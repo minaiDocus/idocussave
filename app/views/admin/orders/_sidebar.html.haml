@@ -1,0 +1,47 @@
+.block
+  %h3 Product management
+  .content
+    %p
+      Here you can
+      %span.hightlight manage
+      your Orders
+    %p
+      %strong States:
+      %ul.list
+        %li
+          %em
+            cart :
+          l'utilisateur a été jusqu'à l'étape de récap.
+        %li
+          %em
+            unpaid :
+          le client n'a pas payé.
+        %li
+          %em
+            paid :
+          le client a payé.
+        %li
+          %em
+            scanned :
+          les documents sont scannés
+
+      
+    %p
+      %b Legend:
+      %ul.list
+        %li!= image_tag("web-app-theme/application_edit.png", :alt => "Edit") + " to edit"
+        %li!= image_tag("web-app-theme/cross.png", :alt => "Delete") + " to delete"
+
+    %p
+      %strong Thumbnail process
+      %ul.list
+        %li
+          Reste :
+          %span.process_remain
+        %li
+          Statut :
+          %span.process_status
+        %li
+          %a{ :href => "#", :class => :process_start } Start
+        %li
+          %a{ :href => "#", :class => :process_stop } Stop

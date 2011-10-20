@@ -1,0 +1,32 @@
+!!!
+%html
+  %head
+    %title
+      Connexion
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    -#%link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
+    != stylesheet_link_tag %w(application)
+
+  %body.devise
+    #worldwrapper
+      #content.clearfix
+        .leftcolon
+          -#%a.mediumlogo.margin2top.margin2left{ :href => "/" }
+          -#%ul.pageslistmenu.margin4top
+            -#%li{:class => controller.controller_name == 'registrations' ? 'current': '' }
+              -#!= link_to "Créer un compte", new_user_registration_path
+
+            -#%li{:class => controller.controller_name == 'confirmations' ? 'current': '' }
+              -#!= link_to "Renvoyer les instructions", new_user_confirmation_path
+
+            -#%li{:class => controller.controller_name == 'sessions' ? 'current': '' }
+              -#!= link_to "Connexion à mon compte", new_user_session_path
+
+            -#%li{:class => controller.controller_name == 'passwords' ? 'current': '' }
+              -#!= link_to "Mot de passe oublié ?", new_user_password_path
+
+        .rightcolon.margin4top.margin2bottom
+          != yield
+      #footer
+        -#©Copyright 2011 iDocus
+    != render :partial => '/shared/google_analitycs'

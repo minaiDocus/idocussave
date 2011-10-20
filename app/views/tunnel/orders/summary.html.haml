@@ -1,0 +1,138 @@
+.leftcolon.margin4top.margin4bottom
+  -#!= render :partial => '/shared/error_messages', :locals => {:object => @order}
+  .tunnelcase
+    %ul.progress
+      %li.first
+        %span
+          Produits
+      %li.second
+        %span
+          Options
+      %li.third.current
+        %span
+          Paiement
+
+
+    %form.clearfix#choosepaymod{ :action => pay_tunnel_order_path, :method => :post }
+      %input{ :type => :hidden, :name => :product_id, :value => @product.id }
+      %input{ :type => :hidden, :name => :option_ids, :value => @option_ids.join(' ') }
+      - if @billing_address_id && @shipping_address_id
+        %input{ :type => :hidden, :name => :billing_address_id, :value => @billing_address_id }
+        %input{ :type => :hidden, :name => :shipping_address_id, :value => @shipping_address_id }
+      
+      %h2.margin2top
+        Récapitulatif de votre commande
+          
+      - total_in_cents_wo_vat = 0.0
+      %ul.optionslist.margin2left.margin2top
+        %li
+          .row
+            %span.product
+              %strong
+                #{@product.title}
+            - if @product.price_in_cents_wo_vat > 0
+              %span.price
+                %strong
+                  #{format_price @product.price_in_cents_wo_vat} € HT
+                %span.smaller
+                  #{format_price @product.price_in_cents_w_vat} € TTC
+                  - total_in_cents_wo_vat += @product.price_in_cents_wo_vat
+        %li
+          - @options.each do |option|
+            .row
+              %span.product
+                %strong.margin2left
+                  + #{option.title}
+              - if option.price_in_cents_wo_vat > 0
+                %span.price
+                  %strong
+                    + #{format_price option.price_in_cents_wo_vat} € HT
+                  %span.smaller
+                    #{format_price option.price_in_cents_w_vat} € TTC
+                    - total_in_cents_wo_vat += option.price_in_cents_wo_vat
+        %li
+          .row
+            %span.product
+              %strong
+                total
+            %span.price
+              %strong
+                #{format_price total_in_cents_wo_vat} € HT
+              %span.smaller
+                #{format_price (total_in_cents_wo_vat * 1.196)} € TTC
+                
+        %li
+          .row
+            %span.product
+              %strong
+                mon compte avant
+            %span.price
+              %strong
+                #{format_price current_user.balance_in_cents} €
+        - new_balance = current_user.balance_in_cents - (total_in_cents_wo_vat * 1.196)
+        %li
+          .row
+            %span.product
+              %strong
+                mon compte après
+            %span.price
+              %span.smaller
+                ( - #{format_price (total_in_cents_wo_vat * 1.196)} € TTC )
+              %strong
+                #{format_price (new_balance)} €
+                
+        - if new_balance < 0
+          %li
+            .row
+              %span
+                %strong
+                  vous n'avez pas assez de crédit, créditer voter compte
+                  !=link_to :ici, account_profile_url
+          
+      
+      - if @billing_address_id && @shipping_address_id
+        .separator.light.margin2top
+
+        %h2.margin2top.margin1bottom
+          Adresses de facturation et de retour
+
+        %ul.adresseslist.static.margin2left.margin1top.clearfix
+          %li
+            .header
+              %span
+                Adresse de facturation
+            .content
+              != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @billing_address_id).first}
+          %li
+            .header
+              %span
+                Adresse de retour du produit
+            .content
+              != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @shipping_address_id).first}
+
+      .separator.strong.margin1top
+      
+      %p.margin1top
+        != check_box_tag "cgv"
+        J'accepte les #{ link_to "conditions générales de ventes", "/pages/c-g-v", :target => "_blank" }.
+
+      .buttonsrow.margin1bottom.margin4top
+        %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Payer maintenant"}
+        %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_path}
+          %span
+            Annuler
+            
+:javascript
+  var orderable = (#{new_balance} < 0)? false : true;
+  $('#choosepaymod').submit(function(){
+    if (orderable)
+      if ($("#cgv").is(":checked")) {
+        return true;
+      } else {
+        alert("Vous devez acceptez les conditions générales de ventes");
+        return false;
+      }
+    } else {
+      alert("Vous ne disposer pas de suffisament de crédit");
+    }
+  });

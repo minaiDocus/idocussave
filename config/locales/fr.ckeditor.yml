@@ -1,0 +1,12 @@
+fr:
+  ckeditor:
+    page_title: "Gestion de fichiers"
+    upload_files: "Ajouter de nouveaux fichiers"
+    buttons:
+      cancel: "Annuler"
+      refresh:
+        title: "Rafraîchir"
+        hint: "Rafraîchir la page"
+      upload:
+        title: "Envoyer"
+        hint: "Envoyer un nouveau fichier"

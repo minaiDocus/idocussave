@@ -1,0 +1,41 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active!= link_to "All CMS Images", admin_cms_images_path
+  .content
+    %h2.title All Images
+    .inner
+      #file-uploader
+      %ul#cms_images
+        - for cms_image in @cms_images
+          %li
+            = image_tag cms_image.content.url
+            %br
+            = cms_image.content.url
+            %br
+            = link_to "delete", [:admin, cms_image], :method => :delete, :confirm => "Are you sure ?"
+
+:javascript
+  $(document).ready(function () {
+    var uploader = new qq.FileUploader({
+      // pass the dom node (ex. $(selector)[0] for jQuery users)
+      element: document.getElementById('file-uploader'),
+      // path to server-side upload script
+      action: '#{ admin_cms_images_path }',
+      onComplete: function(id, fileName, responseJSON){
+        if (responseJSON.success) {
+          //$("#avatar").attr("src", responseJSON.url);
+          node = "<li><img src='"+responseJSON.url+"'/></li>";
+          $('#cms_images').append(node);
+          $$('.qq-upload-failed-text').first().update('Successfully Uploaded!');
+        } else {
+          $$('.qq-upload-failed-text').first().update('Hmm .. upload failed');
+        }
+      }
+
+    });
+  });
+
+      
+- content_for :sidebar, render(:partial => 'sidebar')
+

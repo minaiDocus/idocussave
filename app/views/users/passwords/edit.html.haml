@@ -1,0 +1,20 @@
+%h2 Modifier votre mot de passe
+
+%p
+  Utilisez le formulaire ci-dessous, pour modifier votre mot de passe.
+
+= form_for resource_name, resource, :url => password_path(resource_name), :html => { :method => :put } do |f|
+  != render :partial => '/shared/error_messages', :locals => {:object => resource}
+  = f.hidden_field :reset_password_token
+
+  = f.label "Nouveau mot de passe", :class => "margin2top"
+  = f.password_field :password, :class => "w410"
+
+  = f.label "Confirmation du nouveau mot de passe", :class => "margin2top"
+  = f.password_field :password_confirmation, :class => "w410"
+
+  .buttonsrow.margin3top
+    != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
+    %a.button.whitebtn.floattoright.margin1right{ :href => "/"}
+      %span
+        RETOUR

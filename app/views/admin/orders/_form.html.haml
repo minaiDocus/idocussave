@@ -1,0 +1,25 @@
+.group
+  %label{ :id => "documents_name", :class => :label }
+    Document *
+  %input{ :type => "texte", :name => "document_names", :class => 'text_field', :id => "documents_name" }
+
+.group
+  %label{ :id => "share_with", :class => :label }
+    Partager avec...
+  %input{ :type => "texte", :name => "share_with", :class => 'text_field', :id => "share_with" }
+
+.group
+  %label{ :id => "tags", :class => :label }
+    Tags
+  %input{ :type => "texte", :name => "tags", :class => 'text_field', :id => "tags" }
+
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_orders_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.

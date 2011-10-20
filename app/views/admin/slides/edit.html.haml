@@ -1,0 +1,13 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "Overview", admin_homepages_path
+      %li!= link_to "Add slide", new_admin_slide_path
+      %li!= link_to "Add pavet", new_admin_pavet_path
+  .content
+    %h2.title Editing slide
+    .inner
+      - form_for [:admin, @slide], :html => { :class => :form } do |f|
+        != render :partial => "form", :locals => {:f => f}
+
+- content_for :sidebar, render(:partial => 'sidebar')

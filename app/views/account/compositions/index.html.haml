@@ -1,0 +1,43 @@
+//DocumentComposer widget
+#documentcomposer
+  //Actionbar
+  .actionbar
+    .feedback.inactive.floattoleft.margin1left
+      %span.out
+        Aucun traitement
+  //Page browser
+  .pagesbrowser.scrollpane
+    .titlebar.margin1top
+      %h1.floattoleft
+        Toutes les compositions
+    %ul.documentslist.clearfix
+      != render @compositions
+
+:javascript
+  $(document).ready(function () {
+    $("a.zoom").lightBox();
+    
+    $("a.do-deleteComposition").click(function(){
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce document composé ?')) {
+        node = $(this);
+        li = node.parents("li.document").first();
+        did = li.attr("id").split("_")[1];
+        url = "/account/compositions/" + composition_id;
+        hsh = {"_method": "delete"};
+        $.ajax({
+          url: url,
+          data: hsh,
+          dataType: "json",
+          type: "POST",
+          beforeSend: function() {
+            logBeforeAction("Suppression de la composition en cours");
+          },
+          success: function(data){
+            li.remove();
+            logAfterAction();
+          }
+        });
+      }
+      return false;
+    });
+  });

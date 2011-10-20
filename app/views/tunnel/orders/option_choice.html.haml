@@ -1,0 +1,73 @@
+.leftcolon.margin4top.margin4bottom
+  -#!= render :partial => '/shared/error_messages', :locals => {:object => @order}
+
+  .tunnelcase
+    %ul.progress
+      %li.first
+        %span
+          Produits
+          %br
+      %li.second.current
+        %span
+          Options
+      %li.third
+        %span
+          paiement
+
+    - form_for @product, :url => tunnel_order_path, :html => {:method => :post, :class => 'clearfix'} do |f|
+      %input{ :type => :hidden, :name => :product_id, :value => @product.id }
+      %h2.margin2top
+        Produit : 
+        != @product.title
+      
+      %ul.optionslist.margin2left.margin2top
+        - @product.product_options.distinct(:group).sort.each do |group|
+          - options = @product.product_options.where(:group => group).by_position
+          - if options.count > 1
+            %li
+              - options.each_with_index do |option,index|
+                .row
+                  %span.radio
+                    %input{ :type => :radio, :checked => "#{ (index == 1)? "checked" : "" }", :name => "option_group_#{option.group}", :value => option.id, :id => option.id }
+                  %span.product
+                    %strong
+                      %label{ :for => option.id }
+                        != option.title
+                        != (option.description == "")? "" : " - #{option.description}"
+                  - if option.price_in_cents_wo_vat > 0
+                    %span.price
+                      %strong
+                        #{format_price option.price_in_cents_wo_vat} € HT
+                      %span.smaller
+                        #{format_price option.price_in_cents_w_vat} € TTC
+                  - else
+                    %span.price
+                      %strong
+                        -
+          - else
+            - option = options.first
+            %li
+              .row
+                %span.radio
+                  %input{ :type => :checkbox, :name => "option_group_#{option.group}", :value => option.id, :id => option.id }
+                %span.product
+                  %strong
+                    %label{ :for => option.id }
+                      != option.title
+                      != (option.description == "")? "" : " - #{option.description}"
+                - if option.price_in_cents_wo_vat > 0
+                  %span.price
+                    %strong
+                      #{format_price option.price_in_cents_wo_vat} € HT
+                    %span.smaller
+                      #{format_price option.price_in_cents_w_vat} € TTC
+                - else
+                  %span.price
+                    %strong
+                      -
+
+      .buttonsrow.margin1bottom.margin4top
+        %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Étape suivante"}
+        %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_url}
+          %span
+            Etape précédente

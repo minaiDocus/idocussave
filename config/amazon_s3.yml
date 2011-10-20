@@ -1,0 +1,14 @@
+test:
+   access_key_id: "AKIAJ36W5TGAGJKUWJBA"
+   secret_access_key: "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"
+   bucket: "idocus2-test"
+
+development:
+   access_key_id: "AKIAJ36W5TGAGJKUWJBA"
+   secret_access_key: "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"
+   bucket: "idocus2-development"
+
+production:
+   access_key_id: "AKIAJ36W5TGAGJKUWJBA"
+   secret_access_key: "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"
+   bucket: "idocus2-production"

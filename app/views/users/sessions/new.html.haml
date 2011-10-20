@@ -1,0 +1,55 @@
+- if flash[:notice].present?
+  != render :partial => '/shared/notice_message', :locals => {:title => 'Opération réussie !', :message => flash[:notice]}
+
+%h2
+  Connexion
+
+%p
+  Utilisez le formulaire ci-dessous, pour vous identifier. Veuillez nous indiquer l'adresse e-mail avec laquelle vous avez créé votre compte.
+%p
+  Si vous n'avez pas encore de compte, vous pouvez #{ link_to "créer un compte ici", new_user_registration_path }.
+
+- if devise_mapping.authenticatable?
+  - form_for resource_name, resource, :url => session_path(resource_name) do |f|
+
+    - if flash[:alert].present?
+      - if flash[:alert]
+        .errors.margin2bottom
+          %span.title
+          %ul
+            %li
+              Vous devez être enregistré ou identifié pour continuer.
+      - else
+        - error_class = "error"
+        .errors.margin2bottom
+          %span.title
+            Erreurs à la validation du formulaire
+          %ul
+            %li
+              Email ou mot de passe invalide
+    - else
+      - error_class = ""
+
+    != f.label:"Identifiant :", :class => "margin2top"
+    != f.text_field :email, :class => "w410 #{error_class}"
+
+    != f.label:"Mot de passe :", :class => "margin2top"
+    != f.password_field :password, :class => "w410 #{error_class}"
+
+    - if devise_mapping.rememberable?
+      .margin1top
+        != f.check_box :remember_me
+        Restez connecté à mon compte (session de 2 jours)
+
+
+
+    .buttonsrow.margin3top
+      != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
+      %a.button.whitebtn.floattoright.margin1right{ :href => "javascript:history.back();"}
+        %span
+          RETOUR
+
+
+
+
+

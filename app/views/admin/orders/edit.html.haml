@@ -1,0 +1,14 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All orders", admin_orders_path
+      %li!= link_to "Add order", new_admin_order_path
+  .content
+    %h2.title
+      Editing order 
+      != @order.number
+    .inner
+      - form_for [:admin, @order], :html => { :class => :form } do |f|
+        != render :partial => "form", :locals => {:f => f}
+
+- content_for :sidebar, render(:partial => 'sidebar')

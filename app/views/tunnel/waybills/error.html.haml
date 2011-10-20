@@ -1,0 +1,53 @@
+.leftcolon.margin4top
+  .errors.margin2bottom
+    %span.title
+      #{waybill_error(@error_code)}
+    %ul
+      %li
+        
+  .tunnelcase
+    %ul.progress
+      %li.first
+        %span
+          options de
+          %br
+          ma commande
+      %li.second
+        %span
+          Mon adresse
+          %br
+          de facturation
+      %li.third.current
+        %span
+          paiement et impression
+          %br
+          du bordereau d'envoi
+
+    .clearfix
+      %h2.margin2top
+        Veuillez contactez le support en précisant les informations suivantes :
+
+      %ul.margin2top
+        %li Code erreur : #{@error_code}
+        %li N° de commande : #{@order.number}
+        %li N° de retour : #{@order.waybill_number}
+
+
+
+      .buttonsrow.margin1bottom.margin4top
+        %a.button.whitebtn.floattoright.margin2right.popup{ :href => '#'}
+          %span
+            Fermer cette fenêtre
+
+
+.rightcolon.margin4top
+  != render :partial => '/tunnel/shared/cart'
+  != render :partial => '/tunnel/shared/infosbox'
+
+:javascript
+  $('.popup').click(function(e){
+    e.preventDefault();
+    var o = $(this);
+    var href = o.attr('href');
+    window.close();
+  });

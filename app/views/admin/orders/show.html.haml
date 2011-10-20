@@ -1,0 +1,74 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All orders", admin_orders_path
+      %li!= link_to "Add order", new_admin_order_path
+  .content
+    .inner
+      - if !@order.manual
+        %h2 Order ##{@order.number}
+        %table.table
+          %tr
+            %th.first
+            %th Datasheet
+            %th
+            %th.last
+          %tr
+            %td
+            %td
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@order.created_at)}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Product', :value => @order.product_order.title}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'State', :value => @order.state}
+            %td
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Updated at', :value => l(@order.updated_at)}
+              - customer = @order.user rescue nil
+              - if customer
+                != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Customer', :value => link_to(@order.user.email, [:admin, @order.user])}
+              - else
+                != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Customer', :value => "Inconnu"}
+  
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'VAT RATIO', :value => @order.tva_ratio}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Total without VAT', :value => format_price(@order.total_in_cents_wo_vat)}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Total with VAT', :value => format_price(@order.total_in_cents_w_vat)}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Total VAT', :value => format_price(@order.total_vat)}
+            %td
+  
+        %h3 Addresses
+        %table.table
+          %tr
+            %th.first
+            %th Billing
+            %th Shipping
+            %th.last
+          %tr
+            %td
+            %td
+              != render :partial => 'address', :locals => {:address => @order.shipping_address} rescue nil
+            %td
+              != render :partial => 'address', :locals => {:address => @order.billing_address} rescue nil
+            %td
+      - else
+        %h2 Order ##{@order.number}
+        %table.table
+          %tr
+            %th.first
+            %th Datasheet
+            %th
+            %th.last
+          %tr
+            %td
+            %td
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@order.created_at)}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'State', :value => @order.state}
+            %td
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Updated at', :value => l(@order.updated_at)}
+              - customer = @order.user rescue nil
+              - if customer
+                != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Customer', :value => link_to(@order.user.email, [:admin, @order.user])}
+              - else
+                != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Customer', :value => "Inconnu"}
+            %td
+      .wat-cf
+        != link_to image_tag("web-app-theme/application_edit.png", :alt => "Modifier") + "Modifier", edit_admin_order_path(@order), :class => "button"
+
+- content_for :sidebar, render(:partial => 'sidebar')

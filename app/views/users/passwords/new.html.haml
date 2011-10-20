@@ -1,0 +1,25 @@
+%h2
+  Mot de passe oublié ?
+
+%p
+  Veuillez saisir l'adresse e-mail avec laquelle vous avez créé votre compte.
+  Ensuite, vérifiez votre boîte aux lettres, nous vous envoyons immédiatement
+  un mail qui vous indiquera la démarche à suivre pour réinitialiser votre mot de passe.
+
+
+- if devise_mapping.authenticatable?
+  - form_for resource_name, resource, :url => password_path(resource_name) do |f|
+
+    != render :partial => '/shared/error_messages', :locals => {:object => resource}
+
+    != f.label:"Votre adresse e-mail :", :class => "margin2top"
+    != f.text_field :email, :class => "w410"
+    
+    .buttonsrow.margin3top
+      != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
+      %a.button.whitebtn.floattoright.margin1right{ :href => "/"}
+        %span
+          RETOUR
+
+
+

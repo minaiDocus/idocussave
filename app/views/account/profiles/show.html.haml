@@ -1,0 +1,65 @@
+//DocumentComposer widget
+#useraccount.scrollpane
+  .titlebar.margin3top
+    %h1.floattoleft
+      CHANGEMENT DU MOT DE PASSE
+  .wrapper
+    %p.margin1top
+      Utilisez le formulaire ci-dessous pour modifier vos informations de 
+      compte.
+
+    - form_for @user, :url => account_profile_path do |f|
+      - if flash[:alert].present?
+        - error_class = "error"
+        .errors.margin2bottom.margin2top
+          %span.title
+            Erreurs à la validation du formulaire
+          %ul
+            %li
+              Mots de passe invalides
+
+      != f.label "Mot de passe actuel :", :class => "margin2top"
+      = f.password_field :current_password, :label => "Ancien mot de passe", :class => "w410"
+      != f.label "Nouveau mot de passe :", :class => "margin2top"
+      = f.password_field :password, :label => "Nouveau mot de passe", :class => "w410"
+      != f.label "Confirmation du mot de passe :", :class => "margin2top"
+      = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe", :class => "w410"
+
+      .buttonsrow.margin3top
+        != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
+  
+  
+  .titlebar.margin3top
+    %h1.floattoleft
+      COMPTE PREPAYE
+  .wrapper
+    - if flash[:notice].present?
+      .flash
+        .notice.margin2bottom.margin1top
+          %span.title= flash[:notice]
+          %br
+    - elsif flash[:credit_alert].present?
+      .flash
+        .errors.margin2bottom.margin1top
+          %span.title= flash[:credit_alert]
+          %br
+    
+    %p.margin1top
+      Solde actuel : #{format_price current_user.balance_in_cents} €
+      %br
+      %br
+      - if !params[:amount]
+        %form{ :method => :get, :action => account_profile_path }
+          %label{ :for => :amount } Somme à créditer (€):
+          %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00" }/
+          .buttonsrow.margin2top
+            %input{ :type => :submit, :value => "Suivant", :class => "button whitebtn w100 floattoright" }
+      - else
+        Somme à créditer : #{format_price (params[:amount].to_f * 100)} €
+        %form{ :method => :post, :action => @link_to_paypal }
+          .buttonsrow.margin2top
+            %input{ :type => :submit, :value => "Paypal", :class => "button whitebtn w100 floattoright" }
+        %form{ :method => :post, :action => "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" }
+          != paiement_cic_hidden_fields((@credit.amount/100),@credit.number)
+          .buttonsrow.margin2top
+            %input{ :type => :submit, :value => "CM-CIC", :class => "button whitebtn w100 floattoright" }

@@ -1,0 +1,21 @@
+%span
+  #{address.first_name} #{address.last_name.upcase}
+- if address.company.present?
+  %span
+    #{address.company}
+%span
+  #{address.address_1}
+  - if address.address_2.present?
+    %br
+    #{address.address_2}
+%span
+  #{address.zip} #{address.city.upcase}
+- if address.country.present?
+  %span
+    #{address.country}
+- if address.phone.present?
+  %span
+    tel: #{address.phone}
+- if address.phone_mobile.present?
+  %span
+    mobile: #{address.phone_mobile}

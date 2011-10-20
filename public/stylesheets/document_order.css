@@ -1,0 +1,18 @@
+table{
+  display: table;
+  width: 300px;
+  caption-side: bottom;
+  border: thin solid black;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+row{
+  display: table-row;
+}
+cell{
+  display: table-cell;
+  border: thin solid black;
+  text-align: center;
+  font-weight: bold;
+  width: 220px;
+}

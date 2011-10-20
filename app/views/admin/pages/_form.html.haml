@@ -1,0 +1,53 @@
+.group
+  %h3 Information générale
+  != f.label :title, "Title *", :class => :label
+  != f.text_field :title, :class => 'text_field'
+
+  != f.label :title, "Label *", :class => :label
+  != f.text_field :label, :class => 'text_field'
+
+  != f.label :meta_description, "META description", :class => :label
+  != f.text_field :meta_description, :class => 'text_field'
+  
+  != f.label :style, "Style (CSS)", :class => :label
+  = "<style type='text/css'>"
+  != f.text_area :style, :class => 'text_area'
+  = "</style>"
+  
+  != f.label :image, "nom de l'image de la page ( taille 785*100 pixels ) ( exemple : nature.jpg ) *", :class => :label
+  != f.text_field :image, :class => 'text_field'
+  
+  != f.label :image_info, "Information sur l'image *", :class => :label
+  != f.text_field :image_info, :class => 'text_field'
+  
+  != f.label :content_type, "Type de page :", :class => :label
+  != f.text_field :content_type, :class => 'text_field'
+
+  != f.label :is_footer, "Footer?", :class => :label
+  != f.check_box :is_footer, :class => 'checkbox'
+
+  != f.label :position, "Position *", :class => :label
+  != f.text_field :position, :class => 'text_field'
+
+.group
+  - page_contents_count = 0
+  != f.fields_for :page_contents do |builder|
+    != render :partial => "page_content_fields", :locals => {:f => builder}
+    - page_contents_count += 1
+  
+  %br
+  != link_to_add_fields "onglet", f, "page_contents"
+  %input{ :type => "hidden", :name => "page_contents_count", :value => "#{page_contents_count}"}
+  %br
+  %br
+  
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_users_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.

@@ -1,0 +1,2170 @@
+/*Filename       : application.css 
+  Redered form   : application.sass
+  Need HAML gem  : version 3.0.13
+  Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+  Version        : 1.0.0 2009-07-06 YYYY-MM-DD
+  Author         : Novelys
+  Author's Uri   : www.novelys.com
+  Description    : Css file for iDocus
+
+
+
+/* Summary by anchor (ALT+F for search in file) :
+  0)  _GlobalConstant
+  1)  _SetMixins
+  2)  _FontFace
+  3)  _GeneralSelector
+  4)  _LayoutSqueletons
+  5)  _HomePageCustomClasses
+  6)  _PagesAndDeviseCustomClasses
+  7)  _TunnelCustomClasses
+  8)  _ApplicatonCustomClasses
+  9)  _ApplicationWidget DocumentComposer
+  10) _ApplicationWidget Actionbar
+  11) _ApplicationWidget Feedback
+  12) _ApplicationFileLists
+  13) _NotesDesigns
+  14) _Modalcontent
+  XX) _Buttons
+  XX) _InputButtons
+  XX) _FormStyles
+  XX) _ScrollPane
+  XX) _GeneratedByMixin
+  XX) _WorkingClass
+
+
+
+// _GlobalConstant
+!VAL_MAX_MULTI         = 50
+!VAL_POS_UNIT          = 10
+!MIN_FNT_SIZE          = 12px
+!MIN_LN_HEIGHT         = 16px
+
+!SIZ_HOMEPAGE          = 900px
+!SIZ_TUNNEL            = 750px
+!SIZ_PAGES             = 750px
+!SIZ_APPLICATION       = 100%
+!SIZ_DEF_MARG          = 10px
+!SIZ_BOX_RADIUS        = 8px
+!SIZ_SMALL_BOX_RADIUS  = 4px
+
+!COL_CHART_BROWN       = #3e2f24
+!COL_CHART_BROWN_LIGHT = #e0e0e0
+!COL_CHART_GREEN       = #C9DD03
+!COL_CHART_SKIN        = #D2C295
+!COL_CHART_GRAY        = #1E1E1E
+
+!COL_PAGE_BG           = #dddbda
+!COL_BLOC_GRAY1        = #b9b9b9
+!COL_BLOC_GRAY2        = #bababa
+!COL_BLOC_GRAY3        = #a3a3a3
+
+
+
+// _FontFace
+@font-face
+  :font-family 'VagNormal'
+  :font-style normal
+  :font-weight normal
+  :src local('VagNormal'), url('../images/fonts/vag_round_normal.ttf') format('truetype')
+
+@font-face
+  :font-family 'VagBold'
+  :font-style bold
+  :font-weight bolder
+  :src local('VagBold'), url('../images/fonts/vag_round_bold.ttf') format('truetype')
+
+
+
+// _SetMixins
+@mixin SetBoxRelPositioning
+  :display block !important
+  :position relative !important
+
+@mixin SetBoxAbsPositioning
+  :display block !important
+  :position absolute !important
+
+@mixin SetRoundedCornerBox
+  :border-radius !SIZ_BOX_RADIUS
+  :-webkit-border-radius !SIZ_BOX_RADIUS
+  :-moz-border-radius !SIZ_BOX_RADIUS
+  :-khtml-border-radius !SIZ_BOX_RADIUS
+
+@mixin SetSmallRoundedCornerBox
+  :border-radius !SIZ_SMALL_BOX_RADIUS
+  :-webkit-border-radius !SIZ_SMALL_BOX_RADIUS
+  :-moz-border-radius !SIZ_SMALL_BOX_RADIUS
+  :-khtml-border-radius !SIZ_SMALL_BOX_RADIUS
+
+@mixin GenerateMarginTopClass
+  $i: !VAL_MAX_MULTI
+  @while $i > 0
+    .margin#{$i}top
+      :margin-top !VAL_POS_UNIT * $i + px
+    .padding#{$i}top
+      :padding-top !VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginLeftClass
+  $i: !VAL_MAX_MULTI
+  @while $i > 0
+    .margin#{$i}left
+      :margin-left !VAL_POS_UNIT * $i + px
+    .padding#{$i}left
+      :padding-left !VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginRightClass
+  $i: !VAL_MAX_MULTI
+  @while $i > 0
+    .margin#{$i}right
+      :margin-right !VAL_POS_UNIT * $i + px
+    .padding#{$i}right
+      :padding-right !VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginBottomClass
+  $i: !VAL_MAX_MULTI
+  @while $i > 0
+    .margin#{$i}bottom
+      :margin-bottom !VAL_POS_UNIT * $i + px
+    .padding#{$i}bottom
+      :padding-bottom !VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+
+
+// _GeneralSelector
+html
+  :height 100%
+  :width 100%
+
+body
+  :font-family 'trebuchet ms', arial
+  :font-size !MIN_FNT_SIZE
+  :line-height !MIN_LN_HEIGHT
+  :background-color !COL_PAGE_BG
+
+h1, h2, h3, h4, h5
+  @include SetBoxRelPositioning
+
+h1
+  :position relative
+  :font-family 'VagNormal', 'trebuchet ms'
+  :font-size 48px
+  :line-height 48px
+  :color #000
+
+h3
+  :position relative
+  :font-family 'VagNormal', 'trebuchet ms'
+  :font-size 16px
+  :line-height 16px
+  :color #000
+
+h4
+  :position relative
+  :font-family 'VagNormal', 'trebuchet ms'
+  :font-size 14px
+  :line-height 14px
+  :color #000
+
+
+ul, span, p, a, ul li, div
+  :font-size !MIN_FNT_SIZE
+  :line-height !MIN_LN_HEIGHT
+  :list-style none
+
+
+form
+  @include SetBoxRelPositioning
+  :width 100%
+  :height auto
+
+
+
+// _LayoutSqueletons
+#worldwrapper
+  @include SetBoxRelPositioning
+  :margin-left auto
+  :margin-right auto
+
+#worldwrapper
+  #header, #content, #footer
+    :display block
+    :position relative
+    :width 100%
+
+
+body.homepage
+  #worldwrapper
+    :width !SIZ_HOMEPAGE
+    :height auto
+    #header
+      :min-height 60px
+    #content
+      :min-height 100px
+    #footer
+      :min-height 24px
+      :width 560px
+
+body.application
+  :background-color !COL_CHART_BROWN
+  :overflow hidden
+  #worldwrapper
+    :width !SIZ_APPLICATION
+    :height 100%
+    #header
+      :height 60px
+    #content
+    #footer
+      :min-height 60px
+      :background-color brown
+
+body.tunnel
+  #worldwrapper
+    :width !SIZ_TUNNEL
+    #header
+      :height 64px
+    #content
+      :min-height 100px
+    #footer
+      :min-height 20px
+
+body.pages
+  #worldwrapper
+    :width !SIZ_PAGES
+    :height auto
+    #header
+      :min-height 60px
+    #content
+      :min-height 100px
+    #footer
+      :min-height 20px
+
+body.devise
+  #worldwrapper
+    :width !SIZ_PAGES
+    :height 100%
+    #header
+      :min-height 60px
+    #content
+      :min-height 100px
+    #footer
+      :min-height 20px
+
+
+
+// _HomePageCustomClasses
+body.homepage
+  :background url("../images/application/bg_big_lendsflare.png")
+  :background-repeat no-repeat
+  :background-position center top
+  :background-color !COL_PAGE_BG
+  #worldwrapper
+    :background url("../images/application/bg_brown_colon_300.png")
+    :background-repeat repeat-y
+    :background-position right top
+
+body.homepage
+  #worldwrapper
+    #footer
+      :height 20px
+      :font-size 0px
+      :line-height 0px
+
+body.homepage
+  #worldwrapper
+    #content
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+        :min-height 200px
+      .leftcolon
+        :width 560px
+        :float left
+      .rightcolon
+        :width 340px
+        :float right
+
+body.homepage
+  #worldwrapper
+    #content
+      .leftcolon
+        .mainlogo
+          :margin-left auto
+          :margin-right auto
+      .leftcolon
+        .screencast
+          @include SetBoxRelPositioning
+          :width 550px
+          :height 330px
+          :margin-left 5px
+          :text-align center
+          a
+            :display block
+            :position relative
+            :margin-left auto
+            :margin-right auto
+            :width 486px
+            :height  332px
+            img
+              @include SetBoxRelPositioning
+              @include SetSmallRoundedCornerBox
+              :width 482px
+              :height  328px
+              :border-style solid
+              :border-width 2px
+              :border-color #a0a0a0
+        ul.teasingcols
+          :display block
+          :position relative
+          :margin-top 20px
+          :width 550px
+          :margin-left 5px
+          :min-height 200px
+          li
+            @include SetBoxRelPositioning
+            :float left
+            :width 170px
+            :min-height 200px
+            img
+              :display block
+              :width 170px
+              :height 170px
+            p
+              :display block
+              :position relative
+              :width 160px
+              :padding-left 5px
+              :padding-right 5px
+              :margin-top 10px
+              :font-size 12px
+              :line-height 16px
+            h4
+              :padding-left 5px
+      .rightcolon
+        .loginbox
+          @include SetBoxRelPositioning
+          :height 100px
+          :width 240px
+          :float right
+          :right 30px
+          :color #797979
+          :background url("../images/application/bg_window_separator_brown.png")
+          :background-repeat repeat-x
+          :background-position center bottom
+          a
+            :color #c0d838
+            :text-decoration none
+            :font-size 11px
+          span.title
+            @include SetBoxRelPositioning
+            :height 20px
+            :width 240px
+            :text-transform uppercase
+            :font-weight bold
+            :font-family 'VagNormal', 'trebuchet ms'
+            :font-size 12px
+            :line-height 12px
+            :padding-top 12px
+            :color #e0e0e0
+          form
+            fieldset
+              .leftcol, .rightcol
+                @include SetBoxRelPositioning
+                :height 28px
+                :font-size 11px
+                :line-height 11px
+                input[type="text"], input[type="password"]
+                  :background-color #878686 !important
+              .leftcol
+                :float left
+                :width auto
+              .rightcol
+                :float right
+                :text-align left
+                :width auto
+        .loggedbox
+          @include SetBoxRelPositioning
+          @include SetSmallRoundedCornerBox
+          :margin-top 10px
+          :height 20px
+          :padding-top 5px
+          :width 240px
+          :float right
+          :right 30px
+          :color #797979
+          :background-color #42362f
+          a
+            :font-weight normal
+            :font-size 12px
+            :color #e0e0d4
+            :text-decoration none
+            :padding-left 10px
+          a:hover
+            :color !COL_CHART_GREEN
+        .teasingscreen
+          @include SetBoxRelPositioning
+          :width 432px
+          :height 404px
+          :float right
+        .learnmore
+          @include SetBoxRelPositioning
+          :height 20px
+          :width 322px
+          :float right
+          :text-align right
+          :color #c0d838
+          :margin-right 20px
+          :text-decoration none
+        .teasingstep
+          @include SetBoxRelPositioning
+          :height 44px
+          :width 322px
+          :float right
+          a
+            @include SetBoxRelPositioning
+            :float left
+            :cursor pointer
+          a.step
+            :width 44px
+            :height 44px
+            :background-color yellow
+            :background url("../images/application/sprite_steps.png")
+            :background-repeat no-repeat
+          a.stp1
+            :background-position 0px 0px
+          a.stp2
+            :background-position 0px -44px
+          a.stp3
+            :background-position 0px -88px
+          a.stp4
+            :background-position 0px -132px
+          a.wrd
+            :height 36px
+            :font-family 'VagNormal'
+            :font-weight bold
+            :letter-spacing 0.9px
+            :text-decoration none
+            :font-size 14px
+            :line-height 16px
+            :color #e0e0e0
+            :width 250px
+            :margin-left 10px
+            :margin-top 7px
+        .small
+          :height 22px
+          h2
+            @include SetBoxRelPositioning
+            :font-size 18px
+            :line-height 20px
+            :padding-left 50px
+            :color #c0d838
+        .ordernow
+          @include SetBoxRelPositioning
+          :width 308px
+          :height 70px
+          :float right
+          :background-color red
+          :background url("../images/application/sprite_order_now.png")
+          :background-repeat no-repeat
+          :background-position left top
+          :right 13px
+          a
+            @include SetBoxRelPositioning
+            :width 258px
+            :height 32px
+            :float right
+            :font-family 'VagNormal'
+            :font-weight bold
+            :letter-spacing 0.9px
+            :text-decoration none
+            :text-transform uppercase
+            :font-size 16px
+            :line-height 16px
+            :color #1e1e1e
+            :text-shadow #f2f8d0 0px 1px 0px
+            :padding-left 30px
+            :padding-top 18px
+        .ordernow:hover
+          :background-position left -70px
+
+
+
+// _PagesAndDeviseCustomClasses
+body.pages, body.devise
+  :background url("../images/application/bg_brown_colon_700.png")
+  :background-repeat repeat-y
+  :background-position center top
+  :background-color !COL_PAGE_BG
+
+body.pages, body.devise
+  #worldwrapper
+    #content
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+        :min-height 200px
+      .leftcolon
+        :float left
+      .rightcolon
+        :float right
+
+body.pages
+  #worldwrapper
+    #content
+      .leftcolon
+        :width 220px
+      .rightcolon
+        :width 490px
+        :margin-right 20px
+
+body.devise
+  #worldwrapper
+    #content
+      .leftcolon
+        :width 220px
+      .rightcolon
+        :width 418px
+        :margin-left 40px
+        :margin-right 40px
+        :background url("../images/application/bg_tunnel.png")
+        :background-repeat no-repeat
+        :background-position right top
+        :right 10px
+
+body.pages, body.devise
+  #worldwrapper
+    #content
+      .leftcolon
+        ul.pageslistmenu
+          @include SetBoxRelPositioning
+          :width 220px
+          li
+            @include SetBoxRelPositioning
+            :float left
+            :width 220px
+            :height 54px
+            :margin-top -15px
+            :background-repeat no-repeat
+            :background-position left top
+            a
+              @include SetBoxRelPositioning
+              :margin-left 20px
+              :font-family 'VagNormal'
+              :font-weight bold
+              :letter-spacing 0.9px
+              :text-decoration none
+              :text-transform uppercase
+              :font-size 11px
+              :line-height 12px
+              :color #e0e0e0
+              :width 180px
+              :height 10px
+              :top 1px
+              :padding-top 12px
+              :padding-bottom 10px
+            a:hover
+              :color !COL_CHART_GREEN
+          li.current
+            :background url("../images/application/bg_pages_menu_item.png")
+            a
+              :color !COL_CHART_GRAY
+
+
+
+body.pages
+  #worldwrapper
+    #footer
+      :font-size 11px
+      :line-height 14px
+      :color #7b7b7b
+      :padding-left 240px
+      :width 480px
+
+body.devise
+  #worldwrapper
+    #footer
+      :font-size 11px
+      :line-height 14px
+      :color #7b7b7b
+      :padding-left 290px
+      :width 410px
+      :text-align right
+
+
+
+// _TunnelCustomClasses
+body.tunnel
+  :background url("../images/application/bg_small_lendsflare.png")
+  :background-repeat no-repeat
+  :background-position center top
+  :background-color !COL_PAGE_BG
+
+body.tunnel
+  #worldwrapper
+    #header
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+        :height 64px
+      .leftcolon
+        :width 110px
+        :float left
+        .smallogo
+          :margin-top 14px
+      .rightcolon
+        :width 600px
+        :float right
+        .userlinks
+          @include SetBoxRelPositioning
+          :width 100%
+          :height 20px
+          :margin-top 14px
+          li
+            @include SetBoxRelPositioning
+            :float right
+            :height 20px
+            :margin-left 5px
+            :color #7c7c7c
+          li, li a
+            :font-size 11px
+            :line-height 11px
+          li a
+            :color black
+            :text-decoration none
+        .title
+          @include SetBoxRelPositioning
+          :text-align right
+          :margin-top 15px
+          :font-family 'VagNormal'
+          :font-weight bold
+          :font-size 17px
+          :line-height 17px
+          :letter-spacing 0.9px
+          :text-decoration none
+          :text-transform uppercase
+    #content
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+      .leftcolon
+        :width 528px
+        :float left
+      .rightcolon
+        :width 180px
+        :float right
+    #footer
+      :height 20px
+
+body.tunnel
+  #worldwrapper
+    #content
+      .tunnelcase
+        @include SetBoxRelPositioning
+        @include SetSmallRoundedCornerBox
+        :width 525px
+        :border-style solid
+        :border-width 1px
+        :border-color #a3a3a3
+        :background url("../images/application/bg_tunnel.png")
+        :background-repeat no-repeat
+        :background-position right 50px
+        :background-color #e8e8e8
+        .progress
+          @include SetBoxRelPositioning
+          :width 525px
+          :height 40px
+          :background url("../images/application/bg_progress_tunnel.png")
+          :background-repeat repeat-x
+          :background-position left top
+          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          li
+            :display block
+            :position absolute
+            :height 40px
+            :top 0px
+            :float left
+            :background url("../images/application/bg_progress_tunnel_item.png")
+            :background-repeat repeat-x
+            span
+              @include SetBoxRelPositioning
+              :font-family 'VagNormal'
+              :font-weight bold
+              :font-size 11px
+              :line-height 11px
+              :letter-spacing 0.9px
+              :text-decoration none
+              :text-transform uppercase
+              :height 24px
+              :margin-top 9px
+          li:first-child
+            :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+            :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+          li:last-child
+            :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
+            :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          li.first
+            :z-index 10
+            :width 185px
+            :background-position right -40px
+            :left 0px
+            span
+              :margin-left 20px
+          li.second
+            :z-index 9
+            :width 190px
+            :background-position right -40px
+            :left 155px
+            span
+              :margin-left 45px
+          li.third
+            :z-index 8
+            :width 200px
+            :background-position left -120px
+            :left 325px
+            span
+              :margin-left 35px
+          li.first.current
+            :background-position right 0px
+          li.second.current
+            :background-position right 0px
+          li.third.current
+            :background-position right -80px
+      .tunnelcase
+        h2
+          @include SetBoxRelPositioning
+          :width 485px
+          :margin-left 20px
+          :font-size 18px
+          :line-height 18px
+      .tunnelcase
+        .leftcolon, .rightcolon
+          @include SetBoxRelPositioning
+          :width 230px
+          :height auto
+        .leftcolon
+          :float left
+          :margin-left 20px
+        .rightcolon
+          :float right
+          :margin-right 20px
+        .onerow
+          @include SetBoxRelPositioning
+          :width 485px
+          :float left
+          :height auto
+          :margin-left 20px
+      .tunnelcase
+        p
+          :width 485px
+          :margin-left 20px
+        p
+          a
+            :color #6d9c1a
+            :text-decoration none
+      .tunnelcase
+        .separator
+          @include SetBoxRelPositioning
+          :width 485px
+          :margin-left 20px
+
+body.tunnel
+  #worldwrapper
+    #content
+      .resume
+        @include SetSmallRoundedCornerBox
+        @include SetBoxRelPositioning
+        :width 180px
+        :padding-bottom 20px
+        :background-color #d3d3d3
+        .header
+          @include SetBoxRelPositioning
+          :width 180px
+          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          :background-color #b9b9b9
+          :height 40px
+          span.title
+            @include SetBoxRelPositioning
+            :font-family 'VagNormal'
+            :font-weight bold
+            :font-size 13px
+            :line-height 13px
+            :text-transform uppercase
+            :top 15px
+            :left 15px
+            :color #2a2a2a
+        .content
+          @include SetBoxRelPositioning
+          :width 180px
+          :margin-top 10px
+          span
+            :display block
+            :width 160px
+            :text-align right
+            :margin-right 20px
+          span.title
+            :font-weight bold
+            :color #767676
+          span.price
+            :margin-top 10px
+            :font-size 18px
+            :font-weight bold
+          span.infos
+            :margin-top 2px
+            :font-size 11px
+            :font-weight bold
+          span.priceperpage
+            :font-size 11px
+            :font-weight normal
+            :color #767676
+            :line-height 14px
+            :text-align center
+            :margin-left 10px
+      .infosbox
+        @include SetSmallRoundedCornerBox
+        @include SetBoxRelPositioning
+        :width 180px
+        :padding-bottom 10px
+        :background-color #d3d3d3
+        .header
+          @include SetBoxRelPositioning
+          :width 180px
+          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          :background-color #b9b9b9
+          :height 30px
+          span.title
+            @include SetBoxRelPositioning
+            :font-family 'VagNormal'
+            :font-weight bold
+            :font-size 11px
+            :line-height 11px
+            :text-transform uppercase
+            :top 11px
+            :left 15px
+            :color #2a2a2a
+        .content
+          @include SetBoxRelPositioning
+          :width 180px
+          :margin-top 10px
+          span.infos
+            :font-size 11px
+            :font-weight bold
+            :margin-left 15px
+
+body.tunnel
+  #worldwrapper
+    #content
+      .optionslist
+        @include SetBoxRelPositioning
+        :width 485px
+        li
+          @include SetBoxRelPositioning
+          :width 485px
+          :min-height 20px
+          :border-style solid
+          :border-width 0px 0px 1px 0px
+          :border-color #d0d0d0
+          :margin-bottom 10px
+          :padding-bottom 6px
+        li
+          .row
+            @include SetBoxRelPositioning
+            :width 485px
+            :height 17px
+            span, span strong
+              :font-size 12px
+              :line-height 12px
+              :color #000
+              :display inline-block
+            span.product
+              :width 300px
+            span.price
+              :width 157px
+              :text-align right
+            span.radio
+              :width 20px
+              :padding-top -4px
+              :height 12px
+              input[type="radio"]
+                :top 1px
+                :left 3px
+                :position absolute
+                :vertical-align middle
+                :width 14px
+                :height 14px
+                :padding 0px
+                :margin 0px
+                :line-height 0px
+                :font-size 0px
+            span.smaller
+              :font-size 11px
+              :color #5d5d5d
+            span.green
+              :font-size 12px
+              :color #6d9c1a
+            span.orange
+              :font-size 12px
+              :color #ad3737
+        li:last-child
+          :border-width 0px !important
+          :border-style none
+        li.last
+          :border-width 0px !important
+          :border-style none
+
+body.tunnel
+  #worldwrapper
+    #content
+      .adresseslist
+        @include SetBoxRelPositioning
+        :width 505px
+        :height auto
+        li
+          @include SetSmallRoundedCornerBox
+          @include SetBoxRelPositioning
+          :float left
+          :width 230px
+          :margin-right 20px
+          :margin-bottom 20px
+          :min-height 100px
+          :border-style solid
+          :border-color #b9b9b9
+          :border-width 1px
+          :background-color #fafafa
+          .header, .content, .footer
+            @include SetBoxRelPositioning
+            :width 230px
+          .header
+            :height 30px
+            :background-color #b9b9b9
+            input[type="radio"]
+              :top 8px
+              :left 8px
+              :position absolute
+              :vertical-align middle
+              :width 14px
+              :height 14px
+              :padding 0px
+              :margin 0px
+              :line-height 0px
+              :font-size 0px
+            span
+              :display block
+              :position absolute
+              :font-weight bold
+              :font-size 12px
+              :line-height 14px
+              :left 25px
+              :top 8px
+              a
+                :color #000
+                :text-decoration none
+          .content
+            :min-height 40px
+            :padding-top 10px
+            :padding-bottom 10px
+            span
+              @include SetBoxRelPositioning
+              :font-size 12px
+              :line-height 14px
+              :margin-left 10px
+          .footer
+            :width 220px
+            :min-height 20px
+            :text-align right
+            :margin-right 10px
+            a
+              :font-size 11px
+              :color #000
+              :text-decoration none
+              :margin-left 5px
+
+body.tunnel
+  #worldwrapper
+    #content
+      .paiementlist
+        @include SetBoxRelPositioning
+        :width 505px
+        :height auto
+        li
+          @include SetSmallRoundedCornerBox
+          @include SetBoxRelPositioning
+          :float left
+          :width 230px
+          :margin-right 20px
+          :margin-bottom 20px
+          :height 90px
+          :border-style solid
+          :border-color #b9b9b9
+          :border-width 1px
+          :background-color #fafafa
+          .header, .content
+            @include SetBoxRelPositioning
+            :width 230px
+          .header
+            :height 30px
+            :background-color #b9b9b9
+            input[type="radio"]
+              :top 8px
+              :left 8px
+              :position absolute
+              :vertical-align middle
+              :width 14px
+              :height 14px
+              :padding 0px
+              :margin 0px
+              :line-height 0px
+              :font-size 0px
+            span
+              :display block
+              :position absolute
+              :font-weight bold
+              :font-size 12px
+              :line-height 14px
+              :left 25px
+              :top 8px
+              a
+                :color #000
+                :text-decoration none
+          .content
+            :height 60px
+            :padding-top 0px
+          .content.cbs, .content.paypal
+            :background-repeat no-repeat
+            :background-position center center
+          .content.cbs
+            :background url("../images/application/sprite_cbs.png")
+          .content.paypal
+            :background url("../images/application/sprite_paypal.png")
+
+      .adresseslist.static
+        li, li .header
+          :background-color transparent
+        .header
+          :height 20px
+          span
+            :left 10px
+
+
+
+// _ApplicatonCustomClasses
+body.application
+  #worldwrapper
+    #header
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+      .leftcolon
+        :float left
+        :width 260px
+        :height 60px
+      .rightcolon
+        :float left
+        :min-width 400px
+        :height 60px
+    #content
+      .leftcolon, .rightcolon
+        @include SetBoxRelPositioning
+      .leftcolon
+        :float left
+        :left 0px
+        :width 240px
+      .rightcolon
+        :float right
+        :right 0px
+        :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+        :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+        :background url("../images/application/bg_app.png")
+        :background-repeat no-repeat
+        :background-position right 45px
+        :background-color #dddbda
+
+body.application
+  #worldwrapper
+    #header
+      .rightcolon
+        ul.userinfos
+          :display block
+          :position absolute
+          :height 18px
+          :float right
+          :top 0px
+          :right 0px
+          li
+            @include SetBoxRelPositioning
+            :float right
+            :height 20px
+            :margin-left 2px
+            :top 6px
+            :color !COL_CHART_BROWN_LIGHT
+          li, li a
+            :font-size 11px
+            :line-height 11px
+          li a
+            :color !COL_CHART_GREEN
+            :text-decoration none
+          li a.brown
+            :color !COL_CHART_BROWN_LIGHT !important
+            :margin-right 10px
+        ul.tabmenu
+          :display block
+          :position absolute
+          :float left
+          :height 31px
+          :bottom 0px
+          li
+            @include SetBoxRelPositioning
+            :float left
+            :height 31px
+            :padding-right 15px
+            :margin-right 5px
+            :background url("../images/application/sprite_app_menu_tab.png")
+            :background-repeat no-repeat
+            :background-position right -93px
+            a
+              @include SetBoxRelPositioning
+              :height 19px
+              :padding-left 15px
+              :background url("../images/application/sprite_app_menu_tab.png")
+              :background-repeat no-repeat
+              :background-position left -31px
+              :text-transform uppercase
+              :text-decoration none
+              :font-family 'VagNormal'
+              :font-weight bold
+              :font-size 12px
+              :line-height 12px
+              :padding-top 12px
+              :color !COL_CHART_BROWN_LIGHT
+          li.current
+            :background-position right -62px
+            a
+              :background-position left 0px
+              :color !COL_CHART_BROWN
+          li.link
+            :background none
+            a
+              :background none
+              :color !COL_CHART_GREEN
+
+
+
+// _ApplicationWidget DocumentComposer
+#documentcomposer
+  @include SetBoxRelPositioning
+  :width 100%
+  .jScrollPaneContainer
+    :margin-top 10px
+  .pagesbrowser, .documentbrowser
+    @include SetBoxRelPositioning
+  .pagesbrowser, .documentbrowser
+    ul.pageslist, ul.documentslist
+      @include SetBoxRelPositioning
+      :padding-left 30px
+      :padding-right 20px
+      :margin-top 30px
+      li
+        :display block
+        :position relative
+        :float left
+        :width 112px
+        :height 174px
+        :margin-right 20px
+        :margin-bottom 30px
+        .toolbar
+          :z-index 11
+          :display none !important
+          :position absolute
+          :float left
+          :left 6px
+          :bottom 27px
+          :width 100px
+          :height 27px
+          :-webkit-border-bottom-left-radius 2px
+          :-moz-border-radius-bottomleft 2px
+          :-webkit-border-bottom-right-radius 2px
+          :-moz-border-radius-rightleft 2px
+          :background url("../images/application/gray_blank.png")
+          ul
+            @include SetBoxRelPositioning
+            :width 91px
+            :height 19px
+            :left 5px
+            :top 4px
+            li, li a
+              @include SetBoxRelPositioning
+              :width 19px
+              :height 19px
+              :float right
+            li
+              :margin-left 4px
+              :margin-right 0px
+              :counter-increment none
+            li
+              a
+                :background url("../images/application/sprite_page_toolbar.png")
+              a.edit
+                :background-position 0px 0px
+              a.edit:hover
+                :background-position 0px -19px
+              a.delete
+                :background-position -19px 0px
+              a.delete:hover
+                :background-position -19px -19px
+              a.download
+                :background-position -38px 0px
+              a.download:hover
+                :background-position -38px -19px
+              a.select
+                :background-position -57px 0px
+              a.select:hover
+                :background-position -57px -19px
+              a.select:active
+                :background-position -76px -0px
+      li
+        a.zoom
+          :z-index 11
+          :display none
+          :position absolute
+          :float right
+          :cursor pointer
+          :right 6px
+          :top 6px
+          :width 33px
+          :height 33px
+          :background url("../images/application/sprite_active_corner.png")
+          :background-position left top
+        a.zoom:hover
+          :background-position left -33px
+      li
+        .pagethumb
+          :display block
+          :position absolute
+          :z-index 9
+          :left 6px
+          :top 6px
+          :width 102px
+          :height 143px
+          .thumb
+            :display block
+            :position absolute
+            :z-index 8
+            :left 4px
+            :top 4px
+            :width 92px
+            :height 133px
+            :background url("../images/application/spinner_gray.gif")
+            :background-position 50% 50%
+            :background-repeat no-repeat
+            img
+              @include SetBoxRelPositioning
+              :width 92px
+              :height 133px
+      li
+        .foot
+          :z-index 8
+          :display block
+          :position absolute
+          :padding-top 2px
+          :float left
+          :left 0px
+          :bottom 0px
+          :width 112px
+          :height 19px
+          :text-align center
+          span
+            @include SetSmallRoundedCornerBox
+            :font-size 10px
+            :line-height 10px
+            :color #fff
+            :font-weight bold
+            :top 4px
+            :text-align center
+            :padding-top 3px
+            :padding-bottom 3px
+            :padding-left 6px
+            :padding-right 6px
+            :background-color #3e2f24
+      li:hover
+        .toolbar
+          :display block !important
+      li:hover
+        a.zoom
+          :display block
+      li.selected
+        .foot
+          span
+            :background-color #c9dd03
+            :color #000
+      li.selected
+        .toolbar
+          ul
+            li
+              a.select
+                :background-position -76px -19px
+              a.select:active
+                :background-position -76px 0px
+      li.ui-sortable-helper
+        :opacity 0.5
+        :cursor move
+
+#documentcomposer
+  .pagesbrowser, .documentbrowser
+    ul.pageslist
+      li
+        :counter-increment par-num
+      li
+        .pagethumb
+          :background url("../images/application/sprite_vertical_page.png")
+          :background-position -6px -199px
+          :background-repeat no-repeat
+      li.selected
+        :background url("../images/application/sprite_vertical_page.png")
+        :background-position center top
+        :background-repeat no-repeat
+      li
+        .handle
+          :z-index 10
+          :display block
+          :position absolute
+          :float left
+          :cursor move
+          :left 10px
+          :top 10px
+          :width 92px
+          :height 133px
+          :background url("../images/application/blank.png")
+          :background-color transparent
+      li
+        .foot
+          span:after
+            :content counter(par-num, decimal)
+      li.ui-sortable-helper
+        .foot
+          span:after
+            :content "← déplacer vers →"
+
+#documentcomposer
+  .pagesbrowser, .documentbrowser
+    ul.documentslist
+      li
+        .handle
+          :display none !important
+      li
+        .pagethumb
+          :background url("../images/application/sprite_vertical_multi_page.png")
+          :background-position -6px -199px
+          :background-repeat no-repeat
+          .thumb
+            :top 2px
+      li.selected
+        :background url("../images/application/sprite_vertical_multi_page.png")
+        :background-position center top
+        :background-repeat no-repeat
+    ul.documentslist
+      li.inprogress
+        .zoom, .handle, .pagethumb .thumb img, .toolbar
+          :display none !important
+    ul.documentslist
+      li.foot
+        span
+          :display block
+          :position relative
+          :width 50px
+          :overflow hidden
+
+#documentcomposer
+  .documentbrowser
+    :display block
+    :background url("../images/application/bg_window_separator.png")
+    :background-repeat repeat-x
+    :background-position center top
+    .jScrollPaneContainer
+      :float left
+    .doccol, .infoscol
+      :display block
+      :position relative
+    .doccol
+      :float left
+    .infoscol
+      :float right
+      :background url("../images/application/bg_window_separator_vertical.png")
+      :background-repeat repeat-y
+      :background-position left center
+    .infoscol, .doccol
+      ul.infos
+        @include SetBoxRelPositioning
+        :width auto
+        :height auto
+        :margin-left 20px
+        :margin-top 20px
+        :padding-right 10px
+        li
+          :height 20px
+          :width 100%
+        li
+          span, span a
+            :font-size 11px
+            :line-height 11px
+            :text-decoration none
+          span.lftcol, span.rgtcol
+            @include SetBoxRelPositioning
+            :height 16px
+            :padding-top 4px
+          span.lftcol
+            :float left
+            :padding-left 10px
+          span.rgtcol
+            :float right
+            :padding-right 10px
+        li:nth-child(odd)
+          :background-color #d3d3d3
+
+
+
+// _UserAccount
+#useraccount
+  @include SetBoxRelPositioning
+  :width 100%
+  :height 100%
+  .wrapper
+    :margin-left 20px
+    :width 420px
+    p
+      @include SetBoxRelPositioning
+      :width 100%
+      :margin-bottom 10px
+      :font-size 11px
+      :line-height 14px
+    p.justify
+      :text-align justify
+
+
+
+// _ApplicationWidget Actionbar
+.actionbar
+  @include SetBoxRelPositioning
+  :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
+  :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+  :width 100%
+  :height 42px
+  :background url("../images/application/bg_action_bar.png")
+  :background-repeat repeat-x
+  :background-position center top
+  .button
+    :top 6px
+  .feedback
+    :top 5px
+
+
+
+// _ApplicationWidget Feedback
+.feedback
+  @include SetBoxRelPositioning
+  :height 31px
+  :width auto
+  :padding-right 15px
+  span
+    @include SetBoxRelPositioning
+    :width auto
+    :font-size 12px
+    :line-height 12px
+    :top 9px
+    :margin-left 35px
+    :font-weight bolder
+    :color #484848
+
+.feedback.inactive
+  :background url("../images/application/spinner_stopped_gray_alpha.gif")
+  :background-repeat no-repeat
+  :background-position left center
+  span
+    :color #bab9b9
+
+.feedback.active
+  :background url("../images/application/spinner_gray_alpha.gif")
+  :background-repeat no-repeat
+  :background-position left center
+  span
+    :color #484848
+
+
+
+//  _ApplicationFileLists
+body.application
+  #worldwrapper
+    #content
+      .leftcolon
+        .filelist
+          @include SetBoxRelPositioning
+          :width 200px
+          :height auto
+          :margin-left 20px
+          span.title
+            @include SetBoxRelPositioning
+            :width 200px
+            :height 18px
+            :font-weight bold
+            :font-family 'VagNormal', 'trebuchet ms'
+            :font-size 12px
+            :line-height 12px
+            :padding-top 2px
+            :color #e0e0e0
+            :background url("../images/application/bg_window_separator_light_brown.png")
+            :background-repeat repeat-x
+            :background-position center bottom
+        ul
+          @include SetBoxRelPositioning
+          :width 200px
+          :height auto
+          :margin-top 10px
+          li
+            @include SetBoxRelPositioning
+            @include SetSmallRoundedCornerBox
+            :width 200px
+            :height 30px
+            :margin-top 2px
+            :background-color #4e4239
+            a
+              @include SetBoxRelPositioning
+              :width 200px
+              :height 30px
+              :color #e0e0e0
+              :text-decoration none
+            .icn, .label, .nbs
+              @include SetBoxRelPositioning
+              :float left
+              :font-size 11px
+              :line-height 11px
+            .label, .nbs
+              :padding-top 9px
+              :height 21px
+            .icn
+              :height 30px
+            .label
+              :width auto
+            .nbs
+              :float right
+              :right 10px
+          li.showall
+            a
+              :padding-top 6px
+
+        .filelist.orderok
+          ul
+            li
+              .icn
+                :width 24px
+                :margin-left 9px
+                :background url("../images/application/sprite_icn_order_down.png")
+                :background-repeat no-repeat
+                :background-position 0px -30px
+              .label
+                :margin-left 5px
+            li.current
+              :background url("../images/application/bg_order_list_active.png")
+              :background-repeat repeat-x
+              :background-position center center
+              .icn
+                :background-position 0px 0px
+              a
+                :color #c9dd03
+
+        .filelist.composeddoc
+          ul
+            li
+              .icn
+                :width 24px
+                :margin-left 9px
+                :background url("../images/application/sprite_icn_composed_doc.png")
+                :background-repeat no-repeat
+                :background-position 0px 0px
+              .label
+                :margin-left 5px
+            li:hover
+              a
+                :color #c9dd03
+            li.current
+              :background url("../images/application/bg_order_list_active.png")
+              :background-repeat repeat-x
+              :background-position center center
+              a
+                :color #c9dd03
+
+        .filelist.waitingorder
+          ul
+            li
+              .icn
+                :width 24px
+                :margin-left 9px
+                :background url("../images/application/sprite_icn_watting_order.png")
+                :background-repeat no-repeat
+                :background-position 0px 0px
+              .label
+                :margin-left 5px
+
+
+
+//  _NotesDesigns
+body.application
+  #worldwrapper
+    #content
+      .leftcolon
+        .note
+          @include SetBoxRelPositioning
+          :width 200px
+          :margin-left 20px
+          .head, .content
+            @include SetBoxRelPositioning
+          .head
+            :background-color red
+            :background url("../images/application/sprite_arrow_note_box.png")
+            :background-repeat no-repeat
+            :background-position center bottom
+            :height 7px
+          .content
+            @include SetSmallRoundedCornerBox
+            :background-color #67594e
+            p
+              :font-size 11px
+              :line-height 14px
+              :padding 10px
+              :color #e0e0e0
+            a, p a
+              :font-size 11px
+              :color #c9dd03
+              :text-decoration none
+
+
+
+// _Modalcontent
+.newCompositionDialog
+  #new_composition_spinner
+    :display block
+    :position absolute
+    :float right
+    :width 32px
+    :height 32px
+
+
+
+
+// _SharedClasses
+.mainlogo
+  @include SetBoxRelPositioning
+  :width 258px
+  :height 128px
+  :background url("../images/application/big_logo.png")
+  :background-repeat no-repeat
+  :background-position left top
+
+.mediumlogo
+  @include SetBoxRelPositioning
+  :width 160px
+  :height 76px
+  :background url("../images/application/medium_logo.png")
+  :background-repeat no-repeat
+  :background-position left top
+
+.smallogo
+  @include SetBoxRelPositioning
+  :width 109px
+  :height 49px
+  :background url("../images/application/small_logo.png")
+  :background-repeat no-repeat
+  :background-position left top
+
+.tinylogo
+  @include SetBoxRelPositioning
+  :width 107px
+  :height 50px
+  :background url("../images/application/tiny_logo.png")
+  :background-repeat no-repeat
+  :background-position left top
+
+.teasingbanner
+  @include SetBoxRelPositioning
+  :width 742px
+  :height 348px
+  :background url("../images/application/teasing_banner.png")
+  :background-repeat no-repeat
+  :background-position left top
+  :margin-left auto
+  :margin-right auto
+
+.separator
+  @include SetBoxRelPositioning
+  :height 1px
+
+.separator.strong
+  :background-color #a3a3a3
+
+.separator.light
+  :background-color #d0d0d0
+
+.titlebar
+  @include SetBoxRelPositioning
+  :height 20px
+  :width auto
+  :padding-left 20px
+  h1, h2
+    @include SetBoxRelPositioning
+    :min-width 100px
+    :font-family 'VagNormal', 'trebuchet ms'
+    :font-size 19px
+    :line-height 19px
+    :color #000
+  h1
+    :text-transform uppercase
+
+.ftlinks
+  @include SetBoxRelPositioning
+  :font-size 11px
+  :line-height 14px
+  :width 560px
+  :height 20px
+  :text-align center
+  li
+    :display inline
+    :height 20px
+    :color black
+    :margin-right 1px
+    a
+      :font-size 11px
+      :line-height 14px
+      :color black
+      :text-decoration none
+
+.errors
+  @include SetBoxRelPositioning
+  @include SetSmallRoundedCornerBox
+  :width 100%
+  :background-color #ad3737
+  span.title
+    @include SetBoxRelPositioning
+    :padding-top 10px
+    :margin-left 20px
+    :font-size 14px
+    :line-height 14px
+    :color #fff
+  ul
+    @include SetBoxRelPositioning
+    :margin-left 20px
+    :margin-top 10px
+    :padding-bottom 10px
+    :padding-right 20px
+    li
+      :font-size 11px
+      :line-height 14px
+      :color #f0dbdb
+
+.notice
+  @include SetBoxRelPositioning
+  @include SetSmallRoundedCornerBox
+  :width 100%
+  :background-color #8bad37
+  span.title
+    @include SetBoxRelPositioning
+    :padding-top 10px
+    :margin-left 20px
+    :font-size 14px
+    :line-height 14px
+    :color #fff
+  ul
+    @include SetBoxRelPositioning
+    :margin-left 20px
+    :margin-top 10px
+    :padding-bottom 10px
+    :padding-right 20px
+    li
+      :font-size 11px
+      :line-height 14px
+      :color #fff
+
+.error
+  :background-color #d9b3b2
+
+.buttonsrow
+  @include SetBoxRelPositioning
+  :width 100%
+  :height 32px
+
+
+
+// _Buttons
+a.button
+  @include SetBoxRelPositioning
+  :height 31px
+  :min-width 20px
+  :padding-right 15px
+  :background-position right -124px !important
+  :text-decoration none
+  :background-color green
+  :cursor pointer
+  span
+    @include SetBoxRelPositioning
+    :text-shadow none
+    :font-size 11px
+    :line-height 14px
+    :height 23px
+    :min-width 20px
+    :padding-top 8px
+    :padding-left 15px
+    :background-position left 0px !important
+    :background-color yellow
+    :color #000
+    :font-weight bold
+    :text-shadow #ddd 0px 1px 0px
+a.button:hover
+  :background-position right -155px !important
+  span
+    :background-position left -31px !important
+a.button:active
+  :background-position right -186px !important
+  span
+    :background-position left -62px !important
+    :color #fff
+    :text-shadow none
+
+a.button.inactive, a.button.inactive:hover, a.button.inactive:active
+  :background-position right -217px !important
+  span
+    :background-position left -93px !important
+    :color #949392
+
+a.whitebtn, a.whitebtn span
+  :background url("../images/application/sprite_button_white.png")
+
+
+
+// _InputButtons
+input[type="submit"].button
+  @include SetBoxRelPositioning
+  :height 31px
+  :min-width 100px
+  :border-style none
+  :border-width 0px
+  :padding 0px
+  :font-size 0px
+  :line-height 0px
+  :color #000
+  :cursor pointer
+  :text-decoration none
+  :text-shadow none
+  :font-size 11px
+  :line-height 14px
+  :font-weight bold
+  :font-family 'trebuchet ms', arial !important
+  :text-align center
+
+input[type="submit"].whitebtn
+  :background url("../images/application/sprite_input_white.png")
+
+input[type="submit"].greenbtn
+  :background url("../images/application/sprite_input_green.png")
+
+input[type="submit"].graybtn
+  :background url("../images/application/sprite_input_gray.png")
+
+
+
+input[type="submit"].w100
+  :min-width 100px
+  :background-position right 0px !important
+
+input[type="submit"].w100:hover
+  :background-position right -31px !important
+
+input[type="submit"].w100:active
+  :background-position right -62px !important
+  :color #fff
+
+input[type="submit"].w100.inactive, input[type="submit"].w100.inactive:hover, input[type="submit"].w100.inactive:active
+  :background-position right -372px !important
+  :color #949392
+
+
+
+input[type="submit"].w125
+  :min-width 125px
+  :background-position right -93px !important
+
+input[type="submit"].w125:hover
+  :background-position right -124px !important
+
+input[type="submit"].w125:active
+  :color #fff
+  :background-position right -154px !important
+
+input[type="submit"].w125.inactive, input[type="submit"].w125.inactive:hover, input[type="submit"].w125.inactive:active
+  :background-position right -403px !important
+  :color #949392
+
+
+
+input[type="submit"].w30
+  :height 28px
+  :min-width 30px
+  :background-position right 0px !important
+
+input[type="submit"].w30:hover
+  :background-position right -28px !important
+
+input[type="submit"].w30:active
+  :background-position right -56px !important
+
+
+
+input[type="submit"].w60
+  :height 28px
+  :min-width 60px
+  :background-position right 0px !important
+
+input[type="submit"].w60:hover
+  :background-position right -28px !important
+
+input[type="submit"].w60:active
+  :background-position right -56px !important
+  :color #fff
+
+
+// _FormStyles
+form
+  fieldset
+    @include SetBoxRelPositioning
+    :width 100%
+    :min-height 45px
+  label
+    @include SetBoxRelPositioning
+    :font-size 12px
+    :line-height 12px
+    :font-weight bold
+    :padding-bottom 4px
+  input[type="text"], input[type="password"]
+    @include SetBoxRelPositioning
+    @include SetSmallRoundedCornerBox
+    :border-style none
+    :border-collapse collapse
+    :border-width 0px
+    :margin 0px
+    :width 100px
+    :height 20px
+    :font-size 12px
+    :line-height 16px
+    :padding 4px
+    :color #424242
+    :vertical-align middle
+  input.w50
+    :width 50px
+  input.w70
+    :width 70px
+  input.w100
+    :width 100px
+  input.w120
+    :width 120px
+  input.w140
+    :width 140px
+  input.w160
+    :width 160px
+  input.w180
+    :width 180px
+  input.w200
+    :width 200px
+  input.w210
+    :width 210px
+  input.w220
+    :width 220px
+  input.w240
+    :width 240px
+  input.w380
+    :width 380px
+  input.w400
+    :width 400px
+  input.w420
+    :width 420px
+  input.w410
+    :width 410px
+  input.w470
+    :width 475px
+
+
+
+// _TextileStyles
+body.homepage #textilehpcontent, body.pages .rightcolon
+  h2
+    @include SetBoxRelPositioning
+    :font-family 'VagNormal'
+    :font-weight bold
+    :letter-spacing 0.9px
+    :text-decoration none
+    :text-transform uppercase
+    :font-size 16px
+    :line-height 24px
+    :padding-bottom 10px
+    :padding-top 20px
+  p
+    @include SetBoxRelPositioning
+    :width 100%
+    :margin-bottom 10px
+    :font-size 11px
+    :line-height 14px
+  p.justify
+    :text-align justify
+  p.hide
+    :display none !important
+  form
+    :font-size 10px
+  p, em, strong, del, ins, sub, sup
+    :font-size 11px
+    :line-height 14px
+  sub, sup
+    :font-size 9px
+  ul, ol
+    @include SetBoxRelPositioning
+    :font-size 11px
+    :line-height 14px
+    :margin-bottom 10px
+  ul li
+    :list-style disc
+    :margin-left 20px
+  ol li
+    :list-style decimal
+    :margin-left 20px
+    :font-size 11px
+    :line-height 14px
+  table
+    :position relative
+    :display table
+    :width auto
+    :font-size 11px
+    :line-height 14px
+    :margin-bottom 10px
+    :border-collapse collapse
+  table tr td, table th td
+    :font-size 11px
+    :line-height 14px
+    :padding-left 10px
+    :padding-right 10px
+  table, table tr td, table th td
+    :border-style solid
+    :border-width 1px
+    :border-color #404040
+  table tr:nth-child(even)
+    :background-color #f2f1f1
+  a
+    :color #7b7b7b
+    :text-decoration underline
+    :font-size 11px
+
+
+
+// _ScrollPane
+.jScrollPaneContainer
+  :display block
+  :position relative
+  :overflow hidden
+.jScrollPaneTrack
+  :-webkit-border-radius 3px
+  :-moz-border-radius 3px
+  :position absolute
+  :cursor pointer
+  :right 0
+  :top 0
+  :height 100%
+  :background-color #a2a2a2
+.jScrollPaneDrag
+  :-webkit-border-radius 4px
+  :-moz-border-radius 4px
+  :-left 1px
+  :position absolute
+  :background-repeat no-repeat
+  :background-position 50% 50%
+  :background url("../images/application/scroll.png")
+  :background-position 50% 50%
+  :background-repeat repeat-y
+  :cursor pointer
+  :overflow hidden
+
+
+
+// _GeneratedByMixin
+@include GenerateMarginTopClass
+@include GenerateMarginLeftClass
+@include GenerateMarginRightClass
+@include GenerateMarginBottomClass
+
+
+
+// _WorkingClass
+.floattoleft
+  :float left
+
+.floattoright
+  :float right
+
+.floattocenter
+  :margin auto
+
+.tal
+  :text-align left
+
+.tar
+  :text-align right
+
+.tac
+  :text-align center
+
+.setredbg
+  :background-color red !important
+
+.setgreenbg
+  :background-color green !important
+
+.setbluebg
+  :background-color blue !important
+
+.setyellowbg
+  :background-color yellow !important
+
+.setgraybg
+  :background-color gray !important
+
+.hide
+  :display none !important
+
+.red, a.red
+  :color #ad3737 !important
+
+.green, a.green
+  :color #53ad37 !important
+
+.nobg
+  :background-color transparent !important
+
+.nobrd
+  :border-width 0px !important
+
+.margin05top
+  :margin-top 5px
+
+.margin08top
+  :margin-top 8px
+
+.margin05left
+  :margin-left 5px
+
+.margin05right
+  :margin-right 5px
+
+.margin05bottom
+  :margin-bottom 5px
+
+
+

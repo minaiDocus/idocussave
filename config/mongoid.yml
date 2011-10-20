@@ -1,0 +1,17 @@
+defaults: &defaults
+  host: mongodb.alwaysdata.com
+  port: 27017
+  username: grevalis
+  password: grevidoc
+
+development:
+  <<: *defaults
+  database: grevalis_development
+
+test:
+  <<: *defaults
+  database: grevalis_test
+
+production:
+  <<: *defaults
+  database: grevalis_production

@@ -1,0 +1,24 @@
+%h2
+  Créer un nouveau compte super utilisateur
+
+%p
+  Veuillez saisir votre adresse e-mail et choisissez votre mot de passe.
+  %br
+
+  - form_for @super_user, :url => super_user_registration_path do |f|
+    != render :partial => '/shared/error_messages', :locals => {:object => resource}
+
+    != f.label:"Votre adresse e-mail :", :class => "margin2top"
+    != f.text_field :email, :class => "w410"
+
+    != f.label:"Votre mot de passe :", :class => "margin2top"
+    != f.password_field :password, :class => "w410"
+
+    != f.label:"Confirmation du mot de passe :", :class => "margin2top"
+    != f.password_field :password_confirmation, :class => "w410"
+
+    .buttonsrow.margin3top
+      != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
+      %a.button.whitebtn.floattoright.margin1right{ :href => "/"}
+        %span
+          RETOUR

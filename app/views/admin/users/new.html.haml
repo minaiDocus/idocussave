@@ -1,0 +1,34 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All users", admin_users_path
+      %li.active!= link_to "Add user", new_admin_user_path
+  .content
+    %h2.title New user
+    .inner
+      - form_for [:admin, @user], :html => { :class => :form } do |f|
+        .group
+          != f.label :email, "Email *", :class => :label
+          != f.text_field :email, :class => 'text_field'
+        .group
+          != f.label :password, "Mot de passe *", :class => "margin2top"
+          != f.password_field :password, :class => 'text_field'
+        .group
+          != f.label :password_confirmation, "Confirmation du mot de passe *", :class => "margin2top"
+          != f.password_field :password_confirmation, :class => 'text_field'
+        .group
+          != f.label :is_admin, "Administrateur ?", :class => :label
+          != f.check_box :is_admin, :class => 'checkbox'
+
+        .group.navform.wat-cf
+          %button.button{:type => 'submit'}
+            != image_tag("web-app-theme/tick.png", :alt => "Save")
+            Save
+          != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_users_path, :class => "button"
+
+        .group
+          %em
+            %b *
+            mandatory fields.
+
+- content_for :sidebar, render(:partial => 'sidebar')

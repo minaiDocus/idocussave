@@ -1,0 +1,157 @@
+#useraccount.scrollpane
+  .titlebar.margin3top
+    %h1.floattoleft
+      GESTION DES DOCUMENTS PARTAGÉS
+    %br
+    %table
+      %tr
+        %td.block
+          %h2
+            Les documents que j'ai mis à la disposition des autres
+          %br
+          %table.block2
+            %tr
+              %td.left.block
+                %h3
+                  Vue par utilisateur
+                %br
+                - if @own_shared_documents.any?
+                  - @own_shared_documents.distinct(:observer).each do |observer|
+                    %table
+                      %tr
+                        %td.left.associate
+                          =(User.find(observer)).email
+                      - @own_shared_documents.where(:observer => observer).each do |shared_document|
+                        %tr
+                          %td.item
+                            != link_to "#{(Order.find(shared_document.order_id)).document_name}", account_shared_document_path(shared_document)
+                            != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), account_shared_document_path(shared_document), :class => :delete, :method => :delete, :confirm => "Êtes-vous sûr ?"
+                - elsif @own_shared_documents.empty?
+                  %p
+                    Vous n'avez aucun document partagé
+              %td.right.block
+                %h3
+                  Vue par document
+                %br
+                - if @own_shared_documents.any?
+                  - @own_shared_documents.distinct(:order_id).each do |order_id|
+                    %table.align-left
+                      %tr
+                        %td.left
+                          != link_to "#{(Order.find(order_id)).document_name}", account_shared_document_path(@own_shared_documents.where(:order_id => order_id).first)
+                      - @own_shared_documents.where(:order_id => order_id).each do |shared_document|
+                        %tr
+                          %td.item
+                            = (User.find(shared_document.observer)).email
+                            != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), account_shared_document_path(shared_document), :class => :delete, :method => :delete, :confirm => "Êtes-vous sûr ?"
+                - elsif @own_shared_documents.empty?
+                  %p
+                    Vous n'avez aucun document partagé
+        %td.right2.block
+          %h2
+            Les documents mis à ma disposition par les autres
+          %br
+          %table
+            %tr
+              %td
+                %h3
+                  Vue par utilisateur
+                %br
+                - if @other_shared_documents.any?
+                  - @other_shared_documents.distinct(:owner).each do |owner|
+                    %table
+                      %tr
+                        %td.left.associate2
+                          =(User.find(owner)).email
+                      - @other_shared_documents.where(:owner => owner).each do |shared_document|
+                        %tr
+                          %td.item
+                            != link_to "#{(Order.find(shared_document.order_id)).document_name}", account_shared_document_path(shared_document)
+                - else @other_shared_documents.empty?
+                  %p
+                    Aucun utilisateur ne vous a partagé de document.
+
+:css
+  table, td{
+    font-size:12px;
+    font-family:Arial, serif;
+    color:black;
+    clear:both;
+    margin:5px 0;
+    padding:0;
+  }
+  table a{
+    font-size:12px;
+    padding:0;
+    margin:0;
+  }
+  table .block{
+    width:50%;
+  }
+  table .block2{
+    width:100%;
+  }
+  td.right{
+    border-left:1px solid gray;
+    padding-left:5px;
+  }
+  td.right2{
+    border-left:2px inset gray;
+    padding-left:5px;
+  }
+  td.left{
+    padding-right:5px;
+  }
+  table h2{
+    margin:5px;
+  }
+  table h3{
+    text-align:left;
+    margin:5px;
+  }
+  td.associate{
+    padding:6px 0 6px 2px;
+  }
+  td.associate2{
+    padding:6px 0 6px 4px;
+  }
+  td.item{
+    padding-left:15px;
+  }
+  h1{
+    margin:0 0 17px 7px;
+    font-family:Arial, serif;
+  }
+  .delete{
+    position:relative;
+    bottom:-4px;
+  }
+  td p{
+    padding:5px 0 0 6px;
+  }
+  
+:javascript
+  $(document).ready(function () {
+    $("input[type=checkbox].inplace").click(function(){
+      uid = $(this).attr('id');
+      node = $(this);
+      url = "/account/shared_documents/" + uid + "/update_is_invisible_status";
+      hsh = {value: $(this).is(':checked')};
+      spinner_id = "#spinner_"+uid;
+      $.ajax({
+        url: url,
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+          node.hide();
+          $(spinner_id).show();
+        },
+        success: function(data){
+          $(spinner_id).hide();
+          node.show();
+        }
+      });
+    });
+    
+  });

@@ -1,0 +1,39 @@
+.leftcolon.margin4top.margin4bottom
+  -#!= render :partial => '/shared/error_messages', :locals => {:object => @order}
+
+  .tunnelcase
+    %ul.progress
+      %li.first
+        %span
+          Produits
+      %li.second.current
+        %span
+          Options
+      %li.third
+        %span
+          Paiement
+
+
+    - form_for current_user, :url => tunnel_order_path, :html => {:method => :post, :class => 'clearfix'} do |f|
+      %h2.margin2top Adresse de facturation :
+      %p.margin1top
+        Choisir l'une des adresses ci-dessous ou
+        != link_to "ajouter une nouvelle adresse.", new_tunnel_address_path
+
+      %ul.adresseslist.margin2left.margin2top.clearfix
+        != render :partial => 'address', :collection => current_user.addresses, :locals => {:f => f, :billing => true}
+
+      %h2 Adresse de retour des documents :
+      %p.margin1top
+        Choisir l'une des adresses ci-dessous ou
+        != link_to "ajouter une nouvelle adresse.", new_tunnel_address_path
+      %ul.adresseslist.margin2left.margin2top.clearfix
+        != render :partial => 'address', :collection => current_user.addresses, :locals => {:f => f, :billing => false}
+
+
+      .buttonsrow.margin1bottom.margin2top
+        %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Étape suivante"}
+        %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_path}
+          %span
+            Annuler
+

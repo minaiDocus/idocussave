@@ -1,0 +1,20 @@
+.leftcolon.margin4top.margin4bottom
+  != render :partial => '/shared/error_messages', :locals => {:object => @address}
+    
+  .tunnelcase
+    %ul.progress
+      %li.first
+        %span
+          Produits
+      %li.second.current
+        %span
+          Options
+      %li.third
+        %span
+          Paiement
+
+
+    - form_for [:tunnel, @address], :html => {:method => :put, :class => 'clearfix'} do |f|
+      %h2.margin2top
+        Modifier une adresses :
+      != render :partial => 'form', :locals => {:f => f}

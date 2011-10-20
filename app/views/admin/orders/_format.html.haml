@@ -1,0 +1,16 @@
+%li
+  .row
+    %span.radio
+      = f.radio_button :document_format_id, format.id, :disabled => !format.is_enable, :checked => (@order.document_format.id == format.id), :class => "format_item"
+    %span.product
+      %strong
+        #{format.title}
+      (#{format.description})
+      - if format.malus
+        %span{:id => "malus_"+format.id.to_s}
+          - if format.malus > 0
+            +
+          #{format.malus}%
+    - unless format.is_enable
+      %span.price.orange
+        bientôt disponible

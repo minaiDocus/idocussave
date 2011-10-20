@@ -1,0 +1,44 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active!= link_to "All products", admin_products_path
+      %li!= link_to "Add product", new_admin_product_path
+      %li!= link_to "Add option", new_admin_product_option_path
+  .content
+    %h2.title All products
+    .inner
+      %table.table
+        %tr
+          %th N°
+          %th Title
+          %th Price (in cents, without VAT)
+          %th Option Title
+          %th Option Group
+          %th Option N°
+          %th.last &nbsp;
+        - @products.each do |product|
+          %tr{:class => cycle("odd", "even")}
+            %td!= product.position
+            %td!= product.title
+            %td!= product.price_in_cents_wo_vat
+            %td -
+            %td -
+            %td -
+            %td.last
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_path(product)
+              |
+              != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_path(product), :method => :delete, :confirm => "Êtes-vous sûr ?"
+          - product.product_options.by_position.each do |option|
+            %tr{:class => cycle("odd", "even")}
+              %td
+              %td ►
+              %td!= "+#{option.price_in_cents_wo_vat}"
+              %td!= option.title
+              %td!= option.group
+              %td!= option.position
+              %td.last
+                != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_option_path(option)
+                |
+                != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?"
+
+- content_for :sidebar, render(:partial => 'sidebar')

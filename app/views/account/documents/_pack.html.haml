@@ -1,0 +1,87 @@
+- document = pack.documents.first
+
+- if pack.order.state == "paid"
+  - document_class = ""
+- elsif pack.order.state == "scanned"
+  - if pack.users.size > 1 && pack.order.user == current_user
+    - document_class = "sharing"
+  - elsif pack.users.size > 1 && pack.order.user != current_user
+    - document_class = "shared #{pack.order.user.id rescue ""}"
+  - else
+    - document_class = "scanned"
+
+- if document
+  %li.document.group.tooltip-target{ :id => "Pack_#{pack.id}_#{document.id}", :class => "#{document_class}" }
+    - tags = DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name rescue ""
+    %input{ :type => :hidden, :name => :tags, :value => "#{tags+' '+pack.name}" }
+    - if !document.dirty
+      - link_to_large = document.content.url(:large)
+      - link_to_medium = document.content.url(:medium)
+    - else
+      - link_to_large = '/system/processing.png'
+      - link_to_medium = '/system/processing.png'
+    != link_to "", link_to_large, :class => "zoom zgallery1"
+    .toolbar
+      %ul
+        %li
+          != link_to "", "#{(pack.documents.where(:is_an_original => true).first).content.url}", :class => "download", :title => "Télécharger", :target => "_blank"
+        %li
+          != link_to "", "#", :class => "select do-select", :title => "Sélectionner"
+        %li
+          != link_to "", "#", :class => "growl-info", :title => "Information"
+    .pagethumb
+      .thumb
+        != link_to image_tag(link_to_medium), "#", :class => "do-show"
+        .document_tags
+          != tags
+    .foot
+      %span
+        = pack.name
+    .growl-info
+      %table
+        %tr
+          %td.padding1top
+            Nom du document
+          %td.padding1top.padding1left
+            = ": "
+            %span{ :class => "order-#{document_class}" }
+              #{pack.name}.pdf
+        %tr
+          %td.padding1top
+            Date de mise en ligne
+          %td.padding1top.padding1left
+            = ": "
+            = l(pack.created_at)
+        %tr
+          %td.padding2top.padding2bottom
+            Nombre de pages
+          %td.padding2top.padding2bottom.padding1left
+            = ": "
+            #{pack.documents.size - 1}
+        - if document_class == "sharing"
+          - pack.users.each do |user|
+            - if user != current_user
+              %tr{ :id => pack.id }
+                %td.padding1top
+                  Accès donné à
+                %td.padding1top.padding1left
+                  = ": "
+                  #{user.email}
+                  != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), "#", :class => "remote-delete", :id => pack.id
+        - elsif document_class == "shared #{pack.order.user.id rescue ""}"
+          %tr{ :id => pack.id }
+            %td.padding1top
+              Accès donné par
+            %td.padding1top.padding1left
+              = ": "
+              #{pack.order.user.email}
+              != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), "#", :class => "remote-delete", :id => pack.id
+
+- else
+  %li.document.group.paid{:id => "Pack_#{pack.id}"}
+    .pagethumb
+      .thumb
+        != link_to image_tag('application/empty_order_thumb.png'), invoice_account_document_path(pack, :format => :pdf)
+    .foot
+      %span
+        != pack.order.waybill_number

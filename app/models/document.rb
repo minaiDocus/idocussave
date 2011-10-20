@@ -1,0 +1,78 @@
+class Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Paperclip
+
+  field :content_file_name
+  field :content_file_type
+  field :content_file_size, :type => Integer
+  field :content_updated_at, :type => Time
+  field :is_an_original, :type => Boolean, :default => false
+  field :tags, :type => String, :default => ""
+  field :position, :type => Integer
+  field :dirty, :type => Boolean, :default => true
+
+  references_many :document_tags
+  referenced_in :pack
+  # DELETE ME AFTER MIGRATION
+  referenced_in :order
+
+  has_mongoid_attached_file :content,
+    :styles => {
+      :thumb => ["46x67>", :png],
+      :medium => ["92x133", :png],
+      :large => ["480x696", :png]
+    }
+  
+  before_content_post_process do |image|
+    if image.dirty || image.dirty.nil? # halts processing
+      false
+    else
+      true
+    end
+  end
+  
+  after_post_process :split_pages
+
+  scope :without_original, :where => { :is_an_original.in => [false, nil] }
+  scope :originals, :where => { :is_an_original => true }
+  
+  def self.do_reprocess_styles
+    nb = 0
+    self.where(:dirty => true).each do |doc|
+      nb += 1
+      puts "document[#{doc.content_file_name}][#{nb}]}"
+      doc.dirty = false
+      doc.content.reprocess!
+      if !doc.save!
+        doc.dirty = true
+      end
+    end
+    puts "Document reprocessed number : #{nb}"
+  end
+
+protected
+
+  def split_pages
+    if dirty
+      Rails.logger.debug("entering split pages")
+      if self.is_an_original
+        temp_file = content.to_file
+        temp_path = File.expand_path(temp_file.path)
+        nbr = File.basename(self.content_file_name, ".pdf")
+        cmd = "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%02d.pdf"
+        Rails.logger.debug("Will split document with #{cmd}")
+        system(cmd)
+
+        Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
+          document = Document.new
+          document.dirty = true
+          document.pack = self.pack
+          document.position = index
+          document.content = File.new file
+          document.save
+        end
+      end
+    end
+  end
+end

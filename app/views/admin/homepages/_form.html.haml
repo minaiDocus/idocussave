@@ -1,0 +1,20 @@
+%h3 Homepage introduction
+!= f.label :content, "Contenu *", :class => :label
+!= f.text_area :content, :class => 'text_area'
+
+!= f.label :meta_description, "Meta-déscription", :class => :label
+!= f.text_area :meta_description, :class => 'text_area'
+
+!= f.label :style, "Style CSS", :class => :label
+!= f.text_area :style, :class => 'text_area'
+  
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_pages_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.

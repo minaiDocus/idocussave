@@ -1,0 +1,14 @@
+%li.document{:id => "composition_#{composition.id}"}
+  != link_to "", composition.content.url(:large), :class => "zoom", :title => "Agrandir"
+  .toolbar
+    %ul
+      %li
+        != link_to "", composition.content.url, :class => "download", :title => "Télécharger", :target => "_blank"
+      %li
+        %a.delete.do-deleteComposition{ :href => "#", :title => "Supprimer"}
+  .pagethumb
+    .thumb
+      != link_to image_tag(composition.content.url(:medium)), account_composition_path(composition)
+  .foot
+    %span
+      = composition.name

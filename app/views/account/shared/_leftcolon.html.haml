@@ -1,0 +1,106 @@
+.filelist.waitingorder.margin2top
+  %span.title
+    COMMANDES EN COURS...
+  %ul
+    - for order in @last_orders_paid
+      %li
+        - link_to "#" do
+          .icn
+          .label!= order.waybill_number
+          .nbs
+            #{order.product_order.number_of_sheets} pages
+    - unless @last_orders_paid.blank?
+      %li.showall.tac
+        != link_to "Voir tout →", account_orders_path(:paid_orders => true)
+.note.top.margin1top
+  .head
+  .content
+    %p
+      - if @last_orders_paid.any?
+        Vos commandes sont en cours de traitement par iDOCUS.
+      - else
+        Aucune commande en cours,
+        != link_to "découvrez nos offres", new_tunnel_order_path
+        ou
+        != link_to "passez commande", new_tunnel_order_path
+        \.
+
+.filelist.orderok.margin2top
+  %span.title
+    COMMANDES TRAITÉES
+  - if @last_orders_scanned.any?
+    %ul
+      - for order in @last_orders_scanned
+        %li.order.do-view{:class => (@order == order && "current")}
+          - link_to account_order_path(order) do
+            .icn
+            .label= order.document_name
+            .nbs
+              #{order.documents.size - 1}
+      %li.showall.tac
+        != link_to "Voir tout →", account_orders_path
+- if @last_orders_scanned.empty?
+  .note.top.margin1top
+    .head
+    .content
+      %p
+        Aucune commande traitée pour l'instant.
+        
+.filelist.composeddoc.margin2top
+  %span.title
+    DOCUMENTS COMPOSÉS
+  - if @last_compositions.any?
+    %ul
+      - for composition in @last_compositions
+        %li{:class => (@composition == composition && "current"), :id => composition.id}
+          - link_to account_composition_path(composition) do
+            .icn
+            .label
+              = composition.name
+            .nbs
+              = composition.document_ids.size
+      %li.showall.tac
+        != link_to "Voir tout →", account_compositions_path
+
+- if @last_compositions.empty?
+  .note.top.margin1top
+    .head
+    .content
+      %p
+        Vous n'avez pas encore composé de document.
+        %br
+        %br
+        - if @order.blank?
+          Ceci sera possible dès que nous aurons traité
+          votre commande.
+        - else
+          Sélectionner plusieurs page afin de créer un document à l'aide
+          du bouton "Créer une composition".
+
+.filelist.orderok.margin2top
+  %span.title
+    DOCUMENTS PARTAGÉS
+  - if !@shared_documents.nil?
+    %ul
+      - @shared_documents.each do |shared_document|
+        %li.order.do-view
+          - link_to account_shared_document_path(shared_document) do
+            .icn
+            - order = Order.where(:_id => shared_document.order).first
+            .label= order.document_name
+            .nbs
+              #{order.documents.size - 1}
+      %li.showall.tac
+        != link_to "Voir tout →", account_shared_documents_path
+- if @shared_documents.nil?
+  .note.top.margin1top
+    .head
+    .content
+      %p
+        Aucun document partagé pour l'instant.
+    
+.note.top.margin1top
+  .head
+  .content
+    %p
+      Vous pouvez paramétrer le partage de document dans l'onglet "mes documents partagés"

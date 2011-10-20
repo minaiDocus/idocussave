@@ -1,0 +1,18 @@
+%h2
+  Renvoi des instructions de confirmation
+
+%p
+  Si vous n'avez pas eu d'email permettant la validation de votre compte à l'inscription,
+  utilisez le formulaire ci-dessous. Pensez à vérifier également le contenu de votre dossier de courriers indésirables.
+
+  - form_for resource_name, resource, :url => confirmation_path(resource_name) do |f|
+    != render :partial => '/shared/error_messages', :locals => {:object => resource}
+
+    != f.label:"Votre adresse e-mail :", :class => "margin2top"
+    != f.text_field :email, :class => "w410"
+
+    .buttonsrow.margin3top
+      != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
+      %a.button.whitebtn.floattoright.margin1right{ :href => "/"}
+        %span
+          RETOUR
