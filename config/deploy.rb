@@ -91,3 +91,6 @@ namespace :delayed_job do
   end
 end
 
+
+        require './config/boot'
+        require 'airbrake/capistrano'

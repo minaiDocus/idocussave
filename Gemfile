@@ -10,7 +10,7 @@ gem 'daemons'
 gem 'whenever', :require => false
 gem 'haml'
 gem 'devise'
-gem 'hoptoad_notifier'
+gem 'airbrake'
 gem 'will_paginate', '3.0.pre2'
 gem 'dynamic_form'
 gem 'mongoid_slug', :require => 'mongoid/slug'
