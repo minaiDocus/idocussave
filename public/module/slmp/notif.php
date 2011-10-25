@@ -32,8 +32,6 @@ $cardOperationType =  (isset($mapping['cardOperationType'])) ?  $mapping['cardOp
 
 $cardOperationResult =  (isset($mapping['cardOperationResult'])) ?  $mapping['cardOperationResult'] : '' ;
 
-$cardOperationResult =  (isset($mapping['cardOperationResult'])) ?  $mapping['cardOperationResult'] : '' ;
-
 $collectOperationResult =  (isset($mapping['collectOperationResult'])) ?  $mapping['collectOperationResult'] : '' ;
 
 $invoiceReference =  (isset($mapping['invoiceReference'])) ?  $mapping['invoiceReference'] : '' ;
@@ -108,7 +106,6 @@ $doc = array(
 "cardRequestId" => $cardRequestId,
 "cardOperationType" => $cardOperationType,
 "cardOperationResult" => $cardOperationResult,
-"cardOperationResult" => $cardOperationResult,
 "collectOperationResult" => $collectOperationResult,
 "invoiceReference" => $invoiceReference,
 "invoiceAmount" => $invoiceAmount,
@@ -136,11 +133,12 @@ $doc = array(
 "user_id" => $user["_id"]
 );
 
-if (isset($user["recurring_id"])) {
-	$db->recurrings->findOne(array("_id" => $user["recurring_id"]))->update(array("recurrings" => '\$'), $doc);
+if (isset($user["debit_mandate_id"]) && $user["debit_mandate_id"] != null) {
+	$db->debit_mandates->update(array("_id" => $user["debit_mandate_id"]),$doc);
 } else {
-	$recurring = $db->recurrings->insert($doc);
-	$db->users->update(array("email" => $email),array('\$set' => array("recurring_id" => $recurring["_id"]));
+	$db->debit_mandates->insert($doc);
+	$current_debit_mandate = $db->debit_mandates->findOne(array("user_id" => $user["_id"]));
+	$db->users->update(array("email" => $user["email"]),array('$set' => array("debit_mandate_id" => $current_debit_mandate["_id"])));
 }
 
 ?>

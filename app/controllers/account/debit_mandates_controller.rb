@@ -1,0 +1,23 @@
+class Account::DebitMandatesController < Account::AccountController
+  skip_before_filter :find_last_composition
+
+public
+  def show
+    @debit_mandate = current_user.debit_mandate rescue nil
+  end
+  
+  def new
+    @user = current_user
+    @debit_mandate = DebitMandate.new
+  end
+  
+  def return
+    if (current_user.debit_mandate.transactionStatus == "success") {
+      flash[:notice] = "Vos information de prélévement bancaire on bien été pris en compte par nos services."
+      render :action => "show"
+    } else {
+      flash[:notice] = "Une erreur est survenu lors du traitement. Veuillez réessayer à nouveau."
+      render :action => "new"
+    }
+  end
+end

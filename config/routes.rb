@@ -41,6 +41,9 @@ Idocus::Application.routes.draw do
         get :cancel
       end
     end
+    resource :debit_mandate do
+      get 'return', :on => :member
+    end
     resources :compositions do
       post 'reorder', :on => :member
       delete 'delete_document', :on => :member

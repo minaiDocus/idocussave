@@ -1,0 +1,40 @@
+class DebitMandate
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field :transactionId
+  field :transactionStatus
+  field :transactionErrorCode
+  field :signatureOperationResult
+  field :signatureDate
+  field :mandateScore
+  field :cardTransactionId
+  field :cardRequestId
+  field :cardOperationType
+  field :cardOperationResult
+  field :collectOperationResult
+  field :invoiceReference
+  field :invoiceAmount
+  field :invoiceExecutionDate
+  field :reference
+  field :title
+  field :firstName
+  field :lastName
+  field :email
+  field :bic
+  field :iban
+  field :RUM
+  field :companyName
+  field :organizationId
+  field :invoiceLine1
+  field :invoiceLine2
+  field :invoiceCity
+  field :invoiceCountry
+  field :invoicePostalCode
+  field :deliveryLine1
+  field :deliveryLine2
+  field :deliveryCity
+  field :deliveryCountry
+  field :deliveryPostalCode
+  
+end
