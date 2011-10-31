@@ -65,9 +65,9 @@
             %input{ :type => :submit, :value => "CM-CIC", :class => "button whitebtn w100 floattoright" }
       - if current_user.debit_mandate.transactionStatus == "success"
         %form{ :method => :post, :action => "/account/payment/mode" }
-          %input{ :type => :hidden, :name => :use_debit_mandate, :value => (current_user.use_debit_mandate ? false : true) }
+          %input{ :type => :hidden, :name => :use_debit_mandate, :value => (current_user.use_debit_mandate ? "false" : "true") }
             .buttonsrow
-              %input{ :type => :submit, :value => "#{current_user.use_debit_mandate ? "pré-payé" : "prélèvement" )}", :class => "button whitebtn w100 floattoright" }
+              %input{ :type => :submit, :value => "#{current_user.use_debit_mandate ? "pré-payé" : "prélèvement" }", :class => "button whitebtn w100 floattoright" }
       - else
-        Replisse le formulaire pour le prélèvement 
+        Replissez le formulaire pour le prélèvement 
         %a{ :href => "prlv.idocus.com/form.php" }ici
