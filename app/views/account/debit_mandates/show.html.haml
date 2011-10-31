@@ -12,5 +12,5 @@
             %br
       %ul
         - if @debit_mandate
-          - @debit_mandate.each do |key,value|
-            %li="#{key} : #{value}"
+          - @debit_mandate.fields.each do |key,value|
+            %li="#{key} : #{self[key]}"

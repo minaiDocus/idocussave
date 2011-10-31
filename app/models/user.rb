@@ -18,6 +18,7 @@ class User
   references_many :credits
   references_many :document_tags
   references_one :composition
+  references_one :debit_mandate
 
   def self.find_by_email param
     User.where(:email => param).first
