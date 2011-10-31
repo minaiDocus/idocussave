@@ -41,6 +41,9 @@ Idocus::Application.routes.draw do
         get :cancel
       end
     end
+    resource :payment do
+      post 'mode', :on => :member
+    end
     resource :debit_mandate do
       get 'return', :on => :member
     end

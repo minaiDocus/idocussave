@@ -9,6 +9,7 @@ class User
   field :email
   field :is_admin, :type => Boolean, :default => false
   field :balance_in_cents, :type => Float, :default => 0.0
+  field :use_debit_mandate, :type => Boolean, :default => false
 
   embeds_many :addresses
   

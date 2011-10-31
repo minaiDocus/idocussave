@@ -52,14 +52,22 @@
         %form{ :method => :get, :action => account_profile_path }
           %label{ :for => :amount } Somme à créditer (€):
           %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00" }/
-          .buttonsrow.margin2top
+          .buttonsrow
             %input{ :type => :submit, :value => "Suivant", :class => "button whitebtn w100 floattoright" }
       - else
         Somme à créditer : #{format_price (params[:amount].to_f * 100)} €
         %form{ :method => :post, :action => @link_to_paypal }
-          .buttonsrow.margin2top
+          .buttonsrow
             %input{ :type => :submit, :value => "Paypal", :class => "button whitebtn w100 floattoright" }
         %form{ :method => :post, :action => "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" }
           != paiement_cic_hidden_fields((@credit.amount/100),@credit.number)
-          .buttonsrow.margin2top
+          .buttonsrow.margin1top
             %input{ :type => :submit, :value => "CM-CIC", :class => "button whitebtn w100 floattoright" }
+      - if current_user.debit_mandate.transactionStatus == "success"
+        %form{ :method => :post, :action => "/account/payment/mode" }
+          %input{ :type => :hidden, :name => :use_debit_mandate, :value => (current_user.use_debit_mandate ? false : true) }
+            .buttonsrow
+              %input{ :type => :submit, :value => "#{current_user.use_debit_mandate ? "pré-payé" : "prélèvement" )}", :class => "button whitebtn w100 floattoright" }
+      - else
+        Replisse le formulaire pour le prélèvement 
+        %a{ :href => "prlv.idocus.com/form.php" }ici
