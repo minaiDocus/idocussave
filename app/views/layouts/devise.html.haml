@@ -13,11 +13,11 @@
         .leftcolon
           %a.mediumlogo.margin2top.margin2left{ :href => "/" }
           %ul.pageslistmenu.margin4top
-            -#%li{:class => controller.controller_name == 'registrations' ? 'current': '' }
-              -#!= link_to "Créer un compte", new_user_registration_path
+            %li{:class => controller.controller_name == 'registrations' ? 'current': '' }
+              != link_to "Créer un compte", new_user_registration_path
 
-            -#%li{:class => controller.controller_name == 'confirmations' ? 'current': '' }
-              -#!= link_to "Renvoyer les instructions", new_user_confirmation_path
+            %li{:class => controller.controller_name == 'confirmations' ? 'current': '' }
+              != link_to "Renvoyer les instructions", new_user_confirmation_path
 
             %li{:class => controller.controller_name == 'sessions' ? 'current': '' }
               != link_to "Connexion à mon compte", new_user_session_path

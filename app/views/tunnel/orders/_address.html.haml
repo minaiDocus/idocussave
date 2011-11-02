@@ -2,9 +2,10 @@
   .header
    
     - if billing
-      %input{ :type => :radio, :name => :billing_address, :value =>  address.id, :id => "b_#{address.id}" }
+      %input{ :type => :radio, :name => :billing_address, :value =>  address.id, :id => "b_#{address.id}", :checked => "#{(@nb == 0)? "checked" : "" }" }
     - else
-      %input{ :type => :radio, :name => :shipping_address, :value =>  address.id, :id => "s_#{address.id}" }
+      %input{ :type => :radio, :name => :shipping_address, :value =>  address.id, :id => "s_#{address.id}", :checked => "#{(@nb == 0)? "checked" : "" }" }
+    - @nb += 1
     %span
       %a{ :href => "#"}
         %label{ :for => "#{ billing ? "b_" : "s_" }#{ address.id }" }

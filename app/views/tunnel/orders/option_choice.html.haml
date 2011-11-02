@@ -28,12 +28,12 @@
               - options.each_with_index do |option,index|
                 .row
                   %span.radio
-                    %input{ :type => :radio, :checked => "#{ (index == 1)? "checked" : "" }", :name => "option_group_#{option.group}", :value => option.id, :id => option.id }
+                    !=radio_button_tag("option_group_#{option.group}", option.id, ((index == 0)? true : false), :id => option.id )
                   %span.product
                     %strong
                       %label{ :for => option.id }
                         != option.title
-                        != (option.description == "")? "" : " - #{option.description}"
+                    != (option.description == "")? "" : " - #{option.description}"
                   - if option.price_in_cents_wo_vat > 0
                     %span.price
                       %strong
@@ -48,7 +48,7 @@
             - option = options.first
             %li
               .row
-                %span.radio
+                %span.checkbox
                   %input{ :type => :checkbox, :name => "option_group_#{option.group}", :value => option.id, :id => option.id }
                 %span.product
                   %strong

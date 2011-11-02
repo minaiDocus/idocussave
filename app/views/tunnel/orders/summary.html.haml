@@ -22,7 +22,12 @@
       
       %h2.margin2top
         Récapitulatif de votre commande
+        
+      %h3.margin2top
+        #{ (@product.category == 1)? "Numérisation" : "Sauvegarde" } : #{ @product.title }
           
+      .h-separator.light.margin2top
+      
       - total_in_cents_wo_vat = 0.0
       %ul.optionslist.margin2left.margin2top
         %li
@@ -52,46 +57,55 @@
                     - total_in_cents_wo_vat += option.price_in_cents_wo_vat
         %li
           .row
-            %span.product
+            %span.caption
               %strong
-                total
+                total de votre commande
             %span.price
               %strong
                 #{format_price total_in_cents_wo_vat} € HT
               %span.smaller
                 #{format_price (total_in_cents_wo_vat * 1.196)} € TTC
                 
+      .h-separator.light.margin2top
+         
+      %ul.optionslist.margin2left.margin2top
         %li
           .row
-            %span.product
+            %span
               %strong
-                mon compte avant
-            %span.price
-              %strong
-                #{format_price current_user.balance_in_cents} €
-        - new_balance = current_user.balance_in_cents - (total_in_cents_wo_vat * 1.196)
-        %li
-          .row
-            %span.product
-              %strong
-                mon compte après
-            %span.price
-              %span.smaller
-                ( - #{format_price (total_in_cents_wo_vat * 1.196)} € TTC )
-              %strong
-                #{format_price (new_balance)} €
-                
-        - if new_balance < 0
+                Le total sera dédui de votre compte #{current_user.use_debit_mandate ? "de prélèvement" : "prépayé" }
+        
+        - unless current_user.use_debit_mandate
           %li
             .row
-              %span
+              %span.caption
                 %strong
-                  vous n'avez pas assez de crédit, créditer voter compte
-                  !=link_to :ici, account_profile_url
-          
+                  Solde actuel de mon compte prépayé
+              %span.price
+                %strong
+                  #{format_price current_user.balance_in_cents} €
+          - new_balance = current_user.balance_in_cents - (total_in_cents_wo_vat * 1.196)
+          %li
+            .row
+              %span.caption
+                %strong
+                  Solde de mon compte prépayé après opération
+              %span.price
+                %span.smaller
+                  ( - #{format_price (total_in_cents_wo_vat * 1.196)} € TTC )
+                %strong
+                  #{format_price (new_balance)} €
+                
+          - if new_balance < 0
+            %li
+              .row
+                %span
+                  %strong
+                    vous n'avez pas assez de crédit, créditer votre compte
+                    !=link_to :ici, account_profile_url
       
       - if @billing_address_id && @shipping_address_id
-        .separator.light.margin2top
+        .h-separator.light.margin2top
 
         %h2.margin2top.margin1bottom
           Adresses de facturation et de retour
@@ -110,9 +124,9 @@
             .content
               != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @shipping_address_id).first}
 
-      .separator.strong.margin1top
+      .h-separator.strong.margin1top
       
-      %p.margin1top
+      %p.margin2top
         != check_box_tag "cgv"
         J'accepte les #{ link_to "conditions générales de ventes", "/pages/c-g-v", :target => "_blank" }.
 
@@ -120,19 +134,14 @@
         %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Payer maintenant"}
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_path}
           %span
-            Annuler
+            Etape précèdente
             
 :javascript
-  var orderable = (#{new_balance} < 0)? false : true;
   $('#choosepaymod').submit(function(){
-    if (orderable)
-      if ($("#cgv").is(":checked")) {
-        return true;
-      } else {
-        alert("Vous devez acceptez les conditions générales de ventes");
-        return false;
-      }
+    if ($("#cgv").is(":checked")) {
+      return true;
     } else {
-      alert("Vous ne disposer pas de suffisament de crédit");
+      alert("Vous devez acceptez les conditions générales de ventes");
+      return false;
     }
   });

@@ -100,6 +100,13 @@ body.tunnel #content .tunnelcase h2 {
   margin-left: 20px;
   font-size: 18px;
   line-height: 18px; }
+body.tunnel #content .tunnelcase h3 {
+  display: block !important;
+  position: relative !important;
+  width: 485px;
+  margin-left: 20px;
+  font-size: 16px;
+  line-height: 16px; }
 body.tunnel #content .tunnelcase .leftcolon, body.tunnel #content .tunnelcase .rightcolon {
   display: block !important;
   position: relative !important;
@@ -124,7 +131,7 @@ body.tunnel #content .tunnelcase p {
 body.tunnel #content .tunnelcase p a {
   color: #6d9c1a;
   text-decoration: none; }
-body.tunnel #content .tunnelcase .separator {
+body.tunnel #content .tunnelcase .h-separator {
   display: block !important;
   position: relative !important;
   width: 485px;
@@ -240,10 +247,12 @@ body.tunnel #content .optionslist {
     width: 485px;
     min-height: 20px;
     border-style: solid;
-    border-width: 0px 0px 1px 0px;
+    border-width: 0px 0px 0px 0px;
     border-color: #d0d0d0;
     margin-bottom: 10px;
     padding-bottom: 6px; }
+  body.tunnel #content .optionslist li.first {
+    border-width: 1px 0px 0px 0px; }
   body.tunnel #content .optionslist li .row {
     display: block !important;
     position: relative !important;
@@ -254,7 +263,7 @@ body.tunnel #content .optionslist {
       line-height: 12px;
       color: black;
       display: inline-block; }
-    body.tunnel #content .optionslist li .row span.product {
+    body.tunnel #content .optionslist li .row span.product, body.tunnel #content .optionslist li .row span.caption {
       width: 300px; }
     body.tunnel #content .optionslist li .row span.price {
       width: 157px;
@@ -263,6 +272,11 @@ body.tunnel #content .optionslist {
       width: 20px;
       padding-top: -4px;
       height: 12px; }
+    body.tunnel #content .optionslist li .row span.checkbox {
+      position: relative;
+      left: 3px;
+      bottom: 1px;
+      margin-right: 4px;}
       body.tunnel #content .optionslist li .row span.radio input[type="radio"] {
         top: 1px;
         left: 3px;
@@ -427,3 +441,14 @@ body.tunnel #content .adresseslist.static .header {
   height: 20px; }
   body.tunnel #content .adresseslist.static .header span {
     left: 10px; }
+
+.h-separator {
+  display: block !important;
+  position: relative !important;
+  height: 1px; }
+
+.h-separator.strong {
+  background-color: #a3a3a3; }
+
+.h-separator.light {
+  background-color: #d0d0d0; }

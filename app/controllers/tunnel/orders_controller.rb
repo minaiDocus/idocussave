@@ -48,7 +48,7 @@ class Tunnel::OrdersController < Tunnel::TunnelController
   def summary
     @product = Product.find session[:product_id]
     @option_ids = session[:option_ids]
-    @options = @product.product_options.any_in(:_id => @option_ids)
+    @options = @product.product_options.any_in(:_id => @option_ids).by_position
     @billing_address_id = session[:billing_address] rescue nil
     @shipping_address_id = session[:shipping_address] rescue nil
   end
