@@ -16,7 +16,6 @@ public
         @credit = Credit.last
       end
       values = {
-        :business => 'lailol_1312465379_biz@directmada.com',
         :cmd => '_cart',
         :upload => 1,
         :notify_url => "#{notify_account_paypal_url}?order_id=#{@credit.number}",
@@ -29,7 +28,15 @@ public
         :item_number_1 => 1,
         :quantity_1 => 1
       }
-      @link_to_paypal = "https://www.sandbox.paypal.com/cgi-bin/webscr?"+ values.to_query
+      if Rails.env.production?
+        values.merge(:business => 'florent.tachot@grevalis.com');
+        @link_to_paypal = "https://www.paypal.com/cgi-bin/webscr?"+ values.to_query
+        @link_to_cm_cic ="https://ssl.paiement.cic-banques.fr/paiement.cgi"
+      else
+        values.merge(:business => 'lailol_1312465379_biz@directmada.com');
+        @link_to_paypal = "https://www.sandbox.paypal.com/cgi-bin/webscr?"+ values.to_query
+        @link_to_cm_cic ="https://ssl.paiement.cic-banques.fr/test/paiement.cgi"
+      end
     end
   end
 

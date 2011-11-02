@@ -60,7 +60,7 @@
           %form{ :method => :post, :action => @link_to_paypal }
             .buttonsrow
               %input{ :type => :submit, :value => "Paypal", :class => "button whitebtn w100 floattoright" }
-          %form{ :method => :post, :action => "https://ssl.paiement.cic-banques.fr/test/paiement.cgi" }
+          %form{ :method => :post, :action => @link_to_cm_cic }
             != paiement_cic_hidden_fields((@credit.amount/100),@credit.number)
             .buttonsrow.margin1top
               %input{ :type => :submit, :value => "CM-CIC", :class => "button whitebtn w100 floattoright" }
