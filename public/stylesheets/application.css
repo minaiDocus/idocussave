@@ -485,6 +485,10 @@ body.devise #worldwrapper #content .rightcolon {
   background-repeat: no-repeat;
   background-position: right top;
   right: 10px; }
+  body.devise #worldwrapper #content .rightcolon h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
 
 body.pages #worldwrapper #content .leftcolon ul.pageslistmenu, body.devise #worldwrapper #content .leftcolon ul.pageslistmenu {
   display: block !important;
