@@ -28,6 +28,7 @@ class Order
   field :waybill_number, :type => String
   field :coliposte, :type => String
   field :document_destiny, :type => Integer, :default => 1
+  field :payment_type, :type => Integer, :default => 0
 
   index :number, :unique => true
 

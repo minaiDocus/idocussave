@@ -1,5 +1,6 @@
 class Tunnel::OrdersController < Tunnel::TunnelController
   skip_before_filter :authenticate_user!, :only => %w(new option_choice create)
+  skip_before_filter :verify_authenticity_token
 
   helper :paiement_cic
 
@@ -60,8 +61,21 @@ class Tunnel::OrdersController < Tunnel::TunnelController
     @options.each do |option|
       price += option.price_in_cents_w_vat
     end
-    if (current_user.balance_in_cents - price >= 0)
-      order = Order.new
+  
+    order = Order.new
+    ok = false
+    unless current_user.use_debit_mandate
+      if (current_user.balance_in_cents - price >= 0)
+        ok = true
+        current_user.balance_in_cents -= price
+        order.payment_type = 0
+      end
+    else
+      ok = true
+      order.payment_type = 1
+    end
+    
+    if ok
       order.set_product_order @product, @options
       if params[:billing_address_id] && params[:shipping_address_id]
         order.billing_address = current_user.addresses.find(params[:billing_address_id])
@@ -83,4 +97,5 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       redirect_to summary_tunnel_order_url
     end
   end
+  
 end
