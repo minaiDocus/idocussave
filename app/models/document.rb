@@ -14,8 +14,6 @@ class Document
 
   references_many :document_tags
   referenced_in :pack
-  # DELETE ME AFTER MIGRATION
-  referenced_in :order
 
   has_mongoid_attached_file :content,
     :styles => {

@@ -11,9 +11,6 @@ class Order
   
   references_many :packs, :dependent => :delete
   
-  # DELETE ME AFTER MIGRATION
-  references_many :documents
-  
   references_one :invoice
 	
   embeds_one :product_order
