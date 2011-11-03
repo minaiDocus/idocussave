@@ -1,0 +1,8 @@
+%html
+  %header
+  %body{ :onload => "document.forms['form'].submit()" }
+    %form{ :action => @link, :method => :post, :name => "form" }
+      - if params[:cmcic]
+        != paiement_cic_hidden_fields((@credit.amount/100),@credit.number)
+      %noscript
+        %input{ :type => :submit, :name => :envoyer, :value => :envoyer }/

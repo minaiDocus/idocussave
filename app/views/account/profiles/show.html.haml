@@ -1,5 +1,15 @@
 //DocumentComposer widget
 #useraccount.scrollpane
+  - if flash[:notice].present?
+    .flash
+      .notice.margin2bottom.margin1top
+        %span.title= flash[:notice]
+        %br
+  - elsif flash[:credit_alert].present?
+    .flash
+      .errors.margin2bottom.margin1top
+        %span.title= flash[:credit_alert]
+        %br
   .titlebar.margin3top
     %h1.floattoleft
       CHANGEMENT DU MOT DE PASSE
@@ -33,43 +43,135 @@
     %h1.floattoleft
       PAIEMENT
   .wrapper
-    - if flash[:notice].present?
-      .flash
-        .notice.margin2bottom.margin1top
-          %span.title= flash[:notice]
+    %br
+    Choisissez votre mode de paiement
+    %br
+    %ul.paymentslist.clearfix
+      %li
+        .header
+          !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+          %span
+            %a{ :href => "#"}
+              %label{ :for => :pp }
+                compte prépayé
+        .content
+          %span
+            Solde actuel du compte prépayé: #{format_price @user.balance_in_cents} €
           %br
-    - elsif flash[:credit_alert].present?
-      .flash
-        .errors.margin2bottom.margin1top
-          %span.title= flash[:credit_alert]
+          %span
+            %form{ :method => :get, :action => credit_account_payment_path }
+              %label{ :for => :amount } Somme à créditer (€):
+              %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00", :class => "w200" }/
+              %span
+                %br
+                Payer avec :
+                %br
+              %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft" }/
+              %input{ :type => :submit, :name => "cmcic", :value => "Cm-cic", :class => "button whitebtn w100 floattoright margin1right" }/
+        .footer.padding1bottom
+      %li
+        .header
+          !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
+          %span
+            %a{ :href => "#"}
+              %label{ :for => :prlv } prélèvement
+        .content
+          %span
+            Etat :
+            - if @user.debit_mandate
+              - if @user.debit_mandate.transactionStatus == "success"
+                ok
+              - else
+                information non valide
+            - else
+              non configuré
+          %span
+            Nom de la banque : #{@user.debit_mandate.bic rescue ""}
           %br
-    
-    %p.margin1top
-      - if @user.use_debit_mandate == false
-        Solde actuel du compte pré-payé: #{format_price @user.balance_in_cents} €
-        %br
-        %br
-        - if !params[:amount]
-          %form{ :method => :get, :action => account_profile_path }
-            %label{ :for => :amount } Somme à créditer (€):
-            %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00" }/
-            .buttonsrow
-              %input{ :type => :submit, :value => "Suivant", :class => "button whitebtn w100 floattoright" }
-        - else
-          Somme à créditer : #{format_price (params[:amount].to_f * 100)} €
-          %form{ :method => :post, :action => @link_to_paypal }
-            .buttonsrow
-              %input{ :type => :submit, :value => "Paypal", :class => "button whitebtn w100 floattoright" }
-          %form{ :method => :post, :action => @link_to_cm_cic }
-            != paiement_cic_hidden_fields((@credit.amount/100),@credit.number)
-            .buttonsrow.margin1top
-              %input{ :type => :submit, :value => "CM-CIC", :class => "button whitebtn w100 floattoright" }
-      - if @user.debit_mandate != nil
-        - if @user.debit_mandate.transactionStatus == "success"
-          %form{ :method => :post, :action => "/account/payment/mode" }
-            %input{ :type => :hidden, :name => :use_debit_mandate, :value => (@user.use_debit_mandate ? "false" : "true") }
-              .buttonsrow
-                %input{ :type => :submit, :value => "#{@user.use_debit_mandate ? "pré-payé" : "prélèvement" }", :class => "button whitebtn w100 floattoright" }
-      - if (@user.debit_mandate.transactionStatus != "success" rescue true)
-        Remplissez le formulaire pour le prélèvement 
-        %a{ :href => "http://prlv.idocus.com/form.php?#{ { :email => @user.email }.to_query }" }ici
+          %span
+            Remplissez ou modifiez le formulaire en cliquant sur le bouton suivant :
+            %br
+          %span.margin1right
+            %form{ :method => :get, :action => "http://prlv.idocus.com/form.php" }
+              %input{ :type => :hidden, :name => :email, :value => @user.email }
+              %input{ :type => :submit, :value => "Slimpay", :class => "button whitebtn w100 floattoright" }/
+        .footer.padding1bottom
+
+:css
+  .paymentslist {
+    display: block !important;
+    position: relative !important;
+    width: 505px;
+    height: auto; }
+    .paymentslist li {
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      -khtml-border-radius: 4px;
+      display: block !important;
+      position: relative !important;
+      float: left;
+      width: 230px;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      min-height: 100px;
+      border-style: solid;
+      border-color: #b9b9b9;
+      border-width: 1px;
+      background-color: #fafafa; }
+      .paymentslist li .header, .paymentslist li .content, .paymentslist li .footer {
+        display: block !important;
+        position: relative !important;
+        width: 230px; }
+      .paymentslist li .header {
+        height: 30px;
+        background-color: #b9b9b9; }
+        .paymentslist li .header input[type="radio"] {
+          top: 8px;
+          left: 8px;
+          position: absolute;
+          vertical-align: middle;
+          width: 14px;
+          height: 14px;
+          padding: 0px;
+          margin: 0px;
+          line-height: 0px;
+          font-size: 0px; }
+        .paymentslist li .header span {
+          display: block;
+          position: absolute;
+          font-weight: bold;
+          font-size: 12px;
+          line-height: 14px;
+          left: 25px;
+          top: 8px; }
+          .paymentslist li .header span a {
+            color: black;
+            text-decoration: none; }
+      .paymentslist li .content {
+        min-height: 40px;
+        padding-top: 10px;
+        padding-bottom: 10px; }
+        .paymentslist li .content span {
+          display: block !important;
+          position: relative !important;
+          font-size: 12px;
+          line-height: 14px;
+          margin-left: 10px; }
+      .paymentslist li .footer {
+        width: 220px;
+        min-height: 20px;
+        text-align: right;
+        margin-right: 10px; }
+        .paymentslist li .footer a {
+          font-size: 11px;
+          color: black;
+          text-decoration: none;
+          margin-left: 5px; }
+
+  .paymentslist.static li, .paymentslist.static li .header {
+    background-color: transparent; }
+  .paymentslist.static .header {
+    height: 20px; }
+    .paymentslist.static .header span {
+      left: 10px; }
