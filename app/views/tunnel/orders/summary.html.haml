@@ -94,10 +94,9 @@
           - if new_balance < 0
             %li
               .row
-                %span
-                  %strong
-                    vous n'avez pas assez de crédit, créditer votre compte
-                    !=link_to :ici, account_profile_url
+                %span.orange
+                  Votre compte a un solde insuffisant, veuillez le créditer 
+                  !=link_to :ici, account_profile_url
       
       - if @billing_address_id && @shipping_address_id
         .h-separator.light.margin1top.margin1bottom
