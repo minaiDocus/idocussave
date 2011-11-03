@@ -24,7 +24,7 @@
         - @nb = 0
         != render :partial => 'address', :collection => current_user.addresses, :locals => {:f => f, :billing => true}
 
-      %h2 Adresse de retour des documents :
+      %h2 Adresse de retour :
       %p.margin1top
         Choisir l'une des adresses ci-dessous ou
         != link_to "ajouter une nouvelle adresse.", new_tunnel_address_path
@@ -37,5 +37,5 @@
         %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Étape suivante"}
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_path}
           %span
-            Etape précédente
+            Étape précédente
 

@@ -22,9 +22,6 @@
       
       %h2.margin2top
         Récapitulatif de votre commande
-        
-      %h3.margin2top
-        #{ (@product.category == 1)? "Numérisation" : "Sauvegarde" } : #{ @product.title }
           
       .h-separator.light.margin2top
       
@@ -34,7 +31,7 @@
           .row
             %span.product
               %strong
-                #{@product.title}
+                #{ (@product.category == 0)? "Numérisation" : "Sauvegarde" } : #{ @product.title }
             - if @product.price_in_cents_wo_vat > 0
               %span.price
                 %strong
@@ -47,11 +44,11 @@
             .row
               %span.product
                 %strong.margin2left
-                  + #{option.title}
+                  #{option.title}
               - if option.price_in_cents_wo_vat > 0
                 %span.price
                   %strong
-                    + #{format_price option.price_in_cents_wo_vat} € HT
+                    #{format_price option.price_in_cents_wo_vat} € HT
                   %span.smaller
                     #{format_price option.price_in_cents_w_vat} € TTC
                     - total_in_cents_wo_vat += option.price_in_cents_wo_vat
@@ -59,7 +56,7 @@
           .row
             %span.caption
               %strong
-                total de votre commande
+                Total de votre commande
             %span.price
               %strong
                 #{format_price total_in_cents_wo_vat} € HT
@@ -73,7 +70,7 @@
           .row
             %span
               %strong
-                Le total sera dédui de votre compte #{current_user.use_debit_mandate ? "de prélèvement" : "prépayé" }
+                #{current_user.use_debit_mandate ? "Le total sera prélevé sur votre compte bancaire." : "Le total sera dédui de votre compte prépayé." }
         
         - unless current_user.use_debit_mandate
           %li
@@ -89,10 +86,8 @@
             .row
               %span.caption
                 %strong
-                  Solde de mon compte prépayé après opération
+                  Solde de mon compte prépayé après cet opération
               %span.price
-                %span.smaller
-                  ( - #{format_price (total_in_cents_wo_vat * 1.196)} € TTC )
                 %strong
                   #{format_price (new_balance)} €
                 
@@ -105,10 +100,7 @@
                     !=link_to :ici, account_profile_url
       
       - if @billing_address_id && @shipping_address_id
-        .h-separator.light.margin2top
-
-        %h2.margin2top.margin1bottom
-          Adresses de facturation et de retour
+        .h-separator.light.margin1top.margin1bottom
 
         %ul.adresseslist.static.margin2left.margin1top.clearfix
           %li
@@ -120,7 +112,7 @@
           %li
             .header
               %span
-                Adresse de retour du produit
+                Adresse de retour
             .content
               != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @shipping_address_id).first}
 
@@ -134,7 +126,7 @@
         %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Payer maintenant"}
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_path}
           %span
-            Etape précèdente
+            Étape précédente
             
 :javascript
   $('#choosepaymod').submit(function(){

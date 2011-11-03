@@ -17,7 +17,7 @@
     - form_for @product, :url => tunnel_order_path, :html => {:method => :post, :class => 'clearfix'} do |f|
       %input{ :type => :hidden, :name => :product_id, :value => @product.id }
       %h2.margin2top
-        Produit : 
+        #{(@product.category == 0)? "Numérisation : " : "Sauvegarde : "}
         != @product.title
       
       %ul.optionslist.margin2left.margin2top
@@ -70,4 +70,4 @@
         %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Étape suivante"}
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_url}
           %span
-            Etape précédente
+            Étape précédente

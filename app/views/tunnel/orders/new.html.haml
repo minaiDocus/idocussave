@@ -19,11 +19,11 @@
         Numérisation :
 
       %ul.optionslist.margin2left.margin2top
-        - @products.each do |product|
+        - @products.each_with_index do |product,index|
           %li
             .row
               %span.radio
-                %input{ :type => :radio, :name => :product_id, :value => product.id, :id => product.id, :class => "product_item" }
+                !=radio_button_tag("product_id", product.id, ((index == 0)? true : false), :id => product.id, :class => "product_item" )
               %span.product
                 %strong
                   %label{ :for => product.id }
