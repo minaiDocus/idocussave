@@ -12,12 +12,8 @@
         %br
   .titlebar.margin3top
     %h1.floattoleft
-      CHANGEMENT DU MOT DE PASSE
+      CHANGER MON MOT DE PASSE
   .wrapper
-    %p.margin1top
-      Utilisez le formulaire ci-dessous pour modifier vos informations de 
-      compte.
-
     - form_for @user, :url => account_profile_path do |f|
       - if flash[:alert].present?
         - error_class = "error"
@@ -35,18 +31,14 @@
       != f.label "Confirmation du mot de passe :", :class => "margin2top"
       = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe", :class => "w410"
 
-      .buttonsrow.margin3top
+      .buttonsrow.margin1top
         != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
   
   
   .titlebar.margin2top
     %h1.floattoleft
-      PAIEMENT
-  .wrapper
-    %br
-    Choisissez votre mode de paiement
-    %br
-    %br
+      CHOISIR MON MODE DE PAIEMENT
+  .wrapper.margin2top
     %ul.paymentslist.clearfix
       %li
         .header
@@ -68,7 +60,7 @@
                 Payer avec :
                 %br
               %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft margin1right" }/
-              %input{ :type => :submit, :name => "cmcic", :value => "Cm-cic", :class => "button whitebtn w100 margin1right" }/
+              %input{ :type => :submit, :name => "cmcic", :value => "CM-CIC", :class => "button whitebtn w100 margin1right" }/
         .footer.padding1bottom
       %li
         .header
@@ -87,15 +79,11 @@
             - else
               non configuré
           %span
-            Nom de la banque : #{@user.debit_mandate.bic rescue ""}
-          %br
-          %span.aligncenter
-            Configurer mon prélèvement :
-            %br
-          %span
+            Banque : #{@user.debit_mandate.bic rescue ""}
+          %span.margin6top
             %form{ :method => :get, :action => "http://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
               %input{ :type => :hidden, :name => :email, :value => @user.email }/
-              %input{ :type => :submit, :value => "Slimpay", :class => "button whitebtn w100 margin055left" }/
+              %input{ :type => :submit, :value => "Configurer...", :class => "button whitebtn w100 margin055left" }/
         .footer.padding1bottom
 
 :javascript

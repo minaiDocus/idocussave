@@ -77,7 +77,7 @@
             .row
               %span.caption
                 %strong
-                  Solde actuel de mon compte prépayé :
+                  Solde actuel de mon compte :
               %span.price
                 %strong
                   #{format_price current_user.balance_in_cents} €
@@ -86,7 +86,7 @@
             .row
               %span.caption
                 %strong
-                  Solde de mon compte prépayé après cette opération :
+                  Solde de mon compte après cette opération :
               %span.price
                 %strong
                   #{format_price (new_balance)} €
