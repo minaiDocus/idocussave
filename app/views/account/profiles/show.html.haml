@@ -39,12 +39,13 @@
         != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
   
   
-  .titlebar.margin3top
+  .titlebar.margin2top
     %h1.floattoleft
       PAIEMENT
   .wrapper
     %br
     Choisissez votre mode de paiement
+    %br
     %br
     %ul.paymentslist.clearfix
       %li
@@ -56,18 +57,18 @@
                 compte prépayé
         .content
           %span
-            Solde actuel du compte prépayé: #{format_price @user.balance_in_cents} €
+            Solde actuel du compte : #{format_price @user.balance_in_cents} €
           %br
           %span
             %form{ :method => :get, :action => credit_account_payment_path }
               %label{ :for => :amount } Somme à créditer (€):
               %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00", :class => "w200" }/
-              %span
-                %br
+              %br
+              %span.aligncenter
                 Payer avec :
                 %br
-              %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft" }/
-              %input{ :type => :submit, :name => "cmcic", :value => "Cm-cic", :class => "button whitebtn w100 floattoright margin1right" }/
+              %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft margin1right" }/
+              %input{ :type => :submit, :name => "cmcic", :value => "Cm-cic", :class => "button whitebtn w100 margin1right" }/
         .footer.padding1bottom
       %li
         .header
@@ -88,14 +89,47 @@
           %span
             Nom de la banque : #{@user.debit_mandate.bic rescue ""}
           %br
-          %span
-            Remplissez ou modifiez le formulaire en cliquant sur le bouton suivant :
+          %span.aligncenter
+            Configurer mon prélèvement :
             %br
-          %span.margin1right
-            %form{ :method => :get, :action => "http://prlv.idocus.com/form.php" }
-              %input{ :type => :hidden, :name => :email, :value => @user.email }
-              %input{ :type => :submit, :value => "Slimpay", :class => "button whitebtn w100 floattoright" }/
+          %span
+            %form{ :method => :get, :action => "http://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
+              %input{ :type => :hidden, :name => :email, :value => @user.email }/
+              %input{ :type => :submit, :value => "Slimpay", :class => "button whitebtn w100 margin055left" }/
         .footer.padding1bottom
+
+:javascript
+  $(document).ready(function () {
+    $("input[type=radio]").click(function(){
+      var request_value = 0;
+      if ($(this).val() == "false")
+        request_value = 1;
+      else
+        request_value = 2;
+      hsh = {mode: request_value};
+      $.ajax({
+        url: "/account/payment/mode",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+        },
+        success: function(data){
+          if (data == "1"){
+            alert("Vos achat seront maintenant débiter de votre compte prépayé");
+          } else if (data == "2") {
+            alert("Vos achat seront maintenant débiter de votre compte bancaire");
+          } else if (data == "3") {
+            alert("Vous n'avez pas encore configurer votre prélèvement");
+            $("#pp").attr('checked', true);
+            $("#prlv").attr('checked', false);
+          } else {
+            alert("Une erreur s'est produite, veuillez réessayer plus tard");
+          }
+        }
+      });
+    });
+  });
 
 :css
   .paymentslist {
@@ -114,7 +148,7 @@
       width: 230px;
       margin-right: 20px;
       margin-bottom: 20px;
-      min-height: 100px;
+      height: 165px;
       border-style: solid;
       border-color: #b9b9b9;
       border-width: 1px;
@@ -175,3 +209,8 @@
     height: 20px; }
     .paymentslist.static .header span {
       left: 10px; }
+  .aligncenter{
+    margin: auto;
+    text-align: center; }
+  .margin055left{
+    margin-left: 55px; }

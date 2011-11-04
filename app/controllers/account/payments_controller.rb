@@ -8,15 +8,29 @@ class Account::PaymentsController < Account::AccountController
   
 public
   def mode
-    if params[:use_debit_mandate] == "true" && current_user.debit_mandate != nil
-      current_user.use_debit_mandate = true if current_user.debit_mandate.transactionStatus == "success"
-      current_user.save
-    else
-      current_user.use_debit_mandate = false
-      current_user.save
+    response = 0
+    if params[:mode]
+      if params[:mode] == "1"
+        current_user.use_debit_mandate = false
+        current_user.save
+        response = 1
+      elsif params[:mode] == "2" && current_user.debit_mandate != nil
+        if current_user.debit_mandate.transactionStatus == "success"
+          current_user.use_debit_mandate = true
+          current_user.save
+          response = 2
+        else
+          response = 3
+        end
+      else
+        response = 3
+      end
     end
     
-    redirect_to account_profile_path
+    respond_to do |format|
+      format.json{ render :json => response.to_json, :status => :ok }
+      format.html{ redirect_to account_profile_path }
+    end
   end
   
   def credit
