@@ -31,7 +31,7 @@
           .row
             %span.product
               %strong
-                #{ (@product.category == 0)? "Numérisation" : "Sauvegarde" } : #{ @product.title }
+                #{ (@product.category == 1)? "Numérisation" : "Sauvegarde" } : #{ @product.title }
             - if @product.price_in_cents_wo_vat > 0
               %span.price
                 %strong
@@ -44,7 +44,7 @@
             .row
               %span.product
                 %strong.margin2left
-                  #{option.title}
+                  != "- #{option.title}"
               - if option.price_in_cents_wo_vat > 0
                 %span.price
                   %strong
@@ -70,14 +70,14 @@
           .row
             %span
               %strong
-                #{current_user.use_debit_mandate ? "Le total sera prélevé sur votre compte bancaire." : "Le total sera dédui de votre compte prépayé." }
+                #{current_user.use_debit_mandate ? "Le total sera prélevé sur votre compte bancaire." : "Le total sera déduit de votre compte prépayé." }
         
         - unless current_user.use_debit_mandate
           %li
             .row
               %span.caption
                 %strong
-                  Solde actuel de mon compte prépayé
+                  Solde actuel de mon compte prépayé :
               %span.price
                 %strong
                   #{format_price current_user.balance_in_cents} €
@@ -86,7 +86,7 @@
             .row
               %span.caption
                 %strong
-                  Solde de mon compte prépayé après cet opération
+                  Solde de mon compte prépayé après cette opération :
               %span.price
                 %strong
                   #{format_price (new_balance)} €

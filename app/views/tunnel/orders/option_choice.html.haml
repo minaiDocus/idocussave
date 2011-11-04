@@ -17,7 +17,7 @@
     - form_for @product, :url => tunnel_order_path, :html => {:method => :post, :class => 'clearfix'} do |f|
       %input{ :type => :hidden, :name => :product_id, :value => @product.id }
       %h2.margin2top
-        #{(@product.category == 0)? "Numérisation : " : "Sauvegarde : "}
+        #{(@product.category == 1)? "Numérisation : " : "Sauvegarde : "}
         != @product.title
       
       %ul.optionslist.margin2left.margin2top
