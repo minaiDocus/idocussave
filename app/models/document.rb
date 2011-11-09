@@ -42,7 +42,7 @@ class Document
       puts "document[#{doc.content_file_name}][#{nb}]}"
       doc.dirty = false
       doc.content.reprocess!
-      if !doc.save!
+      if !doc.save
         doc.dirty = true
       end
     end
