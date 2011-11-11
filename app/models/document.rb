@@ -11,9 +11,11 @@ class Document
   field :tags, :type => String, :default => ""
   field :position, :type => Integer
   field :dirty, :type => Boolean, :default => true
+  field :indexed, :type => Boolean, :default => false
 
   references_many :document_tags
   referenced_in :pack
+  has_and_belongs_to_many  :words
 
   has_mongoid_attached_file :content,
     :styles => {

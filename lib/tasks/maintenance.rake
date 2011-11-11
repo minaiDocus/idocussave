@@ -58,4 +58,65 @@ namespace :maintenance do
     }
   end
 
+  namespace :lang do
+    desc "Feed dictionary"
+    task :feed, [:path] => :environment do |t,args|
+      filename = File.expand_path(File.dirname(__FILE__)) + args[:path]
+      
+      puts "fetching dictionary at #{filename}"
+      
+      if File.exist?(filename)
+        File.open(filename, 'r') do |file|
+          while line = file.gets
+            Dictionary.add Iconv.iconv('UTF-8', 'ISO-8859-1', line.chomp).join()
+            print '.'
+          end  
+        end
+      end
+    end
+  end
+  
+  namespace :document do
+    desc "Feed user dictionary"
+    task :extract_content => :environment do
+      require 'rubygems'
+      require 'pdf/reader'
+      
+      def Receiver
+        attr_reader :text
+        
+        def initialize
+          @text = ""
+        end
+        
+        def show_text(string, *params)
+          @text += string
+        end
+        
+        def show_text_with_positioning(array, *params)
+        show_text(array.select{|i| i.is_a?(String)}.join())
+        end
+      end
+
+      Document.where(:indexed => false).each do |document|
+        user = document.pack.order.user
+        
+        receiver = Receiver.new
+        PDF::Reader.file(filename,receiver)
+
+        for w in receiver.text.split()
+          if v_word = Dictionary.find_one(w)
+            unless wd = Word.where(:word => v_word, :pdf_content_id => user.pdf_content.id)
+              wd = Word.create(:word => v_word, :pdf_content_id => user.pdf_content.id)
+            end
+            wd.documents << document
+            wd.save!
+          end
+        end
+        document.indexed = true
+        document.save!
+      end
+    end
+  end
+  
 end

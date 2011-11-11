@@ -18,8 +18,8 @@ Idocus::Application.routes.draw do
     resources :documents do
       get 'invoice', :on => :member
       get 'packs', :on => :collection
-      get 'find_tag', :on => :collection
-      get 'find_by_tag', :on => :collection
+      get 'search', :on => :collection
+      get 'find', :on => :collection
       post 'update_tag', :on => :collection
       post 'reorder', :on => :collection
       post 'share', :on => :collection

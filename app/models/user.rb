@@ -20,6 +20,7 @@ class User
   references_many :document_tags
   references_one :composition
   references_one :debit_mandate
+  references_one :document_content
 
   def self.find_by_email param
     User.where(:email => param).first

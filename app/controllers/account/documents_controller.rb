@@ -94,25 +94,44 @@ class Account::DocumentsController < Account::AccountController
     end
   end
   
-  def find_tag
-    @document_tags = DocumentTag.where(:user_id => current_user.id, :name => /\w*#{params[:q]}\w*/)
-    
-    tags = ""
-    @document_tags.each do |document_tag|
-      document_tag.name.scan(/\w*#{params[:q]}\w*/).each do |tag|
-        if !tags.match(/ #{tag}( )*/)
-          tags += " #{tag}"
+  def search
+    @tags = Array.new
+    @document_contents = Array.new
+  
+    if params[:by] == "tags" || !params[:by]
+      @document_tags = DocumentTag.where(:user_id => current_user.id, :name => /\w*#{params[:q]}\w*/)
+      
+      tags = ""
+      @document_tags.each do |document_tag|
+        document_tag.name.scan(/\w*#{params[:q]}\w*/).each do |tag|
+          if !tags.match(/ #{tag}( )*/)
+            tags += " #{tag}"
+          end
         end
+      end
+      
+      tags.split.each do |tag|
+        @tags << {"id" => "tag", "name" => "#{tag}"}
+      end
+      
+    end
+    
+    if params[:by] == "ocr_result" || !params[:by]
+      words = current_user.document_content.words.where(:content => /\w*#{params[:q]}\w*/).entries rescue Array.new
+      words.each do |word|
+        @document_contents << {"id" => "content", "name" => "#{word.content}"}
       end
     end
     
-    @tags = Array.new
-    tags.split.each do |tag|
-      @tags << {:id => "#{tag}", :name => "#{tag}"}
+    @result = Array.new
+    @result = @tags + @document_contents
+    
+    @result = @result.sort do |a,b|
+      a["name"] <=> b["name"]
     end
     
     respond_to do |format|
-      format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
+      format.json{ render :json => @result.to_json, :callback => params[:callback], :status => :ok }
     end
   end
   
@@ -156,9 +175,9 @@ class Account::DocumentsController < Account::AccountController
     end
   end
   
-  def find_by_tag
+  def find
     document_ids = ""
-    params[:tags].split(':_:').each_with_index do |tag,index|
+    params[:having].split(':_:').each_with_index do |tag,index|
       if index == 0
         DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => current_user.id).each do |document_tag|
           document_ids += " #{document_tag.document_id}"
@@ -172,6 +191,28 @@ class Account::DocumentsController < Account::AccountController
         end
       end
     end
+    
+    params[:having].split(':_:').each_with_index do |tag,index|
+      docs = Array.new
+      words = current_user.document_content.words.where(:content => /\w*#{tag}\w*/).entries rescue Array.new
+      words.each_with_index do |word,index|
+        if index == 0
+          docs = word.documents
+        else
+          docs = docs.select do |d|
+            if word.documents.include?(d)
+              true
+            else
+              false
+            end
+          end
+        end
+      end
+      docs.each do |d|
+        document_ids += " #{d.id}"
+      end
+    end
+    
     @documents = Document.any_in(:_id => document_ids.split).entries
     
     render :action => "show"

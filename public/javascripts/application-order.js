@@ -406,23 +406,26 @@ $(document).ready(function () {
     return false;
   });
   
-  $("#filter").tokenInput("/account/documents/find_tag.json", {
+  $("#filter").tokenInput("/account/documents/search.json", {
     theme: "facebook",
     hintText: "Tapez un mot à rechercher",
     noResultsText: "Aucun résultat",
     searchingText: "Recherche en cours...",
     tokenDelimiter: ":_:",
+    tokenValue: "name",
     preventDuplicates: true,
+    resultsFormatter: function(item) { return "<li><p class='" + item.id + "'>" + item.name + "</p></li>" },
+    tokenFormatter: function(item) {  return "<li><p class='" + item.id + "'>" + item.name + "</p></li>" },
     onAdd: function (item) {
       var value = $(this).val();
-      var url = "/account/documents/find_by_tag?tags="+value;
+      var url = "/account/documents/find?having="+value;
       getDocument(this,url);
       getScans();
     },
     onDelete: function (item) {
       if($("#filter").val() != ""){
         var value = $(this).val();
-        var url = "/account/documents/find_by_tag?tags="+value;
+        var url = "/account/documents/find?having="+value;
         getDocument(this,url);
       }else{
         $("ul.pageslist.all").html("");
