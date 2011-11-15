@@ -79,10 +79,7 @@ namespace :maintenance do
   namespace :document do
     desc "Feed user dictionary"
     task :extract_content => :environment do
-      require 'rubygems'
-      require 'pdf/reader'
-      
-      def Receiver
+      class Receiver
         attr_reader :text
         
         def initialize
@@ -97,19 +94,24 @@ namespace :maintenance do
         show_text(array.select{|i| i.is_a?(String)}.join())
         end
       end
+      
+      Document.where(:is_an_original => true).entries.each do |document|
+        document.indexed = true
+        document.save!
+      end
 
       Document.where(:indexed => false).each do |document|
         user = document.pack.order.user
         
         receiver = Receiver.new
-        PDF::Reader.file(filename,receiver)
+        PDF::Reader.file("/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver)
 
         for w in receiver.text.split()
           if v_word = Dictionary.find_one(w)
-            unless wd = Word.where(:word => v_word, :pdf_content_id => user.pdf_content.id)
-              wd = Word.create(:word => v_word, :pdf_content_id => user.pdf_content.id)
+            unless wd = Word.where(:content => v_word, :document_content_id => user.document_content.id)
+              wd = Word.create!(:content => v_word, :document_content_id => user.document_content.id)
             end
-            wd.documents << document
+            wd.documents << document  << document.pack.documents.where(:is_an_original => true).first
             wd.save!
           end
         end

@@ -33,7 +33,7 @@ class Account::DocumentsController < Account::AccountController
       if !params[:tags]
         current_user.orders.with_state([:paid]).desc(:created_at).each do |order|
           order.packs.each do |pack|
-            if matchTag(pack.documents.first.id)
+            if matchFilter(pack.documents.first.id)
               pack_ids << pack.id
             end
           end
@@ -41,7 +41,7 @@ class Account::DocumentsController < Account::AccountController
       end
       current_user.orders.with_state([:scanned]).desc(:created_at).each do |order|
         order.packs.each do |pack|
-          if matchTag(pack.documents.first.id)
+          if matchFilter(pack.documents.first.id)
             pack_ids << pack.id
           end
         end
@@ -54,7 +54,7 @@ class Account::DocumentsController < Account::AccountController
         order_ids << order.id
       end
       Pack.where(:user_ids => current_user.id).not_in(:order_id => order_ids).entries.each do |pack|
-        if matchTag(pack.documents.first.id)
+        if matchFilter(pack.documents.first.id)
           pack_ids << pack.id
         end
       end
@@ -64,7 +64,7 @@ class Account::DocumentsController < Account::AccountController
           order2_ids << order.id
         end
         Pack.where(:user_ids => current_user.id).not_in(:order_id => order_ids).any_in(:order_id => order2_ids).each do |pack|
-          if matchTag(pack.documents.first.id)
+          if matchFilter(pack.documents.first.id)
             pack_ids << pack.id
           end
         end
@@ -271,20 +271,35 @@ class Account::DocumentsController < Account::AccountController
     
 protected
 
-  def matchTag document_id
+  def matchFilter document_id
     if params[:tags]
+      match_tag = true
+      match_content = true
+
       document_tag = DocumentTag.where(:document_id => document_id, :user_id => current_user.id).first
       if document_tag.nil?
-        return false
+        match_tag = false
       end
-      params[:tags].split(':_:').each do |tag|
-        if !document_tag.name.match(/ #{tag}/)
-          return false
+      params[:filter].split(':_:').each do |tag|
+        unless document_tag.name.match(/ #{tag}/)
+          match_tag = false
         end
       end
-      return true
+
+      params[:filter].split(':_:').each do |filter|
+        unless Word.where(:content => filter, :document_ids => document_id).first
+          match_content = false
+        end
+      end
+
+      if match_tag || match_content
+        true
+      else
+        false
+      end
     else
-      return true
+      true
     end
   end
 end
+

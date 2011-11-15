@@ -3,6 +3,6 @@ class DocumentContent
   include Mongoid::Timestamps
   
   referenced_in :user
-  embeds_many :words
+  references_many :words
   
 end

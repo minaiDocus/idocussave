@@ -115,14 +115,14 @@ function getDocument(REF,URL){
 }
 
 function getScans(PAGE){
-  var tags = $("#filter").val();
-  if (tags != "")
-    tags = "&amp;tags="+tags;
+  var filtre = $("#filter").val();
+  if (filtre != "")
+    filtre = ";filtre="+filtre;
   var view = $("select[name=document_owner_list]").val();
   var per_page = $("select[name=per_page]").val();
   var page = typeof(PAGE) != 'undefined' ? PAGE : 1;
   
-  var Url = "/account/documents/packs?page="+page+"&amp;view="+view+"&amp;per_page="+per_page+tags;
+  var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filtre;
   
   $.ajax({
     url: Url,
