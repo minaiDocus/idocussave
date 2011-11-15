@@ -268,6 +268,75 @@ class Account::DocumentsController < Account::AccountController
       format.json{ render :json => {}, :status => :ok }
     end
   end
+  
+  def archive
+    pack = Pack.find(params[:pack_id])[0]
+    
+    # extraction des informations
+    
+    url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
+    metadata = `pdftk #{url} dump_data`
+    
+    number_of_page = metadata.scan(/NumberOfPages: \d+/).to_s.scan(/\d+/).to_s.to_i
+    
+    bookmarks = metadata.scan(/BookmarkTitle: \w+\nBookmarkLevel: \d+\nBookmarkPageNumber: \d+/)
+    
+    dec = []
+    unless bookmarks.empty?
+      bookmarks.each do |b|
+        inter = []
+        b.split(/\n/).each_with_index do |info,index|
+          inter << info.split(/: /)[1]
+        end
+        dec << inter
+      end
+    else
+      dec << [pack.name,1,1]
+    end
+    
+    # découpoage et stockage dans une zone temporaire
+    
+    unless File.directory?("#{Rails.root}/public/system/archive")
+      Dir.mkdir("#{Rails.root}/public/system/archive")
+      unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
+        Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
+      end
+    end
+    
+    dec.each_with_index do |partie,index|
+      filename = partie[0]
+      start_number = partie[2]
+      end_number = (dec[index + 1][2] - 1) rescue number_of_page
+      
+      part = ""
+      if start_number == end_number
+        part = "#{start_number}"
+      else
+        part = "#{start_number}-#{end_number}"
+      end
+      
+      cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
+      system(cmd)
+    end
+    
+    # archivage et suppression des fichiers inutile
+    
+    url = "#{Rails.root}/public/system/archive/#{current_user.id}/#{pack.name}.zip"
+    
+    system("rm #{Rails.root}/public/system/archive/#{current_user.id}/*.zip") rescue nil # suppression du précédent zip
+    
+    system("zip '#{url}' #{Rails.root}/public/system/archive/#{current_user.id}/*.pdf")
+    
+    system("rm #{Rails.root}/public/system/archive/#{current_user.id}/*.pdf")
+    
+    @url = "/system/archive/#{current_user.id}/#{pack.name}.zip"
+    
+    respond_to do |format|
+      format.json do
+        render :json => @url.to_json, :status => :ok
+      end
+    end
+  end
     
 protected
 

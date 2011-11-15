@@ -25,6 +25,7 @@ gem 'mongoid_session_store'
 gem 'SystemTimer'
 gem 'ckeditor', :git => 'git://github.com/yannski/rails-ckeditor.git', :branch => 'rails3'
 gem 'rack-raw-upload'
+gem 'pdf-reader'
 
 group :development do
   gem 'mongrel'

@@ -497,6 +497,27 @@ $(document).ready(function () {
     setVisibility();
   });
   
+  $("a.do-archive").click(function(){
+    link = $(this);
+    li = link.parents("li.document");
+    var pack_id = _.map(li, function(node){ return node.id.split("_")[1] });
+    $.ajax({
+      url: "/account/documents/archive",
+      data: hsh = {"pack_id":pack_id},
+      dataType: "json",
+      type: "POST",
+      beforeSend: function() {
+        logBeforeAction("Préparation du document...");
+      },
+      success: function(data){
+        logAfterAction();
+        baseurl = window.location.pathname.split('/')[0];
+        window.open(baseurl+""+data);
+      }
+    });
+    return false;
+  });
+  
   $("a.delete.do-deleteDocumentFromComposition").click(function(){
     link = $(this);
     li = link.parents("li.document");

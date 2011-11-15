@@ -104,12 +104,13 @@ namespace :maintenance do
         user = document.pack.order.user
         
         receiver = Receiver.new
-        PDF::Reader.file("/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver)
+        PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver)
 
         for w in receiver.text.split()
           if v_word = Dictionary.find_one(w)
-            unless wd = Word.where(:content => v_word, :document_content_id => user.document_content.id)
-              wd = Word.create!(:content => v_word, :document_content_id => user.document_content.id)
+            debugger
+            unless wd = Word.where(:content => v_word.word, :document_content_id => user.document_content.id).first
+              wd = Word.create!(:content => v_word.word, :document_content_id => user.document_content.id)
             end
             wd.documents << document  << document.pack.documents.where(:is_an_original => true).first
             wd.save!

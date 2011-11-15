@@ -26,6 +26,8 @@
         %li
           != link_to "", "#{(pack.documents.where(:is_an_original => true).first).content.url}", :class => "download", :title => "Télécharger", :target => "_blank"
         %li
+          != link_to "", "#", :class => "download do-archive", :title => "Télécharger une archive zip"
+        %li
           != link_to "", "#", :class => "select do-select", :title => "Sélectionner"
         %li
           != link_to "", "#", :class => "growl-info", :title => "Information"

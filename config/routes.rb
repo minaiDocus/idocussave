@@ -23,6 +23,7 @@ Idocus::Application.routes.draw do
       post 'update_tag', :on => :collection
       post 'reorder', :on => :collection
       post 'share', :on => :collection
+      post 'archive', :on => :collection
     end
     resources :addresses
     resource :profile

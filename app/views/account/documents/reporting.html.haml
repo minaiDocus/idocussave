@@ -1,0 +1,10 @@
+%h1
+  REPORTING #{ @year }
+  
+%br
+!= select_tag(:view_for, options_for_select( ( [["Tous",0]] + @clients.collect{|c| [c.email, c.id]} ) ))
+
+- @orders.each do |order|
+  lol
+  != order.waybill_number
+  %br
