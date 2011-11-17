@@ -9,6 +9,8 @@ class Order
   # FIXME use newer syntax
   referenced_in :user
   
+  referenced_in :prescriber, :class_name => 'User', :inverse_of => :prescribed_orders, :dependent => :nullify
+  
   references_many :packs, :dependent => :delete
   
   references_one :invoice

@@ -20,6 +20,7 @@ Idocus::Application.routes.draw do
       get 'packs', :on => :collection
       get 'search', :on => :collection
       get 'find', :on => :collection
+      get 'reporting', :on => :collection
       post 'update_tag', :on => :collection
       post 'reorder', :on => :collection
       post 'share', :on => :collection

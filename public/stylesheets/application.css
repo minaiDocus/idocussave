@@ -1153,9 +1153,9 @@ body.application #worldwrapper #header .rightcolon ul.tabmenu {
         ul.pageslist li .toolbar ul, ul.documentslist li .toolbar ul, #documentcomposer .documentbrowser ul.pageslist li .toolbar ul, #documentcomposer .documentbrowser ul.documentslist li .toolbar ul {
           display: block !important;
           position: relative !important;
-          width: 91px;
+          width: 100px;
           height: 19px;
-          left: 5px;
+          left: -7px;
           top: 4px; }
           ul.pageslist li .toolbar ul li, ul.pageslist li .toolbar ul li a, ul.documentslist li .toolbar ul li, ul.documentslist li .toolbar ul li a, #documentcomposer .documentbrowser ul.pageslist li .toolbar ul li, #documentcomposer .documentbrowser ul.pageslist li .toolbar ul li a, #documentcomposer .documentbrowser ul.documentslist li .toolbar ul li, #documentcomposer .documentbrowser ul.documentslist li .toolbar ul li a {
             display: block !important;

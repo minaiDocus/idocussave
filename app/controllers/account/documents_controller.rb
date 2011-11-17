@@ -10,7 +10,7 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
-  def show
+def show
     @pack = current_user.packs.where(:_id => params[:id]).first rescue nil
     @documents = @pack.documents.without_original.asc(:position) rescue nil
 
@@ -30,7 +30,7 @@ class Account::DocumentsController < Account::AccountController
     pack_ids = []
     
     if params[:view] == "all" || params[:view] == "self"
-      if !params[:tags]
+      if !params[:filtre]
         current_user.orders.with_state([:paid]).desc(:created_at).each do |order|
           order.packs.each do |pack|
             if matchFilter(pack.documents.first.id)
@@ -97,20 +97,22 @@ class Account::DocumentsController < Account::AccountController
   def search
     @tags = Array.new
     @document_contents = Array.new
-  
+    
+    query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:q]).join()
+    
     if params[:by] == "tags" || !params[:by]
-      @document_tags = DocumentTag.where(:user_id => current_user.id, :name => /\w*#{params[:q]}\w*/)
+      @document_tags = DocumentTag.where(:user_id => current_user.id, :name => /\w*#{query}\w*/)
       
       tags = ""
       @document_tags.each do |document_tag|
-        document_tag.name.scan(/\w*#{params[:q]}\w*/).each do |tag|
+        document_tag.name.scan(/\w*#{query}\w*/).each do |tag|
           if !tags.match(/ #{tag}( )*/)
             tags += " #{tag}"
           end
         end
       end
       
-      tags.split.each do |tag|
+      Iconv.iconv('ISO-8859-1', 'UTF-8', tags).join().split.each do |tag|
         @tags << {"id" => "tag", "name" => "#{tag}"}
       end
       
@@ -138,8 +140,8 @@ class Account::DocumentsController < Account::AccountController
   def update_tag
     sous = ""
     add = ""
-    params[:tags].downcase.split.each do |tag|
-      if tag.match(/^([a-z]|[0-9]|-|_)+$/)
+    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:tags]).join().downcase.split.each do |tag|
+      if tag.match(/-*\w*/)
         if tag[0] == 45 # '45' = '-'
           sous += " #{tag.sub("-","").sub("*","(.*)")}"
         else
@@ -177,7 +179,7 @@ class Account::DocumentsController < Account::AccountController
   
   def find
     document_ids = ""
-    params[:having].split(':_:').each_with_index do |tag,index|
+    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').each_with_index do |tag,index|
       if index == 0
         DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => current_user.id).each do |document_tag|
           document_ids += " #{document_tag.document_id}"
@@ -192,7 +194,7 @@ class Account::DocumentsController < Account::AccountController
       end
     end
     
-    params[:having].split(':_:').each_with_index do |tag,index|
+    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').each_with_index do |tag,index|
       docs = Array.new
       words = current_user.document_content.words.where(:content => /\w*#{tag}\w*/).entries rescue Array.new
       words.each_with_index do |word,index|
@@ -306,7 +308,7 @@ class Account::DocumentsController < Account::AccountController
     dec.each_with_index do |partie,index|
       filename = partie[0]
       start_number = partie[2]
-      end_number = (dec[index + 1][2] - 1) rescue number_of_page
+      end_number = (dec[index + 1][2].to_i - 1) rescue number_of_page
       
       part = ""
       if start_number == end_number
@@ -321,13 +323,13 @@ class Account::DocumentsController < Account::AccountController
     
     # archivage et suppression des fichiers inutile
     
-    url = "#{Rails.root}/public/system/archive/#{current_user.id}/#{pack.name}.zip"
+    Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
     
-    system("rm #{Rails.root}/public/system/archive/#{current_user.id}/*.zip") rescue nil # suppression du précédent zip
+    system("rm *.zip") rescue nil # suppression du précédent zip
     
-    system("zip '#{url}' #{Rails.root}/public/system/archive/#{current_user.id}/*.pdf")
+    system("zip '#{pack.name}.zip' *.pdf")
     
-    system("rm #{Rails.root}/public/system/archive/#{current_user.id}/*.pdf")
+    system("rm *.pdf")
     
     @url = "/system/archive/#{current_user.id}/#{pack.name}.zip"
     
@@ -337,11 +339,55 @@ class Account::DocumentsController < Account::AccountController
       end
     end
   end
+  
+  def reporting
+    @year = params[:year] ? params[:year].to_i : Time.now.year
+    @clients = current_user.clients
+    
+    @packs = []
+    if orders = Order.where(:prescriber_id => current_user.id).entries
+      orders.each{|order| order.packs.each{|p| @packs << p}}
+    end
+    
+    time = Date.new(@year).to_time
+    @reporting = {}
+    12.times do
+      month = { "#{time.month}" => []}
+      @reporting.merge!(month)
+      
+      packs = @packs.select{|p| p["created_at"] >= time && p["created_at"] <= (time.next_month - 1)}
+      unless packs.empty?
+        packs = packs.sort{|a,b| a.order.created_at <=> b.order.created_at}
+        
+        @clients.each do |client|
+          user = [client.email,client.id]
+          docs = packs.select{|p| p.order.user == client }.collect do |p|
+            p.get_division_from_pdf if !p.division
+            division_level_1 = p.division[1].select{|d| d[1].to_i == 1}
+            division_level_2 = nil
+            if p.division[0].to_i == 2
+              division_level_2 = p.division[1].select{|d| d[1].to_i == 2}
+            end
+            unless division_level_2
+              division_level_2 = division_level_1
+            end
+            [p.name,division_level_1.length,division_level_2.length,p.documents.size - 1]
+          end
+          exces = 0
+          
+          @reporting[time.month.to_s] << [user, docs, exces] if docs.size > 0
+        end
+      end
+      
+      time = time.next_month
+    end
+    
+  end
     
 protected
 
   def matchFilter document_id
-    if params[:tags]
+    if params[:filtre]
       match_tag = true
       match_content = true
 
@@ -349,14 +395,14 @@ protected
       if document_tag.nil?
         match_tag = false
       end
-      params[:filter].split(':_:').each do |tag|
+      Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:').each do |tag|
         unless document_tag.name.match(/ #{tag}/)
           match_tag = false
         end
       end
 
-      params[:filter].split(':_:').each do |filter|
-        unless Word.where(:content => filter, :document_ids => document_id).first
+      Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:').each do |filtre|
+        unless Word.where(:content => filtre, :document_ids => document_id).first
           match_content = false
         end
       end

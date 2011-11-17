@@ -25,6 +25,6 @@
     .thumb
       != image_tag link_to_medium
       .document_tags
-        != DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name rescue ""
+        != Iconv.iconv('ISO-8859-1', 'UTF-8', DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name).join() rescue ""
   .foot
     %span

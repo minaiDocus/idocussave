@@ -9,6 +9,7 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    Ascii85 (1.0.1)
     RedCloth (4.2.8)
     SystemTimer (1.2.3)
     abstract (1.0.0)
@@ -110,6 +111,8 @@ GEM
     paperclip (2.3.6)
       activerecord
       activesupport
+    pdf-reader (0.10.1)
+      Ascii85 (~> 1.0.0)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.13)
@@ -187,6 +190,7 @@ DEPENDENCIES
   mongrel
   net-sftp
   paperclip (= 2.3.6)
+  pdf-reader
   rack-raw-upload
   rails (= 3.0.4)
   rcov (= 0.9.8)

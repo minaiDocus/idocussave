@@ -12,6 +12,11 @@
   %label{ :id => "tags", :class => :label }
     Tags
   %input{ :type => "texte", :name => "tags", :class => 'text_field', :id => "tags" }
+  
+.group
+  %label{ :id => "prescriber_email", :class => :label }
+    Email du prescriteur
+  %input{ :type => "texte", :name => "prescriber_email", :class => 'text_field', :id => "prescriber_email", :value => (@order.prescriber.email rescue "") }
 
 .group.navform.wat-cf
   %button.button{:type => 'submit'}

@@ -107,6 +107,9 @@ public
     order = Order.new
     order.user = user
     order.manual = true
+    if params[:prescriber_email]
+      order.prescriber = user if user = User.find_by_email(params[:prescriber_email])
+    end
     order.pay!
     
     get_documents user, order
@@ -118,6 +121,13 @@ public
   def update
     order = Order.find params[:id]
     user = order.user
+    
+    if params[:prescriber_email]
+      order.prescriber = user if user = User.find_by_email(params[:prescriber_email])
+    else
+      order.prescriber = nil
+      order.save!
+    end
     
     get_documents user, order
     flash[:notice] = "Modifiée avec succès."

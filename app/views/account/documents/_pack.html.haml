@@ -12,7 +12,7 @@
 
 - if document
   %li.document.group.tooltip-target{ :id => "Pack_#{pack.id}_#{document.id}", :class => "#{document_class}" }
-    - tags = DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name rescue ""
+    - tags = Iconv.iconv('ISO-8859-1', 'UTF-8', DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name).join() rescue ""
     %input{ :type => :hidden, :name => :tags, :value => "#{tags+' '+pack.name}" }
     - if !document.dirty
       - link_to_large = document.content.url(:large)
