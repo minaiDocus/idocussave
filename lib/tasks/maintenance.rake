@@ -108,7 +108,6 @@ namespace :maintenance do
 
         for w in receiver.text.split()
           if v_word = Dictionary.find_one(w)
-            debugger
             unless wd = Word.where(:content => v_word.word, :document_content_id => user.document_content.id).first
               wd = Word.create!(:content => v_word.word, :document_content_id => user.document_content.id)
             end
