@@ -297,12 +297,11 @@ def show
     end
     
     # découpoage et stockage dans une zone temporaire
-    
     unless File.directory?("#{Rails.root}/public/system/archive")
       Dir.mkdir("#{Rails.root}/public/system/archive")
-      unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
-        Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
-      end
+    end
+    unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
+      Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
     end
     
     dec.each_with_index do |partie,index|

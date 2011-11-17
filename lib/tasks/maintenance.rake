@@ -78,45 +78,56 @@ namespace :maintenance do
   
   namespace :document do
     desc "Feed user dictionary"
-    task :extract_content => :environment do
-      class Receiver
-        attr_reader :text
-        
-        def initialize
-          @text = ""
-        end
-        
-        def show_text(string, *params)
-          @text += string
-        end
-        
-        def show_text_with_positioning(array, *params)
-        show_text(array.select{|i| i.is_a?(String)}.join())
-        end
-      end
+    task :extract_content_for_user, [:email] => :environment do |t,args|
+      user = User.find_by_email(args[:email])
       
-      Document.where(:is_an_original => true).entries.each do |document|
-        document.indexed = true
-        document.save!
-      end
-
-      Document.where(:indexed => false).each do |document|
-        user = document.pack.order.user
-        
-        receiver = Receiver.new
-        PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver)
-
-        for w in receiver.text.split()
-          if v_word = Dictionary.find_one(w)
-            unless wd = Word.where(:content => v_word.word, :document_content_id => user.document_content.id).first
-              wd = Word.create!(:content => v_word.word, :document_content_id => user.document_content.id)
-            end
-            wd.documents << document  << document.pack.documents.where(:is_an_original => true).first
-            wd.save!
+      if user
+        puts "In progress..."
+        class Receiver
+          attr_reader :text
+          
+          def initialize
+            @text = ""
+          end
+          
+          def show_text(string, *params)
+            @text += string
+          end
+          
+          def show_text_with_positioning(array, *params)
+          show_text(array.select{|i| i.is_a?(String)}.join())
           end
         end
-        document.indexed = true
-        document.save!
+        
+        user.orders.each do |order|
+          order.packs.each do |pack|
+            pack.documents.where(:is_an_original => true).entries.each do |document|
+              document.indexed = true
+              document.save
+            end
+            pack.documents.where(:indexed => nil).entries.each do |document|
+              user = document.pack.order.user
+              receiver = Receiver.new
+              PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue nil
+              for w in receiver.text.split()
+                if v_word = Dictionary.find_one(w)
+                  unless wd = Word.where(:content => v_word.word, :document_content_id => user.document_content.id).first
+                    wd = Word.create!(:content => v_word.word, :document_content_id => user.document_content.id)
+                  end
+                  wd.documents << document if !wd.documents.include?(document)
+                  original = document.pack.documents.where(:is_an_original => true).first
+                  wd.documents <<  original if !wd.documents.include?(original)
+                  wd.save!
+                end
+              end
+              document.indexed = true
+              document.save!
+              print "."
+            end
+          end
+        end
+      else
+        puts "Unkown user : #{args[:email]}"
       end
     end
   end
