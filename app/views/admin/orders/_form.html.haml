@@ -16,7 +16,7 @@
 .group
   %label{ :id => "prescriber_email", :class => :label }
     Email du prescriteur
-  %input{ :type => "texte", :name => "prescriber_email", :class => 'text_field', :id => "prescriber_email", :value => (@order.prescriber.email rescue "") }
+  %input{ :type => "texte", :name => "prescriber_email", :class => 'text_field', :id => "prescriber_email", :value => (Reporting.where(:order_ids => @order.id).first.user.email rescue "") }
 
 .group.navform.wat-cf
   %button.button{:type => 'submit'}

@@ -71,5 +71,62 @@ class Pack
     def shared_by
       self.order.user
     end
+    
+    def find_document filter, user
+      docs = []
+      filter.split.each_with_index do |word,index|
+        if index == 0
+          docs = Document.any_in(:pack_id => user["pack_ids"]).where(:content_text => /\w*#{word}\w*/).entries
+        else
+          inter = []
+          docs.each do |document|
+            inter << document if document.content_text.match(/\w*#{word}\w*/)
+          end
+          docs = inter
+        end
+      end
+      docs
+    end
+    
+    def find_content filter, user
+      result = []
+      res = Document.any_in(:pack_id => user["pack_ids"]).where(:content_text => /\w*#{filter}\w*/).entries
+      if res
+        res.each do |document|
+          document.content_text.scan(/[+]*\w*#{filter}\w*/).each do |word|
+            if word.match(/^[+]/)
+              result << [true,word.scan(/\w+/).join()]
+            else
+              result << [false,word]
+            end
+          end
+        end
+      end
+      result = result.uniq
+    end
+    
+    def find_by_content filter, user
+      docs = []
+      filter.split.each_with_index do |word,index|
+        inter = []
+        if index == 0
+          docs = Document.any_in(:pack_id => user["pack_ids"]).where(:content_text => /\w*#{word}\w*/).entries
+        else
+          docs.each do |document|
+            inter << document if document.content_text.match(/*\w*#{word}\w*/)
+          end
+          docs = inter
+        end
+      end
+      packs = []
+      if docs
+        docs.each do |document|
+          packs << document.pack if !packs.include?(document.pack)
+        end
+      end
+      packs
+    end
+    
   end
+  
 end

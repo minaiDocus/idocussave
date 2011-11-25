@@ -8,6 +8,7 @@ class Product
   field :price_in_cents_wo_vat, :type => Float
   field :description, :type => String, :default => ""
   field :position, :type => Integer, :default => 1
+  field :is_a_subscription, :type => Boolean, :default => false
 
   validates_presence_of :title
   validates_presence_of :price_in_cents_wo_vat

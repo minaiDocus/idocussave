@@ -1,6 +1,6 @@
 class Admin::UsersController < Admin::AdminController
 
-  before_filter :load_user, :only => %w(edit update update_confirm_status destroy)
+  before_filter :load_user, :only => %w(edit update update_confirm_status update_delivery_status destroy)
 
 protected
 
@@ -33,6 +33,11 @@ public
   
   def update
     if @user.update_attributes params[:user]
+      params[:user][:clients_email] = [] unless params[:user][:clients_email]
+      @user.reporting = Reporting.new unless @user.reporting
+      @user.reporting.clients = User.find_by_emails params[:user][:clients_email].split(/\s*,\s*/)
+      @user.delivery.state = params[:delivery_state]
+      @user.delivery.save
       redirect_to admin_users_path
     else
       render :action => "edit"
@@ -44,7 +49,18 @@ public
     
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }
-      format.html{ redirect_to admin_pages_path }
+      format.html{ redirect_to admin_users_path }
+    end
+  end
+  
+  def update_delivery_status
+    @user.delivery = Delivery.new unless @user.delivery
+    @user.delivery.state = params[:value]
+    @user.delivery.save!
+    
+    respond_to do |format|
+      format.json{ render :json => {}, :status => :ok }
+      format.html{ redirect_to admin_users_path }
     end
   end
 

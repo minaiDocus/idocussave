@@ -19,7 +19,11 @@
 .group
   != f.label :position, "Position", :class => :label
   != f.text_field :position, :class => 'text_field'
-
+  
+.group
+  != f.label :is_a_subscription, "Abonnement ?", :class => :label
+  != f.check_box :is_a_subscription, :class => 'checkbox'
+  
 .group.navform.wat-cf
   %button.button{:type => 'submit'}
     != image_tag("web-app-theme/tick.png", :alt => "Save")

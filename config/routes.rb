@@ -73,6 +73,7 @@ Idocus::Application.routes.draw do
     root :to => "admin#index"
     resources :users do
       post 'update_confirm_status', :on => :member
+      post 'update_delivery_status', :on => :member
     end
     resources :orders
     resources :homepages

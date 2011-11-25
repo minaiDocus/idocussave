@@ -7,6 +7,7 @@ class Document
   field :content_file_type
   field :content_file_size, :type => Integer
   field :content_updated_at, :type => Time
+  field :content_text, :type => String, :default => ""
   field :is_an_original, :type => Boolean, :default => false
   field :tags, :type => String, :default => ""
   field :position, :type => Integer

@@ -22,7 +22,7 @@ protected
     }
     
     doc_names = []
-    params[:document_names].split(', ').each do |doc_name|
+    params[:document_names].split(/\s*,\s*/).each do |doc_name|
       doc_names << doc_name
     end
     
@@ -119,18 +119,30 @@ public
   end
   
   def update
+    message = ""
+  
     order = Order.find params[:id]
     user = order.user
     
-    if params[:prescriber_email]
-      order.prescriber = user if user = User.find_by_email(params[:prescriber_email])
+    unless params[:prescriber_email].blank?
+      if user = User.find_by_email(params[:prescriber_email])
+        if user.reporting && user.reporting.clients.include?(order.user)
+          user.reporting.order_add order unless user.reporting.order_ids.include?(order.id)
+        else
+          message += "L'utilisteur #{order.user.email} n'est pas client de #{user.email}."
+        end
+      end
     else
-      order.prescriber = nil
-      order.save!
+      reporting = Reporting.where(:order_ids => order.id).entries
+      reporting.each do |r|
+        r.order_del order
+      end
     end
     
-    get_documents user, order
-    flash[:notice] = "Modifiée avec succès."
+    if get_documents user, order
+      message += "Modifiée avec succès."
+    end
+    flash[:notice] = message
     
     redirect_to admin_orders_path
   end
@@ -142,9 +154,7 @@ public
         url = url.split('/')
         cmd = "cd #{Rails.root}/public/system/contents/ && rm -r #{url[3]}"
         system(cmd)
-        if document_tags = DocumentTag.where(:document_id => document.id)
-          document_tags.delete_all
-        end
+        document.document_tag.delete if document.document_tag
       end
     end
     @order.delete

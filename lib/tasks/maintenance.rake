@@ -76,13 +76,13 @@ namespace :maintenance do
     end
   end
   
-  namespace :document do
-    desc "Feed user dictionary"
-    task :extract_content_for_user, [:email] => :environment do |t,args|
+  namespace :pdf do
+    desc "Extract pdf content to DB"
+    task :extract_content_for, [:email] => :environment do |t,args|
       user = User.find_by_email(args[:email])
       
       if user
-        puts "In progress..."
+        # Creating class for reading
         class Receiver
           attr_reader :text
           
@@ -91,7 +91,12 @@ namespace :maintenance do
           end
           
           def show_text(string, *params)
-            @text += string
+            word = string.scan(/\w+/).join().downcase
+            if Dictionary.find_one(word)
+              @text += "+#{word}"
+            else
+              @text += word
+            end
           end
           
           def show_text_with_positioning(array, *params)
@@ -99,33 +104,37 @@ namespace :maintenance do
           end
         end
         
+        puts "The extraction begin..."
+        
         user.orders.each do |order|
+          puts "Order number : #{order.number}"
           order.packs.each do |pack|
+            puts "\tPack name : #{pack.name}"
             pack.documents.where(:is_an_original => true).entries.each do |document|
               document.indexed = true
               document.save
             end
-            pack.documents.where(:indexed => nil).entries.each do |document|
-              user = document.pack.order.user
-              receiver = Receiver.new
-              PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue nil
-              for w in receiver.text.split()
-                if v_word = Dictionary.find_one(w)
-                  unless wd = Word.where(:content => v_word.word, :document_content_id => user.document_content.id).first
-                    wd = Word.create!(:content => v_word.word, :document_content_id => user.document_content.id)
-                  end
-                  wd.documents << document if !wd.documents.include?(document)
-                  original = document.pack.documents.where(:is_an_original => true).first
-                  wd.documents <<  original if !wd.documents.include?(original)
-                  wd.save!
+            documents = pack.documents.not_in(:indexed => [true]).entries
+            puts "\t\tTotal number of documents to process : #{documents.length}"
+            if documents.length > 0
+              documents.each_with_index do |document,index|
+                receiver = Receiver.new
+                result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
+                if result
+                  print "\n\t\t\t[DOC-#{index + 1}]..."
+                  document.content_text = receiver.text.split().uniq
+                  document.indexed = true
+                  document.save!
+                else
+                  print "!"
                 end
               end
-              document.indexed = true
-              document.save!
-              print "."
+            else
+              puts "Pass."
             end
           end
         end
+        puts "The extraction is finished."
       else
         puts "Unkown user : #{args[:email]}"
       end

@@ -9,6 +9,7 @@ class ProductOption
   attr_accessor :new_product_price_in_cents_wo_vat
   attr_accessor :new_product_category
   attr_accessor :new_product_position
+  attr_accessor :new_product_duration
   
   field :title
   field :description, :type => String, :default => ""
@@ -16,9 +17,7 @@ class ProductOption
   field :position, :type => Integer, :default => 1
   field :group, :type => Integer, :default => 1
   field :require_addresses, :type => Boolean, :default => false
-  field :is_a_subscription, :type => Boolean, :default => false
-  field :begin, :type => Date
-  field :end, :type => Date
+  field :duration, :type => Integer, :default => 1
   
   validates_presence_of :title
   validates_presence_of :price_in_cents_wo_vat
@@ -34,8 +33,8 @@ class ProductOption
   end
   
   def create_product_from_attributes
-  	unless new_product_title.blank? && new_product_description.blank? && new_product_price_in_cents_wo_vat.blank? && new_product_category.blank? && new_product_position.blank?
-  		document_product = DocumentProduct.new(:title => new_product_title, :description => new_product_description, :price_in_cents_wo_vat => new_product_price_in_cents_wo_vat, :category => new_product_category, :position => new_product_position)
+  	unless new_product_title.blank? && new_product_description.blank? && new_product_price_in_cents_wo_vat.blank? && new_product_category.blank? && new_product_position.blank? && new_product_duration.blank?
+  		document_product = DocumentProduct.new(:title => new_product_title, :description => new_product_description, :price_in_cents_wo_vat => new_product_price_in_cents_wo_vat, :category => new_product_category, :position => new_product_position, :duration => new_product_duration)
       document_product.document_product_options << self
       document_product.save!
   	end

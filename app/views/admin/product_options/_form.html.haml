@@ -21,7 +21,11 @@
 .group
   != f.label :require_addresses, "Adresse requise?", :class => :label
   != f.check_box :require_addresses, :class => 'check_box'
-
+  
+.group
+  != f.label :duration, "Durée de l'abonnement ( en nombre de mois, laisser à 1 pour normal ) ?", :class => :label
+  != f.text_field :duration, :class => 'text_field'
+  
 .group
   != f.label :product_id, "Sélectionner un produit :", :class => :label
   != f.collection_select :product_id, Product.find(:all), :id, :title, :include_blank => false, :prompt => "Selectionner un produit"

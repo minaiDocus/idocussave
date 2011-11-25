@@ -413,9 +413,17 @@ $(document).ready(function () {
     searchingText: "Recherche en cours...",
     tokenDelimiter: ":_:",
     tokenValue: "name",
+    propertyToSearch: "name",
     preventDuplicates: true,
-    resultsFormatter: function(item) { return "<li><p class='" + item.id + "'>" + item.name + "</p></li>" },
-    tokenFormatter: function(item) {  return "<li><p class='" + item.id + "'>" + item.name + "</p></li>" },
+    resultsFormatter: function(item) {
+      var type  = "";
+      if (item.id == 1)
+        type = " - tag";
+      else if (item.id == 2)
+        type = " - inconnu";
+      return "<li>" + item.name + "<span style='font-style: italic; color: gray;'>" + type + "</span></li>";
+    },
+    tokenFormatter: function(item) {  return "<li>" + item.name + "</li>" },
     onAdd: function (item) {
       var value = $(this).val();
       var url = "/account/documents/find?having="+value;

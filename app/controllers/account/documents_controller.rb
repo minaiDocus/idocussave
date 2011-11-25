@@ -10,7 +10,7 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
-def show
+  def show
     @pack = current_user.packs.where(:_id => params[:id]).first rescue nil
     @documents = @pack.documents.without_original.asc(:position) rescue nil
 
@@ -26,7 +26,7 @@ def show
     end
   end
   
-    def packs
+  def packs
     pack_ids = []
     
     if params[:view] == "all" || params[:view] == "self"
@@ -71,14 +71,20 @@ def show
       end
     end
     
-    @packs = nil
-    unless pack_ids.empty?
-      @packs = Pack.any_in(:_id => pack_ids).desc(:created_at)
-      @packs_count = @packs.count
-      @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
-    else
-      @packs_count = 0;
+    @packs = []
+    
+    if params[:filtre]
+      @packs = Pack.find_by_content(params[:filtre],current_user)
     end
+    
+    unless pack_ids.empty?
+      @packs = @packs + Pack.any_in(:_id => pack_ids).desc(:created_at)
+      @packs = @packs.uniq
+    end
+
+    @packs_count = @packs.count
+    @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
+    
   end
 
   def invoice
@@ -113,19 +119,20 @@ def show
       end
       
       Iconv.iconv('ISO-8859-1', 'UTF-8', tags).join().split.each do |tag|
-        @tags << {"id" => "tag", "name" => "#{tag}"}
+        @tags << {"id" => "1", "name" => "#{tag}"}
       end
       
     end
     
     if params[:by] == "ocr_result" || !params[:by]
-      words = current_user.document_content.words.where(:content => /\w*#{params[:q]}\w*/).entries rescue Array.new
-      words.each do |word|
-        @document_contents << {"id" => "content", "name" => "#{word.content}"}
+      result = Pack.find_content query, current_user
+      if result
+        result.each do |word|
+          @document_contents << {"id" => "#{word[0] ? 0 : 2}", "name" => "#{word[1]}"}
+        end
       end
     end
     
-    @result = Array.new
     @result = @tags + @document_contents
     
     @result = @result.sort do |a,b|
@@ -194,28 +201,12 @@ def show
       end
     end
     
-    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').each_with_index do |tag,index|
-      docs = Array.new
-      words = current_user.document_content.words.where(:content => /\w*#{tag}\w*/).entries rescue Array.new
-      words.each_with_index do |word,index|
-        if index == 0
-          docs = word.documents
-        else
-          docs = docs.select do |d|
-            if word.documents.include?(d)
-              true
-            else
-              false
-            end
-          end
-        end
-      end
-      docs.each do |d|
-        document_ids += " #{d.id}"
-      end
-    end
+    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').join(" ")
+    
     
     @documents = Document.any_in(:_id => document_ids.split).entries
+    @documents = @documents + Pack.find_document(params[:having], current_user)
+    @documents = @documents.uniq
     
     render :action => "show"
   end
@@ -341,10 +332,10 @@ def show
   
   def reporting
     @year = params[:year] ? params[:year].to_i : Time.now.year
-    @clients = current_user.clients
+    @clients = current_user.reporting.clients
     
     @packs = []
-    if orders = Order.where(:prescriber_id => current_user.id).entries
+    if orders = current_user.reporting.orders
       orders.each{|order| order.packs.each{|p| @packs << p}}
     end
     
@@ -388,7 +379,6 @@ protected
   def matchFilter document_id
     if params[:filtre]
       match_tag = true
-      match_content = true
 
       document_tag = DocumentTag.where(:document_id => document_id, :user_id => current_user.id).first
       if document_tag.nil?
@@ -400,13 +390,7 @@ protected
         end
       end
 
-      Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:').each do |filtre|
-        unless Word.where(:content => filtre, :document_ids => document_id).first
-          match_content = false
-        end
-      end
-
-      if match_tag || match_content
+      if match_tag
         true
       else
         false
