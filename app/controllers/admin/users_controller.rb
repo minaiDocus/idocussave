@@ -33,11 +33,11 @@ public
   
   def update
     if @user.update_attributes params[:user]
+      debugger
       params[:user][:clients_email] = [] unless params[:user][:clients_email]
-      @user.reporting = Reporting.new unless @user.reporting
+      @user.reporting = Reporting.create unless @user.reporting
       @user.reporting.clients = User.find_by_emails params[:user][:clients_email].split(/\s*,\s*/)
-      @user.delivery.state = params[:delivery_state]
-      @user.delivery.save
+      @user.save
       redirect_to admin_users_path
     else
       render :action => "edit"
@@ -54,7 +54,11 @@ public
   end
   
   def update_delivery_status
-    @user.delivery = Delivery.new unless @user.delivery
+    debugger
+    unless @user.delivery
+      @user.delivery = Delivery.create
+      @user.save
+    end
     @user.delivery.state = params[:value]
     @user.delivery.save!
     

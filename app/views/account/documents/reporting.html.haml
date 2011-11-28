@@ -145,11 +145,12 @@
               - ok = false
               - nb = 0
               - Delivery::STATES.each do |state|
-                - if !ok && state[1] != client.delivery.state
+                - stt = client.delivery.state rescue nil
+                - if !ok && state[1] != stt
                   - nb += 1 
                 - else
                   - ok = true
-              
+                
               - ok = true
               - Delivery::STATES.each_with_index do |state,index|
                 - if index != 0
