@@ -11,7 +11,15 @@ protected
 public
 
   def index
-    @users = User.desc(:created_at).paginate :page => params[:page]
+    if params[:email] && !params[:email].blank?
+      @users = User.where(:email => /\w*#{params[:email]}\w*/)
+      if @users.nil?
+        @users = []
+      end
+    else
+      @users = User.all
+    end
+    @users = @users.desc(:created_at).paginate :page => params[:page], :per_page => 50
   end
 
   def new

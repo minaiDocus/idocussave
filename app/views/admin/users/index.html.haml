@@ -6,6 +6,12 @@
   .content
     %h2.title All users
     .inner
+      %form{ :method => "GET", :action => admin_users_path }
+        %label{ :for => :email }
+          Filtrer sur l'utilisateur : 
+        %input.w100{ :type => :text, :name => :email, :value => (params[:email] rescue "") }
+        %input{ :type => :submit, :value => "Valider", :style => "width:50px;" }
+      %br
       %table.table
         %tr
           %th Email

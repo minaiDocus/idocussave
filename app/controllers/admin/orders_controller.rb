@@ -86,7 +86,17 @@ protected
 public
 
   def index
-    @orders = Order.order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
+    if params[:email] && !params[:email].blank?
+      users = User.where(:email => /\w*#{params[:email]}\w*/).entries
+      if users
+        @orders = Order.any_in(:user_id => users.collect{|u| u.id})
+      else
+        @orders = []
+      end
+    else
+      @orders = Order.all
+    end
+    @orders = @orders.order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
     
     respond_to do |format|
       format.html
