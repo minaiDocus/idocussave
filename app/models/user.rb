@@ -20,6 +20,7 @@ class User
   references_many :orders
   references_many :credits
   references_many :document_tags
+  references_many :events
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
