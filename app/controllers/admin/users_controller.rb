@@ -33,10 +33,10 @@ public
   
   def update
     if @user.update_attributes params[:user]
-      debugger
       params[:user][:clients_email] = [] unless params[:user][:clients_email]
       @user.reporting = Reporting.create unless @user.reporting
-      @user.reporting.clients = User.find_by_emails params[:user][:clients_email].split(/\s*,\s*/)
+      @user.reporting.clients = User.find_by_emails params[:user][:clients_email].split(/\s*,\s*/) - [@user]
+      @user.reporting.save
       @user.save
       redirect_to admin_users_path
     else
@@ -54,7 +54,6 @@ public
   end
   
   def update_delivery_status
-    debugger
     unless @user.delivery
       @user.delivery = Delivery.create
       @user.save

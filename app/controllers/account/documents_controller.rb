@@ -332,10 +332,10 @@ class Account::DocumentsController < Account::AccountController
   
   def reporting
     @year = params[:year] ? params[:year].to_i : Time.now.year
-    @clients = current_user.reporting.clients
+    @clients = current_user.reporting.clients + [current_user]
     
     @packs = []
-    if orders = current_user.reporting.orders
+    if orders = (current_user.reporting.orders + current_user.orders)
       orders.each{|order| order.packs.each{|p| @packs << p}}
     end
     
