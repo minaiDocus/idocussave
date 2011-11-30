@@ -11,6 +11,14 @@
   != f.text_field :price_in_cents_wo_vat, :class => 'text_field'
   
 .group
+  != f.label :header_info, "Information d'entête de page: ", :class => :label
+  != f.text_area :header_info, :class => 'text_area'
+  
+.group
+  != f.label :footer_info, "Information de pied de page : ", :class => :label
+  != f.text_area :footer_info, :class => 'text_area'
+  
+.group
   != f.label :category, "Catégorie :", :class => :label
   %select{ :name => :category, :id => :category }
     %option{ :value => 1 } Numérisation
@@ -23,6 +31,10 @@
 .group
   != f.label :is_a_subscription, "Abonnement ?", :class => :label
   != f.check_box :is_a_subscription, :class => 'checkbox'
+  
+.group
+  != f.label :require_billing_address, "Adresse de facturation requise ?", :class => :label
+  != f.check_box :require_billing_address, :class => 'checkbox'
   
 .group.navform.wat-cf
   %button.button{:type => 'submit'}

@@ -17,7 +17,8 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       session[:product_id] = params[:product_id]
       session[:option_ids] = []
       require_addresses = false
-      Product.find(params[:product_id]).product_options.distinct(:group).each do |group|
+      product = Product.find(params[:product_id])
+      product.product_options.distinct(:group).each do |group|
         if params["option_group_#{group}"]
           session[:option_ids] << params["option_group_#{group}"]
           if  ProductOption.find(params["option_group_#{group}"]).require_addresses == true
@@ -25,14 +26,17 @@ class Tunnel::OrdersController < Tunnel::TunnelController
           end
         end
       end
+      session[:require_shipping_address] = require_addresses
+      require_addresses = true if product.require_billing_address
       if require_addresses
+        session[:require_billing_address] = product.require_billing_address
         redirect_to address_choice_tunnel_order_url
       else
         redirect_to summary_tunnel_order_url
       end
     else
-      session[:billing_address] = params[:billing_address]
-      session[:shipping_address] = params[:shipping_address]
+      session[:billing_address] = params[:billing_address] rescue nil
+      session[:shipping_address] = params[:shipping_address] rescue nil
       redirect_to summary_tunnel_order_url
     end
   end

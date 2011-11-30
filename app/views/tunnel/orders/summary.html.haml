@@ -97,23 +97,36 @@
                 %span.orange
                   Votre compte a un solde insuffisant, veuillez le créditer 
                   !=link_to :ici, account_profile_url
+          %li
+            .row
+              %span
+                Si vous souhaitez régler par prélèvement bancaire cliquez
+                !=link_to :ici, account_profile_url
+        - else
+          %li
+            .row
+              %span
+                Si vous souhaitez régler par compte prépayé cliquez
+                !=link_to :ici, account_profile_url
       
-      - if @billing_address_id && @shipping_address_id
+      - if @billing_address_id || @shipping_address_id
         .h-separator.light.margin1top.margin1bottom
 
         %ul.adresseslist.static.margin2left.margin1top.clearfix
-          %li
-            .header
-              %span
-                Adresse de facturation
-            .content
-              != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @billing_address_id).first}
-          %li
-            .header
-              %span
-                Adresse de retour
-            .content
-              != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @shipping_address_id).first}
+          - if @billing_address_id
+            %li
+              .header
+                %span
+                  Adresse de facturation
+              .content
+                != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @billing_address_id).first}
+          - if @shipping_address_id
+            %li
+              .header
+                %span
+                  Adresse de retour
+              .content
+                != render :partial => 'address_content', :locals => {:address => current_user.addresses.where(:_id => @shipping_address_id).first}
 
       .h-separator.strong.margin1top
       

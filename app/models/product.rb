@@ -9,6 +9,9 @@ class Product
   field :description, :type => String, :default => ""
   field :position, :type => Integer, :default => 1
   field :is_a_subscription, :type => Boolean, :default => false
+  field :require_billing_address, :type => Boolean, :default => true
+  field :header_info, :type => String, :default => ""
+  field :footer_info, :type => String, :default => ""
 
   validates_presence_of :title
   validates_presence_of :price_in_cents_wo_vat

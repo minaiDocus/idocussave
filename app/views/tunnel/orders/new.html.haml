@@ -28,7 +28,7 @@
                 %strong
                   %label{ :for => product.id }
                     !=product.title
-                != (product.description == "")? "" : " - #{product.description}"
+                != (product.description == "")? "" : " #{product.description}"
               - if product.price_in_cents_w_vat > 0
                 %span.price
                   %strong

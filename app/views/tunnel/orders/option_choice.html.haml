@@ -20,6 +20,10 @@
         #{(@product.category == 1)? "Numérisation : " : "Sauvegarde : "}
         != @product.title
       
+      %br
+      .margin2left
+        != @product.header_info
+      
       %ul.optionslist.margin2left.margin2top
         - @product.product_options.distinct(:group).sort.each do |group|
           - options = @product.product_options.where(:group => group).by_position
@@ -61,7 +65,8 @@
                   %span.price
                     %strong
                       -
-
+        != @product.footer_info
+        
       .buttonsrow.margin1bottom.margin4top
         %input.button.whitebtn.floattoright.margin2right.w125{ :type => "submit", :value => "Étape suivante"}
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_url}
