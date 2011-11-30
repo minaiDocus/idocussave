@@ -75,7 +75,9 @@ Idocus::Application.routes.draw do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
     end
-    resources :orders
+    resources :orders do
+      post 'update_prescriber', :on => :collection
+    end
     resources :homepages
     resource :thumbnail_task do
       get 'start'

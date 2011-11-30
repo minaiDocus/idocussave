@@ -156,6 +156,41 @@ public
     
     redirect_to admin_orders_path
   end
+  
+  def update_prescriber
+    user = User.find_by_email(params[:prescriber_email])
+    if user
+      order_ids = params[:order_ids].split
+      
+      unless order_ids.nil?
+        orders = Order.any_in(:_id => order_ids).entries
+        unless orders.empty?
+          orders.each do |order|
+            reporting = Reporting.where(:order_ids => order.id).first
+            if reporting && reporting.user != user
+                reporting.order_del order
+                reporting.save
+            end
+            if !reporting || reporting.user != user
+              user.reporting = Reporting.create unless user.reporting
+              user.reporting.orders += orders
+              user.reporting.save
+              user.save
+            end
+          end
+        end
+      else
+        flash[:notice] = "Aucune commande séléctionner."
+      end
+    else
+      flash[:notice] = "Utilisateur inconnu : '#{params[:prescriber_email]}'."
+    end
+    
+    respond_to do |format|
+      format.json{ render :json => {}, :status => :ok }
+      format.html{ redirect_to admin_orders_path }
+    end
+  end
 
   def destroy
     @order.packs.each do |pack|

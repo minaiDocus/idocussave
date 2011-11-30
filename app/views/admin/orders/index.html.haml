@@ -12,31 +12,62 @@
         %input.w100{ :type => :text, :name => :email, :value => (params[:email] rescue "") }
         %input{ :type => :submit, :value => "Valider", :style => "width:50px;" }
       %br
-      %table.table
-        %tr
-          %th N°
-          %th Date
-          %th Customer
-          %th Total
-          %th State
-          %th.last &nbsp;
-        - @orders.each do |instance|
-          %tr{:class => cycle("odd", "even")}
-            %td!= link_to instance.number, [:admin, instance]
-            %td!= link_to l(instance.created_at), [:admin, instance]
-            %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
-            %td
-              - if instance.manual
-                Inconnu
+      %form{ :method => "POST", :action => update_prescriber_admin_orders_path }
+        %table.table
+          %tr
+            %th N°
+            %th Date
+            %th Customer
+            %th Total
+            %th State
+            %th
+            %th.last &nbsp;
+          - @orders.each_with_index do |instance,index|
+            %tr{:class => cycle("odd", "even")}
+              %td!= link_to instance.number, [:admin, instance]
+              %td!= link_to l(instance.created_at), [:admin, instance]
+              %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+              %td
+                - if instance.manual
+                  Inconnu
 
-            %td!= instance.state
-
-            %td.last
-              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_order_path(instance)
-              -#|
-              -#!= link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_order_path(instance), :method => :delete, :confirm => "Êtes-vous sûr ?"
-
+              %td!= instance.state
+              
+              %td
+                %input{ :type => :checkbox, :class => "order", :name => "id_#{index + 1}", :value => instance.id }
+              %td.last
+                != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_order_path(instance)
+                -#|
+                -#!= link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_order_path(instance), :method => :delete, :confirm => "Êtes-vous sûr ?"
+        %label{ :for => :email }
+          Notifier ces commandes à l'utilisateur : 
+        %input.w100{ :type => :text, :name => :prescriber_email }
+        %input{ :type => :button, :id => :prescriber_order , :value => "Valider", :style => "width:50px;" }
+        
       .actions-bar.wat-cf
         .actions
         != will_paginate @orders
 - content_for :sidebar, render(:partial => 'sidebar')
+
+:javascript
+  $(document).ready(function () {
+    $('#prescriber_order').click(function(){
+      var order_ids = "";
+      $("input[type=checkbox]").each(function(){
+        order_ids += " "+$(this).val();
+      });
+      hsh = { "prescriber_email":$("input[name=prescriber_email]").val(), "order_ids":order_ids };
+      $.ajax({
+        url: "/admin/orders/update_prescriber",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+        },
+        success: function(data){
+          alert("Okidoki");
+        }
+      });
+      return false;
+    });
+  });
