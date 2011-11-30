@@ -8,7 +8,7 @@
     .inner
       %form{ :method => "GET", :action => admin_orders_path }
         %label{ :for => :email }
-          Filtrer sur l'utilisateur : 
+          Filtre "Customer" : 
         %input.w100{ :type => :text, :name => :email, :value => (params[:email] rescue "") }
         %input{ :type => :submit, :value => "Valider", :style => "width:50px;" }
       %br
@@ -20,11 +20,12 @@
             %th Customer
             %th Total
             %th State
+            %th Prescriber
             %th
             %th.last &nbsp;
           - @orders.each_with_index do |instance,index|
             %tr{:class => cycle("odd", "even")}
-              %td!= link_to instance.number, [:admin, instance]
+              %td!= link_to instance.number, [:admin, instance], :title => "#{instance.packs.collect{|p| p.name}.join(', ')}"
               %td!= link_to l(instance.created_at), [:admin, instance]
               %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
               %td
@@ -34,6 +35,11 @@
               %td!= instance.state
               
               %td
+                - reporting = Reporting.where(:order_ids => instance.id).first
+                - if reporting
+                  != reporting.user.email
+                
+              %td
                 %input{ :type => :checkbox, :class => "order", :name => "id_#{index + 1}", :value => instance.id }
               %td.last
                 != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_order_path(instance)
@@ -42,7 +48,9 @@
         %label{ :for => :email }
           Notifier ces commandes à l'utilisateur : 
         %input.w100{ :type => :text, :name => :prescriber_email }
-        %input{ :type => :button, :id => :prescriber_order , :value => "Valider", :style => "width:50px;" }
+        %input{ :type => :submit, :value => "Valider", :style => "width:50px;" }
+        %br
+        ( Laisser vide pour supprimer le prescripteur )
         
       .actions-bar.wat-cf
         .actions
