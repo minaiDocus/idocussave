@@ -1,0 +1,34 @@
+.group
+  != f.label :title, "Title *", :class => :label
+  != f.text_field :title, :class => 'text_field'
+  
+.group
+  != f.label :description, "Déscription", :class => :label
+  != f.text_field :description, :class => 'text_field'
+  
+.group
+  != f.label :position, "Position", :class => :label
+  != f.text_field :position, :class => 'text_field'
+  
+.group
+  != f.label :supergroup_id, "Sélectionner un super groupe", :class => :label
+  != f.collection_select :supergroup_id, (Group.find(:all) - [@group]), :id, :title, :prompt => "Selectionner un super groupe"
+  
+.group
+  != f.label :require_id, "Sélectionner un groupe pour la dépendance", :class => :label
+  != f.collection_select :require_id, (Group.find(:all) - [@group]), :id, :title, :prompt => "Selectionner un super groupe"
+  
+.group
+  != f.label :product_id, "Sélectionner un produit", :class => :label
+  != f.collection_select :product_id, Product.find(:all), :id, :title, :prompt => "Sélectionner un produit"
+  
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_products_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.
