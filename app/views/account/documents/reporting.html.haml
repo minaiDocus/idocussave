@@ -9,6 +9,14 @@
     != csrf_meta_tag
 
   %body.padding1left
+    -if current_user.is_admin
+      %form{ :action => reporting_account_documents_path, :method => "GET" }
+        %label{ :for => :view_user }
+          Voir le reporting de : 
+        %input{ :type => :text, :name => :email, :id => :view_user }
+        %input{ :type => :submit, :style => "width: 50px;" }
+      %br
+      %br
     %a{ :href => "#{reporting_account_documents_path}?year=#{@year - 1}" }
       année précédente
     |

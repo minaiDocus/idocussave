@@ -54,7 +54,7 @@ class Pack
       div << [self.name,1,1,number_of_page]
     end
 
-    div = [level_number,div]
+    div = [level_number,number_of_page,div]
     self.division = div
     self.save
   end

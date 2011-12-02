@@ -8,6 +8,7 @@ class Order
 
   # FIXME use newer syntax
   referenced_in :user
+  referenced_in :subscription
   
   references_many :packs, :dependent => :delete
   

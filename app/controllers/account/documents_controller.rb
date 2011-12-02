@@ -266,26 +266,11 @@ class Account::DocumentsController < Account::AccountController
     pack = Pack.find(params[:pack_id])[0]
     
     # extraction des informations
-    
-    url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
-    metadata = `pdftk #{url} dump_data`
-    
-    number_of_page = metadata.scan(/NumberOfPages: \d+/).to_s.scan(/\d+/).to_s.to_i
-    
-    bookmarks = metadata.scan(/BookmarkTitle: \w+\nBookmarkLevel: \d+\nBookmarkPageNumber: \d+/)
-    
-    dec = []
-    unless bookmarks.empty?
-      bookmarks.each do |b|
-        inter = []
-        b.split(/\n/).each_with_index do |info,index|
-          inter << info.split(/: /)[1]
-        end
-        dec << inter
-      end
-    else
-      dec << [pack.name,1,1]
+    if pack.division.empty?
+      pack.get_division_from_pdf
     end
+    
+    number_of_page = pack.division[1]
     
     # découpoage et stockage dans une zone temporaire
     unless File.directory?("#{Rails.root}/public/system/archive")
@@ -295,10 +280,11 @@ class Account::DocumentsController < Account::AccountController
       Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
     end
     
-    dec.each_with_index do |partie,index|
-      filename = partie[0]
+    pack.division[2].each_with_index do |partie,index|
+      filename = partie[0].gsub(/\s/,'_')
+      level = partie[1]
       start_number = partie[2]
-      end_number = (dec[index + 1][2].to_i - 1) rescue number_of_page
+      end_number = partie[3]
       
       part = ""
       if start_number == end_number
@@ -307,21 +293,21 @@ class Account::DocumentsController < Account::AccountController
         part = "#{start_number}-#{end_number}"
       end
       
+      url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
       cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
       system(cmd)
     end
     
     # archivage et suppression des fichiers inutile
     
+    new_name = pack.name.gsub(/\s/,'_')
+    
     Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-    
     system("rm *.zip") rescue nil # suppression du précédent zip
-    
-    system("zip '#{pack.name}.zip' *.pdf")
-    
+    system("zip '#{new_name}.zip' *.pdf")
     system("rm *.pdf")
     
-    @url = "/system/archive/#{current_user.id}/#{pack.name}.zip"
+    @url = "/system/archive/#{current_user.id}/#{new_name}.zip"
     
     respond_to do |format|
       format.json do
@@ -331,11 +317,23 @@ class Account::DocumentsController < Account::AccountController
   end
   
   def reporting
+    @user = nil
+    if params[:email] && current_user.is_admin
+      @user = User.find_by_email(params[:email])
+    end
+    unless @user
+      @user = current_user
+    end
     @year = params[:year] ? params[:year].to_i : Time.now.year
-    @clients = current_user.reporting.clients + [current_user]
+    unless @user.reporting
+      @user.reporting = Reporting.new
+      @user.save
+      @user.reporting.save
+    end
+    @clients = @user.reporting.clients + [@user]
     
     @packs = []
-    if orders = (current_user.reporting.orders + current_user.orders)
+    if orders = (@user.reporting.orders + @user.orders)
       orders.each{|order| order.packs.each{|p| @packs << p}}
     end
     
@@ -353,10 +351,10 @@ class Account::DocumentsController < Account::AccountController
           user = [client.email,client.id]
           docs = packs.select{|p| p.order.user == client }.collect do |p|
             p.get_division_from_pdf if !p.division
-            division_level_1 = p.division[1].select{|d| d[1].to_i == 1}
+            division_level_1 = p.division[2].select{|d| d[1].to_i == 1}
             division_level_2 = nil
             if p.division[0].to_i == 2
-              division_level_2 = p.division[1].select{|d| d[1].to_i == 2}
+              division_level_2 = p.division[2].select{|d| d[1].to_i == 2}
             end
             unless division_level_2
               division_level_2 = division_level_1

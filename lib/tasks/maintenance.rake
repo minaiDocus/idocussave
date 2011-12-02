@@ -79,9 +79,15 @@ namespace :maintenance do
   namespace :pdf do
     desc "Extract pdf content to DB"
     task :extract_content_for, [:email] => :environment do |t,args|
-      user = User.find_by_email(args[:email])
+    
+      users = []
+      if args[:email] == "all"
+        users = User.all.entries
+      else
+        users << User.find_by_emails(args[:email].split(/,/))
+      end
       
-      if user
+      users.each do |user|
         # Creating class for reading
         class Receiver
           attr_reader :text
@@ -92,10 +98,12 @@ namespace :maintenance do
           
           def show_text(string, *params)
             word = string.scan(/\w+/).join().downcase
-            if Dictionary.find_one(word)
-              @text += "+#{word}"
-            else
-              @text += word
+            if word.length <= 50
+              if Dictionary.find_one(word)
+                @text += "+#{word}"
+              else
+                @text += word
+              end
             end
           end
           
@@ -135,8 +143,6 @@ namespace :maintenance do
           end
         end
         puts "The extraction is finished."
-      else
-        puts "Unkown user : #{args[:email]}"
       end
     end
   end

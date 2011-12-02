@@ -22,6 +22,10 @@
   != f.label :duration, "Durée de l'abonnement ( en nombre de mois, laisser à 1 pour normal ) ?", :class => :label
   != f.text_field :duration, :class => 'text_field'
   
+.group
+  != f.label :quantity, "Qantité", :class => :label
+  != f.text_field :quantity, :class => 'text_field'
+  
 - if @product_option.product
   - groups = Group.where(:product_id => @product_option.product.id).entries
 - else

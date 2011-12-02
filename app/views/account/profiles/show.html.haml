@@ -81,7 +81,7 @@
           %span
             Banque : #{@user.debit_mandate.bic rescue ""}
           %span.margin6top
-            %form{ :method => :get, :action => "http://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
+            %form{ :method => :get, :action => "https://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
               %input{ :type => :hidden, :name => :email, :value => @user.email }/
               %input{ :type => :submit, :value => "Configurer...", :class => "button whitebtn w100 margin055left" }/
         .footer.padding1bottom

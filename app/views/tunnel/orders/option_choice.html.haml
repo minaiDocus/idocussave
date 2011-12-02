@@ -26,16 +26,59 @@
       
       %ul.optionslist.margin2left.margin2top
         - p = Proc.new do |group, block|
-          .group
+          .group{ :id => group.id }
+            .title.margin05top.margin05bottom
+              != group.title + (group.description == "" ? "" : " - "+group.description)
+            !=hidden_field_tag "#{group.id}_DependantIds", group.required_for.collect{|g| g.id}.join('-')
             - if group.subgroups
-              - group.subgroups.each do |subgroup|
-                %br
+              - group.subgroups.by_position.each do |subgroup|
                 - block.call(subgroup, block)
-                %br
-            -if group.product_options
-              !=group.product_options.collect{|o| o.title}.join("<br />")
-        
-        - @product.groups.where(:supergroup => nil).each do |group|
+            - unless group.product_options.empty?
+              - if group.is_option_dependent
+                %li
+                  - group.product_options.each_with_index do |option,index|
+                    .row
+                      %span.radio
+                        !=radio_button_tag("option_#{group.id}", option.id, ((index == 0)? true : false), :id => option.id, :class => "option" )
+                        !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
+                      %span.product
+                        %label{ :for => option.id }
+                          != option.title
+                        != (option.description == "")? "" : " - #{option.description}"
+                      - if option.price_in_cents_wo_vat > 0
+                        %span.price
+                          %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
+                          %span
+                            #{format_price option.price_in_cents_wo_vat}
+                          € HT
+                      - else
+                        %span.price
+                          %strong
+                            -
+              - else
+                %li
+                  - group.product_options.each do |option|
+                    .row
+                      %span.checkbox
+                        %input{ :type => :checkbox, :name => "option_#{group.id}_#{option.id}", :value => option.id, :id => option.id, :class => "option" }
+                        !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
+                      %span.product
+                        %label{ :for => option.id }
+                          != option.title
+                          != (option.description == "")? "" : " - #{option.description}"
+                      - if option.price_in_cents_wo_vat > 0
+                        %span.price
+                          %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
+                          %span
+                            #{format_price option.price_in_cents_wo_vat}
+                          € HT
+                      - else
+                        %span.price
+                          %strong
+                            -
+                  
+        - @product.groups.where(:supergroup_id => nil).by_position.entries.each do |group|
+          .h-separator.light.margin2top.margin1bottom
           - p.call(group, p)
         
         != @product.footer_info
@@ -48,5 +91,32 @@
             
 :css
   .group{
-    border: 1px solid black;
-    margin: 10px 0 10px 10px; }
+    //border: 1px solid black;
+    //margin: 10px 0 10px 10px;
+    }
+  .margin05top{
+    margin-top: 5px; }
+  .margin05bottom{
+    margin-bottom: 5px; }
+  .margin2left{
+    margin-left: 20px; }
+    
+:javascript
+  $(document).ready(function(){
+    $(".option").click(function(){
+      id = $(this).attr("id");
+      quantity = $("#option_"+id+"_quantity").val();
+      id = $(this).parent("span").parent("div").parent("li").parent("div").attr("id");
+      ids = $("#"+id+"_DependantIds").val().split(/-/);
+      for(i=0; i < ids.length; i++){
+        group = $("#"+ids[i]);
+        group.children("li").children("div").each(function(){
+          option_price = $(this).children("span.price");
+          price = option_price.children("input").val();
+          new_price = price * quantity;
+          option_price.children("span").text(new_price);
+        });
+      }
+    });
+  });
+

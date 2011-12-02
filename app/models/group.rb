@@ -6,6 +6,7 @@ class Group
   field :title, :type => String
   field :description, :type => String, :default => ""
   field :position, :type => Integer, :default => 1
+  field :is_option_dependent, :type => Boolean, :default => false
   
   validates_presence_of :title
   

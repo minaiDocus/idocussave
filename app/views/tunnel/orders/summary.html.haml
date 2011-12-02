@@ -39,29 +39,54 @@
                 %span.smaller
                   #{format_price @product.price_in_cents_w_vat} € TTC
                   - total_in_cents_wo_vat += @product.price_in_cents_wo_vat
-        %li
-          - @options.each do |option|
+        
+      - total = 0
+      - p = Proc.new do |group, block|
+        - if !group.product_options.empty?
+          - options = group.product_options.any_in(:_id => @options.collect{|o| o.id}).entries
+          - unless options.empty?
+            .group.margin1top
+              != group.title
+              - options.each do |option|
+                .row
+                  %span.product
+                    %div
+                      != option.title
+                  - if option.price_in_cents_wo_vat > 0
+                    %span.price
+                      - quantity = 1
+                      - if option.group && option.group.require
+                        - quantity = option.group.require.product_options.any_in(:_id => @options.collect{|o| o.id}).first.quantity
+                      #{format_price option.price_in_cents_wo_vat * quantity} € HT
+                      - total_in_cents_wo_vat += option.price_in_cents_wo_vat * quantity
+                      - total += option.price_in_cents_wo_vat * quantity
+        - elsif !group.subgroups.empty?
+          .group.margin1top
+            %strong
+              != group.title
+        - if group.subgroups
+          - group.subgroups.by_position.each do |subgroup|
+            - block.call(subgroup, block)
+        
+      - @product.groups.where(:supergroup_id => nil).entries.each do |group|
+        - total = 0
+        .h-separator.light.margin1top.margin1bottom
+        %ul.optionslist.margin2left.margin2top
+          %li
+            - p.call(group,p)
+          %li.margin1top
             .row
-              %span.product
-                %strong.margin2left
-                  != "- #{option.title}"
-              - if option.price_in_cents_wo_vat > 0
-                %span.price
-                  %strong
-                    #{format_price option.price_in_cents_wo_vat} € HT
-                  %span.smaller
-                    #{format_price option.price_in_cents_w_vat} € TTC
-                    - total_in_cents_wo_vat += option.price_in_cents_wo_vat
-        %li
-          .row
-            %span.caption
-              %strong
-                Total de votre commande
-            %span.price
-              %strong
-                #{format_price total_in_cents_wo_vat} € HT
-              %span.smaller
-                #{format_price (total_in_cents_wo_vat * 1.196)} € TTC
+              %span.caption
+                %strong
+                  Total :
+              %span.price
+                %strong
+                  #{format_price total} € HT
+            .row
+              %span.caption
+              %span.price
+                %span.smaller
+                  #{format_price (total * 1.196)} € TTC
                 
       .h-separator.light.margin2top
          
@@ -148,4 +173,9 @@
       alert("Vous devez acceptez les conditions générales de ventes");
       return false;
     }
-  });
+
+:css
+  .margin05left{
+    margin-left: 5px; }
+  .margin1top{
+    margin-top: 10px; }

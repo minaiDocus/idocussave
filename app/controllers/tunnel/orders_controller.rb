@@ -18,14 +18,34 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       session[:option_ids] = []
       require_addresses = false
       product = Product.find(params[:product_id])
-      product.product_options.distinct(:group).each do |group|
-        if params["option_group_#{group}"]
-          session[:option_ids] << params["option_group_#{group}"]
-          if  ProductOption.find(params["option_group_#{group}"]).require_addresses == true
+      
+      p  = Proc.new do |group, block|
+        if group.subgroups
+          group.subgroups.each do |group|
+            block.call(group, block)
+          end
+        end
+        if params["option_#{group.id}"]
+          session[:option_ids] << params["option_#{group.id}"]
+          if  ProductOption.find(params["option_#{group.id}"]).require_addresses == true
             require_addresses = true
+          end
+        elsif group.product_options
+          group.product_options.each do |option|
+            if params["option_#{group.id}_#{option.id}"]
+              session[:option_ids] << params["option_#{group.id}_#{option.id}"]
+              if  ProductOption.find(params["option_#{group.id}_#{option.id}"]).require_addresses == true
+                require_addresses = true
+              end
+            end
           end
         end
       end
+      
+      product.groups.where(:supergroup_id => nil).entries.each do |group|
+        p.call(group, p)
+      end
+      
       session[:require_shipping_address] = require_addresses
       require_addresses = true if product.require_billing_address
       if require_addresses
@@ -40,6 +60,7 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       redirect_to summary_tunnel_order_url
     end
   end
+
   
   def address_choice
     if current_user.addresses.any?
@@ -52,7 +73,17 @@ class Tunnel::OrdersController < Tunnel::TunnelController
   def summary
     @product = Product.find session[:product_id]
     @option_ids = session[:option_ids]
-    @options = @product.product_options.any_in(:_id => @option_ids).by_position
+    @options = @product.product_options.any_in(:_id => @option_ids).by_position.sort do |a,b|
+      if a.group && b.group
+        if a.group.position != b.group.position
+          a.group.position <=> b.group.position
+        else
+          a.group.title <=> b.group.title
+        end
+      else
+        a.position <=> b.position
+      end
+    end
     @billing_address_id = session[:billing_address] rescue nil
     @shipping_address_id = session[:shipping_address] rescue nil
   end
@@ -62,8 +93,16 @@ class Tunnel::OrdersController < Tunnel::TunnelController
     @options = @product.product_options.any_in(:_id => params[:option_ids].split)
     price = 0
     price += @product.price_in_cents_w_vat
+    @new_options = []
     @options.each do |option|
-      price += option.price_in_cents_w_vat
+      quantity = 1
+      if option.group && option.group.require
+        quantity = option.group.require.product_options.any_in(:_id => @options.collect{|o| o.id}).first.quantity
+      end
+      price += option.price_in_cents_w_vat * quantity
+      new_option = option
+      new_option.price_in_cents_wo_vat *= quantity
+      @new_options << new_option
     end
   
     order = Order.new
@@ -80,7 +119,7 @@ class Tunnel::OrdersController < Tunnel::TunnelController
     end
     
     if ok
-      order.set_product_order @product, @options
+      order.set_product_order @product, @new_options
       if params[:billing_address_id] && params[:shipping_address_id]
         order.billing_address = current_user.addresses.find(params[:billing_address_id])
         order.shipping_address = current_user.addresses.find(params[:shipping_address_id])
@@ -88,6 +127,16 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       order.user = current_user
       if order.save
         order.pay!
+        if @product.is_a_subscription
+          greater_duration = 1
+          @options.each do |option|
+            if option.duration > greater_duration
+              greater_duration = option.duration
+            end
+          end
+          subscription = Subscription.new(:end => greater_duration, :user_id => current_user.id, :order_id => order.id)
+          subscription.save
+        end
         current_user.save
         redirect_to new_tunnel_order_url
         else

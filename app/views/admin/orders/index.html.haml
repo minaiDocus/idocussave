@@ -31,7 +31,12 @@
               %td
                 - if instance.manual
                   Inconnu
-
+                - else
+                  #{format_price instance.total_in_cents_wo_vat} € HT
+                  %br
+                  %small
+                    #{format_price instance.total_in_cents_w_vat} € TTC
+                    
               %td!= instance.state
               
               %td

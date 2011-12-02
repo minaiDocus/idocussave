@@ -21,6 +21,7 @@ class User
   references_many :credits
   references_many :document_tags
   references_many :events
+  references_many :subscriptions
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
