@@ -25,46 +25,19 @@
         != @product.header_info
       
       %ul.optionslist.margin2left.margin2top
-        - @product.product_options.distinct(:group).sort.each do |group|
-          - options = @product.product_options.where(:group => group).by_position
-          - if options.count > 1
-            %li
-              - options.each_with_index do |option,index|
-                .row
-                  %span.radio
-                    !=radio_button_tag("option_group_#{option.group}", option.id, ((index == 0)? true : false), :id => option.id )
-                  %span.product
-                    %strong
-                      %label{ :for => option.id }
-                        != option.title
-                    != (option.description == "")? "" : " - #{option.description}"
-                  - if option.price_in_cents_wo_vat > 0
-                    %span.price
-                      %strong
-                        #{format_price option.price_in_cents_wo_vat} € HT
-                  - else
-                    %span.price
-                      %strong
-                        -
-          - else
-            - option = options.first
-            %li
-              .row
-                %span.checkbox
-                  %input{ :type => :checkbox, :name => "option_group_#{option.group}", :value => option.id, :id => option.id }
-                %span.product
-                  %strong
-                    %label{ :for => option.id }
-                      != option.title
-                      != (option.description == "")? "" : " - #{option.description}"
-                - if option.price_in_cents_wo_vat > 0
-                  %span.price
-                    %strong
-                      #{format_price option.price_in_cents_wo_vat} € HT
-                - else
-                  %span.price
-                    %strong
-                      -
+        - p = Proc.new do |group, block|
+          .group
+            - if group.subgroups
+              - group.subgroups.each do |subgroup|
+                %br
+                - block.call(subgroup, block)
+                %br
+            -if group.product_options
+              !=group.product_options.collect{|o| o.title}.join("<br />")
+        
+        - @product.groups.where(:supergroup => nil).each do |group|
+          - p.call(group, p)
+        
         != @product.footer_info
         
       .buttonsrow.margin1bottom.margin4top
@@ -72,3 +45,8 @@
         %a.button.whitebtn.floattoleft.margin2left{ :href => new_tunnel_order_url}
           %span
             Étape précédente
+            
+:css
+  .group{
+    border: 1px solid black;
+    margin: 10px 0 10px 10px; }

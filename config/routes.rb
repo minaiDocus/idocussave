@@ -98,5 +98,6 @@ Idocus::Application.routes.draw do
     resources :cms_images
     resources :products
     resources :product_options
+    resources :groups
   end
 end

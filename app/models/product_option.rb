@@ -15,7 +15,6 @@ class ProductOption
   field :description, :type => String, :default => ""
   field :price_in_cents_wo_vat, :type => Float
   field :position, :type => Integer, :default => 1
-  field :group, :type => Integer, :default => 1
   field :require_addresses, :type => Boolean, :default => false
   field :duration, :type => Integer, :default => 1
   
@@ -25,19 +24,19 @@ class ProductOption
   slug :title
 
   referenced_in :product
+  referenced_in :group
   
+public
+
   class << self
     def by_position
-    	asc(:group).asc(:position)
+    	asc(:position)
     end
-  end
-  
-  def create_product_from_attributes
-  	unless new_product_title.blank? && new_product_description.blank? && new_product_price_in_cents_wo_vat.blank? && new_product_category.blank? && new_product_position.blank? && new_product_duration.blank?
-  		document_product = DocumentProduct.new(:title => new_product_title, :description => new_product_description, :price_in_cents_wo_vat => new_product_price_in_cents_wo_vat, :category => new_product_category, :position => new_product_position, :duration => new_product_duration)
-      document_product.document_product_options << self
-      document_product.save!
-  	end
+    
+    def by_group
+    	asc(:group_id)
+    end
+    
   end
   
   def self.find_by_slug txt
@@ -46,6 +45,16 @@ class ProductOption
   
   def price_in_cents_w_vat
     price_in_cents_wo_vat * 1.196
+  end
+  
+protected
+
+  def create_product_from_attributes
+  	unless new_product_title.blank? && new_product_description.blank? && new_product_price_in_cents_wo_vat.blank? && new_product_category.blank? && new_product_position.blank? && new_product_duration.blank?
+  		document_product = DocumentProduct.new(:title => new_product_title, :description => new_product_description, :price_in_cents_wo_vat => new_product_price_in_cents_wo_vat, :category => new_product_category, :position => new_product_position, :duration => new_product_duration)
+      document_product.document_product_options << self
+      document_product.save!
+  	end
   end
   
 end

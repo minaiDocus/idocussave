@@ -12,6 +12,7 @@ public
 
   def index
     @products = Product.by_position.by_price_ascending.all
+    @groups = Group.by_position.all
   end
 
   def new
@@ -39,7 +40,6 @@ public
   end
 
   def destroy
-    @product.product_options.delete_all
     @product.destroy
     redirect_to admin_products_path
   end
