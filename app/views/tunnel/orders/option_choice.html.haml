@@ -21,66 +21,69 @@
         != @product.title
       
       %br
-      .margin2left
+      .margin2left.margin2right
         != @product.header_info
       
-      %ul.optionslist.margin2left.margin2top
-        - p = Proc.new do |group, block|
-          .group{ :id => group.id }
-            .title.margin05top.margin05bottom
-              != group.title + (group.description == "" ? "" : " - "+group.description)
-            !=hidden_field_tag "#{group.id}_DependantIds", group.required_for.collect{|g| g.id}.join('-')
-            - if group.subgroups
-              - group.subgroups.by_position.each do |subgroup|
-                - block.call(subgroup, block)
-            - unless group.product_options.empty?
-              - if group.is_option_dependent
-                %li
-                  - group.product_options.each_with_index do |option,index|
-                    .row
-                      %span.radio
-                        !=radio_button_tag("option_#{group.id}", option.id, ((index == 0)? true : false), :id => option.id, :class => "option" )
-                        !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
-                      %span.product
-                        %label{ :for => option.id }
-                          != option.title
+      - p = Proc.new do |group, block|
+        .group{ :id => group.id }
+          .title.margin05top.margin05bottom
+            != group.title + (group.description == "" ? "" : " - "+group.description)
+          !=hidden_field_tag "#{group.id}_DependantIds", group.required_for.collect{|g| g.id}.join('-')
+          - if group.subgroups
+            - group.subgroups.by_position.each do |subgroup|
+              - block.call(subgroup, block)
+          - unless group.product_options.empty?
+            - if group.is_option_dependent
+              %li
+                - group.product_options.by_position.each_with_index do |option,index|
+                  .row
+                    %span.radio
+                      !=radio_button_tag("option_#{group.id}", option.id, ((index == 0)? true : false), :id => option.id, :class => "option" )
+                      !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
+                    %span.product
+                      %label{ :for => option.id }
+                        != option.title
+                      != (option.description == "")? "" : " - #{option.description}"
+                    - if option.price_in_cents_wo_vat > 0
+                      %span.price
+                        %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
+                        %span
+                          #{format_price option.price_in_cents_wo_vat}
+                        € HT
+                    - else
+                      %span.price
+                        %strong
+                          -
+            - else
+              %li
+                - group.product_options.each do |option|
+                  .row
+                    %span.checkbox
+                      %input{ :type => :checkbox, :name => "option_#{group.id}_#{option.id}", :value => option.id, :id => option.id, :class => "option" }
+                      !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
+                    %span.product
+                      %label{ :for => option.id }
+                        != option.title
                         != (option.description == "")? "" : " - #{option.description}"
-                      - if option.price_in_cents_wo_vat > 0
-                        %span.price
-                          %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
-                          %span
-                            #{format_price option.price_in_cents_wo_vat}
-                          € HT
-                      - else
-                        %span.price
-                          %strong
-                            -
-              - else
-                %li
-                  - group.product_options.each do |option|
-                    .row
-                      %span.checkbox
-                        %input{ :type => :checkbox, :name => "option_#{group.id}_#{option.id}", :value => option.id, :id => option.id, :class => "option" }
-                        !=hidden_field_tag "option_#{option.id}_quantity", option.quantity
-                      %span.product
-                        %label{ :for => option.id }
-                          != option.title
-                          != (option.description == "")? "" : " - #{option.description}"
-                      - if option.price_in_cents_wo_vat > 0
-                        %span.price
-                          %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
-                          %span
-                            #{format_price option.price_in_cents_wo_vat}
-                          € HT
-                      - else
-                        %span.price
-                          %strong
-                            -
+                    - if option.price_in_cents_wo_vat > 0
+                      %span.price
+                        %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
+                        %span
+                          #{format_price option.price_in_cents_wo_vat}
+                        € HT
+                    - else
+                      %span.price
+                        %strong
+                          -
                   
-        - @product.groups.where(:supergroup_id => nil).by_position.entries.each do |group|
-          .h-separator.light.margin2top.margin1bottom
+      - @product.groups.where(:supergroup_id => nil).by_position.entries.each do |group|
+        .h-separator.light.margin2top.margin1bottom
+        %ul.optionslist.margin2left.margin2top
           - p.call(group, p)
-        
+      
+      .h-separator.light.margin2top.margin2bottom
+      
+      .margin2left.margin2right
         != @product.footer_info
         
       .buttonsrow.margin1bottom.margin4top
@@ -98,6 +101,8 @@
     margin-top: 5px; }
   .margin05bottom{
     margin-bottom: 5px; }
+  .margin2bottom{
+    margin-bottom: 20px; }
   .margin2left{
     margin-left: 20px; }
     
