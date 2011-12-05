@@ -88,7 +88,7 @@ namespace :maintenance do
         end
         def show_text(string, *params)
           string.split().each do |w|
-            word = w.scan(/[\w|.|@]+/).join().downcase
+            word = w.scan(/[\w|.|@|_|-]+/).join().downcase
             if word.length <= 50
               if Dictionary.find_one(word)
                 @text += " +#{word}"
