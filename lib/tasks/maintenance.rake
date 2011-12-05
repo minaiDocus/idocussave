@@ -78,72 +78,49 @@ namespace :maintenance do
   
   namespace :pdf do
     desc "Extract pdf content to DB"
-    task :extract_content_for, [:email] => :environment do |t,args|
-    
-      users = []
-      if args[:email] == "all"
-        users = User.all.entries
-      else
-        users << User.find_by_emails(args[:email].split(/,/))
-      end
+    task :extract_content => :environment do
+      puts "The extraction begin..."
       
-      users.each do |user|
-        # Creating class for reading
-        class Receiver
-          attr_reader :text
-          
-          def initialize
-            @text = ""
-          end
-          
-          def show_text(string, *params)
-            word = string.scan(/\w+/).join().downcase
+      class Receiver
+        attr_reader :text
+        def initialize
+          @text = ""
+        end
+        def show_text(string, *params)
+          string.split().each do |w|
+            word = w.scan(/[\w|.|@]+/).join().downcase
             if word.length <= 50
               if Dictionary.find_one(word)
-                @text += "+#{word}"
+                @text += " +#{word}"
               else
-                @text += word
+                @text += " #{word}"
               end
             end
           end
-          
-          def show_text_with_positioning(array, *params)
+        end
+        def show_text_with_positioning(array, *params)
           show_text(array.select{|i| i.is_a?(String)}.join())
-          end
         end
-        
-        puts "The extraction begin..."
-        
-        user.orders.each do |order|
-          puts "Order number : #{order.number}"
-          order.packs.each do |pack|
-            puts "\tPack name : #{pack.name}"
-            pack.documents.where(:is_an_original => true).entries.each do |document|
-              document.indexed = true
-              document.save
-            end
-            documents = pack.documents.not_in(:indexed => [true]).entries
-            puts "\t\tTotal number of documents to process : #{documents.length}"
-            if documents.length > 0
-              documents.each_with_index do |document,index|
-                receiver = Receiver.new
-                result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
-                if result
-                  print "\n\t\t\t[DOC-#{index + 1}]..."
-                  document.content_text = receiver.text.split().uniq
-                  document.indexed = true
-                  document.save!
-                else
-                  print "!"
-                end
-              end
-            else
-              puts "Pass."
-            end
-          end
-        end
-        puts "The extraction is finished."
       end
+      
+      documents = Document.not_in(:indexed => [true]).where(:is_an_original => false).entries
+      puts "Nombre de document à indexé : #{documents.count}"
+      
+      documents.each_with_index do |document,index|
+        print "[#{index + 1}]"
+        receiver = Receiver.new
+        result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
+        if result
+          print "ok\n"
+          document.content_text = receiver.text
+          document.indexed = true
+          document.save!
+        else
+          print "not ok\n"
+        end
+      end
+      
+      puts "The extraction is finished."
     end
   end
   
