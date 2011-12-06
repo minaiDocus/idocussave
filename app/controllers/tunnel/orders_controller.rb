@@ -126,7 +126,7 @@ class Tunnel::OrdersController < Tunnel::TunnelController
       end
       order.user = current_user
       if order.save
-        order.pay!
+        title = "Commande ponctuelle"
         if @product.is_a_subscription
           greater_duration = 1
           @options.each do |option|
@@ -136,10 +136,22 @@ class Tunnel::OrdersController < Tunnel::TunnelController
           end
           subscription = Subscription.new(:end => greater_duration, :user_id => current_user.id, :order_id => order.id)
           subscription.save
+          title = "Abonnement d'une durée de #{greater_duration} mois"
         end
+        event = Event.new
+        event.user = current_user
+        event.title = title
+        event.description = @options.select{|o| o.title}.join(' - ')
+        event.quantity = 0
+        event.amount_in_cents = price
+        event.type_number = 0
+        event.save
+        #event.invoice
+        order.pay!
         current_user.save
-        redirect_to new_tunnel_order_url
-        else
+        flash[:notice] = "Vous venez d'éffectuer un achat."
+        redirect_to account_profile_path
+      else
         redirect_to homepages_url
       end
     else

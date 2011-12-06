@@ -1371,8 +1371,7 @@ ul.documentslist li.foot span, #documentcomposer .documentbrowser ul.documentsli
   width: 100%;
   height: 100%; }
   #useraccount .wrapper {
-    margin-left: 20px;
-    width: 420px; }
+    margin-left: 20px; }
     #useraccount .wrapper p {
       display: block !important;
       position: relative !important;

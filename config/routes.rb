@@ -99,5 +99,6 @@ Idocus::Application.routes.draw do
     resources :products
     resources :product_options
     resources :groups
+    resources :subscriptions
   end
 end

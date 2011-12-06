@@ -5,12 +5,15 @@ class Invoice
   field :number, :type => Integer
   
   referenced_in :order
+  referenced_in :event
 
   before_create :set_number
 
   def number
     txt = read_attribute(:number)
     self.order.created_at.strftime("%Y%m") + ("%0.6d" % txt)
+  rescue Exception
+    self.event.created_at.strftime("%Y%m") + ("%0.6d" % txt)
   end
 
 private

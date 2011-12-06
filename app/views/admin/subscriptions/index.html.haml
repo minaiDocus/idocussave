@@ -1,0 +1,54 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active!= link_to "All subscriptions", admin_subscriptions_path
+      -#%li!= link_to "Add order", new_admin_subscription_path
+  .content
+    %h2.title All subscriptions
+    .inner
+      %br
+      %table.table
+        %tr
+          %th N°
+          %th Date
+          %th Customer
+          %th Total
+          %th Progress
+          %th Documents 
+          %th Payment Type
+          %th.last &nbsp;
+        - @subscriptions.each_with_index do |instance,index|
+          %tr{:class => cycle("odd", "even")}
+            %td!= link_to instance.number, [:admin, instance]
+            %td!= link_to l(instance.created_at), [:admin, instance]
+            %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+            %td
+              - total = 0
+              - if instance.order && instance.order.product_order 
+                - instance.order.product_order.product_option_order.each do |option|
+                  - total += option.price_in_cents_w_vat
+              !=total
+              € TTC
+                  
+            %td
+              != instance.progress.to_s + "/" + instance.end.to_s
+            
+            %td
+              - if instance.order && instance.order.packs
+                != instance.order.packs.count
+              - else
+                0
+              
+            %td
+              - if instance.order.payment_type == 0
+                prépayé
+              - else
+                prélèvement
+              
+            %td.last
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_subscription_path(instance)
+        
+      .actions-bar.wat-cf
+        .actions
+        != will_paginate @subscriptions
+- content_for :sidebar, render(:partial => 'sidebar')

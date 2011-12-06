@@ -1,90 +1,117 @@
 //DocumentComposer widget
 #useraccount.scrollpane
-  - if flash[:notice].present?
-    .flash
-      .notice.margin2bottom.margin1top
-        %span.title= flash[:notice]
-        %br
-  - elsif flash[:credit_alert].present?
-    .flash
-      .errors.margin2bottom.margin1top
-        %span.title= flash[:credit_alert]
-        %br
-  .titlebar.margin3top
-    %h1.floattoleft
-      CHANGER MON MOT DE PASSE
-  .wrapper
-    - form_for @user, :url => account_profile_path do |f|
-      - if flash[:alert].present?
-        - error_class = "error"
-        .errors.margin2bottom.margin2top
-          %span.title
-            Erreurs à la validation du formulaire
-          %ul
-            %li
-              Mots de passe invalides
-
-      != f.label "Mot de passe actuel :", :class => "margin2top"
-      = f.password_field :current_password, :label => "Ancien mot de passe", :class => "w410"
-      != f.label "Nouveau mot de passe :", :class => "margin2top"
-      = f.password_field :password, :label => "Nouveau mot de passe", :class => "w410"
-      != f.label "Confirmation du mot de passe :", :class => "margin2top"
-      = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe", :class => "w410"
-
-      .buttonsrow.margin1top
-        != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
-  
-  
-  .titlebar.margin2top
-    %h1.floattoleft
-      CHOISIR MON MODE DE PAIEMENT
-  .wrapper.margin2top
-    %ul.paymentslist.clearfix
-      %li
-        .header
-          !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-          %span
-            %a{ :href => "#"}
-              %label{ :for => :pp }
-                compte prépayé
-        .content
-          %span
-            Solde actuel du compte : #{format_price @user.balance_in_cents} €
+  .block_1
+    - if flash[:notice].present?
+      .flash
+        .notice.margin2bottom.margin1top
+          %span.title= flash[:notice]
           %br
-          %span
-            %form{ :method => :get, :action => credit_account_payment_path }
-              %label{ :for => :amount } Somme à créditer (€):
-              %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00", :class => "w200" }/
-              %br
-              %span.aligncenter
-                Payer avec :
+    - elsif flash[:credit_alert].present?
+      .flash
+        .errors.margin2bottom.margin1top
+          %span.title= flash[:credit_alert]
+          %br
+    .titlebar.margin3top
+      %h1.floattoleft
+        CHANGER MON MOT DE PASSE
+    .wrapper.w420
+      - form_for @user, :url => account_profile_path do |f|
+        - if flash[:alert].present?
+          - error_class = "error"
+          .errors.margin2bottom.margin2top
+            %span.title
+              Erreurs à la validation du formulaire
+            %ul
+              %li
+                Mots de passe invalides
+  
+        != f.label "Mot de passe actuel :", :class => "margin2top"
+        = f.password_field :current_password, :label => "Ancien mot de passe", :class => "w410"
+        != f.label "Nouveau mot de passe :", :class => "margin2top"
+        = f.password_field :password, :label => "Nouveau mot de passe", :class => "w410"
+        != f.label "Confirmation du mot de passe :", :class => "margin2top"
+        = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe", :class => "w410"
+  
+        .buttonsrow.margin1top
+          != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
+    
+    
+    .titlebar.margin2top
+      %h1.floattoleft
+        CHOISIR MON MODE DE PAIEMENT
+    .wrapper.margin2top
+      %ul.paymentslist.clearfix
+        %li
+          .header
+            !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+            %span
+              %a{ :href => "#"}
+                %label{ :for => :pp }
+                  compte prépayé
+          .content
+            %span
+              Solde actuel du compte : #{format_price @user.balance_in_cents} €
+            %br
+            %span
+              %form{ :method => :get, :action => credit_account_payment_path }
+                %label{ :for => :amount } Somme à créditer (€):
+                %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00", :class => "w200" }/
                 %br
-              %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft margin1right" }/
-              %input{ :type => :submit, :name => "cmcic", :value => "CM-CIC", :class => "button whitebtn w100 margin1right" }/
-        .footer.padding1bottom
-      %li
-        .header
-          !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
-          %span
-            %a{ :href => "#"}
-              %label{ :for => :prlv } prélèvement
-        .content
-          %span
-            Etat :
-            - if @user.debit_mandate
-              - if @user.debit_mandate.transactionStatus == "success"
-                ok
+                %span.aligncenter
+                  Payer avec :
+                  %br
+                %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft margin1right" }/
+                %input{ :type => :submit, :name => "cmcic", :value => "CM-CIC", :class => "button whitebtn w100 margin1right" }/
+          .footer.padding1bottom
+        %li
+          .header
+            !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
+            %span
+              %a{ :href => "#"}
+                %label{ :for => :prlv } prélèvement
+          .content
+            %span
+              Etat :
+              - if @user.debit_mandate
+                - if @user.debit_mandate.transactionStatus == "success"
+                  ok
+                - else
+                  information non valide
               - else
-                information non valide
-            - else
-              non configuré
-          %span
-            Banque : #{@user.debit_mandate.bic rescue ""}
-          %span.margin6top
-            %form{ :method => :get, :action => "https://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
-              %input{ :type => :hidden, :name => :email, :value => @user.email }/
-              %input{ :type => :submit, :value => "Configurer...", :class => "button whitebtn w100 margin055left" }/
-        .footer.padding1bottom
+                non configuré
+            %span
+              Banque : #{@user.debit_mandate.bic rescue ""}
+            %span.margin6top
+              %form{ :method => :get, :action => "https://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
+                %input{ :type => :hidden, :name => :email, :value => @user.email }/
+                %input{ :type => :submit, :value => "Configurer...", :class => "button whitebtn w100 margin055left" }/
+          .footer.padding1bottom
+
+  .block_2
+    - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|    
+      %div.info{ :class => (event.type_number == 0? "green" : "red") }
+        .date.aligncenter
+          #{event.created_at.strftime("%Y-%m-%d")}
+        .title
+          #{event.title}
+        .quantity.aligncenter
+          - if event.quantity == 0
+            #{"-"}
+          - else            
+            #{event.quantity}
+        .amount.aligncenter
+          - if event.amount_in_cents == 0
+            #{"-"}
+          - else
+            #{format_price event.amount_in_cents} €
+        .description.aligncenter
+          %span{ :title => event.description }
+            ?
+        .invoice
+          - if event.invoice
+            !=link_to "fac", "#"
+          - else
+            !=link_to "none", "#"
 
 :javascript
   $(document).ready(function () {
@@ -202,3 +229,68 @@
     text-align: center; }
   .margin055left{
     margin-left: 55px; }
+  .block_1{
+    float: left;
+    border: 1px solid black;
+    width: 505px; }
+  .block_2{
+    float: right;
+    border: 1px solid black;
+    width: 530px; }
+  .w420{
+    width: 420px; }
+    
+  .info {
+    both: none;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    width: 518px;
+    height: 23px;
+    margin: 5px; }
+
+  .red { 
+    background-color: #ad3737; }
+   
+  .green {
+    background-color: #8bad37; }
+    
+  .date {
+    color: white;
+    padding: 3px;
+    float: left;
+    width: 100px; }
+  .title {
+    border-left: 2px solid gray;
+    padding: 3px;
+    color: white;
+    float: left; 
+    width: 217px; }
+  .quantity {
+    border-left: 2px solid gray;
+    padding: 3px;
+    color: white;
+    float: left; 
+    width: 35px; }
+  .amount {
+    border-left: 2px solid gray;
+    padding: 3px;
+    color: white;
+    float: left;
+    width: 45px; }
+  .description {
+    border-left: 2px solid gray;
+    padding: 3px;
+    float: left;
+    color: white;
+    width: 25px; }
+  .invoice {
+    border-left: 2px solid gray;
+    padding: 3px;
+    float: left;
+    color: white;
+    width: 50px; }
+  
+  .aligncenter {
+    text-align: center; }
