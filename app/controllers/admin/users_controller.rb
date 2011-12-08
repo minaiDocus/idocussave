@@ -98,4 +98,13 @@ public
     @user.destroy
     redirect_to admin_users_path
   end
+  
+  def reinitialize_all_delivery_state
+    Delivery.all.entries.each do |delivery|
+      delivery.state = "nothing"
+      delivery.save
+    end
+    
+    redirect_to admin_users_path
+  end
 end

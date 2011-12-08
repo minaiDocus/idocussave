@@ -2,6 +2,7 @@ class Subscription
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  field :category, :type => Integer, :default => 1
   field :progress, :type => Integer, :default => 1
   field :end, :type => Integer, :default => 12
   field :number, :type => Integer

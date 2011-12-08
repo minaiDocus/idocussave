@@ -65,8 +65,11 @@
         - users_uniq = users.uniq
         - users_uniq.each do |user|
           %option{ :value => "#{user.id}" }
-            #{user.email}
-        
+            - if user.company
+              != user.company + " - " + user.email
+            - else
+              #{user.email}
+              
       %label.floattoright.margin1right.margin015top{ :for => :document_owner_list }
         Afficher les documents :
     %ul.documentslist.clearfix

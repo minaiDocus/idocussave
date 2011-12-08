@@ -11,7 +11,18 @@ protected
 public
 
   def index
-    @subscriptions = Subscription.all.order_by([[:created_at,:desc]]).entries.paginate :page => params[:page], :per_page => 50
+    @subscriptions = Subscription.all
+  
+    @users = User.all
+    @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
+    @users = @users.where(:first_name => /\w*#{params[:first_name]}\w*/) if !params[:first_name].blank?
+    @users = @users.where(:last_name => /\w*#{params[:last_name]}\w*/) if !params[:last_name].blank?
+    @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
+    @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
+    user_ids = @users.entries.collect{|u| u.id}
+    
+    @subscriptions = @subscriptions.where(:number => params[:number]) if !params[:number].blank?
+    @subscriptions = @subscriptions.any_in(:user_id => user_ids).order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
   end
   
   def show

@@ -74,6 +74,7 @@ Idocus::Application.routes.draw do
     resources :users do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
+      get 'reinitialize_all_delivery_state', :on => :collection
     end
     resources :orders do
       post 'update_prescriber', :on => :collection

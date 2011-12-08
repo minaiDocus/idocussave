@@ -22,7 +22,13 @@
       
       %h2.margin2top
         Récapitulatif de votre commande
-          
+      
+      - if @not_ok
+        .h-separator.light.margin2top
+        .red.margin2left.margin2top
+          Vous êtes déjà abonné, si vous voulez changer certaines options, constatez-nous à l'adresse suivante : 
+          !=link_to "support@idocus.com", "mailto:support@idocus.com"
+      
       .h-separator.light.margin2top
       
       - total_in_cents_wo_vat = 0.0
@@ -179,3 +185,5 @@
     margin-left: 5px; }
   .margin1top{
     margin-top: 10px; }
+  .red{
+    color: red; }

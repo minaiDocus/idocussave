@@ -38,4 +38,11 @@ class User
     User.any_in(:email => params).entries
   end
   
+  def is_subscribed_to_category number
+    if self.subscriptions.where(:category => number).first
+      true
+    else
+      false
+    end
+  end
 end

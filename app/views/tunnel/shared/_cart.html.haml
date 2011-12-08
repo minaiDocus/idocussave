@@ -1,18 +1,7 @@
 .resume
   .header
     %span.title
-      RÉSUMÉ
+      Total
   .content
-    %span.title
-      Total de votre commande
-    %span.price#cart_total_w_vat
-      #{format_price @order.total_in_cents_w_vat} € TTC
-    %span.infos#cart_total_wo_vat
-      #{format_price @order.total_in_cents_wo_vat} € HT
-
-    %span.priceperpage.margin2top
-      soit à partir de
-      %strong#cart_pps_w_vat
-        #{format_tiny_price @order.price_per_page_in_cents_w_vat} € TTC
-    %span.priceperpage#cart_pps_wo_vat
-      (#{format_tiny_price @order.price_per_page_in_cents_wo_vat} € HT) la page
+    %span.price#cart_total_wo_vat
+    %span.infos#cart_total_w_vat

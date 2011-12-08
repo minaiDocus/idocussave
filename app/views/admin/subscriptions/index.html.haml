@@ -6,6 +6,42 @@
   .content
     %h2.title All subscriptions
     .inner
+      %form{ :method => "GET", :action => admin_subscriptions_path }
+        %h3 Filtre            
+        %table.table
+          %tr
+            %th
+              %label{ :for => :company } Company
+            %th
+              %label{ :for => :code } Code
+            %th
+              %label{ :for => :first_name } Nom
+            %th
+              %label{ :for => :last_name } Prénom
+            %th
+              %label{ :for => :email } Email
+            %th.last
+              %label{ :for => :number } N°
+          %tr
+            %td
+              %input{ :type => :text, :name => :company, :id => :company, :value => (params[:company] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :code, :id => :code, :value => (params[:code] rescue "") }
+            %td
+              %input{ :type => :text, :name => :first_name, :id => :first_name, :value => (params[:first_name] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :last_name, :id => :last_name, :value => (params[:last_name] rescue "") }
+            %td
+              %input{ :type => :text, :name => :email, :id => :email, :value => (params[:email] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :number, :id => :number, :value => (params[:number] rescue "") }
+            
+        .group.navform.wat-cf
+          %button.button{:type => 'submit'}
+            != image_tag("web-app-theme/tick.png", :alt => "Valider")
+            Valider
+          != link_to image_tag("web-app-theme/cross.png", :alt => "Effacer le filtre") + "Effacer le filtre", admin_subscriptions_path, :class => "button"
+            
       %br
       %table.table
         %tr
@@ -21,7 +57,17 @@
           %tr{:class => cycle("odd", "even")}
             %td!= link_to instance.number, [:admin, instance]
             %td!= link_to l(instance.created_at), [:admin, instance]
-            %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+            %td
+              != link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+              %br
+              - name = ""
+              - name = instance.user.first_name + " " if !instance.user.first_name.blank?
+              - name += instance.user.last_name if !instance.user.last_name.blank?
+              %span{ :title => name }
+                !=instance.user.code rescue ""
+                - if instance.user.code
+                  #{" - "}
+                !=instance.user.company rescue ""
             %td
               - total = 0
               - if instance.order && instance.order.product_order 
@@ -53,3 +99,9 @@
         .actions
         != will_paginate @subscriptions
 - content_for :sidebar, render(:partial => 'sidebar')
+
+:css
+  .w50 {
+    width: 50px; }
+  .w75 {
+    width: 75px; }

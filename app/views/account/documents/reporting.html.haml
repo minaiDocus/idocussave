@@ -28,8 +28,15 @@
           REPORTING #{ @year }
     
         %form
-          != select_tag(:view_for, options_for_select( ( [["Tous",0]] + @clients.collect{|c| [c.email, c.id]} ) ), :class => "view_for")
+          - select_res = @clients.collect{|c| [(!c.company.blank? ? (c.company + " - ") : "") + (!c.code.blank? ? (c.code + " - ") : "") + (!c.first_name.blank? ? (c.first_name + " - ") : "") + c.email, c.id]}
+          != select_tag(:view_for, options_for_select( [["Tous",0]] + select_res ), :class => "view_for")
     
+        %br
+        !=link_to "Tout replier", "#", :class => "hide_all"
+        |
+        !=link_to "Tout déplier", "#", :class => "show_all"
+        %br
+        
         - mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
     
         - total_ss_docs_per_year = total_feuilles_per_year = total_pages_per_year = 0
@@ -59,7 +66,7 @@
                       %th.alignleft
                         Noms des documents
                       %th.w50
-                        Ss-docs
+                        Piéces
                       %th.w50
                         Feuilles
                       %th.w50
@@ -99,7 +106,7 @@
               %table.margin2left.margin2top
                 %tr
                   %th.w100
-                    Total ss-docs
+                    Total piéces
                   %th.w100
                     Total feuilles
                   %th.w100
@@ -123,7 +130,7 @@
           %table.margin2top.margin3bottom
             %tr
               %th.w100
-                Total ss-docs
+                Total piéces
               %th.w100
                 Total feuilles
               %th.w100
@@ -139,28 +146,33 @@
       .content_right
         %h2.margin2bottom
           Etat de l'utilisation du service pour le mois de #{mois[Time.now.month - 1]} #{Time.now.year}
+        - total = [0,0,0,0,0]
         %table
           %tr
-            %th.w300
-              Utilisateur
+            %th.w75
+              Société
+            %th.w75
+              Code
+            %th.w75
+              Nom
+            %th.w75
+              Prénom
+            %th.w75
+              Email
             %th{ :colspan => 5 }
               Statut des documents papier
-          - total = [0,0,0,0,0]
           - @clients.each do |client|
             %tr.client{ :class => client.id }
-              %td.w300
-                !=client.email
-                - if !client.code.blank? || !client.first_name.blank? || !client.last_name.blank? || !client.company.blank? || !client.code.blank?
-                  %br
-                  !=client.code rescue ""
-                  - if !client.code.blank?
-                    #{" - "}
-                  !=client.first_name rescue ""
-                  - if !client.first_name.blank? && !client.last_name.blank?
-                    !=" " + client.last_name
-                  - if client.company && !client.company.blank?
-                    %br
-                    !=client.company
+              %td.w75
+                =client.company rescue ""
+              %td.w75
+                =client.code rescue ""
+              %td.w75
+                =client.first_name rescue ""
+              %td.w75
+                =client.last_name rescue ""
+              %td.w75
+                =client.email rescue ""
               
               - ok = false
               - nb = 0
@@ -185,15 +197,37 @@
                       != state[0]
                 - if index == nb
                   - ok = false
-          %tr.total_etat
-            %td Total
+        %br
+        %table
+          %tr
+            %th Total Utitlisateurs
+            %th Total Attendus
+            %th Total Réclamés
+            %th Total Réceptionnés
+            %th Total Traités
+            %th Total Retournés
+          %tr.total_etat.aligncenter
+            %td!= @clients.count
             - total.each do |t|
-              %td.aligncenter
+              %td
                 !=t
                 
 :javascript
   var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
   $(document).ready(function () {
+    $(".show_all").click(function(){
+      for(i=1;i<=12;i++){
+        $(".month_"+i).removeClass("hide");
+        $("#month_"+i).text("[-]");
+      }
+    });
+    $(".hide_all").click(function(){
+      for(i=1;i<=12;i++){
+        $(".month_"+i).addClass("hide");
+        $("#month_"+i).text("[+]");
+      }
+    });
+  
     $(".view_for").change(function(){
       id = $(this).val();
       if (id == "0") {
@@ -260,13 +294,13 @@
     font-size: 14px; }
   .box{
     height: auto;
-    width: 1000px; }
+    width: 100%; }
   .content_left{
     float: left;
-    width: 500px; }
+    width: 400px; }
   .content_right{
     float: right;
-    width: 500px; }
+    width: 700px; }
   .margin1left{
     margin-left: 10px; }
   .margin2left{
@@ -292,6 +326,8 @@
     background-color: #c9dd03; }
   .w50{
     width: 50px; }
+  .w75{
+    width: 75px; }
   .w100{
     width: 100px; }
   .w300{

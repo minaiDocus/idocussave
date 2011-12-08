@@ -72,6 +72,7 @@ class Tunnel::OrdersController < Tunnel::TunnelController
   
   def summary
     @product = Product.find session[:product_id]
+    @not_ok = true if current_user.is_subscribed_to_category @product.category
     @option_ids = session[:option_ids]
     @options = @product.product_options.any_in(:_id => @option_ids).by_position.sort do |a,b|
       if a.group && b.group
@@ -90,82 +91,91 @@ class Tunnel::OrdersController < Tunnel::TunnelController
 
   def pay
     @product = Product.find params[:product_id]
-    @options = @product.product_options.any_in(:_id => params[:option_ids].split)
-    price = 0
-    price += @product.price_in_cents_w_vat
-    @new_options = []
-    @options.each do |option|
-      quantity = 1
-      if option.group && option.group.require
-        quantity = option.group.require.product_options.any_in(:_id => @options.collect{|o| o.id}).first.quantity
-      end
-      price += option.price_in_cents_w_vat * quantity
-      new_option = option
-      new_option.price_in_cents_wo_vat *= quantity
-      @new_options << new_option
-    end
-  
-    order = Order.new
-    ok = false
-    unless current_user.use_debit_mandate
-      if (current_user.balance_in_cents - price >= 0)
-        ok = true
-        current_user.balance_in_cents -= price
-        order.payment_type = 0
-      end
-    else
-      ok = true
-      order.payment_type = 1
-    end
-    
-    if ok
-      order.set_product_order @product, @new_options
-      if params[:billing_address_id] && params[:shipping_address_id]
-        order.billing_address = current_user.addresses.find(params[:billing_address_id])
-        order.shipping_address = current_user.addresses.find(params[:shipping_address_id])
-      end
-      order.user = current_user
-      if order.save
-        invoice = Invoice.create
-        title = "Commande ponctuelle"
-        if @product.is_a_subscription
-          greater_duration = 1
-          @options.each do |option|
-            if option.duration > greater_duration
-              greater_duration = option.duration
-            end
-          end
-          subscription = Subscription.new(:end => greater_duration, :user_id => current_user.id, :order_id => order.id)
-          subscription.save
-          title = "Abonnement"
+    if !current_user.is_subscribed_to_category @product.category
+      @options = @product.product_options.any_in(:_id => params[:option_ids].split)
+      price = 0
+      price += @product.price_in_cents_w_vat
+      @new_options = []
+      @options.each do |option|
+        quantity = 1
+        if option.group && option.group.require
+          quantity = option.group.require.product_options.any_in(:_id => @options.collect{|o| o.id}).first.quantity
         end
-        event = Event.new
-        event.user = current_user
-        event.title = title
-        event.description = "Achat - " + @product.title + " : " + @options.collect{|o| o.title}.join(', ').downcase
-        event.amount_in_cents = price
-        event.type_number = 0
-        
-        event.invoice = invoice
-        order.invoice = invoice
-        
-        invoice.save
-        event.save
-        order.save
-        
-        order.pay!
-        current_user.save
-        flash[:notice] = "Vous venez d'éffectuer un achat."
-        redirect_to account_profile_path
+        price += option.price_in_cents_w_vat * quantity
+        new_option = option
+        new_option.price_in_cents_wo_vat *= quantity
+        @new_options << new_option
+      end
+    
+      order = Order.new
+      ok = false
+      unless current_user.use_debit_mandate
+        if (current_user.balance_in_cents - price >= 0)
+          ok = true
+          current_user.balance_in_cents -= price
+          order.payment_type = 0
+        end
       else
-        redirect_to homepages_url
+        ok = true
+        order.payment_type = 1
+      end
+      
+      if ok
+        order.set_product_order @product, @new_options
+        if params[:billing_address_id] && params[:shipping_address_id]
+          order.billing_address = current_user.addresses.find(params[:billing_address_id])
+          order.shipping_address = current_user.addresses.find(params[:shipping_address_id])
+        end
+        order.user = current_user
+        if order.save
+          invoice = Invoice.create
+          
+          event = Event.new
+          event.user = current_user
+          event.description = "Achat - " + @product.title + " : " + @options.collect{|o| o.title}.join(', ').downcase
+          event.amount_in_cents = price
+          event.type_number = 0
+          
+          event.invoice = invoice
+          
+          title = "Commande ponctuelle"
+          if @product.is_a_subscription
+            greater_duration = 1
+            @options.each do |option|
+              if option.duration > greater_duration
+                greater_duration = option.duration
+              end
+            end
+            subscription = Subscription.new(:end => greater_duration, :user_id => current_user.id, :order_id => order.id)
+            subscription.save
+            title = "Abonnement"
+            event.description = "Abonnement - " + @product.title + " : " + @options.collect{|o| o.title}.join(', ').downcase
+          end
+          event.title = title
+          order.invoice = invoice
+          
+          invoice.save
+          event.save
+          order.save
+          
+          order.pay!
+          current_user.save
+          flash[:notice] = "Vous venez d'éffectuer un achat."
+          redirect_to account_profile_path
+        else
+          flash[:notice] = "Une erreur est survenu, nous nous efforcerons de la résoudre dans les plus brefs délais."
+          redirect_to account_profile_path
+        end
+      else
+        session[:product_id] = @product.id
+        session[:option_ids] = params[:option_ids].split
+        session[:billing_address] = params[:billing_address_id]
+        session[:shipping_address] = params[:shipping_address_id]
+        redirect_to summary_tunnel_order_url
       end
     else
-      session[:product_id] = @product.id
-      session[:option_ids] = params[:option_ids].split
-      session[:billing_address] = params[:billing_address_id]
-      session[:shipping_address] = params[:shipping_address_id]
-      redirect_to summary_tunnel_order_url
+      flash[:notice] = "Vous êtes déjà abonné!"
+      redirect_to account_profile_path
     end
   end
   
