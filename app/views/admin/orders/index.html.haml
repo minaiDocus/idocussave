@@ -7,10 +7,41 @@
     %h2.title All orders
     .inner
       %form{ :method => "GET", :action => admin_orders_path }
-        %label{ :for => :email }
-          Filtre "Customer" : 
-        %input.w100{ :type => :text, :name => :email, :value => (params[:email] rescue "") }
-        %input{ :type => :submit, :value => "Valider", :style => "width:50px;" }
+        %h3 Filtre
+        %table.table
+          %tr
+            %th
+              %label{ :for => :email } Email
+            %th
+              %label{ :for => :first_name } Nom
+            %th
+              %label{ :for => :last_name } Prénom
+            %th
+              %label{ :for => :company } Company
+            %th
+              %label{ :for => :company } Code
+            %th.last
+              %label{ :for => :number } Order number
+          %tr
+            %td
+              %input{ :type => :text, :name => :email, :id => :email, :value => (params[:email] rescue "") }
+            %td
+              %input{ :type => :text, :name => :first_name, :id => :first_name, :value => (params[:first_name] rescue "") }
+            %td
+              %input{ :type => :text, :name => :last_name, :id => :last_name, :value => (params[:last_name] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :company, :id => :company, :value => (params[:company] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :code, :id => :code, :value => (params[:code] rescue "") }
+            %td
+              %input.w75{ :type => :text, :name => :number, :id => :number, :value => (params[:number] rescue "") }
+              
+        .group.navform.wat-cf
+          %button.button{:type => 'submit'}
+            != image_tag("web-app-theme/tick.png", :alt => "Valider")
+            Valider
+      %br
+      %br
       %br
       %form{ :method => "POST", :action => update_prescriber_admin_orders_path }
         %table.table
@@ -27,7 +58,17 @@
             %tr{:class => cycle("odd", "even")}
               %td!= link_to instance.number, [:admin, instance], :title => "#{instance.packs.collect{|p| p.name}.join(', ')}"
               %td!= link_to l(instance.created_at), [:admin, instance]
-              %td!= link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+              %td
+                != link_to instance.user.email, [:admin, instance.user] rescue "inconnu"
+                %br
+                %span{ :title => (instance.user.company rescue "") }
+                  !=instance.user.code rescue ""
+                  - if instance.user.code
+                    #{" - "}
+                  !=instance.user.first_name rescue ""
+                  - if instance.user.first_name
+                    #{" "}
+                  !=instance.user.last_name rescue ""
               %td
                 - if instance.manual
                   Inconnu
@@ -84,3 +125,9 @@
       return false;
     });
   });
+  
+:css
+  .w50 {
+    width: 50px; }
+  .w75 {
+    width: 75px; }

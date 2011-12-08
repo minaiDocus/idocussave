@@ -350,7 +350,7 @@ class Account::DocumentsController < Account::AccountController
         @clients.each do |client|
           user = [client.email,client.id]
           docs = packs.select{|p| p.order.user == client }.collect do |p|
-            p.get_division_from_pdf if !p.division
+            p.get_division_from_pdf if p.division.empty?
             division_level_1 = p.division[2].select{|d| d[1].to_i == 1}
             division_level_2 = nil
             if p.division[0].to_i == 2

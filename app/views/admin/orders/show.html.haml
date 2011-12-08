@@ -18,6 +18,7 @@
             %td
               != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@order.created_at)}
               != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Product', :value => @order.product_order.title}
+              != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Options', :value => @order.product_order.product_option_order.collect{|o| o.title}.join(' - ')}
               != render :partial =>'/admin/shared/show_field', :locals => {:key => 'State', :value => @order.state}
             %td
               != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Updated at', :value => l(@order.updated_at)}
@@ -68,6 +69,46 @@
               - else
                 != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Customer', :value => "Inconnu"}
             %td
+      
+      %h3 Liste des documents
+      %table.table
+        %tr
+          %th.first
+          %th Date
+          %th Nom
+          %th Sous-documents
+          %th Feuilles
+          %th Page
+          %th.last
+        - total_sub_doc = 0
+        - total_sheets = 0
+        - total_pages = 0
+        - @order.packs.order_by([:created_at,:asc]).each do |pack|
+          - pack.get_division_from_pdf if pack.division.empty? || pack.division.nil?
+          %tr{:class => cycle("odd", "even")}
+            %td
+            %td!=pack.created_at.strftime("%Y-%m-%d %H:%M")
+            %td!=pack.name
+            %td
+              - res = pack.division[2].select{|d| d[1] == 2}.count
+              - if res == 0
+                - res = pack.division[2].select{|d| d[1] == 1}.count
+              !=res
+            %td!=pack.division[2].select{|d| d[1] == 1}.count
+            %td!=pack.division[1]
+            %td
+            - total_sub_doc += res
+            - total_sheets += pack.division[2].select{|d| d[1] == 1}.count
+            - total_pages += pack.division[1]
+        %tr
+          %td
+          %td
+          %td TOTAL
+          %td!=total_sub_doc
+          %td!=total_sheets
+          %td!=total_pages
+          %td
+      
       .wat-cf
         != link_to image_tag("web-app-theme/application_edit.png", :alt => "Modifier") + "Modifier", edit_admin_order_path(@order), :class => "button"
 

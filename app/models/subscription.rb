@@ -13,6 +13,8 @@ class Subscription
   referenced_in :user
   references_one :order
   
+  references_many :events
+  
   def claim_money
     self.progress += 1
     # fonction qui débite l'utilisateur en fonction du type de payement

@@ -1,0 +1,17 @@
+Uniquement pour le prélèvement
+%br
+.group
+  %label{ :id => "amount_in_cents", :class => :label }
+    Montant (cents) *
+  %input{ :type => "texte", :name => "amount_in_cents", :class => 'text_field', :id => "amount_in_cents" }
+
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_orders_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.

@@ -141,14 +141,26 @@
           Etat de l'utilisation du service pour le mois de #{mois[Time.now.month - 1]} #{Time.now.year}
         %table
           %tr
-            %th
+            %th.w300
               Utilisateur
             %th{ :colspan => 5 }
               Statut des documents papier
+          - total = [0,0,0,0,0]
           - @clients.each do |client|
             %tr.client{ :class => client.id }
-              %td
+              %td.w300
                 !=client.email
+                - if !client.code.blank? || !client.first_name.blank? || !client.last_name.blank? || !client.company.blank? || !client.code.blank?
+                  %br
+                  !=client.code rescue ""
+                  - if !client.code.blank?
+                    #{" - "}
+                  !=client.first_name rescue ""
+                  - if !client.first_name.blank? && !client.last_name.blank?
+                    !=" " + client.last_name
+                  - if client.company && !client.company.blank?
+                    %br
+                    !=client.company
               
               - ok = false
               - nb = 0
@@ -160,6 +172,8 @@
                   - else
                     - ok = true
                 
+              - if nb != 0
+                - total[nb - 1] += 1
               - ok = true
               - Delivery::STATES.each_with_index do |state,index|
                 - if index != 0
@@ -171,6 +185,11 @@
                       != state[0]
                 - if index == nb
                   - ok = false
+          %tr.total_etat
+            %td Total
+            - total.each do |t|
+              %td.aligncenter
+                !=t
                 
 :javascript
   var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
@@ -179,8 +198,10 @@
       id = $(this).val();
       if (id == "0") {
         $(".client").show();
+        $(".total_etat").show();
       } else {
         $(".client").hide();
+        $(".total_etat").hide();
         $("."+id).show();
       }
       var total_ss_docs = 0;
@@ -273,6 +294,8 @@
     width: 50px; }
   .w100{
     width: 100px; }
+  .w300{
+    width: 300px; }
   .aligncenter{
     text-align: center; }
   .alignleft{

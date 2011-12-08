@@ -3,7 +3,6 @@ class HomepageController < ApplicationController
   layout "homepage"
 
   def index
-    debugger
     @homepage = Homepage.first
     @page_types = PageType.by_position.all
     @slides = Slide.visible.by_position

@@ -7,6 +7,19 @@
   != f.check_box :is_admin, :class => 'checkbox'
   
 .group
+  != f.label :first_name, "Nom", :class => :label
+  != f.text_field :first_name, :class => 'text_field'
+  %br
+  != f.label :last_name, "Prénom", :class => :label
+  != f.text_field :last_name, :class => 'text_field'
+  %br        
+  != f.label :code, "Code client", :class => :label
+  != f.text_field :code, :class => 'text_field'
+  %br
+  != f.label :company, "Société", :class => :label
+  != f.text_field :company, :class => 'text_field'
+  
+.group
   != f.label :clients_email, "Email du (des) client(s)", :class => :label
   != f.text_area :clients_email, :class => 'text_area', :value => (@user.reporting.clients.collect{|c| c.email}.join(', ') rescue "")
 

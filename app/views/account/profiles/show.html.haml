@@ -88,26 +88,32 @@
           .footer.padding1bottom
 
   .block_2
+    %h3.margin1top.margin1left Factures
+    %br
+    .title_bar
+      .b_title.wdate
+        Date
+      .b_title.winvoice_number
+        N° facture
+      .b_title.wamount
+        Montant
+      .b_title.wdetails
+        Détails
     - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|    
-      %div.info{ :class => (event.type_number == 0? "green" : "red") }
-        .date.aligncenter
+      %div.info.aligncenter{ :class => (event.type_number == 0? "green" : "red") }
+        .date
           #{event.created_at.strftime("%Y-%m-%d")}
-        .title
-          #{event.title}
-        .quantity.aligncenter
-          - if event.quantity == 0
-            #{"-"}
-          - else            
-            #{event.quantity}
-        .amount.aligncenter
+        .invoice_number
+          #{event.invoice.number rescue ""}
+        .amount
           - if event.amount_in_cents == 0
             #{"-"}
           - else
             #{format_price event.amount_in_cents} €
-        .description.aligncenter
+        .description
           %span{ :title => event.description }
             ?
-        .invoice
+        .invoice_link
           - if event.invoice
             !=link_to "fac", "#"
           - else
@@ -231,12 +237,10 @@
     margin-left: 55px; }
   .block_1{
     float: left;
-    border: 1px solid black;
     width: 505px; }
   .block_2{
     float: right;
-    border: 1px solid black;
-    width: 530px; }
+    width: 470px; }
   .w420{
     width: 420px; }
     
@@ -246,7 +250,7 @@
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -khtml-border-radius: 4px;
-    width: 518px;
+    width: 442px;
     height: 23px;
     margin: 5px; }
 
@@ -261,36 +265,51 @@
     padding: 3px;
     float: left;
     width: 100px; }
-  .title {
+  .invoice_number {
     border-left: 2px solid gray;
     padding: 3px;
     color: white;
     float: left; 
-    width: 217px; }
-  .quantity {
-    border-left: 2px solid gray;
-    padding: 3px;
-    color: white;
-    float: left; 
-    width: 35px; }
+    width: 150px; }
   .amount {
     border-left: 2px solid gray;
     padding: 3px;
     color: white;
     float: left;
-    width: 45px; }
+    width: 60px; }
   .description {
     border-left: 2px solid gray;
     padding: 3px;
     float: left;
     color: white;
-    width: 25px; }
-  .invoice {
+    width: 30px; }
+  .invoice_link {
     border-left: 2px solid gray;
     padding: 3px;
     float: left;
     color: white;
-    width: 50px; }
+    width: 30px; }
   
   .aligncenter {
     text-align: center; }
+    
+  .title_bar {
+    margin: 5px;
+    color: white;
+    text-align: center;
+    background-color: #3e2f24;
+    height: 18px;
+    width: 440px; }
+  .b_title {
+    padding: 0 3px 0 3px;
+    height: 18px;
+    float: left;}
+    
+  .wdate {
+    width: 100px; }
+  .winvoice_number {
+    width: 150px; }
+  .wamount {
+    width: 60px; }
+  .wdetails{
+    width: 100px; }

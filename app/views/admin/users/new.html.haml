@@ -10,15 +10,30 @@
         .group
           != f.label :email, "Email *", :class => :label
           != f.text_field :email, :class => 'text_field'
+          
         .group
           != f.label :password, "Mot de passe *", :class => "margin2top"
           != f.password_field :password, :class => 'text_field'
-        .group
+          %br
           != f.label :password_confirmation, "Confirmation du mot de passe *", :class => "margin2top"
           != f.password_field :password_confirmation, :class => 'text_field'
+          
         .group
           != f.label :is_admin, "Administrateur ?", :class => :label
           != f.check_box :is_admin, :class => 'checkbox'
+          
+        .group
+          != f.label :first_name, "Nom", :class => :label
+          != f.text_field :first_name, :class => 'text_field'
+          %br
+          != f.label :last_name, "Prénom", :class => :label
+          != f.text_field :last_name, :class => 'text_field'
+          %br        
+          != f.label :code, "Code client", :class => :label
+          != f.text_field :code, :class => 'text_field'
+          %br
+          != f.label :company, "Société", :class => :label
+          != f.text_field :company, :class => 'text_field'
 
         .group.navform.wat-cf
           %button.button{:type => 'submit'}

@@ -10,6 +10,10 @@ class User
   field :is_admin, :type => Boolean, :default => false
   field :balance_in_cents, :type => Float, :default => 0.0
   field :use_debit_mandate, :type => Boolean, :default => false
+  field :code, :type => String
+  field :first_name, :type => String
+  field :last_name, :type => String
+  field :company, :type => String
 
   embeds_many :addresses
   

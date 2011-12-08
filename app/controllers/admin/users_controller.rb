@@ -11,14 +11,13 @@ protected
 public
 
   def index
-    if params[:email] && !params[:email].blank?
-      @users = User.where(:email => /\w*#{params[:email]}\w*/)
-      if @users.nil?
-        @users = []
-      end
-    else
-      @users = User.all
-    end
+    @users = User.all
+    @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
+    @users = @users.where(:first_name => /\w*#{params[:first_name]}\w*/) if !params[:first_name].blank?
+    @users = @users.where(:last_name => /\w*#{params[:last_name]}\w*/) if !params[:last_name].blank?
+    @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
+    @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
+    
     @users = @users.desc(:created_at).paginate :page => params[:page], :per_page => 50
   end
 
@@ -27,6 +26,8 @@ public
   end
 
   def create
+    params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
+    params[:user][:last_name] = params[:user][:last_name].capitalize if params[:user][:last_name]
     @user = User.new params[:user]
     @user.skip_confirmation!
     if @user.save
@@ -40,6 +41,8 @@ public
   end
   
   def update
+    params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
+    params[:user][:last_name] = params[:user][:last_name].capitalize if params[:user][:last_name]
     if @user.update_attributes params[:user]
       params[:user][:clients_email] = [] unless params[:user][:clients_email]
       @user.reporting = Reporting.create unless @user.reporting

@@ -86,17 +86,18 @@ protected
 public
 
   def index
-    if params[:email] && !params[:email].blank?
-      users = User.where(:email => /\w*#{params[:email]}\w*/).entries
-      if users
-        @orders = Order.any_in(:user_id => users.collect{|u| u.id})
-      else
-        @orders = []
-      end
-    else
-      @orders = Order.all
-    end
-    @orders = @orders.order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
+    @orders = Order.all
+  
+    @users = User.all
+    @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
+    @users = @users.where(:first_name => /\w*#{params[:first_name]}\w*/) if !params[:first_name].blank?
+    @users = @users.where(:last_name => /\w*#{params[:last_name]}\w*/) if !params[:last_name].blank?
+    @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
+    @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
+    user_ids = @users.entries.collect{|u| u.id}
+    
+    @orders = @orders.where(:number => params[:number]) if !params[:number].blank?
+    @orders = @orders.any_in(:user_id => user_ids).order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
     
     respond_to do |format|
       format.html

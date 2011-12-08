@@ -26,9 +26,8 @@
               - total = 0
               - if instance.order && instance.order.product_order 
                 - instance.order.product_order.product_option_order.each do |option|
-                  - total += option.price_in_cents_w_vat
-              !=total
-              € TTC
+                  - total += option.price_in_cents_wo_vat * 1.196
+              #{format_price total} € TTC
                   
             %td
               != instance.progress.to_s + "/" + instance.end.to_s
@@ -40,10 +39,12 @@
                 0
               
             %td
-              - if instance.order.payment_type == 0
+              - if instance.order && instance.order.payment_type == 0
                 prépayé
-              - else
+              - elsif instance.order && instance.order.payment_type == 1
                 prélèvement
+              - else
+                prépayé
               
             %td.last
               != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_subscription_path(instance)
