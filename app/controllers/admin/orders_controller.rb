@@ -1,16 +1,10 @@
 class Admin::OrdersController < Admin::AdminController
 
-  before_filter :load_model, :only => %w(show edit update destroy)
-  before_filter :load_order, :only => %w(destroy)
-
+  before_filter :load_model, :only => %w(show edit edit_option update update_option destroy)
 
   include Admin::BaseAdminMixin
 
 protected
-
-  def load_order
-    @order = Order.find params[:id]
-  end
   
   def get_documents user, order
     Dir.chdir("#{Rails.root}/tmp/input_pdf_manuel/")
@@ -216,4 +210,68 @@ public
     redirect_to admin_document_orders_path
   end
 
+  def edit_option
+  end
+  
+  def update_option
+    @product = Product.find(params[:product_id])
+    option_ids = []
+    p  = Proc.new do |group, block|
+      if group.subgroups
+        group.subgroups.each do |group|
+          block.call(group, block)
+        end
+      end
+      if params["option_#{group.id}"]
+        option_ids << params["option_#{group.id}"]
+        if  ProductOption.find(params["option_#{group.id}"]).require_addresses == true
+          require_addresses = true
+        end
+      elsif group.product_options
+        group.product_options.each do |option|
+          if params["option_#{group.id}_#{option.id}"]
+            option_ids << params["option_#{group.id}_#{option.id}"]
+            if  ProductOption.find(params["option_#{group.id}_#{option.id}"]).require_addresses == true
+              require_addresses = true
+            end
+          end
+        end
+      end
+    end
+    
+    @product.groups.where(:supergroup_id => nil).entries.each do |group|
+      p.call(group, p)
+    end
+    
+    @options = ProductOption.any_in(:_id => option_ids).entries
+    
+    @new_options = []
+    @options.each do |option|
+      quantity = 1
+      if option.group && option.group.require
+        quantity = option.group.require.product_options.any_in(:_id => @options.collect{|o| o.id}).first.quantity
+      end
+      new_option = option
+      new_option.price_in_cents_wo_vat *= quantity
+      @new_options << new_option
+    end
+    
+    @order.set_product_order @product, @new_options
+    
+    event = Event.new
+    event.title = "Changement d'options"
+    event.description = "Changement d'options pour le produit \"#{@order.product_order.title}\" : #{@options.collect{|o| o.title}.join(' - ').downcase}"
+    event.amount_in_cents = 0
+    event.type_number = 0
+    event.user = @order.user
+    event.subscription = @order.subscription
+    event.invoice = Invoice.create
+    
+    if @order.save && @order.user.save && event.save && event.invoice.save && @order.subscription.save
+      redirect_to admin_order_path(@order)
+    else
+      redirect_to edit_option_admin_order_path(@order)
+    end
+  end
+  
 end

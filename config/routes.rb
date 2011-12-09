@@ -78,6 +78,8 @@ Idocus::Application.routes.draw do
     end
     resources :orders do
       post 'update_prescriber', :on => :collection
+      get 'edit_option', :on => :member
+      post 'update_option', :on => :member
     end
     resources :homepages
     resource :thumbnail_task do

@@ -18,7 +18,7 @@
           %td
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@subscription.created_at)}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Product', :value => @order.product_order.title}
-            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Options', :value => @order.product_order.product_option_order.collect{|o| o.title}.join(' - ')}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'N° de commande associée', :value => (link_to @order.number, [:admin, @order])}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Progress', :value => "#{@subscription.progress}/#{@subscription.end}"}
           %td
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Updated at', :value => l(@subscription.updated_at)}
@@ -33,6 +33,25 @@
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Total with VAT', :value => format_price(@order.total_in_cents_w_vat)}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Total VAT', :value => format_price(@order.total_vat)}
           %td
+      %h3 Liste des options
+      %table.table
+        %tr
+          %th.first
+          %th Titre
+          %th Prix
+          %th Durée
+          %th.last
+        - @subscription.order.product_order.product_option_order.each do |option|
+          %tr
+            %td
+            %td!= option.title
+            %td
+              #{format_price option.price_in_cents_wo_vat} € HT
+              %br
+              %small
+                #{format_price(option.price_in_cents_wo_vat * 1.196)} € TTC
+            %td!= option.duration
+            %td
       %h3 Liste des documents
       %table.table
         %tr

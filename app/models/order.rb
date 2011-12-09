@@ -125,6 +125,8 @@ class Order
 
     self.product_order = product_order
     
+    self.product_order.product_option_order = []
+    
     options.each do |option|
       product_option_order = ProductOptionOrder.new
       product_option_order.fields.keys.each do |k|
