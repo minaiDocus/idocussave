@@ -3,5 +3,9 @@
     %span.title
       Total
   .content
-    %span.price#cart_total_wo_vat
-    %span.infos#cart_total_w_vat
+    - @product.groups.where(:supergroup_id => nil).by_position.entries.each do |group|
+      %span.title
+        !=group.title
+      %span.price{ :id => "cart_total_wo_vat_#{group.id}" }
+      %span.infos{ :id => "cart_total_w_vat_#{group.id}" }
+      %br

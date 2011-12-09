@@ -93,7 +93,7 @@
             Étape précédente
       
 .rightcolon.margin4top
-  -#!= render :partial => '/tunnel/shared/cart'
+  != render :partial => '/tunnel/shared/cart'
   
 :css
   .group{
@@ -110,30 +110,33 @@
     margin-left: 20px; }
     
 :javascript
+  var group_ids = [#{@product.groups.where(:supergroup_id => nil).by_position.entries.collect{|g| "'"+g.id.to_s+"'"}.join(',')}];
   function set_total_price(){
-    var total = 0;
-    $("input[type=radio]:checked").each(function(){
-      total += parseInt($(this).parent("span").parent("div").children(".price").children("span").text());
-    });
-    $("input[type=checkbox]:checked").each(function(){
-      total += parseInt($(this).parent("span").parent("div").children(".price").children("span").text());
-    });
-    var total_w_vat = total * 1.196
-    $("#cart_total_w_vat").text(total_w_vat.toFixed(2) + "€ TTC");
-    $("#cart_total_wo_vat").text(total + "€ HT");
+    for (i in group_ids){
+      var total = 0;
+      $("#"+group_ids[i]).find("input[type=radio]:checked").each(function(){
+        total += parseInt($(this).parents(".row").find(".price > span").text());
+      });
+      $("#"+group_ids[i]).find("input[type=checkbox]:checked").each(function(){
+        total += parseInt($(this).parents(".row").find(".price > span").text());
+      });
+      var total_w_vat = total * 1.196
+      $("#cart_total_w_vat_"+group_ids[i]).text(total_w_vat.toFixed(2) + "€ TTC");
+      $("#cart_total_wo_vat_"+group_ids[i]).text(total + "€ HT");
+    }
   }
   $(document).ready(function(){
     set_total_price();
     $("input.option").change(function(){
       id = $(this).attr("id");
       quantity = $("#option_"+id+"_quantity").val();
-      id = $(this).parent("span").parent("div").parent("li").parent("div").attr("id");
+      id = $(this).parents(".group").attr("id");
       if ($("#"+id+"_DependantIds").val() != ""){
         ids = $("#"+id+"_DependantIds").val().split(/-/);
         if( ids.length != 0 ){
           for(i=0; i < ids.length; i++){
             group = $("#"+ids[i]);
-            group.children("li").children("div").each(function(){
+            group.find("li > div").each(function(){
               option_price = $(this).children("span.price");
               price = option_price.children("input").val();
               new_price = price * quantity;
