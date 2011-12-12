@@ -46,7 +46,7 @@
                       != (option.description == "")? "" : " - #{option.description}"
                     %span.price
                       %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
-                      %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
+                      %span.value{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         #{format_price option.price_in_cents_wo_vat}
                       %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         € HT
@@ -63,7 +63,7 @@
                         != (option.description == "")? "" : " - #{option.description}"
                     %span.price
                       %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
-                      %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
+                      %span.value{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         #{format_price option.price_in_cents_wo_vat}
                       %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         € HT
@@ -134,7 +134,7 @@
               option_price = $(this).children("span.price");
               price = option_price.children("input").val();
               new_price = price * quantity;
-              option_price.children("span").text(new_price);
+              option_price.children("span.value").text(new_price);
             });
           }
         }
