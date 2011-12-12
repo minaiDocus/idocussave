@@ -130,11 +130,11 @@ public
     user = order.user
     
     unless params[:prescriber_email].blank?
-      if user = User.find_by_email(params[:prescriber_email])
-        if user.reporting && user.reporting.clients.include?(order.user)
-          user.reporting.order_add order unless user.reporting.order_ids.include?(order.id)
+      if prescriber = User.find_by_email(params[:prescriber_email])
+        if prescriber.reporting && prescriber.reporting.clients.include?(user)
+          prescriber.reporting.order_add order unless prescriber.reporting.order_ids.include?(order.id)
         else
-          message += "L'utilisteur #{order.user.email} n'est pas client de #{user.email}."
+          message += "L'utilisteur #{order.user.email} n'est pas client de #{prescriber.email}."
         end
       end
     else
