@@ -47,7 +47,7 @@
                     %span.price
                       %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
                       %span.value{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
-                        #{format_price option.price_in_cents_wo_vat}
+                        #{format_price(option.price_in_cents_wo_vat) + " "}
                       %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         € HT
             - else
@@ -64,7 +64,7 @@
                     %span.price
                       %input{ :type => :hidden, :class => "original_option_price", :name => "original_option_price", :value => format_price(option.price_in_cents_wo_vat) }/
                       %span.value{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
-                        #{format_price option.price_in_cents_wo_vat}
+                        #{format_price(option.price_in_cents_wo_vat) + " "}
                       %span{ :class => ((option.price_in_cents_wo_vat > 0)? "" : "hide") }
                         € HT
                   
@@ -115,8 +115,8 @@
         total += parseInt($(this).parents(".row").find(".price > span").text());
       });
       var total_w_vat = total * 1.196
-      $("#cart_total_w_vat_"+group_ids[i]).text(total_w_vat.toFixed(2) + "€ TTC");
-      $("#cart_total_wo_vat_"+group_ids[i]).text(total + "€ HT");
+      $("#cart_total_w_vat_"+group_ids[i]).text(total_w_vat.toFixed(2) + " € TTC");
+      $("#cart_total_wo_vat_"+group_ids[i]).text(total + " € HT");
     }
   }
   $(document).ready(function(){
