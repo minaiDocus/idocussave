@@ -18,9 +18,180 @@ class Pack
     document.content = File.new "#{Rails.root}/tmp/input_pdf_manuel/#{name}.pdf"
     if document.save!
       self.order.scanned! unless self.order.scanned?
-      #system("rm #{Rails.root}/tmp/input_pdf_manuel/#{waybill_number}.pdf")
+      system("rm #{Rails.root}/tmp/input_pdf_manuel/#{name}.pdf")
     end
-    
+  end
+  
+  def get_documents
+    # changement de répertoire
+    Dir.chdir("#{Rails.root}/tmp/input_pdf_manuel")
+
+    # récupérer les fichiers pdf dans le répertoire
+    document_names = Dir.entries("./").select{|f| f.match(/\w+_\w+_\w+_\d+\.(pdf|PDF)$/)}
+
+    # réecriture de l'extension en minuscule s'il ne l'est pas déjà
+    document_names.each_with_index do |document_name,index|
+      if document_name.match(/\.PDF$/)
+        new_name = document_name.sub(/\.PDF$/,'.pdf')
+        File.rename(document_name, new_name)
+        document_names[index] = new_name
+      end
+    end
+
+    # réorganisation par pack des fichiers ayant les même préfix, triée par order alphabétique
+    document_packs = []
+    while (!document_names.empty?) do
+      prefix_name = document_names[0].split('_')[0..2].join('_')
+      document_packs << document_names.join('\\').scan(/#{prefix_name}_[0-9]+\.pdf/).sort
+      document_names -= document_packs[-1].to_a
+    end
+
+    # ajout du nombre de page pour chaque document
+    document_packs.each_with_index do |document_pack,index|
+      total_pages = 0
+      document_pack.each_with_index do |document,i|
+        number_of_page = `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i
+        document_pack[i] = [document,number_of_page]
+        total_pages += number_of_page
+      end
+      document_packs[index] = [total_pages] + document_packs[index]
+    end
+
+    # traitement de chaque pack
+    document_packs.each do |document_pack|
+      user_code = document_pack[1][0].split('_')[0]
+      original_doc_name = document_pack[1][0].split('_')[0..2].join('_') + "_all"
+      
+      user = User.where(:code => user_code).first
+      if user
+        pack_already_exists = true
+        pack = user.packs.where(:name => original_doc_name).first
+      
+        unless pack
+          pack_already_exists = false
+          order = user.subscription.order rescue user.orders.last
+          unless order
+            order = order.create!(:user_id => user.id)
+          end
+          pack = Pack.create!(:name => original_doc_name, :order_id => order.id)
+          order.save
+        end
+
+        counter = 0
+        if pack_already_exists
+          pack.get_division_from_pdf if !pack.division || pack.division.empty?
+          counter = pack.division[-1][-1][0].split('_')[3].to_i
+        else
+          pack.division = [1,0,[]]
+        end
+        
+        document_pack.each_with_index do |document,index|
+          if index != 0
+            counter += 1 
+            zero_filler = "0" * (3 - counter.to_s.length)
+            
+            new_name = document[0].sub(/_[0-9]+.pdf/,"_#{zero_filler + counter.to_s}.pdf")
+            File.rename(document[0], new_name)
+            document_pack[index] = [new_name,document[1]]
+          end
+        end
+        old_number_of_page = pack.division[1]
+        
+        # mis à jour du nombre total de page
+        pack.division[1] += document_pack[0]
+        
+        if pack_already_exists
+          last_page = pack.division[-1][-1][3].to_i
+        else
+          last_page = 0
+        end
+        
+        # mis à jour de la division
+        document_pack.each_with_index do |document,index|
+          if index != 0
+            pack.division[-1] << [document[0].sub(/\.pdf$/,''),"1",(last_page + 1).to_s,(last_page + document[1]).to_s]
+            last_page += document[1]
+          end
+        end
+        
+        input_list = ""
+        letter = "A"
+        document_pack.each_with_index do |document,index|
+          if index != 0
+            input_list += "#{letter}=#{document[0]} "
+            letter = letter.next
+          end
+        end
+        
+        range_list = ""
+        r_letter = "A"
+        while (r_letter < letter) do
+          range_list += "#{r_letter} "
+          r_letter = r_letter.next
+        end
+        
+        # assemblage des pdf
+        cmd = "pdftk #{input_list} cat #{range_list} output #{original_doc_name}.pdf"
+        puts cmd
+        system(cmd)
+        
+        if pack_already_exists
+          prefix = pack.documents.where(:is_an_original => true).first.content_file_name.scan(/\w+/)[0]
+          
+          # division en page
+          cmd = "pdftk #{original_doc_name}.pdf burst output #{prefix}_pages_%02d.pdf"
+          puts cmd
+          system(cmd)
+          
+          nbr = old_number_of_page
+          
+          number_of_page = document_pack[0]
+          
+          1..number_of_page.times do |i|
+            nbr += 1
+            zero_filler = "0" * (2 - (i + 1).to_s.length)
+            old_name = "#{prefix}_pages_#{zero_filler + (i + 1).to_s}.pdf"
+            zero_filler = "0" * (2 - nbr.to_s.length)
+            new_name = "#{prefix}_pages_#{zero_filler + nbr.to_s}.pdf"
+            File.rename(old_name,new_name)
+            
+            # création d'un document pour chaque page
+            document = Document.new
+            document.dirty = true
+            document.pack = pack
+            document.position = old_number_of_page + i + 1
+            document.content = File.new new_name
+            document.save
+          end
+        
+          # mis à jour du document original
+          original_document = pack.documents.where(:is_an_original => true).first
+          temp_file = original_document.content.to_file
+          temp_path = File.expand_path(temp_file.path)
+          basename = File.basename(temp_path)
+          
+          cmd = "cp #{temp_path} ./" 
+          puts cmd
+          system(cmd)
+          
+          cmd = "pdftk A=#{basename} B=#{original_doc_name}.pdf cat A B output #{temp_path}"
+          puts cmd
+          system(cmd)
+          
+        else
+          pack.get_document original_doc_name
+        end
+        
+        # suppression des fichiers temporaire
+        cmd = "rm #{basename.sub('.pdf','')}* #{original_doc_name}.pdf"
+        puts cmd
+        system(cmd)
+          
+        pack.save
+      end
+    end
+    # retour au répertoire racine
+    Dir.chdir("#{Rails.root}")
   end
   
   def get_division_from_pdf

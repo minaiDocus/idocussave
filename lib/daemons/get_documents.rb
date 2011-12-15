@@ -12,6 +12,6 @@ Signal.trap("TERM") do
 end
 
 while($running) do
-  Order.get_documents
-  sleep 10
+  Pack.get_documents
+  sleep 3600
 end
