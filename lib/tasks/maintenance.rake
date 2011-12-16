@@ -122,6 +122,11 @@ namespace :maintenance do
       
       puts "The extraction is finished."
     end
+    
+    desc "Fetch new scanned documents in /tmp/input_pdf_auto"
+    task :get_documents => :environment do
+      Pack.get_documents
+    end
   end
   
 end
