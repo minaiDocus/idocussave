@@ -24,7 +24,7 @@ class Pack
   
   def self.get_documents
     # changement de répertoire
-    Dir.chdir("#{Rails.root}/tmp/input_pdf_manuel")
+    Dir.chdir("#{Rails.root}/tmp/input_pdf_auto")
 
     # récupérer les fichiers pdf dans le répertoire
     document_names = Dir.entries("./").select{|f| f.match(/\w+_\w+_\w+_\d+\.(pdf|PDF)$/)}
