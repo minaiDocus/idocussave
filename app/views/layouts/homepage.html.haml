@@ -4,9 +4,12 @@
     %title Idocus | Archivage numérique
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }/
     %meta{ :name => :description, :content => "#{@homepage.meta_description rescue ''}" }/
-    != stylesheet_link_tag %w(pages/general pages/index pages/slideshow)
-    != javascript_include_tag %w(jquery-1.5.1.min slides.min.jquery)
+    != stylesheet_link_tag %w(pages/general pages/index pages/slideshow application-fix)
+    != javascript_include_tag %w(jquery-1.5.1.min jquery.tools.min slides.min.jquery)
     :javascript
+      $(document).ready(function(){
+        $(".information").tooltip({ effect: 'slide', relative: true, position: 'top right', offset: [0,0]});
+      });
       $(function(){
           $('#slides').slides({
               preload: true,

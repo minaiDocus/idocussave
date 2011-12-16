@@ -5,9 +5,13 @@
       #{ @page_title || "Commander" } - Idocus
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
-    = javascript_include_tag "jquery-1.4.2.min", "rails", "sprintf"
-    != stylesheet_link_tag %w(pages/general pages/tunnel)
+    = javascript_include_tag %w(jquery-1.5.1.min jquery.tools.min rails sprintf)
+    != stylesheet_link_tag %w(pages/general pages/tunnel application-fix)
     != csrf_meta_tag
+    :javascript
+      $(document).ready(function(){
+        $(".information").tooltip({ effect: 'slide', relative: true, position: 'top right', offset: [0,0]});
+      });
   %body.tunnel
     #worldwrapper
       #header

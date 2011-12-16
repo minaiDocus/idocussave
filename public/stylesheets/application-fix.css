@@ -77,6 +77,9 @@ li.document.shared .foot span, .order-shared{
   color:black;
 }
 
+.information {
+  display: inline-block; }
+
 /* simple css-based tooltip */
 .tooltip {
   background-color:#000;
