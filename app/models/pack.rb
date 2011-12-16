@@ -22,7 +22,7 @@ class Pack
     end
   end
   
-  def get_documents
+  def self.get_documents
     # changement de répertoire
     Dir.chdir("#{Rails.root}/tmp/input_pdf_manuel")
 
@@ -71,7 +71,7 @@ class Pack
           pack_already_exists = false
           order = user.subscription.order rescue user.orders.last
           unless order
-            order = order.create!(:user_id => user.id)
+            order = Order.create!(:user_id => user.id, :state => "paid", :manual => true)
           end
           pack = Pack.create!(:name => original_doc_name, :order_id => order.id)
           order.save
@@ -114,24 +114,13 @@ class Pack
           end
         end
         
-        input_list = ""
-        letter = "A"
+        document_list = ""
         document_pack.each_with_index do |document,index|
-          if index != 0
-            input_list += "#{letter}=#{document[0]} "
-            letter = letter.next
-          end
-        end
-        
-        range_list = ""
-        r_letter = "A"
-        while (r_letter < letter) do
-          range_list += "#{r_letter} "
-          r_letter = r_letter.next
+          document_list += " #{document[0]}" if index != 0
         end
         
         # assemblage des pdf
-        cmd = "pdftk #{input_list} cat #{range_list} output #{original_doc_name}.pdf"
+        cmd = "pdftk#{document_list} cat output #{original_doc_name}.pdf"
         puts cmd
         system(cmd)
         
@@ -186,6 +175,12 @@ class Pack
         cmd = "rm #{basename.sub('.pdf','')}* #{original_doc_name}.pdf"
         puts cmd
         system(cmd)
+        
+        pack.users << user
+        reporting = Reporting.where(:client_ids => user.id).first
+        if reporting
+          pack.users << reporting.user
+        end
           
         pack.save
       end
