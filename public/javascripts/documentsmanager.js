@@ -52,6 +52,8 @@ function documentmanagerresizer() {
   var headerheight;
   var leftcolonwidth;
   var docummentcomposerheight;
+  var useraccountheight;
+  var useraccountwidth;
   var pagesbrowserheight;
   var pagesbrowserwidth;
   var actiobarheight;
@@ -72,6 +74,8 @@ function documentmanagerresizer() {
   // Calculated values
   docummentcomposerheight = windowheight - headerheight;
   docummentcomposerwidth = windowwidth - leftcolonwidth;
+  useraccountheight = windowheight - headerheight - 5;
+  useraccountwidth = windowwidth - leftcolonwidth - 10;
   pagesbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*pane_ratio)-20;
   pagesbrowserwidth = docummentcomposerwidth -10
   documentbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*30);
@@ -91,6 +95,8 @@ function documentmanagerresizer() {
   $("#documentcomposer .documentbrowser .doccol").css('height', documentbrowserheight -10 +"px");
   $("#documentcomposer .documentbrowser .infoscol").css('width', infoscolwidth -10 +"px");
   $("#documentcomposer .documentbrowser .infoscol").css('height', documentbrowserheight -10 +"px");
+  $("#useraccount").css('height', useraccountheight +"px");
+  $("#useraccount").css('width', useraccountwidth +"px");
 }
 
 
@@ -104,6 +110,8 @@ function scrollpaneresizer() {
   var headerheight;
   var leftcolonwidth;
   var docummentcomposerheight;
+  var useraccountheight;
+  var useraccountwidth;
   var pagesbrowserheight;
   var pagesbrowserwidth;
   var actiobarheight;
@@ -124,6 +132,8 @@ function scrollpaneresizer() {
   // Calculated values
   docummentcomposerheight = windowheight - headerheight;
   docummentcomposerwidth = windowwidth - leftcolonwidth;
+  useraccountheight = windowheight - headerheight - 5;
+  useraccountwidth = windowwidth - leftcolonwidth - 10;
   pagesbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*pane_ratio)-20;
   pagesbrowserwidth = docummentcomposerwidth -10
   documentbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*30);
@@ -138,6 +148,8 @@ function scrollpaneresizer() {
   $("#documentcomposer .documentbrowser .infoscol").closest(".jScrollPaneContainer").css('width', infoscolwidth -10 +"px");
   $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('height', documentbrowserheight -10 +"px");
   $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('width', compdoccolwidth +"px");
+  $("#useraccount").closest(".jScrollPaneContainer").css('height', useraccountheight +"px");
+  $("#useraccount").closest(".jScrollPaneContainer").css('width', useraccountwidth +"px");
 }
 
 
@@ -151,6 +163,8 @@ function customscrollbarapplayer() {
   $('#documentcomposer .documentbrowser .doccol').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
   $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('float', "left");
   $("#documentcomposer .documentbrowser .infoscol").closest(".jScrollPaneContainer").css('float', "right");
+  
+  $('#useraccount').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
 }
 
 
