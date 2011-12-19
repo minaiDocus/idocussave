@@ -27,6 +27,10 @@ Idocus::Application.routes.draw do
       post 'archive', :on => :collection
     end
     resources :addresses
+    resource :dropbox do
+      get 'authorize_url', :on => :member
+      get 'callback', :on => :member
+    end
     resource :profile
     resource :paypal, :only => [] do
       member do

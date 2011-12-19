@@ -10,15 +10,20 @@ class Pack
   field :name, :type => String
   field :division, :type => Array
   
-  def get_document name
+  def get_document name, in_dir_manual=true
     document = Document.new
     document.is_an_original = true
     document.dirty = true
     document.pack = self
-    document.content = File.new "#{Rails.root}/tmp/input_pdf_manuel/#{name}.pdf"
+    if in_dir_manual
+      type = "manual"
+    else
+      type = "auto"
+    end
+    document.content = File.new "#{Rails.root}/tmp/input_pdf_#{type}/#{name}.pdf"
     if document.save!
       self.order.scanned! unless self.order.scanned?
-      system("rm #{Rails.root}/tmp/input_pdf_manuel/#{name}.pdf")
+      system("rm #{Rails.root}/tmp/input_pdf_#{type}/#{name}.pdf")
     end
   end
   
@@ -168,11 +173,26 @@ class Pack
           system(cmd)
           
         else
-          pack.get_document original_doc_name
+          pack.get_document original_doc_name, false
+        end
+        
+        # chargement dans la dropbox du propriétaire
+        dropbox = user.my_dropbox
+        if dropbox
+          session = dropbox.new_session
+          if session.authorized?
+            client = DropboxClient.new(session, Dropbox::ACCESS_TYPE)
+            document_pack.each_with_index do |document,i|
+              if i != 0
+                f = open(document[0])
+                client.put_file("/#{document[0]}",f) rescue nil
+              end
+            end
+          end
         end
         
         # suppression des fichiers temporaire
-        cmd = "rm #{basename.sub('.pdf','')}* #{original_doc_name}.pdf"
+        cmd = "rm #{original_doc_name.sub("all","")}* "
         puts cmd
         system(cmd)
         

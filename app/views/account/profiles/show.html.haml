@@ -13,6 +13,13 @@
           %br
     .titlebar.margin3top
       %h1.floattoleft
+        CONFIGURER MON COMPTE DROPBOX
+    .wrapper.w420
+      cliquer sur le lien suivant,
+      != link_to "ici", authorize_url_account_dropbox_path
+      ,pour paramétrer votre compte dropbox, autoriser l'application idocus à acceder à votre compte dans la page qui s'ouvre.
+    .titlebar.margin3top
+      %h1.floattoleft
         CHANGER MON MOT DE PASSE
     .wrapper.w420
       - form_for @user, :url => account_profile_path do |f|

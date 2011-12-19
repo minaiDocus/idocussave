@@ -29,6 +29,7 @@ class User
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
+  references_one :my_dropbox
 
   def self.find_by_email param
     User.where(:email => param).first
