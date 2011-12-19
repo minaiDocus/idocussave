@@ -159,6 +159,12 @@ class Pack
             document.position = old_number_of_page + i + 1
             document.content = File.new new_name
             document.save
+            
+            document_tag = DocumentTag.new
+            document_tag.document = document.id
+            document_tag.user = user.id
+            document_tag.generate
+            document_tag.save!
           end
         
           # mis à jour du document original
@@ -177,6 +183,13 @@ class Pack
           
         else
           pack.get_document original_doc_name, false
+          pack.documents.each do |document|
+            document_tag = DocumentTag.new
+            document_tag.document = document.id
+            document_tag.user = user.id
+            document_tag.generate
+            document_tag.save!
+          end
         end
         
         # chargement dans la dropbox du propriétaire
