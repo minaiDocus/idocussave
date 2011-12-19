@@ -4,3 +4,4 @@ tmp/
 public/images/
 public/system/
 Gemfile.lock
+doc_data.txt
