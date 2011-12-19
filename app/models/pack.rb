@@ -180,15 +180,17 @@ class Pack
         end
         
         # chargement dans la dropbox du propriétaire
-        dropbox = user.my_dropbox
-        if dropbox
-          session = dropbox.new_session
-          if session.authorized?
-            client = DropboxClient.new(session, Dropbox::ACCESS_TYPE)
-            document_pack.each_with_index do |document,i|
-              if i != 0
-                f = open(document[0])
-                client.put_file("/#{document[0]}",f) rescue nil
+        if user.is_dropbox_authorized
+          dropbox = user.my_dropbox
+          if dropbox
+            session = dropbox.new_session
+            if session.authorized?
+              client = DropboxClient.new(session, Dropbox::ACCESS_TYPE)
+              document_pack.each_with_index do |document,i|
+                if i != 0
+                  f = open(document[0])
+                  client.put_file("/#{document[0]}",f) rescue nil
+                end
               end
             end
           end

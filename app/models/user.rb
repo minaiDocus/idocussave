@@ -14,6 +14,7 @@ class User
   field :first_name, :type => String
   field :last_name, :type => String
   field :company, :type => String
+  field :is_dropbox_authorized, :type => Boolean, :default => false
 
   embeds_many :addresses
   

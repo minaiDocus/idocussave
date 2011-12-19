@@ -7,6 +7,10 @@
   != f.check_box :is_admin, :class => 'checkbox'
   
 .group
+  != f.label :is_dropbox_authorized, "Autoriser Dropbox ?", :class => :label
+  != f.check_box :is_dropbox_authorized, :class => 'checkbox'
+  
+.group
   != f.label :first_name, "Nom", :class => :label
   != f.text_field :first_name, :class => 'text_field'
   %br

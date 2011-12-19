@@ -6,18 +6,19 @@
         .notice.margin2bottom.margin1top
           %span.title= flash[:notice]
           %br
-    - elsif flash[:credit_alert].present?
+    - elsif flash[:credit_alert].present? || flash[:error].present?
       .flash
         .errors.margin2bottom.margin1top
-          %span.title= flash[:credit_alert]
+          %span.title= flash[:credit_alert] || flash[:error]
           %br
-    .titlebar.margin3top
-      %h1.floattoleft
-        CONFIGURER MON COMPTE DROPBOX
-    .wrapper.w420
-      cliquer sur le lien suivant,
-      != link_to "ici", authorize_url_account_dropbox_path
-      ,pour paramétrer votre compte dropbox, autoriser l'application idocus à acceder à votre compte dans la page qui s'ouvre.
+    - if current_user.is_dropbox_authorized
+      .titlebar.margin3top
+        %h1.floattoleft
+          DROPBOX
+      .wrapper.w420
+        Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
+        != link_to "ici", authorize_url_account_dropbox_path
+        #{"."}
     .titlebar.margin3top
       %h1.floattoleft
         CHANGER MON MOT DE PASSE

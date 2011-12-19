@@ -1,8 +1,15 @@
 class Account::DropboxesController < Account::AccountController
-  
+  before_filter :dropbox_authorized?
   before_filter :load_dropbox
   
 private
+
+  def dropbox_authorized?
+    unless current_user.is_dropbox_authorized
+      flash[:error] = "Vous n'êtes pas autorisé à utiliser Dropbox."
+      redirect_to account_profile_path
+    end
+  end
 
   def load_dropbox
     @dropbox = current_user.my_dropbox
