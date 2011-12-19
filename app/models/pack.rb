@@ -301,7 +301,7 @@ class Pack
             if word.match(/^[+]/)
               result << [true,word.scan(/\w+/).join()]
             else
-              result << [false,word]
+              # result << [false,word]
             end
           end
         end
