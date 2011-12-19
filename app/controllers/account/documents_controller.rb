@@ -33,16 +33,20 @@ class Account::DocumentsController < Account::AccountController
       if !params[:filtre]
         current_user.orders.with_state([:paid]).desc(:created_at).each do |order|
           order.packs.each do |pack|
-            if matchFilter(pack.documents.first.id)
-              pack_ids << pack.id
+            unless pack.documents.empty?
+              if matchFilter(pack.documents.first.id)
+                pack_ids << pack.id
+              end
             end
           end
         end
       end
       current_user.orders.with_state([:scanned]).desc(:created_at).each do |order|
         order.packs.each do |pack|
-          if matchFilter(pack.documents.first.id)
-            pack_ids << pack.id
+          unless pack.documents.empty?
+            if matchFilter(pack.documents.first.id)
+              pack_ids << pack.id
+            end
           end
         end
       end
@@ -54,8 +58,10 @@ class Account::DocumentsController < Account::AccountController
         order_ids << order.id
       end
       Pack.where(:user_ids => current_user.id).not_in(:order_id => order_ids).entries.each do |pack|
-        if matchFilter(pack.documents.first.id)
-          pack_ids << pack.id
+        unless pack.documents.empty?
+          if matchFilter(pack.documents.first.id)
+            pack_ids << pack.id
+          end
         end
       end
       if params[:view] != "all"
@@ -64,8 +70,10 @@ class Account::DocumentsController < Account::AccountController
           order2_ids << order.id
         end
         Pack.where(:user_ids => current_user.id).not_in(:order_id => order_ids).any_in(:order_id => order2_ids).each do |pack|
-          if matchFilter(pack.documents.first.id)
-            pack_ids << pack.id
+          unless pack.documents.empty?
+            if matchFilter(pack.documents.first.id)
+              pack_ids << pack.id
+            end
           end
         end
       end
@@ -381,10 +389,11 @@ protected
       document_tag = DocumentTag.where(:document_id => document_id, :user_id => current_user.id).first
       if document_tag.nil?
         match_tag = false
-      end
-      Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:').each do |tag|
-        unless document_tag.name.match(/ #{tag}/)
-          match_tag = false
+      else
+        Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:').each do |tag|
+          unless document_tag.name.match(/ #{tag}/)
+            match_tag = false
+          end
         end
       end
 
