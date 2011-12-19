@@ -71,6 +71,9 @@ class Pack
       if user
         pack_already_exists = true
         pack = user.packs.where(:name => original_doc_name).first
+        unless pack
+          pack = user.packs.where(:name => original_doc_name.gsub('_',' ')).first
+        end
       
         unless pack
           pack_already_exists = false
@@ -78,7 +81,7 @@ class Pack
           unless order
             order = Order.create!(:user_id => user.id, :state => "paid", :manual => true)
           end
-          pack = Pack.create!(:name => original_doc_name, :order_id => order.id)
+          pack = Pack.create!(:name => original_doc_name.gsub('_',' '), :order_id => order.id)
           order.save
         end
 
@@ -164,11 +167,11 @@ class Pack
           temp_path = File.expand_path(temp_file.path)
           basename = File.basename(temp_path)
           
-          cmd = "cp #{temp_path} ./" 
+          cmd = "cp '#{temp_path}' ./" 
           puts cmd
           system(cmd)
           
-          cmd = "pdftk A=#{basename} B=#{original_doc_name}.pdf cat A B output #{temp_path}"
+          cmd = "pdftk A='#{basename}' B=#{original_doc_name}.pdf cat A B output '#{temp_path}'"
           puts cmd
           system(cmd)
           
