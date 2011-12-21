@@ -15,8 +15,12 @@
       .titlebar.margin3top
         %h1.floattoleft
           DROPBOX
-      .wrapper.w420
-        Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
+      .wrapper.w420.margin2top
+        - session = DropboxSession.deserialize(current_user.my_dropbox.session)
+        - if session.authorized?
+          Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
+        - else
+          Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
         != link_to "ici", authorize_url_account_dropbox_path
         #{"."}
     .titlebar.margin3top
