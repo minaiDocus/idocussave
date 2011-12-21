@@ -161,14 +161,7 @@
               Email
             %th{ :colspan => 5 }
               Statut des documents papier
-          - @clients_sort = @clients.sort do |a,b|
-            - if a.code != b.code
-              - a.code <=> b.code
-            - elsif a.company != b.company
-              - a.company <=> b.company
-            - elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-              - (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
-          - @clients_sort.each do |client|
+          - @clients.each do |client|
             %tr.client{ :class => client.id }
               %td.w75
                 =client.company rescue ""

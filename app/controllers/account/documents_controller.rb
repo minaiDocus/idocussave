@@ -339,6 +339,17 @@ class Account::DocumentsController < Account::AccountController
       @user.reporting.save
     end
     @clients = @user.reporting.clients + [@user]
+    @clients = @clients.sort do |a,b|
+      if a.code != b.code
+        a.code <=> b.code
+      elsif a.company != b.company
+        a.company <=> b.company
+      elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+        (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
+      else
+        a.email <=> b.email
+      end
+    end
     
     @packs = []
     if orders = (@user.reporting.orders + @user.orders)

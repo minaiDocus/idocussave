@@ -29,13 +29,13 @@
  * XX) _GeneratedByMixin
  * XX) _WorkingClass */
 @font-face {
-  font-family: "VagNormal";
+  font-family: arial, "VagNormal";
   font-style: normal;
   font-weight: normal;
   src: local("VagNormal"), url("../images/fonts/vag_round_normal.ttf") format("truetype"); }
 
 @font-face {
-  font-family: "VagBold";
+  font-family: arial, "VagBold";
   font-style: bold;
   font-weight: bolder;
   src: local("VagBold"), url("../images/fonts/vag_round_bold.ttf") format("truetype"); }
@@ -45,7 +45,7 @@ html {
   width: 100%; }
 
 body {
-  font-family: "trebuchet ms", arial;
+  font-family: arial, "trebuchet ms";
   font-size: 12px;
   line-height: 16px;
   background-color: #dddbda; }
@@ -56,21 +56,21 @@ h1, h2, h3, h4, h5 {
 
 h1 {
   position: relative;
-  font-family: "VagNormal", "trebuchet ms";
+  font-family: arial, "VagNormal", "trebuchet ms";
   font-size: 48px;
   line-height: 48px;
   color: black; }
 
 h3 {
   position: relative;
-  font-family: "VagNormal", "trebuchet ms";
+  font-family: arial, "VagNormal", "trebuchet ms";
   font-size: 16px;
   line-height: 16px;
   color: black; }
 
 h4 {
   position: relative;
-  font-family: "VagNormal", "trebuchet ms";
+  font-family: arial, "VagNormal", "trebuchet ms";
   font-size: 14px;
   line-height: 14px;
   color: black; }
@@ -254,7 +254,7 @@ body.homepage #worldwrapper #content .rightcolon .loginbox {
     width: 240px;
     text-transform: uppercase;
     font-weight: bold;
-    font-family: "VagNormal", "trebuchet ms";
+    font-family: arial, "VagNormal", "trebuchet ms";
     font-size: 12px;
     line-height: 12px;
     padding-top: 12px;
@@ -340,7 +340,7 @@ body.homepage #worldwrapper #content .rightcolon .teasingstep {
     background-position: 0px -132px; }
   body.homepage #worldwrapper #content .rightcolon .teasingstep a.wrd {
     height: 36px;
-    font-family: "VagNormal";
+    font-family: arial, "VagNormal";
     font-weight: bold;
     letter-spacing: 0.9px;
     text-decoration: none;
@@ -376,7 +376,7 @@ body.homepage #worldwrapper #content .rightcolon .ordernow {
     width: 258px;
     height: 32px;
     float: right;
-    font-family: "VagNormal";
+    font-family: arial, "VagNormal";
     font-weight: bold;
     letter-spacing: 0.9px;
     text-decoration: none;
@@ -439,7 +439,7 @@ body.pages #worldwrapper #content .leftcolon ul.pageslistmenu, body.devise #worl
       display: block !important;
       position: relative !important;
       margin-left: 20px;
-      font-family: "VagNormal";
+      font-family: arial, "VagNormal";
       font-weight: bold;
       letter-spacing: 0.9px;
       text-decoration: none;
@@ -516,7 +516,7 @@ body.tunnel #worldwrapper #header .rightcolon {
     position: relative !important;
     text-align: right;
     margin-top: 15px;
-    font-family: "VagNormal";
+    font-family: arial, "VagNormal";
     font-weight: bold;
     font-size: 17px;
     line-height: 17px;
@@ -573,7 +573,7 @@ body.tunnel #worldwrapper #content .tunnelcase {
       body.tunnel #worldwrapper #content .tunnelcase .progress li span {
         display: block !important;
         position: relative !important;
-        font-family: "VagNormal";
+        font-family: arial, "VagNormal";
         font-weight: bold;
         font-size: 11px;
         line-height: 11px;
@@ -675,7 +675,7 @@ body.tunnel #worldwrapper #content .resume {
     body.tunnel #worldwrapper #content .resume .header span.title {
       display: block !important;
       position: relative !important;
-      font-family: "VagNormal";
+      font-family: arial, "VagNormal";
       font-weight: bold;
       font-size: 13px;
       line-height: 13px;
@@ -734,7 +734,7 @@ body.tunnel #worldwrapper #content .infosbox {
     body.tunnel #worldwrapper #content .infosbox .header span.title {
       display: block !important;
       position: relative !important;
-      font-family: "VagNormal";
+      font-family: arial, "VagNormal";
       font-weight: bold;
       font-size: 11px;
       line-height: 11px;
@@ -1028,7 +1028,7 @@ body.application #worldwrapper #header .rightcolon ul.tabmenu {
       background-position: left -31px;
       text-transform: uppercase;
       text-decoration: none;
-      font-family: "VagNormal";
+      font-family: arial, "VagNormal";
       font-weight: bold;
       font-size: 12px;
       line-height: 12px;
@@ -1175,7 +1175,6 @@ body.application #worldwrapper #header .rightcolon ul.tabmenu {
         -khtml-border-radius: 4px;
         font-size: 10px;
         line-height: 10px;
-        color: white;
         font-weight: bold;
         top: 4px;
         text-align: left;
@@ -1369,7 +1368,7 @@ body.application #worldwrapper #content .leftcolon .filelist {
     width: 200px;
     height: 18px;
     font-weight: bold;
-    font-family: "VagNormal", "trebuchet ms";
+    font-family: arial, "VagNormal", "trebuchet ms";
     font-size: 12px;
     line-height: 12px;
     padding-top: 2px;
@@ -1565,7 +1564,7 @@ body.application #worldwrapper #content .leftcolon .note {
     display: block !important;
     position: relative !important;
     min-width: 100px;
-    font-family: "VagNormal", "trebuchet ms";
+    font-family: arial, "VagNormal", "trebuchet ms";
     font-size: 19px;
     line-height: 19px;
     color: black; }
@@ -1722,7 +1721,7 @@ input[type="submit"].button {
   font-size: 11px;
   line-height: 14px;
   font-weight: bold;
-  font-family: "trebuchet ms", arial !important;
+  font-family: arial, "trebuchet ms", arial !important;
   text-align: center; }
 
 input[type="submit"].whitebtn {
@@ -1853,7 +1852,7 @@ form input.w470 {
 body.homepage #textilehpcontent h2, body.pages .rightcolon h2 {
   display: block !important;
   position: relative !important;
-  font-family: "VagNormal";
+  font-family: arial, "VagNormal";
   font-weight: bold;
   letter-spacing: 0.9px;
   text-decoration: none;

@@ -63,13 +63,13 @@ $COL_BLOC_GRAY3        : #a3a3a3
 
 // _FontFace
 @font-face
-  :font-family 'VagNormal'
+  :font-family arial, 'VagNormal'
   :font-style normal
   :font-weight normal
   :src local('VagNormal'), url('../images/fonts/vag_round_normal.ttf') format('truetype')
 
 @font-face
-  :font-family 'VagBold'
+  :font-family arial, 'VagBold'
   :font-style bold
   :font-weight bolder
   :src local('VagBold'), url('../images/fonts/vag_round_bold.ttf') format('truetype')
@@ -141,7 +141,7 @@ html
   :width 100%
 
 body
-  :font-family 'trebuchet ms', arial
+  :font-family arial, 'trebuchet ms'
   :font-size $MIN_FNT_SIZE
   :line-height $MIN_LN_HEIGHT
   :background-color $COL_PAGE_BG
@@ -151,21 +151,21 @@ h1, h2, h3, h4, h5
 
 h1
   :position relative
-  :font-family 'VagNormal', 'trebuchet ms'
+  :font-family arial, 'VagNormal', 'trebuchet ms'
   :font-size 48px
   :line-height 48px
   :color #000
 
 h3
   :position relative
-  :font-family 'VagNormal', 'trebuchet ms'
+  :font-family arial, 'VagNormal', 'trebuchet ms'
   :font-size 16px
   :line-height 16px
   :color #000
 
 h4
   :position relative
-  :font-family 'VagNormal', 'trebuchet ms'
+  :font-family arial, 'VagNormal', 'trebuchet ms'
   :font-size 14px
   :line-height 14px
   :color #000
@@ -364,7 +364,7 @@ body.homepage
             :width 240px
             :text-transform uppercase
             :font-weight bold
-            :font-family 'VagNormal', 'trebuchet ms'
+            :font-family arial, 'VagNormal', 'trebuchet ms'
             :font-size 12px
             :line-height 12px
             :padding-top 12px
@@ -443,7 +443,7 @@ body.homepage
             :background-position 0px -132px
           a.wrd
             :height 36px
-            :font-family 'VagNormal'
+            :font-family arial, 'VagNormal'
             :font-weight bold
             :letter-spacing 0.9px
             :text-decoration none
@@ -476,7 +476,7 @@ body.homepage
             :width 258px
             :height 32px
             :float right
-            :font-family 'VagNormal'
+            :font-family arial, 'VagNormal'
             :font-weight bold
             :letter-spacing 0.9px
             :text-decoration none
@@ -551,7 +551,7 @@ body.pages, body.devise
             a
               @include SetBoxRelPositioning
               :margin-left 20px
-              :font-family 'VagNormal'
+              :font-family arial, 'VagNormal'
               :font-weight bold
               :letter-spacing 0.9px
               :text-decoration none
@@ -636,7 +636,7 @@ body.tunnel
           @include SetBoxRelPositioning
           :text-align right
           :margin-top 15px
-          :font-family 'VagNormal'
+          :font-family arial, 'VagNormal'
           :font-weight bold
           :font-size 17px
           :line-height 17px
@@ -690,7 +690,7 @@ body.tunnel
             :background-repeat repeat-x
             span
               @include SetBoxRelPositioning
-              :font-family 'VagNormal'
+              :font-family arial, 'VagNormal'
               :font-weight bold
               :font-size 11px
               :line-height 11px
@@ -790,7 +790,7 @@ body.tunnel
           :height 40px
           span.title
             @include SetBoxRelPositioning
-            :font-family 'VagNormal'
+            :font-family arial, 'VagNormal'
             :font-weight bold
             :font-size 13px
             :line-height 13px
@@ -842,7 +842,7 @@ body.tunnel
           :height 30px
           span.title
             @include SetBoxRelPositioning
-            :font-family 'VagNormal'
+            :font-family arial, 'VagNormal'
             :font-weight bold
             :font-size 11px
             :line-height 11px
@@ -1137,7 +1137,7 @@ body.application
               :background-position left -31px
               :text-transform uppercase
               :text-decoration none
-              :font-family 'VagNormal'
+              :font-family arial, 'VagNormal'
               :font-weight bold
               :font-size 12px
               :line-height 12px
@@ -1282,7 +1282,6 @@ body.application
           @include SetSmallRoundedCornerBox
           :font-size 10px
           :line-height 10px
-          :color #fff
           :font-weight bold
           :top 4px
           :text-align left
@@ -1506,7 +1505,7 @@ body.application
             :width 200px
             :height 18px
             :font-weight bold
-            :font-family 'VagNormal', 'trebuchet ms'
+            :font-family arial, 'VagNormal', 'trebuchet ms'
             :font-size 12px
             :line-height 12px
             :padding-top 2px
@@ -1711,7 +1710,7 @@ body.application
   h1, h2
     @include SetBoxRelPositioning
     :min-width 100px
-    :font-family 'VagNormal', 'trebuchet ms'
+    :font-family arial, 'VagNormal', 'trebuchet ms'
     :font-size 19px
     :line-height 19px
     :color #000
@@ -1855,7 +1854,7 @@ input[type="submit"].button
   :font-size 11px
   :line-height 14px
   :font-weight bold
-  :font-family 'trebuchet ms', arial !important
+  :font-family arial, 'trebuchet ms', arial !important
   :text-align center
 
 input[type="submit"].whitebtn
@@ -1994,7 +1993,7 @@ form
 body.homepage #textilehpcontent, body.pages .rightcolon
   h2
     @include SetBoxRelPositioning
-    :font-family 'VagNormal'
+    :font-family arial, 'VagNormal'
     :font-weight bold
     :letter-spacing 0.9px
     :text-decoration none
