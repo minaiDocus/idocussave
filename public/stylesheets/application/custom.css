@@ -49,6 +49,7 @@ a span {
   font-size: 32px; }
 
 li.document.page .foot span {
+  color: white;
   background-color: #3e2f24; }
 li.document.page.selected .foot span {
   color: white; }
@@ -74,7 +75,8 @@ li.document.scanned .foot span, .order-scanned {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -khtml-border-radius: 4px;
-  color: black; }
+  color: black;
+  font-family: "trebuchet ms"; }
 
 li.document.sharing .foot span, .order-sharing {
   background-color: #ffaf60;
@@ -82,7 +84,8 @@ li.document.sharing .foot span, .order-sharing {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -khtml-border-radius: 4px;
-  color: black; }
+  color: black;
+  font-family: "trebuchet ms"; }
 
 li.document.shared .foot span, .order-shared {
   background-color: #4f81f4;
@@ -90,7 +93,8 @@ li.document.shared .foot span, .order-shared {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -khtml-border-radius: 4px;
-  color: black; }
+  color: black;
+  font-family: "trebuchet ms"; }
 
 .order-paid, .order-scanned, .order-sharing, .order-shared {
   padding: 4px; }
