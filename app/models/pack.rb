@@ -67,6 +67,16 @@ class Pack
       user_code = document_pack[1][0].split('_')[0]
       original_doc_name = document_pack[1][0].split('_')[0..2].join('_') + "_all"
       
+      # deplacement des fichiers dans un dossier temporaire
+      Dir.mkdir(original_doc_name)
+      document_pack.each_with_index do |document,index|
+        if index != 0
+          cmd = "mv #{document[0]} #{original_doc_name}"
+          system(cmd)
+        end
+      end
+      Dir.chdir(original_doc_name)
+      
       user = User.where(:code => user_code).first
       if user
         pack_already_exists = true
@@ -209,9 +219,9 @@ class Pack
           end
         end
         
-        # suppression des fichiers temporaire
-        cmd = "rm #{original_doc_name.sub("all","")}* "
-        puts cmd
+        # suppression du dossier temporaire et retour au dossier principale
+        Dir.chdir("..")
+        cmd = "rm -r #{original_doc_name}"
         system(cmd)
         
         pack.users << user
