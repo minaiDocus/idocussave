@@ -1,6 +1,6 @@
 /*Filename       : application.css 
   Redered form   : application.sass
-  Need HAML gem  : version 3.0.13
+  Need HAML gem  : version 3.1.12
   Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
   Version        : 1.0.0 2011-12-21 YYYY-MM-DD
   Author         : DirectMada
@@ -35,29 +35,29 @@
 
 
 // _GlobalConstant
-!VAL_MAX_MULTI         = 50
-!VAL_POS_UNIT          = 10
-!MIN_FNT_SIZE          = 12px
-!MIN_LN_HEIGHT         = 16px
+$VAL_MAX_MULTI         : 50
+$VAL_POS_UNIT          : 10
+$MIN_FNT_SIZE          : 12px
+$MIN_LN_HEIGHT         : 16px
 
-!SIZ_HOMEPAGE          = 900px
-!SIZ_TUNNEL            = 750px
-!SIZ_PAGES             = 750px
-!SIZ_APPLICATION       = 100%
-!SIZ_DEF_MARG          = 10px
-!SIZ_BOX_RADIUS        = 8px
-!SIZ_SMALL_BOX_RADIUS  = 4px
+$SIZ_HOMEPAGE          : 900px
+$SIZ_TUNNEL            : 750px
+$SIZ_PAGES             : 750px
+$SIZ_APPLICATION       : 100%
+$SIZ_DEF_MARG          : 10px
+$SIZ_BOX_RADIUS        : 8px
+$SIZ_SMALL_BOX_RADIUS  : 4px
 
-!COL_CHART_BROWN       = #3e2f24
-!COL_CHART_BROWN_LIGHT = #e0e0e0
-!COL_CHART_GREEN       = #C9DD03
-!COL_CHART_SKIN        = #D2C295
-!COL_CHART_GRAY        = #1E1E1E
+$COL_CHART_BROWN       : #3e2f24
+$COL_CHART_BROWN_LIGHT : #e0e0e0
+$COL_CHART_GREEN       : #C9DD03
+$COL_CHART_SKIN        : #D2C295
+$COL_CHART_GRAY        : #1E1E1E
 
-!COL_PAGE_BG           = #dddbda
-!COL_BLOC_GRAY1        = #b9b9b9
-!COL_BLOC_GRAY2        = #bababa
-!COL_BLOC_GRAY3        = #a3a3a3
+$COL_PAGE_BG           : #dddbda
+$COL_BLOC_GRAY1        : #b9b9b9
+$COL_BLOC_GRAY2        : #bababa
+$COL_BLOC_GRAY3        : #a3a3a3
 
 
 
@@ -86,51 +86,51 @@
   :position absolute !important
 
 @mixin SetRoundedCornerBox
-  :border-radius !SIZ_BOX_RADIUS
-  :-webkit-border-radius !SIZ_BOX_RADIUS
-  :-moz-border-radius !SIZ_BOX_RADIUS
-  :-khtml-border-radius !SIZ_BOX_RADIUS
+  :border-radius $SIZ_BOX_RADIUS
+  :-webkit-border-radius $SIZ_BOX_RADIUS
+  :-moz-border-radius $SIZ_BOX_RADIUS
+  :-khtml-border-radius $SIZ_BOX_RADIUS
 
 @mixin SetSmallRoundedCornerBox
-  :border-radius !SIZ_SMALL_BOX_RADIUS
-  :-webkit-border-radius !SIZ_SMALL_BOX_RADIUS
-  :-moz-border-radius !SIZ_SMALL_BOX_RADIUS
-  :-khtml-border-radius !SIZ_SMALL_BOX_RADIUS
+  :border-radius $SIZ_SMALL_BOX_RADIUS
+  :-webkit-border-radius $SIZ_SMALL_BOX_RADIUS
+  :-moz-border-radius $SIZ_SMALL_BOX_RADIUS
+  :-khtml-border-radius $SIZ_SMALL_BOX_RADIUS
 
 @mixin GenerateMarginTopClass
-  $i: !VAL_MAX_MULTI
+  $i: $VAL_MAX_MULTI
   @while $i > 0
     .margin#{$i}top
-      :margin-top !VAL_POS_UNIT * $i + px
+      :margin-top $VAL_POS_UNIT * $i + px
     .padding#{$i}top
-      :padding-top !VAL_POS_UNIT * $i + px
+      :padding-top $VAL_POS_UNIT * $i + px
     $i: $i - 1
 
 @mixin GenerateMarginLeftClass
-  $i: !VAL_MAX_MULTI
+  $i: $VAL_MAX_MULTI
   @while $i > 0
     .margin#{$i}left
-      :margin-left !VAL_POS_UNIT * $i + px
+      :margin-left $VAL_POS_UNIT * $i + px
     .padding#{$i}left
-      :padding-left !VAL_POS_UNIT * $i + px
+      :padding-left $VAL_POS_UNIT * $i + px
     $i: $i - 1
 
 @mixin GenerateMarginRightClass
-  $i: !VAL_MAX_MULTI
+  $i: $VAL_MAX_MULTI
   @while $i > 0
     .margin#{$i}right
-      :margin-right !VAL_POS_UNIT * $i + px
+      :margin-right $VAL_POS_UNIT * $i + px
     .padding#{$i}right
-      :padding-right !VAL_POS_UNIT * $i + px
+      :padding-right $VAL_POS_UNIT * $i + px
     $i: $i - 1
 
 @mixin GenerateMarginBottomClass
-  $i: !VAL_MAX_MULTI
+  $i: $VAL_MAX_MULTI
   @while $i > 0
     .margin#{$i}bottom
-      :margin-bottom !VAL_POS_UNIT * $i + px
+      :margin-bottom $VAL_POS_UNIT * $i + px
     .padding#{$i}bottom
-      :padding-bottom !VAL_POS_UNIT * $i + px
+      :padding-bottom $VAL_POS_UNIT * $i + px
     $i: $i - 1
 
 
@@ -142,9 +142,9 @@ html
 
 body
   :font-family 'trebuchet ms', arial
-  :font-size !MIN_FNT_SIZE
-  :line-height !MIN_LN_HEIGHT
-  :background-color !COL_PAGE_BG
+  :font-size $MIN_FNT_SIZE
+  :line-height $MIN_LN_HEIGHT
+  :background-color $COL_PAGE_BG
 
 h1, h2, h3, h4, h5
   @include SetBoxRelPositioning
@@ -172,8 +172,8 @@ h4
 
 
 ul, span, p, a, ul li, div
-  :font-size !MIN_FNT_SIZE
-  :line-height !MIN_LN_HEIGHT
+  :font-size $MIN_FNT_SIZE
+  :line-height $MIN_LN_HEIGHT
   :list-style none
 
 
@@ -199,7 +199,7 @@ form
 
 body.homepage
   #worldwrapper
-    :width !SIZ_HOMEPAGE
+    :width $SIZ_HOMEPAGE
     :height auto
     #header
       :min-height 60px
@@ -210,10 +210,10 @@ body.homepage
       :width 560px
 
 body.application
-  :background-color !COL_CHART_BROWN
+  :background-color $COL_CHART_BROWN
   :overflow hidden
   #worldwrapper
-    :width !SIZ_APPLICATION
+    :width $SIZ_APPLICATION
     :height 100%
     #header
       :height 60px
@@ -224,7 +224,7 @@ body.application
 
 body.tunnel
   #worldwrapper
-    :width !SIZ_TUNNEL
+    :width $SIZ_TUNNEL
     #header
       :height 64px
     #content
@@ -234,7 +234,7 @@ body.tunnel
 
 body.pages
   #worldwrapper
-    :width !SIZ_PAGES
+    :width $SIZ_PAGES
     :height auto
     #header
       :min-height 60px
@@ -245,7 +245,7 @@ body.pages
 
 body.devise
   #worldwrapper
-    :width !SIZ_PAGES
+    :width $SIZ_PAGES
     :height 100%
     #header
       :min-height 60px
@@ -261,7 +261,7 @@ body.homepage
   :background url("../images/application/bg_big_lendsflare.png")
   :background-repeat no-repeat
   :background-position center top
-  :background-color !COL_PAGE_BG
+  :background-color $COL_PAGE_BG
   #worldwrapper
     :background url("../images/application/bg_brown_colon_300.png")
     :background-repeat repeat-y
@@ -403,7 +403,7 @@ body.homepage
             :text-decoration none
             :padding-left 10px
           a:hover
-            :color !COL_CHART_GREEN
+            :color $COL_CHART_GREEN
         .teasingscreen
           @include SetBoxRelPositioning
           :width 432px
@@ -497,7 +497,7 @@ body.pages, body.devise
   :background url("../images/application/bg_brown_colon_700.png")
   :background-repeat repeat-y
   :background-position center top
-  :background-color !COL_PAGE_BG
+  :background-color $COL_PAGE_BG
 
 body.pages, body.devise
   #worldwrapper
@@ -565,11 +565,11 @@ body.pages, body.devise
               :padding-top 12px
               :padding-bottom 10px
             a:hover
-              :color !COL_CHART_GREEN
+              :color $COL_CHART_GREEN
           li.current
             :background url("../images/application/bg_pages_menu_item.png")
             a
-              :color !COL_CHART_GRAY
+              :color $COL_CHART_GRAY
 
 
 
@@ -599,7 +599,7 @@ body.tunnel
   :background url("../images/application/bg_small_lendsflare.png")
   :background-repeat no-repeat
   :background-position center top
-  :background-color !COL_PAGE_BG
+  :background-color $COL_PAGE_BG
 
 body.tunnel
   #worldwrapper
@@ -676,10 +676,10 @@ body.tunnel
           :background url("../images/application/bg_progress_tunnel.png")
           :background-repeat repeat-x
           :background-position left top
-          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright $SIZ_SMALL_BOX_RADIUS
           li
             :display block
             :position absolute
@@ -700,11 +700,11 @@ body.tunnel
               :height 24px
               :margin-top 9px
           li:first-child
-            :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-            :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+            :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+            :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
           li:last-child
-            :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
-            :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+            :-webkit-border-top-right-radius $SIZ_SMALL_BOX_RADIUS
+            :-moz-border-radius-topright $SIZ_SMALL_BOX_RADIUS
           li.first
             :z-index 10
             :width 185px
@@ -782,10 +782,10 @@ body.tunnel
         .header
           @include SetBoxRelPositioning
           :width 180px
-          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright $SIZ_SMALL_BOX_RADIUS
           :background-color #b9b9b9
           :height 40px
           span.title
@@ -834,10 +834,10 @@ body.tunnel
         .header
           @include SetBoxRelPositioning
           :width 180px
-          :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-          :-webkit-border-top-right-radius !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
-          :-moz-border-radius-topright !SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+          :-webkit-border-top-right-radius $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
+          :-moz-border-radius-topright $SIZ_SMALL_BOX_RADIUS
           :background-color #b9b9b9
           :height 30px
           span.title
@@ -1079,8 +1079,8 @@ body.application
       .rightcolon
         :float right
         :right 0px
-        :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-        :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+        :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+        :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
         :background url("../images/application/bg_app.png")
         :background-repeat no-repeat
         :background-position right 45px
@@ -1103,15 +1103,15 @@ body.application
             :height 20px
             :margin-left 2px
             :top 6px
-            :color !COL_CHART_BROWN_LIGHT
+            :color $COL_CHART_BROWN_LIGHT
           li, li a
             :font-size 11px
             :line-height 11px
           li a
-            :color !COL_CHART_GREEN
+            :color $COL_CHART_GREEN
             :text-decoration none
           li a.brown
-            :color !COL_CHART_BROWN_LIGHT !important
+            :color $COL_CHART_BROWN_LIGHT !important
             :margin-right 10px
         ul.tabmenu
           :display block
@@ -1142,17 +1142,17 @@ body.application
               :font-size 12px
               :line-height 12px
               :padding-top 12px
-              :color !COL_CHART_BROWN_LIGHT
+              :color $COL_CHART_BROWN_LIGHT
           li.current
             :background-position right -62px
             a
               :background-position left 0px
-              :color !COL_CHART_BROWN
+              :color $COL_CHART_BROWN
           li.link
             :background none
             a
               :background none
-              :color !COL_CHART_GREEN
+              :color $COL_CHART_GREEN
 
 
 
@@ -1445,8 +1445,8 @@ ul.documentslist
 // _ApplicationWidget Actionbar
 .actionbar
   @include SetBoxRelPositioning
-  :-webkit-border-top-left-radius !SIZ_SMALL_BOX_RADIUS
-  :-moz-border-radius-topleft !SIZ_SMALL_BOX_RADIUS
+  :-webkit-border-top-left-radius $SIZ_SMALL_BOX_RADIUS
+  :-moz-border-radius-topleft $SIZ_SMALL_BOX_RADIUS
   :width 100%
   :height 42px
   :background url("../images/application/bg_action_bar.png")

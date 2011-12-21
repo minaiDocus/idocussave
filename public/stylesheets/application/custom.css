@@ -1,0 +1,96 @@
+/*Filename       : custom.css
+ * Redered form   : custom.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css custom file for UI */
+.document_tags {
+  position: relative;
+  bottom: 132px;
+  background: black;
+  color: white;
+  display: none; }
+
+ul li.list {
+  width: auto;
+  height: auto; }
+
+.margin01top {
+  margin-top: 1px; }
+
+.margin07top {
+  margin-top: 7px; }
+
+.margin05top {
+  margin-top: 5px; }
+
+.margin015top {
+  margin-top: 15px; }
+
+.aligncenter {
+  text-align: center; }
+  .aligncenter .paginate {
+    display: inline-block; }
+
+a span {
+  font-size: 12px; }
+  a span.visibility {
+    font-size: 12px; }
+
+.pagesbrowser .titlebar {
+  background-image: url(../../images/application/bg_action_bar.png);
+  border-top: 1px #b1b1b1 outset;
+  height: 32px; }
+
+.visibility {
+  text-align: center;
+  font-size: 32px; }
+
+li.document.page .foot span {
+  background-color: #3e2f24; }
+li.document.page.selected .foot span {
+  color: white; }
+li.document.paid .foot span {
+  background-color: #909090;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  color: black; }
+
+.order-paid {
+  background-color: #909090;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  color: black; }
+
+li.document.scanned .foot span, .order-scanned {
+  background-color: #ffffb7;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  color: black; }
+
+li.document.sharing .foot span, .order-sharing {
+  background-color: #ffaf60;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  color: black; }
+
+li.document.shared .foot span, .order-shared {
+  background-color: #4f81f4;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  color: black; }
+
+.order-paid, .order-scanned, .order-sharing, .order-shared {
+  padding: 4px; }

@@ -1,0 +1,1166 @@
+/*Filename       : pages.css
+ * Redered form   : pages.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : iDocus public page main file */
+/*Filename       : general.css
+ * Redered form   : general.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for public global page */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+  border-style: none;
+  font-family: Arial, Calibri, Verdana, Helvetica, sans-serif;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  margin: 0;
+  outline-style: none;
+  outline-width: 0;
+  padding: 0; }
+
+html[xmlns] .clearfix {
+  display: block; }
+
+* html .clearfix {
+  height: 1%; }
+
+.clearfix {
+  display: block; }
+  .clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0; }
+
+.clear {
+  clear: both; }
+
+.style_bar {
+  width: 960px;
+  height: 3px;
+  background: url(../../images/pages/ligne%20style.png) no-repeat;
+  margin-bottom: 25px;
+  margin-top: 25px; }
+
+.floattoleft {
+  float: left; }
+
+.floattoright {
+  float: right; }
+
+.margin05top {
+  margin-top: 3px; }
+
+.margin2top {
+  margin-top: 20px; }
+
+.margin4top {
+  margin-top: 40px; }
+
+.margin2right {
+  margin-right: 20px; }
+
+.margin1left {
+  margin-left: 10px; }
+
+.margin2left {
+  margin-left: 20px; }
+
+.margin1bottom {
+  margin-bottom: 10px; }
+
+.margin4bottom {
+  margin-bottom: 40px; }
+
+input, button, textarea {
+  outline: none;
+  padding: 0;
+  resize: none; }
+
+form input.w50 {
+  width: 50px; }
+form input.w120 {
+  width: 120px; }
+form input.w220 {
+  width: 220px; }
+form input.w470 {
+  width: 475px; }
+
+input[type="submit"].w30 {
+  height: 28px;
+  min-width: 30px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-style: none;
+  border-collapse: collapse;
+  border-width: 0px;
+  background-position: right 0px !important; }
+  input[type="submit"].w30:hover {
+    background-position: right -28px !important; }
+  input[type="submit"].w30:active {
+    background-position: right -56px !important; }
+input[type="submit"].w125 {
+  width: 125px;
+  background-position: right -93px !important; }
+  input[type="submit"].w125:hover {
+    background-position: right -124px !important; }
+  input[type="submit"].w125:active {
+    color: white;
+    background-position: right -154px !important; }
+  input[type="submit"].w125.inactive {
+    background-position: right -403px !important;
+    color: #949392; }
+    input[type="submit"].w125.inactive:hover, input[type="submit"].w125.inactive:active {
+      background-position: right -403px !important;
+      color: #949392; }
+
+a.button {
+  display: block !important;
+  position: relative !important;
+  height: 31px;
+  min-width: 20px;
+  padding-right: 15px;
+  background-position: right -124px !important;
+  text-decoration: none;
+  background-color: green;
+  cursor: pointer; }
+  a.button span {
+    display: block !important;
+    position: relative !important;
+    text-shadow: none;
+    font-size: 11px;
+    line-height: 14px;
+    height: 23px;
+    min-width: 20px;
+    padding-top: 8px;
+    padding-left: 15px;
+    background-position: left 0px !important;
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    text-shadow: #dddddd 0px 1px 0px; }
+  a.button:hover {
+    background-position: right -155px !important; }
+    a.button:hover span {
+      background-position: left -31px !important; }
+  a.button:active {
+    background-position: right -186px !important; }
+    a.button:active span {
+      background-position: left -62px !important;
+      color: white;
+      text-shadow: none; }
+  a.button.inactive {
+    background-position: right -217px !important; }
+    a.button.inactive:hover, a.button.inactive:active {
+      background-position: right -217px !important; }
+    a.button.inactive span, a.button.inactive:hover span, a.button.inactive:active span {
+      background-position: left -93px !important;
+      color: #949392; }
+a.whitebtn {
+  background: url("../../images/application/sprite_button_white.png"); }
+  a.whitebtn span {
+    background: url("../../images/application/sprite_button_white.png"); }
+
+input[type="submit"].button {
+  display: block !important;
+  position: relative !important;
+  height: 31px;
+  min-width: 100px;
+  border-style: none;
+  border-width: 0px;
+  padding: 0px;
+  font-size: 0px;
+  line-height: 0px;
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+  text-shadow: none;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: bold;
+  font-family: "trebuchet ms", arial !important;
+  text-align: center; }
+input[type="submit"].whitebtn {
+  background: url("../../images/application/sprite_input_white.png"); }
+input[type="submit"].greenbtn {
+  background: url("../../images/application/sprite_input_green.png"); }
+
+form input[type="text"], form input[type="password"] {
+  display: block !important;
+  position: relative !important;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-style: none;
+  border-collapse: collapse;
+  border-width: 0px;
+  margin: 0px;
+  height: 21px;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 4px;
+  color: #424242;
+  vertical-align: middle; }
+
+input[type="checkbox"] {
+  margin: 0 2px 0 0;
+  position: relative;
+  top: 3px; }
+
+.buttonsrow {
+  display: block !important;
+  position: relative !important;
+  width: 100%;
+  height: 32px; }
+
+#header {
+  height: 82px;
+  background: #3e2f24;
+  min-width: 100%;
+  margin: 0;
+  padding: 0; }
+  #header .box {
+    width: 960px;
+    margin: auto; }
+  #header .logo {
+    max-width: 107px;
+    max-height: 72px;
+    margin-top: -9px;
+    padding: 15px 17px;
+    position: relative;
+    left: 25px;
+    float: left;
+    background-color: white;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -khtml-border-radius: 10px; }
+  #header .menu {
+    width: 570px;
+    height: 82px;
+    float: left;
+    text-align: center; }
+    #header .menu .box {
+      width: auto;
+      margin-top: 35px; }
+      #header .menu .box a {
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+        color: #c9dd03; }
+        #header .menu .box a:hover {
+          text-decoration: underline; }
+      #header .menu .box .current {
+        font-size: 16px; }
+      #header .menu .box .separator {
+        color: #c9dd03; }
+  #header .login {
+    max-width: 240px;
+    height: 82px;
+    float: right; }
+  #header .loginbox {
+    display: block !important;
+    position: relative !important;
+    max-height: 82px;
+    width: 240px;
+    float: right;
+    right: 30px;
+    color: #797979;
+    background-repeat: repeat-x;
+    background-position: center bottom; }
+    #header .loginbox a {
+      color: #c9dd03;
+      text-decoration: none;
+      font-size: 11px; }
+      #header .loginbox a:hover {
+        text-decoration: underline; }
+    #header .loginbox span.title {
+      display: block !important;
+      position: relative !important;
+      height: 20px;
+      width: 240px;
+      font-weight: bold;
+      font-family: "Arial", "VagNormal", "trebuchet ms", "serif";
+      font-size: 12px;
+      line-height: 12px;
+      padding-top: 6px;
+      color: #e0e0e0; }
+    #header .loginbox form fieldset .leftcol {
+      display: block !important;
+      position: relative !important;
+      height: 28px;
+      font-size: 11px;
+      line-height: 11px; }
+
+body #header .loginbox form fieldset .rightcol {
+  display: block !important;
+  position: relative !important;
+  height: 28px;
+  font-size: 11px;
+  line-height: 11px; }
+
+#header .loginbox form fieldset .leftcol input[type="text"], #header .loginbox form fieldset .leftcol input[type="password"] {
+  background-color: #878686 !important; }
+#header .loginbox form fieldset .rightcol input[type="text"], #header .loginbox form fieldset .rightcol input[type="password"] {
+  background-color: #878686 !important; }
+#header .loginbox form fieldset .leftcol {
+  float: left;
+  width: auto; }
+#header .loginbox form fieldset .rightcol {
+  float: right;
+  text-align: left;
+  width: auto; }
+
+body {
+  font-family: "Arial";
+  color: #333333;
+  font-size: 12px;
+  text-align: justify; }
+
+#content {
+  width: 100%;
+  margin: auto;
+  text-align: center; }
+
+#footer {
+  height: 75px;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #3e2f24;
+  text-align: center; }
+  #footer .box {
+    display: inline-block;
+    width: 900px;
+    margin: 0;
+    padding: 0; }
+  #footer .lien {
+    width: 900px;
+    margin: 20px 0 20px 0;
+    padding: 0; }
+    #footer .lien a {
+      font-size: 11px;
+      text-decoration: none;
+      color: #c9dd03;
+      margin: 0; }
+      #footer .lien a:hover {
+        font-size: 12px; }
+    #footer .lien .separator {
+      color: #c9dd03; }
+  #footer .copyright {
+    width: 900px;
+    font-size: 11px;
+    margin: 0 0 20px 0;
+    color: white; }
+
+/*Filename       : index.css
+ * Redered form   : index.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for public homepage */
+#content #back_slides {
+  padding-top: 25px;
+  width: 100%;
+  background-color: #d2c295; }
+#content h1, #content h2 {
+  color: #3e2f24; }
+#content .slides {
+  width: 960px;
+  height: 200px; }
+#content .services {
+  display: inline-block;
+  width: 684px;
+  background: white;
+  text-align: left; }
+  #content .services .box {
+    float: left;
+    vertical-align: middle;
+    display: inline-block;
+    width: 220px;
+    height: 130px;
+    margin: 2px 2px;
+    padding: 0;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px; }
+    #content .services .box.style_1 {
+      border: solid 2px #d2c295; }
+    #content .services .box.style_2 {
+      background: url(../../images/pages/box_style_3.png) no-repeat; }
+    #content .services .box.style_3 {
+      background: url(../../images/pages/box_style_4.png) no-repeat; }
+    #content .services .box.style_0 a, #content .services .box.style_1 a {
+      text-decoration: none;
+      color: #3e2f24;
+      font-weight: bold;
+      font-size: 12px; }
+    #content .services .box.style_0 a:hover, #content .services .box.style_1 a:hover {
+      text-decoration: underline; }
+    #content .services .box.style_2 a, #content .services .box.style_3 a {
+      text-decoration: none;
+      color: #c9dd03;
+      font-weight: bold;
+      font-size: 12px; }
+    #content .services .box.style_2 a:hover, #content .services .box.style_3 a:hover {
+      text-decoration: underline; }
+    #content .services .box .content {
+      color: black;
+      width: auto;
+      height: 105px;
+      padding: 7px 7px 0 7px;
+      margin: 0;
+      overflow: hidden;
+      text-align: justify; }
+      #content .services .box .content h3 {
+        color: #3e2f24;
+        text-align: center; }
+    #content .services .box.style_2 .content h3, #content .services .box.style_3 .content h3 {
+      background: url(../../images/pages/box_style_title.png) no-repeat 0 -50px;
+      color: #3e2f24;
+      width: 220px;
+      height: 20px;
+      position: relative;
+      left: -9px;
+      padding-left: 9px;
+      text-align: center; }
+    #content .services .box.style_0 .commander, #content .services .box.style_1 .commander {
+      min-width: 100px;
+      max-height: 25px;
+      margin: 0;
+      float: left;
+      text-align: left;
+      padding: 2px 0 0 7px; }
+    #content .services .box.style_0 .details, #content .services .box.style_1 .details {
+      min-width: 100px;
+      max-height: 25px;
+      margin: 0;
+      float: right;
+      text-align: right;
+      padding: 2px 7px 0 0; }
+    #content .services .box.style_2 .commander, #content .services .box.style_3 .commander {
+      min-width: 100px;
+      max-height: 25px;
+      margin: 0;
+      float: left;
+      text-align: right;
+      position: relative;
+      bottom: 3px;
+      left: 24px;
+      padding: 2px 0 0 7px; }
+    #content .services .box.style_2 .details, #content .services .box.style_3 .details {
+      min-width: 100px;
+      max-height: 25px;
+      margin: 0;
+      float: right;
+      text-align: right;
+      position: relative;
+      bottom: 3px;
+      padding: 2px 7px 0 0; }
+    #content .services .box.style_2 .details a, #content .services .box.style_3 .details a {
+      color: #3e2f24; }
+
+/*Filename       : slideshow.css
+ * Redered form   : slideshow.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for homepage slideshow effects */
+#slides {
+  height: 200px;
+  width: 960px;
+  margin: 0 auto 0; }
+
+/*	Slides container
+ *	Important:
+ *	Set the width of your slides container
+ *	Set to display none, prevents content flash */
+.slides_container {
+  width: 912px;
+  overflow: hidden;
+  position: relative;
+  display: none;
+  float: left; }
+  .slides_container div.slide {
+    width: 912px;
+    height: 180px;
+    display: block; }
+
+/*	Each slide
+ *	Important:
+ *	Set the width of your slides
+ *	If height not specified height will be set by the slide content
+ *	Set to display block */
+/*	Next/prev buttons */
+#slides .next {
+  width: 24px;
+  height: 43px;
+  display: block;
+  z-index: 101; }
+#slides .prev {
+  width: 24px;
+  height: 43px;
+  display: block;
+  z-index: 101;
+  float: left;
+  position: relative;
+  top: 68.5px;
+  left: 24px; }
+#slides .next {
+  float: left;
+  position: relative;
+  top: 68.5px;
+  right: 24px; }
+
+/*	Pagination */
+.pagination {
+  width: 600px;
+  margin: 0 auto 0;
+  text-align: center; }
+  .pagination li {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: auto;
+    list-style: none; }
+    .pagination li a {
+      display: inline-block;
+      width: 12px;
+      height: 0;
+      padding-top: 12px;
+      background-image: url(../../images/pages/pagination.png);
+      background-position: 0 0;
+      overflow: hidden; }
+    .pagination li.current a {
+      background-position: 0 -12px; }
+
+/*	Caption */
+.caption {
+  z-index: 500;
+  position: absolute;
+  bottom: 100px;
+  padding: 0 20px 0 20px;
+  background: black;
+  background: rgba(0, 0, 0, 0.5);
+  width: 960px;
+  height: 25px;
+  font-size: 1.3em;
+  line-height: 1.33;
+  color: white;
+  border-top: 1px solid black;
+  text-shadow: none;
+  text-align: left; }
+
+/*	Footer */
+#footer {
+  text-align: center;
+  width: 960px;
+  margin-top: 9px;
+  padding: 4.5px 0 18px;
+  border-top: 1px solid #dfdfdf; }
+  #footer p {
+    margin: 4.5px 0;
+    font-size: 1em; }
+
+/*	Anchors */
+#slides a:link, #slides a:visited {
+  color: #599100;
+  text-decoration: none; }
+#slides a:hover, #slides a:active {
+  color: #599100;
+  text-decoration: underline; }
+
+/*Filename       : page.css
+ * Redered form   : page.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for public page */
+.content {
+  width: 960px;
+  padding: 0;
+  margin: auto; }
+  .content .left_bar {
+    width: 175px;
+    min-height: 500px;
+    float: left;
+    background: url(../../images/pages/menu_fond.png) no-repeat 0 125px; }
+    .content .left_bar .menu_title {
+      width: 175px;
+      margin-top: 125px;
+      padding: 6px 0 30px 0;
+      font-weight: 600;
+      color: #0f0f0f;
+      text-align: center;
+      font-size: 14px; }
+    .content .left_bar .sidebar {
+      width: 175px;
+      height: auto;
+      float: left; }
+    .content .left_bar .menu_sep {
+      width: 175px;
+      height: 3px;
+      background: url(../../images/pages/menu_sep.png) no-repeat; }
+    .content .left_bar .side_rub_link {
+      width: 175px;
+      height: 25px;
+      padding: 6px 0 0 28px;
+      text-align: left; }
+      .content .left_bar .side_rub_link a {
+        font-weight: 600;
+        color: #584531;
+        text-decoration: none;
+        font-size: 11px; }
+        .content .left_bar .side_rub_link a:hover {
+          font-weight: 600;
+          color: #c9dd03; }
+      .content .left_bar .side_rub_link.cur_side {
+        background: url(../../images/pages/menu_fleche.png) no-repeat 147px 0; }
+        .content .left_bar .side_rub_link.cur_side a:hover {
+          font-weight: 600;
+          color: #584531; }
+  .content .right_bar {
+    width: 785px;
+    height: auto;
+    float: right; }
+    .content .right_bar .rub_image {
+      max-width: 785px;
+      max-height: 100px;
+      overflow: hidden; }
+    .content .right_bar .rubrique {
+      width: 785px;
+      height: auto;
+      float: left; }
+    .content .right_bar .tabnav {
+      height: 69px;
+      text-align: center; }
+    .content .right_bar .center {
+      display: inline-block;
+      height: 69px; }
+    .content .right_bar .tabnav .center a {
+      text-decoration: none;
+      color: #584531;
+      display: block;
+      float: left;
+      padding: 25px 0 0 0;
+      margin: 0;
+      height: 42px; }
+      .content .right_bar .tabnav .center a:hover {
+        text-decoration: underline;
+        cursor: pointer; }
+      .content .right_bar .tabnav .center a.current {
+        color: #c9dd03; }
+      .content .right_bar .tabnav .center a:hover.current {
+        text-decoration: none;
+        cursor: pointer; }
+    .content .right_bar .center .separator_2 {
+      width: 3px;
+      height: 69px;
+      background: url(../../images/pages/separator_2.png) no-repeat;
+      margin: 0 3px 0;
+      float: left;
+      display: block; }
+    .content .right_bar .tab_bar_sep {
+      width: 724px;
+      height: 9px;
+      background: url(../../images/pages/tab_sep.png) no-repeat 75px 0; }
+    .content .right_bar .ong_contenu {
+      min-height: 400px; }
+    .content .right_bar .tabpage {
+      width: 785px;
+      height: auto;
+      display: none; }
+    .content .right_bar .contenu_image {
+      width: 82px;
+      height: 82px;
+      margin: 7px; }
+    .content .right_bar .box_rub {
+      width: 745px;
+      padding: 20px 20px 20px 20px;
+      clear: both; }
+      .content .right_bar .box_rub p {
+        display: block;
+        margin-bottom: 40px; }
+      .content .right_bar .box_rub .imgfloatleft {
+        float: left;
+        margin: 0 7px 7px 0; }
+      .content .right_bar .box_rub .imgfloatright {
+        float: right;
+        margin: 0 0 7px 7px; }
+
+/*Filename       : tunnel.css
+ * Redered form   : tunnel.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for e-commerce tunnel */
+body.tunnel {
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-color: #dddbda; }
+  body.tunnel #content {
+    text-align: left;
+    width: 730px;
+    margin: auto; }
+    body.tunnel #content .leftcolon {
+      width: 528px;
+      float: left; }
+    body.tunnel #content .rightcolon {
+      width: 180px;
+      float: right; }
+    body.tunnel #content .tunnelcase {
+      display: block !important;
+      position: relative !important;
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      -khtml-border-radius: 4px;
+      width: 525px;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #a3a3a3;
+      background: url("../../images/application/bg_tunnel.png");
+      background-repeat: no-repeat;
+      background-position: right 50px;
+      background-color: #e8e8e8; }
+      body.tunnel #content .tunnelcase .progress {
+        display: block !important;
+        position: relative !important;
+        width: 525px;
+        height: 40px;
+        background: url("../../images/application/bg_progress_tunnel.png");
+        background-repeat: repeat-x;
+        background-position: left top;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-top-right-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-topright: 4px; }
+        body.tunnel #content .tunnelcase .progress li {
+          display: block;
+          position: absolute;
+          height: 40px;
+          top: 0px;
+          float: left;
+          background: url("../../images/application/bg_progress_tunnel_item.png");
+          background-repeat: repeat-x; }
+          body.tunnel #content .tunnelcase .progress li span {
+            display: block !important;
+            position: relative !important;
+            font-family: "Arial";
+            font-weight: bold;
+            font-size: 11px;
+            line-height: 11px;
+            letter-spacing: 0.9px;
+            text-decoration: none;
+            text-transform: uppercase;
+            height: 24px;
+            margin-top: 9px; }
+          body.tunnel #content .tunnelcase .progress li:first-child {
+            -webkit-border-top-left-radius: 4px;
+            -moz-border-radius-topleft: 4px; }
+          body.tunnel #content .tunnelcase .progress li:last-child {
+            -webkit-border-top-right-radius: 4px;
+            -moz-border-radius-topright: 4px; }
+          body.tunnel #content .tunnelcase .progress li.first {
+            z-index: 10;
+            width: 185px;
+            background-position: right -40px;
+            left: 0px; }
+            body.tunnel #content .tunnelcase .progress li.first span {
+              margin-left: 20px; }
+          body.tunnel #content .tunnelcase .progress li.second {
+            z-index: 9;
+            width: 190px;
+            background-position: right -40px;
+            left: 155px; }
+            body.tunnel #content .tunnelcase .progress li.second span {
+              margin-left: 45px; }
+          body.tunnel #content .tunnelcase .progress li.third {
+            z-index: 8;
+            width: 200px;
+            background-position: left -120px;
+            left: 325px; }
+            body.tunnel #content .tunnelcase .progress li.third span {
+              margin-left: 35px; }
+          body.tunnel #content .tunnelcase .progress li.first.current, body.tunnel #content .tunnelcase .progress li.second.current {
+            background-position: right 0px; }
+          body.tunnel #content .tunnelcase .progress li.third.current {
+            background-position: right -80px; }
+      body.tunnel #content .tunnelcase h2 {
+        display: block !important;
+        position: relative !important;
+        width: 485px;
+        margin-left: 20px;
+        font-size: 18px;
+        line-height: 18px; }
+      body.tunnel #content .tunnelcase h3 {
+        display: block !important;
+        position: relative !important;
+        width: 485px;
+        margin-left: 20px;
+        font-size: 16px;
+        line-height: 16px; }
+      body.tunnel #content .tunnelcase .leftcolon, body.tunnel #content .tunnelcase .rightcolon {
+        display: block !important;
+        position: relative !important;
+        width: 230px;
+        height: auto; }
+      body.tunnel #content .tunnelcase .leftcolon {
+        float: left;
+        margin-left: 20px; }
+      body.tunnel #content .tunnelcase .rightcolon {
+        float: right;
+        margin-right: 20px; }
+      body.tunnel #content .tunnelcase .onerow {
+        display: block !important;
+        position: relative !important;
+        width: 485px;
+        float: left;
+        height: auto;
+        margin-left: 20px; }
+      body.tunnel #content .tunnelcase p {
+        width: 485px;
+        margin-left: 20px; }
+        body.tunnel #content .tunnelcase p a {
+          color: #6d9c1a;
+          text-decoration: none; }
+      body.tunnel #content .tunnelcase .h-separator {
+        display: block !important;
+        position: relative !important;
+        width: 485px;
+        margin-left: 20px; }
+    body.tunnel #content .resume {
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      -khtml-border-radius: 4px;
+      display: block !important;
+      position: relative !important;
+      width: 180px;
+      padding-bottom: 20px;
+      background-color: #d3d3d3; }
+      body.tunnel #content .resume .header {
+        display: block !important;
+        position: relative !important;
+        width: 180px;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-top-right-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-topright: 4px;
+        background-color: #b9b9b9;
+        height: 40px; }
+        body.tunnel #content .resume .header span.title {
+          display: block !important;
+          position: relative !important;
+          font-family: "Arial";
+          font-weight: bold;
+          font-size: 13px;
+          line-height: 13px;
+          text-transform: uppercase;
+          top: 15px;
+          left: 15px;
+          color: #2a2a2a; }
+      body.tunnel #content .resume .content {
+        display: block !important;
+        position: relative !important;
+        width: 180px;
+        margin-top: 10px; }
+        body.tunnel #content .resume .content span {
+          display: block;
+          width: 160px;
+          text-align: right;
+          margin-right: 20px; }
+          body.tunnel #content .resume .content span.title {
+            font-weight: bold;
+            color: #767676; }
+          body.tunnel #content .resume .content span.price {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold; }
+          body.tunnel #content .resume .content span.infos {
+            margin-top: 2px;
+            font-size: 11px;
+            font-weight: bold; }
+          body.tunnel #content .resume .content span.priceperpage {
+            font-size: 11px;
+            font-weight: normal;
+            color: #767676;
+            line-height: 14px;
+            text-align: center;
+            margin-left: 10px; }
+    body.tunnel #content .infosbox {
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      -khtml-border-radius: 4px;
+      display: block !important;
+      position: relative !important;
+      width: 180px;
+      padding-bottom: 10px;
+      background-color: #d3d3d3; }
+      body.tunnel #content .infosbox .header {
+        display: block !important;
+        position: relative !important;
+        width: 180px;
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-top-right-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-topright: 4px;
+        background-color: #b9b9b9;
+        height: 30px; }
+        body.tunnel #content .infosbox .header span.title {
+          display: block !important;
+          position: relative !important;
+          font-family: "Arial";
+          font-weight: bold;
+          font-size: 11px;
+          line-height: 11px;
+          text-transform: uppercase;
+          top: 11px;
+          left: 15px;
+          color: #2a2a2a; }
+      body.tunnel #content .infosbox .content {
+        display: block !important;
+        position: relative !important;
+        width: 180px;
+        margin-top: 10px; }
+        body.tunnel #content .infosbox .content span.infos {
+          font-size: 11px;
+          font-weight: bold;
+          margin-left: 15px; }
+    body.tunnel #content .optionslist {
+      display: block !important;
+      position: relative !important;
+      width: 485px; }
+      body.tunnel #content .optionslist li {
+        display: block !important;
+        position: relative !important;
+        width: 485px;
+        min-height: 20px;
+        border-style: solid;
+        border-width: 0px 0px 0px 0px;
+        border-color: #d0d0d0;
+        margin-bottom: 10px;
+        padding-bottom: 6px; }
+        body.tunnel #content .optionslist li.first {
+          border-width: 1px 0px 0px 0px; }
+        body.tunnel #content .optionslist li .row {
+          display: block !important;
+          position: relative !important;
+          width: 485px;
+          height: 17px; }
+          body.tunnel #content .optionslist li .row span {
+            font-size: 12px;
+            line-height: 12px;
+            color: black;
+            display: inline-block; }
+            body.tunnel #content .optionslist li .row span strong {
+              font-size: 12px;
+              line-height: 12px;
+              color: black;
+              display: inline-block; }
+            body.tunnel #content .optionslist li .row span.product, body.tunnel #content .optionslist li .row span.caption {
+              width: 300px; }
+            body.tunnel #content .optionslist li .row span.price {
+              width: 157px;
+              text-align: right; }
+            body.tunnel #content .optionslist li .row span.radio {
+              width: 20px;
+              padding-top: -4px;
+              height: 12px; }
+            body.tunnel #content .optionslist li .row span.checkbox {
+              position: relative;
+              left: 3px;
+              bottom: 1px;
+              margin-right: 4px; }
+            body.tunnel #content .optionslist li .row span.radio input[type="radio"] {
+              top: 1px;
+              left: 3px;
+              position: absolute;
+              vertical-align: middle;
+              width: 14px;
+              height: 14px;
+              padding: 0px;
+              margin: 0px;
+              line-height: 0px;
+              font-size: 0px; }
+            body.tunnel #content .optionslist li .row span.smaller {
+              font-size: 11px;
+              color: #5d5d5d; }
+            body.tunnel #content .optionslist li .row span.green {
+              font-size: 12px;
+              color: #6d9c1a; }
+            body.tunnel #content .optionslist li .row span.orange {
+              font-size: 12px;
+              color: #c66037; }
+        body.tunnel #content .optionslist li:last-child, body.tunnel #content .optionslist li.last {
+          border-width: 0px !important;
+          border-style: none; }
+    body.tunnel #content .adresseslist {
+      display: block !important;
+      position: relative !important;
+      width: 505px;
+      height: auto; }
+      body.tunnel #content .adresseslist li {
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -khtml-border-radius: 4px;
+        display: block !important;
+        position: relative !important;
+        float: left;
+        width: 230px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        min-height: 100px;
+        border-style: solid;
+        border-color: #b9b9b9;
+        border-width: 1px;
+        background-color: #fafafa; }
+        body.tunnel #content .adresseslist li .header, body.tunnel #content .adresseslist li .content, body.tunnel #content .adresseslist li .footer {
+          display: block !important;
+          position: relative !important;
+          width: 230px; }
+        body.tunnel #content .adresseslist li .header {
+          height: 30px;
+          background-color: #b9b9b9; }
+          body.tunnel #content .adresseslist li .header input[type="radio"] {
+            top: 8px;
+            left: 8px;
+            position: absolute;
+            vertical-align: middle;
+            width: 14px;
+            height: 14px;
+            padding: 0px;
+            margin: 0px;
+            line-height: 0px;
+            font-size: 0px; }
+          body.tunnel #content .adresseslist li .header span {
+            display: block;
+            position: absolute;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 14px;
+            left: 25px;
+            top: 8px; }
+            body.tunnel #content .adresseslist li .header span a {
+              color: black;
+              text-decoration: none; }
+        body.tunnel #content .adresseslist li .content {
+          min-height: 40px;
+          padding-top: 10px;
+          padding-bottom: 10px; }
+          body.tunnel #content .adresseslist li .content span {
+            display: block !important;
+            position: relative !important;
+            font-size: 12px;
+            line-height: 14px;
+            margin-left: 10px; }
+        body.tunnel #content .adresseslist li .footer {
+          width: 220px;
+          min-height: 20px;
+          text-align: right;
+          margin-right: 10px; }
+          body.tunnel #content .adresseslist li .footer a {
+            font-size: 11px;
+            color: black;
+            text-decoration: none;
+            margin-left: 5px; }
+    body.tunnel #content .paiementlist {
+      display: block !important;
+      position: relative !important;
+      width: 505px;
+      height: auto; }
+      body.tunnel #content .paiementlist li {
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -khtml-border-radius: 4px;
+        display: block !important;
+        position: relative !important;
+        float: left;
+        width: 230px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        height: 90px;
+        border-style: solid;
+        border-color: #b9b9b9;
+        border-width: 1px;
+        background-color: #fafafa; }
+        body.tunnel #content .paiementlist li .header, body.tunnel #content .paiementlist li .content {
+          display: block !important;
+          position: relative !important;
+          width: 230px; }
+        body.tunnel #content .paiementlist li .header {
+          height: 30px;
+          background-color: #b9b9b9; }
+          body.tunnel #content .paiementlist li .header input[type="radio"] {
+            top: 8px;
+            left: 8px;
+            position: absolute;
+            vertical-align: middle;
+            width: 14px;
+            height: 14px;
+            padding: 0px;
+            margin: 0px;
+            line-height: 0px;
+            font-size: 0px; }
+          body.tunnel #content .paiementlist li .header span {
+            display: block;
+            position: absolute;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 14px;
+            left: 25px;
+            top: 8px; }
+            body.tunnel #content .paiementlist li .header span a {
+              color: black;
+              text-decoration: none; }
+        body.tunnel #content .paiementlist li .content {
+          height: 60px;
+          padding-top: 0px; }
+          body.tunnel #content .paiementlist li .content.cbs, body.tunnel #content .paiementlist li .content.paypal {
+            background-repeat: no-repeat;
+            background-position: center center; }
+          body.tunnel #content .paiementlist li .content.cbs {
+            background: url("../../images/application/sprite_cbs.png"); }
+          body.tunnel #content .paiementlist li .content.paypal {
+            background: url("../../images/application/sprite_paypal.png"); }
+    body.tunnel #content .adresseslist.static li {
+      background-color: transparent; }
+      body.tunnel #content .adresseslist.static li .header {
+        background-color: transparent; }
+    body.tunnel #content .adresseslist.static .header {
+      height: 20px; }
+      body.tunnel #content .adresseslist.static .header span {
+        left: 10px; }
+
+.h-separator {
+  display: block !important;
+  position: relative !important;
+  height: 1px; }
+  .h-separator.strong {
+    background-color: #a3a3a3; }
+  .h-separator.light {
+    background-color: #d0d0d0; }

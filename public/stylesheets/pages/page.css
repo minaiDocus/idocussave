@@ -1,0 +1,119 @@
+/*Filename       : page.css
+ * Redered form   : page.sass
+ * Need HAML gem  : version 3.1.12
+ * Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+ * Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+ * Author         : DirectMada
+ * Author's Uri   : www.directmada.com
+ * Description    : Css file for public page */
+.content {
+  width: 960px;
+  padding: 0;
+  margin: auto; }
+  .content .left_bar {
+    width: 175px;
+    min-height: 500px;
+    float: left;
+    background: url(../../images/pages/menu_fond.png) no-repeat 0 125px; }
+    .content .left_bar .menu_title {
+      width: 175px;
+      margin-top: 125px;
+      padding: 6px 0 30px 0;
+      font-weight: 600;
+      color: #0f0f0f;
+      text-align: center;
+      font-size: 14px; }
+    .content .left_bar .sidebar {
+      width: 175px;
+      height: auto;
+      float: left; }
+    .content .left_bar .menu_sep {
+      width: 175px;
+      height: 3px;
+      background: url(../../images/pages/menu_sep.png) no-repeat; }
+    .content .left_bar .side_rub_link {
+      width: 175px;
+      height: 25px;
+      padding: 6px 0 0 28px;
+      text-align: left; }
+      .content .left_bar .side_rub_link a {
+        font-weight: 600;
+        color: #584531;
+        text-decoration: none;
+        font-size: 11px; }
+        .content .left_bar .side_rub_link a:hover {
+          font-weight: 600;
+          color: #c9dd03; }
+      .content .left_bar .side_rub_link.cur_side {
+        background: url(../../images/pages/menu_fleche.png) no-repeat 147px 0; }
+        .content .left_bar .side_rub_link.cur_side a:hover {
+          font-weight: 600;
+          color: #584531; }
+  .content .right_bar {
+    width: 785px;
+    height: auto;
+    float: right; }
+    .content .right_bar .rub_image {
+      max-width: 785px;
+      max-height: 100px;
+      overflow: hidden; }
+    .content .right_bar .rubrique {
+      width: 785px;
+      height: auto;
+      float: left; }
+    .content .right_bar .tabnav {
+      height: 69px;
+      text-align: center; }
+    .content .right_bar .center {
+      display: inline-block;
+      height: 69px; }
+    .content .right_bar .tabnav .center a {
+      text-decoration: none;
+      color: #584531;
+      display: block;
+      float: left;
+      padding: 25px 0 0 0;
+      margin: 0;
+      height: 42px; }
+      .content .right_bar .tabnav .center a:hover {
+        text-decoration: underline;
+        cursor: pointer; }
+      .content .right_bar .tabnav .center a.current {
+        color: #c9dd03; }
+      .content .right_bar .tabnav .center a:hover.current {
+        text-decoration: none;
+        cursor: pointer; }
+    .content .right_bar .center .separator_2 {
+      width: 3px;
+      height: 69px;
+      background: url(../../images/pages/separator_2.png) no-repeat;
+      margin: 0 3px 0;
+      float: left;
+      display: block; }
+    .content .right_bar .tab_bar_sep {
+      width: 724px;
+      height: 9px;
+      background: url(../../images/pages/tab_sep.png) no-repeat 75px 0; }
+    .content .right_bar .ong_contenu {
+      min-height: 400px; }
+    .content .right_bar .tabpage {
+      width: 785px;
+      height: auto;
+      display: none; }
+    .content .right_bar .contenu_image {
+      width: 82px;
+      height: 82px;
+      margin: 7px; }
+    .content .right_bar .box_rub {
+      width: 745px;
+      padding: 20px 20px 20px 20px;
+      clear: both; }
+      .content .right_bar .box_rub p {
+        display: block;
+        margin-bottom: 40px; }
+      .content .right_bar .box_rub .imgfloatleft {
+        float: left;
+        margin: 0 7px 7px 0; }
+      .content .right_bar .box_rub .imgfloatright {
+        float: right;
+        margin: 0 0 7px 7px; }
