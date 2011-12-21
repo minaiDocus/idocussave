@@ -2,9 +2,9 @@
   Redered form   : application.sass
   Need HAML gem  : version 3.0.13
   Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
-  Version        : 1.0.0 2009-07-06 YYYY-MM-DD
-  Author         : Novelys
-  Author's Uri   : www.novelys.com
+  Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+  Author         : DirectMada
+  Author's Uri   : www.directmada.com
   Description    : Css file for iDocus
 
 
@@ -1164,221 +1164,216 @@ body.application
     :margin-top 10px
   .pagesbrowser, .documentbrowser
     @include SetBoxRelPositioning
-  .pagesbrowser, .documentbrowser
-    ul.pageslist, ul.documentslist
-      @include SetBoxRelPositioning
-      :padding-left 30px
-      :padding-right 20px
-      :margin-top 30px
-      li
-        :display block
-        :position relative
+  ul.pageslist, ul.documentslist
+    @include SetBoxRelPositioning
+    :padding-left 30px
+    :padding-right 20px
+    :margin-top 30px
+    li
+      :display block
+      :position relative
+      :float left
+      :width 112px
+      :height 174px
+      :margin-right 0px
+      :margin-bottom 0px
+      .toolbar
+        :z-index 11
+        :display none !important
+        :position absolute
         :float left
-        :width 112px
-        :height 174px
-        :margin-right 20px
-        :margin-bottom 30px
-        .toolbar
-          :z-index 11
-          :display none !important
-          :position absolute
-          :float left
-          :left 6px
-          :bottom 27px
+        :left 6px
+        :bottom 27px
+        :width 100px
+        :height 27px
+        :-webkit-border-bottom-left-radius 2px
+        :-moz-border-radius-bottomleft 2px
+        :-webkit-border-bottom-right-radius 2px
+        :-moz-border-radius-rightleft 2px
+        :background url("../images/application/gray_blank.png")
+        ul
+          @include SetBoxRelPositioning
           :width 100px
-          :height 27px
-          :-webkit-border-bottom-left-radius 2px
-          :-moz-border-radius-bottomleft 2px
-          :-webkit-border-bottom-right-radius 2px
-          :-moz-border-radius-rightleft 2px
-          :background url("../images/application/gray_blank.png")
-          ul
-            @include SetBoxRelPositioning
-            :width 91px
-            :height 19px
-            :left 5px
-            :top 4px
-            li, li a
-              @include SetBoxRelPositioning
-              :width 19px
-              :height 19px
-              :float right
-            li
-              :margin-left 4px
-              :margin-right 0px
-              :counter-increment none
-            li
-              a
-                :background url("../images/application/sprite_page_toolbar.png")
-              a.edit
-                :background-position 0px 0px
-              a.edit:hover
-                :background-position 0px -19px
-              a.delete
-                :background-position -19px 0px
-              a.delete:hover
-                :background-position -19px -19px
-              a.download
-                :background-position -38px 0px
-              a.download:hover
-                :background-position -38px -19px
-              a.select
-                :background-position -57px 0px
-              a.select:hover
-                :background-position -57px -19px
-              a.select:active
-                :background-position -76px -0px
-      li
-        a.zoom
-          :z-index 11
-          :display none
-          :position absolute
-          :float right
-          :cursor pointer
-          :right 6px
-          :top 6px
-          :width 33px
-          :height 33px
-          :background url("../images/application/sprite_active_corner.png")
-          :background-position left top
-        a.zoom:hover
-          :background-position left -33px
-      li
-        .pagethumb
-          :display block
-          :position absolute
-          :z-index 9
-          :left 6px
-          :top 6px
-          :width 102px
-          :height 143px
-          .thumb
-            :display block
-            :position absolute
-            :z-index 8
-            :left 4px
-            :top 4px
-            :width 92px
-            :height 133px
-            :background url("../images/application/spinner_gray.gif")
-            :background-position 50% 50%
-            :background-repeat no-repeat
-            img
-              @include SetBoxRelPositioning
-              :width 92px
-              :height 133px
-      li
-        .foot
-          :z-index 8
-          :display block
-          :position absolute
-          :padding-top 2px
-          :float left
-          :left 0px
-          :bottom 0px
-          :width 112px
           :height 19px
-          :text-align center
-          span
-            @include SetSmallRoundedCornerBox
-            :font-size 10px
-            :line-height 10px
-            :color #fff
-            :font-weight bold
-            :top 4px
-            :text-align center
-            :padding-top 3px
-            :padding-bottom 3px
-            :padding-left 6px
-            :padding-right 6px
-            :background-color #3e2f24
-      li:hover
-        .toolbar
-          :display block !important
-      li:hover
-        a.zoom
-          :display block
-      li.selected
-        .foot
-          span
-            :background-color #c9dd03
-            :color #000
-      li.selected
-        .toolbar
-          ul
-            li
-              a.select
-                :background-position -76px -19px
-              a.select:active
-                :background-position -76px 0px
-      li.ui-sortable-helper
-        :opacity 0.5
-        :cursor move
-
-#documentcomposer
-  .pagesbrowser, .documentbrowser
-    ul.pageslist
-      li
-        :counter-increment par-num
-      li
-        .pagethumb
-          :background url("../images/application/sprite_vertical_page.png")
-          :background-position -6px -199px
-          :background-repeat no-repeat
-      li.selected
-        :background url("../images/application/sprite_vertical_page.png")
-        :background-position center top
-        :background-repeat no-repeat
-      li
-        .handle
-          :z-index 10
+          :left -7px
+          :top 4px
+          li, li a
+            @include SetBoxRelPositioning
+            :width 19px
+            :height 19px
+            :float right
+          li
+            :margin-left 4px
+            :margin-right 0px
+            :counter-increment none
+          li
+            a
+              :background url("../images/application/sprite_page_toolbar.png")
+            a.edit
+              :background-position 0px 0px
+            a.edit:hover
+              :background-position 0px -19px
+            a.delete
+              :background-position -19px 0px
+            a.delete:hover
+              :background-position -19px -19px
+            a.download
+              :background-position -38px 0px
+            a.download:hover
+              :background-position -38px -19px
+            a.select
+              :background-position -57px 0px
+            a.select:hover
+              :background-position -57px -19px
+            a.select:active
+              :background-position -76px -0px
+    li
+      a.zoom
+        :z-index 11
+        :display none
+        :position absolute
+        :float right
+        :cursor pointer
+        :right 6px
+        :top 6px
+        :width 33px
+        :height 33px
+        :background url("../images/application/sprite_active_corner.png")
+        :background-position left top
+      a.zoom:hover
+        :background-position left -33px
+    li
+      .pagethumb
+        :display block
+        :position absolute
+        :z-index 9
+        :left 6px
+        :top 6px
+        :width 102px
+        :height 143px
+        .thumb
           :display block
           :position absolute
-          :float left
-          :cursor move
-          :left 10px
-          :top 10px
+          :z-index 8
+          :left 4px
+          :top 4px
           :width 92px
           :height 133px
-          :background url("../images/application/blank.png")
-          :background-color transparent
-      li
-        .foot
-          span:after
-            :content counter(par-num, decimal)
-      li.ui-sortable-helper
-        .foot
-          span:after
-            :content "← déplacer vers →"
-
-#documentcomposer
-  .pagesbrowser, .documentbrowser
-    ul.documentslist
-      li
-        .handle
-          :display none !important
-      li
-        .pagethumb
-          :background url("../images/application/sprite_vertical_multi_page.png")
-          :background-position -6px -199px
+          :background url("../images/application/spinner_gray.gif")
+          :background-position 50% 50%
           :background-repeat no-repeat
-          .thumb
-            :top 2px
-      li.selected
-        :background url("../images/application/sprite_vertical_multi_page.png")
-        :background-position center top
-        :background-repeat no-repeat
-    ul.documentslist
-      li.inprogress
-        .zoom, .handle, .pagethumb .thumb img, .toolbar
-          :display none !important
-    ul.documentslist
-      li.foot
+          img
+            @include SetBoxRelPositioning
+            :width 92px
+            :height 133px
+    li
+      .foot
+        :z-index 8
+        :display block
+        :position absolute
+        :padding-top 2px
+        :float left
+        :left 0px
+        :bottom 0px
+        :width 112px
+        :height 19px
+        :text-align center
         span
-          :display block
-          :position relative
-          :width 50px
-          :overflow hidden
+          @include SetSmallRoundedCornerBox
+          :font-size 10px
+          :line-height 10px
+          :color #fff
+          :font-weight bold
+          :top 4px
+          :text-align left
+          :padding-top 3px
+          :padding-bottom 3px
+          :padding-left 6px
+          :padding-right 6px
+          :min-height 22px
+          :max-height 44px
+          :height auto
+          :width 100px
+    li:hover
+      .toolbar
+        :display block !important
+    li:hover
+      a.zoom
+        :display block
+    li.selected
+      .foot
+        span
+          :color #000
+    li.selected
+      .toolbar
+        ul
+          li
+            a.select
+              :background-position -76px -19px
+            a.select:active
+              :background-position -76px 0px
+    li.ui-sortable-helper
+      :opacity 0.5
+      :cursor move
+
+ul.pageslist
+  li
+    :counter-increment par-num
+  li
+    .pagethumb
+      :background url("../images/application/sprite_vertical_page.png")
+      :background-position -6px -199px
+      :background-repeat no-repeat
+  li.selected
+    :background url("../images/application/sprite_vertical_page.png")
+    :background-position center top
+    :background-repeat no-repeat
+  li
+    .handle
+      :z-index 10
+      :display block
+      :position absolute
+      :float left
+      :cursor move
+      :left 10px
+      :top 10px
+      :width 92px
+      :height 133px
+      :background url("../images/application/blank.png")
+      :background-color transparent
+  li
+    .foot
+      span:after
+        :content counter(par-num, decimal)
+  li.ui-sortable-helper
+    .foot
+      span:after
+        :content "← déplacer vers →"
+
+ul.documentslist
+  li
+    .handle
+      :display none !important
+  li
+    .pagethumb
+      :background url("../images/application/sprite_vertical_multi_page.png")
+      :background-position -6px -199px
+      :background-repeat no-repeat
+      .thumb
+        :top 2px
+  li.selected
+    :background url("../images/application/sprite_vertical_multi_page.png")
+    :background-position center top
+    :background-repeat no-repeat
+  li.inprogress
+    .zoom, .handle, .pagethumb .thumb img, .toolbar
+      :display none !important
+  li.foot
+    span
+      :display block
+      :position relative
+      :width 50px
+      :overflow hidden
 
 #documentcomposer
   .documentbrowser
@@ -1436,7 +1431,6 @@ body.application
   :height 100%
   .wrapper
     :margin-left 20px
-    :width 420px
     p
       @include SetBoxRelPositioning
       :width 100%

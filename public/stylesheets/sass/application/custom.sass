@@ -1,0 +1,100 @@
+/*Filename       : custom.css
+  Redered form   : custom.sass
+  Need HAML gem  : version 3.0.13
+  Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+  Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+  Author         : DirectMada
+  Author's Uri   : www.directmada.com
+  Description    : Css custom file for UI
+
+.document_tags
+  position: relative
+  bottom: 132px
+  background: black
+  color: white
+  display: none
+
+ul li.list
+  width: auto
+  height: auto
+
+.margin01top
+  margin-top: 1px
+
+.margin07top
+  margin-top: 07px
+
+.margin05top
+  margin-top: 5px
+
+.margin015top
+  margin-top: 15px
+
+.aligncenter
+  text-align: center
+  .paginate
+    display: inline-block
+
+a span
+  &.visibility
+    font-size: 12px
+  font-size: 12px
+
+.pagesbrowser .titlebar
+  background-image: url(../../images/application/bg_action_bar.png)
+  border-top: 1px rgb(177, 177, 177) outset
+  //border-bottom:1px rgb(177,177,177) outset;
+  height: 32px
+
+.visibility
+  text-align: center
+  font-size: 32px
+
+li.document
+  &.page
+    .foot span
+      background-color: #3e2f24
+    &.selected .foot span
+      color: white
+  &.paid .foot span
+    background-color: rgb(144, 144, 144)
+    border-radius: 4px
+    -webkit-border-radius: 4px
+    -moz-border-radius: 4px
+    -khtml-border-radius: 4px
+    color: black
+
+.order-paid
+  background-color: rgb(144, 144, 144)
+  border-radius: 4px
+  -webkit-border-radius: 4px
+  -moz-border-radius: 4px
+  -khtml-border-radius: 4px
+  color: black
+
+li.document.scanned .foot span, .order-scanned
+  background-color: rgb(255, 255, 183)
+  border-radius: 4px
+  -webkit-border-radius: 4px
+  -moz-border-radius: 4px
+  -khtml-border-radius: 4px
+  color: black
+
+li.document.sharing .foot span, .order-sharing
+  background-color: rgb(255, 175, 96)
+  border-radius: 4px
+  -webkit-border-radius: 4px
+  -moz-border-radius: 4px
+  -khtml-border-radius: 4px
+  color: black
+
+li.document.shared .foot span, .order-shared
+  background-color: rgb(79, 129, 244)
+  border-radius: 4px
+  -webkit-border-radius: 4px
+  -moz-border-radius: 4px
+  -khtml-border-radius: 4px
+  color: black
+
+.order-paid, .order-scanned, .order-sharing, .order-shared
+  padding: 4px

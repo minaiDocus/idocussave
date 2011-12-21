@@ -1,7 +1,0 @@
-InfoKey: ModDate
-InfoValue: D:20110510105907+01'00'
-InfoKey: CreationDate
-InfoValue: D:20110510103435
-PdfID0: 47a9fed3f164a7f1f772bd5479176e
-PdfID1: 47a9fed3f164a7f1f772bd5479176e
-NumberOfPages: 11

@@ -1,0 +1,459 @@
+/*Filename       : tunnel.css 
+  Redered form   : tunnel.sass
+  Need HAML gem  : version 3.0.13
+  Compatibility  : Firefox 3.5, Safari 5.0, Internet Explorer 7 & 8
+  Version        : 1.0.0 2011-12-21 YYYY-MM-DD
+  Author         : DirectMada
+  Author's Uri   : www.directmada.com
+  Description    : Css file for e-commerce tunnel
+
+body.tunnel
+  background-repeat: no-repeat
+  background-position: center top
+  background-color: #dddbda
+  #content
+    text-align: left
+    width: 730px
+    margin: auto
+    .leftcolon
+      width: 528px
+      float: left
+    .rightcolon
+      width: 180px
+      float: right
+    .tunnelcase
+      display: block !important
+      position: relative !important
+      border-radius: 4px
+      -webkit-border-radius: 4px
+      -moz-border-radius: 4px
+      -khtml-border-radius: 4px
+      width: 525px
+      border-style: solid
+      border-width: 1px
+      border-color: #a3a3a3
+      background: url("../../images/application/bg_tunnel.png")
+      background-repeat: no-repeat
+      background-position: right 50px
+      background-color: #e8e8e8
+      .progress
+        display: block !important
+        position: relative !important
+        width: 525px
+        height: 40px
+        background: url("../../images/application/bg_progress_tunnel.png")
+        background-repeat: repeat-x
+        background-position: left top
+        -webkit-border-top-left-radius: 4px
+        -webkit-border-top-right-radius: 4px
+        -moz-border-radius-topleft: 4px
+        -moz-border-radius-topright: 4px
+        li
+          display: block
+          position: absolute
+          height: 40px
+          top: 0px
+          float: left
+          background: url("../../images/application/bg_progress_tunnel_item.png")
+          background-repeat: repeat-x
+          span
+            display: block !important
+            position: relative !important
+            font-family: "Arial"
+            font-weight: bold
+            font-size: 11px
+            line-height: 11px
+            letter-spacing: 0.9px
+            text-decoration: none
+            text-transform: uppercase
+            height: 24px
+            margin-top: 9px
+          &:first-child
+            -webkit-border-top-left-radius: 4px
+            -moz-border-radius-topleft: 4px
+          &:last-child
+            -webkit-border-top-right-radius: 4px
+            -moz-border-radius-topright: 4px
+          &.first
+            z-index: 10
+            width: 185px
+            background-position: right -40px
+            left: 0px
+            span
+              margin-left: 20px
+          &.second
+            z-index: 9
+            width: 190px
+            background-position: right -40px
+            left: 155px
+            span
+              margin-left: 45px
+          &.third
+            z-index: 8
+            width: 200px
+            background-position: left -120px
+            left: 325px
+            span
+              margin-left: 35px
+          &.first.current, &.second.current
+            background-position: right 0px
+          &.third.current
+            background-position: right -80px
+      h2
+        display: block !important
+        position: relative !important
+        width: 485px
+        margin-left: 20px
+        font-size: 18px
+        line-height: 18px
+      h3
+        display: block !important
+        position: relative !important
+        width: 485px
+        margin-left: 20px
+        font-size: 16px
+        line-height: 16px
+      .leftcolon, .rightcolon
+        display: block !important
+        position: relative !important
+        width: 230px
+        height: auto
+      .leftcolon
+        float: left
+        margin-left: 20px
+      .rightcolon
+        float: right
+        margin-right: 20px
+      .onerow
+        display: block !important
+        position: relative !important
+        width: 485px
+        float: left
+        height: auto
+        margin-left: 20px
+      p
+        width: 485px
+        margin-left: 20px
+        a
+          color: #6d9c1a
+          text-decoration: none
+      .h-separator
+        display: block !important
+        position: relative !important
+        width: 485px
+        margin-left: 20px
+    .resume
+      border-radius: 4px
+      -webkit-border-radius: 4px
+      -moz-border-radius: 4px
+      -khtml-border-radius: 4px
+      display: block !important
+      position: relative !important
+      width: 180px
+      padding-bottom: 20px
+      background-color: #d3d3d3
+      .header
+        display: block !important
+        position: relative !important
+        width: 180px
+        -webkit-border-top-left-radius: 4px
+        -webkit-border-top-right-radius: 4px
+        -moz-border-radius-topleft: 4px
+        -moz-border-radius-topright: 4px
+        background-color: #b9b9b9
+        height: 40px
+        span.title
+          display: block !important
+          position: relative !important
+          font-family: "Arial"
+          font-weight: bold
+          font-size: 13px
+          line-height: 13px
+          text-transform: uppercase
+          top: 15px
+          left: 15px
+          color: #2a2a2a
+      .content
+        display: block !important
+        position: relative !important
+        width: 180px
+        margin-top: 10px
+        span
+          display: block
+          width: 160px
+          text-align: right
+          margin-right: 20px
+          &.title
+            font-weight: bold
+            color: #767676
+          &.price
+            margin-top: 10px
+            font-size: 18px
+            font-weight: bold
+          &.infos
+            margin-top: 2px
+            font-size: 11px
+            font-weight: bold
+          &.priceperpage
+            font-size: 11px
+            font-weight: normal
+            color: #767676
+            line-height: 14px
+            text-align: center
+            margin-left: 10px
+    .infosbox
+      border-radius: 4px
+      -webkit-border-radius: 4px
+      -moz-border-radius: 4px
+      -khtml-border-radius: 4px
+      display: block !important
+      position: relative !important
+      width: 180px
+      padding-bottom: 10px
+      background-color: #d3d3d3
+      .header
+        display: block !important
+        position: relative !important
+        width: 180px
+        -webkit-border-top-left-radius: 4px
+        -webkit-border-top-right-radius: 4px
+        -moz-border-radius-topleft: 4px
+        -moz-border-radius-topright: 4px
+        background-color: #b9b9b9
+        height: 30px
+        span.title
+          display: block !important
+          position: relative !important
+          font-family: "Arial"
+          font-weight: bold
+          font-size: 11px
+          line-height: 11px
+          text-transform: uppercase
+          top: 11px
+          left: 15px
+          color: #2a2a2a
+      .content
+        display: block !important
+        position: relative !important
+        width: 180px
+        margin-top: 10px
+        span.infos
+          font-size: 11px
+          font-weight: bold
+          margin-left: 15px
+    .optionslist
+      display: block !important
+      position: relative !important
+      width: 485px
+      li
+        display: block !important
+        position: relative !important
+        width: 485px
+        min-height: 20px
+        border-style: solid
+        border-width: 0px 0px 0px 0px
+        border-color: #d0d0d0
+        margin-bottom: 10px
+        padding-bottom: 6px
+        &.first
+          border-width: 1px 0px 0px 0px
+        .row
+          display: block !important
+          position: relative !important
+          width: 485px
+          height: 17px
+          span
+            font-size: 12px
+            line-height: 12px
+            color: black
+            display: inline-block
+            strong
+              font-size: 12px
+              line-height: 12px
+              color: black
+              display: inline-block
+            &.product, &.caption
+              width: 300px
+            &.price
+              width: 157px
+              text-align: right
+            &.radio
+              width: 20px
+              padding-top: -4px
+              height: 12px
+            &.checkbox
+              position: relative
+              left: 3px
+              bottom: 1px
+              margin-right: 4px
+            &.radio input[type="radio"]
+              top: 1px
+              left: 3px
+              position: absolute
+              vertical-align: middle
+              width: 14px
+              height: 14px
+              padding: 0px
+              margin: 0px
+              line-height: 0px
+              font-size: 0px
+            &.smaller
+              font-size: 11px
+              color: #5d5d5d
+            &.green
+              font-size: 12px
+              color: #6d9c1a
+            &.orange
+              font-size: 12px
+              color: #c66037
+        &:last-child, &.last
+          border-width: 0px !important
+          border-style: none
+    .adresseslist
+      display: block !important
+      position: relative !important
+      width: 505px
+      height: auto
+      li
+        border-radius: 4px
+        -webkit-border-radius: 4px
+        -moz-border-radius: 4px
+        -khtml-border-radius: 4px
+        display: block !important
+        position: relative !important
+        float: left
+        width: 230px
+        margin-right: 20px
+        margin-bottom: 20px
+        min-height: 100px
+        border-style: solid
+        border-color: #b9b9b9
+        border-width: 1px
+        background-color: #fafafa
+        .header, .content, .footer
+          display: block !important
+          position: relative !important
+          width: 230px
+        .header
+          height: 30px
+          background-color: #b9b9b9
+          input[type="radio"]
+            top: 8px
+            left: 8px
+            position: absolute
+            vertical-align: middle
+            width: 14px
+            height: 14px
+            padding: 0px
+            margin: 0px
+            line-height: 0px
+            font-size: 0px
+          span
+            display: block
+            position: absolute
+            font-weight: bold
+            font-size: 12px
+            line-height: 14px
+            left: 25px
+            top: 8px
+            a
+              color: black
+              text-decoration: none
+        .content
+          min-height: 40px
+          padding-top: 10px
+          padding-bottom: 10px
+          span
+            display: block !important
+            position: relative !important
+            font-size: 12px
+            line-height: 14px
+            margin-left: 10px
+        .footer
+          width: 220px
+          min-height: 20px
+          text-align: right
+          margin-right: 10px
+          a
+            font-size: 11px
+            color: black
+            text-decoration: none
+            margin-left: 5px
+    .paiementlist
+      display: block !important
+      position: relative !important
+      width: 505px
+      height: auto
+      li
+        border-radius: 4px
+        -webkit-border-radius: 4px
+        -moz-border-radius: 4px
+        -khtml-border-radius: 4px
+        display: block !important
+        position: relative !important
+        float: left
+        width: 230px
+        margin-right: 20px
+        margin-bottom: 20px
+        height: 90px
+        border-style: solid
+        border-color: #b9b9b9
+        border-width: 1px
+        background-color: #fafafa
+        .header, .content
+          display: block !important
+          position: relative !important
+          width: 230px
+        .header
+          height: 30px
+          background-color: #b9b9b9
+          input[type="radio"]
+            top: 8px
+            left: 8px
+            position: absolute
+            vertical-align: middle
+            width: 14px
+            height: 14px
+            padding: 0px
+            margin: 0px
+            line-height: 0px
+            font-size: 0px
+          span
+            display: block
+            position: absolute
+            font-weight: bold
+            font-size: 12px
+            line-height: 14px
+            left: 25px
+            top: 8px
+            a
+              color: black
+              text-decoration: none
+        .content
+          height: 60px
+          padding-top: 0px
+          &.cbs, &.paypal
+            background-repeat: no-repeat
+            background-position: center center
+          &.cbs
+            background: url("../../images/application/sprite_cbs.png")
+          &.paypal
+            background: url("../../images/application/sprite_paypal.png")
+    .adresseslist.static
+      li
+        background-color: transparent
+        .header
+          background-color: transparent
+      .header
+        height: 20px
+        span
+          left: 10px
+
+.h-separator
+  display: block !important
+  position: relative !important
+  height: 1px
+  &.strong
+    background-color: #a3a3a3
+  &.light
+    background-color: #d0d0d0
