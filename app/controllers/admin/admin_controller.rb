@@ -11,6 +11,13 @@ private
        redirect_to root_url
     end
   end
+  
+  def format_params
+    @formatted_last_name = ""
+    @formatted_first_name = ""
+    @formatted_last_name = params[:last_name].split.collect{|n| n.capitalize}.join(' ') if params[:last_name]
+    @formatted_first_name = params[:first_name].upcase if params[:first_name]
+  end
 
 public
 

@@ -1,6 +1,7 @@
 class Admin::OrdersController < Admin::AdminController
 
   before_filter :load_model, :only => %w(show edit edit_option update update_option destroy)
+  before_filter :format_params, :only => %w(index)
 
   include Admin::BaseAdminMixin
 
@@ -84,8 +85,8 @@ public
   
     @users = User.all
     @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
-    @users = @users.where(:first_name => /\w*#{params[:first_name]}\w*/) if !params[:first_name].blank?
-    @users = @users.where(:last_name => /\w*#{params[:last_name]}\w*/) if !params[:last_name].blank?
+    @users = @users.where(:first_name => /\w*#{@formatted_first_name}\w*/) if !params[:first_name].blank?
+    @users = @users.where(:last_name => /\w*#{@formatted_last_name}\w*/) if !params[:last_name].blank?
     @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
     @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
     user_ids = @users.entries.collect{|u| u.id}
