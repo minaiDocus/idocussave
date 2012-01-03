@@ -17,11 +17,9 @@
         %input{ :type => :submit, :style => "width: 50px;" }
       %br
       %br
-    %a{ :href => "#{reporting_account_documents_path}?year=#{@year - 1}" }
-      année précédente
+    !=link_to "année précédente", reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || ""))
     |
-    %a{ :href => "#{reporting_account_documents_path}?year=#{@year + 1}" }
-      année suivante
+    !=link_to "année suivante", reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || ""))
     .box
       .content_left
         %h1
