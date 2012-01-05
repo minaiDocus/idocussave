@@ -67,11 +67,11 @@
           - users << pack.order.user
         - users_uniq = users.uniq
         - users_uniq = users_uniq.sort do |a,b|
-          - if a.code != b.code
+          - if a.code && b.code && a.code != b.code
             - a.code <=> b.code
-          - elsif a.company != b.company
+          - elsif a.company && b.company && a.company != b.company
             - a.company <=> b.company
-          - elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+          - elsif a.first_name && b.first_name && a.last_name && b.last_name && (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
             - (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
           - else
             - a.email <=> b.email
