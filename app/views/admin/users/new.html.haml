@@ -23,6 +23,10 @@
           != f.check_box :is_admin, :class => 'checkbox'
           
         .group
+          != f.label :is_prescriber, "Est prescripteur ?", :class => :label
+          != f.check_box :is_prescriber, :class => 'checkbox'
+  
+        .group
           != f.label :is_dropbox_authorized, "Autoriser Dropbox ?", :class => :label
           != f.check_box :is_dropbox_authorized, :class => 'checkbox'
           

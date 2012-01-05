@@ -1,0 +1,14 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All account book types", admin_account_book_types_path
+      %li!= link_to "Add account book type", new_admin_account_book_type_path
+  .content
+    %h2.title
+      Editing account book type 
+      != @account_book_type.name
+    .inner
+      - form_for [:admin, @account_book_type], :html => { :class => :form } do |f|
+        != render :partial => "form", :locals => {:f => f}
+
+- content_for :sidebar, render(:partial => 'sidebar')

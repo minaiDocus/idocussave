@@ -17,6 +17,9 @@
     %a.floattoleft.margin2left.margin015top{ :href => reporting_account_documents_path, :target => "_blank" }
       %span
         Reporting
+    %a.do-openNewUploadDialog.floattoleft.margin2left.margin015top{ :href => "#" }
+      %span{ :title => "Charger dans iDocus vos documents qui sont déjà en version numérique." }
+        Téléverser
   //Page browser
   .pagesbrowser.scrollpane
     .titlebar.orders_scanned_title.margin1bottom
@@ -157,3 +160,18 @@
       %br
       != text_field_tag :composition, nil, :id => "composition_name"
       != image_tag "application/spinner_gray_alpha.gif", :id => "new_composition_spinner", :class => "hide"
+
+.hide
+  .newUploadDialog
+    %p
+      Formats de fichiers acceptés : pdf, jpeg, jpg, gif, png, bmp, tiff, tif.
+      %br
+      %br
+      Attention, les fichiers téléversés entrent dans le calcul de l'utilisation de votre quota autorisé par votre abonnement.
+      %br
+      %br
+    = label_tag :account_book_type, "Type de document", :class => :label
+    - options = options_for_select(Reporting.where(:client_ids => current_user.id).first.user.account_book_types.by_position.collect{ |u| [u.name, u.name] }) rescue []
+    = select_tag "account_book_type", options, :class => 'text_field', :id => "account_book_type"
+    #file-uploader
+    %ul#uploaded_files

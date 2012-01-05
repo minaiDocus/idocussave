@@ -15,22 +15,36 @@ class User
   field :last_name, :type => String
   field :company, :type => String
   field :is_dropbox_authorized, :type => Boolean, :default => false
+  field :is_prescriber, :type => Boolean, :default => false
 
   embeds_many :addresses
   
   referenced_in :reporting
   
   references_and_referenced_in_many :packs
+  references_and_referenced_in_many :account_book_types
   
   references_many :orders
   references_many :credits
   references_many :document_tags
   references_many :events
   references_many :subscriptions
+  references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
   references_one :my_dropbox
+  
+  def name
+    f_name = self.first_name || ""
+    l_name = self.last_name || ""
+    result = [f_name,l_name].join(' ')
+    unless result.blank?
+      return result
+    else
+      return self.email
+    end
+  end
 
   def self.find_by_email param
     User.where(:email => param).first

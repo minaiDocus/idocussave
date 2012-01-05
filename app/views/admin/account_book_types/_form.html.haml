@@ -1,0 +1,22 @@
+.group
+  != f.label :name, "Libellé *", :class => :label
+  != f.text_field :name, :class => 'text_field'
+
+.group
+  != f.label :position, "Position", :class => :label
+  != f.text_field :position, :class => 'text_field'
+  
+.group
+  != label_tag :account_book_type_user_ids, "Prescripteur", :class => :label
+  != select_tag "user_ids[]", options_for_select(User.where(:is_prescriber => true).collect { |u| [u.name, u.id] }, @account_book_type.users.collect { |u| u.id}), :multiple=>true, :size=>6, :class => 'text_field', :id => "account_book_type_user_ids"
+
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_account_book_types_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.

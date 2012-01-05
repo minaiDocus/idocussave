@@ -32,6 +32,7 @@ Idocus::Application.routes.draw do
       get 'callback', :on => :member
     end
     resource :profile
+    resource :fileuploader
     resource :paypal, :only => [] do
       member do
         post :success
@@ -107,5 +108,6 @@ Idocus::Application.routes.draw do
     resources :product_options
     resources :groups
     resources :subscriptions
+    resources :account_book_types
   end
 end
