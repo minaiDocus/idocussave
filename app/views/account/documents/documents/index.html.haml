@@ -1,0 +1,135 @@
+//DocumentComposer widget
+#documentcomposer
+  //Actionbar
+  .actionbar
+    .feedback.inactive.floattoleft.margin1left
+      %span.out
+        Aucun traitement
+        
+    = label_tag :filtre, "Filtrer sur :", :class => "filterlabel floattoleft margin2top margin1right margin1left"
+    = text_field_tag :filter, :class => "floattoleft"
+    
+    = check_box_tag :tags, "1", false, :class => "visibility floattoleft margin1left margin015top"
+    = label_tag :tags, "Afficher les tags", :class => "floattoleft margin2top"
+    
+    %a.do-growlLegend{ :href => "#", :class => "floattoleft margin2left margin015top" }
+      %span Légende
+    %a.do-openNewUploadDialog{ :href => "#", :class => "floattoleft margin2left margin015top" }
+      %span{ :title => "Charger dans iDocus vos documents qui sont déjà en version numérique." } Téléverser
+    
+    = link_to "Reporting", reporting_account_documents_path, :target => "_blank", :class => "floattoleft margin2left margin015top"
+  
+  //Page browser
+  .pagesbrowser.scrollpane
+    .titlebar.orders_scanned_title.margin1bottom
+      %a.do-showDocuments{ :href => "#", :title => "Afficher/Cacher les documents", :class => "floattoleft margin1right margin1top" }
+        %span.visibility Afficher
+      %h1.floattoleft.margin07top
+        %span documents
+      
+      %a.do-openNewSharingDialog{ :href => "#", :class => "floattoright margin1right margin1top inactive" }
+        %span Partages
+      %a.do-openNewDocumentsTaggingDialog{ :href => "#", :class => "floattoright margin1right margin1top inactive" }
+        %span Tags
+      %span.floattoright.margin2left.margin1right.margin1top Action :
+      
+      %a.do-deselectAllVisible{ :href => "#", :class => "floattoright margin1right margin1top" }
+        %span Aucun
+      %a.do-selectAllVisible{ :href => "#", :class => "floattoright margin1right margin1top" }
+        %span Tous
+      %span.floattoright.margin2left.margin1right.margin1top Sélection :
+      
+      = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page floattoright margin1right margin07top"
+      = label_tag :per_page, "par :", :class => "floattoright margin1right margin015top"
+
+      = select_tag :document_owner_list, options_for_select([["tous","all"],["qui m'appartiennent","self"]]+linked_users_option), :class => "floattoright margin1right margin07top"
+      = label_tag :document_owner_list, "Afficher les documents :", :class => "floattoright margin1right margin015top"
+      
+    %ul.documentslist.clearfix
+      != render :partial => "pack", :collection => @packs
+      
+    %div.clear.margin2top.aligncenter.pagination
+      != will_paginate( @packs, :previous_label => "&laquo; précedent", :next_label => "suivant &raquo;") if @packs
+      = hidden_field_tag :packs_count, @packs_count
+    
+    .titlebar.pages_title.margin2top
+      %a.do-showPages{ :href => "#", :title => "Afficher/Cacher les pages", :class => "floattoleft margin1right margin1top"}
+        %span.visibility Afficher
+      %h1.floattoleft.margin07top
+        %span Pages
+      
+      %a.do-openNewPagesTaggingDialog{ :href => "#", :class => "floattoright margin1right margin1top inactive" }
+        %span Tagger
+      %span.floattoright.margin2left.margin1right.margin1top Action :
+      
+      %a.do-deselectAllPage{ :href => "#", :class => "floattoright margin1right margin1top" }
+        %span Aucune
+      %a.do-selectAllPage{ :href => "#", :class => "floattoright margin1right margin1top" }
+        %span Toutes
+      %span.floattoright.margin2left.margin1right.margin1top Sélection :
+      
+    %ul.pageslist.all.clearfix
+    %ul.pageslist.find_result.clearfix
+    .titlebar.composition_title.margin2top
+      %a.do-showSelection.floattoleft.margin1right.margin1top{ :href => "#", :title => "Afficher/Cacher la sélection"}
+        %span.visibility Afficher
+      %h1.floattoleft.margin1bottom.margin07top
+        %span Sélection
+      
+      %a.do-openNewCompositionDialog{ :href => "#", :class => "floattoright margin1right margin1top inactive" }
+        %span Composer
+      %span.floattoright.margin2left.margin1right.margin1top Action :
+    %ul.pageslist.composition.clearfix
+      - if @composition
+        - @is_composition = true
+        != render @composition
+        - @is_composition = false
+
+.hide
+  .newSharingDialog
+    %h3 Départager
+    %p
+      Pour refuser le partage, d'un autre utilisateur, de ce(s) document(s), cliquer sur le lien suivant : 
+      = link_to "Départager", "#", :class => "do-unshareSelected"
+      != image_tag "application/spinner_gray_alpha.gif", :id => "destroy_sharing_spinner", :class => "hide"
+    %br
+    %h3 Partager
+    %p
+      Pour partager ce(s) document(s) entrer l'identifiant du/des compte(s) concerné(s), séparer les identifiants des comptes avec des espaces.
+      %br
+      Identifiant(s) : 
+      != text_field_tag :name, nil, :id => "sharing_name"
+      != image_tag "application/spinner_gray_alpha.gif", :id => "new_sharing_spinner", :class => "hide"
+
+.hide
+  .newTaggingDialog
+    %p
+      Nom du tags
+      %br
+      != text_field_tag :tags, nil, :id => "tags_name"
+      != image_tag "application/spinner_gray_alpha.gif", :id => "new_tagging_spinner", :class => "hide"
+      %br
+      Pour ajouter plusieurs tags à ce(s) document(s), separer les tags avec des espaces.
+      Pour en retirer ajouter '-' devant le tag.
+
+.hide
+  .newCompositionDialog
+    %p
+      Nom de la composition
+      %br
+      != text_field_tag :composition, nil, :id => "composition_name"
+      != image_tag "application/spinner_gray_alpha.gif", :id => "new_composition_spinner", :class => "hide"
+
+.hide
+  .newUploadDialog
+    %p
+      Formats de fichiers acceptés : pdf, jpeg, jpg, gif, png, bmp, tiff, tif.
+      %br
+      %br
+      Attention, les fichiers téléversés entrent dans le calcul de l'utilisation de votre quota autorisé par votre abonnement.
+      %br
+      %br
+    = label_tag :account_book_type, "Type de document", :class => :label
+    = select_tag "account_book_type", options_for_select(account_book_types_option), :class => 'text_field', :id => "account_book_type"
+    #file-uploader
+    %ul#uploaded_files

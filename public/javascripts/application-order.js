@@ -9,39 +9,21 @@ function setVisibility(){
     $(".document_tags").show();
   else
     $(".document_tags").hide();
-  //Selection
-  if (CompositionVisible){
-    $("li.document.page.composition").show();
-    $("a.do-showSelection").children("span").text("Cacher");
-  }else{
-    $("li.document.page.composition").hide();
-    $("a.do-showSelection").children("span").text("Afficher");
-  }
-  nombre = 0;
-  $("ul.pageslist.composition li.document").each(function(index){
-    nombre++;
-  });
-  $(".titlebar.composition_title h1").html("<span>sélection</span><span class='filter-result'> - "+nombre+" page(s)</span>");
+  
   //Documents
-  $("li.document.group").show();
-  
-  value = $("#document_owner_list").val();
-  if(value == "self"){
-    $("li.document.group.shared").hide();
-  }else if(value != "all"){
-    $("li.document.group").hide();
-    $("li.document.group."+value).show();
-  }
-  
-  nombre = $("input[name=packs_count]").val();
-  $(".titlebar.orders_scanned_title h1").html("<span>documents</span><span class='filter-result'> - "+nombre+" résultat(s)</span>");
-  
   if (!DocumentsVisible){
     $("li.document.group").hide();
     $("a.do-showDocuments").children("span").text("Afficher");
   }else{
+    $("li.document.group").show();
     $("a.do-showDocuments").children("span").text("Cacher");
   }
+  nombre = 0;
+  $("ul.documentslist li.document").each(function(index){
+    nombre++;
+  });
+  $(".titlebar.orders_scanned_title h1").html("<span>documents</span><span class='filter-result'> - "+nombre+" résultat(s)</span>");
+  
   //Pages
   if (PagesVisible){
     $("li.document.page.alone").show();
@@ -54,29 +36,26 @@ function setVisibility(){
   $("ul.pageslist.all li.document.page,ul.pageslist.find_result li.document.page").each(function(index){
     nombre++;
   });
-  PagesTitle = "<span>pages "+DocumentName+"</span><span class='filter-result'>- "+nombre+" page(s)</span>";
-  $(".titlebar.pages_title h1").html(PagesTitle);
+  $(".titlebar.pages_title h1").html("<span>pages "+DocumentName+"</span><span class='filter-result'>- "+nombre+" page(s)</span>");
+  
+  //Sélections
+  if (CompositionVisible){
+    $("li.document.page.composition").show();
+    $("a.do-showSelection").children("span").text("Cacher");
+  }else{
+    $("li.document.page.composition").hide();
+    $("a.do-showSelection").children("span").text("Afficher");
+  }
+  nombre = 0;
+  $("ul.pageslist.composition li.document").each(function(index){
+    nombre++;
+  });
+  $(".titlebar.composition_title h1").html("<span>sélection</span><span class='filter-result'> - "+nombre+" page(s)</span>");
   
   if ($("ul.pageslist.composition li.document").length > 0)
     activateCompositionButton();
   else
     deactivateCompositionButton();
-  
-  $(".pagesbrowser").jScrollPane({
-    scrollbarWidth : 10,
-    scrollbarMargin : 5,
-    wheelSpeed : 18,
-    showArrows : false,
-    arrowSize : 0,
-    animateTo : false,
-    dragMinHeight : 1,
-    dragMaxHeight : 99999,
-    animateInterval : 100,
-    animateStep: 3,
-    maintainPosition: true,
-    scrollbarOnLeft: false,
-    reinitialiseOnImageLoad: false
-  });
 }
 
 function getDocument(REF,URL){
@@ -286,7 +265,15 @@ function run_tooltip(){
 function doLive(){
   run_zoombox();
   run_tooltip();
-  $("a.do-show").click(function(){
+  
+  $("a.do-show").unbind('click');
+  $("a.do-select").unbind('click');
+  $("a.growl-info").unbind('click');
+  $("a.do-selectPage").unbind('click');
+  $(".pagination a").unbind('click');
+  $("a.delete").unbind('click');
+  
+  $("a.do-show").bind('click',function(){
     link = $(this);
     li = link.parents("li.document");
     var order_id = _.map(li, function(node){ return node.id.split("_")[1] });
@@ -294,15 +281,12 @@ function doLive(){
     getDocument(li,url);
     return false;
   });
-  $("a.do-select").click(function(){
+  $("a.do-select").bind('click',function(){
     link = $(this);
     li = link.parents("li.document.group");
     li.toggleClass("selected");
     if (li.hasClass("selected")){
-      if(!li.hasClass("shared"))
-        activateButton();
-      else
-        activateDocumentsTaggingButton();
+      activateButton();
     }
     else{
       var desactivate = true;
@@ -315,19 +299,14 @@ function doLive(){
     }
     return false;
   });
-  $("a.growl-info").click(function(){
+  $("a.growl-info").bind('click',function(){
     info = $(this).parents("li.document.group").children(".growl-info").html();
     $.jGrowl(info, {
-      sticky: true,
       position: "bottom-right"
-    });
-    $("a.remote-delete").live("click",function(){
-      $.post(this.href,{ _method: 'delete' },function(data){this.remove();},"json");
-      return false;
     });
     return false;
   });
-  $("a.do-selectPage").click(function(){
+  $("a.do-selectPage").bind('click',function(){
     link = $(this);
     li = link.parents("li.document");
     li.toggleClass("selected");
@@ -350,7 +329,7 @@ function doLive(){
     
     return false;
   });
-  $(".pagination a").click(function(){
+  $(".pagination a").bind('click',function(){
     var page = 1;
     var regexp = new RegExp("page=[0-9]+");
     var regexp2 = new RegExp("[0-9]+");
@@ -359,7 +338,7 @@ function doLive(){
     
     return false;
   });
-  $("a.delete").click(function(){
+  $("a.delete").bind('click',function(){
     url = $(this).attr("href");
     hsh = "";
     spinner_id = $(this).next().attr("id");
@@ -389,19 +368,11 @@ $(document).ready(function () {
   $("select[name=per_page]").change(function(){
     getScans();
   });
-
-  $("a.order_comming_soon").click(function(){
-    $.jGrowl("Commande en ligne bientôt disponible", {
-      sticky: true,
-      position: "bottom-right"
-    });
-    return false;
-  });
   
   $("a.do-growlLegend").click(function(){
     $.jGrowl("<span class='order-paid'>document.pdf</span> : Commande en cours de traitement<br /><br /><span class='order-scanned'>document.pdf</span> : Mon document<br /><br /><span class='order-sharing'>document.pdf</span> : Mon document que je partage<br /><br /><span class='order-shared'>document.pdf</span> : Document partagé par un autre utilisateur",{
       sticky: true,
-      position: "top-right"
+      position: "bottom-right"
     });
     return false;
   });
@@ -414,14 +385,14 @@ $(document).ready(function () {
     tokenDelimiter: ":_:",
     tokenValue: "name",
     propertyToSearch: "name",
-    preventDuplicates: true,
+    preventDuplicates: false,
     resultsFormatter: function(item) {
       var type  = "";
       if (item.id == 1)
         type = " - tag";
       else if (item.id == 2)
         type = " - inconnu";
-      return "<li>" + item.name + "<span style='font-style: italic; color: gray;'>" + type + "</span></li>";
+      return "<li>" + item.name + "<span class='filter-result-type'>"+type+"</span></li>";
     },
     tokenFormatter: function(item) {  return "<li>" + item.name + "</li>" },
     onAdd: function (item) {
@@ -508,7 +479,7 @@ $(document).ready(function () {
   $("a.do-archive").click(function(){
     link = $(this);
     li = link.parents("li.document");
-    var pack_id = _.map(li, function(node){ return node.id.split("_")[1] });
+    var pack_id = _.map(li, function(node){ return node.id.split("_")[1] })[0];
     $.ajax({
       url: "/account/documents/archive",
       data: hsh = {"pack_id":pack_id},
@@ -521,6 +492,25 @@ $(document).ready(function () {
         logAfterAction();
         baseurl = window.location.pathname.split('/')[0];
         window.open(baseurl+""+data);
+      }
+    });
+    return false;
+  });
+  
+  $("a.do-unshareSelected").click(function(){
+    var pack_ids = _.map($("li.document.group.shared.selected"), function(node){ return node.id.split("_")[1] });
+    var hsh = {"pack_ids": pack_ids};
+    $.ajax({
+      url: "/account/documents/sharings/destroy_multiple",
+      data: hsh,
+      dataType: "json",
+      type: "POST",
+      beforeSend: function() {
+        $("#destroy_sharing_spinner").removeClass("hide", false);
+      },
+      success: function(data){
+        $("#destroy_sharing_spinner").addClass("hide", true);
+        location.reload();
       }
     });
     return false;
@@ -569,12 +559,12 @@ $(document).ready(function () {
     if (!($(this).hasClass("inactive"))) {
       $(".newSharingDialog").dialog({
         modal:true,
-        title:"Création d'un nouveau partage",
+        title:"Gestion des partages",
         buttons: { "Valider": function() {
           var pack_ids = _.map($("li.document.group.scanned.selected,li.document.group.sharing.selected"), function(node){ return node.id.split("_")[1] });
           var hsh = {"pack_ids": pack_ids, "email": $("#sharing_name").val()};
           $.ajax({
-            url: "/account/documents/share",
+            url: "/account/documents/sharings",
             data: hsh,
             dataType: "json",
             type: "POST",
@@ -625,12 +615,12 @@ $(document).ready(function () {
     if (!($(this).hasClass("inactive"))) {
       $(".newTaggingDialog").dialog({
         modal:true,
-        title:"Edition d'un tag de document",
+        title:"Gestion des tags",
         buttons: { "Valider": function() {
           var document_ids = _.map($("li.document.group.selected"), function(node){ return node.id.split("_")[2] });
           var hsh = {"document_ids": document_ids, "tags": $("#tags_name").val()};
           $.ajax({
-            url: "/account/documents/update_tag",
+            url: "/account/documents/tags/update_multiple",
             data: hsh,
             dataType: "json",
             type: "POST",

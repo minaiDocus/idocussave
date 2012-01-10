@@ -1,6 +1,5 @@
 class Account::AccountController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_last_composition
   #around_filter :catch_404
 
   skip_before_filter :authenticate_super_user!
@@ -8,11 +7,6 @@ class Account::AccountController < ApplicationController
   layout "inner"
 
 protected
-
-  def find_last_composition
-    return if self.controller_name == 'document_tags'
-    @last_composition = current_user.composition
-  end
 
   def catch_404
     begin

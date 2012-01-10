@@ -1,0 +1,28 @@
+- document_class = @is_composition ? "composition" : "alone"
+
+%li.document.page{ :id => "document_none_#{document.id}", :class => document_class }
+  - unless document.dirty
+    - link_to_large = document.content.url(:large)
+    - link_to_medium = document.content.url(:medium)
+  - else
+    - link_to_large = link_to_medium = '/system/processing.png'
+  
+  = link_to "", link_to_large, :class => "zoom zgallery#{ @is_composition? 3 : 2 }", :title => "Zoomer sur la page"
+  .toolbar
+    %ul
+      %li.download
+        != link_to "", document.content.url, :class => "download", :title => "Télécharger", :target => "_blank"
+      - if @composition
+        %li.delete_composition
+          %a.delete.do-deleteDocumentFromComposition{ :href => "#", :title => "Supprimer" }
+      - else
+        %li.selector
+          != link_to "", "#", :class => "select do-selectPage", :title => "Sélectionner pour la composition"
+  .handle{ :title => "Déplacer" }
+  .pagethumb
+    .thumb
+      != image_tag link_to_medium
+      .document_tags
+        = tags_of document
+  .foot
+    %span

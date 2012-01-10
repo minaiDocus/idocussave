@@ -14,25 +14,36 @@ Idocus::Application.routes.draw do
   
   namespace :account do
     root :to => "account/documents#index"
-    resource :document_tags
-    resources :documents do
-      get 'invoice', :on => :member
-      get 'packs', :on => :collection
-      get 'search', :on => :collection
-      get 'find', :on => :collection
-      get 'reporting', :on => :collection
-      post 'update_tag', :on => :collection
-      post 'reorder', :on => :collection
-      post 'share', :on => :collection
-      post 'archive', :on => :collection
+    
+    scope :module => "documents" do
+      resources :documents do
+        get 'invoice', :on => :member
+        get 'packs', :on => :collection
+        get 'search', :on => :collection
+        get 'find', :on => :collection
+        get 'reporting', :on => :collection
+        post 'reorder', :on => :collection
+        post 'archive', :on => :collection
+      end
     end
+    
+    namespace :documents do
+      resource :sharing do
+        post 'destroy_multiple', :on => :collection
+        post 'destroy_multiple_selected', :on => :collection
+      end
+      resource :tags do
+        post 'update_multiple', :on => :collection
+      end
+      resource :upload
+    end
+    
     resources :addresses
     resource :dropbox do
       get 'authorize_url', :on => :member
       get 'callback', :on => :member
     end
     resource :profile
-    resource :fileuploader
     resource :paypal, :only => [] do
       member do
         post :success

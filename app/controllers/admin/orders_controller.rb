@@ -8,7 +8,7 @@ class Admin::OrdersController < Admin::AdminController
 protected
   
   def get_documents user, order
-    Dir.chdir("#{Rails.root}/tmp/input_pdf_manuel/")
+    Dir.chdir("#{Rails.root}/tmp/input_pdf_manual/")
     
     file_names = []
     Dir.foreach("./") { |file_name|

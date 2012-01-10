@@ -1,0 +1,349 @@
+!!!
+%html
+  %head
+    %title
+      Mon compte Idocus
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    %link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
+    != javascript_include_tag %w(jquery-1.5.1.min)
+    != csrf_meta_tag
+
+  %body.padding1left
+    -if current_user.is_admin
+      %form{ :action => reporting_account_documents_path, :method => "GET" }
+        %label{ :for => :view_user }
+          Voir le reporting de : 
+        %input{ :type => :text, :name => :email, :id => :view_user }
+        %input{ :type => :submit, :style => "width: 50px;" }
+      %br
+      %br
+    !=link_to "année précédente", reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || ""))
+    |
+    !=link_to "année suivante", reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || ""))
+    .box
+      .content_left
+        %h1
+          REPORTING #{ @year }
+    
+        %form
+          - select_res = @clients.collect{|c| [(!c.company.blank? ? (c.company + " - ") : "") + (!c.code.blank? ? (c.code + " - ") : "") + (!c.first_name.blank? ? (c.first_name + " - ") : "") + c.email, c.id]}
+          != select_tag(:view_for, options_for_select( [["Tous",0]] + select_res ), :class => "view_for")
+    
+        %br
+        !=link_to "Tout replier", "#", :class => "hide_all"
+        |
+        !=link_to "Tout déplier", "#", :class => "show_all"
+        %br
+        
+        - mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+    
+        - total_ss_docs_per_year = total_feuilles_per_year = total_pages_per_year = 0
+    
+        - date = Date.new(@year).to_time
+        - mois.each_with_index do |m,index|
+          - nb = index + 1
+          %h2
+            %a{ :href => "#", :class => "do-showHide", :id => "month_#{nb}" }
+              [-]
+            != m
+    
+          - date = date.next_month
+    
+          - total_ss_docs_per_month = total_feuilles_per_month = total_pages_per_month = 0
+    
+          %div{ :class => "month_#{nb}" }
+            - if @reporting[nb.to_s]
+              - @reporting[nb.to_s].each do |e|
+                .client{ :class => "#{e[0][1]} margin2left" }
+                  %h3
+                    != e[0][0]
+    
+                  - total_ss_docs = total_feuilles = total_pages = 0
+                  %table
+                    %tr
+                      %th.alignleft
+                        Noms des documents
+                      %th.w50
+                        Piéces
+                      %th.w50
+                        Feuilles
+                      %th.w50
+                        Pages
+                    - e[1].each do |doc|
+                      %tr
+                        %td
+                          != doc[0]
+                        %td.w50.aligncenter.ss-docs
+                          != doc[1]
+                        %td.w50.aligncenter.feuilles
+                          != doc[2]
+                        %td.w50.aligncenter.pages
+                          != doc[3]
+                          - total_ss_docs += doc[1]
+                          - total_feuilles += doc[2]
+                          - total_pages += doc[3]
+                    %tr
+                      %td.bold.alignright
+                        Total
+                      %td.w50.aligncenter.bold.ss-docs{ :class => "#{e[0][1]} #{m}" }
+                        != total_ss_docs
+                      %td.w50.aligncenter.bold.feuilles{ :class => "#{e[0][1]} #{m}" }
+                        != total_feuilles
+                      %td.w50.aligncenter.bold.pages{ :class => "#{e[0][1]} #{m}" }
+                        != total_pages
+                  -#!= "Total dépassement pour le mois : #{e[2]}"
+    
+                  - total_ss_docs_per_month += total_ss_docs
+                  - total_feuilles_per_month += total_feuilles
+                  - total_pages_per_month += total_pages
+    
+            - if total_ss_docs_per_month > 0 && total_feuilles_per_month > 0 && total_pages_per_month > 0
+              %h3.margin2left.margin2top
+                Total du mois de #{m}
+    
+              %table.margin2left.margin2top
+                %tr
+                  %th.w100
+                    Total piéces
+                  %th.w100
+                    Total feuilles
+                  %th.w100
+                    Total pages
+                %tr.aligncenter
+                  %td.w100.bold.total-ss-docs{ :class => m }
+                    != total_ss_docs_per_month
+                  %td.w100.bold.total-feuilles{ :class => m }
+                    != total_feuilles_per_month
+                  %td.w100.bold.total-pages{ :class => m }
+                    != total_pages_per_month
+    
+          - total_ss_docs_per_year += total_ss_docs_per_month
+          - total_feuilles_per_year += total_feuilles_per_month
+          - total_pages_per_year += total_pages_per_month
+    
+        %h2.margin3top
+          Total de l'année #{@year}
+    
+        - if total_ss_docs_per_year > 0 && total_feuilles_per_year > 0 && total_pages_per_year > 0
+          %table.margin2top.margin3bottom
+            %tr
+              %th.w100
+                Total piéces
+              %th.w100
+                Total feuilles
+              %th.w100
+                Total pages
+            %tr.aligncenter
+              %td.w100.bold.total-ss-docs.global
+                != total_ss_docs_per_year
+              %td.w100.bold.total-feuilles.global
+                != total_feuilles_per_year
+              %td.w100.bold.total-pages.global
+                != total_pages_per_year
+                
+      .content_right
+        %h2.margin2bottom
+          Etat de l'utilisation du service pour le mois de #{mois[Time.now.month - 1]} #{Time.now.year}
+        - total = [0,0,0,0,0]
+        %table
+          %tr
+            %th.w75
+              Société
+            %th.w75
+              Code
+            %th.w75
+              Nom
+            %th.w75
+              Prénom
+            %th.w75
+              Email
+            %th{ :colspan => 5 }
+              Statut des documents papier
+          - @clients.each do |client|
+            %tr.client{ :class => client.id }
+              %td.w75
+                =client.company rescue ""
+              %td.w75
+                =client.code rescue ""
+              %td.w75
+                =client.first_name rescue ""
+              %td.w75
+                =client.last_name rescue ""
+              %td.w75
+                =client.email rescue ""
+              
+              - ok = false
+              - nb = 0
+              - if client.delivery
+                - Delivery::STATES.each do |state|
+                  - stt = client.delivery.state
+                  - if !ok && state[1] != stt
+                    - nb += 1 
+                  - else
+                    - ok = true
+                
+              - if nb != 0
+                - total[nb - 1] += 1
+              - ok = true
+              - Delivery::STATES.each_with_index do |state,index|
+                - if index != 0
+                  - if ok
+                    %td.green.aligncenter
+                      != state[0]
+                  - else
+                    %td.gray.aligncenter
+                      != state[0]
+                - if index == nb
+                  - ok = false
+        %br
+        %table
+          %tr
+            %th Total Utitlisateurs
+            %th Total Attendus
+            %th Total Réclamés
+            %th Total Réceptionnés
+            %th Total Traités
+            %th Total Retournés
+          %tr.total_etat.aligncenter
+            %td!= @clients.count
+            - total.each do |t|
+              %td
+                !=t
+                
+:javascript
+  var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+  $(document).ready(function () {
+    $(".show_all").click(function(){
+      for(i=1;i<=12;i++){
+        $(".month_"+i).removeClass("hide");
+        $("#month_"+i).text("[-]");
+      }
+    });
+    $(".hide_all").click(function(){
+      for(i=1;i<=12;i++){
+        $(".month_"+i).addClass("hide");
+        $("#month_"+i).text("[+]");
+      }
+    });
+  
+    $(".view_for").change(function(){
+      id = $(this).val();
+      if (id == "0") {
+        $(".client").show();
+        $(".total_etat").show();
+      } else {
+        $(".client").hide();
+        $(".total_etat").hide();
+        $("."+id).show();
+      }
+      var total_ss_docs = 0;
+      var total_feuilles = 0;
+      var total_pages = 0;
+      for(var i= 0; i < mois.length; i++)
+      {
+        //total ss-docs
+        total = 0;
+          $("."+mois[i]+".ss-docs:visible").each(function(index) {
+          total += parseInt($(this).text());
+        });
+        $("."+mois[i]+".total-ss-docs").text(total);
+        total_ss_docs += total;
+        //total feuilles
+        total = 0;
+          $("."+mois[i]+".feuilles:visible").each(function(index) {
+          total += parseInt($(this).text());
+        });
+        $("."+mois[i]+".total-feuilles").text(total);
+        total_feuilles += total;
+        //total pages
+        total = 0;
+          $("."+mois[i]+".pages:visible").each(function(index) {
+          total += parseInt($(this).text());
+        });
+        $("."+mois[i]+".total-pages").text(total);
+        total_pages += total;
+      }
+      $(".total-ss-docs.global").text(total_ss_docs);
+      $(".total-feuilles.global").text(total_feuilles);
+      $(".total-pages.global").text(total_pages);
+    });
+    $(".do-showHide").click(function(){
+      nom = "."+$(this).attr("id");
+      if ($(nom).hasClass("hide")){
+        $(nom).removeClass("hide");
+        $(this).text("[-]");
+      } else {
+        $(nom).addClass("hide");
+        $(this).text("[+]");
+      }
+    });
+  });
+
+:css
+  body{
+    font-family: Arial;
+    font-size: 12px;
+    background-color: #dddbda; }
+  h1{
+    font-size: 18px; }
+  h2{
+    font-size: 16px; }
+  h3{
+    font-size: 14px; }
+  .box{
+    height: auto;
+    width: 100%; }
+  .content_left{
+    float: left;
+    width: 400px; }
+  .content_right{
+    float: right;
+    width: 700px; }
+  .margin1left{
+    margin-left: 10px; }
+  .margin2left{
+    margin-left: 20px; }
+  .margin3left{
+    margin-left: 30px; }
+  .margin2top{
+    margin-top: 20px; }
+  .margin3top{
+    margin-top: 30px; }
+  .margin2bottom{
+    margin-bottom: 20px; }
+  .margin3bottom{
+    margin-bottom: 30px; }
+  .padding1left{
+    padding-left: 10px; }
+  table{
+    border-collapse: collapse; }
+  tr, td, th{
+    width: 200px;
+    border: solid black 1px; }
+  th{
+    background-color: #c9dd03; }
+  .w50{
+    width: 50px; }
+  .w75{
+    width: 75px; }
+  .w100{
+    width: 100px; }
+  .w300{
+    width: 300px; }
+  .aligncenter{
+    text-align: center; }
+  .alignleft{
+    text-align: left; }
+  .alignright{
+    text-align: right; }
+  .hide{
+    display: none;}
+  .bold{
+    font-weight: bold;
+  }
+  a{
+    text-decoration: none; }
+  .green{
+    background-color: green; }
+  .gray{
+    background-color: gray; }
