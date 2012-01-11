@@ -16,11 +16,10 @@ class Pack
     document.dirty = true
     document.pack = self
     if in_dir_manual
-      type = "manual"
+      document.content = File.new "#{Rails.root}/tmp/input_pdf_manual/#{name}.pdf"
     else
-      type = "auto"
+      document.content = File.new "#{Rails.root}/tmp/input_pdf_auto/#{name.split('_')[0..2].join('_')}_all/#{name}.pdf"
     end
-    document.content = File.new "#{Rails.root}/tmp/input_pdf_#{type}/#{name}.pdf"
     if document.save!
       self.order.scanned! unless self.order.scanned?
       system("rm #{Rails.root}/tmp/input_pdf_#{type}/#{name}.pdf")
