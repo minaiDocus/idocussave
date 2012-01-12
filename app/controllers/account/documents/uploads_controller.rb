@@ -1,4 +1,4 @@
-class Account::FileuploadersController < Account::AccountController
+class Account::Documents::UploadsController < Account::AccountController
   
   skip_before_filter :verify_authenticity_token, :only => %w(create)
 
@@ -13,7 +13,11 @@ class Account::FileuploadersController < Account::AccountController
         
         Dir.chdir("#{Rails.root}/tmp/input_pdf_auto/ocr_tasks")
         
-        checkpoint_number = Dir.entries('.').select{|d| d.match(/^#{basename}/)}.sort.last.split('_')[3].sub('.pdf','').to_i + 1 rescue 500
+        checkpoint_number = Dir.entries('.').select{|d| d.match(/^#{basename}/)}.sort.last.split('_')[3].sub('.pdf','').to_i + 1 rescue 0
+        if checkpoint_number == 0
+          nb = Dir.entries('..').select{|d| d.match(/^#{basename}/)}.sort.last.split('_')[3].sub('.pdf','').to_i + 1 rescue 500
+          (nb < 500) ? checkpoint_number = 500 : checkpoint_number = nb
+        end
         
         file_name = basename + "_" + ("0"*(3 - checkpoint_number.to_s.length)) + checkpoint_number.to_s + File.extname(params[:file].original_filename)
         
