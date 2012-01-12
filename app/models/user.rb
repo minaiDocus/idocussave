@@ -29,7 +29,6 @@ class User
   references_many :document_tags
   references_many :events
   references_many :subscriptions
-  references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
