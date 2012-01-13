@@ -6,7 +6,7 @@
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
     = javascript_include_tag %w(jquery-1.5.1.min jquery.tools.min rails sprintf)
-    != stylesheet_link_tag %w(pages application/custom)
+    != stylesheet_link_tag %w(pages/general pages/tunnel)
     != csrf_meta_tag
     :javascript
       $(document).ready(function(){
