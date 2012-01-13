@@ -7,8 +7,6 @@ require 'erb'
 gem 'activesupport', '>=3.0.0.beta4'
 require 'active_support'
 
-require "./lib/static_list.rb"
-
 # For some reason, ActiveSupport 3.0.0 doesn't load.
 # Load needed extension directly for now.
 require "active_support/core_ext/object"
@@ -22,4 +20,4 @@ options = YAML.load(
     
 options[:dir_mode] = options[:dir_mode].to_sym
 
-Daemons.run File.dirname(__FILE__) + "/get_documents.rb", options
+Daemons.run File.dirname(__FILE__) + "/maintenance.rb", options

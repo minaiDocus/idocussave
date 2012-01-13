@@ -13,5 +13,8 @@ end
 
 while($running) do
   Pack.get_documents
-  sleep 3600
+  Document.do_reprocess_styles
+  Document.extract_content
+  
+  sleep 1800
 end

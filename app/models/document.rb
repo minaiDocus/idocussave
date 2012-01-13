@@ -37,6 +37,7 @@ class Document
 
   scope :without_original, :where => { :is_an_original.in => [false, nil] }
   scope :originals, :where => { :is_an_original => true }
+  scope :not_indexed, :not_in => { :indexed => [true] }
   
   def self.do_reprocess_styles
     nb = 0
@@ -50,6 +51,47 @@ class Document
       end
     end
     puts "Document reprocessed number : #{nb}"
+  end
+  
+  def self.extract_content
+    class Receiver
+      attr_reader :text
+      def initialize
+        @text = ""
+      end
+      def show_text(string, *params)
+        string.split().each do |w|
+          word = w.scan(/[\w|.|@|_|-]+/).join().downcase
+          if word.length <= 50
+            if Dictionary.find_one(word)
+              @text += " +#{word}"
+            else
+              @text += " #{word}"
+            end
+          end
+        end
+      end
+      def show_text_with_positioning(array, *params)
+        show_text(array.select{|i| i.is_a?(String)}.join())
+      end
+    end
+    
+    documents = Document.without_original.not_indexed.entries
+    puts "Nombre de document à indexé : #{documents.count}"
+    
+    documents.each_with_index do |document,index|
+      print "[#{index + 1}]"
+      receiver = Receiver.new
+      result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
+      if result
+        print "ok\n"
+        document.content_text = receiver.text
+        document.indexed = true
+        document.save!
+      else
+        print "not ok\n"
+      end
+    end
   end
 
 protected
