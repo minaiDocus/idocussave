@@ -88,6 +88,19 @@ function getDocument(REF,URL){
       setSameDocumentSelected();
       
       doLive();
+      scrollpaneresizer();
+      customscrollbarapplayer();
+    },
+    error: function(data){
+      logAfterAction();
+      
+      $.jGrowl("<span style='color: red;'>Une erreur est survenu. Veuillez réessayer, s'il vous plaît.</span>",{
+        sticky: true,
+        position: "bottom-right"
+      });
+      
+      scrollpaneresizer();
+      customscrollbarapplayer();
     }
   });
   return false;
@@ -119,6 +132,19 @@ function getScans(PAGE){
       list.remove();
       setVisibility();
       doLive();
+      scrollpaneresizer();
+      customscrollbarapplayer();
+    },
+    error: function(data){
+      logAfterAction();
+      
+      $.jGrowl("<span style='color: red;'>Une erreur est survenu. Veuillez réessayer, s'il vous plaît.</span>",{
+        sticky: true,
+        position: "bottom-right"
+      });
+      
+      scrollpaneresizer();
+      customscrollbarapplayer();
     }
   });
 }
