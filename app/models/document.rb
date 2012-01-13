@@ -54,28 +54,6 @@ class Document
   end
   
   def self.extract_content
-    class Receiver
-      attr_reader :text
-      def initialize
-        @text = ""
-      end
-      def show_text(string, *params)
-        string.split().each do |w|
-          word = w.scan(/[\w|.|@|_|-]+/).join().downcase
-          if word.length <= 50
-            if Dictionary.find_one(word)
-              @text += " +#{word}"
-            else
-              @text += " #{word}"
-            end
-          end
-        end
-      end
-      def show_text_with_positioning(array, *params)
-        show_text(array.select{|i| i.is_a?(String)}.join())
-      end
-    end
-    
     documents = Document.without_original.not_indexed.entries
     puts "Nombre de document à indexé : #{documents.count}"
     
@@ -117,5 +95,27 @@ protected
         end
       end
     end
+  end
+end
+
+class Receiver
+  attr_reader :text
+  def initialize
+    @text = ""
+  end
+  def show_text(string, *params)
+    string.split().each do |w|
+      word = w.scan(/[\w|.|@|_|-]+/).join().downcase
+      if word.length <= 50
+        if Dictionary.find_one(word)
+          @text += " +#{word}"
+        else
+          @text += " #{word}"
+        end
+      end
+    end
+  end
+  def show_text_with_positioning(array, *params)
+    show_text(array.select{|i| i.is_a?(String)}.join())
   end
 end
