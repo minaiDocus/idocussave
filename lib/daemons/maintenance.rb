@@ -16,5 +16,10 @@ while($running) do
   Document.do_reprocess_styles
   Document.extract_content
   
+  User.all.each do |user|
+    user.document_content_index = DocumentContentIndex.create unless user.document_content_index
+    user.document_content_index.update_content!
+  end
+  
   sleep 1800
 end

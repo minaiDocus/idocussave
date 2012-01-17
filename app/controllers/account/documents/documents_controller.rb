@@ -33,6 +33,34 @@ public
   end
   
   def packs
+    @packs = []
+    pack_ids = []
+    f_pack_ids = []
+    
+    if params[:filtre]
+      query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:')
+      f_pack_ids = current_user.document_content_index.try(:search,query,0)
+    end
+      
+    if params[:view] == "all"
+      @packs = current_user.packs
+      @packs = @packs.select{|p| f_pack_ids.include? p.id} unless f_pack_ids.empty? #filtre
+    elsif params[:view] == "self"
+      own_pack_ids = []
+      current_user.orders.each do |order|
+        order.packs.each do |pack|
+          own_pack_ids += [pack.id]
+        end
+      end
+      pack_ids = pack_ids.select{|p| own_pack_ids.include? p}
+      pack_ids = pack_ids.select{|p| f_pack_ids.include? p} unless f_pack_ids.empty? # filtre
+      @packs = Pack.any_in(:_id => pack_ids).desc(:created_at)
+    else
+      order_ids = Order.where(:user_id => (User.find(params[:view])).id).collect{|o| o.id}
+      @packs = current_user.packs.any_in(:order_id => order_ids)
+      @packs = @packs.select{|p| f_pack_ids.include? p.id} unless f_pack_ids.empty? #filtre
+    end
+    
     pack_ids = []
     
     if params[:view] == "all" || params[:view] == "self"
@@ -65,16 +93,8 @@ public
       end
     end
     
-    @packs = []
-    
-    if params[:filtre]
-      @packs = Pack.find_by_content params[:filtre], current_user
-    end
-    
-    unless pack_ids.empty?
-      @packs = @packs + Pack.any_in(:_id => pack_ids).desc(:created_at)
-      @packs = @packs.uniq
-    end
+    @packs += Pack.any_in(:_id => pack_ids).desc(:created_at)
+    @packs = @packs.uniq
 
     @packs_count = @packs.count
     @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
@@ -119,11 +139,12 @@ public
     end
     
     if params[:by] == "ocr_result" || !params[:by]
-      result = Pack.find_content query, current_user
-      if result
-        result.each do |word|
-          @document_contents << {"id" => "#{word[0] ? 0 : 2}", "name" => "#{word[1]}"}
-        end
+      query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:q]).join()
+      result = current_user.document_content_index.try(:search,query) || []
+      
+      @document_contents = []
+      result.each do |r|
+        @document_contents << {"id" => "#{r.match(/^\+/) ? 0 : 2}", "name" => r.sub(/^\+/,'')}
       end
     end
     
@@ -132,15 +153,19 @@ public
     @result = @result.sort do |a,b|
       a["name"] <=> b["name"]
     end
-    
+
     respond_to do |format|
       format.json{ render :json => @result.to_json, :callback => params[:callback], :status => :ok }
     end
   end
   
   def find
+    query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:')
+    
+    @documents = []
+
     document_ids = ""
-    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').each_with_index do |tag,index|
+    query.each_with_index do |tag,index|
       if index == 0
         DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => current_user.id).each do |document_tag|
           document_ids += " #{document_tag.document_id}"
@@ -155,11 +180,8 @@ public
       end
     end
     
-    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:').join(" ")
-    
-    
-    @documents = Document.any_in(:_id => document_ids.split).entries
-    @documents = @documents + Pack.find_document(params[:having], current_user)
+    @documents = Document.any_in(:_id => document_ids.split).without_original.entries
+    @documents += Document.any_in(:_id => current_user.document_content_index.try(:search,query,1)).without_original.entries
     @documents = @documents.uniq
     
     render :action => "show"
@@ -203,7 +225,7 @@ public
     new_name = pack.name.gsub(/\s/,'_')
     
     Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-    system("rm *.zip") rescue nil # suppression du prÃ©cÃ©dent zip
+    system("rm *.zip") rescue nil # suppression du précédent zip
     system("zip '#{new_name}.zip' *.pdf")
     system("rm *.pdf")
     

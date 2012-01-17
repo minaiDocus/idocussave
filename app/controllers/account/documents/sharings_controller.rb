@@ -45,6 +45,8 @@ class Account::Documents::SharingsController < Account::AccountController
       end
     end
     
+    current_user.document_content_index.try("remove",packs.collect{|p| p.id})
+    
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }
     end

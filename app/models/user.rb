@@ -33,6 +33,7 @@ class User
   references_one :debit_mandate
   references_one :delivery
   references_one :my_dropbox
+  references_one :document_content_index
   
   def name
     f_name = self.first_name || ""

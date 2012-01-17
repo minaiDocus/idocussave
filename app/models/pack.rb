@@ -22,7 +22,7 @@ class Pack
     end
     if document.save!
       self.order.scanned! unless self.order.scanned?
-      system("rm #{Rails.root}/tmp/input_pdf_manual/#{name}.pdf") if in_dir_manual
+      system("rm -r #{Rails.root}/tmp/input_pdf_manual/#{name}.pdf") if in_dir_manual
     end
   end
   
