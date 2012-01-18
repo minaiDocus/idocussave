@@ -39,7 +39,7 @@ public
     
     if params[:filtre]
       query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:')
-      f_pack_ids = current_user.document_content_index.try(:search,query,0)
+      f_pack_ids = current_user.document_content_index.try(:search,query)[1]
     end
       
     if params[:view] == "all"
@@ -144,7 +144,7 @@ public
       
       @document_contents = []
       result.each do |r|
-        @document_contents << {"id" => "#{r.match(/^\+/) ? 0 : 2}", "name" => r.sub(/^\+/,'')}
+        @document_contents << {"id" => "#{r[0].match(/^\+/) ? 0 : 2}", "name" => r[0].sub(/^\+/,'')}
       end
     end
     
@@ -181,7 +181,7 @@ public
     end
     
     @documents = Document.any_in(:_id => document_ids.split).without_original.entries
-    @documents += Document.any_in(:_id => current_user.document_content_index.try(:search,query,1)).without_original.entries
+    @documents += Document.any_in(:_id => current_user.document_content_index.try(:search,query)[2]).without_original.entries
     @documents = @documents.uniq
     
     render :action => "show"

@@ -1,176 +1,220 @@
 class DocumentContentIndex
+  INDEX_PATH = "#{Rails.root}/tmp/documents_contents_index/"
+  
+  attr_reader :data, :header, :body, :formatted_header, :formatted_body, :content_text, :indexed_pack_ids, :indexed_document_ids
+  
   include Mongoid::Document
   include Mongoid::Timestamps
-
-  field :content, :type => Hash, :default => {}
-  field :indexed_document_ids, :type => Array, :default => []
-  field :indexed_pack_ids, :type => Array, :default => []
   
   referenced_in :user
   
-  def update_content!
-    index = self.content
-    pack_ids = self.user.packs.collect{|p| p.id} - self.indexed_pack_ids
-    
-    documents = Document.any_in(:pack_id => pack_ids).not_in(:_id => indexed_document_ids).without_original
-    
-    print "processing #{documents.count} document(s)..."
-    
-    start_time = Time.now
-    i_document_ids = []
-    i_pack_ids = []
-    documents.each do |document|
-      if Time.now - start_time > 10
-        self.content = index
-        self.indexed_document_ids += i_document_ids
-        self.indexed_document_ids = self.indexed_document_ids.uniq
-        self.indexed_pack_ids += i_pack_ids
-        self.indexed_pack_ids = self.indexed_pack_ids.uniq
-        if self.save
-          i_document_ids = []
-          i_pack_ids = []
-          print "!"          
-        else
-          print "*"
-        end
-        sleep(2)
-        start_time = Time.now
-      end
-      
-      content_ary = document.content_text.split
-      content_ary.each do |c|
-        if index[c]
-          index[c][0] += [document.pack.id]
-          index[c][1] += [document.id]
-          index[c][0] = index[c][0].uniq
-          index[c][1] = index[c][1].uniq
-        else
-          index = index.merge({c => [[document.pack.id],[document.id]]})
-        end
-      end
-      
-      i_document_ids << document.id
-      i_pack_ids << document.pack.id
-      
-      print "."
-    end
-    self.content = index
-    self.save
-  end
-  
-  def update_content_with d_pack_ids
-    if d_pack_ids.is_a?(Array)
-      pack_ids = d_pack_ids - self.indexed_pack_ids
-      unless pack_ids.empty?
-        c_pack_ids = self.user.packs.collect{|p| p.id} - self.indexed_pack_ids
-        pack_ids = pack_ids.select{|p| c_pack_ids.include? p}
-        documents = Document.any_in(:pack_id => pack_ids).not_in(:_id => indexed_document_ids).without_original
-        
-        print "processing #{documents.count} document(s)..."
-        
-        index = self.content
-        documents.each do |document|
-          content_ary = document.content_text.split
-          content_ary.each do |c|
-            if index[c]
-              index[c][0] += [document.pack.id]
-              index[c][1] += [document.id]
-              index[c][0] = index[c][0].uniq
-              index[c][1] = index[c][1].uniq
-            else
-              index = index.merge({c => [[document.pack.id],[document.id]]})
-            end
-          end
-          self.indexed_document_ids << document.id
-          self.indexed_document_ids = self.indexed_document_ids.uniq
-          self.indexed_pack_ids << document.pack.id
-          self.indexed_pack_ids = self.indexed_pack_ids.uniq
-          
-          print "."
-        end
-        self.content = index
-        self.save
-      end
-    end
-  end
-  
-  def search param, type=2, strict=true
-    # recherche de mots
-    if type == 2
-      keys = self.content.keys
-      if  param.is_a?(Array)
-        result = []
-        param.each do |p|
-          result += keys.select{|k| k.match(/#{p}/)}
-        end
-        result
-      else
-        keys.select{|k| k.match(/#{param}/)}
-      end
-    # recherche de pack (0) ou de document (1)
-    elsif type == 0 || type == 1
-      index = self.content
-      if index.is_a?(Hash)
-        keys = index.keys
-        result_ids = []
-        if  param.is_a?(Array)
-          param.each_with_index do |p,i|
-            key = strict ? keys.select{|k| k.match(/^[\+]*#{p}$/)}.first : keys.select{|k| k.match(/#{p}/)}.first
-            if key
-              temp_ids = index[key][type]
-              if i != 0
-                result_ids = temp_ids.select{|id| result_ids.include? id }
-              else
-                result_ids = temp_ids
-              end
-            else
-              result_ids = []
-            end
-          end
-          result_ids
-        else
-          key = strict ? keys.select{|k| k.match(/^[\+]*#{param}$/)}.first : keys.select{|k| k.match(/#{param}/)}.first
-          if key
-            result_ids = index[key][type]
-          else
-            result_ids = []
-          end
-          result_ids
-        end
-      else
-        false
-      end
-    else
-      false
-    end
-  end
-  
+public
   def remove pack_ids
-    index = self.content
+    get_all if @formatted_body.nil?
+    
     if pack_ids.is_a?(Array)
       packs = Pack.any_in(:_id => pack_ids)
       packs.each do |pack|
         pack.documents.each do |document|
           content_ary = document.content_text.split
           content_ary.each do |c|
-            unless index[c].nil?
-              if index[c][0].is_a?(Array)
-                index[c][0] -= [pack.id]
-                if index[c][0].empty?
-                  index.delete(c)
-                elsif index[c][1].is_a?(Array)
-                  index[c][1] -= [document.id]
+            unless @formatted_body[c].nil?
+              if @formatted_body[c][0].is_a?(Array)
+                @formatted_body[c][0] -= [pack.id]
+                if @formatted_body[c][0].empty?
+                  @formatted_body.delete(c)
+                elsif @formatted_body[c][1].is_a?(Array)
+                  @formatted_body[c][1] -= [document.id]
                 end
               end
             end
           end
-          self.indexed_document_ids -= [document.id]
+          @indexed_document_ids -= [document.id]
         end
-        self.indexed_pack_ids -= [pack.id]
+        @indexed_pack_ids -= [pack.id]
       end
     end
-    self.content = index
-    self.save
+    save_data
+  end
+  
+  def update_data!
+    get_all
+    
+    pack_ids = self.user.packs.collect{|p| p.id} - @indexed_pack_ids
+    documents = Document.any_in(:pack_id => pack_ids).not_in(:_id => @indexed_document_ids).without_original.entries
+    
+    print "processing #{documents.count} document(s)..."
+    
+    start_time = Time.now
+    documents.each do |document|
+      if Time.now - start_time > 10
+        print "!"
+        sleep(2)
+        start_time = Time.now
+      end
+      
+      content_ary = document.content_text.split
+      content_ary.each do |c|
+        if @formatted_body[c]
+          @formatted_body[c][0] << document.pack.id
+          @formatted_body[c][1] << document.id
+        else
+          @formatted_body = @formatted_body.merge( { c => [[document.pack.id], [document.id]] } )
+        end
+      end
+      @indexed_pack_ids << document.pack.id
+      @indexed_document_ids << document.id
+      
+      print "."
+    end
+    
+    save_data
+  end
+
+  def get_all
+    get_data
+    get_header
+    get_body
+    get_formatted_header
+    get_formatted_body
+    get_indexed_pack_ids
+    get_indexed_document_ids
+    true
+  end
+
+  def get_file_name
+    INDEX_PATH + self.user.id.to_s+".index"
+  end
+  
+  def save_data
+    uniqify!
+    make_text!
+    file = File.open(get_file_name,"w")
+    file ? file.syswrite(@content_text) : false
+  end
+  
+  def create_data
+    File.open(get_file_name,"w")
+  end
+  
+  def get_data
+    file = File.open(get_file_name,"r") rescue create_data
+    @data = file ? file.readlines : []
+  end
+  
+  def get_header
+    @header = @data[0..29]
+    @header = [] unless @header
+    while @header.length < 31
+      @header << ""
+    end
+    @header
+  end
+  
+  def get_body
+    @body = @data[31..(32 + @data.length - 1)] || []
+  end
+  
+  def get_formatted_header
+    array_data = []
+    @header.each do |h|
+      if h.is_a?(String)
+        tmp_h =  h.chomp.split(":")
+        key = tmp_h[0] || ""
+        value = tmp_h[1] || ""
+        array_data << [ key, value ]
+      else
+        array_data << [ "", ""]
+      end
+    end
+    @formatted_header = array_data
+  end
+  
+  def get_formatted_body
+    hash_data = {}
+    @body.each do |d|
+      tmp_d =  d.chomp.split("\t")
+      word = tmp_d[0]
+      pack_ids = tmp_d[1].split(",")
+      document_ids = tmp_d[2].split(",")
+      hash_data = hash_data.merge( { word => [ pack_ids, document_ids ] } )
+    end
+    @formatted_body = hash_data
+  end
+  
+  def get_indexed_pack_ids
+    @indexed_pack_ids = @formatted_header[0][1].split(",")
+  end
+  
+  def get_indexed_document_ids
+    @indexed_document_ids = @formatted_header[1][1].split(",")
+  end
+  
+  def make_text!
+    text = ""
+    text += "INDEXED_PACK_IDS : " + @indexed_pack_ids.join(",")
+    text += "\n"
+    text += "INDEXED_DOCUMENT_IDS : " + @indexed_document_ids.join(",")
+    text += "\n"
+    @formatted_header[2..29].each do |fh|
+      text += fh.join(":") + "\n"
+    end
+    text += "\n"
+    @formatted_body.each do |key,value|
+      word = [ key ]
+      pack_ids = [ value[0].join(",") ]
+      document_ids = [ value[1].join(",") ]
+      text += ( word + pack_ids + document_ids ).join("\t") + "\n"
+    end
+    @content_text = text
+  end
+  
+  def uniqify!
+    @formatted_body = @formatted_body.each do |key,value|
+      value[0] = value[0].uniq
+      value[1] = value[1].uniq
+    end
+    @indexed_document_ids = @indexed_document_ids.uniq
+    @indexed_pack_ids = @indexed_pack_ids.uniq
+    true
+  end
+  
+  def sort!
+    @formatted_body = @formatted_body.sort { |a,b| a.keys.join.sub(/^\+?/,'') <=> b.keys.join.sub(/^\+?/,'') }
+  end
+  
+  def search word, strict=true
+    get_all if @formatted_body.nil?
+    results = []
+    if word.is_a?(String)
+      results = @formatted_body.select { |key,value| key.match(/^\+?#{word}$/) } if strict
+      results = @formatted_body.select { |key,value| key.match(/#{word}/) } if !strict
+    elsif word.is_a?(Array)
+      word.each do |w|
+        results += @formatted_body.select { |key,value| key.match(/^\+?#{w}$/) } if strict
+        results += @formatted_body.select { |key,value| key.match(/#{w}/) } if !strict
+      end
+      words = []
+      pack_ids = nil
+      document_ids = nil
+      results.each do |key,value|
+        words << key
+        if pack_ids.nil?
+          pack_ids = value[0]
+        else
+          pack_ids = pack_ids - (pack_ids - value[0])
+        end
+        if document_ids.nil?
+          document_ids = value[1]
+        else
+          document_ids = document_ids - (document_ids - value[1])
+        end
+      end
+      pack_ids = [] if pack_ids.nil?
+      document_ids = [] if document_ids.nil?
+      results = [words.uniq,pack_ids.uniq,document_ids.uniq]
+    end
+    results
   end
   
 end
