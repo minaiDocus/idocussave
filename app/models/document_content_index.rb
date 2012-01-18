@@ -94,11 +94,16 @@ public
   end
   
   def create_data
-    File.open(get_file_name,"w")
+    File.open(get_file_name,"w+")
   end
   
   def get_data
-    file = File.open(get_file_name,"r") rescue create_data
+    file = nil
+    begin
+      file = File.open(get_file_name,"r") 
+    rescue
+      file = create_data
+    end
     @data = file ? file.readlines : []
   end
   

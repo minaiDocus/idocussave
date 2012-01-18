@@ -18,7 +18,7 @@ while($running) do
   
   User.all.each do |user|
     user.document_content_index = DocumentContentIndex.create unless user.document_content_index
-    user.document_content_index.update_content!
+    user.document_content_index.update_data!
   end
   
   sleep 1800
