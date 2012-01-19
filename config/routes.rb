@@ -120,5 +120,6 @@ Idocus::Application.routes.draw do
     resources :groups
     resources :subscriptions
     resources :account_book_types
+    resources :documents
   end
 end
