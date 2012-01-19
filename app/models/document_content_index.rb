@@ -189,30 +189,40 @@ public
   end
   
   def search word, strict=true
-    get_all if @formatted_body.nil?
+    get_data
     results = []
     if word.is_a?(String)
-      results = @formatted_body.select { |key,value| key.match(/^\+?#{word}$/) } if strict
-      results = @formatted_body.select { |key,value| key.match(/#{word}/) } if !strict
+      body = @data.length > 30 ? @data[31..@data.length-1] : []
+      res = body.select { |d| d.match(/^\+?#{word}/) } if strict
+      res = body.select { |d| d.match(/.*#{word}.*\t/) } if !strict
+      res.each do |r|
+        rr = r.split("\t")
+        results << [rr[0],rr[1].split(","),rr[2].split(",")]
+      end
     elsif word.is_a?(Array)
       word.each do |w|
-        results += @formatted_body.select { |key,value| key.match(/^\+?#{w}$/) } if strict
-        results += @formatted_body.select { |key,value| key.match(/#{w}/) } if !strict
+        body = @data.length > 30 ? @data[31..@data.length-1] : []
+        res = body.select { |d| d.match(/^\+?#{w}/) } if strict
+        res = body.select { |d| d.match(/.*#{w}.*\t/) } if !strict
+        res.each do |r|
+          rr = r.split("\t")
+          results << [rr[0],rr[1].split(","),rr[2].split(",")]
+        end
       end
       words = []
       pack_ids = nil
       document_ids = nil
-      results.each do |key,value|
-        words << key
+      results.each do |r|
+        words << r[0]
         if pack_ids.nil?
-          pack_ids = value[0]
+          pack_ids = r[1]
         else
-          pack_ids = pack_ids - (pack_ids - value[0])
+          pack_ids = pack_ids - (pack_ids - r[1])
         end
         if document_ids.nil?
-          document_ids = value[1]
+          document_ids = r[2]
         else
-          document_ids = document_ids - (document_ids - value[1])
+          document_ids = document_ids - (document_ids - r[2])
         end
       end
       pack_ids = [] if pack_ids.nil?

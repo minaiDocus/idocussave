@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.4'
 
-gem 'bson_ext', '~> 1.3.1'
+gem 'bson_ext', '~> 1.4.0'
 gem 'mongoid', '2.0.1'
 gem 'mongoid-paperclip', '0.0.4', :require => 'mongoid_paperclip'
 gem 'paperclip', '2.3.6'

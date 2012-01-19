@@ -3,9 +3,9 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
   helper_method :format_price
-  around_filter :catch_404 if %w(staging production).include?(Rails.env)
+  #around_filter :catch_404 if %w(staging production).include?(Rails.env)
 
-  before_filter :redirect_to_https
+  #before_filter :redirect_to_https
 
   def layout_by_resource
     if devise_controller? && resource_name == :super_user

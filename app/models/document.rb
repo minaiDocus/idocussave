@@ -43,7 +43,7 @@ class Document
     nb = 0
     self.where(:dirty => true).each do |doc|
       nb += 1
-      puts "document[#{doc.content_file_name}][#{nb}]}"
+      puts "document[#{doc.content_file_name}][#{nb}]"
       doc.dirty = false
       doc.content.reprocess!
       if !doc.save
