@@ -1,5 +1,7 @@
-class Admin::DocumentsController < ApplicationController
+class Admin::DocumentsController < Admin::AdminController
   layout "admin"
+  
+  before_filter :format_params, :only => %w(index)
   
   def index
     @user = nil
@@ -16,7 +18,7 @@ class Admin::DocumentsController < ApplicationController
     
     if @user.try(:packs)
       @packs = @user.packs.sort do |a,b|
-        a.created_at <=> b.created_at
+        b.created_at <=> a.created_at
       end
     end
     

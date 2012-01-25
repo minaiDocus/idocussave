@@ -45,9 +45,9 @@
           %th.last &nbsp;
         - @packs.each do |pack|
           %tr{:class => cycle("odd", "even")}
-            %td= pack.created_at
+            %td= pack.created_at.strftime("%Y-%m-%d %H:%M:%S")
             %td= link_to pack.name, pack.documents.originals.first.content.url rescue pack.name
-            %td= pack.documents.count rescue "inconnu"
+            %td= pack.documents.count - 1 rescue "inconnu"
             %td.last
       
       .actions-bar.wat-cf
