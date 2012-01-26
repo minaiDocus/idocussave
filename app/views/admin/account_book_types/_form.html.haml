@@ -1,6 +1,10 @@
 .group
   != f.label :name, "Libellé *", :class => :label
   != f.text_field :name, :class => 'text_field'
+  
+.group
+  != f.label :description, "Déscription", :class => :label
+  != f.text_field :description, :class => 'text_field'
 
 .group
   != f.label :position, "Position", :class => :label

@@ -21,7 +21,15 @@ module DocumentsHelper
   end
   
   def account_book_types_option
-    Reporting.where(:client_ids => current_user.id).first.user.account_book_types.by_position.collect{ |u| [u.name, u.name] } rescue []
+    reporting = Reporting.where(:client_ids => current_user.id).first
+    if reporting
+      reporting.user.account_book_types.by_position.map do |u|
+        description = u.description.blank? ? "" : " " + u.description
+        [u.name + description, u.name]
+      end
+    else
+      []
+    end
   end
   
   def tags_of document

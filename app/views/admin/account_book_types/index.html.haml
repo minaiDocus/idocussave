@@ -10,11 +10,13 @@
         %tr
           %th Position
           %th Name
+          %th Description
           %th.last &nbsp;
         - @account_book_types.each do |account_book_type|
           %tr{:class => cycle("odd", "even")}
             %td!= account_book_type.position
             %td!= account_book_type.name
+            %td!= account_book_type.description
             %td.last
               != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_account_book_type_path(account_book_type)
               |

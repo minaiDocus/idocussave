@@ -8,6 +8,7 @@ class AccountBookType
   references_and_referenced_in_many :users
   
   field :name, :type => String
+  field :description, :type => String, :default => ""
   field :position, :type => Integer, :default => 0
   
   slug :name
