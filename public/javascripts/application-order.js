@@ -260,32 +260,32 @@ function run_zoombox(){
 }
 
 function run_tooltip(){
-  $("a[title]").tooltip({
-    position:'top right',
-    bounce: true,
-    effect: 'slide'
-  }).dynamic({
-    top: {
-      direction: 'up',
-      bounce: true,
-      effect: 'slide'
-    },
-    bottom: {
-      direction: 'down',
-      bounce: true,
-      effect: 'slide'
-    },
-    left: {
-      direction: 'left',
-      bounce: true,
-      effect: 'slide'
-    },
-    right: {
-      direction: 'right',
-      bounce: true,
-      effect: 'slide'
-    }
-  });
+  // $("a[title]").tooltip({
+    // position:'top right',
+    // bounce: true,
+    // effect: 'slide'
+  // }).dynamic({
+    // top: {
+      // direction: 'up',
+      // bounce: true,
+      // effect: 'slide'
+    // },
+    // bottom: {
+      // direction: 'down',
+      // bounce: true,
+      // effect: 'slide'
+    // },
+    // left: {
+      // direction: 'left',
+      // bounce: true,
+      // effect: 'slide'
+    // },
+    // right: {
+      // direction: 'right',
+      // bounce: true,
+      // effect: 'slide'
+    // }
+  // });
 }
 
 function doLive(){
@@ -663,39 +663,6 @@ $(document).ready(function () {
       });
     }
     return false;
-  });
-  
-  $("a.do-openNewUploadDialog").click(function(){
-    $(".newUploadDialog").dialog({
-      modal:true,
-      title:"Téléverser des documents dans iDocus",
-    });
-    return false;
-  });
-  
-  var uploader = new qq.FileUploader({
-    // pass the dom node (ex. $(selector)[0] for jQuery users)
-    element: document.getElementById('file-uploader'),
-    // path to server-side upload script
-    action: "/account/documents/upload",
-    params: {
-      type: $("#account_book_type").val()
-    },
-    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif','bmp','tiff','tif','pdf'],
-    onComplete: function(id, fileName, responseJSON){
-      if (responseJSON.success) {
-        //$("#avatar").attr("src", responseJSON.url);
-        node = "<li>"+responseJSON.file_name+"</li>";
-        $('#uploaded_files').append(node);
-        $$('.qq-upload-failed-text').first().update('Successfully Uploaded!');
-      } else {
-        $$('.qq-upload-failed-text').first().update('Hmm .. upload failed');
-      }
-    }
-  });
-  
-  $("#account_book_type").change(function() {
-    uploader.setParams({type: $("#account_book_type").val()});
   });
   
   $(".pageslist.all").sortable({
