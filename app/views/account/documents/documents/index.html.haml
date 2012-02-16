@@ -14,8 +14,17 @@
     
     %a.do-growlLegend{ :href => "#", :class => "floattoleft margin2left margin015top" }
       %span Légende
-    %a.do-openNewUploadDialog{ :href => "#", :class => "floattoleft margin2left margin015top" }
+    /
+      %a.do-openNewUploadDialog{ :href => "#", :class => "floattoleft margin2left margin015top" }
+        %span{ :title => "Charger dans iDocus vos documents qui sont déjà en version numérique." } Téléverser
+    
+    %a{ :href => "#inline_doc", :class => "inline floattoleft margin2left margin015top" }
       %span{ :title => "Charger dans iDocus vos documents qui sont déjà en version numérique." } Téléverser
+    
+    :javascript
+      $(document).ready(function() {
+        $(".inline").colorbox({inline:true, width:"800px", height:"300px", scrolling:true, title:"Téléverser des documents"});
+      });
     
     = link_to "Reporting", reporting_account_documents_path, :target => "_blank", :class => "floattoleft margin2left margin015top"
   
@@ -119,17 +128,112 @@
       %br
       != text_field_tag :composition, nil, :id => "composition_name"
       != image_tag "application/spinner_gray_alpha.gif", :id => "new_composition_spinner", :class => "hide"
-
+    
 .hide
-  .newUploadDialog
-    %p
-      Formats de fichiers acceptés : pdf, jpeg, jpg, gif, png, bmp, tiff, tif.
+  #inline_doc
+    :plain
+      <script>
+        var fileUploadErrors = {
+          maxFileSize: 'File is too big',
+          minFileSize: 'File is too small',
+          acceptFileTypes: 'Filetype not allowed',
+          maxNumberOfFiles: 'Max number of files exceeded',
+          uploadedBytes: 'Uploaded bytes exceed file size',
+          emptyResult: 'Empty file upload result'
+        };
+      </script>
+      <script id="template-upload" type="text/html">
+      {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+          <tr class="template-upload fade">
+              <td class="name">{%=file.name%}</td>
+              <td class="size">{%=o.formatFileSize(file.size)%}</td>
+              {% if (file.error) { %}
+                  <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+              {% } else if (o.files.valid && !i) { %}
+                  <td>
+                      <div class="progress progress-success progress-striped active"><div class="bar" style="width:0%;"></div></div>
+                  </td>
+                  <td class="start">{% if (!o.options.autoUpload) { %}
+                      <button class="btn btn-primary">
+                          <i class="icon-upload icon-white"></i> Démarrer
+                      </button>
+                  {% } %}</td>
+              {% } else { %}
+                  <td colspan="2"></td>
+              {% } %}
+              <td class="cancel">{% if (!i) { %}
+                  <button class="btn btn-warning">
+                      <i class="icon-ban-circle icon-white"></i> Annuler
+                  </button>
+              {% } %}</td>
+          </tr>
+      {% } %}
+      </script>
+      <script id="template-download" type="text/html">
+      {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
+          <tr class="template-download fade">
+              {% if (file.error) { %}
+                  <td></td>
+                  <td class="name">{%=file.name%}</td>
+                  <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+              {% } else { %}
+                  <td class="created_at">{%=file.created_at%}</td>
+                  <td class="name">{%=file.name%}</td>
+                  <td class="new_name">{%=file.new_name%}</td>
+                  <td colspan="2"></td>
+              {% } %}
+          </tr>
+      {% } %}
+      </script>
+    %p{ :style => "text-align:right" }
+      Formats de fichiers acceptés : 
+      %span{ :class => "label label-info", :style => "margin-right:5px;"} pdf
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } jpeg
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } jpg
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } gif
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } png
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } bmp
+      %span{ :class => "label label-info", :style => "margin-right:5px;" } tiff
+      %span{ :class => "label label-info" } tif
       %br
       %br
-      Attention, les fichiers téléversés entrent dans le calcul de l'utilisation de votre quota autorisé par votre abonnement.
+    %form{ :id => "fileupload", :action => "/account/documents/upload", :method => "POST", :enctype => "multipart/form-data" }
+      = label_tag :account_book_type, "Type de document : ", :class => "floattoleft"
+      = select_tag "account_book_type", options_for_select(account_book_types_option), :class => 'text_field', :id => "account_book_type", :style =>"position:relative;bottom:5px;margin-bottom:15px;"
       %br
       %br
-    = label_tag :account_book_type, "Type de document", :class => :label
-    = select_tag "account_book_type", options_for_select(account_book_types_option), :class => 'text_field', :id => "account_book_type"
-    #file-uploader
-    %ul#uploaded_files
+      :plain
+        <div class="row fileupload-buttonbar">
+            <div class="span6">
+                <span class="btn btn-success fileinput-button">
+                    <span><i class="icon-plus icon-white"></i> Ajouter des fichiers...</span>
+                    <input type="file" name="files[]" multiple>
+                </span>
+                <button type="submit" class="btn btn-primary start">
+                    <i class="icon-upload icon-white"></i> Démarrer
+                </button>
+                <button type="reset" class="btn btn-warning cancel">
+                    <i class="icon-ban-circle icon-white"></i> Annuler
+                </button>
+            </div>
+            <div class="span6">
+                <div class="progress progress-success progress-striped active fade">
+                    <div class="bar" style="width:0%;"></div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    
+:css
+  /**************HACK*************/
+  body.application #worldwrapper #content .rightcolon {
+    float: none; }
+  #header {
+    overflow: hidden; }
+  .application {
+    overflow-x: auto !important;
+    overflow-y: hidden !important; }
+  #documentcomposer ul.pageslist, #documentcomposer ul.documentslist {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
