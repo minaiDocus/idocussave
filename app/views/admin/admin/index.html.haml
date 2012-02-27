@@ -1,1 +1,68 @@
-%h1 Welcome!
+.block
+  .content
+    %h2.title Last events (#{@events.count})
+    .inner
+      %table.table
+        %tr
+          %th Customer
+          %th Title
+          %th Price
+          %th Type
+          %th.last &nbsp;
+        - @events.each do |event|
+          %tr{:class => cycle("odd", "even")}
+            %td!= link_to event.user.email, [:admin, event.user]
+            %td!= event.title
+            %td
+              #{format_price event.price_in_cents_wo_vat} € HT
+              %br
+              %small
+                #{format_price event.price_in_cents_w_vat} € TTC
+            %td
+              - if event.type_number == 0
+                Crédit
+              - elsif event.type_number == 1
+                Débit
+            %td.last
+            
+      %br
+    
+    %h2.title Last orders (#{@orders.count})
+    .inner
+      %table.table
+        %tr
+          %th N°
+          %th Date
+          %th Customer
+          %th Total
+          %th State
+          %th.last &nbsp;
+        - @orders.each do |order|
+          %tr{:class => cycle("odd", "even")}
+            %td!= link_to order.number, [:admin, order]
+            %td!= link_to l(order.created_at), [:admin, order]
+            %td
+              != link_to order.user.email, [:admin, order.user] rescue "inconnu"
+              %br
+              - name = ""
+              - name = order.user.first_name + " " if !order.user.first_name.blank?
+              - name += order.user.last_name if !order.user.last_name.blank?
+              %span{ :title => name }
+                !=order.user.code rescue ""
+                - if !order.user.code.blank? && !order.user.company.blank?
+                  #{" - "}
+                !=order.user.company rescue ""
+            %td
+              - if order.manual
+                Inconnu
+              - else
+                #{format_price order.total_in_cents_wo_vat} € HT
+                %br
+                %small
+                  #{format_price order.total_in_cents_w_vat} € TTC
+                  
+            %td!= order.state
+            %td.last
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_order_path(order)
+            
+- content_for :sidebar, render(:partial => 'sidebar')
