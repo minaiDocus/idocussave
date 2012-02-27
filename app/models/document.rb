@@ -16,9 +16,8 @@ class Document
 
   references_many :document_tags
   referenced_in :pack
-  has_and_belongs_to_many  :words
 
-  has_mongoid_attached_file :content,
+has_mongoid_attached_file :content,
     :styles => {
       :thumb => ["46x67>", :png],
       :medium => ["92x133", :png],
@@ -37,11 +36,20 @@ class Document
 
   scope :without_original, :where => { :is_an_original.in => [false, nil] }
   scope :originals, :where => { :is_an_original => true }
+  
+  scope :not_extracted, :where => { :content_text => "" }
+  scope :extracted, :not_in => { :content_text => [""] }
+  scope :cannot_extract, :where => { :content_text => "-[none]" }
+  
   scope :not_indexed, :not_in => { :indexed => [true] }
+  scope :indexed, :where => { :indexed => true }
+  
+  scope :not_clean, :where => { :dirty => true }
+  scope :clean, :where => { :dirty => false }
   
   def self.do_reprocess_styles
     nb = 0
-    self.where(:dirty => true).each do |doc|
+    self.not_clean.each do |doc|
       nb += 1
       puts "document[#{doc.content_file_name}][#{nb}]"
       doc.dirty = false
@@ -54,17 +62,25 @@ class Document
   end
   
   def self.extract_content
-    documents = Document.without_original.not_indexed.entries
+    documents = Document.without_original.not_extracted.entries
     puts "Nombre de document à indexé : #{documents.count}"
     
+    checkpoint_timer = Time.now
     documents.each_with_index do |document,index|
+      if ((Time.now - checkpoint_timer) > 10.seconds)
+        puts "Zzz"
+        sleep(2)
+        checkpoint_timer = Time.now
+      end
       print "[#{index + 1}]"
       receiver = Receiver.new
       result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
       if result
         print "ok\n"
         document.content_text = receiver.text
-        document.indexed = true
+        if document.content_text == ""
+          document.content_text = "-[none]"
+        end
         document.save!
       else
         print "not ok\n"
