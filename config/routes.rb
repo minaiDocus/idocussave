@@ -22,6 +22,8 @@ Idocus::Application.routes.draw do
         get 'search', :on => :collection
         get 'find', :on => :collection
         get 'reporting', :on => :collection
+        get 'index2', :on => :collection
+        get 'search_user', :on => :collection
         post 'reorder', :on => :collection
         post 'archive', :on => :collection
       end
@@ -37,6 +39,8 @@ Idocus::Application.routes.draw do
       end
       resource :upload
     end
+    
+    resources :backups
     
     resources :addresses
     resource :dropbox do
@@ -87,13 +91,14 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
+    resources :events
     resources :users do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
       get 'reinitialize_all_delivery_state', :on => :collection
+      get 'search', :on => :collection
     end
     resources :orders do
-      post 'update_prescriber', :on => :collection
       get 'edit_option', :on => :member
       post 'update_option', :on => :member
     end
@@ -117,9 +122,15 @@ Idocus::Application.routes.draw do
     resources :cms_images
     resources :products
     resources :product_options
-    resources :groups
+    resources :product_groups
     resources :subscriptions
     resources :account_book_types
-    resources :documents
+    resources :documents do
+      get 'run_background_process', :on => :collection
+    end
+    resources :backups do
+      get 'service', :on => :collection
+    end
+  
   end
 end
