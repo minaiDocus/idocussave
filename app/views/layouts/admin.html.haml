@@ -4,8 +4,8 @@
     %meta{:content => "text/html; charset=utf-8", "http-equiv" => "Content-Type"}
     %link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
     %title idocus BackOffice
-    = stylesheet_link_tag "admin", "fileuploader", :cache => true
-    = javascript_include_tag "jquery-1.4.2.min", "rails", "fileuploader", "application", "jquery.timers"
+    = stylesheet_link_tag "admin", "fileuploader", "effects", :cache => true
+    = javascript_include_tag "jquery-1.5.1.min", "rails", "fileuploader", "application", "jquery.timers", "jquery.tokeninput"
     = csrf_meta_tag
   %body
     #container
@@ -21,6 +21,8 @@
               %a.logout{:href => "/users/sign_out"}= t("web-app-theme.logout", :default => "Logout")
         #main-navigation
           %ul.wat-cf
+            %li= link_to "Dashboard", admin_root_path
+            %li= link_to "Events", admin_events_path
             %li= link_to "Users", admin_users_path
             %li= link_to "Homepage", admin_homepages_path
             %li= link_to "Pages", admin_pages_path
@@ -28,8 +30,9 @@
             %li= link_to "Orders", admin_orders_path
             %li= link_to "Products", admin_products_path
             %li= link_to "Subscriptions", admin_subscriptions_path
-            %li= link_to "Account book type", admin_account_book_types_path
+            %li= link_to "Account book types", admin_account_book_types_path
             %li= link_to "Documents", admin_documents_path
+            %li= link_to "Backups", admin_backups_path
       #wrapper.wat-cf
         .flash
           - flash.each do |type, message|
