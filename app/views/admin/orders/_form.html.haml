@@ -1,22 +1,18 @@
 .group
-  %label{ :id => "documents_name", :class => :label }
-    Document *
-  %input{ :type => "texte", :name => "document_names", :class => 'text_field', :id => "documents_name" }
+  != f.label :names, "Documents *", :class => :label
+  != f.text_field :names, :class => :text_field
 
 .group
-  %label{ :id => "share_with", :class => :label }
-    Partager avec...
-  %input{ :type => "texte", :name => "share_with", :class => 'text_field', :id => "share_with" }
+  != f.label :share_with, "Partager avec...", :class => :label
+  != f.text_field :share_with, :class => :text_field
 
 .group
-  %label{ :id => "tags", :class => :label }
-    Tags
-  %input{ :type => "texte", :name => "tags", :class => 'text_field', :id => "tags" }
+  != f.label :tags, "Tags", :class => :label
+  != f.text_field :tags, :class => :text_field
   
 .group
-  %label{ :id => "prescriber_email", :class => :label }
-    Email du prescriteur
-  %input{ :type => "texte", :name => "prescriber_email", :class => 'text_field', :id => "prescriber_email", :value => (Reporting.where(:order_ids => @order.id).first.user.email rescue "") }
+  != f.label :is_viewable_by_prescriber, "Visible par le prescripteur", :class => :label
+  != f.check_box :is_viewable_by_prescriber
 
 .group.navform.wat-cf
   %button.button{:type => 'submit'}
@@ -28,3 +24,6 @@
   %em
     %b *
     mandatory fields.
+    
+/
+  != render :partial => '/admin/shared/tokeninput_user_search', :locals => { :link => "/admin/users/search.json?reporting=true" }

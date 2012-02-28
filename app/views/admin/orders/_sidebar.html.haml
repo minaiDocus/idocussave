@@ -33,15 +33,5 @@
         %li!= image_tag("web-app-theme/cross.png", :alt => "Delete") + " to delete"
 
     %p
-      %strong Thumbnail process
-      %ul.list
-        %li
-          Reste :
-          %span.process_remain
-        %li
-          Statut :
-          %span.process_status
-        %li
-          %a{ :href => "#", :class => :process_start } Start
-        %li
-          %a{ :href => "#", :class => :process_stop } Stop
+      %form{ :method => "GET", :action => admin_orders_path }
+        != render :partial =>'/admin/shared/filter', :locals => {:link_back => admin_orders_path, :other_filter_fields => [{:caption => "N°", :id => "number"}]}

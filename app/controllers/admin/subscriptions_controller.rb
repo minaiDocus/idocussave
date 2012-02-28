@@ -1,7 +1,7 @@
 class Admin::SubscriptionsController < Admin::AdminController
   
   before_filter :load_subscription, :only => %w(show edit update destroy)
-  before_filter :format_params, :only => %w(index)
+  before_filter :filtered_user_ids, :only => %w(index)
 
 protected
 
@@ -14,16 +14,10 @@ public
   def index
     @subscriptions = Subscription.all
   
-    @users = User.all
-    @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
-    @users = @users.where(:first_name => /\w*#{@formatted_first_name}\w*/) if !params[:first_name].blank?
-    @users = @users.where(:last_name => /\w*#{@formatted_last_name}\w*/) if !params[:last_name].blank?
-    @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
-    @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
-    user_ids = @users.entries.collect{|u| u.id}
-    
     @subscriptions = @subscriptions.where(:number => params[:number]) if !params[:number].blank?
-    @subscriptions = @subscriptions.any_in(:user_id => user_ids).order_by(:number.desc, :created_at.asc).paginate :page => params[:page], :per_page => 50
+    @subscriptions = @subscriptions.any_in(:user_id => @filtered_user_ids) if !@filtered_user_ids.empty?
+    
+    @subscriptions = @subscriptions.order_by(:number.desc, :created_at.desc).paginate :page => params[:page], :per_page => 50
   end
   
   def show

@@ -106,7 +106,7 @@
         - total_sheets = 0
         - total_pages = 0
         - @order.packs.order_by([:created_at,:asc]).each do |pack|
-          - pack.get_division_from_pdf if pack.division.empty? || pack.division.nil?
+          - pack.get_division_from_pdf if pack.division.nil? || pack.division.try("empty?")
           %tr{:class => cycle("odd", "even")}
             %td
             %td!=pack.created_at.strftime("%Y-%m-%d %H:%M")

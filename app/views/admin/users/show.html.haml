@@ -1,0 +1,46 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All users", admin_users_path
+      %li!= link_to "Add user", new_admin_user_path
+  .content
+    .inner
+      %h2 User : #{@user.email}
+      %table.table
+        %tr
+          %th.first
+          %th Datasheet
+          %th Options
+          %th.last
+        %tr
+          %td
+          %td
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@user.created_at)}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Name', :value => @user.name}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Code', :value => @user.code}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Company', :value => @user.company}
+          %td
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Admin ?', :value => (@user.is_admin ? "Yes" : "No")}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Dropbox authorized ?', :value => (@user.is_dropbox_authorized ? "Yes" : "No")}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Prescriber ?', :value => (@user.is_prescriber ? "Yes" : "No")}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Use debit mandate ?', :value => (@user.use_debit_mandate ? "Yes" : "No")}
+          %td
+      
+      %h3 Other Information
+      %table.table
+        %tr
+          %th.first
+          %th Data
+          %th.last
+        %tr
+          %td
+          %td
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Balance', :value => "#{format_price(@user.balance_in_cents)} €"}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Orders count', :value => @user.orders.count}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Documents count', :value => @user.packs.select{|p| p.order.user == @user}.count}
+          %td
+      
+      .wat-cf
+        != link_to image_tag("web-app-theme/application_edit.png", :alt => "Modifier") + "Modifier", edit_admin_user_path(@user), :class => "button"
+
+- content_for :sidebar, render(:partial => 'sidebar')

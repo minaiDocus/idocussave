@@ -1,12 +1,13 @@
 class Order
   # FIXME do that with the builtin i18n rails module
   STATES = [['en panier', 'cart'], ['payée', 'paid'], ['impayée', 'unpaid']]
+  
+  attr_accessor :names, :share_with, :tags
 
   include Mongoid::Document
   include Mongoid::Timestamps
   include ActiveRecord::Transitions
-
-  # FIXME use newer syntax
+  
   referenced_in :user
   referenced_in :subscription
   
@@ -27,6 +28,7 @@ class Order
   field :coliposte, :type => String
   field :document_destiny, :type => Integer, :default => 1
   field :payment_type, :type => Integer, :default => 0
+  field :is_viewable_by_prescriber, :type => Boolean, :default => false
 
   index :number, :unique => true
 
@@ -34,6 +36,7 @@ class Order
 
   before_create :set_number
   before_create :set_waybill_number
+  before_save :get_documents
 
   state_machine do
     state :cart
@@ -135,6 +138,82 @@ class Order
         product_option_order.send(setter, value)
       end
       self.product_order.product_option_order << product_option_order
+    end
+  end
+  
+  def get_documents
+    unless @names.blank?
+      document_names = @names
+      share_with_users = @share_with ||= []
+      document_tags = @tags ||= ""
+      
+      Dir.chdir("#{Rails.root}/tmp/input_pdf_manual/")
+      
+      file_names = []
+      Dir.foreach("./") { |file_name|
+        file_names << file_name.sub(/.pdf/i,'') if file_name.match(/.pdf/i)
+        File.rename(file_name, file_name.sub(/.PDF/,'.pdf')) if file_name.match(/.PDF/)
+      }
+      
+      doc_names = []
+      document_names.split(/\s*,\s*/).each do |doc_name|
+        doc_names << doc_name
+      end
+      
+      valid_names = []
+      doc_names.each do |doc_name|
+        file_names.each do |file_name|
+          if doc_name.match(/[*]/)
+            valid_names << file_name if file_name.match(/#{doc_name.sub('*','(.*)')}/i)
+          else
+            valid_names << file_name if file_name.match(/\A#{doc_name}\z/i)
+          end
+        end
+      end
+
+      valid_names.each do |file_name|
+        number = self.packs.count + 1
+        File.rename("#{file_name}.pdf","#{self.waybill_number}_#{number}.pdf")
+      
+        pack = Pack.new
+        pack.order = self
+        pack.name = file_name.gsub('_',' ')
+        pack.users << self.user
+        pack.save!
+        pack.get_document "#{self.waybill_number}_#{number}"
+
+        share_with_users.split(', ').each do |other|
+          observer = User.find_by_email other
+          unless observer.nil? && observer.id != self.user.id
+            pack.users << observer
+          end
+        end
+        pack.save!
+    
+        tags = [" "]
+        document_tags.gsub('*','').downcase.split.each do |tag|
+          tags << tag
+        end
+
+        pack.documents.each do |document|
+          document_tag = DocumentTag.new
+          document_tag.document = document.id
+          document_tag.user = self.user.id
+          g_tags = document_tag.generate
+          document_tag.name += tags.join(' ')
+          document_tag.save!
+          share_with_users.split(', ').each do |other|
+            observer = User.find_by_email other rescue nil
+            unless observer.nil?
+              document_tag = DocumentTag.new
+              document_tag.document = document.id
+              document_tag.user = observer.id
+              document_tag.name = g_tags + tags.join(' ')
+              document_tag.save!
+            end
+          end
+        end
+      end
     end
   end
   

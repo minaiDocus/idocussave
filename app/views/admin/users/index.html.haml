@@ -6,43 +6,9 @@
   .content
     %h2.title All users
     .inner
-      %form{ :method => "GET", :action => admin_users_path }
-        %h3 Filtre
-        %table.table
-          %tr
-            %th
-              %label{ :for => :company } Company
-            %th
-              %label{ :for => :code } Code
-            %th
-              %label{ :for => :first_name } Nom
-            %th
-              %label{ :for => :last_name } Prénom
-            %th.last
-              %label{ :for => :email } Email
-          %tr
-            %td
-              %input{ :type => :text, :name => :company, :id => :company, :value => (params[:company] rescue "") }
-            %td
-              %input{ :type => :text, :name => :code, :id => :code, :value => (params[:code] rescue "") }
-            %td
-              %input{ :type => :text, :name => :first_name, :id => :first_name, :value => (params[:first_name] rescue "") }
-            %td
-              %input{ :type => :text, :name => :last_name, :id => :last_name, :value => (params[:last_name] rescue "") }
-            %td.last
-              %input{ :type => :text, :name => :email, :id => :email, :value => (params[:email] rescue "") }
-            
-        .group.navform.wat-cf
-          %button.button{:type => 'submit'}
-            != image_tag("web-app-theme/tick.png", :alt => "Valider")
-            Valider
-          != link_to image_tag("web-app-theme/cross.png", :alt => "Effacer le filtre") + "Effacer le filtre", admin_users_path, :class => "button"
-        
-      %br
-      %br
-      %br
       %table.table
         %tr
+          %th Created at
           %th Identifier
           %th
             Company
@@ -51,12 +17,12 @@
           %th Admin?
           %th Confirmed?
           %th Status
-          %th Created at
           %th.last &nbsp;
         - @users.each do |user|
           %tr{:class => cycle("odd", "even")}
+            %td!= l(user.created_at)
             %td
-              != user.email
+              != link_to user.email, [:admin, user]
               - if user.first_name || user.last_name
                 %br
                 != user.first_name rescue ""
@@ -71,15 +37,16 @@
             %td!= (user.is_admin)? 'oui' : 'non'
             %td
               - if user.confirmed?
-                != 'oui'
+                oui
               - else
-                != 'non, confirmer? '
-                != check_box_tag 'confirmed?', true, false, :class => "inplace", :id => user.id
+                non, confirmer ?
+                != check_box_tag 'confirmed ?', true, false, :class => "inplace", :id => user.id
                 != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_#{user.id}"
             %td
+              - delivery = user.find_or_create_reporting.find_or_create_current_monthly.delivery
               %select{ :name => :delivery_state, :id => user.id, :class => :delivery_state }
                 - Delivery::STATES.each do |state|
-                  - same = (user.delivery.state == state[1]) rescue false
+                  - same = (delivery.state == state[1]) rescue false
                   - if same
                     %option{ :value => state[1], :selected => :selected }
                       !=state[0]
@@ -87,8 +54,6 @@
                     %option{ :value => state[1] }
                       !=state[0]
               != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_2_#{user.id}"
-            %td
-              = user.created_at.strftime("%Y-%m-%d %H:%M:%S")
             %td.last
               != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_user_path(user)
               -#|

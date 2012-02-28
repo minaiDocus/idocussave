@@ -1,7 +1,7 @@
 class Admin::UsersController < Admin::AdminController
 
-  before_filter :load_user, :only => %w(edit update update_confirm_status update_delivery_status destroy)
-  before_filter :format_params, :only => %w(index)
+  before_filter :load_user, :only => %w(show edit update update_confirm_status update_delivery_status destroy)
+  before_filter :filtered_user_ids, :only => %w(index)
 
 protected
 
@@ -13,13 +13,13 @@ public
 
   def index
     @users = User.all
-    @users = @users.where(:email => /\w*#{params[:email]}\w*/) if !params[:email].blank?
-    @users = @users.where(:first_name => /\w*#{@formatted_first_name}\w*/) if !params[:first_name].blank?
-    @users = @users.where(:last_name => /\w*#{@formatted_last_name}\w*/) if !params[:last_name].blank?
-    @users = @users.where(:company => /\w*#{params[:company]}\w*/) if !params[:company].blank?
-    @users = @users.where(:code => /\w*#{params[:code]}\w*/) if !params[:code].blank?
+  
+    @users = @users.any_in(:_id => @filtered_user_ids) if !@filtered_user_ids.empty?
     
     @users = @users.desc(:created_at).paginate :page => params[:page], :per_page => 50
+  end
+  
+  def show
   end
 
   def new
@@ -32,8 +32,10 @@ public
     @user = User.new params[:user]
     @user.skip_confirmation!
     if @user.save
+      flash[:notice] = "Crée avec succès."
       redirect_to admin_users_path
     else
+      flash[:error] = "Erreur lors de la création."
       render :action => "new"
     end
   end
@@ -42,16 +44,11 @@ public
   end
   
   def update
-    params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
-    params[:user][:last_name] = params[:user][:last_name].capitalize if params[:user][:last_name]
     if @user.update_attributes params[:user]
-      params[:user][:clients_email] = [] unless params[:user][:clients_email]
-      @user.reporting = Reporting.create unless @user.reporting
-      @user.reporting.clients = User.find_by_emails params[:user][:clients_email].split(/\s*,\s*/) - [@user]
-      @user.reporting.save
-      @user.save
+      flash[:notice] = "Modifiée avec succès."
       redirect_to admin_users_path
     else
+      flash[:error] = "Erreur lors de la modification."
       render :action => "edit"
     end
   end
@@ -66,16 +63,29 @@ public
   end
   
   def update_delivery_status
-    unless @user.delivery
-      @user.delivery = Delivery.create
-      @user.save
-    end
-    @user.delivery.state = params[:value]
-    @user.delivery.save!
+    delivery = nil
     
-    respond_to do |format|
-      format.json{ render :json => {}, :status => :ok }
-      format.html{ redirect_to admin_users_path }
+    reporting = @user.find_or_create_reporting
+    if params[:current_month]
+      if params[:current_month] == "false"
+        delivery = reporting.monthly.previous.delivery rescue nil
+      else
+        delivery = reporting.find_or_create_current_monthly.delivery
+      end
+    else
+      delivery = reporting.find_or_create_current_monthly.delivery
+    end
+    
+    if delivery && delivery.update_attributes(:state => params[:value])
+      respond_to do |format|
+        format.json{ render :json => {}, :status => :ok }
+        format.html{ redirect_to admin_users_path }
+      end
+    else
+      respond_to do |format|
+        format.json{ render :json => {}, :status => :error }
+        format.html{ render :action => "edit" }
+      end
     end
   end
 
@@ -107,5 +117,30 @@ public
     end
     
     redirect_to admin_users_path
+  end
+
+  def search
+    @tags = []
+    if !params[:q].blank?
+      users = User.where(:email => /.*#{params[:q]}.*/)
+      
+      if params[:reporting].blank?
+        users.each do |user|
+          @tags << {"id" => "#{user.id}", "name" => "#{user.email}"}
+        end
+      else
+        users = users.prescribers
+        users.entries.each do |user|
+          user.create_reporting if user.reporting.nil?
+        end
+        debugger
+        users.entries.each do |user|
+          @tags << {"id" => "#{user.id}", "name" => "#{user.own_reporting.id}"}
+        end
+      end
+    end
+    respond_to do |format|
+      format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
+    end
   end
 end
