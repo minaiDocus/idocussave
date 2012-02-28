@@ -32,13 +32,25 @@ function layoutresizer() {
   headerrightcolonwidth = windowwidth - headerleftcolonwidth;
 
   // Content element resize
-  $("#content").css('height', contentheight +"px");
+  // $("#content").css('height', contentheight +"px");
   $("#content").css('width', windowwidth +"px");
   $("#content .leftcolon").css('height', leftcolonheight +"px");
   $("#content .leftcolon").css('width', leftcolonwidth +"px");
   $("#content .rightcolon").css('height', rightcolonheight +"px");
-  $("#content .rightcolon").css('width', rightcolonwidth +"px");
-  $("#header .rightcolon").css('width', headerrightcolonwidth +"px");
+  
+  if (rightcolonwidth >= 660) {
+    $("#content .rightcolon").css('width', rightcolonwidth +"px");
+  } else {
+    $("#content .rightcolon").css('width', "660px");
+  }
+  
+  if (headerrightcolonwidth >= 400) {
+    $("#header .rightcolon").css('width', headerrightcolonwidth +"px");
+    $("#header").css('width', headerleftcolonwidth + headerrightcolonwidth +"px");
+  } else {
+    $("#header .rightcolon").css('width', "400px");
+    $("#header").css('width', "660px");
+  }
 }
 
 
@@ -54,13 +66,18 @@ function documentmanagerresizer() {
   var docummentcomposerheight;
   var useraccountheight;
   var useraccountwidth;
+  var userbackupheight;
+  var userbackupwidth;
+  var userreportingheight;
+  var userreportingwidth;
   var pagesbrowserheight;
   var pagesbrowserwidth;
   var actiobarheight;
   var pane_ratio;
 
   // Set default values
-  margin = 20;
+  minimun_width = 660;
+  margin = 1;
   headerheight = 60;
   leftcolonwidth= 0;
   actiobarheight= 42 ;
@@ -76,27 +93,42 @@ function documentmanagerresizer() {
   docummentcomposerwidth = windowwidth - leftcolonwidth;
   useraccountheight = windowheight - headerheight - 5;
   useraccountwidth = windowwidth - leftcolonwidth - 10;
+  userbackupheight = windowheight - headerheight - 5;
+  userbackupwidth = windowwidth - leftcolonwidth - 10;
+  userreportingheight = windowheight - headerheight - 5; 
+  userreportingwidth =  windowwidth - leftcolonwidth - 10;
   pagesbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*pane_ratio)-20;
   pagesbrowserwidth = docummentcomposerwidth -10
   documentbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*30);
   documentbrowserwidth = docummentcomposerwidth -10
-  compdoccolwidth = (pagesbrowserwidth /100)*60;
-  infoscolwidth = (pagesbrowserwidth /100)*40;
 
   // Widget element resize
   $("#documentcomposer").css('height', docummentcomposerheight +"px");
-  $("#documentcomposer").css('width', docummentcomposerwidth +"px");
+  if (docummentcomposerwidth >= minimun_width)
+    $("#documentcomposer").css('width', docummentcomposerwidth +"px");
+  else
+    $("#documentcomposer").css('width', minimun_width +"px");
+
   $("#documentcomposer .pagesbrowser").css('height', pagesbrowserheight +"px");
-  $("#documentcomposer .pagesbrowser").css('width', pagesbrowserwidth +"px");
-  $("#documentcomposer .pagesbrowser .pageslist").css('width', pagesbrowserwidth - (margin*2) +"px");
-  $("#documentcomposer .documentbrowser").css('height', documentbrowserheight +"px");
-  $("#documentcomposer .documentbrowser").css('width', documentbrowserwidth +"px");
-  $("#documentcomposer .documentbrowser .doccol").css('width', compdoccolwidth +"px");
-  $("#documentcomposer .documentbrowser .doccol").css('height', documentbrowserheight -10 +"px");
-  $("#documentcomposer .documentbrowser .infoscol").css('width', infoscolwidth -10 +"px");
-  $("#documentcomposer .documentbrowser .infoscol").css('height', documentbrowserheight -10 +"px");
+  if (pagesbrowserwidth >= minimun_width)
+    $("#documentcomposer .pagesbrowser").css('width', pagesbrowserwidth - margin +"px");
+  else
+    $("#documentcomposer .pagesbrowser").css('width', minimun_width - margin +"px");
+  
+  if ((pagesbrowserwidth - (margin*2)) >= minimun_width) {
+    $("#documentcomposer .pagesbrowser .pageslist").css('width', pagesbrowserwidth - margin +"px");
+    $("#documentcomposer .pagesbrowser .documentslist").css('width', pagesbrowserwidth - margin +"px");
+  } else {
+    $("#documentcomposer .pagesbrowser .pageslist").css('width', minimun_width - margin +"px");
+    $("#documentcomposer .pagesbrowser .documentslist").css('width', minimun_width - margin +"px");
+  }
+  
   $("#useraccount").css('height', useraccountheight +"px");
   $("#useraccount").css('width', useraccountwidth +"px");
+  $("#userbackup").css('height', userbackupheight +"px");
+  $("#userbackup").css('width', userbackupwidth +"px");
+  $("#userreporting").css('height', userreportingheight +"px");
+  $("#userreporting").css('width', userreportingwidth +"px");
 }
 
 
@@ -112,6 +144,10 @@ function scrollpaneresizer() {
   var docummentcomposerheight;
   var useraccountheight;
   var useraccountwidth;
+  var userbackupheight;
+  var userbackupwidth;
+  var userreportingheight;
+  var userreportingwidth;
   var pagesbrowserheight;
   var pagesbrowserwidth;
   var actiobarheight;
@@ -134,22 +170,26 @@ function scrollpaneresizer() {
   docummentcomposerwidth = windowwidth - leftcolonwidth;
   useraccountheight = windowheight - headerheight - 5;
   useraccountwidth = windowwidth - leftcolonwidth - 10;
+  userbackupheight = windowheight - headerheight - 5;
+  userbackupwidth = windowwidth - leftcolonwidth - 10;
+  userreportingheight = windowheight - headerheight - 5; 
+  userreportingwidth =  windowwidth - leftcolonwidth - 10;
   pagesbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*pane_ratio)-20;
   pagesbrowserwidth = docummentcomposerwidth -10
   documentbrowserheight = (((docummentcomposerheight - actiobarheight)/100)*30);
   documentbrowserwidth = docummentcomposerwidth -10
-  compdoccolwidth = (pagesbrowserwidth /100)*60;
-  infoscolwidth = (pagesbrowserwidth /100)*40;
 
   // Widget element resize
-  $("#documentcomposer .pagesbrowser").closest(".jScrollPaneContainer").css('height', pagesbrowserheight +"px");
-  $("#documentcomposer .pagesbrowser").closest(".jScrollPaneContainer").css('width', pagesbrowserwidth +"px");
-  $("#documentcomposer .documentbrowser .infoscol").closest(".jScrollPaneContainer").css('height', documentbrowserheight -10 +"px");
-  $("#documentcomposer .documentbrowser .infoscol").closest(".jScrollPaneContainer").css('width', infoscolwidth -10 +"px");
-  $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('height', documentbrowserheight -10 +"px");
-  $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('width', compdoccolwidth +"px");
+  // $("#documentcomposer .pagesbrowser .jspContainer").css('height', pagesbrowserheight +"px");
+  // $("#documentcomposer .pagesbrowser .jspContainer").css('width', pagesbrowserwidth +"px");
+  // $("#documentcomposer .pagesbrowser .jspContainer .jspPane").css('height', pagesbrowserheight +"px");
+  // $("#documentcomposer .pagesbrowser .jspContainer .jspPane").css('width', pagesbrowserwidth +"px");
   $("#useraccount").closest(".jScrollPaneContainer").css('height', useraccountheight +"px");
   $("#useraccount").closest(".jScrollPaneContainer").css('width', useraccountwidth +"px");
+  $("#userbackup").closest(".jScrollPaneContainer").css('height', userbackupheight +"px");
+  $("#userbackup").closest(".jScrollPaneContainer").css('width', userbackupwidth +"px");
+  $("#userreporting").closest(".jScrollPaneContainer").css('height', userreportingheight +"px");
+  $("#userreporting").closest(".jScrollPaneContainer").css('width', userreportingwidth +"px");
 }
 
 
@@ -158,13 +198,12 @@ function scrollpaneresizer() {
 // Resize apply scrollbar
 function customscrollbarapplayer() {
   $.extend($.fn.jScrollPane.defaults, {showArrows:true});
-  $('#documentcomposer .pagesbrowser').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
-  $('#documentcomposer .documentbrowser .infoscol').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
-  $('#documentcomposer .documentbrowser .doccol').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
-  $("#documentcomposer .documentbrowser .doccol").closest(".jScrollPaneContainer").css('float', "left");
-  $("#documentcomposer .documentbrowser .infoscol").closest(".jScrollPaneContainer").css('float', "right");
+  // $(".application").jScrollPane({scrollbarMargin:0, showArrows:false});
+  $("#documentcomposer").jScrollPane({scrollbarMargin:0, showArrows:false});
   
   $('#useraccount').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
+  $('#userbackup').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
+  $('#userreporting').jScrollPane({scrollbarWidth:8, scrollbarMargin:0, showArrows:false});
 }
 
 

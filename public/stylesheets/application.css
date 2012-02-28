@@ -1384,7 +1384,41 @@ ul.documentslist li.foot span {
       line-height: 14px; }
     #useraccount .wrapper p.justify {
       text-align: justify; }
-
+      
+#userbackup {
+  display: block !important;
+  position: relative !important;
+  width: 100%;
+  height: 100%; }
+  #userbackup .wrapper {
+    margin-left: 20px; }
+    #userbackup .wrapper p {
+      display: block !important;
+      position: relative !important;
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 11px;
+      line-height: 14px; }
+    #userbackup.wrapper p.justify {
+      text-align: justify; }
+  
+#userreporting {
+  display: block !important;
+  position: relative !important;
+  width: 100%;
+  height: 100%; }
+  #userreporting .wrapper {
+    margin-left: 20px; }
+    #userreporting .wrapper p {
+      display: block !important;
+      position: relative !important;
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 11px;
+      line-height: 14px; }
+    #userreporting.wrapper p.justify {
+      text-align: justify; }
+  
 .actionbar {
   display: block !important;
   position: relative !important;
@@ -3417,6 +3451,18 @@ body.homepage #textilehpcontent a, body.pages .rightcolon a {
  * Author         : DirectMada
  * Author's Uri   : www.directmada.com
  * Description    : Css custom file for UI */
+.state_AC{
+  color: green;
+}
+
+.state_DE{
+  color: red;
+}
+
+.state_EP{
+  color: orangered;
+}
+
 .document_tags {
   position: relative;
   bottom: 132px;

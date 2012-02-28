@@ -202,6 +202,17 @@ body {
     .table td.last {
       text-align: right; }
 
+/* group */
+.group {
+  border: 1px inset white;
+  background-color: #f0f0f0;
+  -webkit-border-radius: 8px;
+  -webkit-border--radius: 8px;
+  -moz-border-radius: 8px;
+  -moz-border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px; }
+
 /* forms */
 input.checkbox {
   margin: 0;
@@ -216,15 +227,6 @@ input.checkbox {
   -moz-border-radius: 4px;
   padding: 15px; }
 
-.form .group {
-  border: 1px inset white;
-  background-color: #f0f0f0;
-  -webkit-border-radius: 8px;
-  -webkit-border--radius: 8px;
-  -moz-border-radius: 8px;
-  -moz-border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px; }
 .form div.left {
   width: 20%;
   float: left; }
