@@ -16,10 +16,19 @@ class User
   field :company, :type => String
   field :is_dropbox_authorized, :type => Boolean, :default => false
   field :is_prescriber, :type => Boolean, :default => false
+  
+  attr_accessor :client_ids
+  
+  # FIXME remove me after migrating Reporting
+  referenced_in :reporting
 
   embeds_many :addresses
   
-  referenced_in :reporting
+  references_many :clients, :class_name => "User", :inverse_of => :prescriber
+  referenced_in :prescriber, :class_name => "User", :inverse_of => :clients
+  
+  references_and_referenced_in_many :reportings, :inverse_of => :viewer
+  references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
   
   references_and_referenced_in_many :packs
   references_and_referenced_in_many :account_book_types
@@ -29,11 +38,16 @@ class User
   references_many :document_tags
   references_many :events
   references_many :subscriptions
+  references_many :backups
+  references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
   references_one :delivery
   references_one :my_dropbox
-  references_one :document_content_index
+  
+  scope :prescribers, :where => { :is_prescriber => true }
+  
+  before_save :format_name, :update_copy, :update_clients
   
   def name
     f_name = self.first_name || ""
@@ -60,5 +74,162 @@ class User
     else
       false
     end
+  end
+  
+  def update_copy
+    find_or_create_copy.set_attributes
+  end
+  
+  def find_or_create_copy
+    copy = self.copy
+    if copy
+      copy
+    else
+      copy = Reporting::Customer.new
+      copy.original_user = self
+      copy.save
+      copy
+    end
+  end
+  
+  def find_or_create_reporting
+    copy = find_or_create_copy
+    reporting = copy.reporting
+    if reporting
+      reporting
+    else
+      reporting = Reporting.new
+      reporting.customer = copy
+      self.reportings << reporting
+      self.save
+      reporting.save
+      copy.save
+      reporting
+    end
+  end
+  
+  def all_monthly
+    Reporting::Monthly.any_in(:reporting_id => self["reporting_ids"])
+  end
+  
+  def all_customers
+    Reporting::Customer.any_in(:reporting_id => self["reporting_ids"])
+  end
+  
+  def all_customers_sorted
+    all_customers.sort do |a,b|
+      if a.code != b.code
+        a.code <=> b.code
+      elsif a.company != b.company
+        a.company <=> b.company
+      elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+        (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
+      else
+        a.email <=> b.email
+      end
+    end
+  end
+  
+  def all_clients
+    users = []
+    all_customers.each do |customer|
+      unless customer.original_user.nil?
+        users << customer.original_user
+      else
+        users << customer
+      end
+    end
+    users
+  end
+  
+  def all_clients_sorted
+    all_clients.sort do |a,b|
+      if a.code != b.code
+        a.code <=> b.code
+      elsif a.company != b.company
+        a.company <=> b.company
+      elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+        (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
+      else
+        a.email <=> b.email
+      end
+    end
+  end
+  
+  def is_client? user
+    unless self.is_prescriber
+      (all_clients - [self]).include? user
+    else
+      false
+    end
+  end
+  
+  def document_ids
+    ids = []
+    self.packs.each do |p|
+      p.documents.without_original.each do |d|
+        ids << d.id
+      end
+    end
+    ids
+  end
+  
+  def simplify_ids ids
+    ids.map do |id|
+      "#{id}"
+    end
+  end
+  
+  def search_document word
+    DocumentContentIndex.search word, simplify_ids(document_ids)
+  end
+  
+  def find_document words
+    ids = DocumentContentIndex.find_document_ids words, simplify_ids(document_ids)
+    Document.any_in(:_id => ids)
+  end
+  
+  def find_pack words
+    ids = find_pack_ids words
+    Pack.any_in(:_id => ids)
+  end
+  
+  def find_pack_ids words
+    DocumentContentIndex.find_pack_ids words, simplify_ids(pack_ids)
+  end
+  
+protected
+  def update_clients
+    if self.is_prescriber && !self.client_ids.blank?
+      new_client_ids = self.client_ids.split(/\s*,\s*/)
+      
+      # add
+      new_clients = User.any_in(:_id => new_client_ids) - [self]
+      new_clients.each do |new_client|
+        new_client.prescriber = self
+        new_client.save
+        
+        reporting = new_client.find_or_create_reporting
+        self.reportings << reporting
+        reporting.save
+      end
+      
+      # remove
+      old_clients = self.clients - new_clients - [self]
+      old_clients.each do |old_client|
+        old_client["prescriber_id"] = nil
+        old_client.save
+        
+        reporting = old_client.find_or_create_reporting
+        self["reporting_ids"] = self["reporting_ids"] - [reporting.id]
+        reporting["viewer_ids"] = reporting["viewer_ids"] - [self.id]
+        reporting.save
+      end
+    end
+  end
+  
+  def format_name
+    self.first_name = self.first_name.upcase rescue ""
+    self.last_name = self.last_name.split.map(&:capitalize) rescue ""
   end
 end

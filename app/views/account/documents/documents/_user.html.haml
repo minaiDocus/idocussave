@@ -1,0 +1,91 @@
+%ul{ :class => "month_#{index+1} child round #{one_monthly.reporting.customer.id}", :id => "c_#{one_monthly.reporting.customer.id}_#{index+1}"}
+  %li
+    - ustate = one_monthly.reporting.find_or_create_monthly_for(@year,index+1).delivery.state rescue "nothing"
+    - state = Delivery::STATES.index{|i| i[1] ==  ustate}
+    - if(state!=0)
+      - @total_state[state - 1] += 1
+    .tabletitle{ :class => "month_#{index+1}"}
+      - if one_monthly.documents.size > 0
+        %span{ :class => "sub s_c show_child sc_#{index+1} show_child_details", :id => "sc_#{one_monthly.reporting.customer.id}_#{index+1}" } 
+          %a
+            +
+        %span{ :class => "sub h_c hide_child hc_#{index+1} hide_child_details", :id => "hc_#{one_monthly.reporting.customer.id}_#{index+1}" }
+          %a
+            != "-"
+        %h3!= format_user one_monthly.reporting.customer
+      - else
+        %h3{ :class => "without_sign" }
+          != format_user one_monthly.reporting.customer
+      .state_container{ :class => "round"}
+        - if state == 1
+          %span{ :class => "bar_full round_left" }
+            %a attendus
+        - else
+          - state.times do |i|
+            - if i == 0
+              %span{ :class => "bar_full round_left" }
+                %a attendus
+              %span{ :class => "sep_bar" }
+            - elsif i == (state - 1)
+              - if state == 3
+                %span{ :class => "bar_full round_right" }
+                  %a traités
+              - else
+                %span{ :class => "bar_full" }
+                  %a reçus
+            - else
+              %span{ :class => "bar_full" }
+                %a reçus
+              %span{ :class => "sep_bar" }
+        - if state == 0
+          %span{ :class => "bar_empty round_left" }
+            %a attendus
+          %span{ :class => "bar_empty" }
+            %a reçus
+          %span{ :class => "bar_empty round_right" }
+            %a traités
+        - elsif state == 1
+          %span{ :class => "bar_empty" }
+            %a reçus
+          %span{ :class => "bar_empty round_right" }
+            %a traités
+        - elsif state == 2
+          %span{ :class => "bar_empty round_right" }
+            %a traités
+  - if one_monthly.documents.size > 0
+    %li{ :class => "child_#{one_monthly.reporting.customer.id}_#{index+1} content_#{index+1}"}
+      %table{ :class => "month_#{index+1} tab"}
+        %tr
+          %th.first Nom des documents
+          %th.second Pièces
+          %th.second Feuilles
+          %th.second Pages
+          %th.second Attaches  
+          %th.second Hors format
+        - total_pieces = 0
+        - total_sheets = 0
+        - total_pages = 0
+        - one_monthly.documents.each do |document|
+          %tr
+            %td.first!= document.name
+            %td.second!= document.pieces
+            %td.second!= document.sheets
+            %td.second!= document.pages
+            %td.second
+            %td.second
+            - total_pieces += document.pieces
+            - total_sheets += document.sheets
+            - total_pages += document.pages
+        %tr
+          %td.first <b>Total</>
+          %td.second{ :class => "m_#{index+1} pieces" }
+            %b!= total_pieces
+          %td.second{ :class => "m_#{index+1} sheets" }
+            %b!= total_sheets
+          %td.second{ :class => "m_#{index+1} pages" }
+            %b!= total_pages
+          %td.second{ :class => "m_#{index+1}" }
+          %td.second{ :class => "m_#{index+1}" }
+          - @total_pieces_per_month += total_pieces
+          - @total_sheets_per_month += total_sheets
+          - @total_pages_per_month += total_pages

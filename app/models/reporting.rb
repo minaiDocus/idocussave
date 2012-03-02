@@ -2,47 +2,33 @@ class Reporting
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  field :client_ids, :type => Array, :default => []
-  field :order_ids, :type => Array, :default => []
+  references_and_referenced_in_many :viewer, :class_name => "User", :inverse_of => :reportings
+  references_many :monthly, :class_name => "Reporting::Monthly", :inverse_of => :reporting
+  references_one :customer, :class_name => "Reporting::Customer", :inverse_of => :reporting
   
-  references_one :user
-  
-  def clients
-    User.any_in(:_id => self.client_ids).entries
+public
+  def find_or_create_monthly_by_date date
+    find_or_create_monthly date.year, date.month
   end
   
-  def clients= users
-    unless users.empty?
-      self.client_ids = users.collect{|u| u.id} if users.select{|u| !u.is_a?(User)} == []
+  def find_or_create_monthly_for year, month
+    find_or_create_monthly year, month
+  end
+  
+  def find_or_create_current_monthly
+    find_or_create_monthly Time.now.year, Time.now.month
+  end
+  
+protected
+  def find_or_create_monthly year, month
+    monthly = self.monthly.where(:month => month, :year => year).first
+    if monthly
+      monthly
     else
-      self.client_ids = []
+      monthly = self.monthly.new
+      monthly.month = month
+      monthly.year = year
+      monthly.save ? monthly : nil
     end
-    self.save
-    clients
   end
-  
-  def orders
-    Order.any_in(:_id => self.order_ids).entries
-  end
-  
-  def orders= orders
-    unless orders.empty?
-      self.order_ids = orders.collect{|o| o.id} if orders.select{|o| !o.is_a?(Order)} == []
-    else
-      self.order_ids = []
-    end
-    self.save
-    orders
-  end
-  
-  def order_add order
-    self.order_ids += [order.id]
-    self.save
-  end
-  
-  def order_del order
-    self.order_ids -= [order.id]
-    self.save
-  end
-  
 end

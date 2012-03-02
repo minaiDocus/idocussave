@@ -1,0 +1,38 @@
+%ul{ :class => "month_#{index+1} total round", :id => "t_#{index+1}"}
+  %li{ :class => "month_#{index+1}" }
+    .tabletitle{ :class => "month_#{index+1} total_head"}
+      %span{ :class => "sub s_c sc_#{index+1}  show_child_details", :id => "st_#{index+1}" }
+        %a
+          +
+      %span{ :class => "sub h_c hc_#{index+1} hide_child_details", :id => "ht_#{index+1}" }
+        %a  
+          != "-"
+      %h3 Total
+      .state_container{ :class => "round"}
+        %span{ :class => "bar_full total_bar round_left" }
+          != @total_state[0]
+        %span{ :class => "sep_bar total_bar" }
+        %span{ :class => "bar_full total_bar" }
+          != @total_state[1]
+        %span{ :class => "sep_bar total_bar" }
+        %span{ :class => "bar_full total_bar round_right" }
+          != @total_state[2]
+  %li{ :class => "month_#{index+1} total_c#{index+1} content_#{index+1}"}
+    %table{ :class => "month_#{index+1} tab"}
+      %tr
+        %th.first
+        %th.second Pièces
+        %th.second Feuilles
+        %th.second Pages
+        %th.second Attaches
+        %th.second Hors format
+      %tr
+        %td.first 
+        %td.second{ :class => "m_#{index+1} total-pieces" }
+          !=@total_pieces_per_month
+        %td.second{ :class => "m_#{index+1} total-sheets" }
+          !=@total_sheets_per_month
+        %td.second{ :class => "m_#{index+1} total-pages" }
+          !=@total_pages_per_month 
+        %td.second{ :class => "m_#{index+1} total-attaches" }
+        %td.second{ :class => "m_#{index+1} total-hors_format" }
