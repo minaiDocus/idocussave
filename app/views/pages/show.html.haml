@@ -1,57 +1,36 @@
-.content
-  .left_bar
-    .menu_title
-      %span #{@page_type.caption}
-    .sidebar
-      - nb = 1
-      - cur_side = ""
-      - @all_page.each do |page|
-        - if nb > 1
-          .menu_sep
-        - cur_side = ""
-        - if page.title == @page.title
-          - cur_side = "cur_side"
-        .side_rub_link{ :id => "side_#{nb}_div", :class => "#{cur_side}" }
-          %a{ :id => "side_#{nb}", :title => "#{page.title}", :href => "#{page.slug}" } #{page.title}
-        - nb += 1
-
-  .right_bar
-    %style{ :type => "text/css" }
-      != @page.style
-    .rub_image
-      - image = @cms_images.find_by_name(@page.image2) || ""
-      %img{ :src => "#{image.content.url}", :alt => "#{@page.image_info || ''}" }
-    .rubrique
-      .tabnav
-        .center
-          - nb = 1
-          - cur_side = ""
-          - @page.page_contents.each do |onglet|
-            - if nb > 1
-              %span.separator_2
-            - cur_tab = ""
-            - if nb == 1
-              - current = "current"
-            %a{ :id => "tab_#{nb}", :class => "tab_lien #{current}", :href => "#"} #{onglet.title}
-            - nb += 1
-      .clear
-      .tab_bar_sep
-      .clear
-      .ong_contenu
-        - nb = 1
-        - @page.page_contents.each do |onglet|
-          .tabpage{ :id => "tab_#{nb}_page" }
+.container.margin4top.padding2top.padding2bottom
+  .row
+    .span3.margin11top
+      .well.sidebar-nav
+        %ul{ :class=>"nav nav-list" }
+          %li{ :class=> "nav-header" }
+            #{@page_type.caption}
+          - @all_page.each_with_index do |page, index|
+            %li{ :class => ("active" if page.title == @page.title) }
+              %a{ :title => "#{page.title}", :href => "#{page.slug}" } #{page.title}
+    .span9
+      - image = @cms_images.find_by_name(@page.image2).content.url rescue ""
+      %img{ :src=>"#{image}", :alt => "#{@page.image_info || ''}", :class=>"margin1bottom" }
+      
+      %ul{ :id=>"tab", :class=>"subnav nav-tabs" }
+        - @page.page_contents.each_with_index do |onglet, index|
+          %li{ :class => ("active" if index == 0) }
+            %a{ "data-toggle"=>"tab", :href => "#part_#{index+1}" } #{onglet.title}
+       
+      .tab-content
+        - @page.page_contents.each_with_index do |onglet, index|
+          .tab-pane{ :class => ("active" if index == 0), :id=>"part_#{index+1}" }
             .box_rub
               - onglet.page_content_items.asc(:position).asc(:title).each do |item|
                 .clear
                 .box
-                  - image = @cms_images.find_by_name(item.image) || ""
+                  - image = @cms_images.find_by_name(item.image).content.url rescue ""
                   - if item.model == 1
-                    %img.contenu_image{ :src => "#{image.content.url}", :alt => "#{item.image_info || ''}", :class => "imgfloatleft" }
+                    %img.contenu_image{ :src => "#{image}", :alt => "#{item.image_info || ''}", :class => "imgfloatleft" }
                     %span{ :class => "contentfloatleft" }!=item.content
                   - elsif item.model == 2
-                    %img.contenu_image{ :src => "#{image.content.url}", :alt => "#{item.image_info || ''}", :class => "imgfloatright" }
+                    %img.contenu_image{ :src => "#{image}", :alt => "#{item.image_info || ''}", :class => "imgfloatright" }
                     %span{ :class => "contentfloatright" }!=item.content
                   - else
                     %span!=item.content
-          - nb += 1
+                    

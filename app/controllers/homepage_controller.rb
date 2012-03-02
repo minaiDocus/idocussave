@@ -1,6 +1,6 @@
 class HomepageController < ApplicationController
-
-  layout "homepage"
+  
+  layout "pages"
 
   def index
     @homepage = Homepage.first

@@ -1,34 +1,21 @@
-#content
-  #back_slides
-    #slides
-      /
-        %a.prev{:href => "#"}
-          %img{:alt => "Arrow Prev", :height => "43", :src => "images/pages/arrow-next.png", :width => "24"}/
-      .slides_container
-        - @slides.each do |slide|
-          .slide
-            %a{ :href => "#{slide.link}" }
-              - image = @cms_images.find_by_name(slide.name) || ""
-              %img{ :src => "#{image.content.url}", :alt => "#{slide.description}" }
-            /
-              .caption
-                %p
-                  = slide.description
-      /
-        %a.next{:href => "#"}
-          %img{:alt => "Arrow Next", :height => "43", :src => "images/pages/arrow-prev.png", :width => "24"}/
-      
-  /.style_bar
-  != @homepage.content rescue ""
-  /.style_bar
-  .services
+.carousel-container.carousel.slide{ :id=>"myCarousel" }
+  .carousel-inner
+    - @slides.each_with_index do |slide, index|
+      .item{ :class => ("active" if index == 0) }
+        - image = @cms_images.find_by_name(slide.name) || ""
+        %img{ :src=>"#{image.content.url}" }
+            
+.container.margin2bottom
+  .row{ :id=>"offers" }
+    .row
+      != @homepage.content rescue ""
     - @pavets.each do |pavet|
-      .box{ :class => "style_#{pavet.model}" }
-        .content!= pavet.content
-        .commander
-          - if pavet.is_left_active
-            != link_to "#{pavet.left_link_name}", "#{pavet.left_link_url}"
-        .details
-          - if pavet.is_right_active
-            != link_to "#{pavet.right_link_name}", "#{pavet.right_link_url}"
-  /.style_bar
+      .span3
+        .pave{ :class => ("well gray" if pavet.model.to_i != 0) }
+          .content!= pavet.content
+          .commander.pull-left
+            - if pavet.is_left_active
+              != link_to "#{pavet.left_link_name}", "#{pavet.left_link_url}"
+          .details.pull-right
+            - if pavet.is_right_active
+              != link_to "#{pavet.right_link_name}", "#{pavet.right_link_url}"

@@ -1,100 +1,71 @@
 !!!
-%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+%html
   %head
     %title Idocus | Archivage numérique
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-type"}/
-    != stylesheet_link_tag %w(pages application/custom)
-    != javascript_include_tag %w(jquery-1.5.1.min jquery.tools.min onglet)
-    :javascript
-      $(document).ready(function(){
-        $(".information").tooltip({ effect: 'slide', relative: true, position: 'top right', offset: [0,0]});
-      });
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }/
+    %meta{ :name => :description, :content => "#{@homepage.meta_description rescue ''}" }/
+    != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
+    %style{ :type => "text/css" }
+      !=@homepage.style rescue ""
   %body
-    #header
-      .box
-        .logo
-          %a{:href => "/"}
-            %img{:alt => "Logo", :src => "../../images/pages/logo.png"}/
-        .menu
-          .box
-            %a{:href => "/"} accueil
-            - @page_types.each do |type|
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
+            %span{ :class=>"icon-bar" }
+            %span{ :class=>"icon-bar" }
+            %span{ :class=>"icon-bar" }
+          %a{ :class=>"logo", :href=>"/" }
+            != image_tag "logo/tiny_logo.png", :alt => "logo"
+          .nav-collapse
+            %ul{ :class=>"nav" }
+              - @page_types.each do |type|
+                - lien = Page.where(:content_type => type.number).visible.by_position.first
+                - if lien
+                  %li
+                    %a{ :href => "/pages/#{lien.slug rescue '#'}" } #{type.caption}
+          - if current_user
+            %p{ :class=>"navbar-text pull-right" }
+              Connecté en tant que 
+              != link_to current_user.email, account_documents_path
+              |
+              != link_to "déconnexion", destroy_user_session_path
+          - else
+            %p{ :class=>"navbar-text pull-right" }
+              %a{ "data-toggle"=>"modal", :href=>"#connexion" } Connexion
+              <span class="divider-vertical"></span>
+              %a{ :href=>"/users/sign_up" } Créer un compte
+        
+    != yield
+  
+    %footer
+      .modal-footer.aligncenter
+        %p{ :class=>"green" }
+          - @page_in_footer.each_with_index do |page, index|
+            - if index != 0
               %span.separator &#124;
-              - lien = Page.where(:content_type => type.number).by_position.first
-              %a{:href => "/pages/#{lien.slug rescue '#'}"} #{type.caption}
-            
-        .login
-          .loginbox
-            - if current_user
-              .connected
-                %span.title Connecté en tant que :
-                != link_to current_user.email, account_documents_path
-                &#124;
-                != link_to "déconnexion", destroy_user_session_path
-            - else
-              %span.title Mon compte
-              - form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
-                %fieldset
-                  .leftcol.clearfix
-                    != f.text_field :email, :class => 'w120'
-                  .leftcol.margin1left.clearfix
-                    != f.password_field :password, :class => 'w50'
-                  .rightcol.clearfix
-                    != f.submit :class => 'greenbtn floattoright w30', :value => "OK"
-                  .leftcol.margin05top.clearfix
-                    != f.check_box :remember_me
-                    %label{:for => "remember_me", :title => "Session de 2 jours"} Se souvenir &#124;
-                    %a{:href => "users/password/new"} Aide
-                    &#124;
-                    %a{:href => "users/sign_up"} Créer un compte
-    .clear
-      != yield
-    .clear
-    #footer
-      .box
-        .lien
-          - nb=0
-          - @page_in_footer.each do |page|
-            - if nb != 0
-              %span.separator &#124;
-            != link_to page.title, "/pages/#{page.slug}"
-            - nb += 1
-        .copyright
-          \© iDocus 2011
-
-    :javascript
-      $(document).ready(function () {
-        $(".tooltip").each(function(){
-          node = $(this);
-          text = $(node.attr("href")).html();
-          $(node).qtip({
-            content: {
-              text: text
-            },
-            show: 'mouseover',
-            hide: 'mouseout',
-            style: { 
-              width: 300,
-              padding: 5,
-              color: 'black',
-              background: '#e8e6e5',
-              border: {
-                 radius: 5,
-                 color: '#3e2f24'
-              },
-              tip: 'topMiddle',
-              name: 'light' // Inherit the rest of the attributes from the preset dark style
-            },
-            position: {
-              corner: {
-                target: 'bottomMiddle',
-                tooltip: 'topMiddle'
-              },
-              adjust: { screen: true }
-            }
-          });
-
-        });
-      })
-
-    != render :partial => '/shared/google_analitycs'
+            != link_to page.title, "pages/#{page.slug}"
+        %p{ :class=>"copyright" } &copy; iDocus 2012
+    
+    != render :partial => "/shared/google_analitycs"
+    
+    - if !current_user
+      .modal{ :id=>"connexion", :style=>"display: none;" }
+        .modal-header
+          %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+          %h3 Connexion
+        - form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
+          .modal-body
+            %fieldset
+              %label{ :for => "email" } Email
+              != f.text_field :email, :id=>"email"
+              %label{ :for => "password" } Mot de passe
+              != f.password_field :password, :id=>"password"
+              != f.check_box :remember_me, :class=>"pull-left", :id=>"remember_me"
+              %label{ :for => "remember_me", :class=>"pull-left", :title => "Session de 2 jours" } Se souvenir
+          .modal-footer
+            != f.submit :class => "btn btn-primary", :value => "OK"
+            %a{ :href=>"/users/password/new", :class=>"btn" } Aide
+            %a{ :href=>"#", :class=>"modal-close btn" } Fermer
+    
+    != javascript_include_tag %w(jquery-1.7.1.min bootstrap.min application2)

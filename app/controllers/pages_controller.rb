@@ -2,8 +2,6 @@ class PagesController < ApplicationController
 
   before_filter :load_page, :only => %w(show)
 
-  layout "pages"
-
 protected
 
   def load_page
