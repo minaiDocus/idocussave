@@ -7,7 +7,6 @@ gem 'mongoid', '2.0.1'
 gem 'mongoid-paperclip', '0.0.4', :require => 'mongoid_paperclip'
 gem 'paperclip', '2.3.6'
 gem 'daemons'
-gem 'whenever', :require => false
 gem 'haml'
 gem 'devise'
 gem 'airbrake'
@@ -25,10 +24,13 @@ gem 'mongoid_session_store'
 gem 'SystemTimer'
 gem 'rack-raw-upload'
 gem 'pdf-reader'
+gem 'savon_model'
+gem 'prawn'
 
 group :development do
   gem 'mongrel'
   gem 'ruby-debug'
+  gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :require => 'rails_development_boost'
 end
 
 group :test do
