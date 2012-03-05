@@ -65,7 +65,7 @@
   %br
   previous month :
   %br
-  %select{ :name => :delivery_state_2, :id => "#{@user.id}_2", :class => :delivery_state, :disabled => (previous_monthly ? "" : "disabled") }
+  %select{ :name => :delivery_state_2, :id => "#{@user.id}_2", :class => :delivery_state }
     - Reporting::Delivery::STATES.each do |state|
       - same = (previous_monthly.delivery.state == state[1]) rescue false
       - if same

@@ -45,7 +45,7 @@
             %td
               - delivery = user.find_or_create_reporting.find_or_create_current_monthly.delivery
               %select{ :name => :delivery_state, :id => user.id, :class => :delivery_state }
-                - Delivery::STATES.each do |state|
+                - Reporting::Delivery::STATES.each do |state|
                   - same = (delivery.state == state[1]) rescue false
                   - if same
                     %option{ :value => state[1], :selected => :selected }
