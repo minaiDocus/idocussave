@@ -14,10 +14,10 @@
       .inter{ :class => "round_bottom" }
         %span{ :class => "prev_next" }
           %a
-            != link_to (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || ""))
-          %a #{@year}          
+            != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))
+          %a #{@year}
           %a
-            != link_to (@year + 1), reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || ""))
+            != link_to( (@year + 1), reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || "")))
       - mois.each_with_index do |m, index|
         - monthly = @monthlies.select{|mo| mo.month == index + 1}
         != render :partial => "month.html.haml", :locals => { :m => m, :index => index, :monthly => monthly }
