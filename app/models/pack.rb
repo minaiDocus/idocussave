@@ -147,11 +147,11 @@ class Pack
       # réecriture de l'extension en minuscule s'il ne l'est pas déjà
       downcase_extension
 
-      # réorganisation par pack des fichiers ayant les même préfix, triée par order alphabétique
       files = []
       
-      file_names = valid_documents
-      
+      # réorganisation par pack des fichiers ayant les même préfix, triée par order alphabétique
+      file_names = valid_documents.sort
+      total_documents = file_names.count
       while (!file_names.empty?) do
         prefix_name = file_names[0].split('_')[0..2].join('_')
         user_code = prefix_name.split('_')[0]
@@ -175,15 +175,24 @@ class Pack
         files[index][:page_number] = total_pages
       end
       
+      puts "\n\n\n###############################################################################################\n\n"
+      puts "#Date \t\t: #{Time.now}"
+      puts "#Packs \t\t: #{files.count}"
+      puts "#Documents \t: #{total_documents}\n\n"
+      
       # traitement de chaque pack
-      files.each do |file|
+      files.each_with_index do |file,index|
         pack_name = file[:prefix_name] + "_all"
+        
+        print "#{index} - #{pack_name}"
         
         # deplacement des fichiers dans un dossier temporaire
         moov_to pack_name, file[:collection].map{|d| d[:name]}
         
         user = User.where(:code => file[:user_code]).first
         if user
+          print " - #{user.email}"
+        
           pack_already_exists = true
           pack = user.packs.any_in(:name => [pack_name,pack_name.gsub('_',' ')]).first
         
@@ -193,40 +202,45 @@ class Pack
             unless order
               order = Order.create!(:user_id => user.id, :state => "paid", :manual => true)
             end
-            pack = Pack.create!(:name => pack_name.gsub('_',' '), :order_id => order.id)
+            pack = Pack.create!({:name => pack_name.gsub('_',' '), :order_id => order.id, :information => {"page_number" => 0, "collection" => [], "name" => ""},:customs => 0})
           end
           
           counter = 0
           if pack_already_exists
-            pack.safe_get_division_from_pdf
-            counter = pack.information[:page_number]
+            print " - existant"
+            counter = pack.information["page_number"]
           else
-            pack.information[:page_number] = 0
+            print " - nouveau"
+            pack.information["page_number"] = 0
           end
           
-          require "prawn"
+          print " - [#{pack.id}]\n"
           
-          collection_number = file[:collection].length - 1
-          while collection_number > 0
-            zero_filler = "0" * (3 - (counter + collection_number).to_s.length)
+          require "prawn" 
+          
+          collection_number = file[:collection].length
+          collection_number.times do |i|
             
-            new_name = file[:collection][collection_number][:name].sub(/_[0-9]+.pdf/,"_#{zero_filler + (counter + collection_number).to_s}.pdf")
-            File.rename(file[:collection][collection_number][:name], new_name+"_")
-            file[:collection][collection_number][:name] = new_name
-
-            system("rm stamp.pdf")
+            zero_filler = "0" * (3 - (counter + i + 1).to_s.length)
+            
+            new_name = file[:collection][i][:name].sub(/_[0-9]+.pdf/,"_#{zero_filler + (counter + i + 1).to_s}.pdf")
+            File.rename(file[:collection][i][:name], new_name+"__")
+            file[:collection][i][:name] = new_name
+            
             Prawn::Document.generate "stamp.pdf", :margin => 0 do
               fill_color "FF0000"
               stroke_color "FF0000"
               rotate(330, :origin => [495,780]) do
-                stroke_rectangle [493, 790], 121, 16
+                stroke_rectangle [493, 790], 124, 16
                 draw_text new_name.sub(/\.pdf/,''), :size => 10, :at => [495, 780]
               end
             end
             
-            system("pdftk #{file[:collection][collection_number][:name]}_ stamp stamp.pdf output #{file[:collection][collection_number][:name]}")
-            
-            collection_number -= 1
+            system("pdftk #{file[:collection][i][:name]}__ stamp stamp.pdf output #{file[:collection][i][:name]}_")
+          end
+          system("rm *.pdf__ stamp.pdf")
+          collection_number.times do |i|
+            File.rename(file[:collection][i][:name]+"_",file[:collection][i][:name])
           end
           
           old_number_of_page = pack.information["page_number"]
@@ -239,46 +253,49 @@ class Pack
             last_page = pack.information["collection"][-1]["end"] rescue 0
           end
           
+          pack.information["collection"] = [] if pack.information["collection"].nil?
+          
+          puts "\t\tpage\t\tfeuille"
+          puts "ancien\t\t#{old_number_of_page}\t\t#{pack.information["collection"].count}"
+          puts "nouveau\t\t#{file[:page_number]}\t\t#{file[:collection].count}"
+          
           # mis à jour de la division
           file[:collection].each do |document|
-            pack.information["collection"] = [] if pack.information["collection"].nil?
             pack.information["collection"] << { :name => document[:name].sub(/\.pdf$/,''), :level => "1", :start => (last_page + 1), :end => (last_page + document[:page_number]) }
             last_page += document[:page_number]
           end
+          
+          puts "total\t\t#{pack.information['page_number']}\t\t#{pack.information['collection'].count}"
           
           document_list = file[:collection].map{ |document| " #{document[:name]}" }
           
           # assemblage des pdf
           cmd = "pdftk#{document_list} cat output #{pack_name}.pdf"
-          puts cmd
           system(cmd)
           
           if pack_already_exists
             prefix = pack.documents.where(:is_an_original => true).first.content_file_name.scan(/\w+/)[0]
             
             # division en page
-            cmd = "pdftk #{pack_name}.pdf burst output #{prefix}_pages_%03d.pdf"
-            puts cmd
+            cmd = "pdftk #{pack_name}.pdf burst output #{prefix}_pages_%03d.pdf_"
             system(cmd)
             
-            number_of_page = file[:page_number]
+            number_of_page = file[:page_number] 
             
-            nbr = old_number_of_page + number_of_page
+            number_of_page.times do |i|
+              new_number = old_number_of_page + i + 1
             
-            1..number_of_page.times do |i|
-              nbr -= 1
-              
-              zero_filler = "0" * (3 - (number_of_page - i).to_s.length)
-              old_name = "#{prefix}_pages_#{zero_filler + (number_of_page - i).to_s}.pdf"
-              zero_filler = "0" * (3 - nbr.to_s.length)
-              new_name = "#{prefix}_pages_#{zero_filler + nbr.to_s}.pdf"
+              zero_filler = "0" * (3 - (i + 1).to_s.length)
+              old_name = "#{prefix}_pages_#{zero_filler + (i + 1).to_s}.pdf_"
+              zero_filler = "0" * (3 - new_number.to_s.length)
+              new_name = "#{prefix}_pages_#{zero_filler + new_number.to_s}.pdf"
               File.rename(old_name,new_name)
               
               # création d'un document pour chaque page
               document = Document.new
               document.dirty = true
               document.pack = pack
-              document.position = old_number_of_page + i + 1
+              document.position = new_number
               document.content = File.new new_name
               document.save
               
@@ -297,13 +314,15 @@ class Pack
             temp_path = File.expand_path(temp_file.path)
             basename = File.basename(temp_path)
             
-            cmd = "cp '#{temp_path}' ./" 
-            puts cmd
+            ### correction sur le nom des fichiers ###
+            cmd = "cp '#{temp_path}' ./#{pack_name}.pdf_"
             system(cmd)
             
-            cmd = "pdftk A='#{basename}' B=#{pack_name}.pdf cat A B output '#{temp_path}'"
-            puts cmd
+            ### correction sur le nom des fichiers ###
+            cmd = "pdftk A='#{basename}_' B=#{pack_name}.pdf cat A B output '#{temp_path}'"
             system(cmd)
+            
+            system("rm #{basename}_ doc_data.txt")
             
           else
             pack.get_document pack_name, false
@@ -325,11 +344,12 @@ class Pack
             if dropbox
               session = dropbox.new_session
               if session.authorized?
+                puts "\nLivraison dans la dropbox du client #{user.email} [#{user.id}]"
                 client = DropboxClient.new(session, Dropbox::ACCESS_TYPE)
                 file[:collection].map{|f| f[:name]}.each_with_index do |document,i|
                   if i != 0
-                    f = open(document[0])
-                    client.put_file("#{path}#{document[0]}",f) rescue nil
+                    f = open(document)
+                    client.put_file("#{path}#{document}",f) rescue nil
                   end
                 end
                 f = open("#{pack_name}.pdf")
@@ -347,11 +367,12 @@ class Pack
               if dropbox
                 session = dropbox.new_session
                 if session.authorized?
+                  puts "\nLivraison dans la dropbox du prescripteur #{prescriber.email} [#{prescriber.id}]"
                   client = DropboxClient.new(session, Dropbox::ACCESS_TYPE)
                   file[:collection].map{|f| f[:name]}.each_with_index do |document,i|
                     if i != 0
-                      f = open(document[0])
-                      client.put_file("#{path}#{document[0]}",f) rescue nil
+                      f = open(document)
+                      client.put_file("#{path}#{document}",f) rescue nil
                     end
                   end
                   f = open("#{pack_name}.pdf")
@@ -363,18 +384,19 @@ class Pack
           end
           
           # suppression du dossier temporaire et retour au dossier principale
-          system("rm *")
           Dir.chdir("..")
-          system("rm -r #{pack_name}")
+          # system("rm -r #{pack_name}")
           
           pack.users << user
           pack.users = pack.users + user.find_or_create_reporting.viewer
             
           pack.save
+        else
+          print " - aucun\n"
         end
+        puts "\n\n"
       end
-      # retour au répertoire racine
-      Dir.chdir("#{Rails.root}")
+      puts "###############################################################################################\n\n\n"
     end
   end
 end
