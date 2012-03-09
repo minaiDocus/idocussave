@@ -22,7 +22,6 @@ Idocus::Application.routes.draw do
         get 'search', :on => :collection
         get 'find', :on => :collection
         get 'reporting', :on => :collection
-        get 'index2', :on => :collection
         get 'search_user', :on => :collection
         post 'reorder', :on => :collection
         post 'archive', :on => :collection
@@ -30,7 +29,7 @@ Idocus::Application.routes.draw do
     end
     
     namespace :documents do
-      resource :sharing do
+      resource :sharings do
         post 'destroy_multiple', :on => :collection
         post 'destroy_multiple_selected', :on => :collection
       end

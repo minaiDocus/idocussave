@@ -1,28 +1,32 @@
 - document_class = @is_composition ? "composition" : "alone"
 
-%li.document.page{ :id => "document_none_#{document.id}", :class => document_class }
+%li{ :id => "document_#{document.id}", :class => "#{document_class} pages" }
   - unless document.dirty
     - link_to_large = document.content.url(:large)
-    - link_to_medium = document.content.url(:medium)
+    - link_to_thumb = document.content.url(:thumb)
   - else
-    - link_to_large = link_to_medium = '/system/processing.png'
+    - link_to_large = link_to_thumb = '/system/processing.png'
   
-  = link_to "", link_to_large, :class => "zoom zgallery#{ @is_composition? 3 : 2 }", :title => "Zoomer sur la page"
+  - name = document.content_file_name.sub(".pdf","").sub("all_pages","").gsub("_"," ")
+  
+  %input{ :type => :hidden, :name => :name, :value => "#{name}" }
+  %input{ :type => :hidden, :name => :tags, :value => "#{tags_of document}" }
+  - if !@is_composition
+    = link_to "", document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
   .toolbar
-    %ul
+    %ul.margin0
       %li.download
         != link_to "", document.content.url, :class => "download", :title => "Télécharger", :target => "_blank"
-      - if @composition
+      - if @is_composition
         %li.delete_composition
-          %a.delete.do-deleteDocumentFromComposition{ :href => "#", :title => "Supprimer" }
+          %a.delete.do-removePageFromSelection{ :href => "#", :title => "Supprimer" }
       - else
         %li.selector
           != link_to "", "#", :class => "select do-selectPage", :title => "Sélectionner pour la composition"
-  .handle{ :title => "Déplacer" }
+  - if @is_composition
+    .handle{ :title => "Déplacer" }
   .pagethumb
     .thumb
-      != image_tag link_to_medium
-      .document_tags
-        = tags_of document
+      != image_tag link_to_thumb
   .foot
     %span

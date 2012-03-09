@@ -1,327 +1,116 @@
-//DocumentComposer widget
-#useraccount.scrollpane
-  .block_1
-    - if flash[:notice].present?
-      .flash
-        .notice.margin2bottom.margin1top
-          %span.title= flash[:notice]
-          %br
-    - elsif flash[:credit_alert].present? || flash[:error].present?
-      .flash
-        .errors.margin2bottom.margin1top
-          %span.title= flash[:credit_alert] || flash[:error]
-          %br
-    - if current_user.is_dropbox_authorized
-      .titlebar.margin3top
-        %h1.floattoleft
-          DROPBOX
-      .wrapper.w420.margin2top
-        - session = DropboxSession.deserialize(current_user.my_dropbox.session) rescue nil
-        - if session && session.authorized?
-          Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
-        - else
-          Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
-        != link_to "ici", authorize_url_account_dropbox_path
-        #{"."}
-    .titlebar.margin3top
-      %h1.floattoleft
-        CHANGER MON MOT DE PASSE
-    .wrapper.w420
-      - form_for @user, :url => account_profile_path do |f|
-        - if flash[:alert].present?
-          - error_class = "error"
-          .errors.margin2bottom.margin2top
-            %span.title
-              Erreurs à la validation du formulaire
-            %ul
-              %li
-                Mots de passe invalides
-  
-        != f.label "Mot de passe actuel :", :class => "margin2top"
-        = f.password_field :current_password, :label => "Ancien mot de passe", :class => "w410"
-        != f.label "Nouveau mot de passe :", :class => "margin2top"
-        = f.password_field :password, :label => "Nouveau mot de passe", :class => "w410"
-        != f.label "Confirmation du mot de passe :", :class => "margin2top"
-        = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe", :class => "w410"
-  
-        .buttonsrow.margin1top
-          != f.submit "Modifier", :class => "button whitebtn w100 floattoright"
-    
-    
-    .titlebar.margin2top
-      %h1.floattoleft
-        CHOISIR MON MODE DE PAIEMENT
-    .wrapper.margin2top
-      %ul.paymentslist.clearfix
-        %li
-          .header
-            !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-            %span
-              %a{ :href => "#"}
-                %label{ :for => :pp }
-                  compte prépayé
-          .content
-            %span
-              Solde actuel du compte : #{format_price @user.balance_in_cents} €
-            %br
-            %span
-              %form{ :method => :get, :action => credit_account_payment_path }
-                %label{ :for => :amount } Somme à créditer (€):
-                %input{ :id => :amount, :name => :amount, :type => :text, :value => "0.00", :class => "w200" }/
-                %br
-                %span.aligncenter
-                  Payer avec :
-                  %br
-                %input{ :type => :submit, :name => "paypal", :value => "Paypal", :class => "button whitebtn w100 floattoleft margin1right" }/
-                %input{ :type => :submit, :name => "cmcic", :value => "CM-CIC", :class => "button whitebtn w100 margin1right" }/
-          .footer.padding1bottom
-        %li
-          .header
-            !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
-            %span
-              %a{ :href => "#"}
-                %label{ :for => :prlv } prélèvement
-          .content
-            %span
-              Etat :
-              - if @user.debit_mandate
-                - if @user.debit_mandate.transactionStatus == "success"
-                  ok
-                - else
-                  information non valide
+.container.margin4top.padding2top
+  .row
+    .span12.alerts
+      - if flash[:notice].present?
+        .alert.alert-success
+          %a{ :class=>"close", "data-dismiss"=>"alert" } ×  
+          %span= flash[:notice]
+      - elsif flash[:credit_alert].present? || flash[:error].present?
+        .alert.alert-error
+          %a{ :class=>"close", "data-dismiss"=>"alert" } × 
+          %span= flash[:credit_alert] || flash[:error]
+  .row
+    .span3
+      - if current_user.is_dropbox_authorized
+        .row
+          .span3
+            .well            
+              %h3
+                DROPBOX
+              - session = DropboxSession.deserialize(current_user.my_dropbox.session) rescue nil
+              - if session && session.authorized?
+                Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
               - else
-                non configuré
-            %span
-              Banque : #{@user.debit_mandate.bic rescue ""}
-            %span.margin6top
-              %form{ :method => :get, :action => "https://prlv.idocus.com/form.php", :class => "margin1right aligncenter" }
-                %input{ :type => :hidden, :name => :email, :value => @user.email }/
-                %input{ :type => :submit, :value => "Configurer...", :class => "button whitebtn w100 margin055left" }/
-          .footer.padding1bottom
-
-  .block_2
-    %h3.margin1top.margin1left Factures
-    %br
-    .title_bar
-      .b_title.wdate
-        Date
-      .b_title.winvoice_number
-        N° facture
-      .b_title.wamount
-        Montant
-      .b_title.wdetails
-        Détails
-    - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|    
-      %div.info.aligncenter{ :class => (event.type_number == 0? "green" : "red") }
-        .date
-          #{event.created_at.strftime("%Y-%m-%d")}
-        .invoice_number
-          #{event.invoice.number rescue ""}
-        .amount
-          - if event.amount_in_cents == 0
-            #{"-"}
-          - else
-            #{format_price event.amount_in_cents} €
-        .description
-          %span{ :title => event.description }
-            ?
-        .invoice_link
-          - if event.invoice
-            !=link_to "fac", "#"
-          - else
-            !=link_to "none", "#"
-
-:javascript
-  $(document).ready(function () {
-    $("input[type=radio]").click(function(){
-      var request_value = 0;
-      if ($(this).val() == "false")
-        request_value = 1;
-      else
-        request_value = 2;
-      hsh = {mode: request_value};
-      $.ajax({
-        url: "/account/payment/mode",
-        data: hsh,
-        dataType: "json",
-        type: "POST",
-        beforeSend: function() {
-        },
-        success: function(data){
-          if (data == "1"){
-            alert("Vos réglements seront maintenant débités de votre compte prépayé");
-          } else if (data == "2") {
-            alert("Vos réglements seront maintenant prélevés sur votre compte bancaire");
-          } else if (data == "3") {
-            alert("Vous n'avez pas encore configuré votre prélèvement");
-            $("#pp").attr('checked', true);
-            $("#prlv").attr('checked', false);
-          } else {
-            alert("Une erreur s'est produite, veuillez réessayer plus tard");
-          }
-        }
-      });
-    });
-  });
-
-:css
-  .paymentslist {
-    display: block !important;
-    position: relative !important;
-    width: 505px;
-    height: auto; }
-    .paymentslist li {
-      border-radius: 4px;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      -khtml-border-radius: 4px;
-      display: block !important;
-      position: relative !important;
-      float: left;
-      width: 230px;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      height: 165px;
-      border-style: solid;
-      border-color: #b9b9b9;
-      border-width: 1px;
-      background-color: #fafafa; }
-      .paymentslist li .header, .paymentslist li .content, .paymentslist li .footer {
-        display: block !important;
-        position: relative !important;
-        width: 230px; }
-      .paymentslist li .header {
-        height: 30px;
-        background-color: #b9b9b9; }
-        .paymentslist li .header input[type="radio"] {
-          top: 8px;
-          left: 8px;
-          position: absolute;
-          vertical-align: middle;
-          width: 14px;
-          height: 14px;
-          padding: 0px;
-          margin: 0px;
-          line-height: 0px;
-          font-size: 0px; }
-        .paymentslist li .header span {
-          display: block;
-          position: absolute;
-          font-weight: bold;
-          font-size: 12px;
-          line-height: 14px;
-          left: 25px;
-          top: 8px; }
-          .paymentslist li .header span a {
-            color: black;
-            text-decoration: none; }
-      .paymentslist li .content {
-        min-height: 40px;
-        padding-top: 10px;
-        padding-bottom: 10px; }
-        .paymentslist li .content span {
-          display: block !important;
-          position: relative !important;
-          font-size: 12px;
-          line-height: 14px;
-          margin-left: 10px; }
-      .paymentslist li .footer {
-        width: 220px;
-        min-height: 20px;
-        text-align: right;
-        margin-right: 10px; }
-        .paymentslist li .footer a {
-          font-size: 11px;
-          color: black;
-          text-decoration: none;
-          margin-left: 5px; }
-
-  .paymentslist.static li, .paymentslist.static li .header {
-    background-color: transparent; }
-  .paymentslist.static .header {
-    height: 20px; }
-    .paymentslist.static .header span {
-      left: 10px; }
-  .aligncenter{
-    margin: auto;
-    text-align: center; }
-  .margin055left{
-    margin-left: 55px; }
-  .block_1{
-    float: left;
-    width: 505px; }
-  .block_2{
-    float: right;
-    width: 470px; }
-  .w420{
-    width: 420px; }
-    
-  .info {
-    both: none;
-    border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    width: 442px;
-    height: 23px;
-    margin: 5px; }
-
-  .red { 
-    background-color: #ad3737; }
-   
-  .green {
-    background-color: #8bad37; }
-    
-  .date {
-    color: white;
-    padding: 3px;
-    float: left;
-    width: 100px; }
-  .invoice_number {
-    border-left: 2px solid gray;
-    padding: 3px;
-    color: white;
-    float: left; 
-    width: 150px; }
-  .amount {
-    border-left: 2px solid gray;
-    padding: 3px;
-    color: white;
-    float: left;
-    width: 60px; }
-  .description {
-    border-left: 2px solid gray;
-    padding: 3px;
-    float: left;
-    color: white;
-    width: 30px; }
-  .invoice_link {
-    border-left: 2px solid gray;
-    padding: 3px;
-    float: left;
-    color: white;
-    width: 30px; }
-  
-  .aligncenter {
-    text-align: center; }
-    
-  .title_bar {
-    margin: 5px;
-    color: white;
-    text-align: center;
-    background-color: #3e2f24;
-    height: 18px;
-    width: 440px; }
-  .b_title {
-    padding: 0 3px 0 3px;
-    height: 18px;
-    float: left;}
-    
-  .wdate {
-    width: 100px; }
-  .winvoice_number {
-    width: 150px; }
-  .wamount {
-    width: 60px; }
-  .wdetails{
-    width: 100px; }
+                Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
+              != link_to "ici", authorize_url_account_dropbox_path
+              #{"."}
+      .row
+        .span3
+          .well.change_pass_parent
+            %h3 Changer mon mot de passe
+            %br/
+            .change_pass
+              - form_for @user, :url => account_profile_path do |f|
+                - if flash[:alert].present?
+                  .alert-container
+                    .alert.alert-error
+                      %a{ :class=>"close", "data-dismiss"=>"alert" } × 
+                      %span
+                        %ul
+                          %li
+                            Mots de passe invalides
+          
+                != f.label "Mot de passe actuel :"
+                = f.password_field :current_password, :label => "Ancien mot de passe"
+                != f.label "Nouveau mot de passe :"
+                = f.password_field :password, :label => "Nouveau mot de passe"
+                != f.label "Confirmation du mot de passe :"
+                = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
+                != f.submit "Modifier", :class => "btn blue"
+    .span6.gray.well.paymentslist_container
+      %div
+        %h3.aligncenter Mode de paiement
+        %br/
+        .row
+          .span3
+            .paymentslist
+              .header
+                !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+                %span
+                  %a{ :href => "#" }
+                    %label{ :for => "pp" } compte prépayé                
+              %form{ :method => :get, :action => credit_account_payment_path }
+                .content
+                  %span
+                    %label{ :for => "amount" } Somme à créditer (€):
+                    %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
+                    %br/
+                    Payer avec :
+                .footer
+                  %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
+                  %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
+          .span3
+            .paymentslist
+              .header
+                !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
+                %span
+                  %a{ :href => "#" }
+                    %label{ :for => "prlv" } prélèvement
+              .content
+                %span
+                  Etat : 
+                  - if @user.debit_mandate
+                    - if @user.debit_mandate.transactionStatus == "success"
+                      ok
+                    - else
+                      information non valide
+                  - else
+                    non configuré
+                %span
+                  Banque : #{@user.debit_mandate.bic rescue ""}
+              .footer.padding1bottom
+                %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
+                  %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
+                  %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
+      %div
+        %h3.aligncenter Factures
+        %br/
+        %table.table.table-striped.table-bordered.table-condensed
+          %thead
+            %tr.aligncenter
+              %th Date
+              %th Montant facture
+              %th N°
+              %th Détails
+          %tbody
+            - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|
+              %tr.aligncenter{ :class => (event.type_number == 0? "green" : "red") }
+                %td #{event.created_at.strftime("%Y-%m-%d")}
+                %td
+                  - if event.amount_in_cents == 0
+                    #{"-"}
+                  - else
+                    #{format_price event.amount_in_cents} €
+                %td #{event.invoice.number rescue ""}
+                %td.information{ :title => event.description }
+                  ?

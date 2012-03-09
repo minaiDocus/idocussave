@@ -1,72 +1,40 @@
-- document = pack.documents.first
-
+- document_type_content = ""
 - if pack.order.state == "paid"
-  - document_class = ""
+  - document_class = "paid"
+  - document_type_title = "Commande en cours de traitement"
 - elsif pack.order.state == "scanned"
   - if pack.users.size > 1 && pack.order.user == current_user
     - document_class = "sharing"
+    - document_type_title = "Mon document que je partage"
   - elsif pack.users.size > 1 && pack.order.user != current_user
-    - document_class = "shared #{pack.order.user.id rescue ''}"
+    - document_class = "shared"
+    - document_type_title = "Document partagé par un autre utilisateur"
   - else
     - document_class = "scanned"
-
-- if document
-  %li.document.group.tooltip-target{ :id => "Pack_#{pack.id}_#{document.id}", :class => document_class }
-    - tags = tags_of document
-    = hidden_field_tag :tags, tags
-
-    - unless document.dirty
-      - link_to_large = document.content.url(:large)
-      - link_to_medium = document.content.url(:medium)
-    - else
-      - link_to_large = link_to_medium = '/system/processing.png'
+    - document_type_title = "Mon document"
     
-    != link_to "", link_to_large, :class => "zoom zgallery1"
-    .toolbar
-      %ul
-        %li
-          != link_to "", "#{(pack.documents.where(:is_an_original => true).first).content.url}", :class => "download", :title => "Télécharger", :target => "_blank"
-        %li
-          != link_to "", "#", :class => "download do-archive", :title => "Télécharger une archive zip"
-        %li
-          != link_to "", "#", :class => "select do-select", :title => "Sélectionner"
-        %li
-          != link_to "", "#", :class => "growl-info", :title => "Information"
-    .pagethumb
-      .thumb
-        != link_to image_tag(link_to_medium), "#", :class => "do-show"
-        .document_tags
-          != tags
-    .foot
-      %span #{pack.name}
-    .growl-info
-      %table
-        %tr
-          %td.padding1top Nom du document
-          %td.padding1top.padding1left
-            \:
-            %span{ :class => "order-#{document_class}" } #{pack.name}.pdf
-        %tr
-          %td.padding1top Date de mise en ligne
-          %td.padding1top.padding1left : #{l(pack.created_at)}
-        %tr
-          %td.padding2top.padding2bottom Nombre de pages
-          %td.padding2top.padding2bottom.padding1left : #{pack.documents.size - 1}
-        
-        - if document_class == "sharing"
-          - pack.users.each do |user|
-            - if user != current_user
-              %tr{ :id => pack.id }
-                %td.padding1top Accès donné à
-                %td.padding1top.padding1left : #{user.email} #{link_to image_tag("web-app-theme/cross.png", :alt => "delete"), "#", :class => "remote-delete", :id => pack.id}
-        - elsif document_class == "shared #{pack.order.user.id rescue ''}"
-          %tr{ :id => pack.id }
-            %td.padding1top Accès donné par
-            %td.padding1top.padding1left : #{pack.order.user.email}
+- document_type_content = document_type_title
 
-- else
-  %li.document.group.paid{ :id => "Pack_#{pack.id}" }
-    .pagethumb
-      .thumb #{link_to image_tag('application/empty_order_thumb.png'), invoice_account_document_path(pack, :format => :pdf)}
-    .foot
-      %span #{pack.order.waybill_number}
+- if document_class == "sharing"
+  - document_type_content += "<br/>Accès donné à :<br/>"
+  - pack.users.each do |user|
+    - if user != current_user
+      - document_type_content += "#{user.email}<br />"
+- elsif document_class == "shared"
+  - document_type_content += "<br/>Accès donné par : #{pack.order.user.email}"
+ 
+
+%li{ :id => "original_#{pack.documents.originals.first.id}_#{pack.id}", :class => document_class }
+  %span.action
+    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pack.information["page_number"] rescue -1}<br />Tags : #{tags_of pack.documents.originals.first}", :href => "#"}
+      %i.icon-info-sign
+    %a.do-select.do-tooltip{:href => "#", :title => "sélectionner"}
+      %i.icon-ok
+    %a.do-tooltip{ :href => "#{(pack.documents.where(:is_an_original => true).first).content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
+      %i.icon-download-alt
+    %a.do-tooltip{ :href => "#", :title => "Télécharger une archive zip", :class => "download do-archive" }
+      %i.icon-download
+    %a.do-popover{ :href => "#", "data-content" => document_type_content }
+      %i.icon-star-empty.icon-document-type{ :class => document_class }
+  %span.name
+    %a.do-show{ :href => "#"} #{pack.name.sub('all','')}

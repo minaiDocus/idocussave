@@ -1,6 +1,6 @@
-%ul.documentslist.clearfix
+﻿%ul.margin3top.margin0left
   != render :partial => "pack", :collection => @packs
 
-%div.clear.margin2top.aligncenter.pagination
-  != will_paginate( @packs, :previous_label => "&laquo; précedent", :next_label => "suivant &raquo;")
+.aligncenter
+  != will_paginate( @packs, :previous_label => "&laquo;", :next_label => "&raquo;")
   %input{ :type => :hidden, :name => :packs_count, :value => "#{@packs_count}" }

@@ -33,7 +33,7 @@ class Account::Documents::SharingsController < Account::AccountController
   end
   
   def destroy_multiple
-    packs = current_user.packs.find(params[:pack_ids].split('_')).select{|p| p.order.user != current_user} rescue []
+    packs = current_user.packs.find(params[:pack_ids]).select{|p| p.order.user != current_user} rescue []
     
     packs.each do |pack|
       current_user.packs -= [pack]
@@ -44,8 +44,6 @@ class Account::Documents::SharingsController < Account::AccountController
         DocumentTag.where(:document_id => document.id, :user_id => current_user.id).delete
       end
     end
-    
-    current_user.document_content_index.try("remove",packs.collect{|p| p.id})
     
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }

@@ -1,5 +1,6 @@
 class Account::Documents::DocumentsController < Account::AccountController
-  layout "inner", :only => %w(index reporting)
+  layout :choose_layout, :only => %w(index reporting)
+  
   before_filter :find_last_composition, :only => %w(index)
 
 protected  
@@ -7,17 +8,17 @@ protected
     return if self.controller_name == 'document_tags'
     @last_composition = current_user.composition
   end
+  
+  def choose_layout
+    if [ 'index' ].include? action_name
+      'inner'
+    elsif ['reporting'].include? action_name
+      'inner2'
+    end
+  end
 
 public
   def index
-    @packs_count = current_user.packs.count
-    @packs = current_user.packs.desc(:created_at).paginate :page => params[:page], :per_page => 20
-    if @last_composition
-      @composition = Document.any_in(:_id => @last_composition.document_ids)
-    end
-  end
-  
-  def index2
     @packs_count = current_user.packs.count
     @packs = current_user.packs.desc(:created_at).paginate :page => params[:page], :per_page => 20
     if @last_composition
@@ -69,7 +70,7 @@ public
     @packs_count = @packs.count
     @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
   end
-
+  
   def invoice
     @order = current_user.orders.find params[:id]
 
@@ -168,42 +169,47 @@ public
       format.json{ render :json => {}, :status => :ok }
     end
   end
-  
+    
   def archive
     pack = Pack.find(params[:pack_id])
     
-    pack.get_division_from_pdf if pack.division.empty?
-    number_of_page = pack.division[1]
-    
-    unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
-      Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
-    end
-    
-    pack.division[2].each_with_index do |partie,index|
-      filename = partie[0].gsub(/\s/,'_')
-      level = partie[1]
-      start_number = partie[2]
-      end_number = partie[3]
+    if !pack.information.nil?
+      unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
+        Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
+      end
       
-      part = (start_number == end_number) ? start_number.to_s : start_number.to_s+"-"+end_number.to_s
+      pack.information["collection"].each_with_index do |one_part,index|
+        filename = one_part["name"].gsub(/\s/,'_')
+        level = one_part["level"]
+        start_number = one_part["start"]
+        end_number = one_part["end"]
+        
+        part = (start_number == end_number) ? start_number.to_s : start_number.to_s+"-"+end_number.to_s
+        
+        url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
+        cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
+        system(cmd)
+      end
       
-      url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
-      cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
-      system(cmd)
-    end
-
-    new_name = pack.name.gsub(/\s/,'_')
+      new_name = pack.name.gsub(/\s/,'_')
     
-    Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-    system("rm *.zip") rescue nil # suppression du précédent zip
-    system("zip '#{new_name}.zip' *.pdf")
-    system("rm *.pdf")
-    
-    @url = "/system/archive/#{current_user.id}/#{new_name}.zip"
-    
-    respond_to do |format|
-      format.json do
-        render :json => @url.to_json, :status => :ok
+      Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
+      system("rm *.zip") rescue nil # suppression du précédent zip
+      system("zip '#{new_name}.zip' *.pdf")
+      system("rm *.pdf")
+      
+      @url = "/system/archive/#{current_user.id}/#{new_name}.zip"
+      
+      respond_to do |format|
+        format.json do
+          render :json => @url.to_json, :status => :ok
+        end
+      end
+    else
+      respond_to do |format|
+        format.json do
+          render :json => "Document not ready.".to_json, :status => :error
+        end
       end
     end
   end

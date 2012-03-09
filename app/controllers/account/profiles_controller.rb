@@ -1,12 +1,10 @@
 class Account::ProfilesController < Account::AccountController
-  skip_before_filter :find_last_composition
-
 public
 
   def show
     @user = current_user
   end
-
+  
   def update
     @user = current_user
     if @user.valid_password?(params[:user][:current_password])

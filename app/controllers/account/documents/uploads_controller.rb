@@ -1,7 +1,5 @@
 class Account::Documents::UploadsController < Account::AccountController
   helper :all
-  
-  skip_before_filter :verify_authenticity_token, :only => %w(create)
 
   def create
     type = current_user.prescriber.account_book_types.where(:name => params[:account_book_type]).first.name rescue nil
