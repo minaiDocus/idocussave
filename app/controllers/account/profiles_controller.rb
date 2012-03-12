@@ -1,6 +1,6 @@
 class Account::ProfilesController < Account::AccountController
+  
 public
-
   def show
     @user = current_user
   end

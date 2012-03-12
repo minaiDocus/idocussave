@@ -1,24 +1,33 @@
-.block1{ :class => "parent_month_#{index+1} month round", :id => "m_#{index+1}" }
-  .header{ :class => "head_month_#{index}" }
-    - if !monthly.empty?
-      %span{ :class => "show_month show_child_all", :id => "s_#{index+1}" }  +
-      %span{ :class => "hide_month hide_child_all", :id => "h_#{index+1}" }
-        != "-"
-    %h2 
-      != m
-    - if !monthly.empty?
-      %a{ :class => "month_#{index+1}_details" }
-        %span{ :class => "hide_all_content hide_child_all_details", :id => "hac_#{index+1}" } [Afficher / Masquer] les détails
-      %a{ :class => "month_#{index+1}_details" }
-        %span{ :class => "show_all_content show_child_all_details", :id => "sac_#{index+1}" } [Afficher / Masquer] les détails
-  .content{ :class => "month_#{index+1}" }
-    - if !monthly.empty?
+.month{ :class => ("active" if !monthly.empty?) }
+  .header
+    .actiongroup.first.pull-left
+      - if !monthly.empty?
+        %a.do-showThis.pull-left{ :href => "#", :style => "display:none;" }
+          +
+        %a.do-hideThis.pull-left{ :href => "#" }
+          \-
+    .title.pull-left
+      %h3
+        != month
+    .actiongroup.pull-right
+      - if !monthly.empty?
+        %a.do-showAll.pull-left{ :href => "#", :style => "display:none;" }
+          Afficher les détails
+        %a.do-hideAll.pull-left{ :href => "#" }
+          Cacher les détails
+  - if !monthly.empty?
+    .content
       - @total_pieces_per_month = 0
       - @total_sheets_per_month = 0
       - @total_pages_per_month = 0
       - @total_state = [0,0,0]
       - monthly = monthly.sort{|a,b| a.reporting.customer.code <=> b.reporting.customer.code}
-      - monthly.each do |one_monthly|              
-        != render :partial => "user.html.haml", :locals => { :index => index, :one_monthly => one_monthly }
-        
-      != render :partial => "total.html.haml", :locals => { :index => index }  
+      - monthly.each do |one_monthly|
+        - is_visible = true
+        - if !current_user.is_prescriber && !current_user.is_admin
+          - if one_monthly.reporting.customer.original_user != current_user
+            - is_visible = false
+        - if is_visible
+          != render :partial => "user.html.haml", :locals => { :index => index, :one_monthly => one_monthly }
+      - if current_user.is_prescriber || current_user.is_admin
+        != render :partial => "total.html.haml", :locals => { :index => index }

@@ -5,8 +5,11 @@
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }/
     %meta{ :name => :description, :content => "#{@homepage.meta_description rescue ''}" }/
     = csrf_meta_tag
-    != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min ui-lightness/jquery-ui-1.8.5.custom file-uploader/jquery.fileupload-ui token-input-facebook.min application2)
-    
+    - if ((params[:controller] == "account/documents/documents" && params[:action] == "reporting") || (params[:controller] == "account/profiles" && params[:action] == "show"))
+      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
+    - else
+      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min ui-lightness/jquery-ui-1.8.5.custom file-uploader/jquery.fileupload-ui token-input-facebook.min application2)
+      
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -21,11 +24,8 @@
             %ul{ :class=>"nav" }
               %li{ :class=>("active" if params[:controller] == "account/profiles") }
                 != link_to "Mon compte", account_profile_path
-              %li{ :class=>("active" if params[:controller] == "account/documents/documents") }
+              %li{ :class=>("active" if params[:controller] == "account/documents/documents" && params[:action] == "index") }
                 != link_to "Documents", account_documents_path
-              /
-                %li
-                  != link_to "Mes sauvegardes", account_backups_path
               %li
                 != link_to "Passer une nouvelle commande »", new_tunnel_order_path
           - if current_user
@@ -55,7 +55,7 @@
                 .modal-footer
                   != f.submit :class => "btn btn-primary", :value => "OK"
                   %a{ :href=>"users/password/new", :class=>"btn" } Aide
-                  %a{ :href=>"#", :class=>"modal-close btn" } Close               
+                  %a{ :href=>"#", :class=>"modal-close btn" } Close
         
         
         
@@ -65,14 +65,7 @@
       <!--[if lt IE 9]>
         <script src="/javascripts/html5.js" type="text/javascript"></script>
       <![endif]-->
-    != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min file-uploader/tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min application application2)
-    
-    :css
-      .modal-body {
-        padding: 0 15px; }
-        
-      input[type="checkbox"]{
-        margin: 2px !important; }
-        
-      form {
-        margin: 0;}
+    - if (params[:controller] == "account/documents/documents" && params[:action] == "reporting")
+      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min reporting)
+    - else
+      != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min file-uploader/tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min application application2)

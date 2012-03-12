@@ -1,324 +1,37 @@
-#userreporting.scrollpane
-  != render :partial => "actionbar"
-    
-  .wrapper
-    - mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
-    .block{ :class => "round"}      
-      .header
-        %h2
-          Reporting de l'année #{@year}
-        %a.do-showAll{ :class => "show_all"}
-          +
-        %a.do-hideAll{ :class => "hide_all"}
-          != "-"
-      .inter{ :class => "round_bottom" }
-        %span{ :class => "prev_next" }
-          %a
-            != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))
-          %a #{@year}
-          %a
-            != link_to( (@year + 1), reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || "")))
-      - mois.each_with_index do |m, index|
-        - monthly = @monthlies.select{|mo| mo.month == index + 1}
-        != render :partial => "month.html.haml", :locals => { :m => m, :index => index, :monthly => monthly }
-           
-    
-:css
-  .block {
-    float:left;
-    width: 550px; 
-    display: block;
-    position: relative;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border-style: solid;
-    border-color: #b9b9b9;
-    border-width: 1px;
-    background-color: #fafafa;}
-      
-  .block .header {
-    padding-top: 15px;
-    height: 20px;
-    background-color: #b9b9b9;
-    display: block;
-    position: relative;
-    width: 100%; }
-  
-  .block .inter {
-    padding-top: 5px;
-    height: 20px;
-    display: block;
-    position: relative;
-    top: -1px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    border-style: solid;
-    border-color: #b9b9b9;
-    border-width: 1px;   
-    background-color: #fafafa;}
-    
-  .border_bottom {    
-    border-bottom-left-radius: 4px;
-    -webkit-border-bottom-left-radius: 4px;
-    -moz-border-bottom-left-radius: 4px;
-    -khtml-border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    -webkit-border-bottom-right-radius: 4px;
-    -moz-border-bottom-right-radius: 4px;
-    -khtml-border-bottom-right-radius: 4px;}
-    
-  .block .inter a{
-    margin-left:10px;
-    font-size: 15px;
-    font-weight: bold;
-    text-align: left;}
-    
-  .block .inter .prev_next{
-    float: right;
-    margin-right: 10px;
-    font-size: 10px;
-    font-weight: bold;}
-  
-  .block .header h2 {
-    text-align: center;
-    font-size: 15px;
-    font-weight: bold;}
-  
-  .block1 { 
-    display: block;
-    position: relative;
-    margin-top: 5px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    border-style: solid;
-    border-color: #e7ad00;
-    border-width: 1px;
-    background-color: #dddbda; }
-  
-  .block1 .header, .block .content {
-    display: block;
-    position: relative;
-    width: 100%;}
-      
-  .block1 .header {
-    padding-top: 15px;
-    height: 13px;
-    background-color: #dddbda;}
-  
-  .block1 .header h2 {
-    font-size: 15px;
-    font-weight: bold;
-    padding-left: 22px;
-    text-align: left;}
-  
-  .block .content .child {
-    display: block;
-    position: relative;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border-style: solid;
-    border-color: #ffcf40;
-    border-width: 1px;
-    background-color: #fafafa; }
-  
-  .block .content .total {
-    display: block;
-    position: relative;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border-style: solid;
-    border-width: 1px;
-    background-color: white; }
-  
-  .block .content ul.total {
-    border-color: #ffc619; }
-  
-  .block .content ul li {
-    display: block;
-    position: relative;
-    width: 100%; }
-    
-  .block .content .child li td, .block .content .child li th { 
-    text-align:right;
-    border-width:10px;
-    border-style:solid;
-    border-color: #fafafa;}
-    
-  .block .content .total li td, .block .content .total li th { 
-    text-align:right;
-    border-width:10px;
-    border-style:solid;
-    border-color: white;}
-  
-  .block .content ul li table {
-    width:100%}
-    
-  .block .content ul li td.first, .block .content ul li th.first {
-    width: 135px;}
-      
-  .block .content ul li .tabletitle{
-    height: 25px;    
-    background-color: #ffcf40;
-    width: 100%; }
-  
-  .block .content ul li .total_head {
-    height: 25px;
-    background-color: orange;
-    width: 100%; }
-  
-  .block .content ul li .tabletitle h3 {
-    float:left;
-    position: relative;
-    padding-top: 5px;
-    padding-left: 5px;}
-  
-  .without_sign {
-    margin-left: 10px;}
-    
-  .block .content ul li .tabletitle .state_container {
-    height: 19px;
-    float: right;    
-    width: 175px;    
-    right: 5px;
-    border-style: solid;
-    background-color: #fafafa;
-    position: relative;
-    top: 3px;}
-  
-  .round {
-    border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -khtml-border-radius: 4px;}
-    
-  .round_left {
-    border-top-left-radius: 4px;
-    -webkit-border-top-left-radius: 4px;
-    -moz-border-top-left-radius: 4px;
-    -khtml-border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    -webkit-border-bottom-left-radius: 4px;
-    -moz-border-bottom-left-radius: 4px;
-    -khtml-border-bottom-left-radius: 4px;}
-    
-  .round_right {    
-    border-top-right-radius: 4px;
-    -webkit-border-top-right-radius: 4px;
-    -moz-border-top-right-radius: 4px;
-    -khtml-border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    -webkit-border-bottom-right-radius: 4px;
-    -moz-border-bottom-right-radius: 4px;
-    -khtml-border-bottom-right-radius: 4px;}
-  
-  .bar_full {
-    float:left;
-    width: 55px;
-    height:15px;
-    margin-top:1px;
-    margin-left:1px;    
-    border-width: 1px;
-    border-color: #c9dd03;
-    border-style: solid;
-    background-color: #c9dd03;
-    text-align: center;}
-        
-  .total_bar {
-    text-align: center;}
-    
-  .bar_empty {
-    float:left;
-    width: 55px;
-    height:15px;
-    margin-top:1px;
-    margin-left:1px;
-    border-width: 1px;
-    border-color: #c9dd03;
-    border-style: solid;
-    background-color: #fafafa; 
-    text-align: center;}
-    
-  .bar_empty a, .bar_full {}
-  
-  .hide_all {
-    float:left;
-    font-size: 30px;
-    position: relative;
-    left: 13px;
-    bottom: 8px;}
-    
-  .show_all {
-    float:left;
-    font-size: 20px;
-    position: relative;
-    left: 13px;
-    bottom: 5px;}
-    
-  .hide_child_all {
-    float:left;
-    font-size: 30px;
-    position: relative;
-    left: 7px;
-    bottom: 12px;}
-    
-  .show_child_all {
-    float:left;
-    font-size: 20px;
-    position: relative;
-    left: 7px;
-    bottom: 9px;}
-    
-  .hide_child_all_details, .show_child_all_details {
-    float:right;
-    position: relative;
-    right: 7px;
-    bottom: 9px;}
-    
-  .hide_child_details {
-    float:left;
-    width: 11px;
-    height: 11px;
-    border-width: 0px;
-    border-color: #fafafa;
-    border-style: solid;
-    font-size: 30px;
-    text-align: center;
-    position: relative;
-    left: 2px;
-    top: 6px;}
-    
-  .hide_child_details a{
-    position: relative;
-    top: -5px;
-    font-size: 32px;
-    color: #7f40ff;}
-     
-  .show_child_details {
-    float:left;
-    width: 11px;
-    height: 11px;
-    border-width: 0px;
-    border-color: #fafafa;
-    border-style: solid;
-    font-size: 20px;
-    position: relative;
-    left: 2px;
-    top: 6px;}
-  
-  .show_child_details a{
-    position: relative;
-    left: -1 px;
-    top: -4px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #7f40ff;}
-  
-  .color_total {    
-    border-color: #ffd98f;
-    background-color: #ffd98f;}
+﻿#reporting.container.padding6top
+  - if current_user.is_prescriber || current_user.is_admin
+    .row
+      .span12
+        .well
+          .actionbar
+            = label_tag :filter, "Filtrer sur : ", :class => "pull-left margin1left margin1right"
+            != select_tag(:view_for, options_for_select( [["Tous",0]] + filter_list_of_users(@customers) ), :class => "view_for pull-left margin1top margin1right")
+            
+            - if current_user.is_admin?
+              %form{ :action => reporting_account_documents_path, :method => "GET" }
+                = label_tag :email, "Voir le reporting de :", :class => "pull-left margin3left margin1right"
+                = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
+                = submit_tag "Valider", :class => "pull-left btn margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+  .row
+    .span8
+      .well
+        .header.first
+          .actiongroup.first.pull-left
+            %a.do-showGlobal.pull-left{ :href => "#", :style => "display:none;" }
+              +
+            %a.do-hideGlobal.pull-left{ :href => "#" }
+              \-
+          .title
+            %h3.pull-left
+              Reporting de l'année #{@year}
+          .actiongroup.pull-right
+            %a
+              != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))
+            %span #{@year}
+            %a
+              != link_to( (@year + 1), reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || "")))
+        .content.margin3top
+          - months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+          - months.each_with_index do |month, index|
+            - monthly = @monthlies.select{|m| m.month == index + 1}
+            != render :partial => "month.html.haml", :locals => { :month => month, :index => index, :monthly => monthly }

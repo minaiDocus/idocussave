@@ -1,5 +1,5 @@
 class Account::Documents::DocumentsController < Account::AccountController
-  layout :choose_layout, :only => %w(index reporting)
+  layout "inner", :only => %w(index reporting)
   
   before_filter :find_last_composition, :only => %w(index)
 
@@ -7,14 +7,6 @@ protected
   def find_last_composition
     return if self.controller_name == 'document_tags'
     @last_composition = current_user.composition
-  end
-  
-  def choose_layout
-    if [ 'index' ].include? action_name
-      'inner'
-    elsif ['reporting'].include? action_name
-      'inner2'
-    end
   end
 
 public
@@ -215,6 +207,22 @@ public
   end
   
   def reporting
+    @user = nil
+    if params[:email] && current_user.is_admin
+      @user = User.find_by_email(params[:email])
+      flash[:notice] = "User unknow : #{params[:email]}" unless @user
+    end
+    if @user.nil?
+      @user = current_user
+    end
+    @year = params[:year].to_i if !params[:year].blank?
+    @year ||= Time.now.year
+    @monthlies = @user.all_monthly.of(@year).asc(:month).entries
+    @clients = @user.all_clients_sorted.entries
+    @customers = @user.all_customers_sorted.entries
+  end
+  
+  def reporting2
     @user = nil
     if params[:email] && current_user.is_admin
       @user = User.find_by_email(params[:email])
