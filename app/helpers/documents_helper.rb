@@ -18,10 +18,11 @@ module DocumentsHelper
     end
 
     users.collect do |u|
-      [
-        ((!u.company.blank? ? u.code + " - " : u.code) + ((!u.company.blank? && !u.code.blank?) ? u.company + " - " : "") + u.email),
-        u.id
-      ]
+      name = ""
+      name +=  u.code + " - " if !u.code.blank?
+      name +=  u.company + " - " if !u.company.blank?
+      name += u.email
+      [name,u.id]
     end
   end
   
@@ -54,10 +55,11 @@ module DocumentsHelper
       end
     end
     sorted_users.collect do |u|
-      [
-        ((!u.company.blank? ? u.code + " - " : u.code) + ((!u.company.blank? && !u.code.blank?) ? u.company + " - " : "") + u.email),
-        u.id
-      ]
+      name = ""
+      name +=  u.code + " - " if !u.code.blank?
+      name +=  u.company + " - " if !u.company.blank?
+      name += u.email
+      [name,u.id]
     end
   end
   

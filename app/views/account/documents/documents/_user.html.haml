@@ -1,4 +1,4 @@
-.user{ :id => "user_#{one_monthly.reporting.customer.id}", :class => ("active" if !one_monthly.documents.empty?) }
+.user{ :class => "user_#{one_monthly.reporting.customer.id} #{"active" if !one_monthly.documents.empty?}" }
   .header
     .actiongroup.first.pull-left
       - if !one_monthly.documents.empty?

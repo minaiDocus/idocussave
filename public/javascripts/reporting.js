@@ -9,7 +9,7 @@ $(document).ready(function(){
       $(".user").show();
       $(".total").show();
     } else {
-      $("#user_"+id).show();
+      $(".user_"+id).show();
     }
   });
   
