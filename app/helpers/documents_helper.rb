@@ -17,7 +17,12 @@ module DocumentsHelper
       end
     end
 
-    users.collect{|u| [(u.company ? u.company+" - "+u.email : u.email),u.id]}
+    users.collect do |u|
+      [
+        ((!u.company.blank? ? u.code + " - " : u.code) + ((!u.company.blank? && !u.code.blank?) ? u.company + " - " : "") + u.email),
+        u.id
+      ]
+    end
   end
   
   def account_book_types_option
@@ -48,18 +53,17 @@ module DocumentsHelper
         a.email <=> b.email
       end
     end
-    sorted_users.collect do |user|
-      name = user.code.blank? ? "" : user.company.blank? ? user.code : "#{user.code} - "
-      name += user.company.blank? ? "" : user.first_name.blank? ? user.company : "#{user.company} - "
-      name += user.first_name.blank? ? "" : user.last_name.blank? ? user.first_name : "#{user.first_name} #{user.last_name}"
-      [name, user.id]
+    sorted_users.collect do |u|
+      [
+        ((!u.company.blank? ? u.code + " - " : u.code) + ((!u.company.blank? && !u.code.blank?) ? u.company + " - " : "") + u.email),
+        u.id
+      ]
     end
   end
   
   def format_user user
     name = user.code.blank? ? "" : user.company.blank? ? user.code : "#{user.code} - "
-    name += user.company.blank? ? "" : user.first_name.blank? ? user.company : "#{user.company} - "
-    name += user.first_name.blank? ? "" : user.last_name.blank? ? user.first_name : "#{user.first_name} #{user.last_name}"
+    name += user.company.blank? ? "" : user.company
     name
   end
   

@@ -5,7 +5,7 @@
         .well
           .actionbar
             = label_tag :filter, "Filtrer sur : ", :class => "pull-left margin1left margin1right"
-            != select_tag(:view_for, options_for_select( [["Tous",0]] + filter_list_of_users(@customers) ), :class => "view_for pull-left margin1top margin1right")
+            != select_tag(:view_for, options_for_select( [["Tous",0]] + filter_list_of_users(@customers) ), :class => "view_for pull-left margin1top margin1right", :style => "width:auto")
             
             - if current_user.is_admin?
               %form{ :action => reporting_account_documents_path, :method => "GET" }
