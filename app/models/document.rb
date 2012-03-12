@@ -20,8 +20,7 @@ class Document
 has_mongoid_attached_file :content,
     :styles => {
       :thumb => ["46x67>", :png],
-      :medium => ["92x133", :png],
-      :large => ["480x696", :png]
+      :medium => ["92x133", :png]
     }
   
   before_content_post_process do |image|
@@ -55,7 +54,7 @@ has_mongoid_attached_file :content,
       doc.dirty = false
       doc.content.reprocess!
       if !doc.save
-        doc.dirty = true
+        doc.update_attributes(:dirty => true)
       end
     end
     puts "Document reprocessed number : #{nb}"
