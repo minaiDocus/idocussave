@@ -231,7 +231,7 @@ class Pack
               fill_color "FF0000"
               stroke_color "FF0000"
               rotate(330, :origin => [495,780]) do
-                stroke_rectangle [493, 790], 124, 16
+                # stroke_rectangle [493, 790], 124, 16
                 draw_text new_name.sub(/\.pdf/,''), :size => 10, :at => [495, 780]
               end
             end
