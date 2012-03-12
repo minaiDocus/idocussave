@@ -387,9 +387,11 @@ class Pack
           Dir.chdir("..")
           # system("rm -r #{pack_name}")
           
-          pack.users << user
-          pack.users = pack.users + user.find_or_create_reporting.viewer
-            
+          if !pack_already_exists
+            pack.users << user
+            pack.users = pack.users + user.find_or_create_reporting.viewer
+          end
+          
           pack.save
         else
           print " - aucun\n"
