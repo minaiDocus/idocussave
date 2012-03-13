@@ -12,11 +12,15 @@
   
 .group
   != f.label :owner, "Propriétaire", :class => :label
-  != select_tag "account_book_type[owner]", options_for_select(User.where(:is_prescriber => true).entries.collect { |u| [u.name, u.id] }, [@account_book_type.owner.name,@account_book_type.owner.id])
+  - selection = User.where(:is_prescriber => true).entries.collect{|u| [u.name, u.id]} rescue []
+  - selected = [@account_book_type.owner.name,@account_book_type.owner.id] rescue []
+  != select_tag "account_book_type[owner]", options_for_select(selection, selected)
   
 .group
   != label_tag "account_book_type[client_ids][]", "Clients", :class => :label
-  != select_tag "account_book_type[client_ids][]", options_for_select(@account_book_type.owner.clients.collect { |u| [u.name, u.id] }, @account_book_type.clients.collect { |u| u.id}), :multiple=>true, :size=>10, :class => 'text_field', :id => "account_book_type_client_ids[]"
+  - selection = @account_book_type.owner.clients.collect{|u| [u.name, u.id]} rescue []
+  - selected = @account_book_type.clients.collect{|u| u.id} rescue []
+  != select_tag "account_book_type[client_ids][]", options_for_select(selection, selected), :multiple=>true, :size=>10, :class => 'text_field', :id => "account_book_type_client_ids[]"
 
 .group.navform.wat-cf
   %button.button{:type => 'submit'}
