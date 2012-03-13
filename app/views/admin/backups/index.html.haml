@@ -1,0 +1,39 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active!= link_to "All backups", admin_backups_path
+      %li!= link_to "Services", service_admin_backups_path
+  .content
+    %h2.title All backups
+    .inner  
+      %table.table
+        %tr
+          %th Created at
+          %th Customer
+          %th Account number
+          %th Space
+          %th State
+          %th.last &nbsp;
+        - @backups.each do |backup|
+          %tr{:class => cycle("odd", "even")}
+            %td= l(backup.created_at)
+            %td= link_to backup.user.email, admin_user_path(backup.user)
+            %td= backup.account_number
+            %td= backup.space.to_s + " Go"
+            %td
+              - if backup.state == "AC"
+                Active
+              - elsif backup.state == "DE"
+                Disabled
+              - elsif backup.state == "EP"
+                Deleting scheduled
+              - else
+                Unkown
+            %td.last
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_backup_path(backup)
+            
+      .actions-bar.wat-cf
+        .actions
+        != will_paginate @backups
+
+- content_for :sidebar, render(:partial => 'sidebar')

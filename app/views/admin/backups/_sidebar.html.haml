@@ -1,0 +1,11 @@
+.block
+  %h3 Backup management
+  .content
+    %p
+      Here you can
+      %span.hightlight manage
+      backups
+
+    %p
+      %form{ :method => "GET", :action => admin_backups_path }
+        != render :partial =>'/admin/shared/filter', :locals => {:link_back => admin_backups_path}
