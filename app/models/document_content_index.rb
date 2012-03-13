@@ -1,235 +1,212 @@
 class DocumentContentIndex
-  INDEX_PATH = "#{Rails.root}/tmp/documents_contents_index/"
+  INDEX_PATH = "#{Rails.root}/tmp/document_content.index"
   
-  attr_reader :data, :header, :body, :formatted_header, :formatted_body, :content_text, :indexed_pack_ids, :indexed_document_ids
+  class << self
   
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  
-  referenced_in :user
-  
-public
-  def remove pack_ids
-    get_all if @formatted_body.nil?
+    def init
+      File.new(INDEX_PATH,"w")
+    end
     
-    if pack_ids.is_a?(Array)
-      packs = Pack.any_in(:_id => pack_ids)
-      packs.each do |pack|
-        pack.documents.each do |document|
-          content_ary = document.content_text.split
-          content_ary.each do |c|
-            unless @formatted_body[c].nil?
-              if @formatted_body[c][0].is_a?(Array)
-                @formatted_body[c][0] -= [pack.id]
-                if @formatted_body[c][0].empty?
-                  @formatted_body.delete(c)
-                elsif @formatted_body[c][1].is_a?(Array)
-                  @formatted_body[c][1] -= [document.id]
-                end
-              end
-            end
-          end
-          @indexed_document_ids -= [document.id]
-        end
-        @indexed_pack_ids -= [pack.id]
+    def indexed_lines
+      lines = File.open(INDEX_PATH,"r").readlines rescue []
+      lines.map do |line|
+        line.chomp
       end
     end
-    save_data
-  end
-  
-  def update_data!
-    get_all
     
-    pack_ids = self.user.packs.collect{|p| p.id} - @indexed_pack_ids
-    documents = Document.any_in(:pack_id => pack_ids).not_in(:_id => @indexed_document_ids).without_original.entries
-    
-    print "processing #{documents.count} document(s)..."
-    
-    start_time = Time.now
-    documents.each do |document|
-      if Time.now - start_time > 10
-        print "!"
-        sleep(2)
-        start_time = Time.now
-      end
-      
-      content_ary = document.content_text.split
-      content_ary.each do |c|
-        if @formatted_body[c]
-          @formatted_body[c][0] << document.pack.id
-          @formatted_body[c][1] << document.id
+    def is_visible line, x_ids, is_document=true
+      part = 1 if is_document
+      part = 2 if !is_document
+      ids = line.split("\t")[part].split(",")
+      ok = false
+      while(!ids.empty?)
+        if x_ids.include? ids[0]
+          ok = true
+          break
         else
-          @formatted_body = @formatted_body.merge( { c => [[document.pack.id], [document.id]] } )
+          ids -= [ids[0]]
         end
       end
-      @indexed_pack_ids << document.pack.id
-      @indexed_document_ids << document.id
-      
-      print "."
+      ok
     end
     
-    save_data
-  end
-
-  def get_all
-    get_data
-    get_header
-    get_body
-    get_formatted_header
-    get_formatted_body
-    get_indexed_pack_ids
-    get_indexed_document_ids
-    true
-  end
-
-  def get_file_name
-    INDEX_PATH + self.user.id.to_s+".index"
-  end
-  
-  def save_data
-    uniqify!
-    make_text!
-    file = File.open(get_file_name,"w")
-    file ? file.syswrite(@content_text) : false
-  end
-  
-  def create_data
-    File.open(get_file_name,"w+")
-  end
-  
-  def get_data
-    file = nil
-    begin
-      file = File.open(get_file_name,"r") 
-    rescue
-      file = create_data
-    end
-    @data = file ? file.readlines : []
-  end
-  
-  def get_header
-    @header = @data[0..29]
-    @header = [] unless @header
-    while @header.length < 31
-      @header << ""
-    end
-    @header
-  end
-  
-  def get_body
-    @body = @data[31..(32 + @data.length - 1)] || []
-  end
-  
-  def get_formatted_header
-    array_data = []
-    @header.each do |h|
-      if h.is_a?(String)
-        tmp_h =  h.chomp.split(":")
-        key = tmp_h[0] || ""
-        value = tmp_h[1] || ""
-        array_data << [ key, value ]
+    def search word, ids, is_document=true, only_word=true, strict=false
+      lines = []
+      lines = find indexed_lines, word if !strict
+      lines = [find_strict(indexed_lines,word)] if strict
+      lines = lines.compact
+      lines = lines.select do |line|
+        is_visible line, ids, is_document
+      end      
+      if only_word
+        lines.map do |line|
+          line.split("\t")[0]
+        end
       else
-        array_data << [ "", ""]
+        lines
       end
     end
-    @formatted_header = array_data
-  end
-  
-  def get_formatted_body
-    hash_data = {}
-    @body.each do |d|
-      tmp_d =  d.chomp.split("\t")
-      word = tmp_d[0]
-      pack_ids = tmp_d[1].split(",")
-      document_ids = tmp_d[2].split(",")
-      hash_data = hash_data.merge( { word => [ pack_ids, document_ids ] } )
+    
+    def find_index lines, word
+      lines.index{|l| l.match(/^#{word}\t/)}
     end
-    @formatted_body = hash_data
-  end
-  
-  def get_indexed_pack_ids
-    @indexed_pack_ids = @formatted_header[0][1].split(",")
-  end
-  
-  def get_indexed_document_ids
-    @indexed_document_ids = @formatted_header[1][1].split(",")
-  end
-  
-  def make_text!
-    text = ""
-    text += "INDEXED_PACK_IDS : " + @indexed_pack_ids.join(",")
-    text += "\n"
-    text += "INDEXED_DOCUMENT_IDS : " + @indexed_document_ids.join(",")
-    text += "\n"
-    @formatted_header[2..29].each do |fh|
-      text += fh.join(":") + "\n"
+    
+    def find lines, word
+      lines.select{|l| l.split("\t")[0].match(/#{word}/)}
     end
-    text += "\n"
-    @formatted_body.each do |key,value|
-      word = [ key ]
-      pack_ids = [ value[0].join(",") ]
-      document_ids = [ value[1].join(",") ]
-      text += ( word + pack_ids + document_ids ).join("\t") + "\n"
+    
+    def find_strict lines, word
+      lines.select{|l| l.match(/^#{word}\t/)}.first
     end
-    @content_text = text
-  end
-  
-  def uniqify!
-    @formatted_body = @formatted_body.each do |key,value|
-      value[0] = value[0].uniq
-      value[1] = value[1].uniq
-    end
-    @indexed_document_ids = @indexed_document_ids.uniq
-    @indexed_pack_ids = @indexed_pack_ids.uniq
-    true
-  end
-  
-  def sort!
-    @formatted_body = @formatted_body.sort { |a,b| a.keys.join.sub(/^\+?/,'') <=> b.keys.join.sub(/^\+?/,'') }
-  end
-  
-  def search word, strict=true
-    get_data
-    results = []
-    if word.is_a?(String)
-      body = @data.length > 30 ? @data[31..@data.length-1] : []
-      res = body.select { |d| d.match(/^\+?#{word}/) } if strict
-      res = body.select { |d| d.match(/.*#{word}.*\t/) } if !strict
-      res.each do |r|
-        rr = r.split("\t")
-        results << [rr[0],rr[1].split(","),rr[2].split(",")]
+    
+    def find_document_ids words, doc_ids
+      res_lines = []
+      words.each do |word|
+        res = search(word,doc_ids,true,false,true).first
+        res_lines << res if !res.nil?
       end
-    elsif word.is_a?(Array)
-      word.each do |w|
-        body = @data.length > 30 ? @data[31..@data.length-1] : []
-        res = body.select { |d| d.match(/^\+?#{w}/) } if strict
-        res = body.select { |d| d.match(/.*#{w}.*\t/) } if !strict
-        res.each do |r|
-          rr = r.split("\t")
-          results << [rr[0],rr[1].split(","),rr[2].split(",")]
-        end
+      make_dependance res_lines
+    end
+    
+    def find_pack_ids words, pack_ids
+      res_lines = []
+      words.each do |word|
+        res = search(word,pack_ids,false,false,true).first
+        res_lines << res if !res.nil?
       end
-      words = []
-      pack_ids = nil
-      document_ids = nil
-      results.each do |r|
-        words << r[0]
-        if pack_ids.nil?
-          pack_ids = r[1]
+      make_dependance res_lines, false
+    end
+    
+    def make_dependance lines, document=true
+      part = 1 if document
+      part = 2 if !document
+      valid_ids = []
+      lines.each_with_index do |line,index|
+        if index == 0
+          valid_ids = line.split("\t")[part].split(",")
         else
-          pack_ids = pack_ids - (pack_ids - r[1])
-        end
-        if document_ids.nil?
-          document_ids = r[2]
-        else
-          document_ids = document_ids - (document_ids - r[2])
+          ids = line.split("\t")[part].split(",")
+          valid_ids = valid_ids.select do |id|
+            ids.include? id
+          end
         end
       end
-      pack_ids = [] if pack_ids.nil?
-      document_ids = [] if document_ids.nil?
-      results = [words.uniq,pack_ids.uniq,document_ids.uniq]
+      valid_ids
     end
-    results
+    
+    def save_content data
+      file = File.open(INDEX_PATH,"w") rescue nil
+      if file
+        file.write data
+        file.rewind
+        true
+      else
+        false
+      end
+    end
+    
+    def update lines
+      lines = remove_blank lines
+      lines = lines.uniq
+      lines = remove_duplicate_entries lines
+      if save_content lines.join("\n")
+        true
+      else
+        false
+      end
+    end
+    
+    def remove_blank lines
+      lines - lines.select{|l| l.blank? || l.split("\t")[1].nil? || l == ""}
+    end
+    
+    def remove_duplicate_entries lines
+      lines.map do |line|
+        s_line = line.split("\t")
+        [s_line[0],s_line[1].split(",").uniq.join(","),s_line[2].split(",").uniq.join(",")].join("\t")
+      end
+    end
+    
+    def add document, lines=[], do_save=true
+      if !document.content_text.nil? || !document.content_text.blank?
+        i_lines = lines if !lines.empty?
+        i_lines = indexed_lines if lines.empty?
+        document.content_text.split.select{|w| w.match(/^\+/)}.each do |word|
+          w = word.sub("+","")
+          index = find_index i_lines, w
+          if index.nil?
+            i_lines << "#{w}\t#{document.id},#{document.pack.documents.originals.first.id}\t#{document.pack.id}"
+          else
+            parts = i_lines[index].split("\t")
+            i_lines[index] = "#{parts[0]}\t#{parts[1]},#{document.id}\t#{parts[2]},#{document.pack.id}"
+          end
+        end
+        if do_save
+          if update i_lines
+            document.update_attributes(:indexed => true)
+          end
+        else
+          i_lines
+        end
+      end
+    end
+    
+    def remove document, lines=[], do_save=true
+      if !document.content_text.nil? || !document.content_text.blank?
+        i_lines = lines if !lines.empty?
+        i_lines = indexed_lines if lines.empty?
+        document.content_text.split.select{|w| w.match(/^\+/)}.each do |word|
+          index = find i_lines, word
+          if !index.nil?
+            i_lines[index] = i_lines[index].sub("#{document.id}","").sub("#{document.pack.originals.first.id}","").sub("#{document.pack.id}")
+          end
+        end
+        if do_save
+          if update i_lines
+            document.update_attributes(:indexed => false)
+          end
+        else
+          i_lines
+        end
+      end
+    end
+    
+    def add_pack pack
+      lines = indexed_lines
+      checkpoint_timer = Time.now
+      pack.documents.each do |document|
+        if ((Time.now - checkpoint_timer) > 10.seconds)
+          sleep(2)
+          checkpoint_timer = Time.now
+        else
+          lines = add document, lines, false
+        end
+      end
+      if update lines
+        pack.documents.not_indexed.entries.each do |document|
+          document.update_attributes(:indexed => true)
+        end
+      end
+    end
+    
+    def remove_pack pack
+      lines = indexed_lines
+      pack.documents.each do |document|
+        lines = remove document, lines, false
+      end
+      if update lines
+        pack.documents.each do |document|
+          document.update_attributes(:indexed => false)
+        end
+      end
+    end
+    
+    def process_all
+      Pack.all.entries.each do |pack|
+        add_pack pack
+      end
+    end
+  
   end
   
 end
