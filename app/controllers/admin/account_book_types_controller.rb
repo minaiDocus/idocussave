@@ -22,9 +22,8 @@ public
   
   def create
     @account_book_type = AccountBookType.new params[:account_book_type]
-    if params[:user_ids]
-      users = User.any_in(:_id => params[:user_ids]).entries
-      @account_book_type.users = users
+    if params[:account_book_type][:client_ids]
+      @account_book_type.clients = User.any_in(:_id => params[:account_book_type][:client_ids])
     end
     if @account_book_type.save
       users.each{|u| u.save} if params[:user_ids]
@@ -38,9 +37,8 @@ public
   end
   
   def update
-    if params[:user_ids]
-      users = User.any_in(:_id => params[:user_ids]).entries
-      @account_book_type.users = users
+    if params[:account_book_type][:client_ids]
+      @account_book_type.clients = User.any_in(:_id => params[:account_book_type][:client_ids])
     end
     if @account_book_type.update_attributes params[:account_book_type]
       users.each{|u| u.save} if params[:user_ids]

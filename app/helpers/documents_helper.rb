@@ -27,14 +27,9 @@ module DocumentsHelper
   end
   
   def account_book_types_option
-    prescriber = current_user.prescriber
-    if prescriber
-      prescriber.account_book_types.by_position.map do |u|
-        description = u.description.blank? ? "" : " " + u.description
-        [u.name + description, u.name]
-      end
-    else
-      []
+    current_user.account_book_types.by_position.map do |u|
+      description = u.description.blank? ? "" : " " + u.description
+      [u.name + description, u.name]
     end
   end
   
@@ -48,7 +43,7 @@ module DocumentsHelper
         a.code <=> b.code
       elsif a.company != b.company
         a.company <=> b.company
-      elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+        elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
         (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
       else
         a.email <=> b.email

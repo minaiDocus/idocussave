@@ -5,7 +5,8 @@ class AccountBookType
 
   before_save :upcase_name
   
-  references_and_referenced_in_many :users
+  referenced_in :owner, :class_name => "User", :inverse_of => :my_account_book_types
+  references_and_referenced_in_many :clients, :class_name => "User", :inverse_of => :account_book_types
   
   field :name, :type => String
   field :description, :type => String, :default => ""
@@ -13,7 +14,8 @@ class AccountBookType
   
   slug :name
   
-  validates_presence_of :name
+  validates :name, :length => { :in => 2..4 }
+  validates :description, :length => { :in => 2..50 }
   
 public
   

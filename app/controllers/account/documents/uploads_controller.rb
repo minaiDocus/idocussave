@@ -2,7 +2,7 @@ class Account::Documents::UploadsController < Account::AccountController
   helper :all
 
   def create
-    type = current_user.prescriber.account_book_types.where(:name => params[:account_book_type]).first.name rescue nil
+    type = current_user.account_book_types.where(:name => params[:account_book_type]).first.name rescue nil
     
     data = []
     hsh = {}

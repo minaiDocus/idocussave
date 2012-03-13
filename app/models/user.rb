@@ -31,7 +31,9 @@ class User
   references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
   
   references_and_referenced_in_many :packs
-  references_and_referenced_in_many :account_book_types
+  
+  references_many :my_account_book_types, :class_name => "AccountBookType", :inverse_of => :owner
+  references_and_referenced_in_many :account_book_types,  :inverse_of => :clients
   
   references_many :orders
   references_many :credits
@@ -58,6 +60,14 @@ class User
     else
       return self.email
     end
+  end
+  
+  def information
+    f_info = []
+    f_info << self.code if !self.code.blank?
+    f_info << self.company if !self.company.blank?
+    f_info << self.email
+    f_info.join(" - ")
   end
 
   def self.find_by_email param
