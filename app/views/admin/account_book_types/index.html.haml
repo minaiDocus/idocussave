@@ -9,12 +9,14 @@
       %table.table
         %tr
           %th Position
+          %th Prescripteur
           %th Name
           %th Description
           %th.last &nbsp;
         - @account_book_types.each do |account_book_type|
           %tr{:class => cycle("odd", "even")}
             %td!= account_book_type.position
+            %td!= link_to account_book_type.owner.email, admin_user_path(account_book_type.owner) rescue ""
             %td!= account_book_type.name
             %td!= account_book_type.description
             %td.last

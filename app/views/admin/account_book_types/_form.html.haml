@@ -12,13 +12,13 @@
   
 .group
   != f.label :owner, "Propriétaire", :class => :label
-  - selection = User.where(:is_prescriber => true).entries.collect{|u| [u.name, u.id]} rescue []
+  - selection = User.where(:is_prescriber => true).entries.collect{|u| [u.information, u.id]} rescue []
   - selected = [@account_book_type.owner.name,@account_book_type.owner.id] rescue []
   != select_tag "account_book_type[owner]", options_for_select(selection, selected)
   
 .group
   != label_tag "account_book_type[client_ids][]", "Clients", :class => :label
-  - selection = @account_book_type.owner.clients.collect{|u| [u.name, u.id]} rescue []
+  - selection = @account_book_type.owner.clients.collect{|u| [u.information, u.id]} rescue []
   - selected = @account_book_type.clients.collect{|u| u.id} rescue []
   != select_tag "account_book_type[client_ids][]", options_for_select(selection, selected), :multiple=>true, :size=>10, :class => 'text_field', :id => "account_book_type_client_ids[]"
 
