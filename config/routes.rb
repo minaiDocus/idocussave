@@ -39,14 +39,12 @@ Idocus::Application.routes.draw do
       resource :upload
     end
     
-    resources :backups
-    
+    resource :profile
     resources :addresses
     resource :dropbox do
       get 'authorize_url', :on => :member
       get 'callback', :on => :member
     end
-    resource :profile
     resource :paypal, :only => [] do
       member do
         post :success
@@ -73,6 +71,11 @@ Idocus::Application.routes.draw do
       post 'reorder', :on => :member
       delete 'delete_document', :on => :member
     end
+    resources :backups
+    
+    namespace :manage do
+      resources :account_book_types
+    end
   end
 
   namespace :tunnel do
@@ -94,7 +97,6 @@ Idocus::Application.routes.draw do
     resources :users do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
-      get 'reinitialize_all_delivery_state', :on => :collection
       get 'search', :on => :collection
     end
     resources :orders do

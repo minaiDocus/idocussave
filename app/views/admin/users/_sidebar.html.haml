@@ -11,13 +11,7 @@
       %ul.list
         %li!= image_tag("web-app-theme/application_edit.png", :alt => "Edit") + " to edit a user"
         %li!= image_tag("web-app-theme/cross.png", :alt => "Delete") + " to delete a user"
-    
-    %p
-      %b Réinitialiser les états d'avancement :
-      != link_to image_tag("web-app-theme/tick.png", :alt => "Réinitialiser les états d'avancement") + "Valider", reinitialize_all_delivery_state_admin_users_path, :class => "button"
-    
     %br
-    
     %p
       %form{ :method => "GET", :action => admin_users_path }
         != render :partial =>'/admin/shared/filter', :locals => {:link_back => admin_users_path}
