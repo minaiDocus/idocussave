@@ -11,6 +11,7 @@ class Pack
   field :division, :type => Array, :default => []
   field :information, :type => Hash, :default => {"page_number" => 0, "collection" => [], "name" => ""}
   field :customs, :type => Integer, :default => 0
+  field :is_open_for_uploaded_file, :type => Boolean, :default => true
   
   after_save :update_reporting
   
@@ -215,6 +216,13 @@ class Pack
           end
           
           print " - [#{pack.id}]\n"
+          
+          file[:collection].each do |f|
+            nb = f[:name].scan(/_[0-9]{3}.pdf/)[0].scan(/[0-9]{3}/)[0].to_i
+            if nb < 500
+              pack.is_open_for_uploaded_file = false
+            end
+          end
           
           require "prawn" 
           

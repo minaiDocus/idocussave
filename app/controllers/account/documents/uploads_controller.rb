@@ -8,24 +8,21 @@ class Account::Documents::UploadsController < Account::AccountController
     hsh = {}
     
     if type && !current_user.code.blank? && params[:files][0].original_filename && params[:files][0].tempfile
-      uploaded_file = current_user.uploaded_files.create(:original_filename => params[:files][0].original_filename, :account_book_type => params[:account_book_type])
-      if uploaded_file.persisted?
-        uploaded_file.moov_file params[:files][0].tempfile
-        if uploaded_file.is_password_protected?
-          uploaded_file.delete_file
-          uploaded_file.delete
-          hsh[:name] = params[:files][0].original_filename
-          hsh[:error] = "document protégé"
-          data << hsh
-        else
-          hsh[:created_at] = l(uploaded_file.created_at)
-          hsh[:name] = uploaded_file.original_filename
-          hsh[:new_name] = uploaded_file.pack_name.to_s + ".pdf"
-          data << hsh
-        end
-      else
+      begin
+        uploaded_file = UploadedFile.make current_user, type, params[:files][0].original_filename, params[:files][0].tempfile, params[:for_current_month]
+        hsh[:created_at] = l(uploaded_file.created_at)
+        hsh[:name] = uploaded_file.original_filename
+        hsh[:new_name] = uploaded_file.pack_name + ".pdf"
+        data << hsh
+      # rescue extension
+      rescue TypeError
         hsh[:name] = params[:files][0].original_filename
         hsh[:error] = "document non valide"
+        data << hsh
+      # rescue protected
+      rescue ArgumentError
+        hsh[:name] = params[:files][0].original_filename
+        hsh[:error] = "document protégé"
         data << hsh
       end
       

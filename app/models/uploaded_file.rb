@@ -4,103 +4,119 @@ class UploadedFile
   
   VALID_EXTENSION = [".pdf",".bmp",".jpeg",".jpg",".png",".tiff",".tif",".gif"]
   
-  after_create :do_process
-  
   referenced_in :user
   
   field :basename, :type => String
   field :account_book_type, :type => String
-  field :number, :type => String
+  field :page_number, :type => Integer
   field :original_filename, :type => String
   field :is_ocr_needded, :type => Boolean, :default => true
   field :is_delivered, :type => Boolean, :default => false
   
-  validates_presence_of :original_filename, :account_book_type
+  validates_presence_of :original_filename, :basename, :account_book_type, :page_number
   
-  scope :valid, :where => { :is_valid => true }
-  scope :not_valid, :where => { :is_valid => false }
   scope :delivered, :where => { :delivered => true }
   scope :not_delivered, :where => { :delivered => false }
   
-  validate :validity_of_extension
-  
 public
-  def processing_filename
-    "#{self.basename}_#{self.number}#{self.original_extension}"
-  end
-  
   def pack_name
-    "#{self.basename}_all"
+    self.basename + "_all"
   end
   
-  def moov_file tempfile
-    Dir.chdir("#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/")
-    new_name = "#{self.basename}_#{self.number}#{self.original_extension}"
-    file = File.new(new_name,'w+')
-    FileUtils.copy_stream(tempfile,file)
-    file.rewind
-  end
-  
-  def is_password_protected?
-    if self.original_extension == ".pdf"
-      # FIXME use more predicted code
-      !system("pdftk #{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{processing_filename} dump_data output /dev/null")
-    else
-      false
-    end
-  end
-  
-  def delete_file
-    system("rm #{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{processing_filename}")
-  end
-  
-  def do_process
-    set_basename
-    set_number
-    self.save
-  end
-
-  def set_basename
-    unless account_book_type.blank?
-      month = Time.now.month > 9 ? Time.now.month.to_s : "0"+Time.now.month.to_s
-      year = Time.now.year.to_s
-      self.basename = "#{self.user.code}_#{self.account_book_type}_#{year}#{month}"
-    end
-  end
-  
-  def set_number
-    nb = 0
-    if filename = get_last_similar_filename(".")
-      nb = filename.split('_')[3].sub('.pdf','').to_i + 1
-      if nb == 0
-        if filename = get_last_similar_filename("..")
-          nb = filename.split('_')[3].sub('.pdf','').to_i + 1
-          nb = 500 if nb < 500 && nb > 999
+  class << self
+    def make user, sAccountBookType, sOriginalFilename, tempfile, for_current_month
+      # Validate extension
+      sExtension = File.extname(sOriginalFilename).downcase
+      raise TypeError, 'Extension is not valid' unless VALID_EXTENSION.include? sExtension
+      
+      # Get basename
+      sBasename = ""
+      is_current = true
+      if for_current_month == "false"
+        sMonth = (Time.now.month - 1) > 9 ? (Time.now.month - 1).to_s : "0" + (Time.now.month - 1).to_s
+        sYear = (Time.now - 1.month).year.to_s
+        sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
+        
+        pack = user.packs.where(:name => sBasename.gsub("_"," ") + " all").first
+        if pack
+          if pack.is_open_for_uploaded_file
+            is_current = false
+          end
         else
-          nb = 500
+          is_current = false
+        end
+      end
+      
+      if is_current
+        sMonth = Time.now.month > 9 ? Time.now.month.to_s : "0"+Time.now.month.to_s
+        sYear = Time.now.year.to_s
+        sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
+      end
+      
+      # Get number
+      iNumber = get_number sBasename
+      
+      # Mooving tempfile
+      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
+      sNewFilename = sBasename + "_" + iNumber + sExtension
+      file = File.new(sNewFilename,'w+')
+      FileUtils.copy_stream(tempfile,file)
+      file.rewind
+      file.close
+      
+      # Verify if pdf file is password protected
+      is_protected = is_password_protected? sNewFilename, sExtension
+      
+      if !is_protected
+        # Get page number
+        iPageNumber = get_page_number sNewFilename
+        
+        user.uploaded_files.create(:original_filename => sOriginalFilename, :basename => sBasename, :page_number => iPageNumber, :account_book_type => sAccountBookType)
+      else
+        delete_file sNewFilename
+        raise ArgumentError, 'The file is password protected'
+      end
+    end
+    
+    def get_page_number sFilename
+      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
+      `pdftk #{sFilename} dump_data`.scan(/NumberOfPages: [0-9]+/)[0].scan(/[0-9]+/)[0].to_i rescue 0
+    end
+    
+    def get_number sBasename
+      nb = 0
+      if filename = get_last_similar_filename(sBasename, ".")
+        nb = filename.split('_')[3].sub('.pdf','').to_i + 1
+        if nb == 0
+          if filename = get_last_similar_filename("..")
+            nb = filename.split('_')[3].sub('.pdf','').to_i + 1
+            nb = 500 if nb < 500 && nb > 999
+          else
+            nb = 500
+          end
+        else
+          nb = 500 if nb < 500 && nb > 999
         end
       else
-        nb = 500 if nb < 500 && nb > 999
       end
-    else
+      (1000+nb).to_s[1..3]
     end
-    self.number = (1000+nb).to_s[1..3]
-  end
-  
-  def original_extension
-    File.extname(self.original_filename) rescue ""
-  end
-  
-  def get_last_similar_filename path
-    Dir.entries("#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{path}").select{|d| d.match(/^#{self.basename}/)}.sort.last
-  end
-  
-  def validity_of_extension
-    unless VALID_EXTENSION.include?(original_extension.downcase)
-      errors.add(:original_extension, "Extension '#{original_extension}' is not valid, valid is : #{VALID_EXTENSION.join(' ')}")
-    else
-      true
+    
+    def get_last_similar_filename sBasename, path
+      Dir.entries("#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{path}").select{|d| d.match(/^#{sBasename}/)}.sort.last
+    end
+    
+    def is_password_protected? sFilename, sExtension
+      if sExtension == ".pdf"
+        Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
+        !system("pdftk #{sFilename} dump_data output /dev/null")
+      else
+        false
+      end
+    end
+    
+    def delete_file sFilename
+      system("rm #{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{sFilename}")
     end
   end
-
 end
