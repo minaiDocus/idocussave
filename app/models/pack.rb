@@ -218,7 +218,7 @@ class Pack
           print " - [#{pack.id}]\n"
           
           file[:collection].each do |f|
-            nb = f[:name].scan(/_[0-9]{3}.pdf/)[0].scan(/[0-9]{3}/)[0].to_i
+            nb = f[:name].sub(".pdf","").split("_")[3].to_i
             if nb < 500
               pack.is_open_for_uploaded_file = false
             end
