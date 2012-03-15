@@ -85,20 +85,16 @@ public
     
     def get_number sBasename
       nb = 0
-      if filename = get_last_similar_filename(sBasename, ".")
+      filename = get_last_similar_filename(sBasename, ".")
+      if filename
         nb = filename.split('_')[3].sub('.pdf','').to_i + 1
-        if nb == 0
-          if filename = get_last_similar_filename("..")
-            nb = filename.split('_')[3].sub('.pdf','').to_i + 1
-            nb = 500 if nb < 500 && nb > 999
-          else
-            nb = 500
-          end
-        else
-          nb = 500 if nb < 500 && nb > 999
-        end
       else
+        filename = get_last_similar_filename(sBasename, "..")
+        if filename
+          nb = filename.split('_')[3].sub('.pdf','').to_i + 1
+        end
       end
+      nb = 500 if nb < 500 || nb > 999
       (1000+nb).to_s[1..3]
     end
     
