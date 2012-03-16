@@ -12,14 +12,17 @@ Signal.trap("TERM") do
 end
 
 while($running) do
-  Pack.get_documents
-  Document.do_reprocess_styles
-  Document.extract_content
-  
-  User.all.each do |user|
-    user.document_content_index = DocumentContentIndex.create unless user.document_content_index
-    user.document_content_index.update_data!
+  ok ||= false
+  if Time.now.min != 0 or !ok
+    sleep(60 - Time.now.min)
+    ok = true
   end
   
-  sleep 1800
+  if ok
+    Pack.get_documents
+    Document.do_reprocess_styles
+    Document.extract_content
+    Document::Index.process
+    ok = false
+  end
 end
