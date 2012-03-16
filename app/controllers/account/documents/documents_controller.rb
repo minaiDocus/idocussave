@@ -48,7 +48,7 @@ public
     if params[:filtre]
       # query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:')
       query = params[:filtre].split(':_:')
-      f_pack_ids = current_user.find_pack_ids(query)
+      f_pack_ids = Document::Index.find_pack_ids query, current_user
       
       @packs1 = @packs.select{|p| f_pack_ids.include?("#{p.id}")}
       @packs2 = @packs.select{|p| p.match_tags(params[:filtre],current_user)}
@@ -102,7 +102,7 @@ public
     end
     
     if params[:by] == "ocr_result" || !params[:by]
-      results = current_user.search_document query
+      results = Document::Index.search query, current_user
       
       @document_contents = []
       results.each do |r|
@@ -144,7 +144,7 @@ public
     end
     
     @documents = Document.any_in(:_id => document_ids.split).without_original.entries
-    @documents += current_user.find_document(query).without_original.entries
+    @documents += Document::Index.find_document(query, current_user).entries
     @documents = @documents.uniq
     
     render :action => "show"

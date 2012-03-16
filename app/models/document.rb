@@ -86,6 +86,10 @@ has_mongoid_attached_file :content,
       end
     end
   end
+  
+  def verified_content_text
+    self.content_text.split(" ").select{|w| w.match(/\+/)}.map{|w| w.sub(/^\+/,"")}
+  end
 
 protected
 

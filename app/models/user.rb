@@ -174,43 +174,9 @@ class User
     end
   end
   
-  def document_ids
-    ids = []
-    self.packs.each do |p|
-      p.documents.without_original.each do |d|
-        ids << d.id
-      end
-    end
-    ids
-  end
-  
-  def simplify_ids ids
-    ids.map do |id|
-      "#{id}"
-    end
-  end
-  
-  def search_document word
-    DocumentContentIndex.search word, simplify_ids(document_ids)
-  end
-  
-  def find_document words
-    ids = DocumentContentIndex.find_document_ids words, simplify_ids(document_ids)
-    Document.any_in(:_id => ids)
-  end
-  
-  def find_pack words
-    ids = find_pack_ids words
-    Pack.any_in(:_id => ids)
-  end
-  
-  def find_pack_ids words
-    DocumentContentIndex.find_pack_ids words, simplify_ids(pack_ids)
-  end
-  
 protected
   def update_clients
-    if self.is_prescriber && !self.client_ids.blank?
+    if self.is_prescriber && !self.client_ids.nil?
       new_client_ids = self.client_ids.split(/\s*,\s*/)
       
       # add
