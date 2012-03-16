@@ -14,7 +14,7 @@ end
 while($running) do
   ok ||= false
   if Time.now.min != 0 or !ok
-    sleep(60 - Time.now.min)
+    sleep((60-Time.now.min)*60)
     ok = true
   end
   
