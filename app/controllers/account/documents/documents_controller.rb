@@ -222,22 +222,6 @@ public
     @customers = @user.all_customers_sorted.entries
   end
   
-  def reporting2
-    @user = nil
-    if params[:email] && current_user.is_admin
-      @user = User.find_by_email(params[:email])
-      flash[:notice] = "User unknow : #{params[:email]}" unless @user
-    end
-    if @user.nil?
-      @user = current_user
-    end
-    @year = params[:year].to_i if !params[:year].blank?
-    @year ||= Time.now.year
-    @monthlies = @user.all_monthly.of(@year).asc(:month).entries
-    @clients = @user.all_clients_sorted.entries
-    @customers = @user.all_customers_sorted.entries
-  end
-  
   def search_user
     @tags = []
     if !params[:q].blank?
