@@ -13,7 +13,7 @@ class Document::Index
     end
     
     def reset
-      Document.indexed.entries.each { |d| d.update_attributes :indexed => false }
+      Document.without_original.extracted.indexed.entries.each { |d| d.update_attributes :indexed => false }
       Document::Tree.reset
       Dir.chdir WORDS_INDEX_PATH
       system "rm *"
