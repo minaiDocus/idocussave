@@ -24,6 +24,8 @@
           .title
             %h3.pull-left
               Reporting de l'année #{@year}
+          .legend{ :style => "float:left;margin-top:4px;margin-left:136px;" }
+            Légende : total (numérisées, téléversées)
           .actiongroup.pull-right
             %a
               != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))

@@ -18,21 +18,27 @@
     %table
       %tr
         %th.first
-        %th.second Pièces
-        %th.second Feuilles
-        %th.second Pages
+        %th.second.aligncenter Pièces
+        %th.second.aligncenter Feuilles
+        %th.second.aligncenter Pages
         %th.second Attaches
         %th.second Hors format
       %tr
         %td.first
-        %td.second
+        %td.second.aligncenter
           %b
-            !=@total_pieces_per_month
-        %td.second
+            != @total_pieces_per_month + @total_uploaded_pieces_per_month
+            (#{@total_pieces_per_month},
+            #{@total_uploaded_pieces_per_month})
+        %td.second.aligncenter
           %b
-            !=@total_sheets_per_month
-        %td.second
+            != @total_sheets_per_month + @total_uploaded_sheets_per_month
+            (#{@total_sheets_per_month},
+            #{@total_uploaded_sheets_per_month})
+        %td.second.aligncenter
           %b
-            !=@total_pages_per_month 
+            != @total_pages_per_month + @total_uploaded_pages_per_month
+            (#{@total_pages_per_month},
+            #{@total_uploaded_pages_per_month})
         %td.second
         %td.second

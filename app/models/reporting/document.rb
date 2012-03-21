@@ -8,9 +8,11 @@ class Reporting::Document
   field :pieces, :type => Integer, :default => 0
   field :sheets, :type => Integer, :default => 0
   field :pages, :type => Integer, :default => 0
-  field :customs, :type => Integer, :default => 0
   field :clip, :type => Integer, :default => 0
   field :oversize, :type => Integer, :default => 0
+  field :uploaded_pieces, :type => Integer, :default => 0
+  field :uploaded_sheets, :type => Integer, :default => 0
+  field :uploaded_pages, :type => Integer, :default => 0
   field :is_shared, :type => Boolean, :default => false
   
   validates_presence_of :name

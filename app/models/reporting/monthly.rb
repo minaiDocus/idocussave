@@ -86,7 +86,7 @@ protected
   def price_of_excess_customs
     total_customs = 0
     self.documents.each do |document|
-      total_customs += document.customs
+      total_customs += document.uploaded_pages
     end
     
     total_customs -= self.max_custom_page

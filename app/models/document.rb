@@ -17,7 +17,7 @@ class Document
   references_many :document_tags
   referenced_in :pack
 
-has_mongoid_attached_file :content,
+  has_mongoid_attached_file :content,
     :styles => {
       :thumb => ["46x67>", :png],
       :medium => ["92x133", :png]
@@ -32,6 +32,7 @@ has_mongoid_attached_file :content,
   end
   
   after_post_process :split_pages
+  after_create :add_tags
 
   scope :without_original, :where => { :is_an_original.in => [false, nil] }
   scope :originals, :where => { :is_an_original => true }
@@ -46,71 +47,116 @@ has_mongoid_attached_file :content,
   scope :not_clean, :where => { :dirty => true }
   scope :clean, :where => { :dirty => false }
   
-  def self.do_reprocess_styles
-    nb = 0
-    self.not_clean.each do |doc|
-      nb += 1
-      puts "document[#{doc.content_file_name}][#{nb}]"
-      doc.dirty = false
-      doc.content.reprocess!
-      if !doc.save
-        doc.update_attributes(:dirty => true)
-      end
-    end
-    puts "Document reprocessed number : #{nb}"
-  end
-  
-  def self.extract_content
-    documents = Document.without_original.not_extracted.entries
-    puts "Nombre de document à indexé : #{documents.count}"
-    
-    checkpoint_timer = Time.now
-    documents.each_with_index do |document,index|
-      if ((Time.now - checkpoint_timer) > 10.seconds)
-        puts "Zzz"
-        sleep(2)
-        checkpoint_timer = Time.now
-      end
-      print "[#{index + 1}]"
-      receiver = Receiver.new
-      result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
-      if result
-        print "ok\n"
-        document.content_text = receiver.text
-        if document.content_text == ""
-          document.content_text = "-[none]"
-        end
-        document.save!
-      else
-        print "not ok\n"
-      end
-    end
-  end
-  
+public
   def verified_content_text
-    self.content_text.split(" ").select{|w| w.match(/\+/)}.map{|w| w.sub(/^\+/,"")}
+    self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
   end
-
+  
 protected
-
   def split_pages
-    if dirty
-      Rails.logger.debug("entering split pages")
-      if self.is_an_original
-        temp_file = content.to_file
-        temp_path = File.expand_path(temp_file.path)
-        nbr = File.basename(self.content_file_name, ".pdf")
-        cmd = "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%02d.pdf"
-        Rails.logger.debug("Will split document with #{cmd}")
-        system(cmd)
+    if self.is_an_original
+      temp_file = content.to_file
+      temp_path = File.expand_path(temp_file.path)
+      nbr = File.basename(self.content_file_name, ".pdf")
+      system "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%03d.pdf"
 
-        Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
-          document = Document.new
-          document.dirty = true
-          document.pack = self.pack
-          document.position = index
-          document.content = File.new file
-          document.save
+      Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
+        document = Document.new
+        document.dirty = true
+        document.pack = self.pack
+        document.position = index
+        document.content = File.new file
+        document.save
+      end
+    end
+  end
+  
+  def add_tags
+    document_tag = DocumentTag.new
+    document_tag.document = self
+    document_tag.user = self.pack.order.user
+    document_tag.generate
+    document_tag.save
+  end
+  
+  class << self
+    def update_file pack, filename
+      start_at_page = pack.documents.size
+      tempfile = pack.original_document.content.to_file
+      temp_path = File.expand_path(tempfile.path)
+      basename = File.basename(temp_path,".pdf")
+      
+      basename = File.basename pack.original_document.content_file_name, ".pdf"
+      system "pdftk #{filename} burst output #{basename}_pages_%03d.pdf_"
+      rename_pages start_at_page
+      add_pages pack, basename, start_at_page
+      update_original_file temp_path, filename
+    end
+    
+    def rename_pages start_at_page
+      Dir.glob("*_pages*").each_with_index do |file,index|
+        number = (start_at_page + index).to_s
+        new_name = file.sub /[0-9]{3}\.pdf_/, "0" * (3 - number.size) + number + ".pdf"
+        File.rename file, new_name
+      end
+    end
+    
+    def add_pages pack, basename, start_at_page
+      Dir.glob("#{basename}_pages*").sort.each_with_index do |file, index|
+        document = Document.new
+        document.dirty = true
+        document.pack = pack
+        document.position = start_at_page + index
+        document.content = File.new file
+        document.save
+        File.delete file
+      end
+    end
+    
+    def update_original_file temp_path, filename
+      File.rename temp_path, temp_path + "_"
+      system "pdftk A=#{temp_path}_ B=#{filename} cat A B output #{temp_path}"
+      system "rm #{temp_path}_ #{filename}"
+      system "cp #{temp_path} ./"
+    end
+  
+    def do_reprocess_styles
+      nb = 0
+      self.not_clean.each do |doc|
+        nb += 1
+        puts "document[#{doc.content_file_name}][#{nb}]"
+        doc.dirty = false
+        doc.content.reprocess!
+        if !doc.save
+          doc.update_attributes(:dirty => true)
+        end
+      end
+      puts "Document reprocessed number : #{nb}"
+    end
+    
+    def extract_content
+      documents = Document.without_original.not_extracted.entries
+      puts "Nombre de document à indexé : #{documents.count}"
+      
+      checkpoint_timer = Time.now
+      documents.each_with_index do |document,index|
+        if ((Time.now - checkpoint_timer) > 10.seconds)
+          puts "Zzz"
+          sleep(2)
+          checkpoint_timer = Time.now
+        end
+        print "[#{index + 1}]"
+        receiver = Receiver.new
+        result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
+        if result
+          print "ok\n"
+          document.content_text = receiver.text
+          if document.content_text == ""
+            document.content_text = "-[none]"
+          end
+          document.save!
+        else
+          print "not ok\n"
         end
       end
     end
@@ -123,8 +169,8 @@ class Receiver
     @text = ""
   end
   def show_text(string, *params)
-    string.split().each do |w|
-      word = w.scan(/[\w|.|@|_|-]+/).join().downcase
+    string.split().each do |dirty_word|
+      word = dirty_word.scan(/[\dirty_word|.|@|_|-]+/).join().downcase
       if word.length <= 50
         if Dictionary.find_one(word)
           @text += " +#{word}"
@@ -135,6 +181,6 @@ class Receiver
     end
   end
   def show_text_with_positioning(array, *params)
-    show_text(array.select{|i| i.is_a?(String)}.join())
+    show_text array.select { |element| element.is_a? String }.join()
   end
 end

@@ -20,6 +20,9 @@
       - @total_pieces_per_month = 0
       - @total_sheets_per_month = 0
       - @total_pages_per_month = 0
+      - @total_uploaded_pieces_per_month = 0
+      - @total_uploaded_sheets_per_month = 0
+      - @total_uploaded_pages_per_month = 0
       - @total_state = [0,0,0]
       - monthly = monthly.sort{|a,b| a.reporting.customer.code <=> b.reporting.customer.code}
       - monthly.each do |one_monthly|

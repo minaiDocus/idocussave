@@ -49,4 +49,14 @@ class MyDropbox
     self.session = ""
     self.save
   end
+  
+  def deliver filename, delivery_path
+    if temp_session = new_session
+      if temp_session.authorized?
+        client = DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
+        client.file_delete "#{delivery_path}#{filename}" rescue nil
+        client.put_file "#{delivery_path}#{filename}", open(filename) rescue nil
+      end
+    end
+  end
 end

@@ -25,44 +25,63 @@
       %table
         %tr
           %th.first.documents Nom des documents
-          %th.second Pièces
-          %th.second Feuilles
-          %th.second Pages
+          %th.second.aligncenter Pièces
+          %th.second.aligncenter Feuilles
+          %th.second.aligncenter Pages
           %th.second Attaches  
           %th.second Hors format
         - total_pieces = 0
         - total_sheets = 0
         - total_pages = 0
+        - total_uploaded_pieces = 0
+        - total_uploaded_sheets = 0
+        - total_uploaded_pages = 0
         - one_monthly.documents.each do |document|
           %tr
             %td.first.documents
               != document.name
-            %td.second
+            %td.second.aligncenter
               != document.pieces
-            %td.second
+              (#{document.pieces - document.uploaded_pieces rescue document.pieces},
+              #{document.uploaded_pieces rescue 0})
+              - total_pieces += document.pieces - document.uploaded_pieces rescue document.pieces
+              - total_uploaded_pieces += document.uploaded_pieces rescue 0
+            %td.second.aligncenter
               != document.sheets
-            %td.second
+              (#{document.sheets - document.uploaded_sheets rescue document.sheets},
+              #{document.uploaded_sheets rescue 0})
+              - total_sheets += document.sheets - document.uploaded_sheets rescue document.sheets
+              - total_uploaded_sheets += document.uploaded_sheets rescue 0
+            %td.second.aligncenter
               != document.pages
-            %td.second
-            %td.second
-            - total_pieces += document.pieces
-            - total_sheets += document.sheets
-            - total_pages += document.pages
+              (#{document.pages - document.uploaded_pages rescue document.pages},
+              #{document.uploaded_pages rescue 0})
+              - total_pages += document.pages - document.uploaded_pages rescue document.pages
+              - total_uploaded_pages += document.uploaded_pages rescue 0
         %tr
           %td.first.documents
             %b
               Total
-          %td.second
+          %td.second.aligncenter
             %b
-              != total_pieces
-          %td.second
+              != total_pieces + total_uploaded_pieces
+              (#{total_pieces},
+              #{total_uploaded_pieces})
+          %td.second.aligncenter
             %b
-              != total_sheets
-          %td.second
+              != total_sheets + total_uploaded_sheets
+              (#{total_sheets},
+              #{total_uploaded_sheets})
+          %td.second.aligncenter
             %b
-              != total_pages
+              != total_pages + total_uploaded_pages
+              (#{total_pages},
+              #{total_uploaded_pages})
           %td.second
           %td.second
           - @total_pieces_per_month += total_pieces
           - @total_sheets_per_month += total_sheets
           - @total_pages_per_month += total_pages
+          - @total_uploaded_pieces_per_month += total_uploaded_pieces
+          - @total_uploaded_sheets_per_month += total_uploaded_sheets
+          - @total_uploaded_pages_per_month += total_uploaded_pages

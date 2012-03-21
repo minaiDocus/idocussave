@@ -3,6 +3,7 @@ class UploadedFile
   include Mongoid::Timestamps
   
   VALID_EXTENSION = [".pdf",".bmp",".jpeg",".jpg",".png",".tiff",".tif",".gif"]
+  UPLOADED_FILE_PATH = "#{Rails.root}/tmp/input_pdf_auto/uploads/"
   
   referenced_in :user
   
@@ -24,12 +25,17 @@ public
   end
   
   class << self
+    def init
+      Dir.mkdir UPLOADED_FILE_PATH
+    end
+    
     def make user, sAccountBookType, sOriginalFilename, tempfile, for_current_month
-      # Validate extension
+      Dir.chdir UPLOADED_FILE_PATH
+      #  Validate extension.
       sExtension = File.extname(sOriginalFilename).downcase
       raise TypeError, 'Extension is not valid' unless VALID_EXTENSION.include? sExtension
       
-      # Get basename
+      #  Get basename.
       sBasename = ""
       is_current = true
       if for_current_month == "false"
@@ -53,33 +59,56 @@ public
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
       end
       
-      # Get number
+      #  Get number.
       iNumber = get_number sBasename
       
-      # Mooving tempfile
-      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
+      #  Mooving tempfile.
       sNewFilename = sBasename + "_" + iNumber + sExtension
       file = File.new(sNewFilename,'w+')
       FileUtils.copy_stream(tempfile,file)
       file.rewind
       file.close
       
-      # Verify if pdf file is password protected
+      #  Verify if pdf file is password protected.
       is_protected = is_password_protected? sNewFilename, sExtension
       
       if !is_protected
-        # Get page number
+        if sExtension != ".pdf"
+          name = sNewFilename.sub(/#{sExtension}/,".pdf")
+          system "convert #{sNewFilename} #{name}"
+          File.delete sNewFilename
+          sNewFilename = name
+        end
+        
+        #  Get page number.
         iPageNumber = get_page_number sNewFilename
+        
+        system "cp #{sNewFilename} ../"
+        pack = Pack.find_or_create_by_name sBasename.gsub("_"," ") + " all", user
+        if pack.information["uploaded"]
+          pack.information["uploaded"]["pages"] += iPageNumber
+          pack.information["uploaded"]["sheets"] += 1
+          pack.information["uploaded"]["pieces"] += 1
+        else
+          pack.information["uploaded"] = {}
+          pack.information["uploaded"]["pages"] = iPageNumber
+          pack.information["uploaded"]["sheets"] = 1
+          pack.information["uploaded"]["pieces"] = 1
+        end
+        Dir.chdir Pack::FETCHING_PATH
+        Pack.add [sNewFilename], pack
+        
+        Dir.chdir UPLOADED_FILE_PATH
+        File.rename sNewFilename, "up_" + sNewFilename
         
         user.uploaded_files.create(:original_filename => sOriginalFilename, :basename => sBasename, :page_number => iPageNumber, :account_book_type => sAccountBookType)
       else
-        delete_file sNewFilename
+        File.delete sNewFilename
         raise ArgumentError, 'The file is password protected'
       end
     end
     
     def get_page_number sFilename
-      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
       `pdftk #{sFilename} dump_data`.scan(/NumberOfPages: [0-9]+/)[0].scan(/[0-9]+/)[0].to_i rescue 0
     end
     
@@ -99,20 +128,15 @@ public
     end
     
     def get_last_similar_filename sBasename, path
-      Dir.entries("#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{path}").select{|d| d.match(/^#{sBasename}/)}.sort.last
+      Dir.entries("#{path}").select{|d| d.match(/^#{sBasename}/)}.sort.last
     end
     
     def is_password_protected? sFilename, sExtension
       if sExtension == ".pdf"
-        Dir.chdir "#{Rails.root}/tmp/input_pdf_auto/ocr_tasks/"
         !system("pdftk #{sFilename} dump_data output /dev/null")
       else
         false
       end
-    end
-    
-    def delete_file sFilename
-      system("rm #{Rails.root}/tmp/input_pdf_auto/ocr_tasks/#{sFilename}")
     end
   end
 end
