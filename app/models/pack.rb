@@ -12,7 +12,7 @@ class Pack
   
   field :name, :type => String
   field :division, :type => Array, :default => []
-  field :information, :type => Hash, :default => { "pages_number" => 0, "collection" => [], "uploaded" => { "pages" => 0, "sheets" => 0, "pieces" => 0 } }
+  field :information, :type => Hash, :default => { "page_number" => 0, "collection" => [], "uploaded" => { "pages" => 0, "sheets" => 0, "pieces" => 0 } }
   field :is_open_for_uploaded_file, :type => Boolean, :default => true
   
   after_save :update_reporting
@@ -23,7 +23,7 @@ class Pack
       document = monthly.find_or_create_document_by_name self.name
       if !self.information.nil? && !self.information.empty?
         document.sheets = document.pieces = self.information["collection"].count rescue 0
-        document.pages = self.information["pages_number"]
+        document.pages = self.information["page_number"]
         document.uploaded_pieces = self.information["uploaded"]["pieces"]
         document.uploaded_sheets = self.information["uploaded"]["sheets"]
         document.uploaded_pages = self.information["uploaded"]["pages"]
@@ -90,9 +90,9 @@ class Pack
       else
         debugger
         order = user.subscription.order rescue user.orders.last
-        order = Order.create!(:user_id => user.id, :state => "paid", :manual => true) unless order
+        order = Order.create!(:user_id => user.id, :state => "scanned", :manual => true) unless order
         pack = Pack.new
-        pack.information["pages_number"] = 0
+        pack.information["page_number"] = 0
         pack.information["uploaded"] = {}
         pack.information["uploaded"]["pages"] = 0
         pack.information["uploaded"]["sheets"] = 0
@@ -212,7 +212,7 @@ class Pack
     def update_information filesname, old_information
       information = old_information
       total_pages = 0
-      current_page = old_information["pages_number"] + 1
+      current_page = old_information["page_number"] + 1
       filesname.each do |filename|
         name = filename.sub(".pdf","")
         pages_number = page_number_of filename
@@ -223,7 +223,7 @@ class Pack
         information["collection"] << { :name => name, :start_page => start_page, :end_page => end_page, :level => level }
         total_pages += pages_number
       end
-      information["pages_number"] += total_pages
+      information["page_number"] += total_pages
       information
     end
   
