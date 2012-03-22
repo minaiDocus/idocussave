@@ -49,7 +49,7 @@
             %td.second.aligncenter
               != document.sheets
               (#{document.sheets - document.uploaded_sheets rescue document.sheets},
-              #{document.uploaded_sheets rescue 0})
+              \-)
               - total_sheets += document.sheets - document.uploaded_sheets rescue document.sheets
               - total_uploaded_sheets += document.uploaded_sheets rescue 0
             %td.second.aligncenter
@@ -71,7 +71,7 @@
             %b
               != total_sheets + total_uploaded_sheets
               (#{total_sheets},
-              #{total_uploaded_sheets})
+              \-)
           %td.second.aligncenter
             %b
               != total_pages + total_uploaded_pages
