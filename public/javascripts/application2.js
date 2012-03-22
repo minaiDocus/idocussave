@@ -24,7 +24,12 @@
   // showing all pages of the document given by link
   function showPages(link) {
     var document_id = link.parents("li").attr("id").split("_")[2];
-    var url = "/account/documents/"+document_id;
+    
+    var filtre = $("#filter").val();
+    if (filtre != "")
+      filtre = "?filtre="+filtre;
+    var url = "/account/documents/"+document_id+filtre;
+    
     $("#panel2").hide();
     $("#panel1").show();
     getPages(url,link.text());
@@ -280,21 +285,13 @@
       },
       tokenFormatter: function(item) {  return "<li>" + item.name + "</li>" },
       onAdd: function (item) {
-        var value = $(this).val();
-        var url = "/account/documents/find?having="+value;
         $("#panel1 .header h3").text("");
-        getPages(url);
+        $("#panel1 > .content > ul").html("");
         getPacks();
       },
       onDelete: function (item) {
-        if($("#filter").val() != ""){
-          var value = $(this).val();
-          var url = "/account/documents/find?having="+value;
-          $("#panel1 .header h3").text("");
-          getPages(url);
-        }else{
-          $("#panel1 > .content > ul").html("");
-        }
+        $("#panel1 .header h3").text("");
+        $("#panel1 > .content > ul").html("");
         getPacks();
       }
     });

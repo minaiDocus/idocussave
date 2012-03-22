@@ -30,6 +30,7 @@ class User
   references_and_referenced_in_many :reportings, :inverse_of => :viewer
   references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
   
+  references_many :own_packs, :class_name => "Pack", :inverse_of => :owner
   references_and_referenced_in_many :packs
   
   references_many :my_account_book_types, :class_name => "AccountBookType", :inverse_of => :owner

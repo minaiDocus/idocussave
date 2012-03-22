@@ -14,7 +14,7 @@ class Document
   field :dirty, :type => Boolean, :default => true
   field :indexed, :type => Boolean, :default => false
 
-  references_many :document_tags
+  references_many :document_tags, :dependent => :delete
   referenced_in :pack
 
   has_mongoid_attached_file :content,
@@ -74,12 +74,25 @@ protected
   def add_tags
     document_tag = DocumentTag.new
     document_tag.document = self
+    document_tag.pack = self.pack
     document_tag.user = self.pack.order.user
     document_tag.generate
     document_tag.save
   end
   
   class << self
+    def find_ids_by_tags tags, user, ids=[]
+      document_ids = ids
+      tags.each_with_index do |tag,index|
+        if index == 0 && document_ids.empty?
+          document_ids = DocumentTag.where(:user_id => user.id, :name => / #{tag}/).distinct(:document_id)
+        else
+          document_ids = DocumentTag.any_in(:document_id => document_ids).where(:user_id => user.id, :name => / #{tag}/).distinct(:document_id)
+        end
+      end
+      document_ids
+    end
+  
     def update_file pack, filename
       start_at_page = pack.documents.size
       tempfile = pack.original_document.content.to_file

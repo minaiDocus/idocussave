@@ -19,7 +19,28 @@ public
   end
   
   def show
-    @documents = current_user.packs.find(params[:id]).documents.without_original.asc(:position) rescue nil
+    @documents = current_user.packs.find(params[:id]).documents.without_original rescue []
+    
+    if params[:filtre]
+      @user = current_user
+      queries = params[:filtre].split(':_:')
+      document_ids = []
+      queries.each_with_index do |query,index|
+        f_document_ids = []
+        t_document_ids = []
+        if index == 0
+          f_document_ids = Document::Index.find_document_ids [query], @user
+          t_document_ids = Document.find_ids_by_tags [query], @user
+          document_ids = f_document_ids + t_document_ids
+        else
+          f_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document::Index.find_document_ids([query], @user)).distinct(:_id)
+          t_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document.find_ids_by_tags([query], @user)).distinct(:_id)
+          document_ids = f_document_ids + t_document_ids
+        end
+      end
+      ids = @documents.map { |d| d.id }
+      @documents = Document.any_in(:_id => document_ids).asc(:position).find_all { |document| ids.include? document.id }
+    end
 
     respond_to do |format|
       format.html{}
@@ -35,28 +56,35 @@ public
   
   def packs
     @packs = []
-      
-    if params[:view] == "all" || params[:view].nil?
-      @packs = current_user.packs
-    elsif params[:view] == "self"
-      @packs = current_user.packs.select{|p| p.order.user == current_user}
-    else
-      order_ids = Order.where(:user_id => (User.find(params[:view])).id).collect{|o| o.id}
-      @packs = current_user.packs.any_in(:order_id => order_ids).entries
-    end
+    @user = current_user
     
     if params[:filtre]
-      # query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:filtre]).join().split(':_:')
-      query = params[:filtre].split(':_:')
-      f_pack_ids = Document::Index.find_pack_ids query, current_user
-      
-      @packs1 = @packs.select{|p| f_pack_ids.include?("#{p.id}")}
-      @packs2 = @packs.select{|p| p.match_tags(params[:filtre],current_user)}
-      @packs = (@packs1 + @packs2).uniq
+      queries = params[:filtre].split(':_:')
+      pack_ids = []
+      queries.each_with_index do |query,index|
+        f_pack_ids = []
+        t_pack_ids = []
+        if index == 0
+          f_pack_ids = Document::Index.find_pack_ids [query], @user
+          t_pack_ids = Pack.find_ids_by_tags [query], @user
+          pack_ids = f_pack_ids + t_pack_ids
+        else
+          f_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Document::Index.find_pack_ids([query], @user)).distinct(:_id)
+          t_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Pack.find_ids_by_tags([query], @user)).distinct(:_id)
+          pack_ids = f_pack_ids + t_pack_ids
+        end
+      end
+      @packs = Pack.any_in(:_id => pack_ids)
+    else
+      @packs = @user.packs
     end
+    @packs = @packs.order_by([[:created_at, :desc]])
     
-    @packs = @packs.sort do |a,b|
-      b.created_at <=> a.created_at
+    if params[:view] == "self"
+      @packs = @packs.select { |pack| pack.order.user == @user }
+    elsif params[:view] != "all" and params[:view] != ""
+      @other_user = User.find(params[:view])
+      @packs = @packs.where(:owner_id => @other_user.id)
     end
     
     @packs_count = @packs.count
@@ -122,7 +150,6 @@ public
   end
   
   def find
-    # query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:having]).join().split(':_:')
     query = params[:having].split(':_:')
     
     @documents = []
@@ -156,7 +183,7 @@ public
       document = documents.select{|x| x.id.to_s == id.to_s}.first
       document.update_attributes :position => index
     }
-
+    
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }
     end

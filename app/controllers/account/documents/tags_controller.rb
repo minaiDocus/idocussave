@@ -18,7 +18,7 @@ class Account::Documents::TagsController < Account::AccountController
         sous.split.each do |s|
           DocumentTag.where(:name => / #{s}( |$)/, :document_id => document.id).each do |document_tag|
             document_tag.name = document_tag.name.gsub(/ #{s}( |$)/,'')
-            document_tag.save!
+            document_tag.save
           end
         end
         old_document_tags = DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first
@@ -28,9 +28,10 @@ class Account::Documents::TagsController < Account::AccountController
         else
           new_document_tags = DocumentTag.new
           new_document_tags.name = add
-          new_document_tags.document = document.id
-          new_document_tags.user = current_user.id
-          new_document_tags.save!
+          new_document_tags.document = document
+          new_document_tags.pack = document.pack
+          new_document_tags.user = current_user
+          new_document_tags.save
         end
       end
     end

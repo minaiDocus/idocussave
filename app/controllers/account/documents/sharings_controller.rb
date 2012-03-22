@@ -13,10 +13,10 @@ class Account::Documents::SharingsController < Account::AccountController
           tags = ""
           pack.documents.each_with_index do |document,i|
             if i == 0
-              document_tag = DocumentTag.create(:document_id => document.id, :user_id => user.id)
+              document_tag = DocumentTag.create(:document_id => document.id, :pack_id => document.pack.id, :user_id => user.id)
               tags = document_tag.generate
             else
-              document_tag = DocumentTag.create(:document_id => document.id, :user_id => user.id, :name => tags)
+              document_tag = DocumentTag.create(:document_id => document.id, :pack_id => document.pack.id, :user_id => user.id, :name => tags)
             end
           end
           pack.save
@@ -40,9 +40,7 @@ class Account::Documents::SharingsController < Account::AccountController
       pack.users -= [current_user]
       current_user.save
       pack.save
-      pack.documents.each do |document|
-        DocumentTag.where(:document_id => document.id, :user_id => current_user.id).delete
-      end
+      DocumentTag.where(:pack_id => pack.id, :user_id => current_user.id).delete_all
     end
     
     respond_to do |format|

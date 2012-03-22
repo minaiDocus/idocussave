@@ -5,10 +5,12 @@ class Pack
   FETCHING_PATH = "#{Rails.root}/tmp/input_pdf_auto/"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
 
+  referenced_in :owner, :class_name => "User", :inverse_of => :own_packs
   references_and_referenced_in_many :users
   
   referenced_in :order
   references_many :documents, :dependent => :delete
+  references_many :document_tags
   
   field :name, :type => String
   field :division, :type => Array, :default => []
@@ -48,20 +50,6 @@ class Pack
       system("rm -r #{Rails.root}/tmp/input_pdf_manual/#{name}.pdf") if in_dir_manual
     end
   end
-    
-  def match_tags tags, user=order.user
-    tags = Iconv.iconv('UTF-8', 'ISO-8859-1', tags).join().split(':_:')
-    match_tag = true
-
-    document_tag = DocumentTag.where(:document_id => self.documents.first.id, :user_id => user.id).first rescue nil
-    unless document_tag
-      match_tag = false
-    else
-      tags.each{ |tag| match_tag = false unless document_tag.name.match(/ #{tag}/) }
-    end
-
-    match_tag ? true : false
-  end
   
   def original_document
     documents.originals.first
@@ -81,14 +69,25 @@ class Pack
     end
     
     def find_by_name name
-      Pack.where(:name => name).first
+      where(:name => name).first
+    end
+    
+    def find_ids_by_tags tags, user, ids=[]
+      pack_ids = ids
+      tags.each_with_index do |tag,index|
+        if index == 0 && pack_ids.empty?
+          pack_ids = DocumentTag.where(:user_id => user.id, :name => / #{tag}/).distinct(:pack_id)
+        else
+          pack_ids = DocumentTag.any_in(:pack_id => pack_ids).where(:user_id => user.id, :name => / #{tag}/).distinct(:pack_id)
+        end
+      end
+      pack_ids
     end
     
     def find_or_create_by_name name, user
       if pack = find_by_name(name)
         pack
       else
-        debugger
         order = user.subscription.order rescue user.orders.last
         order = Order.create!(:user_id => user.id, :state => "scanned", :manual => true) unless order
         pack = Pack.new
@@ -170,6 +169,7 @@ class Pack
         document.content = File.new pack_filename
         
         #  Attribution du pack.
+        pack.owner = user
         pack.users << user
         pack.users += user.find_or_create_reporting.viewer
         pack.save ? document.save : false

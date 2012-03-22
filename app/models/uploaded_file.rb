@@ -101,7 +101,7 @@ public
         Dir.chdir UPLOADED_FILE_PATH
         File.rename sNewFilename, "up_" + sNewFilename
         
-        user.uploaded_files.create(:original_filename => sOriginalFilename, :basename => sBasename, :page_number => iPageNumber, :account_book_type => sAccountBookType)
+        user.uploaded_files.create(:original_filename => sOriginalFilename, :basename => sBasename, :page_number => iPageNumber, :account_book_type => sAccountBookType, :is_delivered => true)
       else
         File.delete sNewFilename
         raise ArgumentError, 'The file is password protected'

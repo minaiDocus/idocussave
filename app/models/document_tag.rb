@@ -3,6 +3,7 @@ class DocumentTag
   
   referenced_in :user
   referenced_in :document
+  referenced_in :pack
   
   field :name, :type => String, :default => ""
   
@@ -17,5 +18,4 @@ class DocumentTag
     self.save!
     self.name
   end
-  
 end
