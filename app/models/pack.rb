@@ -148,8 +148,7 @@ class Pack
       set_is_open_for_uploaded_file pack, filesname
       
       #  Renommage des fichiers.
-      start_at_page = pack.information["collection"].size
-      start_at_page = 1 if start_at_page == 0
+      start_at_page = pack.information["collection"].size + 1
       filesname = apply_new_name filesname, start_at_page
       pack.information = update_information(filesname, pack.information)
       #  Création du fichier all.
