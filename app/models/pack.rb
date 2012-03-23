@@ -167,10 +167,10 @@ class Pack
         document.pack = pack
         document.content = File.new pack_filename
         
+        debugger
         #  Attribution du pack.
         pack.owner = user
-        pack.users << user
-        pack.users += user.find_or_create_reporting.viewer
+        pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
         pack.save ? document.save : false
       end
       
