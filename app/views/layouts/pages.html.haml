@@ -50,7 +50,7 @@
     != render :partial => "/shared/google_analitycs"
     
     - if !current_user
-      .modal{ :id=>"connexion", :style=>"display: none;" }
+      .modal.hide.fade.in{ :id=>"connexion" }
         .modal-header
           %a{ :class=>"close", "data-dismiss"=>"modal" } ×
           %h3 Connexion
@@ -68,4 +68,9 @@
             %a{ :href=>"/users/password/new", :class=>"btn" } Aide
             %a{ :href=>"#", :class=>"modal-close btn" } Fermer
     
-    != javascript_include_tag %w(jquery-1.7.1.min bootstrap.min application2)
+    != javascript_include_tag %w(jquery-1.7.1.min bootstrap.min)
+    :javascript
+      $(document).ready(function() {
+        $(".carousel").carousel();
+        $(".modal-close").click(function(){ $(".modal").modal("hide"); });
+      });

@@ -268,13 +268,14 @@
     // filter autocompletion
     $("#filter").tokenInput("/account/documents/search.json", {
       theme: "facebook",
-      hintText: "Tapez un mot à rechercher",
+      hintText: "Tapez au moins 2 caractères pour commencer la recherche.",
       noResultsText: "Aucun résultat",
       searchingText: "Recherche en cours...",
       tokenDelimiter: ":_:",
       tokenValue: "name",
       propertyToSearch: "name",
       preventDuplicates: false,
+      minChars: 2,
       resultsFormatter: function(item) {
         var type  = "";
         if (item.id == 1)
@@ -560,11 +561,8 @@
       removePage(li);
     });
     
-    $(".carousel").carousel();
-    $(".modal").modal("hide");
     $(".modal-close").click(function(){ $(".modal").modal("hide"); });
     $(".close").click(function(){ $(this).parents("li").remove(); });
-    $("#connexion").modal({ backdrop: true });
     
     // selection event handler
     $(".do-selectAll").click(function(){ $("#documentslist > .content > ul > li").addClass("selected"); });
