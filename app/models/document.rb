@@ -183,8 +183,8 @@ class Receiver
   end
   def show_text(string, *params)
     string.split().each do |dirty_word|
-      word = dirty_word.scan(/[\dirty_word|.|@|_|-]+/).join().downcase
-      if word.length <= 50
+      word = dirty_word.scan(/[\w|.|@|_|-]+/).join().downcase
+      if word.length > 1 and word.length <= 50
         if Dictionary.find_one(word)
           @text += " +#{word}"
         else
