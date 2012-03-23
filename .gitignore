@@ -1,8 +1,8 @@
 doc/
 log/
 tmp/
-public/images/
-public/system/
+public/images
+public/system
 Gemfile.lock
 doc_data.txt
 .sass-cache
