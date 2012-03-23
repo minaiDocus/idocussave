@@ -238,7 +238,7 @@ class Pack
       start = starting_page
       filesname.map do |filename|
         new_filename = generate_new_name(filename,(start += 1) - 1)
-        stamp_path = generate_stamp(new_filename.gsub("_"," "))
+        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""))
         system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
         system "rm #{filename}_"
         new_filename
