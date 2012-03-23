@@ -18,9 +18,6 @@ class User
   field :is_prescriber, :type => Boolean, :default => false
   
   attr_accessor :client_ids
-  
-  # FIXME remove me after migrating Reporting
-  referenced_in :reporting
 
   embeds_many :addresses
   
