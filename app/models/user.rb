@@ -16,8 +16,9 @@ class User
   field :company, :type => String
   field :is_dropbox_authorized, :type => Boolean, :default => false
   field :is_prescriber, :type => Boolean, :default => false
+  field :inactive_at, :type => Time
   
-  attr_accessor :client_ids
+  attr_accessor :client_ids, :is_inactive
 
   embeds_many :addresses
   
@@ -47,7 +48,8 @@ class User
   
   scope :prescribers, :where => { :is_prescriber => true }
   
-  before_save :format_name, :update_copy, :update_clients
+  before_save :format_name, :update_clients, :set_inactive_at
+  after_save :update_copy
   
   def name
     f_name = self.first_name || ""
@@ -172,6 +174,22 @@ class User
     end
   end
   
+  def is_active?
+    if inactive_at.nil?
+      true
+    else
+      false
+    end
+  end
+  
+  def is_inactive?
+    if inactive_at.nil?
+      false
+    else
+      true
+    end
+  end
+  
 protected
   def update_clients
     if self.is_prescriber && !self.client_ids.nil?
@@ -199,6 +217,14 @@ protected
         reporting["viewer_ids"] = reporting["viewer_ids"] - [self.id]
         reporting.save
       end
+    end
+  end
+  
+  def set_inactive_at
+    if self.is_inactive == "1"
+      self.inactive_at = Time.now
+    elsif self.is_inactive == "0"
+      self.inactive_at = nil
     end
   end
   

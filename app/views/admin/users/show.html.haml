@@ -19,6 +19,7 @@
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Name', :value => @user.name}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Code', :value => @user.code}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Company', :value => @user.company}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Is actif ?', :value => (@user.is_active? ? "Yes" : "No (#{l(@user.inactive_at)})")}
           %td
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Admin ?', :value => (@user.is_admin ? "Yes" : "No")}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Dropbox authorized ?', :value => (@user.is_dropbox_authorized ? "Yes" : "No")}

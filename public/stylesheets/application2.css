@@ -130,7 +130,7 @@ h2 { font-size: 16px; }
   z-index: 1040; }
   
 
-/*** other ***/
+/*** Other ***/
 .aligncenter { text-align: center; }
 .alignleft { text-align: left; }
 .alignright { text-align: right; }
@@ -154,6 +154,8 @@ h2 { font-size: 16px; }
 
 .padding05 { padding: 5px; }
 .margin05left { margin-left: 5px; }
+
+.btn { font-size: 11px; }
 
 
 /*** Action bar ***/
@@ -500,7 +502,7 @@ li.token-input-token-facebook {
 table td.first {
   width: 145px; }
 table td.second {
-  width: 70px; }
+  width: 90px; }
   
 .actiongroup.first {
   width: 16px;
@@ -627,5 +629,23 @@ table td.second {
 .total .content {
   text-align: right; }
 .total .content th.first, .total .content td.first {
-  text-align: left;
+  text-align: center;
   width: 168px; }
+  
+
+  
+/***** Form *****/
+/*** Global ***/
+select {
+  width: auto; }
+/*** Error ***/
+label.error {
+  color: #b94a48; }
+input.error, select.error, textarea.error {
+  color: #b94a48;
+  border-color: #b94a48; }
+input.error:focus, select.error:focus, textarea.error:focus {
+  border-color: #953b39;
+  -webkit-box-shadow: 0 0 6px #d59392;
+  -moz-box-shadow: 0 0 6px #d59392;
+  box-shadow: 0 0 6px #d59392; }

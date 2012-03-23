@@ -35,5 +35,6 @@
         .content.margin3top
           - months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
           - months.each_with_index do |month, index|
-            - monthly = @monthlies.select{|m| m.month == index + 1}
+            - monthly = @monthlies.select { |m| m.month == index + 1 and m.reporting.customer.is_active_at m.year, m.month }
+            - @total_active_user = monthly.count
             != render :partial => "month.html.haml", :locals => { :month => month, :index => index, :monthly => monthly }

@@ -20,6 +20,9 @@
   %br
   != f.check_box :is_dropbox_authorized, :class => 'checkbox floattoleft'
   != f.label :is_dropbox_authorized, "Autoriser Dropbox ?", :class => :label
+  %br
+  != f.check_box :is_inactive, :class => 'checkbox floattoleft', :checked => (!@user.inactive_at.nil? ? "checked" : "")
+  != f.label :is_inactive, "Marquer inactif ? #{ @user.is_inactive? ? '(' + l(@user.inactive_at) + ')' : '' }", :class => :label
   
 .group
   != f.check_box :is_prescriber, :class => 'checkbox floattoleft'

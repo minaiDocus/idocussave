@@ -17,14 +17,15 @@
   .content.margin1top
     %table
       %tr
-        %th.first
+        %th.first.aligncenter Total utilisateur actif
         %th.second.aligncenter Pièces
         %th.second.aligncenter Feuilles
         %th.second.aligncenter Pages
         %th.second Attaches
         %th.second Hors format
       %tr
-        %td.first
+        %td.first.aligncenter
+          != @total_active_user
         %td.second.aligncenter
           %b
             != @total_pieces_per_month + @total_uploaded_pieces_per_month
