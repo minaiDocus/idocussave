@@ -5,7 +5,6 @@ class Account::Documents::DocumentsController < Account::AccountController
 
 protected  
   def find_last_composition
-    return if self.controller_name == 'document_tags'
     @last_composition = current_user.composition
   end
 
