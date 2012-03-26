@@ -14,9 +14,11 @@ class User
   field :first_name, :type => String
   field :last_name, :type => String
   field :company, :type => String
-  field :is_dropbox_authorized, :type => Boolean, :default => false
   field :is_prescriber, :type => Boolean, :default => false
   field :inactive_at, :type => Time
+  field :is_dropbox_authorized, :type => Boolean, :default => false
+  field :dropbox_delivery_folder, :type => String, :default => ""
+  field :is_dropbox_extended_authorized, :type => Boolean, :default => false
   
   attr_accessor :client_ids, :is_inactive
 
@@ -47,6 +49,7 @@ class User
   references_one :my_dropbox
   
   scope :prescribers, :where => { :is_prescriber => true }
+  scope :dropbox_extended_authorized, :where => { :is_dropbox_extended_authorized => true }
   
   before_save :format_name, :update_clients, :set_inactive_at
   after_save :update_copy

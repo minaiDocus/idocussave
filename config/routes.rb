@@ -132,6 +132,9 @@ Idocus::Application.routes.draw do
     resources :backups do
       get 'service', :on => :collection
     end
-  
+    resources :dropboxs do
+      get 'authorize_url', :on => :collection
+      get 'callback', :on => :collection
+    end
   end
 end

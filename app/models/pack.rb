@@ -167,7 +167,6 @@ class Pack
         document.pack = pack
         document.content = File.new pack_filename
         
-        debugger
         #  Attribution du pack.
         pack.owner = user
         pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
@@ -175,7 +174,16 @@ class Pack
       end
       
       #  Livraison dans dropbox.
-      deliver_to_dropbox filesname + [pack_filename], dropbox_delivery_path(pack_name), [user,user.prescriber]
+      deliver_to_dropbox filesname + [pack_filename], dropbox_delivery_path(pack_name), [user]
+      prescriber = user.prescriber
+      if prescriber
+        if prescriber.is_dropbox_extended_authorized
+          deliver_to_dropbox_extended filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
+        end
+        if prescriber.is_dropbox_authorized
+          deliver_to_dropbox filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
+        end
+      end
       
       #  Marquage des fichiers comme étant traité.
       filesname.each do |filename|
@@ -201,8 +209,18 @@ class Pack
     def deliver_to_dropbox filesname, delivery_path, users
       filesname.each do |filename|
         users.each do |user|
-          if user and user.is_dropbox_authorized?
-            user.my_dropbox.deliver filename, delivery_path rescue nil
+          if user.is_dropbox_authorized?
+            user.my_dropbox.deliver filename, delivery_path
+          end
+        end
+      end
+    end
+    
+    def deliver_to_dropbox_extended filesname, delivery_path, users
+      filesname.each do |filename|
+        users.each do |user|
+          if user.is_dropbox_authorized? and !user.dropbox_delivery_folder.nil?
+            DropboxExtended.deliver filename, user.dropbox_delivery_folder, delivery_path
           end
         end
       end
