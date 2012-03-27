@@ -1,5 +1,5 @@
 %h2
-  Créer un nouveau compte idocus
+  Créer un nouveau compte iDocus
 
 %p
   Veuillez saisir votre adresse e-mail et choisissez votre mot de passe.
@@ -8,25 +8,26 @@
   %br
   Pour toute question concernant votre compte : #{ mail_to("contact@idocus.com") }
 
-  - form_for @user, :url => user_registration_path do |f|
+  - form_for @user, :url => user_registration_path, :html => { :class => "form-horizontal" } do |f|
     != render :partial => '/shared/error_messages', :locals => {:object => resource}
 
-    != f.label:"Votre adresse e-mail :", :class => "margin2top"
-    != f.text_field :email, :class => "w410"
+    .control-group
+      != f.label :email, :"Votre adresse e-mail :", :class => "control-label"
+      .controls
+        != f.text_field :email
 
-    != f.label:"Votre mot de passe :", :class => "margin2top"
-    != f.password_field :password, :class => "w410"
+    .control-group
+      != f.label :password, :"Votre mot de passe :", :class => "control-label"
+      .controls
+        != f.password_field :password
 
-    != f.label:"Confirmation du mot de passe :", :class => "margin2top"
-    != f.password_field :password_confirmation, :class => "w410"
+    .control-group
+      != f.label :password_confirmation, :"Confirmation du mot de passe :", :class => "control-label"
+      .controls
+        != f.password_field :password_confirmation
 
-    .buttonsrow.margin3top
-      != f.submit "VALIDER", :class => "button whitebtn w100 floattoright"
-      %a.button.whitebtn.floattoright.margin1right{ :href => "/"}
+    .form-actions
+      != f.submit "VALIDER", :class => "btn pull-left"
+      %a.btn.margin1left{ :href => "/" }
         %span
           RETOUR
-
-
-
-
-

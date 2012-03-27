@@ -20,6 +20,19 @@ fr:
               blank: 'Le champ cité est vide.'
             zip:
               blank: 'Le champ code postal est vide.'
+        user:
+          attributes:
+            email:
+              blank: 'est vide'
+            password:
+              too_short: "trop court"
+              too_long: "trop long"
+              confirmation: "de confirmation invalide"
+              blank: 'est vide'
+    attributes:
+      user:
+        email: "E-mail"
+        password: "Mots de passe"
 
   devise:
     unauthenticated: 'Vous devez être enregistré ou identifié pour continuer.'

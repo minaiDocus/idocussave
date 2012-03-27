@@ -5,28 +5,54 @@
       Connexion
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %link{ 'rel' => 'shortcut icon', 'type' => "image/ico", 'href' => '/images/favicon.ico'}
-    != stylesheet_link_tag %w(application)
+    != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
 
-  %body.devise
-    #worldwrapper
-      #content.clearfix
-        .leftcolon
-          %a.mediumlogo.margin2top.margin2left{ :href => "/" }
-          %ul.pageslistmenu.margin4top
-            %li{:class => controller.controller_name == 'registrations' ? 'current': '' }
-              != link_to "Créer un compte", new_user_registration_path
+  %body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
+            %span{ :class=>"icon-bar" }
+            %span{ :class=>"icon-bar" }
+            %span{ :class=>"icon-bar" }
+          %a{ :class=>"logo", :href=>"/" }
+            != image_tag "logo/tiny_logo.png", :alt => "logo"
+          .nav-collapse
+            %ul{ :class=>"nav" }
+              - @page_types = PageType.by_position.all
+              - @page_types.each do |type|
+                - lien = Page.where(:content_type => type.number).visible.by_position.first
+                - if lien
+                  %li
+                    %a{ :href => "/pages/#{lien.slug rescue '#'}" } #{type.caption}
+    .container.margin6top
+      .row
+        .span3
+          .well.sidebar-nav
+            %ul.nav.nav-list
+              %li{ :class => controller.controller_name == 'registrations' ? 'active': '' }
+                != link_to "Créer un compte", new_user_registration_path
 
-            %li{:class => controller.controller_name == 'confirmations' ? 'current': '' }
-              != link_to "Renvoyer les instructions", new_user_confirmation_path
+              %li{ :class => controller.controller_name == 'confirmations' ? 'active': '' }
+                != link_to "Renvoyer les instructions", new_user_confirmation_path
 
-            %li{:class => controller.controller_name == 'sessions' ? 'current': '' }
-              != link_to "Connexion à mon compte", new_user_session_path
+              %li{ :class => controller.controller_name == 'sessions' ? 'active': '' }
+                != link_to "Connexion à mon compte", new_user_session_path
 
-            %li{:class => controller.controller_name == 'passwords' ? 'current': '' }
-              != link_to "Mot de passe oublié ?", new_user_password_path
-
-        .rightcolon.margin4top.margin2bottom
-          != yield
-      #footer
-        ©Copyright 2011 iDocus
-    != render :partial => '/shared/google_analitycs'
+              %li{ :class => controller.controller_name == 'passwords' ? 'active': '' }
+                != link_to "Mot de passe oublié ?", new_user_password_path
+        .span9
+          .well
+            != yield
+          
+    %footer
+      .modal-footer.aligncenter
+        %p{ :class=>"green" }
+          - @page_in_footer = Page.in_footer.visible.by_position.all
+          - @page_in_footer.each_with_index do |page, index|
+            - if index != 0
+              %span.separator &#124;
+            != link_to page.title, "pages/#{page.slug}"
+        %p{ :class=>"copyright" } &copy; iDocus 2012
+            
+    != javascript_include_tag %w(jquery-1.7.1.min bootstrap.min)
