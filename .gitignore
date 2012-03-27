@@ -1,6 +1,7 @@
 doc/
 log/
 tmp/
+data/
 public/images
 public/system
 Gemfile.lock
