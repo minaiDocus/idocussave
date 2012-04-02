@@ -1,4 +1,4 @@
-.month{ :class => ("active" if !monthly.empty?) }
+.month{ :class => "#{'active' if !monthly.empty?}" }
   .header
     .actiongroup.first.pull-left
       - if !monthly.empty?
@@ -11,18 +11,22 @@
         != month
     .actiongroup.pull-right
       - if !monthly.empty?
-        %a.do-showAll.pull-left{ :href => "#", :style => "display:none;" }
-          Afficher les détails
-        %a.do-hideAll.pull-left{ :href => "#" }
-          Cacher les détails
+        %input{ :type => :checkbox, :id => "subscriptions_#{index + 1}", :class => "do-showHideInformation pull-left", :checked => :checked }
+        %label{ :for => "subscriptions_#{index + 1}", :class => "pull-left margin05left margin2right" } coûts
+        
+        %input{ :type => :checkbox, :id => "users_#{index + 1}", :class => "do-showHideInformation pull-left", :checked => :checked }
+        %label{ :for => "users_#{index + 1}", :class => "pull-left margin05left" } utilisateurs
   - if !monthly.empty?
-    .content
+    .content{ :class => "month_#{index + 1}" }
       - @total_pieces_per_month = 0
       - @total_sheets_per_month = 0
       - @total_pages_per_month = 0
       - @total_uploaded_pieces_per_month = 0
       - @total_uploaded_sheets_per_month = 0
       - @total_uploaded_pages_per_month = 0
+      - @total_excess_sheets = 0
+      - @total_excess_uploaded_pages = 0
+      - @total_price_per_month = 0
       - @total_state = [0,0,0]
       - monthly = monthly.sort{|a,b| a.reporting.customer.code <=> b.reporting.customer.code}
       - monthly.each do |one_monthly|

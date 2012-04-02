@@ -1,7 +1,7 @@
-.user{ :class => "user_#{one_monthly.reporting.customer.id} #{"active" if !one_monthly.documents.empty?}" }
+.user{ :class => "user_#{one_monthly.reporting.customer.id} #{'active' unless one_monthly.documents.empty? and one_monthly.find_or_create_subscription_detail.product_order.nil?}" }
   .header
     .actiongroup.first.pull-left
-      - if !one_monthly.documents.empty?
+      - unless one_monthly.documents.empty? and one_monthly.find_or_create_subscription_detail.product_order.nil?
         %a.do-showThis.pull-left{ :href => "#", :style => "display:none;" }
           +
         %a.do-hideThis.pull-left{ :href => "#" }
@@ -20,68 +20,84 @@
         reçus
       .state3.pull-left{ :class => ("active" if state == 3) }
         traités
-  .content.margin1top
-    - if !one_monthly.documents.empty?
-      %table
-        %tr
-          %th.first.documents Nom des documents
-          %th.second.aligncenter Pièces
-          %th.second.aligncenter Feuilles
-          %th.second.aligncenter Pages
-          %th.second Attaches  
-          %th.second Hors format
-        - total_pieces = 0
-        - total_sheets = 0
-        - total_pages = 0
-        - total_uploaded_pieces = 0
-        - total_uploaded_sheets = 0
-        - total_uploaded_pages = 0
-        - one_monthly.documents.each do |document|
-          %tr
-            %td.first.documents
-              != document.name
-            %td.second.aligncenter
-              != document.pieces
-              (#{document.pieces - document.uploaded_pieces rescue document.pieces},
-              #{document.uploaded_pieces rescue 0})
-              - total_pieces += document.pieces - document.uploaded_pieces rescue document.pieces
-              - total_uploaded_pieces += document.uploaded_pieces rescue 0
-            %td.second.aligncenter
-              != document.sheets
-              (#{document.sheets - document.uploaded_sheets rescue document.sheets},
-              \-)
-              - total_sheets += document.sheets - document.uploaded_sheets rescue document.sheets
-              - total_uploaded_sheets += document.uploaded_sheets rescue 0
-            %td.second.aligncenter
-              != document.pages
-              (#{document.pages - document.uploaded_pages rescue document.pages},
-              #{document.uploaded_pages rescue 0})
-              - total_pages += document.pages - document.uploaded_pages rescue document.pages
-              - total_uploaded_pages += document.uploaded_pages rescue 0
+  .content.margin1top{ :style => "min-height:#{one_monthly.documents.count * 20 + 60}px" }
+    %table{ :class => "document_#{one_monthly.month} #{'pull-left margin10right' if one_monthly.subscription_detail and one_monthly.subscription_detail.product_order}" }
+      %tr
+        %th.first.documents Nom des documents
+        %th.second.aligncenter Pièces
+        %th.second.aligncenter Feuilles
+        %th.second.aligncenter Pages
+        %th.second Attaches  
+        %th.second Hors format
+      - total_pieces = 0
+      - total_sheets = 0
+      - total_pages = 0
+      - total_uploaded_pieces = 0
+      - total_uploaded_sheets = 0
+      - total_uploaded_pages = 0
+      - one_monthly.documents.each do |document|
         %tr
           %td.first.documents
-            %b
-              Total
+            != document.name
           %td.second.aligncenter
-            %b
-              != total_pieces + total_uploaded_pieces
-              (#{total_pieces},
-              #{total_uploaded_pieces})
+            != document.pieces
+            (#{document.pieces - document.uploaded_pieces rescue document.pieces},
+            #{document.uploaded_pieces rescue 0})
+            - total_pieces += document.pieces - document.uploaded_pieces rescue document.pieces
+            - total_uploaded_pieces += document.uploaded_pieces rescue 0
           %td.second.aligncenter
-            %b
-              != total_sheets
-              (#{total_sheets},
-              \-)
+            != document.sheets
+            (#{document.sheets - document.uploaded_sheets rescue document.sheets},
+            \-)
+            - total_sheets += document.sheets - document.uploaded_sheets rescue document.sheets
+            - total_uploaded_sheets += document.uploaded_sheets rescue 0
           %td.second.aligncenter
-            %b
-              != total_pages + total_uploaded_pages
-              (#{total_pages},
-              #{total_uploaded_pages})
-          %td.second
-          %td.second
-          - @total_pieces_per_month += total_pieces
-          - @total_sheets_per_month += total_sheets
-          - @total_pages_per_month += total_pages
-          - @total_uploaded_pieces_per_month += total_uploaded_pieces
-          - @total_uploaded_sheets_per_month += total_uploaded_sheets
-          - @total_uploaded_pages_per_month += total_uploaded_pages
+            != document.pages
+            (#{document.pages - document.uploaded_pages rescue document.pages},
+            #{document.uploaded_pages rescue 0})
+            - total_pages += document.pages - document.uploaded_pages rescue document.pages
+            - total_uploaded_pages += document.uploaded_pages rescue 0
+      %tr
+        %td.first.documents
+          %b
+            Total
+        %td.second.aligncenter
+          %b
+            != total_pieces + total_uploaded_pieces
+            (#{total_pieces},
+            #{total_uploaded_pieces})
+        %td.second.aligncenter
+          %b
+            != total_sheets
+            (#{total_sheets},
+            \-)
+        %td.second.aligncenter
+          %b
+            != total_pages + total_uploaded_pages
+            (#{total_pages},
+            #{total_uploaded_pages})
+        %td.second
+        %td.second
+        - @total_pieces_per_month += total_pieces
+        - @total_sheets_per_month += total_sheets
+        - @total_pages_per_month += total_pages
+        - @total_uploaded_pieces_per_month += total_uploaded_pieces
+        - @total_uploaded_sheets_per_month += total_uploaded_sheets
+        - @total_uploaded_pages_per_month += total_uploaded_pages
+      %tr
+        %td.first.documents.alignleft
+          %i Dépassement
+        %td.second.aligncenter
+        %td.second.aligncenter
+          - excess_sheets = total_pieces - 100
+          - excess_sheets = excess_sheets > 0 ? excess_sheets : 0
+          - @total_excess_sheets += excess_sheets
+          %i!= excess_sheets
+        %td.second.aligncenter
+          - excess_uploaded_pages = total_uploaded_pages - 200
+          - excess_uploaded_pages = excess_uploaded_pages > 0 ? excess_uploaded_pages : 0
+          - @total_excess_uploaded_pages += excess_uploaded_pages
+          %i!= excess_uploaded_pages
+        %td.second.aligncenter
+        %td.second.aligncenter
+    != render :partial => "subscription_detail.html.haml", :locals => { :index => index, :one_monthly => one_monthly }

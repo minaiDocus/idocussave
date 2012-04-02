@@ -25,20 +25,25 @@ $(document).ready(function(){
     $(this).parents(".header").next(".content").hide();
   });
   
-  $(".do-showAll").click(function(){
-    $(this).hide();
-    $(this).parents(".actiongroup").children(".do-hideAll").show();
-    $(this).parents(".header").next(".content").children(".user, .total").find(".do-hideThis").show();
-    $(this).parents(".header").next(".content").children(".user, .total").find(".do-showThis").hide();
-    $(this).parents(".header").next(".content").children(".user, .total").children(".content").show();
-  });
-  
-  $(".do-hideAll").click(function(){
-    $(this).hide();
-    $(this).parents(".actiongroup").children(".do-showAll").show();
-    $(this).parents(".header").next(".content").children(".user, .total").find(".do-hideThis").hide();
-    $(this).parents(".header").next(".content").children(".user, .total").find(".do-showThis").show();
-    $(this).parents(".header").next(".content").children(".user, .total").children(".content").hide();
+  $(".do-showHideInformation").change(function(){
+    var mois = $(this).attr("id").split("_")[1];
+    var $subscriptions = $("#subscriptions_"+mois);
+    var is_subs_info_checked = $subscriptions.is(":checked");
+    var is_users_info_checked = $("#users_"+mois).is(":checked");
+    
+    if (is_subs_info_checked) {
+      $(".subscription_"+mois).show();
+    } else {
+      $(".subscription_"+mois).hide();
+    }
+    
+    if (is_users_info_checked) {
+      $subscriptions.removeAttr("disabled");
+      $(".content.month_"+mois+" .user").show();
+    } else {
+      $subscriptions.attr("disabled","");
+      $(".content.month_"+mois+" .user").hide();
+    }
   });
   
   $(".do-showGlobal").click(function(){
