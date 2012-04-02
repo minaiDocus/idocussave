@@ -12,7 +12,7 @@ public
 
   def index
     @products = Product.by_position.by_price_ascending.all
-    @groups = Group.by_position.all
+    @product_groups = ProductGroup.by_position.all
   end
 
   def new

@@ -1,5 +1,9 @@
 .group
-  != f.label :title, "Title *", :class => :label
+  != f.label :name, "Name * (nom du produit dans l'administration)", :class => :label
+  != f.text_field :name, :class => 'text_field'
+
+.group
+  != f.label :title, "Title * (nom du produit dans le tunnel)", :class => :label
   != f.text_field :title, :class => 'text_field'
   
 .group
@@ -17,11 +21,11 @@
   
 .group
   != f.label :supergroup_id, "Sélectionner un super groupe", :class => :label
-  != f.collection_select :supergroup_id, (Group.find(:all) - [@group]), :id, :title, :prompt => "Selectionner un super groupe"
+  != f.select(:product_supergroup_id, ([["aucun",""]] + ProductGroup.all.entries.map{|g| [g.name,g.id]}))
   
 .group
   != f.label :require_id, "Sélectionner un groupe pour la dépendance", :class => :label
-  != f.collection_select :require_id, (Group.find(:all) - [@group]), :id, :title, :prompt => "Selectionner un super groupe"
+  != f.select(:product_require_id, ([["aucun",""]] + ProductGroup.all.entries.map{|g| [g.name,g.id]}))
   
 .group
   != f.label :product_id, "Sélectionner un produit", :class => :label

@@ -25,7 +25,7 @@ class ProductOption
   slug :title
 
   referenced_in :product
-  referenced_in :group
+  referenced_in :product_group
   
 public
 
@@ -46,6 +46,10 @@ public
   
   def price_in_cents_w_vat
     price_in_cents_wo_vat * 1.196
+  end
+  
+  def group
+    product_group.title rescue ""
   end
   
 protected

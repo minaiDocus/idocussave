@@ -78,7 +78,7 @@
             %th Prix
             %th Durée
             %th.last
-          - @order.product_order.product_option_order.each do |option|
+          - @order.product_order.product_option_orders.each do |option|
             %tr
               %td
               %td!= option.title

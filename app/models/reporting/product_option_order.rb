@@ -1,4 +1,4 @@
-class ProductOptionOrder
+class Reporting::ProductOptionOrder
   include Mongoid::Document
   
   field :title, :type => String
@@ -9,7 +9,13 @@ class ProductOptionOrder
   field :require_addresses, :type => Boolean
   field :duration, :type => Integer
   field :quantity, :type => Integer
-
-  embedded_in :product_order
+  
+  embedded_in :product_order, :class_name => "Reporting::ProductOrder", :inverse_of => :product_option_orders
+  
+  class << self
+    def by_position
+      asc(:position)
+    end
+  end
   
 end

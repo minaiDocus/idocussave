@@ -1,26 +1,26 @@
-class Admin::GroupsController < Admin::AdminController
+class Admin::ProductGroupsController < Admin::AdminController
 
   before_filter :load_group, :only => %w(edit update destroy)
 
 protected
 
   def load_group
-    @group = Group.find_by_slug params[:id]
+    @product_group = ProductGroup.find_by_slug params[:id]
   end
 
 public
 
   def index
-    @groups = Group.by_position.all
+    @product_groups = ProductGroup.by_position.all
   end
 
   def new
-    @group = Group.new
+    @product_group = ProductGroup.new
   end
 
   def create
-    @group = Group.new params[:group]
-    if @group.save
+    @product_group = ProductGroup.new params[:product_group]
+    if @product_group.save
       redirect_to admin_products_path
     else
       render :action => "new"
@@ -31,7 +31,7 @@ public
   end
 
   def update
-    if @group.update_attributes params[:group]
+    if @product_group.update_attributes params[:product_group]
       redirect_to admin_products_path
     else
       render :action => "edit"
@@ -39,7 +39,7 @@ public
   end
 
   def destroy
-    @group.destroy
+    @product_group.destroy
     redirect_to admin_products_path
   end
 end

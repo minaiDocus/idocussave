@@ -4,6 +4,7 @@ class Reporting::Monthly
   
   referenced_in :reporting, :inverse_of => :monthly
   embeds_one :delivery, :class_name => "Reporting::Delivery", :inverse_of => :monthly
+  embeds_one :subscription_detail, :class_name => "Reporting::SubscriptionDetail", :inverse_of => :monthly
   
   embeds_many :documents, :class_name => "Reporting::Document", :inverse_of => :monthly
   
@@ -11,7 +12,7 @@ class Reporting::Monthly
   before_save :update_total_price_in_cents
   
   # Subscription default pack
-  field :base_price_in_cents, :type => Integer, :default => 1900
+  field :base_price_in_cents, :type => Integer, :default => 0
   field :max_sheets, :type => Integer, :default => 100
   field :max_custom_page, :type => Integer, :default => 100
   # Total
@@ -45,6 +46,16 @@ public
       self.documents.create(:name => name)
       #FIXME try another solution
       self.find_or_create_document_by_name name
+    end
+  end
+  
+  def find_or_create_subscription_detail
+    if self.subscription_detail
+      self.subscription_detail
+    else
+      self.subscription_detail = Reporting::SubscriptionDetail.new
+      self.subscription_detail.save
+      self.subscription_detail
     end
   end
   

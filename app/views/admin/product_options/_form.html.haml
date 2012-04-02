@@ -27,12 +27,12 @@
   != f.text_field :quantity, :class => 'text_field'
   
 - if @product_option.product
-  - groups = Group.where(:product_id => @product_option.product.id).entries
+  - product_groups = ProductGroup.where(:product_id => @product_option.product.id).entries
 - else
-  - groups = Group.find(:all)
+  - product_groups = ProductGroup.find(:all)
 .group
-  != f.label :group_id, "Sélectionner un groupe", :class => :label
-  != f.collection_select :group_id, groups, :id, :title, :prompt => "Selectionner un groupe"
+  != f.label :product_group_id, "Sélectionner un groupe", :class => :label
+  != f.collection_select :product_group_id, product_groups, :id, :title, :prompt => "Selectionner un groupe"
   
 .group
   != f.label :product_id, "Sélectionner un produit :", :class => :label

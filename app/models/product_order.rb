@@ -8,7 +8,17 @@ class ProductOrder
   field :position, :type => Integer
   field :require_billing_address, :type => Boolean, :default => true
 
-  embedded_in :order,  :inverse_of => :product_order
-  embeds_many :product_option_order
+  embedded_in :order
+  embeds_many :product_option_orders
+  
+  after_save :update_reporting
+  
+private
+  def update_reporting
+    monthly = self.order.user.find_or_create_reporting.find_or_create_monthly_by_date self.order.updated_at
+    subscription_detail = monthly.find_or_create_subscription_detail
+    subscription_detail.set_product_order self
+    monthly.save
+  end
 
 end

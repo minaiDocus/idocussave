@@ -193,6 +193,19 @@ class User
     end
   end
   
+  def scanning_subscription
+    subscriptions.where(:category => 1).first
+  end
+  
+  def find_or_create_scanning_subscription
+    if scanning_subscription
+      scanning_subscription
+    else
+      subscriptions.create
+      scanning_subscription
+    end
+  end
+  
 protected
   def update_clients
     if self.is_prescriber && !self.client_ids.nil?

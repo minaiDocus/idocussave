@@ -29,6 +29,7 @@ class Order
   field :document_destiny, :type => Integer, :default => 1
   field :payment_type, :type => Integer, :default => 0
   field :is_viewable_by_prescriber, :type => Boolean, :default => false
+  field :is_current, :type => Boolean, :default => true
 
   index :number, :unique => true
 
@@ -63,13 +64,14 @@ class Order
 
   scope :with_state, lambda{|ary| where(:state.in => [ary].flatten.map(&:to_s)) }
   scope :without_state, lambda{|ary| where(:state.nin => [ary].flatten.map(&:to_s)) }
-
+  scope :current, :where => { :is_current => true }
+  
   def total_in_cents_wo_vat
     _product = self.product_order
     
     price =  _product.price_in_cents_wo_vat.to_f rescue -1
     
-    _product.product_option_order.each do |option|
+    _product.product_option_orders.each do |option|
       price += option.price_in_cents_wo_vat.to_f rescue -1
     end
 
@@ -119,16 +121,16 @@ class Order
   end
   
   def set_product_order product, options
-    product_order = ProductOrder.new
-    product_order.fields.keys.each do |k|
+    new_product_order = ProductOrder.new
+    new_product_order.fields.keys.each do |k|
       setter =  (k+"=").to_sym
       value = product.send(k)
-      product_order.send(setter, value)
+      new_product_order.send(setter, value)
     end
 
-    self.product_order = product_order
+    self.product_order = new_product_order
     
-    self.product_order.product_option_order = []
+    self.product_order.product_option_orders = []
     
     options.each do |option|
       product_option_order = ProductOptionOrder.new
@@ -137,8 +139,16 @@ class Order
         value = option.send(k)
         product_option_order.send(setter, value)
       end
-      self.product_order.product_option_order << product_option_order
+      product_option_order.position = option.product_group.position
+      product_option_order.group = option.product_group.title
+      self.product_order.product_option_orders << product_option_order
     end
+    
+    monthly = self.user.find_or_create_reporting.find_or_create_monthly_by_date Time.now
+    subscription_detail = monthly.find_or_create_subscription_detail
+    subscription_detail.product_order.set_product_option_order options
+    monthly.save
+    
   end
   
   def get_documents

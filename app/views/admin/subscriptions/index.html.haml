@@ -34,7 +34,7 @@
             %td
               - total = 0
               - if instance.order && instance.order.product_order 
-                - instance.order.product_order.product_option_order.each do |option|
+                - instance.order.product_order.product_option_orders.each do |option|
                   - total += option.price_in_cents_wo_vat * 1.196
               #{format_price total} € TTC
                   

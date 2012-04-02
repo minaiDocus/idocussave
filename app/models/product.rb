@@ -18,7 +18,7 @@ class Product
 
   slug :title
   
-  references_many :groups, :dependent => :delete
+  references_many :product_groups, :dependent => :delete
   references_many :product_options, :dependent => :delete
 
   class << self
