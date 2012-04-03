@@ -26,10 +26,16 @@
               Reporting de l'année #{@year}
           .legend{ :style => "float:left;margin-top:4px;margin-left:136px;" }
             Légende : total (numérisées, téléversées)
+            
           .actiongroup.pull-right
+            %input{ :type => :checkbox, :id => "users_0", :class => "do-showHideGlobal users pull-left", :checked => :checked }
+            %label{ :for => "users_0", :class => "pull-left margin05left margin2right" } utilisateurs
+            %input{ :type => :checkbox, :id => "subscriptions_0", :class => "do-showHideGlobal subscriptions pull-left", :checked => :checked }
+            %label{ :for => "subscriptions_0", :class => "pull-left margin05left margin3right" } coûts
+            
             %a
               != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))
-            %span #{@year}
+            %span.margin1left.margin1right #{@year}
             %a
               != link_to( (@year + 1), reporting_account_documents_path(:year => (@year + 1), :email => (params[:email] || "")))
         .content.margin3top

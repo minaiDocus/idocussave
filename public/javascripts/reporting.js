@@ -6,10 +6,28 @@ $(document).ready(function(){
     $(".total").hide();
     
     if(id == 0) {
-      $(".user").show();
-      $(".total").show();
+      if ($(".do-showHideGlobal.users").is(":checked")) {
+        $(".do-showHideGlobal").attr("disabled",false);
+      } else {
+        $(".do-showHideGlobal.users").attr("disabled",false);
+      }
+      
+      $(".do-showHideInformation.users").each(function(index){
+        var $this = $(this);
+        var mois = $this.attr("id").split("_")[1];
+        $this.removeAttr("disabled");
+        if ($this.is(":checked")) {
+          $("#subscriptions_"+mois).attr("disabled",false);
+          $(".month_"+mois+" .user").show();
+          $(".month_"+mois+" .total").show();
+        } else {
+          $(".month_"+mois+" .total").show();
+        }
+      });
     } else {
       $(".user_"+id).show();
+      $(".do-showHideInformation").attr("disabled",true);
+      $(".do-showHideGlobal").attr("disabled",true);
     }
   });
   
@@ -44,6 +62,34 @@ $(document).ready(function(){
       $subscriptions.attr("disabled","");
       $(".content.month_"+mois+" .user").hide();
     }
+  });
+  
+  $(".do-showHideGlobal").change(function(){
+    var is_subs_info_checked = $("#subscriptions_0").is(":checked");
+    var is_users_info_checked = $("#users_0").is(":checked");
+    
+    if (!is_users_info_checked)
+      $("#subscriptions_0").attr("disabled","disabled");
+    else
+      $("#subscriptions_0").removeAttr("disabled");
+    
+    $(".do-showHideInformation.users").each(function(index){
+      var mois = $(this).attr("id").split("_")[1];
+      
+      $("#users_"+mois).attr("checked",is_users_info_checked);
+      $("#subscriptions_"+mois).attr("checked",is_subs_info_checked);
+      $("#subscriptions_"+mois).attr("disabled",!is_users_info_checked);
+      
+      if (is_subs_info_checked)
+        $(".subscription_"+mois).show();
+      else
+        $(".subscription_"+mois).hide();
+      
+      if (is_users_info_checked)
+        $(".content.month_"+mois+" .user").show();
+      else
+        $(".content.month_"+mois+" .user").hide();
+    });
   });
   
   $(".do-showGlobal").click(function(){

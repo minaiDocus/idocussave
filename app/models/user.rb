@@ -19,6 +19,8 @@ class User
   field :is_dropbox_authorized, :type => Boolean, :default => false
   field :dropbox_delivery_folder, :type => String, :default => ""
   field :is_dropbox_extended_authorized, :type => Boolean, :default => false
+  field :is_centraliser, :type => Boolean, :default => true
+  field :is_detail_authorized, :type => Boolean, :default => false
   
   attr_accessor :client_ids, :is_inactive
 

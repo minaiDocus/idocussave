@@ -59,6 +59,25 @@ public
     end
   end
   
+  def scanning_subscription
+    self.reporting.customer.original_user.scanning_subscription rescue nil
+  end
+  
+  def max_sheets_authorized
+    if subscription = scanning_subscription
+      subscription.detail.max_number_of_sheets
+    else
+      self.max_sheets
+    end
+  end
+  
+  def max_uploaded_pages_authorized
+    if subscription = scanning_subscription
+      subscription.detail.max_uploaded_pages
+    else
+      self.max_custom_page
+    end
+  end
 protected
   def create_delivery_state
     self.delivery = Reporting::Delivery.new
@@ -87,7 +106,7 @@ protected
       total_sheets += document.sheets
     end
     
-    total_sheets -= self.max_sheets
+    total_sheets -= max_sheets_authorized
     
     if total_sheets > 0
       self.total_price_in_cents += total_sheets * 12
@@ -100,7 +119,7 @@ protected
       total_customs += document.uploaded_pages
     end
     
-    total_customs -= self.max_custom_page
+    total_customs -= max_uploaded_pages_authorized
     
     while total_customs > 0
       self.total_price_in_cents += 200

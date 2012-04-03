@@ -48,7 +48,14 @@
   != f.check_box :is_prescriber, :class => 'checkbox floattoleft'
   != f.label :is_prescriber, "Est prescripteur ?", :class => :label
   %br
-  .clients
+  %br
+  .for-prescriber
+    != f.check_box :is_centraliser, :class => 'checkbox floattoleft'
+    != f.label :is_centraliser, "Est centraliseur ?", :class => :label
+    %br
+    != f.check_box :is_detail_authorized, :class => 'checkbox floattoleft'
+    != f.label :is_detail_authorized, "Autoriser les details pour les clients ?", :class => :label
+    %br
     != f.label :client_ids, "Email du (des) client(s)", :class => :label
     != f.text_field :client_ids, :class => 'text_field', :value => ""
 
@@ -105,13 +112,13 @@
   $(document).ready(function(){
     
     if (!$("#user_is_prescriber").is(":checked"))
-      $(".group .clients").hide();
+      $(".group .for-prescriber").hide();
     
     $("#user_is_prescriber").change(function(){
       if($(this).is(":checked")) {
-        $(".group .clients").show();
+        $(".group .for-prescriber").show();
       } else {
-        $(".group .clients").hide();
+        $(".group .for-prescriber").hide();
       }
     });
     
