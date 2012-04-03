@@ -135,7 +135,7 @@ protected
   
     def do_reprocess_styles
       nb = 0
-      self.not_clean.each do |doc|
+      self.not_clean.without_original.each do |doc|
         nb += 1
         puts "document[#{doc.content_file_name}][#{nb}]"
         doc.dirty = false
