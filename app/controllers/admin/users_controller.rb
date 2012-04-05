@@ -128,6 +128,8 @@ public
     if !params[:q].blank?
       users = User.where(:email => /.*#{params[:q]}.*/)
       
+      users = users.prescribers if params[:prescriber].present?
+      
       if params[:reporting].blank?
         users.each do |user|
           @tags << {"id" => "#{user.id}", "name" => "#{user.email}"}

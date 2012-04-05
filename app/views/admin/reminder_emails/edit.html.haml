@@ -1,0 +1,12 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All reminder emails", admin_reminder_emails_path
+      %li!= link_to "Add reminder email", new_admin_reminder_email_path
+  .content
+    %h2.title
+      Editing reminder email : 
+      != @reminder_email.subject
+    .inner
+      - form_for [:admin, @reminder_email], :html => { :class => :form } do |f|
+        != render :partial => "form", :locals => {:f => f}

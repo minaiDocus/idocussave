@@ -12,17 +12,11 @@ Signal.trap("TERM") do
 end
 
 while($running) do
-  ok ||= false
-  if Time.now.min != 0 or !ok
-    sleep((60-Time.now.min)*60)
-    ok = true
-  end
-  
-  if ok
     Pack.get_documents
+    ReminderEmail.deliver
     Document.do_reprocess_styles
     Document.extract_content
     Document::Index.process
-    ok = false
-  end
+    
+    sleep(1800)
 end

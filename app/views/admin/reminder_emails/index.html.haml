@@ -1,0 +1,44 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first.active!= link_to "All reminder emails", admin_reminder_emails_path
+      %li!= link_to "Add reminder email", new_admin_reminder_email_path
+  .content
+    %h2.title All reminder emails
+    .inner
+      %table.table
+        %tr
+          %th Label
+          %th Customer
+          %th Delivery day
+          %th Delivered at
+          %th
+            Delivery count
+            %br
+            delivered / processed / total
+          %th.last &nbsp;
+        - @reminder_emails.each do |reminder_email|
+          %tr{:class => cycle("odd", "even")}
+            %td!= link_to reminder_email.name, [:admin, reminder_email]
+            %td!= link_to reminder_email.user.email, [:admin, reminder_email.user]
+            %td!= reminder_email.delivery_day
+            %td!= l(reminder_email.delivered_at) rescue nil
+            %td
+              != reminder_email.delivered_users.count
+              \/
+              != reminder_email.processed_users.count
+              \/
+              != reminder_email.user.clients.active.count
+            %td.last
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_reminder_email_path(reminder_email)
+              |
+              != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_reminder_email_path(reminder_email), :method => :delete, :confirm => "Êtes-vous sûr ?"
+      .actions-bar.wat-cf
+        .actions
+        != will_paginate @reminder_emails
+
+- content_for :sidebar, render(:partial => 'sidebar')
+  
+:css
+  .w50 { width: 50px; }
+  .w75 { width: 75px; }

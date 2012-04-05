@@ -38,6 +38,8 @@ class User
   references_many :my_account_book_types, :class_name => "AccountBookType", :inverse_of => :owner
   references_and_referenced_in_many :account_book_types,  :inverse_of => :clients
   
+  references_many :reminder_emails
+  
   references_many :orders
   references_many :credits
   references_many :document_tags
@@ -52,9 +54,14 @@ class User
   
   scope :prescribers, :where => { :is_prescriber => true }
   scope :dropbox_extended_authorized, :where => { :is_dropbox_extended_authorized => true }
+  scope :active, :where => { :inactive_at => nil }
   
   before_save :format_name, :update_clients, :set_inactive_at
   after_save :update_copy
+  
+  def active
+    inactive_at == nil
+  end
   
   def name
     f_name = self.first_name || ""

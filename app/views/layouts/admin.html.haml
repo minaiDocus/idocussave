@@ -14,16 +14,13 @@
         #user-navigation
           %ul.wat-cf
             %li
-              %a{:href => "#"}= t("web-app-theme.profile", :default => "Profile")
-            %li
-              %a{:href => "#"}= t("web-app-theme.settings", :default => "Settings")
-            %li
               %a.logout{:href => "/users/sign_out"}= t("web-app-theme.logout", :default => "Logout")
         #main-navigation
           %ul.wat-cf
             %li= link_to "Dashboard", admin_root_path
             %li= link_to "Events", admin_events_path
             %li= link_to "Users", admin_users_path
+            %li= link_to "Reminder emails", admin_reminder_emails_path
             %li= link_to "Homepage", admin_homepages_path
             %li= link_to "Pages", admin_pages_path
             %li= link_to "CMS Images", admin_cms_images_path

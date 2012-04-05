@@ -99,6 +99,10 @@ Idocus::Application.routes.draw do
       post 'update_delivery_status', :on => :member
       get 'search', :on => :collection
     end
+    resources :reminder_emails do
+      get 'preview', :on => :member
+      get 'deliver', :on => :member
+    end
     resources :orders do
       get 'edit_option', :on => :member
       post 'update_option', :on => :member
