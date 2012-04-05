@@ -14,8 +14,9 @@
         %input{ :type => :checkbox, :id => "users_#{index + 1}", :class => "do-showHideInformation users pull-left", :checked => :checked }
         %label{ :for => "users_#{index + 1}", :class => "pull-left margin05left margin2right" } utilisateurs
         
-        %input{ :type => :checkbox, :id => "subscriptions_#{index + 1}", :class => "do-showHideInformation subscriptions pull-left", :checked => :checked }
-        %label{ :for => "subscriptions_#{index + 1}", :class => "pull-left margin05left" } coûts
+        - if @active
+          %input{ :type => :checkbox, :id => "subscriptions_#{index + 1}", :class => "do-showHideInformation subscriptions pull-left", :checked => :checked }
+          %label{ :for => "subscriptions_#{index + 1}", :class => "pull-left margin05left" } coûts
         
   - if !monthly.empty?
     .content{ :class => "month_#{index + 1}" }

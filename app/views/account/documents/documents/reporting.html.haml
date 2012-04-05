@@ -30,8 +30,14 @@
           .actiongroup.pull-right
             %input{ :type => :checkbox, :id => "users_0", :class => "do-showHideGlobal users pull-left", :checked => :checked }
             %label{ :for => "users_0", :class => "pull-left margin05left margin2right" } utilisateurs
-            %input{ :type => :checkbox, :id => "subscriptions_0", :class => "do-showHideGlobal subscriptions pull-left", :checked => :checked }
-            %label{ :for => "subscriptions_0", :class => "pull-left margin05left margin3right" } coûts
+            
+            - @active = true
+            - is_detail_authorized = current_user.prescriber.is_detail_authorized rescue true
+            - @active = false if !is_detail_authorized
+            
+            - if @active
+              %input{ :type => :checkbox, :id => "subscriptions_0", :class => "do-showHideGlobal subscriptions pull-left", :checked => :checked }
+              %label{ :for => "subscriptions_0", :class => "pull-left margin05left margin3right" } coûts
             
             %a
               != link_to( (@year - 1), reporting_account_documents_path(:year => (@year - 1), :email => (params[:email] || "")))
