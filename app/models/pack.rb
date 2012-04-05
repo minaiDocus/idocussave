@@ -19,6 +19,8 @@ class Pack
   
   after_save :update_reporting
   
+  scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
+  
   def update_reporting
     monthly = self.order.user.find_or_create_reporting.find_or_create_monthly_by_date(self.created_at) rescue nil
     if monthly
@@ -195,8 +197,7 @@ class Pack
     def set_is_open_for_uploaded_file pack, filesname
       if pack.is_open_for_uploaded_file
         filesname.select do |filename|
-          filename.sub(".pdf","").split("_")[3].to_i < 500
-          pack.is_open_for_uploaded_file = false
+          pack.is_open_for_uploaded_file = false if filename.sub(".pdf","").split("_")[3].to_i < 500
         end
       end
     end
