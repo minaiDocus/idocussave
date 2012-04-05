@@ -18,7 +18,7 @@ class Reporting::ProductOrder
       product_option_order.title = option.title
       product_option_order.group = option.group
       product_option_order.price_in_cents_wo_vat = option.price_in_cents_wo_vat
-      product_option_order.position = option.position
+      product_option_order.position = option.product_group.position
       product_option_order.duration = option.duration
       product_option_order.quantity = option.quantity
       product_option_order.require_addresses = option.require_addresses

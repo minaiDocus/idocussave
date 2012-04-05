@@ -48,7 +48,7 @@
           %th Durée
           %th.last
         - if @order
-          - @subscription.order.product_order.product_option_orders.each do |option|
+          - @subscription.order.product_order.product_option_orders.sort{ |a,b| a.position <=> b.position }.each do |option|
             %tr
               %td
               %td!= option.group + " - " + option.title
