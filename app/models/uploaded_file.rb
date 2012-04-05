@@ -116,11 +116,11 @@ public
       nb = 0
       filename = get_last_similar_filename(sBasename, ".")
       if filename
-        nb = filename.split('_')[3].sub('.pdf','').to_i + 1
+        nb = filename.split('_')[4].sub('.pdf','').to_i + 1
       else
         filename = get_last_similar_filename(sBasename, "..")
         if filename
-          nb = filename.split('_')[3].sub('.pdf','').to_i + 1
+          nb = filename.split('_')[4].sub('.pdf','').to_i + 1
         end
       end
       nb = 500 if nb < 500 || nb > 999
@@ -128,7 +128,7 @@ public
     end
     
     def get_last_similar_filename sBasename, path
-      Dir.entries("#{path}").select{|d| d.match(/^#{sBasename}/)}.sort.last
+      Dir.entries("#{path}").select{|d| d.match(/^up_#{sBasename}/)}.sort.last
     end
     
     def is_password_protected? sFilename, sExtension
