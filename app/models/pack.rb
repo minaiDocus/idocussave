@@ -220,7 +220,7 @@ class Pack
     def deliver_to_dropbox_extended filesname, delivery_path, users
       filesname.each do |filename|
         users.each do |user|
-          if user.is_dropbox_authorized? and !user.dropbox_delivery_folder.nil?
+          if !user.dropbox_delivery_folder.nil?
             DropboxExtended.deliver filename, user.dropbox_delivery_folder, delivery_path
           end
         end
