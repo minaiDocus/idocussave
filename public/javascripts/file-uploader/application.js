@@ -18,31 +18,6 @@ $(function () {
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload({sequentialUploads:true});
 
-    if (window.location.hostname === 'blueimp.github.com') {
-        // Demo settings:
-        $('#fileupload').prop(
-            'action',
-            '//jquery-file-upload.appspot.com'
-        );
-        $('#fileupload').fileupload('option', {
-            maxFileSize: 5000000,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png|pdf|bmp|tiff?)$/i
-        });
-    } else {
-        // Load existing files:
-        $.getJSON($('#fileupload').prop('action'), function (files) {
-            var fu = $('#fileupload').data('fileupload'),
-                template;
-            fu._adjustMaxNumberOfFiles(-files.length);
-            template = fu._renderDownload(files)
-                .appendTo($('#fileupload .files'));
-            // Force reflow:
-            fu._reflow = fu._transition && template.length &&
-                template[0].offsetWidth;
-            template.addClass('in');
-        });
-    }
-
     // Enable iframe cross-domain access via redirect page:
     var redirectPage = window.location.href.replace(
         /\/[^\/]*$/,
