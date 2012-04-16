@@ -210,7 +210,7 @@ class Pack
     def deliver_to_dropbox filesname, delivery_path, users
       filesname.each do |filename|
         users.each do |user|
-          if user.is_dropbox_authorized?
+          if user.is_dropbox_authorized? and user.my_dropbox
             user.my_dropbox.deliver filename, delivery_path
           end
         end
