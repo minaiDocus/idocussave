@@ -1,0 +1,49 @@
+.group
+  != f.label :first_name, "* Prénom", :class => "label"
+  != f.text_field :first_name, :class => "text_field"
+  %br
+  %br
+  != f.label :last_name, "* Nom", :class => "label"
+  != f.text_field :last_name, :class => "text_field"
+
+.group
+  != f.label :company, "Raison sociale", :class => "label"
+  != f.text_field :company, :class => 'w470', :class => "text_field"
+
+.group
+  != f.label :address_1, "* Adresse", :class => "label"
+  != f.text_field :address_1, :class => "text_field"
+
+.group
+  != f.label :address_2, "Adresse (suite)", :class => "label"
+  != f.text_field :address_2, :class => "text_field"
+
+.group
+  != f.label :zip, "* Code Postal", :class => "label"
+  != f.text_field :zip, :class => "text_field"
+  %br
+  %br
+  != f.label :city, "* Ville", :class => "label"
+  != f.text_field :city, :class => "text_field"
+
+.group
+  != f.label :country, "Pays", :class => "label"
+  != f.text_field :country, :class => "text_field"
+  %br
+  %br
+  != f.label :phone, "Numéro de téléphone (domicile)", :class => "label"
+  != f.text_field :phone, :class => "text_field"
+
+.group  
+  != f.label :phone_mobile, "Numéro de téléphone (fixe)", :class => "label"
+  != f.text_field :phone_mobile, :class => "text_field"
+
+%br
+
+%button.button{:type => 'submit'}
+  != image_tag("web-app-theme/tick.png", :alt => "Save")
+  Save
+!= link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_user_addresses_path(@user), :class => "button"
+
+%br
+%br

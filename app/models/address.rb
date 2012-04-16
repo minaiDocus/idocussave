@@ -14,6 +14,9 @@ class Address
   field :country
   field :phone
   field :phone_mobile
+  
+  field :is_for_billing, :type => Boolean, :default => false
+  field :is_for_shipping, :type => Boolean, :default => false
 
   embedded_in :user,  :inverse_of => :addresses
 
@@ -21,7 +24,10 @@ class Address
   embedded_in :order, :inverse_of => :billing_address
 
   validates_presence_of :first_name, :last_name, :address_1, :city, :zip
-
+  
+  scope :for_billing, :where => { :is_for_billing => true }
+  scope :for_shipping, :where => { :is_for_shipping => true }
+  
   def as_location
     self.attributes.delete_if {|key, value| key == '_id' } 
   end

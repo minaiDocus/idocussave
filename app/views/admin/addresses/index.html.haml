@@ -1,0 +1,143 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All users", admin_users_path
+      %li!= link_to "Add user", new_admin_user_path
+  .content
+    %h2 Manage addresses for user #{@user.email}
+    
+    - form_tag update_multiple_admin_user_addresses_path(@user), :html => {:method => :put, :class => 'clearfix'}, :style => "margin-left: 16px;" do
+      %h3.margin2top Adresse de facturation :
+      %p.margin1top
+        - unless @user.addresses.empty?
+          Choisir l'une des adresses ci-dessous ou
+        != link_to "ajouter une nouvelle adresse.", new_admin_user_address_path(@user)
+
+      %ul.adresseslist.margin2left.margin1top.clearfix
+        != render :partial => 'address', :collection => @user.addresses, :locals => {:billing => true}
+      %div{ :style => "clear: both;" }
+
+      %h3 Adresse de retour :
+      %p.margin1top
+        - unless @user.addresses.empty?
+          Choisir l'une des adresses ci-dessous ou
+        != link_to "ajouter une nouvelle adresse.", new_admin_user_address_path(@user)
+      %ul.adresseslist.margin2left.margin2top.clearfix
+        != render :partial => 'address', :collection => @user.addresses, :locals => {:billing => false}
+      %div{ :style => "clear: both;" }
+      
+      
+      %button.button{:type => 'submit'}
+        != image_tag("web-app-theme/tick.png", :alt => "Save")
+        Save
+      != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_users_path, :class => "button"
+      
+      %br
+      %br
+      %br
+      
+:javascript
+  $(document).ready(function(){
+    $("input[name=billing_address]").change(function() {
+      hsh = {};
+      hsh = { _method: "PUT", billing_address: $(this).val() };
+      $.ajax({
+        url: "#{update_multiple_admin_user_addresses_path(@user)}",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        success: function(data){
+          alert("Modifié avec succès.");
+        }
+      });
+    });
+    
+    $("input[name=shipping_address]").change(function() {
+      hsh = {};
+      hsh = { _method: "PUT", shipping_address: $(this).val() };
+      $.ajax({
+        url: "#{update_multiple_admin_user_addresses_path(@user)}",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        success: function(data){
+          alert("Modifié avec succès.");
+        }
+      });
+    });
+  });
+      
+:css
+  .margin2top { margin-top: 20px; }
+  .margin1top { margin-top: 10px; }
+  
+  .adresseslist {
+    display: block !important;
+    position: relative !important;
+    width: 505px;
+    height: auto; }
+    .adresseslist li {
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      -khtml-border-radius: 4px;
+      display: block !important;
+      position: relative !important;
+      float: left;
+      width: 230px;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      min-height: 100px;
+      border-style: solid;
+      border-color: #b9b9b9;
+      border-width: 1px;
+      background-color: #fafafa; }
+      .adresseslist li .header, .adresseslist li .content, .adresseslist li .footer {
+        display: block !important;
+        position: relative !important;
+        width: 230px; }
+      .adresseslist li .header {
+        height: 30px;
+        background-color: #b9b9b9; }
+        .adresseslist li .header input[type="radio"] {
+          top: 8px;
+          left: 8px;
+          position: absolute;
+          vertical-align: middle;
+          width: 14px;
+          height: 14px;
+          padding: 0px;
+          margin: 0px;
+          line-height: 0px;
+          font-size: 0px; }
+        .adresseslist li .header span {
+          display: block;
+          position: absolute;
+          font-weight: bold;
+          font-size: 12px;
+          line-height: 14px;
+          left: 25px;
+          top: 8px; }
+          .adresseslist li .header span a {
+            color: black;
+            text-decoration: none; }
+      .adresseslist li .content {
+        min-height: 40px;
+        padding-top: 10px;
+        padding-bottom: 10px; }
+        .adresseslist li .content span {
+          display: block !important;
+          position: relative !important;
+          font-size: 12px;
+          line-height: 14px;
+          margin-left: 10px; }
+      .adresseslist li .footer {
+        width: 220px;
+        min-height: 20px;
+        text-align: right;
+        margin-right: 10px; }
+        .adresseslist li .footer a {
+          font-size: 11px;
+          color: black;
+          text-decoration: none;
+          margin-left: 5px; }

@@ -1,0 +1,16 @@
+%li
+  .header
+    - if billing
+      != radio_button_tag :billing_address, address.id, address.is_for_billing
+    - else
+      != radio_button_tag :shipping_address, address.id, address.is_for_shipping
+    %span
+      - if billing
+        %label{ :for => "billing_address_#{address.id}" } Choisir cette adresse
+      - else
+        %label{ :for => "shipping_address_#{address.id}" } Choisir cette adresse
+  .content
+    != render :partial => 'address_content', :locals => {:address => address}
+  .footer
+    != link_to "supprimer", admin_user_address_path(@user,address), :class => 'red', :method => :delete, :confirm => 'Êtes vous sûr de vouloir supprimer cette addresse ?'
+    != link_to "modifier", edit_admin_user_address_path(@user,address)

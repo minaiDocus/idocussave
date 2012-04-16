@@ -1,4 +1,5 @@
 Idocus::Application.routes.draw do
+
   root :to => "homepage#index"
 
   devise_for :super_users
@@ -59,7 +60,7 @@ Idocus::Application.routes.draw do
         get :success
         get :cancel
       end
-    end
+      end
     resource :payment do
       post 'mode', :on => :member
       get 'credit', :on => :member
@@ -76,6 +77,7 @@ Idocus::Application.routes.draw do
     namespace :manage do
       resources :account_book_types
     end
+    resources :invoices
   end
 
   namespace :tunnel do
@@ -98,6 +100,9 @@ Idocus::Application.routes.draw do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
       get 'search', :on => :collection
+      resources :addresses do
+        put 'update_multiple', :on => :collection
+      end
     end
     resources :reminder_emails do
       get 'preview', :on => :member

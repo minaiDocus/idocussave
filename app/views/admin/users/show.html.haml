@@ -26,6 +26,27 @@
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Prescriber ?', :value => (@user.is_prescriber ? "Yes" : "No")}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Use debit mandate ?', :value => (@user.use_debit_mandate ? "Yes" : "No")}
           %td
+          
+      %h3 Addresses
+      %table.table
+        %tr
+          %th.first
+          %th Billing
+          %th Shipping
+          %th.last
+        %tr
+          %td
+          %td
+            != render :partial => 'address', :locals => {:address => @user.billing_address}
+          %td
+            != render :partial => 'address', :locals => {:address => @user.shipping_address}
+          %td
+      
+      .wat-cf
+        != link_to image_tag("web-app-theme/application_edit.png", :alt => "Modifier les adresses") + "Modifier les adresses", admin_user_addresses_path(@user), :class => "button"
+      
+      %br
+      %br
       
       %h3 Other Information
       %table.table

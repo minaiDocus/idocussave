@@ -39,7 +39,7 @@ class User
   references_and_referenced_in_many :account_book_types,  :inverse_of => :clients
   
   references_many :reminder_emails
-  
+  references_many :invoices
   references_many :orders
   references_many :credits
   references_many :document_tags
@@ -213,6 +213,14 @@ class User
       subscriptions.create
       scanning_subscription
     end
+  end
+  
+  def shipping_address
+    self.addresses.for_shipping.first
+  end
+  
+  def billing_address
+    self.addresses.for_billing.first
   end
   
 protected
