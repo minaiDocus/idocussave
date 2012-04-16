@@ -134,17 +134,14 @@ protected
     end
   
     def do_reprocess_styles
-      nb = 0
-      self.not_clean.without_original.each do |doc|
-        nb += 1
-        puts "document[#{doc.content_file_name}][#{nb}]"
-        doc.dirty = false
-        doc.content.reprocess!
-        if !doc.save
-          doc.update_attributes(:dirty => true)
-        end
+      print "Beginning reprocess..."
+      self.not_clean.without_original.each_with_index do |document,index|
+        print "."
+        document.dirty = false
+        document.content.reprocess!
+        document.save
       end
-      puts "Document reprocessed number : #{nb}"
+      print "end of reprocess."
     end
     
     def extract_content
