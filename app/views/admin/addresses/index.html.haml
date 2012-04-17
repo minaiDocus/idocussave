@@ -6,7 +6,7 @@
   .content
     %h2 Manage addresses for user #{@user.email}
     
-    - form_tag update_multiple_admin_user_addresses_path(@user), :html => {:method => :put, :class => 'clearfix'}, :style => "margin-left: 16px;" do
+    %form{ :style => "margin-left: 16px;" }
       %h3.margin2top Adresse de facturation :
       %p.margin1top
         - unless @user.addresses.empty?
@@ -25,12 +25,8 @@
       %ul.adresseslist.margin2left.margin2top.clearfix
         != render :partial => 'address', :collection => @user.addresses, :locals => {:billing => false}
       %div{ :style => "clear: both;" }
-      
-      
-      %button.button{:type => 'submit'}
-        != image_tag("web-app-theme/tick.png", :alt => "Save")
-        Save
-      != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_users_path, :class => "button"
+
+      != link_to image_tag("web-app-theme/cross.png", :alt => "Retour") + "Retour", admin_user_path(@user), :class => "button"
       
       %br
       %br
