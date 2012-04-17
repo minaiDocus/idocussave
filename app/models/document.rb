@@ -134,14 +134,19 @@ protected
     end
   
     def do_reprocess_styles
-      print "Beginning reprocess..."
-      self.not_clean.without_original.each_with_index do |document,index|
-        print "."
-        document.dirty = false
-        document.content.reprocess!
-        document.save
+      puts "Beginning reprocess."
+      total = self.not_clean.without_original.count
+      while total > 0
+        documents = self.not_clean.without_original.limit(50)
+        documents.each_with_index do |document,index|
+          print "."
+          document.dirty = false
+          document.content.reprocess!
+          document.save
+        end
+        total -= 10
       end
-      print "end of reprocess."
+      puts "\nEnd of reprocess."
     end
     
     def extract_content
