@@ -23,7 +23,7 @@ class Address
   embedded_in :order, :inverse_of => :shipping_address
   embedded_in :order, :inverse_of => :billing_address
 
-  validates_presence_of :first_name, :last_name, :address_1, :city, :zip
+  validates_presence_of :first_name, :last_name, :address_2, :city, :zip
   
   scope :for_billing, :where => { :is_for_billing => true }
   scope :for_shipping, :where => { :is_for_shipping => true }
