@@ -98,7 +98,7 @@ public
     respond_to do |format|
       format.html{ render :layout => false }
       format.pdf do
-        render :pdf => "#{@invoice.number}", :template => "/account/orders/invoice.html.haml"
+        render :pdf => "#{@invoice.number}", :template => "/account/documents/documents/invoice.html.haml"
       end
     end
   end
@@ -241,6 +241,7 @@ public
     if @user.nil?
       @user = current_user
     end
+    @prescriber = @user.prescriber ? @user.prescriber : @user
     @year = params[:year].to_i if !params[:year].blank?
     @year ||= Time.now.year
     @monthlies = @user.all_monthly.of(@year).asc(:month).entries

@@ -29,23 +29,24 @@
         contact@idocus.com
       %div{:style => "float:right;"}
         - address = @order.billing_address
-        #{address.first_name} #{address.last_name}
-        %br
-        - if address.company.present?
-          = address.company
+        - if address
+          #{address.first_name} #{address.last_name}
           %br
-        - if address.address_1.present?
-          = address.address_1
+          - if address.company.present?
+            = address.company
+            %br
+          - if address.address_1.present?
+            = address.address_1
+            %br
+          - if address.address_2.present?
+            = address.address_2
+            %br
+          - if address.address_3.present?
+            = address.address_3
+            %br
+          #{address.zip} #{address.city}
           %br
-        - if address.address_2.present?
-          = address.address_2
-          %br
-        - if address.address_3.present?
-          = address.address_3
-          %br
-        #{address.zip} #{address.city}
-        %br
-        #{address.country}
+          #{address.country}
       %div{:style => "clear:both;"}
       .margin4top
         %p
@@ -65,7 +66,7 @@
           %tbody
             %tr{:style => "height:40px;"}
               %td= @order.product_order.title
-              %td= @order.document_format_order.title
+              %td= @order.document_format_order.title rescue " xxx "
               %td= @order.document_destiny
               %td{:style => "text-align:right"}
                 = format_price(@order.total_in_cents_wo_vat)+" €"

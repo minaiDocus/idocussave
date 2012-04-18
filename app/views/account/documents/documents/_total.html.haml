@@ -15,50 +15,62 @@
       .state3.active.pull-left
         != @total_state[2]
   .content.margin1top{ :style => "height:65px" }
-    %table.pull-left.margin10right
-      %tr
-        %th.first.aligncenter
-        %th.second.aligncenter Pièces
-        %th.second.aligncenter Feuilles
-        %th.second.aligncenter Pages
-        %th.second Attaches
-        %th.second Hors format
-      %tr
-        %td.padding2left.alignleft
-          %b Total
-        %td.second.aligncenter
-          %b
-            != @total_pieces_per_month + @total_uploaded_pieces_per_month
-            (#{@total_pieces_per_month},
-            #{@total_uploaded_pieces_per_month})
-        %td.second.aligncenter
-          %b
-            != @total_sheets_per_month + @total_uploaded_sheets_per_month
-            (#{@total_sheets_per_month},
-            \-)
-        %td.second.aligncenter
-          %b
-            != @total_pages_per_month + @total_uploaded_pages_per_month
-            (#{@total_pages_per_month},
-            #{@total_uploaded_pages_per_month})
-        %td.second
-        %td.second
-      %tr
-        %td.padding2left.documents.alignleft
-          %i Dépassement
-        %td
-        %td.second.aligncenter
-          %i!= @total_excess_sheets
-        %td.second.aligncenter
-          %i!= @total_excess_uploaded_pages
-        %td
-        %td
-    %table.margin3left{ :style => "border-left:1px solid #ffcf40;margin-bottom:10px;" }
-      %tr
-        %th.alignleft.padding1left{ :style => "width:147px" } Utilisateurs actifs
-        %th.second.alignleft.padding1left
-        %th.alignright Total HT
-      %tr
-        %td.aligncenter.padding1left!= @total_active_user
-        %td.second.alignleft
-        %td.alignright!= format_price_00(@total_price_per_month) + " €"
+    .row
+      .pull-left
+        .span7
+          %table.pull-left
+            %tr
+              %th.first.aligncenter
+              %th.second.aligncenter Pièces
+              %th.second.aligncenter Feuilles
+              %th.second.aligncenter Pages
+              %th.second Attaches
+              %th.second Hors format
+            %tr
+              %td.padding2left.alignleft
+                %b Total
+              %td.second.aligncenter
+                %b
+                  != @total_pieces_per_month + @total_uploaded_pieces_per_month
+                  (#{@total_pieces_per_month},
+                  #{@total_uploaded_pieces_per_month})
+              %td.second.aligncenter
+                %b
+                  != @total_sheets_per_month + @total_uploaded_sheets_per_month
+                  (#{@total_sheets_per_month},
+                  \-)
+              %td.second.aligncenter
+                %b
+                  != @total_pages_per_month + @total_uploaded_pages_per_month
+                  (#{@total_pages_per_month},
+                  #{@total_uploaded_pages_per_month})
+              %td.second
+              %td.second
+            %tr
+              %td.padding2left.documents.alignleft
+                %i Dépassement
+              %td
+              %td.second.aligncenter
+                %i!= @total_excess_sheets
+              %td.second.aligncenter
+                %i!= @total_excess_uploaded_pages
+              %td
+              %td
+              
+      .pull-right
+        .span4
+          %table{ :style => "border-left:1px solid #ffcf40;margin-bottom:10px;" }
+            %tr
+              %th.alignleft.padding1left{ :style => "width:147px" } Utilisateurs actifs
+              %th.second.alignleft.padding1left Facture
+              %th.alignright Total HT
+            %tr
+              %td.aligncenter.padding1left!= @total_active_user
+              %td.second.alignleft{ :style => "position:relative;left:13px" }
+                - if @prescriber.is_centraliser
+                  - invoice = @user.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+1)}/).first
+                  - if invoice
+                    - if invoice.content.try(:url)
+                      %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+                    %a{ :href => account_invoice_path(invoice), :class => "icon-eye-open", :style => "width:16px,height:16px;" }
+              %td.alignright!= format_price_00(@total_price_per_month) + " €"

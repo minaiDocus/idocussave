@@ -100,8 +100,7 @@
             %tr.aligncenter
               %th Date
               %th Montant facture
-              %th N°
-              %th Détails
+              %th Facture
           %tbody
             - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|
               %tr.aligncenter{ :class => (event.type_number == 0? "green" : "red") }
@@ -111,6 +110,8 @@
                     #{"-"}
                   - else
                     #{format_price event.amount_in_cents} €
-                %td #{event.invoice.number rescue ""}
                 %td.information{ :title => event.description }
-                  ?
+                  - if event.invoice
+                    - if event.invoice.content.try(:url)
+                      %a{ :href => event.invoice.content.url, :target => "_blank", :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+                    %a{ :href => account_invoice_path(event.invoice), :class => "icon-eye-open", :style => "width:16px;height:16px;" }

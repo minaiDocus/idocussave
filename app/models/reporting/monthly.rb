@@ -24,6 +24,8 @@ class Reporting::Monthly
   validate :attributes_year_and_month_is_uniq
   
   scope :current_year, :where => { :year => Time.now.year }
+  scope :current_month, :where => { :year => Time.now.year, :month => Time.now.month }
+  scope :of_date, lambda{|date| where(:year => date.year, :month => date.month) }
   
 public
   def self.current

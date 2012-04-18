@@ -14,9 +14,8 @@ class Subscription
   
   referenced_in :user
   references_many :orders
-  
   references_many :events
-  
+  references_many :invoices
   references_many :subscription_details, :dependent => :destroy
   
   def order

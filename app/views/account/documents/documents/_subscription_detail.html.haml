@@ -1,6 +1,6 @@
 - if one_monthly.subscription_detail and one_monthly.subscription_detail.product_order
   - product = one_monthly.subscription_detail.product_order
-  %table.margin3left{ :style => "border-left:1px solid #ffcf40;margin-bottom:10px;", :class => "subscription_#{one_monthly.month}" }
+  %table{ :style => "border-left:1px solid #ffcf40;margin-bottom:10px;", :class => "subscription_#{one_monthly.month}" }
     %tr
       %th.first.alignleft.padding1left Paramètre
       %th.second.alignleft.padding1left Valeur
@@ -23,4 +23,15 @@
         %b Total :
       %td.alignright
         %b!= format_price_00(@total) + " €"
+    %tr
+      %td.first.padding1left
+      %td.second.alignright.padding1left
+        Facture :
+      %td.alignright
+        - if !@prescriber.is_centraliser
+          - invoice = @user.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+1)}/).first
+          - if invoice
+            - if invoice.content.try(:url)
+              %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+            %a{ :href => account_invoice_path(invoice), :class => "icon-eye-open", :style => "width:16px,height:16px;" }
   - @total_price_per_month += @total

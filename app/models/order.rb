@@ -144,12 +144,17 @@ class Order
       self.product_order.product_option_orders << product_option_order
     end
     
-    monthly = self.user.find_or_create_reporting.find_or_create_monthly_by_date Time.now
-    subscription_detail = monthly.find_or_create_subscription_detail
-    subscription_detail.set_product_order new_product_order
-    subscription_detail.product_order.set_product_option_order options
-    monthly.save
+    current_time = order.created_at rescue Time.now
     
+    while current_time < Time.now
+      monthly = self.user.find_or_create_reporting.find_or_create_monthly_by_date current_time
+      subscription_detail = monthly.find_or_create_subscription_detail
+      subscription_detail.set_product_order new_product_order
+      subscription_detail.product_order.set_product_option_order options
+      monthly.save
+      
+      current_time += 1.month
+    end
   end
   
   def get_documents
