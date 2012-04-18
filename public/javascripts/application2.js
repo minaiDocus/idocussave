@@ -540,6 +540,13 @@
     initEventOnClickOnLinkButton();
     initEventOnHoverOnInformation();
     
+    $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
+    $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
+    $(window).resize(function() {
+      $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
+      $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
+    });
+    
     $(".view_for").change(function() {
       getPacks();
     });
