@@ -6,7 +6,7 @@
       %th.second.alignleft.padding1left Valeur
       %th.alignright Prix HT
     - @total = 0
-    - product.product_option_orders.by_position.each do |option|
+    - product.product_option_orders.where(:position.lt => 1000).by_position.each do |option|
       %tr
         %td.first.alignleft.padding1left!= option.group
         %td.second.alignleft.padding1left!= option.title
@@ -17,6 +17,12 @@
       %td.second.alignleft.padding1left
       %td.alignright!= format_price_00(one_monthly.total_price_in_cents) + " €"
       - @total += one_monthly.total_price_in_cents
+    - product.product_option_orders.where(:position.gt => 999).by_position.each do |option|
+      %tr
+        %td.first.alignleft.padding1left!= option.group
+        %td.second.alignleft.padding1left!= option.title
+        %td.alignright!= format_price_00(option.price_in_cents_wo_vat) + " €"
+        - @total += option.price_in_cents_wo_vat
     %tr
       %td.first.padding1left
       %td.second.alignright.padding1left
