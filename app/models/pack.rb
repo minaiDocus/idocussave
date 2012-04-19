@@ -9,31 +9,55 @@ class Pack
   references_and_referenced_in_many :users
   
   referenced_in :order
-  references_many :documents, :dependent => :delete
+  references_many :documents, :dependent => :destroy
   references_many :document_tags
+  
+  embeds_many :divisions
   
   field :name, :type => String
   field :division, :type => Array, :default => []
   field :information, :type => Hash, :default => { "page_number" => 0, "collection" => [], "uploaded" => { "pages" => 0, "sheets" => 0, "pieces" => 0 } }
-  field :is_open_for_uploaded_file, :type => Boolean, :default => true
+  field :is_open_for_upload, :type => Boolean, :default => true
   
-  after_save :update_reporting
+  # after_save :update_reporting
   
   scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
   
+  def pages
+    self.documents.without_original
+  end
+  
+  def sheets
+    self.divisions.sheets
+  end
+  
+  def pieces
+    self.divisions.pieces
+  end
+  
   def update_reporting
-    monthly = self.order.user.find_or_create_reporting.find_or_create_monthly_by_date(self.created_at) rescue nil
-    if monthly
-      document = monthly.find_or_create_document_by_name self.name
-      if !self.information.nil? && !self.information.empty?
-        document.sheets = document.pieces = self.information["collection"].count rescue 0
-        document.pages = self.information["page_number"]
-        document.uploaded_pieces = self.information["uploaded"]["pieces"]
-        document.uploaded_sheets = self.information["uploaded"]["sheets"]
-        document.uploaded_pages = self.information["uploaded"]["pages"]
+    reporting = self.order.user.find_or_create_reporting rescue nil
+    if reporting
+      total = self.divisions.sheets.count
+      offset = 0
+      while total > 0
+        current_divisions = self.divisions.sheets.of_month(pack.created_at+offset.month)
+        if current_divisions.count > 0
+          if monthly = reporting.find_or_create_monthly_by_date(current_divisions.first.created_at)
+            document = monthly.find_or_create_document_by_name self.name
+            document.sheets = current_divisions.sheets.count
+            document.pieces = current_divisions.pieces.count
+            document.pages = current_divisions.sheets.pages_count
+            document.uploaded_pieces = current_divisions.uploaded.sheets.count
+            document.uploaded_sheets = current_divisions.uploaded.pieces.count
+            document.uploaded_pages = current_divisions.uploaded.sheets.pages_count
+            document.is_shared = self.order.is_viewable_by_prescriber
+            monthly.save
+          end
+          total -= current_divisions.count
+        end
+        offset += 1
       end
-      document.is_shared = self.order.is_viewable_by_prescriber
-      monthly.save
     end
   end
   
@@ -93,12 +117,6 @@ class Pack
         order = user.subscription.order rescue user.orders.last
         order = Order.create!(:user_id => user.id, :state => "scanned", :manual => true) unless order
         pack = Pack.new
-        pack.information["page_number"] = 0
-        pack.information["uploaded"] = {}
-        pack.information["uploaded"]["pages"] = 0
-        pack.information["uploaded"]["sheets"] = 0
-        pack.information["uploaded"]["pieces"] = 0
-        pack.information["collection"] = []
         pack.name = name
         pack.order = order
         pack
@@ -141,18 +159,18 @@ class Pack
       end
     end
     
-    def add filesname, pack
+    def add filesname, pack, is_an_upload=false
       user = pack.order.user
       pack_name = pack.name.gsub(" ","_")
       pack_filename = pack_name + ".pdf"
       
       init_and_moov_to pack_name, filesname
-      set_is_open_for_uploaded_file pack, filesname
+      pack.is_open_for_upload = false if is_an_upload == false
       
       #  Renommage des fichiers.
-      start_at_page = pack.information["collection"].size + 1
+      start_at_page = pack.divisions.count + 1
       filesname = apply_new_name filesname, start_at_page
-      pack.information = update_information(filesname, pack.information)
+      update_division(filesname, pack, is_an_upload)
       #  Création du fichier all.
       filesname_list = filesname.sum { |f| " " + f }
       system "pdftk #{filesname_list} cat output #{pack_filename}"
@@ -160,12 +178,13 @@ class Pack
       #  Vérification de l'existance ou pas.
       if pack.persisted?
         #  Mise à jour des documents.
-        Document.update_file pack, pack_filename
+        Document.update_file pack, pack_filename, is_an_upload
         pack.save
       else
         document = Document.new
         document.dirty = true
         document.is_an_original = true
+        document.is_an_upload = is_an_upload
         document.pack = pack
         document.content = File.new pack_filename
         
@@ -194,14 +213,6 @@ class Pack
     end
     
   private
-    def set_is_open_for_uploaded_file pack, filesname
-      if pack.is_open_for_uploaded_file
-        filesname.select do |filename|
-          pack.is_open_for_uploaded_file = false if filename.sub(".pdf","").split("_")[3].to_i < 500
-        end
-      end
-    end
-  
     def dropbox_delivery_path pack_name
       part = pack_name.split "_"
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
@@ -226,23 +237,34 @@ class Pack
         end
       end
     end
-  
-    def update_information filesname, old_information
-      information = old_information
+    
+    def update_division filesname, pack, is_an_upload
       total_pages = 0
-      current_page = old_information["page_number"] + 1
+      count = pack.documents.count
+      current_page = (count == 0) ? 1 : count
+      current_position = pack.sheets.last.position + 1 rescue 1
+      
       filesname.each do |filename|
         name = filename.sub(".pdf","")
         pages_number = page_number_of filename
-        start_page  = current_page
+        
+        sheet = Division.new
+        sheet.level = Division::SHEETS_LEVEL
+        piece = Division.new
+        piece.level = Division::PIECES_LEVEL
+        
+        piece.name = sheet.name = name
+        piece.start = sheet.start = current_page
         current_page += pages_number
-        end_page = current_page - 1
-        level = 1
-        information["collection"] << { :name => name, :start_page => start_page, :end_page => end_page, :level => level }
+        piece.end = sheet.end = current_page - 1
+        piece.is_an_upload = sheet.is_an_upload = is_an_upload
+        piece.position = sheet.position = current_position
+        pack.divisions << piece
+        pack.divisions << sheet
+        
+        current_position += 1
         total_pages += pages_number
       end
-      information["page_number"] += total_pages
-      information
     end
   
     def init_and_moov_to name, filesname

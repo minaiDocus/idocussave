@@ -191,16 +191,15 @@ public
   def archive
     pack = Pack.find(params[:pack_id])
     
-    if !pack.information.nil?
+    if pack.divisions.sheets.count > 0
       unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
         Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
       end
       
-      pack.information["collection"].each_with_index do |one_part,index|
-        filename = one_part["name"].gsub(/\s/,'_')
-        level = one_part["level"]
-        start_number = one_part["start"]
-        end_number = one_part["end"]
+      pack.divisions.sheets.each do |sheet|
+        filename = sheet.name.gsub(/\s/,'_')
+        start_number = sheet.start
+        end_number = sheet.end
         
         part = (start_number == end_number) ? start_number.to_s : start_number.to_s+"-"+end_number.to_s
         

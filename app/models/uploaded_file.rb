@@ -45,7 +45,7 @@ public
         
         pack = user.packs.where(:name => sBasename.gsub("_"," ") + " all").first
         if pack
-          if pack.is_open_for_uploaded_file
+          if pack.is_open_for_upload
             is_current = false
           end
         else
@@ -85,18 +85,9 @@ public
         
         system "cp #{sNewFilename} ../"
         pack = Pack.find_or_create_by_name sBasename.gsub("_"," ") + " all", user
-        if pack.information["uploaded"]
-          pack.information["uploaded"]["pages"] += iPageNumber
-          pack.information["uploaded"]["sheets"] += 1
-          pack.information["uploaded"]["pieces"] += 1
-        else
-          pack.information["uploaded"] = {}
-          pack.information["uploaded"]["pages"] = iPageNumber
-          pack.information["uploaded"]["sheets"] = 1
-          pack.information["uploaded"]["pieces"] = 1
-        end
+        
         Dir.chdir Pack::FETCHING_PATH
-        Pack.add [sNewFilename], pack
+        Pack.add [sNewFilename], pack, true
         
         Dir.chdir UPLOADED_FILE_PATH
         File.rename sNewFilename, "up_" + sNewFilename

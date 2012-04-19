@@ -9,12 +9,13 @@ class Document
   field :content_updated_at, :type => Time
   field :content_text, :type => String, :default => ""
   field :is_an_original, :type => Boolean, :default => false
+  field :is_an_upload, :type => Boolean, :default => false
   field :tags, :type => String, :default => ""
   field :position, :type => Integer
   field :dirty, :type => Boolean, :default => true
   field :indexed, :type => Boolean, :default => false
 
-  references_many :document_tags, :dependent => :delete
+  references_many :document_tags, :dependent => :destroy
   referenced_in :pack
 
   has_mongoid_attached_file :content,
@@ -66,6 +67,7 @@ protected
         document.pack = self.pack
         document.position = index
         document.content = File.new file
+        document.is_an_upload = self.is_an_upload
         document.save
       end
     end
@@ -93,7 +95,7 @@ protected
       document_ids
     end
   
-    def update_file pack, filename
+    def update_file pack, filename, is_an_upload=false
       start_at_page = pack.documents.size
       tempfile = pack.original_document.content.to_file
       temp_path = File.expand_path(tempfile.path)
@@ -102,7 +104,7 @@ protected
       basename = File.basename pack.original_document.content_file_name, ".pdf"
       system "pdftk #{filename} burst output #{basename}_pages_%03d.pdf_"
       rename_pages start_at_page
-      add_pages pack, basename, start_at_page
+      add_pages pack, basename, start_at_page, is_an_upload
       update_original_file temp_path, filename
     end
     
@@ -114,13 +116,14 @@ protected
       end
     end
     
-    def add_pages pack, basename, start_at_page
+    def add_pages pack, basename, start_at_page, is_an_upload
       Dir.glob("#{basename}_pages*").sort.each_with_index do |file, index|
         document = Document.new
         document.dirty = true
         document.pack = pack
         document.position = start_at_page + index
         document.content = File.new file
+        document.is_an_upload = is_an_upload
         document.save
         File.delete file
       end
