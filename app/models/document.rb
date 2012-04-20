@@ -48,6 +48,9 @@ class Document
   scope :not_clean, :where => { :dirty => true }
   scope :clean, :where => { :dirty => false }
   
+  scope :uploaded, :where => { :is_an_upload => true }
+  scope :scanned, :where => { :is_an_upload => false }
+  
 public
   def verified_content_text
     self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }

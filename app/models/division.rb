@@ -25,7 +25,11 @@ class Division
   end
   
   def self.pages_count
-    self.sum(&:pages_count)
+    total = 0
+    self.each do |division|
+      total += division.pages_count
+    end
+    total
   end
   
   def pages_count

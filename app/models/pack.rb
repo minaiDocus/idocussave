@@ -38,25 +38,45 @@ class Pack
   def update_reporting
     reporting = self.order.user.find_or_create_reporting rescue nil
     if reporting
-      total = self.divisions.sheets.count
-      offset = 0
+      total = self.divisions.count
+      nb = 0
+      debugger
       while total > 0
-        current_divisions = self.divisions.sheets.of_month(pack.created_at+offset.month)
+        time = self.created_at+nb.month
+        
+        current_divisions = self.divisions.select do |div|
+          true if div.created_at > time.beginning_of_month and div.created_at <= time.end_of_month
+        end
+        
         if current_divisions.count > 0
-          if monthly = reporting.find_or_create_monthly_by_date(current_divisions.first.created_at)
+          if monthly = reporting.find_or_create_monthly_by_date(time)
             document = monthly.find_or_create_document_by_name self.name
-            document.sheets = current_divisions.sheets.count
-            document.pieces = current_divisions.pieces.count
-            document.pages = current_divisions.sheets.pages_count
-            document.uploaded_pieces = current_divisions.uploaded.sheets.count
-            document.uploaded_sheets = current_divisions.uploaded.pieces.count
-            document.uploaded_pages = current_divisions.uploaded.sheets.pages_count
+            document.sheets = current_divisions.select { |d|
+              true if d.level == Division::SHEETS_LEVEL
+            }.count
+            document.pieces = current_divisions.select { |d|
+              true if d.level == Division::PIECES_LEVEL
+            }.count
+            document.pages = self.documents.without_original.select { |doc| 
+              true if doc.created_at > time.beginning_of_month and doc.created_at <= time.end_of_month
+            }.count
+            
+            document.uploaded_pieces = current_divisions.select { |d|
+              true if d.level == Division::SHEETS_LEVEL and d.is_an_upload
+            }.count
+            document.uploaded_sheets = current_divisions.select { |d|
+              true if d.level == Division::PIECES_LEVEL and d.is_an_upload
+            }.count
+            document.uploaded_pages = self.documents.without_original.uploaded.select { |doc|
+              true if doc.created_at > time.beginning_of_month and doc.created_at <= time.end_of_month
+            }.count
+            
             document.is_shared = self.order.is_viewable_by_prescriber
             monthly.save
           end
           total -= current_divisions.count
         end
-        offset += 1
+        nb += 1
       end
     end
   end
@@ -252,6 +272,8 @@ class Pack
         sheet.level = Division::SHEETS_LEVEL
         piece = Division.new
         piece.level = Division::PIECES_LEVEL
+        
+        piece.created_at = piece.updated_at = sheet.created_at = sheet.updated_at = Time.now
         
         piece.name = sheet.name = name
         piece.start = sheet.start = current_page
