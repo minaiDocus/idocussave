@@ -35,7 +35,7 @@
         Facture :
       %td.alignright
         - if !@prescriber.is_centraliser
-          - invoice = @user.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+1)}/).first
+          - invoice = one_monthly.reporting.customer.original_user.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
           - if invoice
             - if invoice.content.try(:url)
               %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }

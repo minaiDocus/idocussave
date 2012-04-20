@@ -92,26 +92,3 @@
                 %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
                   %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
                   %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
-      %div
-        %h3.aligncenter Factures
-        %br/
-        %table.table.table-striped.table-bordered.table-condensed
-          %thead
-            %tr.aligncenter
-              %th Date
-              %th Montant facture
-              %th Facture
-          %tbody
-            - @user.events.limit(10).order_by([[:created_at,:desc]]).each do |event|
-              %tr.aligncenter{ :class => (event.type_number == 0? "green" : "red") }
-                %td #{event.created_at.strftime("%Y-%m-%d")}
-                %td
-                  - if event.amount_in_cents == 0
-                    #{"-"}
-                  - else
-                    #{format_price event.amount_in_cents} €
-                %td.information{ :title => event.description }
-                  - if event.invoice
-                    - if event.invoice.content.try(:url)
-                      %a{ :href => event.invoice.content.url, :target => "_blank", :class => "icon-download-alt", :style => "width:16px;height:16px;" }
-                    %a{ :href => account_invoice_path(event.invoice), :class => "icon-eye-open", :style => "width:16px;height:16px;" }

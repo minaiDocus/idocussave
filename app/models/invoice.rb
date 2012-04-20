@@ -22,7 +22,7 @@ class Invoice
   referenced_in :event
   referenced_in :subscription
 
-  before_create :set_number
+  # before_create :set_number
   
 public
   def create_pdf
@@ -32,6 +32,7 @@ public
     current_month = mois[self.created_at.month]
     previous_month = mois[(self.created_at - 1.month).month]
     year = (self.created_at - 1.month).year
+    month = (self.created_at - 1.month).month
       
     @total = 0
     
@@ -40,20 +41,23 @@ public
     prescriber = user.prescriber ? user.prescriber : user
     if (prescriber and prescriber != user and !prescriber.is_centraliser)
       # particular
-      monthly = user.find_or_create_reporting.find_or_create_monthly_for year, (self.created_at - 1.month).month
+      monthly = user.find_or_create_reporting.find_or_create_monthly_for year, month
       subscription_detail = monthly.find_or_create_subscription_detail
       options = subscription_detail.product_order.product_option_orders.by_position rescue []
       
       options.each do |option|
-        @data << [option.group + " - " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+        @data << [option.group + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
         @total += option.price_in_cents_wo_vat
       end
       @data << ["Dépassement",format_price(monthly.total_price_in_cents) + " €"]
       @total += monthly.total_price_in_cents
     else
       # prescriber
-      user.clients.active.each do |client|
-        monthly = client.find_or_create_reporting.find_or_create_monthly_by_date self.created_at
+      
+      @monthlies = user.all_monthly.of(year).asc(:month).entries
+      @monthlies = @monthlies.select { |m| m.month == month and m.reporting.customer.is_active_at(m.year, m.month) and m.reporting.customer.original_user != user }
+      
+      @monthlies.each do |monthly|
         options = monthly.subscription_detail.product_order.product_option_orders rescue []
         options.each do |option|
           @total += option.price_in_cents_wo_vat
@@ -63,8 +67,15 @@ public
       
       @data = [
         ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
-        ["Nombre de clients actifs : #{prescriber.clients.active.count}",""]
+        ["Nombre de clients actifs : #{@monthlies.count}",""]
       ]
+      
+      monthly = user.find_or_create_reporting.find_or_create_monthly_by_date(self.created_at - 1.month)
+      options = monthly.subscription_detail.product_order.product_option_orders.where(:position.gt => 999).by_position rescue []
+      options.each do |option|
+        @data << ["#{option.group} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
+        @total += option.price_in_cents_wo_vat
+      end
     end
     
     @address = self.user.addresses.for_billing.first
@@ -85,17 +96,13 @@ public
         ]
       
       pdf.table(header_data, :width => 540) do
-        style(row(0), :borders => [:top], :border_color => "AFA6A6", :text_color => "AFA6A6")
+        style(row(0), :borders => [:top,:bottom], :border_color => "AFA6A6", :text_color => "AFA6A6")
         style(columns(1), :align => :center)
         style(columns(2), :align => :right)
       end
       
+      pdf.move_down 10
       pdf.image "#{Rails.root}/public/images/application/small_logo.png", :width => 85, :height => 40, :at => [4, pdf.cursor]
-      
-      pdf.move_down 40
-      pdf.line [0, pdf.cursor], [540, pdf.cursor]
-      pdf.stroke_color "AFA6A6"
-      pdf.stroke
       
       
       #  Body
@@ -104,13 +111,13 @@ public
       pdf.default_leading 5
       
       # Address
-      formatted_address = [@address.company, @address.last_name + " " + @address.first_name, @address.address_1, @address.address_2, @address.zip.to_s + " " + @address.city, @address.country].
+      formatted_address = [@address.company, @address.first_name + " " + @address.last_name, @address.address_1, @address.address_2, @address.zip.to_s + " " + @address.city, @address.country].
         reject { |a| a.nil? or a.empty? }.
         join("\n")
       
       pdf.move_down 33
-      pdf.bounding_box([430, pdf.cursor], :width => 110) do
-        pdf.text formatted_address, :align => :left, :style => :bold
+      pdf.bounding_box([252, pdf.cursor], :width => 240) do
+        pdf.text formatted_address, :align => :right, :style => :bold
       end
       
       # Information
@@ -122,8 +129,10 @@ public
       pdf.move_down 14
       pdf.text "<b>Période concernée :</b> " + previous_month + " " + year.to_s, :align => :left, :inline_format => true
       
-      pdf.move_down 7
-      pdf.text "<b>Votre code client :</b> #{user.code}", :align => :left, :inline_format => true
+      if (prescriber and prescriber != user and !prescriber.is_centraliser)
+        pdf.move_down 7
+        pdf.text "<b>Votre code client :</b> #{user.code}", :align => :left, :inline_format => true
+      end
       
       # Detail
       pdf.move_down 30

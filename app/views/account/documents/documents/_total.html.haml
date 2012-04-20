@@ -14,7 +14,7 @@
         != @total_state[1]
       .state3.active.pull-left
         != @total_state[2]
-  .content.margin1top{ :style => "height:65px" }
+  .content.margin1top
     .row
       .pull-left
         .span7
@@ -56,21 +56,46 @@
                 %i!= @total_excess_uploaded_pages
               %td
               %td
-              
+            
       .pull-right
         .span4
           %table{ :style => "border-left:1px solid #ffcf40;margin-bottom:10px;" }
             %tr
-              %th.alignleft.padding1left{ :style => "width:147px" } Utilisateurs actifs
-              %th.second.alignleft.padding1left Facture
-              %th.alignright Total HT
+              %th.padding1left{:style => "text-align:left;width:145px;"} Paramètre
+              %th.second.padding1left{:style => "text-align:left"} Valeur
+              %th.alignright Prix HT
             %tr
-              %td.aligncenter.padding1left!= @total_active_user
-              %td.second.alignleft{ :style => "position:relative;left:13px" }
+              %td.padding1left{:style => "text-align:left"} Prestation iDocus
+              %td.second.padding1left{:style => "text-align:left"}
+              %td.alignright!= format_price_00(@total_price_per_month) + " €"
+            %tr
+              %td.padding1left{:style => "text-align:left"} Nombre de clients actifs
+              %td.second.padding1left{:style => "text-align:left"}!= @total_active_user
+              %td.alignright
+            - poo = @prescriber_monthly.subscription_detail.product_order.product_option_orders.where(:position.gt => 999).by_position rescue nil
+            - if poo
+              - poo.each do |option|
+                %tr
+                  %td.padding1left{:style => "text-align:left"}
+                    #{option.group}
+                  %td.second.padding1left{:style => "text-align:left"}
+                    #{option.title}
+                  %td.alignright!= format_price_00(option.price_in_cents_wo_vat) + " €"
+                - @total_price_per_month += option.price_in_cents_wo_vat
+            %tr
+              %td.padding1left
+              %td.second.alignright.padding1left
+                %b Total :
+              %td.alignright
+                %b!= format_price_00(@total_price_per_month) + " €"
+            %tr
+              %td.padding1left
+              %td.second.alignright.padding1left
+                Facture :
+              %td.alignright
                 - if @prescriber.is_centraliser
-                  - invoice = @user.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+1)}/).first
+                  - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
                   - if invoice
                     - if invoice.content.try(:url)
                       %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                     %a{ :href => account_invoice_path(invoice), :class => "icon-eye-open", :style => "width:16px,height:16px;" }
-              %td.alignright!= format_price_00(@total_price_per_month) + " €"

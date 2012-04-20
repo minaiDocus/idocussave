@@ -12,6 +12,7 @@ class Reporting::Monthly
   before_save :update_total_price_in_cents
   
   # Subscription default pack
+  field :discount_in_cents, :type => Integer, :default => 0
   field :base_price_in_cents, :type => Integer, :default => 0
   field :max_sheets, :type => Integer, :default => 100
   field :max_custom_page, :type => Integer, :default => 100
