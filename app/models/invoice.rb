@@ -22,7 +22,7 @@ class Invoice
   referenced_in :event
   referenced_in :subscription
 
-  # before_create :set_number
+  before_create :set_number
   
 public
   def create_pdf
