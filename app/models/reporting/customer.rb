@@ -42,4 +42,15 @@ class Reporting::Customer
     end
   end
   
+  def name
+    f_name = self.first_name || ""
+    l_name = self.last_name || ""
+    result = [f_name,l_name].join(' ')
+    unless result.blank?
+      return result
+    else
+      return self.email
+    end
+  end
+  
 end

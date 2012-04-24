@@ -12,6 +12,9 @@
                 = label_tag :email, "Voir le reporting de :", :class => "pull-left margin3left margin1right"
                 = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
                 = submit_tag "Valider", :class => "pull-left btn margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+            
+            %div.pull-right.margin1right{ :style => "position:relative;top:-20px;" }
+              != link_to image_tag("application/icon-xls.png", :alt => "export xls", :style => "position:relative;top:4px;") + " export xls", reporting_account_documents_path(request.parameters.merge({:format => :xls}))
   .row
     .span12
       .well

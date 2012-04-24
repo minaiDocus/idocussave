@@ -26,6 +26,7 @@ gem 'rack-raw-upload'
 gem 'pdf-reader'
 gem 'savon_model'
 gem 'prawn'
+gem 'to_xls'
 
 group :development do
   gem 'mongrel'

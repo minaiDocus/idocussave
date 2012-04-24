@@ -246,6 +246,13 @@ public
     @monthlies = @user.all_monthly.of(@year).asc(:month).entries
     @clients = @user.all_clients_sorted.entries
     @customers = @user.all_customers_sorted.entries
+    
+    respond_to do |format|
+      format.html
+      format.xls do
+        send_data(render_to_xls(@monthlies), :type=> "application/vnd.ms-excel", :filename => "reporting_iDocus_#{Time.now.year}#{"%0.2d" % Time.now.month}#{"%0.2d" % Time.now.day}.xls")
+      end
+    end
   end
   
   def search_user
@@ -260,6 +267,77 @@ public
     respond_to do |format|
       format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
     end
+  end
+  
+private
+  def render_to_xls monthlies
+    book = Spreadsheet::Workbook.new
+    
+    # Document
+    sheet1 = book.create_worksheet :name => "Production"
+    sheet1.row(0).concat ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces numérisées", "Piéces versées", "Feuilles total", "Feuilles numérisées", "Pages total", "Pages numérisées", "Pages versées", "Attache" ,"Hors format"]
+    
+    nb = 1
+    monthlies.each do |monthly|
+      monthly.documents.each do |document|
+        data = [
+                    monthly.month,
+                    monthly.year,
+                    monthly.reporting.customer.code,
+                    monthly.reporting.customer.company,
+                    document.name,
+                    document.pieces,
+                    document.scanned_pieces,
+                    document.uploaded_pieces,
+                    document.sheets,
+                    document.scanned_sheets,
+                    document.pages,
+                    document.scanned_pages,
+                    document.uploaded_pages,
+                    document.clip,
+                    document.oversize
+                  ]
+        sheet1.row(nb).replace data
+        nb += 1
+      end
+    end
+    
+    # Invoice
+    sheet2 = book.create_worksheet :name => "Facturation"
+    sheet2.row(0).concat ["Mois", "Année", "Code client", "Nom du client", "Paramètre", "Valeur", "Prix HT"]
+    
+    nb = 1
+    monthlies.each do |monthly|
+      poos = monthly.subscription_detail.product_order.product_option_orders rescue []
+      unless poos.empty?
+        poos.each do |poo|
+          data = [
+                      monthly.month,
+                      monthly.year,
+                      monthly.reporting.customer.code,
+                      monthly.reporting.customer.name,
+                      poo.group,
+                      poo.title,
+                      format_price_00(poo.price_in_cents_wo_vat)
+                    ]
+          sheet2.row(nb).replace data
+          nb += 1
+          end
+      end
+    end
+    
+    io = StringIO.new('')
+    book.write(io)
+    io.string
+  end
+  
+  def render_to_xls_simple monthlies
+    documents = []
+    monthlies.each { |monthly| documents = documents + monthly.documents }
+    
+    documents.to_xls  :name => "Documents",
+                                :headers => ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces versé", "Feuilles total", "Feuilles numérisé", "Pages total", "Pages numérisé", "Attache" ,"Hors format"],
+                                :columns => [{:monthly => [:month, :year, { :reporting => { :customer => [:code, :company]}}]}, :name, :pieces, :uploaded_pieces, :sheets, :scanned_sheets, :pages, :scanned_pages, :clip, :oversize]
   end
   
 end

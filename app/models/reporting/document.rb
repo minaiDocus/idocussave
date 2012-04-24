@@ -21,6 +21,18 @@ class Reporting::Document
   
   validate :uniqueness_of_name
   
+  def scanned_pieces
+    pieces - uploaded_pieces
+  end
+  
+  def scanned_sheets
+    sheets - uploaded_sheets
+  end
+  
+  def scanned_pages
+    pages - uploaded_pages
+  end
+  
 private
   def uniqueness_of_name
     document = self.monthly.documents.where(:name => self.name).first
