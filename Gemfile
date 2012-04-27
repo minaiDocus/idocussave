@@ -27,6 +27,7 @@ gem 'pdf-reader'
 gem 'savon_model'
 gem 'prawn'
 gem 'to_xls'
+gem 'barby'
 
 group :development do
   gem 'mongrel'

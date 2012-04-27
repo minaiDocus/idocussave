@@ -1,0 +1,79 @@
+.group
+  != f.label :title, "Title *", :class => :label
+  != f.text_field :title, :class => 'text_field'
+  
+.group
+  != f.label :position, "Position", :class => :label
+  != f.text_field :position, :class => 'text_field'
+
+.group
+  != f.label "file_sending_kit[:user]", "Prescriber *", :class => :label
+  - selection = User.where(:is_prescriber => true).entries.collect{|u| [u.information, u.id]} rescue []
+  - selected = [@file_sending_kit.user.email,@file_sending_kit.user.id] rescue []
+  != select_tag "file_sending_kit[user_id]", options_for_select(selection, selected)
+  
+.group
+  != field_set_tag "Logo", :class => :group do
+    != field_set_tag "Centre (affiché dans le mail)", :class => :group do
+      != f.label "logo_path", "Chemin * : ", :class => :label_block
+      != f.text_field "logo_path", :placeholder => "/images/soleil.png"
+      %br
+      %br
+      != f.label "logo_height", "Hauteur : ", :class => :label_block
+      != f.text_field "logo_height"
+      %br
+      %br
+      != f.label "logo_width", "Largeur : ", :class => :label_block
+      != f.text_field "logo_width"
+    
+    != field_set_tag "Gauche", :class => :group do
+      != f.label "left_logo_path", "Chemin * : ", :class => :label_block
+      != f.text_field "left_logo_path", :placeholder => "/images/soleil.png"
+      %br
+      %br
+      != f.label "left_logo_height", "Hauteur : ", :class => :label_block
+      != f.text_field "left_logo_height"
+      %br
+      %br
+      != f.label "left_logo_width", "Largeur : ", :class => :label_block
+      != f.text_field "left_logo_width"
+      
+    != field_set_tag "Droite", :class => :group do
+      != f.label "right_logo_path", "Chemin * : ", :class => :label_block
+      != f.text_field "right_logo_path", :placeholder => "/images/soleil.png"
+      %br
+      %br
+      != f.label "right_logo_height", "Hauteur : ", :class => :label_block
+      != f.text_field "right_logo_height"
+      %br
+      %br
+      != f.label "right_logo_width", "Largeur : ", :class => :label_block
+      != f.text_field "right_logo_width"
+      
+.group
+  != f.label :instruction, "Instruction * :", :class => :label_block, :style => "float:left;margin-left:36px;"
+  != f.text_area :instruction
+  
+.group
+  != f.label :idocus_instruction, "iDocus instruction * :", :class => :label_block, :style => "float:left;margin-left:36px;"
+  != f.text_area :idocus_instruction
+  
+.group.navform.wat-cf
+  %button.button{:type => 'submit'}
+    != image_tag("web-app-theme/tick.png", :alt => "Save")
+    Save
+  != link_to image_tag("web-app-theme/cross.png", :alt => "Cancel") + "Cancel", admin_file_sending_kits_path, :class => "button"
+
+.group
+  %em
+    %b *
+    mandatory fields.
+
+:css
+  .label_block {
+    display: inline-block;
+    margin-right: 3px;
+    text-align: right;
+    width: 125px; }
+  input {
+    width : 300px; }

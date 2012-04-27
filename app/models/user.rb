@@ -51,6 +51,7 @@ class User
   references_one :debit_mandate
   references_one :delivery
   references_one :my_dropbox
+  references_one :file_sending_kit
   
   scope :prescribers, :where => { :is_prescriber => true }
   scope :dropbox_extended_authorized, :where => { :is_dropbox_extended_authorized => true }

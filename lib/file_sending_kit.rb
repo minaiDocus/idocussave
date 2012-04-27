@@ -1,0 +1,312 @@
+require 'barby'
+require 'barby/barcode/code_39'
+require 'barby/outputter/rmagick_outputter'
+
+module FileSendingKitGenerator
+  TEMPDIR_PATH = "#{Rails.root}/public/system/data"
+  LOGO_PATH = "#{Rails.root}/public/images/application"
+  
+  def FileSendingKitGenerator.generate(clients_data,file_sending_kit)
+    BarCode::init
+    
+    clients = to_clients(clients_data)
+    
+    KitGenerator::folder to_folders(clients_data), file_sending_kit
+    KitGenerator::mail to_mails(clients), file_sending_kit
+    KitGenerator::label to_labels(clients)
+  end
+  
+private
+
+  def FileSendingKitGenerator.to_clients(clients_data)
+    clients_data.map { |client_data| client_data[:user] }
+  end
+
+  def FileSendingKitGenerator.to_folders(clients_data)
+    folders_data = []
+    clients_data.each do |client_data|
+      current_time = Time.now - client_data[:start_month].month
+      end_time = current_time + client_data[:offset_month].month
+      while current_time < end_time
+        client_data[:user].account_book_types.by_position.each do |account_book_type|
+          folders_data << to_folder(client_data, current_time, account_book_type)
+        end
+        current_time += 1.month
+      end
+    end
+    folders_data
+  end
+  
+  def FileSendingKitGenerator.to_folder(client_data, period, account_book_type)
+    user = client_data[:user]
+    folder = {}
+    folder[:code] = user.code
+    folder[:company] = user.company.upcase
+    folder[:period] = "#{KitGenerator::MOIS[period.month].upcase} #{period.year}"
+    folder[:account_book_type] = "#{account_book_type.name} #{account_book_type.description.upcase}"
+    folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
+    folder[:barcode_path] = BarCode::generate_png(folder[:file_code])
+    folder[:left_logo] = client_data[:left_logo]
+    folder[:right_logo] = client_data[:right_logo]
+    folder
+  end
+
+  def FileSendingKitGenerator.to_mails(users)
+    users.map { |user| to_mail(user) }
+  end
+  
+  def FileSendingKitGenerator.to_mail(user)
+    mail = {}
+    mail[:prescriber_company] = user.prescriber.company
+    mail[:client_email] = user.email
+    mail[:client_password] = "v46hps32"
+    mail[:client_code] = user.code
+    mail[:client_address] = to_label(user)
+    mail
+  end
+
+  def FileSendingKitGenerator.to_labels(users)
+    users.map { |user| to_label(user) }
+  end
+
+  def FileSendingKitGenerator.to_label(user)
+    address = user.addresses.for_shipping.first
+    [
+      user.company,
+      user.name,
+      address.address_1,
+      address.address_2,
+      "#{address.zip} #{address.city}"
+    ].
+    reject { |e| e.nil? or e.empty? }
+  end
+  
+end
+
+module KitGenerator
+  MOIS = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+  
+  def KitGenerator.folder(folders,file_sending_kit)
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folder.pdf", :page_layout => :landscape, :page_size => "A3", :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7 do |pdf|
+      folders.each_with_index do |folder,index|
+        folder_bloc(pdf,folder,file_sending_kit)
+        if !folders[index+1].nil?
+          pdf.start_new_page(:page_size => "A3", :page_layout => :landscape, :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7)
+        end
+      end
+    end
+  end
+  
+  def KitGenerator.mail(mails,file_sending_kit)
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/mail.pdf", :left_margin => 70, :right_margin => 70 do |pdf|
+      pdf.font "Helvetica"
+      
+      mails.each_with_index do |mail,index|
+        mail_bloc(pdf,mail,file_sending_kit)
+        if !mails[index+1].nil?
+          pdf.start_new_page(:left_margin => 70, :right_margin => 70)
+        end
+      end
+    end
+
+  end
+  
+  def KitGenerator.label(labels)
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :left_margin => 15, :right_margin => 15, :bottom_margin => 0, :top_margin => 0 do |pdf|
+      pdf.font_size 11
+      labels.each_with_index do |label,index|
+        if index % 2 == 0
+          pdf.float { label_bloc(pdf,label) }
+        else
+          label_bloc(pdf,label,283)
+        end
+      end
+    end
+  end
+  
+private
+
+  def KitGenerator.folder_bloc(pdf, folder, file_sending_kit)
+    pdf.font_size 6
+    pdf.text folder[:file_code], :align => :right
+    
+    pdf.font_size 16
+    
+    # LEFT SIDE
+    pdf.float do
+      pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 800) do
+        pdf.move_down 15
+        pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 389) do
+          pdf.stroke_bounds
+          pdf.bounding_box([15, pdf.cursor - 15], :width => 501, :height => 359) do
+            pdf.text file_sending_kit.instruction, :inline_format => true
+          end
+        end
+        
+        pdf.move_down 7
+        pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 389) do
+          pdf.stroke_bounds
+          pdf.bounding_box([15, pdf.cursor - 15], :width => 501, :height => 359) do
+            pdf.text file_sending_kit.idocus_instruction, :inline_format => true
+          end
+        end
+      end
+    end
+    
+    # RIGHT SIDE
+    pdf.bounding_box([595, pdf.cursor], :width => 531, :height => 800) do
+      pdf.move_down 15
+      
+      # LOGO
+      pdf.float do
+        pdf.bounding_box([0, pdf.cursor], :width => 265, :height => 169) do
+          pdf.image "./public#{file_sending_kit.left_logo_path}", :height => file_sending_kit.left_logo_height, :width => file_sending_kit.left_logo_width, :vposition => :center, :position => :center
+        end
+      end
+      pdf.bounding_box([265, pdf.cursor], :width => 265, :height => 169) do
+        pdf.image "./public#{file_sending_kit.right_logo_path}", :height => file_sending_kit.right_logo_height, :width => file_sending_kit.right_logo_width, :vposition => :center, :position => :center
+      end
+
+      pdf.move_down 10
+      
+      # BAR CODE
+      pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 84) do
+        pdf.image folder[:barcode_path], :height => 56, :width => 282
+      end
+
+      pdf.move_down 10
+
+      # INFORMATION
+      pdf.float do
+        pdf.bounding_box([0, pdf.cursor], :width => 416, :height => 512) do
+
+          data = [["CODE :","<b>#{folder[:code]}</b>"],["NOM :","<b>#{folder[:company]}</b>"],["MOIS :","<b>#{folder[:period]}</b>"],["JOURNAL :","<b>#{folder[:account_book_type]}</b>"]]
+
+          pdf.table(data, :width => 416, :cell_style => { :inline_format => true, :padding => [12, 4, 12, 4] }, :column_widths => { 0 => 100}) do
+            style(row(0..-1), :borders => [])
+            style(columns(0), :align => :right)
+          end
+        end
+      end
+      
+      # BAR CODE
+      pdf.bounding_box([416, pdf.cursor], :width => 113, :height => 512) do
+        pdf.move_down 409
+        pdf.rotate(90, :origin => [30,100]) do
+          pdf.image folder[:barcode_path], :height => 56, :width => 282, :position => -70, :vposition => 440
+        end
+      end
+    end
+  end
+
+  def KitGenerator.mail_bloc(pdf, mail, file_sending_kit)
+    pdf.font_size 8
+    pdf.default_leading 4
+    header_data = 	[
+                              [
+                              "IDOCUS / GREVALIS\n5, rue de Douai\n75009 Paris",
+                              "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
+                              "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
+                              ]
+                            ]
+    
+    pdf.table(header_data, :width => 471, :column_widths => [157,157,157]) do
+      style(row(0), :borders => [:top,:bottom], :border_color => "AFA6A6", :text_color => "AFA6A6")
+      style(columns(0), :align => :left)
+      style(columns(1), :align => :center)
+      style(columns(2), :align => :right)
+    end
+    
+    pdf.move_down 15
+    pdf.image "./public#{file_sending_kit.logo_path}", :width => file_sending_kit.logo_width, :height => file_sending_kit.logo_height, :position => :center
+    
+    pdf.font_size 10
+
+    pdf.move_down 12
+    pdf.bounding_box([230, pdf.cursor], :width => 240) do
+      pdf.text mail[:client_address].join("\n"), :align => :right
+    end
+    
+    pdf.move_down 15
+
+    pdf.text "Votre code client : <b>#{mail[:client_code]}</b>", :align => :left, :style => :italic, :inline_format => true
+
+    pdf.move_down 8
+    pdf.text "Paris, le #{Time.now.day} #{MOIS[Time.now.month]} #{Time.now.year}", :align => :right
+    
+    pdf.move_down 15
+
+    pdf.text "Bonjour,"
+    pdf.move_down 8
+    pdf.text "Le cabinet #{mail[:prescriber_company]}, vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité."
+    pdf.move_down 8
+    pdf.text "Cette prestation, assurée par iDocus, va vous permettre un accès rapide et très pratique à vos documents."
+    pdf.text "Ils seront disponibles dans votre espace personnel sur le site <b>www.idocus.com</b>", :inline_format => true
+    pdf.move_down 8
+    pdf.text "Nous venons de vous créer un compte pour y accéder : "
+
+    pdf.bounding_box([25, pdf.cursor], :width => 515) do
+      pdf.text "-	 votre login : <b> #{mail[:client_email]}</b>", :inline_format => true
+      pdf.text "-	 votre mot de passe : <b> #{mail[:client_password]} (à changer lors de votre première connexion)</b>", :inline_format => true
+    end
+
+    pdf.move_down 10
+    pdf.text "Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos papiers."
+    pdf.bounding_box([25, pdf.cursor], :width => 515) do
+      pdf.text "-  Un fichier par chemise (AC, VT, BQ....)"
+      pdf.text "-  Format des fichiers : PDF"
+      pdf.text "-  Traitement d’OCR effectué (Reconnaissance Optique de Caractères)."
+      pdf.text "-  L’interface du site vous permet aussi de télécharger, découper, regrouper les pages."
+      pdf.text "-  Beaucoup de nouvelles fonctionnalités sont prévues dans les semaines et mois à venir, nous vous tiendrons informés."
+    end
+
+    pdf.move_down 10
+    pdf.text "Vos documents qui sont déjà sous format électronique sont à intégrer dans le système iDocus grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel."
+
+    pdf.move_down 10
+    pdf.text "Le respect des consignes et des dates préconisées par #{mail[:prescriber_company]} ainsi que la  bonne utilisation des chemises et enveloppes ci-jointes garantiront l’efficacité de notre service."
+
+    pdf.move_down 10
+    pdf.text "Nous vous souhaitons une bonne utilisation."
+
+    pdf.move_down 13
+    pdf.text "L’équipe iDocus", :align => :center
+  end
+  
+  def KitGenerator.label_bloc(pdf, label, y=0)
+    pdf.bounding_box([y, pdf.cursor], :width => 283, :height => 120) do
+      pdf.move_down 22
+      pdf.bounding_box([15, pdf.cursor], :width => 268) do
+        label.each do |field|
+          pdf.text field, :inline_format => true
+          pdf.move_down 2
+        end
+      end
+    end
+  end
+  
+end
+
+module BarCode
+  TEMPDIR_PATH = "#{Rails.root}/tmp/barcode"
+  
+  def BarCode.init
+    unless File.exist?(TEMPDIR_PATH)
+      Dir.mkdir(TEMPDIR_PATH)
+    else
+      system("rm #{TEMPDIR_PATH}/*.png")
+    end
+  end
+
+  def BarCode.generate_png text
+    tempfile_path = "#{TEMPDIR_PATH}/#{text.gsub(" ","_")}.png"
+  
+    barcode = Barby::Code39.new(text)
+    File.open(tempfile_path,"w") do |f|
+      f.write barcode.to_png(:height => 50, :margin => 5)
+    end
+    
+    tempfile_path
+  end
+  
+end

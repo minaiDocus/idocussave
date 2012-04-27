@@ -1,0 +1,63 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All file sending kits", admin_file_sending_kits_path
+      %li!= link_to "Add file sending kit", new_admin_file_sending_kit_path
+  .content
+    .inner
+      %h2 File sending kit : #{@file_sending_kit.title}
+      %table.table
+        %tr
+          %th.first
+          %th Information
+          %th.last
+        %tr
+          %td
+          %td
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Created at', :value => l(@file_sending_kit.created_at)}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Title', :value => @file_sending_kit.title}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Owner', :value => @file_sending_kit.user.email}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Company', :value => @file_sending_kit.user.company}
+          %td
+          
+      .group
+        %h3 File sending kit generator
+        - form_tag generate_admin_file_sending_kit_path do
+          %table.table
+            %tr
+              %th Sélection
+              %th Nom
+              %th Début
+              %th Durée
+            - @file_sending_kit.user.clients.each do |client|
+              %tr
+                %td
+                  != check_box_tag "users[#{client.id}][is_checked]", "true", false
+                %td!= client.name
+                %td
+                  != text_field_tag "users[#{client.id}][start_month]", 0
+                %td
+                  != text_field_tag "users[#{client.id}][offset_month]", 1
+          .navform.wat-cf
+            %button.button{:type => 'submit'}
+              != image_tag("web-app-theme/tick.png", :alt => "Génerer")
+              Génerer
+            != link_to image_tag("web-app-theme/cross.png", :alt => "Annuler") + "Annuler", admin_file_sending_kits_path, :class => "button"
+          
+          - if @is_generated == true
+            %br
+            .group.link
+              %h3 Lien
+              %ul
+                %li
+                  %a{ :href => "/system/data/folder.pdf", :target => "_blank" } chemise
+                %li
+                  %a{ :href => "/system/data/mail.pdf", :target => "_blank" } mail
+                %li
+                  %a{ :href => "/system/data/label.pdf", :target => "_blank" } étiquette
+            
+- content_for :sidebar, render(:partial => 'sidebar')
+
+:css
+  .link li {
+    margin-left: 16px; }

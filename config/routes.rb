@@ -145,5 +145,8 @@ Idocus::Application.routes.draw do
       get 'authorize_url', :on => :collection
       get 'callback', :on => :collection
     end
+    resources :file_sending_kits do
+      post 'generate', :on => :member
+    end
   end
 end

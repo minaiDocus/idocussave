@@ -1,0 +1,12 @@
+.block
+  .secondary-navigation
+    %ul.wat-cf
+      %li.first!= link_to "All file sending kits", admin_file_sending_kits_path
+      %li.active!= link_to "Add file sending kit", new_admin_file_sending_kit_path
+  .content
+    %h2.title New file sending kit
+    .inner
+      - form_for [:admin, @file_sending_kit], :html => { :class => :form } do |f|
+        != render :partial => "form", :locals => {:f => f}
+
+- content_for :sidebar, render(:partial => 'sidebar')
