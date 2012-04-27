@@ -1,4 +1,42 @@
 namespace :maintenance do
+  namespace :monthly do
+    desc "Init current monthly"
+    task :init => [:environment] do
+      User.prescribers.each do |prescriber|
+        prescriber.clients.active.each do |client|
+          client.find_or_create_reporting.find_or_create_current_monthly
+        end
+      end
+    end
+  end
+  
+  namespace :invoice do
+    desc "Generate invoice"
+    task :generate => [:environment] do
+      User.prescribers.each do |prescriber|
+        puts Time.now
+        if prescriber.is_centraliser
+          puts "Generating invoice for prescriber : #{prescriber.name} <#{prescriber.email}>"
+          invoice = Invoice.new
+          invoice.user = prescriber
+          invoice.save
+          invoice.create_pdf
+        else
+          puts "Prescriber #{prescriber.name} <#{prescriber.email}>"
+          clients = prescriber.clients - [prescriber]
+          clients.each do |client|
+            puts "\tgenerating invoice for client : #{client.name} <#{client.email}>"
+            invoice = Invoice.new
+            invoice.user = client
+            invoice.save
+            invoice.create_pdf
+          end
+        end
+        puts Time.now
+      end
+    end
+  end
+  
   namespace :order do
     desc "Init to 234 Order sequence"
     task :init => [:environment] do
@@ -8,7 +46,7 @@ namespace :maintenance do
       else
         DbaSequence.create(:name => :order, :counter => 234)
         puts "DbaSequence initialized"
-      end
+        end
     end
 
   end
