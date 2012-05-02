@@ -40,7 +40,6 @@ class Pack
     if reporting
       total = self.divisions.count
       nb = 0
-      debugger
       while total > 0
         time = self.created_at+nb.month
         
@@ -159,6 +158,49 @@ class Pack
       `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i rescue 0
     end
     
+    def get_file_from_numen target_dir="diadeis2depose/LIVRAISON"
+      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
+      Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
+      Dir.chdir("NUMEN_DELIVERY_BACKUP")
+      
+      require "net/ftp"
+      
+      ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
+      
+      ftp.chdir(target_dir)
+      filesName = ftp.nlst.sort
+      headers = filesName.select { |e| e.match(/\.txt$/) }
+      
+      headers.each do |header|
+        folderName = File.basename(header,".txt")
+        puts "Looking at folder : #{folderName}"
+        ftp.chdir(folderName)
+        filesName = ftp.nlst.sort
+        
+        Dir.mkdir(folderName) unless File.exist?(folderName)
+        Dir.chdir(folderName)
+        filesName.each do |fileName|
+          if fileName.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
+            unless File.exist?(fileName)
+              print "\tTrying to fetch document named #{fileName}..."
+              ftp.getbinaryfile(fileName)
+              print "done\n"
+            else
+              puts "\tHad already fetched document named #{fileName}"
+            end
+            # ftp.delete(fileName)
+          end
+        end
+        filesName.each { |fileName| system("cp #{fileName} ../../") }
+        
+        Dir.chdir("..")
+        ftp.chdir("..")
+        File.new(header,"w")
+      end
+      
+      ftp.close
+    end
+    
     def get_documents
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       downcase_extension
@@ -212,6 +254,9 @@ class Pack
         pack.owner = user
         pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
         pack.save ? document.save : false
+        if pack.order.state == "paid"
+          pack.order.scanned!
+        end
       end
       
       #  Livraison dans dropbox.
