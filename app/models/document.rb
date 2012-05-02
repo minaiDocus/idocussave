@@ -81,12 +81,14 @@ protected
   end
   
   def add_tags
-    document_tag = DocumentTag.new
-    document_tag.document = self
-    document_tag.pack = self.pack
-    document_tag.user = self.pack.order.user
-    document_tag.generate
-    document_tag.save
+    self.pack.users.each do |user|
+      document_tag = DocumentTag.new
+      document_tag.document = self
+      document_tag.pack = self.pack
+      document_tag.user = user
+      document_tag.generate
+      document_tag.save
+    end
   end
   
   class << self
