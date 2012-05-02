@@ -56,6 +56,10 @@ public
     self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
   end
   
+  def by_position
+    asc(:position)
+  end
+  
 protected
   def split_pages
     if self.is_an_original
