@@ -18,7 +18,8 @@ public
   end
   
   def show
-    @documents = current_user.packs.find(params[:id]).documents.without_original.by_position rescue []
+    debugger
+    @documents = current_user.packs.find(params[:id]).documents.without_original.sort { |a,b| a.position <=> b.position } rescue []
     
     if params[:filtre]
       @user = current_user
