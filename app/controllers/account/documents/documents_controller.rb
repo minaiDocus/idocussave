@@ -18,7 +18,7 @@ public
   end
   
   def show
-    @documents = current_user.packs.find(params[:id]).documents.without_original rescue []
+    @documents = current_user.packs.find(params[:id]).documents.without_original.by_position rescue []
     
     if params[:filtre]
       @user = current_user
