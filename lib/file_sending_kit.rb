@@ -112,13 +112,14 @@ module KitGenerator
   end
   
   def KitGenerator.label(labels)
-    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :left_margin => 15, :right_margin => 15, :bottom_margin => 0, :top_margin => 0 do |pdf|
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
+      pdf.move_down 32
       labels.each_with_index do |label,index|
         if index % 2 == 0
           pdf.float { label_bloc(pdf,label) }
         else
-          label_bloc(pdf,label,283)
+          label_bloc(pdf,label,297)
         end
       end
     end
@@ -274,9 +275,9 @@ private
   end
   
   def KitGenerator.label_bloc(pdf, label, y=0)
-    pdf.bounding_box([y, pdf.cursor], :width => 283, :height => 120) do
-      pdf.move_down 22
-      pdf.bounding_box([15, pdf.cursor], :width => 268) do
+    pdf.bounding_box([y, pdf.cursor], :width => 297, :height => 111) do
+      pdf.move_down 18
+      pdf.bounding_box([15, pdf.cursor], :width => 297) do
         label.each do |field|
           pdf.text field, :inline_format => true
           pdf.move_down 2
