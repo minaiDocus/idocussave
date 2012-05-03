@@ -1,4 +1,4 @@
-(function($) {
+﻿(function($) {
   // add page to the selection field
   function addPage(page) {
     var id = page.attr("id").split("_")[1];
@@ -231,7 +231,8 @@
     $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); });
     
     // archive link handler
-    $("a.do-archive").click(function() {
+    $("a.do-archive").unbind("click");
+    $("a.do-archive").bind("click",function() {
       link = $(this);
       var pack_id = link.parents("li").attr("id").split("_")[2];
       $.ajax({
@@ -242,10 +243,14 @@
         beforeSend: function() {
           logBeforeAction("Traitement en cours");
         },
-        success: function(data){
+        success: function(data) {
           logAfterAction();
           baseurl = window.location.pathname.split('/')[0];
           window.open(baseurl+""+data);
+        },
+        error: function(e) {
+          logAfterAction();
+          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span><span class='label label-important'>erreur</span> : " + e.responseText +" </span></div>");
         }
       });
       return false;

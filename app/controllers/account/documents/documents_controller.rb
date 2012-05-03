@@ -211,7 +211,7 @@ public
       new_name = pack.name.gsub(/\s/,'_')
     
       Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-      system("rm *.zip") rescue nil # suppression du précédent zip
+      system("rm *.zip") rescue nil # suppression du prÃ©cÃ¨dent zip
       system("zip '#{new_name}.zip' *.pdf")
       system("rm *.pdf")
       
@@ -225,7 +225,7 @@ public
     else
       respond_to do |format|
         format.json do
-          render :json => "Document not ready.".to_json, :status => :error
+          render :json => 'Ce document ne contient aucune information de hashage'.to_json, :status => :error
         end
       end
     end
