@@ -324,6 +324,17 @@ private
           nb += 1
           end
       end
+      data = [
+                  monthly.month,
+                  monthly.year,
+                  monthly.reporting.customer.code,
+                  monthly.reporting.customer.name,
+                  "Dépassement",
+                  "",
+                  format_price_00(monthly.total_price_in_cents)
+                ]
+      sheet2.row(nb).replace data
+      nb += 1
     end
     
     io = StringIO.new('')
