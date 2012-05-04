@@ -53,7 +53,7 @@
     var name = li.children("input[name=name]").val();
     
     $(".showPage").attr("id",id);
-    $("#pageInformation").attr("data-content","Tags : "+tags);
+    $("#pageInformation").attr("data-content",tags);
     
     $("#panel2 .header h3").text(name);
   }
