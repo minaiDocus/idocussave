@@ -77,7 +77,6 @@ Idocus::Application.routes.draw do
     namespace :manage do
       resources :account_book_types
     end
-    resources :invoices
   end
 
   namespace :tunnel do

@@ -108,4 +108,12 @@ $(document).ready(function(){
     $(this).parents(".header").next(".content").children(".month").children(".content").hide();
   });
   
+  $("a.do-showInvoice").click(function(){
+    $invoiceDialog = $("#invoiceDialog");
+    $invoiceDialog.find("h3").text($(this).attr("title"));
+    $invoiceDialog.find("#invoice-show").attr("src",$(this).attr("href"));
+    $invoiceDialog.modal();
+    return false;
+  });
+  
 });

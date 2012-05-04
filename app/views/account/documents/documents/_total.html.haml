@@ -98,4 +98,4 @@
                   - if invoice
                     - if invoice.content.try(:url)
                       %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
-                    %a{ :href => account_invoice_path(invoice), :class => "icon-eye-open", :style => "width:16px,height:16px;" }
+                    %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
