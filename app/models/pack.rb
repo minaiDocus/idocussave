@@ -168,30 +168,41 @@ class Pack
       ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
       
       ftp.chdir(target_dir)
-      filesName = ftp.nlst.sort
-      headers = filesName.select { |e| e.match(/\.txt$/) }
+      rootFilesName = ftp.nlst.sort
+      headers = rootFilesName.select { |e| e.match(/\.txt$/) }
+      
+      processed_headers = Dir.glob("*.txt")
+      headers = headers - processed_headers
       
       headers.each do |header|
-        folderName = File.basename(header,".txt")
+        folderName = rootFilesName.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
         puts "Looking at folder : #{folderName}"
         ftp.chdir(folderName)
-        filesName = ftp.nlst.sort
+        foldersName = ftp.nlst.sort
+        
+        allFilesName = []
         
         Dir.mkdir(folderName) unless File.exist?(folderName)
         Dir.chdir(folderName)
-        filesName.each do |fileName|
-          if fileName.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
-            unless File.exist?(fileName)
-              print "\tTrying to fetch document named #{fileName}..."
-              ftp.getbinaryfile(fileName)
-              print "done\n"
-            else
-              puts "\tHad already fetched document named #{fileName}"
+        foldersName.each do |folderName|
+          ftp.chdir(folderName)
+          filesName = ftp.nlst.sort
+          allFilesName += filesName
+          filesName.each do |fileName|
+            if fileName.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
+              unless File.exist?(fileName)
+                print "\tTrying to fetch document named #{fileName}..."
+                ftp.getbinaryfile(fileName)
+                print "done\n"
+              else
+                puts "\tHad already fetched document named #{fileName}"
+              end
+              # ftp.delete(fileName)
             end
-            # ftp.delete(fileName)
           end
+          ftp.chdir("../")
         end
-        filesName.each { |fileName| system("cp #{fileName} ../../") }
+        allFilesName.each { |fileName| system("cp #{fileName} ../../") }
         
         Dir.chdir("..")
         ftp.chdir("..")
