@@ -241,7 +241,7 @@ class Pack
       pack.is_open_for_upload = false if is_an_upload == false
       
       #  Renommage des fichiers.
-      start_at_page = pack.divisions.count + 1
+      start_at_page = pack.divisions.pieces.count + 1
       filesname = apply_new_name filesname, start_at_page
       update_division(filesname, pack, is_an_upload)
       #  Création du fichier all.
