@@ -302,7 +302,7 @@
       }
     });
   
-    // payement mode management by AJAX
+    // payement mode management
     $("input[type=radio]").click(function() {
       var request_value = 0;
       if ($(this).val() == "false")
@@ -328,6 +328,38 @@
             $("#pp").attr('checked', true);
           } else {
             $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div>");
+          }
+        }
+      });
+    });
+    
+     // external file storage management
+    $(".use_service").change(function() {
+      var service = $(this).attr("id").split("_")[1];
+      var is_enable = false;
+      if ($(this).is(":checked")) {
+        is_enable = true;
+        $(".service_config_"+service).show();
+      } else {
+        $(".service_config_"+service).hide();
+      }
+      hsh = {service: service, is_enable: is_enable};
+      $.ajax({
+        url: "/account/external_file_storage/use",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+        },
+        success: function(data) {
+          if (data == true) {
+            $(".alerts").html("<div class='alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Vos modification ont été enregistrée.</span></div>");
+            if (is_enable)
+              $(".service_config_"+service).show();
+            else
+              $(".service_config_"+service).hide();
+          } else if (data == false) {
+            $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Cette opération est non autorisée.</span></div>");
           }
         }
       });

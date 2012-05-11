@@ -49,8 +49,8 @@ class User
   references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
-  references_one :delivery
   references_one :my_dropbox
+  references_one :external_file_storage
   references_one :file_sending_kit
   
   scope :prescribers, :where => { :is_prescriber => true }
@@ -263,7 +263,7 @@ protected
   end
   
   def format_name
-    self.first_name = self.first_name.upcase rescue ""
-    self.last_name = self.last_name.split.map(&:capitalize) rescue ""
+    self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
+    self.last_name = self.last_name.upcase rescue ""
   end
 end
