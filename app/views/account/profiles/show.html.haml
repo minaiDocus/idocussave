@@ -11,84 +11,115 @@
           %span= flash[:credit_alert] || flash[:error]
   .row
     .span3
-      - if current_user.is_dropbox_authorized
-        .row
-          .span3
-            .well            
-              %h3
-                DROPBOX
-              - session = DropboxSession.deserialize(current_user.my_dropbox.session) rescue nil
-              - if session && session.authorized?
-                Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
-              - else
-                Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
-              != link_to "ici", authorize_url_account_dropbox_path
-              #{"."}
-      .row
-        .span3
-          .well.change_pass_parent
-            %h3 Changer mon mot de passe
-            %br/
-            .change_pass
-              - form_for @user, :url => account_profile_path do |f|
-                - if flash[:alert].present?
-                  .alert-container
-                    .alert.alert-error
-                      %a{ :class=>"close", "data-dismiss"=>"alert" } × 
-                      %span
-                        %ul
-                          %li
-                            Mots de passe invalides
-          
-                != f.label "Mot de passe actuel :"
-                = f.password_field :current_password, :label => "Ancien mot de passe"
-                != f.label "Nouveau mot de passe :"
-                = f.password_field :password, :label => "Nouveau mot de passe"
-                != f.label "Confirmation du mot de passe :"
-                = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
-                != f.submit "Modifier", :class => "btn blue"
-    .span6.gray.well.paymentslist_container
-      %div
-        %h3.aligncenter Mode de paiement
+      .well.change_pass_parent
+        %h3 Changer mon mot de passe
         %br/
-        .row
-          .span3
-            .paymentslist
-              .header
-                !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-                %span
-                  %a{ :href => "#" }
-                    %label{ :for => "pp" } compte prépayé                
-              %form{ :method => :get, :action => credit_account_payment_path }
+        .change_pass
+          - form_for @user, :url => account_profile_path do |f|
+            - if flash[:alert].present?
+              .alert-container
+                .alert.alert-error
+                  %a{ :class=>"close", "data-dismiss"=>"alert" } × 
+                  %span
+                    %ul
+                      %li
+                        Mots de passe invalides
+      
+            != f.label "Mot de passe actuel :"
+            = f.password_field :current_password, :label => "Ancien mot de passe"
+            != f.label "Nouveau mot de passe :"
+            = f.password_field :password, :label => "Nouveau mot de passe"
+            != f.label "Confirmation du mot de passe :"
+            = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
+            != f.submit "Modifier", :class => "btn blue"
+    .span7
+      .row
+        .span6.gray.well.paymentslist_container
+          %h3.aligncenter Mode de paiement
+          %br/
+          .row
+            .span3
+              .paymentslist
+                .header
+                  !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+                  %span
+                    %a{ :href => "#" }
+                      %label{ :for => "pp" } compte prépayé                
+                %form{ :method => :get, :action => credit_account_payment_path }
+                  .content
+                    %span
+                      %label{ :for => "amount" } Somme à créditer (€):
+                      %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
+                      %br/
+                      Payer avec :
+                  .footer
+                    %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
+                    %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
+            .span3
+              .paymentslist
+                .header
+                  !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
+                  %span
+                    %a{ :href => "#" }
+                      %label{ :for => "prlv" } prélèvement
                 .content
                   %span
-                    %label{ :for => "amount" } Somme à créditer (€):
-                    %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
-                    %br/
-                    Payer avec :
-                .footer
-                  %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
-                  %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
-          .span3
-            .paymentslist
-              .header
-                !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
-                %span
-                  %a{ :href => "#" }
-                    %label{ :for => "prlv" } prélèvement
-              .content
-                %span
-                  Etat : 
-                  - if @user.debit_mandate
-                    - if @user.debit_mandate.transactionStatus == "success"
-                      ok
+                    Etat : 
+                    - if @user.debit_mandate
+                      - if @user.debit_mandate.transactionStatus == "success"
+                        ok
+                      - else
+                        information non valide
                     - else
-                      information non valide
-                  - else
-                    non configuré
-                %span
-                  Banque : #{@user.debit_mandate.bic rescue ""}
-              .footer.padding1bottom
-                %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
-                  %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
-                  %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
+                      non configuré
+                  %span
+                    Banque : #{@user.debit_mandate.bic rescue ""}
+                .footer.padding1bottom
+                  %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
+                    %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
+                    %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
+      
+      - if @user.external_file_storage.authorized > 0
+        .row
+          .span6.well
+            - if @user.external_file_storage.try("is_dropbox_basic_authorized?")
+              - service_number = ExternalFileStorage::F_DROPBOX
+              - is_service_used = @user.external_file_storage.try("is_used?", ExternalFileStorage::F_DROPBOX)
+              %div
+                .row
+                  .span3
+                    %h3
+                      DROPBOX
+                  .span3.alignright
+                    != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:right;"
+                    != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
+                .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span6
+                    - session = DropboxSession.deserialize(current_user.my_dropbox.session) rescue nil
+                    - if session && session.authorized?
+                      Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
+                    - else
+                      Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
+                    != link_to "ici", authorize_url_account_dropbox_path
+                    #{"."}
+              %hr
+            
+            - if @user.external_file_storage.try("is_google_docs_authorized?")
+              - service_number = ExternalFileStorage::F_GOOGLE_DOCS
+              - is_service_used = @user.external_file_storage.try("is_used?", service_number)
+              %div
+                .row
+                  .span3
+                    %h3
+                      GOOGLE DOCS
+                  .span3.alignright
+                    != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:right;"
+                    != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
+                .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span6
+                    - if @user.external_file_storage.try("is_google_docs_authorized?") and @user.external_file_storage.try(:google_doc).try(:is_configured)
+                      Votre compte Google Docs est déjà configuré, si vous voulez le reparamétrer cliquez
+                    - else
+                      Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Google, cliquez
+                    != link_to "ici", authorize_url_account_google_doc_path
+                    #{"."}

@@ -58,6 +58,15 @@ public
         end
       end
       
+      external_file_storage = params[:external_file_storage]
+      if external_file_storage
+        flags = 0
+        external_file_storage.each { |key, value| flags |= value.to_i }
+        @user.external_file_storage.update_attributes(:authorized => flags)
+      else
+        @user.external_file_storage.update_attributes(:authorized => 0)
+      end
+      
       flash[:notice] = "Modifiée avec succès."
       redirect_to admin_users_path
     else

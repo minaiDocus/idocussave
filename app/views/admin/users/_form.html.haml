@@ -3,10 +3,10 @@
   != f.text_field :email, :class => 'text_field'
   %br
   != f.label :first_name, "Nom", :class => :label
-  != f.text_field :first_name, :class => 'text_field'
+  != f.text_field :last_name, :class => 'text_field'
   %br
   != f.label :last_name, "Prénom", :class => :label
-  != f.text_field :last_name, :class => 'text_field'
+  != f.text_field :first_name, :class => 'text_field'
   %br        
   != f.label :code, "Code client", :class => :label
   != f.text_field :code, :class => 'text_field'
@@ -22,11 +22,14 @@
   != f.label :is_inactive, "Marquer inactif ? #{ @user.is_inactive? ? '(' + l(@user.inactive_at) + ')' : '' }", :class => :label
   
 .group
-  != f.check_box :is_dropbox_authorized, :class => 'checkbox floattoleft'
-  != f.label :is_dropbox_authorized, "Autoriser Dropbox ?", :class => :label
+  != check_box_tag "external_file_storage[is_dropbox_basic_authorized]", ExternalFileStorage::F_DROPBOX, @user.external_file_storage.try("is_dropbox_basic_authorized?"), :class => 'checkbox floattoleft'
+  != label_tag "external_file_storage[is_dropbox_basic_authorized]", "Autoriser Dropbox?", :class => :label
   %br
   != f.check_box :is_dropbox_extended_authorized, :class => 'checkbox floattoleft'
   != f.label :is_dropbox_extended_authorized, "Autoriser Dropbox Extended ?", :class => :label
+  %br
+  != check_box_tag "external_file_storage[is_google_docs_authorized]", ExternalFileStorage::F_GOOGLE_DOC, @user.external_file_storage.try("is_google_docs_authorized?"), :class => 'checkbox floattoleft'
+  != label_tag "external_file_storage[is_google_docs_authorized]", "Autoriser Google Docs ?", :class => :label
   
 .group
   != check_box_tag :is_new_subscription_detail_entry, "true", false, :class => 'checkbox floattoleft'
@@ -70,44 +73,6 @@
     %b *
     mandatory fields.
     
-.group
-  %h3
-    Delivery state for
-  
-  - monthly = @user.find_or_create_reporting.monthly
-  - current_monthly = monthly.current
-  - previous_monthly = monthly.previous
-  
-  current month : 
-  %br
-  %select{ :name => :delivery_state_1, :id => "#{@user.id}_1", :class => :delivery_state }
-    - Reporting::Delivery::STATES.each do |state|
-      - same = (current_monthly.delivery.state == state[1]) rescue false
-      - if same
-        %option{ :value => state[1], :selected => :selected }
-          !=state[0]
-      - else
-        %option{ :value => state[1] }
-          !=state[0]
-  != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_#{@user.id}_1"
-  
-  %br
-  %br
-  previous month :
-  %br
-  %select{ :name => :delivery_state_2, :id => "#{@user.id}_2", :class => :delivery_state }
-    - Reporting::Delivery::STATES.each do |state|
-      - same = (previous_monthly.delivery.state == state[1]) rescue false
-      - if same
-        %option{ :value => state[1], :selected => :selected }
-          !=state[0]
-      - else
-        %option{ :value => state[1] }
-          !=state[0]
-  != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_#{@user.id}_2"
-  - if !previous_monthly
-    no delivery for previous month
-    
 :javascript
   $(document).ready(function(){
     
@@ -132,34 +97,6 @@
       hintText: "Tapez une adresse email à rechercher",
       noResultsText: "Aucun résultat",
       searchingText: "Recherche en cours..."
-    });
-    
-    $("select").change(function(){
-      uid = $(this).attr('id').split('_')[0];
-      un = $(this).attr('id').split('_')[1]
-      current_month = (un == 1) ? true : false;
-      node = $(this);
-      url = "/admin/users/" + uid + "/update_delivery_status";
-      hsh = {value: $(this).val(), current_month: current_month};
-      spinner_id = "#spinner_"+uid+"_"+un;
-      $.ajax({
-        url: url,
-        data: hsh,
-        dataType: "json",
-        type: "POST",
-        beforeSend: function() {
-          node.hide();
-          $(spinner_id).show();
-        },
-        success: function(data){
-          $(spinner_id).hide();
-          node.show();
-        },
-        error: function(data){
-          $(spinner_id).hide();
-          //node.show();
-        }
-      });
     });
     
   });
