@@ -14,7 +14,7 @@ class ExternalFileStorage
   field :path, :type => String, :default => "/"
   field :is_path_used, :type => Boolean, :default => true
   field :used, :type => Integer, :default => 0
-  field :authorized, :type => Integer, :defaut => 0
+  field :authorized, :type => Integer, :default => 0
   
   def authorize flags
     update_attributes(:authorized => authorized | flags)
