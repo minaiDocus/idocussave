@@ -17,7 +17,7 @@ class Page
 
   slug :label
 
-  embeds_many :page_contents, :dependent => :destroy
+  embeds_many :page_contents
   accepts_nested_attributes_for :page_contents, :reject_if => lambda { |a| a[:title].blank? }, :allow_destroy => true
 
   validates_presence_of :title
