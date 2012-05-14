@@ -102,6 +102,8 @@
                       Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
                     != link_to "ici", authorize_url_account_dropbox_path
                     #{"."}
+            
+            - if @user.external_file_storage.try("is_dropbox_basic_authorized?") and @user.external_file_storage.try("is_google_docs_authorized?")
               %hr
             
             - if @user.external_file_storage.try("is_google_docs_authorized?")

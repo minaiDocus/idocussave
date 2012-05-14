@@ -48,7 +48,6 @@ class User
   references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
-  references_one :my_dropbox
   references_one :external_file_storage
   references_one :file_sending_kit
   
