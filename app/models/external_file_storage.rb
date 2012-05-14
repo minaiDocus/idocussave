@@ -77,7 +77,7 @@ class ExternalFileStorage
     trusted_flags =  authorized & used & flags
     
     if trusted_flags & F_DROPBOX > 0
-      if dropbox_basic
+      if dropbox_basic and dropbox_basic.is_configured?
         filespath.each do |filepath|
           dropbox_basic.deliver filepath, delivery_path
         end
@@ -85,7 +85,7 @@ class ExternalFileStorage
     end
     
     if trusted_flags & F_GOOGLE_DOCS > 0
-      if google_doc
+      if google_doc and google_doc.is_configured?
         filespath.each do |filepath|
           google_doc.deliver filepath, delivery_path
         end

@@ -46,6 +46,10 @@ class DropboxBasic
     end
   end
   
+  def is_configured?
+    new_session.authorized?
+  end
+  
   def reset_session
     self.session = ""
     self.save

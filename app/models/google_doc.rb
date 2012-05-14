@@ -40,6 +40,10 @@ class GoogleDoc
     @access_token
   end
   
+  def is_configured?
+    is_configured
+  end
+  
   def reset_session
     update_attributes(:token => "", :secret => "", :is_configured => false)
   end

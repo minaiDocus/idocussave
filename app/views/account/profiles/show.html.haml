@@ -95,8 +95,7 @@
                     != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
-                    - session = DropboxSession.deserialize(current_user.my_dropbox.session) rescue nil
-                    - if session && session.authorized?
+                    - if @user.external_file_storage.try(:dropbox_basic).try("is_configured?")
                       Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
                     - else
                       Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
@@ -119,7 +118,7 @@
                     != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
-                    - if @user.external_file_storage.try("is_google_docs_authorized?") and @user.external_file_storage.try(:google_doc).try(:is_configured)
+                    - if @user.external_file_storage.try(:google_doc).try("is_configured?")
                       Votre compte Google Docs est déjà configuré, si vous voulez le reparamétrer cliquez
                     - else
                       Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Google, cliquez

@@ -5,17 +5,18 @@ class Account::DropboxesController < Account::AccountController
 private
 
   def dropbox_authorized?
-    unless current_user.is_dropbox_authorized
+    unless current_user.external_file_storage.try("is_dropbox_basic_authorized?")
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Dropbox."
       redirect_to account_profile_path
     end
   end
 
   def load_dropbox
-    @dropbox = current_user.my_dropbox
+    @dropbox = current_user.external_file_storage.try("dropbox_basic")
     if @dropbox.nil?
-      @dropbox = MyDropbox.create(:user_id => current_user.id)
-      current_user.update_attributes(:my_dropbox_id => @dropbox.id)
+      @dropbox = DropboxBasic.new
+      current_user.find_or_create_external_file_storage.dropbox_basic = @dropbox
+      @dropbox.save
     end
   end
 
