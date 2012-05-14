@@ -22,13 +22,14 @@
   != f.label :is_inactive, "Marquer inactif ? #{ @user.is_inactive? ? '(' + l(@user.inactive_at) + ')' : '' }", :class => :label
   
 .group
+  != hidden_field_tag "external_file_storage[default]", 0
   != check_box_tag "external_file_storage[is_dropbox_basic_authorized]", ExternalFileStorage::F_DROPBOX, @user.external_file_storage.try("is_dropbox_basic_authorized?"), :class => 'checkbox floattoleft'
   != label_tag "external_file_storage[is_dropbox_basic_authorized]", "Autoriser Dropbox?", :class => :label
   %br
   != f.check_box :is_dropbox_extended_authorized, :class => 'checkbox floattoleft'
   != f.label :is_dropbox_extended_authorized, "Autoriser Dropbox Extended ?", :class => :label
   %br
-  != check_box_tag "external_file_storage[is_google_docs_authorized]", ExternalFileStorage::F_GOOGLE_DOC, @user.external_file_storage.try("is_google_docs_authorized?"), :class => 'checkbox floattoleft'
+  != check_box_tag "external_file_storage[is_google_docs_authorized]", ExternalFileStorage::F_GOOGLE_DOCS, @user.external_file_storage.try("is_google_docs_authorized?"), :class => 'checkbox floattoleft'
   != label_tag "external_file_storage[is_google_docs_authorized]", "Autoriser Google Docs ?", :class => :label
   
 .group

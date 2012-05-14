@@ -79,7 +79,7 @@
                     %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
-      - if @user.external_file_storage.authorized > 0
+      - if @user.external_file_storage and @user.external_file_storage.authorized > 0
         .row
           .span6.well
             - if @user.external_file_storage.try("is_dropbox_basic_authorized?")

@@ -224,6 +224,10 @@ class User
     self.addresses.for_billing.first
   end
   
+  def find_or_create_external_file_storage
+    external_file_storage || ExternalFileStorage.create(:user_id => self.id)
+  end
+  
 protected
   def update_clients
     if self.is_prescriber && !self.client_ids.nil?
