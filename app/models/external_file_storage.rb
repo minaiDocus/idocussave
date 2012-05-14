@@ -68,7 +68,7 @@ class ExternalFileStorage
   end
   
   def deliver filespath, folder_path=nil, flags=used
-    if is_path_used
+    if folder_path.nil? and is_path_used
       delivery_path = path
     else
       delivery_path = folder_path
