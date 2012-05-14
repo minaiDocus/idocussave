@@ -16,7 +16,6 @@ class User
   field :company, :type => String
   field :is_prescriber, :type => Boolean, :default => false
   field :inactive_at, :type => Time
-  field :is_dropbox_authorized, :type => Boolean, :default => false
   field :dropbox_delivery_folder, :type => String, :default => ""
   field :is_dropbox_extended_authorized, :type => Boolean, :default => false
   field :is_centraliser, :type => Boolean, :default => true
