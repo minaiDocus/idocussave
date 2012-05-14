@@ -254,6 +254,10 @@ class Pack
         Document.update_file pack, pack_filename, is_an_upload
         pack.save
       else
+        #  Attribution du pack.
+        pack.owner = user
+        pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
+        
         document = Document.new
         document.dirty = true
         document.is_an_original = true
@@ -261,9 +265,6 @@ class Pack
         document.pack = pack
         document.content = File.new pack_filename
         
-        #  Attribution du pack.
-        pack.owner = user
-        pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
         pack.save ? document.save : false
         if pack.order.state == "paid"
           pack.order.scanned!
