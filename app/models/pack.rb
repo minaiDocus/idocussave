@@ -270,15 +270,13 @@ class Pack
         end
       end
       
-      #  Livraison dans dropbox.
-      deliver_to_dropbox filesname + [pack_filename], dropbox_delivery_path(pack_name), [user]
+      #  Livraison dans les services de stockage externe
+      deliver_to_external_file_storage filesname + [pack_filename], dropbox_delivery_path(pack_name), [user]
       prescriber = user.prescriber
       if prescriber
+        deliver_to_external_file_storage filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
         if prescriber.is_dropbox_extended_authorized
           deliver_to_dropbox_extended filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
-        end
-        if prescriber.is_dropbox_authorized
-          deliver_to_dropbox filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
         end
       end
       
@@ -294,11 +292,11 @@ class Pack
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
   
-    def deliver_to_dropbox filesname, delivery_path, users
+    def deliver_to_external_file_storage filesname, delivery_path, users
       filesname.each do |filename|
         users.each do |user|
-          if user.is_dropbox_authorized? and user.my_dropbox
-            user.my_dropbox.deliver filename, delivery_path
+          if user.external_file_storage
+            user.external_file_storage.deliver filename, delivery_path
           end
         end
       end
