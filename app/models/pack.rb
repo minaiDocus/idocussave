@@ -15,8 +15,6 @@ class Pack
   embeds_many :divisions
   
   field :name, :type => String
-  field :division, :type => Array, :default => []
-  field :information, :type => Hash, :default => { "page_number" => 0, "collection" => [], "uploaded" => { "pages" => 0, "sheets" => 0, "pieces" => 0 } }
   field :is_open_for_upload, :type => Boolean, :default => true
   
   after_save :update_reporting
