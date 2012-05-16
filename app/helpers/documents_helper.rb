@@ -1,9 +1,8 @@
 module DocumentsHelper
   
   def linked_users_option
-    order_ids = current_user.orders.collect{|o| o.id} rescue []
-
-    users = Pack.where(:user_ids => current_user.id).not_in(:order_id => order_ids).entries.collect{|p| p.order.user}.uniq
+    user_ids = Pack.any_in(:user_ids => [current_user.id]).not_in(:owner_id => [current_user.id]).only(:owner_id).map(&:owner_id).uniq
+    users = User.any_in(:_id => user_ids)
 
     users = users.sort do |a,b|
       if a.code && b.code && a.code != b.code
@@ -34,7 +33,7 @@ module DocumentsHelper
   end
   
   def tags_of document
-    Iconv.iconv('ISO-8859-1', 'UTF-8', DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name).join() rescue ""
+    DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name rescue ""
   end
   
   def filter_list_of_users users
