@@ -1,7 +1,7 @@
 module DocumentsHelper
   
   def linked_users_option
-    user_ids = Pack.any_in(:user_ids => [current_user.id]).not_in(:owner_id => [current_user.id]).only(:owner_id).map(&:owner_id).uniq
+    user_ids = Pack.any_in(:user_ids => [current_user.id]).not_in(:owner_id => [current_user.id]).distinct(:owner_id)
     users = User.any_in(:_id => user_ids)
 
     users = users.sort do |a,b|
