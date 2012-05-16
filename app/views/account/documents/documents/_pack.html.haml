@@ -23,14 +23,14 @@
 - elsif document_class == "shared"
   - document_type_content += "<br/>Accès donné par : #{pack.order.user.email}"
  
-
-%li{ :id => "original_#{pack.documents.originals.first.id}_#{pack.id}", :class => document_class }
+- document = pack.documents.originals.first
+%li{ :id => "original_#{document.id}_#{pack.id}", :class => document_class }
   %span.action
-    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pack.information["page_number"] rescue -1}<br />Tags : #{tags_of pack.documents.originals.first}", :href => "#"}
+    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pack.documents.without_original.count}<br />Tags : #{tags_of document}", :href => "#"}
       %i.icon-info-sign
     %a.do-select.do-tooltip{:href => "#", :title => "sélectionner"}
       %i.icon-ok
-    %a.do-tooltip{ :href => "#{(pack.documents.where(:is_an_original => true).first).content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
+    %a.do-tooltip{ :href => "#{document.content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
     %a.do-tooltip{ :href => "#", :title => "Télécharger une archive zip", :class => "download do-archive" }
       %i.icon-download

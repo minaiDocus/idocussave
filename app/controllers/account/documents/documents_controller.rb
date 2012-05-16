@@ -10,8 +10,7 @@ protected
 
 public
   def index
-    @packs_count = current_user.packs.count
-    @packs = current_user.packs.desc(:created_at).paginate :page => params[:page], :per_page => 20
+    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at).paginate :page => params[:page], :per_page => 20
     if @last_composition
       @composition = Document.any_in(:_id => @last_composition.document_ids)
     end
