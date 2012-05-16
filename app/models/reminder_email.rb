@@ -40,6 +40,7 @@ class ReminderEmail
   def init
     self.delivered_user_ids = []
     self.processed_user_ids = []
+    self.delivered_at = nil
     save
   end
   
@@ -52,14 +53,14 @@ class ReminderEmail
   end
   
   def deliver_if_its_time
-    if delivered_at.nil? || delivered_at.month < Time.now.month and Time.now.day == delivery_day
-      self.init if delivered_at.month < Time.now.month
+    if ((delivered_at.nil? || delivered_at.month < Time.now.month) and Time.now.day == delivery_day)
+      self.init if !delivered_at.nil? and delivered_at.month < Time.now.month
       deliver
     end
   end
   
   def self.deliver
-    self.all.each do |reminder_email|
+    self.all.entries.each do |reminder_email|
       reminder_email.deliver_if_its_time
     end
   end
