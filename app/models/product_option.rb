@@ -48,7 +48,7 @@ public
     price_in_cents_wo_vat * 1.196
   end
   
-  def group
+  def group_title
     product_group.title rescue ""
   end
   
