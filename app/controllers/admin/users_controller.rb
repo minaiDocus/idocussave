@@ -45,19 +45,6 @@ public
   
   def update
     if @user.update_attributes params[:user]
-      users = [@user]
-      if @user.is_prescriber and params[:is_parent_subscription_detail] == "true"
-        users = users + @user.clients
-      end
-      users.each do |user|
-        detail = user.find_or_create_scanning_subscription.detail
-        if params[:is_new_subscription_detail_entry] == "true" || detail.nil?
-          user.find_or_create_scanning_subscription.subscription_details.create(params[:subscription_detail])
-        else
-          detail.update_attributes params[:subscription_detail]
-        end
-      end
-      
       flags = 0
       params[:external_file_storage].each { |key, value| flags |= value.to_i }
       @user.find_or_create_external_file_storage.update_attributes(:authorized => flags)

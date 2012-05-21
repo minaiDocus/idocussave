@@ -1,10 +1,13 @@
 class Scan::Subscription < Subscription
   referenced_in :prescriber, :class_name => "User", :inverse_of => :scan_subscription_reports
   references_many :periods, :class_name => "Scan::Period", :inverse_of => :subscription
+  references_many :documents, :class_name => "Scan::Document", :inverse_of => :subscription
   
   attr_accessor :is_to_spreading
   
   field :period_duration, :type => Integer, :default => 1
+  field :max_sheets_authorized, :type => Integer, :default => 100
+  field :max_upload_pages_authorized, :type => Integer, :default => 200
   
   validates_presence_of :prescriber_id
   
@@ -51,6 +54,8 @@ class Scan::Subscription < Subscription
     self.end_in = scan_subscription.end_in
     self.payment_type = scan_subscription.payment_type
     self.period_duration = scan_subscription.period_duration
+    self.max_sheets_authorized = scan_subscription.max_sheets_authorized
+    self.max_upload_pages_authorized = scan_subscription.max_upload_pages_authorized
     self.product_option_orders = scan_subscription.product_option_orders
     self.save
   end

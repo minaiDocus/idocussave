@@ -13,6 +13,7 @@ class Subscription
   field :number, :type => Integer
   field :payment_type, :type => Integer, :default => PREPAYED
   field :price_in_cents_wo_vat, :type => Integer, :default => 0
+  field :tva_ratio, :type => Float, :default => 1.196
   
   validates_uniqueness_of :number
   
@@ -45,7 +46,11 @@ class Subscription
   end
   
   def price_in_cents_w_vat
-    price_in_cents_wo_vat * 1.196
+    price_in_cents_wo_vat * tva_ratio
+  end
+  
+  def total_vat
+    price_in_cents_w_vat - price_in_cents_wo_vat
   end
   
   def update_price
@@ -61,7 +66,7 @@ class Subscription
   end
   
   def products_total_price_in_cents_w_vat
-    products_total_price_in_cents_wo_vat * 1.196
+    products_total_price_in_cents_wo_vat * tva_ratio
   end
   
   def product= _product
