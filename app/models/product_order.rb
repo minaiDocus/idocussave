@@ -9,5 +9,5 @@ class ProductOrder
   field :require_billing_address, :type => Boolean, :default => true
 
   embedded_in :order
-  embeds_many :product_option_orders
+  # embeds_many :product_option_orders
 end

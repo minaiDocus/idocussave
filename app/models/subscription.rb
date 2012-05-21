@@ -1,22 +1,33 @@
 class Subscription
   include Mongoid::Document
   include Mongoid::Timestamps
+  
+  PREPAYED = 1
+  DEBIT = 2
 
   field :category, :type => Integer, :default => 1
-  field :progress, :type => Integer, :default => 1
-  field :end, :type => Integer, :default => 12
+  field :start_at_year, :type => Integer, :default => Time.now.year
+  field :start_at_month, :type => Integer, :default => Time.now.month
+  field :end_in, :type => Integer, :default => 12
+  field :current_progress, :type => Integer, :default => 1
   field :number, :type => Integer
+  field :payment_type, :type => Integer, :default => PREPAYED
+  field :price_in_cents_wo_vat, :type => Integer, :default => 0
   
   validates_uniqueness_of :number
   
   before_create :set_number
-  after_create :create_detail
+  before_save :update_price
   
   referenced_in :user
   references_many :orders
   references_many :events
   references_many :invoices
+  
+  # TODO remove me
   references_many :subscription_details, :dependent => :destroy
+  
+  embeds_many :product_option_orders, :as => :product_optionable
   
   def order
     orders.current.first
@@ -33,6 +44,62 @@ class Subscription
     order
   end
   
+  def price_in_cents_w_vat
+    price_in_cents_wo_vat * 1.196
+  end
+  
+  def update_price
+    self.price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
+  end
+  
+  def update_price!
+    update_attributes(:price_in_cents_wo_vat => products_total_price_in_cents_wo_vat)
+  end
+  
+  def products_total_price_in_cents_wo_vat
+    product_option_orders.sum(&:price_in_cents_wo_vat)
+  end
+  
+  def products_total_price_in_cents_w_vat
+    products_total_price_in_cents_wo_vat * 1.196
+  end
+  
+  def product= _product
+    id = _product[:id]
+    product = Product.find id
+    _groups = _product[id]
+    
+    options = []
+    option_ids = []
+    _groups.each { |key, value| option_ids += value }
+    
+    _groups.each do |_group|
+      group = ProductGroup.find(_group[0])
+      required_option = nil
+      if group.product_require
+        required_option = group.product_require.product_options.any_in(:_id => option_ids).first
+      end
+      _group[1].each do |option_id|
+        option = ProductOption.find option_id
+        option_order = copy_product_option(option)
+        option_order.price_in_cents_wo_vat = option_order.price_in_cents_wo_vat * required_option.quantity unless required_option.nil?
+        options << option_order
+      end
+    end
+    
+    self.product_option_orders = options
+  end
+  
+  def copy_product_option product_option
+    product_option_order = ProductOptionOrder.new
+    product_option_order.fields.keys.each do |k|
+      setter =  (k+"=").to_sym
+      value = product_option.send(k)
+      product_option_order.send(setter, value)
+    end
+    product_option_order
+  end
+  
   def detail
     subscription_details.current.first
   end
@@ -44,11 +111,6 @@ class Subscription
   end
   
 protected
-  def create_detail
-    detail = SubscriptionDetail.new
-    detail.subscription = self
-    detail.save
-  end
   
   def set_number
     self.number = DbaSequence.next(:subscription)

@@ -140,6 +140,7 @@ Idocus::Application.routes.draw do
     resources :product_options
     resources :product_groups
     resources :subscriptions
+    resources :scan_subscriptions
     resources :account_book_types
     resources :documents do
       get 'run_background_process', :on => :collection

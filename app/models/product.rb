@@ -20,6 +20,9 @@ class Product
   
   references_many :product_groups, :dependent => :delete
   references_many :product_options, :dependent => :delete
+  
+  scope :subscribable, :where => { :is_a_subscription => true }
+  scope :unsubscribable, :where => { :is_a_subscription => false }
 
   class << self
     def by_price_ascending

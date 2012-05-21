@@ -25,11 +25,14 @@ class User
 
   embeds_many :addresses
   
+  # TODO remove those after migration
   references_many :clients, :class_name => "User", :inverse_of => :prescriber
   referenced_in :prescriber, :class_name => "User", :inverse_of => :clients
-  
   references_and_referenced_in_many :reportings, :inverse_of => :viewer
   references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
+  
+  references_many :scan_subscriptions, :class_name => "Scan::Subscription", :inverse_of => :user
+  references_many :scan_subscription_reports, :class_name => "Scan::Subscription", :inverse_of => :prescriber
   
   references_many :own_packs, :class_name => "Pack", :inverse_of => :owner
   references_and_referenced_in_many :packs
@@ -205,12 +208,11 @@ class User
     subscriptions.where(:category => 1).first
   end
   
-  def find_or_create_scanning_subscription
-    if scanning_subscription
-      scanning_subscription
+  def find_or_create_scan_subscription
+    if scan_subscriptions.last
+      scan_subscriptions.last
     else
-      subscriptions.create
-      scanning_subscription
+      self.scan_subscriptions.create
     end
   end
   
