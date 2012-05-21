@@ -31,23 +31,7 @@
   %br
   != check_box_tag "external_file_storage[is_google_docs_authorized]", ExternalFileStorage::F_GOOGLE_DOCS, @user.external_file_storage.try("is_google_docs_authorized?"), :class => 'checkbox floattoleft'
   != label_tag "external_file_storage[is_google_docs_authorized]", "Autoriser Google Docs ?", :class => :label
-  
-.group
-  != check_box_tag :is_new_subscription_detail_entry, "true", false, :class => 'checkbox floattoleft'
-  != label_tag :is_new_subscription_detail_entry, "Nouvelle entrée ?", :class => :label
-  %br
-  != check_box_tag :is_parent_subscription_detail, "true", false, :class => 'checkbox floattoleft'
-  != label_tag :is_parent_subscription_detail, "Propager les changements pour tout les clients ?", :class => :label
-  %br
-  != label_tag "subscription_detail[base_price_in_cents]", "Prix de base de l'abonnement en centime : ", :class => :label
-  != text_field_tag "subscription_detail[base_price_in_cents]", (@user.scanning_subscription.detail.base_price_in_cents rescue 0), :class => 'text_field'
-  %br
-  != label_tag "subscription_detail[max_number_of_sheets]", "Nombre de feuilles compris dans l'abonnement : ", :class => :label
-  != text_field_tag "subscription_detail[max_number_of_sheets]", (@user.scanning_subscription.detail.max_number_of_sheets rescue 0), :class => 'text_field'
-  %br
-  != label_tag "subscription_detail[max_uploaded_pages]", "Nombre de pages téléversées compris dans l'abonnement : ", :class => :label
-  != text_field_tag "subscription_detail[max_uploaded_pages]", (@user.scanning_subscription.detail.max_uploaded_pages rescue 0), :class => 'text_field'
-  
+
 .group
   != f.check_box :is_prescriber, :class => 'checkbox floattoleft'
   != f.label :is_prescriber, "Est prescripteur ?", :class => :label

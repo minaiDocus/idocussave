@@ -49,7 +49,7 @@ public
   end
   
   def group_title
-    product_group.title rescue ""
+    product_group.try(:title)
   end
   
 protected

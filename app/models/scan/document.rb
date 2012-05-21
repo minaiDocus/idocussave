@@ -2,7 +2,7 @@ class Scan::Document
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :reporting, :class_name => "Scan::Reporting", :inverse_of => :documents
+  referenced_in :subscription, :class_name => "Scan::Subscription", :inverse_of => :documents
   referenced_in :period, :class_name => "Scan::Period", :inverse_of => :documents
   referenced_in :pack, :inverse_of => :scan_document
   
@@ -24,6 +24,10 @@ class Scan::Document
   scope :shared, :where => { :is_shared => true }
   
   after_save :update_period
+  
+  def self.by_created_at
+    order_by(:created_at, :desc)
+  end
   
   def update_period
     period.update_price!
