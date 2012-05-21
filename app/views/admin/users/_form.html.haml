@@ -89,9 +89,6 @@
     });
     
     $("#user_client_ids").tokenInput("/admin/users/search.json", {
-      prePopulate: [
-        #{users_to_tokeninput_field(@user.all_clients - [@user])}
-      ],
       searchDelay: 1000,
       minChars: 1,
       preventDuplicates: true,

@@ -20,6 +20,20 @@ public
     @subscriptions = @subscriptions.order_by(:number.desc, :created_at.desc).paginate :page => params[:page], :per_page => 50
   end
   
+  def new
+  	@scan_subscription = Scan::Subscription.new
+  end
+  
+  def create
+    @scan_subscription = Scan::Subscription.new params[:scan_subscription]
+    if @scan_subscription.save
+      flash[:notice] = "Créer avec succès."
+      redirect_to admin_subscriptions_path
+    else
+      render :action => :new
+    end
+  end
+  
   def show
   end
 

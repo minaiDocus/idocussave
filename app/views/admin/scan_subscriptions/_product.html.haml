@@ -1,0 +1,7 @@
+.group
+  != radio_button_tag "scan_subscription[product][id]", product.id, :class => "product"
+  != label_tag "product_id_#{product.id}", product.title
+  
+  - product.product_groups.where(:product_supergroup_id => nil).by_position.entries.each do |product_group|
+    %ul.optionslist.margin2left.margin2top
+      != render :partial => "product_group", :locals => { :product_group => product_group, :product => product }
