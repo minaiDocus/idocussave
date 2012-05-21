@@ -105,6 +105,7 @@ class Subscription
     product_option_order
   end
   
+  # TODO remove me
   def detail
     subscription_details.current.first
   end

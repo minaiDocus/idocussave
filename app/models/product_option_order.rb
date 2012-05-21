@@ -10,4 +10,8 @@ class ProductOptionOrder
   field :quantity, :type => Integer
 
   embedded_in :product_optionable, :polymorphic => true
+  
+  def self.by_position
+    asc(:position)
+  end
 end
