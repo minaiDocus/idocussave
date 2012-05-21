@@ -42,11 +42,11 @@
           %th Prix
           %th Durée
           %th.last
-        - @scan_subscription.product_option_orders.sort{ |a,b| a.position <=> b.position }.each do |option|
+        - @scan_subscription.product_option_orders.by_position.each do |option|
           %tr
             %td
             %td
-              #{option.group_title} - #{option.title}
+              != "#{option.group_title} - #{option.title}"
             %td
               #{format_price option.price_in_cents_wo_vat} € HT
               %br

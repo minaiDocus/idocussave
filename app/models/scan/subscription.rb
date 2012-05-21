@@ -56,7 +56,7 @@ class Scan::Subscription < Subscription
     self.period_duration = scan_subscription.period_duration
     self.max_sheets_authorized = scan_subscription.max_sheets_authorized
     self.max_upload_pages_authorized = scan_subscription.max_upload_pages_authorized
-    self.product_option_orders = scan_subscription.product_option_orders
+    self.copy_options! scan_subscription.product_option_orders
     self.save
   end
   
@@ -73,6 +73,20 @@ class Scan::Subscription < Subscription
   def check_propagation
     if is_to_spreading.try(:to_i) == 1 and user.is_prescriber
       propagate_changes
+    end
+  end
+  
+protected
+  def copy_options! options
+    self.product_option_orders = []
+    options.each do |option|
+      product_option_order = ProductOptionOrder.new
+      product_option_order.fields.keys.each do |k|
+        setter =  (k+"=").to_sym
+        value = option.send(k)
+        product_option_order.send(setter, value)
+      end
+      self.product_option_orders << product_option_order
     end
   end
 end
