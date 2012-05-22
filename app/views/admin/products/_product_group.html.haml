@@ -1,0 +1,28 @@
+%fieldset{ :id => product_group.id, :style => "margin:7px;padding:7px;" }
+  %span.title
+    != "#{product_group.title} #{product_group.description}"
+  %span.action
+    != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_group_path(product_group)
+    |
+    != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_group_path(product_group), :method => :delete, :confirm => "Êtes-vous sûr ?"
+  
+  != hidden_field_tag "#{product_group.id}_DependantIds", product_group.product_required_for.collect{|g| g.id}.join('-')
+  - if product_group.product_subgroups
+    - product_group.product_subgroups.by_position.each do |product_subgroup|
+      != render :partial => "product_group", :locals => { :product_group => product_subgroup, :product => product }
+  - unless product_group.product_options.empty?
+    %table{ :style => "width:100%;" }
+      - if product_group.is_option_dependent
+        - product_group.product_options.by_position.each_with_index do |option,index|
+          %tr
+            %td{ :style => "width:20px;" }
+              %span.radio
+                != radio_button_tag "product_options[]", option.id, ((index == 0)? true : false), :id => option.id, :class => "option", :disabled => :disabled
+            != render :partial => "product_option", :locals => { :option => option }
+      - else
+        - product_group.product_options.by_position.each_with_index do |option,index|
+          %tr
+            %td{ :style => "width:20px;" }
+              %span.checkbox
+                %input{ :type => :checkbox, :name => "product_options[]", :value => option.id, :id => option.id, :class => "option", :disabled => :disabled }
+            != render :partial => "product_option", :locals => { :option => option }

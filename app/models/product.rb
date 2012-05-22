@@ -5,7 +5,7 @@ class Product
 
   field :title
   field :category, :type => Integer, :default => 1
-  field :price_in_cents_wo_vat, :type => Float
+  field :price_in_cents_wo_vat, :type => Integer, :default => 0
   field :description, :type => String, :default => ""
   field :position, :type => Integer, :default => 1
   field :is_a_subscription, :type => Boolean, :default => false

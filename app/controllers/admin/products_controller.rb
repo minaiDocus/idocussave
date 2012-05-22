@@ -12,6 +12,7 @@ public
 
   def index
     @products = Product.by_position.by_price_ascending.all
+    @product_options = ProductOption.by_group.by_position.all
     @product_groups = ProductGroup.by_position.all
   end
 
