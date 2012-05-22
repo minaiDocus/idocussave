@@ -1,0 +1,9 @@
+%td{ :style => "width:400px;" }
+  != "#{option.title} #{option.description}"
+%td.price{ :style => "margin-left:20px;width:auto;" }
+  #{format_price(option.price_in_cents_wo_vat)} € HT
+%td{ :style => "width:auto;text-align:right;" }
+  != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_option_path(option)
+  |
+  != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?"
+  

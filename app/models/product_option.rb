@@ -49,7 +49,11 @@ public
   end
   
   def group_title
-    product_group.try(:title)
+    product_group.try(:title) || ""
+  end
+  
+  def group_position
+    product_group.try(:position) || 1
   end
   
 protected

@@ -6,59 +6,49 @@
       %li!= link_to "Add option", new_admin_product_option_path
       %li!= link_to "Add group", new_admin_product_group_path
   .content
-    %h2.title All products
     .inner
+      %h3.title Preview
+      != render :partial => "product", :collection => @products
+      
+      %h3.title All options
       %table.table
         %tr
-          %th N°
+          %th Position
           %th Title
-          %th Price (in cents, without VAT)
-          %th Option Title
-          %th Option N°
-          %th Option Group
+          %th Price
+          %th Group
           %th.last &nbsp;
-        - @products.each do |product|
+        - @product_options.each do |option|
           %tr{:class => cycle("odd", "even")}
-            %td!= product.position
-            %td!= product.title
-            %td!= product.price_in_cents_wo_vat
-            %td -
-            %td -
-            %td -
+            %td!= option.position
+            %td!= option.title
+            %td!= "+#{option.price_in_cents_wo_vat}"
+            %td!= option.product_group.try(:title)
             %td.last
-              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_path(product)
+              != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_option_path(option)
               |
-              != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_path(product), :method => :delete, :confirm => "Êtes-vous sûr ?"
-          - product.product_options.by_group.by_position.each do |option|
-            %tr{:class => cycle("odd", "even")}
-              %td
-              %td ►
-              %td!= "+#{option.price_in_cents_wo_vat}"
-              %td!= option.title
-              %td!= option.position
-              %td!= option.product_group.title rescue ""
-              %td.last
-                != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_option_path(option)
-                |
-                != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?"
-                
-      %h2.title All groups
+              != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?"
+      
+      %h3.title All groups
       %table.table
         %tr
+          %th Position
           %th Title
           %th Product
-          %th Position
           %th Option count
           %th.last &nbsp;
         - @product_groups.each do |product_group|
           %tr{:class => cycle("odd", "even")}
-            %td!= product_group.title
-            %td!= product_group.product.title rescue ""
             %td!= product_group.position
+            %td!= product_group.title
+            %td!= product_group.product.try(:title)
             %td!= product_group.product_options.size
             %td.last
               != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_product_group_path(product_group)
               |
               != link_to image_tag("web-app-theme/cross.png", :alt => "delete"), admin_product_group_path(product_group), :method => :delete, :confirm => "Êtes-vous sûr ?"
-
+      
 - content_for :sidebar, render(:partial => 'sidebar')
+
+:css
+  .action { float: right; }
