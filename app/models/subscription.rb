@@ -6,9 +6,10 @@ class Subscription
   DEBIT = 2
 
   field :category, :type => Integer, :default => 1
-  field :start_at_year, :type => Integer, :default => Time.now.year
-  field :start_at_month, :type => Integer, :default => Time.now.month
-  field :end_in, :type => Integer, :default => 12
+  field :start_at, :type => Time, :default => Time.now
+  field :end_at, :type => Time, :default => Time.now + 12.month
+  field :end_in, :type => Integer, :default => 12 # month
+  field :period_duration, :type => Integer, :default => 1
   field :current_progress, :type => Integer, :default => 1
   field :number, :type => Integer
   field :payment_type, :type => Integer, :default => PREPAYED
@@ -17,8 +18,11 @@ class Subscription
   
   validates_uniqueness_of :number
   
+  scope :of_user, lambda { |user| where(:user_id => user.id) }
+  scope :for_year, lambda { |year| where(:start_at.lt => Time.local((year + 1),1,1,0,0,0), :end_at.gt => Time.local((year - 1),1,1,0,0,0)) }
+  
   before_create :set_number
-  before_save :update_price
+  before_save :update_price, :set_start_date, :set_end_date
   
   referenced_in :user
   references_many :orders
@@ -29,6 +33,10 @@ class Subscription
   references_many :subscription_details, :dependent => :destroy
   
   embeds_many :product_option_orders, :as => :product_optionable
+  
+  def by_start_date
+    asc(:start_at)
+  end
   
   def order
     orders.current.first
@@ -117,8 +125,28 @@ class Subscription
   end
   
 protected
-  
   def set_number
     self.number = DbaSequence.next(:subscription)
+  end
+  
+  def set_start_date
+    year = start_at.year
+    month = start_at.month
+    if period_duration == 3
+      if start_at.month <= 3
+        month = 1
+      elsif start_at.month <= 6
+        month = 4
+      elsif start_at.month <= 9
+        month = 7
+      elsif start_at.month <= 12
+        month = 10
+      end
+    end
+    self.start_at = Time.local year,month,1,0,0,0
+  end
+  
+  def set_end_date
+    self.end_at = start_at + end_in.month - 1.seconds
   end
 end

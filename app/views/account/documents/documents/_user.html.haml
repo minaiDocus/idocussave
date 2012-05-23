@@ -97,12 +97,12 @@
                   %i Dépassement
                 %td.second.aligncenter
                 %td.second.aligncenter
-                  - excess_sheets = total_pieces - one_monthly.max_sheets_authorized
+                  - excess_sheets = total_pieces - one_monthly.max_sheets_authorized rescue 0
                   - excess_sheets = excess_sheets > 0 ? excess_sheets : 0
                   - @total_excess_sheets += excess_sheets
                   %i!= excess_sheets
                 %td.second.aligncenter
-                  - excess_uploaded_pages = total_uploaded_pages - one_monthly.max_uploaded_pages_authorized
+                  - excess_uploaded_pages = total_uploaded_pages - one_monthly.max_uploaded_pages_authorized rescue 0
                   - excess_uploaded_pages = excess_uploaded_pages > 0 ? excess_uploaded_pages : 0
                   - @total_excess_uploaded_pages += excess_uploaded_pages
                   %i!= excess_uploaded_pages

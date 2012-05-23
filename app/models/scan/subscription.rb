@@ -5,7 +5,6 @@ class Scan::Subscription < Subscription
   
   attr_accessor :is_to_spreading
   
-  field :period_duration, :type => Integer, :default => 1
   field :max_sheets_authorized, :type => Integer, :default => 100
   field :max_upload_pages_authorized, :type => Integer, :default => 200
   
@@ -34,18 +33,20 @@ class Scan::Subscription < Subscription
   	self.prescriber = User.where(:code => vcode).first
   end
   
-  def find_or_create_period_by time
-    find_or_create_period time.year, time.month
+  def find_period time
+    periods.where(:start_at.lt => time, :end_at.gt => time, :duration => period_duration).first
   end
   
-  def find_or_create_period year, month, duration=nil
-    ecart = duration.nil? ? period_duration : duration
-    period = periods.where(:year => year, :month.lt => month + 1, :month.gt => month - ecart, :duration => duration).last
+  def find_or_create_period time
+    period = find_period time
     if period
       period
     else
-      period = periods.create(:year => year, :month => month, :duration => duration)
-      period.set_product_orders! product_orders
+      period = Scan::Period.new(:start_at => time, :duration => period_duration)
+      period.subscription = self
+      period.user = self.user
+      period.set_product_option_orders self.product_option_orders
+      period.save
       period
     end
   end
