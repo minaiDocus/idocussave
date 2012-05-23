@@ -1,5 +1,5 @@
 class Account::Documents::DocumentsController < Account::AccountController
-  layout "inner", :only => %w(index reporting)
+  layout "inner", :only => %w(index reporting reporting2)
   
   before_filter :find_last_composition, :only => %w(index)
 

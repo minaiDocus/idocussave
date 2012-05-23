@@ -12,6 +12,7 @@
           %th N°
           %th Date
           %th Customer
+          %th Type
           %th Progress
           %th Payment Type
           %th.last &nbsp;
@@ -24,6 +25,15 @@
               %br
               %span{ :title => instance.user.try(:name) }
                 != [instance.user.try(:code), instance.user.try(:company)].join(" - ")
+            %td
+              - if instance.period_duration == 1
+                Mensuel
+              - elsif instance.period_duration == 3
+                Trimestriel
+              - elsif instance.period_duration == 12
+                Annuel
+              - else
+                instance.period_duration
             %td
               #{instance.current_progress}/#{instance.end_in}
             %td

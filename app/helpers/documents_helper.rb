@@ -63,4 +63,28 @@ module DocumentsHelper
     name
   end
   
+  def annual_periods_for_user user, year=Time.now.year
+    periods = []
+    subscriptions = @subscriptions.of_user(user).for_year(@year).asc(:start_at)
+    current_date = Time.local(year,1,15,0,0,0)
+    while current_date.year == year
+      subscriptions.each do |subscription|
+        while subscription.end_at > current_date and current_date.year == year
+          period = subscription.find_period(current_date)
+          if period
+            periods << period
+            current_date += period.duration.month
+          else
+            periods << nil
+            current_date += 1.month
+          end
+        end
+      end
+      while current_date.year == year
+        periods << nil
+        current_date += 1.month
+      end
+    end
+    periods
+  end
 end

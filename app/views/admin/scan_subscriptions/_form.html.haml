@@ -10,7 +10,7 @@
 != f.label :payment_type, "Mode de paiement :", :class => :label
 != f.select :payment_type, [["prépayé",Subscription::PREPAYED],["prélèvement",Subscription::DEBIT]], :class => "select"
 %br
-!= f.label :end_in, "Durée (année) :", :class => :label
+!= f.label :end_in, "Durée (mois) :", :class => :label
 != f.text_field :end_in, :class => :text_field
 %br
 %br

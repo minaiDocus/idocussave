@@ -31,6 +31,7 @@ class User
   references_and_referenced_in_many :reportings, :inverse_of => :viewer
   references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
   
+  references_many :periods, :class_name => "Scan::Period", :inverse_of => :user
   references_many :scan_subscriptions, :class_name => "Scan::Subscription", :inverse_of => :user
   references_many :scan_subscription_reports, :class_name => "Scan::Subscription", :inverse_of => :prescriber
   
