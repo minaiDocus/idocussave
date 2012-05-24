@@ -14,7 +14,7 @@ class Scan::Document
   field :uploaded_sheets, :type => Integer, :default => 0
   field :uploaded_pieces, :type => Integer, :default => 0
   field :oversized, :type => Integer, :default => 0
-  field :paperclip, :type => Integer, :default => 0
+  field :paperclips, :type => Integer, :default => 0
   field :is_shared, :type => Boolean, :default => false
   
   validates_presence_of :name
@@ -30,7 +30,7 @@ class Scan::Document
   end
   
   def update_period
-    period.update_price!
+    period.update_information!
   end
   
   def self.find_by_name name

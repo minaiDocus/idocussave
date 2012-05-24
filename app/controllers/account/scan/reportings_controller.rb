@@ -1,6 +1,6 @@
-class Account::Documents::SubscriptionsController < Account::AccountController
-  layout "inner", :only => %w(index show)
-  
+class Account::Scan::ReportingsController < Account::AccountController
+  layout "inner", :only => %w(index)
+
   def index
     @user = nil
     if params[:email] && current_user.is_admin
@@ -14,13 +14,5 @@ class Account::Documents::SubscriptionsController < Account::AccountController
     @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
     @clients = @user.clients
     @subscriptions = @user.scan_subscription_reports
-  end
-  
-  def show
-    
-  end
-  
-  def period
-    
   end
 end

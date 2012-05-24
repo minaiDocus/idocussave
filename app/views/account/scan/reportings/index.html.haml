@@ -1,0 +1,156 @@
+﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+
+#reporting.container.padding6top
+  - if current_user.is_prescriber || current_user.is_admin
+    .row
+      .span12
+        .well
+          .actionbar
+            = label_tag :filter, "Filtrer sur : ", :class => "pull-left margin1left margin1right"
+            != select_tag(:view_for, options_for_select( [["Tous",0]] + filter_list_of_users(@clients) ), :class => "view_for pull-left margin1top margin1right", :style => "width:auto")
+            
+            - if current_user.is_admin?
+              %form{ :action => reporting_account_documents_path, :method => "GET" }
+                = label_tag :email, "Voir le reporting de :", :class => "pull-left margin3left margin1right"
+                = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
+                = submit_tag "Valider", :class => "pull-left btn margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+  .row
+    .span12
+      %table.table.table-condensed
+        %thead
+          %tr
+            %th
+              Utilisateur
+            - months.each do |month|
+              %th{ :style => "width:7.5%;text-align:center;" }
+                #{month}
+        %tbody
+          - @clients.each do |client|
+            %tr
+              %td
+                #{client.code}
+              - periods = annual_periods_for_user(client,@year)
+              - periods.each do |period|
+                - if period
+                  - if period.duration == 3
+                    %td{ :style => "width:7.5%;text-align:center;", :colspan => 3 }
+                      %a.do-show{ "href" => "#", :id => "refs_#{client.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
+                        .period{ :class => "user_id_#{client.id} period_id_#{period.id} n_#{period.start_at.month}" }
+                          #{period.sheets} | #{period.uploaded_pages} | 0
+                  - else
+                    %td{ :style => "width:7.5%;text-align:center;" }
+                      %a.do-show{ "href" => "#", :id => "refs_#{client.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
+                        .period{ :class => "user_id_#{client.id} period_id_#{period.id} n_#{period.start_at.month}" }
+                          #{period.sheets} | #{period.uploaded_pages} | 0
+                - else
+                  %td{ :style => "width:7.5%;text-align:center;" }
+                    \-
+                    
+.modal.fade{ :id=>"periodModal" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %a.prev.do-show
+      précédent
+    %h3 Titre
+    %a.next.do-show
+      suivant
+  %form
+    .modal-body
+
+:plain
+  <script type="text/x-tmpl" id="tmpl-period">
+    <div class="documentslist">
+      <table class="table table-striped">
+        <tr>
+          <th>Nom des documents</th>
+          <th>Pièces</th>
+          <th>Feuilles</th>
+          <th>Pages</th>
+          <th>Attaches</th>
+          <th>Hors format</th>
+        </tr>
+        {% for(var i=0; i<o.documents.list.length; i++) { %}
+          <tr>
+            <td>{%= o.documents.list[i].name %}</td>
+            <td>{%= o.documents.list[i].pieces %}</td>
+            <td>{%= o.documents.list[i].sheets %}</td>
+            <td>{%= o.documents.list[i].pages %}</td>
+            <td>{%= o.documents.list[i].paperclips %}</td>
+            <td>{%= o.documents.list[i].oversized %}</td>
+          </tr>
+        {% } %}
+        <tr>
+          <td><b>Total</b></td>
+          <td>{%= o.documents.total.pieces %}</td>
+          <td>{%= o.documents.total.sheets %}</td>
+          <td>{%= o.documents.total.pages %}</td>
+          <td>{%= o.documents.total.paperclips %}</td>
+          <td>{%= o.documents.total.oversized %}</td>
+        </tr>
+        <tr>
+          <td><b>Dépassement</b></td>
+          <td></td>
+          <td>{%= o.documents.excess.sheets %}</td>
+          <td>{%= o.documents.excess.uploaded_pages %}</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class="optionslist">
+      <table class="table table-striped">
+        <tr>
+          <th>Paramètre</th>
+          <th>Valeur</th>
+          <th style="text-align:right;">Prix HT</th>
+        </tr>
+        {% for(var i=0; i<o.options.list.length; i++) { %}
+          <tr>
+            <td>{%= o.options.list[i].group_title %}</td>
+            <td>{%= o.options.list[i].title %}</td>
+            <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
+          </tr>
+        {% } %}
+        <tr>
+          <td>Dépassement</td>
+          <td></td>
+          <td style="text-align:right;">{%= o.options.excess_price%} €</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Total :</td>
+          <td style="text-align:right;">{%= o.options.total%} €</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Facture :</td>
+          <td>{%= o.options.invoice_link%}</td>
+        </tr>
+    </div>
+  </script>
+  
+
+
+:css
+  .period{
+    padding:1px 3px 2px;font-size:9px;font-weight:bold;color:#ffffff;text-transform:uppercase;background-color:#BBBBBB;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}
+  .period:hover{
+    background-color:#999999;}
+  .period.selected{border:1px solid green;}
+  .period table td{
+    height:10px;
+    font-size:8px;}
+    
+  #periodModal{
+    margin:-250px 0 0 -500px;
+    height:600px;
+    width:1000px; }
+  #periodModal .documentslist{
+    height:430px;
+    width:500px;
+    float:left; }
+  #periodModal .optionslist{
+    height:430px;
+    width:400px;
+    float:right; }
+    
