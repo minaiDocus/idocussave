@@ -16,21 +16,6 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     
-    namespace :documents do
-      resource :sharings do
-        post 'destroy_multiple', :on => :collection
-        post 'destroy_multiple_selected', :on => :collection
-      end
-      resource :tags do
-        post 'update_multiple', :on => :collection
-      end
-      resource :upload
-      resources :subscriptions do
-        get 'reporting', :on => :collection
-        get 'period', :on => :member
-      end
-    end
-    
     scope :module => "documents" do
       resources :documents do
         get 'invoice', :on => :member
@@ -42,6 +27,22 @@ Idocus::Application.routes.draw do
         post 'reorder', :on => :collection
         post 'archive', :on => :collection
       end
+    end
+    
+    namespace :documents do
+      resource :sharings do
+        post 'destroy_multiple', :on => :collection
+        post 'destroy_multiple_selected', :on => :collection
+      end
+      resource :tags do
+        post 'update_multiple', :on => :collection
+      end
+      resource :upload
+    end
+    
+    namespace :scan do
+      resources :reportings
+      resources :periods
     end
     
     resource :profile

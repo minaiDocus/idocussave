@@ -4,7 +4,7 @@ class ProductOptionOrder
   field :title, :type => String
   field :group_title, :type => String
   field :description, :type => String
-  field :price_in_cents_wo_vat, :type => Float
+  field :price_in_cents_wo_vat, :type => Integer
   field :group_position, :type => Integer
   field :duration, :type => Integer
   field :quantity, :type => Integer

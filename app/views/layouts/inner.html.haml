@@ -67,7 +67,7 @@
       <![endif]-->
     - if (params[:controller] == "account/documents/documents" && params[:action] == "reporting")
       != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min reporting)
-    - elsif (params[:controller] == "account/documents/subscriptions" && params[:action] == "index")
-      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min reporting2)
+    - elsif (params[:controller] == "account/scan/reportings" && params[:action] == "index")
+      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min tmpl.min reporting2)
     - else
-      != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min file-uploader/tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min application application2)
+      != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min application application2)

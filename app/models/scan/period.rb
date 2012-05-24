@@ -18,14 +18,8 @@ class Scan::Period
   field :max_sheets_authorized, :type => Integer, :default => 100
   field :max_upload_pages_authorized, :type => Integer, :default => 200
   
-  field :pages, :type => Integer, :default => 0
   field :sheets, :type => Integer, :default => 0
-  field :pieces, :type => Integer, :default => 0
   field :uploaded_pages, :type => Integer, :default => 0
-  field :uploaded_sheets, :type => Integer, :default => 0
-  field :uploaded_pieces, :type => Integer, :default => 0
-  field :oversized, :type => Integer, :default => 0
-  field :paperclip, :type => Integer, :default => 0
   
   scope :monthly, :where => { :duration => 1 }
   scope :bimonthly, :where => { :duration => 2 }
@@ -35,51 +29,165 @@ class Scan::Period
   validate :attributes_year_and_month_is_uniq
   
   before_create :add_one_delivery!
-  before_save :update_price, :set_start_date, :set_end_date
+  before_save :set_start_date, :set_end_date, :update_information
   
   def price_in_cents_w_vat
-    price_in_cents_wo_vat * tva_ratio
+    self.price_in_cents_wo_vat * tva_ratio
   end
   
   def total_vat
-    price_in_cents_w_vat - price_in_cents_wo_vat
+    price_in_cents_w_vat - self.price_in_cents_wo_vat
   end
   
   def update_price
-    self.price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
+    self.price_in_cents_wo_vat = total_price_in_cents_wo_vat
   end
   
   def update_price!
-    update_attributes(:price_in_cents_wo_vat => products_total_price_in_cents_wo_vat)
+    update_attributes(:price_in_cents_wo_vat => total_price_in_cents_wo_vat)
+  end
+  
+  def total_price_in_cents_wo_vat
+    products_total_price_in_cents_wo_vat + price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages
   end
   
   def products_total_price_in_cents_wo_vat
     product_option_orders.sum(&:price_in_cents_wo_vat)
   end
   
-  def products_total_price_in_cents_w_vat
-    products_total_price_in_cents_wo_vat * tva_ratio
-  end
-  
-  def price_of_excess_uploaded_pages
-    excess_uploaded_pages = documents.sum(&:uploaded_pages) - max_uploaded_pages_authorized
-    if excess_uploaded_pages > 0
-      (excess_uploaded_pages / 100) * 200 + (excess_uploaded_pages % 100 > 0 ? 200 : 0)
+  def price_in_cents_of_excess_sheets
+    excess = excess_sheets
+    if excess > 0
+      excess * 12
     else
       0
     end
   end
   
+  def price_in_cents_of_excess_uploaded_pages
+    excess = excess_uploaded_pages
+    if excess > 0
+      (excess / 100) * 200 + (excess % 100 > 0 ? 200 : 0)
+    else
+      0
+    end
+  end
+  
+  def excess_sheets
+    excess  = sheets - max_sheets_authorized
+    excess > 0 ? excess : 0
+  end
+  
+  def excess_uploaded_pages
+    excess = uploaded_pages - max_upload_pages_authorized
+    excess > 0 ? excess : 0
+  end
+  
   def set_product_option_orders product_options
+    self.product_option_orders = []
     product_options.each do |product_option|
-      new_product_option_order = product_option_orders.new
+      new_product_option_order = ProductOptionOrder.new
       new_product_option_order.fields.keys.each do |k|
         setter =  (k+"=").to_sym
         value = product_option.send(k)
         new_product_option_order.send(setter, value)
       end
-      new_product_option_order.save
+      self.product_option_orders << new_product_option_order
     end
+  end
+  
+  def update_information!
+    update_information
+    save
+  end
+  
+  def update_information
+    self.sheets = self.documents.sum(&:sheets)
+    self.uploaded_pages = self.documents.sum(&:uploaded_pages)
+    update_price
+  end
+  
+  def render_json
+    {
+      :documents => documents_json,
+      :options => options_json
+    }
+  end
+  
+  def documents_json
+    total = {}
+    total[:pieces] = 0
+    total[:sheets] = 0
+    total[:pages] = 0
+    total[:uploaded_pieces] = 0
+    total[:uploaded_sheets] = 0
+    total[:uploaded_pages] = 0
+    total[:paperclips] = 0
+    total[:oversized] = 0
+    
+    lists = []
+    documents.each do |document|
+      list = {}
+      list[:name] = document.name
+      list[:pieces] = document.pieces.to_s
+      list[:sheets] = document.sheets.to_s
+      list[:pages] = document.pages.to_s
+      list[:uploaded_pieces] = document.uploaded_pieces.to_s
+      list[:uploaded_sheets] = document.uploaded_sheets.to_s
+      list[:uploaded_pages] = document.uploaded_pages.to_s
+      list[:paperclips] = document.paperclips.to_s
+      list[:oversized] = document.oversized.to_s
+      
+      lists << list
+      
+      total[:pieces] += document.pieces
+      total[:sheets] += document.sheets
+      total[:pages] += document.pages
+      total[:uploaded_pieces] += document.uploaded_pieces
+      total[:uploaded_sheets] += document.uploaded_sheets
+      total[:uploaded_pages] += document.uploaded_pages
+      total[:paperclips] += document.paperclips
+      total[:oversized] += document.oversized
+    end
+    
+    total[:pieces] = total[:pieces].to_s
+    total[:sheets] = total[:sheets].to_s
+    total[:pages] = total[:pages].to_s
+    total[:uploaded_pieces] = total[:uploaded_pieces].to_s
+    total[:uploaded_sheets] = total[:uploaded_sheets].to_s
+    total[:uploaded_pages] = total[:uploaded_pages].to_s
+    total[:paperclips] = total[:paperclips].to_s
+    total[:oversized] = total[:oversized].to_s
+    
+    {
+      :list => lists,
+      :total => total,
+      :excess => {
+        :sheets => excess_sheets.to_s, :uploaded_pages => excess_uploaded_pages.to_s
+      },
+      :delivery => delivery.state
+    }
+  end
+  
+  def options_json
+    lists = []
+    product_option_orders.by_position.each do |option|
+      list = {}
+      list[:group_title] = option.group_title
+      list[:title] = option.title
+      list[:price] = format_price option.price_in_cents_wo_vat
+      lists << list
+    end
+    {
+        :list => lists,
+        :excess_price => format_price(price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages),
+        :total => format_price(price_in_cents_wo_vat),
+        :invoice_link => ""
+    }
+  end
+  
+  def format_price price_in_cents
+    ("%0.2f" % (price_in_cents/100.0)).gsub(".",",")
   end
   
 private
