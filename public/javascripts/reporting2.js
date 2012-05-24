@@ -1,10 +1,12 @@
+var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
 function render_data(refs){
   if (refs != "") {
     var _refs = refs.split("_");
     var user_id = _refs[1];
     var period_id = _refs[2];
-    var month = _refs[3];
-    var duration = _refs[4];
+    var month = parseInt(_refs[3]);
+    var duration = parseInt(_refs[4]);
     
     var $periodModal = $("#periodModal");
     
@@ -18,7 +20,7 @@ function render_data(refs){
       var prev_id = "link_" + user_id + "_" + prev_period_id + "_" + prev_month + "_" + prev_duration;
     }
     
-    var $next = $(".user_id_" + user_id + ".n_" + (parseInt(month) + parseInt(duration)));
+    var $next = $(".user_id_" + user_id + ".n_" + (month + duration));
     var next_id = "";
     if ($next.length > 0) {
       var _next_refs = $next.parent("a.do-show").attr("id").split("_");
@@ -30,6 +32,20 @@ function render_data(refs){
     
     $periodModal.find(".prev").attr("id",prev_id);
     $periodModal.find(".next").attr("id",next_id);
+    
+    if (duration == 1) {
+      $("#periodModal .modal-header h3").text(mois[month - 1]);
+    } else if (duration == 3) {
+      if (month == 1) {
+        $("#periodModal .modal-header h3").text(mois[0] + " - " + mois[2]);
+      } else if (month == 4) {
+        $("#periodModal .modal-header h3").text(mois[3] + " - " + mois[5]);
+      } else if (month == 7) {
+        $("#periodModal .modal-header h3").text(mois[6] + " - " + mois[8]);
+      } else if (month == 10) {
+        $("#periodModal .modal-header h3").text(mois[9] + " - " + mois[11]);
+      }
+    }
     
     $.ajax({
       url: "/account/scan/periods/" + period_id,

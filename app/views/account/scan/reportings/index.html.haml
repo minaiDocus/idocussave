@@ -49,11 +49,15 @@
 .modal.fade{ :id=>"periodModal" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %a.prev.do-show
-      précédent
-    %h3 Titre
-    %a.next.do-show
-      suivant
+    .row
+      .span3{ :style => "text-align:left;" }
+        %a.btn.prev.do-show
+          précédent
+      .span3{ :style => "text-align:center;" }
+        %h3 Titre
+      .span3{ :style => "text-align:right;" }
+        %a.btn.next.do-show
+          suivant
   %form
     .modal-body
 
@@ -106,8 +110,8 @@
         </tr>
         {% for(var i=0; i<o.options.list.length; i++) { %}
           <tr>
-            <td>{%= o.options.list[i].group_title %}</td>
-            <td>{%= o.options.list[i].title %}</td>
+            <td>{%# o.options.list[i].group_title %}</td>
+            <td>{%# o.options.list[i].title %}</td>
             <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
           </tr>
         {% } %}
