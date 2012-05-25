@@ -63,9 +63,9 @@ module DocumentsHelper
     name
   end
   
-  def annual_periods_for_user user, year=Time.now.year
+  def annual_periods_for_user user, scan_subscriptions, year=Time.now.year
     periods = []
-    subscriptions = @subscriptions.of_user(user).for_year(@year).asc(:start_at)
+    subscriptions = scan_subscriptions.of_user(user).for_year(@year).asc(:start_at)
     current_date = Time.local(year,1,15,0,0,0)
     while current_date.year == year
       subscriptions.each do |subscription|

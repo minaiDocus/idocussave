@@ -6,15 +6,15 @@ class Scan::Document
   referenced_in :period, :class_name => "Scan::Period", :inverse_of => :documents
   referenced_in :pack, :inverse_of => :scan_document
   
-  field :title, :type => String, :default => ""
-  field :pages, :type => Integer, :default => 0
-  field :sheets, :type => Integer, :default => 0
+  field :name, :type => String, :default => ""
   field :pieces, :type => Integer, :default => 0
-  field :uploaded_pages, :type => Integer, :default => 0
-  field :uploaded_sheets, :type => Integer, :default => 0
+  field :sheets, :type => Integer, :default => 0
+  field :pages, :type => Integer, :default => 0
   field :uploaded_pieces, :type => Integer, :default => 0
-  field :oversized, :type => Integer, :default => 0
+  field :uploaded_sheets, :type => Integer, :default => 0
+  field :uploaded_pages, :type => Integer, :default => 0
   field :paperclips, :type => Integer, :default => 0
+  field :oversized, :type => Integer, :default => 0
   field :is_shared, :type => Boolean, :default => false
   
   validates_presence_of :name
@@ -30,7 +30,7 @@ class Scan::Document
   end
   
   def update_period
-    period.update_information!
+    self.period.update_information!
   end
   
   def self.find_by_name name
