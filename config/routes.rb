@@ -16,17 +16,15 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     
-    scope :module => "documents" do
-      resources :documents do
-        get 'invoice', :on => :member
-        get 'packs', :on => :collection
-        get 'search', :on => :collection
-        get 'find', :on => :collection
-        get 'reporting', :on => :collection
-        get 'search_user', :on => :collection
-        post 'reorder', :on => :collection
-        post 'archive', :on => :collection
-      end
+    resources :documents do
+      get 'invoice', :on => :member
+      get 'packs', :on => :collection
+      get 'search', :on => :collection
+      get 'find', :on => :collection
+      get 'reporting', :on => :collection
+      get 'search_user', :on => :collection
+      post 'reorder', :on => :collection
+      post 'archive', :on => :collection
     end
     
     namespace :documents do
