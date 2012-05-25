@@ -68,23 +68,23 @@
                             T
                         %span{ :class => period.documents_name_tags }
                         .value
-                          %span{ :class => "pieces value_1" }
+                          %span{ :class => "hide pieces value_1" }
                             #{period.pieces}
                           %span{ :class => "sheets value_0" }
                             #{period.sheets}
-                          %span{ :class => "pages value_2" }
+                          %span{ :class => "hide pages value_2" }
                             #{period.pages}
-                          %span{ :class => "uploaded_pieces value_4" }
+                          %span{ :class => "hide uploaded_pieces value_4" }
                             #{period.uploaded_pieces}
-                          %span{ :class => "uploaded_sheets value_3" }
+                          %span{ :class => "hide uploaded_sheets value_3" }
                             #{period.uploaded_sheets}
-                          %span{ :class => "uploaded_pages value_5" }
+                          %span{ :class => "hide uploaded_pages value_5" }
                             #{period.uploaded_pages}
-                          %span{ :class => "paperclips value_6" }
+                          %span{ :class => "hide paperclips value_6" }
                             #{period.paperclips}
-                          %span{ :class => "oversized value_7" }
+                          %span{ :class => "hide oversized value_7" }
                             #{period.oversized}
-                          %span{ :class => "price value_8" }
+                          %span{ :class => "hide price value_8" }
                             #{format_price_00 period.price_in_cents_w_vat} €
                 - else
                   %td{ :style => "width:7%;text-align:center;" }

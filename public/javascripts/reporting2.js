@@ -104,15 +104,14 @@ $(document).ready(function(){
     }
     
     $(".period").removeClass("selected");
-    
-    $results = $(".period:visible "+class_tags)
-    $("#filter_results").text($results.length + " résultat(s)");
-    $results.each(function(index){
-      $(this).parents(".period").addClass("selected");
-    });
-    
-    if ($account_book_filter.val().length == 0 && $year_filter.val().length == 0 && $month_filter.val().length == 0) {
-      $(".period:visible").addClass("selected");
+    if (class_tags.length > 0) {
+      $results = $(".period:visible "+class_tags);
+      $results.each(function(index){
+        $(this).parents(".period").addClass("selected");
+      });
+      $("#filter_results").text($results.length + " résultat(s)");
+    } else {
+      $("#filter_results").text("");
     }
     return false;
   });
