@@ -18,8 +18,15 @@ class Scan::Period
   field :max_sheets_authorized, :type => Integer, :default => 100
   field :max_upload_pages_authorized, :type => Integer, :default => 200
   
+  field :documents_name_tags, :type => String, :default => ""
+  field :pieces, :type => Integer, :default => 0
   field :sheets, :type => Integer, :default => 0
+  field :pages, :type => Integer, :default => 0
+  field :uploaded_pieces, :type => Integer, :default => 0
+  field :uploaded_sheets, :type => Integer, :default => 0
   field :uploaded_pages, :type => Integer, :default => 0
+  field :paperclips, :type => Integer, :default => 0
+  field :oversized, :type => Integer, :default => 0
   
   scope :monthly, :where => { :duration => 1 }
   scope :bimonthly, :where => { :duration => 2 }
@@ -96,14 +103,35 @@ class Scan::Period
     end
   end
   
+  def set_documents_name_tags
+    tags = []
+    self.documents.each do |document|
+      if document.name.match(/\w+\s\w+\s\d{6}\sall$/)
+        name = document.name.split
+        tags << "b_#{name[1]}"
+        tags << "y_#{name[2][0..3]}"
+        tags << "m_#{name[2][4..5].to_i}"
+      end
+    end
+    tags = tags.uniq
+    self.documents_name_tags = tags.join(" ")
+  end
+  
   def update_information!
     update_information
     save
   end
   
   def update_information
+    set_documents_name_tags
+    self.pieces = self.documents.sum(&:pieces)
     self.sheets = self.documents.sum(&:sheets)
+    self.pages = self.documents.sum(&:pages)
+    self.uploaded_pieces = self.documents.sum(&:uploaded_pieces)
+    self.uploaded_sheets = self.documents.sum(&:uploaded_sheets)
     self.uploaded_pages = self.documents.sum(&:uploaded_pages)
+    self.paperclips = self.documents.sum(&:paperclips)
+    self.oversized = self.documents.sum(&:oversized)
     update_price
   end
   
@@ -129,6 +157,7 @@ class Scan::Period
     documents.each do |document|
       list = {}
       list[:name] = document.name
+      list[:link] = document.pack.try(:originals).try(:first).try(:content).try(:url) || "#"
       list[:pieces] = document.pieces.to_s
       list[:sheets] = document.sheets.to_s
       list[:pages] = document.pages.to_s

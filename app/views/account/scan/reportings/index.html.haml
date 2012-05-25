@@ -4,16 +4,38 @@
   - if current_user.is_prescriber || current_user.is_admin
     .row
       .span12
-        .well
-          .actionbar
-            = label_tag :filter, "Filtrer sur : ", :class => "pull-left margin1left margin1right"
-            != select_tag(:view_for, options_for_select( [["Tous",0]] + filter_list_of_users(@clients) ), :class => "view_for pull-left margin1top margin1right", :style => "width:auto")
-            
-            - if current_user.is_admin?
-              %form{ :action => reporting_account_documents_path, :method => "GET" }
-                = label_tag :email, "Voir le reporting de :", :class => "pull-left margin3left margin1right"
-                = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
-                = submit_tag "Valider", :class => "pull-left btn margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+        .actionbar.well
+          - if current_user.is_admin?
+            .row.margin1bottom
+              .span11
+                %form.margin0bottom{ :action => account_scan_reportings_path, :method => "GET" }
+                  = label_tag :email, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
+                  = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
+                  = submit_tag "Valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+          .row
+            .span3
+              %table
+                %tr{ :style => "text-align:left;" }
+                  %th= label_tag :value_filter, "Afficher : "
+                %tr
+                  %td= select_tag(:value_filter, options_for_select( [["Feuilles",0],["Pièces",1],["Pages",2],["Feuilles téléversées",3],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7],["Total",8]] ), :class => "margin0bottom", :style => "width:auto;")
+            .span6
+              %form#filter.margin0bottom
+                %table
+                  %tr{ :style => "text-align:left;" }
+                    %th= label_tag :user_filter, "Utilisateur : ", :class => "margin1left"
+                    %th= label_tag :account_book_filter, "Journal : "
+                    %th= label_tag :year_filter, "Année : "
+                    %th= label_tag :month_filter, "Mois : "
+                    %th
+                    %th
+                  %tr
+                    %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users) ), :class => "margin1left margin0bottom", :style => "width:auto")
+                    %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                    %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                    %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                    %td= submit_tag "ok", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;"
+                    %td#filter_results.padding1left{ :style => "color:green;" }
   .row
     .span12
       %table.table.table-condensed
@@ -25,84 +47,103 @@
               %th{ :style => "width:7.5%;text-align:center;" }
                 #{month}
         %tbody
-          - @clients.each do |client|
-            %tr
+          - @users.each do |user|
+            %tr{ :id => "user_#{user.id}", :class => "user" }
               %td
-                #{client.code}
-              - periods = annual_periods_for_user(client,@year)
+                #{[user.code,user.company].join(" - ")}
+              - periods = annual_periods_for_user(user, @subscriptions, @year)
               - periods.each do |period|
                 - if period
-                  - if period.duration == 3
-                    %td{ :style => "width:7.5%;text-align:center;", :colspan => 3 }
-                      %a.do-show{ "href" => "#", :id => "refs_#{client.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                        .period{ :class => "user_id_#{client.id} period_id_#{period.id} n_#{period.start_at.month}" }
-                          #{period.sheets} | #{period.uploaded_pages} | 0
-                  - else
-                    %td{ :style => "width:7.5%;text-align:center;" }
-                      %a.do-show{ "href" => "#", :id => "refs_#{client.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                        .period{ :class => "user_id_#{client.id} period_id_#{period.id} n_#{period.start_at.month}" }
-                          #{period.sheets} | #{period.uploaded_pages} | 0
+                  %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
+                    %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
+                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
+                        - if period.delivery.state == "wait"
+                          %span.label.label-important.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Attendus" }
+                            A
+                        - elsif period.delivery.state == "received"
+                          %span.label.label-warning.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Reçus" }
+                            R
+                        - elsif period.delivery.state == "delivered"
+                          %span.label.label-info.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Traités" }
+                            T
+                        %span{ :class => period.documents_name_tags }
+                        .value
+                          %span{ :class => "pieces value_1" }
+                            #{period.pieces}
+                          %span{ :class => "sheets value_0" }
+                            #{period.sheets}
+                          %span{ :class => "pages value_2" }
+                            #{period.pages}
+                          %span{ :class => "uploaded_pieces value_4" }
+                            #{period.uploaded_pieces}
+                          %span{ :class => "uploaded_sheets value_3" }
+                            #{period.uploaded_sheets}
+                          %span{ :class => "uploaded_pages value_5" }
+                            #{period.uploaded_pages}
+                          %span{ :class => "paperclips value_6" }
+                            #{period.paperclips}
+                          %span{ :class => "oversized value_7" }
+                            #{period.oversized}
+                          %span{ :class => "price value_8" }
+                            #{format_price_00 period.price_in_cents_w_vat} €
                 - else
-                  %td{ :style => "width:7.5%;text-align:center;" }
+                  %td{ :style => "width:7%;text-align:center;" }
                     \-
                     
 .modal.fade{ :id=>"periodModal" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    .row
-      .span3{ :style => "text-align:left;" }
-        %a.btn.prev.do-show
-          précédent
-      .span3{ :style => "text-align:center;" }
-        %h3 Titre
-      .span3{ :style => "text-align:right;" }
-        %a.btn.next.do-show
-          suivant
-  %form
-    .modal-body
+    %h3.title_period{ :style => "text-align:center;" }
+    = hidden_field_tag :year, @year
+  .modal-body
+  .modal-footer
+    %a.btn.prev.do-show.margin3left{ :style => "float:left;margin-left:0;" }
+      précédent
+    %a.btn.next.do-show{ :style => "float:right;" }
+      suivant
 
 :plain
   <script type="text/x-tmpl" id="tmpl-period">
     <div class="documentslist">
-      <table class="table table-striped">
+      <table class="table table-striped table-condensed">
         <tr>
           <th>Nom des documents</th>
-          <th>Pièces</th>
-          <th>Feuilles</th>
-          <th>Pages</th>
-          <th>Attaches</th>
-          <th>Hors format</th>
+          <th class="center">Pièces</th>
+          <th class="center">Feuilles</th>
+          <th class="center">Pages</th>
+          <th class="center">Attaches</th>
+          <th class="center">Hors format</th>
         </tr>
         {% for(var i=0; i<o.documents.list.length; i++) { %}
           <tr>
-            <td>{%= o.documents.list[i].name %}</td>
-            <td>{%= o.documents.list[i].pieces %}</td>
-            <td>{%= o.documents.list[i].sheets %}</td>
-            <td>{%= o.documents.list[i].pages %}</td>
-            <td>{%= o.documents.list[i].paperclips %}</td>
-            <td>{%= o.documents.list[i].oversized %}</td>
+            <td><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
+            <td class="center">{%= o.documents.list[i].pieces %} ({%= (parseInt(o.documents.list[i].pieces) - parseInt(o.documents.list[i].uploaded_pieces)+'') %}, {%= o.documents.list[i].uploaded_pieces %})</td>
+            <td class="center">{%= (parseInt(o.documents.list[i].sheets) - parseInt(o.documents.list[i].uploaded_sheets))+'' %}</td>
+            <td class="center">{%= o.documents.list[i].pages %} ({%= (parseInt(o.documents.list[i].pages) - parseInt(o.documents.list[i].uploaded_pages))+'' %}, {%= o.documents.list[i].uploaded_pages %})</td>
+            <td class="center">{%= o.documents.list[i].paperclips %}</td>
+            <td class="center">{%= o.documents.list[i].oversized %}</td>
           </tr>
         {% } %}
         <tr>
           <td><b>Total</b></td>
-          <td>{%= o.documents.total.pieces %}</td>
-          <td>{%= o.documents.total.sheets %}</td>
-          <td>{%= o.documents.total.pages %}</td>
-          <td>{%= o.documents.total.paperclips %}</td>
-          <td>{%= o.documents.total.oversized %}</td>
+          <td class="center">{%= o.documents.total.pieces %} ({%= (parseInt(o.documents.total.pieces) - parseInt(o.documents.total.uploaded_pieces))+'' %}, {%= o.documents.total.uploaded_pieces %})</td>
+          <td class="center">{%= (parseInt(o.documents.total.sheets) - parseInt(o.documents.total.uploaded_sheets))+'' %}</td>
+          <td class="center">{%= o.documents.total.pages %} ({%= (parseInt(o.documents.total.pages) - parseInt(o.documents.total.uploaded_pages))+'' %}, {%= o.documents.total.uploaded_pages %})</td>
+          <td class="center">{%= o.documents.total.paperclips %}</td>
+          <td class="center">{%= o.documents.total.oversized %}</td>
         </tr>
         <tr>
           <td><b>Dépassement</b></td>
           <td></td>
-          <td>{%= o.documents.excess.sheets %}</td>
-          <td>{%= o.documents.excess.uploaded_pages %}</td>
+          <td class="center">{%= o.documents.excess.sheets %}</td>
+          <td class="center">{%= o.documents.excess.uploaded_pages %}</td>
           <td></td>
           <td></td>
         </tr>
       </table>
     </div>
     <div class="optionslist">
-      <table class="table table-striped">
+      <table class="table table-striped table-condensed">
         <tr>
           <th>Paramètre</th>
           <th>Valeur</th>
@@ -137,24 +178,39 @@
 
 :css
   .period{
-    padding:1px 3px 2px;font-size:9px;font-weight:bold;color:#ffffff;text-transform:uppercase;background-color:#BBBBBB;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}
+    border: 1px solid #BBBBBB;
+    padding:1px 3px 2px;
+    font-size:9px;
+    font-weight:bold;
+    color:#ffffff;
+    text-transform:uppercase;
+    background-color:#BBBBBB;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;}
   .period:hover{
+    border: 1px solid #999999;
     background-color:#999999;}
-  .period.selected{border:1px solid green;}
+  .period.selected{
+    border:1px solid green;}
   .period table td{
     height:10px;
     font-size:8px;}
     
   #periodModal{
     margin:-250px 0 0 -500px;
-    height:600px;
+    height:464px;
     width:1000px; }
+  #periodModal .modal-body{
+    height:330px; }
   #periodModal .documentslist{
-    height:430px;
+    height:330px;
     width:500px;
     float:left; }
   #periodModal .optionslist{
-    height:430px;
+    height:330px;
     width:400px;
     float:right; }
     
+  #periodModal table tr td.center, #periodModal table tr th.center{
+    text-align:center; }

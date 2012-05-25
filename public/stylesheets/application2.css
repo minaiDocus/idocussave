@@ -205,9 +205,6 @@ li.token-input-token-facebook {
 .actionbar label {
   padding-top: 2px; }
 .actionbar select {
-  position: relative;
-  top: -3px;
-  margin-top: 2px;
   height: 23px;
   font-size: 11px }
 

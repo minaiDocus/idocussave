@@ -1,4 +1,4 @@
-class Account::Documents::DocumentsController < Account::AccountController
+class Account::DocumentsController < Account::AccountController
   layout "inner", :only => %w(index reporting reporting2)
   
   before_filter :find_last_composition, :only => %w(index)
@@ -97,7 +97,7 @@ public
     respond_to do |format|
       format.html{ render :layout => false }
       format.pdf do
-        render :pdf => "#{@invoice.number}", :template => "/account/documents/documents/invoice.html.haml"
+        render :pdf => "#{@invoice.number}", :template => "/account/documents/invoice.html.haml"
       end
     end
   end
