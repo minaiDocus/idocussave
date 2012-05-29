@@ -79,6 +79,8 @@ $(document).ready(function(){
     false;
   });
   
+  $("span.badge").tooltip();
+  
   $("#filter").submit(function(){
     var user_id = $("#user_filter").val();
     if (user_id == "0") {
