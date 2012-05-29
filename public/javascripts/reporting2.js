@@ -83,8 +83,10 @@ $(document).ready(function(){
     var user_id = $("#user_filter").val();
     if (user_id == "0") {
       $(".user").removeClass("hide");
+      $("#total").removeClass("hide");
     } else {
       $(".user").addClass("hide");
+      $("#total").addClass("hide");
       $("#user_"+user_id).removeClass("hide");
     }
     
@@ -118,7 +120,7 @@ $(document).ready(function(){
   
   $("#value_filter").change(function(){
     var val = $(this).val();
-    $(".period .value span").addClass("hide");
-    $(".period .value .value_"+val).removeClass("hide");
+    $(".value span").addClass("hide");
+    $(".value .value_"+val).removeClass("hide");
   });
 });
