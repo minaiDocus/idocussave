@@ -1,6 +1,6 @@
 ﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
 
-#reporting.container.padding6top
+#reporting.container.padding4top
   - if current_user.is_prescriber || current_user.is_admin
     .row
       .span12
@@ -12,6 +12,7 @@
                   = label_tag :email, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
                   = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
                   = submit_tag "Valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+            %hr.margin1top.margin1bottom
           .row
             .span3
               %table
@@ -19,7 +20,7 @@
                   %th= label_tag :value_filter, "Afficher : "
                 %tr
                   %td= select_tag(:value_filter, options_for_select( [["Feuilles",0],["Pièces",1],["Pages",2],["Feuilles téléversées",3],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7],["Total",8]] ), :class => "margin0bottom", :style => "width:auto;")
-            .span6
+            .span8
               %form#filter.margin0bottom
                 %table
                   %tr{ :style => "text-align:left;" }
@@ -36,15 +37,20 @@
                     %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                     %td= submit_tag "ok", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;"
                     %td#filter_results.padding1left{ :style => "color:green;" }
+  
+  - annual_summary = []
+  - 12.times do
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0 }
+  
   .row
     .span12
       %table.table.table-condensed
         %thead
           %tr
-            %th
+            %th{ :style => "width:15%;" }
               Utilisateur
             - months.each do |month|
-              %th{ :style => "width:7.5%;text-align:center;" }
+              %th{ :style => "width:7%;text-align:center;" }
                 #{month}
         %tbody
           - @users.each do |user|
@@ -86,10 +92,45 @@
                             #{period.oversized}
                           %span{ :class => "hide price value_8" }
                             #{format_price_00 period.price_in_cents_w_vat} €
+                            
+                          - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
+                          - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
+                          - annual_summary[period.end_at.month - 1][:pages] += period.pages
+                          - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
+                          - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets
+                          - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
+                          - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
+                          - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
+                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_w_vat
                 - else
                   %td{ :style => "width:7%;text-align:center;" }
                     \-
-                    
+          - if current_user.is_prescriber || current_user.is_admin
+            %tr#total
+              %td
+                %b Total
+              - annual_summary.each do |month|
+                %td{ :style => "width:7%;text-align:center;" }
+                  %b.value
+                    %span{ :class => "hide pieces value_1" }
+                      #{month[:pieces]}
+                    %span{ :class => "sheets value_0" }
+                      #{month[:sheets]}
+                    %span{ :class => "hide pages value_2" }
+                      #{month[:pages]}
+                    %span{ :class => "hide uploaded_pieces value_4" }
+                      #{month[:uploaded_pieces]}
+                    %span{ :class => "hide uploaded_sheets value_3" }
+                      #{month[:uploaded_sheets]}
+                    %span{ :class => "hide uploaded_pages value_5" }
+                      #{month[:uploaded_pages]}
+                    %span{ :class => "hide paperclips value_6" }
+                      #{month[:paperclips]}
+                    %span{ :class => "hide oversized value_7" }
+                      #{month[:oversized]}
+                    %span{ :class => "hide price value_8" }
+                      #{format_price_00 month[:price_in_cents]} €
+
 .modal.fade{ :id=>"periodModal" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
@@ -179,6 +220,7 @@
 :css
   .period{
     border: 1px solid #BBBBBB;
+    margin: 0;
     padding:1px 3px 2px;
     font-size:9px;
     font-weight:bold;
