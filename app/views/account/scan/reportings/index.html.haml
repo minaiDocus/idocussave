@@ -64,13 +64,13 @@
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
                       .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
                         - if period.delivery.state == "wait"
-                          %span.label.label-important.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Attendus" }
+                          %span.badge.badge-important.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Attendus" }
                             A
                         - elsif period.delivery.state == "received"
-                          %span.label.label-warning.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Reçus" }
+                          %span.badge.badge-warning.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Reçus" }
                             R
                         - elsif period.delivery.state == "delivered"
-                          %span.label.label-info.pull-left{ :style => "height:16px;", :rel => "tooltip", :title => "Traités" }
+                          %span.badge.badge-info.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Traités" }
                             T
                         %span{ :class => period.documents_name_tags }
                         .value
@@ -240,7 +240,7 @@
     font-size:8px;}
     
   #periodModal{
-    margin:-250px 0 0 -500px;
+    margin:-310px 0 0 -500px;
     height:464px;
     width:1000px; }
   #periodModal .modal-body{
