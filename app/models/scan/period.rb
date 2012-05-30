@@ -55,11 +55,15 @@ class Scan::Period
   end
   
   def total_price_in_cents_wo_vat
-    products_total_price_in_cents_wo_vat + price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages
+    products_total_price_in_cents_wo_vat + price_in_cents_of_total_excess
   end
   
   def products_total_price_in_cents_wo_vat
     product_option_orders.sum(&:price_in_cents_wo_vat)
+  end
+  
+  def price_in_cents_of_total_excess
+    price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages
   end
   
   def price_in_cents_of_excess_sheets
@@ -157,7 +161,11 @@ class Scan::Period
     documents.each do |document|
       list = {}
       list[:name] = document.name
-      list[:link] = document.pack.try(:originals).try(:first).try(:content).try(:url) || "#"
+      begin
+        list[:link] = document.pack.documents.originals.first.content.url
+      rescue
+        list[:link] = "#"
+      end
       list[:pieces] = document.pieces.to_s
       list[:sheets] = document.sheets.to_s
       list[:pages] = document.pages.to_s

@@ -4,7 +4,7 @@ class Scan::Document
   
   referenced_in :subscription, :class_name => "Scan::Subscription", :inverse_of => :documents
   referenced_in :period, :class_name => "Scan::Period", :inverse_of => :documents
-  referenced_in :pack, :inverse_of => :scan_document
+  referenced_in :pack, :inverse_of => :scan_documents
   
   field :name, :type => String, :default => ""
   field :pieces, :type => Integer, :default => 0
@@ -20,7 +20,7 @@ class Scan::Document
   validates_presence_of :name
   validate :uniqueness_of_name
   
-  scope :created_at_in, lambda { |time_begin,time_end| where(:created_at.in => time_begin.to_i..time_begin.to_i) }
+  scope :for_time, lambda { |time| where(:created_at.gt => time.beginning_of_month - 1.seconds, :created_at.lt => time.end_of_month + 1.seconds) }
   scope :shared, :where => { :is_shared => true }
   
   after_save :update_period
@@ -33,16 +33,32 @@ class Scan::Document
     self.period.update_information!
   end
   
+  def scanned_pieces
+    pieces - uploaded_pieces
+  end
+  
+  def scanned_sheets
+    sheets - uploaded_sheets
+  end
+  
+  def scanned_pages
+    pages - uploaded_pages
+  end
+  
   def self.find_by_name name
     where(:name => name).first
   end
   
-  def find_or_create_by_name name
+  def self.find_or_create_by_name name, period
     document = period.documents.find_by_name name
     if document
       document
     else
-      period.documents.create(:name => name)
+      document = Scan::Document.new
+      document.name = name
+      document.period = period
+      document.save
+      document
     end
   end
   

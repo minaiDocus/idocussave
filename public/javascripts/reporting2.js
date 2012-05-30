@@ -66,10 +66,67 @@ function render_data(refs){
       },
       success: function(data){
         $periodModal.find(".modal-body").html(tmpl("tmpl-period",data));
+        var account_book_filter = $("#account_book_filter").val();
+        var year_filter = parseInt($("#year_filter").val());
+        var month_filter = parseInt($("#month_filter").val());
+        $("#periodModal .name").each(function(index){
+          var is_ok = true;
+          var name = $(this).text().split(" ");
+          var account_book_value = name[1];
+          var year_value = parseInt(name[2].substr(0,4));
+          var month_value = parseInt(name[2].substr(4,2));
+          if(account_book_filter.length > 0 && account_book_filter != account_book_value)
+            is_ok = false;
+          if(year_filter && year_filter != year_value)
+            is_ok = false;
+          if(month_filter && month_filter != month_value)
+            is_ok = false;
+          if(is_ok && (account_book_filter.length > 0 || year_filter || month_filter)){
+            $(this).parents("tr").addClass("selected");
+          }
+        });
       }
     });
     
     $periodModal.modal();
+  }
+}
+
+function apply_filter(){
+  var user_id = $("#user_filter").val();
+  if (user_id == "0") {
+    $(".user").removeClass("hide");
+    $("#total").removeClass("hide");
+  } else {
+    $(".user").addClass("hide");
+    $("#total").addClass("hide");
+    $("#user_"+user_id).removeClass("hide");
+  }
+  
+  var class_tags = ""
+  
+  var $account_book_filter = $("#account_book_filter");
+  var $year_filter = $("#year_filter");
+  var $month_filter = $("#month_filter");
+  if ($account_book_filter.val().length > 0) {
+    class_tags += ".b_" + $account_book_filter.val();
+  }
+  if ($year_filter.val().length > 0) {
+    class_tags += ".y_" + parseInt($year_filter.val());
+  }
+  if ($month_filter.val().length > 0) {
+    class_tags += ".m_" + parseInt($month_filter.val());
+  }
+  
+  $(".period").removeClass("selected");
+  if (class_tags.length > 0) {
+    $results = $(".period:visible "+class_tags);
+    $results.each(function(index){
+      $(this).parents(".period").addClass("selected");
+    });
+    $("#filter_results").text($results.length + " résultat(s)");
+  } else {
+    $("#filter_results").text("");
   }
 }
 
@@ -81,42 +138,16 @@ $(document).ready(function(){
   
   $("span.badge").tooltip();
   
+  $("#reset_filter").click(function(){
+    $("#user_filter").val("0");
+    $("#account_book_filter").val("");
+    $("#year_filter").val("");
+    $("#month_filter").val("");
+    apply_filter();
+  });
+  
   $("#filter").submit(function(){
-    var user_id = $("#user_filter").val();
-    if (user_id == "0") {
-      $(".user").removeClass("hide");
-      $("#total").removeClass("hide");
-    } else {
-      $(".user").addClass("hide");
-      $("#total").addClass("hide");
-      $("#user_"+user_id).removeClass("hide");
-    }
-    
-    var class_tags = ""
-    
-    var $account_book_filter = $("#account_book_filter");
-    var $year_filter = $("#year_filter");
-    var $month_filter = $("#month_filter");
-    if ($account_book_filter.val().length > 0) {
-      class_tags += ".b_" + $account_book_filter.val();
-    }
-    if ($year_filter.val().length > 0) {
-      class_tags += ".y_" + parseInt($year_filter.val());
-    }
-    if ($month_filter.val().length > 0) {
-      class_tags += ".m_" + parseInt($month_filter.val());
-    }
-    
-    $(".period").removeClass("selected");
-    if (class_tags.length > 0) {
-      $results = $(".period:visible "+class_tags);
-      $results.each(function(index){
-        $(this).parents(".period").addClass("selected");
-      });
-      $("#filter_results").text($results.length + " résultat(s)");
-    } else {
-      $("#filter_results").text("");
-    }
+    apply_filter();
     return false;
   });
   
