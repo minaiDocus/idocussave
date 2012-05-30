@@ -1,46 +1,62 @@
 ﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
 
 #reporting.container.padding4top
-  - if current_user.is_prescriber || current_user.is_admin
-    .row
-      .span12
-        .actionbar.well
-          - if current_user.is_admin?
-            .row.margin1bottom
-              .span11
-                %form.margin0bottom{ :action => account_scan_reportings_path, :method => "GET" }
-                  = label_tag :email, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
-                  = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
-                  = submit_tag "Valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
-            %hr.margin1top.margin1bottom
-          .row
-            .span3
+  .row
+    .span12
+      .actionbar.well
+        - if current_user.is_admin?
+          .row.margin1bottom
+            .span11
+              %form.margin0bottom{ :action => account_scan_reportings_path, :method => "GET" }
+                = label_tag :email, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
+                = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
+                = submit_tag "valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+          %hr.margin1top.margin1bottom
+        .row
+          .span3
+            %table
+              %tr{ :style => "text-align:left;" }
+                %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
+              %tr
+                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Feuilles téléversées",3],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7]]
+                - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
+                  - options += [["Montant facture (€)",8],["Dépassement (€)",9]]
+                %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
+          .span7
+            %form#filter.margin0bottom
               %table
                 %tr{ :style => "text-align:left;" }
-                  %th= label_tag :value_filter, "Afficher : "
+                  %th= label_tag :user_filter, "Utilisateur : ", :class => "margin1left margin0bottom"
+                  %th= label_tag :account_book_filter, "Journal : ", :class => "margin0bottom"
+                  %th= label_tag :year_filter, "Année : ", :class => "margin0bottom"
+                  %th= label_tag :month_filter, "Mois : ", :class => "margin0bottom"
+                  %th
+                  %th
                 %tr
-                  %td= select_tag(:value_filter, options_for_select( [["Feuilles",0],["Pièces",1],["Pages",2],["Feuilles téléversées",3],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7],["Total",8]] ), :class => "margin0bottom", :style => "width:auto;")
-            .span8
-              %form#filter.margin0bottom
-                %table
-                  %tr{ :style => "text-align:left;" }
-                    %th= label_tag :user_filter, "Utilisateur : ", :class => "margin1left"
-                    %th= label_tag :account_book_filter, "Journal : "
-                    %th= label_tag :year_filter, "Année : "
-                    %th= label_tag :month_filter, "Mois : "
-                    %th
-                    %th
-                  %tr
-                    %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users) ), :class => "margin1left margin0bottom", :style => "width:auto")
-                    %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
-                    %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
-                    %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
-                    %td= submit_tag "ok", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;"
-                    %td#filter_results.padding1left{ :style => "color:green;" }
+                  - opts = { :class => "margin1left margin0bottom", :style => "width:auto" }
+                  - if !current_user.is_admin and !current_user.is_prescriber
+                    - opts.merge!({ :disabled => :disabled})
+                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users) ),  opts)
+                  %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td
+                    %a#reset_filter.btn.margin0bottom{ :style => "height:21px;font-size:11px;padding:0 8px 0;" }
+                      %span{ :style => "position:relative;top:2px;" }
+                        reset
+                    != submit_tag "valider", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;"
+                  %td#filter_results.padding1left{ :style => "color:green;" }
+          .span1{ :style => "line-height:24px;text-align:right;float:right;" }
+            .line1
+              %a.margin0bottom{ "data-toggle" => :modal, :href => "#legendModal" }
+                %span{ :style => "position:relative;top:3px;" }
+                  Légende
+            .line2
+              != link_to image_tag("application/icon-xls.png", :alt => "Export xls", :style => "position:relative;top:0px;") + " Export xls", account_scan_reportings_path(request.parameters.merge({:format => :xls}))
   
   - annual_summary = []
   - 12.times do
-    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0 }
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0] }
   
   .row
     .span12
@@ -48,7 +64,9 @@
         %thead
           %tr
             %th{ :style => "width:15%;" }
-              Utilisateur
+              != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :email => (params[:email] || "")))
+              %span.margin1left.margin1right #{@year}
+              != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
             - months.each do |month|
               %th{ :style => "width:7%;text-align:center;" }
                 #{month}
@@ -62,18 +80,21 @@
                 - if period
                   %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
+                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;" }
                         - if period.delivery.state == "wait"
-                          %span.badge.badge-important.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Attendus" }
+                          - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
+                          %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;", :title => "Attendus" }
                             A
                         - elsif period.delivery.state == "received"
-                          %span.badge.badge-warning.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Reçus" }
+                          - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
+                          %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Reçus" }
                             R
                         - elsif period.delivery.state == "delivered"
-                          %span.badge.badge-info.pull-left{ :style => "height:16px;padding:2px 3px 1px;width:10px;", :rel => "tooltip", :title => "Traités" }
+                          - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
+                          %span.badge.badge-success{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Traités" }
                             T
                         %span{ :class => period.documents_name_tags }
-                        .value
+                        .value{ :style => "display:inline-block;text-align:right;width:44px;" }
                           %span{ :class => "hide pieces value_1" }
                             #{period.pieces}
                           %span{ :class => "sheets value_0" }
@@ -90,8 +111,11 @@
                             #{period.paperclips}
                           %span{ :class => "hide oversized value_7" }
                             #{period.oversized}
-                          %span{ :class => "hide price value_8" }
-                            #{format_price_00 period.price_in_cents_w_vat} €
+                          - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
+                            %span{ :class => "hide price value_8" }
+                              #{format_price_00 period.price_in_cents_w_vat} €
+                            %span{ :class => "hide excess_price value_9" }
+                              #{format_price_00 period.price_in_cents_of_total_excess} €
                             
                           - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
                           - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
@@ -102,6 +126,7 @@
                           - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
                           - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
                           - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_w_vat
+                          - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
                 - else
                   %td{ :style => "width:7%;text-align:center;" }
                     \-
@@ -110,8 +135,8 @@
               %td
                 %b Total
               - annual_summary.each do |month|
-                %td{ :style => "width:7%;text-align:center;" }
-                  %b.value
+                %td{ :style => "width:7%;text-align:right;" }
+                  %b.value{ :style => "padding-right:5px;" }
                     %span{ :class => "hide pieces value_1" }
                       #{month[:pieces]}
                     %span{ :class => "sheets value_0" }
@@ -130,6 +155,36 @@
                       #{month[:oversized]}
                     %span{ :class => "hide price value_8" }
                       #{format_price_00 month[:price_in_cents]} €
+                    %span{ :class => "hide price value_9" }
+                      #{format_price_00 month[:price_in_cents_of_excess]} €
+                  %div
+                    %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;", :title => "Attendus" }
+                      #{month[:delivery_status][0]}
+                    %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Reçus" }
+                      #{month[:delivery_status][1]}
+                    %span.badge.badge-success{ :style => "height:16px;padding:2px 3px 3px 5px;width:10px;", :title => "Traités" }
+                      #{month[:delivery_status][2]}
+
+.modal.fade{ :id=>"legendModal" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3{ :style => "text-align:center;" }
+      Légende
+  .modal-body
+    %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;margin-right:5px;", :title => "Attendus" }
+      A
+    \: Attendus
+    %br
+    %br
+    %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;margin-right:5px;", :title => "Reçus" }
+      R
+    \: Reçus
+    %br
+    %br
+    %span.badge.badge-success{ :style => "height:16px;padding:2px 3px 3px 5px;width:10px;margin-right:5px;", :title => "Traités" }
+      T
+    \: Traités
+    %br
 
 .modal.fade{ :id=>"periodModal" }
   .modal-header
@@ -146,45 +201,49 @@
 :plain
   <script type="text/x-tmpl" id="tmpl-period">
     <div class="documentslist">
-      <table class="table table-striped table-condensed">
+      <table class="table table-condensed">
         <tr>
-          <th>Nom des documents</th>
+          <th class="first">Nom des documents</th>
           <th class="center">Pièces</th>
           <th class="center">Feuilles</th>
           <th class="center">Pages</th>
           <th class="center">Attaches</th>
-          <th class="center">Hors format</th>
+          <th class="center last">Hors format</th>
         </tr>
         {% for(var i=0; i<o.documents.list.length; i++) { %}
           <tr>
-            <td><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
+            {% if(o.documents.list[i].link != "#") { %}
+              <td class="first name"><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
+            {% } else { %}
+              <td class="first name">{%= o.documents.list[i].name %}</td>
+            {% } %}
             <td class="center">{%= o.documents.list[i].pieces %} ({%= (parseInt(o.documents.list[i].pieces) - parseInt(o.documents.list[i].uploaded_pieces)+'') %}, {%= o.documents.list[i].uploaded_pieces %})</td>
             <td class="center">{%= (parseInt(o.documents.list[i].sheets) - parseInt(o.documents.list[i].uploaded_sheets))+'' %}</td>
             <td class="center">{%= o.documents.list[i].pages %} ({%= (parseInt(o.documents.list[i].pages) - parseInt(o.documents.list[i].uploaded_pages))+'' %}, {%= o.documents.list[i].uploaded_pages %})</td>
             <td class="center">{%= o.documents.list[i].paperclips %}</td>
-            <td class="center">{%= o.documents.list[i].oversized %}</td>
+            <td class="center last">{%= o.documents.list[i].oversized %}</td>
           </tr>
         {% } %}
         <tr>
           <td><b>Total</b></td>
-          <td class="center">{%= o.documents.total.pieces %} ({%= (parseInt(o.documents.total.pieces) - parseInt(o.documents.total.uploaded_pieces))+'' %}, {%= o.documents.total.uploaded_pieces %})</td>
-          <td class="center">{%= (parseInt(o.documents.total.sheets) - parseInt(o.documents.total.uploaded_sheets))+'' %}</td>
-          <td class="center">{%= o.documents.total.pages %} ({%= (parseInt(o.documents.total.pages) - parseInt(o.documents.total.uploaded_pages))+'' %}, {%= o.documents.total.uploaded_pages %})</td>
-          <td class="center">{%= o.documents.total.paperclips %}</td>
-          <td class="center">{%= o.documents.total.oversized %}</td>
+          <td class="center"><b>{%= o.documents.total.pieces %} ({%= (parseInt(o.documents.total.pieces) - parseInt(o.documents.total.uploaded_pieces))+'' %}, {%= o.documents.total.uploaded_pieces %})</b></td>
+          <td class="center"><b>{%= (parseInt(o.documents.total.sheets) - parseInt(o.documents.total.uploaded_sheets))+'' %}</b></td>
+          <td class="center"><b>{%= o.documents.total.pages %} ({%= (parseInt(o.documents.total.pages) - parseInt(o.documents.total.uploaded_pages))+'' %}, {%= o.documents.total.uploaded_pages %})</b></td>
+          <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
+          <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
         </tr>
         <tr>
           <td><b>Dépassement</b></td>
           <td></td>
-          <td class="center">{%= o.documents.excess.sheets %}</td>
-          <td class="center">{%= o.documents.excess.uploaded_pages %}</td>
+          <td class="center"><i>{%= o.documents.excess.sheets %}</i></td>
+          <td class="center"><i>{%= o.documents.excess.uploaded_pages %}</i></td>
           <td></td>
           <td></td>
         </tr>
       </table>
     </div>
     <div class="optionslist">
-      <table class="table table-striped table-condensed">
+      <table class="table table-condensed">
         <tr>
           <th>Paramètre</th>
           <th>Valeur</th>
@@ -219,11 +278,11 @@
 
 :css
   .period{
-    border: 1px solid #BBBBBB;
+    border: 3px solid #BBBBBB;
     margin: 0;
-    padding:1px 3px 2px;
+    padding:2px 3px 3px;
     font-size:9px;
-    font-weight:bold;
+    font-weight:normal;
     color:#ffffff;
     text-transform:uppercase;
     background-color:#BBBBBB;
@@ -231,10 +290,10 @@
     -moz-border-radius:3px;
     border-radius:3px;}
   .period:hover{
-    border: 1px solid #999999;
+    border: 3px solid #999999;
     background-color:#999999;}
   .period.selected{
-    border:1px solid green;}
+    border:3px solid #00FF7F;}
   .period table td{
     height:10px;
     font-size:8px;}
@@ -256,3 +315,14 @@
     
   #periodModal table tr td.center, #periodModal table tr th.center{
     text-align:center; }
+    
+  #periodModal table tr td, #periodModal table tr th{
+    border:none; }
+  
+  #periodModal table tr.selected td{
+    border-top:2px solid #00FF7F;
+    border-bottom:2px solid #00FF7F; }
+  #periodModal table tr.selected td.first{
+    border-left:2px solid #00FF7F; }
+  #periodModal table tr.selected td.last{
+    border-right:2px solid #00FF7F; }

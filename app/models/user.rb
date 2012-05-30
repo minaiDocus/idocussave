@@ -210,10 +210,12 @@ class User
   end
   
   def find_or_create_scan_subscription
-    if scan_subscriptions.last
+    if !scan_subscriptions.empty?
       scan_subscriptions.last
     else
-      self.scan_subscriptions.create
+      scan_subscription = Scan::Subscription.new
+      scan_subscription.user = self
+      scan_subscription.save
     end
   end
   
