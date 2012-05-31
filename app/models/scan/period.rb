@@ -18,7 +18,7 @@ class Scan::Period
   field :max_sheets_authorized, :type => Integer, :default => 100
   field :max_upload_pages_authorized, :type => Integer, :default => 200
   
-  field :documents_name_tags, :type => String, :default => ""
+  field :documents_name_tags, :type => Array, :default => []
   field :pieces, :type => Integer, :default => 0
   field :sheets, :type => Integer, :default => 0
   field :pages, :type => Integer, :default => 0
@@ -33,7 +33,7 @@ class Scan::Period
   scope :quarterly, :where => { :duration => 3 }
   scope :annual, :where => { :duration => 12 }
   
-  validate :attributes_year_and_month_is_uniq
+  # validate :attributes_year_and_month_is_uniq
   
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
@@ -112,13 +112,10 @@ class Scan::Period
     self.documents.each do |document|
       if document.name.match(/\w+\s\w+\s\d{6}\sall$/)
         name = document.name.split
-        tags << "b_#{name[1]}"
-        tags << "y_#{name[2][0..3]}"
-        tags << "m_#{name[2][4..5].to_i}"
+        tags << "b_#{name[1]} y_#{name[2][0..3]} m_#{name[2][4..5].to_i}"
       end
     end
-    tags = tags.uniq
-    self.documents_name_tags = tags.join(" ")
+    self.documents_name_tags = tags
   end
   
   def update_information!
@@ -229,7 +226,7 @@ class Scan::Period
   
 private
   def attributes_year_and_month_is_uniq
-    period = subscription.periods.where(:start_at.gt => start_at - 1.days, :end_at.lt => end_at + 1.days, :duration => duration).first
+    period = subscription.periods.where(:start_at.gte => start_at, :end_at.lte => end_at, :duration => duration).first
     if period and period != self
       errors.add(:month, "Period, with start_at '#{start_at}' and end_at '#{end_at}', already exist for this customer.")
     else

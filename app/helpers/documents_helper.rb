@@ -38,21 +38,26 @@ module DocumentsHelper
   
   def filter_list_of_users users
     sorted_users = users.sort do |a,b|
-      if a.code != b.code
-        a.code <=> b.code
-      elsif a.company != b.company
-        a.company <=> b.company
-        elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-        (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
+      if a.code and a.company and a.first_name and a.last_name and a.email and b.code and b.company and b.first_name and b.last_name and b.email
+        if a.code != b.code
+          a.code <=> b.code
+        elsif a.company != b.company
+          a.company <=> b.company
+          elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
+          (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
+        else
+          a.email <=> b.email
+        end
       else
-        a.email <=> b.email
+        1
       end
     end
     sorted_users.collect do |u|
-      name = ""
-      name +=  u.code + " - " if !u.code.blank?
-      name +=  u.company + " - " if !u.company.blank?
-      name += u.email
+      name = []
+      name << u.code if !u.code.blank?
+      name << u.company if !u.company.blank?
+      name << u.email
+      name = name.join(" - ")
       [name,u.id]
     end
   end
@@ -65,7 +70,7 @@ module DocumentsHelper
   
   def annual_periods_for_user user, scan_subscriptions, year=Time.now.year
     periods = []
-    subscriptions = scan_subscriptions.of_user(user).for_year(@year).asc(:start_at)
+    subscriptions = scan_subscriptions.of_user(user).asc(:start_at)
     current_date = Time.local(year,1,15,0,0,0)
     while current_date.year == year
       subscriptions.each do |subscription|

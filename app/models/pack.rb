@@ -17,7 +17,7 @@ class Pack
   field :name, :type => String
   field :is_open_for_upload, :type => Boolean, :default => true
   
-  after_save :update_reporting_document
+  # after_save :update_reporting_document
   
   scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
   
@@ -33,17 +33,18 @@ class Pack
     self.divisions.pieces
   end
   
-  def find_scan_document_by time
-    self.scan_documents.for_time(time).first
+  def find_scan_document start_time, end_time
+    self.scan_documents.for_time(start_time,end_time).first
   end
   
-  def find_or_create_scan_document_by time
-    sd = find_scan_document_by(time)
+  def find_or_create_scan_document start_time, end_time, period
+    sd = find_scan_document(start_time, end_time)
     if sd
       sd
     else
-      period = owner.find_or_create_scan_subscription.find_or_create_period(time)
-      sd = Scan::Document.find_or_create_by_name(self.name,period)
+      sd = Scan::Document.new
+      sd.name = name
+      sd.period = period
       sd.pack = self
       sd.save
       sd
@@ -52,29 +53,28 @@ class Pack
   
   def update_reporting_document
     total = divisions.count
-    nb = 0
+    period_duration = 0
+    time = created_at
     while total > 0
-      time = self.created_at+nb.month
-      
-      current_divisions = divisions.where(:created_at.gt => time.beginning_of_month, :created_at.lt => time.end_of_month)
-      
-      if current_divisions.count > 0
-        document = find_or_create_scan_document_by(time)
+      period = owner.find_or_create_scan_subscription.find_or_create_period(time)
+      current_divisions = divisions.select{ |division| division.created_at > period.start_at and division.created_at < period.end_at }
+      if !current_divisions.empty?
+        document = find_or_create_scan_document(period.start_at,period.end_at,period)
         if document
-          document.sheets = current_divisions.sheets.count
-          document.pieces = current_divisions.pieces.count
-          document.pages = self.documents.without_original.count
+          document.sheets = current_divisions.select{ |division| division.level == Division::PIECES_LEVEL }.count
+          document.pieces = current_divisions.select{ |division| division.level == Division::SHEETS_LEVEL }.count
+          document.pages = self.pages.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
           
-          document.uploaded_pieces = current_divisions.uploaded.pieces.count
-          document.uploaded_sheets = current_divisions.uploaded.sheets.count
-          document.uploaded_pages = self.documents.without_original.uploaded.where(:created_at.gt => time.beginning_of_month - 1.seconds, :created_at.lt => time.end_of_month + 1.seconds).count
+          document.uploaded_pieces = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::PIECES_LEVEL }.count
+          document.uploaded_sheets = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::SHEETS_LEVEL }.count
+          document.uploaded_pages = self.pages.uploaded.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
           
           document.is_shared = self.order.is_viewable_by_prescriber
           document.save
         end
+        time += period.duration.month
         total -= current_divisions.count
       end
-      nb += 1
     end
   end
   

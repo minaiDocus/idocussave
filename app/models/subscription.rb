@@ -19,7 +19,7 @@ class Subscription
   validates_uniqueness_of :number
   
   scope :of_user, lambda { |user| where(:user_id => user.id) }
-  scope :for_year, lambda { |year| where(:start_at.lt => Time.local((year + 1),1,1,0,0,0), :end_at.gt => Time.local((year - 1),1,1,0,0,0)) }
+  scope :for_year, lambda { |year| where(:start_at.lte => Time.local(year,12,31,23,59,59), :end_at.gte => Time.local(year,1,1,0,0,0)) }
   
   before_create :set_number
   before_save :update_price, :set_start_date, :set_end_date

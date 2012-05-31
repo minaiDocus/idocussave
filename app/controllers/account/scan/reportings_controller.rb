@@ -23,15 +23,16 @@ class Account::Scan::ReportingsController < Account::AccountController
     respond_to do |format|
       format.html
       format.xls do
-        send_data(render_to_xls(@subscriptions), :type=> "application/vnd.ms-excel", :filename => "reporting_iDocus_#{Time.now.year}#{"%0.2d" % Time.now.month}#{"%0.2d" % Time.now.day}.xls")
+        send_data(render_to_xls(@subscriptions,@year), :type=> "application/vnd.ms-excel", :filename => "reporting_iDocus_#{Time.now.year}#{"%0.2d" % Time.now.month}#{"%0.2d" % Time.now.day}.xls")
       end
     end
   end
   
 private
-  def render_to_xls subscriptions
+  def render_to_xls subscriptions, year
     periods = []
-    subscriptions.each{ |subscription| periods += subscription.periods }
+    subscriptions.each{ |subscription| periods += subscription.periods.select{ |period| period.start_at.year == year } }
+    periods = periods.sort { |a,b| a.start_at.month <=> b.start_at.month }
   
     book = Spreadsheet::Workbook.new
     
