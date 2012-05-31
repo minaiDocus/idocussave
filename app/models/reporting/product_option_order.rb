@@ -18,4 +18,14 @@ class Reporting::ProductOptionOrder
     end
   end
   
+  # Need for migration
+  def group_position
+    position
+  end
+  
+  # Need for migration
+  def group_title
+    group
+  end
+  
 end
