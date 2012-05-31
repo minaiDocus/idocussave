@@ -48,7 +48,7 @@ function render_data(refs){
       if (month == 1) {
         $("#periodModal .modal-header h3").html("1<sup>er</sup> trimestre " + year);
       } else if (month == 4) {
-        $("#periodModal .modal-header h3").html("2<sup>nd</sup> trimestre " + year);
+        $("#periodModal .modal-header h3").html("2<sup>éme</sup> trimestre " + year);
       } else if (month == 7) {
         $("#periodModal .modal-header h3").html("3<sup>éme</sup> trimestre " + year);
       } else if (month == 10) {

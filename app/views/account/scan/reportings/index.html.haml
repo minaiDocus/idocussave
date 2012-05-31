@@ -13,7 +13,7 @@
                 = submit_tag "valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
           %hr.margin1top.margin1bottom
         .row
-          .span3
+          .span2
             %table
               %tr{ :style => "text-align:left;" }
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
@@ -22,7 +22,7 @@
                 - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
                   - options += [["Montant facture (€)",8],["Dépassement (€)",9]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
-          .span7
+          .span8
             %form#filter.margin0bottom
               %table
                 %tr{ :style => "text-align:left;" }
@@ -93,7 +93,8 @@
                           - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
                           %span.badge.badge-success{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Traités" }
                             T
-                        %span{ :class => period.documents_name_tags }
+                        - period.documents_name_tags.each do |tags|
+                          %span{ :class => tags }
                         .value{ :style => "display:inline-block;text-align:right;width:44px;" }
                           %span{ :class => "hide pieces value_1" }
                             #{period.pieces}
@@ -134,6 +135,13 @@
             %tr#total
               %td
                 %b Total
+                %br
+                %span{ :style => "color:red;" } Attendus
+                |
+                %span{ :style => "color:#F89406;" } Reçus
+                |
+                %span{ :style => "color:#468847;" } Traités
+                
               - annual_summary.each do |month|
                 %td{ :style => "width:7%;text-align:right;" }
                   %b.value{ :style => "padding-right:5px;" }
@@ -157,13 +165,12 @@
                       #{format_price_00 month[:price_in_cents]} €
                     %span{ :class => "hide price value_9" }
                       #{format_price_00 month[:price_in_cents_of_excess]} €
-                  %div
-                    %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;", :title => "Attendus" }
-                      #{month[:delivery_status][0]}
-                    %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Reçus" }
-                      #{month[:delivery_status][1]}
-                    %span.badge.badge-success{ :style => "height:16px;padding:2px 3px 3px 5px;width:10px;", :title => "Traités" }
-                      #{month[:delivery_status][2]}
+                  %div{ :style => "text-align:center;" }
+                    %span{ :style => "color:red;" }= month[:delivery_status][0]
+                    |
+                    %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
+                    |
+                    %span{ :style => "color:#468847;" }= month[:delivery_status][2]
 
 .modal.fade{ :id=>"legendModal" }
   .modal-header
@@ -173,17 +180,17 @@
   .modal-body
     %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;margin-right:5px;", :title => "Attendus" }
       A
-    \: Attendus
+    \: Documents papier attendus
     %br
     %br
     %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;margin-right:5px;", :title => "Reçus" }
       R
-    \: Reçus
+    \: Documents papier reçus
     %br
     %br
     %span.badge.badge-success{ :style => "height:16px;padding:2px 3px 3px 5px;width:10px;margin-right:5px;", :title => "Traités" }
       T
-    \: Traités
+    \: Documents papier traités
     %br
 
 .modal.fade{ :id=>"periodModal" }
@@ -192,9 +199,11 @@
     %h3.title_period{ :style => "text-align:center;" }
     = hidden_field_tag :year, @year
   .modal-body
-  .modal-footer
+  .modal-footer{ :style => "text-align:center;" }
     %a.btn.prev.do-show.margin3left{ :style => "float:left;margin-left:0;" }
       précédent
+    %span{ :style => "position:relative;top:6px;" }
+      Légende : total (numérisées, téléversées)
     %a.btn.next.do-show{ :style => "float:right;" }
       suivant
 
@@ -233,7 +242,7 @@
           <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
         </tr>
         <tr>
-          <td><b>Dépassement</b></td>
+          <td><i>Dépassement</i></td>
           <td></td>
           <td class="center"><i>{%= o.documents.excess.sheets %}</i></td>
           <td class="center"><i>{%= o.documents.excess.uploaded_pages %}</i></td>
@@ -242,6 +251,7 @@
         </tr>
       </table>
     </div>
+    <div class="separator"></div>
     <div class="optionslist">
       <table class="table table-condensed">
         <tr>
@@ -263,7 +273,7 @@
         </tr>
         <tr>
           <td></td>
-          <td>Total :</td>
+          <td><b>Total :</b></td>
           <td style="text-align:right;">{%= o.options.total%} €</td>
         </tr>
         <tr>
@@ -308,6 +318,12 @@
     height:330px;
     width:500px;
     float:left; }
+  #periodModal .separator{
+    height:330px;
+    border-left:1px solid #EEE;
+    margin-left:33px;
+    width:1px;
+    float:left; }
   #periodModal .optionslist{
     height:330px;
     width:400px;
@@ -326,3 +342,8 @@
     border-left:2px solid #00FF7F; }
   #periodModal table tr.selected td.last{
     border-right:2px solid #00FF7F; }
+  
+  .table tbody tr:hover td,
+  .table tbody tr:hover th {
+    background-color: none;
+  }
