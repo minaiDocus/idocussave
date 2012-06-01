@@ -92,7 +92,7 @@ private
                   period.user.name,
                   "Dépassement",
                   "",
-                  format_price_00(period.price_in_cents_w_vat)
+                  format_price_00(period.price_in_cents_of_total_excess)
                 ]
       sheet2.row(nb).replace(data)
       nb += 1
