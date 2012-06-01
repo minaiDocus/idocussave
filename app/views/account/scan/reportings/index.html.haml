@@ -146,7 +146,7 @@
                 %b Nombre de clients actifs
                 %br
                 Facture
-              - annual_summary.each do |month|
+              - annual_summary.each_with_index do |month,index|
                 %td{ :style => "width:7%;text-align:right;" }
                   %b.value{ :style => "padding-right:5px;" }
                     %span{ :class => "hide pieces value_1" }
@@ -177,7 +177,13 @@
                     %span{ :style => "color:#468847;" }= month[:delivery_status][2]
                   %span{ :style => "padding-right:5px;" }
                     #{month[:active_user]}
-                  
+                  .invoice{ :style => "text-align:center;" }
+                    - if @prescriber.is_centraliser
+                      - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
+                      - if invoice
+                        - if invoice.content.try(:url)
+                          %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+                          %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
 
 .modal.fade{ :id=>"legendModal" }
   .modal-header
@@ -213,6 +219,13 @@
       Légende : total (numérisées, téléversées)
     %a.btn.next.do-show{ :style => "float:right;" }
       suivant
+
+.modal.fade.in{ :id=>"invoiceDialog" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3
+  .modal-body
+    %iframe{:src => "", :id => "invoice-show", :style => "width:843px; height:415px;" }
 
 :plain
   <script type="text/x-tmpl" id="tmpl-period">
@@ -286,12 +299,15 @@
         <tr>
           <td></td>
           <td>Facture :</td>
-          <td>{%= o.options.invoice_link%}</td>
+          <td>
+            {% if (o.options.invoice_link != "") { %}
+              <a href="{%= o.options.invoice_link%}" class="icon-download-alt" style="width:16px;height:16px;"></a>
+              <a href="{%= o.options.invoice_link%}" class="icon-eye-open do-showInvoice" style="width:16px;height:16px;" title="{%= o.options.invoice_number %}.pdf"></a>
+            {% } %}
+          </td>
         </tr>
     </div>
   </script>
-  
-
 
 :css
   .period{
