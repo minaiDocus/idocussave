@@ -143,12 +143,12 @@
                 |
                 %span{ :style => "color:#468847;" } Traités
                 %br
-                %b Nombre de clients actifs
+                Nombre de clients actifs
                 %br
                 Facture
               - annual_summary.each_with_index do |month,index|
-                %td{ :style => "width:7%;text-align:right;" }
-                  %b.value{ :style => "padding-right:5px;" }
+                %td{ :style => "width:7%;text-align:right;padding-right:5px;" }
+                  %b.value
                     %span{ :class => "hide pieces value_1" }
                       #{month[:pieces]}
                     %span{ :class => "sheets value_0" }
@@ -169,15 +169,15 @@
                       #{format_price_00 month[:price_in_cents]} €
                     %span{ :class => "hide price value_9" }
                       #{format_price_00 month[:price_in_cents_of_excess]} €
-                  %div{ :style => "text-align:center;" }
-                    %span{ :style => "color:red;" }= month[:delivery_status][0]
-                    |
-                    %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
-                    |
-                    %span{ :style => "color:#468847;" }= month[:delivery_status][2]
-                  %span{ :style => "padding-right:5px;" }
-                    #{month[:active_user]}
-                  .invoice{ :style => "text-align:center;" }
+                  %br
+                  %span{ :style => "color:red;" }= month[:delivery_status][0]
+                  |
+                  %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
+                  |
+                  %span{ :style => "color:#468847;" }= month[:delivery_status][2]
+                  %br
+                  %span{ :style => "padding-right:3px;" }= month[:active_user]
+                  .invoice{ :style => "padding-right:3px;" }
                     - if @prescriber.is_centraliser
                       - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
                       - if invoice
@@ -220,11 +220,11 @@
     %a.btn.next.do-show{ :style => "float:right;" }
       suivant
 
-.modal.fade.in{ :id=>"invoiceDialog" }
+.modal.fade.in{ :id=>"invoiceDialog", :style => "height:500px;" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
     %h3
-  .modal-body
+  .modal-body{ :style => "max-height:450px;" }
     %iframe{:src => "", :id => "invoice-show", :style => "width:843px; height:415px;" }
 
 :plain
