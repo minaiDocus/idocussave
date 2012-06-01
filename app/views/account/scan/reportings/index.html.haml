@@ -18,9 +18,9 @@
               %tr{ :style => "text-align:left;" }
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
-                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Feuilles téléversées",3],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7]]
+                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7]]
                 - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
-                  - options += [["Montant facture (€)",8],["Dépassement (€)",9]]
+                  - options += [["Montant facture (€ HT)",8],["Dépassement (€ HT)",9]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
           .span8
             %form#filter.margin0bottom
@@ -135,7 +135,25 @@
           - if current_user.is_prescriber || current_user.is_admin
             %tr#total
               %td
-                %b Total
+                %b.value
+                  %span{ :class => "sheets value_0" }
+                    Nb de feuilles numérisées
+                  %span{ :class => "hide pieces value_1" }
+                    Nb de pièces numérisées
+                  %span{ :class => "hide pages value_2" }
+                    Nb de pages numérisées
+                  %span{ :class => "hide uploaded_pieces value_4" }
+                    Nb de pièces téléversées
+                  %span{ :class => "hide uploaded_pages value_5" }
+                    Nb de pages téléversées
+                  %span{ :class => "hide paperclips value_6" }
+                    Nb d'attaches
+                  %span{ :class => "hide oversized value_7" }
+                    Nb de hors formats
+                  %span{ :class => "hide price value_8" }
+                    Montant facture (€ HT)
+                  %span{ :class => "hide price value_9" }
+                    Dépassement (€ HT)
                 %br
                 %span{ :style => "color:red;" } Attendus
                 |
