@@ -3,6 +3,10 @@ var year = $("#year").val();
 $(".period .value span").addClass("hide");
 $(".period .value .value_0").removeClass("hide");
 
+function do_live_showInvoice(){
+  
+}
+
 function render_data(refs){
   if (refs != "") {
     var _refs = refs.split("_");
@@ -85,6 +89,8 @@ function render_data(refs){
             $(this).parents("tr").addClass("selected");
           }
         });
+        
+        do_live_showInvoice();
       }
     });
     
@@ -131,6 +137,14 @@ function apply_filter(){
 }
 
 $(document).ready(function(){
+  $("a.do-showInvoice").bind("click",function(){
+    $invoiceDialog = $("#invoiceDialog");
+    $invoiceDialog.find("h3").text($(this).attr("title"));
+    $invoiceDialog.find("#invoice-show").attr("src",$(this).attr("href"));
+    $invoiceDialog.modal();
+    return false;
+  });
+  
   $("a.do-show").click(function(){
     render_data($(this).attr("id"));
     false;

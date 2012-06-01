@@ -212,11 +212,21 @@ class Scan::Period
       list[:price] = format_price option.price_in_cents_wo_vat
       lists << list
     end
+    invoice_link = ""
+    invoice_number = ""
+    if !self.user.prescriber.try(:is_centraliser)
+      invoice = self.user.invoices.where(:number => /^#{self.start_at.year}#{"%0.2d" % (self.end_at.month+1)}/).first
+      if invoice.try(:content).try(:url)
+        invoice_link = invoice.content.url
+        invoice_number = invoice.number
+      end
+    end
     {
         :list => lists,
         :excess_price => format_price(price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages),
         :total => format_price(price_in_cents_wo_vat),
-        :invoice_link => ""
+        :invoice_link => invoice_link,
+        :invoice_number => invoice_number
     }
   end
   
