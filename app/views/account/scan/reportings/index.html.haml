@@ -56,7 +56,7 @@
   
   - annual_summary = []
   - 12.times do
-    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0] }
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
   
   .row
     .span12
@@ -75,9 +75,10 @@
             %tr{ :id => "user_#{user.id}", :class => "user" }
               %td
                 #{[user.code,user.company].join(" - ")}
-              - periods = annual_periods_for_user(user, @subscriptions, @year)
+              - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
               - periods.each do |period|
                 - if period
+                  - annual_summary[period.start_at.month - 1][:active_user] += 1
                   %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
                       .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;" }
@@ -114,7 +115,7 @@
                             #{period.oversized}
                           - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
                             %span{ :class => "hide price value_8" }
-                              #{format_price_00 period.price_in_cents_w_vat} €
+                              #{format_price_00 period.price_in_cents_wo_vat} €
                             %span{ :class => "hide excess_price value_9" }
                               #{format_price_00 period.price_in_cents_of_total_excess} €
                             
@@ -126,7 +127,7 @@
                           - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
                           - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
                           - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
-                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_w_vat
+                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
                           - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
                 - else
                   %td{ :style => "width:7%;text-align:center;" }
@@ -141,7 +142,10 @@
                 %span{ :style => "color:#F89406;" } Reçus
                 |
                 %span{ :style => "color:#468847;" } Traités
-                
+                %br
+                %b Nombre de clients actifs
+                %br
+                Facture
               - annual_summary.each do |month|
                 %td{ :style => "width:7%;text-align:right;" }
                   %b.value{ :style => "padding-right:5px;" }
@@ -171,6 +175,9 @@
                     %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
                     |
                     %span{ :style => "color:#468847;" }= month[:delivery_status][2]
+                  %span{ :style => "padding-right:5px;" }
+                    #{month[:active_user]}
+                  
 
 .modal.fade{ :id=>"legendModal" }
   .modal-header
