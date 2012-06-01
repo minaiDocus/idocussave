@@ -115,7 +115,7 @@
                             #{period.oversized}
                           - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
                             %span{ :class => "hide price value_8" }
-                              #{format_price_00 period.price_in_cents_w_vat} €
+                              #{format_price_00 period.price_in_cents_wo_vat} €
                             %span{ :class => "hide excess_price value_9" }
                               #{format_price_00 period.price_in_cents_of_total_excess} €
                             
@@ -127,7 +127,7 @@
                           - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
                           - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
                           - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
-                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_w_vat
+                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
                           - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
                 - else
                   %td{ :style => "width:7%;text-align:center;" }
