@@ -11,8 +11,9 @@ class Account::Scan::ReportingsController < Account::AccountController
     @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
     
     if @user.is_prescriber
-      @users = @user.clients
+      @users = @user.clients.asc(:code)
       @subscriptions = @user.scan_subscription_reports
+      @periods = Scan::Period.any_in(:subscription_id => @subscriptions.distinct(:_id)).where(:start_at.gte => Time.local(@year,1,1,0,0,0), :end_at.lte => Time.local(@year,12,31,23,59,59)).entries
       @prescriber = @user
     else
       @users = [@user]

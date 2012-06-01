@@ -68,26 +68,19 @@ module DocumentsHelper
     name
   end
   
-  def annual_periods_for_user user, scan_subscriptions, year=Time.now.year
+  def annual_periods_for_user user, scan_subscriptions, all_periods, year=Time.now.year
+    current_month = 1
+    current_period = 0
     periods = []
-    subscriptions = scan_subscriptions.of_user(user).asc(:start_at)
-    current_date = Time.local(year,1,15,0,0,0)
-    while current_date.year == year
-      subscriptions.each do |subscription|
-        while subscription.end_at > current_date and current_date.year == year
-          period = subscription.find_period(current_date)
-          if period
-            periods << period
-            current_date += period.duration.month
-          else
-            periods << nil
-            current_date += 1.month
-          end
-        end
-      end
-      while current_date.year == year
+    temp_period = all_periods.select { |period| period[:user_id] == user[:_id] }.sort { |a,b| a.start_at <=> b.start_at }
+    while current_month < 13
+      if temp_period[current_period] and temp_period[current_period].start_at.month == current_month
+        periods << temp_period[current_period]
+        current_month += temp_period[current_period].duration
+        current_period += 1
+      else
         periods << nil
-        current_date += 1.month
+        current_month += 1
       end
     end
     periods

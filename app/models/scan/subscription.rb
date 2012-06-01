@@ -37,6 +37,14 @@ class Scan::Subscription < Subscription
     periods.where(:start_at.lt => time, :end_at.gt => time, :duration => period_duration).first
   end
   
+  def _find_period time
+    periods.select do |period|
+      period.start_at < time and
+      period.end_at > time and
+      period.duration == period_duration
+    end.first
+  end
+  
   def find_or_create_period time
     period = find_period time
     if period
