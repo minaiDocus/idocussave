@@ -1,7 +1,7 @@
 module AddressDeliveryList
   def self.process
     prescribers = []
-    if PRESCRIBERS_CODE.empty?
+    if PRESCRIBERS_CODE and PRESCRIBERS_CODE.empty?
       prescribers = User.prescribers.asc(:code).entries
     else
       prescribers = User.any_in(:code => PRESCRIBERS_CODE).asc(:code).entries
