@@ -1,3 +1,1 @@
-module AddressDeliveryList
-  PRESCRIBERS_CODE  = []
-end
+AddressDeliveryList::PRESCRIBERS_CODE  = []
