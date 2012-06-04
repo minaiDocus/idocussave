@@ -202,6 +202,16 @@
                         - if invoice.content.try(:url)
                           %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                           %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
+        - if current_user.is_prescriber || current_user.is_admin
+          %tfooter
+            %tr
+              %th{ :style => "width:15%;" }
+                != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :email => (params[:email] || "")))
+                %span.margin1left.margin1right #{@year}
+                != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
+              - months.each do |month|
+                %th{ :style => "width:7%;text-align:right;" }
+                  #{month}
 
 .modal.fade{ :id=>"legendModal" }
   .modal-header
@@ -334,9 +344,8 @@
     padding:2px 3px 3px;
     font-size:9px;
     font-weight:normal;
-    color:#ffffff;
+    color:black;
     text-transform:uppercase;
-    background-color:#BBBBBB;
     -webkit-border-radius:3px;
     -moz-border-radius:3px;
     border-radius:3px;}
