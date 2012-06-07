@@ -9,7 +9,7 @@ module ApplicationHelper
     ("%0.2f" % price_in_euros).gsub(".", ",").gsub(/,00/, "")
   end
   
-def format_price_00 price_in_cents
+  def format_price_00 price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",")
   end
@@ -73,5 +73,18 @@ def format_price_00 price_in_cents
       render :partial => association.to_s.singularize + "_fields", :locals => {:f => builder}
     end
     link_to_function image_tag("web-app-theme/application_edit.png", :alt => "Ajouter un #{name}") + "Ajouter un #{name}", "add_fields(this, '#{association}', '#{h(escape_javascript(fields))}')", :class => "button"
+  end
+  
+  def active_clients clients, date
+    end_date = date.end_of_month
+    clients.select do |client|
+      if client.inactive_at.nil?
+        true
+      elsif client.inactive_at > end_date
+        true
+      else
+        false
+      end
+    end
   end
 end
