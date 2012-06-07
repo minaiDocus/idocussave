@@ -41,12 +41,25 @@ class DropboxExtended
       DropboxClient.new(session, DropboxExtended::ACCESS_TYPE)
     end
     
-    def deliver filename, folder, delivery_path
+    def static_path(delivery_path, info_path)
+      delivery_path.gsub!(":code",info_path[:code])
+      delivery_path.gsub!(":company",info_path[:company])
+      delivery_path.gsub!(":account_book",info_path[:account_book])
+      delivery_path.gsub!(":year",info_path[:year])
+      delivery_path.gsub!(":month",info_path[:month])
+      delivery_path.gsub!(":delivery_date",info_path[:delivery_date])
+      delivery_path
+    end
+    
+    def deliver filesname, folder, infopath
       if temp_session = get_session
         if temp_session.authorized?
+          delivery_path = static_path(folder, infopath)
           client = get_client(temp_session)
-          client.file_delete "#{folder}#{delivery_path}#{filename}" rescue nil
-          client.put_file "#{folder}#{delivery_path}#{filename}", open(filename) rescue nil
+          filesname.each do |filename|
+            client.file_delete "#{folder}#{delivery_path}#{filename}" rescue nil
+            client.put_file "#{folder}#{delivery_path}#{filename}", open(filename) rescue nil
+          end
         end
       end
     end

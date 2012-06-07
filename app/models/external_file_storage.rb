@@ -11,7 +11,7 @@ class ExternalFileStorage
   references_one :dropbox_basic
   references_one :google_doc
   
-  field :path, :type => String, :default => "/"
+  field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   field :is_path_used, :type => Boolean, :default => true
   field :used, :type => Integer, :default => 0
   field :authorized, :type => Integer, :default => 0
@@ -67,30 +67,35 @@ class ExternalFileStorage
     services.join(", ")
   end
   
-  def deliver filespath, folder_path=nil, flags=used
-    if folder_path.nil? and is_path_used
-      delivery_path = path
-    else
-      delivery_path = folder_path
-    end
-    
+  def deliver filespath, info_path={}, flags=used
     trusted_flags =  authorized & used & flags
+    delivery_path = ""
     
     if trusted_flags & F_DROPBOX > 0
       if dropbox_basic and dropbox_basic.is_configured?
-        filespath.each do |filepath|
-          dropbox_basic.deliver filepath, delivery_path
-        end
+        delivery_path = is_path_used ? path : dropbox_basic.path
+        delivery_path = static_path(delivery_path,info_path)
+        dropbox_basic.deliver filespath, delivery_path
       end
     end
     
     if trusted_flags & F_GOOGLE_DOCS > 0
       if google_doc and google_doc.is_configured?
-        filespath.each do |filepath|
-          google_doc.deliver filepath, delivery_path
-        end
+        delivery_path = is_path_used ? path : google_doc.path
+        delivery_path = static_path(delivery_path,info_path)
+        google_doc.deliver(filespath, delivery_path)
       end
     end
+  end
+  
+  def static_path(delivery_path, info_path)
+    delivery_path.gsub!(":code",info_path[:code])
+    delivery_path.gsub!(":company",info_path[:company])
+    delivery_path.gsub!(":account_book",info_path[:account_book])
+    delivery_path.gsub!(":year",info_path[:year])
+    delivery_path.gsub!(":month",info_path[:month])
+    delivery_path.gsub!(":delivery_date",info_path[:delivery_date])
+    delivery_path
   end
   
 end

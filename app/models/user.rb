@@ -16,7 +16,7 @@ class User
   field :company, :type => String
   field :is_prescriber, :type => Boolean, :default => false
   field :inactive_at, :type => Time
-  field :dropbox_delivery_folder, :type => String, :default => ""
+  field :dropbox_delivery_folder, :type => String, :default => "iDocus_delivery/:code/:year:month/:account_book/"
   field :is_dropbox_extended_authorized, :type => Boolean, :default => false
   field :is_centraliser, :type => Boolean, :default => true
   field :is_detail_authorized, :type => Boolean, :default => false

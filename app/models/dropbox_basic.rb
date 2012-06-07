@@ -5,7 +5,7 @@ class DropboxBasic
   referenced_in :external_file_storage
   
   field :session, :type => String, :default => ""
-  field :path, :type => String, :default => "/"
+  field :path, :type => String, :default => ":code/:year:month/:account_book/"
   
   def new_session
     session = ""
@@ -55,20 +55,16 @@ class DropboxBasic
     self.save
   end
   
-  def deliver filepath, folder_path=nil
-    if folder_path.nil?
-      delivery_path = path
-    else
-      delivery_path = folder_path
-    end
-    
-    filename = File.basename(filepath)
-    
+  def deliver filespath, folder_path
     if temp_session = new_session
       if temp_session.authorized?
         client = DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
-        client.put_file "#{delivery_path}#{filename}", open(filepath) rescue nil
+        filespath.each do |filepath|
+          filename = File.basename(filepath)
+          client.put_file "#{folder_path}#{filename}", open(filepath)
+        end
       end
     end
   end
+  
 end

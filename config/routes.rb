@@ -38,6 +38,7 @@ Idocus::Application.routes.draw do
       resource :upload
     end
     
+    
     namespace :scan do
       resources :reportings
       resources :periods
@@ -55,6 +56,7 @@ Idocus::Application.routes.draw do
     end
     resource :external_file_storage do
       post :use, :on => :member
+      post :update_path_settings, :on => :member
     end
     resource :paypal, :only => [] do
       member do

@@ -7,37 +7,32 @@ class GoogleDoc
   field :token, :type => String, :default => ""
   field :secret, :type => String, :default => ""
   field :is_configured, :type => Boolean, :default => false
-  field :path, :type => String, :default => "iDocus"
+  field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   
-  def consumer
-    @consumer ||= OAuth::Consumer.new( GoogleDocs::CONSUMER_KEY, GoogleDocs::CONSUMER_SECRET, GoogleDocs::SETTINGS )
-  end
+  attr_accessor :service
   
-  def get_authorize_url callback
-    request_token = consumer.get_request_token( { :oauth_callback => callback }, :scope => GoogleDocs::SCOPE_URL )
+  def get_authorize_url(callback)
+    request_token = service.get_request_token(callback)
     update_attributes(:token => request_token.token, :secret => request_token.secret)
     request_token.authorize_url
   end
   
-  def get_access_token verifier
+  def get_access_token(verifier)
     if !token.empty? and !secret.empty?
-      request_token = OAuth::RequestToken.new consumer
-      request_token.token = token
-      request_token.secret = secret
-      access_token = request_token.get_access_token :oauth_verifier => verifier
+      access_token = service.get_access_token(verifier)
       update_attributes(:token => access_token.token, :secret => access_token.secret, :is_configured => true)
+      access_token
     else
       raise "Attributes token or/and secret is/are empty."
     end
   end
   
-  def access_token
-    unless @access_token
-      @access_token = OAuth::AccessToken.new consumer
-      @access_token.token = token
-      @access_token.secret = secret
+  def service
+    if !self.token.empty? and !self.secret.empty?
+      @service ||= GoogleDocumentsList::API::Service.new(self.token, self.secret)
+    else
+      @service ||= GoogleDocumentsList::API::Service.new()
     end
-    @access_token
   end
   
   def is_configured?
@@ -48,7 +43,12 @@ class GoogleDoc
     update_attributes(:token => "", :secret => "", :is_configured => false)
   end
   
-  def deliver filename, delivery_path
-    # TODO implement me
+  def deliver(filespath, delivery_path)
+    if service
+      colID = service.find_or_create_colID(delivery_path)
+      filespath.each do |filepath|
+        service.upload_file(filepath, colID)
+      end
+    end
   end
 end

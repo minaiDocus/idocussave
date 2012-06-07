@@ -17,7 +17,7 @@ class Pack
   field :name, :type => String
   field :is_open_for_upload, :type => Boolean, :default => true
   
-  # after_save :update_reporting_document
+  after_save :update_reporting_document
   
   scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
   
@@ -70,6 +70,7 @@ class Pack
           document.uploaded_pages = self.pages.uploaded.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
           
           document.is_shared = self.order.is_viewable_by_prescriber
+          debugger
           document.save
         end
         time += period.duration.month
@@ -270,12 +271,12 @@ class Pack
       end
       
       #  Livraison dans les services de stockage externe
-      deliver_to_external_file_storage filesname + [pack_filename], dropbox_delivery_path(pack_name), [user]
+      deliver_to_external_file_storage filesname + [pack_filename], info_path(pack_name,user), [user]
       prescriber = user.prescriber
       if prescriber
-        deliver_to_external_file_storage filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
+        deliver_to_external_file_storage filesname + [pack_filename], info_path(pack_name,prescriber), [prescriber]
         if prescriber.is_dropbox_extended_authorized
-          deliver_to_dropbox_extended filesname + [pack_filename], dropbox_delivery_path(pack_name), [prescriber]
+          deliver_to_dropbox_extended filesname + [pack_filename], info_path(pack_name,prescriber), [prescriber]
         end
       end
       
@@ -286,27 +287,35 @@ class Pack
     end
     
   private
-    def dropbox_delivery_path pack_name
+    def info_path pack_name, user=nil
+      name_info = pack_name.split("_")
+      info = {}
+      info[:code] = name_info[0]
+      info[:company] = user.try(:company)
+      info[:account_book] = name_info[1]
+      info[:year] = name_info[2][0..3]
+      info[:month] = name_info[2][4..5]
+      info[:delivery_date] = Time.now.strftime("%Y%m%d")
+      info
+    end
+    
+    def default_delivery_path pack_name
       part = pack_name.split "_"
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
-  
-    def deliver_to_external_file_storage filesname, delivery_path, users
-      filesname.each do |filename|
-        users.each do |user|
-          if user.external_file_storage
-            user.external_file_storage.deliver filename, delivery_path
-          end
+    
+    def deliver_to_external_file_storage filesname, infopath, users
+      users.each do |user|
+        if user.external_file_storage
+          user.external_file_storage.deliver filesname, infopath
         end
       end
     end
     
-    def deliver_to_dropbox_extended filesname, delivery_path, users
-      filesname.each do |filename|
-        users.each do |user|
-          if !user.dropbox_delivery_folder.nil?
-            DropboxExtended.deliver filename, user.dropbox_delivery_folder, delivery_path
-          end
+    def deliver_to_dropbox_extended filesname, infopath, users
+      users.each do |user|
+        if !user.dropbox_delivery_folder.nil?
+          DropboxExtended.deliver filesname, user.dropbox_delivery_folder, infopath
         end
       end
     end

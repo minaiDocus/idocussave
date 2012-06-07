@@ -80,8 +80,17 @@
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
       - if @user.external_file_storage and @user.external_file_storage.authorized > 0
+        :javascript
+          var is_path_used = #{@user.external_file_storage.is_path_used ? "true" : "false"};
         .row
           .span6.well
+            != check_box_tag "use_global_path", 1, @user.external_file_storage.is_path_used, :style => "margin:2px 5px  0 0;", :class => "pull-left"
+            != label_tag "use_global_path", "Utiliser un chemin globale."
+            %form.margin0bottom{ :class => "", :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
+              != label_tag "external_file_storage[path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+              != text_field_tag "external_file_storage[path]", @user.external_file_storage.path, :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
+              != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
+            %hr{ :style => "margin:5px 0 5px 0;" }
             - if @user.external_file_storage.try("is_dropbox_basic_authorized?")
               - service_number = ExternalFileStorage::F_DROPBOX
               - is_service_used = @user.external_file_storage.try("is_used?", ExternalFileStorage::F_DROPBOX)
@@ -101,9 +110,12 @@
                       Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
                     != link_to "ici", authorize_url_account_dropbox_path
                     #{"."}
-            
+                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
+                      != label_tag "external_file_storage[dropbox_basic][path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@user.external_file_storage.try(:dropbox_basic).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
             - if @user.external_file_storage.try("is_dropbox_basic_authorized?") and @user.external_file_storage.try("is_google_docs_authorized?")
-              %hr
+              %hr{ :style => "margin:5px 0 5px 0;" }
             
             - if @user.external_file_storage.try("is_google_docs_authorized?")
               - service_number = ExternalFileStorage::F_GOOGLE_DOCS
@@ -124,3 +136,7 @@
                       Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Google, cliquez
                     != link_to "ici", authorize_url_account_google_doc_path
                     #{"."}
+                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
+                      != label_tag "external_file_storage[google_doc][path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+                      != text_field_tag "external_file_storage[google_doc][path]", "#{@user.external_file_storage.try(:google_doc).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"

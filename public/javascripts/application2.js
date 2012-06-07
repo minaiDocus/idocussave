@@ -661,6 +661,41 @@
     $("#selectionlist .content ul").sortable({
       handle: '.handle'
     });
+    
+    if (is_path_used) {
+      $(".global_path").removeAttr("disabled");
+      $(".other_path").attr("disabled","disabled");
+    } else {
+      $(".global_path").attr("disabled","disabled");
+      $(".other_path").removeAttr("disabled");
+    }
+    
+    $("#use_global_path").change(function(){
+      is_path_used = $(this).is(":checked");
+      if (is_path_used) {
+        $(".global_path").removeAttr("disabled");
+        $(".other_path").attr("disabled","disabled");
+      } else {
+        $(".global_path").attr("disabled","disabled");
+        $(".other_path").removeAttr("disabled");
+      }
+      var hsh = {"external_file_storage[is_path_used]": is_path_used};
+      $.ajax({
+        url: "/account/external_file_storage/update_path_settings",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+        },
+        success: function(data){
+          if (data == "1") {
+            $(".alerts").html("<div class='alert alert-success'><a class='close' data-dismiss='alert'> × </a><span>Modifié avec succès.</span></div>");
+          } else {
+            $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Une erreur est suvenu lors de la modification, veuillez réessayer plus tard.</span></div>");
+          }
+        }
+      });
+    });
   });
   
 })(jQuery);
