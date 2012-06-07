@@ -1,4 +1,11 @@
 namespace :maintenance do
+  namespace :address do
+    desc "Deliver updated address list"
+    task :deliver_updated_list => [:environment] do
+      AddressDeliveryList::process
+    end
+  end
+  
   namespace :monthly do
     desc "Init current monthly"
     task :init => [:environment] do

@@ -3,7 +3,12 @@ module AddressDeliveryList
     def create_config_file
       begin
         File.open "#{Rails.root}/config/initializers/address_delivery_list.rb","w" do |f|
-          f.write "AddressDeliveryList::PRESCRIBERS_CODE  = []\nAddressDeliveryList::EMAIL_TO_NOTIFY = ''"
+          f.write "AddressDeliveryList::ADDRESS = '193.168.63.12'\n"
+          f.write "AddressDeliveryList::LOGIN = 'depose'\n"
+          f.write "AddressDeliveryList::PASSWORD = 'tran5fert'\n"
+          f.write "AddressDeliveryList::DELIVERY_DIR = 'depose2diadeis/iDocus_adresses_retour'\n"
+          f.write "AddressDeliveryList::PRESCRIBERS_CODE  = []\n"
+          f.write "AddressDeliveryList::EMAIL_TO_NOTIFY = ''\n"
         end
       rescue
         puts "Cant't write file #{Rails.root}/config/initializers/address_delivery_list.rb"
@@ -77,10 +82,10 @@ module AddressDeliveryList
       AddressListUpdatedMailer.notify.deliver
     end
     
-    def send_file(filepath, target_dir="depose2diadeis/iDocus_adresses_retour")
+    def send_file(filepath, target_dir=DELIVERY_DIR)
       if File.exist?(filepath)
         require "net/ftp"
-        ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
+        ftp = Net::FTP.new(ADDRESS, LOGIN, PASSWORD)
         ftp.chdir(target_dir)
         ftp.put(filepath, File.basename(filepath))
         ftp.close
