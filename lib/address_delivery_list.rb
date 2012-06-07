@@ -20,7 +20,7 @@ module AddressDeliveryList
       begin
         File.open("#{Rails.root}/data/address_delivery_list_checkpoint.txt","w") do |f|
           f.write(data)
-          puts "Checkpoint set to #{data}"
+          puts "Checkpoint set at #{data}"
         end
       rescue
         puts "Can't write file #{Rails.root}/data/address_delivery_list_checkpoint.txt"
