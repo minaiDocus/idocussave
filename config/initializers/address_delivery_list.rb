@@ -1,1 +1,0 @@
-AddressDeliveryList::PRESCRIBERS_CODE  = []
