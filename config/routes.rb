@@ -83,10 +83,6 @@ Idocus::Application.routes.draw do
       delete 'delete_document', :on => :member
     end
     resources :backups
-    
-    namespace :manage do
-      resources :account_book_types
-    end
   end
 
   namespace :tunnel do
