@@ -48,13 +48,24 @@ module AddressDeliveryList
       time
     end
     
+    def prescribers
+      prescribers = []
+      if !PRESCRIBERS_CODE or (PRESCRIBERS_CODE and PRESCRIBERS_CODE.empty?)
+        prescribers = User.prescribers.asc(:code).entries
+      else
+        prescribers = User.any_in(:code => PRESCRIBERS_CODE).asc(:code).entries
+      end
+    end
+    
     def is_address_updated
       nb = 0
       time = get_checkpoint
-      User.all.each do |user|
-        address = user.addresses.for_shipping.first
-        if address and address.updated_at > time
-          nb += 1
+      prescribers.each do |prescriber|
+        prescriber.clients.each do |client|
+          address = client.addresses.for_shipping.first
+          if address and address.updated_at > time
+            nb += 1
+          end
         end
       end
       nb > 0 ? true : false
@@ -62,20 +73,14 @@ module AddressDeliveryList
     
     def process
       if is_address_updated
-        prescribers = []
-        if PRESCRIBERS_CODE and PRESCRIBERS_CODE.empty?
-          prescribers = User.prescribers.asc(:code).entries
-        else
-          prescribers = User.any_in(:code => PRESCRIBERS_CODE).asc(:code).entries
-        end
         filepath = create_file_for_prescribers(prescribers)
         if send_file(filepath)
-          set_checkpoint
           send_email
         end
       else
         puts "No update since last delivery."
       end
+      set_checkpoint
     end
     
     def send_email
