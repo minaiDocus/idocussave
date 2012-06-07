@@ -68,12 +68,12 @@
               %span.margin1left.margin1right #{@year}
               != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
             - months.each do |month|
-              %th{ :style => "width:7%;text-align:center;" }
+              %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                 #{month}
         %tbody
           - @users.each do |user|
             %tr{ :id => "user_#{user.id}", :class => "user" }
-              %td
+              %td{ :style => "vertical-align:middle;" }
                 #{[user.code,user.company].join(" - ")}
               - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
               - periods.each do |period|
@@ -81,22 +81,19 @@
                   - annual_summary[period.start_at.month - 1][:active_user] += 1
                   %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;" }
+                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;height:13px;" }
                         - if period.delivery.state == "wait"
                           - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
-                          %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;", :title => "Attendus" }
-                            A
+                          .badge.badge-important.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;background-color:red;" }
                         - elsif period.delivery.state == "received"
                           - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
-                          %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Reçus" }
-                            R
+                          .badge.badge-warning.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;" }
                         - elsif period.delivery.state == "delivered"
                           - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
-                          %span.badge.badge-success{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;", :title => "Traités" }
-                            T
+                          .badge.badge-success.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;" }
                         - period.documents_name_tags.each do |tags|
                           %span{ :class => tags }
-                        .value{ :style => "display:inline-block;text-align:right;width:43px;" }
+                        .value{ :style => "display:inline-block;text-align:right;width:43px;position:relative;top:-2px;" }
                           %span{ :class => "hide pieces value_1" }
                             #{period.pieces}
                           %span{ :class => "sheets value_0" }
@@ -155,7 +152,7 @@
                   %span{ :class => "hide price value_9" }
                     Dépassement (€ HT)
                 %br
-                %span{ :style => "color:red;" } Attendus
+                %span{ :style => "color:red;" } Non reçus
                 |
                 %span{ :style => "color:#F89406;" } Reçus
                 |
@@ -210,7 +207,7 @@
                 %span.margin1left.margin1right #{@year}
                 != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
               - months.each do |month|
-                %th{ :style => "width:7%;text-align:right;" }
+                %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                   #{month}
 
 .modal.fade{ :id=>"legendModal" }
