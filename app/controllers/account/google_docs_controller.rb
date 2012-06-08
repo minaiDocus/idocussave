@@ -1,40 +1,30 @@
 class Account::GoogleDocsController < Account::AccountController
   before_filter :service_authorized?
-  before_filter :load_service
+  before_filter :load_google_doc
   
 private
-
   def service_authorized?
     unless current_user.external_file_storage.try("is_google_docs_authorized?")
-      flash[:error] = "Vous n'êtes pas autorisé à utiliser Google Docs."
+      flash[:error] = "Vous n'êtes pas autorisé à utiliser Google Drive."
       redirect_to account_profile_path
     end
   end
-
-  def load_service
-    unless current_user.external_file_storage
-      current_user.external_file_storage = ExternalFileStorage.create
-    end
-    external_file_storage = current_user.external_file_storage
-    
-    @service ||= external_file_storage.google_doc
-    unless @service
-      @service = GoogleDoc.new
-      external_file_storage.google_doc = @service
-      @service.save
-    end
+  
+  def load_google_doc
+    current_user.external_file_storage.create unless current_user.external_file_storage
+    @google_doc = current_user.external_file_storage.google_doc
+    @google_doc = external_file_storage.google_doc.create unless @google_doc
   end
-
+  
 public
-
   def authorize_url
-    @service.reset_session
-    redirect_to @service.get_authorize_url callback_account_google_doc_url
+    @google_doc.reset_session
+    redirect_to @google_doc.get_authorize_url(callback_account_google_doc_url)
   end
   
   def callback
-    @service.get_access_token params[:oauth_verifier]
-    flash[:notice] = "Votre compte Google Docs à été configuré avec succès."
+    @google_doc.get_access_token(params[:oauth_verifier])
+    flash[:notice] = "Votre compte Google Drive à été configuré avec succès."
     redirect_to account_profile_path
   end
   

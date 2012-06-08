@@ -13,6 +13,8 @@ module GoogleDocumentsList
           @token = @access_token.token = token
           @secret = @access_token.secret = secret
           @access_token
+        else
+          @token = @secret = ""
         end
       end
       
