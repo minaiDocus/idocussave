@@ -84,10 +84,10 @@
           var is_path_used = #{@user.external_file_storage.is_path_used ? "true" : "false"};
         .row
           .span6.well
-            != check_box_tag "use_global_path", 1, @user.external_file_storage.is_path_used, :style => "margin:2px 5px  0 0;", :class => "pull-left"
-            != label_tag "use_global_path", "Utiliser un chemin globale."
+            %h3.aligncenter Livraison automatique
             %form.margin0bottom{ :class => "", :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-              != label_tag "external_file_storage[path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+              != check_box_tag "use_global_path", 1, @user.external_file_storage.is_path_used, :style => "margin:11px 5px  0 0;", :class => "pull-left"
+              Chemin de livraison identique pour tous les services : 
               != text_field_tag "external_file_storage[path]", @user.external_file_storage.path, :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
               != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
             %hr{ :style => "margin:5px 0 5px 0;" }
@@ -96,22 +96,21 @@
               - is_service_used = @user.external_file_storage.try("is_used?", ExternalFileStorage::F_DROPBOX)
               %div
                 .row
-                  .span3
-                    %h3
-                      DROPBOX
-                  .span3.alignright
-                    != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:right;"
-                    != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
+                  .span6
+                    != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
+                    %b
+                      != label_tag :"service_#{service_number}", "DROPBOX"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
                     - if @user.external_file_storage.try(:dropbox_basic).try("is_configured?")
-                      Votre compte Dropbox est déjà configuré, si vous voulez le reparamétrer cliquez
+                      Votre compte iDocus est connecté à votre compte Dropbox. 
+                      != link_to "paramètres", authorize_url_account_dropbox_path
                     - else
-                      Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Dropbox, cliquez
-                    != link_to "ici", authorize_url_account_dropbox_path
+                      Pour connecter iDocus à votre compte Dropbox, cliquez
+                      != link_to "ici", authorize_url_account_dropbox_path
                     #{"."}
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != label_tag "external_file_storage[dropbox_basic][path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+                      != label_tag "external_file_storage[dropbox_basic][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
                       != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@user.external_file_storage.try(:dropbox_basic).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
             - if @user.external_file_storage.try("is_dropbox_basic_authorized?") and @user.external_file_storage.try("is_google_docs_authorized?")
@@ -122,21 +121,20 @@
               - is_service_used = @user.external_file_storage.try("is_used?", service_number)
               %div
                 .row
-                  .span3
-                    %h3
-                      GOOGLE DOCS
-                  .span3.alignright
-                    != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:right;"
-                    != label_tag :"service_#{service_number}", "Utiliser ?", :class => "margin2right"
+                  .span6
+                    != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
+                    %b
+                      != label_tag :"service_#{service_number}", "GOOGLE DRIVE"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
                     - if @user.external_file_storage.try(:google_doc).try("is_configured?")
-                      Votre compte Google Docs est déjà configuré, si vous voulez le reparamétrer cliquez
+                      Votre compte iDocus est connecté à votre compte Google Drive. 
+                      != link_to "paramètres", authorize_url_account_google_doc_path
                     - else
-                      Pour autoriser l'envoi automatique par iDocus de vos documents sur votre compte Google, cliquez
-                    != link_to "ici", authorize_url_account_google_doc_path
+                      Pour connecter iDocus à votre compte Google Drive, cliquez
+                      != link_to "ici", authorize_url_account_google_doc_path
                     #{"."}
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != label_tag "external_file_storage[google_doc][path]", "chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+                      != label_tag "external_file_storage[google_doc][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
                       != text_field_tag "external_file_storage[google_doc][path]", "#{@user.external_file_storage.try(:google_doc).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
