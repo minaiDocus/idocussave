@@ -13,13 +13,13 @@ class Account::Scan::ReportingsController < Account::AccountController
     if @user.is_prescriber
       @users = @user.clients.asc(:code)
       @subscriptions = @user.scan_subscription_reports
-      @periods = Scan::Period.any_in(:subscription_id => @subscriptions.distinct(:_id)).where(:start_at.gte => Time.local(@year,1,1,0,0,0), :end_at.lte => Time.local(@year,12,31,23,59,59)).entries
       @prescriber = @user
     else
       @users = [@user]
       @subscriptions = @user.scan_subscriptions
       @prescriber = @user.prescriber
     end
+    @periods = Scan::Period.any_in(:subscription_id => @subscriptions.distinct(:_id)).where(:start_at.gte => Time.local(@year,1,1,0,0,0), :end_at.lte => Time.local(@year,12,31,23,59,59)).entries
     
     respond_to do |format|
       format.html

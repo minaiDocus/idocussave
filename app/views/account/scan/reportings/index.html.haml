@@ -78,7 +78,8 @@
               - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
               - periods.each do |period|
                 - if period
-                  - annual_summary[period.start_at.month - 1][:active_user] += 1
+                  - period.duration.times do |i|
+                    - annual_summary[period.start_at.month + i - 1][:active_user] += 1
                   %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
                       .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;height:13px;" }
@@ -252,8 +253,9 @@
   .modal-body{ :style => "max-height:450px;" }
     %iframe{:src => "", :id => "invoice-show", :style => "width:843px; height:415px;" }
 
-:plain
-  <script type="text/x-tmpl" id="tmpl-period">
+
+%script{ :type => "text/x-tmpl", :id => "tmpl-period" }
+  :plain
     <div class="documentslist">
       <table class="table table-condensed">
         <tr>
@@ -296,43 +298,44 @@
         </tr>
       </table>
     </div>
-    <div class="separator"></div>
-    <div class="optionslist">
-      <table class="table table-condensed">
-        <tr>
-          <th>Paramètre</th>
-          <th>Valeur</th>
-          <th style="text-align:right;">Prix HT</th>
-        </tr>
-        {% for(var i=0; i<o.options.list.length; i++) { %}
+  - if @prescriber.is_detail_authorized or current_user.is_prescriber or current_user.is_admin
+    :plain
+      <div class="separator"></div>
+      <div class="optionslist">
+        <table class="table table-condensed">
           <tr>
-            <td>{%# o.options.list[i].group_title %}</td>
-            <td>{%# o.options.list[i].title %}</td>
-            <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
+            <th>Paramètre</th>
+            <th>Valeur</th>
+            <th style="text-align:right;">Prix HT</th>
           </tr>
-        {% } %}
-        <tr>
-          <td>Dépassement</td>
-          <td></td>
-          <td style="text-align:right;">{%= o.options.excess_price%} €</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><b>Total :</b></td>
-          <td style="text-align:right;">{%= o.options.total%} €</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>Facture :</td>
-          <td>
-            {% if (o.options.invoice_link != "") { %}
-              <a href="{%= o.options.invoice_link%}" class="icon-download-alt" style="width:16px;height:16px;"></a>
-              <a href="{%= o.options.invoice_link%}" class="icon-eye-open do-showInvoice" style="width:16px;height:16px;" title="{%= o.options.invoice_number %}.pdf"></a>
-            {% } %}
-          </td>
-        </tr>
-    </div>
-  </script>
+          {% for(var i=0; i<o.options.list.length; i++) { %}
+            <tr>
+              <td>{%# o.options.list[i].group_title %}</td>
+              <td>{%# o.options.list[i].title %}</td>
+              <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
+            </tr>
+          {% } %}
+          <tr>
+            <td>Dépassement</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_price%} €</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><b>Total :</b></td>
+            <td style="text-align:right;">{%= o.options.total%} €</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Facture :</td>
+            <td>
+              {% if (o.options.invoice_link != "") { %}
+                <a href="{%= o.options.invoice_link%}" class="icon-download-alt" style="width:16px;height:16px;"></a>
+                <a href="{%= o.options.invoice_link%}" class="icon-eye-open do-showInvoice" style="width:16px;height:16px;" title="{%= o.options.invoice_number %}.pdf"></a>
+              {% } %}
+            </td>
+          </tr>
+      </div>
 
 :css
   .period{

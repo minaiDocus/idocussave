@@ -136,11 +136,12 @@ class Scan::Period
     update_price
   end
   
-  def render_json
-    {
-      :documents => documents_json,
-      :options => options_json
-    }
+  def render_json(viewer=self.user)
+    hash = { :documents => documents_json }
+    if viewer.is_admin or viewer.is_prescriber or viewer.prescriber.try(:is_detail_authorized)
+      hash.merge!({ :options => options_json })
+    end
+    hash
   end
   
   def documents_json

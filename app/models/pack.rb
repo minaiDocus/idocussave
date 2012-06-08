@@ -70,8 +70,10 @@ class Pack
           document.uploaded_pages = self.pages.uploaded.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
           
           document.is_shared = self.order.is_viewable_by_prescriber
-          debugger
           document.save
+        end
+        if document.pages - document.uploaded_pages > 0
+          period.delivery.delivered!
         end
         time += period.duration.month
         total -= current_divisions.count

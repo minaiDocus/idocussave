@@ -8,7 +8,7 @@ class Scan::Delivery
   
   embedded_in :period, :class_name => "Scan::Period", :inverse_of => :delivery
   
-  field :state, :default => 'nothing'
+  field :state, :default => 'wait'
   
   state_machine do
     state :nothing

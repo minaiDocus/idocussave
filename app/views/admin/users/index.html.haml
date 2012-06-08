@@ -16,7 +16,6 @@
             Code
           %th Admin?
           %th Confirmed?
-          %th Status
           %th.last &nbsp;
         - @users.each do |user|
           %tr{:class => cycle("odd", "even")}
@@ -42,18 +41,6 @@
                 non, confirmer ?
                 != check_box_tag 'confirmed ?', true, false, :class => "inplace", :id => user.id
                 != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_#{user.id}"
-            %td
-              - delivery = user.find_or_create_reporting.find_or_create_current_monthly.delivery
-              %select{ :name => :delivery_state, :id => user.id, :class => :delivery_state }
-                - Reporting::Delivery::STATES.each do |state|
-                  - same = (delivery.state == state[1]) rescue false
-                  - if same
-                    %option{ :value => state[1], :selected => :selected }
-                      !=state[0]
-                  - else
-                    %option{ :value => state[1] }
-                      !=state[0]
-              != image_tag "lightbox-ico-loading.gif", :style => "display:none;", :id => "spinner_2_#{user.id}"
             %td.last
               != link_to image_tag("web-app-theme/application_edit.png", :alt => "Edit"), edit_admin_user_path(user)
               -#|

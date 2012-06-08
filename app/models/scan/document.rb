@@ -20,7 +20,7 @@ class Scan::Document
   validates_presence_of :name
   validate :uniqueness_of_name
   
-  scope :for_time, lambda { |start_time,end_time| where(:created_at.lt => start_time, :created_at.gt => end_time) }
+  scope :for_time, lambda { |start_time,end_time| where(:created_at.gte => start_time, :created_at.lte => end_time) }
   scope :shared, :where => { :is_shared => true }
   
   after_save :update_period

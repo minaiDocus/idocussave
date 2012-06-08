@@ -3,7 +3,7 @@ class Invoice
   include Mongoid::Timestamps
   include Mongoid::Paperclip
   include Mongoid::Slug
-
+  
   field :number, :type => String
   field :content_file_name
   field :content_file_type
@@ -21,7 +21,7 @@ class Invoice
   referenced_in :order
   referenced_in :event
   referenced_in :subscription
-
+  
   before_create :set_number
   
 public
@@ -33,47 +33,45 @@ public
     previous_month = mois[(self.created_at - 1.month).month]
     year = (self.created_at - 1.month).year
     month = (self.created_at - 1.month).month
-      
-    @total = 0
     
+    @total = 0
     @data = []
     
     prescriber = user.prescriber ? user.prescriber : user
-    if (prescriber and prescriber != user and !prescriber.is_centraliser)
+    time = self.created_at - 1.month
+    scan_subscription = user.scan_subscriptions.where(:start_at.lte => time, :end_at.gte => time).first
+    if (prescriber != user and !prescriber.is_centraliser)
       # particular
-      monthly = user.find_or_create_reporting.find_or_create_monthly_for year, month
-      subscription_detail = monthly.find_or_create_subscription_detail
-      options = subscription_detail.product_order.product_option_orders.by_position rescue []
-      
+      period = scan_subscription.find_or_create_period(time)
+      options = period.product_option_orders
       options.each do |option|
-        @data << [option.group + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
-        @total += option.price_in_cents_wo_vat
+        @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
       end
-      @data << ["Dépassement",format_price(monthly.total_price_in_cents) + " €"]
-      @total += monthly.total_price_in_cents
+      @data << ["Dépassement",format_price(period.price_in_cents_of_total_excess) + " €"]
+      @total += period.price_in_cents_wo_vat
     else
       # prescriber
-      
-      @monthlies = user.all_monthly.of(year).asc(:month).entries
-      @monthlies = @monthlies.select { |m| m.month == month and m.reporting.customer.is_active_at(m.year, m.month) and m.reporting.customer.original_user != user }
-      
-      @monthlies.each do |monthly|
-        options = monthly.subscription_detail.product_order.product_option_orders rescue []
-        options.each do |option|
-          @total += option.price_in_cents_wo_vat
+      users = user.clients.select do |client|
+        if client.is_inactive? and client.inactive_at.year >= time.year and client.inactive_at.month <= time.month
+          false
+        else
+          true
         end
-        @total += monthly.total_price_in_cents
       end
+      periods = Scan::Period.any_in(:subscription_id => user.scan_subscription_reports.distinct(:_id)).
+      where(:start_at.lte => time, :end_at.gte => time).
+      select{ |period| period.end_at.month == time.month }
+      
+      @total += periods.sum(&:price_in_cents_wo_vat)
       
       @data = [
         ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
-        ["Nombre de clients actifs : #{@monthlies.count}",""]
+        ["Nombre de clients actifs : #{periods.count}",""]
       ]
       
-      monthly = user.find_or_create_reporting.find_or_create_monthly_by_date(self.created_at - 1.month)
-      options = monthly.subscription_detail.product_order.product_option_orders.where(:position.gt => 999).by_position rescue []
+      options = scan_subscription.product_option_orders.where(:group_position.gte => 1000).by_position rescue []
       options.each do |option|
-        @data << ["#{option.group} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
+        @data << ["#{option.group_title} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
         @total += option.price_in_cents_wo_vat
       end
     end
@@ -88,12 +86,12 @@ public
       pdf.font_size 8
       pdf.default_leading 4
       header_data = [
-          [
-            "IDOCUS / GREVALIS\n5, rue de Douai\n75009 Paris",
-            "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
-            "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
-          ]
+        [
+          "IDOCUS / GREVALIS\n5, rue de Douai\n75009 Paris",
+          "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
+          "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
         ]
+      ]
       
       pdf.table(header_data, :width => 540) do
         style(row(0), :borders => [:top,:bottom], :border_color => "AFA6A6", :text_color => "AFA6A6")
@@ -185,7 +183,7 @@ public
     
     self.content = File.new "#{Rails.root}/tmp/#{self.number}.pdf"
     self.save
-    File.delete "#{Rails.root}/tmp/#{self.number}.pdf"
+    #File.delete "#{Rails.root}/tmp/#{self.number}.pdf"
     
   end
   
@@ -193,7 +191,7 @@ public
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",")
   end
-
+  
 private
   def set_number
     txt = DbaSequence.next("invoice_"+Time.now.strftime("%Y%m"))

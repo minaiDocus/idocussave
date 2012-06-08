@@ -18,7 +18,7 @@ public
   def show
     respond_to do |format|
       format.html {}
-      format.json { render :json => @period.render_json, :status => :ok }
+      format.json { render :json => @period.render_json(current_user), :status => :ok }
     end
   end
 end
