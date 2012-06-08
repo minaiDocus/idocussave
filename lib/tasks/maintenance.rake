@@ -1,4 +1,16 @@
 namespace :maintenance do
+  namespace :documents do
+    desc "Fecth documents"
+    task :fetch => [:environment] do
+      Pack.get_file_from_numen
+      Pack.get_documents
+      ReminderEmail.deliver
+      Document.do_reprocess_styles
+      Document.extract_content
+      Document::Index.process
+    end
+  end
+  
   namespace :address do
     desc "Deliver updated address list"
     task :deliver_updated_list => [:environment] do
@@ -55,9 +67,9 @@ namespace :maintenance do
         puts "DbaSequence initialized"
         end
     end
-
+  
   end
-
+  
   namespace :migrate do
     desc "Copy price_in_cents_wo_vat to new_price"
     task :product_new_price => [:environment] do
@@ -67,7 +79,7 @@ namespace :maintenance do
         puts "#{p.title} up to date !"
       end
     end
-
+  
     desc "Copy new_price into price_in_cents_wo_vat"
     task :product_price_bigdec => [:environment] do
       Product.all.each do |p|
@@ -77,7 +89,7 @@ namespace :maintenance do
       end
     end
   end
-
+  
   namespace :paperclip do
     desc "reprocess all images"
     task :reprocess => [:environment] do
@@ -95,14 +107,14 @@ namespace :maintenance do
       puts "done with Compositions"
     end
   end
-
+  
   task :textilize_pages => :environment do
     Page.all.each{|page|
       page.body = textilize page.body
       page.save
     }
   end
-
+  
   namespace :lang do
     desc "Feed dictionary"
     task :feed, [:path] => :environment do |t,args|
