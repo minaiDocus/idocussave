@@ -88,13 +88,14 @@ class ExternalFileStorage
     end
   end
   
-  def static_path(delivery_path, info_path)
-    delivery_path.gsub!(":code",info_path[:code])
-    delivery_path.gsub!(":company",info_path[:company])
-    delivery_path.gsub!(":account_book",info_path[:account_book])
-    delivery_path.gsub!(":year",info_path[:year])
-    delivery_path.gsub!(":month",info_path[:month])
-    delivery_path.gsub!(":delivery_date",info_path[:delivery_date])
+  def static_path(path, info_path)
+    delivery_path = path
+    delivery_path = delivery_path.gsub(":code",info_path[:code])
+    delivery_path = delivery_path.gsub(":company",info_path[:company])
+    delivery_path = delivery_path.gsub(":account_book",info_path[:account_book])
+    delivery_path = delivery_path.gsub(":year",info_path[:year])
+    delivery_path = delivery_path.gsub(":month",info_path[:month])
+    delivery_path = delivery_path.gsub(":delivery_date",info_path[:delivery_date])
     delivery_path
   end
   

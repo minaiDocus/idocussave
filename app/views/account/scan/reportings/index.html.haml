@@ -96,11 +96,11 @@
                           %span{ :class => tags }
                         .value{ :style => "display:inline-block;text-align:right;width:43px;position:relative;top:-2px;" }
                           %span{ :class => "hide pieces value_1" }
-                            #{period.pieces}
+                            #{period.pieces - period.uploaded_pieces}
                           %span{ :class => "sheets value_0" }
-                            #{period.sheets}
+                            #{period.sheets - period.uploaded_sheets}
                           %span{ :class => "hide pages value_2" }
-                            #{period.pages}
+                            #{period.pages - period.uploaded_pages}
                           %span{ :class => "hide uploaded_pieces value_4" }
                             #{period.uploaded_pieces}
                           %span{ :class => "hide uploaded_sheets value_3" }
@@ -217,18 +217,15 @@
     %h3{ :style => "text-align:center;" }
       Légende
   .modal-body
-    %span.badge.badge-important{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;background-color:red;margin-right:5px;", :title => "Attendus" }
-      A
+    %span.badge.badge-important{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;background-color:red;", :title => "Attendus" }
     \: Documents papier attendus
     %br
     %br
-    %span.badge.badge-warning{ :style => "height:16px;padding:2px 1px 3px 5px;width:10px;margin-right:5px;", :title => "Reçus" }
-      R
+    %span.badge.badge-warning{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;", :title => "Reçus" }
     \: Documents papier reçus
     %br
     %br
-    %span.badge.badge-success{ :style => "height:16px;padding:2px 3px 3px 5px;width:10px;margin-right:5px;", :title => "Traités" }
-      T
+    %span.badge.badge-success{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;", :title => "Traités" }
     \: Documents papier traités
     %br
 
