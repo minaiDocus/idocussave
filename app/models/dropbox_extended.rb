@@ -59,7 +59,6 @@ class DropboxExtended
           clean_path = delivery_path.sub(/\/$/,"")
           client = get_client(temp_session)
           filesname.each do |filename|
-            client.file_delete "#{delivery_path}#{filename}" rescue nil
             client.put_file "#{clean_path}/#{filename}", open(filename) rescue nil
           end
         end
