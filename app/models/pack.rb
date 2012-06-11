@@ -73,7 +73,7 @@ class Pack
           document.save
         end
         if document.pages - document.uploaded_pages > 0
-          period.delivery.delivered!
+          period.delivery.delivered! unless period.delivery == "delivered"
         end
         time += period.duration.month
         total -= current_divisions.count
