@@ -16,10 +16,13 @@ class Pack
   
   field :name, :type => String
   field :is_open_for_upload, :type => Boolean, :default => true
+  field :is_delivered_to_external_file_storage, :type => Boolean, :default => false
   
   after_save :update_reporting_document
   
   scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
+  scope :delivered_to_efs, :where => { :is_delivered_to_external_file_storage => true }
+  scope :not_delivered_to_efs, :where => { :is_delivered_to_external_file_storage => false }
   
   def pages
     self.documents.without_original
@@ -272,20 +275,7 @@ class Pack
         end
       end
       
-      #  Livraison dans les services de stockage externe
-      deliver_to_external_file_storage filesname + [pack_filename], info_path(pack_name,user), [user]
-      prescriber = user.prescriber
-      if prescriber
-        deliver_to_external_file_storage filesname + [pack_filename], info_path(pack_name,prescriber), [prescriber]
-        if prescriber.is_dropbox_extended_authorized
-          deliver_to_dropbox_extended filesname + [pack_filename], info_path(pack_name,prescriber), [prescriber]
-        end
-      end
-      
-      #  Marquage des fichiers comme étant traité.
-      filesname.each do |filename|
-        File.rename filename, "up_" + filename
-      end
+      delay(:queue => 'external file storage delivery').deliver_to_external_file_storage(pack.id, [user.id,user.prescriber.try(:id)], [Dir.pwd, filesname + [pack_filename]], info_path(pack_name,user))
     end
     
     def info_path pack_name, user=nil
@@ -305,20 +295,28 @@ class Pack
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
     
-    def deliver_to_external_file_storage filesname, infopath, users
+    def deliver_to_external_file_storage pack_id, user_ids, filespath, infopath
+      pack = Pack.find(pack_id)
+      users = User.find(user_ids)
+      Dir.chdir(filespath[0])
+      filesname = filespath[1]
       users.each do |user|
-        if user.external_file_storage
-          user.external_file_storage.deliver filesname, infopath
+        if user
+          if user.external_file_storage
+            user.external_file_storage.deliver filesname, infopath
+          end
+          if user.is_prescriber and user.is_dropbox_extended_authorized and !user.dropbox_delivery_folder.nil?
+            DropboxExtended.deliver filesname, user.dropbox_delivery_folder, infopath
+          end
         end
       end
-    end
-    
-    def deliver_to_dropbox_extended filesname, infopath, users
-      users.each do |user|
-        if !user.dropbox_delivery_folder.nil?
-          DropboxExtended.deliver filesname, user.dropbox_delivery_folder, infopath
+      #  Marquage des fichiers comme étant traité.
+      filesname.each do |filename|
+        unless filename.match(/all\.pdf$/)
+          File.rename filename, "up_" + filename
         end
       end
+      pack.update_attributes(:is_delivered_to_external_file_storage => true)
     end
     
   private
