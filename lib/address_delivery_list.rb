@@ -8,7 +8,7 @@ module AddressDeliveryList
           f.write "AddressDeliveryList::PASSWORD = 'tran5fert'\n"
           f.write "AddressDeliveryList::DELIVERY_DIR = 'depose2diadeis/iDocus_adresses_retour'\n"
           f.write "AddressDeliveryList::PRESCRIBERS_CODE  = []\n"
-          f.write "AddressDeliveryList::EMAIL_TO_NOTIFY = ''\n"
+          f.write "AddressDeliveryList::EMAIL_TO_NOTIFY = []\n"
         end
       rescue
         puts "Cant't write file #{Rails.root}/config/initializers/address_delivery_list.rb"
@@ -84,7 +84,7 @@ module AddressDeliveryList
     end
     
     def send_email
-      AddressListUpdatedMailer.notify.deliver
+      AddressListUpdatedMailer.notify(EMAIL_TO_NOTIFY).deliver
     end
     
     def send_file(filepath, target_dir=DELIVERY_DIR)

@@ -30,7 +30,7 @@ class Scan::Document
   end
   
   def update_period
-    self.period.update_information!
+    self.period.reload.save
   end
   
   def scanned_pieces

@@ -59,9 +59,10 @@ class DropboxBasic
     if temp_session = new_session
       if temp_session.authorized?
         client = DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
+        clean_path = folder_path.sub(/\/$/,"")
         filespath.each do |filepath|
           filename = File.basename(filepath)
-          client.put_file "#{folder_path}#{filename}", open(filepath)
+          client.put_file "#{clean_path}/#{filename}", open(filepath)
         end
       end
     end

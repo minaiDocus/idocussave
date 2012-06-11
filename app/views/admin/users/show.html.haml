@@ -22,7 +22,7 @@
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Is actif ?', :value => (@user.is_active? ? "Yes" : "No (#{l(@user.inactive_at)})")}
           %td
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Admin ?', :value => (@user.is_admin ? "Yes" : "No")}
-            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Dropbox authorized ?', :value => (@user.is_dropbox_authorized ? "Yes" : "No")}
+            != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Dropbox Extended authorized ?', :value => (@user.is_dropbox_extended_authorized ? "Yes" : "No")}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Prescriber ?', :value => (@user.is_prescriber ? "Yes" : "No")}
             != render :partial =>'/admin/shared/show_field', :locals => {:key => 'Use debit mandate ?', :value => (@user.use_debit_mandate ? "Yes" : "No")}
           %td
