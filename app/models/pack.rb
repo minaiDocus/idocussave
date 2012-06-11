@@ -288,7 +288,6 @@ class Pack
       end
     end
     
-  private
     def info_path pack_name, user=nil
       name_info = pack_name.split("_")
       info = {}
@@ -322,6 +321,7 @@ class Pack
       end
     end
     
+  private
     def update_division filesname, pack, is_an_upload
       total_pages = 0
       count = pack.documents.count
