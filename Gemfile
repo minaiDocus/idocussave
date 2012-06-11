@@ -28,6 +28,8 @@ gem 'savon_model'
 gem 'prawn'
 gem 'to_xls'
 gem 'barby'
+gem 'oauth'
+gem 'delayed_job_mongoid'
 
 group :development do
   gem 'mongrel'
