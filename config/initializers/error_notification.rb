@@ -1,0 +1,3 @@
+module ErrorNotitication
+  EMAILS = []
+end
