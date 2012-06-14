@@ -84,7 +84,9 @@ module AddressDeliveryList
     end
     
     def send_email
-      AddressListUpdatedMailer.notify(EMAIL_TO_NOTIFY).deliver
+      EMAIL_TO_NOTIFY.each do |email|
+        AddressListUpdatedMailer.notify(email).deliver
+      end
     end
     
     def send_file(filepath, target_dir=DELIVERY_DIR)
