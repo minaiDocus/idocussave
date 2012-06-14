@@ -2,14 +2,16 @@ class ExternalFileStorage
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  SERVICES = ["Dropbox","Google Drive"]
+  SERVICES = ["Dropbox","Google Drive","FTP"]
   
   F_DROPBOX = 2
   F_GOOGLE_DOCS = 4
+  F_FTP = 8
   
   referenced_in :user
   references_one :dropbox_basic
   references_one :google_doc
+  references_one :ftp
   
   field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   field :is_path_used, :type => Boolean, :default => true
@@ -32,6 +34,10 @@ class ExternalFileStorage
     authorized & F_GOOGLE_DOCS > 0
   end
   
+  def is_ftp_authorized?
+    authorized & F_FTP > 0
+  end
+  
   def is_authorized? flag
     authorized & flag > 0
   end
@@ -40,7 +46,16 @@ class ExternalFileStorage
     services  = []
     services << "Dropbox" if authorized & F_DROPBOX > 0
     services << "Google Drive" if authorized & F_GOOGLE_DOCS > 0
+    services << "FTP" if authorized & F_FTP > 0
     services.join(", ")
+  end
+  
+  def services_authorized_count
+    nb = 0
+    nb += 1 if authorized & F_DROPBOX > 0
+    nb += 1 if authorized & F_DROPBOX > 0
+    nb += 1 if authorized & F_FTP > 0
+    nb
   end
   
   def use flags
@@ -64,6 +79,7 @@ class ExternalFileStorage
     services  = []
     services << "Dropbox" if used & F_DROPBOX > 0
     services << "Google Drive" if used & F_GOOGLE_DOCS > 0
+    services << "FTP" if used & F_FTP > 0
     services.join(", ")
   end
   
@@ -84,6 +100,14 @@ class ExternalFileStorage
         delivery_path = is_path_used ? path : google_doc.path
         delivery_path = static_path(delivery_path,info_path)
         google_doc.deliver(filespath, delivery_path)
+      end
+    end
+    
+    if trusted_flags & F_FTP > 0
+      if ftp and ftp.is_configured?
+        delivery_path = is_path_used ? path : ftp.path
+        delivery_path = static_path(delivery_path,info_path)
+        ftp.deliver(filespath, delivery_path)
       end
     end
   end

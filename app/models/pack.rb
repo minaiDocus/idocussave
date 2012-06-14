@@ -216,6 +216,10 @@ class Pack
         
         if is_ok
           allFilesName.each { |fileName| system("cp #{fileName} ../../") }
+        else
+          ErrorNotitication::EMAILS.each do |email|
+            delay(:queue => 'error notification', :priority => 100).NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
+          end
         end
         
         Dir.chdir("..")
