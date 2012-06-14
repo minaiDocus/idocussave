@@ -31,6 +31,9 @@
   %br
   != check_box_tag "external_file_storage[is_google_docs_authorized]", ExternalFileStorage::F_GOOGLE_DOCS, @user.external_file_storage.try("is_google_docs_authorized?"), :class => 'checkbox floattoleft'
   != label_tag "external_file_storage[is_google_docs_authorized]", "Autoriser Google Docs ?", :class => :label
+  %br
+  != check_box_tag "external_file_storage[is_ftp_authorized]", ExternalFileStorage::F_FTP, @user.external_file_storage.try("is_ftp_authorized?"), :class => 'checkbox floattoleft'
+  != label_tag "external_file_storage[is_ftp_authorized]", "Autoriser FTP ?", :class => :label
 
 .group
   != f.check_box :is_prescriber, :class => 'checkbox floattoleft'

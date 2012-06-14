@@ -5,7 +5,10 @@ private
   def load_ftp
     user = current_user
     user.external_file_storage.create if !user.external_file_storage
-    user.external_file_storage.ftp.create if !user.external_file_storage.ftp
+    if !user.external_file_storage.ftp
+      user.external_file_storage.ftp = Ftp.new
+      user.external_file_storage.ftp.save
+    end
     @ftp = user.external_file_storage.ftp
   end
   
