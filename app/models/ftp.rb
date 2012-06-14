@@ -57,7 +57,7 @@ class Ftp
     require "net/ftp"
     
     begin
-      Net::FTP.open(host) do |ftp|
+      Net::FTP.open(host.sub(/^ftp:\/\//,'')) do |ftp|
         ftp.login(login,password)
         change_or_make_dir(clean_path, ftp)
         filesname.each do |filename|
