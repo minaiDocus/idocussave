@@ -2,14 +2,13 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.4'
 
-gem 'bson_ext', '~> 1.4.0'
+gem 'bson_ext', '1.4.0'
 gem 'mongoid', '2.0.1'
 gem 'mongoid-paperclip', '0.0.4', :require => 'mongoid_paperclip'
 gem 'paperclip', '2.3.6'
 gem 'daemons'
 gem 'haml'
 gem 'devise'
-gem 'airbrake'
 gem 'will_paginate', '3.0.pre2'
 gem 'dynamic_form'
 gem 'mongoid_slug', :require => 'mongoid/slug'
@@ -28,11 +27,15 @@ gem 'savon_model'
 gem 'prawn'
 gem 'to_xls'
 gem 'barby'
+gem 'oauth'
+gem 'delayed_job_mongoid'
+gem 'exception_notification'
 
 group :development do
   gem 'mongrel'
   gem 'ruby-debug'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :require => 'rails_development_boost'
+  gem 'letter_opener'
 end
 
 group :test do
@@ -41,4 +44,3 @@ group :test do
   gem 'rcov', '0.9.8'
   gem 'spork', '0.9.0.rc5'
 end
-

@@ -206,7 +206,17 @@ class Pack
           end
           ftp.chdir("../")
         end
-        allFilesName.each { |fileName| system("cp #{fileName} ../../") }
+        
+        is_ok = true
+        allFilesName.each do |filename|
+          if `pdftk #{filename} dump_data`.empty?
+            is_ok = false
+          end
+        end
+        
+        if is_ok
+          allFilesName.each { |fileName| system("cp #{fileName} ../../") }
+        end
         
         Dir.chdir("..")
         ftp.chdir("..")

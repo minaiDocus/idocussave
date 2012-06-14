@@ -24,19 +24,16 @@
           <a class='logo' href='/'>
             <img alt="logo" src="/images/logo/tiny_logo.png?1330589844" />
           </a>
-          <p class='navbar-text pull-right'>
-            <a data-toggle='modal' href='#connexion'>Connexion</a>
-            |
-            <a href='/users/sign_up'>Créer un compte</a>
-          </p>
         </div>
       </div>
     </div>
     <div class='container margin4top padding2top padding2bottom'>
       <div class='row'>
-        <div class='span4 offset4 well'>
-          <h2>Erreur 404</h2>
-          <p>Page introuvable</p>
+        <div class='span4 offset4'>
+          <div class='well aligncenter margin0bottom'>
+            <h2>Erreur 404</h2>
+            <p>Page introuvable</p>
+          </div>
         </div>
       </div>
     </div>
@@ -58,38 +55,7 @@
         })();
       //]]>
     </script>
-    <div class='modal hide fade in' id='connexion'>
-      <div class='modal-header'>
-        <a class='close' data-dismiss='modal'>×</a>
-        <h3>Connexion</h3>
-      </div>
-<form accept-charset="UTF-8" action="/users/sign_in" class="user_new" id="user_new" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="HXops5xxc/Jk9t8DGBxzmRXTCQk2FcgiwsXuu4ANhxw=" /></div>
-      <div class='modal-body'>
-        <fieldset>
-          <label for='email'>Email</label>
-          <input id="email" name="user[email]" size="30" type="text" />
-          <label for='password'>Mot de passe</label>
-          <input id="password" name="user[password]" size="30" type="password" />
-          <input name="user[remember_me]" type="hidden" value="0" /><input class="pull-left" id="remember_me" name="user[remember_me]" type="checkbox" value="1" />
-          <label class='pull-left' for='remember_me' title='Session de 2 jours'>Se souvenir</label>
-        </fieldset>
-      </div>
-      <div class='modal-footer'>
-        <input class="btn btn-primary" id="user_submit" name="commit" type="submit" value="OK" />
-        <a class='btn' href='/users/password/new'>Aide</a>
-        <a class='modal-close btn' href='#'>Fermer</a>
-      </div>
-</form>
-    </div>
     <script src="/javascripts/jquery-1.7.1.min.js?1328780406" type="text/javascript"></script>
     <script src="/javascripts/bootstrap.min.js?1330589675" type="text/javascript"></script>
-    <script type='text/javascript'>
-      //<![CDATA[
-        $(document).ready(function() {
-          $(".carousel").carousel();
-          $(".modal-close").click(function(){ $(".modal").modal("hide"); });
-        });
-      //]]>
-    </script>
   </body>
 </html>
