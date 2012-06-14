@@ -58,6 +58,9 @@ Idocus::Application.routes.draw do
       post :use, :on => :member
       post :update_path_settings, :on => :member
     end
+    resource :ftp do
+      post :configure, :on => :member
+    end
     resource :paypal, :only => [] do
       member do
         post :success

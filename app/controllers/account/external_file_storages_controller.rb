@@ -33,6 +33,9 @@ public
     elsif params[:external_file_storage][:google_doc]
       @external_file_storage.google_doc.create if !@external_file_storage.google_doc
       result = @external_file_storage.google_doc.update_attributes(params[:external_file_storage][:google_doc])
+    elsif params[:external_file_storage][:ftp]
+      @external_file_storage.ftp.create if !@external_file_storage.ftp
+      result = @external_file_storage.ftp.update_attributes(params[:external_file_storage][:ftp])
     end
     respond_to do |format|
       format.json{ render :json => result.to_json, :status => :ok }
