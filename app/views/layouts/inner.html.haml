@@ -24,7 +24,7 @@
             %ul{ :class=>"nav" }
               %li{ :class=>("active" if params[:controller] == "account/profiles") }
                 != link_to "Mon compte", account_profile_path
-              %li{ :class=>("active" if params[:controller] == "account/documents/documents" && params[:action] == "index") }
+              %li{ :class=>("active" if params[:controller] == "account/documents" && params[:action] == "index") }
                 != link_to "Documents", account_documents_path
               /
                 %li
