@@ -19,7 +19,8 @@ protected
       @page_in_footer = Page.in_footer.visible.by_position rescue []
       render :template => "404.html.haml", :status => 404, :layout => "inner"
     rescue => e
-      ExceptionNotifier::Notifier.exception_notification(request.env, e).deliver
+      user_info = ["#{current_user.try(:code)} :",current_user.try(:name),"<#{current_user.email}>"].reject{ |i| i.nil? }.join(' ')
+      ExceptionNotifier::Notifier.exception_notification(request.env, e, :data => { :user_info => "#{user_info}" }).deliver
       @page_types = PageType.by_position rescue []
       @page_in_footer = Page.in_footer.visible.by_position rescue []
       render :template => "500.html.haml", :status => 500, :layout => "inner"
