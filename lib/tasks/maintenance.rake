@@ -20,7 +20,7 @@ namespace :maintenance do
   namespace :invoice do
     desc "Generate invoice"
     task :generate => [:environment] do
-      User.prescribers.each do |prescriber|
+      User.prescribers.not_in(:code => InvoiceConfig::IGNORE_CODES).each do |prescriber|
         puts Time.now
         if prescriber.is_centraliser
           puts "Generating invoice for prescriber : #{prescriber.name} <#{prescriber.email}>"
