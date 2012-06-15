@@ -53,14 +53,14 @@ class ExternalFileStorage
   def services_authorized_count
     nb = 0
     nb += 1 if authorized & F_DROPBOX > 0
-    nb += 1 if authorized & F_DROPBOX > 0
+    nb += 1 if authorized & F_GOOGLE_DOCS > 0
     nb += 1 if authorized & F_FTP > 0
     nb
   end
   
   def use flags
     trusted_flags = authorized & flags
-    if trusted_flags == flags
+    if trusted_flags == flags and services_used_count < 2
       update_attributes(:used => used | trusted_flags)
     else
       false
@@ -81,6 +81,14 @@ class ExternalFileStorage
     services << "Google Drive" if used & F_GOOGLE_DOCS > 0
     services << "FTP" if used & F_FTP > 0
     services.join(", ")
+  end
+  
+  def services_used_count
+    nb = 0
+    nb += 1 if used & F_DROPBOX > 0
+    nb += 1 if used & F_GOOGLE_DOCS > 0
+    nb += 1 if used & F_FTP > 0
+    nb
   end
   
   def deliver filespath, info_path={}, flags=used

@@ -268,6 +268,15 @@
     $('.do-popover-left').popover({placement: 'left'});
   }
   
+  function apply_services_numbers_limit() {
+    services_used_count = $(".use_service:checked").length;
+    if (services_used_count < 2) {
+      $(".use_service:not(:checked)").removeAttr("disabled");
+    } else if (services_used_count == 2) {
+      $(".use_service:not(:checked)").attr("disabled","disabled");
+    }
+  }
+  
   // initialize once
   function initManager() {
     // filter autocompletion
@@ -363,6 +372,7 @@
           }
         }
       });
+      apply_services_numbers_limit();
     });
     
     $("#sharingButton").click(function() {
@@ -576,6 +586,7 @@
     initManager();
     initEventOnClickOnLinkButton();
     initEventOnHoverOnInformation();
+    apply_services_numbers_limit();
     
     $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
     $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
