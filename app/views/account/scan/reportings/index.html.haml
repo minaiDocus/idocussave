@@ -1,5 +1,8 @@
 ﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
 
+:javascript
+  var user_email = "#{params[:email] if @user.email == params[:email]}";
+
 #reporting.container.padding4top
   .row
     .span12
@@ -266,7 +269,7 @@
         {% for(var i=0; i<o.documents.list.length; i++) { %}
           <tr>
             {% if(o.documents.list[i].link != "#") { %}
-              <td class="first name"><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
+              <td class="first name"><a href="/account/documents/{%= o.documents.list[i].id %}/historic" class="document-info"><i class="icon-info-sign" style="margin-right:3px;"></i></a><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
             {% } else { %}
               <td class="first name">{%= o.documents.list[i].name %}</td>
             {% } %}

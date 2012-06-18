@@ -160,6 +160,7 @@ class Scan::Period
       list = {}
       list[:name] = document.name
       begin
+        list[:id] = document.pack.id
         list[:link] = document.pack.documents.originals.first.content.url
       rescue
         list[:link] = "#"

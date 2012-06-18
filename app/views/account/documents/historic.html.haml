@@ -1,0 +1,12 @@
+%table
+  %tr
+    %th N°
+    %th Date
+    %th Téléversement
+    %th Numérisé
+  - @events.each_with_index do |event,index|
+    %tr
+      %td!= index + 1
+      %td!= event[:date].strftime("%d-%m-%Y")
+      %td{ :style => "text-align:center;" }!= event[:uploaded]
+      %td{ :style => "text-align:center;" }!= event[:scanned]
