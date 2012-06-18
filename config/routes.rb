@@ -25,6 +25,7 @@ Idocus::Application.routes.draw do
       get 'search_user', :on => :collection
       post 'reorder', :on => :collection
       post 'archive', :on => :collection
+      get 'historic', :on => :member
     end
     
     namespace :documents do

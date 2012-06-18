@@ -4,8 +4,8 @@ class ApplicationController < ActionController::Base
   layout :layout_by_resource
   helper_method :format_price
   
-  before_filter :redirect_to_https if Rails.env.production?
-  around_filter :catch_error # if %w(staging production).include?(Rails.env)
+  # before_filter :redirect_to_https if Rails.env.production?
+  around_filter :catch_error if %w(staging production).include?(Rails.env)
   
   def layout_by_resource
     if devise_controller? && resource_name == :super_user
