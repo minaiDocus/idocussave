@@ -7,15 +7,8 @@ protected
   def find_last_composition
     @last_composition = current_user.composition
   end
-
-public
-  def index
-    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at)
-    @packs_count = @packs.count
-    @packs = @packs.paginate(:page => params[:page], :per_page => 20)
-    if @last_composition
-      @composition = Document.any_in(:_id => @last_composition.document_ids)
-    end
+  
+  def load_entries
     pack_ids = @packs.map { |pack| pack.id }
     packs = Pack.any_in(:_id => pack_ids)
     order_ids = packs.distinct(:order_id)
@@ -26,6 +19,17 @@ public
     @all_tags = DocumentTag.any_in(:document_id => original_document_ids).entries
     user_ids = packs.distinct(:user_ids)
     @all_users = User.any_in(:_id => user_ids).entries
+  end
+  
+public
+  def index
+    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at)
+    @packs_count = @packs.count
+    @packs = @packs.paginate(:page => params[:page], :per_page => 20)
+    if @last_composition
+      @composition = Document.any_in(:_id => @last_composition.document_ids)
+    end
+    load_entries
   end
   
   def show
@@ -82,19 +86,20 @@ public
       end
       @packs = Pack.any_in(:_id => pack_ids)
     else
-      @packs = @user.packs
+      @packs = Pack.any_in(:user_ids => [@user.id])
     end
     @packs = @packs.order_by([[:created_at, :desc]])
     
     if params[:view] == "self"
-      @packs = @packs.select { |pack| pack.order.user == @user }
-    elsif params[:view] != "all" and params[:view] != ""
+      @packs = @packs.where(:owner_id => @user.id)
+    elsif params[:view] != "all" and params[:view].present?
       @other_user = User.find(params[:view])
       @packs = @packs.where(:owner_id => @other_user.id)
     end
     
     @packs_count = @packs.count
     @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
+    load_entries
   end
   
   def invoice
