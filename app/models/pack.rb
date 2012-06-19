@@ -104,6 +104,26 @@ class Pack
     documents.originals.first
   end
   
+  def historic
+    _documents = self.documents.asc(:created_at).without_original.entries
+    current_date = _documents.first.created_at
+    @events = [{:date => current_date, :uploaded => 0, :scanned => 0}]
+    current_offset = 0
+    _documents.each do |document|
+      if document.created_at > current_date.end_of_day
+        current_date = document.created_at
+        current_offset += 1
+        @events << {:date => current_date, :uploaded => 0, :scanned => 0}
+      end
+      if document.is_an_upload
+        @events[current_offset][:uploaded] += 1
+      else
+        @events[current_offset][:scanned] += 1
+      end
+    end
+    @events
+  end
+  
   class << self
     def own
       where(:user => self.order.user)

@@ -266,10 +266,21 @@
           <th class="center">Attaches</th>
           <th class="center last">Hors format</th>
         </tr>
-        {% for(var i=0; i<o.documents.list.length; i++) { %}
+        {% for(var i=0; i<o.documents.list.length; i++) {
+            var content = "<table class='historic'><tr><th>N°</th><th>Date</th><th>Téléversées</th><th>Numérisées</th></tr>";
+            for(var k=0; k<o.documents.list[i].historic.length; k++) {
+              content += "<tr>";
+              content += "<td>"+(k+1)+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].date+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].uploaded+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].scanned+"</td>";
+              content += "</tr>";
+            }
+            content += "</table>";
+          %}
           <tr>
             {% if(o.documents.list[i].link != "#") { %}
-              <td class="first name"><a href="/account/documents/{%= o.documents.list[i].id %}/historic" class="document-info"><i class="icon-info-sign" style="margin-right:3px;"></i></a><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
+              <td class="first name"><a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
             {% } else { %}
               <td class="first name">{%= o.documents.list[i].name %}</td>
             {% } %}
@@ -397,3 +408,11 @@
   .table tbody tr:hover th {
     background-color: none;
   }
+  
+  table.historic th, table.historic td {
+    text-align:center;
+    padding: 5px; }
+  table.historic .first {
+    padding-left: 0; }
+  .popover-title {
+    font-size: 14px; }

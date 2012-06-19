@@ -160,8 +160,14 @@ class Scan::Period
       list = {}
       list[:name] = document.name
       begin
-        list[:id] = document.pack.id
-        list[:link] = document.pack.documents.originals.first.content.url
+        pack = document.pack
+        if pack
+          list[:historic] = pack.historic.each { |h| h[:date] = h[:date].strftime("%d %m %Y") }
+          list[:link] = document.pack.documents.originals.first.content.url
+        else
+          list[:historic] = ""
+          list[:link] = ""
+        end
       rescue
         list[:link] = "#"
       end
