@@ -26,7 +26,7 @@
       #documentslist.well
         .header
           %h3.pull-left
-            #{current_user.packs.count} documents
+            #{@packs_count} documents
           .actiongroup.pull-right
             %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
               %i.icon-tag

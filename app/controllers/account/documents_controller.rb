@@ -10,14 +10,33 @@ protected
 
 public
   def index
-    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at).paginate :page => params[:page], :per_page => 20
+    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at)
+    @packs_count = @packs.count
+    @packs = @packs.paginate(:page => params[:page], :per_page => 20)
     if @last_composition
       @composition = Document.any_in(:_id => @last_composition.document_ids)
     end
+    pack_ids = @packs.map { |pack| pack.id }
+    packs = Pack.any_in(:_id => pack_ids)
+    order_ids = packs.distinct(:order_id)
+    @all_orders = Order.any_in(:_id => order_ids).entries
+    @all_documents = Document.any_in(:pack_id => pack_ids).entries
+    @all_original_documents = @all_documents.select{ |document| document.is_an_original }
+    original_document_ids = @all_original_documents.map { |document| document.id }
+    @all_tags = DocumentTag.any_in(:document_id => original_document_ids).entries
+    user_ids = packs.distinct(:user_ids)
+    @all_users = User.any_in(:_id => user_ids).entries
   end
   
   def show
-    @documents = current_user.packs.find(params[:id]).documents.without_original.sort { |a,b| a.position <=> b.position } rescue []
+    @pack = Pack.any_in(:user_ids => [current_user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
+    unless @pack
+      raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id])
+    end
+    
+    @documents = Pack.find(params[:id]).documents.without_original.asc(:position).entries
+    document_ids = @documents.map { |document| document.id }
+    @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
     
     if params[:filtre]
       @user = current_user
@@ -38,17 +57,6 @@ public
       end
       ids = @documents.map { |d| d.id }
       @documents = Document.any_in(:_id => document_ids).asc(:position).find_all { |document| ids.include? document.id }
-    end
-
-    respond_to do |format|
-      format.html{}
-      format.json do
-        render :json => {},
-        :status => :ok
-      end
-      format.pdf do
-        render :pdf => "invoice_order_#{@document_pack.to_param}", :template => "/account/documents/receipt.html.haml"
-      end
     end
   end
   
