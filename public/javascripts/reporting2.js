@@ -90,15 +90,7 @@ function render_data(refs){
           }
         });
         
-        $(".document-info").click(function(){
-          baseurl = window.location.origin;
-          params = "";
-          if (user_email.length > 0) {
-            params = "?email=" + user_email;
-          }
-          window.open(baseurl + $(this).attr("href") + params);
-          return false;
-        });
+        $(".do-popover").popover({placement: 'right'});
         
         do_live_showInvoice();
       }

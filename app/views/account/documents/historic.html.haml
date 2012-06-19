@@ -1,12 +1,36 @@
-%table
-  %tr
-    %th N°
-    %th Date
-    %th Téléversement
-    %th Numérisé
-  - @events.each_with_index do |event,index|
+%h3!= @pack.name
+%div.group
+  %span.legend
+    Historique des ajouts de pages :
+  %br
+  %table.group
     %tr
-      %td!= index + 1
-      %td!= event[:date].strftime("%d-%m-%Y")
-      %td{ :style => "text-align:center;" }!= event[:uploaded]
-      %td{ :style => "text-align:center;" }!= event[:scanned]
+      %th.first N°
+      %th Date
+      %th
+        Téléversées
+      %th
+        Numérisées
+    - @events.each_with_index do |event,index|
+      %tr
+        %td.first!= index + 1
+        %td!= event[:date].strftime("%d %m %Y")
+        %td{ :style => "text-align:center;" }!= event[:uploaded]
+        %td{ :style => "text-align:center;" }!= event[:scanned]
+
+:css
+  h3 {
+    color: #584528;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 27px; }
+  .group {
+    font-size:11px;
+    font-family: Arial; }
+  .legend {
+    font-size: 14px; }
+  table th, table td {
+    padding: 5px; }
+  table .first {
+    padding-left: 0; }
