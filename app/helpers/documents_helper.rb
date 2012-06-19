@@ -32,8 +32,8 @@ module DocumentsHelper
     end
   end
   
-  def tags_of document
-    DocumentTag.where(:user_id => current_user.id, :document_id => document.id).first.name rescue ""
+  def tags_of document, tags
+    tags.select { |tag| tag[:user_id] == current_user.id and tag[:document_id] == document.id }.first.try(:name)
   end
   
   def filter_list_of_users users

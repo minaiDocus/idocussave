@@ -1,12 +1,17 @@
+- is_own = current_user.own_packs.include?(pack)
+- order = @all_orders.select { |order| pack[:order_id] == order.id }.first
+- users = @all_users.select { |user| pack[:user_ids].include?(user.id) }
+- owner = users.select { |user| pack[:owner_id] == user.id }.first
+
 - document_type_content = ""
-- if pack.order.state == "paid"
+- if order.state == "paid"
   - document_class = "paid"
   - document_type_title = "Commande en cours de traitement"
-- elsif pack.order.state == "scanned"
-  - if pack.users.size > 1 && pack.order.user == current_user
+- elsif order.state == "scanned"
+  - if users.size > 1 && is_own
     - document_class = "sharing"
     - document_type_title = "Mon document que je partage"
-  - elsif pack.users.size > 1 && pack.order.user != current_user
+  - elsif users.size > 1 && !is_own
     - document_class = "shared"
     - document_type_title = "Document partagé par un autre utilisateur"
   - else
@@ -17,20 +22,23 @@
 
 - if document_class == "sharing"
   - document_type_content += "<br/>Accès donné à :<br/>"
-  - pack.users.each do |user|
+  - users.each do |user|
     - if user != current_user
       - document_type_content += "#{user.email}<br />"
 - elsif document_class == "shared"
-  - document_type_content += "<br/>Accès donné par : #{pack.order.user.email}"
+  - document_type_content += "<br/>Accès donné par : #{owner.email}"
  
-- document = pack.documents.originals.first
-%li{ :id => "original_#{document.id}_#{pack.id}", :class => document_class }
+- documents = @all_documents.select { |document| document[:pack_id] == pack.id }
+- original_document = documents.select { |document| document.is_an_original }.first
+- pages = documents - [original_document]
+
+%li{ :id => "original_#{original_document.id}_#{pack.id}", :class => document_class }
   %span.action
-    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pack.documents.without_original.count}<br />Tags : #{tags_of document}", :href => "#"}
+    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pages.count}<br />Tags : #{tags_of(original_document,@all_tags)}", :href => "#"}
       %i.icon-info-sign
     %a.do-select.do-tooltip{:href => "#", :title => "sélectionner"}
       %i.icon-ok
-    %a.do-tooltip{ :href => "#{document.content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
+    %a.do-tooltip{ :href => "#{original_document.content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
     %a.do-tooltip{ :href => "#", :title => "Télécharger une archive zip", :class => "download do-archive" }
       %i.icon-download

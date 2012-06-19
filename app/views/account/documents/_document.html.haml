@@ -10,7 +10,7 @@
   - name = document.content_file_name.sub(".pdf","").sub("all_pages","").gsub("_"," ")
   
   %input{ :type => :hidden, :name => :name, :value => "#{name}" }
-  %input{ :type => :hidden, :name => :tags, :value => "#{tags_of document}" }
+  %input{ :type => :hidden, :name => :tags, :value => "#{tags_of(document,@all_tags)}" }
   - if !@is_composition
     = link_to "", document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
   .toolbar
