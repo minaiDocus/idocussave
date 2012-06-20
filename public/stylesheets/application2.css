@@ -647,3 +647,101 @@ input.error:focus, select.error:focus, textarea.error:focus {
   -webkit-box-shadow: 0 0 6px #d59392;
   -moz-box-shadow: 0 0 6px #d59392;
   box-shadow: 0 0 6px #d59392; }
+
+
+
+/***** Reporting *****/
+#reporting table thead tr th.month {
+  width:7%;
+  text-align:right;
+  padding-right:7px; }
+#reporting table tbody tr td {
+  vertical-align:middle; }
+#reporting .period {
+  text-align:right;
+  height:13px;
+  border: 3px solid #BBBBBB;
+  margin: 0;
+  padding:2px 3px 3px;
+  font-size:9px;
+  font-weight:normal;
+  color:black;
+  text-transform:uppercase;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px; }
+#reporting td.block {
+  width:7%;
+  text-align:center; }
+#reporting .period:hover {
+  border: 3px solid #999999;
+  background-color:#999999; }
+#reporting .period.selected {
+  border:3px solid #00FF7F; }
+#reporting .period table td {
+  height:10px;
+  font-size:8px; }
+#reporting .period .badge {
+  height:6px;
+  width:6px;
+  margin-top:1px;
+  padding:3px; }
+#legendModal .badge {
+  height:6px;
+  width:6px;
+  padding:0 7px 0;
+  margin-right:5px; }
+#reporting .badge-important {
+  background-color:red; }
+#reporting .period .value {
+  display:inline-block;
+  text-align:right;
+  width:43px;
+  position:relative;
+  top:-2px; }
+
+#periodModal {
+  margin:-310px 0 0 -500px;
+  height:464px;
+  width:1000px; }
+#periodModal .modal-body {
+  height:330px; }
+#periodModal .documentslist {
+  height:330px;
+  width:500px;
+  float:left; }
+#periodModal .separator {
+  height:330px;
+  border-left:1px solid #EEE;
+  margin-left:33px;
+  width:1px;
+  float:left; }
+#periodModal .optionslist {
+  height:330px;
+  width:400px;
+  float:right; }
+
+#periodModal table tr td.center, #periodModal table tr th.center {
+  text-align:center; }
+
+#periodModal table tr td, #periodModal table tr th {
+  border:none; }
+
+#periodModal table tr.selected td {
+  border-top:2px solid #00FF7F;
+  border-bottom:2px solid #00FF7F; }
+#periodModal table tr.selected td.first {
+  border-left:2px solid #00FF7F; }
+#periodModal table tr.selected td.last {
+  border-right:2px solid #00FF7F; }
+
+#reporting .table tbody tr:hover td, #reporting  .table tbody tr:hover th {
+  background-color: none; }
+
+#reporting table.historic th, table.historic td {
+  text-align:center;
+  padding: 5px; }
+#reporting table.historic .first {
+  padding-left: 0; }
+.popover-title {
+  font-size: 14px !important; }
