@@ -3,10 +3,10 @@
   %head
     %title Idocus | Archivage numérique
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }/
-    %meta{ :name => :description, :content => "#{@homepage.meta_description rescue ''}" }/
+    %meta{ :name => :description, :content => @homepage.try(:meta_description) }/
     != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
     %style{ :type => "text/css" }
-      !=@homepage.style rescue ""
+      != @homepage.try(:style)
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -19,11 +19,12 @@
             != image_tag "logo/tiny_logo.png", :alt => "logo"
           .nav-collapse
             %ul{ :class=>"nav" }
-              - @page_types.each do |type|
-                - lien = Page.where(:content_type => type.number).visible.by_position.first
-                - if lien
-                  %li
-                    %a{ :href => "/pages/#{lien.slug rescue '#'}" } #{type.caption}
+              - if @page_types.present?
+                - @page_types.each do |type|
+                  - lien = Page.where(:content_type => type.number).visible.by_position.first
+                  - if lien
+                    %li
+                      %a{ :href => "/pages/#{lien.slug rescue '#'}" } #{type.caption}
           - if current_user
             %p{ :class=>"navbar-text pull-right" }
               Connecté en tant que 
@@ -41,10 +42,11 @@
     %footer
       .modal-footer.aligncenter
         %p{ :class=>"green" }
-          - @page_in_footer.each_with_index do |page, index|
-            - if index != 0
-              %span.separator &#124;
-            != link_to page.title, "pages/#{page.slug}"
+          - if @page_in_footer.present?
+            - @page_in_footer.each_with_index do |page, index|
+              - if index != 0
+                %span.separator &#124;
+              != link_to page.title, "pages/#{page.slug}"
         %p{ :class=>"copyright" } &copy; iDocus 2012
     
     != render :partial => "/shared/google_analitycs"

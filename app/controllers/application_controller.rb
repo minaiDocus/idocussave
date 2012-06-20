@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :format_price
   
   before_filter :redirect_to_https if Rails.env.production?
-  around_filter :catch_error if %w(staging production).include?(Rails.env)
+  around_filter :catch_error # if %w(staging production).include?(Rails.env)
   
   def layout_by_resource
     if devise_controller? && resource_name == :super_user
@@ -57,8 +57,6 @@ protected
                 ActionController::UnknownAction,
                 BSON::InvalidObjectId,
                 Mongoid::Errors::DocumentNotFound
-      @page_types = PageType.by_position rescue []
-      @page_in_footer = Page.in_footer.visible.by_position rescue []
       render :template => "404.html.haml", :status => 404, :layout => "pages"
     rescue => e
       user_info = "[visiteur]"
@@ -66,8 +64,6 @@ protected
         user_info = ["#{current_user.try(:code)} :",current_user.try(:name),"<#{current_user.email}>"].reject{ |i| i.nil? }.join(' ')
       end
       ExceptionNotifier::Notifier.exception_notification(request.env, e, :data => { :user_info => "#{user_info}" }).deliver
-      @page_types = PageType.by_position rescue []
-      @page_in_footer = Page.in_footer.visible.by_position rescue []
       render :template => "500.html.haml", :status => 500, :layout => "pages"
     end
   end

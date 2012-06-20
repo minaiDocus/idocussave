@@ -161,4 +161,6 @@ Idocus::Application.routes.draw do
       post 'generate', :on => :member
     end
   end
+  
+  match '*a', :to => 'errors#routing'
 end
