@@ -198,6 +198,8 @@ class Pack
       processed_headers = Dir.glob("*.txt")
       headers = headers - processed_headers
       
+      total_filesname = []
+      
       headers.each do |header|
         folderName = rootFilesName.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
         puts "Looking at folder : #{folderName}"
@@ -236,9 +238,10 @@ class Pack
         
         if is_ok
           allFilesName.each { |fileName| system("cp #{fileName} ../../") }
+          total_filesname += allFilesName
         else
           ErrorNotitication::EMAILS.each do |email|
-            delay(:queue => 'error notification', :priority => 100).NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
+            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
           end
         end
         
@@ -248,12 +251,14 @@ class Pack
       end
       
       ftp.close
+      
+      total_filesname
     end
     
-    def get_documents
+    def get_documents files=[]
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       downcase_extension
-      filesname = valid_documents.sort
+      filesname = files.empty? ? valid_documents.sort : files
       # traiter un document à la fois
       while !filesname.empty?
         filename = filesname.first
