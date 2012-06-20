@@ -71,33 +71,33 @@
               %span.margin1left.margin1right #{@year}
               != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
             - months.each do |month|
-              %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
+              %th.month
                 #{month}
         %tbody
           - @users.each do |user|
             %tr{ :id => "user_#{user.id}", :class => "user" }
-              %td{ :style => "vertical-align:middle;" }
+              %td
                 #{[user.code,user.company].join(" - ")}
               - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
               - periods.each do |period|
                 - if period
                   - period.duration.times do |i|
                     - annual_summary[period.start_at.month + i - 1][:active_user] += 1
-                  %td{ :style => "width:7%;text-align:center;", :colspan => period.duration }
+                  %td.block{ :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}", :style => "text-align:right;height:13px;" }
+                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
                         - if period.delivery.state == "wait"
                           - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
-                          .badge.badge-important.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;background-color:red;" }
+                          .badge.badge-important.pull-left
                         - elsif period.delivery.state == "received"
                           - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
-                          .badge.badge-warning.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;" }
+                          .badge.badge-warning.pull-left
                         - elsif period.delivery.state == "delivered"
                           - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
-                          .badge.badge-success.pull-left{ :style => "height:6px;width:6px;margin-top:1px;padding:3px;" }
+                          .badge.badge-success.pull-left
                         - period.documents_name_tags.each do |tags|
                           %span{ :class => tags }
-                        .value{ :style => "display:inline-block;text-align:right;width:43px;position:relative;top:-2px;" }
+                        .value
                           %span{ :class => "hide pieces value_1" }
                             #{period.pieces - period.uploaded_pieces}
                           %span{ :class => "sheets value_0" }
@@ -131,7 +131,7 @@
                           - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
                           - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
                 - else
-                  %td{ :style => "width:7%;text-align:center;" }
+                  %td.block
                     \-
           - if current_user.is_prescriber || current_user.is_admin
             %tr#total
@@ -220,15 +220,15 @@
     %h3{ :style => "text-align:center;" }
       Légende
   .modal-body
-    %span.badge.badge-important{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;background-color:red;", :title => "Attendus" }
+    %span.badge.badge-important
     \: Documents papier attendus
     %br
     %br
-    %span.badge.badge-warning{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;", :title => "Reçus" }
+    %span.badge.badge-warning
     \: Documents papier reçus
     %br
     %br
-    %span.badge.badge-success{ :style => "height:6px;width:6px;padding:0 7px 0;margin-right:5px;", :title => "Traités" }
+    %span.badge.badge-success
     \: Documents papier traités
     %br
 
@@ -347,72 +347,3 @@
             </td>
           </tr>
       </div>
-
-:css
-  .period{
-    border: 3px solid #BBBBBB;
-    margin: 0;
-    padding:2px 3px 3px;
-    font-size:9px;
-    font-weight:normal;
-    color:black;
-    text-transform:uppercase;
-    -webkit-border-radius:3px;
-    -moz-border-radius:3px;
-    border-radius:3px;}
-  .period:hover{
-    border: 3px solid #999999;
-    background-color:#999999;}
-  .period.selected{
-    border:3px solid #00FF7F;}
-  .period table td{
-    height:10px;
-    font-size:8px;}
-    
-  #periodModal{
-    margin:-310px 0 0 -500px;
-    height:464px;
-    width:1000px; }
-  #periodModal .modal-body{
-    height:330px; }
-  #periodModal .documentslist{
-    height:330px;
-    width:500px;
-    float:left; }
-  #periodModal .separator{
-    height:330px;
-    border-left:1px solid #EEE;
-    margin-left:33px;
-    width:1px;
-    float:left; }
-  #periodModal .optionslist{
-    height:330px;
-    width:400px;
-    float:right; }
-    
-  #periodModal table tr td.center, #periodModal table tr th.center{
-    text-align:center; }
-    
-  #periodModal table tr td, #periodModal table tr th{
-    border:none; }
-  
-  #periodModal table tr.selected td{
-    border-top:2px solid #00FF7F;
-    border-bottom:2px solid #00FF7F; }
-  #periodModal table tr.selected td.first{
-    border-left:2px solid #00FF7F; }
-  #periodModal table tr.selected td.last{
-    border-right:2px solid #00FF7F; }
-  
-  .table tbody tr:hover td,
-  .table tbody tr:hover th {
-    background-color: none;
-  }
-  
-  table.historic th, table.historic td {
-    text-align:center;
-    padding: 5px; }
-  table.historic .first {
-    padding-left: 0; }
-  .popover-title {
-    font-size: 14px; }
