@@ -655,7 +655,7 @@ input.error:focus, select.error:focus, textarea.error:focus {
   width:7%;
   text-align:right;
   padding-right:7px; }
-#reporting table tbody tr td {
+#reporting table tbody tr td.align-middle {
   vertical-align:middle; }
 #reporting .period {
   text-align:right;
