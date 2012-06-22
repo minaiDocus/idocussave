@@ -43,4 +43,7 @@ group :test do
   gem 'factory_girl_rails', '1.0'
   gem 'rcov', '0.9.8'
   gem 'spork', '0.9.0.rc5'
+  gem 'guard-spork'
+  gem 'guard-rspec'
+  gem 'database_cleaner'
 end
