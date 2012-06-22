@@ -76,14 +76,14 @@
         %tbody
           - @users.each do |user|
             %tr{ :id => "user_#{user.id}", :class => "user" }
-              %td
+              %td.align-middle
                 #{[user.code,user.company].join(" - ")}
               - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
               - periods.each do |period|
                 - if period
                   - period.duration.times do |i|
                     - annual_summary[period.start_at.month + i - 1][:active_user] += 1
-                  %td.block{ :colspan => period.duration }
+                  %td.align-middle.block{ :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
                       .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
                         - if period.delivery.state == "wait"
@@ -131,7 +131,7 @@
                           - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
                           - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
                 - else
-                  %td.block
+                  %td.align-middle.block
                     \-
           - if current_user.is_prescriber || current_user.is_admin
             %tr#total
