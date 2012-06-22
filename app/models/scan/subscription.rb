@@ -14,7 +14,7 @@ class Scan::Subscription < Subscription
   after_save :check_propagation
   
   def set_category
-  	category = 1
+  	self.category = 1
   end
   
   def code
