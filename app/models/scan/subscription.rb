@@ -54,8 +54,18 @@ class Scan::Subscription < Subscription
       period.subscription = self
       period.user = self.user
       period.set_product_option_orders self.product_option_orders
-      period.save
+      if period.save
+        remove_non_reusable_options!
+      end
       period
+    end
+  end
+  
+  def remove_non_reusable_options!
+    self.product_option_orders.each do |option|
+      if option.duration == 0
+        option.destroy
+      end
     end
   end
   
