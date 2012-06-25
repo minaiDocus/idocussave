@@ -13,7 +13,7 @@ class Ftp
   scope :configured, :where => { :is_configured => true }
   scope :not_configured, :where => { :is_configured => false }
   
-  validates_format_of :host, :with => URI::regexp("ftp")
+  # validates_format_of :host, :with => URI::regexp("ftp")
   validates :login, :length => { :minimum => 2, :maximum => 40 }
   validates :password, :length => { :minimum => 2, :maximum => 40 }
   
@@ -51,6 +51,24 @@ class Ftp
     end
   end
   
+  def is_updated(filename, ftp)
+    result = ftp.list.select { |entry| entry.match(/#{filename}/) }.first
+    if result
+      size = result.split(/\s/).reject(&:empty?)[3]
+      if size == File.size(filename)
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+  
+  def is_not_updated(filename, ftp)
+    !is_updated(filename, ftp)
+  end
+  
   def deliver(filesname, folder_path)
     clean_path = folder_path.sub(/\/$/,"")
     
@@ -61,7 +79,9 @@ class Ftp
         ftp.login(login,password)
         change_or_make_dir(clean_path, ftp)
         filesname.each do |filename|
-          ftp.put(filename)
+          if is_not_updated(filename, ftp)
+            ftp.put(filename)
+          end
         end
         true
       end

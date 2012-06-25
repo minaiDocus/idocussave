@@ -507,6 +507,28 @@
     $("#composition_name").change(function() {
       $("#compositionDialog .names_alert").html("");
     });
+  
+    $("#deliverButton").click(function() {
+      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      var view = $("select[name=document_owner_list]").val();
+      var hsh = { "filter": $("#filter").val(), "pack_ids": pack_ids, "view": view };
+      $.ajax({
+        url: "/account/documents/sync_with_external_file_storage",
+        data: hsh,
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+          logBeforeAction("Traitement en cours");
+        },
+        success: function(data){
+          logAfterAction();
+        },
+        error: function(data){
+          logAfterAction();
+          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div>");
+        }
+      });
+    });
   }
   
   $(document).ready(function() {

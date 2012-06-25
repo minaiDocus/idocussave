@@ -1,6 +1,6 @@
 class Account::AccountController < ApplicationController
   before_filter :authenticate_user!
-  around_filter :catch_error # if %w(staging production).include?(Rails.env)
+  around_filter :catch_error if %w(staging production).include?(Rails.env)
   
   layout "inner"
   

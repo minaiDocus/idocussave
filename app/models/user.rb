@@ -54,6 +54,7 @@ class User
   references_one :debit_mandate
   references_one :external_file_storage
   references_one :file_sending_kit
+  references_one :pack_delivery_list
   
   scope :prescribers, :where => { :is_prescriber => true }
   scope :dropbox_extended_authorized, :where => { :is_dropbox_extended_authorized => true }
@@ -229,6 +230,14 @@ class User
   
   def find_or_create_external_file_storage
     external_file_storage || ExternalFileStorage.create(:user_id => self.id)
+  end
+  
+  def find_or_create_pack_delivery_list
+    if !self.pack_delivery_list
+      self.pack_delivery_list = PackDeliveryList.new
+      self.pack_delivery_list.save
+    end
+    self.pack_delivery_list
   end
   
 protected

@@ -290,6 +290,56 @@ public
     @events = @pack.historic
   end
   
+  def sync_with_external_file_storage
+    @user = current_user
+    @all_pack_ids = Pack.any_in(:user_ids => [@user.id]).distinct(:_id)
+    @pack_ids = []
+    if params[:pack_ids].present?
+      clean_pack_ids = @all_pack_ids.map { |id| "#{id}" }
+      @pack_ids = params[:pack_ids].select { |pack_id| clean_pack_ids.include?(pack_id) }
+    elsif params[:filter].present?
+      @packs = []
+      queries = params[:filter].split(':_:')
+      pack_ids = []
+      queries.each_with_index do |query,index|
+        f_pack_ids = []
+        t_pack_ids = []
+        if index == 0
+          f_pack_ids = Document::Index.find_pack_ids [query], @user
+          t_pack_ids = Pack.find_ids_by_tags [query], @user
+          pack_ids = f_pack_ids + t_pack_ids
+        else
+          f_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Document::Index.find_pack_ids([query], @user)).distinct(:_id)
+          t_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Pack.find_ids_by_tags([query], @user)).distinct(:_id)
+          pack_ids = f_pack_ids + t_pack_ids
+        end
+      end
+      @packs = Pack.any_in(:_id => pack_ids)
+      @packs = @packs.order_by([[:created_at, :desc]])
+      
+      if params[:view].present?
+        if params[:view] == "self"
+          @packs = @packs.where(:owner_id => @user.id)
+        elsif params[:view] != "all"
+          @other_user = User.find(params[:view])
+          @packs = @packs.where(:owner_id => @other_user.id)
+        end
+      end
+      @pack_ids = @packs.distinct(:_id)
+    else
+      @pack_ids = @all_pack_ids
+    end
+    
+    pack_delivery_list = @user.find_or_create_pack_delivery_list
+    pack_delivery_list.add!(@pack_ids)
+    pack_delivery_list.process_in_background
+    
+    respond_to do |format|
+      format.html{ render :nothing => true, :status => 200 }
+      format.json { render :json => true, :status => :ok }
+    end
+  end
+  
 private
   def render_to_xls monthlies
     book = Spreadsheet::Workbook.new

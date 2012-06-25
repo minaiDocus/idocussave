@@ -26,6 +26,7 @@ Idocus::Application.routes.draw do
       post 'reorder', :on => :collection
       post 'archive', :on => :collection
       get 'historic', :on => :member
+      post 'sync_with_external_file_storage', :on => :collection
     end
     
     namespace :documents do
