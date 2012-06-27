@@ -26,10 +26,6 @@ class PackDeliveryList
     save
   end
   
-  def process_in_background
-    delay(:queue => 'external file storage delivery', :priority => 5).process(self.id)
-  end
-  
   def process!
     packs = Pack.any_in(:_id => pack_ids)
     packs.each do |pack|
@@ -40,18 +36,18 @@ class PackDeliveryList
   end
   
   def send_file(document)
-    begin
-      filepath = document.content.url.sub(/\?.+/,"")
-      path = File.dirname(filepath)
-      Dir.chdir(path)
-      service.deliver [filepath], info_path(document.pack.name,self.user)
-    rescue
-      puts "An error preventing this file #{filepath} from sending."
-    end
+    filepath = document.content.path
+    path = File.dirname(filepath)
+    Dir.chdir(path)
+    service.deliver [filepath], info_path(document.pack.name,self.user)
+  end
+  
+  def service
+    @external_file_storage ||= self.user.find_or_create_external_file_storage
   end
   
   def info_path(name, user=nil)
-    name_info = name.split("_")
+    name_info = name.split(/\s/)
     info = {}
     info[:code] = name_info[0]
     info[:company] = user.try(:company)
@@ -63,8 +59,7 @@ class PackDeliveryList
   end
   
   def self.process(id)
-    pack_delivery_list = find(id)
-    pack_delivery_list.process!
+    find(id).process!
   end
   
 end

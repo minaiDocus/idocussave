@@ -55,6 +55,28 @@ class DropboxBasic
     self.save
   end
   
+  def is_updated(path, filename, client)
+    begin
+      result = client.metadata("#{path}/#{filename}")
+    rescue DropboxError
+      result = nil
+    end
+    if result
+      size = result["bytes"]
+      if size == File.size(filename)
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+  
+  def is_not_updated(path, filename, client)
+    !is_updated(path, filename, client)
+  end
+  
   def deliver filespath, folder_path
     if temp_session = new_session
       if temp_session.authorized?
@@ -62,7 +84,9 @@ class DropboxBasic
         clean_path = folder_path.sub(/\/$/,"")
         filespath.each do |filepath|
           filename = File.basename(filepath)
-          client.put_file "#{clean_path}/#{filename}", open(filepath)
+          if is_not_updated(clean_path, filename, client)
+            client.put_file "#{clean_path}/#{filename}", open(filepath)
+          end
         end
       end
     end

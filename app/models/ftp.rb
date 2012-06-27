@@ -13,7 +13,7 @@ class Ftp
   scope :configured, :where => { :is_configured => true }
   scope :not_configured, :where => { :is_configured => false }
   
-  # validates_format_of :host, :with => URI::regexp("ftp")
+  validates_format_of :host, :with => URI::regexp("ftp")
   validates :login, :length => { :minimum => 2, :maximum => 40 }
   validates :password, :length => { :minimum => 2, :maximum => 40 }
   
@@ -41,12 +41,14 @@ class Ftp
   end
   
   def change_or_make_dir(pathname, ftp)
-    folders = pathname.split("/")
+    folders = pathname.split("/").reject { |e| e.empty? }
     folders.each do |folder|
-      if ftp.mkdir(folder)
+      begin
+        ftp.mkdir(folder)
+      rescue Net::FTPPermError
+        puts "Unable to create directory #{folder} in #{pathname}"
+      ensure
         ftp.chdir(folder)
-      else
-        raise "Unable to create directory #{folder} in #{pathname}"
       end
     end
   end
@@ -54,7 +56,7 @@ class Ftp
   def is_updated(filename, ftp)
     result = ftp.list.select { |entry| entry.match(/#{filename}/) }.first
     if result
-      size = result.split(/\s/).reject(&:empty?)[3]
+      size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
       if size == File.size(filename)
         true
       else
@@ -69,7 +71,7 @@ class Ftp
     !is_updated(filename, ftp)
   end
   
-  def deliver(filesname, folder_path)
+  def deliver(filespath, folder_path)
     clean_path = folder_path.sub(/\/$/,"")
     
     require "net/ftp"
@@ -78,7 +80,8 @@ class Ftp
       Net::FTP.open(host.sub(/^ftp:\/\//,'')) do |ftp|
         ftp.login(login,password)
         change_or_make_dir(clean_path, ftp)
-        filesname.each do |filename|
+        filespath.each do |filepath|
+          filename = File.basename(filepath)
           if is_not_updated(filename, ftp)
             ftp.put(filename)
           end
