@@ -78,19 +78,18 @@
             %th Prix
             %th Durée
             %th.last
-          - @order.product_order.product_option_orders.each do |option|
+          - @order.subscription.product_option_orders.each do |option|
             %tr
               %td
               %td!= option.title
               %td
-                #{format_price option.price_in_cents_wo_vat} € HT
+                - price = option.price_in_cents_wo_vat.is_a?(Integer) ? option.price_in_cents_wo_vat : 0
+                #{format_price price} € HT
                 %br
                 %small
-                  #{format_price(option.price_in_cents_wo_vat * 1.196)} € TTC
+                  #{format_price(price * 1.196)} € TTC
               %td!= option.duration
               %td
-        .wat-cf
-          != link_to image_tag("web-app-theme/application_edit.png", :alt => "Modifier les options") + "Modifier les options", edit_option_admin_order_path(@order), :class => "button"
       
       %h3 Liste des documents
       %table.table
@@ -106,22 +105,20 @@
         - total_sheets = 0
         - total_pages = 0
         - @order.packs.order_by([:created_at,:asc]).each do |pack|
-          - pack.get_division_from_pdf if pack.division.nil? || pack.division.try("empty?")
           %tr{:class => cycle("odd", "even")}
             %td
-            %td!=pack.created_at.strftime("%Y-%m-%d %H:%M")
-            %td!=pack.name
+            %td!= pack.created_at.strftime("%Y-%m-%d %H:%M")
+            %td!= pack.name
+            - pieces_count = pack.pieces.count
+            %td!= pieces_count
+            - sheets_count = pack.sheets.count
+            %td!= sheets_count
+            - pages_count = pack.pages.count
+            %td!= pages_count
             %td
-              - res = pack.division[2].select{|d| d[1] == 2}.count
-              - if res == 0
-                - res = pack.division[2].select{|d| d[1] == 1}.count
-              !=res
-            %td!=pack.division[2].select{|d| d[1] == 1}.count
-            %td!=pack.division[1]
-            %td
-            - total_sub_doc += res
-            - total_sheets += pack.division[2].select{|d| d[1] == 1}.count
-            - total_pages += pack.division[1]
+            - total_sub_doc += pieces_count
+            - total_sheets += sheets_count
+            - total_pages += pages_count
         %tr
           %td
           %td
