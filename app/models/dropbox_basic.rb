@@ -78,15 +78,14 @@ class DropboxBasic
   end
   
   def deliver filespath, folder_path
-    if temp_session = new_session
-      if temp_session.authorized?
-        client = DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
-        clean_path = folder_path.sub(/\/$/,"")
-        filespath.each do |filepath|
-          filename = File.basename(filepath)
-          if is_not_updated(clean_path, filename, client)
-            client.put_file "#{clean_path}/#{filename}", open(filepath)
-          end
+    @temp_session ||= new_session
+    if @temp_session.try(:authorized?)
+      @client ||= DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
+      clean_path = folder_path.sub(/\/$/,"")
+      filespath.each do |filepath|
+        filename = File.basename(filepath)
+        if is_not_updated(clean_path, filename, @client)
+          @client.put_file "#{clean_path}/#{filename}", open(filepath)
         end
       end
     end

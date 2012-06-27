@@ -511,7 +511,8 @@
     $("#deliverButton").click(function() {
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       var view = $("select[name=document_owner_list]").val();
-      var hsh = { "filter": $("#filter").val(), "pack_ids": pack_ids, "view": view };
+      var delivery_type = $("input[name=delivery_type]:checked").val();
+      var hsh = { "filter": $("#filter").val(), "pack_ids": pack_ids, "view": view, "type": delivery_type };
       $.ajax({
         url: "/account/documents/sync_with_external_file_storage",
         data: hsh,
@@ -519,13 +520,19 @@
         type: "POST",
         beforeSend: function() {
           logBeforeAction("Traitement en cours");
+          $("#deliverButton").attr("disabled","disabled");
         },
         success: function(data){
           logAfterAction();
+          $(".alerts").html("<div class='alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Vos documents vous seront livrés dès que possible.</span></div>");
+          $('#shareDialog').modal('hide');
+          $("#deliverButton").removeAttr("disabled");
         },
         error: function(data){
           logAfterAction();
-          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div>");
+          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Erreur interne, l'administrateur a été prévenu.</span></div>");
+          $('#shareDialog').modal('hide');
+          $("#deliverButton").removeAttr("disabled");
         }
       });
     });

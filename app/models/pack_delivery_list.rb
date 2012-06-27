@@ -2,44 +2,83 @@ class PackDeliveryList
   include Mongoid::Document
   include Mongoid::Timestamps
   
+  ALL = 0
+  ORIGINAL_ONLY = 1
+  SHEETS_ONLY = 2
+  
   referenced_in :user
   
-  field :pack_ids, :type => Array, :default => []
+  field :queue, :type => Array, :default => []
   
   def simplify(ids)
     ids.map { |id| "#{id}" }
   end
   
-  def add!(ids)
-    self.pack_ids = self.pack_ids + simplify(ids)
-    self.pack_ids = self.pack_ids.uniq
+  def add!(ids,type=ALL)
+    self.queue = self.queue + format_queue(ids,type)
+    self.queue = self.queue.uniq
     save
   end
   
-  def remove!(ids)
-    self.pack_ids = self.pack_ids - simplify(ids)
+  def format_queue(ids,type)
+    simplify(ids).map { |id| [id,type] }
+  end
+  
+  def remove!(entries)
+    self.queue = self.queue - entries
     save
   end
   
   def reset!
-    self.pack_ids = []
+    self.queue = []
     save
   end
   
   def process!
-    packs = Pack.any_in(:_id => pack_ids)
-    packs.each do |pack|
-      document = pack.documents.originals.first
-      send_file(document)
-      remove!(["#{pack.id}"])
+    self.queue.each do |entry|
+      pack = Pack.find(entry[0])
+      send_file(pack,entry[1])
+      remove!([entry])
     end
   end
   
-  def send_file(document)
-    filepath = document.content.path
-    path = File.dirname(filepath)
+  def send_file(pack,type)
+    folder_name = pack.name.gsub(/\s/,'_')
+    path = "#{Rails.root}/tmp/#{folder_name}"
+    Dir.mkdir(path) if !File.exist?(path)
     Dir.chdir(path)
-    service.deliver [filepath], info_path(document.pack.name,self.user)
+    
+    filesname = []
+    if type == ALL || type == ORIGINAL_ONLY
+      document = pack.documents.originals.first
+      filepath = document.content.path
+      system("cp #{filepath} ./")
+      filesname << File.basename(filepath)
+    end
+    if type == ALL || type == SHEETS_ONLY
+      documents = pack.documents.without_original.sort { |a,b| a.position <=> b.position }
+      sheets_count = documents.size / 2
+      sheets_count.times do |i|
+        first_path = documents[ i * 2 ].content.path
+        second_path = documents[ i * 2 + 1 ].content.path
+        name = sheet_name(pack, i)
+        combine(first_path, second_path, name)
+        filesname << name
+      end
+    end
+    
+    service.deliver filesname, info_path(pack.name,self.user)
+    system("rm -r #{Rails.root}/tmp/#{folder_name}")
+  end
+  
+  def sheet_name(pack, i)
+    pack.name.split(/\s/)[0..2].join("_") + "_" + ("%0.3d" % i) + ".pdf"
+  end
+  
+  def combine(first_path, second_path, name)
+    cmd = "pdftk A=#{first_path} B=#{second_path} cat A1 B1 output #{name}"
+    puts cmd
+    system(cmd)
   end
   
   def service

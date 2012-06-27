@@ -210,3 +210,19 @@
     .modal-footer
       %a{ :href=>"#", :class=>"modal-close btn" } Fermer
       %input#compositionButton.btn{ :type => "submit", :value => "Ok" }
+
+.modal.fade{ :id=>"shareDialog" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3 Envoyer vers mon stockage externe
+  %form
+    .modal-body
+      != radio_button_tag :delivery_type, PackDeliveryList::ALL, true, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{PackDeliveryList::ALL}", "Document originale et feuilles"
+      != radio_button_tag :delivery_type, PackDeliveryList::ORIGINAL_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{PackDeliveryList::ORIGINAL_ONLY}", "Document originale seulement"
+      != radio_button_tag :delivery_type, PackDeliveryList::SHEETS_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{PackDeliveryList::SHEETS_ONLY}", "Feuilles seulement"
+    .modal-footer
+      %a#deliverButton.btn{ :href => "#" }
+        Valider

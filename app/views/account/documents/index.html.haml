@@ -28,7 +28,7 @@
           %h3.pull-left
             #{@packs_count} documents
           .actiongroup.pull-right
-            %a.do-tooltip#deliverButton{ :href => "#", :title => "Envoyer vers mon stockage externe" }
+            %a.do-tooltip{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
               %i.icon-share-alt
             %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
               %i.icon-tag
