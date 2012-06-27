@@ -19,16 +19,11 @@
           != f.password_field :password_confirmation, :class => 'text_field'
           
         .group
+          != f.check_box :is_admin, :class => 'checkbox floattoleft'
           != f.label :is_admin, "Administrateur ?", :class => :label
-          != f.check_box :is_admin, :class => 'checkbox'
-          
-        .group
+          %br
+          != f.check_box :is_prescriber, :class => 'checkbox floattoleft'
           != f.label :is_prescriber, "Est prescripteur ?", :class => :label
-          != f.check_box :is_prescriber, :class => 'checkbox'
-  
-        .group
-          != f.label :is_dropbox_authorized, "Autoriser Dropbox ?", :class => :label
-          != f.check_box :is_dropbox_authorized, :class => 'checkbox'
           
         .group
           != f.label :first_name, "Nom", :class => :label
@@ -55,3 +50,7 @@
             mandatory fields.
 
 - content_for :sidebar, render(:partial => 'sidebar')
+
+:css
+  .floattoleft {
+    float: left; }
