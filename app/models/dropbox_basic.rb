@@ -80,7 +80,7 @@ class DropboxBasic
   def deliver filespath, folder_path
     @temp_session ||= new_session
     if @temp_session.try(:authorized?)
-      @client ||= DropboxClient.new(temp_session, Dropbox::ACCESS_TYPE)
+      @client ||= DropboxClient.new(@temp_session, Dropbox::ACCESS_TYPE)
       clean_path = folder_path.sub(/\/$/,"")
       filespath.each do |filepath|
         filename = File.basename(filepath)

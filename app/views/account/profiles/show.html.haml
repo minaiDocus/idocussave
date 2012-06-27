@@ -86,7 +86,8 @@
           var is_path_used = #{@user.external_file_storage.is_path_used ? "true" : "false"};
         .row
           .span6.well
-            %h3.aligncenter Livraison automatique
+            %h3.aligncenter Stockage externe des documents
+            %br
             %form.margin0bottom{ :class => "", :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
               != check_box_tag "use_global_path", 1, @user.external_file_storage.is_path_used, :style => "margin:11px 5px  0 0;", :class => "pull-left"
               Chemin de livraison identique pour tous les services : 

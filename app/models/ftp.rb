@@ -43,13 +43,8 @@ class Ftp
   def change_or_make_dir(pathname, ftp)
     folders = pathname.split("/").reject { |e| e.empty? }
     folders.each do |folder|
-      begin
-        ftp.mkdir(folder)
-      rescue Net::FTPPermError
-        puts "Unable to create directory #{folder} in #{pathname}"
-      ensure
-        ftp.chdir(folder)
-      end
+      ftp.mkdir(folder) rescue nil
+      ftp.chdir(folder)
     end
   end
   

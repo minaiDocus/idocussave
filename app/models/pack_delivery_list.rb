@@ -4,7 +4,7 @@ class PackDeliveryList
   
   ALL = 0
   ORIGINAL_ONLY = 1
-  SHEETS_ONLY = 2
+  PIECES_ONLY = 2
   
   referenced_in :user
   
@@ -49,36 +49,33 @@ class PackDeliveryList
     Dir.chdir(path)
     
     filesname = []
+    document = pack.documents.originals.first
+    filepath = document.content.path
     if type == ALL || type == ORIGINAL_ONLY
-      document = pack.documents.originals.first
-      filepath = document.content.path
       system("cp #{filepath} ./")
       filesname << File.basename(filepath)
     end
-    if type == ALL || type == SHEETS_ONLY
-      documents = pack.documents.without_original.sort { |a,b| a.position <=> b.position }
-      sheets_count = documents.size / 2
-      sheets_count.times do |i|
-        first_path = documents[ i * 2 ].content.path
-        second_path = documents[ i * 2 + 1 ].content.path
-        name = sheet_name(pack, i)
-        combine(first_path, second_path, name)
+    if type == ALL || type == PIECES_ONLY
+      pieces = pack.divisions.pieces.sort { |a,b| a.position <=> b.position }
+      pieces.each_with_index do |piece,index|
+        name = pieces_name(pack, index + 1)
+        make_piece(filepath, piece.start, piece.end, name)
         filesname << name
       end
     end
     
     service.deliver filesname, info_path(pack.name,self.user)
+    system("rm *")
+    Dir.chdir("../")
     system("rm -r #{Rails.root}/tmp/#{folder_name}")
   end
   
-  def sheet_name(pack, i)
+  def pieces_name(pack, i)
     pack.name.split(/\s/)[0..2].join("_") + "_" + ("%0.3d" % i) + ".pdf"
   end
   
-  def combine(first_path, second_path, name)
-    cmd = "pdftk A=#{first_path} B=#{second_path} cat A1 B1 output #{name}"
-    puts cmd
-    system(cmd)
+  def make_piece(filepath, pages_start, pages_end, name)
+    system("pdftk A=#{filepath} cat A#{pages_start}-#{pages_end} output #{name}")
   end
   
   def service
