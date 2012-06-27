@@ -129,6 +129,9 @@ h2 { font-size: 16px; }
 .modal-backdrop {
   z-index: 1040; }
   
+.modal form {
+  margin-bottom: 0; }
+  
 
 /*** Other ***/
 .aligncenter { text-align: center; }
