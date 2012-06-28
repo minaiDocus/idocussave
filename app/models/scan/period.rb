@@ -85,7 +85,7 @@ class Scan::Period
   end
   
   def excess_sheets
-    excess  = sheets - max_sheets_authorized
+    excess  = sheets - uploaded_sheets - max_sheets_authorized
     excess > 0 ? excess : 0
   end
   
