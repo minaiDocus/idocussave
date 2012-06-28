@@ -11,7 +11,7 @@ class Scan::Subscription < Subscription
   validates_presence_of :prescriber_id
   
   before_create :set_category
-  after_save :check_propagation
+  after_save :check_propagation, :update_current_period
   
   def set_category
   	self.category = 1
@@ -93,6 +93,17 @@ class Scan::Subscription < Subscription
     if is_to_spreading.try(:to_i) == 1 and user.is_prescriber
       propagate_changes
     end
+  end
+  
+  def update_current_period
+    current_period = find_or_create_period(Time.now)
+    if self.user.is_prescriber
+      options = self.product_option_orders.where(:group_position.gte => 1000)
+    else
+      options = self.product_option_orders
+    end
+    current_period.set_product_option_orders(options)
+    current_period.save
   end
   
 protected
