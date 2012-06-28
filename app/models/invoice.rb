@@ -58,7 +58,7 @@ public
           true
         end
       end
-      periods = Scan::Period.any_in(:subscription_id => user.scan_subscription_reports.distinct(:_id)).
+      periods = Scan::Period.any_in(:subscription_id => user.scan_subscription_reports.not_in(:_id => [scan_subscription.id]).distinct(:_id)).
       where(:start_at.lte => time, :end_at.gte => time).
       select{ |period| period.end_at.month == time.month }
       
@@ -69,7 +69,10 @@ public
         ["Nombre de clients actifs : #{periods.count}",""]
       ]
       
-      options = scan_subscription.product_option_orders.where(:group_position.gte => 1000).by_position rescue []
+      options = scan_subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
+      first.product_option_orders.
+      where(:group_position.gte => 1000).
+      by_position rescue []
       options.each do |option|
         @data << ["#{option.group_title} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
         @total += option.price_in_cents_wo_vat
