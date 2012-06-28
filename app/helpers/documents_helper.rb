@@ -85,4 +85,11 @@ module DocumentsHelper
     end
     periods
   end
+  
+  def price_of_period_by_time periods, time
+    periods.select { |period| period.start_at <= time and period.end_at >= time }.
+    first.
+    try(:price_in_cents_wo_vat) || 0
+  end
+  
 end

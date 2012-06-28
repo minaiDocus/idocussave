@@ -12,5 +12,5 @@
         %li!= image_tag("web-app-theme/application_edit.png", :alt => "Edit") + " to edit a scan subscription"   
     
     %p
-      %form{ :method => "GET", :action => admin_subscriptions_path }
+      %form{ :method => "GET", :action => admin_scan_subscriptions_path }
         != render :partial =>'/admin/shared/filter', :locals => {:link_back => admin_scan_subscriptions_path, :other_filter_fields => [{:caption => "N°", :id => "number"}]}
