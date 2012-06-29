@@ -79,25 +79,25 @@
                     %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
-      - if @user.external_file_storage and @user.external_file_storage.authorized > 0
-        - services_authorized_count = @user.external_file_storage.services_authorized_count
+      - if @external_file_storage.authorized > 0
+        - services_authorized_count = @external_file_storage.services_authorized_count
         - nb = 0
         :javascript
-          var is_path_used = #{@user.external_file_storage.is_path_used ? "true" : "false"};
+          var is_path_used = #{@external_file_storage.is_path_used ? "true" : "false"};
         .row
           .span6.well
             %h3.aligncenter Stockage externe des documents
             %br
             %form.margin0bottom{ :class => "", :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-              != check_box_tag "use_global_path", 1, @user.external_file_storage.is_path_used, :style => "margin:11px 5px  0 0;", :class => "pull-left"
+              != check_box_tag "use_global_path", 1, @external_file_storage.is_path_used, :style => "margin:11px 5px  0 0;", :class => "pull-left"
               Chemin de livraison identique pour tous les services : 
-              != text_field_tag "external_file_storage[path]", @user.external_file_storage.path, :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
+              != text_field_tag "external_file_storage[path]", @external_file_storage.path, :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
               != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
             %hr{ :style => "margin:5px 0 5px 0;" }
-            - if @user.external_file_storage.try("is_dropbox_basic_authorized?")
+            - if @external_file_storage.is_dropbox_basic_authorized?
               - nb += 1
               - service_number = ExternalFileStorage::F_DROPBOX
-              - is_service_used = @user.external_file_storage.try("is_used?", ExternalFileStorage::F_DROPBOX)
+              - is_service_used = @external_file_storage.is_used?(service_number)
               %div
                 .row
                   .span6
@@ -106,7 +106,7 @@
                       != label_tag :"service_#{service_number}", "DROPBOX"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
-                    - if @user.external_file_storage.try(:dropbox_basic).try("is_configured?")
+                    - if @external_file_storage.dropbox_basic.is_configured?
                       Votre compte iDocus est connecté à votre compte Dropbox. 
                       != link_to "Paramètres", authorize_url_account_dropbox_path
                     - else
@@ -115,16 +115,16 @@
                     #{"."}
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != label_tag "external_file_storage[dropbox_basic][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@user.external_file_storage.try(:dropbox_basic).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
             
             - if nb < services_authorized_count
               %hr{ :style => "margin:5px 0 5px 0;" }
             
-            - if @user.external_file_storage.try("is_google_docs_authorized?")
+            - if @external_file_storage.is_google_docs_authorized?
               - nb += 1
               - service_number = ExternalFileStorage::F_GOOGLE_DOCS
-              - is_service_used = @user.external_file_storage.try("is_used?", service_number)
+              - is_service_used = @external_file_storage.is_used?(service_number)
               %div
                 .row
                   .span6
@@ -133,7 +133,7 @@
                       != label_tag :"service_#{service_number}", "GOOGLE DRIVE"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
-                    - if @user.external_file_storage.try(:google_doc).try("is_configured?")
+                    - if @external_file_storage.google_doc.is_configured?
                       Votre compte iDocus est connecté à votre compte Google Drive. 
                       != link_to "Paramètres", authorize_url_account_google_doc_path
                     - else
@@ -142,16 +142,16 @@
                     #{"."}
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != label_tag "external_file_storage[google_doc][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[google_doc][path]", "#{@user.external_file_storage.try(:google_doc).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
             
             - if nb < services_authorized_count
               %hr{ :style => "margin:5px 0 5px 0;" }
             
-            - if @user.external_file_storage.try("is_ftp_authorized?")
+            - if @external_file_storage.is_ftp_authorized?
               - nb += 1
               - service_number = ExternalFileStorage::F_FTP
-              - is_service_used = @user.external_file_storage.try("is_used?", ExternalFileStorage::F_FTP)
+              - is_service_used = @external_file_storage.is_used?(service_number)
               %div
                 .row
                   .span6
@@ -160,7 +160,7 @@
                       != label_tag :"service_#{service_number}", "FTP"
                 .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span6
-                    - if @user.external_file_storage.try(:ftp).try("is_configured?")
+                    - if @external_file_storage.ftp.is_configured?
                       Votre compte iDocus est connecté à votre compte FTP. 
                       != link_to "Paramètres", "#ftpDialog", "data-toggle" => "modal"
                     - else
@@ -169,7 +169,7 @@
                     \.
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != label_tag "external_file_storage[ftp][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[ftp][path]", "#{@user.external_file_storage.try(:ftp).try(:path)}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
@@ -183,17 +183,17 @@
                   %td.alignright
                     != label_tag "ftp[host]", "Hôte : "
                   %td
-                    != text_field_tag "ftp[host]", @user.external_file_storage.try(:ftp).try(:host)
+                    != text_field_tag "ftp[host]", @external_file_storage.ftp.host
                 %tr
                   %td.alignright
                     != label_tag "ftp[login]", "Identifiant : "
                   %td
-                    != text_field_tag "ftp[login]", @user.external_file_storage.try(:ftp).try(:login)
+                    != text_field_tag "ftp[login]", @external_file_storage.ftp.login
                 %tr
                   %td.alignright
                     != label_tag "ftp[password]", "Mots de passe : "
                   %td
-                    != password_field_tag "ftp[password]", @user.external_file_storage.try(:ftp).try(:password)
+                    != password_field_tag "ftp[password]", @external_file_storage.ftp.password
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
