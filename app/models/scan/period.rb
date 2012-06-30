@@ -118,6 +118,12 @@ class Scan::Period
     self.documents_name_tags = tags
   end
   
+  def check_delivery
+    if self.sheets - self.uploaded_sheets > 0
+      self.delivery.state = "delivered"
+    end
+  end
+  
   def update_information!
     update_information
     save
@@ -133,6 +139,7 @@ class Scan::Period
     self.uploaded_pages = self.documents.sum(&:uploaded_pages)
     self.paperclips = self.documents.sum(&:paperclips)
     self.oversized = self.documents.sum(&:oversized)
+    check_delivery
     update_price
   end
   
