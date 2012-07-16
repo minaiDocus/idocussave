@@ -16,7 +16,9 @@ class ExternalFileStorage
   field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   field :is_path_used, :type => Boolean, :default => true
   field :used, :type => Integer, :default => 0
-  field :authorized, :type => Integer, :default => 0
+  field :authorized, :type => Integer, :default => 14
+  
+  after_create :init_services
   
   def authorize flags
     update_attributes(:authorized => authorized | flags)
@@ -129,6 +131,14 @@ class ExternalFileStorage
     delivery_path = delivery_path.gsub(":month",info_path[:month])
     delivery_path = delivery_path.gsub(":delivery_date",info_path[:delivery_date])
     delivery_path
+  end
+  
+protected
+  def init_services
+    DropboxBasic.create(:external_file_storage_id => self.id)
+    GoogleDoc.create(:external_file_storage_id => self.id)
+    Ftp.create(:external_file_storage_id => self.id)
+    true
   end
   
 end

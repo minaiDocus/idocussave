@@ -3,6 +3,7 @@ class Account::ProfilesController < Account::AccountController
 public
   def show
     @user = current_user
+    @external_file_storage = @user.find_or_create_external_file_storage
   end
   
   def update

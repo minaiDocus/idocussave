@@ -150,13 +150,16 @@ protected
       total = self.not_clean.without_original.count
       while total > 0
         documents = self.not_clean.without_original.limit(50)
-        documents.each_with_index do |document,index|
-          print "."
-          document.dirty = false
+        documents.each do |document|
           document.content.reprocess!
-          document.save
+          document.dirty = false
+          if document.save
+            print "."
+          else
+            print "!"
+          end
         end
-        total -= 10
+        total -= 50
       end
       puts "\nEnd of reprocess."
     end
