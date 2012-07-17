@@ -86,7 +86,7 @@ class Scan::Subscription < Subscription
   end
   
   def propagate_changes
-   propagate_changes_for user.clients
+   propagate_changes_for user.clients.active
   end
   
   def check_propagation
