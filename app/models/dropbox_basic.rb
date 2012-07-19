@@ -85,6 +85,7 @@ class DropboxBasic
       filespath.each do |filepath|
         filename = File.basename(filepath)
         if is_not_updated(clean_path, filename, @client)
+          @client.file_delete "#{clean_path}/#{filename}" rescue nil
           @client.put_file "#{clean_path}/#{filename}", open(filepath)
         end
       end

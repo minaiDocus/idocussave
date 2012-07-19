@@ -45,9 +45,12 @@ class GoogleDoc
   
   def deliver(filespath, delivery_path)
     if service
-      colID = service.find_or_create_colID(delivery_path)
-      filespath.each do |filepath|
-        service.upload_file(filepath, colID)
+      collection = service.get_collection_id(delivery_path)
+      if collection
+        colID = collection["id"]
+        filespath.each do |filepath|
+          service.upload_file(filepath, colID, "text/plain")
+        end
       end
     end
   end
