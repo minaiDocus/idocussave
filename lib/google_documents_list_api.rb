@@ -50,15 +50,6 @@ module GoogleDocumentsList
         @access_token
       end
       
-      def get_collection_id(path)
-        result = find_or_create_collection(path)
-        if result
-          result["id"].split("/")[-1] rescue nil
-        else
-          nil
-        end
-      end
-      
       def find_or_create_collection(path)
         colID = nil
         result = nil
@@ -92,6 +83,17 @@ EOF
       def delete(resourceID)
         @access_token.delete("#{DEFAULT_URL}/#{resourceID}?delete=true")
         is_response_ok?
+      end
+      
+      def update_or_create_file(filepath, colID, content_type, collection=nil)
+        document = find_document(File.basename(filepath,".*"), colID)
+        if document
+          id = document["id"].split("/")[-1]
+          etag = document["etag"]
+          update(filepath, id, etag, content_type)
+        else
+          create(filepath, content_type, colID, collection)
+        end
       end
       
       def collections(colID=nil)
@@ -174,9 +176,14 @@ EOF
       end
       
       # POST
-      def create(filepath, content_type, colID=nil)
+      def create(filepath, content_type, colID=nil, collection=nil)
         id = colID.nil? ? "" : "/" + colID
-        url = "https://docs.google.com/feeds/upload/create-session/default/private/full#{id}?convert=false"
+        url = ""
+        if collection
+          url = collection["resumable-create-media"] + "?convert=false"
+        else
+          url = "https://docs.google.com/feeds/upload/create-session/default/private/full/#{id}?convert=false"
+        end
         name = File.basename(filepath, '.*')
         @access_token.post(url, '', 'X-Upload-Content-Type' => content_type, 'X-Upload-Content-Length' => File.size(filepath).to_s, 'Slug' => name, 'GData-Version' => '3.0')
         if is_response_ok?
@@ -189,9 +196,8 @@ EOF
       
       # PUT
       def update(filepath, id, etag, content_type)
-        extension = File.extname(filepath).sub(".","")
         name = File.basename(filepath, '.*')
-        url = "https://docs.google.com/feeds/upload/create-session/default/private/full/#{extension}%#{id}"
+        url = "https://docs.google.com/feeds/upload/create-session/default/private/full/#{id}"
         options = { 'If-Match' => etag, 'Content-Length' => '0', 'X-Upload-Content-Type' => content_type, 'X-Upload-Content-Length' => File.size(filepath).to_s, 'GData-Version' => '3.0' }
         @access_token.put(url, '', options)
         if is_response_ok?

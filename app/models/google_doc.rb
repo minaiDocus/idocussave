@@ -45,11 +45,10 @@ class GoogleDoc
   
   def deliver(filespath, delivery_path)
     if service
-      collection = service.get_collection_id(delivery_path)
+      collection = service.find_or_create_collection(delivery_path)
       if collection
-        colID = collection["id"]
         filespath.each do |filepath|
-          service.upload_file(filepath, colID, "text/plain")
+          service.update_or_create_file(filepath, collection["id"].split("/")[-1], "application/pdf", collection)
         end
       end
     end
