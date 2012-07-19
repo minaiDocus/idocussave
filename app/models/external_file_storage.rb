@@ -94,30 +94,38 @@ class ExternalFileStorage
   end
   
   def deliver filespath, info_path={}, flags=used
-    trusted_flags =  authorized & used & flags
-    delivery_path = ""
-    
-    if trusted_flags & F_DROPBOX > 0
-      if dropbox_basic and dropbox_basic.is_configured?
-        delivery_path = is_path_used ? path : dropbox_basic.path
-        delivery_path = static_path(delivery_path,info_path)
-        dropbox_basic.deliver filespath, delivery_path
+    is_ok = true
+    filespath.each do |filepath|
+      unless File.exist? filepath
+        is_ok = false
       end
     end
-    
-    if trusted_flags & F_GOOGLE_DOCS > 0
-      if google_doc and google_doc.is_configured?
-        delivery_path = is_path_used ? path : google_doc.path
-        delivery_path = static_path(delivery_path,info_path)
-        google_doc.deliver(filespath, delivery_path)
+    if is_ok
+      trusted_flags =  authorized & used & flags
+      delivery_path = ""
+      
+      if trusted_flags & F_DROPBOX > 0
+        if dropbox_basic and dropbox_basic.is_configured?
+          delivery_path = is_path_used ? path : dropbox_basic.path
+          delivery_path = static_path(delivery_path,info_path)
+          dropbox_basic.deliver filespath, delivery_path
+        end
       end
-    end
-    
-    if trusted_flags & F_FTP > 0
-      if ftp and ftp.is_configured?
-        delivery_path = is_path_used ? path : ftp.path
-        delivery_path = static_path(delivery_path,info_path)
-        ftp.deliver(filespath, delivery_path)
+      
+      if trusted_flags & F_GOOGLE_DOCS > 0
+        if google_doc and google_doc.is_configured?
+          delivery_path = is_path_used ? path : google_doc.path
+          delivery_path = static_path(delivery_path,info_path)
+          google_doc.deliver(filespath, delivery_path)
+        end
+      end
+      
+      if trusted_flags & F_FTP > 0
+        if ftp and ftp.is_configured?
+          delivery_path = is_path_used ? path : ftp.path
+          delivery_path = static_path(delivery_path,info_path)
+          ftp.deliver(filespath, delivery_path)
+        end
       end
     end
   end

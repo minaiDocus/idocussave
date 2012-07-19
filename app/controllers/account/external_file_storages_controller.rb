@@ -37,6 +37,11 @@ public
       @external_file_storage.ftp.create if !@external_file_storage.ftp
       result = @external_file_storage.ftp.update_attributes(params[:external_file_storage][:ftp])
     end
+    if result == true
+      flash[:notice] = "Modifié avec succés."
+    else
+      flash[:error] = "Chemin non valide."
+    end
     respond_to do |format|
       format.json{ render :json => result.to_json, :status => :ok }
       format.html{ redirect_to account_profile_path }
