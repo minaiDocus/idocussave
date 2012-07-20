@@ -53,7 +53,9 @@ module GoogleDocumentsList
       def find_or_create_collection(path)
         colID = nil
         result = nil
-        path.split("/").each do |name|
+        path.split("/").
+        reject { |e| e.empty? }.
+        each do |name|
           result = find_collection(name,colID)
           result = create_collection(name,colID) unless result
           colID = result["id"].split("/")[-1] rescue nil
