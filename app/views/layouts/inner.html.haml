@@ -6,10 +6,10 @@
     %meta{ :name => :description, :content => "#{@homepage.meta_description rescue ''}" }/
     = csrf_meta_tag
     - if ((params[:controller] == "account/scan/reportings" && params[:action] == "index") || (params[:controller] == "account/profiles" && params[:action] == "show"))
-      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
+      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min jquery.qtip.min application2)
     - else
-      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min ui-lightness/jquery-ui-1.8.5.custom file-uploader/jquery.fileupload-ui token-input-facebook.min application2)
-  
+      != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min ui-lightness/jquery-ui-1.8.5.custom file-uploader/jquery.fileupload-ui token-input-facebook.min jquery.qtip.min application2)
+
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -67,8 +67,8 @@
     - if (params[:controller] == "account/documents" && params[:action] == "reporting")
       != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min reporting)
     - elsif (params[:controller] == "account/scan/reportings" && params[:action] == "index")
-      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min tmpl.min account/reporting)
+      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min tmpl.min jquery.qtip.min account/help account/reporting)
     - elsif (params[:controller] == "account/profiles" && params[:action] == "show")
-      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min account/profile)
+      != javascript_include_tag %w(jquery-1.7.1.min rails bootstrap.min jquery.qtip.min account/help account/profile)
     - else
-      != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min application account/documents)
+      != javascript_include_tag %w(jquery-1.7.1.min jquery-ui-1.8.5.custom.min rails bootstrap.min tmpl.min file-uploader/load-image.min file-uploader/jquery.iframe-transport file-uploader/jquery.fileupload file-uploader/jquery.fileupload-ui file-uploader/application file-uploader/cors/jquery.xdr-transport.js jquery.tokeninput.min jquery.qtip.min application account/help account/documents)

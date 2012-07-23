@@ -18,12 +18,14 @@
         = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
         
         .pull-right
+          %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
+          |
           %a{ "data-toggle"=>"modal", :href=>"#uploadDialog" } Téléverser
           |
           != link_to "Reporting", account_scan_reportings_path
   .row-fluid
     .span3
-      #documentslist.well
+      #documentslist.well.qtip-target
         .header
           %h3.pull-left
             #{@packs_count} documents
@@ -108,3 +110,4 @@
               != render :partial => "/account/documents/document", :collection => @composition
             
 != render :partial => "/account/documents/dialog_box"
+!= render "help"

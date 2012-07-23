@@ -627,7 +627,9 @@
     $("#selectionlist .content ul").sortable({
       handle: '.handle'
     });
-    
+
+    // do_qtip(["left bottom"],["top right"],["#documentslist"],["#help1"],["jtools"]);
+
   });
   
 })(jQuery);
