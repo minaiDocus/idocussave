@@ -259,6 +259,7 @@ class Pack
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       downcase_extension
       filesname = files.empty? ? valid_documents.sort : files
+      data = []
       # traiter un document à la fois
       while !filesname.empty?
         filename = filesname.first
@@ -267,11 +268,22 @@ class Pack
         pack_filesname = filesname.find_all { |f| f.match(/#{basename}/) }
         if user = User.where(:code => user_code).first
           pack = find_or_create_by_name basename.gsub("_"," ") + " all", user
-          add pack_filesname, pack
+          data << add(pack_filesname, pack)
         end
         Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
         
         filesname -= pack_filesname
+      end
+      deliver_mail(data)
+    end
+
+    def deliver_mail(data)
+      while data.any?
+        email = data.first[0]
+        tempdata = data.select { |d| d[0] == email }
+        filesname = tempdata.map { |e| e[1] }
+        PackMailer.new_document_available(User.find_by_email(email), filesname).deliver
+        data = data - tempdata
       end
     end
     
@@ -315,6 +327,7 @@ class Pack
       end
       
       delay(:queue => 'external file storage delivery').deliver_to_external_file_storage(pack.id, [user.id,user.prescriber.try(:id)], [Dir.pwd, filesname + [pack_filename]], info_path(pack_name,user))
+      [user.email,pack_filename]
     end
     
     def info_path pack_name, user=nil
