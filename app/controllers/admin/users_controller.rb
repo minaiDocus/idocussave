@@ -32,10 +32,11 @@ public
     @user = User.new params[:user]
     @user.skip_confirmation!
     if @user.save
-      flash[:notice] = "Crée avec succès."
+      UserMailer.welcome(@user).deliver
+      flash[:notice] = "Crï¿½e avec succï¿½s."
       redirect_to admin_users_path
     else
-      flash[:error] = "Erreur lors de la création."
+      flash[:error] = "Erreur lors de la crï¿½ation."
       render :action => "new"
     end
   end
@@ -49,7 +50,7 @@ public
       params[:external_file_storage].each { |key, value| flags |= value.to_i }
       @user.find_or_create_external_file_storage.update_attributes(:authorized => flags)
       
-      flash[:notice] = "Modifiée avec succès."
+      flash[:notice] = "Modifiï¿½e avec succï¿½s."
       redirect_to admin_users_path
     else
       flash[:error] = "Erreur lors de la modification."
