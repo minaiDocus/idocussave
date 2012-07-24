@@ -16,7 +16,7 @@ class ExternalFileStorage
   field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   field :is_path_used, :type => Boolean, :default => true
   field :used, :type => Integer, :default => 0
-  field :authorized, :type => Integer, :default => 14
+  field :authorized, :type => Integer, :default => 10
   
   after_create :init_services
   
