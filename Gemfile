@@ -32,9 +32,7 @@ gem 'delayed_job_mongoid'
 gem 'exception_notification'
 
 group :development do
-  gem 'mongrel'
-  gem 'ruby-debug'
-  gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git', :require => 'rails_development_boost'
+  gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'letter_opener'
 end
 
