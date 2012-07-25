@@ -52,14 +52,40 @@ class DropboxExtended
       delivery_path
     end
     
-    def deliver filesname, folder, infopath
+    def is_updated(path, filename, client)
+      begin
+        result = client.metadata("#{path}/#{filename}")
+      rescue DropboxError
+        result = nil
+      end
+      if result
+        size = result["bytes"]
+        if size == File.size(filename)
+          true
+        else
+          false
+        end
+      else
+        false
+      end
+    end
+    
+    def is_not_updated(path, filename, client)
+      !is_updated(path, filename, client)
+    end
+    
+    def deliver filespath, folder, infopath
       if temp_session = get_session
         if temp_session.authorized?
           delivery_path = static_path(folder, infopath)
           clean_path = delivery_path.sub(/\/$/,"")
           client = get_client(temp_session)
-          filesname.each do |filename|
-            client.put_file "#{clean_path}/#{filename}", open(filename) rescue nil
+          filespath.each do |filepath|
+            filename = File.basename(filepath)
+            if is_not_updated(clean_path, filename, client)
+              client.file_delete "#{clean_path}/#{filename}" rescue nil
+              client.put_file "#{clean_path}/#{filename}", open(filename) rescue nil
+            end
           end
         end
       end
