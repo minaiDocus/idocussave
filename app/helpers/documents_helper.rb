@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module DocumentsHelper
   
   def linked_users_option

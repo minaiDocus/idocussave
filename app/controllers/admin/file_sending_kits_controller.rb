@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::FileSendingKitsController < Admin::AdminController
   
   before_filter :load_my_file_sending_kit, :only => %w(show edit update destroy generate)

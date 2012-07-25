@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::ScanSubscriptionsController < Admin::AdminController
   
   before_filter :load_scan_subscription, :only => %w(show edit update destroy)

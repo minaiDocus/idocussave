@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module Paperclip
   module Storage
     module S3

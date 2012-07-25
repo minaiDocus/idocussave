@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::AccountBookTypesController < ApplicationController
   layout "admin"
   

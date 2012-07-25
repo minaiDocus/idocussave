@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Pack
   include Mongoid::Document
   include Mongoid::Timestamps

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Document::Tree
   TREE_PATH = "#{Rails.root}/tmp/document_content_index/tree"
   

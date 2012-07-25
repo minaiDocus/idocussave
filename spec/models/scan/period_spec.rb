@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
 describe Scan::Period do

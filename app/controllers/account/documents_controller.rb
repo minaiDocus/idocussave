@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::DocumentsController < Account::AccountController
   layout "inner", :only => %w(index reporting reporting2)
   

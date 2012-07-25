@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module AdminHelper
   def array_of_backup_function
     NeobeApi::METHOD_LIST.map{|m| [m,m.sub(/\(.*\)/,'')]}

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class SharedDocument
   include Mongoid::Document
   include Mongoid::Timestamps

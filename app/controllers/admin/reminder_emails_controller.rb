@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::ReminderEmailsController < Admin::AdminController
   before_filter :load_reminder_email, :only => %w(show edit update destroy preview deliver)
   

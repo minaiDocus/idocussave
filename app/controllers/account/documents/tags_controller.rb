@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::Documents::TagsController < Account::AccountController
   
   def update_multiple

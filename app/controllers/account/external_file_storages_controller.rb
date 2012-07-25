@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::ExternalFileStoragesController < Account::AccountController
   
   before_filter :load_external_file_storage

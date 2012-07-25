@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::DebitMandatesController < Account::AccountController
   skip_before_filter :find_last_composition
 

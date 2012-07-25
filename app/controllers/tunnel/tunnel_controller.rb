@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Tunnel::TunnelController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_page

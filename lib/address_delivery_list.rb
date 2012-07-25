@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module AddressDeliveryList
   class << self
     def create_config_file

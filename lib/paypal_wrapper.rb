@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class PaypalWrapper
   attr_reader :paypal_notify
   attr_accessor :gross

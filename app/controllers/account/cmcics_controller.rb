@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::CmcicsController < Account::AccountController
   
   skip_before_filter :authenticate_user!, :only => [:callback]

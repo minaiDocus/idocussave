@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::AddressesController < Admin::AdminController
   before_filter :load_user
   before_filter :load_instance, :except => [:index, :new, :create, :update_multiple]

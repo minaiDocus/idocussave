@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::DocumentsController < Admin::AdminController
   
   before_filter :filtered_user_ids, :only => %w(index)

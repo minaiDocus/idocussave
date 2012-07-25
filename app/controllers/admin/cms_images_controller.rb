@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::CmsImagesController < Admin::AdminController
   
   skip_before_filter :verify_authenticity_token, :only => %w(create)

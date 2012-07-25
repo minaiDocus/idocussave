@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::UsersController < Admin::AdminController
 
   before_filter :load_user, :only => %w(show edit update update_confirm_status update_delivery_status destroy)

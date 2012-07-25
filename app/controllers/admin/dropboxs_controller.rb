@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::DropboxsController < Admin::AdminController
 
   before_filter :load_user, :only => %w(edit update)

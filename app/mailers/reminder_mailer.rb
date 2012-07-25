@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class ReminderMailer < ActionMailer::Base
   helper :application
   default :from => "do-not-reply@idocus.com"

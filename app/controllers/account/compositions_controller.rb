@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::CompositionsController < Account::AccountController
 
   before_filter :load_composition, :only => %w(destroy show reorder delete_document)

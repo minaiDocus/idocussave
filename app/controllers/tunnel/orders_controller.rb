@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Tunnel::OrdersController < Tunnel::TunnelController
   skip_before_filter :authenticate_user!, :only => %w(new option_choice create)
   skip_before_filter :verify_authenticity_token

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::BackupsController < Admin::AdminController
 	
   before_filter :load_backup, :only => %w(edit update)

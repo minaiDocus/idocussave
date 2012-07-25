@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Document::Index
   WORDS_INDEX_PATH = "#{Rails.root}/tmp/document_content_index/words/"
 

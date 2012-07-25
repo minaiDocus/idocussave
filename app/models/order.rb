@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Order
   # FIXME do that with the builtin i18n rails module
   STATES = [['en panier', 'cart'], ['payée', 'paid'], ['impayée', 'unpaid']]

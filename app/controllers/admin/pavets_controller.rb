@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::PavetsController < Admin::AdminController
 
   before_filter :load_pavet, :only => %w(edit update destroy)

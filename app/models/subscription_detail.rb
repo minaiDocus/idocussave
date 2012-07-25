@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class SubscriptionDetail
   include Mongoid::Document
   include Mongoid::Timestamps

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 # This module is very useful to handle static lists (like enumerations).
 #
 # The problem:

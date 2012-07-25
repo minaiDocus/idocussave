@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module AWS
   module S3
     class Authentication

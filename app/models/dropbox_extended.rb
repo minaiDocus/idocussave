@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class DropboxExtended
   PATH = "#{Rails.root}/data/"
   

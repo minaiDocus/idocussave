@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class ErrorsController < ApplicationController
   def routing
     if params[:a].match(/^system\/contents\//)

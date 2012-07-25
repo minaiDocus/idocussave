@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::Scan::PeriodsController < Account::AccountController
   layout nil
   

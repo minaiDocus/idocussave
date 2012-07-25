@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::HomepagesController < Admin::AdminController
 
   before_filter :load_page, :only => %w(edit update destroy)

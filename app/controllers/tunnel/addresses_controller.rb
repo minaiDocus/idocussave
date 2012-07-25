@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Tunnel::AddressesController < Tunnel::TunnelController
   before_filter :authenticate_user!
   before_filter :load_instance, :except => [:new, :create]

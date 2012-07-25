@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class PageContentItem
   include Mongoid::Document
   include Mongoid::Timestamps

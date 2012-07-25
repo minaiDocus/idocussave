@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::EventsController < Admin::AdminController
   before_filter :filtered_user_ids, :only => %w(index)
 

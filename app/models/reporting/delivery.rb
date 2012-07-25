@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Reporting::Delivery
   # FIXME do that with the builtin i18n rails module
   STATES = [['rien', 'nothing'], ['attendus', 'wait'], ['réceptionnés', 'received'], ['traités', 'delivered']]

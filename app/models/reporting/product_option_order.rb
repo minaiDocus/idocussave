@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Reporting::ProductOptionOrder
   include Mongoid::Document
   

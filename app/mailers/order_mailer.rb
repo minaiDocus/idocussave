@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class OrderMailer < ActionMailer::Base
   helper :application
   default :from => "do-not-reply@idocus.com"

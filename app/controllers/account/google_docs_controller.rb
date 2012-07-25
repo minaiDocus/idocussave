@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::GoogleDocsController < Account::AccountController
   before_filter :service_authorized?
   before_filter :load_google_doc

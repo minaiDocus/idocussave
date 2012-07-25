@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 
 module ApplicationHelper
   include StaticList::Helpers

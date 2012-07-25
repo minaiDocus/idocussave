@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::Documents::SharingsController < Account::AccountController
   
   def create

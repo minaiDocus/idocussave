@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::SlidesController < Admin::AdminController
 
   before_filter :load_slide, :only => %w(edit update destroy)

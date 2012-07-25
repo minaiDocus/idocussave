@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class BackgroundProcess
   ENV["RAILS_ENV"] = Rails.env
   

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 require 'oauth'
 require 'rexml/document'
 require 'uri'

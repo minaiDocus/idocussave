@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Invoice
   include Mongoid::Document
   include Mongoid::Timestamps

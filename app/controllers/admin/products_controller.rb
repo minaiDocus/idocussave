@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::ProductsController < Admin::AdminController
 
   before_filter :load_product, :only => %w(edit update destroy)

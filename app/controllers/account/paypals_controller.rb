@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::PaypalsController < Account::AccountController
   
   skip_before_filter :authenticate_user!, :only => [:notify]

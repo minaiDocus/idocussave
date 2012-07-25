@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class PackMailer < ActionMailer::Base
   default :from => "do-not-reply@idocus.com"
 

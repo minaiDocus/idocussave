@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::DropboxesController < Account::AccountController
   before_filter :dropbox_authorized?
   before_filter :load_dropbox

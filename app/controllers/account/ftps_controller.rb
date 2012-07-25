@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::FtpsController < Account::AccountController
   before_filter :load_ftp
   

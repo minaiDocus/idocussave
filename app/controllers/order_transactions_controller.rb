@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class OrderTransactionsController < ApplicationController
 
   protect_from_forgery :except => [:bank_callback]

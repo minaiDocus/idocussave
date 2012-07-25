@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::Scan::ReportingsController < Account::AccountController
   layout "inner", :only => %w(index)
 

@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Admin::OrdersController < Admin::AdminController
 
   before_filter :load_model, :only => %w(show edit edit_option update update_option destroy)

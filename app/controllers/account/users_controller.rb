@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Account::UsersController < Account::AccountController
 
 public
