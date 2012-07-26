@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 namespace :maintenance do
   namespace :documents do
     desc "Fecth documents"
