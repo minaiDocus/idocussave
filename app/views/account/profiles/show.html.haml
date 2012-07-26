@@ -1,4 +1,4 @@
-.container.margin4top.padding2top
+.container
   .row
     .span12.alerts
       - if flash[:notice].present?
@@ -16,7 +16,7 @@
         %a{ :href => "#", :class => "show-qtip" } show
         %br/
         .change_pass
-          - form_for @user, :url => account_profile_path do |f|
+          = form_for @user, :url => account_profile_path do |f|
             - if flash[:alert].present?
               .alert-container
                 .alert.alert-error

@@ -61,4 +61,13 @@ Idocus::Application.configure do
     :sender_address => %{"notifier" <notifier@idocus.com>},
     :exception_recipients => %w{lailol@directmada.com florent.tachot@idocus.com},
     :ignore_exceptions => ExceptionNotifier.default_ignore_exceptions + [Mongoid::Errors::DocumentNotFound, BSON::InvalidObjectId]
+
+  # Compress JavaScript and CSS
+  config.assets.compress = true
+
+  # Don't fallback to assets pipeline
+  config.assets.compile = false
+
+  # Generate digests for assets URLs
+  config.assets.digest = true
 end

@@ -4,7 +4,7 @@
     %title Idocus | Archivage numérique
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-type" }/
     %meta{ :name => :description, :content => @homepage.try(:meta_description) }/
-    != stylesheet_link_tag %w(bootstrap.min bootstrap-responsive.min margin-padding-control.min application2)
+    != stylesheet_link_tag 'application'
     %style{ :type => "text/css" }
       != @homepage.try(:style)
   %body
@@ -56,7 +56,7 @@
         .modal-header
           %a{ :class=>"close", "data-dismiss"=>"modal" } ×
           %h3 Connexion
-        - form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
+        = form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
           .modal-body
             %fieldset
               %label{ :for => "email" } Email
@@ -70,7 +70,7 @@
             %a{ :href=>"/users/password/new", :class=>"btn" } Aide
             %a{ :href=>"#", :class=>"modal-close btn" } Fermer
     
-    != javascript_include_tag %w(jquery-1.7.1.min bootstrap.min)
+    != javascript_include_tag 'application'
     :javascript
       $(document).ready(function() {
         $(".carousel").carousel();
