@@ -14,10 +14,10 @@ public
   
   def return
     if current_user.debit_mandate.transactionStatus == "success"
-      flash[:notice] = "Vos information de prélévement bancaire on bien été pris en compte par nos services."
+      flash[:notice] = "Vos information de prÃ©lÃ©vement bancaire on bien Ã©tÃ© pris en compte par nos services."
       render :action => "show"
     else
-      flash[:notice] = "Une erreur est survenu lors du traitement. Veuillez réessayer à nouveau."
+      flash[:notice] = "Une erreur est survenu lors du traitement. Veuillez rÃ©essayer Ã  nouveau."
       render :action => "new"
     end
   end
