@@ -17,7 +17,7 @@ public
   
     @users = @users.any_in(:_id => @filtered_user_ids) if !@filtered_user_ids.empty?
     
-    @users = @users.desc(:created_at).paginate :page => params[:page], :per_page => 50
+    @users = @users.desc(:created_at).page(params[:page]).per(50)
   end
   
   def show

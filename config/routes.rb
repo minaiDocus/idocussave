@@ -4,7 +4,9 @@ Idocus::Application.routes.draw do
 
   devise_for :super_users
   devise_for :users
-  
+
+  ActiveAdmin.routes(self)
+
   resources :maintenances
 
   resources :pages do

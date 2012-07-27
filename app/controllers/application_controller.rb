@@ -68,5 +68,13 @@ protected
       render :template => "500.html.haml", :status => 500, :layout => "pages"
     end
   end
+
+  def authenticate_admin_user!
+    authenticate_user!
+    unless current_user && current_user.is_admin
+      flash[:error] = "Vous n'avez pas accès à cette page!"
+      redirect_to root_path
+    end
+  end
   
 end

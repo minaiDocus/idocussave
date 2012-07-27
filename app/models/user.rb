@@ -63,6 +63,8 @@ class User
   
   before_save :format_name, :update_clients, :set_inactive_at
   after_save :update_copy
+
+  accepts_nested_attributes_for :external_file_storage
   
   def active
     inactive_at == nil
