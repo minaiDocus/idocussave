@@ -3,7 +3,7 @@
 :javascript
   var user_email = "#{params[:email] if @user.email == params[:email]}";
 
-#reporting.container.padding4top
+#reporting.container
   .row
     .span12
       .actionbar.well
@@ -36,7 +36,7 @@
                   %th
                   %th
                 %tr
-                  - opts = { :class => "margin1left margin0bottom", :style => "width:auto" }
+                  - opts = { :class => "margin1left margin0bottom", :style => "width:auto;position:relative;top:-4px;" }
                   - if !current_user.is_admin and !current_user.is_prescriber
                     - opts.merge!({ :disabled => :disabled})
                   %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users) ),  opts)
@@ -44,10 +44,10 @@
                   %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td
-                    %a#reset_filter.btn.margin0bottom{ :style => "height:21px;font-size:11px;padding:0 8px 0;" }
+                    %a#reset_filter.btn.margin0bottom{ :style => "height:21px;font-size:11px;padding:0 8px 0;position:relative;top:-4px;" }
                       %span{ :style => "position:relative;top:2px;" }
                         reset
-                    != submit_tag "valider", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;"
+                    != submit_tag "valider", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;position:relative;top:-4px;"
                   %td#filter_results.padding1left{ :style => "color:green;" }
           .span1{ :style => "line-height:24px;text-align:right;float:right;" }
             .line1
@@ -55,7 +55,7 @@
                 %span{ :style => "position:relative;top:3px;" }
                   Légende
             .line2
-              != link_to image_tag("application/icon-xls.png", :alt => "Export xls", :style => "position:relative;top:0px;") + " Export xls", account_scan_reportings_path(request.parameters.merge({:format => :xls}))
+              != link_to image_tag("application/icon-xls.png", :alt => "Export xls", :style => "position:relative;top:-2px;") + " Export xls", account_scan_reportings_path(request.parameters.merge({:format => :xls}))
   
   - annual_summary = []
   - 12.times do
