@@ -46,7 +46,7 @@
             - @page_in_footer.each_with_index do |page, index|
               - if index != 0
                 %span.separator &#124;
-              != link_to page.title, "pages/#{page.slug}"
+              != link_to page.title, page
         %p{ :class=>"copyright" } &copy; iDocus 2012
     
     != render :partial => "/shared/google_analitycs"
