@@ -21,7 +21,7 @@
         - @page.page_contents.each_with_index do |onglet, index|
           .tab-pane{ :class => ("active" if index == 0), :id=>"part_#{index+1}" }
             .box_rub
-              - onglet.page_content_items.asc(:position).asc(:title).each do |item|
+              - onglet.page_content_items.asc(:position).each do |item|
                 .clear
                 .box
                   - image = @cms_images.find_by_name(item.image).content.url rescue ""
