@@ -44,7 +44,7 @@
           %ul.margin3top.margin0left
             != render :partial => "/account/documents/pack", :collection => @packs
           .aligncenter
-            != will_paginate( @packs, :previous_label => "&laquo;", :next_label => "&raquo;")
+            != paginate @packs
           
     .span9
       #pageslist.well

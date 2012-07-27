@@ -98,7 +98,9 @@
     var page = 1;
     var regexp = new RegExp("page=[0-9]+");
     var regexp2 = new RegExp("[0-9]+");
-    page = regexp2.exec(regexp.exec(link.attr("href")))[0];
+    result = regexp2.exec(regexp.exec(link.attr("href").replace(/per_page=\d/,"")));
+    if (result != null)
+      page = result[0];
     getPacks(page);
   }
   

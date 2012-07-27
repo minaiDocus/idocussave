@@ -1,10 +1,18 @@
 # -*- encoding : UTF-8 -*-
 class Account::DocumentsController < Account::AccountController
-  layout "inner", :only => %w(index reporting reporting2)
+  layout :current_layout
   
   before_filter :find_last_composition, :only => %w(index)
 
-protected  
+protected
+  def current_layout
+    if %w(index reporting).include? params[:action]
+      'inner'
+    else
+      nil
+    end
+  end
+
   def find_last_composition
     @last_composition = current_user.composition
   end
@@ -26,7 +34,7 @@ public
   def index
     @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at)
     @packs_count = @packs.count
-    @packs = @packs.paginate(:page => params[:page], :per_page => 20)
+    @packs = @packs.page(params[:page]).per(20)
     if @last_composition
       @composition = Document.any_in(:_id => @last_composition.document_ids)
     end
@@ -99,7 +107,7 @@ public
     end
     
     @packs_count = @packs.count
-    @packs = @packs.paginate :page => params[:page], :per_page => params[:per_page]
+    @packs = @packs.page(params[:page]).per(params[:per_page])
     load_entries
   end
   

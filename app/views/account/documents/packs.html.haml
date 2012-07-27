@@ -2,5 +2,5 @@
   != render :partial => "pack", :collection => @packs
 
 .aligncenter
-  != will_paginate( @packs, :previous_label => "&laquo;", :next_label => "&raquo;")
+  != paginate @packs
   %input{ :type => :hidden, :name => :packs_count, :value => "#{@packs_count}" }

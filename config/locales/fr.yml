@@ -162,3 +162,10 @@ fr:
 
   order: "Commande"
   composition: "Composition"
+
+  views:
+    pagination:
+      first: "&laquo;"
+      last: "&raquo;"
+      previous: "&lsaquo;"
+      next: "&rsaquo;"
