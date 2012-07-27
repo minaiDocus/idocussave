@@ -8,7 +8,7 @@
 
 
 - if devise_mapping.authenticatable?
-  - form_for resource_name, resource, :url => password_path(resource_name), :html => { :class => "form-horizontal" } do |f|
+  = form_for resource, :url => password_path(resource_name), :html => { :class => "form-horizontal" } do |f|
     != render :partial => '/shared/error_messages', :locals => {:object => resource}
 
     .control-group

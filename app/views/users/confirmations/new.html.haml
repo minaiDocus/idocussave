@@ -5,7 +5,7 @@
   Si vous n'avez pas eu d'email permettant la validation de votre compte à l'inscription,
   utilisez le formulaire ci-dessous. Pensez à vérifier également le contenu de votre dossier de courriers indésirables.
 
-  - form_for resource_name, resource, :url => confirmation_path(resource_name), :html => { :class => "form-horizontal" } do |f|
+  = form_for resource, :url => confirmation_path(resource_name), :html => { :class => "form-horizontal" } do |f|
     != render :partial => '/shared/error_messages', :locals => {:object => resource}
 
     .control-group
