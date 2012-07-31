@@ -26,7 +26,7 @@
 
 :javascript
   $(document).ready(function(){;
-    $("#user_client_ids").tokenInput("/admin/users/search_by_code.json", {
+    $("#user_client_ids").tokenInput("/admin2/users/search_by_code.json", {
       prePopulate: [
         #{user_codes_to_tokeninput_field @user.clients}
       ],
