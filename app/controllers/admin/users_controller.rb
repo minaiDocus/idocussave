@@ -142,4 +142,21 @@ public
       format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
     end
   end
+
+  def search_by_code
+    @tags = []
+    if !params[:q].blank?
+      users = User.where(:code => /.*#{params[:q]}.*/i)
+
+      users = users.prescribers if params[:prescriber].present?
+
+      users.each do |user|
+        @tags << {"id" => "#{user.id}", "name" => "#{user.code.presence || user.email}"}
+      end
+    end
+
+    respond_to do |format|
+      format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
+    end
+  end
 end

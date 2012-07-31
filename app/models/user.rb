@@ -25,10 +25,11 @@ class User
   attr_accessor :client_ids, :is_inactive
 
   embeds_many :addresses
-  
-  # TODO remove those after migration
+
   references_many :clients, :class_name => "User", :inverse_of => :prescriber
   referenced_in :prescriber, :class_name => "User", :inverse_of => :clients
+
+  # TODO remove those after migration
   references_and_referenced_in_many :reportings, :inverse_of => :viewer
   references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
   
@@ -53,7 +54,7 @@ class User
   references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
-  references_one :external_file_storage
+  references_one :external_file_storage, :autosave => true
   references_one :file_sending_kit
   references_one :pack_delivery_list
   
@@ -62,7 +63,7 @@ class User
   scope :active, :where => { :inactive_at => nil }
   
   before_save :format_name, :update_clients, :set_inactive_at
-  after_save :update_copy
+  #after_save :update_copy
 
   accepts_nested_attributes_for :external_file_storage
   
@@ -247,33 +248,40 @@ class User
   
 protected
   def update_clients
-    if self.is_prescriber && !self.client_ids.nil?
-      new_client_ids = self.client_ids.split(/\s*,\s*/)
-      
-      # add
-      new_clients = User.any_in(:_id => new_client_ids) - [self]
-      new_clients.each do |new_client|
-        new_client.prescriber = self
-        new_client.save
-        
-        reporting = new_client.find_or_create_reporting
-        self.reportings << reporting
-        reporting.save
-      end
-      
-      # remove
-      old_clients = self.clients - new_clients - [self]
-      old_clients.each do |old_client|
-        old_client["prescriber_id"] = nil
-        old_client.save
-        
-        reporting = old_client.find_or_create_reporting
-        self["reporting_ids"] = self["reporting_ids"] - [reporting.id]
-        reporting["viewer_ids"] = reporting["viewer_ids"] - [self.id]
-        reporting.save
-      end
+    if self.client_ids.present?
+      self.clients = User.any_in(:_id => client_ids.split(','))
+    else
+      nil
     end
   end
+  #def update_clients
+  #  if self.is_prescriber && !self.client_ids.nil?
+  #    new_client_ids = self.client_ids.split(/\s*,\s*/)
+  #
+  #    # add
+  #    new_clients = User.any_in(:_id => new_client_ids) - [self]
+  #    new_clients.each do |new_client|
+  #      new_client.prescriber = self
+  #      new_client.save
+  #
+  #      reporting = new_client.find_or_create_reporting
+  #      self.reportings << reporting
+  #      reporting.save
+  #    end
+  #
+  #    # remove
+  #    old_clients = self.clients - new_clients - [self]
+  #    old_clients.each do |old_client|
+  #      old_client["prescriber_id"] = nil
+  #      old_client.save
+  #
+  #      reporting = old_client.find_or_create_reporting
+  #      self["reporting_ids"] = self["reporting_ids"] - [reporting.id]
+  #      reporting["viewer_ids"] = reporting["viewer_ids"] - [self.id]
+  #      reporting.save
+  #    end
+  #  end
+  #end
   
   def set_inactive_at
     if self.is_inactive == "1"

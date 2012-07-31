@@ -16,4 +16,18 @@ module AdminHelper
   def users_to_tokeninput_field users
     users.map{ |user| "{id: \"#{user.id}\", name: \"#{user.email}\"}"}.join(',')
   end
+
+  def user_codes_to_tokeninput_field users
+    users.sort { |a,b|
+            if a.code and b.code.blank?
+              -1
+            elsif a.code.blank? and b.code
+              1
+            elsif a.code and b.code
+              a.code <=> b.code
+            end
+          }.
+          map{ |user| "{id: \"#{user.id}\", name: \"#{user.code.presence || user.email}\"}"}.
+          join(',')
+  end
 end

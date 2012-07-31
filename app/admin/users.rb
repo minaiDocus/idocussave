@@ -22,18 +22,20 @@ ActiveAdmin.register User do
     default_actions
   end
 
-  form do |f|
-    f.inputs 'Informations' do
-      f.input :email, label: 'E-mail'
-      f.input :first_name, label: 'Prénom'
-      f.input :last_name, label: 'Nom'
-      f.input :code, label: 'Code client'
-      f.input :company, label: 'Société'
+  show do |user|
+    attributes_table do
+      row :created_at
+      row :name
+      row :code
+      row :company
+      row 'Acitf ?' do |user|
+        user.inactive_at.nil? ? 'Oui' : 'Non'
+      end
+      row :is_admin
+      row :is_prescriber
+      row :use_debit_mandate
     end
-
-    f.inputs 'Autorisation' do
-      f.input :is_admin, as: :boolean, label: 'Est administrateur ?'
-    end
-    f.buttons
   end
+
+  form :partial => "form"
 end

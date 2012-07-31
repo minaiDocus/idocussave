@@ -1,0 +1,41 @@
+= semantic_form_for [:admin2, @user] do |f|
+  = f.inputs 'Informations' do
+    = f.input :email, label: 'E-mail'
+    = f.input :first_name, label: 'Prénom'
+    = f.input :last_name, label: 'Nom'
+    = f.input :code, label: 'Code client'
+    = f.input :company, label: 'Société'
+
+  = f.inputs 'Autorisations' do
+    = f.input :is_admin, as: Boolean, label: 'Est administrateur ?'
+    = f.input :is_dropbox_extended_authorized, as: Boolean, label: 'Autoriser Dropbox Extended ?'
+
+    = f.semantic_fields_for :external_file_storage do |efs|
+      = efs.input :is_dropbox_basic_authorized, as: Boolean, label: 'Autoriser Dropbox?'
+      = efs.input :is_google_docs_authorized, as: Boolean, label: 'Autoriser Google Docs ?'
+      = efs.input :is_ftp_authorized, as: Boolean, label: 'Autoriser FTP ?'
+
+  = f.inputs 'Gestion clients' do
+    = f.input :is_prescriber, as: Boolean, label: 'Est prescripteur ?'
+    = f.input :is_centraliser, as: Boolean, label: 'Est centraliseur ?'
+    = f.input :is_detail_authorized, as: Boolean, label: 'Autoriser les details pour les clients ?'
+
+    = f.input :client_ids, label: 'Email du (des) client(s)'
+
+  = f.buttons
+
+:javascript
+  $(document).ready(function(){;
+    $("#user_client_ids").tokenInput("/admin/users/search_by_code.json", {
+      prePopulate: [
+        #{user_codes_to_tokeninput_field @user.clients}
+      ],
+      searchDelay: 1000,
+      minChars: 1,
+      preventDuplicates: true,
+      hintText: "Tapez un code client à rechercher",
+      noResultsText: "Aucun résultat",
+      searchingText: "Recherche en cours..."
+    });
+
+  });

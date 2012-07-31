@@ -114,6 +114,7 @@ Idocus::Application.routes.draw do
       post 'update_confirm_status', :on => :member
       post 'update_delivery_status', :on => :member
       get 'search', :on => :collection
+      get 'search_by_code', :on => :collection
       resources :addresses do
         put 'update_multiple', :on => :collection
       end

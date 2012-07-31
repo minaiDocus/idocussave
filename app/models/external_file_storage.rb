@@ -37,8 +37,9 @@ class ExternalFileStorage
     is_dropbox_basic_authorized?
   end
 
-  def is_dropbox_basic_authorized=(ok)
-    authorized = ok ? authorized | F_DROPBOX : authorized ^ F_DROPBOX
+  def is_dropbox_basic_authorized=(value)
+    ok = value.to_i == 1
+    self.authorized = ok ? self.authorized | F_DROPBOX : self.authorized ^ F_DROPBOX
   end
   
   def is_google_docs_authorized?
@@ -49,8 +50,9 @@ class ExternalFileStorage
     is_google_docs_authorized?
   end
 
-  def is_google_docs_authorized=(ok)
-    authorized = ok ? authorized | F_GOOGLE_DOCS : authorized ^ F_GOOGLE_DOCS
+  def is_google_docs_authorized=(value)
+    ok = value.to_i == 1
+    self.authorized = ok ? self.authorized | F_GOOGLE_DOCS : self.authorized ^ F_GOOGLE_DOCS
   end
   
   def is_ftp_authorized?
@@ -61,8 +63,9 @@ class ExternalFileStorage
     is_ftp_authorized?
   end
 
-  def is_ftp_authorized=(ok)
-    authorized = ok ? authorized | F_FTP : authorized ^ F_FTP
+  def is_ftp_authorized=(value)
+    ok = value.to_i == 1
+    self.authorized = ok ? self.authorized | F_FTP : self.authorized ^ F_FTP
   end
   
   def is_authorized? flag
