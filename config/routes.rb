@@ -106,64 +106,6 @@ Idocus::Application.routes.draw do
 
     resources :addresses
   end
-
-  namespace :admin do
-    root :to => "admin#index"
-    resources :events
-    resources :users do
-      post 'update_confirm_status', :on => :member
-      post 'update_delivery_status', :on => :member
-      get 'search', :on => :collection
-      resources :addresses do
-        put 'update_multiple', :on => :collection
-      end
-    end
-    resources :reminder_emails do
-      get 'preview', :on => :member
-      get 'deliver', :on => :member
-    end
-    resources :orders do
-      get 'edit_option', :on => :member
-      post 'update_option', :on => :member
-    end
-    resources :homepages
-    resource :thumbnail_task do
-      get 'start'
-      get 'stop'
-      get 'status'
-      get 'remain'
-    end
-    resources :slides do
-      post 'update_is_invisible_status', :on => :member
-    end
-    resources :pavets do
-      post 'update_is_invisible_status', :on => :member
-    end
-    resources :page_types
-    resources :pages do
-      post 'update_is_invisible_status', :on => :member
-    end
-    resources :cms_images
-    resources :products
-    resources :product_options
-    resources :product_groups
-    resources :subscriptions
-    resources :scan_subscriptions
-    resources :account_book_types
-    resources :documents do
-      get 'run_background_process', :on => :collection
-    end
-    resources :backups do
-      get 'service', :on => :collection
-    end
-    resources :dropboxs do
-      get 'authorize_url', :on => :collection
-      get 'callback', :on => :collection
-    end
-    resources :file_sending_kits do
-      post 'generate', :on => :member
-    end
-  end
   
   match '*a', :to => 'errors#routing'
 end

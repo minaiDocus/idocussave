@@ -1,9 +1,0 @@
-.block
-  %h3 Dashboard
-  .content
-    %p
-      Here you can view all events
-    %br
-    %p
-      %form{ :method => "GET", :action => admin_events_path }
-        != render :partial =>'/admin/shared/filter', :locals => {:link_back => admin_events_path, :other_filter_fields => [{:caption => "Date de début", :id => "beginning_date"},{:caption => "Date de fin", :id => "ending_date"},{:caption => "Title", :id => "title"}]}
