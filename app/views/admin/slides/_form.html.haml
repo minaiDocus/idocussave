@@ -1,5 +1,4 @@
-.group
-  %h3 Information du slide
+= semantic_form_for [:admin2, @pavet] do |f|
   
   != f.label :name, "Nom de l'image ( taille 912*180 pixels ) ( exemple : soleil.jpg ) *", :class => :label
   != f.text_field :name, :class => 'text_field'

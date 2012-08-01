@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Pavet
+class Homepage::Pad
   include Mongoid::Document
   include Mongoid::Timestamps
 
@@ -14,10 +14,10 @@ class Pavet
   field :is_right_active, :type => Boolean, :default => false
   field :right_link_name, :type => String, :default => "Détails"
   field :right_link_url, :type => String, :default => "/pages/"
-  
+
   validates_presence_of :caption
   validates_presence_of :content
-  
+
   class << self
     def by_position
       asc(:position).asc(:title)

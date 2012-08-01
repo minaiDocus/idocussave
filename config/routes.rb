@@ -14,10 +14,10 @@ Idocus::Application.routes.draw do
       resources :page_content_items
     end
   end
-  
+
   namespace :account do
     root :to => "account/documents#index"
-    
+
     resources :documents do
       get 'invoice', :on => :member
       get 'packs', :on => :collection
@@ -30,7 +30,7 @@ Idocus::Application.routes.draw do
       get 'historic', :on => :member
       post 'sync_with_external_file_storage', :on => :collection
     end
-    
+
     namespace :documents do
       resource :sharings do
         post 'destroy_multiple', :on => :collection
@@ -41,13 +41,13 @@ Idocus::Application.routes.draw do
       end
       resource :upload
     end
-    
-    
+
+
     namespace :scan do
       resources :reportings
       resources :periods
     end
-    
+
     resource :profile
     resources :addresses
     resource :dropbox do
