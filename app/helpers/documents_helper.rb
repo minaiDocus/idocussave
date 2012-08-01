@@ -1,7 +1,7 @@
 module DocumentsHelper
   
   def linked_users_option
-    user_ids = Pack.any_in(:user_ids => [current_user.id]).not_in(:owner_id => [current_user.id]).distinct(:owner_id)
+    user_ids = Pack.any_in(:user_ids => [@user.id]).not_in(:owner_id => [@user.id]).distinct(:owner_id)
     users = User.any_in(:_id => user_ids)
 
     users = users.sort do |a,b|
@@ -26,14 +26,14 @@ module DocumentsHelper
   end
   
   def account_book_types_option
-    current_user.account_book_types.by_position.map do |u|
+    @user.account_book_types.by_position.map do |u|
       description = u.description.blank? ? "" : " " + u.description
       [u.name + description, u.name]
     end
   end
   
   def tags_of document, tags
-    tags.select { |tag| tag[:user_id] == current_user.id and tag[:document_id] == document.id }.first.try(:name)
+    tags.select { |tag| tag[:user_id] == @user.id and tag[:document_id] == document.id }.first.try(:name)
   end
   
   def filter_list_of_users users
