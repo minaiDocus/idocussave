@@ -6,7 +6,7 @@ ActiveAdmin.register Homepage::Base do
   
   index do
     column "name" do |base|
-      link_to base.name, admin2_homepage_basis_path(base)
+      link_to base.name, admin_homepage_basis_path(base)
     end
     default_actions
   end

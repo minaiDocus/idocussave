@@ -1,4 +1,4 @@
-= semantic_form_for [:admin2, @user] do |f|
+= semantic_form_for [:admin, @user] do |f|
   = f.inputs 'Informations' do
     = f.input :email, label: 'E-mail'
     = f.input :first_name, label: 'Prénom'
@@ -26,7 +26,7 @@
 
 :javascript
   $(document).ready(function(){;
-    $("#user_client_ids").tokenInput("/admin2/users/search_by_code.json", {
+    $("#user_client_ids").tokenInput("/admin/users/search_by_code.json", {
       prePopulate: [
         #{user_codes_to_tokeninput_field @user.clients}
       ],
