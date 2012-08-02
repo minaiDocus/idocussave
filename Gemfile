@@ -31,7 +31,6 @@ gem 'barby'
 gem 'oauth'
 gem 'delayed_job_mongoid'
 gem 'exception_notification'
-gem 'paiement_cic', '~> 0.2'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
