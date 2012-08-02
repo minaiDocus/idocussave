@@ -18,13 +18,17 @@ namespace :maintenance do
       AddressDeliveryList::process
     end
   end
-  
-  namespace :monthly do
-    desc "Init current monthly"
+
+  namespace :reporting do
+    desc "Init current period"
     task :init => [:environment] do
       User.prescribers.each do |prescriber|
         prescriber.clients.active.each do |client|
-          client.find_or_create_reporting.find_or_create_current_monthly
+          begin
+            client.scan_subscriptions.last.find_or_create_period Time.now
+          rescue
+            puts "Can't generate period for user #{client.code}<#{client.email}>, probably lack of scan_subscription entry."
+          end
         end
       end
     end

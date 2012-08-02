@@ -1,7 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
-  
+
+  before_filter :load_user
   before_filter :find_last_composition, :only => %w(index)
 
 protected
@@ -13,8 +14,21 @@ protected
     end
   end
 
+  def load_user
+    if (params[:email].present? || session[:acts_as].present?) && current_user.is_admin
+      @user = User.find_by_email(params[:email] || session[:acts_as]) || current_user
+      if @user == current_user
+        session[:acts_as] = nil
+      else
+        session[:acts_as] = @user.email
+      end
+    else
+      @user = current_user
+    end
+  end
+
   def find_last_composition
-    @last_composition = current_user.composition
+    @last_composition = @user.composition
   end
   
   def load_entries
@@ -32,7 +46,7 @@ protected
   
 public
   def index
-    @packs = Pack.any_in(:user_ids => [current_user.id]).desc(:created_at)
+    @packs = Pack.any_in(:user_ids => [@user.id]).desc(:created_at)
     @packs_count = @packs.count
     @packs = @packs.page(params[:page]).per(20)
     if @last_composition
@@ -42,7 +56,7 @@ public
   end
   
   def show
-    @pack = Pack.any_in(:user_ids => [current_user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
+    @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
     unless @pack
       raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id])
     end
@@ -52,7 +66,6 @@ public
     @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
     
     if params[:filtre]
-      @user = current_user
       queries = params[:filtre].split(':_:')
       document_ids = []
       queries.each_with_index do |query,index|
@@ -75,7 +88,6 @@ public
   
   def packs
     @packs = []
-    @user = current_user
     
     if params[:filtre]
       queries = params[:filtre].split(':_:')
@@ -112,7 +124,7 @@ public
   end
   
   def invoice
-    @order = current_user.orders.find params[:id]
+    @order = @user.orders.find params[:id]
 
     @invoice = @order.invoice || @order.create_invoice
 
@@ -132,7 +144,7 @@ public
     query = params[:q]
     
     if params[:by] == "tags" || !params[:by]
-      @document_tags = DocumentTag.where(:user_id => current_user.id, :name => /\w*#{query}\w*/)
+      @document_tags = DocumentTag.where(:user_id => @user.id, :name => /\w*#{query}\w*/)
       
       tags = ""
       @document_tags.each do |document_tag|
@@ -150,7 +162,7 @@ public
     end
     
     if params[:by] == "ocr_result" || !params[:by]
-      results = Document::Index.search query, current_user
+      results = Document::Index.search query, @user
       
       @document_contents = []
       results.each do |r|
@@ -177,7 +189,7 @@ public
     document_ids = ""
     query.each_with_index do |tag,index|
       if index == 0
-        DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => current_user.id).each do |document_tag|
+        DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => @user.id).each do |document_tag|
           document_ids += " #{document_tag.document_id}"
         end
       else
@@ -191,7 +203,7 @@ public
     end
     
     @documents = Document.any_in(:_id => document_ids.split).without_original.entries
-    @documents += Document::Index.find_document(query, current_user).entries
+    @documents += Document::Index.find_document(query, @user).entries
     @documents = @documents.uniq
     
     render :action => "show"
@@ -300,7 +312,6 @@ public
   end
   
   def sync_with_external_file_storage
-    @user = current_user
     packs = []
     all_packs = Pack.any_in(:user_ids => [@user.id])
     all_pack_ids = all_packs.distinct(:_id)
@@ -342,7 +353,7 @@ public
 
     type = params[:type].to_i || PackDeliveryList::ALL
     
-    pack_delivery_list = @user.find_or_create_pack_delivery_list
+    pack_delivery_list = current_user.find_or_create_pack_delivery_list
     pack_delivery_list.add!(result_pack_ids,type)
     PackDeliveryList.delay(:queue => 'external file storage delivery', :priority => 5).process(pack_delivery_list.id)
 
