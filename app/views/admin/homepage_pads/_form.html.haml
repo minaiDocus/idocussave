@@ -15,4 +15,6 @@
     != f.input :right_link_name, label: 'Nom du lien droit' 
     != f.input :right_link_url, label: 'Url du lien droit'
  
-  = f.buttons
+   = f.buttons do
+    = f.commit_button
+    = content_tag(:li, (link_to t('active_admin.cancel'), admin_reminder_emails_path), class: 'cancel')

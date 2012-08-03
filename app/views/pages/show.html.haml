@@ -2,35 +2,34 @@
   .row
     .span3.margin11top
       .well.sidebar-nav
-        %ul{ :class=>"nav nav-list" }
-          %li{ :class=> "nav-header" }
-            #{@page_type.caption}
-          - @all_page.each_with_index do |page, index|
-            %li{ :class => ("active" if page.title == @page.title) }
-              %a{ :title => "#{page.title}", :href => "#{page.slug}" } #{page.title}
+        %ul{ class: 'nav nav-list' }
+          %li{ class: 'nav-header' }
+            #{@page.tag}
+          - @pages.each do |page|
+            %li{ class: ('active' if page == @page) }
+              = link_to page.title, page_path(page)
     .span9
-      - image = @cms_images.find_by_name(@page.image2).content.url rescue ""
-      %img{ :src=>"#{image}", :alt => "#{@page.image_info || ''}", :class=>"margin1bottom" }
+      = image_tag image_url_for_page(@page), alt: @page.image.try(:description) , class: 'margin1bottom'
       
-      %ul{ :id=>"tab", :class=>"subnav nav-tabs" }
-        - @page.page_contents.each_with_index do |onglet, index|
-          %li{ :class => ("active" if index == 0) }
-            %a{ "data-toggle"=>"tab", :href => "#part_#{index+1}" } #{onglet.title}
+      %ul{ id: 'tab', class: 'subnav nav-tabs' }
+        - @page.contents.by_position.distinct_tag.each_with_index do |tag, index|
+          %li{ class: ('active' if index == 0) }
+            = link_to tag, "#part_#{index+1}", 'data-toggle' => 'tab'
        
       .tab-content
-        - @page.page_contents.each_with_index do |onglet, index|
-          .tab-pane{ :class => ("active" if index == 0), :id=>"part_#{index+1}" }
+        - @page.contents.by_position.distinct_tag.each_with_index do |tag, index|
+          .tab-pane{ class: ('active' if index == 0), id: "part_#{index+1}" }
             .box_rub
-              - onglet.page_content_items.asc(:position).each do |item|
+              - @page.contents.where(tag: tag).by_position.each do |content|
                 .clear
                 .box
-                  - image = @cms_images.find_by_name(item.image).content.url rescue ""
-                  - if item.model == 1
-                    %img.contenu_image{ :src => "#{image}", :alt => "#{item.image_info || ''}", :class => "imgfloatleft" }
-                    %span{ :class => "contentfloatleft" }!=item.content
-                  - elsif item.model == 2
-                    %img.contenu_image{ :src => "#{image}", :alt => "#{item.image_info || ''}", :class => "imgfloatright" }
-                    %span{ :class => "contentfloatright" }!=item.content
+                  - url = CmsImage.find_by_name(content.thumb).try(:content).try(:url)
+                  - if content.model == 1
+                    = image_tag url, alt: content.thumb_info, class: 'contenu_image imgfloatleft'
+                    %span{ class: 'contentfloatleft' }!= content.text
+                  - elsif content.model == 2
+                    = image_tag url, alt: content.thumb_info, class: 'contenu_image imgfloatright'
+                    %span{ class: 'contentfloatright' }!= content.text
                   - else
-                    %span!=item.content
+                    %span!= content.text
                     

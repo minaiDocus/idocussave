@@ -31,6 +31,7 @@ gem 'barby'
 gem 'oauth'
 gem 'delayed_job_mongoid'
 gem 'exception_notification'
+gem 'nested_form'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
@@ -43,12 +44,14 @@ end
 gem 'jquery-rails'
 
 group :development do
+  gem 'thin'
   gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'letter_opener'
 end
 
 group :test do
   gem 'rspec-rails', '2.0.0.beta.20'
+  gem 'mongoid-rspec'
   gem 'factory_girl_rails'
   gem 'rcov', '0.9.8'
   gem 'spork', '0.9.0.rc5'

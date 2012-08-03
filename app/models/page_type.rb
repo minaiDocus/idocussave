@@ -1,4 +1,5 @@
 # -*- encoding : UTF-8 -*-
+# TODO remove me after migration
 class PageType
   include Mongoid::Document
   include Mongoid::Timestamps

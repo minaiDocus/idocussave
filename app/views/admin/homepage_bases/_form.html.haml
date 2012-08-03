@@ -4,4 +4,6 @@
     = f.input :style, as: :text, label: 'Style'
     = f.input :content, as: :text, label: 'Contenu'
     = f.input :meta_description, as: :text, label: 'Méta-description'
-  = f.buttons
+  = f.buttons do
+    = f.commit_button
+    = content_tag(:li, (link_to t('active_admin.cancel'), admin_reminder_emails_path), class: 'cancel')

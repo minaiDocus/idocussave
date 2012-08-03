@@ -1,22 +1,23 @@
-.carousel-container.carousel.slide{ :id=>"myCarousel" }
+.carousel-container.carousel.slide{ id: 'myCarousel' }
   .carousel-inner
-    - @slides.each_with_index do |slide, index|
-      - image = @cms_images.find_by_name(slide.name)
-      - if image
-        .item{ :class => ("active" if index == 0) }
-          %img{ :src=>"#{image.content.url}" }
+    - if @homepage
+      - @homepage.images.each_with_index do |image, index|
+        - image_found = CmsImage.find_by_name(image.name)
+        - if image_found && image_found.content
+          .item{ class: ('active' if index == 0) }
+            = image_tag "#{image_found.content.url}"
           
 .container.margin2bottom
-  .row{ :id=>"offers" }
-    .row
-      != @homepage.content rescue ""
-    - @pavets.each do |pavet|
-      .span3
-        .pave{ :class => ("well gray" if pavet.model.to_i != 0) }
-          .content!= pavet.content
-          .commander.pull-left
-            - if pavet.is_left_active
-              != link_to "#{pavet.left_link_name}", "#{pavet.left_link_url}"
-          .details.pull-right
-            - if pavet.is_right_active
-              != link_to "#{pavet.right_link_name}", "#{pavet.right_link_url}"
+  .row{ id: 'offers' }
+    - if @homepage
+      != @homepage.text
+      - @homepage.contents.each do |content|
+        .span3
+          .pave{ class: ("well gray" if content.model.to_i != 0) }
+            .content!= content.text
+            .commander.pull-left
+              - if content.left_link_name.present?
+                = link_to "#{content.left_link_name}", "#{content.left_link_url}"
+            .details.pull-right
+              - if content.right_link_name.present?
+                = link_to "#{content.right_link_name}", "#{content.right_link_url}"

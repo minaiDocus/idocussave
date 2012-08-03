@@ -7,10 +7,12 @@ ActiveAdmin.register User do
   filter :first_name, as: 'string', label: 'Prénom'
   filter :last_name, as: 'string', label: 'Nom'
   filter :email, as: 'string', label: 'E-mail'
+  
+  config.sort_order= "created_at_desc"
 
   index do
     column 'Date de création', sortable: :created_at do |user|
-      user.created_at
+      l(user.created_at, format: :short)
     end
     column :email
     column 'Société / Code', sortable: :code do |user|

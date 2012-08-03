@@ -1,15 +1,24 @@
 # -*- encoding : UTF-8 -*-
 class HomepageController < ApplicationController
-  
   layout "pages"
 
+  before_filter :authenticate_user!, only: :preview
+
   def index
-    @homepage = Homepage.first
-    @page_types = PageType.by_position.all
-    @slides = Slide.visible.by_position
-    @cms_images = CmsImage.all
-    @pavets = Pavet.visible.by_position
-    @page_in_footer = Page.in_footer.visible.by_position
+    @homepage = Page.homepage
+  end
+
+  def preview
+    if current_user.is_admin
+      @homepage = Page.preview.find_by_slug(params[:id])
+      if @homepage
+        render action: :index
+      else
+        redirect_to root_path
+      end
+    else
+      redirect_to root_path
+    end
   end
 
 end

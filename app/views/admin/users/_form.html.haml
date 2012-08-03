@@ -22,7 +22,9 @@
 
     = f.input :client_ids, label: 'Email du (des) client(s)'
 
-  = f.buttons
+  = f.buttons do
+    = f.commit_button
+    = content_tag(:li, (link_to t('active_admin.cancel'), admin_reminder_emails_path), class: 'cancel')
 
 :javascript
   $(document).ready(function(){;

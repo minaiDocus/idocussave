@@ -9,11 +9,7 @@ Idocus::Application.routes.draw do
 
   resources :maintenances
 
-  resources :pages do
-    resources :page_contents do
-      resources :page_content_items
-    end
-  end
+  resources :pages
 
   namespace :account do
     root :to => "account/documents#index"
@@ -106,6 +102,8 @@ Idocus::Application.routes.draw do
 
     resources :addresses
   end
+
+  get "/preview/(:id)", controller: :homepage, action: :preview
   
   match '*a', :to => 'errors#routing'
 end
