@@ -44,14 +44,14 @@ end
 
 gem 'jquery-rails'
 
-group :development do
+group :development, :test do
   gem 'thin'
   gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'letter_opener'
+  gem 'rspec-rails'
 end
 
 group :test do
-  gem 'rspec-rails', '2.0.0.beta.20'
   gem 'mongoid-rspec'
   gem 'factory_girl_rails'
   gem 'rcov', '0.9.8'
