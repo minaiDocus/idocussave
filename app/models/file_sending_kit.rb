@@ -4,8 +4,8 @@ class FileSendingKit
   include Mongoid::Timestamps
   
   field :title, :type => String
-  field :instruction, :type => String
-  field :idocus_instruction, :type => String
+  field :instruction, :type => String, :default => ""
+  field :idocus_instruction, :type => String, :default => ""
   field :position, :type => Integer, :default => 0
   
   field :logo_path, :type => String
@@ -20,7 +20,7 @@ class FileSendingKit
   field :right_logo_height, :type => Integer, :default => 0
   field :right_logo_width, :type => Integer, :default => 0
   
-  validates_presence_of :title, :instruction, :idocus_instruction, :logo_path, :left_logo_path, :right_logo_path
+  validates_presence_of :user, :title, :logo_path, :left_logo_path, :right_logo_path
   
   referenced_in :user
   

@@ -1,0 +1,43 @@
+= semantic_form_for [:admin, @file_sending_kit] do |f|
+  = f.inputs 'Détails' do
+    = f.input :title, label: 'Titre'
+    = f.input :position
+    = f.input :user, label: 'Prescripteur'
+
+  = f.inputs 'Logo' do
+    = f.inputs 'Centre (affiché dans le mail)' do
+      = f.input :logo_path, label: 'Chemin'
+      = f.input :logo_height, label: 'Hauteur'
+      = f.input :logo_width, label: 'Largeur'
+
+    = f.inputs 'Gauche' do
+      = f.input :left_logo_path, label: 'Chemin'
+      = f.input :left_logo_height, label: 'Hauteur'
+      = f.input :left_logo_width, label: 'Largeur'
+
+    = f.inputs 'Droite' do
+      = f.input :right_logo_path, label: 'Chemin'
+      = f.input :right_logo_height, label: 'Hauteur'
+      = f.input :right_logo_width, label: 'Largeur'
+
+  = f.inputs 'Instructions' do
+    = f.input :instruction, as: :text, label: 'Instruction(s) de base'
+    = f.input :idocus_instruction, as: :text, label: 'Instruction(s) iDocus'
+
+  = f.buttons do
+    = f.commit_button
+    = content_tag(:li, (link_to t('active_admin.cancel'), admin_file_sending_kits_path), class: 'cancel')
+
+:javascript
+  $(document).ready(function(){
+    $("#file_sending_kit_user_id").tokenInput("/admin/users/search_by_code.json", {
+      prePopulate: [#{user_codes_to_tokeninput_field([@file_sending_kit.user]) rescue ""}],
+      tokenLimit: 1,
+      searchDelay: 500,
+      minChars: 1,
+      preventDuplicates: true,
+      hintText: "Rechercher un prescripteur",
+      noResultsText: "Aucun résultat",
+      searchingText: "Recherche en cours..."
+    });
+  });
