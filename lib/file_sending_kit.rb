@@ -2,7 +2,6 @@
 require 'barby'
 require 'barby/barcode/code_39'
 require 'barby/outputter/png_outputter'
-require 'barby/outputter/rmagick_outputter'
 
 module FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/public/system/data"
