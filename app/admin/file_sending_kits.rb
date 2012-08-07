@@ -13,7 +13,7 @@ ActiveAdmin.register FileSendingKit do
       file_sending_kit.title
     end
     column 'Prescripteur', sortable: :title do |file_sending_kit|
-      [file_sending_kit.user.try(:company), file_sending_kit.user.try(:code)].join(' - ')
+      link_to [file_sending_kit.user.try(:company), file_sending_kit.user.try(:code)].join(' - '), [:admin, file_sending_kit.user]
     end
     default_actions
   end
