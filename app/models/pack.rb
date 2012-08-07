@@ -79,9 +79,9 @@ class Pack
         if document.pages - document.uploaded_pages > 0
           period.delivery.update_attributes(:state => "delivered")
         end
-        time += period.duration.month
         total -= current_divisions.count
       end
+      time += period.duration.month
     end
   end
   
