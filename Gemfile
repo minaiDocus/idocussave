@@ -28,6 +28,7 @@ gem 'savon_model'
 gem 'prawn'
 gem 'to_xls'
 gem 'barby'
+gem 'chunky_png' # required by barby
 gem 'oauth'
 gem 'delayed_job_mongoid'
 gem 'exception_notification'
