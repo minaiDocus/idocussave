@@ -8,23 +8,24 @@
 
   = f.inputs 'Autorisations' do
     = f.input :is_admin, as: Boolean, label: 'Est administrateur ?'
-    = f.input :is_dropbox_extended_authorized, as: Boolean, label: 'Autoriser Dropbox Extended ?'
 
     = f.semantic_fields_for :external_file_storage do |efs|
-      = efs.input :is_dropbox_basic_authorized, as: Boolean, label: 'Autoriser Dropbox?'
       = efs.input :is_google_docs_authorized, as: Boolean, label: 'Autoriser Google Docs ?'
       = efs.input :is_ftp_authorized, as: Boolean, label: 'Autoriser FTP ?'
+      = efs.input :is_dropbox_basic_authorized, as: Boolean, label: 'Autoriser Dropbox?'
 
+    = f.input :is_dropbox_extended_authorized, as: Boolean, label: 'Autoriser Dropbox Extended ?'
+    = f.input :dropbox_delivery_folder, as:  String, label: 'Dropbox Extended chemin de livraison', wrapper_html: { class: 'if_dropbox_extended_authorized' }
+    
   = f.inputs 'Gestion clients' do
     = f.input :is_prescriber, as: Boolean, label: 'Est prescripteur ?'
-    = f.input :is_centraliser, as: Boolean, label: 'Est centraliseur ?'
-    = f.input :is_detail_authorized, as: Boolean, label: 'Autoriser les details pour les clients ?'
-
-    = f.input :client_ids, label: 'Email du (des) client(s)'
+    = f.input :is_centraliser, as: Boolean, label: 'Est centraliseur ?', wrapper_html: { class: 'for_prescriber' }
+    = f.input :is_detail_authorized, as: Boolean, label: 'Autoriser les details pour les clients ?', wrapper_html: { class: 'for_prescriber' }
+    = f.input :client_ids, label: 'Email du (des) client(s)', wrapper_html: { class: 'for_prescriber' }
 
   = f.buttons do
     = f.commit_button
-    = content_tag(:li, (link_to t('active_admin.cancel'), admin_reminder_emails_path), class: 'cancel')
+    = content_tag(:li, (link_to t('active_admin.cancel'), admin_users_path), class: 'cancel')
 
 :javascript
   $(document).ready(function(){;
@@ -32,7 +33,7 @@
       prePopulate: [
         #{user_codes_to_tokeninput_field @user.clients}
       ],
-      searchDelay: 1000,
+      searchDelay: 500,
       minChars: 1,
       preventDuplicates: true,
       hintText: "Tapez un code client à rechercher",
@@ -40,4 +41,25 @@
       searchingText: "Recherche en cours..."
     });
 
+    if (!$("#user_is_prescriber").is(":checked"))
+      $(".for_prescriber").hide();
+
+    $("#user_is_prescriber").change(function(){
+      if($(this).is(":checked")) {
+        $(".for_prescriber").show();
+      } else {
+        $(".for_prescriber").hide();
+      }
+    });
+
+    if (!$("#user_is_dropbox_extended_authorized").is(":checked"))
+      $("#user_dropbox_delivery_folder").attr('disabled','disabled');
+
+    $("#user_is_dropbox_extended_authorized").change(function(){
+      if($(this).is(":checked")) {
+        $("#user_dropbox_delivery_folder").removeAttr('disabled');
+      } else {
+        $("#user_dropbox_delivery_folder").attr('disabled','disabled');
+      }
+    });
   });

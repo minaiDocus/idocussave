@@ -8,7 +8,7 @@ ActiveAdmin.register User do
   filter :last_name, as: 'string', label: 'Nom'
   filter :email, as: 'string', label: 'E-mail'
   
-  config.sort_order= "created_at_desc"
+  config.sort_order = "created_at_desc"
 
   index do
     column 'Date de création', sortable: :created_at do |user|
@@ -63,6 +63,10 @@ ActiveAdmin.register User do
                   th 'Mode de paiement'
                   td user.use_debit_mandate ? 'Prélèvement' : 'Prépayé'
                 end
+                tr do
+                  th 'Solde du compte prépayé'
+                  td format_price_00(user.balance_in_cents) + ' €'
+                end
               end
             end
          end
@@ -105,5 +109,5 @@ ActiveAdmin.register User do
     end
   end
 
-  form partial: "form"
+  form partial: 'form'
 end
