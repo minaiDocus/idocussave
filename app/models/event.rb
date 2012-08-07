@@ -5,9 +5,11 @@ class Event
 
   field :title, :type => String
   field :description, :type => String, :default => ""
-  field :amount_in_cents, :type => Integer, :default => 0
   field :price_in_cents_wo_vat, :type => Integer, :default => 0
   field :type_number, :type => Integer, :default => 0
+  
+  # TODO remove me after migration
+  field :amount_in_cents, :type => Integer, :default => 0
   
   validates_presence_of :title  
   
