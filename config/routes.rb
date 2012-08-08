@@ -101,6 +101,10 @@ Idocus::Application.routes.draw do
     resources :addresses
   end
 
+  namespace :admin do
+    root :to => "admin#index"
+  end
+
   get "/preview/(:id)", controller: :homepage, action: :preview
   
   match '*a', :to => 'errors#routing'

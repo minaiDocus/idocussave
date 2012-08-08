@@ -1,0 +1,14 @@
+%a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+  %span.icon-bar
+  %span.icon-bar
+  %span.icon-bar
+= link_to image_tag('logo/tiny_logo.png', alt: 'logo'), '/', class: 'logo'
+.nav-collapse
+  %ul.nav
+    %li{ class: ('active' if params[:controller] == 'admin/admin') }
+      = link_to 'Dashboard', admin_root_path
+%p.navbar-text.pull-right
+  Bienvenue
+  = link_to current_user.email, account_documents_path
+  |
+  = link_to 'déconnexion', destroy_user_session_path
