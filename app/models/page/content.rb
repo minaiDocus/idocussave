@@ -22,7 +22,7 @@ class Page::Content
 
   embedded_in :page, inverse_of: :contents
 
-  validates_presence_of :title, :text
+  validates_presence_of :title, :text, :tag
 
   class << self
     def by_position

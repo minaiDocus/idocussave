@@ -60,13 +60,14 @@ class Page
     end
 
     def all_types
-      all.by_position.distinct(:tag).reject { |e| e.match /homepage/i }
+      all.distinct(:tag).reject { |e| e.match /homepage/i }
     end
 
     def all_first_pages
-      all_types.map do |tag|
+      pages = all_types.map do |tag|
         Page.where(tag: tag).by_position.visible.first
       end
+      pages.sort { |a,b| a.position <=> b.position }
     end
 
     def find_by_tag param
