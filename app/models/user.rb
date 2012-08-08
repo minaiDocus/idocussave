@@ -81,6 +81,10 @@ class User
       return self.email
     end
   end
+
+  def formatted_identifier
+    [self.code,self.company,self.name].compact.join(' - ')
+  end
   
   def information
     f_info = []
