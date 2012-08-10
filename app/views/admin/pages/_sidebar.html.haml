@@ -1,0 +1,23 @@
+%h3 Filtres
+
+= form_tag admin_pages_path, method: :get, html: { class: 'form form-vertical' } do
+  = label_tag 'page_contains[title]', t('mongoid.models.page.attributes.title')
+  = text_field_tag 'page_contains[title]', (params[:page_contains][:title] rescue '')
+  = label_tag 'page_contains[position]', t('mongoid.models.page.attributes.position')
+  = number_field_tag 'page_contains[position]', (params[:page_contains][:position] rescue '')
+  = label_tag 'page_contains[is_invisible]', t('mongoid.models.page.attributes.is_visible') + ' ?'
+  = select_tag 'page_contains[is_invisible]', options_for_select([[t('yes_value'),0],[t('no_value'),1]], (params[:page_contains][:is_invisible] rescue ''))
+  = label_tag 'page_contains[created_at][$lt]', t('mongoid.models.common.attributes.created_at')
+  .input-append.date.datepicker
+    = text_field_tag 'page_contains[created_at][$gt]', '', class: 'span4'
+    %span.add-on
+      %i.icon-th
+  .input-append.date.datepicker
+    = text_field_tag 'page_contains[created_at][$lt]', '', class: 'span4'
+    %span.add-on
+      %i.icon-th
+  -#= label_tag 'page_contains[_id]', 'Page'
+  -#= select_tag 'page_contains[_id]', options_for_select(Page.all.map { |e| [e.title,e.id] })
+  %br
+  = submit_tag t('filters.name'), class: 'btn'
+  = link_to t('filters.cancel'), admin_pages_path, class: 'btn'

@@ -60,7 +60,7 @@ class Scan::Period
   end
   
   def products_total_price_in_cents_wo_vat
-    product_option_orders.sum(&:price_in_cents_wo_vat)
+    product_option_orders.sum(:price_in_cents_wo_vat)
   end
   
   def price_in_cents_of_total_excess
@@ -132,14 +132,14 @@ class Scan::Period
   
   def update_information
     set_documents_name_tags
-    self.pieces = self.documents.sum(&:pieces)
-    self.sheets = self.documents.sum(&:sheets)
-    self.pages = self.documents.sum(&:pages)
-    self.uploaded_pieces = self.documents.sum(&:uploaded_pieces)
-    self.uploaded_sheets = self.documents.sum(&:uploaded_sheets)
-    self.uploaded_pages = self.documents.sum(&:uploaded_pages)
-    self.paperclips = self.documents.sum(&:paperclips)
-    self.oversized = self.documents.sum(&:oversized)
+    self.pieces = self.documents.sum(:pieces)
+    self.sheets = self.documents.sum(:sheets)
+    self.pages = self.documents.sum(:pages)
+    self.uploaded_pieces = self.documents.sum(:uploaded_pieces)
+    self.uploaded_sheets = self.documents.sum(:uploaded_sheets)
+    self.uploaded_pages = self.documents.sum(:uploaded_pages)
+    self.paperclips = self.documents.sum(:paperclips)
+    self.oversized = self.documents.sum(:oversized)
     check_delivery
     update_price
   end

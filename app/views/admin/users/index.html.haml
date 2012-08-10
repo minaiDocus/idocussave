@@ -1,0 +1,22 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span9
+    %table.table.table-bordered.table-condensed.table-striped
+      %thead
+        %tr
+          %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { user_contains: user_contains }
+          %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier'), { user_contains: user_contains }
+          %th= t('actions.name').pluralize
+      %tbody
+        - @users.each do |user|
+          %tr
+            %td= l(user.created_at)
+            %td= user.formatted_identifier
+            %td
+              = link_to content_tag(:i, '', class: 'icon-eye-open'), admin_user_path(user), class: 'btn', alt: t('actions.show'), title: t('actions.show')
+              = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_user_path(user), class: 'btn', alt: t('actions.edit'), title: t('actions.edit')
+    .pull-right
+      = paginate @users
+  .span3.well
+    = render partial: 'sidebar'

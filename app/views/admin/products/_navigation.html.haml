@@ -1,0 +1,13 @@
+.navbar
+  .navbar-inner
+    .container-fluid
+      .nav-collapse
+        %ul.nav
+          %li{ class: ('active' if params[:controller] == 'admin/products' && params[:action] == 'index') }
+            = link_to 'Index', admin_products_path
+          %li{ class: ('active' if params[:controller] == 'admin/products' && params[:action] == 'new') }
+            = link_to 'Ajouter un produit', new_admin_product_path
+          %li{ class: ('active' if params[:controller] == 'admin/product_options' && params[:action] == 'new') }
+            = link_to 'Ajouter une option', new_admin_product_option_path
+          %li{ class: ('active' if params[:controller] == 'admin/product_groups' && params[:action] == 'new') }
+            =  link_to 'Ajouter un groupe', new_admin_product_group_path

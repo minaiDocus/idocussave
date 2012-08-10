@@ -1,0 +1,59 @@
+.well
+  = simple_nested_form_for [:admin, @page], html: { class: 'form form-horizontal' } do |f|
+    .row-fluid
+      .span12
+        %h2 Informations
+    .row-fluid
+      .span4
+        = f.input :title, label: 'Titre'
+        = f.input :title, label: 'Label'
+        = f.input :position
+        = f.input :tag, label: 'Libellé du type de page'
+        = f.input :is_footer, as: 'boolean', wrapper: :inline_checkbox, label: 'Afficher dans le pied de page ?'
+        = f.input :is_invisible, as: 'boolean', wrapper: :inline_checkbox, label: 'Est visible ?'
+        = f.input :is_for_preview, as: 'boolean', wrapper: :inline_checkbox, label: 'Est visible pour la preview ?'
+      .span8
+        = f.input :meta_description, as: :text, label: 'Meta description'
+        = f.input :style, as: :text, label: 'Style (CSS)'
+
+    %hr
+    .row-fluid
+      .span12
+        %h2 Images
+    .row-fluid
+      = f.fields_for :images do |image|
+        .span4
+          = image.input :name, label: 'Nom'
+          = image.input :description
+          = image.input :link, label: 'URL'
+          = image.input :position
+          = image.input :is_invisible, as: 'boolean', wrapper: :inline_checkbox, label: 'Est visible ?'
+          .form-actions
+            = image.link_to_remove "Supprimer l'image", class: 'btn'
+      = f.link_to_add "Ajouter une image", :images, class: 'btn'
+
+    %hr
+    .row-fluid
+      .span12
+        %h2 Contenus
+    .row-fluid
+      .span12
+        = f.fields_for :contents do |content|
+          .span6
+            = content.input :title,label: 'Titre'
+            = content.input :text, as: :text, label: 'Contenu'
+            = content.input :model, label: 'Modèle'
+            = content.input :position
+            = content.input :tag, label: 'Libellé du type du contenu'
+            = content.input :left_link_name,label: 'Libellé gauche'
+            = content.input :left_link_url, label:'URL gauche'
+            = content.input :right_link_name, label: 'Libellé droite'
+            = content.input :right_link_url, label: 'URL droite'
+            = content.input :is_invisible, as: 'boolean', wrapper: :inline_checkbox, label: 'Est visible ?'
+            .form-actions
+              = content.link_to_remove "Supprimer le contenu", class: 'btn'
+        = f.link_to_add "Ajouter du contenu", :contents, class: 'btn'
+    .row-fluid
+      .form-actions
+        = f.submit t('actions.submit'), class: 'btn'
+        = link_to t('actions.cancel'), admin_pages_path, class: 'btn'

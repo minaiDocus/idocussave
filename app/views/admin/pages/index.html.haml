@@ -1,0 +1,29 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span9.well
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th= sortable :position, t('mongoid.models.page.attributes.position'), page_contains
+          %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), page_contains
+          %th= sortable :title, t('mongoid.models.page.attributes.title'), page_contains
+          %th= sortable :tag, t('mongoid.models.page.attributes.tag'), page_contains
+          %th= t('actions.name')
+      %tbody
+        - @pages.each do |page|
+          %tr
+            %td= page.position
+            %td= l(page.created_at)
+            %td= page.title
+            %td= page.tag
+            %td
+              = link_to t('actions.show'), admin_page_path(page)
+              |
+              = link_to t('actions.edit'), edit_admin_page_path(page)
+              |
+              = link_to t('actions.destroy'), admin_page_path(page), confirm: 'Voulez vous vraiment suprimer cette page ?', method: 'delete'
+    .pull-right
+      != paginate @pages
+  .span3.well
+    = render partial: 'sidebar'

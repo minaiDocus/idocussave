@@ -1,0 +1,14 @@
+.row-fluid
+  .span12.well
+    .group
+      %span.title
+        #{product.position} - #{product.title}
+        
+      %span.action
+        .pull-right
+          = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_path(product), class: 'btn'
+          = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_path(product), :method => :delete, :confirm => "Êtes-vous sûr ?", class: 'btn'
+      
+      - product.product_groups.where(:product_supergroup_id => nil).by_position.entries.each do |product_group|
+        %ul
+          != render :partial => "product_group", :locals => { :product_group => product_group, :product => product }

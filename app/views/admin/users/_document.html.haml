@@ -1,0 +1,26 @@
+.label{ style: 'padding:3px 5px 3px' }
+  Documents
+%table.table.table-striped.table-bordered.table-condensed
+  %thead
+    %tr
+      %th
+      %th Nombre de documents
+      %th Vignettes
+      %th Extraction
+      %th Indexation
+  %tbody
+    %tr
+      %th Propre
+      %td= @user.own_packs.count
+      - documents = get_documents(@user.own_packs)
+      %td= documents.not_clean.count
+      %td= documents.not_extracted.count
+      %td= documents.not_indexed.count
+    %tr
+      %th Total
+      - packs = Pack.any_in(:user_ids => [@user.id])
+      %td= packs.count
+      - documents = get_documents(packs)
+      %td= documents.not_clean.count
+      %td= documents.not_extracted.count
+      %td= documents.not_indexed.count

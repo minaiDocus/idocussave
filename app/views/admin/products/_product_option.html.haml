@@ -1,0 +1,11 @@
+%td{ :style => "width:400px;" }
+  != "#{option.title} #{option.description}"
+%td.price{ :style => "margin-left:20px;width:auto;" }
+  #{format_price(option.price_in_cents_wo_vat)} € HT
+%td!= option.position
+%td!= option.quantity
+%td!= option.duration
+%td{ :style => "width:auto;text-align:right;" }
+  != link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_option_path(option), class: 'btn'
+  != link_to content_tag(:i, '', class: 'icon-remove'), admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?", class: 'btn'
+  

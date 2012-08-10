@@ -30,4 +30,43 @@ module AdminHelper
           map{ |user| "{id: \"#{user.id}\", name: \"#{user.code.presence || user.email}\"}"}.
           join(',')
   end
+
+  def sortable column, title=nil, contains={}
+    title ||= column.titleize
+    direction = 'asc'
+    icon = ''
+    if column.to_s == sort_column
+      direction = sort_direction == 'asc' ? 'desc' : 'asc'
+      icon_direction = sort_direction == 'asc' ? 'down' : 'up'
+      icon = content_tag( :i, '', class: 'icon-chevron-' + icon_direction)
+    end
+    options = contains
+    options = options.merge(page: params[:page]) if params[:page]
+    options = options.merge(per_page: params[:per_page]) if params[:per_page]
+    link_to icon + title, { sort: column, direction: direction }.merge(options)
+  end
+
+  def get_documents(packs)
+    Document.any_in(:pack_id => packs.distinct(:_id))
+  end
+
+  def ok_label
+    content_tag(:i, '', class: 'icon-ok')
+  end
+
+  def btn_ok_label
+    content_tag(:span, ok_label, class: 'label label-success')
+  end
+
+  def not_ok_label
+    content_tag(:i, '', class: 'icon-remove')
+  end
+
+  def btn_not_ok_label
+    content_tag(:span, not_ok_label, class: 'label label-important')
+  end
+
+  def btn_label(is_ok)
+    is_ok ? btn_ok_label : btn_not_ok_label
+  end
 end

@@ -33,6 +33,8 @@ gem 'oauth'
 gem 'delayed_job_mongoid'
 gem 'exception_notification'
 gem 'nested_form'
+gem 'bootstrap-datepicker-rails'
+gem 'best_in_place'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
@@ -40,6 +42,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier', '>= 1.0.3'
   gem 'therubyracer'
+  gem 'jquery-ui-rails'
 end
 
 gem 'jquery-rails'

@@ -1,0 +1,9 @@
+.navbar
+  .navbar-inner
+    .container-fluid
+      .nav-collapse
+        %ul.nav
+          %li{ class: ('active' if params[:controller] == 'admin/pages' && params[:action] == 'index') }
+            = link_to 'Index', admin_pages_path
+          %li{ class: ('active' if params[:controller] == 'admin/pages' && params[:action] == 'new') }
+            = link_to 'Nouvelle page', new_admin_page_path

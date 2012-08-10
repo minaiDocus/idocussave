@@ -103,6 +103,11 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
+    resources :users
+    resources :pages
+    resources :products
+    resources :product_options
+    resources :product_groups
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

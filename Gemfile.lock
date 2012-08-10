@@ -38,6 +38,11 @@ GEM
     arel (3.0.2)
     barby (0.5.0)
     bcrypt-ruby (3.0.1)
+    best_in_place (1.1.2)
+      jquery-rails
+      rails (~> 3.1)
+    bootstrap-datepicker-rails (0.6.16)
+      railties (>= 3.0)
     bson (1.6.4)
     bson_ext (1.6.2)
       bson (~> 1.6.2)
@@ -107,6 +112,9 @@ GEM
     jquery-rails (2.0.2)
       railties (>= 3.2.0, < 5.0)
       thor (~> 0.14)
+    jquery-ui-rails (1.1.0)
+      jquery-rails
+      railties (>= 3.1.0)
     json (1.7.4)
     kaminari (0.13.0)
       actionpack (>= 3.0.0)
@@ -295,6 +303,8 @@ PLATFORMS
 DEPENDENCIES
   SystemTimer
   barby
+  best_in_place
+  bootstrap-datepicker-rails
   bson_ext (= 1.6.2)
   chunky_png
   coffee-rails (~> 3.2.1)
@@ -311,6 +321,7 @@ DEPENDENCIES
   hpricot
   jonathantron-paypal
   jquery-rails
+  jquery-ui-rails
   kaminari
   letter_opener
   mongo (= 1.6.2)

@@ -1,0 +1,25 @@
+.row-fluid
+  .span12.well
+    %h2 Informations
+    %br
+      = simple_form_for [:admin, @product] do |f|
+        .row-fluid.form-horizontal
+          .span12.well
+            .row-fluid.form-horizontal
+              .span4
+                = f.input :title, label: 'Titre'
+                = f.input :position, as: 'integer'
+                = f.input :is_a_subscription, as: 'boolean', label: 'Abonnement ?'
+                = f.input :require_billing_address, as: 'boolean', label: 'Adresse de facturation requise ?'
+                = f.input :price_in_cents_wo_vat, label: 'Prix (en centimes)'
+              .span6
+                = f.input :description, as: 'text', input_html: { class: 'xxlarge' }
+        .row-fluid.form-horizontal
+          .span12
+            = f.input :header_info, as: 'text', label: "Informations d'entête de page :", input_html: { class: 'xxlarge' }
+          .span12
+            = f.input :footer_info, as: 'text', label: 'Informations de pied de page :', input_html: {class: 'xxlarge'}
+        %br
+        .form-actions
+          = f.submit t('actions.submit'), class: 'btn'
+        

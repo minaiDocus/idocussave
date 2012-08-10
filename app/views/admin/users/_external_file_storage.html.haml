@@ -1,0 +1,27 @@
+- external_file_storage = @user.find_or_create_external_file_storage
+.label{ style: 'padding:3px 5px 3px' }
+  Services de stockages externes
+- if @user.active
+  %table.table.table-striped.table-bordered.table-condensed
+    %thead
+      %tr
+        %th Service
+        %th Autorisé ?
+        %th Configuré ?
+        %th Utilisé ?
+    %tbody
+      %tr
+        %th Dropbox
+        %td= external_file_storage.is_dropbox_basic_authorized? ? btn_ok_label : btn_not_ok_label
+        %td= external_file_storage.dropbox_basic.is_configured? ? ok_label : not_ok_label
+        %td= external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX) ? ok_label : not_ok_label
+      %tr
+        %th Google Drive
+        %td= external_file_storage.is_google_docs_authorized? ? btn_ok_label : btn_not_ok_label
+        %td= external_file_storage.google_doc.is_configured? ? ok_label : not_ok_label
+        %td= external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS) ? ok_label : not_ok_label
+      %tr
+        %th FTP
+        %td= external_file_storage.is_ftp_authorized? ? btn_ok_label : btn_not_ok_label
+        %td= external_file_storage.ftp.is_configured? ? ok_label : not_ok_label
+        %td= external_file_storage.is_used?(ExternalFileStorage::F_FTP) ? ok_label : not_ok_label

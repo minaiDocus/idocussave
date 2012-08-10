@@ -1,0 +1,66 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span12.well
+    .pull-left
+      %h2= @user.name + (@user.inactive_at ? ' (Inactif)' : '')
+    .pull-right
+      = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_user_path(@user), class: 'btn'
+
+.row-fluid
+  .span6
+    .label{ style: 'padding:3px 5px 3px' }
+      informations
+    .row-fluid
+      .span6
+        %table.table.table-striped.table-bordered.table-condensed
+          %tbody
+            %tr
+              %th= t('mongoid.models.common.attributes.created_at')
+              %td= l(@user.created_at)
+            %tr
+              %th= t('mongoid.attributes.user.email')
+              %td= @user.email
+            %tr
+              %th= t('mongoid.models.user.attributes.name')
+              %td= @user.name
+            %tr
+              %th= t('mongoid.models.user.attributes.company')
+              %td= @user.company
+            %tr
+              %th= t('mongoid.models.user.attributes.code')
+              %td= @user.code
+            %tr
+              %th= t('mongoid.models.user.attributes.inactive_at')
+              %td= l(@user.inactive_at) rescue ''
+      .span6
+        %table.table.table-striped.table-bordered.table-condensed
+          %tbody
+            %tr
+              %th= t('mongoid.models.user.attributes.is_admin')
+              %td= @user.is_admin ? btn_ok_label : btn_not_ok_label
+            %tr
+              %th= t('mongoid.models.user.attributes.is_prescriber')
+              %td= @user.is_prescriber ? btn_ok_label : btn_not_ok_label
+            %tr
+              %th= t('mongoid.models.user.attributes.use_debit_mandate')
+              %td= @user.use_debit_mandate ? btn_ok_label : btn_not_ok_label
+  .span3
+    - if @user.addresses.for_billing.first
+      = render partial: 'address', locals: { address: @user.addresses.for_billing.first, is_for_billing: true }
+  .span3
+    - if @user.addresses.for_shipping.first
+      = render partial: 'address', locals: { address: @user.addresses.for_shipping.first, is_for_billing: false }
+%div
+  .row-fluid
+    .span6
+      = render partial: 'subscription'
+    .span6
+      = render partial: 'document'
+  .row-fluid
+    .span4.well
+      %h3 ABT
+    .span4
+      = render partial: 'external_file_storage'
+    .span4.well
+      %h3 RE

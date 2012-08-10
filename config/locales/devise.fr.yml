@@ -49,9 +49,14 @@ fr:
         signed_in: "Vous êtes maintenant connecté."
         signed_out: "Vous êtes maintenant déconnecté."
     sessions:
+      message:
+        welcome: "Bienvenue"
       user:
         signed_in: "Vous êtes maintenant connecté."
         signed_out: "Vous êtes maintenant déconnecté."
+      action:
+        sing_in: "Connexion"
+        sing_out: "Déconnexion"
     passwords:
       user:
         send_instructions: "Un email vous a été envoyé pour changer votre mot de passe<br/>Pour toute question concernant votre compte : contact@idocus.com"

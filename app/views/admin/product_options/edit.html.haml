@@ -1,0 +1,11 @@
+= render partial: 'admin/products/navigation'
+
+.row-fluid
+  .span.well
+    .pull-left
+      %h2= "#{t('actions.edit')} : #{@product_option.title}"
+    .pull-right
+      = link_to content_tag(:i, '', class: 'icon-plus') , new_admin_product_option_path, class: 'btn'
+      = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_option_path(@product_option), confirm: 'Voulez vous vraiment suprimer cette option ?', method: 'delete', class: 'btn'
+
+= render partial: 'form'

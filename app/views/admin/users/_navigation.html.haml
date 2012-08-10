@@ -1,0 +1,7 @@
+.navbar
+  .navbar-inner
+    .container-fluid
+      .nav-collapse
+        %ul.nav
+          %li{ class: ('active' if params[:controller] == 'admin/users' && params[:action] == 'index') }
+            = link_to 'Index', admin_users_path

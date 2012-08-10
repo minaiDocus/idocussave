@@ -1,0 +1,76 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span12.well
+    .content
+    .inner
+      %h3.title Preview
+      = render :partial => "product", :collection => @products
+  
+.row-fluid
+  .span12.well
+    %h2 Produits
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th= t('mongoid.models.product.attributes.position')
+          %th= t('mongoid.models.product.attributes.title')
+          %th= t('mongoid.models.product.attributes.price_in_cents_wo_vat')
+          %th= t('actions.name')
+      %tbody
+        - @products.each do |product|
+          %tr
+            %td= product.position
+            %td= product.title
+            %td.price= format_price_00(product.price_in_cents_wo_vat) + ' €'
+            %td
+              = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_path(product)
+              |
+              = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_path(product), confirm: 'Voulez vous vraiment suprimer ce produit ?', method: 'delete'
+
+.row-fluid
+  .span12.well
+    %h2 Options
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th= t('mongoid.models.product_option.attributes.position')
+          %th= t('mongoid.models.product_option.attributes.name')
+          %th= t('mongoid.models.product_option.attributes.price_in_cents_wo_vat')
+          %th= t('mopngoid.models.product_option.group')
+          %th= t('actions.name')
+      %tbody
+        - @product_options.each do |product_option|
+          %tr
+            %td= product_option.position
+            %td= product_option.title
+            %td.price= format_price_00(product_option.price_in_cents_wo_vat) + ' €'
+            %td= product_option.product_group.try(:name)
+            %td
+              = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_option_path(product_option)
+              |
+              = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_option_path(product_option), confirm: 'Voulez vous vraiment suprimer cette option ?', method: 'delete'
+
+  
+.row-fluid
+  .span12.well
+    %h2 Groupes
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th= t('mongoid.models.product_group.attributes.position')
+          %th= t('mongoid.models.product_group.attributes.name')
+          %th= t('mongoid.models.product.attributes.title')
+          %th Nombre d'option(s)
+          %th= t('actions.name')
+      %tbody
+        - @product_groups.each do |product_group|
+          %tr
+            %td= product_group.position
+            %td= product_group.title
+            %td= product_group.product.title
+            %td= product_group.product_options.count
+            %td
+              = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_group_path(product_group)
+              |
+              = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_group_path(product_group), confirm: 'Voulez vous vraiment suprimer ce groupe ?', method: 'delete'
