@@ -52,19 +52,19 @@
         .modal-header
           %a{ :class=>"close", "data-dismiss"=>"modal" } ×
           %h3 Connexion
-        = form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
+        = form_for User.new, :url => session_path(:user), :html => { :method => :post } do |f|
           .modal-body
             %fieldset
               %label{ :for => "email" } Email
-              != f.text_field :email, :id=>"email"
+              = f.text_field :email, :id=>"email"
               %label{ :for => "password" } Mot de passe
-              != f.password_field :password, :id=>"password"
-              != f.check_box :remember_me, :class=>"pull-left", :id=>"remember_me"
-              %label{ :for => "remember_me", :class=>"pull-left", :title => "Session de 2 jours" } Se souvenir
+              = f.password_field :password, :id => "password"
+              = f.check_box :remember_me, :class => "pull-left", :id => "remember_me"
+              %label{ :for => "remember_me", :class => "pull-left", :title => "Session de 2 jours" } Se souvenir
           .modal-footer
-            != f.submit :class => "btn btn-primary", :value => "OK"
-            %a{ :href=>"/users/password/new", :class=>"btn" } Aide
-            %a{ :href=>"#", :class=>"modal-close btn" } Fermer
+            = f.submit "OK", :class => "btn btn-primary"
+            %a{ :href => "/users/password/new", :class => "btn" } Aide
+            %a{ :href => "#", :class => "modal-close btn" } Fermer
     
     != javascript_include_tag 'application'
     :javascript

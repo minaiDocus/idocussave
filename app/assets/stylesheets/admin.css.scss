@@ -3,6 +3,7 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require common
+ *= require sass/fileuploader
  *= require_self
 */
 
@@ -102,33 +103,7 @@ html, body {
 .footer, .push {
   height: 4em;
 }
-
-.form {
-  .control-label {
-     width: 160px;
-  }
-  .controls {
-     margin-left: 180px;
-  }
-  .checkbox.inline {
-    padding-left: 0;
-    .control-label {
-      text-align: left;
-    }
-  }
-  textarea {
-    width: auto;
-    height: 180px;
-  }
-}
-
-.input-mini,input.mini,textarea.mini,select.mini{width:60px;}
-.input-small,input.small,textarea.small,select.small{width:90px;}
-.input-medium,input.medium,textarea.medium,select.medium{width:150px;}
-.input-large,input.large,textarea.large,select.large{width:210px;}
-.input-xlarge,input.xlarge,textarea.xlarge,select.xlarge{width:270px;}
-.input-xxlarge,input.xxlarge,textarea.xxlarge,select.xxlarge{width:530px;}
-textarea.xxlarge{overflow-y:auto;}
+/*****************/
 
 table {
   tr {
@@ -139,4 +114,71 @@ table {
       text-align: right;
     }
   }
+}
+
+#cms_images img {
+  max-width: 250px;
+  max-height: 75px; }
+
+#user {
+  input[type=text], input[type=textarea] {
+    padding: 0;
+    margin: 0;
+    width: 75%;
+    height: 14px;
+    font-size: 11px; }
+
+  .price {
+    text-align: right; }
+
+  table th.first {
+    width: 100px; }
+  table td.checkbox {
+    width: 25px; }
+  table td.value {
+    width: auto;
+    text-align: right; }
+
+  #edit_addresses {
+    width: 80%; }
+  #edit_scan_subscription {
+    input {
+      position: relative;
+      top: -3px;
+      margin: 0 7px 0 0; }
+  }
+  ul.token-input-list-facebook {
+    margin: auto;
+    width: 100%; }
+}
+
+.alignleft {
+  text-align: left; }
+.alignright {
+  text-align: right; }
+
+#products, #pages {
+  .form {
+    .control-label {
+      width: 160px;
+    }
+    .controls {
+      margin-left: 180px;
+    }
+    .checkbox.inline {
+      padding-left: 0;
+      .control-label {
+        text-align: left;
+      }
+    }
+    textarea {
+      width: auto;
+      height: 180px;
+    }
+  }
+
+  table th, table td {
+    text-align: left; }
+  table th.first, table td.first {
+    text-align: right; }
 }

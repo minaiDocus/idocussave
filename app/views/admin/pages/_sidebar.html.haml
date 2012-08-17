@@ -19,5 +19,5 @@
   -#= label_tag 'page_contains[_id]', 'Page'
   -#= select_tag 'page_contains[_id]', options_for_select(Page.all.map { |e| [e.title,e.id] })
   %br
-  = submit_tag t('filters.name'), class: 'btn'
+  = submit_tag 'Filtrer', class: 'btn'
   = link_to t('filters.cancel'), admin_pages_path, class: 'btn'

@@ -1,0 +1,8 @@
+= simple_form_for [:admin, @user, @account_book_type], html: { class: 'form form-horizontal account_book_type margin0' } do |f|
+  .modal-body
+    = f.input :name, label: 'Libellé'
+    = f.input :description, label: 'Déscription'
+    = f.input :position, as: :integer, label: 'Position'
+    = f.input :client_ids, label: 'Clients', collection: @user.clients, label_method: :info, value_method: :id, selected: @account_book_type['client_ids'], input_html: { multiple: true, size: 10 }
+  .modal-footer
+    = f.submit t('actions.submit'), class: 'btn'

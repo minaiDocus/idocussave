@@ -1,0 +1,2 @@
+%label{ for: option.id }
+  != [option.title,option.description, format_price_00(option.price_in_cents_wo_vat) + "€ HT"].reject { |e| e.blank? }.join(' ')

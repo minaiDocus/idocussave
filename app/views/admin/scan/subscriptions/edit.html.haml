@@ -1,0 +1,17 @@
+- if @subscription
+  = simple_form_for [:admin, @user, @subscription], html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+    .modal-body
+      .row-fluid
+        .span12
+          = f.input :prescriber_code, label: 'Code prescripteur'
+          = f.input :period_duration, label: 'Type de période', collection: [["mensuel",1],["trimestriel",3],["annuel",12]], include_blank: false
+          = f.input :payment_type, label: 'Mode de paiement', collection: [["prépayé",Subscription::PREPAYED],["prélèvement",Subscription::DEBIT]], include_blank: false
+          = f.input :end_in, label: 'Durrée (mois)'
+
+      != render partial: "product", collection: @products
+
+      .row-fluid
+        .span12
+          = f.input :is_to_spreading, label: 'Propager les changements pour tout les clients ?', as: :boolean if @user.is_prescriber
+    .modal-footer
+      = f.submit 'Valider', class: 'btn'

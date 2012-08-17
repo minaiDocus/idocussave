@@ -13,7 +13,6 @@
     .span3
       .well.change_pass_parent
         %h3 Changer mon mot de passe
-        %a{ :href => "#", :class => "show-qtip" } show
         %br/
         .change_pass
           = form_for @user, :url => account_profile_path do |f|

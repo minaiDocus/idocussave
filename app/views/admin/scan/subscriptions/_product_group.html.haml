@@ -1,0 +1,20 @@
+.row-fluid
+  .span12.well
+    %h4= product_group.title + " " + product_group.description
+    - product_group.product_subgroups.by_position.each do |product_subgroup|
+      != render partial: "product_group", locals: { product_group: product_subgroup, product: product }
+    - if product_group.product_options.any?
+      - if product_group.is_option_dependent
+        - product_group.product_options.by_position.each_with_index do |option,index|
+          .row-fluid
+            .span12
+              .pull-left
+                != radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, ((index == 0)? true : false), id: option.id, class: "option"
+              != render partial: "product_option", locals: { option: option }
+      - else
+        - product_group.product_options.by_position.each do |option|
+          .row-fluid
+            .span12
+              .pull-left
+                %input{ type: :checkbox, name: "scan_subscription[product][#{product.id}][#{product_group.id}][]", value: option.id, id: option.id, class: "option" }
+              != render partial: "product_option", locals: { option: option }

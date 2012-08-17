@@ -38,9 +38,6 @@ GEM
     arel (3.0.2)
     barby (0.5.0)
     bcrypt-ruby (3.0.1)
-    best_in_place (1.1.2)
-      jquery-rails
-      rails (~> 3.1)
     bootstrap-datepicker-rails (0.6.16)
       railties (>= 3.0)
     bson (1.6.4)
@@ -303,7 +300,6 @@ PLATFORMS
 DEPENDENCIES
   SystemTimer
   barby
-  best_in_place
   bootstrap-datepicker-rails
   bson_ext (= 1.6.2)
   chunky_png

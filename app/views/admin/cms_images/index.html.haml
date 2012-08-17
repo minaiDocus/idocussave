@@ -1,0 +1,18 @@
+.navbar
+  .navbar-inner
+    .container-fluid
+      %ul.nav
+        %li.active= link_to 'Index', admin_cms_images_path
+.row-fluid
+  .span12.well
+    %h2.title Toutes les Images
+
+    #file-uploader
+    %ul#cms_images
+      - for cms_image in @cms_images
+        %li
+          = link_to image_tag(cms_image.content.url), cms_image.content.url, target: :_blank
+          %br
+          = cms_image.content.url
+          %br
+          = link_to 'delete', [:admin, cms_image], method: :delete, confirm: 'Are you sure ?'

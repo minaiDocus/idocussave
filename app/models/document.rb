@@ -32,9 +32,8 @@ class Document
       true
     end
   end
-  
-  after_post_process :split_pages
-  after_create :add_tags
+
+  after_create :split_pages, :add_tags
 
   scope :without_original, :where => { :is_an_original.in => [false, nil] }
   scope :originals, :where => { :is_an_original => true }
@@ -64,10 +63,8 @@ public
 protected
   def split_pages
     if self.is_an_original
-      temp_file = content.to_file
-      temp_path = File.expand_path(temp_file.path)
       nbr = File.basename(self.content_file_name, ".pdf")
-      system "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%03d.pdf"
+      system "pdftk #{content.path} burst output /tmp/#{nbr}_pages_%03d.pdf"
 
       Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
         document = Document.new
@@ -107,10 +104,7 @@ protected
   
     def update_file pack, filename, is_an_upload=false
       start_at_page = pack.documents.size
-      tempfile = pack.original_document.content.to_file
-      temp_path = File.expand_path(tempfile.path)
-      basename = File.basename(temp_path,".pdf")
-      
+      temp_path = pack.original_document.content.path
       basename = File.basename pack.original_document.content_file_name, ".pdf"
       system "pdftk #{filename} burst output #{basename}_pages_%03d.pdf_"
       rename_pages start_at_page

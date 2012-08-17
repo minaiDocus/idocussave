@@ -25,12 +25,12 @@ class ProductGroup
   referenced_in :product_supergroup, :class_name => 'ProductGroup', :inverse_of => :product_subgroups
   
   class << self
-    def  by_position
-      asc(:position).asc(:title)
+    def by_position
+      asc([:position,:title])
     end
-  end
-  
-  def self.find_by_slug txt
-    self.first :conditions => {:slug => txt}
+
+    def find_by_slug(txt)
+      self.first conditions: { slug: txt }
+    end
   end
 end

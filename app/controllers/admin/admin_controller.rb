@@ -11,8 +11,13 @@ class Admin::AdminController < ApplicationController
     redirect_to root_url unless current_user.is_admin
   end
 
+  def nil_layout
+    nil
+  end
+
   public
 
   def index
+    @last_packs = Pack.desc(:created_at).limit(10)
   end
 end

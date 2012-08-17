@@ -1,14 +1,20 @@
 !!!
 %html
   %head
-    %title Idocus | Archivage numérique
+    %title Idocus | BackOffice
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }/
     = csrf_meta_tag
     != stylesheet_link_tag 'admin'
+    :plain
+      <!--[if lt IE 9]>
+        <script src="/javascripts/html5.js" type="text/javascript"></script>
+      <![endif]-->
+    != javascript_include_tag 'admin'
+    != javascript_include_tag 'admin/user' if params[:controller] == 'admin/users'
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
-        %div.container-fluid
+        .container-fluid
           = render 'layouts/admin/navigation'
     .container-fluid.wrapper
       .content
@@ -19,8 +25,3 @@
       .push
     %footer.footer
       %p.copyright{ style: 'text-align:center;' } &copy; iDocus 2012
-    :plain
-      <!--[if lt IE 9]>
-        <script src="/javascripts/html5.js" type="text/javascript"></script>
-      <![endif]-->
-    != javascript_include_tag 'admin'

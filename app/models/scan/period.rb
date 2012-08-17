@@ -60,7 +60,7 @@ class Scan::Period
   end
   
   def products_total_price_in_cents_wo_vat
-    product_option_orders.sum(:price_in_cents_wo_vat)
+    product_option_orders.sum(:price_in_cents_wo_vat) || 0
   end
   
   def price_in_cents_of_total_excess
@@ -132,14 +132,14 @@ class Scan::Period
   
   def update_information
     set_documents_name_tags
-    self.pieces = self.documents.sum(:pieces)
-    self.sheets = self.documents.sum(:sheets)
-    self.pages = self.documents.sum(:pages)
-    self.uploaded_pieces = self.documents.sum(:uploaded_pieces)
-    self.uploaded_sheets = self.documents.sum(:uploaded_sheets)
-    self.uploaded_pages = self.documents.sum(:uploaded_pages)
-    self.paperclips = self.documents.sum(:paperclips)
-    self.oversized = self.documents.sum(:oversized)
+    self.pieces = self.documents.sum(:pieces) || 0
+    self.sheets = self.documents.sum(:sheets) || 0
+    self.pages = self.documents.sum(:pages) || 0
+    self.uploaded_pieces = self.documents.sum(:uploaded_pieces) || 0
+    self.uploaded_sheets = self.documents.sum(:uploaded_sheets) || 0
+    self.uploaded_pages = self.documents.sum(:uploaded_pages) || 0
+    self.paperclips = self.documents.sum(:paperclips) || 0
+    self.oversized = self.documents.sum(:oversized) || 0
     check_delivery
     update_price
   end
@@ -249,6 +249,10 @@ class Scan::Period
   def format_price price_in_cents
     ("%0.2f" % (price_in_cents/100.0)).gsub(".",",")
   end
+
+  def current
+    desc(:created_at).first
+  end
   
 private
   def attributes_year_and_month_is_uniq
@@ -278,7 +282,7 @@ private
   end
   
   def set_end_date
-    self.end_at = start_at + duration.month - 1.seconds
+    self.end_at = start_at + duration.month - 1.second
   end
 
   def add_one_delivery!

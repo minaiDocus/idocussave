@@ -12,8 +12,11 @@
       = link_to t('mongoid.models.user.name').pluralize, admin_users_path
     %li{ class: ('active' if params[:controller] == 'admin/pages') }
       = link_to t('mongoid.models.page.name').pluralize, admin_pages_path
+    %li{ class: ('active' if params[:controller] == 'admin/cms_images') }
+      = link_to t('mongoid.models.cms_image.name').pluralize, admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to t('mongoid.models.product.name').pluralize, admin_products_path
+
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')
   = link_to current_user.email, account_documents_path

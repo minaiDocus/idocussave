@@ -265,9 +265,13 @@ fr:
           last_name: 'Nom'
           email: 'Email'
           inactive_at: 'Est inactif depuis le'
+          is_inactive: 'Est inactif ?'
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
+          is_centralizer: 'Est centralisateur ?'
+          is_detail_authorized: 'Autoriser les détails ?'
           use_debit_mandate: 'Utilise le prélévement ?'
+          balance_in_cents: 'Solde du compte prépayé'
       address:
         attributes:
           first_name: "Prénom"
@@ -288,6 +292,8 @@ fr:
           is_invisible: 'Est invisible'
           label: 'Libellé'
           is_footer: 'Afficher dans le footer'
+      cms_image:
+        name: 'CMS Image'
       product:
         name: 'Produit'
         attributes:

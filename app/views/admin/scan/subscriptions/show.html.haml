@@ -1,0 +1,32 @@
+.label{ style: 'padding:3px 5px 3px' }
+  = link_to icon_edit, '#edit_scan_subscription', 'data-toggle' => 'modal'
+  Abonnement en cours
+
+- if @user.is_prescriber
+  %table.table.table-striped.table-bordered.table-condensed
+    %tbody
+      - @options.each do |option|
+        %tr
+          %td= option.group_title
+          %td= option.title
+          %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
+      %tr
+        %th Total
+        %td
+        %td.price= format_price_00(@total) + ' € HT'
+- elsif @period
+  %table.table.table-striped.table-bordered.table-condensed
+    %tbody
+      - @period.product_option_orders.by_position.each do |option|
+        %tr
+          %td= option.group_title
+          %td= option.title
+          %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
+      %tr
+        %td Dépassement
+        %td
+        %td.price= format_price_00(period.price_in_cents_of_total_excess) + ' €' rescue ''
+      %tr
+        %th.total Total
+        %td
+        %td.price= format_price_00(period.total_price_in_cents_wo_vat) + ' €' rescue '0,00 €'

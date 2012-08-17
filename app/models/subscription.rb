@@ -71,7 +71,7 @@ class Subscription
   end
   
   def products_total_price_in_cents_wo_vat
-    product_option_orders.sum(&:price_in_cents_wo_vat)
+    product_option_orders.sum(:price_in_cents_wo_vat) || 0
   end
   
   def products_total_price_in_cents_w_vat
@@ -123,6 +123,10 @@ class Subscription
     self.progress += 1
     # fonction qui débite l'utilisateur en fonction du type de payement
     self.save
+  end
+
+  def self.current
+    desc(:created_at).first
   end
   
 protected

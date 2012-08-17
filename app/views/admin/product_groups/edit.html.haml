@@ -5,7 +5,7 @@
     .pull-left
       %h2= "#{t('actions.edit')} : #{@product_group.name}"
     .pull-right
-      = link_to content_tag(:i, '', class: 'icon-plus'), new_admin_product_group_path, class: 'btn'
-      = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_group_path(@product_group), confirm: 'Voulez vous vraiment suprimer ce groupe ?', method: 'delete', class: 'btn'
+      = link_to t('actions.new'), new_admin_product_group_path, class: 'btn'
+      = link_to t('actions.destroy'), admin_product_group_path(@product_group), confirm: 'Voulez vous vraiment suprimer ce groupe ?', method: 'delete', class: 'btn'
 
 = render partial: 'form'

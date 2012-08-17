@@ -1,0 +1,14 @@
+.label{ style: 'padding:3px 5px 3px' }
+  Options prescripteur
+%table.table.table-striped.table-bordered.table-condensed
+  %tbody
+    %tr
+      %th= t('mongoid.models.user.attributes.is_centralizer')
+      %td.value= check_box_tag 'user[is_centralizer]', 1, @user.is_centralizer
+    %tr
+      %th= t('mongoid.models.user.attributes.is_detail_authorized')
+      %td.value= check_box_tag 'user[is_detail_authorized]', 1, @user.is_detail_authorized
+    %tr
+      %td{ colspan: 2 }
+        %h5 Clients
+        = text_field_tag 'user[client_ids]', ''

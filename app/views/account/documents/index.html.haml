@@ -8,7 +8,7 @@
           %span.out
             Aucun traitement
         = label_tag :filter, "Filtre :", :class => "pull-left"
-        = text_field_tag :filter, :id => :filter, :class => "pull-left"
+        = text_field_tag :filter, "", :id => :filter, :class => "pull-left"
         
         = label_tag :document_owner_list, "Afficher les documents :", :class => "pull-left margin1left"
         = select_tag :document_owner_list, options_for_select([["tous","all"],["qui m'appartiennent","self"]]+linked_users_option), :class => "view_for pull-left wauto margin05left margin0bottom"

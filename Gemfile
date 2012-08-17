@@ -34,7 +34,6 @@ gem 'delayed_job_mongoid'
 gem 'exception_notification'
 gem 'nested_form'
 gem 'bootstrap-datepicker-rails'
-gem 'best_in_place'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

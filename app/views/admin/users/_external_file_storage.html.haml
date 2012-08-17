@@ -1,4 +1,4 @@
-- external_file_storage = @user.find_or_create_external_file_storage
+- external_file_storage = @user.find_or_create_external_file_storage.reload
 .label{ style: 'padding:3px 5px 3px' }
   Services de stockages externes
 - if @user.active
@@ -9,19 +9,31 @@
         %th Autorisé ?
         %th Configuré ?
         %th Utilisé ?
+        %th Chemin de livraison
     %tbody
       %tr
+        %th Dropbox Extended
+        %td= check_box_tag 'user[is_dropbox_extended_authorized]', 1, @user.is_dropbox_extended_authorized
+        %td
+          = icon_tag(DropboxExtended.get_session.authorized?)
+          = link_to "#{DropboxExtended.get_session.authorized? ? 're' : ''}configurer", authorize_url_admin_dropbox_path + "?user_id=#{@user.id}", class: 'btn btn-mini'
+        %td
+        %td= render partial: 'text_field', locals: { name: 'user[dropbox_delivery_folder]', value: @user.dropbox_delivery_folder }
+      %tr
         %th Dropbox
-        %td= external_file_storage.is_dropbox_basic_authorized? ? btn_ok_label : btn_not_ok_label
-        %td= external_file_storage.dropbox_basic.is_configured? ? ok_label : not_ok_label
-        %td= external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX) ? ok_label : not_ok_label
+        %td= check_box_tag 'user[external_file_storage][is_dropbox_basic_authorized]', 1, external_file_storage.is_dropbox_basic_authorized?
+        %td= icon_tag external_file_storage.dropbox_basic.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
+        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][dropbox_basic][path]', value: external_file_storage.dropbox_basic.path }
       %tr
         %th Google Drive
-        %td= external_file_storage.is_google_docs_authorized? ? btn_ok_label : btn_not_ok_label
-        %td= external_file_storage.google_doc.is_configured? ? ok_label : not_ok_label
-        %td= external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS) ? ok_label : not_ok_label
+        %td= check_box_tag 'user[external_file_storage][is_google_docs_authorized]', 1, external_file_storage.is_google_docs_authorized?
+        %td= icon_tag external_file_storage.google_doc.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS)
+        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][google_doc][path]', value: external_file_storage.google_doc.path }
       %tr
         %th FTP
-        %td= external_file_storage.is_ftp_authorized? ? btn_ok_label : btn_not_ok_label
-        %td= external_file_storage.ftp.is_configured? ? ok_label : not_ok_label
-        %td= external_file_storage.is_used?(ExternalFileStorage::F_FTP) ? ok_label : not_ok_label
+        %td= check_box_tag 'user[external_file_storage][is_ftp_authorized]', 1, external_file_storage.is_ftp_authorized?
+        %td= icon_tag external_file_storage.ftp.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
+        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][ftp][path]', value: external_file_storage.ftp.path }

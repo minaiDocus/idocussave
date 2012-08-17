@@ -5,8 +5,6 @@ Idocus::Application.routes.draw do
   devise_for :super_users
   devise_for :users
 
-  resources :maintenances
-
   resources :pages
 
   namespace :account do
@@ -103,11 +101,35 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
-    resources :users
+    resources :users do
+      get 'search_by_code', on: :collection
+      resources :addresses do
+        get 'edit_multiple', on: :collection
+        post 'update_multiple', on: :collection
+      end
+      resources :reminder_emails do
+        get 'preview', on: :member
+        get 'edit_multiple', on: :collection
+        post 'update_multiple', on: :collection
+      end
+      resource :file_sending_kit do
+        get 'select', on: :member
+        post 'generate', on: :member
+      end
+      resources :account_book_types
+      namespace :scan do
+        resource :subscription
+      end
+    end
     resources :pages
+    resources :cms_images
     resources :products
     resources :product_options
     resources :product_groups
+    resource :dropbox do
+      get 'authorize_url', on: :member
+      get 'callback', on: :member
+    end
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

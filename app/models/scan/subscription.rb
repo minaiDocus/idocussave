@@ -106,6 +106,29 @@ class Scan::Subscription < Subscription
     current_period.set_product_option_orders(options)
     current_period.save
   end
+
+  def total
+    result = 0
+    if user.is_prescriber
+      ps = Scan::Period.any_in(subscription_id: user.scan_subscription_reports.distinct(:_id)).
+           where(:start_at.lt => Time.now, :end_at.gt => Time.now)
+      ps.each do |period|
+        result += period.total_price_in_cents_wo_vat
+      end
+      acs = nil
+      if(p = find_period(Time.now))
+        acs = p
+      else
+        acs = self
+      end
+      acs.product_option_orders.where(:group_position.gte => 1000).each do |option|
+        result += option.price_in_cents_wo_vat
+      end
+    else
+      result = find_period(Time.now).try(:total_price_in_cents_wo_vat) || 0
+    end
+    result
+  end
   
 protected
   def copy_options! options

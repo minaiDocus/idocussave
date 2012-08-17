@@ -14,7 +14,8 @@ class AccountBookType
   field :position, :type => Integer, :default => 0
   
   slug :name
-  
+
+  validates_presence_of :name
   validates :name, :length => { :in => 2..4 }
   validates :description, :length => { :in => 2..50 }
   
@@ -23,6 +24,10 @@ public
   class << self
     def by_position
       order_by(:position.asc)
+    end
+
+    def find_by_slug(txt)
+      where(slug: txt).first
     end
   end
   

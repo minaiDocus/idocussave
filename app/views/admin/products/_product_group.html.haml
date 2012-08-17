@@ -1,37 +1,37 @@
-﻿.row-fluid
-  .span12.well
-    %fieldset{ :id => product_group.id, :style => "margin:7px;padding:7px;" }
+﻿.row-fluid 
+  .span12.well{ style: 'padding:0;' } 
+    %fieldset{ :id => product_group.id, :style =>"padding:7px;" }
       %span.title
         != "#{product_group.position} - #{product_group.title} #{product_group.description}"
       %span.action
         .pull-right
-          = link_to content_tag(:i, '', class: 'icon-edit'), edit_admin_product_group_path(product_group), class: 'btn'
-          = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_group_path(product_group), :method => :delete, :confirm => "êtes-vous sûr ?", class: 'btn'
+          = link_to icon_edit, edit_admin_product_group_path(product_group)
+          = link_to icon_destroy, admin_product_group_path(product_group), :method => :delete, :confirm => "êtes-vous sûr ?"
       
       != hidden_field_tag "#{product_group.id}_DependantIds", product_group.product_required_for.collect{|g| g.id}.join('-')
       - if product_group.product_subgroups
         - product_group.product_subgroups.by_position.each do |product_subgroup|
           != render :partial => "product_group", :locals => { :product_group => product_subgroup, :product => product }
       - unless product_group.product_options.empty?
-        %table.table.table-bordered.table-condensed.table-striped{ :style => "width:100%;" }
+        %table.table.table-condensed
           %tr
             %th
             %th Libellé
-            %th Prix
-            %th Position
-            %th Quantité
-            %th Durée
+            %th.first Prix
+            %th.first Position
+            %th.first Quantité
+            %th.first Durée
           - if product_group.is_option_dependent
             - product_group.product_options.by_position.each_with_index do |option,index|
               %tr
-                %td{ :style => "width:25px;" }
+                %td.first{ :style => "width:25px;" }
                   %span
                     != radio_button_tag "product_options[]", option.id, ((index == 0)? true : false), :id => option.id, :class => "option", :disabled => :disabled
                 != render :partial => "product_option", :locals => { :option => option }
           - else
             - product_group.product_options.by_position.each_with_index do |option,index|
               %tr
-                %td{ :style => "width:20px;" }
+                %td.first{ :style =>"width:20px;" }
                   %span.checkbox
                     %input{ :type => :checkbox, :name => "product_options[]", :value => option.id, :id => option.id, :class => "option", :disabled => :disabled }
                 != render :partial => "product_option", :locals => { :option => option }

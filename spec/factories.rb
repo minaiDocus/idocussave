@@ -15,4 +15,23 @@ FactoryGirl.define do
     tag { |content| content.title }
     sequence(:text) { |n| "Content #{n}" }
   end
+
+  factory User do
+    sequence(:email) { |n| "user#{n}@example.com" }
+    password '123456'
+    sequence(:first_name) { |n| "user#{n}" }
+    last_name 'TEST'
+    company 'TeSt'
+    sequence(:code) { |n| "TS#{'%04d' % n}" }
+  end
+  
+  factory Product do
+    sequence(:price_in_cents_wo_vat)  { |n|  n*100+100 }
+    sequence(:position) { |n| n}
+  end
+  
+  factory ProductOption do
+    sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
+  end
+  
 end

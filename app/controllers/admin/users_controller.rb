@@ -14,12 +14,27 @@ class Admin::UsersController < Admin::AdminController
     @user = User.find params[:id]
     respond_to do |format|
       if @user.update_attributes(params[:user])
-        format.html { redirect_to [:admin,@user], notice: 'Modifié avec succès.' }
-        format.json { respond_with_bip(@user) }
+        format.json{ render json: {}, status: :ok }
+        format.html{ redirect_to admin_user_path(@user) }
       else
-        format.html { render action: :edit }
-        format.json { respond_with_bip(@user) }
+        format.json{ render json: @user.to_json, status: :unprocessable_entity }
+        format.html{ redirect_to admin_user_path(@user), error: "Impossible de modifier cette utilisateur." }
       end
+    end
+  end
+
+  def search_by_code
+    tags = []
+    if params[:q].present?
+      users = User.where(code: /.*#{params[:q]}.*/i)
+      users = users.prescribers if params[:prescriber].present?
+      users.each do |user|
+        tags << {id: user.id, name: user.code}
+      end
+    end
+
+    respond_to do |format|
+      format.json{ render json: tags.to_json, status: :ok }
     end
   end
 

@@ -1,0 +1,50 @@
+.label{ style: 'padding:3px 5px 3px' }
+  Informations
+.row-fluid
+  .span7
+    %table.table.table-striped.table-bordered.table-condensed.bestinplace
+      %tbody
+        %tr
+          %th.first= t('mongoid.models.common.attributes.created_at')
+          %td= l(@user.created_at)
+        %tr
+          %th.first= t('mongoid.attributes.user.email')
+          %td= render partial: 'text_field', locals: { name: 'user[email]', value: @user.email }
+        %tr
+          %th.first= t('mongoid.models.user.attributes.last_name')
+          %td= render partial: 'text_field', locals: { name: 'user[last_name]', value: @user.last_name }
+        %tr
+          %th.first= t('mongoid.models.user.attributes.first_name')
+          %td= render partial: 'text_field', locals: { name: 'user[first_name]', value: @user.first_name }
+        %tr
+          %th.first= t('mongoid.models.user.attributes.company')
+          %td= render partial: 'text_field', locals: { name: 'user[company]', value: @user.company }
+        %tr
+          %th.first= t('mongoid.models.user.attributes.code')
+          %td= render partial: 'text_field', locals: { name: 'user[code]', value: @user.code }
+  .span5
+    .row-fluid
+      .span12
+        %table.table.table-striped.table-bordered.table-condensed
+          %tbody
+            %tr
+              %th= t('mongoid.models.user.attributes.is_inactive')
+              %td.value
+                = '(' + l(@user.inactive_at, format: :only_date) + ')' rescue ''
+                = check_box_tag 'user[is_inactive]', 1, @user.inactive_at.present?
+            %tr
+              %th= t('mongoid.models.user.attributes.is_admin')
+              %td.value= check_box_tag 'user[is_admin]', 1, @user.is_admin
+            %tr
+              %th= t('mongoid.models.user.attributes.is_prescriber')
+              %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber
+    .row-fluid
+      .span12
+        %table.table.table-striped.table-bordered.table-condensed
+          %tbody
+            %tr
+              %th= t('mongoid.models.user.attributes.use_debit_mandate')
+              %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate
+            %tr
+              %th= t('mongoid.models.user.attributes.balance_in_cents')
+              %td.value= format_price_00(@user.balance_in_cents) + ' €'

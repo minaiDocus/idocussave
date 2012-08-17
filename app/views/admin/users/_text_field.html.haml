@@ -1,0 +1,10 @@
+.static
+  .pull-left.value
+    = value
+  .pull-right.link
+    = edit_link
+.prompt.hide
+  = text_field_tag name, '', class: 'pull-left'
+  .pull-right
+    = ok_link
+    = not_ok_link

@@ -1,0 +1,17 @@
+= simple_nested_form_for [:admin, @user], html: { class: 'addresses form form-horizontal margin0bottom' } do |f|
+  .modal-body
+    = f.fields_for :addresses do |address|
+      .well
+        = address.link_to_remove icon_destroy, class: 'btn btn-mini'
+        = address.input :first_name
+        = address.input :last_name
+        = address.input :company
+        = address.input :address_1
+        = address.input :address_2
+        = address.input :city
+        = address.input :zip
+        = address.input :is_for_billing, as: :boolean
+        = address.input :is_for_shipping, as: :boolean
+    = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn'
+  .modal-footer
+    = f.submit t('actions.submit'), class: 'btn'

@@ -312,7 +312,7 @@ class Pack
       else
         #  Attribution du pack.
         pack.owner = user
-        pack["user_ids"] = pack["user_ids"] + user.find_or_create_reporting.viewer.map { |e| e.id }
+        pack["user_ids"] = pack["user_ids"] + [user.id] + [user.prescriber.try(:id)]
         
         document = Document.new
         document.dirty = true
@@ -320,10 +320,14 @@ class Pack
         document.is_an_upload = is_an_upload
         document.pack = pack
         document.content = File.new pack_filename
-        
-        pack.save ? document.save : false
-        if pack.order.state == "paid"
-          pack.order.scanned!
+
+        if pack.save
+          if pack.order.state == "paid"
+            pack.order.scanned!
+          end
+          document.save
+        else
+          false
         end
       end
       

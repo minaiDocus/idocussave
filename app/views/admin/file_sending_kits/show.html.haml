@@ -1,0 +1,23 @@
+.label{ style: 'padding:3px 5px 3px' }
+  - if @user.is_prescriber
+    = link_to icon_edit, '#edit_file_sending_kit', 'data-toggle' => :modal
+    = link_to content_tag(:i, '', class: 'icon-refresh'), '#select_file_sending_kit', 'data-toggle' => :modal
+  Kit d'envoi de documents
+- if @user.is_prescriber
+  %table.table.table-striped.table-bordered.table-condensed
+    %tbody
+      %tr
+        %th Chemise
+        %td
+          - if File.exist? "#{Rails.root}/public/system/data/folder.pdf"
+            = link_to '/system/data/folder.pdf', '/system/data/folder.pdf', target: :_blank
+      %tr
+        %th Mail
+        %td
+          - if File.exist? "#{Rails.root}/public/system/data/mail.pdf"
+            = link_to '/system/data/mail.pdf', '/system/data/mail.pdf', target: :_blank
+      %tr
+        %th Etiquette
+        %td
+          - if File.exist? "#{Rails.root}/public/system/data/label.pdf"
+            = link_to '/system/data/label.pdf', '/system/data/label.pdf', target: :_blank

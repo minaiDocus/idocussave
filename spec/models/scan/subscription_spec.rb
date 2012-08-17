@@ -29,7 +29,7 @@ describe Scan::Subscription do
     @scan_subscription.max_sheets_authorized.should eq(100)
     @scan_subscription.max_upload_pages_authorized.should eq(200)
     @scan_subscription.start_at.should eq(Time.now.beginning_of_month)
-    @scan_subscription.end_at.should eq(Time.now.beginning_of_month + 12.month - 1.seconds)
+    @scan_subscription.end_at.should eq(Time.now.beginning_of_month + 12.month - 1.second)
     @scan_subscription.code.should eq("PRE0001")
     @scan_subscription.prescriber_code.should eq("PRE")
   end
@@ -40,7 +40,7 @@ describe Scan::Subscription do
     scan_subscription.category.should eq(1)
   end
   
-  it "should verify ponctual options not reused trough month" do
+  it "should verify ponctual options not reused through month" do
     period = @scan_subscription.find_or_create_period(Time.now)
     period2 = @scan_subscription.find_or_create_period(Time.now + 1.month)
     

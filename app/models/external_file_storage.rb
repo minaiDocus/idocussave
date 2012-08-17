@@ -10,15 +10,17 @@ class ExternalFileStorage
   F_FTP = 8
   
   referenced_in :user
-  references_one :dropbox_basic
-  references_one :google_doc
-  references_one :ftp
-  
+  references_one :dropbox_basic, autosave: true
+  references_one :google_doc, autosave: true
+  references_one :ftp, autosave: true
+
+  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp
+
   field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
   field :is_path_used, :type => Boolean, :default => true
   field :used, :type => Integer, :default => 0
   field :authorized, :type => Integer, :default => 10
-  
+
   after_create :init_services
   
   def authorize flags

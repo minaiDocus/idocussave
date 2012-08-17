@@ -18,11 +18,9 @@
             %td= page.title
             %td= page.tag
             %td
-              = link_to t('actions.show'), admin_page_path(page)
-              |
-              = link_to t('actions.edit'), edit_admin_page_path(page)
-              |
-              = link_to t('actions.destroy'), admin_page_path(page), confirm: 'Voulez vous vraiment suprimer cette page ?', method: 'delete'
+              = link_to icon_show, admin_page_path(page)
+              = link_to icon_edit, edit_admin_page_path(page)
+              = link_to icon_destroy, admin_page_path(page), confirm: 'Voulez vous vraiment suprimer cette page ?', method: 'delete'
     .pull-right
       != paginate @pages
   .span3.well

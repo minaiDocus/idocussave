@@ -1,0 +1,24 @@
+.label{ style: 'padding:3px 5px 3px' }
+  - if @user.is_prescriber
+    = link_to icon_edit, '#edit_reminder_emails', 'data-toggle' => :modal
+  Email de rappels
+- if @user.is_prescriber
+  %table.table.table-striped.table-bordered.table-condensed
+    %thead
+      %tr
+        %th Nom
+        %th Date de livraison
+        %th Délivrés le
+        %th Délivrés / Traités / Total
+    %tbody
+      - @reminder_emails.each do |reminder_email|
+        %tr
+          %td= link_to reminder_email.name, preview_admin_user_reminder_email_path(@user, reminder_email), target: :_blank
+          %td= reminder_email.delivery_day
+          %td= l(reminder_email.delivered_at) rescue ''
+          %td
+            != reminder_email.delivered_users.count
+            \/
+            != reminder_email.processed_users.count
+            \/
+            != reminder_email.user.clients.active.count
