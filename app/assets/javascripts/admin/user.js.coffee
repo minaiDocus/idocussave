@@ -265,6 +265,12 @@ update_user_clients = ->
     datatype: 'json',
     type: 'POST'
 
+toggle_prescriber_options = ->
+  if $('#user_is_prescriber').is(':checked')
+    $('#prescriber_options table').removeClass('hide')
+  else
+    $('#prescriber_options table').addClass('hide')
+
 jQuery ->
   $('input[type=checkbox]').click ->
     url = '/admin/users/' + user_id
@@ -363,7 +369,10 @@ jQuery ->
     onDelete: (item) ->
       update_user_clients()
 
+  toggle_prescriber_options()
+
   $('#user_is_prescriber').click ->
+    toggle_prescriber_options()
     get_reminder_emails()
     get_file_sending_kit()
     get_account_book_types()
