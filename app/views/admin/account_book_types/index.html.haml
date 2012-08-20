@@ -16,4 +16,4 @@
           - if @user.is_prescriber
             .pull-right
               = link_to icon_edit, '#', class: 'edit_account_book_type'
-              = link_to icon_destroy, admin_user_account_book_type_path(@user,account_book_type), method: :delete, confirm: 'Etes vous sûr de vouloir supprimer ce type ?', class: 'destroy_account_book_type'
+              = link_to icon_destroy, admin_user_account_book_type_path(@user,account_book_type), method: :delete, data: { confirm: 'Etes vous sûr de vouloir supprimer ce type ?' }, class: 'destroy_account_book_type'
