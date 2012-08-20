@@ -25,7 +25,7 @@ class Document
     }
   
   before_content_post_process do |image|
-    if image.dirty || image.dirty.nil? # halts processing
+    if image.dirty # halts processing
       false
     else
       true
@@ -151,8 +151,8 @@ protected
       while total > 0
         documents = self.not_clean.without_original.limit(50)
         documents.each do |document|
+          document.dirty = false # set to false before reprocess to pass `before_content_post_process`
           document.content.reprocess!
-          document.dirty = false
           if document.save
             print "."
           else
