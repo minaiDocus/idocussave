@@ -63,8 +63,10 @@ public
 protected
   def split_pages
     if self.is_an_original
+      temp_file = content.queued_for_write[:original]
+      temp_path = File.expand_path(temp_file.path)
       nbr = File.basename(self.content_file_name, ".pdf")
-      system "pdftk #{content.path} burst output /tmp/#{nbr}_pages_%03d.pdf"
+      system "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%03d.pdf"
 
       Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
         document = Document.new
@@ -105,7 +107,7 @@ protected
     def update_file pack, filename, is_an_upload=false
       start_at_page = pack.documents.size
       temp_path = pack.original_document.content.path
-      basename = File.basename pack.original_document.content_file_name, ".pdf"
+      basename = File.basename(temp_path,".pdf")
       system "pdftk #{filename} burst output #{basename}_pages_%03d.pdf_"
       rename_pages start_at_page
       add_pages pack, basename, start_at_page, is_an_upload
