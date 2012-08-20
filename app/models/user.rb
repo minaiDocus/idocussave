@@ -233,13 +233,13 @@ class User
   def find_or_create_external_file_storage
     external_file_storage || ExternalFileStorage.create(:user_id => self.id)
   end
-  
+
   def find_or_create_pack_delivery_list
-    if !self.pack_delivery_list
-      self.pack_delivery_list = PackDeliveryList.new
-      self.pack_delivery_list.save
+    if pack_delivery_list
+      pack_delivery_list
+    else
+      PackDeliveryList.create(:user_id => self.id)
     end
-    self.pack_delivery_list
   end
   
 protected
