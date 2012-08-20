@@ -51,6 +51,7 @@ group :development, :test do
   gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'letter_opener'
   gem 'rspec-rails'
+  gem 'quiet_assets'
 end
 
 group :test do
