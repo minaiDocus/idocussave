@@ -230,7 +230,7 @@ class Scan::Period
     end
     invoice_link = ""
     invoice_number = ""
-    if !self.user.prescriber.try(:is_centraliser)
+    if !self.user.prescriber.try(:is_centralizer)
       invoice = self.user.invoices.where(:number => /^#{self.start_at.year}#{"%0.2d" % (self.end_at.month+1)}/).first
       if invoice.try(:content).try(:url)
         invoice_link = invoice.content.url

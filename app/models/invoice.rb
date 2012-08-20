@@ -41,7 +41,7 @@ public
     prescriber = user.prescriber ? user.prescriber : user
     time = self.created_at - 1.month
     scan_subscription = user.scan_subscriptions.where(:start_at.lte => time, :end_at.gte => time).first
-    if (prescriber != user and !prescriber.is_centraliser)
+    if (prescriber != user and !prescriber.is_centralizer)
       # particular
       period = scan_subscription.find_or_create_period(time)
       options = period.product_option_orders
@@ -131,7 +131,7 @@ public
       pdf.move_down 14
       pdf.text "<b>Période concernée :</b> " + previous_month + " " + year.to_s, :align => :left, :inline_format => true
       
-      if (prescriber and prescriber != user and !prescriber.is_centraliser)
+      if (prescriber and prescriber != user and !prescriber.is_centralizer)
         pdf.move_down 7
         pdf.text "<b>Votre code client :</b> #{user.code}", :align => :left, :inline_format => true
       end
