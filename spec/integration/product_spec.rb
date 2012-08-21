@@ -2,74 +2,62 @@ require 'spec_helper'
 
 describe Product do
   before(:each) do
-    ProductOption.destroy_all
-    ProductGroup.destroy_all
     Product.destroy_all
-   
-    @product = FactoryGirl.create(:product, title: 'product1')
-    
-    @product_group1 = ProductGroup.create(position: 1, title: 'productgroup1', name: 'productgroup1')
-    @product_group2 = ProductGroup.create(position: 2, title: 'productgroup2', name: 'productgroup2')
-    
-    @product_option1 = FactoryGirl.create(:product_option, position: 1, title: 'productoption1')
-    @product_option2 = FactoryGirl.create(:product_option, position: 2, title: 'productoption2')
-    @product_option3 = FactoryGirl.create(:product_option, position: 3, title: 'productoption3')
-    @product_option4 = FactoryGirl.create(:product_option, position: 4, title: 'productoption4')  
+    ProductGroup.destroy_all
+    ProductOption.destroy_all
 
-    @product_group1.product_options << @product_option1
-    @product_group1.product_options << @product_option2
-    @product_group1.save
+    @product = FactoryGirl.create(:product, title: 'Game console')
     
-    @product_group2.product_options << @product_option3
-    @product_group2.product_options << @product_option4
-    @product_group2.save
+    @group1 = ProductGroup.create(position: 1, title: 'Pad', name: 'pad')
+    @group2 = ProductGroup.create(position: 2, title: 'Game', name: 'game')
     
-    @product.product_groups << @product_group1
-    @product.product_groups << @product_group2
+    @option1 = FactoryGirl.create(:product_option, title: '1 pad')
+    @option2 = FactoryGirl.create(:product_option, title: '2 pads')
+    @option3 = FactoryGirl.create(:product_option, title: '3 games')
+    @option4 = FactoryGirl.create(:product_option, title: '5 games')
+
+    @group1.product_options << @option1
+    @group1.product_options << @option2
+    @group1.save
+    
+    @group2.product_options << @option3
+    @group2.product_options << @option4
+    @group2.save
+    
+    @product.product_groups << @group1
+    @product.product_groups << @group2
     @product.save
-    
-    @group_count = Product.first.product_groups.count
-   
-    @option_count1 = Product.first.product_groups.first.product_options.count    
-    @option_count2 = Product.first.product_groups.last.product_options.count     
-    
-    @option1 = Product.first.product_groups.first.product_options.all
-    @option2 = Product.first.product_groups.last.product_options.all
- 
-    @product_title = @product_option1.product_group.product.title
   end
   
-  describe ".group count" do
-    subject(:nb) { @group_count }
-    
-    it { subject.should eq(2) }
-  end
-  
-  describe ".option count per group" do
-   subject (:nb) { @option_count1 and @option_count2 }
-    
-   it { subject.should eq(2) }
-    
-  end
+  context "Groups" do
+    it "count should equal 2" do
+      @product.product_groups.count.should eq(2)
+    end
 
-  describe ".[0-1] = [1-2 options] " do
-    subject (:product_options) { @option1 }
-    
-    it { subject.should include(@product_option1) }
-    it { subject.should include(@product_option2) }
-  end
-  
-  describe ".[0-1] = [3-4 options]" do
-    subject (:product_options) { @option2 }
-   
-    it { subject.should include(@product_option3) }
-    it { subject.should include(@product_option4) }
-  end
-  
-  describe ".option -> group -> product title" do
-    subject(:product) { @product_title }
-    
-    it { subject.should eq(@product.title) }
-  end
+    describe "first group options" do
+      subject(:options_title) { @group1.product_options.distinct(:title) }
 
+      it { subject.should include(@option1.title) }
+      it { subject.should include(@option2.title) }
+    end
+
+    describe "last group options" do
+      subject(:options_title) { @group2.product_options.distinct(:title) }
+
+      it { subject.should include(@option3.title) }
+      it { subject.should include(@option4.title) }
+    end
+
+    context "Options" do
+      it "count should equal 4" do
+        total = 0
+        @product.product_groups.each { |g| total += g.product_options.count }
+        total.should eq(4)
+      end
+    end
+  end
+  
+  it "title should equal 'Game console'" do
+    @option1.product_group.product.title.should eq(@product.title)
+  end
 end
