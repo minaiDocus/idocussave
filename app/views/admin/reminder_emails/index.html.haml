@@ -10,6 +10,7 @@
         %th Date de livraison
         %th Délivrés le
         %th Délivrés / Traités / Total
+        %th Action
     %tbody
       - @reminder_emails.each do |reminder_email|
         %tr
@@ -22,3 +23,4 @@
             != reminder_email.processed_users.count
             \/
             != reminder_email.user.clients.active.count
+          %td= link_to "Envoyer", deliver_admin_user_reminder_email_path(@user, reminder_email), class: 'btn btn-mini'

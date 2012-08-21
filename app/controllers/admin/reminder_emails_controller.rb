@@ -16,10 +16,6 @@ class Admin::ReminderEmailsController < Admin::AdminController
     @reminder_emails = @user.reminder_emails
   end
 
-  def preview
-    @reminder_email = @user.reminder_emails.find params[:id]
-  end
-
   def edit_multiple
   end
 
@@ -33,5 +29,21 @@ class Admin::ReminderEmailsController < Admin::AdminController
         format.html{ render action: 'edit_multiple' }
       end
     end
+  end
+
+  def preview
+    @reminder_email = @user.reminder_emails.find params[:id]
+  end
+
+  def deliver
+    result = @reminder_email.deliver
+    if result.is_a? Boolean and result == true
+      flash[:notice] = "Délivré avec succès."
+    elsif result.is_a? Array and result.empty?
+      flash[:notice] = "Les mails ont déjà été envoyé."
+    else
+      flash[:error] = "Une erreur est survenu lors de la livraison."
+    end
+    redirect_to admin_user_path(@user)
   end
 end

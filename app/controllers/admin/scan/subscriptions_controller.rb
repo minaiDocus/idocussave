@@ -15,9 +15,8 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
   def show
     if @user.is_active?
       if @user.is_prescriber
-        subscription = @user.find_or_create_scan_subscription
-        @options = subscription.product_option_orders.where(:group_position.gte => 1000).by_position
-        @total = subscription.total
+        @subscription = @user.find_or_create_scan_subscription
+        @options = @subscription.product_option_orders.where(:group_position.gte => 1000).by_position
       else
         @period = @user.find_or_create_scan_subscription.periods.desc(:created_at).first
       end

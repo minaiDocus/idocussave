@@ -23,7 +23,7 @@ public
   
   class << self
     def by_position
-      order_by(:position.asc)
+      asc([:position, :name])
     end
 
     def find_by_slug(txt)

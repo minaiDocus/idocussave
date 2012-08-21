@@ -20,9 +20,9 @@ class Admin::AccountBookTypesController < Admin::AdminController
 
   def index
     if @user.is_prescriber
-      @account_book_types = @user.my_account_book_types
+      @account_book_types = @user.my_account_book_types.by_position
     else
-      @account_book_types = @user.account_book_types
+      @account_book_types = @user.account_book_types.by_position
     end
   end
 

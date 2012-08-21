@@ -35,18 +35,21 @@ class Subscription
   
   embeds_many :product_option_orders, :as => :product_optionable
   
-  def by_start_date
+  def self.by_start_date
     asc(:start_at)
   end
-  
+
+  # TODO remove me
   def order
     orders.current.first
   end
-  
+
+  # TODO remove me
   def invalid_current_order
     self.order.update_attributes(:is_curent => false) if self.order
   end
-  
+
+  # TODO remove me
   def new_order
     order = Order.new
     order.user = self.user

@@ -109,6 +109,7 @@ Idocus::Application.routes.draw do
       end
       resources :reminder_emails do
         get 'preview', on: :member
+        get 'deliver', on: :member
         get 'edit_multiple', on: :collection
         post 'update_multiple', on: :collection
       end

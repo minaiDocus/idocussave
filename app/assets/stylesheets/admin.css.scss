@@ -107,8 +107,9 @@ html, body {
 
 table {
   tr {
-    th.total {
+    th.total, td.total {
       text-align: right;
+      font-weight: bold;
     }
     td.price {
       text-align: right;
@@ -150,6 +151,9 @@ table {
   ul.token-input-list-facebook {
     margin: auto;
     width: 100%; }
+
+  #scan_subscription table td, #scan_subscription table th {
+    vertical-align: middle; }
 }
 
 .alignleft {
