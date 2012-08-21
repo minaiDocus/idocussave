@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 module PagesHelper
   def footer_pages
-    Page.in_footer.by_position
+    Page.visible.by_position.in_footer
   end
 
   def pages_type

@@ -11,7 +11,7 @@
   .row{ id: 'offers' }
     - if @homepage
       != @homepage.text
-      - @homepage.contents.each do |content|
+      - @homepage.contents.by_position.visible.each do |content|
         .span3
           .pave{ class: ("well gray" if content.model.to_i != 0) }
             .content!= content.text

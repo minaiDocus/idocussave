@@ -56,7 +56,7 @@ class Page
     end
 
     def homepage
-      where(tag: /homepage/i).first
+      where(tag: /homepage/i).visible.by_position.first
     end
 
     def all_types
