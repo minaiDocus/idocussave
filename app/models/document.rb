@@ -34,6 +34,7 @@ class Document
   end
 
   after_create :split_pages, :add_tags
+  after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original }
 
   scope :without_original, :where => { :is_an_original.in => [false, nil] }
   scope :originals, :where => { :is_an_original => true }
@@ -141,53 +142,22 @@ protected
       system "rm #{temp_path}_ #{filename}"
       system "cp #{temp_path} ./"
     end
-  
-    def do_reprocess_styles
-      puts "Beginning reprocess."
-      total = self.not_clean.without_original.count
-      while total > 0
-        documents = self.not_clean.without_original.limit(50)
-        documents.each do |document|
-          document.dirty = false # set to false before reprocess to pass `before_content_post_process`
-          document.content.reprocess!
-          if document.save
-            print "."
-          else
-            print "!"
-          end
-        end
-        total -= 50
-      end
-      puts "\nEnd of reprocess."
-    end
-    
-    def extract_content
-      documents = Document.without_original.not_extracted.entries
-      puts "Nombre de document à indexé : #{documents.count}"
-      
-      checkpoint_timer = Time.now
-      documents.each_with_index do |document,index|
-        if ((Time.now - checkpoint_timer) > 10.seconds)
-          puts "Zzz"
-          sleep(2)
-          checkpoint_timer = Time.now
-        end
-        print "[#{index + 1}]"
-        receiver = Receiver.new
-        result = PDF::Reader.file("#{Rails.root}/public#{document.content.url.sub(/\.pdf.*/,'.pdf')}",receiver) rescue false
-        if result
-          print "ok\n"
-          document.content_text = receiver.text
-          if document.content_text == ""
-            document.content_text = "-[none]"
-          end
-          document.save!
-        else
-          print "not ok\n"
-        end
-      end
-    end
   end
+
+  def generate_thumbs!
+    dirty = false # set to false before reprocess to pass `before_content_post_process`
+    content.reprocess!
+    save
+  end
+  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 0
+
+  def extract_content!
+    receiver = Receiver.new
+    result = PDF::Reader.file(self.content.path,receiver) rescue false
+    self.content_text = receiver.text.presence || "-[none]" if result
+    save
+  end
+  handle_asynchronously :extract_content!, queue: 'documents content', priority: 10
 end
 
 class Receiver
