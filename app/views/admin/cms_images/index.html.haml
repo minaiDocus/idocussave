@@ -15,4 +15,4 @@
           %br
           = cms_image.content.url
           %br
-          = link_to 'delete', [:admin, cms_image], method: :delete, confirm: 'Are you sure ?'
+          = link_to 'delete', [:admin, cms_image], method: :delete, data: { confirm: 'Are you sure ?' }

@@ -6,6 +6,6 @@
       %h2= "#{t('actions.edit')} : #{@product.title}"
     .pull-right
       = link_to content_tag(:i, '', class: 'icon-plus'), new_admin_product_path, class: 'btn'
-      = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_path(@product), confirm: 'Voulez vous vraiment suprimer ce produit ?', method: 'delete', class: 'btn'
+      = link_to content_tag(:i, '', class: 'icon-remove'), admin_product_path(@product), data: { confirm: 'Voulez vous vraiment suprimer ce produit ?' }, method: 'delete', class: 'btn'
 
 = render partial: 'form'

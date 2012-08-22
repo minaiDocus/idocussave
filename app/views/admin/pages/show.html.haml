@@ -6,7 +6,7 @@
       %h2= @page.title
     .pull-right
       = link_to t('actions.edit'), edit_admin_page_path(@page), class: 'btn'
-      = link_to t('actions.destroy'), admin_page_path(@page), confirm: 'Voulez vous vraiment suprimer cette page ?', method: 'delete', class: 'btn'
+      = link_to t('actions.destroy'), admin_page_path(@page), data: { confirm: 'Voulez vous vraiment suprimer cette page ?' }, method: 'delete', class: 'btn'
     
 .row-fluid
   .span9.well

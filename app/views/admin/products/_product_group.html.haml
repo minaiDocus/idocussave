@@ -6,7 +6,7 @@
       %span.action
         .pull-right
           = link_to icon_edit, edit_admin_product_group_path(product_group)
-          = link_to icon_destroy, admin_product_group_path(product_group), :method => :delete, :confirm => "êtes-vous sûr ?"
+          = link_to icon_destroy, admin_product_group_path(product_group), :method => :delete, data: { :confirm => "êtes-vous sûr ?" }
       
       != hidden_field_tag "#{product_group.id}_DependantIds", product_group.product_required_for.collect{|g| g.id}.join('-')
       - if product_group.product_subgroups

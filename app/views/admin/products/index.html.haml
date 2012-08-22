@@ -27,7 +27,7 @@
                   %td.price.first= format_price_00(product.price_in_cents_wo_vat) + ' €'
                   %td.first
                     = link_to icon_edit, edit_admin_product_path(product)
-                    = link_to icon_destroy, admin_product_path(product), confirm: 'Voulez vous vraiment suprimer ce produit ?', method: 'delete'
+                    = link_to icon_destroy, admin_product_path(product), data: { confirm: 'Voulez vous vraiment suprimer ce produit ?' }, method: 'delete'
 
       .row-fluid
         .span12.well
@@ -49,7 +49,7 @@
                   %td.first= product_option.product_group.try(:name)
                   %td.first
                     = link_to icon_edit, edit_admin_product_option_path(product_option)
-                    = link_to icon_destroy, admin_product_option_path(product_option), confirm: 'Voulez vous vraiment suprimer cette option ?', method: 'delete'
+                    = link_to icon_destroy, admin_product_option_path(product_option), data: { confirm: 'Voulez vous vraiment suprimer cette option ?' }, method: 'delete'
 
       .row-fluid
         .span12.well
@@ -71,6 +71,6 @@
                   %td.first= product_group.product_options.count
                   %td.first
                     = link_to icon_edit, edit_admin_product_group_path(product_group)
-                    = link_to icon_destroy, admin_product_group_path(product_group), confirm: 'Voulez vous vraiment suprimer ce groupe ?', method: 'delete'
+                    = link_to icon_destroy, admin_product_group_path(product_group), data: { confirm: 'Voulez vous vraiment suprimer ce groupe ?' }, method: 'delete'
 
     = render partial: 'sidebar'

@@ -7,5 +7,5 @@
 %td.first!= option.duration
 %td.first{ :style =>"width:auto;" }
   != link_to icon_edit, edit_admin_product_option_path(option)
-  != link_to icon_destroy, admin_product_option_path(option), :method => :delete, :confirm => "Êtes-vous sûr ?"
+  != link_to icon_destroy, admin_product_option_path(option), :method => :delete, data: { :confirm => "Êtes-vous sûr ?" }
   
