@@ -40,7 +40,7 @@ Idocus::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :address => "smtp.alwaysdata.com",
+    :address => "localhost",
     :domain => "idocus.com",
     :authentication => :plain,
     :enable_starttls_auto => false

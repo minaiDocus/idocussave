@@ -19,12 +19,9 @@
             != image_tag "logo/tiny_logo.png", :alt => "logo"
           .nav-collapse
             %ul{ :class=>"nav" }
-              - @page_types = PageType.by_position.all
-              - @page_types.each do |type|
-                - lien = Page.where(:content_type => type.number).visible.by_position.first
-                - if lien
-                  %li
-                    %a{ :href => "/pages/#{lien.slug rescue '#'}" } #{type.caption}
+              - pages_type.each do |page|
+                %li
+                  = link_to page.tag, page_path(page)
     .container
       .row
         .span3
