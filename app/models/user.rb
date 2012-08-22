@@ -9,99 +9,92 @@ class User
 
   ## Database authenticatable
   field :email
-  field :encrypted_password, :type => String, :default => ""
+  field :encrypted_password, type: String, default: ""
 
   validates_presence_of :email, :encrypted_password
 
   ## Recoverable
-  field :reset_password_token,   :type => String
-  field :reset_password_sent_at, :type => Time
+  field :reset_password_token,   type: String
+  field :reset_password_sent_at, type: Time
 
   ## Rememberable
-  field :remember_created_at, :type => Time
+  field :remember_created_at, type: Time
 
   ## Trackable
-  field :sign_in_count,      :type => Integer, :default => 0
-  field :current_sign_in_at, :type => Time
-  field :last_sign_in_at,    :type => Time
-  field :current_sign_in_ip, :type => String
-  field :last_sign_in_ip,    :type => String
+  field :sign_in_count,      type: Integer, default: 0
+  field :current_sign_in_at, type: Time
+  field :last_sign_in_at,    type: Time
+  field :current_sign_in_ip, type: String
+  field :last_sign_in_ip,    type: String
 
   ## Confirmable
-  field :confirmation_token,   :type => String
-  field :confirmed_at,         :type => Time
-  field :confirmation_sent_at, :type => Time
-  field :unconfirmed_email,    :type => String # Only if using reconfirmable
+  field :confirmation_token,   type: String
+  field :confirmed_at,         type: Time
+  field :confirmation_sent_at, type: Time
+  field :unconfirmed_email,    type: String # Only if using reconfirmable
 
   ## Lockable
-  # field :failed_attempts, :type => Integer, :default => 0 # Only if lock strategy is :failed_attempts
-  # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
-  # field :locked_at,       :type => Time
+  # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
+  # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
+  # field :locked_at,       type: Time
 
   ## Token authenticatable
-  # field :authentication_token, :type => String
+  # field :authentication_token, type: String
 
-  field :is_admin, :type => Boolean, :default => false
-  field :balance_in_cents, :type => Float, :default => 0.0
-  field :use_debit_mandate, :type => Boolean, :default => false
-  field :code, :type => String
-  field :first_name, :type => String
-  field :last_name, :type => String
-  field :company, :type => String
-  field :is_prescriber, :type => Boolean, :default => false
-  field :inactive_at, :type => Time
-  field :dropbox_delivery_folder, :type => String, :default => "iDocus_delivery/:code/:year:month/:account_book/"
-  field :is_dropbox_extended_authorized, :type => Boolean, :default => false
-  field :is_centralizer, :type => Boolean, :default => true
-  field :is_detail_authorized, :type => Boolean, :default => false
+  field :is_admin,                       type: Boolean, default: false
+  field :balance_in_cents,               type: Float,   default: 0.0
+  field :use_debit_mandate,              type: Boolean, default: false
+  field :code,                           type: String
+  field :first_name,                     type: String
+  field :last_name,                      type: String
+  field :company,                        type: String
+  field :is_prescriber,                  type: Boolean, default: false
+  field :inactive_at,                    type: Time
+  field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
+  field :is_dropbox_extended_authorized, type: Boolean, default: false
+  field :is_centralizer,                 type: Boolean, default: true
+  field :is_detail_authorized,           type: Boolean, default: false
   
   attr_accessor :client_ids, :is_inactive
 
   embeds_many :addresses
 
-  references_many :clients, :class_name => "User", :inverse_of => :prescriber
-  referenced_in :prescriber, :class_name => "User", :inverse_of => :clients
+  references_many :clients,  class_name: "User", inverse_of: :prescriber
+  referenced_in :prescriber, class_name: "User", inverse_of: :clients
 
-  # TODO remove those after migration
-  references_and_referenced_in_many :reportings, :inverse_of => :viewer
-  references_one :copy, :class_name => "Reporting::Customer", :inverse_of => :original_user
+  references_many :periods,                   class_name: "Scan::Period",       inverse_of: :user
+  references_many :scan_subscriptions,        class_name: "Scan::Subscription", inverse_of: :user
+  references_many :scan_subscription_reports, class_name: "Scan::Subscription", inverse_of: :prescriber
   
-  references_many :periods, :class_name => "Scan::Period", :inverse_of => :user
-  references_many :scan_subscriptions, :class_name => "Scan::Subscription", :inverse_of => :user
-  references_many :scan_subscription_reports, :class_name => "Scan::Subscription", :inverse_of => :prescriber
-  
-  references_many :own_packs, :class_name => "Pack", :inverse_of => :owner
+  references_many :own_packs, class_name: "Pack", inverse_of: :owner
   references_and_referenced_in_many :packs
   
-  references_many :my_account_book_types, :class_name => "AccountBookType", :inverse_of => :owner
-  references_and_referenced_in_many :account_book_types,  :inverse_of => :clients
+  references_many :my_account_book_types, class_name: "AccountBookType", inverse_of: :owner
+  references_and_referenced_in_many :account_book_types,  inverse_of: :clients
   
   references_many :reminder_emails
   references_many :invoices
-  references_many :orders
   references_many :credits
   references_many :document_tags
-  references_many :events
   references_many :subscriptions
   references_many :backups
   references_many :uploaded_files
   references_one :composition
   references_one :debit_mandate
-  references_one :external_file_storage, :autosave => true
+  references_one :external_file_storage, autosave: true
   references_one :file_sending_kit
   references_one :pack_delivery_list
   
-  scope :prescribers, :where => { :is_prescriber => true }
-  scope :dropbox_extended_authorized, :where => { :is_dropbox_extended_authorized => true }
-  scope :active, :where => { :inactive_at => nil }
+  scope :prescribers,                 where: { is_prescriber: true }
+  scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
+  scope :active,                      where: { inactive_at: nil }
   
   before_save :format_name, :update_clients, :set_inactive_at
 
   accepts_nested_attributes_for :external_file_storage
-  accepts_nested_attributes_for :addresses, allow_destroy: true
-  accepts_nested_attributes_for :reminder_emails, allow_destroy: true
+  accepts_nested_attributes_for :addresses,             allow_destroy: true
+  accepts_nested_attributes_for :reminder_emails,       allow_destroy: true
 
-  # TODO refactor me
   def active
     inactive_at == nil
   end
@@ -114,121 +107,21 @@ class User
     [self.code,self.company,self.name].reject { |e| e.blank? }.join(' - ')
   end
 
-  def self.find_by_email param
-    User.where(:email => param).first
+  def self.find_by_email(param)
+    User.where(email: param).first
   end
   
-  def self.find_by_emails params
-    User.any_in(:email => params).entries
+  def self.find_by_emails(params)
+    User.any_in(email: params).entries
   end
 
-  # TODO check me
-  def is_subscribed_to_category number
-    if self.subscriptions.where(:category => number).first
+  def is_subscribed_to_category(number)
+    if self.subscriptions.where(category: number).first
       true
     else
       false
     end
   end
-
-
-  # TODO check me
-  #def update_copy
-  #  find_or_create_copy.set_attributes
-  #end
-  #
-  #def find_or_create_copy
-  #  copy = self.copy
-  #  if copy
-  #    copy
-  #  else
-  #    copy = Reporting::Customer.new
-  #    copy.original_user = self
-  #    copy.save
-  #    copy
-  #  end
-  #end
-
-  # TODO check me
-  #def find_or_create_reporting
-  #  copy = find_or_create_copy
-  #  reporting = copy.reporting
-  #  if reporting
-  #    reporting
-  #  else
-  #    reporting = Reporting.new
-  #    reporting.customer = copy
-  #    self.reportings << reporting
-  #    self.save
-  #    reporting.save
-  #    copy.save
-  #    reporting
-  #  end
-  #end
-
-  # TODO check me
-  #def all_monthly
-  #  Reporting::Monthly.any_in(:reporting_id => self["reporting_ids"])
-  #end
-
-
-  # TODO check me
-  #def all_customers
-  #  Reporting::Customer.any_in(:reporting_id => self["reporting_ids"])
-  #end
-
-
-  # TODO check me
-  #def all_customers_sorted
-  #  all_customers.sort do |a,b|
-  #    if a.code != b.code
-  #      a.code <=> b.code
-  #    elsif a.company != b.company
-  #      a.company <=> b.company
-  #    elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-  #      (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
-  #    else
-  #      a.email <=> b.email
-  #    end
-  #  end
-  #end
-
-  # TODO check me
-  #def all_clients
-  #  users = []
-  #  all_customers.each do |customer|
-  #    unless customer.original_user.nil?
-  #      users << customer.original_user
-  #    else
-  #      users << customer
-  #    end
-  #  end
-  #  users
-  #end
-
-  # TODO check me
-  #def all_clients_sorted
-  #  all_clients.sort do |a,b|
-  #    if a.code != b.code
-  #      a.code <=> b.code
-  #    elsif a.company != b.company
-  #      a.company <=> b.company
-  #    elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-  #      (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
-  #    else
-  #      a.email <=> b.email
-  #    end
-  #  end
-  #end
-
-  # TODO check me
-  #def is_client? user
-  #  unless self.is_prescriber
-  #    (all_clients - [self]).include? user
-  #  else
-  #    false
-  #  end
-  #end
   
   def is_active?
     inactive_at.nil? ? true : false
@@ -238,11 +131,6 @@ class User
     !is_active?
   end
 
-  # TODO check me
-  def scanning_subscription
-    subscriptions.where(:category => 1).first
-  end
-  
   def find_or_create_scan_subscription
     if scan_subscriptions.any?
       scan_subscriptions.current
@@ -271,7 +159,7 @@ class User
     if pack_delivery_list
       pack_delivery_list
     else
-      PackDeliveryList.create(:user_id => self.id)
+      PackDeliveryList.create(user_id: self.id)
     end
   end
 
@@ -284,9 +172,10 @@ class User
   end
   
 protected
+
   def update_clients
     if self.client_ids != nil
-      self.clients = User.any_in(:_id => client_ids.split(','))
+      self.clients = User.any_in(_id: client_ids.split(','))
     else
       nil
     end

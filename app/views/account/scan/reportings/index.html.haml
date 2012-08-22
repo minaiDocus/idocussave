@@ -78,7 +78,7 @@
             %tr{ :id => "user_#{user.id}", :class => "user" }
               %td.align-middle
                 #{[user.code,user.company].join(" - ")}
-              - periods = annual_periods_for_user(user, @subscriptions, @periods, @year)
+              - periods = annual_periods_for_user(user, @periods)
               - periods.each do |period|
                 - if period
                   - period.duration.times do |i|
@@ -200,7 +200,7 @@
                   %br
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
-                    - if @prescriber.is_centraliser
+                    - if @prescriber.is_centralizer
                       - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
                       - if invoice
                         - if invoice.content.try(:url)

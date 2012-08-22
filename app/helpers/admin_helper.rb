@@ -13,7 +13,7 @@ module AdminHelper
     end
   end
   
-  def users_to_tokeninput_field users
+  def users_to_tokeninput_field(users)
     users.map{ |user| "{id: \"#{user.id}\", name: \"#{user.email}\"}"}.join(',')
   end
 
@@ -31,7 +31,7 @@ module AdminHelper
           join(',')
   end
 
-  def sortable column, title=nil, contains={}
+  def sortable(column, title=nil, contains={})
     title ||= column.titleize
     direction = 'asc'
     icon = ''

@@ -5,45 +5,42 @@ class DropboxBasic
 
   referenced_in :external_file_storage
   
-  field :session, :type => String, :default => ""
-  field :path, :type => String, :default => ":code/:year:month/:account_book/"
+  field :session, type: String, default: ''
+  field :path,    type: String, default: ':code/:year:month/:account_book/'
   
   def new_session
-    session = ""
-    unless self.session.empty?
-      session = DropboxSession.deserialize(self.session)
+    current_session = ''
+    if self.session.present?
+      current_session = DropboxSession.deserialize(self.session)
     else
-      session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
+      current_session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
     end
-    session.get_request_token
-    self.session = session.serialize
-    self.save
-    session
+    current_session.get_request_token
+    update_attribute(:session, current_session.serialize)
+    current_session
   end
   
   def get_access_token
-    unless self.session.empty?
-      session = DropboxSession.deserialize(self.session)
-      session.get_access_token
-      self.session = session.serialize
-      self.save
-      true
+    if self.session.present?
+      current_session = DropboxSession.deserialize(self.session)
+      current_session.get_access_token
+      update_attribute(:session, current_session.serialize)
     else
       false
     end
   end
   
-  def get_authorize_url callback=""
-    session = ""
+  def get_authorize_url(callback='')
+    current_session = ''
     if self.session.empty?
-      session = new_session
+      current_session = new_session
     else
-      session = DropboxSession.deserialize(self.session)
+      current_session = DropboxSession.deserialize(self.session)
     end
     if callback.empty?
-      session.get_authorize_url
+      current_session.get_authorize_url
     else
-      session.get_authorize_url callback
+      current_session.get_authorize_url(callback)
     end
   end
   
@@ -52,7 +49,7 @@ class DropboxBasic
   end
   
   def reset_session
-    self.session = ""
+    self.session = ''
     self.save
   end
   
@@ -92,5 +89,4 @@ class DropboxBasic
       end
     end
   end
-  
 end

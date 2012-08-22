@@ -1,4 +1,5 @@
 # -*- encoding : UTF-8 -*-
+# TODO reimplement me
 class BackgroundProcess
   ENV["RAILS_ENV"] = Rails.env
   

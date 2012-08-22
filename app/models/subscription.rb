@@ -4,59 +4,36 @@ class Subscription
   include Mongoid::Timestamps
   
   PREPAYED = 1
-  DEBIT = 2
+  DEBIT    = 2
 
-  field :category, :type => Integer, :default => 1
-  field :start_at, :type => Time, :default => Time.now
-  field :end_at, :type => Time, :default => Time.now + 12.month
-  field :end_in, :type => Integer, :default => 12 # month
-  field :period_duration, :type => Integer, :default => 1
-  field :current_progress, :type => Integer, :default => 1
-  field :number, :type => Integer
-  field :payment_type, :type => Integer, :default => PREPAYED
-  field :price_in_cents_wo_vat, :type => Integer, :default => 0
-  field :tva_ratio, :type => Float, :default => 1.196
+  field :category,              type: Integer, default: 1
+  field :start_at,              type: Time,    default: Time.now
+  field :end_at,                type: Time,    default: Time.now + 12.month
+  field :end_in,                type: Integer, default: 12 # month
+  field :period_duration,       type: Integer, default: 1
+  field :current_progress,      type: Integer, default: 1
+  field :number,                type: Integer
+  field :payment_type,          type: Integer, default: PREPAYED
+  field :price_in_cents_wo_vat, type: Integer, default: 0
+  field :tva_ratio,             type: Float,   default: 1.196
   
   validates_uniqueness_of :number
   
-  scope :of_user, lambda { |user| where(:user_id => user.id) }
+  scope :of_user,  lambda { |user| where(user_id: user.id) }
   scope :for_year, lambda { |year| where(:start_at.lte => Time.local(year,12,31,23,59,59), :end_at.gte => Time.local(year,1,1,0,0,0)) }
   
   before_create :set_number
   before_save :update_price, :set_start_date, :set_end_date
   
   referenced_in :user
-  references_many :orders
-  references_many :events
   references_many :invoices
   
-  # TODO remove me
-  references_many :subscription_details, :dependent => :destroy
-  
-  embeds_many :product_option_orders, :as => :product_optionable
+  embeds_many :product_option_orders, as: :product_optionable
   
   def self.by_start_date
     asc(:start_at)
   end
 
-  # TODO remove me
-  def order
-    orders.current.first
-  end
-
-  # TODO remove me
-  def invalid_current_order
-    self.order.update_attributes(:is_curent => false) if self.order
-  end
-
-  # TODO remove me
-  def new_order
-    order = Order.new
-    order.user = self.user
-    order["subscription_id"] = self.id
-    order
-  end
-  
   def price_in_cents_w_vat
     price_in_cents_wo_vat * tva_ratio
   end
@@ -70,7 +47,7 @@ class Subscription
   end
   
   def update_price!
-    update_attributes(:price_in_cents_wo_vat => products_total_price_in_cents_wo_vat)
+    update_attributes(price_in_cents_wo_vat: products_total_price_in_cents_wo_vat)
   end
   
   def products_total_price_in_cents_wo_vat
@@ -94,7 +71,7 @@ class Subscription
       group = ProductGroup.find(_group[0])
       required_option = nil
       if group.product_require
-        required_option = group.product_require.product_options.any_in(:_id => option_ids).first
+        required_option = group.product_require.product_options.any_in(_id: option_ids).first
       end
       _group[1].each do |option_id|
         option = ProductOption.find option_id
@@ -107,7 +84,7 @@ class Subscription
     self.product_option_orders = options
   end
   
-  def copy_product_option product_option
+  def copy_product_option(product_option)
     product_option_order = ProductOptionOrder.new
     product_option_order.fields.keys.each do |k|
       setter =  (k+"=").to_sym
@@ -116,15 +93,11 @@ class Subscription
     end
     product_option_order
   end
-  
-  # TODO remove me
-  def detail
-    subscription_details.current.first
-  end
-  
+
   def claim_money
     self.progress += 1
     # fonction qui débite l'utilisateur en fonction du type de payement
+    # TODO implement me
     self.save
   end
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 FactoryGirl.define do
   factory :page do
     sequence(:position) { |n| n }
@@ -26,12 +27,13 @@ FactoryGirl.define do
   end
   
   factory Product do
-    sequence(:price_in_cents_wo_vat)  { |n|  n*100+100 }
-    sequence(:position) { |n| n}
+    sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
+    sequence(:position) { |n| n }
   end
   
   factory ProductOption do
     sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
+    sequence(:position) { |n| n }
   end
   
 end

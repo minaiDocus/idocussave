@@ -5,27 +5,27 @@ class Ftp
   
   referenced_in :external_file_storage
   
-  field :host, :type => String, :default => "ftp://ftp.example.com"
-  field :login, :type => String, :default => "login"
-  field :password, :type => String, :default => "password"
-  field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
-  field :is_configured, :type => Boolean, :default => false
+  field :host,          type: String,  default: 'ftp://ftp.example.com'
+  field :login,         type: String,  default: 'login'
+  field :password,      type: String,  default: 'password'
+  field :path,          type: String,  default: 'iDocus/:code/:year:month/:account_book/'
+  field :is_configured, type: Boolean, default: false
   
-  scope :configured, :where => { :is_configured => true }
-  scope :not_configured, :where => { :is_configured => false }
+  scope :configured,     where: { is_configured: true }
+  scope :not_configured, where: { is_configured: false }
   
-  validates_format_of :host, :with => URI::regexp("ftp")
-  validates :login, :length => { :minimum => 2, :maximum => 40 }
-  validates :password, :length => { :minimum => 2, :maximum => 40 }
+  validates_format_of :host, with: URI::regexp("ftp")
+  validates :login,    length: { minimum: 2, maximum: 40 }
+  validates :password, length: { minimum: 2, maximum: 40 }
   
   def is_configured?
     is_configured
   end
   
   def reset_info
-    self.host = "ftp://ftp.example.com"
-    self.login = "login"
-    self.password = "password"
+    self.host = 'ftp://ftp.example.com'
+    self.login = 'login'
+    self.password = 'password'
   end
   
   def verify!
@@ -88,5 +88,4 @@ class Ftp
       false
     end
   end
-  
 end

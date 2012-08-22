@@ -5,24 +5,24 @@ class ReminderEmail
   
   referenced_in :user
   
-  field :name, :type => String
-  field :subject, :type => String
-  field :content, :type => String
-  field :delivery_day, :type => Integer, :default => 1
-  field :delivered_at, :type => Time
-  field :delivered_user_ids, :type => Array, :default => []
-  field :processed_user_ids, :type => Array, :default => []
+  field :name,               type: String
+  field :subject,            type: String
+  field :content,            type: String
+  field :delivery_day,       type: Integer, default: 1
+  field :delivered_at,       type: Time
+  field :delivered_user_ids, type: Array,   default: []
+  field :processed_user_ids, type: Array,   default: []
   
   validates_presence_of :name, :subject, :content, :user_id
   
   def deliver
     clients = user.clients.active - processed_users
-    unless clients.empty?
+    if clients.any?
       clients.each do |client|
         if client != user
           now = Time.now
           name = "#{client.code} #{now.year}#{now.month} all"
-          packs_delivered = client.own_packs.where(:name => name, :created_at.gt => Time.now.beginning_of_month).scan_delivered.count
+          packs_delivered = client.own_packs.where(name: name, :created_at.gt => Time.now.beginning_of_month).scan_delivered.count
           if packs_delivered == 0
             ReminderMailer.remind(self,client).deliver
             delivered_user_ids << client.id
@@ -32,7 +32,7 @@ class ReminderEmail
           save
         end
       end
-      self.update_attributes(:delivered_at => Time.now)
+      self.update_attributes(delivered_at: Time.now)
     else
       clients
     end
@@ -46,15 +46,15 @@ class ReminderEmail
   end
   
   def processed_users
-    User.any_in(:_id => processed_user_ids)
+    User.any_in(_id: processed_user_ids)
   end
   
   def delivered_users
-    User.any_in(:_id => delivered_user_ids)
+    User.any_in(_id: delivered_user_ids)
   end
   
   def deliver_if_its_time
-    if ((delivered_at.nil? || delivered_at.month < Time.now.month) and Time.now.day == delivery_day)
+    if (delivered_at.nil? || delivered_at.month < Time.now.month) and Time.now.day == delivery_day
       self.init if !delivered_at.nil? and delivered_at.month < Time.now.month
       deliver
     end

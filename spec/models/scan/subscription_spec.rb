@@ -3,11 +3,13 @@ require 'spec_helper'
 
 describe Scan::Subscription do
   before (:each) do
+    @start_at = Time.now
+
     @user = User.new(:email => "client@example.com", :password => "secret", :code => "PRE0001")
     @user.skip_confirmation!
     @user.save
     
-    @prescriber = User.new(:email => "prescriber@example.com", :password => "secret", :code => "PRE")
+    @prescriber = User.new(:email => "prescriber@example.com", :password => "secret", :code => "PRE", :is_prescriber => true)
     @prescriber.skip_confirmation!
     @prescriber.save
     
@@ -17,6 +19,7 @@ describe Scan::Subscription do
     @scan_subscription = Scan::Subscription.new
     @scan_subscription.prescriber_code = @prescriber.code
     @scan_subscription.code = @user.code
+    @scan_subscription.start_at = @start_at
     @scan_subscription.product_option_orders = [@poo,@poo2]
     @scan_subscription.save
   end
@@ -28,8 +31,8 @@ describe Scan::Subscription do
     @scan_subscription.current_progress.should eq(1)
     @scan_subscription.max_sheets_authorized.should eq(100)
     @scan_subscription.max_upload_pages_authorized.should eq(200)
-    @scan_subscription.start_at.should eq(Time.now.beginning_of_month)
-    @scan_subscription.end_at.should eq(Time.now.beginning_of_month + 12.month - 1.second)
+    @scan_subscription.start_at.should eq(@start_at.beginning_of_month)
+    @scan_subscription.end_at.should eq(@start_at.beginning_of_month + 12.month - 1.second)
     @scan_subscription.code.should eq("PRE0001")
     @scan_subscription.prescriber_code.should eq("PRE")
   end
@@ -41,24 +44,31 @@ describe Scan::Subscription do
   end
   
   it "should verify ponctual options not reused through month" do
-    period = @scan_subscription.find_or_create_period(Time.now)
-    period2 = @scan_subscription.find_or_create_period(Time.now + 1.month)
-    
-    period.product_option_orders.count.should_not eq(period2.product_option_orders.count)
+    period = @scan_subscription.periods.first
+    period.product_option_orders.count.should eq(2)
+    @scan_subscription.product_option_orders.count.should eq(1)
+  end
+
+  it "should find default period" do
+    period = @scan_subscription.periods.first
+    found_period = @scan_subscription.find_period(Time.now)
+    found_period.should eq(period)
   end
   
   it "should find period by time" do
+    time = Time.now + 2.month
+
     period = Scan::Period.new
-    period.start_at = Time.now
+    period.start_at = time
     period.duration = @scan_subscription.period_duration
     period.subscription = @scan_subscription
     period.user = @user
     period.save
-    
-    period2 = @scan_subscription.find_period(Time.now)
+
+    period2 = @scan_subscription.find_period(time)
     period2.should eq(period)
-    
-    period3 = @scan_subscription._find_period(Time.now)
+
+    period3 = @scan_subscription._find_period(time)
     period3.should eq(period)
   end
   

@@ -19,7 +19,6 @@ describe ReminderEmail do
       
       @reminder_email = ReminderEmail.new(name: 'test_email1', subject: 'sujet 1', content: 'contenu1', user_id: @user1.id)
       @reminder_email.save
-      
     end
     
     it "#deliver" do
@@ -30,14 +29,14 @@ describe ReminderEmail do
     end
     
     it "#deliver_if_its_time : now" do
-      @reminder_email.delivered_at = Time.now
+      @reminder_email.delivery_day = Time.now.day
       @reminder_email.deliver_if_its_time
       @reminder_email.processed_user_ids.should_not be_empty
       @reminder_email.delivered_user_ids.should_not be_empty
     end
     
     it "#deliver_if_its_time : now + 1 " do
-      @reminder_email.delivered_at = Time.now + 1.day
+      @reminder_email.delivery_day = Time.now.day + 1
       @reminder_email.deliver_if_its_time
       @reminder_email.processed_user_ids.should be_empty
       @reminder_email.delivered_user_ids.should be_empty

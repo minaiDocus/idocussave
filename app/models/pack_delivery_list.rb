@@ -3,13 +3,13 @@ class PackDeliveryList
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  ALL = 0
+  ALL           = 0
   ORIGINAL_ONLY = 1
-  PIECES_ONLY = 2
+  PIECES_ONLY   = 2
   
   referenced_in :user
   
-  field :queue, :type => Array, :default => []
+  field :queue, type: Array, default: []
   
   def simplify(ids)
     ids.map { |id| "#{id}" }
@@ -98,5 +98,4 @@ class PackDeliveryList
   def self.process(id)
     find(id).process!
   end
-  
 end

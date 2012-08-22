@@ -4,10 +4,10 @@ class Document::Index
 
   class << self
     def init
-      if !File.exists? "#{Rails.root}/tmp/document_content_index"
+      unless File.exists? "#{Rails.root}/tmp/document_content_index"
         Dir.mkdir "#{Rails.root}/tmp/document_content_index"
       end
-      if !File.exists? "#{Rails.root}/tmp/document_content_index/words"
+      unless File.exists? "#{Rails.root}/tmp/document_content_index/words"
         Dir.mkdir "#{Rails.root}/tmp/document_content_index/words"
       end
       Document::Tree.init
@@ -100,7 +100,7 @@ class Document::Index
       end
     end
     
-    def remove_duplicated_ids word
+    def remove_duplicated_ids(word)
       path = Document::Tree.path word
       Dir.glob("*.ids").each do |filename|
         remove_duplicated_entries path + "/" + filename

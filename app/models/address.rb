@@ -8,7 +8,6 @@ class Address
   field :company
   field :address_1
   field :address_2
-  field :address_3
   field :city
   field :zip
   field :state
@@ -16,21 +15,20 @@ class Address
   field :phone
   field :phone_mobile
   
-  field :is_for_billing, :type => Boolean, :default => false
-  field :is_for_shipping, :type => Boolean, :default => false
+  field :is_for_billing,  type: Boolean, default: false
+  field :is_for_shipping, type: Boolean, default: false
 
-  embedded_in :user,  :inverse_of => :addresses
+  embedded_in :user, inverse_of: :addresses
 
-  embedded_in :order, :inverse_of => :shipping_address
-  embedded_in :order, :inverse_of => :billing_address
+  validates_presence_of :first_name, :last_name, :city, :zip
+  validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
+  validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
 
-  validates_presence_of :first_name, :last_name, :address_2, :city, :zip
-  
-  scope :for_billing, :where => { :is_for_billing => true }
-  scope :for_shipping, :where => { :is_for_shipping => true }
+  scope :for_billing,  where: { is_for_billing: true }
+  scope :for_shipping, where: { is_for_shipping: true }
   
   def as_location
-    self.attributes.delete_if {|key, value| key == '_id' } 
+    self.attributes.delete_if { |key, value| key == '_id' }
   end
 
   def same_location? other
@@ -39,6 +37,5 @@ class Address
     else
       false
     end
-    
   end
 end

@@ -6,7 +6,7 @@ class DocumentTag
   referenced_in :document
   referenced_in :pack
   
-  field :name, :type => String, :default => ""
+  field :name, type: String, default: ""
   
   def generate
     tags = ""

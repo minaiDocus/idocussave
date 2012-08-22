@@ -3,24 +3,25 @@ class UploadedFile
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  VALID_EXTENSION = [".pdf",".bmp",".jpeg",".jpg",".png",".tiff",".tif",".gif"]
+  VALID_EXTENSION = %w(.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)
   UPLOADED_FILE_PATH = "#{Rails.root}/tmp/input_pdf_auto/uploads/"
   
   referenced_in :user
   
-  field :basename, :type => String
-  field :account_book_type, :type => String
-  field :page_number, :type => Integer
-  field :original_filename, :type => String
-  field :is_ocr_needded, :type => Boolean, :default => true
-  field :is_delivered, :type => Boolean, :default => false
+  field :basename,          type: String
+  field :account_book_type, type: String
+  field :page_number,       type: Integer
+  field :original_filename, type: String
+  field :is_ocr_needded,    type: Boolean, default: true
+  field :is_delivered,      type: Boolean, default: false
   
   validates_presence_of :original_filename, :basename, :account_book_type, :page_number
   
-  scope :delivered, :where => { :delivered => true }
-  scope :not_delivered, :where => { :delivered => false }
+  scope :delivered,     where: { delivered: true }
+  scope :not_delivered, where: { delivered: false }
   
 public
+
   def pack_name
     self.basename + "_all"
   end
@@ -30,7 +31,7 @@ public
       Dir.mkdir UPLOADED_FILE_PATH
     end
     
-    def make user, sAccountBookType, sOriginalFilename, tempfile, for_current_month
+    def make(user, sAccountBookType, sOriginalFilename, tempfile, for_current_month)
       Dir.chdir UPLOADED_FILE_PATH
       #  Validate extension.
       sExtension = File.extname(sOriginalFilename).downcase
@@ -44,7 +45,7 @@ public
         sYear = (Time.now - 1.month).year.to_s
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
         
-        pack = user.packs.where(:name => sBasename.gsub("_"," ") + " all").first
+        pack = user.packs.where(name: sBasename.gsub("_"," ") + " all").first
         if pack
           if pack.is_open_for_upload
             is_current = false
@@ -93,18 +94,18 @@ public
         Dir.chdir UPLOADED_FILE_PATH
         File.rename sNewFilename, "up_" + sNewFilename
         
-        user.uploaded_files.create(:original_filename => sOriginalFilename, :basename => sBasename, :page_number => iPageNumber, :account_book_type => sAccountBookType, :is_delivered => true)
+        user.uploaded_files.create(original_filename: sOriginalFilename, basename: sBasename, page_number: iPageNumber, account_book_type: sAccountBookType, is_delivered: true)
       else
         File.delete sNewFilename
         raise ArgumentError, 'The file is password protected'
       end
     end
     
-    def get_page_number sFilename
+    def get_page_number(sFilename)
       `pdftk #{sFilename} dump_data`.scan(/NumberOfPages: [0-9]+/)[0].scan(/[0-9]+/)[0].to_i rescue 0
     end
     
-    def get_number sBasename
+    def get_number(sBasename)
       nb = 0
       filename = get_last_similar_filename(sBasename, ".")
       if filename
@@ -119,11 +120,11 @@ public
       (1000+nb).to_s[1..3]
     end
     
-    def get_last_similar_filename sBasename, path
+    def get_last_similar_filename(sBasename, path)
       Dir.entries("#{path}").select{|d| d.match(/^up_#{sBasename}/)}.sort.last
     end
     
-    def is_password_protected? sFilename, sExtension
+    def is_password_protected?(sFilename, sExtension)
       if sExtension == ".pdf"
         !system("pdftk #{sFilename} dump_data output /dev/null")
       else

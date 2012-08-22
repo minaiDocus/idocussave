@@ -1,8 +1,6 @@
 Idocus::Application.routes.draw do
-
   root :to => "homepage#index"
 
-  devise_for :super_users
   devise_for :users
 
   resources :pages

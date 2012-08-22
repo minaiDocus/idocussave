@@ -3,19 +3,22 @@ class Dictionary
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  field :word, :type => String
+  field :word, type: String
   
   validates_presence_of :word
+  validates_uniqueness_of :word
+
+  index :word, unique: true
   
   class << self
-    def find_one word
-      where(:word => word).first
+    def find_one(word)
+      where(word: word).first
     end
     
-    def add word
+    def add(word)
       if word.is_a?(String)
         unless self.find_one(word)
-          new_word = Dictionary.new(:word => word)
+          new_word = Dictionary.new(word: word)
           new_word.save!
           return true
         end
@@ -25,7 +28,7 @@ class Dictionary
       end
     end
     
-    def remove word
+    def remove(word)
       old_word = Dictionary.find_one(word)
       if old_word
         if old_word.delete

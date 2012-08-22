@@ -4,7 +4,7 @@ class Document::Tree
   
   class << self
     def init
-      if !File.exists? TREE_PATH
+      unless File.exists? TREE_PATH
         Dir.mkdir TREE_PATH
       end
     end
@@ -14,7 +14,7 @@ class Document::Tree
       system("rm -r *") 
     end
     
-    def add sWord
+    def add(sWord)
       aLetters = sWord.split("")
       for i in 0..aLetters.count
         path = TREE_PATH + "/" + aLetters[0..i].join("/")
@@ -23,7 +23,7 @@ class Document::Tree
       TREE_PATH + "/" +aLetters.join("/")
     end
     
-    def remove sWord
+    def remove(sWord)
       aLetters = sWord.split("")
       for i in 0..aLetters.count
         length = aLetters.count
@@ -38,7 +38,7 @@ class Document::Tree
       TREE_PATH + "/" +aLetters.join("/")
     end
     
-    def search sWord
+    def search(sWord)
       path = TREE_PATH + "/" + sWord.split("").join("/")
       if File.exists? path
         path
@@ -47,7 +47,7 @@ class Document::Tree
       end
     end
     
-    def path sWord
+    def path(sWord)
       TREE_PATH + "/" + sWord.split("").join("/")
     end
   end

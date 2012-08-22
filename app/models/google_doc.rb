@@ -5,26 +5,26 @@ class GoogleDoc
   
   referenced_in :external_file_storage
   
-  field :token, :type => String, :default => ""
-  field :secret, :type => String, :default => ""
-  field :is_configured, :type => Boolean, :default => false
-  field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
+  field :token,         type: String,  default: ''
+  field :secret,        type: String,  default: ''
+  field :is_configured, type: Boolean, default: false
+  field :path,          type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   
   attr_accessor :service
   
   def get_authorize_url(callback)
     request_token = service.get_request_token(callback)
-    update_attributes(:token => request_token.token, :secret => request_token.secret)
+    update_attributes(token: request_token.token, secret: request_token.secret)
     request_token.authorize_url
   end
   
   def get_access_token(verifier)
     if !token.empty? and !secret.empty?
       access_token = service.get_access_token(verifier)
-      update_attributes(:token => access_token.token, :secret => access_token.secret, :is_configured => true)
+      update_attributes(token: access_token.token, secret: access_token.secret, is_configured: true)
       access_token
     else
-      raise "Attributes token or/and secret is/are empty."
+      raise 'Attributes token or/and secret is/are empty.'
     end
   end
   
@@ -41,7 +41,7 @@ class GoogleDoc
   end
   
   def reset_session
-    update_attributes(:token => "", :secret => "", :is_configured => false)
+    update_attributes(token: '', secret: '', is_configured: false)
   end
   
   def deliver(filespath, delivery_path)
@@ -49,7 +49,7 @@ class GoogleDoc
       collection = service.find_or_create_collection(delivery_path)
       if collection
         filespath.each do |filepath|
-          service.update_or_create_file(filepath, collection["id"].split("/")[-1], "application/pdf", collection)
+          service.update_or_create_file(filepath, collection['id'].split('/')[-1], 'application/pdf', collection)
         end
       end
     end

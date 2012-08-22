@@ -1,22 +1,18 @@
 - is_own = current_user.own_packs.include?(pack)
-- order = @all_orders.select { |order| pack[:order_id] == order.id }.first
 - users = @all_users.select { |user| pack[:user_ids].include?(user.id) }
 - owner = users.select { |user| pack[:owner_id] == user.id }.first
 
-- document_type_content = ""
-- if order.state == "paid"
-  - document_class = "paid"
-  - document_type_title = "Commande en cours de traitement"
-- elsif order.state == "scanned"
-  - if users.size > 1 && is_own
-    - document_class = "sharing"
-    - document_type_title = "Mon document que je partage"
-  - elsif users.size > 1 && !is_own
-    - document_class = "shared"
-    - document_type_title = "Document partagé par un autre utilisateur"
-  - else
-    - document_class = "scanned"
-    - document_type_title = "Mon document"
+- document_type_title = ""
+- document_class = ""
+- if users.size > 1 && is_own
+  - document_class = "sharing"
+  - document_type_title = "Mon document que je partage"
+- elsif users.size > 1 && !is_own
+  - document_class = "shared"
+  - document_type_title = "Document partagé par un autre utilisateur"
+- else
+  - document_class = "scanned"
+  - document_type_title = "Mon document"
     
 - document_type_content = document_type_title
 

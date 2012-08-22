@@ -39,5 +39,4 @@ class DebitMandate
   field :deliveryCity
   field :deliveryCountry
   field :deliveryPostalCode
-  
 end

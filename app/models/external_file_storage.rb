@@ -5,30 +5,30 @@ class ExternalFileStorage
   
   SERVICES = ["Dropbox","Google Drive","FTP"]
   
-  F_DROPBOX = 2
+  F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
-  F_FTP = 8
+  F_FTP         = 8
   
   referenced_in :user
   references_one :dropbox_basic, autosave: true
-  references_one :google_doc, autosave: true
-  references_one :ftp, autosave: true
+  references_one :google_doc,    autosave: true
+  references_one :ftp,           autosave: true
 
   accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp
 
-  field :path, :type => String, :default => "iDocus/:code/:year:month/:account_book/"
-  field :is_path_used, :type => Boolean, :default => true
-  field :used, :type => Integer, :default => 0
-  field :authorized, :type => Integer, :default => 10
+  field :path,         type: String,  default: 'iDocus/:code/:year:month/:account_book/'
+  field :is_path_used, type: Boolean, default: true
+  field :used,         type: Integer, default: 0
+  field :authorized,   type: Integer, default: 10
 
   after_create :init_services
   
-  def authorize flags
-    update_attributes(:authorized => authorized | flags)
+  def authorize(flags)
+    update_attributes(authorized: authorized | flags)
   end
   
-  def unauthorize flags
-    update_attributes(:authorized => authorized ^ ( authorized & flags))
+  def unauthorize(flags)
+    update_attributes(authorized: authorized ^ ( authorized & flags))
   end
   
   def is_dropbox_basic_authorized?
@@ -70,7 +70,7 @@ class ExternalFileStorage
     self.authorized = ok ? self.authorized | F_FTP : self.authorized ^ F_FTP
   end
   
-  def is_authorized? flag
+  def is_authorized?(flag)
     authorized & flag > 0
   end
   
@@ -90,20 +90,20 @@ class ExternalFileStorage
     nb
   end
   
-  def use flags
+  def use(flags)
     trusted_flags = authorized & flags
     if trusted_flags == flags and services_used_count < 2
-      update_attributes(:used => used | trusted_flags)
+      update_attributes(used: used | trusted_flags)
     else
       false
     end
   end
   
-  def unuse flags
-    update_attributes(:used => used ^ ( used & flags ))
+  def unuse(flags)
+    update_attributes(used: used ^ ( used & flags ))
   end
   
-  def is_used? flag
+  def is_used?(flag)
     used & flag > 0
   end
   
@@ -123,7 +123,7 @@ class ExternalFileStorage
     nb
   end
   
-  def deliver filespath, info_path={}, flags=used
+  def deliver(filespath, info_path={}, flags=used)
     is_ok = true
     filespath.each do |filepath|
       unless File.exist? filepath
@@ -161,22 +161,20 @@ class ExternalFileStorage
   end
   
   def static_path(path, info_path)
-    delivery_path = path
-    delivery_path = delivery_path.gsub(":code",info_path[:code])
-    delivery_path = delivery_path.gsub(":company",info_path[:company])
-    delivery_path = delivery_path.gsub(":account_book",info_path[:account_book])
-    delivery_path = delivery_path.gsub(":year",info_path[:year])
-    delivery_path = delivery_path.gsub(":month",info_path[:month])
-    delivery_path = delivery_path.gsub(":delivery_date",info_path[:delivery_date])
-    delivery_path
+    path.gsub(":code",info_path[:code]).
+    gsub(":company",info_path[:company]).
+    gsub(":account_book",info_path[:account_book]).
+    gsub(":year",info_path[:year]).
+    gsub(":month",info_path[:month]).
+    gsub(":delivery_date",info_path[:delivery_date])
   end
   
-protected
+  protected
+
   def init_services
-    DropboxBasic.create(:external_file_storage_id => self.id)
-    GoogleDoc.create(:external_file_storage_id => self.id)
-    Ftp.create(:external_file_storage_id => self.id)
+    DropboxBasic.create(external_file_storage_id: self.id)
+    GoogleDoc.create(external_file_storage_id: self.id)
+    Ftp.create(external_file_storage_id: self.id)
     true
   end
-  
 end

@@ -33,11 +33,11 @@ module DocumentsHelper
     end
   end
   
-  def tags_of document, tags
+  def tags_of(document, tags)
     tags.select { |tag| tag[:user_id] == @user.id and tag[:document_id] == document.id }.first.try(:name)
   end
   
-  def filter_list_of_users users
+  def filter_list_of_users(users)
     sorted_users = users.sort do |a,b|
       if a.code and a.company and a.first_name and a.last_name and a.email and b.code and b.company and b.first_name and b.last_name and b.email
         if a.code != b.code
@@ -53,23 +53,10 @@ module DocumentsHelper
         1
       end
     end
-    sorted_users.collect do |u|
-      name = []
-      name << u.code if !u.code.blank?
-      name << u.company if !u.company.blank?
-      name << u.email
-      name = name.join(" - ")
-      [name,u.id]
-    end
+    sorted_users.collect { |u| [u.info,u.id] }
   end
-  
-  def format_user user
-    name = user.code.blank? ? "" : user.company.blank? ? user.code : "#{user.code} - "
-    name += user.company.blank? ? "" : user.company
-    name
-  end
-  
-  def annual_periods_for_user user, scan_subscriptions, all_periods, year=Time.now.year
+
+  def annual_periods_for_user(user, all_periods)
     current_month = 1
     current_period = 0
     periods = []
@@ -87,10 +74,22 @@ module DocumentsHelper
     periods
   end
   
-  def price_of_period_by_time periods, time
+  def price_of_period_by_time(periods, time)
     periods.select { |period| period.start_at <= time and period.end_at >= time }.
     first.
     try(:price_in_cents_wo_vat) || 0
   end
-  
+
+  def active_clients(clients, date)
+    end_date = date.end_of_month
+    clients.select do |client|
+      if client.inactive_at.nil?
+        true
+      elsif client.inactive_at > end_date
+        true
+      else
+        false
+      end
+    end
+  end
 end

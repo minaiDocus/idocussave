@@ -11,10 +11,6 @@ protected
 
 public
 
-  def index
-    @composition = current_user.composition
-  end
-
   def create
     params[:composition][:user_id] = current_user.id
     Composition.create_with_documents params[:composition]
@@ -35,11 +31,6 @@ public
     respond_to do |format|
       format.json{ render :json => @composition, :status => :ok }
     end
-  end
-
-  def show
-    @documents = @composition.document_ids.inject([]){|res,id| res << Document.find(id)}
-    @all_compositions = current_user.compositions
   end
 
   def reorder

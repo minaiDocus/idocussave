@@ -5,14 +5,14 @@ class Product
   include Mongoid::Slug
 
   field :title
-  field :category, :type => Integer, :default => 1
-  field :price_in_cents_wo_vat, :type => Integer, :default => 0
-  field :description, :type => String, :default => ""
-  field :position, :type => Integer, :default => 1
-  field :is_a_subscription, :type => Boolean, :default => false
-  field :require_billing_address, :type => Boolean, :default => true
-  field :header_info, :type => String, :default => ""
-  field :footer_info, :type => String, :default => ""
+  field :category,                type: Integer, default: 1
+  field :price_in_cents_wo_vat,   type: Integer, default: 0
+  field :description,             type: String,  default: ''
+  field :position,                type: Integer, default: 1
+  field :is_a_subscription,       type: Boolean, default: false
+  field :require_billing_address, type: Boolean, default: true
+  field :header_info,             type: String,  default: ''
+  field :footer_info,             type: String,  default: ''
 
   validates_presence_of :title, :price_in_cents_wo_vat
 
@@ -21,8 +21,8 @@ class Product
   references_many :product_groups
   references_many :product_options
   
-  scope :subscribable, :where => { :is_a_subscription => true }
-  scope :unsubscribable, :where => { :is_a_subscription => false }
+  scope :subscribable,   where: { is_a_subscription: true }
+  scope :unsubscribable, where: { is_a_subscription: false }
 
   class << self
     def by_price_ascending
@@ -34,7 +34,7 @@ class Product
     end
 
     def find_by_slug(txt)
-      self.first :conditions => { :slug => txt }
+      self.first conditions: { slug: txt }
     end
   end
 

@@ -15,7 +15,6 @@ describe Page do
     # associations
     it { should embed_many(:images) }
     it { should embed_many(:contents) }
-    it { should embed_many(:page_contents) }
   end
 
   describe "features" do

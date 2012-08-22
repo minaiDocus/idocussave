@@ -34,8 +34,6 @@ protected
   def load_entries
     pack_ids = @packs.map { |pack| pack.id }
     packs = Pack.any_in(:_id => pack_ids)
-    order_ids = packs.distinct(:order_id)
-    @all_orders = Order.any_in(:_id => order_ids).entries
     @all_documents = Document.any_in(:pack_id => pack_ids).entries
     @all_original_documents = @all_documents.select{ |document| document.is_an_original }
     original_document_ids = @all_original_documents.map { |document| document.id }
@@ -122,20 +120,7 @@ public
     @packs = @packs.page(params[:page]).per(params[:per_page])
     load_entries
   end
-  
-  def invoice
-    @order = @user.orders.find params[:id]
 
-    @invoice = @order.invoice || @order.create_invoice
-
-    respond_to do |format|
-      format.html{ render :layout => false }
-      format.pdf do
-        render :pdf => "#{@invoice.number}", :template => "/account/documents/invoice.html.haml"
-      end
-    end
-  end
-  
   def search
     @tags = []
     @document_contents = []
@@ -208,18 +193,6 @@ public
     
     render :action => "show"
   end
-  
-  def reorder
-    documents = Document.find(params[:document_ids]).to_a
-    params[:document_ids].each_with_index{|id, index|
-      document = documents.select{|x| x.id.to_s == id.to_s}.first
-      document.update_attributes :position => index
-    }
-    
-    respond_to do |format|
-      format.json{ render :json => {}, :status => :ok }
-    end
-  end
     
   def archive
     pack = Pack.find(params[:pack_id])
@@ -261,44 +234,6 @@ public
           render :json => 'Ce document ne contient aucune information de hashage'.to_json, :status => :error
         end
       end
-    end
-  end
-  
-  def reporting
-    @user = nil
-    if params[:email] && current_user.is_admin
-      @user = User.find_by_email(params[:email])
-      flash[:notice] = "User unknow : #{params[:email]}" unless @user
-    end
-    if @user.nil?
-      @user = current_user
-    end
-    @prescriber = @user.prescriber ? @user.prescriber : @user
-    @year = params[:year].to_i if !params[:year].blank?
-    @year ||= Time.now.year
-    @monthlies = @user.all_monthly.of(@year).asc(:month).entries
-    @clients = @user.all_clients_sorted.entries
-    @customers = @user.all_customers_sorted.entries
-    
-    respond_to do |format|
-      format.html
-      format.xls do
-        send_data(render_to_xls(@monthlies), :type=> "application/vnd.ms-excel", :filename => "reporting_iDocus_#{Time.now.year}#{"%0.2d" % Time.now.month}#{"%0.2d" % Time.now.day}.xls")
-      end
-    end
-  end
-  
-  def search_user
-    @tags = []
-    if !params[:q].blank?
-      users = User.where(:email => /.*#{params[:q]}.*/)
-      
-      users.each do |user|
-        @tags << {"id" => "#{user.email}", "name" => "#{user.email}"}
-      end
-    end
-    respond_to do |format|
-      format.json{ render :json => @tags.to_json, :callback => params[:callback], :status => :ok }
     end
   end
   
@@ -362,87 +297,4 @@ public
       format.json { render :json => true, :status => :ok }
     end
   end
-  
-private
-  def render_to_xls monthlies
-    book = Spreadsheet::Workbook.new
-    
-    # Document
-    sheet1 = book.create_worksheet :name => "Production"
-    sheet1.row(0).concat ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces numérisées", "Piéces versées", "Feuilles total", "Feuilles numérisées", "Pages total", "Pages numérisées", "Pages versées", "Attache" ,"Hors format"]
-    
-    nb = 1
-    monthlies.each do |monthly|
-      monthly.documents.each do |document|
-        data = [
-                    monthly.month,
-                    monthly.year,
-                    monthly.reporting.customer.code,
-                    monthly.reporting.customer.company,
-                    document.name,
-                    document.pieces,
-                    document.scanned_pieces,
-                    document.uploaded_pieces,
-                    document.sheets,
-                    document.scanned_sheets,
-                    document.pages,
-                    document.scanned_pages,
-                    document.uploaded_pages,
-                    document.clip,
-                    document.oversize
-                  ]
-        sheet1.row(nb).replace data
-        nb += 1
-      end
-    end
-    
-    # Invoice
-    sheet2 = book.create_worksheet :name => "Facturation"
-    sheet2.row(0).concat ["Mois", "Année", "Code client", "Nom du client", "Paramètre", "Valeur", "Prix HT"]
-    
-    nb = 1
-    monthlies.each do |monthly|
-      poos = monthly.subscription_detail.product_order.product_option_orders rescue []
-      unless poos.empty?
-        poos.each do |poo|
-          data = [
-                      monthly.month,
-                      monthly.year,
-                      monthly.reporting.customer.code,
-                      monthly.reporting.customer.name,
-                      poo.group,
-                      poo.title,
-                      format_price_00(poo.price_in_cents_wo_vat)
-                    ]
-          sheet2.row(nb).replace data
-          nb += 1
-          end
-      end
-      data = [
-                  monthly.month,
-                  monthly.year,
-                  monthly.reporting.customer.code,
-                  monthly.reporting.customer.name,
-                  "Dépassement",
-                  "",
-                  format_price_00(monthly.total_price_in_cents)
-                ]
-      sheet2.row(nb).replace data
-      nb += 1
-    end
-    
-    io = StringIO.new('')
-    book.write(io)
-    io.string
-  end
-  
-  def render_to_xls_simple monthlies
-    documents = []
-    monthlies.each { |monthly| documents = documents + monthly.documents }
-    
-    documents.to_xls  :name => "Documents",
-                                :headers => ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces versé", "Feuilles total", "Feuilles numérisé", "Pages total", "Pages numérisé", "Attache" ,"Hors format"],
-                                :columns => [{:monthly => [:month, :year, { :reporting => { :customer => [:code, :company]}}]}, :name, :pieces, :uploaded_pieces, :sheets, :scanned_sheets, :pages, :scanned_pages, :clip, :oversize]
-  end
-  
 end

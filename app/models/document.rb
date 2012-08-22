@@ -6,23 +6,23 @@ class Document
 
   field :content_file_name
   field :content_file_type
-  field :content_file_size, :type => Integer
-  field :content_updated_at, :type => Time
-  field :content_text, :type => String, :default => ""
-  field :is_an_original, :type => Boolean, :default => false
-  field :is_an_upload, :type => Boolean, :default => false
-  field :tags, :type => String, :default => ""
-  field :position, :type => Integer
-  field :dirty, :type => Boolean, :default => true
-  field :indexed, :type => Boolean, :default => false
+  field :content_file_size,  type: Integer
+  field :content_updated_at, type: Time
+  field :content_text,       type: String,  default: ""
+  field :is_an_original,     type: Boolean, default: false
+  field :is_an_upload,       type: Boolean, default: false
+  field :tags,               type: String,  default: ""
+  field :position,           type: Integer
+  field :dirty,              type: Boolean, default: true
+  field :indexed,            type: Boolean, default: false
 
-  references_many :document_tags, :dependent => :destroy
+  references_many :document_tags, dependent: :destroy
   referenced_in :pack
 
   has_mongoid_attached_file :content,
-    :styles => {
-      :thumb => ["46x67>", :png],
-      :medium => ["92x133", :png]
+    styles: {
+      thumb: ["46x67>", :png],
+      medium: ["92x133", :png]
     }
   
   before_content_post_process do |image|
@@ -36,32 +36,24 @@ class Document
   after_create :split_pages, :add_tags
   after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original }
 
-  scope :without_original, :where => { :is_an_original.in => [false, nil] }
-  scope :originals, :where => { :is_an_original => true }
+  scope :without_original, where:  { :is_an_original.in => [false, nil] }
+  scope :originals,        where:  { is_an_original: true }
   
-  scope :not_extracted, :where => { :content_text => "" }
-  scope :extracted, :not_in => { :content_text => [""] }
-  scope :cannot_extract, :where => { :content_text => "-[none]" }
+  scope :not_extracted,    where:  { content_text: "" }
+  scope :extracted,        not_in: { content_text: [""] }
+  scope :cannot_extract,   where:  { content_text: "-[none]" }
   
-  scope :not_indexed, :not_in => { :indexed => [true] }
-  scope :indexed, :where => { :indexed => true }
+  scope :not_indexed,      not_in: { indexed: [true] }
+  scope :indexed,          where:  { indexed: true }
   
-  scope :not_clean, :where => { :dirty => true }
-  scope :clean, :where => { :dirty => false }
+  scope :not_clean,        where:  { dirty: true }
+  scope :clean,            where:  { dirty: false }
   
-  scope :uploaded, :where => { :is_an_upload => true }
-  scope :scanned, :where => { :is_an_upload => false }
-  
-public
-  def verified_content_text
-    self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
-  end
-  
-  def by_position
-    asc(:position)
-  end
-  
+  scope :uploaded,         where:  { is_an_upload: true }
+  scope :scanned,          where:  { is_an_upload: false }
+
 protected
+
   def split_pages
     if self.is_an_original
       temp_file = content.queued_for_write[:original]
@@ -80,7 +72,7 @@ protected
       end
     end
   end
-  
+
   def add_tags
     self.pack.users.each do |user|
       document_tag = DocumentTag.new
@@ -90,6 +82,16 @@ protected
       document_tag.generate
       document_tag.save
     end
+  end
+  
+  public
+
+  def verified_content_text
+    self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
+  end
+  
+  def by_position
+    asc(:position)
   end
   
   class << self

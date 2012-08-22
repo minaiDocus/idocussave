@@ -17,13 +17,13 @@ class DropboxExtended
       session
     end
     
-    def save_session session
+    def save_session(session)
       File.open "#{PATH}dropbox-session.txt","w" do |file|
         file.puts session.serialize
       end
     end
     
-    def get_authorize_url callback=""
+    def get_authorize_url(callback='')
       session = get_session
       if callback.empty?
         session.get_authorize_url
@@ -41,16 +41,14 @@ class DropboxExtended
     def get_client session
       DropboxClient.new(session, DropboxExtended::ACCESS_TYPE)
     end
-    
+
     def static_path(path, info_path)
-      delivery_path = path
-      delivery_path = delivery_path.gsub(":code",info_path[:code])
-      delivery_path = delivery_path.gsub(":company",info_path[:company])
-      delivery_path = delivery_path.gsub(":account_book",info_path[:account_book])
-      delivery_path = delivery_path.gsub(":year",info_path[:year])
-      delivery_path = delivery_path.gsub(":month",info_path[:month])
-      delivery_path = delivery_path.gsub(":delivery_date",info_path[:delivery_date])
-      delivery_path
+      path.gsub(":code",info_path[:code]).
+      gsub(":company",info_path[:company]).
+      gsub(":account_book",info_path[:account_book]).
+      gsub(":year",info_path[:year]).
+      gsub(":month",info_path[:month]).
+      gsub(":delivery_date",info_path[:delivery_date])
     end
     
     def is_updated(path, filename, client)
@@ -75,7 +73,7 @@ class DropboxExtended
       !is_updated(path, filename, client)
     end
     
-    def deliver filespath, folder, infopath
+    def deliver(filespath, folder, infopath)
       if temp_session = get_session
         if temp_session.authorized?
           delivery_path = static_path(folder, infopath)
@@ -95,7 +93,5 @@ class DropboxExtended
     def reset_session
       File.delete("#{PATH}dropbox-session.txt")
     end
-    
   end
-  
 end

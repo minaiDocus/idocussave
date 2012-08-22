@@ -3,36 +3,36 @@ class Scan::Period
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :user, :inverse_of => :periods
-  referenced_in :subscription, :class_name => "Scan::Subscription", :inverse_of => :periods
-  references_many :documents, :class_name => "Scan::Document", :inverse_of => :period
-  embeds_many :product_option_orders, :as => :product_optionable
-  references_one :invoice, :inverse_of => :period
-  embeds_one :delivery, :class_name => "Scan::Delivery", :inverse_of => :period
+  referenced_in :user, inverse_of: :periods
+  referenced_in :subscription, class_name: "Scan::Subscription", inverse_of: :periods
+  references_many :documents, class_name: "Scan::Document", inverse_of: :period
+  references_one :invoice, inverse_of: :period
+  embeds_many :product_option_orders, as: :product_optionable
+  embeds_one :delivery, class_name: "Scan::Delivery", inverse_of: :period
   
-  field :start_at, :type => Time, :default => Time.local(Time.now.year,Time.now.month,1,0,0,0)
-  field :end_at, :type => Time, :default => Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
-  field :duration, :type => Integer, :default => 1
+  field :start_at, type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
+  field :end_at,   type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
+  field :duration, type: Integer, default: 1
   
-  field :price_in_cents_wo_vat, :type => Integer, :default => 0
-  field :tva_ratio, :type => Float, :default => 1.196
-  field :max_sheets_authorized, :type => Integer, :default => 100
-  field :max_upload_pages_authorized, :type => Integer, :default => 200
+  field :price_in_cents_wo_vat,       type: Integer, default: 0
+  field :tva_ratio,                   type: Float,   default: 1.196
+  field :max_sheets_authorized,       type: Integer, default: 100
+  field :max_upload_pages_authorized, type: Integer, default: 200
   
-  field :documents_name_tags, :type => Array, :default => []
-  field :pieces, :type => Integer, :default => 0
-  field :sheets, :type => Integer, :default => 0
-  field :pages, :type => Integer, :default => 0
-  field :uploaded_pieces, :type => Integer, :default => 0
-  field :uploaded_sheets, :type => Integer, :default => 0
-  field :uploaded_pages, :type => Integer, :default => 0
-  field :paperclips, :type => Integer, :default => 0
-  field :oversized, :type => Integer, :default => 0
+  field :documents_name_tags, type: Array,   default: []
+  field :pieces,              type: Integer, default: 0
+  field :sheets,              type: Integer, default: 0
+  field :pages,               type: Integer, default: 0
+  field :uploaded_pieces,     type: Integer, default: 0
+  field :uploaded_sheets,     type: Integer, default: 0
+  field :uploaded_pages,      type: Integer, default: 0
+  field :paperclips,          type: Integer, default: 0
+  field :oversized,           type: Integer, default: 0
   
-  scope :monthly, :where => { :duration => 1 }
-  scope :bimonthly, :where => { :duration => 2 }
-  scope :quarterly, :where => { :duration => 3 }
-  scope :annual, :where => { :duration => 12 }
+  scope :monthly,   where: { duration: 1 }
+  scope :bimonthly, where: { duration: 2 }
+  scope :quarterly, where: { duration: 3 }
+  scope :annual,    where: { duration: 12 }
   
   # validate :attributes_year_and_month_is_uniq
   
@@ -52,7 +52,7 @@ class Scan::Period
   end
   
   def update_price!
-    update_attributes(:price_in_cents_wo_vat => total_price_in_cents_wo_vat)
+    update_attributes(price_in_cents_wo_vat: total_price_in_cents_wo_vat)
   end
   
   def total_price_in_cents_wo_vat
@@ -95,7 +95,7 @@ class Scan::Period
     excess > 0 ? excess : 0
   end
   
-  def set_product_option_orders product_options
+  def set_product_option_orders(product_options)
     self.product_option_orders = []
     product_options.each do |product_option|
       new_product_option_order = ProductOptionOrder.new
@@ -145,9 +145,9 @@ class Scan::Period
   end
   
   def render_json(viewer=self.user)
-    hash = { :documents => documents_json }
+    hash = { documents: documents_json }
     if viewer.is_admin or viewer.is_prescriber or viewer.prescriber.try(:is_detail_authorized)
-      hash.merge!({ :options => options_json })
+      hash.merge!({ options: options_json })
     end
     hash
   end
@@ -210,12 +210,12 @@ class Scan::Period
     total[:oversized] = total[:oversized].to_s
     
     {
-      :list => lists,
-      :total => total,
-      :excess => {
-        :sheets => excess_sheets.to_s, :uploaded_pages => excess_uploaded_pages.to_s
+      list: lists,
+      total: total,
+      excess: {
+        sheets: excess_sheets.to_s, uploaded_pages: excess_uploaded_pages.to_s
       },
-      :delivery => delivery.state
+      delivery: delivery.state
     }
   end
   
@@ -230,23 +230,23 @@ class Scan::Period
     end
     invoice_link = ""
     invoice_number = ""
-    if !self.user.prescriber.try(:is_centralizer)
-      invoice = self.user.invoices.where(:number => /^#{self.start_at.year}#{"%0.2d" % (self.end_at.month+1)}/).first
+    unless self.user.prescriber.try(:is_centralizer)
+      invoice = self.user.invoices.where(number: /^#{self.start_at.year}#{"%0.2d" % (self.end_at.month+1)}/).first
       if invoice.try(:content).try(:url)
         invoice_link = invoice.content.url
         invoice_number = invoice.number
       end
     end
     {
-        :list => lists,
-        :excess_price => format_price(price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages),
-        :total => format_price(price_in_cents_wo_vat),
-        :invoice_link => invoice_link,
-        :invoice_number => invoice_number
+        list: lists,
+        excess_price: format_price(price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages),
+        total: format_price(price_in_cents_wo_vat),
+        invoice_link: invoice_link,
+        invoice_number: invoice_number
     }
   end
   
-  def format_price price_in_cents
+  def format_price(price_in_cents)
     ("%0.2f" % (price_in_cents/100.0)).gsub(".",",")
   end
 
@@ -256,7 +256,7 @@ class Scan::Period
   
 private
   def attributes_year_and_month_is_uniq
-    period = subscription.periods.where(:start_at.gte => start_at, :end_at.lte => end_at, :duration => duration).first
+    period = subscription.periods.where(:start_at.gte => start_at, :end_at.lte => end_at, duration: duration).first
     if period and period != self
       errors.add(:month, "Period, with start_at '#{start_at}' and end_at '#{end_at}', already exist for this customer.")
     else

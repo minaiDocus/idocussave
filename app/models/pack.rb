@@ -6,24 +6,23 @@ class Pack
   FETCHING_PATH = "#{Rails.root}/tmp/input_pdf_auto/"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
 
-  referenced_in :owner, :class_name => "User", :inverse_of => :own_packs
+  referenced_in :owner, class_name: "User", inverse_of: :own_packs
   references_and_referenced_in_many :users
-  
-  referenced_in :order
-  references_many :documents, :dependent => :destroy
+
+  references_many :documents, dependent: :destroy
   references_many :document_tags
-  references_many :scan_documents, :class_name => "Scan::Document", :inverse_of => :pack
+  references_many :scan_documents, class_name: "Scan::Document", inverse_of: :pack
   embeds_many :divisions
   
-  field :name, :type => String
-  field :is_open_for_upload, :type => Boolean, :default => true
-  field :is_delivered_to_external_file_storage, :type => Boolean, :default => false
+  field :name,                                  type: String
+  field :is_open_for_upload,                    type: Boolean, default: true
+  field :is_delivered_to_external_file_storage, type: Boolean, default: false
   
   after_save :update_reporting_document
   
-  scope :scan_delivered, :where => { :is_open_for_uploaded_file => false }
-  scope :delivered_to_efs, :where => { :is_delivered_to_external_file_storage => true }
-  scope :not_delivered_to_efs, :where => { :is_delivered_to_external_file_storage => false }
+  scope :scan_delivered,       where: { is_open_for_uploaded_file: false }
+  scope :delivered_to_efs,     where: { is_delivered_to_external_file_storage: true }
+  scope :not_delivered_to_efs, where: { is_delivered_to_external_file_storage: false }
   
   def pages
     self.documents.without_original
@@ -37,11 +36,11 @@ class Pack
     self.divisions.pieces
   end
   
-  def find_scan_document start_time, end_time
+  def find_scan_document(start_time, end_time)
     self.scan_documents.for_time(start_time,end_time).first
   end
   
-  def find_or_create_scan_document start_time, end_time, period
+  def find_or_create_scan_document(start_time, end_time, period)
     sd = find_scan_document(start_time, end_time)
     if sd
       sd
@@ -72,8 +71,7 @@ class Pack
           document.uploaded_pieces = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::PIECES_LEVEL }.count
           document.uploaded_sheets = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::SHEETS_LEVEL }.count
           document.uploaded_pages = self.pages.uploaded.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
-          
-          document.is_shared = self.order.is_viewable_by_prescriber
+
           document.save
         end
         if document.pages - document.uploaded_pages > 0
@@ -84,23 +82,7 @@ class Pack
       time += period.duration.month
     end
   end
-  
-  def get_document name, in_dir_manual=true
-    document = Document.new
-    document.is_an_original = true
-    document.dirty = true
-    document.pack = self
-    if in_dir_manual
-      document.content = File.new "#{Rails.root}/tmp/input_pdf_manual/#{name}.pdf"
-    else
-      document.content = File.new "#{Rails.root}/tmp/input_pdf_auto/#{name.split('_')[0..2].join('_')}_all/#{name}.pdf"
-    end
-    if document.save!
-      self.order.scanned! unless self.order.scanned?
-      system("rm -r #{Rails.root}/tmp/input_pdf_manual/#{name}.pdf") if in_dir_manual
-    end
-  end
-  
+
   def original_document
     documents.originals.first
   end
@@ -126,23 +108,15 @@ class Pack
   end
   
   class << self
-    def own
-      where(:user => self.order.user)
+    def find_by_name(name)
+      where(name: name).first
+    end
+
+    def find_or_create_by_name(name, user)
+      find_by_name(name) || Pack.new(owner_id: user.id, name: name)
     end
     
-    def observed
-      excludes(:user => self.order.user)
-    end
-    
-    def shared_by
-      self.order.user
-    end
-    
-    def find_by_name name
-      where(:name => name).first
-    end
-    
-    def find_ids_by_tags tags, user, ids=[]
+    def find_ids_by_tags(tags, user, ids=[])
       pack_ids = ids
       tags.each_with_index do |tag,index|
         if index == 0 && pack_ids.empty?
@@ -154,36 +128,23 @@ class Pack
       pack_ids
     end
     
-    def find_or_create_by_name name, user
-      if pack = find_by_name(name)
-        pack
-      else
-        order = user.subscription.order rescue user.orders.last
-        order = Order.create!(:user_id => user.id, :state => "scanned", :manual => true) unless order
-        pack = Pack.new
-        pack.name = name
-        pack.order = order
-        pack
-      end
-    end
-    
     def valid_documents
       Dir.entries("./").select{|f| f.match(/\w+_\w+_\w+_\d+\.(pdf|PDF)$/)}
     end
     
     def downcase_extension
-      valid_documents.each do |file_name,index|
+      valid_documents.each do |file_name|
         if file_name.match(/\.PDF$/)
           File.rename(file_name, file_name.sub(/\.PDF$/,'.pdf'))
         end
       end
     end
     
-    def page_number_of document
+    def page_number_of(document)
       `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i rescue 0
     end
     
-    def get_file_from_numen target_dir="diadeis2depose/LIVRAISON"
+    def get_file_from_numen(target_dir="diadeis2depose/LIVRAISON")
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
       Dir.chdir("NUMEN_DELIVERY_BACKUP")
@@ -193,8 +154,8 @@ class Pack
       ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
       
       ftp.chdir(target_dir)
-      rootFilesName = ftp.nlst.sort
-      headers = rootFilesName.select { |e| e.match(/\.txt$/) }
+      root_files_name = ftp.nlst.sort
+      headers = root_files_name.select { |e| e.match(/\.txt$/) }
       
       processed_headers = Dir.glob("*.txt")
       headers = headers - processed_headers
@@ -202,27 +163,27 @@ class Pack
       total_filesname = []
       
       headers.each do |header|
-        folderName = rootFilesName.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
-        puts "Looking at folder : #{folderName}"
-        ftp.chdir(folderName)
-        foldersName = ftp.nlst.sort
+        folder_name = root_files_name.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
+        puts "Looking at folder : #{folder_name}"
+        ftp.chdir(folder_name)
+        folders_name = ftp.nlst.sort
         
-        allFilesName = []
+        all_filesname = []
         
-        Dir.mkdir(folderName) unless File.exist?(folderName)
-        Dir.chdir(folderName)
-        foldersName.each do |folderName|
-          ftp.chdir(folderName)
-          filesName = ftp.nlst.sort
-          allFilesName += filesName
-          filesName.each do |fileName|
-            if fileName.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
-              unless File.exist?(fileName)
-                print "\tTrying to fetch document named #{fileName}..."
-                ftp.getbinaryfile(fileName)
+        Dir.mkdir(folder_name) unless File.exist?(folder_name)
+        Dir.chdir(folder_name)
+        folders_name.each do |foldername|
+          ftp.chdir(foldername)
+          files_name = ftp.nlst.sort
+          all_filesname += files_name
+          files_name.each do |file_name|
+            if file_name.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
+              unless File.exist?(file_name)
+                print "\tTrying to fetch document named #{file_name}..."
+                ftp.getbinaryfile(file_name)
                 print "done\n"
               else
-                puts "\tHad already fetched document named #{fileName}"
+                puts "\tHad already fetched document named #{file_name}"
               end
               # ftp.delete(fileName)
             end
@@ -231,15 +192,15 @@ class Pack
         end
         
         is_ok = true
-        allFilesName.each do |filename|
+        all_filesname.each do |filename|
           if `pdftk #{filename} dump_data`.empty?
             is_ok = false
           end
         end
         
         if is_ok
-          allFilesName.each { |fileName| system("cp #{fileName} ../../") }
-          total_filesname += allFilesName
+          all_filesname.each { |filename| system("cp #{filename} ../../") }
+          total_filesname += all_filesname
         else
           ErrorNotitication::EMAILS.each do |email|
             NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
@@ -256,7 +217,7 @@ class Pack
       total_filesname
     end
     
-    def get_documents files=[]
+    def get_documents(files=[])
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       downcase_extension
       filesname = files.empty? ? valid_documents.sort : files
@@ -288,8 +249,8 @@ class Pack
       end
     end
     
-    def add filesname, pack, is_an_upload=false
-      user = pack.order.user
+    def add(filesname, pack, is_an_upload=false)
+      user = pack.owner
       pack_name = pack.name.gsub(" ","_")
       pack_filename = pack_name + ".pdf"
       
@@ -322,9 +283,6 @@ class Pack
         document.content = File.new pack_filename
 
         if pack.save
-          if pack.order.state == "paid"
-            pack.order.scanned!
-          end
           document.save
         else
           false
@@ -335,7 +293,7 @@ class Pack
       [user.email,pack_filename]
     end
     
-    def info_path pack_name, user=nil
+    def info_path(pack_name, user=nil)
       name_info = pack_name.split("_")
       info = {}
       info[:code] = name_info[0]
@@ -347,12 +305,12 @@ class Pack
       info
     end
     
-    def default_delivery_path pack_name
+    def default_delivery_path(pack_name)
       part = pack_name.split "_"
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
     
-    def deliver_to_external_file_storage pack_id, user_ids, filespath, infopath
+    def deliver_to_external_file_storage(pack_id, user_ids, filespath, infopath)
       pack = Pack.find(pack_id)
       users = User.find(user_ids)
       Dir.chdir(filespath[0])
@@ -377,7 +335,8 @@ class Pack
     end
     
   private
-    def update_division filesname, pack, is_an_upload
+
+    def update_division(filesname, pack, is_an_upload)
       total_pages = 0
       count = pack.documents.count
       current_page = (count == 0) ? 1 : count
@@ -408,14 +367,14 @@ class Pack
       end
     end
   
-    def init_and_moov_to name, filesname
+    def init_and_moov_to(name, filesname)
       Dir.mkdir name rescue nil
       filesname.each { |filename| system "mv #{filename} #{name}" }
       Dir.chdir name
       File.delete name + ".pdf" rescue nil
     end
   
-    def apply_new_name filesname, starting_page
+    def apply_new_name(filesname, starting_page)
       filesname.each { |filename| File.rename filename, filename + "_"  }
       start = starting_page
       filesname.map do |filename|
@@ -427,12 +386,12 @@ class Pack
       end
     end
     
-    def generate_new_name filename, number
+    def generate_new_name(filename, number)
       zero_filler = "0" * (3 - number.to_s.size)
       filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
     end
     
-    def generate_stamp text
+    def generate_stamp(text)
       Prawn::Document.generate STAMP_PATH, :margin => 0 do
         fill_color "FF0000"
         rotate(330, :origin => [495,780]) do

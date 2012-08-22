@@ -4,29 +4,24 @@ class Page
   include Mongoid::Timestamps
   include Mongoid::Slug
 
-  field :title, type: String
-  field :label, type: String
-  field :text, type: String, default: ''
+  field :title,            type: String
+  field :label,            type: String
+  field :text,             type: String,  default: ''
   field :meta_description, type: String
-  field :style, type: String
-  field :is_footer, type: Boolean, default: false
-  field :position, type: Integer, default: 1
-  field :is_invisible, type: Boolean, default: false
-  field :tag, type: String
-  field :is_for_preview, type: Boolean, default: false
+  field :style,            type: String
+  field :position,         type: Integer, default: 1
+  field :tag,              type: String
+  field :is_footer,        type: Boolean, default: false
+  field :is_invisible,     type: Boolean, default: false
+  field :is_for_preview,   type: Boolean, default: false
 
   slug :label
 
-  embeds_many :images, class_name: 'Page::Image'
+  embeds_many :images,   class_name: 'Page::Image'
   embeds_many :contents, class_name: 'Page::Content'
 
-  accepts_nested_attributes_for :images, reject_if: lambda { |a| a[:name].blank? }, allow_destroy: true
-  accepts_nested_attributes_for :contents, reject_if: lambda { |a| a[:title].blank? }, allow_destroy: true
-
-  # TODO remove me after migration
-  embeds_many :page_contents
-  accepts_nested_attributes_for :page_contents, reject_if: lambda { |a| a[:title].blank? }, allow_destroy: true
-
+  accepts_nested_attributes_for :images,   reject_if: lambda { |e| e[:name].blank? },  allow_destroy: true
+  accepts_nested_attributes_for :contents, reject_if: lambda { |e| e[:title].blank? }, allow_destroy: true
 
   validates_presence_of :title, :label, :tag
 
@@ -44,7 +39,7 @@ class Page
     end
 
     def by_position
-      asc(:position).asc(:title)
+      asc([:position, :title])
     end
 
     def visible
@@ -82,5 +77,4 @@ class Page
       where(is_for_preview: true)
     end
   end
-
 end

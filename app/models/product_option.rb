@@ -5,12 +5,12 @@ class ProductOption
   include Mongoid::Slug
   
   field :title
-  field :description, :type => String, :default => ""
-  field :price_in_cents_wo_vat, :type => Float
-  field :position, :type => Integer, :default => 1
-  field :require_addresses, :type => Boolean, :default => false
-  field :duration, :type => Integer, :default => 1
-  field :quantity, :type => Integer, :default => 1
+  field :description,           type: String,  default: ""
+  field :price_in_cents_wo_vat, type: Float
+  field :position,              type: Integer, default: 1
+  field :require_addresses,     type: Boolean, default: false
+  field :duration,              type: Integer, default: 1
+  field :quantity,              type: Integer, default: 1
   
   validates_presence_of :title, :price_in_cents_wo_vat
   
@@ -31,7 +31,7 @@ public
     end
 
     def find_by_slug(txt)
-      self.first :conditions => { :slug => txt }
+      self.first conditions: { slug: txt }
     end
   end
 
