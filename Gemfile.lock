@@ -2,7 +2,6 @@ GEM
   remote: http://rubygems.org/
   specs:
     Ascii85 (1.0.1)
-    SystemTimer (1.2.3)
     actionmailer (3.2.7)
       actionpack (= 3.2.7)
       mail (~> 2.4.4)
@@ -213,7 +212,6 @@ GEM
     rcov (0.9.8)
     rdoc (3.12)
       json (~> 1.4)
-    rmagick (2.13.1)
     rspec (2.11.0)
       rspec-core (~> 2.11.0)
       rspec-expectations (~> 2.11.0)
@@ -300,7 +298,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  SystemTimer
   barby
   bootstrap-datepicker-rails
   bson_ext (= 1.6.2)
@@ -338,7 +335,6 @@ DEPENDENCIES
   rack-raw-upload
   rails (= 3.2.7)
   rcov (= 0.9.8)
-  rmagick
   rspec-rails
   ruby-debug19
   sass-rails (~> 3.2.3)
