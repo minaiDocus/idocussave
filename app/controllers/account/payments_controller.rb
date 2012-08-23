@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
-  skip_before_filter :find_last_composition
   skip_before_filter :verify_authenticity_token, :only => [:mode]
   
   layout nil, :only => [:credit]
