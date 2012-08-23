@@ -147,8 +147,8 @@ protected
   end
 
   def generate_thumbs!
-    dirty = false # set to false before reprocess to pass `before_content_post_process`
-    content.reprocess!
+    self.dirty = false # set to false before reprocess to pass `before_content_post_process`
+    self.content.reprocess!
     save
   end
   handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 0
