@@ -64,8 +64,8 @@ class Pack
       if !current_divisions.empty?
         document = find_or_create_scan_document(period.start_at,period.end_at,period)
         if document
-          document.sheets = current_divisions.select{ |division| division.level == Division::PIECES_LEVEL }.count
-          document.pieces = current_divisions.select{ |division| division.level == Division::SHEETS_LEVEL }.count
+          document.sheets = current_divisions.select{ |division| division.level == Division::SHEETS_LEVEL }.count
+          document.pieces = current_divisions.select{ |division| division.level == Division::PIECES_LEVEL }.count
           document.pages = self.pages.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
           
           document.uploaded_pieces = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::PIECES_LEVEL }.count
