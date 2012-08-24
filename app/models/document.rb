@@ -52,6 +52,8 @@ class Document
   scope :uploaded,         where:  { is_an_upload: true }
   scope :scanned,          where:  { is_an_upload: false }
 
+  scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
+
 protected
 
   def split_pages

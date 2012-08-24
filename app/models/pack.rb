@@ -27,6 +27,10 @@ class Pack
   def pages
     self.documents.without_original
   end
+
+  def original_document
+    documents.originals.first
+  end
   
   def sheets
     self.divisions.sheets
@@ -56,22 +60,19 @@ class Pack
   
   def update_reporting_document
     total = divisions.count
-    period_duration = 0
     time = created_at
     while total > 0
       period = owner.find_or_create_scan_subscription.find_or_create_period(time)
-      current_divisions = divisions.select{ |division| division.created_at > period.start_at and division.created_at < period.end_at }
-      if !current_divisions.empty?
+      current_divisions = divisions.of_month(time)
+      if current_divisions.any?
         document = find_or_create_scan_document(period.start_at,period.end_at,period)
         if document
-          document.sheets = current_divisions.select{ |division| division.level == Division::SHEETS_LEVEL }.count
-          document.pieces = current_divisions.select{ |division| division.level == Division::PIECES_LEVEL }.count
-          document.pages = self.pages.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
-          
-          document.uploaded_pieces = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::PIECES_LEVEL }.count
-          document.uploaded_sheets = current_divisions.select{ |division| division.is_an_upload == true}.select{ |division| division.level == Division::SHEETS_LEVEL }.count
-          document.uploaded_pages = self.pages.uploaded.where(:created_at.gt => period.start_at, :created_at.lt => period.end_at).count
-
+          document.sheets = current_divisions.sheets.count
+          document.pieces = current_divisions.pieces.count
+          document.pages = self.pages.of_month(time).count
+          document.uploaded_pieces = current_divisions.uploaded.pieces.count
+          document.uploaded_sheets = current_divisions.uploaded.sheets.count
+          document.uploaded_pages = self.pages.uploaded.of_month(time).count
           document.save
         end
         if document.pages - document.uploaded_pages > 0
@@ -81,10 +82,6 @@ class Pack
       end
       time += period.duration.month
     end
-  end
-
-  def original_document
-    documents.originals.first
   end
   
   def historic
