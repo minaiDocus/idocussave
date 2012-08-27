@@ -312,7 +312,7 @@
         </tr>
       </table>
     </div>
-  - if @prescriber.is_detail_authorized or current_user.is_prescriber or current_user.is_admin
+  - if (@prescriber and @prescriber.is_detail_authorized) or current_user.is_prescriber or current_user.is_admin
     :plain
       <div class="separator"></div>
       <div class="optionslist">
