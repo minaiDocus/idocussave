@@ -64,11 +64,10 @@ Spork.each_run do
       return result
     end
   end
-  
+
   suppress_warnings do
-    Dir["#{Rails.root}/app/models/**/*.rb","#{Rails.root}/lib/*.rb"].each do |file|
-      load(file)
-    end
+    FactoryGirl.reload
     Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}
+    load 'Sporkfile.rb' if File.exist? 'Sporkfile.rb'
   end
 end
