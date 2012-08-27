@@ -1,8 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  
-  layout 'devise'
+
   helper_method :format_price, :format_price_00
   
   before_filter :redirect_to_https if Rails.env.production?
