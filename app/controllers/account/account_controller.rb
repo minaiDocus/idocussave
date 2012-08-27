@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::AccountController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :login_user!
   around_filter :catch_error if %w(staging production).include?(Rails.env)
   
   layout "inner"

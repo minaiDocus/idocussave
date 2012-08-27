@@ -3,19 +3,32 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   helper_method :format_price, :format_price_00
-  
+
   before_filter :redirect_to_https if Rails.env.production?
   around_filter :catch_error if %w(staging production).include?(Rails.env)
-  
+
   def after_sign_in_path_for(resource_or_scope)
-    case resource_or_scope
-    when :user, User
-      account_documents_url
-    when :admin
-      admin_root_url
+    if session[:targeted_path]
+      path = session[:targeted_path]
+      session[:targeted_path] = nil
+      path
     else
-      super
+      case resource_or_scope
+      when :user, User
+        account_documents_url
+      when :admin
+        admin_root_url
+      else
+        super
+      end
     end
+  end
+
+  def login_user!
+    unless current_user and request.path.match(/^\/users.*/)
+      session[:targeted_path] = request.path
+    end
+    authenticate_user!
   end
 
 private
