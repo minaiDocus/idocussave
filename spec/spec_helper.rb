@@ -49,6 +49,7 @@ Spork.prefork do
 
     config.include Mongoid::Matchers
     config.include FactoryGirl::Syntax::Methods
+    config.extend LoginMacros
   end
 end
 
@@ -68,5 +69,6 @@ Spork.each_run do
     Dir["#{Rails.root}/app/models/**/*.rb","#{Rails.root}/lib/*.rb"].each do |file|
       load(file)
     end
+    Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}
   end
 end
