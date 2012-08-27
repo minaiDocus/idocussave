@@ -56,7 +56,7 @@ group :test do
   gem 'mongoid-rspec'
   gem 'factory_girl_rails'
   gem 'rcov', '0.9.8'
-  gem 'webrat'
+  gem 'capybara'
   gem 'spork', '1.0.0rc3'
   gem 'guard-spork'
   gem 'guard-rspec'
