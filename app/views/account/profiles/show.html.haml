@@ -38,23 +38,24 @@
           %h3.aligncenter Mode de paiement
           %br/
           .row
-            .span3
-              .paymentslist
-                .header
-                  !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-                  %span
-                    %a{ :href => "#" }
-                      %label{ :for => "pp" } compte prépayé                
-                %form{ :method => :get, :action => credit_account_payment_path }
-                  .content
+            /
+              .span3
+                .paymentslist
+                  .header
+                    !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
                     %span
-                      %label{ :for => "amount" } Somme à créditer (€):
-                      %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
-                      %br/
-                      Payer avec :
-                  .footer
-                    %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
-                    %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
+                      %a{ :href => "#" }
+                        %label{ :for => "pp" } compte prépayé
+                  %form{ :method => :get, :action => credit_account_payment_path }
+                    .content
+                      %span
+                        %label{ :for => "amount" } Somme à créditer (€):
+                        %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
+                        %br/
+                        Payer avec :
+                    .footer
+                      %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
+                      %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
             .span3
               .paymentslist
                 .header
@@ -64,7 +65,7 @@
                       %label{ :for => "prlv" } prélèvement
                 .content
                   %span
-                    Etat : 
+                    Etat :
                     - if @user.debit_mandate
                       - if @user.debit_mandate.transactionStatus == "success"
                         ok
