@@ -17,7 +17,7 @@ class ExternalFileStorage
   accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp
 
   field :path,         type: String,  default: 'iDocus/:code/:year:month/:account_book/'
-  field :is_path_used, type: Boolean, default: true
+  field :is_path_used, type: Boolean, default: false
   field :used,         type: Integer, default: 0
   field :authorized,   type: Integer, default: 10
 
