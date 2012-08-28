@@ -169,6 +169,7 @@ fr:
       last: "&raquo;"
       previous: "&lsaquo;"
       next: "&rsaquo;"
+      truncate: "..."
 
   actions:
     name: 'Actions'
