@@ -38,23 +38,24 @@
           %h3.aligncenter Mode de paiement
           %br/
           .row
-            .span3
-              .paymentslist
-                .header
-                  !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-                  %span
-                    %a{ :href => "#" }
-                      %label{ :for => "pp" } compte prépayé                
-                %form{ :method => :get, :action => credit_account_payment_path }
-                  .content
+            /
+              .span3
+                .paymentslist
+                  .header
+                    !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
                     %span
-                      %label{ :for => "amount" } Somme à créditer (€):
-                      %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
-                      %br/
-                      Payer avec :
-                  .footer
-                    %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
-                    %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
+                      %a{ :href => "#" }
+                        %label{ :for => "pp" } compte prépayé
+                  %form{ :method => :get, :action => credit_account_payment_path }
+                    .content
+                      %span
+                        %label{ :for => "amount" } Somme à créditer (€):
+                        %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
+                        %br/
+                        Payer avec :
+                    .footer
+                      %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
+                      %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
             .span3
               .paymentslist
                 .header
@@ -64,7 +65,7 @@
                       %label{ :for => "prlv" } prélèvement
                 .content
                   %span
-                    Etat : 
+                    Etat :
                     - if @user.debit_mandate
                       - if @user.debit_mandate.transactionStatus == "success"
                         ok
@@ -80,23 +81,11 @@
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
       - if @external_file_storage.authorized > 0
-        - services_authorized_count = @external_file_storage.services_authorized_count
-        - nb = 0
-        :javascript
-          var is_path_used = #{@external_file_storage.is_path_used ? "true" : "false"};
         .row
           .span6.well
             %h3.aligncenter Stockage externe des documents
             %br
-            %form.margin0bottom{ :class => "", :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-              != hidden_field_tag "authenticity_token", form_authenticity_token
-              != check_box_tag "use_global_path", 1, @external_file_storage.is_path_used, :style => "margin:11px 5px  0 0;", :class => "pull-left"
-              Chemin de livraison identique pour tous les services : 
-              != text_field_tag "external_file_storage[path]", @external_file_storage.path, :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
-              != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "global_path"
-            %hr{ :style => "margin:5px 0 5px 0;" }
             - if @external_file_storage.is_dropbox_basic_authorized?
-              - nb += 1
               - service_number = ExternalFileStorage::F_DROPBOX
               - is_service_used = @external_file_storage.is_used?(service_number)
               %div
@@ -117,16 +106,13 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[dropbox_basic][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
-            
-            - if nb < services_authorized_count
-              %hr{ :style => "margin:5px 0 5px 0;" }
-            
+                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+
             - if @external_file_storage.is_google_docs_authorized?
-              - nb += 1
               - service_number = ExternalFileStorage::F_GOOGLE_DOCS
               - is_service_used = @external_file_storage.is_used?(service_number)
+              %hr{ :style => "margin:5px 0 5px 0;" }
               %div
                 .row
                   .span6
@@ -145,16 +131,13 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[google_doc][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
-            
-            - if nb < services_authorized_count
-              %hr{ :style => "margin:5px 0 5px 0;" }
-            
+                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+
             - if @external_file_storage.is_ftp_authorized?
-              - nb += 1
               - service_number = ExternalFileStorage::F_FTP
               - is_service_used = @external_file_storage.is_used?(service_number)
+              %hr{ :style => "margin:5px 0 5px 0;" }
               %div
                 .row
                   .span6
@@ -173,8 +156,8 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[ftp][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;", :class => "other_path"
+                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
           .modal-header

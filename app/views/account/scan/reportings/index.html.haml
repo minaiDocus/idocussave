@@ -200,7 +200,7 @@
                   %br
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
-                    - if @prescriber.is_centralizer
+                    - if @prescriber and @prescriber.is_centralizer
                       - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
                       - if invoice
                         - if invoice.content.try(:url)
@@ -312,7 +312,7 @@
         </tr>
       </table>
     </div>
-  - if @prescriber.is_detail_authorized or current_user.is_prescriber or current_user.is_admin
+  - if (@prescriber and @prescriber.is_detail_authorized) or current_user.is_prescriber or current_user.is_admin
     :plain
       <div class="separator"></div>
       <div class="optionslist">
