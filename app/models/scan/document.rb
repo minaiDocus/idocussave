@@ -27,7 +27,7 @@ class Scan::Document
   after_save :update_period
   
   def self.by_created_at
-    desc(:created_at)
+    desc(:created_at).asc(:name)
   end
   
   def update_period

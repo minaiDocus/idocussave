@@ -94,13 +94,6 @@ class Subscription
     product_option_order
   end
 
-  def claim_money
-    self.progress += 1
-    # fonction qui débite l'utilisateur en fonction du type de payement
-    # TODO implement me
-    self.save
-  end
-
   def self.current
     desc(:created_at).first
   end

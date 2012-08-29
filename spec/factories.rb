@@ -20,10 +20,17 @@ FactoryGirl.define do
   factory User do
     sequence(:email) { |n| "user#{n}@example.com" }
     password '123456'
-    sequence(:first_name) { |n| "user#{n}" }
+    sequence(:first_name) { |n| "User#{n}" }
     last_name 'TEST'
     company 'TeSt'
     sequence(:code) { |n| "TS#{'%04d' % n}" }
+    confirmed_at Time.now
+    factory :admin do
+      is_admin true
+    end
+    factory :prescriber do
+      is_prescriber true
+    end
   end
   
   factory Product do
@@ -36,4 +43,14 @@ FactoryGirl.define do
     sequence(:position) { |n| n }
   end
   
+  factory Pack do
+    factory :division do
+      sequence(:position) { |n| n+1 }
+      name { |division| "TEST0001_TS_#{Time.now.strftime('%Y%m')}_all_pages_#{"%03d" % division.position}.pdf" }
+    end
+  end
+
+  factory Scan::Document do
+    sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
+  end
 end

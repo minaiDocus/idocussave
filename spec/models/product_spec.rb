@@ -31,4 +31,9 @@ describe Product do
     
     it { subject.should eq(@product1) }
   end
+
+  it "#price_in_cents_w_vat" do
+    @product1.price_in_cents_wo_vat = 1000
+    @product1.price_in_cents_w_vat.should eq(1196)
+  end
 end

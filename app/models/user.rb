@@ -152,7 +152,11 @@ class User
   end
   
   def find_or_create_external_file_storage
-    external_file_storage || ExternalFileStorage.create(user_id: self.id)
+    if external_file_storage
+      external_file_storage
+    else
+      ExternalFileStorage.create(user_id: self.id).reload
+    end
   end
 
   def find_or_create_pack_delivery_list

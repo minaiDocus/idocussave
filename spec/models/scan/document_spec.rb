@@ -44,10 +44,18 @@ describe Scan::Document do
     result.should eq(document)
     result.should_not eq(document2)
   end
-  
-  it "should create document with name and period" do
-    document = Scan::Document.find_or_create_by_name(@document_name, @period)
-    document.should be_persisted
+
+  describe ".find_or_create_by_name" do
+    it "should create document with name and period" do
+      document = Scan::Document.find_or_create_by_name(@document_name, @period)
+      document.should be_persisted
+    end
+
+    it "should find document with name and period" do
+      document1 = Scan::Document.find_or_create_by_name(@document_name, @period)
+      document2 = Scan::Document.find_or_create_by_name(@document_name, @period)
+      document2.should eq(document1)
+    end
   end
   
   it "should verify 'uniqueness_of_name' validation" do
@@ -90,5 +98,13 @@ describe Scan::Document do
     @period.uploaded_pages.should eq(28)
     @period.paperclips.should eq(4)
     @period.oversized.should eq(4)
+  end
+
+  it "#by_created_at" do
+    document1 = FactoryGirl.create(Scan::Document, created_at: 2.seconds.ago, period_id: @period.id)
+    document2 = FactoryGirl.create(Scan::Document, period_id: @period.id)
+    results = Scan::Document.by_created_at.entries
+    results.first.should eq(document2)
+    results.last.should eq(document1)
   end
 end
