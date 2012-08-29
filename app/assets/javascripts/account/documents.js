@@ -117,6 +117,7 @@
       },
       success: function(data){
         logAfterAction();
+        $("#panel1 > .content > ul").html("");
         $("#panel1 > .content > ul").append(data);
         initEventOnClickOnLinkButton();
         initEventOnHoverOnInformation();
