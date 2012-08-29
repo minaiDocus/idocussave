@@ -124,45 +124,33 @@ public
   def search
     @tags = []
     @document_contents = []
-    
-    # query = Iconv.iconv('UTF-8', 'ISO-8859-1', params[:q]).join()
     query = params[:q]
     
     if params[:by] == "tags" || !params[:by]
-      @document_tags = DocumentTag.where(:user_id => @user.id, :name => /\w*#{query}\w*/)
-      
-      tags = ""
+      @document_tags = DocumentTag.where(user_id: @user.id, name: /\w*#{query}\w*/)
       @document_tags.each do |document_tag|
         document_tag.name.scan(/\w*#{query}\w*/).each do |tag|
-          if !tags.match(/ #{tag}( )*/)
-            tags += " #{tag}"
-          end
+          @tags << { id: '1', name: tag }
         end
       end
-      
-      Iconv.iconv('ISO-8859-1', 'UTF-8', tags).join().split.each do |tag|
-        @tags << {"id" => "1", "name" => "#{tag}"}
-      end
-      
+      @tags.uniq!
     end
     
     if params[:by] == "ocr_result" || !params[:by]
-      results = Document::Index.search query, @user
-      
       @document_contents = []
-      results.each do |r|
-        @document_contents << {"id" => "0", "name" => r}
+      begin
+      Document::Index.search(query, @user).
+      each { |r| @document_contents << { id: '0', name: r} }
+      rescue => e
+        puts e
       end
     end
     
     @result = @tags + @document_contents
-    
-    @result = @result.sort do |a,b|
-      a["name"] <=> b["name"]
-    end
+    @result = @result.sort { |a,b| a["name"] <=> b["name"] }
 
     respond_to do |format|
-      format.json{ render :json => @result.to_json, :callback => params[:callback], :status => :ok }
+      format.json{ render json: @result.to_json, callback: params[:callback], status: :ok }
     end
   end
   
