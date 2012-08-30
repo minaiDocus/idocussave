@@ -21,6 +21,8 @@ class Division
   scope :pieces,   where: { level: PIECES_LEVEL }
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
+  validates_presence_of :name, :start, :end
+
   def self.last
     desc(:position).first
   end
@@ -31,5 +33,16 @@ class Division
   
   def pages_count
     self.start - self.end + 1
+  end
+
+  def to_file
+    path = pack.original_document.content.path
+    tmp_path = File.join(Rails.root,'tmp')
+    filename = self.name + '.pdf'
+    filepath = File.join(tmp_path,filename)
+    `pdftk A=#{path} cat A#{self.start}-#{self.end} output #{filepath}`
+    file = File.new(filepath,'r')
+    File.delete(filepath)
+    file
   end
 end
