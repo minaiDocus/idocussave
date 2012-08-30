@@ -56,9 +56,10 @@ class DropboxExtended
         results = client.search(path,filename,1)
       rescue DropboxError => e
         Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'search', filename: filename, message: e)
+        results = []
       end
       if results.any?
-        size = result["bytes"]
+        size = results.first["bytes"]
         if size == File.size(filename)
           true
         else
