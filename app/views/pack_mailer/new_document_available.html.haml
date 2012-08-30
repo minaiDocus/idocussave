@@ -2,8 +2,9 @@ Bonjour,
 %br
 %br
 Suite à leur numérisation par iDocus, les documents ci-dessous sont disponible dans votre interface, à l'adresse #{@url} :
-%br
-#{@filesname.join("<br>")}
+- @filesname.each do |filename|
+  %br
+  = filename
 %br
 %br
 Cordialement,
