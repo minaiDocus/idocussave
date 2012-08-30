@@ -50,14 +50,14 @@ class DropboxExtended
       gsub(":month",info_path[:month]).
       gsub(":delivery_date",info_path[:delivery_date])
     end
-    
+
     def is_updated(path, filename, client)
       begin
-        result = client.metadata("#{path}/#{filename}")
-      rescue DropboxError
-        result = nil
+        results = client.search(path,filename,1)
+      rescue DropboxError => e
+        Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'search', filename: filename, message: e)
       end
-      if result
+      if results.any?
         size = result["bytes"]
         if size == File.size(filename)
           true
@@ -65,7 +65,7 @@ class DropboxExtended
           false
         end
       else
-        false
+        nil
       end
     end
     
@@ -81,9 +81,19 @@ class DropboxExtended
           client = get_client(temp_session)
           filespath.each do |filepath|
             filename = File.basename(filepath)
-            if is_not_updated(clean_path, filename, client)
-              client.file_delete "#{clean_path}/#{filename}" rescue nil
-              client.put_file "#{clean_path}/#{filename}", open(filename) rescue nil
+            if (result = is_not_updated(clean_path, filename, client))
+              if result == false
+                begin
+                  client.file_delete "#{clean_path}/#{filename}"
+                rescue DropboxError => e
+                  Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'deleting', filename: filename, message: e)
+                end
+              end
+              begin
+                client.put_file "#{clean_path}/#{filename}", file
+              rescue DropboxError => e
+                Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'sending', filename: filename, message: e)
+              end
             end
           end
         end

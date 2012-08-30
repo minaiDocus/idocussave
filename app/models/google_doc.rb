@@ -49,7 +49,11 @@ class GoogleDoc
       collection = service.find_or_create_collection(delivery_path)
       if collection
         filespath.each do |filepath|
-          service.update_or_create_file(filepath, collection['id'].split('/')[-1], 'application/pdf', collection)
+          begin
+            service.update_or_create_file(filepath, collection['id'].split('/')[-1], 'application/pdf', collection)
+          rescue => e
+            Delivery::ErrorStack.create(sender: 'GoogleDrive', description: 'sending', filename: filename, message: e)
+          end
         end
       end
     end
