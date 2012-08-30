@@ -91,7 +91,7 @@ class DropboxBasic
             end
           end
           begin
-            @client.put_file "#{clean_path}/#{filename}", file
+            @client.put_file "#{clean_path}/#{filename}", open(filename)
           rescue DropboxError => e
             Delivery::ErrorStack.create(sender: 'DropboxBasic', description: 'sending', filename: filename, message: e)
           end
