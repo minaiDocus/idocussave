@@ -93,7 +93,7 @@ class Ftp
         true
       end
     rescue => e
-      Delivery::ErrorStack.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+      Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
       false
     end
   end

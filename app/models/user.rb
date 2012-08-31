@@ -79,7 +79,7 @@ class User
   references_many :subscriptions
   references_many :backups
   references_many :uploaded_files
-  references_many :delivery_errors
+  references_many :delivery_errors, class_name: 'Delivery::Error', inverse_of: :user
   references_one :composition
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
@@ -153,11 +153,7 @@ class User
   end
   
   def find_or_create_external_file_storage
-    if external_file_storage
-      external_file_storage
-    else
-      ExternalFileStorage.create(user_id: self.id).reload
-    end
+    external_file_storage || ExternalFileStorage.create(user_id: self.id)
   end
 
   def find_or_create_pack_delivery_list

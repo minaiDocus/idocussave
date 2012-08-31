@@ -55,7 +55,7 @@ class DropboxExtended
       begin
         results = client.search(path,filename,1)
       rescue DropboxError => e
-        Delivery::ErrorStack.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{path}/#{filename}", message: e)
+        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{path}/#{filename}", message: e)
         results = []
       end
       if results.any?
@@ -84,7 +84,7 @@ class DropboxExtended
             begin
               client.put_file("#{clean_path}/#{filename}", open(filename), true)
             rescue DropboxError => e
-              Delivery::ErrorStack.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+              Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
             end
           end
         end

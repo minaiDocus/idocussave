@@ -60,7 +60,7 @@ class GoogleDoc
           begin
             service.update_or_create_file(filepath, collection['id'].split('/')[-1], 'application/pdf', collection)
           rescue => e
-            Delivery::ErrorStack.create(sender: 'GoogleDrive', state: 'sending', filepath: "#{delivery_path}/#{filepath}", message: e)
+            Delivery::Error.create(sender: 'GoogleDrive', state: 'sending', filepath: "#{delivery_path}/#{filepath}", message: e)
           end
         end
       end

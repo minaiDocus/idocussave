@@ -9,15 +9,16 @@ class DropboxBasic
   field :path,    type: String, default: ':code/:year:month/:account_book/'
   
   def new_session
-    current_session = ''
-    if self.session.present?
-      current_session = DropboxSession.deserialize(self.session)
-    else
-      current_session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
+    unless @current_session
+      if self.session.present?
+        @current_session = DropboxSession.deserialize(self.session)
+      else
+        @current_session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
+      end
+      @current_session.get_request_token
+      update_attribute(:session, current_session.serialize)
     end
-    current_session.get_request_token
-    update_attribute(:session, current_session.serialize)
-    current_session
+    @current_session
   end
   
   def get_access_token
@@ -31,21 +32,15 @@ class DropboxBasic
   end
   
   def get_authorize_url(callback='')
-    current_session = ''
-    if self.session.empty?
-      current_session = new_session
-    else
-      current_session = DropboxSession.deserialize(self.session)
-    end
     if callback.empty?
-      current_session.get_authorize_url
+      new_session.get_authorize_url
     else
-      current_session.get_authorize_url(callback)
+      new_session.get_authorize_url(callback)
     end
   end
   
   def is_configured?
-    @new_session ||= new_session.authorized?
+    new_session.authorized?
   end
 
   def client
@@ -65,7 +60,7 @@ class DropboxBasic
     begin
       results = client.search(path,filename,1)
     rescue DropboxError => e
-      Delivery::ErrorStack.create(sender: 'DropboxBasic', state: 'searching', filepath: "#{path}/#{filename}", message: e)
+      Delivery::Error.create(sender: 'DropboxBasic', state: 'searching', filepath: "#{path}/#{filename}", message: e)
       results = []
     end
     if results.any?
@@ -93,7 +88,7 @@ class DropboxBasic
           begin
             client.put_file("#{clean_path}/#{filename}", open(filename), true)
           rescue DropboxError => e
-            Delivery::ErrorStack.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+            Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
           end
         end
       end

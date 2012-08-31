@@ -14,9 +14,9 @@ class Delivery::Error
 
   before_create :set_number
 
-  scope resolved, where: { is_resolved: true }
-  scope unresolved, where: { is_resolved: false }
-  scope old, where: { :created_at.lt => 1.month.ago }
+  scope :resolved,   where: { is_resolved: true }
+  scope :unresolved, where: { is_resolved: false }
+  scope :old,        where: { :created_at.lt => 1.month.ago }
 
   def self.by_number
     asc(:number)
