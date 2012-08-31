@@ -84,7 +84,8 @@ class Ftp
         end
         true
       end
-    rescue
+    rescue => e
+      Delivery::ErrorStack.create(sender: 'FTP', description: 'sending', filename: filename, message: e)
       false
     end
   end

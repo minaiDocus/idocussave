@@ -135,7 +135,7 @@ class ExternalFileStorage
       delivery_path = ""
       
       if trusted_flags & F_DROPBOX > 0
-        if dropbox_basic and dropbox_basic.is_configured?
+        if dropbox_basic and is_authorized?(F_DROPBOX) and dropbox_basic.is_configured?
           delivery_path = is_path_used ? path : dropbox_basic.path
           delivery_path = static_path(delivery_path,info_path)
           dropbox_basic.deliver filespath, delivery_path
@@ -143,7 +143,7 @@ class ExternalFileStorage
       end
       
       if trusted_flags & F_GOOGLE_DOCS > 0
-        if google_doc and google_doc.is_configured?
+        if google_doc and is_authorized?(F_GOOGLE_DOCS) and google_doc.is_configured?
           delivery_path = is_path_used ? path : google_doc.path
           delivery_path = static_path(delivery_path,info_path)
           google_doc.deliver(filespath, delivery_path)
@@ -151,7 +151,7 @@ class ExternalFileStorage
       end
       
       if trusted_flags & F_FTP > 0
-        if ftp and ftp.is_configured?
+        if ftp and is_authorized?(F_FTP) and ftp.is_configured?
           delivery_path = is_path_used ? path : ftp.path
           delivery_path = static_path(delivery_path,info_path)
           ftp.deliver(filespath, delivery_path)

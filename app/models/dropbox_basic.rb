@@ -55,19 +55,20 @@ class DropboxBasic
   
   def is_updated(path, filename, client)
     begin
-      result = client.metadata("#{path}/#{filename}")
-    rescue DropboxError
-      result = nil
+      results = client.search(path,filename,1)
+    rescue DropboxError => e
+      Delivery::ErrorStack.create(sender: 'DropboxBasic', description: 'search', filename: filename, message: e)
+      results = []
     end
-    if result
-      size = result["bytes"]
+    if results.any?
+      size = results.first["bytes"]
       if size == File.size(filename)
         true
       else
         false
       end
     else
-      false
+      nil
     end
   end
   
@@ -82,9 +83,19 @@ class DropboxBasic
       clean_path = folder_path.sub(/\/$/,"")
       filespath.each do |filepath|
         filename = File.basename(filepath)
-        if is_not_updated(clean_path, filename, @client)
-          @client.file_delete "#{clean_path}/#{filename}" rescue nil
-          @client.put_file "#{clean_path}/#{filename}", open(filepath)
+        if (result = is_not_updated(clean_path, filename, @client))
+          if result == false
+            begin
+              @client.file_delete "#{clean_path}/#{filename}"
+            rescue DropboxError => e
+              Delivery::ErrorStack.create(sender: 'DropboxBasic', description: 'deleting', filename: filename, message: e)
+            end
+          end
+          begin
+            @client.put_file "#{clean_path}/#{filename}", open(filename)
+          rescue DropboxError => e
+            Delivery::ErrorStack.create(sender: 'DropboxBasic', description: 'sending', filename: filename, message: e)
+          end
         end
       end
     end
