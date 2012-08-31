@@ -35,6 +35,14 @@ class GoogleDoc
       @service ||= GoogleDocumentsList::API::Service.new()
     end
   end
+
+  def client
+    if self.token.any? and self.secret.any?
+      @service ||= GoogleDocumentsList::API::Service.new(self.token, self.secret)
+    else
+      nil
+    end
+  end
   
   def is_configured?
     is_configured
@@ -52,7 +60,7 @@ class GoogleDoc
           begin
             service.update_or_create_file(filepath, collection['id'].split('/')[-1], 'application/pdf', collection)
           rescue => e
-            Delivery::ErrorStack.create(sender: 'GoogleDrive', description: 'sending', filename: filename, message: e)
+            Delivery::ErrorStack.create(sender: 'GoogleDrive', state: 'sending', filepath: "#{delivery_path}/#{filepath}", message: e)
           end
         end
       end

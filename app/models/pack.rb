@@ -12,6 +12,7 @@ class Pack
   references_many :documents, dependent: :destroy
   references_many :document_tags
   references_many :scan_documents, class_name: "Scan::Document", inverse_of: :pack
+  references_many :delivery_errors
   embeds_many :divisions
   
   field :name,                                  type: String

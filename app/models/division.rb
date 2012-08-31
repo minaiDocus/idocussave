@@ -37,12 +37,9 @@ class Division
 
   def to_file
     path = pack.original_document.content.path
-    tmp_path = File.join(Rails.root,'tmp')
     filename = self.name + '.pdf'
-    filepath = File.join(tmp_path,filename)
+    filepath = File.join('/tmp',filename)
     `pdftk A=#{path} cat A#{self.start}-#{self.end} output #{filepath}`
-    file = File.new(filepath,'r')
-    File.delete(filepath)
-    file
+    open(filepath)
   end
 end

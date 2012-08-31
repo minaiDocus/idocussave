@@ -38,8 +38,8 @@ class DropboxExtended
       save_session session
     end
     
-    def get_client session
-      DropboxClient.new(session, DropboxExtended::ACCESS_TYPE)
+    def client
+      @client ||= DropboxClient.new(get_session, DropboxExtended::ACCESS_TYPE)
     end
 
     def static_path(path, info_path)
@@ -51,11 +51,11 @@ class DropboxExtended
       gsub(":delivery_date",info_path[:delivery_date])
     end
 
-    def is_updated(path, filename, client)
+    def is_up_to_date(path, filename)
       begin
         results = client.search(path,filename,1)
       rescue DropboxError => e
-        Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'search', filename: filename, message: e)
+        Delivery::ErrorStack.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{path}/#{filename}", message: e)
         results = []
       end
       if results.any?
@@ -70,31 +70,21 @@ class DropboxExtended
       end
     end
     
-    def is_not_updated(path, filename, client)
-      !is_updated(path, filename, client)
+    def is_not_up_to_date(path, filename)
+      !is_up_to_date(path, filename)
     end
     
     def deliver(filespath, folder, infopath)
-      if temp_session = get_session
-        if temp_session.authorized?
-          delivery_path = static_path(folder, infopath)
-          clean_path = delivery_path.sub(/\/$/,"")
-          client = get_client(temp_session)
-          filespath.each do |filepath|
-            filename = File.basename(filepath)
-            if (result = is_not_updated(clean_path, filename, client))
-              if result == false
-                begin
-                  client.file_delete "#{clean_path}/#{filename}"
-                rescue DropboxError => e
-                  Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'deleting', filename: filename, message: e)
-                end
-              end
-              begin
-                client.put_file "#{clean_path}/#{filename}", open(filename)
-              rescue DropboxError => e
-                Delivery::ErrorStack.create(sender: 'DropboxExtended', description: 'sending', filename: filename, message: e)
-              end
+      if client
+        delivery_path = static_path(folder, infopath)
+        clean_path = delivery_path.sub(/\/$/,"")
+        filespath.each do |filepath|
+          filename = File.basename(filepath)
+          if is_not_up_to_date(clean_path,filename)
+            begin
+              client.put_file("#{clean_path}/#{filename}", open(filename), true)
+            rescue DropboxError => e
+              Delivery::ErrorStack.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
             end
           end
         end

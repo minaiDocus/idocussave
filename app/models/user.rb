@@ -79,6 +79,7 @@ class User
   references_many :subscriptions
   references_many :backups
   references_many :uploaded_files
+  references_many :delivery_errors
   references_one :composition
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true

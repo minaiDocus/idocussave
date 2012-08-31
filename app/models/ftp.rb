@@ -17,6 +17,14 @@ class Ftp
   validates_format_of :host, with: URI::regexp("ftp")
   validates :login,    length: { minimum: 2, maximum: 40 }
   validates :password, length: { minimum: 2, maximum: 40 }
+
+  def client
+    if is_configured?
+      Net::FTP.new(host.sub(/^ftp:\/\//,''), login, password)
+    else
+      nil
+    end
+  end
   
   def is_configured?
     is_configured
@@ -85,7 +93,7 @@ class Ftp
         true
       end
     rescue => e
-      Delivery::ErrorStack.create(sender: 'FTP', description: 'sending', filename: filename, message: e)
+      Delivery::ErrorStack.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
       false
     end
   end
