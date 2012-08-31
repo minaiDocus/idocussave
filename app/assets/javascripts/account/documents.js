@@ -510,6 +510,17 @@
     $("#composition_name").change(function() {
       $("#compositionDialog .names_alert").html("");
     });
+
+    $("#shareDialog").on('show',function(){
+      var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
+      if(pack_ids.length > 0) {
+        $(".warn_selected_file").show();
+        $(".warn_all_file_selected").hide();
+      } else {
+        $(".warn_all_file_selected").show();
+        $(".warn_selected_file").hide();
+      }
+    });
   
     $("#deliverButton").click(function() {
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
