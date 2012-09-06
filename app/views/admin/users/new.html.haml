@@ -1,0 +1,21 @@
+= render partial: 'navigation'
+
+.well
+  = simple_form_for [:admin, @user], html: { class: 'form form-horizontal' } do |f|
+    .row-fluid
+      .span12
+        %h2 Informations
+        = f.input :email, label: 'Email'
+        = f.input :password, label: 'Mots de passe'
+        = f.input :password_confirmation, label: 'Comfirmer le mots de passe'
+        = f.input :is_admin, label: 'Est admin ?', as: 'boolean'
+        = f.input :is_prescriber, label: 'Est prescripteur ?', as: 'boolean'
+        = f.input :is_dropbox_extended_authorized, label: 'Autoriser Dropbox Ex. ?', as: 'boolean'
+        = f.input :first_name, label: 'Prénom'
+        = f.input :last_name, label: 'Nom'
+        = f.input :code, label: 'Code'
+        = f.input :company, label: 'Société'
+    .row-fluid
+      .form-actions
+        = f.submit t('actions.submit'), class: 'btn'
+        = link_to t('actions.cancel'), admin_users_path, class: 'btn'
