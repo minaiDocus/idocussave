@@ -106,7 +106,6 @@ class Scan::Subscription < Subscription
     else
       options = self.product_option_orders
     end
-    remove_not_reusable_options
     current_period = find_or_create_period(Time.now)
     current_period.set_product_option_orders(options)
     current_period.save
