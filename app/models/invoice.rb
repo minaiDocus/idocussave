@@ -31,7 +31,7 @@ class Invoice
   public
 
   def create_pdf
-    mois = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","September","Octobre","Novembre","Décembre"]
+    mois = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
     
     first_day_of_month = (self.created_at - 1.month).beginning_of_month.day
     current_month = mois[self.created_at.month]
