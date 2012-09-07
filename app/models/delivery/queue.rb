@@ -5,28 +5,30 @@ class Delivery::Queue
   referenced_in :pack
   referenced_in :user
 
-  field :counter, type: Integer, default: 0
+  field :counter,   type: Integer, default: 0
   field :is_locked, type: Boolean, default: false
 
   scope :not_processed, where: { :counter.gt => 0 }
-  scope :free, where: { is_locked: false }
-  scope :locked, where: { is_locked: true }
+  scope :free,          where: { is_locked: false }
+  scope :locked,        where: { is_locked: true }
 
-  def inc
-    safely.inc(:counter, 1)
+  validates_presence_of :pack_id, :user_id
+
+  def inc_counter
+    self.safely.inc(:counter, 1)
   end
 
-  def inc!
-    inc
+  def inc_counter!
+    inc_counter
     save
   end
 
-  def dec
-    safely.inc(:counter, -1)
+  def dec_counter
+    self.safely.inc(:counter, -1)
   end
 
-  def dec!
-    dec
+  def dec_counter!
+    dec_counter
     save
   end
 
@@ -61,14 +63,17 @@ class Delivery::Queue
     end
   end
 
+  def self.process(id)
+    Delviery::Queue.find(id).process!
+  end
+
   def run_on_background
     Delivery::Queue.delay(queue: 'delivery', priority: 5).process(self.id)
   end
 
-  def process(id)
-    queue = Delviery::Queue.find(id)
+  def process!
     filespath = []
-    queue.pack.pieces.not_delivered.each do |piece|
+    pack.pieces.not_delivered.each do |piece|
       filespath << piece.to_file.path
     end
     filespath << pack.original_document.content.path
@@ -80,8 +85,8 @@ class Delivery::Queue
       DropboxExtended.deliver(filespath, user.dropbox_delivery_folder, info_path)
     end
     clean_up_temp_pdf(filespath)
-    queue.dec!
-    queue.unlock!
+    dec_counter!
+    unlock!
   end
 
   def clean_up_temp_pdf(filespath)

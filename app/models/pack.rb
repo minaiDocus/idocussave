@@ -102,6 +102,18 @@ class Pack
     end
     @events
   end
+
+  def find_or_create_queue(user)
+    find_queue(user) || create_queue(user)
+  end
+
+  def find_queue(user)
+    delivery_queues.where(user_id: user.id).first
+  end
+
+  def create_queue(user)
+    Delivery::Queue.create(user_id: user.id, pack_id: self.id)
+  end
   
   class << self
     def find_by_name(name)
@@ -290,22 +302,10 @@ class Pack
         File.rename filename, "up_" + filename
       end
 
-      find_or_create_queue(user).inc!
-      find_or_create_queue(user.prescriber).inc! if user.prescriber
+      find_or_create_queue(user).inc_counter!
+      find_or_create_queue(user.prescriber).inc_counter! if user.prescriber
 
       [user.email,pack_filename]
-    end
-
-    def find_or_create_queue(user)
-      find_queue(user) || create_queue(user)
-    end
-
-    def find_queue(user)
-      delivery_queues.where(user_id: user.id).first
-    end
-
-    def create_queue(user)
-      Delivery::Queue.create(user_id: user.id, pack_id: pack.id)
     end
     
     def info_path(pack_name, user=nil)

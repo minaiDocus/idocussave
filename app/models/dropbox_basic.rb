@@ -16,7 +16,7 @@ class DropboxBasic
         @current_session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
       end
       @current_session.get_request_token
-      update_attribute(:session, current_session.serialize)
+      update_attribute(:session, @current_session.serialize)
     end
     @current_session
   end
