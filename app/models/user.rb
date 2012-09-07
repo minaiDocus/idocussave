@@ -80,6 +80,7 @@ class User
   references_many :backups
   references_many :uploaded_files
   references_many :delivery_errors, class_name: 'Delivery::Error', inverse_of: :user
+  references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :user
   references_one :composition
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
@@ -154,6 +155,10 @@ class User
   
   def find_or_create_external_file_storage
     external_file_storage || ExternalFileStorage.create(user_id: self.id)
+  end
+
+  def find_or_create_efs
+    find_or_create_external_file_storage
   end
 
   def find_or_create_pack_delivery_list

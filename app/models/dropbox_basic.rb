@@ -56,7 +56,7 @@ class DropboxBasic
     self.save
   end
 
-  def is_up_to_date(path, filename)
+  def is_up_to_date(path, filepath)
     begin
       results = client.search(path,filename,1)
     rescue DropboxError => e
@@ -65,7 +65,7 @@ class DropboxBasic
     end
     if results.any?
       size = results.first["bytes"]
-      if size == File.size(filename)
+      if size == File.size(filepath)
         true
       else
         false
@@ -75,8 +75,8 @@ class DropboxBasic
     end
   end
 
-  def is_not_up_to_date(path, filename)
-    !is_up_to_date(path, filename)
+  def is_not_up_to_date(path, filepath)
+    !is_up_to_date(path, filepath)
   end
 
   def deliver filespath, folder_path
@@ -84,9 +84,9 @@ class DropboxBasic
       clean_path = folder_path.sub(/\/$/,"")
       filespath.each do |filepath|
         filename = File.basename(filepath)
-        if is_not_up_to_date(clean_path,filename)
+        if is_not_up_to_date(clean_path,filepath)
           begin
-            client.put_file("#{clean_path}/#{filename}", open(filename), true)
+            client.put_file("#{clean_path}/#{filename}", open(filepath), true)
           rescue DropboxError => e
             Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
           end

@@ -57,11 +57,11 @@ class Ftp
     end
   end
   
-  def is_updated(filename, ftp)
+  def is_updated(filepath, ftp)
     result = ftp.list.select { |entry| entry.match(/#{filename}/) }.first
     if result
       size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
-      if size == File.size(filename)
+      if size == File.size(filepath)
         true
       else
         false
@@ -71,8 +71,8 @@ class Ftp
     end
   end
   
-  def is_not_updated(filename, ftp)
-    !is_updated(filename, ftp)
+  def is_not_updated(filepath, ftp)
+    !is_updated(filepath, ftp)
   end
   
   def deliver(filespath, folder_path)
@@ -86,8 +86,8 @@ class Ftp
         change_or_make_dir(clean_path, ftp)
         filespath.each do |filepath|
           filename = File.basename(filepath)
-          if is_not_updated(filename, ftp)
-            ftp.put(filename)
+          if is_not_updated(filepath, ftp)
+            ftp.put(filepath)
           end
         end
         true

@@ -11,19 +11,17 @@ class Pack
 
   references_many :documents, dependent: :destroy
   references_many :document_tags
-  references_many :scan_documents, class_name: "Scan::Document", inverse_of: :pack
-  references_many :delivery_errors
+  references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
+  references_many :delivery_errors, class_name: "Delivery::Error", inverse_of: :pack
+  references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :pack
   embeds_many :divisions
   
-  field :name,                                  type: String
-  field :is_open_for_upload,                    type: Boolean, default: true
-  field :is_delivered_to_external_file_storage, type: Boolean, default: false
+  field :name,               type: String
+  field :is_open_for_upload, type: Boolean, default: true
   
   after_save :update_reporting_document
   
-  scope :scan_delivered,       where: { is_open_for_uploaded_file: false }
-  scope :delivered_to_efs,     where: { is_delivered_to_external_file_storage: true }
-  scope :not_delivered_to_efs, where: { is_delivered_to_external_file_storage: false }
+  scope :scan_delivered, where: { is_open_for_uploaded_file: false }
   
   def pages
     self.documents.without_original
@@ -286,9 +284,28 @@ class Pack
           false
         end
       end
-      
-      delay(:queue => 'external file storage delivery').deliver_to_external_file_storage(pack.id, [user.id,user.prescriber.try(:id)], [Dir.pwd, filesname + [pack_filename]], info_path(pack_name,user))
+
+      #  Marquage des fichiers comme étant traité.
+      filesname.each do |filename|
+        File.rename filename, "up_" + filename
+      end
+
+      find_or_create_queue(user).inc!
+      find_or_create_queue(user.prescriber).inc! if user.prescriber
+
       [user.email,pack_filename]
+    end
+
+    def find_or_create_queue(user)
+      find_queue(user) || create_queue(user)
+    end
+
+    def find_queue(user)
+      delivery_queues.where(user_id: user.id).first
+    end
+
+    def create_queue(user)
+      Delivery::Queue.create(user_id: user.id, pack_id: pack.id)
     end
     
     def info_path(pack_name, user=nil)
@@ -307,31 +324,7 @@ class Pack
       part = pack_name.split "_"
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
-    
-    def deliver_to_external_file_storage(pack_id, user_ids, filespath, infopath)
-      pack = Pack.find(pack_id)
-      users = User.find(user_ids)
-      Dir.chdir(filespath[0])
-      filesname = filespath[1]
-      users.each do |user|
-        if user
-          if user.external_file_storage
-            user.external_file_storage.deliver filesname, infopath
-          end
-          if user.is_prescriber and user.is_dropbox_extended_authorized and !user.dropbox_delivery_folder.nil?
-            DropboxExtended.deliver filesname, user.dropbox_delivery_folder, infopath
-          end
-        end
-      end
-      #  Marquage des fichiers comme étant traité.
-      filesname.each do |filename|
-        unless filename.match(/all\.pdf$/)
-          File.rename filename, "up_" + filename
-        end
-      end
-      pack.update_attributes(:is_delivered_to_external_file_storage => true)
-    end
-    
+
   private
 
     def update_division(filesname, pack, is_an_upload)
