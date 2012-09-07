@@ -23,7 +23,7 @@ class Invoice
 
   slug :number
 
-  before_create :set_number
+  before_validation :set_number
 
   referenced_in :user
   referenced_in :subscription
@@ -31,7 +31,7 @@ class Invoice
   public
 
   def create_pdf
-    mois = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","September","Octobre","Novembre","Décembre"]
+    mois = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
     
     first_day_of_month = (self.created_at - 1.month).beginning_of_month.day
     current_month = mois[self.created_at.month]
@@ -56,13 +56,6 @@ class Invoice
       @total += period.price_in_cents_wo_vat
     else
       # prescriber
-      users = user.clients.select do |client|
-        if client.is_inactive? and client.inactive_at.year >= time.year and client.inactive_at.month <= time.month
-          false
-        else
-          true
-        end
-      end
       periods = Scan::Period.any_in(subscription_id: user.scan_subscription_reports.not_in(_id: [scan_subscription.id]).distinct(:_id)).
       where(:start_at.lte => time, :end_at.gte => time).
       select{ |period| period.end_at.month == time.month }
@@ -108,7 +101,7 @@ class Invoice
       end
 
       pdf.move_down 10
-      pdf.image "#{Rails.root}/public/images/application/small_logo.png", width: 85, height: 40, at: [4, pdf.cursor]
+      pdf.image "#{Rails.root}/app/assets/images/logo/small_logo.png", width: 85, height: 40, at: [4, pdf.cursor]
 
 
       #  Body
@@ -202,8 +195,10 @@ class Invoice
   
 private
   def set_number
-    txt = DbaSequence.next("invoice_"+Time.now.strftime("%Y%m"))
-    self.slug = self.number = self.created_at.strftime("%Y%m") + ("%0.4d" % txt)
+    unless self.number
+      txt = DbaSequence.next("invoice_"+Time.now.strftime("%Y%m"))
+      self.slug = self.number = Time.now.strftime("%Y%m") + ("%0.4d" % txt)
+    end
   end
 
 end

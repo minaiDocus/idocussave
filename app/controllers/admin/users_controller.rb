@@ -10,6 +10,24 @@ class Admin::UsersController < Admin::AdminController
     @user = User.find params[:id]
   end
 
+  def new
+    @user = User.new
+  end
+
+  def create
+    params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
+    params[:user][:last_name] = params[:user][:last_name].split.collect{|n| n.capitalize}.join(' ') if params[:user][:last_name]
+    @user = User.new params[:user]
+    @user.skip_confirmation!
+    if @user.save
+      flash[:notice] = "Crée avec succès."
+      redirect_to admin_users_path
+    else
+      flash[:error] = "Erreur lors de la création."
+      render :action => "new"
+    end
+  end
+
   def update
     @user = User.find params[:id]
     respond_to do |format|
