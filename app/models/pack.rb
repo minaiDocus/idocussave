@@ -16,7 +16,7 @@ class Pack
   references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :pack
   embeds_many :divisions
   
-  field :name,               type: String
+  field :name,                     type: String
   field :is_open_for_upload, type: Boolean, default: true
   
   after_save :update_reporting_document
@@ -302,8 +302,8 @@ class Pack
         File.rename filename, "up_" + filename
       end
 
-      find_or_create_queue(user).inc_counter!
-      find_or_create_queue(user.prescriber).inc_counter! if user.prescriber
+      pack.find_or_create_queue(user).inc_counter!
+      pack.find_or_create_queue(user.prescriber).inc_counter! if user.prescriber
 
       [user.email,pack_filename]
     end

@@ -57,6 +57,7 @@ class DropboxBasic
   end
 
   def is_up_to_date(path, filepath)
+    filename = File.basename(filepath)
     begin
       results = client.search(path,filename,1)
     rescue DropboxError => e

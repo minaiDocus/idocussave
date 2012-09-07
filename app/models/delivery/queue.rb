@@ -64,7 +64,7 @@ class Delivery::Queue
   end
 
   def self.process(id)
-    Delviery::Queue.find(id).process!
+    Delivery::Queue.find(id).process!
   end
 
   def run_on_background
@@ -73,25 +73,18 @@ class Delivery::Queue
 
   def process!
     filespath = []
-    pack.pieces.not_delivered.each do |piece|
+    pack.pieces.each do |piece|
       filespath << piece.to_file.path
     end
+    
     filespath << pack.original_document.content.path
-
-    info_path = Pack.info_path(pack.name,user)
-
+    info_path = Pack.info_path(pack.name.gsub(' ','_'),user)
     user.find_or_create_efs.deliver(filespath, info_path)
+    
     if user.is_prescriber and user.is_dropbox_extended_authorized and user.dropbox_delivery_folder.present?
       DropboxExtended.deliver(filespath, user.dropbox_delivery_folder, info_path)
     end
-    clean_up_temp_pdf(filespath)
     dec_counter!
     unlock!
-  end
-
-  def clean_up_temp_pdf(filespath)
-    filespath.each do |filepath|
-      File.delete(filepath)
-    end
   end
 end

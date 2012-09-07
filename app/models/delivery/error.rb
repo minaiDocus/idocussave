@@ -61,7 +61,7 @@ class Delivery::Error
   end
 
   def resend!
-    result = send
+    result = send_file
     if result
       resolved!
     else
@@ -79,7 +79,7 @@ class Delivery::Error
     self.number = DbaSequence.next('Delivery::ErrorStack')
   end
 
-  def send
+  def send_file
     current_file = file
     if file
       begin

@@ -58,6 +58,7 @@ class Ftp
   end
   
   def is_updated(filepath, ftp)
+    filename = File.basename(filepath)
     result = ftp.list.select { |entry| entry.match(/#{filename}/) }.first
     if result
       size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
@@ -80,21 +81,20 @@ class Ftp
     
     require "net/ftp"
     
-    begin
-      Net::FTP.open(host.sub(/^ftp:\/\//,'')) do |ftp|
-        ftp.login(login,password)
-        change_or_make_dir(clean_path, ftp)
-        filespath.each do |filepath|
+    Net::FTP.open(host.sub(/^ftp:\/\//,'')) do |ftp|
+      ftp.login(login,password)
+      change_or_make_dir(clean_path, ftp)
+      filespath.each do |filepath|
+        begin
           filename = File.basename(filepath)
           if is_not_updated(filepath, ftp)
             ftp.put(filepath)
           end
+        rescue => e
+          Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
         end
-        true
       end
-    rescue => e
-      Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
-      false
+      true
     end
   end
 end
