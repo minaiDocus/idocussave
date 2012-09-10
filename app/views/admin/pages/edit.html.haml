@@ -5,6 +5,6 @@
     .pull-left
       %h2= "#{t('actions.edit')} #{t('mongoid.models.page.name').downcase} : #{@page.title}"
     .pull-right
-      = link_to t('actions.destroy'), admin_page_path(@page), data: { confirm: 'Voulez vous vraiment suprimer cette page ?' }, method: 'delete', class: 'btn'
+      = link_to t('actions.destroy'), admin_page_path(@page), data: { confirm: 'Voulez vous vraiment supprimer cette page ?' }, method: 'delete', class: 'btn'
 
 = render partial: 'form'
