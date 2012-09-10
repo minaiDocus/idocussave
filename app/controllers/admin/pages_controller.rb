@@ -13,7 +13,18 @@ class Admin::PagesController < Admin::AdminController
   def new
     @page = Page.new
   end
-  
+
+  def create
+    @page = Page.new params[:page]
+    if @page.save
+      flash[:notice] = "Crée avec succès."
+      redirect_to admin_pages_path
+    else
+       flash[:error] = "Erreur lors de la création."
+       render :action => "new"
+     end
+  end
+
   def edit
     @page = Page.find_by_slug params[:id]
   end
