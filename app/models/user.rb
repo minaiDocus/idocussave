@@ -154,7 +154,7 @@ class User
   end
   
   def find_or_create_external_file_storage
-    external_file_storage || ExternalFileStorage.create(user_id: self.id).reload_relations
+    external_file_storage || ExternalFileStorage.create(user_id: self.id).reload
   end
 
   def find_or_create_efs
