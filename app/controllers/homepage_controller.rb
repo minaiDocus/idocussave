@@ -9,7 +9,7 @@ class HomepageController < ApplicationController
   end
 
   def preview
-    if current_user.is_admin
+    if current_user && current_user.is_admin
       @homepage = Page.preview.find_by_slug(params[:id])
       if @homepage
         render action: :index
