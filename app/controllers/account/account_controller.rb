@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::AccountController < ApplicationController
   before_filter :login_user!
-  around_filter :catch_error if %w(staging production).include?(Rails.env)
+  around_filter :catch_error if %w(staging production test).include?(Rails.env)
   
   layout "inner"
   
