@@ -281,8 +281,10 @@ class Pack
       else
         #  Attribution du pack.
         pack.owner = user
-        pack["user_ids"] = pack["user_ids"] + [user.id] + [user.prescriber.try(:id)]
-        
+        pack.users << user
+        pack.users << user.prescriber
+        pack.users = pack.users + user.share_with
+
         document = Document.new
         document.dirty = true
         document.is_an_original = true

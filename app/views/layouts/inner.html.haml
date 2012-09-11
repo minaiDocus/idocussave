@@ -10,7 +10,7 @@
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
-        %div{ :class => ((params[:controller] == "account/documents" && params[:action] == "index") ? "container-fluid" : "container") }
+        .container-fluid
           %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
             %span{ :class=>"icon-bar" }
             %span{ :class=>"icon-bar" }

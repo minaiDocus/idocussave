@@ -1,14 +1,18 @@
 # -*- encoding : UTF-8 -*-
 class Account::ProfilesController < Account::AccountController
+  before_filter :load_user
+
+private
+  def load_user
+    @user = current_user
+  end
   
 public
   def show
-    @user = current_user
     @external_file_storage = @user.find_or_create_external_file_storage
   end
   
   def update
-    @user = current_user
     if @user.valid_password?(params[:user][:current_password])
       if @user.update_attributes(params[:user])
         flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
@@ -20,5 +24,43 @@ public
     end
 
     redirect_to account_profile_path(@user)
+  end
+
+  def share_documents_with
+    other = User.where(email: params[:email]).first
+    if other
+      if !other.in?(@user.share_with)
+        if other != @user.prescriber
+          @user.share_with << other
+          if @user.save && other.save
+            flash[:notice] = "Vous avez partagés vos documents avec #{other.email}."
+          else
+            flash[:error] = "Impossible de partager vos documents."
+          end
+        else
+          flash[:error] = "Utilisateur non valide : #{other.email}"
+        end
+      else
+        flash[:error] = "Vos documents sont déjà partagés avec #{other.email}."
+      end
+    else
+      flash[:error] = "Utilisateur non trouvé : #{params[:email]}"
+    end
+    redirect_to account_profile_path(@user.reload)
+  end
+
+  def unshare_documents_with
+    other = User.where(email: params[:email]).first
+    if other && other != @user.prescriber && other.in?(@user.share_with)
+      @user.share_with -= [other]
+      if @user.save && other.save
+        flash[:notice] = "Vous avez départagés vos documents d'avec #{other.email}"
+      else
+        flash[:error] = "Impossible de départager vos documents."
+      end
+    else
+      flash[:error] = "Utilisateur non valide : #{params[:email]}"
+    end
+    redirect_to account_profile_path(@user.reload)
   end
 end

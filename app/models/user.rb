@@ -71,7 +71,10 @@ class User
   
   references_many :my_account_book_types, class_name: "AccountBookType", inverse_of: :owner
   references_and_referenced_in_many :account_book_types,  inverse_of: :clients
-  
+
+  references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
+  references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
+
   references_many :reminder_emails
   references_many :invoices
   references_many :credits

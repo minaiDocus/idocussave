@@ -26,4 +26,60 @@ module ApplicationHelper
       ("%0.4f" % price_in_euros).gsub(".", ",").gsub(/,0000/, "")
     end
   end
+
+  def icon_new
+    content_tag :i, '', class: 'icon-plus'
+  end
+
+  def icon_show
+    content_tag :i, '', class: 'icon-eye-open'
+  end
+
+  def icon_edit
+    content_tag :i, '', class: 'icon-edit'
+  end
+
+  def icon_destroy
+    content_tag :i, '', class: 'icon-remove'
+  end
+
+  def edit_link
+    link_to icon_edit, '#', class: :edit
+  end
+
+  def icon_ok
+    content_tag :i, '', class: 'icon-ok'
+  end
+
+  def icon_not_ok
+    content_tag :i, '', class: 'icon-remove'
+  end
+
+  def ok_link
+    link_to icon_ok, '#', class: :ok
+  end
+
+  def not_ok_link
+    link_to icon_not_ok, '#', class: :not_ok
+  end
+
+  def icon_tag(value)
+    value ? icon_ok : icon_not_ok
+  end
+
+  def label_ok(is_current=false)
+    content_tag(:span, icon_ok, class: "label #{is_current ? 'label-success' : ''}", style: 'margin-left:2px;margin-right:2px;')
+  end
+
+  def label_not_ok(is_current=false)
+    content_tag(:span, icon_not_ok, class: "label #{!is_current ? 'label-important' : ''}", style: 'margin-left:2px;margin-right:2px;')
+  end
+
+  def label_icon_tag(value)
+    value ? label_ok(value) : label_not_ok(value)
+  end
+
+  def label_choice_tag(value)
+    link_to(label_ok(value), '#', class: :ok) + link_to(label_not_ok(value), '#', class: :not_ok)
+  end
 end

@@ -38,7 +38,10 @@ Idocus::Application.routes.draw do
       resources :periods
     end
 
-    resource :profile
+    resource :profile do
+      post   'share_documents_with',   :on => :collection
+      delete 'unshare_documents_with', :on => :collection
+    end
     resources :addresses
     resource :dropbox do
       get 'authorize_url', :on => :member

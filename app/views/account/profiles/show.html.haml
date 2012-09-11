@@ -1,5 +1,5 @@
-.container
-  .row
+.container-fluid
+  .row-fluid
     .span12.alerts
       - if flash[:notice].present?
         .alert.alert-success
@@ -9,7 +9,7 @@
         .alert.alert-error
           %a{ :class=>"close", "data-dismiss"=>"alert" } × 
           %span= flash[:credit_alert] || flash[:error]
-  .row
+  .row-fluid
     .span3
       .well.change_pass_parent
         %h3 Changer mon mot de passe
@@ -32,14 +32,14 @@
             != f.label "Confirmation du mot de passe :"
             = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
             != f.submit "Modifier", :class => "btn blue"
-    .span7
-      .row
-        .span6.gray.well.paymentslist_container
+    .span6
+      .row-fluid
+        .span12.gray.well.paymentslist_container
           %h3.aligncenter Mode de paiement
           %br/
-          .row
+          .row-fluid
             /
-              .span3
+              .span6
                 .paymentslist
                   .header
                     !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
@@ -56,7 +56,7 @@
                     .footer
                       %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
                       %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
-            .span3
+            .span6
               .paymentslist
                 .header
                   !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
@@ -81,21 +81,21 @@
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
       - if @external_file_storage.authorized > 0
-        .row
-          .span6.well
+        .row-fluid
+          .span12.well
             %h3.aligncenter Stockage externe des documents
             %br
             - if @external_file_storage.is_dropbox_basic_authorized?
               - service_number = ExternalFileStorage::F_DROPBOX
               - is_service_used = @external_file_storage.is_used?(service_number)
               %div
-                .row
-                  .span6
+                .row-fluid
+                  .span12
                     != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
                     %b
                       != label_tag :"service_#{service_number}", "DROPBOX"
-                .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                  .span6
+                .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span12
                     - if @external_file_storage.dropbox_basic.is_configured?
                       Votre compte iDocus est connecté à votre compte Dropbox. 
                       != link_to "Paramètres", authorize_url_account_dropbox_path
@@ -114,13 +114,13 @@
               - is_service_used = @external_file_storage.is_used?(service_number)
               %hr{ :style => "margin:5px 0 5px 0;" }
               %div
-                .row
-                  .span6
+                .row-fluid
+                  .span12
                     != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
                     %b
                       != label_tag :"service_#{service_number}", "GOOGLE DRIVE"
-                .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                  .span6
+                .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span12
                     - if @external_file_storage.google_doc.is_configured?
                       Votre compte iDocus est connecté à votre compte Google Drive. 
                       != link_to "Paramètres", authorize_url_account_google_doc_path
@@ -139,13 +139,13 @@
               - is_service_used = @external_file_storage.is_used?(service_number)
               %hr{ :style => "margin:5px 0 5px 0;" }
               %div
-                .row
-                  .span6
+                .row-fluid
+                  .span12
                     != check_box_tag :enable_ftp, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
                     %b
                       != label_tag :"service_#{service_number}", "FTP"
-                .row{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
-                  .span6
+                .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span12
                     - if @external_file_storage.ftp.is_configured?
                       Votre compte iDocus est connecté à votre compte FTP. 
                       != link_to "Paramètres", "#ftpDialog", "data-toggle" => "modal"
@@ -184,5 +184,16 @@
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
+    .span3
+      .well
+        %h3.aligncenter Partager avec d'autres utilisateurs
+        %table.table
+          - @user.share_with.each do |user|
+            %tr
+              %td= user.email
+              %td= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez vous vraiment départager vos future documents ?" }
+        = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
+          = text_field_tag :email, "", style: 'margin-bottom:0;'
+          = submit_tag "Ajouter", class: 'btn'
 
 = render "help"
