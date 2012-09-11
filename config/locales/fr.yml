@@ -256,6 +256,9 @@ fr:
           created_at: 'Date de création'
           updated_at: 'Date de modification'
       user:
+        zero: '0 utilisateurs'
+        one: '1 utilisateur'
+        other: '%{count} utilisateurs'
         name: 'Utilisateur'
         attributes:
           name: 'Nom complet'
@@ -274,16 +277,22 @@ fr:
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
       address:
+        zero: '0 adresses'
+        one: '1 addresse'
+        other: '%{count} addresses'
         attributes:
-          first_name: "Prénom"
-          last_name: "Nom"
-          address_1: "Addresse"
-          address_2: "Addresse (suite)"
-          city: "Ville"
-          zip: "Code postale"
-          billing_address: "Addressse de facturation"
-          shipping_address: "Addresse de retour"
+          first_name: 'Prénom'
+          last_name: 'Nom'
+          address_1: 'Addresse'
+          address_2: 'Addresse (suite)'
+          city: 'Ville'
+          zip: 'Code postale'
+          billing_address: 'Addressse de facturation'
+          shipping_address: 'Addresse de retour'
       page:
+        zero: '0 pages'
+        one: '1 page'
+        other: '%{count} pages'
         name: 'Page'
         attributes:
           title: 'Titre'
@@ -294,14 +303,23 @@ fr:
           label: 'Libellé'
           is_footer: 'Afficher dans le footer'
       cms_image:
+        zero: '0 images'
+        one: '1 image'
+        other: '%{count} images'
         name: 'CMS Image'
       product:
+        zero: '0 produits'
+        one: '1 produit'
+        other: '%{count} produits'
         name: 'Produit'
         attributes:
           title: 'Titre'
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
       product_option:
+        zero: '0 options'
+        one: '1 option'
+        other: '%{count} options'
         name: 'Option de produit'
         group: 'Groupe'
         attributes:
@@ -310,6 +328,9 @@ fr:
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'
       product_group:
+        zero: '0 groupes'
+        one: '1 groupe'
+        other: '%{count} groupes'
         name: 'Groupe de produit'
         attributes:
           titre: 'Titre'
