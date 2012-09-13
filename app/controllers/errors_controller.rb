@@ -4,7 +4,7 @@ class ErrorsController < ApplicationController
     if params[:a].match(/^system\/contents\//)
       render :nothing => true, :status => 404
     else
-      render :template => "404.html.haml", :status => 404, :layout => "pages"
+      render "/404", :status => 404, :layout => "pages"
     end
   end
   
