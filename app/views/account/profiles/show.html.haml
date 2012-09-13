@@ -186,12 +186,17 @@
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
     .span3
       .well
-        %h3.aligncenter Partager avec d'autres utilisateurs
-        %table.table
+        %h3.aligncenter Partages
+        %br
+        Liste des utilisateurs iDocus avec qui vous souhaitez partager systématiquement tous vos nouveaux documents.
+        %br
+        %br
+        %table.table.table-condensed
           - @user.share_with.each do |user|
             %tr
               %td= user.email
-              %td= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez vous vraiment départager vos future documents ?" }
+              %td= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez-vous vraiment supprimer le partage automatique de vos documents avec #{user.email} ?" }
+        %br
         = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
           = text_field_tag :email, "", style: 'margin-bottom:0;'
           = submit_tag "Ajouter", class: 'btn'

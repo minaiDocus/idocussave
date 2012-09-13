@@ -33,7 +33,7 @@ public
         if other != @user.prescriber
           @user.share_with << other
           if @user.save && other.save
-            flash[:notice] = "Vous avez partagés vos documents avec #{other.email}."
+            flash[:notice] = "Vous avez paramétré le partage automatique de vos documents avec #{other.email}."
           else
             flash[:error] = "Impossible de partager vos documents."
           end
@@ -54,7 +54,7 @@ public
     if other && other != @user.prescriber && other.in?(@user.share_with)
       @user.share_with -= [other]
       if @user.save && other.save
-        flash[:notice] = "Vous avez départagés vos documents d'avec #{other.email}"
+        flash[:notice] = "Vous avez supprimé le partage automatique de vos documents avec #{other.email}."
       else
         flash[:error] = "Impossible de départager vos documents."
       end
