@@ -32,7 +32,7 @@ class Division
   end
   
   def pages_count
-    self.start - self.end + 1
+    self.end - self.start + 1
   end
 
   def to_file
