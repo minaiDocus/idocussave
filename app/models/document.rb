@@ -63,6 +63,7 @@ protected
       nbr = File.basename(self.content_file_name, ".pdf")
       system "pdftk #{temp_path} burst output /tmp/#{nbr}_pages_%03d.pdf"
 
+      # FIXME use better regex
       Dir.glob("/tmp/#{nbr}_*").sort.each_with_index do |file, index|
         document = Document.new
         document.dirty = true
