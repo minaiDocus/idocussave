@@ -56,7 +56,7 @@ class DropboxExtended
       begin
         results = client.search(path,filename,1)
       rescue DropboxError => e
-        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{path}/#{filename}", message: e)
+        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{File.join([path,filename])}", message: e)
         results = []
       end
       if results.any?

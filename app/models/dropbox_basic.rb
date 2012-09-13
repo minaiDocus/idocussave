@@ -61,7 +61,7 @@ class DropboxBasic
     begin
       results = client.search(path,filename,1)
     rescue DropboxError => e
-      Delivery::Error.create(sender: 'DropboxBasic', state: 'searching', filepath: "#{path}/#{filename}", message: e)
+      Delivery::Error.create(sender: 'DropboxBasic', state: 'searching', filepath: "#{File.join([path,filename])}", message: e)
       results = []
     end
     if results.any?
@@ -89,7 +89,7 @@ class DropboxBasic
           begin
             client.put_file("#{clean_path}/#{filename}", open(filepath), true)
           rescue DropboxError => e
-            Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+            Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e)
           end
         end
       end

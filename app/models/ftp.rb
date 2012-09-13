@@ -91,7 +91,7 @@ class Ftp
             ftp.put(filepath)
           end
         rescue => e
-          Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+          Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e)
         end
       end
       true
