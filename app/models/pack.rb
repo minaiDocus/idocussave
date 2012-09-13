@@ -58,7 +58,7 @@ class Pack
   end
   
   def update_reporting_document
-    total = divisions.count
+    total = divisions.size
     time = created_at
     while total > 0
       period = owner.find_or_create_scan_subscription.find_or_create_period(time)
@@ -292,11 +292,8 @@ class Pack
         document.pack = pack
         document.content = File.new pack_filename
 
-        if pack.save
-          document.save
-        else
-          false
-        end
+        document.save
+        pack.save
       end
 
       #  Marquage des fichiers comme étant traité.
