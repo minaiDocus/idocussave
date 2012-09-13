@@ -11,10 +11,6 @@ protected
 
 public
 
-  def index
-    @product_groups = ProductGroup.by_position.all
-  end
-
   def new
     @product_group = ProductGroup.new
   end
