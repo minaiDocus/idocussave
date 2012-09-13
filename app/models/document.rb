@@ -34,7 +34,7 @@ class Document
   end
 
   after_create :split_pages, :add_tags
-  after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original }
+  after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original || Rails.env.test? }
 
   scope :without_original, where:  { :is_an_original.in => [false, nil] }
   scope :originals,        where:  { is_an_original: true }
