@@ -12,7 +12,7 @@ class Delivery::Error
   field :number, type: Integer
   field :is_resolved, type: Boolean, default: false
 
-  before_create :set_number
+  before_create :set_number, :set_pack
 
   scope :resolved,   where: { is_resolved: true }
   scope :unresolved, where: { is_resolved: false }
@@ -76,7 +76,7 @@ class Delivery::Error
   private
 
   def set_number
-    self.number = DbaSequence.next('Delivery::ErrorStack')
+    self.number = DbaSequence.next('Delivery::Error')
   end
 
   def send_file
@@ -126,5 +126,12 @@ class Delivery::Error
     efs.ftp.change_or_make_dir(path, @client)
     @client.put(file_obj.path)
     @client.close
+  end
+
+  private
+
+  def set_pack
+    pack_name = filebasename.gsub('_',' ').gsub(/\d{3}$/,'') + 'all'
+    self.pack = Pack.find_by_name(pack_name)
   end
 end
