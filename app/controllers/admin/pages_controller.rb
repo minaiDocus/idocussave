@@ -1,13 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class Admin::PagesController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :page_contains
+  before_filter :load_page, only: %w(show edit update destroy)
 
   def index
     @pages = Page.where(page_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
   
   def show
-    @page = Page.find_by_slug params[:id]
   end
   
   def new
@@ -26,21 +26,29 @@ class Admin::PagesController < Admin::AdminController
   end
 
   def edit
-    @page = Page.find_by_slug params[:id]
   end
  
   def update
-    @page = Page.find_by_slug params[:id]
-      if @page.update_attributes(params[:page])
-        flash[:notice] = "Modifié avec succès."
-        redirect_to admin_pages_path
-      else
-        flash[:error] = "Impossible de modifier la page."
-        render action: :edit
-      end
+    if @page.update_attributes(params[:page])
+      flash[:notice] = "Modifié avec succès."
+      redirect_to admin_pages_path
+    else
+      flash[:error] = "Impossible de modifier la page."
+      render action: :edit
+    end
+  end
+
+  def destroy
+    @page.destroy
+    flash[:notice] = "Supprimé avec succès."
+    redirect_to admin_pages_path
   end
 
   private
+
+  def load_page
+    @page = Page.find_by_slug params[:id]
+  end
 
   def sort_column
     params[:sort] || 'position'
