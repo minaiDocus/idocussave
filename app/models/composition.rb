@@ -23,7 +23,7 @@ class Composition
     temp_files = []
     temp_paths = []
     documents.each{|document|
-      temp_file = document.content.to_file
+      temp_file = open(document.content.path)
       temp_files << temp_file
       temp_paths << File.expand_path(temp_file.path)
     }
