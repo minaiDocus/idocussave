@@ -4,7 +4,7 @@ class Account::Documents::TagsController < Account::AccountController
   def update_multiple
     sous = ""
     add = ""
-    Iconv.iconv('UTF-8', 'ISO-8859-1', params[:tags]).join().downcase.split.each do |tag|
+    params[:tags].downcase.split.each do |tag|
       if tag.match(/-*\w*/)
         if tag[0] == 45 # '45' = '-'
           sous += " #{tag.sub("-","").sub("*","(.*)")}"
