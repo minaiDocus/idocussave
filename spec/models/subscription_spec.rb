@@ -59,9 +59,10 @@ describe Subscription do
   end
   
   it "#set_start_date" do
-    @subscription2.start_at = @subscription2.start_at - 3.month
-    @subscription2.save
-    @subscription2.start_at.month.should eq(1)
+    subscription = Subscription.new
+    subscription.start_at = Time.now
+    subscription.save
+    subscription.start_at.should eq(Time.local(Time.now.year,Time.now.month,1,0,0,0))
   end
 
   describe 'quarterly' do

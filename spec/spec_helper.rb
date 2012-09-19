@@ -55,6 +55,7 @@ Spork.prefork do
     config.include Mongoid::Matchers
     config.include FactoryGirl::Syntax::Methods
     config.extend LoginMacros
+    config.include Devise::TestHelpers, :type => :controller
   end
 end
 

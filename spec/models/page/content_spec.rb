@@ -22,7 +22,7 @@ describe Page::Content do
       Page.destroy_all
       @page = FactoryGirl.build(:page)
       @content1 = FactoryGirl.build(Page::Content, position: 20)
-      @content2 = FactoryGirl.build(Page::Content, position: 10)
+      @content2 = FactoryGirl.build(Page::Content, position: 10, is_invisible: true)
       @content3 = FactoryGirl.build(Page::Content, position: 10)
       @page.contents << @content1
       @page.contents << @content2
@@ -44,6 +44,22 @@ describe Page::Content do
       it { should include(@content1.tag) }
       it { should include(@content2.tag) }
       it { should include(@content3.tag) }
+    end
+
+    describe '.visible' do
+      subject(:tags) { @page.contents.visible.entries }
+
+      it { should include(@content1) }
+      it { should_not include(@content2) }
+      it { should include(@content3) }
+    end
+
+    describe '.invisible' do
+      subject(:tags) { @page.contents.invisible.entries }
+
+      it { should_not include(@content1) }
+      it { should include(@content2) }
+      it { should_not include(@content3) }
     end
   end
 end

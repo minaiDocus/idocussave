@@ -38,6 +38,12 @@ FactoryGirl.define do
     sequence(:position) { |n| n }
   end
   
+   factory ProductGroup do
+    sequence(:position) { |n| n+1 }
+    title { |group| "group_#{group.position}" }
+  end
+  
+  
   factory ProductOption do
     sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
     sequence(:position) { |n| n }
@@ -52,5 +58,13 @@ FactoryGirl.define do
 
   factory Scan::Document do
     sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
+  end
+
+  factory FileSendingKit do
+    sequence(:title) { |n| "Kit #{n}"}
+    sequence(:position) { |n| n }
+    logo_path "404.png"
+    left_logo_path "404.png"
+    right_logo_path "404.png"
   end
 end
