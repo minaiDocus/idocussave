@@ -36,6 +36,7 @@ class Admin::ReminderEmailsController < Admin::AdminController
   end
 
   def deliver
+    @reminder_email = @user.reminder_emails.find params[:id]
     result = @reminder_email.deliver
     if result.is_a? Boolean and result == true
       flash[:notice] = "Délivré avec succès."
