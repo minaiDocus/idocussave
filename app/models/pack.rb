@@ -9,11 +9,12 @@ class Pack
   referenced_in :owner, class_name: "User", inverse_of: :own_packs
   references_and_referenced_in_many :users
 
-  references_many :documents, dependent: :destroy
-  references_many :document_tags
+  references_many :documents,                                                         dependent: :destroy
+  references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy
+  references_many :document_tags,                                                     dependent: :destroy
   references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
-  references_many :delivery_errors, class_name: "Delivery::Error", inverse_of: :pack
-  references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :pack
+  references_many :delivery_errors, class_name: "Delivery::Error", inverse_of: :pack, dependent: :destroy
+  references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :pack, dependent: :destroy
   embeds_many :divisions
   
   field :name,                     type: String
@@ -31,11 +32,11 @@ class Pack
     documents.originals.first
   end
   
-  def sheets
+  def sheets_info
     self.divisions.sheets
   end
   
-  def pieces
+  def pieces_info
     self.divisions.pieces
   end
   
@@ -268,7 +269,11 @@ class Pack
       #  Renommage des fichiers.
       start_at_page = pack.divisions.pieces.count + 1
       filesname = apply_new_name(filesname, start_at_page, user.stamp_name, is_an_upload)
-      update_division(filesname, pack, is_an_upload)
+
+      position = pack.sheets_info.last.position + 1 rescue 1
+      update_pieces(filesname, pack, position, is_an_upload)
+      update_division(filesname, pack, position, is_an_upload)
+
       #  Création du fichier all.
       filesname_list = filesname.sum { |f| " " + f }
       system "pdftk #{filesname_list} cat output #{pack_filename}"
@@ -326,11 +331,11 @@ class Pack
 
   private
 
-    def update_division(filesname, pack, is_an_upload)
+    def update_division(filesname, pack, position, is_an_upload)
       total_pages = 0
       count = pack.documents.count
       current_page = (count == 0) ? 1 : count
-      current_position = pack.sheets.last.position + 1 rescue 1
+      current_position = position
       
       filesname.each do |filename|
         name = filename.sub(".pdf","")
@@ -354,6 +359,20 @@ class Pack
         
         current_position += 1
         total_pages += pages_number
+      end
+    end
+
+    def update_pieces(filesname, pack, position, is_an_upload)
+      current_position = position
+      filesname.each do |filename|
+        piece = Pack::Piece.new
+        piece.pack = pack
+        piece.name = File.basename(filename,'.pdf').gsub('_',' ')
+        piece.content = open(filename)
+        piece.is_an_upload = is_an_upload
+        piece.position = current_position
+        piece.save
+        current_position += 1
       end
     end
   
