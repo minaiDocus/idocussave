@@ -13,7 +13,7 @@ class Account::Scan::ReportingsController < Account::AccountController
     
     if @user.is_prescriber
       @users = @user.clients.asc(:code)
-      @subscriptions = @user.scan_subscription_reports
+      @subscriptions = Scan::Subscription.any_in(:user_id => @users.map { |e| e.id })
       @prescriber = @user
     else
       @users = [@user]
