@@ -42,7 +42,7 @@ class Invoice
     @total = 0
     @data = []
     
-    prescriber = user.prescriber ? user.prescriber : user
+    prescriber = user.prescriber ? user .prescriber : user
     time = self.created_at - 1.month
     scan_subscription = user.scan_subscriptions.where(:start_at.lte => time, :end_at.gte => time).first
     if (prescriber != user and !prescriber.is_centralizer)
@@ -56,7 +56,7 @@ class Invoice
       @total += period.price_in_cents_wo_vat
     else
       # prescriber
-      periods = Scan::Period.any_in(subscription_id: user.scan_subscription_reports.not_in(_id: [scan_subscription.id]).distinct(:_id)).
+      periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => user.clients.map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
       where(:start_at.lte => time, :end_at.gte => time).
       select{ |period| period.end_at.month == time.month }
 
