@@ -15,7 +15,8 @@
       %span{ :class => "label label-info" } tif
       %br
       %br
-      PDF protégés non acceptés.
+      %span.red
+        PDF protégés non acceptés.
       %br
       %br
     %form{ :id => "fileupload", :action => "/account/documents/upload", :method => "POST", :enctype => "multipart/form-data" }
@@ -30,6 +31,8 @@
       = select_tag "for_current_month", options_for_select([[sCurrentMonth + " " + sYear1,"true"],[sPreviousMonth + " " + sYear2,"false"]]), :class => 'text_field', :id => :for_current_month, :style =>"position:relative;bottom:5px;font-size:11px;"
       %br
       %span
+        %span.label.label-warning.margin1right
+          Attention :
         Votre document ne pourra être attribué au mois précédant que si votre envoi "papier" n'a pas encore été traité par iDocus.
       %br
       %br
