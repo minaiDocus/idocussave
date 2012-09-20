@@ -141,7 +141,6 @@ class User
     else
       scan_subscription = Scan::Subscription.new
       scan_subscription.user = self
-      scan_subscription.prescriber = self.prescriber || self
       scan_subscription.save
       scan_subscription
     end

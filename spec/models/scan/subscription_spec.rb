@@ -12,12 +12,14 @@ describe Scan::Subscription do
     @prescriber = User.new(:email => "prescriber@example.com", :password => "secret", :code => "PRE", :is_prescriber => true)
     @prescriber.skip_confirmation!
     @prescriber.save
+
+    @user.prescriber = @prescriber
+    @user.save
     
     @poo = ProductOptionOrder.new(:title => "reuse", :price_in_cents_wo_vat => 1000, :duration => 1)
     @poo2 = ProductOptionOrder.new(:title => "don't reuse", :price_in_cents_wo_vat => 2500, :duration => 0)
     
     @scan_subscription = Scan::Subscription.new
-    @scan_subscription.prescriber_code = @prescriber.code
     @scan_subscription.code = @user.code
     @scan_subscription.start_at = @start_at
     @scan_subscription.product_option_orders = [@poo,@poo2]
@@ -34,7 +36,6 @@ describe Scan::Subscription do
     @scan_subscription.start_at.should eq(@start_at.beginning_of_month)
     @scan_subscription.end_at.should eq(@start_at.beginning_of_month + 12.month - 1.second)
     @scan_subscription.code.should eq("PRE0001")
-    @scan_subscription.prescriber_code.should eq("PRE")
   end
   
   it "should set category to 1" do
@@ -76,7 +77,6 @@ describe Scan::Subscription do
     @scan_subscription.update_attributes(:period_duration => 2)
   
     scan_subscription = Scan::Subscription.new
-    scan_subscription.prescriber_code = @prescriber.code
     scan_subscription.code = @user.code
     scan_subscription.copy! @scan_subscription
     
