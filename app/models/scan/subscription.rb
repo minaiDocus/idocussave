@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Scan::Subscription < Subscription
-  referenced_in :prescriber,  class_name: "User",           inverse_of: :scan_subscription_reports
   references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
@@ -114,7 +113,8 @@ class Scan::Subscription < Subscription
   def total
     result = 0
     if user.is_prescriber
-      ps = Scan::Period.any_in(subscription_id: user.scan_subscription_reports.distinct(:_id)).
+      subscription_ids = Scan::Subscription.any_in(:user_id => user.clients.map { |e| e.id }).distinct(:_id)
+      ps = Scan::Period.any_in(subscription_id: subscription_ids).
            where(:start_at.lt => Time.now, :end_at.gt => Time.now)
       ps.each do |period|
         result += period.total_price_in_cents_wo_vat
