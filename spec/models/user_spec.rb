@@ -21,9 +21,7 @@ describe User do
       
       @subscription = Scan::Subscription.new
       @subscription.user = @prescripteur
-      @subscription.prescriber = @prescripteur
       @subscription.save
-      
     end
       
     it ".create" do

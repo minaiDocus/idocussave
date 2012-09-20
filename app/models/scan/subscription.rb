@@ -8,8 +8,6 @@ class Scan::Subscription < Subscription
   field :max_sheets_authorized,       type: Integer, default: 100
   field :max_upload_pages_authorized, type: Integer, default: 200
   
-  validates_presence_of :prescriber_id
-  
   before_create :set_category, :create_period
   before_save :check_propagation
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
@@ -25,15 +23,7 @@ class Scan::Subscription < Subscription
   def code=(vcode)
   	self.user = User.where(code: vcode).first
   end
-  
-  def prescriber_code
-  	self.prescriber.try(:code)
-  end
-  
-  def prescriber_code=(vcode)
-  	self.prescriber = User.where(code: vcode).first
-  end
-  
+
   def find_period(time)
     periods.where(:start_at.lte => time, :end_at.gte => time, duration: period_duration).first
   end

@@ -57,13 +57,6 @@ describe Subscription do
   it ".current should equal subscription 1" do
     Subscription.current.should eq(@subscription1)
   end
-  
-  it "#set_start_date" do
-    subscription = Subscription.new
-    subscription.start_at = Time.now
-    subscription.save
-    subscription.start_at.should eq(Time.local(Time.now.year,Time.now.month,1,0,0,0))
-  end
 
   describe 'quarterly' do
     before(:each) do

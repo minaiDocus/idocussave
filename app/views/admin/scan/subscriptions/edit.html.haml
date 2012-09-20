@@ -3,7 +3,6 @@
     .modal-body
       .row-fluid
         .span12
-          = f.input :prescriber_code, label: 'Code prescripteur'
           = f.input :period_duration, label: 'Type de période', collection: [["mensuel",1],["trimestriel",3],["annuel",12]], include_blank: false
           = f.input :payment_type, label: 'Mode de paiement', collection: [["prépayé",Subscription::PREPAYED],["prélèvement",Subscription::DEBIT]], include_blank: false
           = f.input :end_in, label: 'Durrée (mois)'
