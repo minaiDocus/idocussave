@@ -267,7 +267,7 @@ class Pack
       
       #  Renommage des fichiers.
       start_at_page = pack.divisions.pieces.count + 1
-      filesname = apply_new_name filesname, start_at_page
+      filesname = apply_new_name(filesname, start_at_page, user.stamp_name, is_an_upload)
       update_division(filesname, pack, is_an_upload)
       #  Création du fichier all.
       filesname_list = filesname.sum { |f| " " + f }
@@ -364,12 +364,12 @@ class Pack
       File.delete name + ".pdf" rescue nil
     end
   
-    def apply_new_name(filesname, starting_page)
+    def apply_new_name(filesname, starting_page, stamp_name, is_an_upload)
       filesname.each { |filename| File.rename filename, filename + "_"  }
       start = starting_page
       filesname.map do |filename|
         new_filename = generate_new_name(filename,(start += 1) - 1)
-        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""))
+        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_an_upload)
         system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
         system "rm #{filename}_"
         new_filename
@@ -381,14 +381,32 @@ class Pack
       filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
     end
     
-    def generate_stamp(text)
+    def generate_stamp(text, stamp_name, is_an_upload)
+      txt = generate_stamp_name(text,stamp_name,is_an_upload)
+      
       Prawn::Document.generate STAMP_PATH, :margin => 0 do
-        fill_color "FF0000"
-        rotate(330, :origin => [495,780]) do
-          draw_text text, :size => 10, :at => [495, 780]
+        bounding_box([0, bounds.height - 5], :width => bounds.width, :height => 30) do
+          fill_color "FF0000"
+          text txt, :size => 10, :align => :center
         end
       end
       STAMP_PATH
+    end
+  
+    def generate_stamp_name(text, stamp_name, is_an_upload)
+      txt = stamp_name
+      info = text.split(' ')
+      
+      origin = generate_origin(is_an_upload)
+      
+      txt.gsub(':code', info[0]).
+      gsub(':account_book', info[1]).
+      gsub(':period', info[2]).
+      gsub(':piece_num', info[3]) + " "  + origin
+    end
+    
+    def generate_origin(is_an_upload)
+      is_an_upload ? "INF" : "PAP"
     end
   end
 end

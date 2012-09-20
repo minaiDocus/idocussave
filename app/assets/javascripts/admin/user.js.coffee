@@ -265,11 +265,20 @@ update_user_clients = ->
     datatype: 'json',
     type: 'POST'
 
+get_propagate_stamp_name = ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/propagate_stamp_name',
+    data: '',
+    datatype: 'json',
+    type: 'GET'
+  
 toggle_prescriber_options = ->
   if $('#user_is_prescriber').is(':checked')
     $('#prescriber_options table').removeClass('hide')
+    $('#stamp_propagation').show()
   else
     $('#prescriber_options table').addClass('hide')
+    $('#stamp_propagation').hide()
 
 jQuery ->
   $('input[type=checkbox]').click ->
@@ -376,3 +385,10 @@ jQuery ->
     get_reminder_emails()
     get_file_sending_kit()
     get_account_book_types()
+    get_propagate_stamp_name()
+
+  $('#stamp_propagation').click ->
+    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
+    if(value)
+      get_propagate_stamp_name()
+    return false

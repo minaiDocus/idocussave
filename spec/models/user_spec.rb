@@ -56,5 +56,25 @@ describe User do
       @user3.scan_subscriptions.should_not be_empty  
     end    
   end
-    
+
+  context "features" do
+    it 'should propagate successfully stamp name' do
+      prescriber = FactoryGirl.create(:prescriber)
+      client1 = FactoryGirl.create(:user)
+      client2 = FactoryGirl.create(:user)
+      prescriber.clients << client1
+      prescriber.clients << client2
+      prescriber.save
+
+      prescriber.update_attribute(:stamp_name, ':period')
+      prescriber.propagate_stamp_name
+
+      prescriber.reload
+      client1.reload
+      client2.reload
+      prescriber.stamp_name.should eq(':period')
+      client1.stamp_name.should eq(':period')
+      client2.stamp_name.should eq(':period')
+    end
+  end
 end

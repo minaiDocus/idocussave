@@ -55,6 +55,8 @@ class User
   field :is_centralizer,                 type: Boolean, default: true
   field :is_detail_authorized,           type: Boolean, default: false
   
+  field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
+  
   attr_accessor :client_ids, :is_inactive
 
   embeds_many :addresses
@@ -177,6 +179,12 @@ class User
       file_sending_kit || FileSendingKit.create(user_id: self.id, title: 'Title', logo_path: '/logo/path', left_logo_path: '/left/logo/path', right_logo_path: '/right/logo/path')
     else
       nil
+    end
+  end
+  
+  def propagate_stamp_name
+    if self.is_prescriber
+      self.clients.each { |client| client.update_attribute(:stamp_name, self.stamp_name) }
     end
   end
   

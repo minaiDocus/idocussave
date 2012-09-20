@@ -1,0 +1,10 @@
+#stamp_personalisation
+  .label{ style: 'padding:3px 5px 3px' }
+    Personnalisation du stamp
+  %table.table.table-striped.table-bordered.table-condensed
+    %tbody
+      %tr
+        %th Nom
+        %td
+          #stamp_propagation.pull-right= link_to icon_globe, '#', title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' }
+          = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }

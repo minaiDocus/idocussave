@@ -55,7 +55,18 @@ class Admin::UsersController < Admin::AdminController
       format.json{ render json: tags.to_json, status: :ok }
     end
   end
-
+  
+  def propagate_stamp_name
+    @user = User.find params[:id]
+    respond_to do |format|
+        if @user.propagate_stamp_name
+          format.json{ render json: {}, status: :ok }
+        else
+          format.json{ render json: {}, status: :unprocessable_entity }
+        end
+    end
+  end
+  
   private
 
   def sort_column

@@ -82,4 +82,8 @@ module ApplicationHelper
   def label_choice_tag(value)
     link_to(label_ok(value), '#', class: :ok) + link_to(label_not_ok(value), '#', class: :not_ok)
   end
+  
+  def icon_globe
+    content_tag :i, '', class: 'icon-globe'
+  end
 end

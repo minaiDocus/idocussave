@@ -104,6 +104,7 @@ Idocus::Application.routes.draw do
     root :to => "admin#index"
     resources :users do
       get 'search_by_code', on: :collection
+      get 'propagate_stamp_name', on: :member
       resources :addresses do
         get 'edit_multiple', on: :collection
         post 'update_multiple', on: :collection
