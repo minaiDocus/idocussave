@@ -9,7 +9,7 @@
             = f.input :position, as: 'integer'
             = f.input :require_addresses, as: 'boolean', label: 'Adresse requise ?'
             = f.input :price_in_cents_wo_vat, as: 'integer', label: 'Prix (en centimes)'
-            = f.input :duration, as: 'integer', label: "Durée de l'abonnement ( en nombre de mois, laisser à 1 pour normal ) ?"
+            = f.input :duration, as: 'integer', label: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période) ?"
             = f.input :quantity, as: 'integer', label: 'Quantité'
             = f.input :product_group, label: 'Groupe', collection: ProductGroup.asc(:name).map { |e| [e.name,e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
           .span4

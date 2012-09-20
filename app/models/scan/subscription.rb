@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Scan::Subscription < Subscription
-  referenced_in :prescriber,  class_name: "User",           inverse_of: :scan_subscription_reports
   references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   

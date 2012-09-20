@@ -54,7 +54,7 @@ class User
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :is_centralizer,                 type: Boolean, default: true
   field :is_detail_authorized,           type: Boolean, default: false
-  
+
   attr_accessor :client_ids, :is_inactive
 
   embeds_many :addresses
@@ -62,9 +62,8 @@ class User
   references_many :clients,  class_name: "User", inverse_of: :prescriber
   referenced_in :prescriber, class_name: "User", inverse_of: :clients
 
-  references_many :periods,                   class_name: "Scan::Period",       inverse_of: :user
-  references_many :scan_subscriptions,        class_name: "Scan::Subscription", inverse_of: :user
-  references_many :scan_subscription_reports, class_name: "Scan::Subscription", inverse_of: :prescriber
+  references_many :periods,            class_name: "Scan::Period",       inverse_of: :user
+  references_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
   
   references_many :own_packs, class_name: "Pack", inverse_of: :owner
   references_and_referenced_in_many :packs
