@@ -74,7 +74,7 @@ class User
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
 
-  references_many :reminder_emails
+  references_many :reminder_emails, autosave: true
   references_many :invoices
   references_many :credits
   references_many :document_tags

@@ -23,4 +23,4 @@
             != reminder_email.processed_users.count
             \/
             != reminder_email.user.clients.active.count
-          %td= link_to "Envoyer", deliver_admin_user_reminder_email_path(@user, reminder_email), class: 'btn btn-mini'
+          %td= link_to "Envoyer", deliver_admin_user_reminder_email_path(@user, reminder_email), class: 'btn btn-mini', data: { confirm: "Voulez vous vraiment envoyer les rappels maintenant ?" }
