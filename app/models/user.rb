@@ -57,6 +57,8 @@ class User
 
   attr_accessor :client_ids, :is_inactive
 
+  # FIXME use another way
+  before_save :set_timestamps_of_addresses
   embeds_many :addresses
 
   references_many :clients,  class_name: "User", inverse_of: :prescriber
@@ -199,5 +201,11 @@ protected
   def format_name
     self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
     self.last_name = self.last_name.upcase rescue ""
+  end
+
+  def set_timestamps_of_addresses
+    self.addresses.each do |address|
+      address.save
+    end
   end
 end
