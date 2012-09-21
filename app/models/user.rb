@@ -205,6 +205,8 @@ protected
 
   def set_timestamps_of_addresses
     self.addresses.each do |address|
+      address.created_at ||= Time.now
+      address.updated_at ||= Time.now
       address.save
     end
   end
