@@ -106,7 +106,7 @@ class Pack::Report
                   observation = Pack::Report::Observation.new
                   observation.expense = expense
                   observation.save
-                  if observation.type == 2
+                  if expense.obs_type == 2
                     obs.css('guest').each do |guest|
                       g = Pack::Report::Observation::Guest.new
                       g.observation = observation
