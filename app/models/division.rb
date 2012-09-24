@@ -14,12 +14,15 @@ class Division
   field :end,          type: Integer, default: 0
   field :is_an_upload, type: Boolean, default: false
   field :position,     type: Integer, default: 0
+  field :is_delivered, type: Boolean, default: false
   
   scope :uploaded,      where: { is_an_upload: true }
   scope :scanned,       where: { is_an_upload: false }
   scope :sheets,        where: { level: SHEETS_LEVEL }
   scope :pieces,        where: { level: PIECES_LEVEL }
   scope :of_month,      lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
+  scope :delivered,     where: { is_delivered: true }
+  scope :not_delivered, where: { is_delivered: false }
 
   validates_presence_of :name, :start, :end
 

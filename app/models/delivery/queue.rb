@@ -73,7 +73,7 @@ class Delivery::Queue
 
   def process!
     filespath = []
-    pack.pieces.each do |piece|
+    pieces = pack.pieces.not_delivered.each do |piece|
       filespath << piece.to_file.path
     end
     
@@ -84,6 +84,12 @@ class Delivery::Queue
     if user.is_prescriber and user.is_dropbox_extended_authorized and user.dropbox_delivery_folder.present?
       DropboxExtended.deliver(filespath, user.dropbox_delivery_folder, info_path)
     end
+
+    pieces.each do |piece|
+      piece.is_delivered = true
+    end
+    pack.save
+
     dec_counter!
     unlock!
   end

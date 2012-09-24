@@ -59,6 +59,8 @@ class User
 
   attr_accessor :client_ids, :is_inactive
 
+  # FIXME use another way
+  before_save :set_timestamps_of_addresses
   embeds_many :addresses
 
   references_many :clients,  class_name: "User", inverse_of: :prescriber
@@ -76,7 +78,7 @@ class User
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
 
-  references_many :reminder_emails
+  references_many :reminder_emails, autosave: true
   references_many :invoices
   references_many :credits
   references_many :document_tags
@@ -207,5 +209,13 @@ protected
   def format_name
     self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
     self.last_name = self.last_name.upcase rescue ""
+  end
+
+  def set_timestamps_of_addresses
+    self.addresses.each do |address|
+      address.created_at ||= Time.now
+      address.updated_at ||= Time.now
+      address.save
+    end
   end
 end

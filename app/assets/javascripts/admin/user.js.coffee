@@ -65,6 +65,8 @@ post_scan_subscription = ->
     else
       values[field.name] = field.value
   values['_method'] = 'PUT'
+  if $('#scan_subscription_is_to_spreading').is(':checked')
+    values['scan_subscription[is_to_spreading]'] =  1
   $.ajax
     url: '/admin/users/' + user_id + '/scan/subscription',
     data: values,
