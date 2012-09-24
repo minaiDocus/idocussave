@@ -36,6 +36,9 @@ Idocus::Application.routes.draw do
     namespace :scan do
       resources :reportings
       resources :periods
+      namespace :report do
+        resources :expenses
+      end
     end
 
     resource :profile do

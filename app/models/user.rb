@@ -123,6 +123,10 @@ class User
     User.any_in(email: params).entries
   end
 
+  def self.find_by_code(code)
+    User.where(code: code).first
+  end
+
   def is_subscribed_to_category(number)
     if self.subscriptions.where(category: number).first
       true

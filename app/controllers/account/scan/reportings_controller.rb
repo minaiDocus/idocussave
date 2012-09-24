@@ -8,19 +8,19 @@ class Account::Scan::ReportingsController < Account::AccountController
       flash[:notice] = "User unknow : #{params[:email]}" unless @user
     end
     @user ||= current_user
-    
+
     @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
-    
+
     if @user.is_prescriber
       @users = @user.clients.asc(:code)
-      @subscriptions = Scan::Subscription.any_in(:user_id => @users.map { |e| e.id })
+      @subscriptions = ::Scan::Subscription.any_in(:user_id => @users.map { |e| e.id })
       @prescriber = @user
     else
       @users = [@user]
       @subscriptions = @user.scan_subscriptions
       @prescriber = @user.prescriber
     end
-    @periods = Scan::Period.any_in(:subscription_id => @subscriptions.distinct(:_id)).where(:start_at.gte => Time.local(@year,1,1,0,0,0), :end_at.lte => Time.local(@year,12,31,23,59,59)).entries
+    @periods = ::Scan::Period.any_in(:subscription_id => @subscriptions.distinct(:_id)).where(:start_at.gte => Time.local(@year,1,1,0,0,0), :end_at.lte => Time.local(@year,12,31,23,59,59)).entries
     
     respond_to do |format|
       format.html

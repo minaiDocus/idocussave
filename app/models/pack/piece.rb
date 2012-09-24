@@ -13,6 +13,7 @@ class Pack::Piece
   field :position,           type: Integer
 
   referenced_in :pack, inverse_of: :pieces
+  references_one :expense, class_name: "Pack::Report::Expense", inverse_of: :piece
 
   has_mongoid_attached_file :content
 
@@ -26,6 +27,8 @@ class Pack::Piece
   def self.by_position
     asc(:position)
   end
+
+  private
 
   def send_to_prepacompta
     account_book = name.split(' ')[1]

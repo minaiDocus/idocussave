@@ -4,6 +4,8 @@ class AccountBookType
   include Mongoid::Timestamps
   include Mongoid::Slug
 
+  ENTRY_TYPE = %w(no expense buying selling)
+
   before_save :upcase_name
   
   referenced_in :owner, class_name: 'User', inverse_of: :my_account_book_types
@@ -12,6 +14,7 @@ class AccountBookType
   field :name,        type: String
   field :description, type: String,  default: ""
   field :position,    type: Integer, default: 0
+  field :entry_type,  type: Integer, default: 0
   
   slug :name
 
@@ -20,6 +23,21 @@ class AccountBookType
   validates :description, length: { in: 2..50 }
   
 public
+
+  def prepacompta_processable?
+    if entry_type > 0
+      true
+    else
+      false
+    end
+  end
+
+  def prepacompta_type
+    return 'NDF' if self.entry_type == 1
+    return 'AC'  if self.entry_type == 2
+    return 'VT'  if self.entry_type == 3
+    return nil
+  end
   
   class << self
     def by_position
