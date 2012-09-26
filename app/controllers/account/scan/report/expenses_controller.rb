@@ -22,7 +22,7 @@ class Account::Scan::Report::ExpensesController < Account::AccountController
     respond_to do |format|
       format.html {}
       format.xls do
-        send_data(@report.to_xls, :type=> "application/vnd.ms-excel", :filename => "#{@report.pack.name.gsub(' ','_').sub('_all','')}.xls")
+        send_data(@report.expenses.render_xls, :type=> "application/vnd.ms-excel", :filename => "#{@report.pack.name.gsub(' ','_').sub('_all','')}.xls")
       end
     end
   end

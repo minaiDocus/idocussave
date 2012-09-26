@@ -4,62 +4,13 @@ class Pack::Report
   include Mongoid::Timestamps
 
   referenced_in :pack, inverse_of: :report
+  referenced_in :document, class_name: 'Scan::Document', inverse_of: :report
   references_many :expenses, class_name: "Pack::Report::Expense", inverse_of: :report
 
   field :type, type: String # NDF / AC / VT
 
-  def to_xls
-    book = Spreadsheet::Workbook.new
-
-    sheet = book.create_worksheet :name => pack.name.gsub(' ','_').sub('_all','')
-    nb = 0
-
-    sheet.row(nb).concat ["","","","Total","","","","(en €)"]
-    nb += 2
-
-    sheet.row(nb).concat ["","","","Type de dépense","HT","TVA","TVA récup.","TTC"]
-    nb += 1
-
-    expenses.distinct_type.each do |type|
-      temp_type = expenses.of_type(type)
-      sheet.row(nb).concat ["","","",type, temp_type.total_amount_in_cents_wo_vat, temp_type.total_vat, temp_type.total_vat_recoverable, temp_type.total_amount_in_cents_w_vat]
-      nb += 1
-    end
-
-    nb += 4
-
-
-    sheet.row(nb).concat ["Dépenses avec le compte professionnel","","","","","","","(en €)"]
-    nb += 2
-
-    sheet.row(nb).concat ["Nom de la pièce (url)","Date","Observations","Type de dépense","HT","TVA","TVA récup.","TTC"]
-    nb += 1
-
-    expenses.pro.each do |expense|
-      sheet.row(nb).concat expense.to_row
-      nb += 1
-    end
-
-    nb += 4
-
-    sheet.row(nb).concat ["Dépenses avec le compte personnel","","","","","","","(en €)"]
-    nb += 2
-
-    sheet.row(nb).concat ["Nom de la pièce (url)","Date","Observations","Type de dépense","HT","TVA","TVA récup.","TTC"]
-    nb += 1
-
-    expenses.perso.each do |expense|
-      sheet.row(nb).concat expense.to_row
-      nb += 1
-    end
-
-    io = StringIO.new('')
-    book.write(io)
-    io.string
-  end
-
   class << self
-    # fetch prepacompta info
+    # fetch PreSaisie info
     def fetch(time=Time.now)
       not_processed_dirs.each do |dir|
         fetch_expense(dir)
@@ -84,6 +35,7 @@ class Pack::Report
               report = Pack::Report.new
               report.type = "NDF"
               report.pack = pack
+              report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
               lot.css('piece').each do |part|
                 part_name = part['number'].gsub('_',' ')
                 piece = pack.pieces.where(name: part_name).first
@@ -95,7 +47,6 @@ class Pack::Report
                   expense.amount_in_cents_wo_vat = part.css('ht').first.content.sub(',','.').to_f rescue nil
                   expense.amount_in_cents_w_vat  = part.css('ttc').first.content.sub(',','.').to_f rescue nil
                   expense.vat                    = part.css('tva').first.content.sub(',','.').to_f rescue nil
-                  expense.vat_recoverable        = part.css('tva_r').first.content.sub(',','.').to_f rescue nil
                   expense.date                   = part.css('date').first.content.to_date rescue nil
                   expense.type                   = part.css('type').first.content rescue nil
                   expense.origin                 = part.css('source').first.content rescue nil
@@ -135,7 +86,7 @@ class Pack::Report
     end
 
     def output_path
-      File.join([PrepaCompta::ROOT_DIR,'output'])
+      File.join([PreSaisie::ROOT_DIR,'output'])
     end
 
     def directories

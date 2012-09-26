@@ -22,7 +22,7 @@ class Pack::Piece
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
-  before_create :send_to_prepacompta
+  before_create :send_to_presaisie
 
   def self.by_position
     asc(:position)
@@ -30,12 +30,12 @@ class Pack::Piece
 
   private
 
-  def send_to_prepacompta
+  def send_to_presaisie
     account_book = name.split(' ')[1]
     account_book_type = self.pack.owner.my_account_book_types.where(name: account_book).first rescue nil
-    if account_book_type && account_book_type.prepacompta_processable?
-      prepacompta_type = account_book_type.prepacompta_type
-      path = File.join([PrepaCompta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),prepacompta_type])
+    if account_book_type && account_book_type.presaisie_processable?
+      presaisie_type = account_book_type.presaisie_type
+      path = File.join([PreSaisie::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),presaisie_type])
       filename = self.name.gsub(' ','_') + '.pdf'
       FileUtils.mkdir_p(path)
       FileUtils.cp(self.content.queued_for_write[:original].path, File.join([path,filename]))

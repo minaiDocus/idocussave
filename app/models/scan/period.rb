@@ -187,6 +187,7 @@ class Scan::Period
       list[:uploaded_pages] = document.uploaded_pages.to_s
       list[:paperclips] = document.paperclips.to_s
       list[:oversized] = document.oversized.to_s
+      list[:report_id] = document.report.try(:id) || "#"
       
       lists << list
       

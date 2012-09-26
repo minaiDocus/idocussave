@@ -282,11 +282,18 @@
             content += "</table>";
           %}
           <tr>
-            {% if(o.documents.list[i].link != "#") { %}
-              <td class="first name"><a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a><a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a></td>
-            {% } else { %}
-              <td class="first name">{%= o.documents.list[i].name %}</td>
+            <td class="first name">
+            <a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a>
+            {% if(o.documents.list[i].report_id != "#") { %}
+  = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xls'),"/account/scan/report/expenses/{%= o.documents.list[i].report_id %}.xls")
+  :plain
             {% } %}
+            {% if(o.documents.list[i].link != "#") { %}
+              <a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a>
+            {% } else { %}
+              {%= o.documents.list[i].name %}
+            {% } %}
+            </td>
             <td class="center">{%= o.documents.list[i].pieces %} ({%= (parseInt(o.documents.list[i].pieces) - parseInt(o.documents.list[i].uploaded_pieces)+'') %}, {%= o.documents.list[i].uploaded_pieces %})</td>
             <td class="center">{%= (parseInt(o.documents.list[i].sheets) - parseInt(o.documents.list[i].uploaded_sheets))+'' %}</td>
             <td class="center">{%= o.documents.list[i].pages %} ({%= (parseInt(o.documents.list[i].pages) - parseInt(o.documents.list[i].uploaded_pages))+'' %}, {%= o.documents.list[i].uploaded_pages %})</td>
