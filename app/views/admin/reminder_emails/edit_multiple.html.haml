@@ -1,4 +1,4 @@
-= simple_nested_form_for [:admin, @user], url: edit_multiple_admin_user_reminder_emails_path(@user), html: { class: 'form form-vertical reminder_emails margin0' } do |f|
+= simple_nested_form_for [:admin, @user], url: update_multiple_admin_user_reminder_emails_path(@user), html: { class: 'form form-vertical reminder_emails margin0' } do |f|
   .modal-body
     = f.fields_for :reminder_emails do |reminder|
       .row-fluid

@@ -11,6 +11,7 @@ class Pack
 
   references_many :documents,                                                         dependent: :destroy
   references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy
+  references_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
   references_many :document_tags,                                                     dependent: :destroy
   references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
   references_many :delivery_errors, class_name: "Delivery::Error", inverse_of: :pack, dependent: :destroy
