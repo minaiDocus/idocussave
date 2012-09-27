@@ -32,7 +32,7 @@ class Pack::Piece
 
   def send_to_presaisie
     account_book = name.split(' ')[1]
-    account_book_type = self.pack.owner.my_account_book_types.where(name: account_book).first rescue nil
+    account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
     if account_book_type && account_book_type.presaisie_processable?
       presaisie_type = account_book_type.presaisie_type
       path = File.join([PreSaisie::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),presaisie_type])
