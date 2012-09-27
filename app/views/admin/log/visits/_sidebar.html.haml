@@ -1,0 +1,10 @@
+%h3 Filtres
+
+= form_tag admin_log_visits_path, method: :get, html: { class: 'form form-vertical' } do
+  = label_tag 'user_contains[code]', 'Code utilisateur'
+  = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue '')
+  = label_tag 'visit_contains[path]', 'Chemin'
+  = text_field_tag 'visit_contains[path]', (params[:visit_contains][:path] rescue '')
+  %br
+  = submit_tag 'Filtrer', class: 'btn'
+  = link_to t('filters.cancel'), admin_log_visits_path, class: 'btn'
