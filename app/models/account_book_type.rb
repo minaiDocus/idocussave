@@ -19,7 +19,7 @@ class AccountBookType
   slug :name
 
   validates_presence_of :name
-  validates :name,        length: { in: 2..4 }
+  validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
   
 public
