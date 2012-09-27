@@ -16,6 +16,8 @@
       = link_to t('mongoid.models.cms_image.name').pluralize, admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to t('mongoid.models.product.name').pluralize, admin_products_path
+    %li{ class: ('active' if params[:controller] == 'admin/log/visits') }
+      = link_to "Historique", admin_log_visits_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

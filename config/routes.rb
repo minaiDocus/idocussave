@@ -133,6 +133,9 @@ Idocus::Application.routes.draw do
       get 'authorize_url', on: :member
       get 'callback', on: :member
     end
+    namespace :log do
+      resources :visits
+    end
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

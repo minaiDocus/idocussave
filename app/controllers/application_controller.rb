@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :redirect_to_https if Rails.env.production?
   around_filter :catch_error if %w(staging production test).include?(Rails.env)
+  around_filter :log_visit if %w(staging production test).include?(Rails.env)
 
   def after_sign_in_path_for(resource_or_scope)
     if session[:targeted_path]
@@ -77,4 +78,15 @@ protected
     end
   end
   
+  def log_visit
+    unless request.path.match('(system|assets)') || !params[:action].in?(%w(index show))
+      unless current_user && current_user.is_admin
+        visit      = ::Log::Visit.new
+        visit.path = request.path
+        visit.user = current_user.try(:id)
+        visit.save
+      end
+    end
+    yield
+  end 
 end
