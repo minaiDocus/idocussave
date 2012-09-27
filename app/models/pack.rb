@@ -417,16 +417,13 @@ class Pack
       txt = stamp_name
       info = text.split(' ')
       
-      origin = generate_origin(is_an_upload)
+      origin = is_an_upload ? "INF" : "PAP"
       
       txt.gsub(':code', info[0]).
       gsub(':account_book', info[1]).
       gsub(':period', info[2]).
-      gsub(':piece_num', info[3]) + " "  + origin
-    end
-    
-    def generate_origin(is_an_upload)
-      is_an_upload ? "INF" : "PAP"
+      gsub(':piece_num', info[3]).
+      gsub(':origin', origin)
     end
   end
 end
