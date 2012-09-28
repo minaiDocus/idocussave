@@ -3,8 +3,9 @@ class Log::Visit
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  field :path,   type: String
-  field :number, type: Integer
+  field :path,       type: String
+  field :number,     type: Integer
+  field :ip_address, type: String
 
   referenced_in :user, class_name: "User", inverse_of: :log_visits
   

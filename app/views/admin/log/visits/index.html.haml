@@ -9,6 +9,7 @@
           %th= sortable :created_at, "Date de visite", visit_contains
           %th= sortable :user_id,    "Utilisateur",    visit_contains
           %th= sortable :path,       "Chemin",         visit_contains
+          %th= sortable :ip_adress,  "Adresse IP",     visit_contains
       %tbody
         - @visits.each do |visit|
           %tr
@@ -20,6 +21,7 @@
               - else
                 Visiteur
             %td= visit.path
+            %td= visit.ip_address
 
     = paginate @visits
   .span3

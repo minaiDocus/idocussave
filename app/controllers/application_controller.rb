@@ -81,9 +81,10 @@ protected
   def log_visit
     unless request.path.match('(system|assets)') || !params[:action].in?(%w(index show))
       unless current_user && current_user.is_admin
-        visit      = ::Log::Visit.new
-        visit.path = request.path
-        visit.user = current_user.try(:id)
+        visit            = ::Log::Visit.new
+        visit.path       = request.path
+        visit.user       = current_user.try(:id)
+        visit.ip_address = request.remote_ip 
         visit.save
       end
     end
