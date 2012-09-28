@@ -11,6 +11,7 @@ class Pack::Report::Observation
     [
       guests.map { |guest| [guest.first_name,guest.last_name].join(' ') }.join(', '),
       comment.to_s
-    ].join(' / ')
+    ].reject { |e| e.presence.nil? }.
+      join(' / ')
   end
 end
