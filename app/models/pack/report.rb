@@ -62,15 +62,15 @@ class Pack::Report
                   expense.save
                   report.expenses << expense
 
-                  observation = Pack::Report::Observation.new
-                  observation.expense = expense
-                  observation.save
-                  if expense.obs_type == 2
+                  if expense.obs_type == 1
+                    observation = Pack::Report::Observation.new
+                    observation.expense = expense
+                    observation.save
                     obs.css('guest').each do |guest|
                       g = Pack::Report::Observation::Guest.new
                       g.observation = observation
-                      g.first_name = guest.css('first_name').first.content rescue nil
-                      g.last_name  = guest.css('last_name').first.content rescue nil
+                      g.first_name = guest.css('first_name').first.try(:content)
+                      g.last_name  = guest.css('last_name').first.try(:content)
                       g.save
                     end
                   end
