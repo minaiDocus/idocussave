@@ -59,6 +59,13 @@ namespace :maintenance do
     end
   end
 
+  namespace :compta do
+    desc "Fetch report data"
+    task :fetch_report, [:path] => :environment do
+      Pack::Report.fetch
+    end
+  end
+
   namespace :lang do
     desc "Feed dictionary"
     task :feed, [:path] => :environment do |t,args|

@@ -40,14 +40,14 @@ class Pack::Report
             name = lot['name'].gsub('_',' ') + ' all'
             pack = Pack.find_by_name(name)
             if pack
-              report = Pack::Report.new
+              report = pack.report || Pack::Report.new
               report.type = "NDF"
               report.pack = pack
               report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
               lot.css('piece').each do |part|
                 part_name = part['number'].gsub('_',' ')
                 piece = pack.pieces.where(name: part_name).first
-                if piece
+                if piece and piece.expense.nil?
                   obs = part.css('obs').first
                   expense                        = Pack::Report::Expense.new
                   expense.report                 = report
@@ -62,15 +62,18 @@ class Pack::Report
                   expense.save
                   report.expenses << expense
 
-                  if expense.obs_type == 1
-                    observation = Pack::Report::Observation.new
-                    observation.expense = expense
-                    observation.save
-                    obs.css('guest').each do |guest|
+                  observation         = Pack::Report::Observation.new
+                  observation.expense = expense
+                  observation.comment = obs.css('comment').first.try(:content)
+                  observation.save
+                  obs.css('guest').each do |guest|
+                    first_name = guest.css('first_name').first.try(:content)
+                    last_name  = guest.css('last_name').first.try(:content)
+                    if first_name.present? || last_name.present?
                       g = Pack::Report::Observation::Guest.new
                       g.observation = observation
-                      g.first_name = guest.css('first_name').first.try(:content)
-                      g.last_name  = guest.css('last_name').first.try(:content)
+                      g.first_name  = first_name
+                      g.last_name   = last_name
                       g.save
                     end
                   end
