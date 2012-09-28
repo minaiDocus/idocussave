@@ -20,6 +20,14 @@ class Pack::Report
       end
     end
 
+    def to_float(txt)
+      if txt.presence
+        txt.sub(',','.').to_f
+      else
+        nil
+      end
+    end
+
     def fetch_expense(dir)
       filepath = File.join([output_path,dir,'NDF.xml'])
       file = File.open(filepath)
@@ -44,13 +52,13 @@ class Pack::Report
                   expense                        = Pack::Report::Expense.new
                   expense.report                 = report
                   expense.piece                  = piece
-                  expense.amount_in_cents_wo_vat = part.css('ht').first.content.sub(',','.').to_f rescue nil
-                  expense.amount_in_cents_w_vat  = part.css('ttc').first.content.sub(',','.').to_f rescue nil
-                  expense.vat                    = part.css('tva').first.content.sub(',','.').to_f rescue nil
-                  expense.date                   = part.css('date').first.content.to_date rescue nil
-                  expense.type                   = part.css('type').first.content rescue nil
-                  expense.origin                 = part.css('source').first.content rescue nil
-                  expense.obs_type               = obs['type'].to_i rescue nil
+                  expense.amount_in_cents_wo_vat = to_float(part.css('ht').first.try(:content))
+                  expense.amount_in_cents_w_vat  = to_float(part.css('ttc').first.try(:content))
+                  expense.vat                    = to_float(part.css('tva').first.try(:content))
+                  expense.date                   = part.css('date').first.try(:content).try(:to_date)
+                  expense.type                   = part.css('type').first.try(:content)
+                  expense.origin                 = part.css('source').first.try(:content)
+                  expense.obs_type               = obs['type'].to_i
                   expense.save
                   report.expenses << expense
 

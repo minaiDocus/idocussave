@@ -41,13 +41,15 @@ class Pack::Report::Expense
       sheet.row(tmp_y).set_format(margin + 2, format)
       sheet.row(tmp_y).set_format(margin + 3, format)
       sheet.row(tmp_y).set_format(margin + 4, format)
-      format = Spreadsheet::Format.new({ :align => :center }.merge(format1))
+      format = Spreadsheet::Format.new({ :align => :right }.merge(format1))
       sheet.row(tmp_y).set_format(margin + 5, format)
       sheet.row(tmp_y).set_format(margin + 6, format)
       sheet.row(tmp_y).set_format(margin + 7, format)
       sheet.row(tmp_y).concat(a_margin + ["Nom de la pièce (url)","Date","Observations","Type de dépense","HT","TVA","TTC"])
       tmp_y += 1
       data[0].each do |d|
+        format = Spreadsheet::Format.new({ :left_color => :blue }.merge(format2))
+        sheet.row(tmp_y).set_format(margin + 1, format)
         format = Spreadsheet::Format.new({ :align => :right, :number_format => "#,##0.00" }.merge(format2))
         sheet.row(tmp_y).set_format(margin + 5, format)
         sheet.row(tmp_y).set_format(margin + 6, format)
@@ -92,7 +94,7 @@ class Pack::Report::Expense
       sheet.row(nb).concat ["","","","","Type de dépense","HT","TVA","TTC"]
       format = Spreadsheet::Format.new({ :weight => :bold }.merge(format1))
       sheet.row(nb).set_format(4, format)
-      format = Spreadsheet::Format.new({ :weight => :bold, :align => :center }.merge(format1))
+      format = Spreadsheet::Format.new({ :weight => :bold, :align => :right }.merge(format1))
       sheet.row(nb).set_format(5, format)
       sheet.row(nb).set_format(6, format)
       sheet.row(nb).set_format(7, format)
