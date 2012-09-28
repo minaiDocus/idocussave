@@ -73,7 +73,7 @@ class Delivery::Queue
 
   def process!
     filespath = []
-    pieces = pack.pieces.not_delivered.each do |piece|
+    pieces = pack.divisions.pieces.not_delivered.each do |piece|
       filespath << piece.to_file.path
     end
     
