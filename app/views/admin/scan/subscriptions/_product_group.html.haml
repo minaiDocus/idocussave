@@ -9,12 +9,12 @@
           .row-fluid
             .span12
               .pull-left
-                != radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, ((index == 0)? true : false), id: option.id, class: "option"
+                != radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
               != render partial: "product_option", locals: { option: option }
       - else
-        - product_group.product_options.by_position.each do |option|
+        - product_group.product_options.by_position.each_with_index do |option,index|
           .row-fluid
             .span12
               .pull-left
-                %input{ type: :checkbox, name: "scan_subscription[product][#{product.id}][#{product_group.id}][]", value: option.id, id: option.id, class: "option" }
+                != check_box_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
               != render partial: "product_option", locals: { option: option }
