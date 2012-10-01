@@ -278,7 +278,7 @@ public
     
     pack_delivery_list = current_user.find_or_create_pack_delivery_list
     pack_delivery_list.add!(result_pack_ids,type)
-    PackDeliveryList.delay(:queue => 'external file storage delivery', :priority => 5).process(pack_delivery_list.id)
+    PackDeliveryList.delay(:queue => 'delivery', :priority => 5).process(pack_delivery_list.id)
 
     respond_to do |format|
       format.html{ render :nothing => true, :status => 200 }
