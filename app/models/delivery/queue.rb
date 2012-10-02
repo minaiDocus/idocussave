@@ -72,11 +72,13 @@ class Delivery::Queue
   end
 
   def process!
-    filespath = []
-    pieces = pack.divisions.pieces.not_delivered.each do |piece|
-      filespath << piece.to_file.path
+    piecespath = []
+    pieces = pack.divisions.pieces.not_delivered
+    pieces.each do |piece|
+      piecespath << piece.to_file.path
     end
-    
+
+    filespath = piecespath
     filespath << pack.original_document.content.path
     info_path = Pack.info_path(pack.name.gsub(' ','_'),user)
     user.find_or_create_efs.deliver(filespath, info_path)
@@ -89,6 +91,10 @@ class Delivery::Queue
       piece.is_delivered = true
     end
     pack.save
+
+    piecespath.each do |piecepath|
+      File.delete piecepath
+    end
 
     dec_counter!
     unlock!
