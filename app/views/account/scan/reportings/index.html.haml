@@ -262,12 +262,13 @@
     <div class="documentslist">
       <table class="table table-condensed">
         <tr>
-          <th class="first">Nom des documents</th>
+          <th class="name">Nom des documents</th>
           <th class="center">Pièces</th>
           <th class="center">Feuilles</th>
           <th class="center">Pages</th>
           <th class="center">Attaches</th>
-          <th class="center last">Hors format</th>
+          <th class="center">Hors format</th>
+          <th class="last"></th>
         </tr>
         {% for(var i=0; i<o.documents.list.length; i++) {
             var content = "<table class='historic'><tr><th>N°</th><th>Date</th><th>Téléversées</th><th>Numérisées</th></tr>";
@@ -282,23 +283,25 @@
             content += "</table>";
           %}
           <tr>
-            <td class="first name">
-            <a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a>
-            {% if(o.documents.list[i].report_id != "#") { %}
-  = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xls'),"/account/scan/report/expenses/{%= o.documents.list[i].report_id %}.xls")
-  :plain
-            {% } %}
-            {% if(o.documents.list[i].link != "#") { %}
-              <a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a>
-            {% } else { %}
-              {%= o.documents.list[i].name %}
-            {% } %}
+            <td class="name">
+              <a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a>
+              {% if(o.documents.list[i].link != "#") { %}
+                <a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a>
+              {% } else { %}
+                {%= o.documents.list[i].name %}
+              {% } %}
             </td>
             <td class="center">{%= o.documents.list[i].pieces %} ({%= (parseInt(o.documents.list[i].pieces) - parseInt(o.documents.list[i].uploaded_pieces)+'') %}, {%= o.documents.list[i].uploaded_pieces %})</td>
             <td class="center">{%= (parseInt(o.documents.list[i].sheets) - parseInt(o.documents.list[i].uploaded_sheets))+'' %}</td>
             <td class="center">{%= o.documents.list[i].pages %} ({%= (parseInt(o.documents.list[i].pages) - parseInt(o.documents.list[i].uploaded_pages))+'' %}, {%= o.documents.list[i].uploaded_pages %})</td>
             <td class="center">{%= o.documents.list[i].paperclips %}</td>
-            <td class="center last">{%= o.documents.list[i].oversized %}</td>
+            <td class="center">{%= o.documents.list[i].oversized %}</td>
+            <td class="last">
+              {% if(o.documents.list[i].report_id != "#") { %}
+  = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xls'),"/account/scan/report/expenses/{%= o.documents.list[i].report_id %}.xls")
+  :plain
+              {% } %}
+            </td>
           </tr>
         {% } %}
         <tr>
@@ -308,6 +311,7 @@
           <td class="center"><b>{%= o.documents.total.pages %} ({%= (parseInt(o.documents.total.pages) - parseInt(o.documents.total.uploaded_pages))+'' %}, {%= o.documents.total.uploaded_pages %})</b></td>
           <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
           <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
+          <td class="last"></td>
         </tr>
         <tr>
           <td><i>Dépassement</i></td>
@@ -316,6 +320,7 @@
           <td class="center"><i>{%= o.documents.excess.uploaded_pages %}</i></td>
           <td></td>
           <td></td>
+          <td class="last"></td>
         </tr>
       </table>
     </div>

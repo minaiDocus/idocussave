@@ -514,6 +514,9 @@ table td.first {
 table td.second {
     width: 90px; }
 
+.documentslist table td.name {
+    width: 170px; }
+
 .actiongroup.first {
     width: 16px;
     height: 16px; }
@@ -720,17 +723,17 @@ input.error:focus, select.error:focus, textarea.error:focus {
     height:330px; }
 #periodModal .documentslist {
     height:330px;
-    width:500px;
+    width:630px;
     float:left; }
 #periodModal .separator {
     height:330px;
     border-left:1px solid #EEE;
-    margin-left:33px;
+    margin-left:5px;
     width:1px;
     float:left; }
 #periodModal .optionslist {
     height:330px;
-    width:400px;
+    width:325px;
     float:right; }
 
 #periodModal table tr td.center, #periodModal table tr th.center {
