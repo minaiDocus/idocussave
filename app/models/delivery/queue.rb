@@ -87,11 +87,6 @@ class Delivery::Queue
       DropboxExtended.deliver(piecespath + [filepath], user.dropbox_delivery_folder, info_path)
     end
 
-    pieces.each do |piece|
-      piece.is_delivered = true
-    end
-    pack.save
-
     piecespath.each do |piecepath|
       File.delete piecepath
     end
