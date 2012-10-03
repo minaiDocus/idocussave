@@ -5,8 +5,9 @@ class Delivery::Queue
   referenced_in :pack
   referenced_in :user
 
-  field :counter,   type: Integer, default: 0
-  field :is_locked, type: Boolean, default: false
+  field :counter,        type: Integer, default: 0
+  field :start_position, type: Integer, default: 0
+  field :is_locked,      type: Boolean, default: false
 
   scope :not_processed, where: { :counter.gt => 0 }
   scope :free,          where: { is_locked: false }
@@ -73,7 +74,7 @@ class Delivery::Queue
 
   def process!
     piecespath = []
-    pieces = pack.divisions.pieces.not_delivered
+    pieces = pack.divisions.pieces.where(:position.gte => self.start_position).asc(:position)
     pieces.each do |piece|
       piecespath << piece.to_file.path
     end
@@ -95,7 +96,9 @@ class Delivery::Queue
       File.delete piecepath
     end
 
-    dec_counter!
-    unlock!
+    self.start_position = pieces.last.position + 1 rescue self.start_position
+    dec_counter
+    unlock
+    save
   end
 end
