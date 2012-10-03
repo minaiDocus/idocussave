@@ -88,7 +88,7 @@ class DropboxBasic
         tries = 0
         begin
           if is_not_up_to_date(clean_path,filepath)
-            print "sending #{clean_path}/#{filenam} ..."
+            print "sending #{clean_path}/#{filename} ..."
             client.put_file("#{clean_path}/#{filename}", open(filepath), true)
             print "done\n"
           end
