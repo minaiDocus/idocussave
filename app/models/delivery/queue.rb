@@ -78,13 +78,12 @@ class Delivery::Queue
       piecespath << piece.to_file.path
     end
 
-    filespath = piecespath
-    filespath << pack.original_document.content.path
+    filepath = pack.original_document.content.path
     info_path = Pack.info_path(pack.name.gsub(' ','_'),user)
-    user.find_or_create_efs.deliver(filespath, info_path)
+    user.find_or_create_efs.deliver(piecespath + [filepath], info_path)
     
     if user.is_prescriber and user.is_dropbox_extended_authorized and user.dropbox_delivery_folder.present?
-      DropboxExtended.deliver(filespath, user.dropbox_delivery_folder, info_path)
+      DropboxExtended.deliver(piecespath + [filepath], user.dropbox_delivery_folder, info_path)
     end
 
     pieces.each do |piece|
