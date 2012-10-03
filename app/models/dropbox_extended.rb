@@ -81,12 +81,20 @@ class DropboxExtended
         clean_path = delivery_path.sub(/\/$/,"")
         filespath.each do |filepath|
           filename = File.basename(filepath)
-          if is_not_up_to_date(clean_path,filepath)
-            begin
+          tries = 0
+          begin
+            if is_not_up_to_date(clean_path,filepath)
+              print "sending #{clean_path}/#{filename} ..."
               client.put_file("#{clean_path}/#{filename}", open(filepath), true)
-            rescue DropboxError => e
-              Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+              print "done\n"
             end
+          rescue Timeout::Error
+            tries += 1
+            print "failed\n"
+            puts "Trying again!"
+            retry if tries <= 3
+          rescue => e
+            Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
           end
         end
       end

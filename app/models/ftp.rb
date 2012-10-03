@@ -85,11 +85,19 @@ class Ftp
       ftp.login(login,password)
       change_or_make_dir(clean_path, ftp)
       filespath.each do |filepath|
+        filename = File.basename(filepath)
+        tries = 0
         begin
-          filename = File.basename(filepath)
           if is_not_updated(filepath, ftp)
+            print "sending #{filepath} ..."
             ftp.put(filepath)
+            print "done\n"
           end
+        rescue Timeout::Error
+          tries += 1
+          print "failed\n"
+          puts "Trying again!"
+          retry if tries <= 3
         rescue => e
           Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e, user_id: external_file_storage.user)
         end
