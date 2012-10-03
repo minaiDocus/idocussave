@@ -85,12 +85,20 @@ class DropboxBasic
       clean_path = folder_path.sub(/\/$/,"")
       filespath.each do |filepath|
         filename = File.basename(filepath)
-        if is_not_up_to_date(clean_path,filepath)
-          begin
+        tries = 0
+        begin
+          if is_not_up_to_date(clean_path,filepath)
+            print "sending #{clean_path}/#{filenam} ..."
             client.put_file("#{clean_path}/#{filename}", open(filepath), true)
-          rescue DropboxError => e
-            Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e, user_id: external_file_storage.user)
+            print "done\n"
           end
+        rescue Timeout::Error
+          tries += 1
+          print "failed\n"
+          puts "Trying again!"
+          retry if tries <= 3
+        rescue => e
+          Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e, user_id: external_file_storage.user)
         end
       end
     end
