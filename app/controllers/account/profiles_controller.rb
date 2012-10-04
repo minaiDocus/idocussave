@@ -10,6 +10,8 @@ private
 public
   def show
     @external_file_storage = @user.find_or_create_external_file_storage
+    @billing_address = @user.addresses.for_billing.first
+    @shipping_address = @user.addresses.for_shipping.first
   end
   
   def update

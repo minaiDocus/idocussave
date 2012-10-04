@@ -178,8 +178,10 @@ fr:
     edit: 'Editer'
     destroy: 'Supprimer'
     cancel: 'Annuler'
+    return: 'Retour'
     update: 'Mettre à jour'
     submit: 'Valider'
+    confirm: 'Êtes-vous sûr ?'
     
 
   filters:
@@ -283,10 +285,13 @@ fr:
         attributes:
           first_name: 'Prénom'
           last_name: 'Nom'
+          company: 'Société'
           address_1: 'Addresse'
           address_2: 'Addresse (suite)'
           city: 'Ville'
-          zip: 'Code postale'
+          zip: 'Code postal'
+          billing: 'Facturation'
+          shipping: 'Retour'
           billing_address: 'Addressse de facturation'
           shipping_address: 'Addresse de retour'
       page:

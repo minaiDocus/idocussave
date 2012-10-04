@@ -32,7 +32,23 @@
             != f.label "Confirmation du mot de passe :"
             = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
             != f.submit "Modifier", :class => "btn blue"
+    
     .span6
+      .row-fluid
+        .span12.well
+          .row-fluid
+            .span12
+              %h3.aligncenter Gestion des adresses
+          %br
+          .row-fluid
+            .span6
+              = render partial: 'account/addresses/address', locals: { address: @billing_address,  single: true, is_for_billing: true }
+            .span6
+              = render partial: 'account/addresses/address', locals: { address: @shipping_address, single: true, is_for_billing: false }
+          .row-fluid
+            .span12.aligncenter
+              = link_to "Configurer", account_addresses_path, class: 'btn'
+
       .row-fluid
         .span12.gray.well.paymentslist_container
           %h3.aligncenter Mode de paiement
