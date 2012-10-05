@@ -56,7 +56,7 @@ class DropboxExtended
       begin
         results = client.search(path,filename,1)
       rescue DropboxError => e
-        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{File.join([path,filename])}", message: e)
+        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{File.join([path,filename])}", message: e.message)
         results = []
       end
       if results.any?
@@ -92,9 +92,9 @@ class DropboxExtended
             tries += 1
             print "failed\n"
             puts "Trying again!"
-            retry if tries <= 3
+            retry if tries < 3
           rescue => e
-            Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e)
+            Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e.message)
           end
         end
       end
