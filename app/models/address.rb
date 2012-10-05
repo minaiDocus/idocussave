@@ -26,6 +26,8 @@ class Address
 
   scope :for_billing,  where: { is_for_billing: true }
   scope :for_shipping, where: { is_for_shipping: true }
+
+  before_save :set_billing_address, :set_shipping_address
   
   def as_location
     self.attributes.delete_if { |key, value| key == '_id' }
@@ -36,6 +38,28 @@ class Address
       other.as_location == self.as_location
     else
       false
+    end
+  end
+
+  def set_billing_address
+    if self.is_for_billing.in? ["1", true]
+      user.addresses.each do |address|
+        address.is_for_billing = false
+      end
+      self.is_for_billing = true
+    else
+      self.is_for_billing = false
+    end
+  end
+
+  def set_shipping_address
+    if self.is_for_shipping.in? ["1", true]
+      user.addresses.each do |address|
+        address.is_for_shipping = false
+      end
+      self.is_for_shipping = true
+    else
+      self.is_for_shipping = false
     end
   end
 end

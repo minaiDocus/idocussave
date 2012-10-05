@@ -1,0 +1,32 @@
+%table.table.table-striped.table-bordered.table-condensed
+  %thead.label
+    %tr
+      %th{ colspan: 2 }
+        - if single
+          = is_for_billing ? t('mongoid.models.address.attributes.billing') : t('mongoid.models.address.attributes.shipping')
+        - else
+          - if address.is_for_billing || address.is_for_shipping
+            = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil),(address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil)].reject(&:nil?).join(t('support.array.two_words_connector'))
+          .pull-right
+            = link_to icon_edit, edit_account_address_path(address)
+            = link_to icon_destroy, account_address_path(address), :method => :delete, data: { :confirm => t('actions.confirm') }
+  - if address
+    %tbody
+      %tr
+        %th= t('mongoid.models.address.attributes.first_name')
+        %td= address.first_name
+      %tr
+        %th= t('mongoid.models.address.attributes.last_name')
+        %td= address.last_name
+      %tr
+        %th= t('mongoid.models.address.attributes.address_1')
+        %td= address.address_1
+      %tr
+        %th= t('mongoid.models.address.attributes.address_2')
+        %td= address.address_2
+      %tr
+        %th= t('mongoid.models.address.attributes.city')
+        %td= address.city
+      %tr
+        %th= t('mongoid.models.address.attributes.zip')
+        %td= address.zip

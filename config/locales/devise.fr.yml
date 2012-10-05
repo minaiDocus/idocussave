@@ -11,11 +11,13 @@ fr:
         address:
           attributes:
             first_name:
-              blank: 'Le champ Nom est vide.'
-            last_name:
               blank: 'Le champ prénom est vide.'
+            last_name:
+              blank: 'Le champ nom est vide.'
             address_1:
-              blank: 'Le champ adresse 1 est vide.'
+              blank: 'Le champ adresse est vide.'
+            address_2:
+              blank: 'Le champ adresse (suite) est vide.'
             city:
               blank: 'Le champ cité est vide.'
             zip:
