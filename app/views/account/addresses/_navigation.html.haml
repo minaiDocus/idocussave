@@ -2,6 +2,6 @@
   .navbar-inner
     %ul.nav
       %li{ class: (action_name == 'index' ? 'active' : '')}
-        = link_to 'Index', account_addresses_path
+        = link_to 'Liste des adresses', account_addresses_path
       %li{ class: (action_name == 'new' ? 'active' : '')}
-        = link_to t('actions.new'), new_account_address_path
+        = link_to 'Nouvelle adresse', new_account_address_path
