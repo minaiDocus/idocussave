@@ -283,6 +283,7 @@ class Pack
       if pack.persisted?
         #  Mise à jour des documents.
         Document.update_file pack, pack_filename, is_an_upload
+        pack.updated_at = Time.now
         pack.save
       else
         #  Attribution du pack.
