@@ -6,8 +6,8 @@
   = f.input :address_2,  label: t('mongoid.models.address.attributes.address_2')
   = f.input :city,       label: t('mongoid.models.address.attributes.city')
   = f.input :zip,        label: t('mongoid.models.address.attributes.zip')
-  = f.input :is_billing, as: :boolean, label: 'Pour la facturation ?'
-  = f.input :is_shipping, as: :boolean, label: 'Pour le retour ?'
+  = f.input :is_for_billing, as: :boolean, label: 'Pour la facturation ?'
+  = f.input :is_for_shipping, as: :boolean, label: 'Pour le retour ?'
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize
