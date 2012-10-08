@@ -2,12 +2,11 @@
   .row-fluid
     .span12
       = render partial: 'navigation'
-  .row-fluid
-    .span12.alerts
-      - flash.each do |type, message|
-        .alert.alert-message.fade.in{ "data-alert" => "alert", :class => twitterized_type(type) }
-          %a.close{:href => "#"} ×
-          %span= message
+  - flash.each do |type, message|
+    .row-fluid
+      .span12.alert.alert-message.fade.in{ "data-alert" => "alert", :class => twitterized_type(type) }
+        %a.close{ 'data-dismiss' => :alert } ×
+        %span= message
   - while @addresses.any?
     - three_addresses = @addresses[0..2]
     - @addresses = @addresses - three_addresses

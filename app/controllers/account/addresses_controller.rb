@@ -32,7 +32,7 @@ public
       flash[:success] = "L'adresse a été créer avec succès"
       redirect_to account_addresses_path
     else
-      flash[:alert] = "Impossible de créer cette adresse"
+      flash[:error] = "Impossible de créer cette adresse"
       render action: "new"
     end
   end
@@ -46,7 +46,7 @@ public
       flash[:success] = "L'adresse a été mis à jour avec succès"
       redirect_to account_addresses_path
     else
-      flash[:alert] = "Impossible de mettre à jour cette adresse"
+      flash[:error] = "Impossible de mettre à jour cette adresse"
       render action: "edit"
     end
   end
