@@ -26,9 +26,8 @@ public
   end
   
   def create
-    @address = Address.new params[:address]
-    @user.addresses << @address
-    if @user.save
+    @address = @user.addresses.new(params[:address])
+    if @address.save && @user.save
       flash[:success] = "L'adresse a été créer avec succès"
       redirect_to account_addresses_path
     else
@@ -41,8 +40,7 @@ public
   end
   
   def update
-    @address.assign_attributes(params[:address])
-    if @user.save
+    if @address.update_attributes(params[:address]) && @user.save
       flash[:success] = "L'adresse a été mis à jour avec succès"
       redirect_to account_addresses_path
     else

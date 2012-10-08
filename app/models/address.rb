@@ -50,6 +50,7 @@ class Address
     else
       self.is_for_billing = false
     end
+    true
   end
 
   def set_shipping_address
@@ -61,5 +62,6 @@ class Address
     else
       self.is_for_shipping = false
     end
+    true
   end
 end
