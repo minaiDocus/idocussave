@@ -200,18 +200,9 @@ new_account_book_type = ->
         return false
 
 create_account_book_type = ->
-  values = {}
-  $.each $('.account_book_type.form').serializeArray(), (i, field) ->
-    if values[field.name]
-      if typeof(values[field.name]) == 'object'
-        values[field.name].push field.value
-      else
-        values[field.name] = [values[field.name],field.value]
-    else
-      values[field.name] = field.value
   $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types',
-    data: values,
+    url: '/admin/users/' + user_id + '/account_book_types.json',
+    data: $('#new_account_book_type .form').serialize(),
     datatype: 'json',
     type: 'POST',
     success: (data) ->
@@ -232,18 +223,9 @@ edit_account_book_type = (id) ->
         return false
 
 update_account_book_type = (id) ->
-  values = {}
-  $.each $('.account_book_type.form').serializeArray(), (i, field) ->
-    if values[field.name]
-      if typeof(values[field.name]) == 'object'
-        values[field.name].push field.value
-      else
-        values[field.name] = [values[field.name],field.value]
-    else
-      values[field.name] = field.value
   $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types/' + id,
-    data: values,
+    url: '/admin/users/' + user_id + '/account_book_types/' + id + '.json',
+    data: $('#edit_account_book_type .form').serialize(),
     datatype: 'json',
     type: 'POST',
     success: (data) ->
