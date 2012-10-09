@@ -51,11 +51,13 @@
     var id = li.attr("id").split("_")[1];
     var tags = li.children("input[name=tags]").val();
     var name = li.children("input[name=name]").val();
-    
+    var page_number = li.children("input[name=page_number]").val();
+
     $(".showPage").attr("id",id);
     $("#pageInformation").attr("data-content",tags);
     
     $("#panel2 .header h3").text(name);
+    $("#panel2 .header .actiongroup .page_number").text(page_number);
   }
   
   // toggle page selection given by link

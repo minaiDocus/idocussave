@@ -65,17 +65,18 @@
           .content.pages
             %ul.margin0
         #panel2{ :style => "display: none" }
-          .header
-            %h3.pull-left
+          .header.row-fluid
+            %h3.span4.alignleft
               Pages
-            .actiongroup.pull-left{ :style => "margin-top: 4px;margin-left: 2px;" }
-              |
+            .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
               %a.do-prevPage{:href => "#"}
                 page précédente
               \-
+              %span.page_number
+              \-
               %a.do-nextPage{:href => "#"}
                 page suivante
-            .actiongroup.pull-right
+            .actiongroup.span4.alignright{ style: 'margin-top:4px' }
               %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
                 %span.label.label-info
                   tags
