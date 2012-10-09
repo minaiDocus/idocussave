@@ -2,7 +2,9 @@
   .modal-body
     = f.input :name, label: 'Libellé'
     = f.input :description, label: 'Déscription'
-    = f.input :entry_type, label: 'Type de saisie', collection: [['aucun',0],['notes de frais',1],['achat',2],['vente',3]], selected: @account_book_type['entry_type'], allow_blank: false
+    = f.input :entry_type, label: 'Type de saisie', collection: [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]], selected: @account_book_type['entry_type'], allow_blank: false
+    = f.input :account_number, label: 'Numéro de compte'
+    = f.input :charge_account, label: 'Compte charge'
     = f.input :position, as: :integer, label: 'Position'
     = f.input :client_ids, label: 'Clients', collection: @user.clients, label_method: :info, value_method: :id, selected: @account_book_type['client_ids'], input_html: { multiple: true, size: 10 }
   .modal-footer

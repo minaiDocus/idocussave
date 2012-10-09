@@ -4,17 +4,19 @@ class AccountBookType
   include Mongoid::Timestamps
   include Mongoid::Slug
 
-  ENTRY_TYPE = %w(no expense buying selling)
+  ENTRY_TYPE = %w(no expense buying selling bank)
 
   before_save :upcase_name
   
   referenced_in :owner, class_name: 'User', inverse_of: :my_account_book_types
   references_and_referenced_in_many :clients, class_name: 'User', inverse_of: :account_book_types
   
-  field :name,        type: String
-  field :description, type: String,  default: ""
-  field :position,    type: Integer, default: 0
-  field :entry_type,  type: Integer, default: 0
+  field :name,           type: String
+  field :description,    type: String,  default: ""
+  field :position,       type: Integer, default: 0
+  field :entry_type,     type: Integer, default: 0
+  field :account_number, type: String
+  field :charge_account, type: String
   
   slug :name
 
@@ -36,6 +38,7 @@ public
     return 'NDF' if self.entry_type == 1
     return 'AC'  if self.entry_type == 2
     return 'VT'  if self.entry_type == 3
+    return 'CB'  if self.entry_type == 4
     return nil
   end
   

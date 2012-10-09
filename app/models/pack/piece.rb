@@ -34,7 +34,12 @@ class Pack::Piece
     if account_book_type && account_book_type.compta_processable?
       compta_type = account_book_type.compta_type
       path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
-      filename = self.name.gsub(' ','_') + '.pdf'
+      filename = ''
+      if compta_type == 'CB'
+        filename = self.name.gsub(' ','_') + '_' + account_book_type.account_number + '_' + account_book_type.charge_account + '.pdf'
+      else
+        filename = self.name.gsub(' ','_') + '.pdf'
+      end
       FileUtils.mkdir_p(path)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
