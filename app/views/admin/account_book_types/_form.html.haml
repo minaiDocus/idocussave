@@ -6,6 +6,6 @@
     = f.input :account_number, label: 'Numéro de compte'
     = f.input :charge_account, label: 'Compte charge'
     = f.input :position, as: :integer, label: 'Position'
-    = f.input :client_ids, label: 'Clients', collection: @user.clients, label_method: :info, value_method: :id, selected: @account_book_type['client_ids'], input_html: { multiple: true, size: 10 }
+    = f.input :client_ids, label: 'Clients', collection: @user.clients.asc(:code), label_method: :info, value_method: :id, selected: @account_book_type['client_ids'], input_html: { multiple: true, size: 10 }
   .modal-footer
     = f.submit t('actions.submit'), class: 'btn'
