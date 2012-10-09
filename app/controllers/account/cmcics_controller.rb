@@ -51,7 +51,7 @@ class Account::CmcicsController < Account::AccountController
   end
 
   def cancel
-    flash[:credit_alert] = "Crédit annuler."
+    flash[:alert] = "Crédit annulé."
     redirect_to account_profile_url
   end
   

@@ -134,7 +134,7 @@
       },
       error: function(data){
         logAfterAction();
-        $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div>");
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div></div>");
       }
     });
   }
@@ -176,7 +176,7 @@
       },
       error: function(data){
         logAfterAction();
-        $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div>");
+        $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div></div>");
       }
     });
   }
@@ -253,7 +253,7 @@
         },
         error: function(e) {
           logAfterAction();
-          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span><span class='label label-important'>erreur</span> : " + e.responseText +" </span></div>");
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span><span class='label label-important'>erreur</span> : " + e.responseText +" </span></div></div>");
         }
       });
       return false;
@@ -538,13 +538,13 @@
         },
         success: function(data){
           logAfterAction();
-          $(".alerts").html("<div class='alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Vos documents vous seront livrés dès que possible.</span></div>");
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Vos documents vous seront livrés dès que possible.</span></div></div>");
           $('#shareDialog').modal('hide');
           $("#deliverButton").removeAttr("disabled");
         },
         error: function(data){
           logAfterAction();
-          $(".alerts").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Erreur interne, l'administrateur a été prévenu.</span></div>");
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Erreur interne, l'administrateur a été prévenu.</span></div></div>");
           $('#shareDialog').modal('hide');
           $("#deliverButton").removeAttr("disabled");
         }

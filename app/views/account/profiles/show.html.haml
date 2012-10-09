@@ -1,14 +1,7 @@
 .container-fluid
-  .row-fluid
-    .span12.alerts
-      - if flash[:notice].present?
-        .alert.alert-success
-          %a{ :class=>"close", "data-dismiss"=>"alert" } ×  
-          %span= flash[:notice]
-      - elsif flash[:credit_alert].present? || flash[:error].present?
-        .alert.alert-error
-          %a{ :class=>"close", "data-dismiss"=>"alert" } × 
-          %span= flash[:credit_alert] || flash[:error]
+  .alerts
+    = render partial: 'shared/message'
+
   .row-fluid
     .span3
       .row-fluid
