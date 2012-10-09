@@ -10,6 +10,10 @@ function apply_services_numbers_limit(){
 $(document).ready(function(){
   apply_services_numbers_limit()
 
+  $('.pan').hide();
+  $('.pan.first').show();
+  $('.do-show.first').parent('li').addClass('active');
+
   // payment mode management
   $("input[type=radio]").click(function(){
     var request_value = 0;
@@ -72,5 +76,14 @@ $(document).ready(function(){
       }
     });
     apply_services_numbers_limit();
+  });
+
+  $(".do-show").click(function(){
+    id = $(this).attr('href');
+    $('li').removeClass('active');
+    $(this).parent('li').addClass('active');
+    $('.pan').hide();
+    $(id).show();
+    return false;
   });
 });

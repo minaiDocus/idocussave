@@ -11,30 +11,47 @@
           %span= flash[:credit_alert] || flash[:error]
   .row-fluid
     .span3
-      .well.change_pass_parent
-        %h3 Changer mon mot de passe
-        %br/
-        .change_pass
-          = form_for @user, :url => account_profile_path do |f|
-            - if flash[:alert].present?
-              .alert-container
-                .alert.alert-error
-                  %a{ :class=>"close", "data-dismiss"=>"alert" } × 
-                  %span
-                    %ul
-                      %li
-                        Mots de passe invalides
-      
-            != f.label "Mot de passe actuel :"
-            = f.password_field :current_password, :label => "Ancien mot de passe"
-            != f.label "Nouveau mot de passe :"
-            = f.password_field :password, :label => "Nouveau mot de passe"
-            != f.label "Confirmation du mot de passe :"
-            = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
-            != f.submit "Modifier", :class => "btn blue"
-    
-    .span6
       .row-fluid
+        .span12
+          .well.sidebar-nav
+            %ul.nav.nav-list
+              %li
+                != link_to 'Changer mon mot de passe', '#change_password', class: 'do-show first'
+              %li
+                != link_to 'Gestion des adresses', '#addresses_management', class: 'do-show'
+              %li
+                != link_to 'Mode de paiement', '#payment_management', class: 'do-show'
+              %li
+                != link_to 'Stockage externe des documents', '#efs_management', class: 'do-show'
+              %li
+                != link_to 'Partages', '#sharing_management', class: 'do-show'
+
+    .span9
+      #change_password.row-fluid.pan.first
+        .span12
+          .well.change_pass_parent
+            %h3.aligncenter Changer mon mot de passe
+            %br/
+            .change_pass
+              = form_for @user, :url => account_profile_path do |f|
+                - if flash[:alert].present?
+                  .alert-container
+                    .alert.alert-error
+                      %a{ :class=>"close", "data-dismiss"=>"alert" } ×
+                      %span
+                        %ul
+                          %li
+                            Mots de passe invalides
+
+                != f.label "Mot de passe actuel :"
+                = f.password_field :current_password, :label => "Ancien mot de passe"
+                != f.label "Nouveau mot de passe :"
+                = f.password_field :password, :label => "Nouveau mot de passe"
+                != f.label "Confirmation du mot de passe :"
+                = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
+                != f.submit "Modifier", :class => "btn blue"
+
+      #addresses_management.row-fluid.pan
         .span12.well
           .row-fluid
             .span12
@@ -49,7 +66,7 @@
             .span12.aligncenter
               = link_to "Configurer", account_addresses_path, class: 'btn'
 
-      .row-fluid
+      #payment_management.row-fluid.pan
         .span12.gray.well.paymentslist_container
           %h3.aligncenter Mode de paiement
           %br/
@@ -97,7 +114,7 @@
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
       - if @external_file_storage.authorized > 0
-        .row-fluid
+        #efs_management.row-fluid.pan
           .span12.well
             %h3.aligncenter Stockage externe des documents
             %br
@@ -122,7 +139,7 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[dropbox_basic][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
 
             - if @external_file_storage.is_google_docs_authorized?
@@ -147,7 +164,7 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[google_doc][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
 
             - if @external_file_storage.is_ftp_authorized?
@@ -172,7 +189,7 @@
                     %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
                       != hidden_field_tag "authenticity_token", form_authenticity_token
                       != label_tag "external_file_storage[ftp][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;"
+                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px; "
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
@@ -200,21 +217,21 @@
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
-    .span3
-      .well
-        %h3.aligncenter Partages
-        %br
-        Liste des utilisateurs iDocus avec qui vous souhaitez partager systématiquement tous vos nouveaux documents.
-        %br
-        %br
-        %table.table.table-condensed
-          - @user.share_with.each do |user|
-            %tr
-              %td= user.email
-              %td= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez-vous vraiment supprimer le partage automatique de vos documents avec #{user.email} ?" }
-        %br
-        = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
-          = text_field_tag :email, "", style: 'margin-bottom:0;'
-          = submit_tag "Ajouter", class: 'btn'
+      #sharing_management.row-fluid.pan
+        .span12
+          .well
+            %h3.aligncenter Partages
+            %br
+            Liste des utilisateurs iDocus avec qui vous souhaitez partager systématiquement tous vos nouveaux documents.
+            %br
+            %br
+            %table.table.table-condensed
+              - @user.share_with.each do |user|
+                %tr
+                  %td{ style: 'width:15px;' }= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez-vous vraiment supprimer le partage automatique de vos documents avec #{user.email} ?" }
+                  %td= user.email
+            = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
+              = text_field_tag :email, "", style: 'margin-bottom:0;width:400px;'
+              = submit_tag "Ajouter", class: 'btn'
 
 = render "help"
