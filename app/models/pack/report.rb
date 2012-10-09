@@ -10,7 +10,7 @@ class Pack::Report
   field :type, type: String # NDF / AC / VT
 
   class << self
-    # fetch PreSaisie info
+    # fetch Compta info
     def fetch(time=Time.now)
       not_processed_dirs.each do |dir|
         fetch_expense(dir)
@@ -97,7 +97,7 @@ class Pack::Report
     end
 
     def output_path
-      File.join([PreSaisie::ROOT_DIR,'output'])
+      File.join([Compta::ROOT_DIR,'output'])
     end
 
     def directories

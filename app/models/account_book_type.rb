@@ -24,7 +24,7 @@ class AccountBookType
   
 public
 
-  def presaisie_processable?
+  def compta_processable?
     if entry_type > 0
       true
     else
@@ -32,7 +32,7 @@ public
     end
   end
 
-  def presaisie_type
+  def compta_type
     return 'NDF' if self.entry_type == 1
     return 'AC'  if self.entry_type == 2
     return 'VT'  if self.entry_type == 3
