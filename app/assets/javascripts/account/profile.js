@@ -80,7 +80,7 @@ $(document).ready(function(){
 
   $(".do-show").click(function(){
     id = $(this).attr('href');
-    $('li').removeClass('active');
+    $('.dlink li').removeClass('active');
     $(this).parent('li').addClass('active');
     $('.pan').hide();
     $(id).show();
