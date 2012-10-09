@@ -8,13 +8,10 @@ get_addresses = ->
       $('#addresses').html(data)
 
 post_addresses = ->
-  values = {}
-  $.each $('.addresses.form').serializeArray(), (i, field) ->
-    if field.name != '_method'
-      values[field.name] = field.value
+  data = $('.addresses.form').serialize().replace(new RegExp("put"),"post");
   $.ajax
     url: '/admin/users/' + user_id + '/addresses/update_multiple',
-    data: values,
+    data: data,
     datatype: 'json',
     type: 'POST',
     success: (data) ->
@@ -55,21 +52,9 @@ edit_scan_subscription = ->
         return false
 
 post_scan_subscription = ->
-  values = {}
-  $.each $('.scan_subscription.form').serializeArray(), (i, field) ->
-    if values[field.name]
-      if typeof(values[field.name]) == 'object'
-        values[field.name].push field.value
-      else
-        values[field.name] = [values[field.name],field.value]
-    else
-      values[field.name] = field.value
-  values['_method'] = 'PUT'
-  if $('#scan_subscription_is_to_spreading').is(':checked')
-    values['scan_subscription[is_to_spreading]'] =  1
   $.ajax
     url: '/admin/users/' + user_id + '/scan/subscription',
-    data: values,
+    data: $('.scan_subscription.form').serialize() + '_method=PUT',
     datatype: 'json',
     type: 'POST',
     success: (data) ->
@@ -98,13 +83,10 @@ edit_reminder_emails = ->
         return false
 
 post_reminder_emails = ->
-  values = {}
-  $.each $('.reminder_emails.form').serializeArray(), (i, field) ->
-    if field.name != '_method'
-      values[field.name] = field.value
+  data = $('.reminder_emails.form').serialize().replace(new RegExp("put"),"post");
   $.ajax
     url: '/admin/users/' + user_id + '/reminder_emails/update_multiple',
-    data: values,
+    data: data,
     datatype: 'json',
     type: 'POST',
     success: (data) ->
@@ -133,12 +115,9 @@ edit_file_sending_kit = ->
         return false
 
 post_file_sending_kit = ->
-  values = {}
-  $.each $('.file_sending_kit.form').serializeArray(), (i, field) ->
-    values[field.name] = field.value
   $.ajax
     url: '/admin/users/' + user_id + '/file_sending_kit',
-    data: values,
+    data: $('.file_sending_kit.form').serialize(),
     datatype: 'json',
     type: 'POST',
     success: (data) ->
@@ -157,13 +136,10 @@ select_file_sending_kit = ->
         return false
 
 generate_file_sending_kit = ->
-  values = {}
-  $.each $('.file_sending_kit.form').serializeArray(), (i, field) ->
-    if field.name != '_method'
-      values[field.name] = field.value
+  data = $('.file_sending_kit.form').serialize.replace(new RegExp("put"),"post")
   $.ajax
     url: '/admin/users/' + user_id + '/file_sending_kit/generate',
-    data: values,
+    data: data,
     datatype: 'json',
     type: 'POST',
     success: (data) ->
