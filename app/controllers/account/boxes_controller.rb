@@ -29,7 +29,7 @@ public
   end
   
   def callback
-    @box.update_attribute(:auth_token, params[:auth_token])
+    @box.update_attributes(auth_token: params[:auth_token], is_configured: true)
     flash[:notice] = "Votre compte Box a été configurée avec succès."
     redirect_to account_profile_path(panel: 'efs_management')
   end
