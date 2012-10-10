@@ -6,6 +6,9 @@
     = f.input :account_number, label: 'Numéro de compte'
     = f.input :charge_account, label: 'Compte charge'
     = f.input :position, as: :integer, label: 'Position'
-    = f.input :client_ids, label: 'Clients', collection: @user.clients.asc(:code), label_method: :info, value_method: :id, selected: @account_book_type['client_ids'], input_html: { multiple: true, size: 10 }
+    .control-group
+      %label.control-label Clients
+      .controls
+        = f.collection_check_boxes :client_ids, @user.clients.active.asc(:code), :id, :info, {}, { class: 'pull-left', style: 'margin-right:5px;position:relative;top:-2px;' }
   .modal-footer
     = f.submit t('actions.submit'), class: 'btn'
