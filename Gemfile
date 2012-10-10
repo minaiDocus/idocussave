@@ -33,6 +33,7 @@ gem 'exception_notification'
 gem 'nested_form'
 gem 'bootstrap-datepicker-rails'
 gem 'google_drive'
+gem 'box-api'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

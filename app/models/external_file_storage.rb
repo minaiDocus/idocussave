@@ -3,18 +3,20 @@ class ExternalFileStorage
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  SERVICES = ["Dropbox","Google Drive","FTP"]
+  SERVICES = ["Dropbox","Google Drive","FTP", "Box"]
   
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
   F_FTP         = 8
+  F_BOX         = 16
   
   referenced_in :user
   references_one :dropbox_basic, autosave: true
   references_one :google_doc,    autosave: true
   references_one :ftp,           autosave: true
+  references_one :the_box,       autosave: true
 
-  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp
+  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :the_box
 
   field :path,         type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   field :is_path_used, type: Boolean, default: false
@@ -70,6 +72,19 @@ class ExternalFileStorage
     self.authorized = ok ? self.authorized | F_FTP : self.authorized ^ F_FTP
   end
   
+  def is_box_authorized?
+    authorized & F_BOX > 0
+  end
+  
+  def is_box_authorized
+    is_box_authorized?
+  end
+  
+  def is_box_authorized=(value)
+    ok = value.to_i == 1
+    self.authorized = ok ? self.authorized | F_BOX : self.authorized ^ F_BOX
+  end
+  
   def is_authorized?(flag)
     authorized & flag > 0
   end
@@ -79,6 +94,7 @@ class ExternalFileStorage
     services << "Dropbox" if authorized & F_DROPBOX > 0
     services << "Google Drive" if authorized & F_GOOGLE_DOCS > 0
     services << "FTP" if authorized & F_FTP > 0
+    services << "BOX" if authorized & F_BOX > 0
     services.join(", ")
   end
   
@@ -87,6 +103,7 @@ class ExternalFileStorage
     nb += 1 if authorized & F_DROPBOX > 0
     nb += 1 if authorized & F_GOOGLE_DOCS > 0
     nb += 1 if authorized & F_FTP > 0
+    nb += 1 if authorized & F_BOX > 0
     nb
   end
   
@@ -112,6 +129,7 @@ class ExternalFileStorage
     services << "Dropbox" if used & F_DROPBOX > 0
     services << "Google Drive" if used & F_GOOGLE_DOCS > 0
     services << "FTP" if used & F_FTP > 0
+    services << "BOX" if used & F_BOX > 0
     services.join(", ")
   end
   
@@ -120,6 +138,7 @@ class ExternalFileStorage
     nb += 1 if used & F_DROPBOX > 0
     nb += 1 if used & F_GOOGLE_DOCS > 0
     nb += 1 if used & F_FTP > 0
+    nb += 1 if used & F_BOX > 0
     nb
   end
   
@@ -157,6 +176,14 @@ class ExternalFileStorage
           ftp.deliver(filespath, delivery_path)
         end
       end
+      
+      if trusted_flags & F_BOX > 0
+        if the_box and is_authorized?(F_BOX) and the_box.is_configured?
+          delivery_path = is_path_used ? path : the_box.path
+          delivery_path = static_path(delivery_path,info_path)
+          the_box.deliver(filespath, delivery_path)
+        end
+      end
     end
   end
   
@@ -175,6 +202,7 @@ class ExternalFileStorage
     DropboxBasic.create(external_file_storage_id: self.id)
     GoogleDoc.create(external_file_storage_id: self.id)
     Ftp.create(external_file_storage_id: self.id)
+    TheBox.create(external_file_storage_id: self.id)
     true
   end
 end

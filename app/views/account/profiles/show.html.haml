@@ -185,6 +185,31 @@
                       != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px; "
                       != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
 
+            - if @external_file_storage.is_box_authorized?
+              - service_number = ExternalFileStorage::F_BOX
+              - is_service_used = @external_file_storage.is_used?(service_number)
+              %hr{ :style => "margin:5px 0 5px 0;" }
+              %div
+                .row-fluid
+                  .span12
+                    != check_box_tag :enable_box, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
+                    %b
+                      != label_tag :"service_#{service_number}", "BOX"
+                .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
+                  .span12
+                    - if @external_file_storage.google_doc.is_configured?
+                      Votre compte iDocus est connecté à votre compte Box.
+                      != link_to "Paramètres", authorize_url_account_box_path
+                    - else
+                      Pour connecter iDocus à votre compte Box, cliquez
+                      != link_to "ici", authorize_url_account_box_path
+                    #{"."}
+                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
+                      != hidden_field_tag "authenticity_token", form_authenticity_token
+                      != label_tag "external_file_storage[the_box][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
+                      != text_field_tag "external_file_storage[the_box][path]", "#{@external_file_storage.the_box.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
+                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
           .modal-header
             %a{ :class=>"close", "data-dismiss"=>"modal" } ×

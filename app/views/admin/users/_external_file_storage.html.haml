@@ -37,3 +37,9 @@
         %td= icon_tag external_file_storage.ftp.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
         %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][ftp][path]', value: external_file_storage.ftp.path }
+      %tr
+        %th Box
+        %td= check_box_tag 'user[external_file_storage][is_box_authorized]', 1, external_file_storage.is_box_authorized?
+        %td= icon_tag external_file_storage.the_box.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
+        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][the_box][path]', value: external_file_storage.the_box.path }

@@ -50,6 +50,10 @@ Idocus::Application.routes.draw do
       get 'authorize_url', :on => :member
       get 'callback', :on => :member
     end
+    resource :box do
+      get 'authorize_url', :on => :member
+      get 'callback', :on => :member
+    end
     resource :google_doc do
       get 'authorize_url', :on => :member
       get 'callback', :on => :member

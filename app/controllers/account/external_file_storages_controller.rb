@@ -37,6 +37,9 @@ public
     elsif params[:external_file_storage][:ftp]
       @external_file_storage.ftp.create if !@external_file_storage.ftp
       result = @external_file_storage.ftp.update_attributes(params[:external_file_storage][:ftp])
+    elsif params[:external_file_storage][:the_box]
+      @external_file_storage.the_box.create if !@external_file_storage.the_box
+      result = @external_file_storage.the_box.update_attributes(params[:external_file_storage][:the_box])
     end
     if result == true
       flash[:notice] = "Modifié avec succés."
