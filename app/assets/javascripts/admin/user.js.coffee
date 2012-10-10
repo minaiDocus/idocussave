@@ -54,7 +54,7 @@ edit_scan_subscription = ->
 post_scan_subscription = ->
   $.ajax
     url: '/admin/users/' + user_id + '/scan/subscription',
-    data: $('.scan_subscription.form').serialize() + '_method=PUT',
+    data: $('.scan_subscription.form').serialize() + '&_method=PUT',
     datatype: 'json',
     type: 'POST',
     success: (data) ->
