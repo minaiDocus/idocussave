@@ -12,7 +12,7 @@ public
     @external_file_storage = @user.find_or_create_external_file_storage
     @billing_address = @user.addresses.for_billing.first
     @shipping_address = @user.addresses.for_shipping.first
-    @active_pannel = params[:pannel] || 'change_password'
+    @active_panel = params[:panel] || 'change_password'
   end
   
   def update
@@ -53,7 +53,7 @@ public
     else
       flash[:error] = "Utilisateur non trouvé : #{params[:email]}"
     end
-    redirect_to account_profile_path(pannel: 'sharing_management')
+    redirect_to account_profile_path(panel: 'sharing_management')
   end
 
   def unshare_documents_with
@@ -68,6 +68,6 @@ public
     else
       flash[:error] = "Utilisateur non valide : #{params[:email]}"
     end
-    redirect_to account_profile_path(pannel: 'sharing_management')
+    redirect_to account_profile_path(panel: 'sharing_management')
   end
 end

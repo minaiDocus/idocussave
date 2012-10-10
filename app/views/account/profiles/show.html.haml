@@ -8,19 +8,19 @@
         .span12
           .well.sidebar-nav
             %ul.nav.nav-list.dlink
-              %li{ class: "#{@active_pannel == 'change_password'      ? 'active' : ''}" }
+              %li{ class: "#{@active_panel == 'change_password'      ? 'active' : ''}" }
                 != link_to 'Changer mon mot de passe',       '#change_password',      class: "do-show"
-              %li{ class: "#{@active_pannel == 'addresses_management' ? 'active' : ''}" }
+              %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
                 != link_to 'Gestion des adresses',           '#addresses_management', class: "do-show"
-              %li{ class: "#{@active_pannel == 'payment_management'   ? 'active' : ''}" }
+              %li{ class: "#{@active_panel == 'payment_management'   ? 'active' : ''}" }
                 != link_to 'Mode de paiement',               '#payment_management',   class: "do-show"
-              %li{ class: "#{@active_pannel == 'efs_management'       ? 'active' : ''}" }
+              %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
                 != link_to 'Stockage externe des documents', '#efs_management',       class: "do-show"
-              %li{ class: "#{@active_pannel == 'sharing_management'   ? 'active' : ''}" }
+              %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
                 != link_to 'Partages',                       '#sharing_management',   class: "do-show"
 
     .span9
-      #change_password.row-fluid.pan{ class: (@active_pannel == 'change_password' ? 'active' : '')}
+      #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
         .span12
           .well.change_pass_parent
             %h3.aligncenter Changer mon mot de passe
@@ -44,7 +44,7 @@
                 = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
                 != f.submit "Modifier", :class => "btn blue"
 
-      #addresses_management.row-fluid.pan{ class: (@active_pannel == 'addresses_management' ? 'active' : '')}
+      #addresses_management.row-fluid.pan{ class: (@active_panel == 'addresses_management' ? 'active' : '')}
         .span12.well
           .row-fluid
             .span12
@@ -59,7 +59,7 @@
             .span12.aligncenter
               = link_to "Configurer", account_addresses_path, class: 'btn'
 
-      #payment_management.row-fluid.pan{ class: (@active_pannel == 'payment_management' ? 'active' : '')}
+      #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
         .span12.gray.well.paymentslist_container
           %h3.aligncenter Mode de paiement
           %br/
@@ -105,9 +105,9 @@
                   %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
                     %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
-      
+
       - if @external_file_storage.authorized > 0
-        #efs_management.row-fluid.pan{ class: (@active_pannel == 'efs_management' ? 'active' : '')}
+        #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
           .span12.well
             %h3.aligncenter Stockage externe des documents
             %br
@@ -123,7 +123,7 @@
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
                     - if @external_file_storage.dropbox_basic.is_configured?
-                      Votre compte iDocus est connecté à votre compte Dropbox. 
+                      Votre compte iDocus est connecté à votre compte Dropbox.
                       != link_to "Paramètres", authorize_url_account_dropbox_path
                     - else
                       Pour connecter iDocus à votre compte Dropbox, cliquez
@@ -148,7 +148,7 @@
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
                     - if @external_file_storage.google_doc.is_configured?
-                      Votre compte iDocus est connecté à votre compte Google Drive. 
+                      Votre compte iDocus est connecté à votre compte Google Drive.
                       != link_to "Paramètres", authorize_url_account_google_doc_path
                     - else
                       Pour connecter iDocus à votre compte Google Drive, cliquez
@@ -173,7 +173,7 @@
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
                     - if @external_file_storage.ftp.is_configured?
-                      Votre compte iDocus est connecté à votre compte FTP. 
+                      Votre compte iDocus est connecté à votre compte FTP.
                       != link_to "Paramètres", "#ftpDialog", "data-toggle" => "modal"
                     - else
                       Pour connecter iDocus à votre compte FTP, cliquez
@@ -210,7 +210,7 @@
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
-      #sharing_management.row-fluid.pan{ class: (@active_pannel == 'sharing_management' ? 'active' : '')}
+      #sharing_management.row-fluid.pan{ class: (@active_panel == 'sharing_management' ? 'active' : '')}
         .span12
           .well
             %h3.aligncenter Partages
