@@ -27,9 +27,6 @@
         .span3
           .well.sidebar-nav
             %ul.nav.nav-list
-              %li{ :class => controller.controller_name == 'registrations' ? 'active': '' }
-                != link_to "Créer un compte", new_user_registration_path
-
               %li{ :class => controller.controller_name == 'confirmations' ? 'active': '' }
                 != link_to "Renvoyer les instructions", new_user_confirmation_path
 
