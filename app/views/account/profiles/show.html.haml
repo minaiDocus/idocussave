@@ -197,7 +197,7 @@
                       != label_tag :"service_#{service_number}", "BOX"
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
-                    - if @external_file_storage.google_doc.is_configured?
+                    - if @external_file_storage.the_box.is_configured?
                       Votre compte iDocus est connecté à votre compte Box.
                       != link_to "Paramètres", authorize_url_account_box_path
                     - else
