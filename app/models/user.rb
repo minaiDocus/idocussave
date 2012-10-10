@@ -3,8 +3,8 @@ class User
   include Mongoid::Document
   include Mongoid::Timestamps
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :lockable and :timeoutable
-  devise :database_authenticatable, :registerable, :confirmable,
+  # :registerable, :token_authenticatable, :lockable and :timeoutable
+  devise :database_authenticatable, :confirmable,
          :recoverable, :rememberable, :validatable, :trackable
 
   ## Database authenticatable

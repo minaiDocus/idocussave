@@ -2,8 +2,6 @@
   Connexion
 %p
   Utilisez le formulaire ci-dessous, pour vous identifier. Veuillez nous indiquer l'adresse e-mail avec laquelle vous avez créé votre compte.
-%p
-  Si vous n'avez pas encore de compte, vous pouvez #{ link_to "créer un compte ici", new_user_registration_path }.
   
 - if devise_mapping.authenticatable?
   = form_for resource, :url => session_path(resource_name), :html => { :class => "form-horizontal" } do |f|
