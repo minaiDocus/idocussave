@@ -8,19 +8,19 @@
         .span12
           .well.sidebar-nav
             %ul.nav.nav-list.dlink
-              %li
-                != link_to 'Changer mon mot de passe', '#change_password', class: 'do-show first'
-              %li
-                != link_to 'Gestion des adresses', '#addresses_management', class: 'do-show'
-              %li
-                != link_to 'Mode de paiement', '#payment_management', class: 'do-show'
-              %li
-                != link_to 'Stockage externe des documents', '#efs_management', class: 'do-show'
-              %li
-                != link_to 'Partages', '#sharing_management', class: 'do-show'
+              %li{ class: "#{@active_pannel == 'change_password'      ? 'active' : ''}" }
+                != link_to 'Changer mon mot de passe',       '#change_password',      class: "do-show"
+              %li{ class: "#{@active_pannel == 'addresses_management' ? 'active' : ''}" }
+                != link_to 'Gestion des adresses',           '#addresses_management', class: "do-show"
+              %li{ class: "#{@active_pannel == 'payment_management'   ? 'active' : ''}" }
+                != link_to 'Mode de paiement',               '#payment_management',   class: "do-show"
+              %li{ class: "#{@active_pannel == 'efs_management'       ? 'active' : ''}" }
+                != link_to 'Stockage externe des documents', '#efs_management',       class: "do-show"
+              %li{ class: "#{@active_pannel == 'sharing_management'   ? 'active' : ''}" }
+                != link_to 'Partages',                       '#sharing_management',   class: "do-show"
 
     .span9
-      #change_password.row-fluid.pan.first
+      #change_password.row-fluid.pan{ class: (@active_pannel == 'change_password' ? 'active' : '')}
         .span12
           .well.change_pass_parent
             %h3.aligncenter Changer mon mot de passe
@@ -44,7 +44,7 @@
                 = f.password_field :password_confirmation, :label => "Confirmation du nouveau mot de passe"
                 != f.submit "Modifier", :class => "btn blue"
 
-      #addresses_management.row-fluid.pan
+      #addresses_management.row-fluid.pan{ class: (@active_pannel == 'addresses_management' ? 'active' : '')}
         .span12.well
           .row-fluid
             .span12
@@ -59,7 +59,7 @@
             .span12.aligncenter
               = link_to "Configurer", account_addresses_path, class: 'btn'
 
-      #payment_management.row-fluid.pan
+      #payment_management.row-fluid.pan{ class: (@active_pannel == 'payment_management' ? 'active' : '')}
         .span12.gray.well.paymentslist_container
           %h3.aligncenter Mode de paiement
           %br/
@@ -107,7 +107,7 @@
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
       
       - if @external_file_storage.authorized > 0
-        #efs_management.row-fluid.pan
+        #efs_management.row-fluid.pan{ class: (@active_pannel == 'efs_management' ? 'active' : '')}
           .span12.well
             %h3.aligncenter Stockage externe des documents
             %br
@@ -210,7 +210,7 @@
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a{ :href=>"#", :class=>"modal-close btn" } Fermer
-      #sharing_management.row-fluid.pan
+      #sharing_management.row-fluid.pan{ class: (@active_pannel == 'sharing_management' ? 'active' : '')}
         .span12
           .well
             %h3.aligncenter Partages

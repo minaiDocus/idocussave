@@ -45,7 +45,7 @@ public
     end
     respond_to do |format|
       format.json{ render :json => result.to_json, :status => :ok }
-      format.html{ redirect_to account_profile_path }
+      format.html{ redirect_to account_profile_path(pannel: 'efs_management') }
     end
   end
   

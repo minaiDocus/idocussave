@@ -765,3 +765,8 @@ input.error:focus, select.error:focus, textarea.error:focus {
     font-weight: bold;
     color: red;
 }
+
+.pan {
+  display: none; }
+.pan.active {
+  display: block; }
