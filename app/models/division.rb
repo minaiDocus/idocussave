@@ -39,6 +39,7 @@ class Division
     path = pack.original_document.content.path
     filename = self.name + '.pdf'
     filepath = File.join('/tmp',filename)
+    File.delete(filepath) rescue nil
     `pdftk A=#{path} cat A#{self.start}-#{self.end} output #{filepath}`
     open(filepath)
   end

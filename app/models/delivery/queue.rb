@@ -88,7 +88,7 @@ class Delivery::Queue
     end
 
     piecespath.each do |piecepath|
-      File.delete piecepath
+      File.delete(piecepath) rescue nil
     end
 
     self.start_position = pieces.last.position + 1 rescue self.start_position
