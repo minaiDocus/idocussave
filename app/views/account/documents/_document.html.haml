@@ -5,7 +5,7 @@
     - link_to_large = document.content.url(:large)
     - link_to_thumb = document.content.url(:thumb)
   - else
-    - link_to_large = link_to_thumb = '/system/processing.png'
+    - link_to_large = link_to_thumb = 'application/processing.png'
 
   - page_number = document.content_file_name.scan(/(\d{3}).pdf/)[0][0].to_i rescue 1
   - pieces_name = document.pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ')
