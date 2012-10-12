@@ -38,6 +38,7 @@ Idocus::Application.routes.draw do
       resources :periods
       namespace :report do
         resources :expenses
+        resources :preseizures
       end
     end
 

@@ -298,8 +298,13 @@
             <td class="center">{%= o.documents.list[i].oversized %}</td>
             <td class="last">
               {% if(o.documents.list[i].report_id != "#") { %}
+                {% if(o.documents.list[i].report_type == "NDF") { %}
   = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xls'),"/account/scan/report/expenses/{%= o.documents.list[i].report_id %}.xls")
   :plain
+                {% } else { %}
+  = link_to(image_tag('application/icon-csv.png', title: 'Fichier de pré-affectation comptable', alt: '{%= o.documents.list[i].report_type %}.csv'),"/account/scan/report/preseizures/{%= o.documents.list[i].report_id %}.csv")
+  :plain
+                {% } %}
               {% } %}
             </td>
           </tr>

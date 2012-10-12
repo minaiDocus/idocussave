@@ -145,14 +145,14 @@ class Scan::Period
   end
   
   def render_json(viewer=self.user)
-    hash = { documents: documents_json }
-    if viewer.is_admin or viewer.is_prescriber or viewer.prescriber.try(:is_detail_authorized)
+    hash = { documents: documents_json(viewer) }
+    if viewer.is_admin or (viewer.is_prescriber && viewer == self.user.prescriber) or viewer.prescriber.try(:is_detail_authorized)
       hash.merge!({ options: options_json })
     end
     hash
   end
   
-  def documents_json
+  def documents_json(viewer)
     total = {}
     total[:pieces] = 0
     total[:sheets] = 0
@@ -187,8 +187,20 @@ class Scan::Period
       list[:uploaded_pages] = document.uploaded_pages.to_s
       list[:paperclips] = document.paperclips.to_s
       list[:oversized] = document.oversized.to_s
-      list[:report_id] = document.report.try(:id) || "#"
-      
+      if document.report.try(:type)
+        if document.report.try(:type) == "NDF"
+          list[:report_id] = document.report.try(:id) || "#"
+          list[:report_type] = document.report.try(:type) || ""
+        elsif viewer.is_admin or viewer == self.user.prescriber && viewer != self.user
+          list[:report_id] = document.report.try(:id) || "#"
+          list[:report_type] = document.report.try(:type) || ""
+        else
+          list[:report_id] = "#"
+        end
+      else
+        list[:report_id] = "#"
+      end
+
       lists << list
       
       total[:pieces] += document.pieces

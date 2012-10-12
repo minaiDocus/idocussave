@@ -5,17 +5,17 @@ class Pack::Report
 
   referenced_in :pack, inverse_of: :report
   referenced_in :document, class_name: 'Scan::Document', inverse_of: :report
-  references_many :expenses, class_name: "Pack::Report::Expense", inverse_of: :report
+  references_many :expenses, class_name: "Pack::Report::Expense", inverse_of: :report, dependent: :delete
+  references_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :delete
 
-  field :type, type: String # NDF / AC / VT
+  field :type, type: String # NDF / AC / CB / VT
 
   class << self
     # fetch Compta info
     def fetch(time=Time.now)
       not_processed_dirs.each do |dir|
         fetch_expense(dir)
-        fetch_buying(dir)
-        fetch_selling(dir)
+        fetch_preseizure(dir)
         mark_processed(dir)
       end
     end
@@ -86,14 +86,57 @@ class Pack::Report
       end
     end
 
-    def fetch_buying(dir)
-      filepath = File.join([output_path,dir,'AC.xml'])
-      #TODO not implemented yet
-    end
-
-    def fetch_selling(dir)
-      filepath = File.join([output_path,dir,'VT.xml'])
-      #TODO not implemented yet
+    def fetch_preseizure(dir)
+      %w(AC CB VT).each do |e|
+        filepath = File.join([output_path,dir,"#{e}.xml"])
+        file = File.open(filepath) rescue nil
+        if file
+          doc = Nokogiri::XML(file)
+          doc.css('customer').each do |customer|
+            code = customer['code']
+            user = User.find_by_code(code)
+            if user
+              customer.css('lot').each do |lot|
+                name = lot['name'].gsub('_',' ') + ' all'
+                pack = Pack.find_by_name(name)
+                if pack
+                  report = pack.report || Pack::Report.new
+                  report.type = e
+                  report.pack = pack
+                  report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
+                  report.save
+                  report.document.save
+                  lot.css('piece').each_with_index do |part,index|
+                    part_name = part['number'].gsub('_',' ')
+                    piece = pack.pieces.where(name: part_name).first
+                    if piece and piece.preseizure.nil?
+                      preseizure               = Pack::Report::Preseizure.new
+                      preseizure.piece         = piece
+                      preseizure.date          = part.css('date').first.try(:content).try(:to_date)
+                      preseizure.deadline_date = part.css('echeance').first.try(:content).try(:to_date)
+                      preseizure.observation   = part.css('remarque').first.try(:content)
+                      preseizure.position      = index + 1
+                      preseizure.save
+                      report.preseizures << preseizure
+                      part.css('account').each_with_index do |account,index|
+                        paccount            = Pack::Report::Preseizure::Account.new
+                        paccount.title      = account['title']
+                        paccount.number     = account['number']
+                        paccount.credit     = to_float(account.css('credit').first.try(:content))
+                        paccount.debit      = to_float(account.css('debit').first.try(:content))
+                        paccount.lettering  = account.css('lettrage').first.try(:content)
+                        paccount.position   = index + 1
+                        paccount.save
+                        preseizure.accounts << paccount
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
     end
 
     def output_path

@@ -5,6 +5,7 @@ class AccountBookType
   include Mongoid::Slug
 
   ENTRY_TYPE = %w(no expense buying selling bank)
+  TYPES_NAME = %w(AC VT BC NDF)
 
   before_save :upcase_name
   
