@@ -23,7 +23,7 @@ class Pack
   
   after_save :update_reporting_document
   
-  scope :scan_delivered, where: { is_open_for_uploaded_file: false }
+  scope :scan_delivered, where: { is_open_for_upload: false }
   
   def pages
     self.documents.without_original
