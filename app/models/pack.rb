@@ -153,33 +153,33 @@ class Pack
     def page_number_of(document)
       `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i rescue 0
     end
-    
+
     def get_file_from_numen(target_dir="diadeis2depose/LIVRAISON")
       Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
       Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
       Dir.chdir("NUMEN_DELIVERY_BACKUP")
-      
+
       require "net/ftp"
-      
+
       ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
-      
+
       ftp.chdir(target_dir)
       root_files_name = ftp.nlst.sort
       headers = root_files_name.select { |e| e.match(/\.txt$/) }
-      
+
       processed_headers = Dir.glob("*.txt")
       headers = headers - processed_headers
-      
+
       total_filesname = []
-      
+
       headers.each do |header|
         folder_name = root_files_name.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
         puts "Looking at folder : #{folder_name}"
         ftp.chdir(folder_name)
         folders_name = ftp.nlst.sort
-        
+
         all_filesname = []
-        
+
         Dir.mkdir(folder_name) unless File.exist?(folder_name)
         Dir.chdir(folder_name)
         folders_name.each do |foldername|
@@ -200,30 +200,49 @@ class Pack
           end
           ftp.chdir("../")
         end
-        
+
         is_ok = true
         all_filesname.each do |filename|
           if `pdftk #{filename} dump_data`.empty?
             is_ok = false
           end
         end
-        
+
         if is_ok
-          all_filesname.each { |filename| system("cp #{filename} ../../") }
-          total_filesname += all_filesname
+          path = "#{Rails.root}/data/assembly_process/work/doc/#{Time.now.strftime('%Y%m%d')}"
+          cached_path = "#{Rails.root}/data/assembly_process/cached/"
+          FileUtils.mkdir_p(cached_path)
+          all_filesname.each do |filename|
+            info = filename.split('_')
+            code = info[0]
+            journal = info[1]
+            user = User.where(code: code).first
+            account_book_type = nil
+            account_book_type = user.account_book_types.where(name: journal).first if user
+            if account_book_type
+              basename = [info[0],info[1],info[2]].join('_')
+              type = account_book_type.compta_type
+              FileUtils.mkdir_p(File.join([path, type, basename]))
+              FileUtils.cp(filename,File.join([path, type, basename, filename]))
+              FileUtils.cp(filename,File.join([cached_path, filename]))
+            else
+              FileUtils.cp(filename,"#{Rails.root}/tmp/input_pdf_auto/"+filename)
+              total_filesname << filename
+            end
+          end
         else
           ErrorNotitication::EMAILS.each do |email|
             NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
           end
         end
-        
+
         Dir.chdir("..")
         ftp.chdir("..")
         File.new(header,"w")
       end
-      
+
       ftp.close
-      
+
       total_filesname
     end
     
@@ -271,9 +290,10 @@ class Pack
       start_at_page = pack.divisions.pieces.count + 1
       filesname = apply_new_name(filesname, start_at_page, user.stamp_name, is_an_upload)
 
-      position = pack.sheets_info.last.position + 1 rescue 1
-      update_pieces(filesname, pack, position, is_an_upload)
-      update_division(filesname, pack, position, is_an_upload)
+      piece_position = pack.pieces_info.last.position + 1 rescue 1
+      sheet_position = pack.sheets_info.last.position + 1 rescue 1
+      update_pieces(filesname, pack, piece_position, is_an_upload)
+      update_division(filesname, pack, piece_position, sheet_position, is_an_upload)
 
       #  Création du fichier all.
       filesname_list = filesname.sum { |f| " " + f }
@@ -333,33 +353,55 @@ class Pack
 
   private
 
-    def update_division(filesname, pack, position, is_an_upload)
+    def update_division(filesname, pack, piece_position, sheet_position, is_an_upload)
       total_pages = 0
       count = pack.documents.count
       current_page = (count == 0) ? 1 : count
-      current_position = position
-      
+      current_piece_position = piece_position
+      current_sheet_position = sheet_position
+
       filesname.each do |filename|
         name = filename.sub(".pdf","")
         pages_number = page_number_of filename
-        
-        sheet = Division.new
-        sheet.level = Division::SHEETS_LEVEL
+
         piece = Division.new
         piece.level = Division::PIECES_LEVEL
         
-        piece.created_at = piece.updated_at = sheet.created_at = sheet.updated_at = Time.now
+        piece.created_at = piece.updated_at = Time.now
         
-        piece.name = sheet.name = name
-        piece.start = sheet.start = current_page
-        current_page += pages_number
-        piece.end = sheet.end = current_page - 1
-        piece.is_an_upload = sheet.is_an_upload = is_an_upload
-        piece.position = sheet.position = current_position
+        piece.name = name
+        piece.start = current_page
+        piece.end = current_page + page_number - 1
+        piece.is_an_upload = is_an_upload
+        piece.position = current_piece_position
         pack.divisions << piece
-        pack.divisions << sheet
-        
-        current_position += 1
+
+        if is_an_upload
+          sheet = Division.new
+          sheet.level = Division::SHEETS_LEVEL
+          sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
+          sheet.start = current_page
+          sheet.end = current_page + page_number - 1
+          sheet.is_an_upload = is_an_upload
+          sheet.position = current_sheet_position
+          pack.divisions << sheet
+          current_sheet_position += 1
+        else
+          (pages_number / 2).times do |i|
+            sheet = Division.new
+            sheet.level = Division::SHEETS_LEVEL
+            sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
+            sheet.start = current_page + (i*2)
+            sheet.end = current_page + (i*2) + 1
+            sheet.is_an_upload = is_an_upload
+            sheet.position = current_sheet_position
+            pack.divisions << sheet
+            current_sheet_position += 1
+          end
+        end
+
+        current_page += pages_number
+        current_piece_position += 1
         total_pages += pages_number
       end
     end
