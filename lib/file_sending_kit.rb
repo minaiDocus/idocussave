@@ -41,6 +41,7 @@ private
   end
   
   def FileSendingKitGenerator.to_folder(client_data, period, account_book_type)
+    part_number = 1
     user = client_data[:user]
     folder = {}
     folder[:code] = user.code
@@ -48,7 +49,6 @@ private
     if client_data[:period_duration] == 1
       folder[:period] = "#{KitGenerator::MOIS[period.month].upcase} #{period.year}"
     elsif client_data[:period_duration] == 3
-      part_number = 1
       duration = period.month
       if duration < 4
         part_number = 1
@@ -62,7 +62,11 @@ private
       folder[:period] = "#{KitGenerator::TRIMESTRE[part_number]} #{period.year}"
     end
     folder[:account_book_type] = "#{account_book_type.name} #{account_book_type.description.upcase}"
-    folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
+    if client_data[:period_duration] == 1
+      folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
+    elsif client_data[:period_duration] == 3
+      folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}T#{part_number}"
+    end
     folder[:barcode_path] = BarCode::generate_png(folder[:file_code])
     folder[:left_logo] = client_data[:left_logo]
     folder[:right_logo] = client_data[:right_logo]
