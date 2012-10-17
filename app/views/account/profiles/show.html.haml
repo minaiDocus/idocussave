@@ -9,17 +9,17 @@
           .well.sidebar-nav
             %ul.nav.nav-list.dlink
               %li{ class: "#{@active_panel == 'change_password'      ? 'active' : ''}" }
-                != link_to 'Changer mon mot de passe',       '#change_password',      class: "do-show"
+                != link_to 'Changer mon mot de passe',           '#change_password',      class: "do-show"
               %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
-                != link_to 'Gestion des adresses',           '#addresses_management', class: "do-show"
+                != link_to 'Gestion de mes adresses',            '#addresses_management', class: "do-show"
               %li{ class: "#{@active_panel == 'payment_management'   ? 'active' : ''}" }
-                != link_to 'Mode de paiement',               '#payment_management',   class: "do-show"
+                != link_to 'Mode de paiement',                   '#payment_management',   class: "do-show"
               %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
-                != link_to 'Stockage externe des documents', '#efs_management',       class: "do-show"
+                != link_to 'Mes services de stockages externes', '#efs_management',       class: "do-show"
               %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
-                != link_to 'Partages',                       '#sharing_management',   class: "do-show"
+                != link_to 'Mes partages',                       '#sharing_management',   class: "do-show"
               %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
-                != link_to 'Mon abonnement',                 '#subscription_options', class: "do-show"
+                != link_to 'Mon abonnement',                     '#subscription_options', class: "do-show"
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
