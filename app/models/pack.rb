@@ -3,7 +3,7 @@ class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  FETCHING_PATH = "#{Rails.root}/tmp/input_pdf_auto/"
+  FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
 
   referenced_in :owner, class_name: "User", inverse_of: :own_packs
@@ -155,7 +155,7 @@ class Pack
     end
     
     def get_file_from_numen(target_dir="diadeis2depose/LIVRAISON")
-      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
+      Dir.chdir FETCHING_PATH
       Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
       Dir.chdir("NUMEN_DELIVERY_BACKUP")
       
@@ -228,7 +228,7 @@ class Pack
     end
     
     def get_documents(files=[])
-      Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
+      Dir.chdir FETCHING_PATH
       downcase_extension
       filesname = files.empty? ? valid_documents.sort : files
       data = []
@@ -242,7 +242,7 @@ class Pack
           pack = find_or_create_by_name basename.gsub("_"," ") + " all", user
           data << add(pack_filesname, pack)
         end
-        Dir.chdir "#{Rails.root}/tmp/input_pdf_auto"
+        Dir.chdir FETCHING_PATH
         
         filesname -= pack_filesname
       end
