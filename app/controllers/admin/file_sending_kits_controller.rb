@@ -17,8 +17,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
   def send_pdf(filename)
     filepath = File.join([Rails.root,'/files/kit/' + filename])
     if File.exist? filepath
-      contents = File.open(filepath,'rb').read
-      send_data(contents, type: 'application/pdf', filename: filename, x_sendfile: true)
+      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true)
     else
       render nothing: true, status: 404
     end

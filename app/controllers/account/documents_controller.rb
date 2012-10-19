@@ -193,15 +193,14 @@ public
       filespath = pack.pieces.map { |e| e.content.path }
       clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
       filename = pack.name.gsub(/\s/,'_') + '.zip'
-      filepath = "/tmp/#{filename}"
+      filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
       system("zip -j #{filepath} #{clean_filespath}")
-      contents = File.open(filepath,'rb').read
-      send_data(contents, type: 'application/zip', filename: filename, x_sendfile: true)
+      send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
     else
       render nothing: true, status: 404
     end
   end
-  
+
   def historic
     if params[:email].present? and (current_user.is_admin or current_user.is_prescriber)
       @user = User.find_by_email(params[:email])
@@ -269,8 +268,7 @@ public
     if File.exist?(filepath) && (@user && @user.in?(document.pack.users)) or params[:token] == document.get_token
       filename = File.basename(filepath)
       type = document.content_file_type || 'application/pdf'
-      contents = File.open(filepath,'rb').read
-      send_data(contents, type: type, filename: filename, x_sendfile: true)
+      send_file(filepath, type: type, filename: filename, x_sendfile: true)
     else
       render nothing: true, status: 404
     end
@@ -282,8 +280,7 @@ public
     if File.exist?(filepath) && (@user && @user.in?(piece.pack.users)) || params[:token] == piece.get_token
       filename = File.basename(filepath)
       type = piece.content_file_type || 'application/pdf'
-      contents = File.open(filepath,'rb').read
-      send_data(contents, type: type, filename: filename, x_sendfile: true)
+      send_file(filepath, type: type, filename: filename, x_sendfile: true)
     else
       render nothing: true, status: 404
     end
