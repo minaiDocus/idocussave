@@ -89,7 +89,8 @@
               %a{:href => "#", :class=>"backToPanel1"}
                 Vue par vignette
           .content
-            %iframe{:src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
+            -#%iframe{:src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
+            %canvas.showPage{ style: 'width:100%; height:100%;' }
 
   .selection-fixed-bottom
     .row-fluid

@@ -37,6 +37,8 @@
   
   // show the preview of page given by link
   function showPage(link) {
+    var url = link.attr("href");
+
     $("#panel1").hide();
     $("#panel2").show();
     
@@ -45,8 +47,28 @@
     
     $("#pageslist .header h3.all").hide();
     $("#pageslist .header .single").show();
-    
-    $(".showPage").attr("src",link.attr("href"));
+
+    PDFJS.disableWorker = true;
+    //
+    // Asynchronous download PDF as an ArrayBuffer
+    //
+    PDFJS.getDocument(url).then(function getPdf(pdf) {
+      //
+      // Fetch the first page
+      //
+      pdf.getPage(1).then(function getPage(page) {
+        var canvas = $('.showPage')[0];
+        var context = canvas.getContext('2d');
+
+        var viewport = page.getViewport(1.0);
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        //
+        // Render PDF page into canvas context
+        //
+        page.render({canvasContext: context, viewport: viewport});
+      });
+    });
     var li = link.parents("li");
     var id = li.attr("id").split("_")[1];
     var tags = li.children("input[name=tags]").val();
