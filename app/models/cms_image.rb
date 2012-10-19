@@ -12,7 +12,9 @@ class CmsImage
   has_mongoid_attached_file :content,
     styles: {
       thumb: ["96x96>", :png],
-    }
+    },
+    path: ":rails_root/public:url",
+    url: "/system#{Rails.env.test? ? '_test' : ''}/:attachment/:id/:style/:filename"
 
   def self.find_by_name(name)
     self.first conditions: { content_file_name: name }

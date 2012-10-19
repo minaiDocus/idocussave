@@ -234,32 +234,6 @@
     
     $("a.do-select").unbind("click");
     $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); });
-    
-    // archive link handler
-    $("a.do-archive").unbind("click");
-    $("a.do-archive").bind("click",function() {
-      link = $(this);
-      var pack_id = link.parents("li").attr("id").split("_")[2];
-      $.ajax({
-        url: "/account/documents/archive",
-        data: hsh = {"pack_id":pack_id},
-        dataType: "json",
-        type: "POST",
-        beforeSend: function() {
-          logBeforeAction("Traitement en cours");
-        },
-        success: function(data) {
-          logAfterAction();
-          baseurl = window.location.pathname.split('/')[0];
-          window.open(baseurl+""+data);
-        },
-        error: function(e) {
-          logAfterAction();
-          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span><span class='label label-important'>erreur</span> : " + e.responseText +" </span></div></div>");
-        }
-      });
-      return false;
-    });
   }
   
   function initEventOnHoverOnInformation() {

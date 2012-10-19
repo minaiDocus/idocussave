@@ -14,6 +14,16 @@ class Admin::FileSendingKitsController < Admin::AdminController
     @file_sending_kit = @user.find_or_create_file_sending_kit
   end
 
+  def send_pdf(filename)
+    filepath = File.join([Rails.root,'/files/kit/' + filename])
+    if File.exist? filepath
+      contents = File.open(filepath,'rb').read
+      send_data(contents, type: 'application/pdf', filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
+    end
+  end
+
   public
 
   def show
@@ -51,5 +61,17 @@ class Admin::FileSendingKitsController < Admin::AdminController
       format.json{ render json: {}, status: :ok }
       format.html{ redirect_to admin_user_path(@user) }
     end
+  end
+
+  def folder
+    send_pdf('folder.pdf')
+  end
+
+  def mail
+    send_pdf('mail.pdf')
+  end
+
+  def label
+    send_pdf('label.pdf')
   end
 end

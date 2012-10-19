@@ -4,6 +4,7 @@ class Account::DocumentsController < Account::AccountController
 
   before_filter :load_user
   before_filter :find_last_composition, :only => %w(index)
+  skip_before_filter :login_user!, :only => %w(download piece)
 
 protected
   def current_layout
@@ -15,7 +16,7 @@ protected
   end
 
   def load_user
-    if (params[:email].present? || session[:acts_as].present?) && current_user.is_admin
+    if (params[:email].present? || session[:acts_as].present?) && current_user.try(:is_admin)
       @user = User.find_by_email(params[:email] || session[:acts_as]) || current_user
       if @user == current_user
         session[:acts_as] = nil
@@ -41,7 +42,7 @@ protected
     user_ids = packs.distinct(:user_ids)
     @all_users = User.any_in(:_id => user_ids).entries
   end
-  
+
 public
   def index
     @packs = Pack.any_in(:user_ids => [@user.id]).desc(:created_at)
@@ -183,45 +184,21 @@ public
   end
     
   def archive
-    pack = Pack.find(params[:pack_id])
-    
-    if pack.divisions.sheets.count > 0
-      unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
-        Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
-      end
-      
-      pack.divisions.sheets.each do |sheet|
-        filename = sheet.name.gsub(/\s/,'_')
-        start_number = sheet.start
-        end_number = sheet.end
-        
-        part = (start_number == end_number) ? start_number.to_s : start_number.to_s+"-"+end_number.to_s
-        
-        url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
-        cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
-        system(cmd)
-      end
-      
-      new_name = pack.name.gsub(/\s/,'_')
-    
-      Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-      system("rm *.zip") rescue nil # suppression du précèdent zip
-      system("zip '#{new_name}.zip' *.pdf")
-      system("rm *.pdf")
-      
-      @url = "/system/archive/#{current_user.id}/#{new_name}.zip"
-      
-      respond_to do |format|
-        format.json do
-          render :json => @url.to_json, :status => :ok
-        end
-      end
+    if current_user.is_admin
+      pack = Pack.find(params[:id])
     else
-      respond_to do |format|
-        format.json do
-          render :json => 'Ce document ne contient aucune information de hashage'.to_json, :status => :error
-        end
-      end
+      pack = Pack.any_in(user_ids: [@user.id]).where(_id: params[:id]).first
+    end
+    if pack
+      filespath = pack.pieces.map { |e| e.content.path }
+      clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
+      filename = pack.name.gsub(/\s/,'_') + '.zip'
+      filepath = "/tmp/#{filename}"
+      system("zip -j #{filepath} #{clean_filespath}")
+      contents = File.open(filepath,'rb').read
+      send_data(contents, type: 'application/zip', filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
     end
   end
   
@@ -283,6 +260,32 @@ public
     respond_to do |format|
       format.html{ render :nothing => true, :status => 200 }
       format.json { render :json => true, :status => :ok }
+    end
+  end
+
+  def download
+    document = Document.find params[:id]
+    filepath = document.content.path(params[:style])
+    if File.exist?(filepath) && (@user && @user.in?(document.pack.users)) or params[:token] == document.get_token
+      filename = File.basename(filepath)
+      type = document.content_file_type || 'application/pdf'
+      contents = File.open(filepath,'rb').read
+      send_data(contents, type: type, filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
+    end
+  end
+
+  def piece
+    piece = Pack::Piece.find params[:id]
+    filepath = piece.content.path
+    if File.exist?(filepath) && (@user && @user.in?(piece.pack.users)) || params[:token] == piece.get_token
+      filename = File.basename(filepath)
+      type = piece.content_file_type || 'application/pdf'
+      contents = File.open(filepath,'rb').read
+      send_data(contents, type: type, filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
     end
   end
 end

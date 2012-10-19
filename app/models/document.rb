@@ -15,6 +15,7 @@ class Document
   field :position,           type: Integer
   field :dirty,              type: Boolean, default: true
   field :indexed,            type: Boolean, default: false
+  field :token,              type: String
 
   references_many :document_tags, dependent: :destroy
   referenced_in :pack
@@ -23,8 +24,10 @@ class Document
     styles: {
       thumb: ["46x67>", :png],
       medium: ["92x133", :png]
-    }
-  
+    },
+    path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/documents/:id/:style/:filename",
+    url: "/account/documents/:id/download/:style"
+
   before_content_post_process do |image|
     if image.dirty # halts processing
       false
@@ -88,6 +91,19 @@ protected
   end
   
   public
+
+  def get_token
+    if token.present?
+      token
+    else
+      update_attribute(:token, rand(36**50).to_s(36))
+      token
+    end
+  end
+
+  def get_access_url(style=:original)
+    content.url(style) + "&token=" + get_token
+  end
 
   def verified_content_text
     self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
