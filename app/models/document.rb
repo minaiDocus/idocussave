@@ -6,19 +6,18 @@ class Document
 
   field :content_file_name
   field :content_file_type
-  field :content_file_size,  type: Integer
-  field :content_updated_at, type: Time
-  field :content_text,       type: String,  default: ""
-  field :is_an_original,     type: Boolean, default: false
-  field :is_an_upload,       type: Boolean, default: false
-  field :tags,               type: String,  default: ""
-  field :position,           type: Integer
-  field :dirty,              type: Boolean, default: true
-  field :indexed,            type: Boolean, default: false
+  field :content_file_size,     type: Integer
+  field :content_updated_at,    type: Time
+  field :content_text,          type: String,  default: ""
+  field :is_an_original,        type: Boolean, default: false
+  field :is_an_upload,          type: Boolean, default: false
+  field :position,              type: Integer
+  field :dirty,                 type: Boolean, default: true
+  
 
   references_many :document_tags, dependent: :destroy
   referenced_in :pack
-
+  
   has_mongoid_attached_file :content,
     styles: {
       thumb: ["46x67>", :png],
@@ -42,9 +41,6 @@ class Document
   scope :not_extracted,    where:  { content_text: "" }
   scope :extracted,        not_in: { content_text: [""] }
   scope :cannot_extract,   where:  { content_text: "-[none]" }
-  
-  scope :not_indexed,      not_in: { indexed: [true] }
-  scope :indexed,          where:  { indexed: true }
   
   scope :not_clean,        where:  { dirty: true }
   scope :clean,            where:  { dirty: false }
@@ -86,30 +82,47 @@ protected
       document_tag.save
     end
   end
-  
-  public
 
-  def verified_content_text
-    self.content_text.split(" ").select { |word| word.match(/\+/) }.map { |word| word.sub(/^\+/,"") }
-  end
+  public
   
   def by_position
     asc(:position)
   end
   
   class << self
-    def find_ids_by_tags tags, user, ids=[]
-      document_ids = ids
-      tags.each_with_index do |tag,index|
-        if index == 0 && document_ids.empty?
-          document_ids = DocumentTag.where(:user_id => user.id, :name => / #{tag}/).distinct(:document_id)
+    def search_ids_by_contents(contents)
+      search_by_contents(contents).distinct(:_id)
+    end
+
+    def search_by_contents(contents)
+      queries = contents.split(' ').map { |e| /#{e}/i }
+      all_in(content_text: queries)
+    end
+
+    def search_ids_by_tags(tags)
+      queries = tags.split(' ').map { |e| /#{e}/i }
+      document_ids = self.all.distinct(:_id)
+      document_tags = DocumentTag.any_in(document_id: document_ids).all_in(name: queries)
+      document_tags.distinct(:document_id)
+    end
+
+    def search_by_tags(tags)
+      any_in(_id: search_ids_by_tags(tags))
+    end
+
+    def search_for(contents)
+      ids = []
+      contents.split(' ').each_with_index do |content,index|
+        temp_ids = search_ids_by_contents(content) + search_ids_by_tags(content)
+        if index != 0
+          ids = temp_ids.select { |e| e.in? ids }
         else
-          document_ids = DocumentTag.any_in(:document_id => document_ids).where(:user_id => user.id, :name => / #{tag}/).distinct(:document_id)
+          ids = temp_ids
         end
       end
-      document_ids
+      any_in(_id: ids)
     end
-  
+
     def update_file pack, filename, is_an_upload=false
       start_at_page = pack.documents.size
       temp_path = pack.original_document.content.path
@@ -175,8 +188,6 @@ class Receiver
       word = dirty_word.scan(/[\w|.|@|_|-]+/).join().downcase
       if word.length > 1 and word.length <= 50
         if Dictionary.find_one(word)
-          @text += " +#{word}"
-        else
           @text += " #{word}"
         end
       end

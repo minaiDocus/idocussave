@@ -24,7 +24,7 @@ class Pack
   after_save :update_reporting_document
   
   scope :scan_delivered, where: { is_open_for_uploaded_file: false }
-  
+
   def pages
     self.documents.without_original
   end
@@ -125,17 +125,56 @@ class Pack
     def find_or_create_by_name(name, user)
       find_by_name(name) || Pack.new(owner_id: user.id, name: name)
     end
-    
-    def find_ids_by_tags(tags, user, ids=[])
-      pack_ids = ids
-      tags.each_with_index do |tag,index|
-        if index == 0 && pack_ids.empty?
-          pack_ids = DocumentTag.where(:user_id => user.id, :name => / #{tag}/).distinct(:pack_id)
+
+    def search_ids_by_contents(contents)
+      documents = Document.any_in(pack_id: self.all.distinct(:_id))
+      documents.search_by_contents(contents).distinct(:pack_id)
+    end
+
+    def search_by_contents(contents)
+      any_in(_id: search_ids_by_contents(contents))
+    end
+
+    def search_ids_by_tags(tags)
+      queries = tags.split(' ').map { |e| /#{e}/i }
+      pack_ids = self.all.distinct(:_id)
+      DocumentTag.any_in(pack_id: pack_ids).
+                  all_in(name: queries).
+                  distinct(:pack_id)
+    end
+
+    def search_by_tags(tags)
+      any_in(_id: search_ids_by_tags(tags))
+    end
+
+    def search_for(contents)
+      pack_ids = []
+      contents.split(' ').each_with_index do |content,index|
+        temp_pack_ids = search_ids_by_contents(content) + search_ids_by_tags(content)
+        if index != 0
+          pack_ids = temp_pack_ids.select { |e| e.in? pack_ids }
         else
-          pack_ids = DocumentTag.any_in(:pack_id => pack_ids).where(:user_id => user.id, :name => / #{tag}/).distinct(:pack_id)
+          pack_ids = temp_pack_ids
         end
       end
-      pack_ids
+      any_in(_id: pack_ids)
+    end
+
+    def find_words_by_tag(tag)
+      contents = DocumentTag.any_in(pack_id: self.all.distinct(:_id)).where(name: /\w*#{tag}\w*/).distinct(:name)
+      words = contents.map { |e| e.scan(/\w*#{tag}\w*/) }.flatten
+      words.uniq.map { |e| { id: '1', name: e } }
+    end
+
+    def find_words_by_content(content)
+      documents = Document.any_in(pack_id: self.all.distinct(:_id))
+      contents = documents.search_by_contents(content).distinct(:content_text)
+      words = contents.map { |e| e.scan(/\w*#{content}\w*/) }.flatten
+      words.uniq.map { |e| { id: '0', name: e } }
+    end
+
+    def find_words(word)
+      (find_words_by_content(word) + find_words_by_tag(word)).uniq.sort { |a,b| a[:name] <=> b[:name] }
     end
     
     def valid_documents
