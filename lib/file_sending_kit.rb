@@ -26,26 +26,47 @@ private
   def FileSendingKitGenerator.to_folders(clients_data)
     folders_data = []
     clients_data.each do |client_data|
-      current_time = Time.now - client_data[:start_month].month
+      current_time = Time.now
+      current_time += client_data[:start_month].month
       end_time = current_time + client_data[:offset_month].month
       while current_time < end_time
+        client_data[:period_duration] = client_data[:user].scan_subscriptions.last.period_duration
         client_data[:user].account_book_types.by_position.each do |account_book_type|
           folders_data << to_folder(client_data, current_time, account_book_type)
         end
-        current_time += 1.month
+        current_time += client_data[:period_duration].month
       end
     end
     folders_data
   end
   
   def FileSendingKitGenerator.to_folder(client_data, period, account_book_type)
+    part_number = 1
     user = client_data[:user]
     folder = {}
     folder[:code] = user.code
     folder[:company] = user.company.upcase
-    folder[:period] = "#{KitGenerator::MOIS[period.month].upcase} #{period.year}"
+    if client_data[:period_duration] == 1
+      folder[:period] = "#{KitGenerator::MOIS[period.month].upcase} #{period.year}"
+    elsif client_data[:period_duration] == 3
+      duration = period.month
+      if duration < 4
+        part_number = 1
+      elsif duration < 7
+        part_number = 2
+      elsif duration < 10
+        part_number = 3
+      else
+        part_number = 4
+      end
+      folder[:period] = "#{KitGenerator::TRIMESTRE[part_number]} #{period.year}"
+    end
     folder[:account_book_type] = "#{account_book_type.name} #{account_book_type.description.upcase}"
-    folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
+    if client_data[:period_duration] == 1
+      folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
+    elsif client_data[:period_duration] == 3
+      folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}T#{part_number}"
+    end
     folder[:barcode_path] = BarCode::generate_png(folder[:file_code])
     folder[:left_logo] = client_data[:left_logo]
     folder[:right_logo] = client_data[:right_logo]
@@ -86,6 +107,7 @@ end
 
 module KitGenerator
   MOIS = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+  TRIMESTRE = [nil,"1er Trimestre","2e Trimestre","3e Trimestre","4e Trimestre"]
   
   def KitGenerator.folder(folders,file_sending_kit)
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folder.pdf", :page_layout => :landscape, :page_size => "A3", :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7 do |pdf|
@@ -182,7 +204,7 @@ private
       pdf.float do
         pdf.bounding_box([0, pdf.cursor], :width => 416, :height => 512) do
 
-          data = [["CODE :","<b>#{folder[:code]}</b>"],["NOM :","<b>#{folder[:company]}</b>"],["MOIS :","<b>#{folder[:period]}</b>"],["JOURNAL :","<b>#{folder[:account_book_type]}</b>"]]
+          data = [["CODE :","<b>#{folder[:code]}</b>"],["NOM :","<b>#{folder[:company]}</b>"],["PERIODE :","<b>#{folder[:period]}</b>"],["JOURNAL :","<b>#{folder[:account_book_type]}</b>"]]
 
           pdf.table(data, :width => 416, :cell_style => { :inline_format => true, :padding => [12, 4, 12, 4] }, :column_widths => { 0 => 100}) do
             style(row(0..-1), :borders => [])

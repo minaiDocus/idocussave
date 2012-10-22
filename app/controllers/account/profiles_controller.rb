@@ -16,17 +16,30 @@ public
   end
   
   def update
-    if @user.valid_password?(params[:user][:current_password])
-      if @user.update_attributes(params[:user])
-        flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
+    if params[:user][:current_password]
+      if @user.valid_password?(params[:user][:current_password])
+        if @user.update_attributes(params[:user])
+          flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
+        else
+          flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
+        end
       else
-        flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
+        flash[:alert] = "Votre ancien mot de passe n'a pas été saisi correctement"
       end
     else
-      flash[:alert] = "Votre ancien mot de passe n'a pas été saisi correctement"
+      params[:user].reject!{ |key,value| key == 'password' || key == 'password_confirmation' }
+      if @user.update_attributes(params[:user])
+        flash[:success] = "Modifié avec succès."
+      else
+        flash[:error] = "Impossible de sauvegarder."
+      end
     end
 
-    redirect_to account_profile_path
+    if params[:panel]
+      redirect_to account_profile_path(panel: params[:panel])
+    else
+      redirect_to account_profile_path
+    end
   end
 
   def share_documents_with

@@ -83,4 +83,13 @@ $(document).ready(function(){
     $(id).addClass('active');
     return false;
   });
+
+  $("#user_is_reminder_email_active").change(function(){
+    if(!$(this).is(":checked")) {
+      var result = confirm("En décochant cette case, vous demandez à ne plus recevoir de mails automatiques de relance pour l'envoi de vos documents papier à iDocus.\nAfin de bénéficier pleinement du service, nous vous conseillons de respecter les dates préconisées par votre cabinet.");
+      if(result == false) {
+        $(this).attr('checked', true);
+      }
+    }
+  });
 });
