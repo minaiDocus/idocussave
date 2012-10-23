@@ -79,16 +79,16 @@ class TheBox
     update_attributes(auth_token: '', ticket: '', is_configured: false)
   end
   
-  def is_up_to_date(folder, filepath)
+  def is_up_to_date?(folder, filepath)
     filename = File.basename(filepath)
     begin
       results = folder.files.select { |e| e.name == filename }
     rescue => e
       Delivery::Error.create(sender: 'Box', state: 'searching', filepath: "#{File.join([path,filename])}", message: e.message, user_id: external_file_storage.user.id)
       results = []
-    end 
+    end
     if results.any?
-      size = results.first["size"]
+      size = results.first.data["size"].to_i
       if size == File.size(filepath)
         true
       else
@@ -99,8 +99,8 @@ class TheBox
     end
   end
   
-  def is_not_up_to_date(path, filepath)
-    !is_up_to_date(path, filepath)
+  def is_not_up_to_date?(folder, filepath)
+    !is_up_to_date?(folder, filepath)
   end
   
   def find_or_create_folder(path)
@@ -125,7 +125,7 @@ class TheBox
         filename = File.basename(filepath)
         tries = 0
         begin
-          if is_not_up_to_date(folder,filepath)
+          if is_not_up_to_date?(folder,filepath)
             print "sending #{clean_path}/#{filename} ..."
             folder.upload(filename)
             print "done\n"

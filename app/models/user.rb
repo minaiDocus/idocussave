@@ -54,6 +54,7 @@ class User
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :is_centralizer,                 type: Boolean, default: true
   field :is_detail_authorized,           type: Boolean, default: false
+  field :is_reminder_email_active,       type: Boolean, default: true
 
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
 

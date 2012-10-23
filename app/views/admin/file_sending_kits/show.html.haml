@@ -9,15 +9,15 @@
       %tr
         %th Chemise
         %td
-          - if File.exist? "#{Rails.root}/public/system/data/folder.pdf"
-            = link_to '/system/data/folder.pdf', '/system/data/folder.pdf', target: :_blank
+          - if File.exist? "#{Rails.root}/files/kit/folder.pdf"
+            = link_to 'folder.pdf', folder_admin_user_file_sending_kit_path
       %tr
         %th Mail
         %td
-          - if File.exist? "#{Rails.root}/public/system/data/mail.pdf"
-            = link_to '/system/data/mail.pdf', '/system/data/mail.pdf', target: :_blank
+          - if File.exist? "#{Rails.root}/files/kit/mail.pdf"
+            = link_to 'mail.pdf', mail_admin_user_file_sending_kit_path
       %tr
         %th Etiquette
         %td
-          - if File.exist? "#{Rails.root}/public/system/data/label.pdf"
-            = link_to '/system/data/label.pdf', '/system/data/label.pdf', target: :_blank
+          - if File.exist? "#{Rails.root}/files/kit/label.pdf"
+            = link_to 'label.pdf', label_admin_user_file_sending_kit_path

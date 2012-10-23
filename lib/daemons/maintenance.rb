@@ -16,7 +16,6 @@ while($running) do
   filesname = Pack.get_file_from_numen
   Pack.get_documents(filesname)
   ReminderEmail.deliver
-  Document::Index.process
   
   sleep(1800)
 end

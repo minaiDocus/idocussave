@@ -16,7 +16,7 @@ describe "get_documents" do
       num = ("_%0.3d" % (i+1))
       name = @basename.gsub(' ','_') + num
       up = (i%2 == 0) ? 1 : 0
-      filepath = "#{Rails.root}/tmp/input_pdf_auto/#{name}#{@extensions[up]}"
+      filepath = File.join([Pack::FETCHING_PATH,"#{name}#{@extensions[up]}"])
       Prawn::Document.generate(filepath) do |pdf|
         pdf.text "Page 1"
         pdf.start_new_page
@@ -28,7 +28,7 @@ describe "get_documents" do
 
   after(:each) do
     system "rm /tmp/TS0001_TS*"
-    system "rm -r #{Rails.root}/tmp/input_pdf_auto/*all"
+    system "rm -r " + File.join([Pack::FETCHING_PATH,"*all"])
   end
 
   describe "once" do
@@ -60,7 +60,7 @@ describe "get_documents" do
         num = ("_%0.3d" % (i+1))
         name = @basename.gsub(' ','_') + num
         up = (i%2 == 0) ? 1 : 0
-        filepath = "#{Rails.root}/tmp/input_pdf_auto/#{name}#{@extensions[up]}"
+        filepath = File.join([Pack::FETCHING_PATH,"#{name}#{@extensions[up]}"])
         Prawn::Document.generate(filepath) do |pdf|
           pdf.text "Page 1"
           pdf.start_new_page
