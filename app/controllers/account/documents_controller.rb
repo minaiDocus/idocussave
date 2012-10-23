@@ -56,59 +56,26 @@ public
   
   def show
     @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
-    unless @pack
-      raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id])
-    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id]) unless @pack
     
-    @documents = Pack.find(params[:id]).documents.without_original.asc(:position).entries
-    document_ids = @documents.map { |document| document.id }
+    @documents = Pack.find(params[:id]).documents.without_original.asc(:position)
+    document_ids = @documents.distinct(:_id)
     @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
-    
+
     if params[:filtre]
-      queries = params[:filtre].split(':_:')
-      document_ids = []
-      queries.each_with_index do |query,index|
-        f_document_ids = []
-        t_document_ids = []
-        if index == 0
-          f_document_ids = Document::Index.find_document_ids [query], @user
-          t_document_ids = Document.find_ids_by_tags [query], @user
-          document_ids = f_document_ids + t_document_ids
-        else
-          f_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document::Index.find_document_ids([query], @user)).distinct(:_id)
-          t_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document.find_ids_by_tags([query], @user)).distinct(:_id)
-          document_ids = f_document_ids + t_document_ids
-        end
-      end
-      ids = @documents.map { |d| d.id }
-      @documents = Document.any_in(:_id => document_ids).asc(:position).find_all { |document| ids.include? document.id }
+      contents = params[:filtre].gsub(/:_:/,' ')
+      @documents = @documents.search_for(contents).asc(:position)
     end
   end
   
   def packs
-    @packs = []
-    
     if params[:filtre]
-      queries = params[:filtre].split(':_:')
-      pack_ids = []
-      queries.each_with_index do |query,index|
-        f_pack_ids = []
-        t_pack_ids = []
-        if index == 0
-          f_pack_ids = Document::Index.find_pack_ids [query], @user
-          t_pack_ids = Pack.find_ids_by_tags [query], @user
-          pack_ids = f_pack_ids + t_pack_ids
-        else
-          f_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Document::Index.find_pack_ids([query], @user)).distinct(:_id)
-          t_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Pack.find_ids_by_tags([query], @user)).distinct(:_id)
-          pack_ids = f_pack_ids + t_pack_ids
-        end
-      end
-      @packs = Pack.any_in(:_id => pack_ids)
+      contents = params[:filtre].gsub(/:_:/,' ')
+      @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
     else
-      @packs = Pack.any_in(:user_ids => [@user.id])
+      @packs = Pack.any_in(user_ids: [@user.id])
     end
-    @packs = @packs.order_by([[:created_at, :desc]])
+    @packs = @packs.order_by([:created_at, :desc])
     
     if params[:view] == "self"
       @packs = @packs.where(:owner_id => @user.id)
@@ -123,35 +90,10 @@ public
   end
 
   def search
-    @tags = []
-    @document_contents = []
-    query = params[:q]
-    
-    if params[:by] == "tags" || !params[:by]
-      @document_tags = DocumentTag.where(user_id: @user.id, name: /\w*#{query}\w*/)
-      @document_tags.each do |document_tag|
-        document_tag.name.scan(/\w*#{query}\w*/).each do |tag|
-          @tags << { id: '1', name: tag }
-        end
-      end
-      @tags.uniq!
-    end
-    
-    if params[:by] == "ocr_result" || !params[:by]
-      @document_contents = []
-      begin
-      Document::Index.search(query, @user).
-      each { |r| @document_contents << { id: '0', name: r} }
-      rescue => e
-        puts e
-      end
-    end
-    
-    @result = @tags + @document_contents
-    @result = @result.sort { |a,b| a["name"] <=> b["name"] }
+    @results = Pack.any_in(user_ids: [@user.id]).find_words(params[:q])
 
     respond_to do |format|
-      format.json{ render json: @result.to_json, callback: params[:callback], status: :ok }
+      format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
     end
   end
   
