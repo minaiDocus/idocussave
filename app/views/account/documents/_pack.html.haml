@@ -36,7 +36,7 @@
       %i.icon-ok
     %a.do-tooltip{ :href => "#{original_document.content.url}", :class => "download", :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
-    %a.do-tooltip{ :href => "#", :title => "Télécharger une archive zip", :class => "download do-archive" }
+    %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }
       %i.icon-download
     %a.do-popover{ :href => "#", "data-content" => document_type_content }
       %i.icon-star-empty.icon-document-type{ :class => document_class }

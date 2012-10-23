@@ -11,12 +11,15 @@ class Pack::Piece
   field :content_updated_at, type: Time
   field :is_an_upload,       type: Boolean, default: false
   field :position,           type: Integer
+  field :token,              type: String
 
   referenced_in :pack, inverse_of: :pieces
   references_one :expense, class_name: "Pack::Report::Expense", inverse_of: :piece
   references_one :preseizure, class_name: "Pack::Report::Preseizure", inverse_of: :piece
 
-  has_mongoid_attached_file :content
+  has_mongoid_attached_file :content,
+                            path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/pieces/:id/:style/:filename",
+                            url: "/account/documents/pieces/:id/download"
 
   scope :uploaded, where: { is_an_upload: true }
   scope :scanned,  where: { is_an_upload: false }
@@ -27,6 +30,19 @@ class Pack::Piece
 
   def self.by_position
     asc(:position)
+  end
+
+  def get_token
+    if token.present?
+      token
+    else
+      update_attribute(:token, rand(36**50).to_s(36))
+      token
+    end
+  end
+
+  def get_access_url
+    content.url + "&token=" + get_token
   end
 
   def send_to_compta

@@ -3,6 +3,7 @@ doc/
 log/
 tmp/
 data/
+files/
 public/system
 public/assets
 doc_data.txt

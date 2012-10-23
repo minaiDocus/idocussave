@@ -6,24 +6,27 @@ class Document
 
   field :content_file_name
   field :content_file_type
-  field :content_file_size,     type: Integer
-  field :content_updated_at,    type: Time
-  field :content_text,          type: String,  default: ""
-  field :is_an_original,        type: Boolean, default: false
-  field :is_an_upload,          type: Boolean, default: false
-  field :position,              type: Integer
-  field :dirty,                 type: Boolean, default: true
-  
+  field :content_file_size,  type: Integer
+  field :content_updated_at, type: Time
+  field :content_text,       type: String,  default: ""
+  field :is_an_original,     type: Boolean, default: false
+  field :is_an_upload,       type: Boolean, default: false
+  field :tags,               type: String,  default: ""
+  field :position,           type: Integer
+  field :dirty,              type: Boolean, default: true
+  field :token,              type: String
 
   references_many :document_tags, dependent: :destroy
   referenced_in :pack
-  
+
   has_mongoid_attached_file :content,
-    styles: {
-      thumb: ["46x67>", :png],
-      medium: ["92x133", :png]
-    }
-  
+                            styles: {
+                                thumb: ["46x67>", :png],
+                                medium: ["92x133", :png]
+                            },
+                            path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/documents/:id/:style/:filename",
+                            url: "/account/documents/:id/download/:style"
+
   before_content_post_process do |image|
     if image.dirty # halts processing
       false
@@ -37,20 +40,20 @@ class Document
 
   scope :without_original, where:  { :is_an_original.in => [false, nil] }
   scope :originals,        where:  { is_an_original: true }
-  
+
   scope :not_extracted,    where:  { content_text: "" }
   scope :extracted,        not_in: { content_text: [""] }
   scope :cannot_extract,   where:  { content_text: "-[none]" }
-  
+
   scope :not_clean,        where:  { dirty: true }
   scope :clean,            where:  { dirty: false }
-  
+
   scope :uploaded,         where:  { is_an_upload: true }
   scope :scanned,          where:  { is_an_upload: false }
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
-protected
+  protected
 
   def split_pages
     if self.is_an_original
@@ -83,13 +86,24 @@ protected
     end
   end
 
-  public
-  
-  def by_position
-    asc(:position)
+  def get_token
+    if token.present?
+      token
+    else
+      update_attribute(:token, rand(36**50).to_s(36))
+      token
+    end
   end
-  
+
+  def get_access_url(style=:original)
+    content.url(style) + "&token=" + get_token
+  end
+
   class << self
+    def by_position
+      asc(:position)
+    end
+
     def search_ids_by_contents(contents)
       search_by_contents(contents).distinct(:_id)
     end
@@ -132,7 +146,7 @@ protected
       add_pages pack, basename, start_at_page, is_an_upload
       update_original_file temp_path, filename
     end
-    
+
     def rename_pages start_at_page
       Dir.glob("*_pages*").each_with_index do |file,index|
         number = (start_at_page + index).to_s
@@ -140,7 +154,7 @@ protected
         File.rename file, new_name
       end
     end
-    
+
     def add_pages pack, basename, start_at_page, is_an_upload
       Dir.glob("#{basename}_pages*").sort.each_with_index do |file, index|
         document = Document.new
@@ -153,7 +167,7 @@ protected
         File.delete file
       end
     end
-    
+
     def update_original_file temp_path, filename
       File.rename temp_path, temp_path + "_"
       system "pdftk A=#{temp_path}_ B=#{filename} cat A B output #{temp_path}"

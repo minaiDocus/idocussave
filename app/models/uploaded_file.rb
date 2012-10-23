@@ -4,7 +4,7 @@ class UploadedFile
   include Mongoid::Timestamps
   
   VALID_EXTENSION = %w(.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)
-  UPLOADED_FILE_PATH = "#{Rails.root}/tmp/input_pdf_auto/uploads/"
+  UPLOADED_FILE_PATH = File.join([Pack::FETCHING_PATH,'uploads'])
   
   referenced_in :user
   

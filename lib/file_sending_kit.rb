@@ -4,8 +4,7 @@ require 'barby/barcode/code_39'
 require 'barby/outputter/png_outputter'
 
 module FileSendingKitGenerator
-  TEMPDIR_PATH = "#{Rails.root}/public/system/data"
-  LOGO_PATH = "#{Rails.root}/public/images/application"
+  TEMPDIR_PATH = "#{Rails.root}/files/kit/"
   
   def FileSendingKitGenerator.generate(clients_data,file_sending_kit)
     BarCode::init
