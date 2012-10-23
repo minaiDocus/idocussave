@@ -268,7 +268,7 @@ public
     if File.exist?(filepath) && (@user && @user.in?(document.pack.users)) or params[:token] == document.get_token
       filename = File.basename(filepath)
       type = document.content_file_type || 'application/pdf'
-      send_file(filepath, type: type, filename: filename, x_sendfile: true)
+      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
