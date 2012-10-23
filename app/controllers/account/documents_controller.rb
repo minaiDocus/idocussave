@@ -55,7 +55,7 @@ public
   
   def show
     @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id]) unless @pack
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
     
     @documents = Pack.find(params[:id]).documents.without_original.asc(:position)
     document_ids = @documents.distinct(:_id)
