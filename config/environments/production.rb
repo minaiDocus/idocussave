@@ -59,7 +59,7 @@ Idocus::Application.configure do
   config.middleware.use ExceptionNotifier,
     :email_prefix => "[iDocus] ",
     :sender_address => %{"notifier" <notifier@idocus.com>},
-    :exception_recipients => %w{lolalaikam@idocus.com florent.tachot@idocus.com},
+    :exception_recipients => %w{lolalaikam@idocus.com lailol@directmada.com florent.tachot@idocus.com},
     :ignore_exceptions => ExceptionNotifier.default_ignore_exceptions + [Mongoid::Errors::DocumentNotFound, BSON::InvalidObjectId]
 
   # Compress JavaScript and CSS
