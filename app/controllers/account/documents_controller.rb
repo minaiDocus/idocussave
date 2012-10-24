@@ -4,6 +4,7 @@ class Account::DocumentsController < Account::AccountController
 
   before_filter :load_user
   before_filter :find_last_composition, :only => %w(index)
+  skip_before_filter :login_user!, :only => %w(download piece)
 
 protected
   def current_layout
@@ -15,7 +16,7 @@ protected
   end
 
   def load_user
-    if (params[:email].present? || session[:acts_as].present?) && current_user.is_admin
+    if (params[:email].present? || session[:acts_as].present?) && current_user.try(:is_admin)
       @user = User.find_by_email(params[:email] || session[:acts_as]) || current_user
       if @user == current_user
         session[:acts_as] = nil
@@ -41,7 +42,7 @@ protected
     user_ids = packs.distinct(:user_ids)
     @all_users = User.any_in(:_id => user_ids).entries
   end
-  
+
 public
   def index
     @packs = Pack.any_in(:user_ids => [@user.id]).desc(:created_at)
@@ -55,59 +56,26 @@ public
   
   def show
     @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
-    unless @pack
-      raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id])
-    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[id]) unless @pack
     
-    @documents = Pack.find(params[:id]).documents.without_original.asc(:position).entries
-    document_ids = @documents.map { |document| document.id }
+    @documents = Pack.find(params[:id]).documents.without_original.asc(:position)
+    document_ids = @documents.distinct(:_id)
     @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
-    
+
     if params[:filtre]
-      queries = params[:filtre].split(':_:')
-      document_ids = []
-      queries.each_with_index do |query,index|
-        f_document_ids = []
-        t_document_ids = []
-        if index == 0
-          f_document_ids = Document::Index.find_document_ids [query], @user
-          t_document_ids = Document.find_ids_by_tags [query], @user
-          document_ids = f_document_ids + t_document_ids
-        else
-          f_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document::Index.find_document_ids([query], @user)).distinct(:_id)
-          t_document_ids = Document.any_in(:_id => document_ids).any_in(:_id => Document.find_ids_by_tags([query], @user)).distinct(:_id)
-          document_ids = f_document_ids + t_document_ids
-        end
-      end
-      ids = @documents.map { |d| d.id }
-      @documents = Document.any_in(:_id => document_ids).asc(:position).find_all { |document| ids.include? document.id }
+      contents = params[:filtre].gsub(/:_:/,' ')
+      @documents = @documents.search_for(contents).asc(:position)
     end
   end
   
   def packs
-    @packs = []
-    
     if params[:filtre]
-      queries = params[:filtre].split(':_:')
-      pack_ids = []
-      queries.each_with_index do |query,index|
-        f_pack_ids = []
-        t_pack_ids = []
-        if index == 0
-          f_pack_ids = Document::Index.find_pack_ids [query], @user
-          t_pack_ids = Pack.find_ids_by_tags [query], @user
-          pack_ids = f_pack_ids + t_pack_ids
-        else
-          f_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Document::Index.find_pack_ids([query], @user)).distinct(:_id)
-          t_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Pack.find_ids_by_tags([query], @user)).distinct(:_id)
-          pack_ids = f_pack_ids + t_pack_ids
-        end
-      end
-      @packs = Pack.any_in(:_id => pack_ids)
+      contents = params[:filtre].gsub(/:_:/,' ')
+      @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
     else
-      @packs = Pack.any_in(:user_ids => [@user.id])
+      @packs = Pack.any_in(user_ids: [@user.id])
     end
-    @packs = @packs.order_by([[:created_at, :desc]])
+    @packs = @packs.order_by([:created_at, :desc])
     
     if params[:view] == "self"
       @packs = @packs.where(:owner_id => @user.id)
@@ -122,35 +90,10 @@ public
   end
 
   def search
-    @tags = []
-    @document_contents = []
-    query = params[:q]
-    
-    if params[:by] == "tags" || !params[:by]
-      @document_tags = DocumentTag.where(user_id: @user.id, name: /\w*#{query}\w*/)
-      @document_tags.each do |document_tag|
-        document_tag.name.scan(/\w*#{query}\w*/).each do |tag|
-          @tags << { id: '1', name: tag }
-        end
-      end
-      @tags.uniq!
-    end
-    
-    if params[:by] == "ocr_result" || !params[:by]
-      @document_contents = []
-      begin
-      Document::Index.search(query, @user).
-      each { |r| @document_contents << { id: '0', name: r} }
-      rescue => e
-        puts e
-      end
-    end
-    
-    @result = @tags + @document_contents
-    @result = @result.sort { |a,b| a["name"] <=> b["name"] }
+    @results = Pack.any_in(user_ids: [@user.id]).find_words(params[:q])
 
     respond_to do |format|
-      format.json{ render json: @result.to_json, callback: params[:callback], status: :ok }
+      format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
     end
   end
   
@@ -183,48 +126,23 @@ public
   end
     
   def archive
-    pack = Pack.find(params[:pack_id])
-    
-    if pack.divisions.sheets.count > 0
-      unless File.directory?("#{Rails.root}/public/system/archive/#{current_user.id}")
-        Dir.mkdir("#{Rails.root}/public/system/archive/#{current_user.id}")
-      end
-      
-      pack.divisions.sheets.each do |sheet|
-        filename = sheet.name.gsub(/\s/,'_')
-        start_number = sheet.start
-        end_number = sheet.end
-        
-        part = (start_number == end_number) ? start_number.to_s : start_number.to_s+"-"+end_number.to_s
-        
-        url = "#{Rails.root}/public#{pack.documents.where(:is_an_original => true).first.content.url.sub(/\.pdf.*/,'.pdf')}"
-        cmd = "pdftk A=#{url} cat A#{part} output #{Rails.root}/public/system/archive/#{current_user.id}/#{filename}.pdf"
-        system(cmd)
-      end
-      
-      new_name = pack.name.gsub(/\s/,'_')
-    
-      Dir.chdir("#{Rails.root}/public/system/archive/#{current_user.id}/")
-      system("rm *.zip") rescue nil # suppression du précèdent zip
-      system("zip '#{new_name}.zip' *.pdf")
-      system("rm *.pdf")
-      
-      @url = "/system/archive/#{current_user.id}/#{new_name}.zip"
-      
-      respond_to do |format|
-        format.json do
-          render :json => @url.to_json, :status => :ok
-        end
-      end
+    if current_user.is_admin
+      pack = Pack.find(params[:id])
     else
-      respond_to do |format|
-        format.json do
-          render :json => 'Ce document ne contient aucune information de hashage'.to_json, :status => :error
-        end
-      end
+      pack = Pack.any_in(user_ids: [@user.id]).where(_id: params[:id]).first
+    end
+    if pack
+      filespath = pack.pieces.map { |e| e.content.path }
+      clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
+      filename = pack.name.gsub(/\s/,'_') + '.zip'
+      filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
+      system("zip -j #{filepath} #{clean_filespath}")
+      send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
     end
   end
-  
+
   def historic
     if params[:email].present? and (current_user.is_admin or current_user.is_prescriber)
       @user = User.find_by_email(params[:email])
@@ -283,6 +201,30 @@ public
     respond_to do |format|
       format.html{ render :nothing => true, :status => 200 }
       format.json { render :json => true, :status => :ok }
+    end
+  end
+
+  def download
+    document = Document.find params[:id]
+    filepath = document.content.path(params[:style])
+    if File.exist?(filepath) && (@user && @user.in?(document.pack.users)) or params[:token] == document.get_token
+      filename = File.basename(filepath)
+      type = document.content_file_type || 'application/pdf'
+      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+    else
+      render nothing: true, status: 404
+    end
+  end
+
+  def piece
+    piece = Pack::Piece.find params[:id]
+    filepath = piece.content.path
+    if File.exist?(filepath) && (@user && @user.in?(piece.pack.users)) || params[:token] == piece.get_token
+      filename = File.basename(filepath)
+      type = piece.content_file_type || 'application/pdf'
+      send_file(filepath, type: type, filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
     end
   end
 end

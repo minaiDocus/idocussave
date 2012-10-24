@@ -9,15 +9,17 @@
           .well.sidebar-nav
             %ul.nav.nav-list.dlink
               %li{ class: "#{@active_panel == 'change_password'      ? 'active' : ''}" }
-                != link_to 'Changer mon mot de passe',       '#change_password',      class: "do-show"
+                != link_to 'Changer mon mot de passe',           '#change_password',      class: "do-show"
               %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
-                != link_to 'Gestion des adresses',           '#addresses_management', class: "do-show"
+                != link_to 'Gestion de mes adresses',            '#addresses_management', class: "do-show"
               %li{ class: "#{@active_panel == 'payment_management'   ? 'active' : ''}" }
-                != link_to 'Mode de paiement',               '#payment_management',   class: "do-show"
+                != link_to 'Mode de paiement',                   '#payment_management',   class: "do-show"
               %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
-                != link_to 'Stockage externe des documents', '#efs_management',       class: "do-show"
+                != link_to 'Mes services de stockages externes', '#efs_management',       class: "do-show"
               %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
-                != link_to 'Partages',                       '#sharing_management',   class: "do-show"
+                != link_to 'Mes partages',                       '#sharing_management',   class: "do-show"
+              %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
+                != link_to 'Mon abonnement',                     '#subscription_options', class: "do-show"
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
@@ -251,5 +253,15 @@
             = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
               = text_field_tag :email, "", style: 'margin-bottom:0;width:400px;'
               = submit_tag "Ajouter", class: 'btn'
+
+      #subscription_options.row-fluid.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
+        .span12
+          .well
+            %h3.aligncenter Relance automatique par mail
+            = simple_form_for @user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
+              = hidden_field_tag :panel, 'subscription_options'
+              = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
+              .form-actions
+                = f.submit 'Valider', class: 'btn'
 
 = render "help"

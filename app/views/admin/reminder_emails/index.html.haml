@@ -24,3 +24,10 @@
             \/
             != reminder_email.user.clients.active.count
           %td= link_to "Envoyer", deliver_admin_user_reminder_email_path(@user, reminder_email), class: 'btn btn-mini', data: { confirm: "Voulez vous vraiment envoyer les rappels maintenant ?" }
+- else
+  = simple_form_for [:admin,@user], html: { id: 'user_reminder_email_options' } do |f|
+    %table.table.table-striped.table-bordered.table-condensed
+      %tbody
+        %tr
+          %th.first Rappel activé ?
+          %td.value= f.input_field :is_reminder_email_active, as: :boolean, style: 'float:right'

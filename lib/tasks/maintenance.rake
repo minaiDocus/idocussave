@@ -6,7 +6,6 @@ namespace :maintenance do
       Pack.get_file_from_numen
       Pack.get_documents
       ReminderEmail.deliver
-      Document::Index.process
     end
   end
   

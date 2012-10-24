@@ -74,9 +74,9 @@ class Delivery::Queue
 
   def process!
     piecespath = []
-    pieces = pack.divisions.pieces.where(:position.gte => self.start_position).asc(:position)
+    pieces = pack.pieces.where(:position.gte => self.start_position).by_position
     pieces.each do |piece|
-      piecespath << piece.to_file.path
+      piecespath << piece.content.path
     end
 
     filepath = pack.original_document.content.path
@@ -85,10 +85,6 @@ class Delivery::Queue
     
     if user.is_prescriber and user.is_dropbox_extended_authorized and user.dropbox_delivery_folder.present?
       DropboxExtended.deliver(piecespath + [filepath], user.dropbox_delivery_folder, info_path)
-    end
-
-    piecespath.each do |piecepath|
-      File.delete(piecepath) rescue nil
     end
 
     self.start_position = pieces.last.position + 1 rescue self.start_position

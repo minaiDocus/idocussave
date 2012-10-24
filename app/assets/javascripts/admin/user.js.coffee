@@ -69,6 +69,18 @@ get_reminder_emails = ->
     type: 'GET',
     success: (data) ->
       $('#reminder_emails').html(data)
+      $('#user_is_reminder_email_active').change ->
+        is_ok = confirm 'Etes vous sûr ?'
+        if !is_ok
+          $(this).attr('checked',!$(this).is(':checked'))
+        else
+          form_data = $('#user_reminder_email_options').serialize()
+          $.ajax
+            url: '/admin/users/' + user_id,
+            data: form_data,
+            datatype: 'json',
+            type: 'POST'
+
 
 edit_reminder_emails = ->
   $.ajax

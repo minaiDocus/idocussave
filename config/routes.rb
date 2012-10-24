@@ -5,6 +5,9 @@ Idocus::Application.routes.draw do
 
   resources :pages
 
+  match '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download', via: :get
+  match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
+
   namespace :account do
     root :to => "account/documents#index"
 
@@ -16,7 +19,7 @@ Idocus::Application.routes.draw do
       get 'reporting', :on => :collection
       get 'search_user', :on => :collection
       post 'reorder', :on => :collection
-      post 'archive', :on => :collection
+      get 'archive', :on => :member
       get 'historic', :on => :member
       post 'sync_with_external_file_storage', :on => :collection
     end
@@ -126,6 +129,9 @@ Idocus::Application.routes.draw do
       resource :file_sending_kit do
         get 'select', on: :member
         post 'generate', on: :member
+        get 'folder', on: :member
+        get 'mail', on: :member
+        get 'label', on: :member
       end
       resources :account_book_types
       namespace :scan do
