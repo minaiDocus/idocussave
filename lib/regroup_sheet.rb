@@ -1,11 +1,11 @@
-module Pack::Utils
+module RegroupSheet
   def infos
-    Dir.entries(Pack::Utils::INFOS_PATH).
+    Dir.entries(RegroupSheet::INFOS_PATH).
         select { |e| e.match(/^\d{8}\.xml$/) }
   end
 
   def processed_infos
-    Dir.entries(Pack::Utils::INFOS_PATH).
+    Dir.entries(RegroupSheet::INFOS_PATH).
         select { |e| e.match(/_retour/) }.
         map { |e| e.sub('_retour','') }
   end
@@ -14,12 +14,13 @@ module Pack::Utils
     infos - processed_infos
   end
 
-  def regroup_files
+  def process
+    filesname = []
     not_processed_infos.each do |filename|
       pack_infos = []
       # assemble
-      output_path = "#{Rails.root}/tmp/input_pdf_auto"
-      file = File.open(File.join(Pack::Utils::FILES_PATH,filename))
+      output_path = Pack::FETCHING_PATH
+      file = File.open(File.join(RegroupSheet::FILES_PATH,filename))
       doc = Nokogiri::XML(file)
       doc.css('lot').each do |lot|
         name = lot['name'].gsub('_',' ') + ' all'
@@ -27,9 +28,10 @@ module Pack::Utils
         if pack
           lot.css('piece').each do |piece|
             filespath = piece.css('sheet').map do |e|
-              File.join([Pack::Utils::CACHED_FILES_PATH,e.content])
+              File.join([RegroupSheet::CACHED_FILES_PATH,e.content])
             end.join(' ')
             new_filename = "#{lot['name']}_#{'%0.3d' % piece['number']}.pdf"
+            filesname << new_filename
             filepath = File.join([output_path,new_filename])
             `pdftk #{filespath} cat output #{filepath}`
           end
@@ -44,10 +46,11 @@ module Pack::Utils
           end
         }
       end
-      filepath = File.join(Pack::Utils::FILES_PATH,filename.sub('.pdf','_retour.pdf'))
+      filepath = File.join(RegroupSheet::FILES_PATH,filename.sub('.pdf','_retour.pdf'))
       File.open(filepath,'w') do |f|
         f.write builder.to_xml
       end
+      filesname
     end
   end
 end

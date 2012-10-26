@@ -248,8 +248,8 @@ class Pack
         end
 
         if is_ok
-          path = "#{Rails.root}/data/assembly_process/work/doc/#{Time.now.strftime('%Y%m%d')}"
-          cached_path = "#{Rails.root}/data/assembly_process/cached/"
+          path = File.join([RegroupSheet::FILES_PATH,Time.now.strftime('%Y%m%d')])
+          cached_path = RegroupSheet::CACHED_FILES_PATH
           FileUtils.mkdir_p(cached_path)
           all_filesname.each do |filename|
             info = filename.split('_')
@@ -265,7 +265,7 @@ class Pack
               FileUtils.cp(filename,File.join([path, type, basename, filename]))
               FileUtils.cp(filename,File.join([cached_path, filename]))
             else
-              FileUtils.cp(filename,"#{Rails.root}/tmp/input_pdf_auto/"+filename)
+              FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
               total_filesname << filename
             end
           end
