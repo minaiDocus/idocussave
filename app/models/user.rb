@@ -94,6 +94,7 @@ class User
   references_one :external_file_storage, autosave: true
   references_one :file_sending_kit
   references_one :pack_delivery_list
+  references_one :csv_outputter, autosave: true
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
@@ -104,6 +105,7 @@ class User
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
   accepts_nested_attributes_for :reminder_emails,       allow_destroy: true
+  accepts_nested_attributes_for :csv_outputter
 
   def active
     inactive_at == nil
@@ -192,6 +194,10 @@ class User
     if self.is_prescriber
       self.clients.each { |client| client.update_attribute(:stamp_name, self.stamp_name) }
     end
+  end
+
+  def csv_outputter!
+    csv_outputter || CsvOutputter.create(user_id: self.id)
   end
   
 protected

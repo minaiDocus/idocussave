@@ -1,0 +1,8 @@
+- selected ||= 'date'
+- selected = selected.sub(/-.*$/,'') if selected.match /^(date,deadline_date)-/
+%li.pull-left.column{ style: 'border: 1px inset grey;margin:3px;padding:3px;' }
+  = select_tag :directive, options_for_select(csv_outputter_options,selected), class: 'pull-left', style: 'width:auto;margin-bottom:0;'
+  .pull-right
+    = link_to icon_move, '#'
+    %br
+    = link_to icon_destroy, '#', class: 'remove_column'

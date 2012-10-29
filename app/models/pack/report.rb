@@ -10,6 +10,10 @@ class Pack::Report
 
   field :type, type: String # NDF / AC / CB / VT
 
+  def to_csv(outputter=pack.owner.csv_outputter!)
+    outputter.format(preseizures)
+  end
+
   class << self
     # fetch Compta info
     def fetch(time=Time.now)

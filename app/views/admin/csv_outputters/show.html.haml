@@ -1,0 +1,15 @@
+.modal-body
+  = link_to icon_new, '#', class: 'add_column'
+  = link_to icon_destroy, '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'remove_all_columns'
+
+  .row-fluid
+    .span12{ style: 'border: 2px solid black;margin:5px;padding:10px;height:100%;' }
+      = simple_form_for [:admin,@user] do |f|
+        %ul.list{ style: 'list-style-type: none;' }
+          - @csv_outputter.to_a.each do |part|
+            = render partial: 'admin/csv_outputters/column', locals: { selected: part }
+
+  %ul.template.hide
+    = render 'admin/csv_outputters/column', locals: { selected: :date }
+.modal-footer
+  = link_to 'Valider', '#', class: 'btn submit'

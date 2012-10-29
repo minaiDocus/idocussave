@@ -137,6 +137,7 @@ Idocus::Application.routes.draw do
       namespace :scan do
         resource :subscription
       end
+      resource :csv_outputter
     end
     resources :pages
     resources :cms_images
