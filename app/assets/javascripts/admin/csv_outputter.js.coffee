@@ -1,8 +1,23 @@
+initialize = ->
+  $('#edit_csv_outputter option:selected').each (index,e) ->
+    type = $(e).attr('value')
+    if type == 'date' || type == 'deadline_date'
+      $(e).parents('li').find('input[name=complement]').removeAttr('disabled')
+    else
+      $(e).parents('li').find('input[name=complement]').attr('disabled','disabled')
+
 active_csv_column_action = ->
   $('#edit_csv_outputter .remove_column').unbind('click')
   $('#edit_csv_outputter .remove_column').bind 'click', ->
     $(this).parents('li').remove()
     false
+  $('#edit_csv_outputter select').unbind('change')
+  $('#edit_csv_outputter select').bind 'change', ->
+    type = $(this).children('option:selected').attr('value')
+    if type == 'date' || type == 'deadline_date'
+      $(this).parents('li').find('input[name=complement]').removeAttr('disabled')
+    else
+      $(this).parents('li').find('input[name=complement]').attr('disabled','disabled')
 
 active_csv_global_action = ->
   $('#edit_csv_outputter .add_column').click ->
@@ -30,6 +45,7 @@ edit_csv_outputter = ->
     success: (data) ->
       $('#edit_csv_outputter .content').html(data)
       $('#edit_csv_outputter .content .list').sortable()
+      initialize()
       active_csv_global_action()
       active_csv_column_action()
 
@@ -39,10 +55,15 @@ put_csv_outputter = ->
   data['user']['csv_outputter'] = {}
   directive = []
   $('#edit_csv_outputter .list li select option:selected').each (index,element) ->
-    directive.push($(element).attr('value'))
+    part = $(element).attr('value')
+    if part == 'date' || part == 'deadline_date'
+      complement = $(this).parents('li').find('input[name=complement]').attr('value')
+      if complement.length > 0
+        part = part + '-' + complement
+    directive.push(part)
   data['user']['csv_outputter']['directive'] = directive.join(';')
   data['_method'] = 'put'
-  data['authenticity_token'] = $('#edit_csv_outputter input[name=authenticity_token]').attr('value')
+  data['authenticity_token'] = $('#edit_csv_outputter input[name=authenticity_token]').val()
   $.ajax
     url: '/admin/users/' + user_id,
     data: data,

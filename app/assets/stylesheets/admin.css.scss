@@ -186,3 +186,26 @@ table {
   table th.first, table td.first {
     text-align: right; }
 }
+
+#edit_csv_outputter.modal {
+  top: 50%;
+  left: 50%;
+  display: none;
+  width: 866px;
+  margin: -220px 0 0 -433px !important; }
+#edit_csv_outputter .box {
+  border: 2px dashed grey;
+  padding: 0 0 5px 0;
+  height: 100%; }
+#edit_csv_outputter .list {
+  list-style-type: none;
+  margin: 5px; }
+#edit_csv_outputter .column {
+  margin: 3px;
+  padding: 3px; }
+#edit_csv_outputter select {
+  width: auto;
+  margin-bottom: 0; }
+#edit_csv_outputter input {
+  width: 73px;
+  margin-bottom: 0; }

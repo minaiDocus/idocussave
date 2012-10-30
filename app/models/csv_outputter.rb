@@ -10,7 +10,6 @@ class CsvOutputter
     directive.split(';')
   end
 
-  # Pack::Preseizure
   def format(preseizures)
     lines = []
     preseizures.each do |preseizure|
@@ -20,40 +19,34 @@ class CsvOutputter
     end
     lines.join("\n")
   end
-  # bla;bla;bla\n
-  # bla;bla;bla\n
-  # bla;bla;bla\n
-  # ...
 
-  # Pack::Preseizure::Account
   def format_line(account)
     line = []
     to_a.each do |value|
       line << case value
-        when /^:date/
-          format = value.sub(/^date-/).presence || "%d/%m/%Y"
+        when /^date/
+          format = value.sub(/^date-/,'').presence || "%d/%m/%Y"
           account.preseizure.date.try(:strftime,format) || ''
-        when ':type'
+        when /^type/
           account.preseizure.report.type
-        when ':number'
+        when /^number/
           account.number
-        when ':debit'
+        when /^debit/
           account.debit
-        when ':credit'
+        when /^credit/
           account.credit
-        when ':title'
+        when /^title/
           account.title
-        when ':piece'
+        when /^piece/
           account.preseizure.piece.try(:name).try(:gsub,' ','_')
-        when ':lettering'
+        when /^lettering/
           account.lettering
-        when /^:deadline_date/
-          format = value.sub(/^deadline_date-/).presence || "%d/%m/%Y"
+        when /^deadline_date/
+          format = value.sub(/^deadline_date-/,'').presence || "%d/%m/%Y"
           account.preseizure.deadline_date.try(:strftime,format) || ''
         else ''
       end
     end
     line.join(";")
   end
-  # bla;bla;bla\n
 end
