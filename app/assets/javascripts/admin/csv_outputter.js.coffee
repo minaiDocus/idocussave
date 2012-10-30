@@ -37,6 +37,7 @@ active_csv_global_action = ->
     false
 
 edit_csv_outputter = ->
+  $('#edit_csv_outputter .content').html('')
   $.ajax
     url: '/admin/users/' + user_id + '/csv_outputter',
     data: '',
