@@ -224,7 +224,8 @@
     
     $(".pagination a").unbind('click');
     $(".pagination a").bind('click',function() {
-      showPacks($(this));
+      if(!$(this).parents('li').hasClass('disabled') && !$(this).parents('li').hasClass('active'))
+        showPacks($(this));
       return false;
     });
     
@@ -306,7 +307,7 @@
           },
           success: function(data){
             logAfterAction();
-            current_page = parseInt($("#documentslist .pagination em").text());
+            current_page = parseInt($("#documentslist .pagination .active a").text());
             getPacks(current_page);
           }
         });
@@ -340,7 +341,7 @@
           },
           success: function(data){
             logAfterAction();
-            current_page = parseInt($("#documentslist .pagination em").text());
+            current_page = parseInt($("#documentslist .pagination .active a").text());
             getPacks(current_page);
           }
         });
