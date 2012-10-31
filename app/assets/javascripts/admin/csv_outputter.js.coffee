@@ -2,30 +2,32 @@ initialize = ->
   $('#edit_csv_outputter option:selected').each (index,e) ->
     type = $(e).attr('value')
     if type == 'date' || type == 'deadline_date'
-      $(e).parents('li').find('input[name=complement]').removeAttr('disabled')
+      $(e).parents('li').find('input[name=format]').removeAttr('disabled')
     else
-      $(e).parents('li').find('input[name=complement]').attr('disabled','disabled')
+      $(this).parents('li').find('input[name=format]').val('')
+      $(e).parents('li').find('input[name=format]').attr('disabled','disabled')
 
-active_csv_column_action = ->
-  $('#edit_csv_outputter .remove_column').unbind('click')
-  $('#edit_csv_outputter .remove_column').bind 'click', ->
+active_csv_field_action = ->
+  $('#edit_csv_outputter .remove_field').unbind('click')
+  $('#edit_csv_outputter .remove_field').bind 'click', ->
     $(this).parents('li').remove()
     false
   $('#edit_csv_outputter select').unbind('change')
   $('#edit_csv_outputter select').bind 'change', ->
     type = $(this).children('option:selected').attr('value')
     if type == 'date' || type == 'deadline_date'
-      $(this).parents('li').find('input[name=complement]').removeAttr('disabled')
+      $(this).parents('li').find('input[name=format]').removeAttr('disabled')
     else
-      $(this).parents('li').find('input[name=complement]').attr('disabled','disabled')
+      $(this).parents('li').find('input[name=format]').val('')
+      $(this).parents('li').find('input[name=format]').attr('disabled','disabled')
 
 active_csv_global_action = ->
-  $('#edit_csv_outputter .add_column').click ->
-    $('#edit_csv_outputter .template li').clone().appendTo('#edit_csv_outputter .list')
-    active_csv_column_action()
+  $('#edit_csv_outputter .add_field').click ->
+    $('#edit_csv_outputter .template li.field').clone().appendTo('#edit_csv_outputter .list')
+    active_csv_field_action()
     false
 
-  $('#edit_csv_outputter .remove_all_columns').click ->
+  $('#edit_csv_outputter .remove_all_fields').click ->
     is_confirmed = confirm('Etes-vous sûr ?')
     if is_confirmed
       $('#edit_csv_outputter .list').html('')
@@ -48,23 +50,25 @@ edit_csv_outputter = ->
       $('#edit_csv_outputter .content .list').sortable()
       initialize()
       active_csv_global_action()
-      active_csv_column_action()
+      active_csv_field_action()
 
 put_csv_outputter = ->
   data = {}
   data['user'] = {}
   data['user']['csv_outputter'] = {}
   directive = []
-  $('#edit_csv_outputter .list li select option:selected').each (index,element) ->
-    part = $(element).attr('value')
-    if part == 'date' || part == 'deadline_date'
-      complement = $(this).parents('li').find('input[name=complement]').attr('value')
-      if complement.length > 0
-        part = part + '-' + complement
+  $('#edit_csv_outputter .list li').each (index,element) ->
+    li = $(this)
+    left_addition = li.find('input[name=left_addition]').val()
+    right_addition = li.find('input[name=right_addition]').val()
+    format = li.find('input[name=format]').val()
+    field = li.find('option:selected').val()
+    part = '{' + left_addition + '}' + field + '-' + format + '{' + right_addition + '}'
     directive.push(part)
-  data['user']['csv_outputter']['directive'] = directive.join(';')
+  data['user']['csv_outputter']['directive'] = directive.join('|')
   data['_method'] = 'put'
   data['authenticity_token'] = $('#edit_csv_outputter input[name=authenticity_token]').val()
+
   $.ajax
     url: '/admin/users/' + user_id,
     data: data,

@@ -1,18 +1,18 @@
 .modal-body
   .row-fluid
     .span12
-      = link_to icon_new + 'Ajouter une colonne', '#', class: 'btn btn-small add_column'
-      = link_to icon_destroy + 'Supprimer toutes les colonnes', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-small remove_all_columns'
+      = link_to icon_new + 'Ajouter une entrée', '#', class: 'btn btn-small add_field'
+      = link_to icon_destroy + 'Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-small remove_all_fields'
   %br
   .row-fluid
     .box.span12
-      = simple_form_for [:admin,@user] do |f|
+      = simple_form_for [:admin,@user] do
         %ul.list
           - @csv_outputter.to_a.each do |part|
-            = render partial: 'admin/csv_outputters/column', locals: { selected: part }
+            = render partial: 'admin/csv_outputters/field', locals: { part: part }
 
   %ul.template.hide
-    = render 'admin/csv_outputters/column', locals: { selected: :date }
+    = render 'admin/csv_outputters/field', locals: { selected: :date }
 .modal-footer
   .pull-left{ style: 'vertical-align: middle;' }
     %span.well.well-small

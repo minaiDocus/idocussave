@@ -191,8 +191,10 @@ table {
   top: 50%;
   left: 50%;
   display: none;
-  width: 876px;
-  margin: -220px 0 0 -438px !important; }
+  width: 760px;
+  margin: -220px 0 0 -365px !important; }
+#edit_csv_outputter .modal-body {
+  overflow-y: scroll; }
 #edit_csv_outputter .box {
   border: 2px dashed grey;
   padding: 0 0 5px 0;
@@ -200,12 +202,14 @@ table {
 #edit_csv_outputter .list {
   list-style-type: none;
   margin: 5px; }
-#edit_csv_outputter .column {
+#edit_csv_outputter .field {
   margin: 3px;
   padding: 3px; }
 #edit_csv_outputter select {
   width: auto;
   margin-bottom: 0; }
 #edit_csv_outputter input {
-  width: 73px;
+  width: 200px;
   margin-bottom: 0; }
+#edit_csv_outputter input[name=format] {
+  width: 73px; }

@@ -7,7 +7,9 @@ class CsvOutputter
   referenced_in :user
 
   def to_a
-    directive.split(';')
+    directive.split('|').map do |e|
+      e.scan(/\{(.*)\}(\w+)-(.*)\{(.*)\}/).first
+    end
   end
 
   def format(preseizures)
@@ -21,32 +23,33 @@ class CsvOutputter
   end
 
   def format_line(account)
-    line = []
-    to_a.each do |value|
-      line << case value
-        when /^date/
-          format = value.sub(/^date-/,'').presence || "%d/%m/%Y"
+    line = ''
+    to_a.each do |part|
+      result = case part[1]
+        when /date/
+          format = part[2].presence || "%d/%m/%Y"
           account.preseizure.date.try(:strftime,format) || ''
-        when /^type/
+        when /type/
           account.preseizure.report.type
-        when /^number/
+        when /number/
           account.number
-        when /^debit/
+        when /debit/
           account.debit
-        when /^credit/
+        when /credit/
           account.credit
-        when /^title/
+        when /title/
           account.title
-        when /^piece/
+        when /piece/
           account.preseizure.piece.try(:name).try(:gsub,' ','_')
-        when /^lettering/
+        when /lettering/
           account.lettering
-        when /^deadline_date/
-          format = value.sub(/^deadline_date-/,'').presence || "%d/%m/%Y"
+        when /deadline_date/
+          format = part[2].presence || "%d/%m/%Y"
           account.preseizure.deadline_date.try(:strftime,format) || ''
         else ''
       end
+      line += part[0] + result + part[3]
     end
-    line.join(";")
+    line
   end
 end
