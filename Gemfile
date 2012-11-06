@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.8'
 
+gem 'rake', '0.8.7'
 gem 'bson_ext', '1.6.2'
 gem 'mongo', '1.6.2'
 gem 'mongoid', '2.4.12'

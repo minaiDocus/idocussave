@@ -61,4 +61,18 @@ module AdminHelper
       [option.title, option.price_in_cents_wo_vat].in?(options)
     end
   end
+
+  def csv_outputter_options
+    [
+        [t('mongoid.models.csv_outputter.attributes.type'),:type],
+        [t('mongoid.models.csv_outputter.attributes.date'),:date],
+        [t('mongoid.models.csv_outputter.attributes.deadline_date'),:deadline_date],
+        [t('mongoid.models.csv_outputter.attributes.title'),:title],
+        [t('mongoid.models.csv_outputter.attributes.piece'),:piece],
+        [t('mongoid.models.csv_outputter.attributes.number'),:number],
+        [t('mongoid.models.csv_outputter.attributes.credit'),:credit],
+        [t('mongoid.models.csv_outputter.attributes.debit'),:debit],
+        [t('mongoid.models.csv_outputter.attributes.lettering'),:lettering],
+    ]
+  end
 end

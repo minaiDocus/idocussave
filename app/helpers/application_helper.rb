@@ -43,6 +43,10 @@ module ApplicationHelper
     content_tag :i, '', class: 'icon-remove'
   end
 
+  def icon_move
+    content_tag :i, '', class: 'icon-move'
+  end
+
   def edit_link
     link_to icon_edit, '#', class: :edit
   end

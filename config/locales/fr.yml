@@ -342,3 +342,18 @@ fr:
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'
+      csv_outputter:
+        zero: '0 csv formateur'
+        one: '1 csv formateur'
+        other: '#{count} csv formateur'
+        name: 'CSV Formateur'
+        attributes:
+          type: 'Type'
+          date: 'Date'
+          deadline_date: 'Echéance'
+          title: 'Titre'
+          piece: 'Nom de la pièce'
+          number: 'Nombre'
+          credit: 'Crédit'
+          debit: 'Débit'
+          lettering: 'Lettrage'

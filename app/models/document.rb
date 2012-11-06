@@ -53,6 +53,19 @@ class Document
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
+  def get_token
+    if token.present?
+      token
+    else
+      update_attribute(:token, rand(36**50).to_s(36))
+      token
+    end
+  end
+
+  def get_access_url(style=:original)
+    content.url(style) + "&token=" + get_token
+  end
+
   protected
 
   def split_pages
@@ -86,18 +99,7 @@ class Document
     end
   end
 
-  def get_token
-    if token.present?
-      token
-    else
-      update_attribute(:token, rand(36**50).to_s(36))
-      token
-    end
-  end
-
-  def get_access_url(style=:original)
-    content.url(style) + "&token=" + get_token
-  end
+  public
 
   class << self
     def by_position
