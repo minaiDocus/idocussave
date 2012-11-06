@@ -32,6 +32,19 @@ class ApplicationController < ActionController::Base
     authenticate_user!
   end
 
+  def load_user
+    if (params[:email].present? || session[:acts_as].present?) && current_user.try(:is_admin)
+      @user = User.find_by_email(params[:email] || session[:acts_as]) || current_user
+      if @user == current_user
+        session[:acts_as] = nil
+      else
+        session[:acts_as] = @user.email
+      end
+    else
+      @user = current_user
+    end
+  end
+
 private
 
   def format_price_00 price_in_cents
