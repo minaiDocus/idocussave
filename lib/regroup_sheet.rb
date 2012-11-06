@@ -15,9 +15,9 @@ module RegroupSheet
   end
 
   def process
-    filesname = []
+    datas = []
     not_processed_infos.each do |filename|
-      pack_infos = []
+      filesname = []
       # assemble
       output_path = Pack::FETCHING_PATH
       file = File.open(File.join(RegroupSheet::FILES_PATH,filename))
@@ -35,14 +35,15 @@ module RegroupSheet
             filepath = File.join([output_path,new_filename])
             `pdftk #{filespath} cat output #{filepath}`
           end
-          pack_infos << [lot['name'],pack.divisions.pieces.by_position.last.position + 1]
         end
       end
+      data = Pack.get_documents(filesname)
+      datas += data
       # return related number
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.assemble {
-          pack_infos.each do |info|
-            xml.lot(info[1], name: info[0])
+          data.each do |info|
+            xml.lot(info[2], name: info[1])
           end
         }
       end
@@ -50,7 +51,7 @@ module RegroupSheet
       File.open(filepath,'w') do |f|
         f.write builder.to_xml
       end
-      filesname
     end
+    datas
   end
 end

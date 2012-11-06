@@ -13,8 +13,11 @@ Signal.trap("TERM") do
 end
 
 while($running) do
+  data = RegroupSheet::process
   filesname = Pack.get_file_from_numen
-  Pack.get_documents(filesname)
+  data += Pack.get_documents(filesname)
+  data.uniq!
+  Pack.deliver_mail(data)
   ReminderEmail.deliver
   
   sleep(1800)

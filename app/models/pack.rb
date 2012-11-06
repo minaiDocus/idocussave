@@ -285,10 +285,18 @@ class Pack
       total_filesname
     end
     
-    def get_documents(files=[])
+    def get_documents(files)
       Dir.chdir FETCHING_PATH
-      downcase_extension
-      filesname = files.empty? ? valid_documents.sort : files
+      if files.nil?
+        filesname = []
+      else
+        if files.empty?
+          downcase_extension
+          filesname = valid_documents.sort
+        else
+          filesname = files
+        end
+      end
       data = []
       # traiter un document à la fois
       while !filesname.empty?
@@ -304,7 +312,7 @@ class Pack
         
         filesname -= pack_filesname
       end
-      deliver_mail(data)
+      data
     end
 
     def deliver_mail(data)
@@ -370,7 +378,7 @@ class Pack
       pack.find_or_create_queue(user).inc_counter!
       pack.find_or_create_queue(user.prescriber).inc_counter! if user.prescriber
 
-      [user.email,pack_filename]
+      [user.email,pack_filename,piece_position]
     end
     
     def info_path(pack_name, user=nil)
@@ -410,7 +418,7 @@ class Pack
         
         piece.name = name
         piece.start = current_page
-        piece.end = current_page + page_number - 1
+        piece.end = current_page + pages_number - 1
         piece.is_an_upload = is_an_upload
         piece.position = current_piece_position
         pack.divisions << piece
@@ -418,6 +426,7 @@ class Pack
         if is_an_upload
           sheet = Division.new
           sheet.level = Division::SHEETS_LEVEL
+          sheet.created_at = sheet.updated_at = Time.now
           sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
           sheet.start = current_page
           sheet.end = current_page + page_number - 1
@@ -429,6 +438,7 @@ class Pack
           (pages_number / 2).times do |i|
             sheet = Division.new
             sheet.level = Division::SHEETS_LEVEL
+            sheet.created_at = sheet.updated_at = Time.now
             sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
             sheet.start = current_page + (i*2)
             sheet.end = current_page + (i*2) + 1
