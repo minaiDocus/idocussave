@@ -1,20 +1,20 @@
 module RegroupSheet
-  def infos
+  def self.infos
     Dir.entries(RegroupSheet::INFOS_PATH).
         select { |e| e.match(/^\d{8}\.xml$/) }
   end
 
-  def processed_infos
+  def self.processed_infos
     Dir.entries(RegroupSheet::INFOS_PATH).
         select { |e| e.match(/_retour/) }.
         map { |e| e.sub('_retour','') }
   end
 
-  def not_processed_infos
+  def self.not_processed_infos
     infos - processed_infos
   end
 
-  def process
+  def self.process
     datas = []
     not_processed_infos.each do |filename|
       filesname = []
