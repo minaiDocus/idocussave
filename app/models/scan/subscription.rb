@@ -4,10 +4,19 @@ class Scan::Subscription < Subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
   attr_accessor :is_to_spreading, :update_period
-  
-  field :max_sheets_authorized,       type: Integer, default: 100
-  field :max_upload_pages_authorized, type: Integer, default: 200
-  
+
+  # quantité limite
+  field :max_sheets_authorized,            type: Integer, default: 100 # numérisés
+  field :max_upload_pages_authorized,      type: Integer, default: 200 # téléversés
+  field :quantity_of_a_lot_of_upload,      type: Integer, default: 200 # téléversés
+  field :max_preseizure_pieces_authorized, type: Integer, default: 100 # presaisies
+  field :max_expense_pieces_authorized,    type: Integer, default: 100 # notes de frais
+  # prix excès
+  field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
+  field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
+  field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
+  field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
+
   before_create :set_category, :create_period
   before_save :check_propagation
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
@@ -43,6 +52,17 @@ class Scan::Subscription < Subscription
       period.subscription = self
       period.user = self.user
       period.set_product_option_orders self.product_option_orders
+
+      period.max_sheets_authorized = self.max_sheets_authorized
+      period.max_upload_pages_authorized = self.max_upload_pages_authorized
+      period.quantity_of_a_lot_of_upload = self.quantity_of_a_lot_of_upload
+      period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
+      period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+      period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
+      period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
+      period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
+      period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+
       period.save
       remove_not_reusable_options
       period
@@ -63,6 +83,13 @@ class Scan::Subscription < Subscription
     self.period_duration = scan_subscription.period_duration
     self.max_sheets_authorized = scan_subscription.max_sheets_authorized
     self.max_upload_pages_authorized = scan_subscription.max_upload_pages_authorized
+    self.quantity_of_a_lot_of_upload = scan_subscription.quantity_of_a_lot_of_upload
+    self.max_preseizure_pieces_authorized = scan_subscription.max_preseizure_pieces_authorized
+    self.max_expense_pieces_authorized = scan_subscription.max_expense_pieces_authorized
+    self.unit_price_of_excess_sheet = scan_subscription.unit_price_of_excess_sheet
+    self.price_of_a_lot_of_upload = scan_subscription.price_of_a_lot_of_upload
+    self.unit_price_of_excess_preseizure = scan_subscription.unit_price_of_excess_preseizure
+    self.unit_price_of_excess_expense = scan_subscription.unit_price_of_excess_expense
     self.copy_options! scan_subscription.product_option_orders
     self.save
   end
@@ -95,6 +122,17 @@ class Scan::Subscription < Subscription
     end
     current_period = find_or_create_period(Time.now)
     current_period.set_product_option_orders(options)
+
+    current_period.max_sheets_authorized = self.max_sheets_authorized
+    current_period.max_upload_pages_authorized = self.max_upload_pages_authorized
+    current_period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
+    current_period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
+    current_period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+    current_period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
+    current_period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
+    current_period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
+    current_period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+
     current_period.save
   end
 
