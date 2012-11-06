@@ -33,6 +33,13 @@ describe Scan::Subscription do
     @scan_subscription.current_progress.should eq(1)
     @scan_subscription.max_sheets_authorized.should eq(100)
     @scan_subscription.max_upload_pages_authorized.should eq(200)
+    @scan_subscription.quantity_of_a_lot_of_upload.should eq(200)
+    @scan_subscription.max_preseizure_pieces_authorized.should eq(100)
+    @scan_subscription.max_expense_pieces_authorized.should eq(100)
+    @scan_subscription.unit_price_of_excess_sheet.should eq(12)
+    @scan_subscription.price_of_a_lot_of_upload.should eq(200)
+    @scan_subscription.unit_price_of_excess_preseizure.should eq(0)
+    @scan_subscription.unit_price_of_excess_expense.should eq(0)
     @scan_subscription.start_at.should eq(@start_at.beginning_of_month)
     @scan_subscription.end_at.should eq(@start_at.beginning_of_month + 12.month - 1.second)
     @scan_subscription.code.should eq("PRE0001")
@@ -85,6 +92,14 @@ describe Scan::Subscription do
     scan_subscription.period_duration.should eq(@scan_subscription.period_duration)
     scan_subscription.max_sheets_authorized.should eq(@scan_subscription.max_sheets_authorized)
     scan_subscription.max_upload_pages_authorized.should eq(@scan_subscription.max_upload_pages_authorized)
+    scan_subscription.quantity_of_a_lot_of_upload.should eq(@scan_subscription.quantity_of_a_lot_of_upload)
+    scan_subscription.max_preseizure_pieces_authorized.should eq(@scan_subscription.max_preseizure_pieces_authorized)
+    scan_subscription.max_expense_pieces_authorized.should eq(@scan_subscription.max_expense_pieces_authorized)
+    scan_subscription.unit_price_of_excess_sheet.should eq(@scan_subscription.unit_price_of_excess_sheet)
+    scan_subscription.price_of_a_lot_of_upload.should eq(@scan_subscription.price_of_a_lot_of_upload)
+    scan_subscription.unit_price_of_excess_preseizure.should eq(@scan_subscription.unit_price_of_excess_preseizure)
+    scan_subscription.unit_price_of_excess_expense.should eq(@scan_subscription.unit_price_of_excess_expense)
+
     scan_subscription.product_option_orders.should eq(@scan_subscription.product_option_orders)
   end
   

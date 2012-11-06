@@ -16,8 +16,18 @@ class Scan::Period
   
   field :price_in_cents_wo_vat,       type: Integer, default: 0
   field :tva_ratio,                   type: Float,   default: 1.196
-  field :max_sheets_authorized,       type: Integer, default: 100
-  field :max_upload_pages_authorized, type: Integer, default: 200
+
+  # quantité limite
+  field :max_sheets_authorized,            type: Integer, default: 100 # numérisés
+  field :max_upload_pages_authorized,      type: Integer, default: 200 # téléversés
+  field :quantity_of_a_lot_of_upload,      type: Integer, default: 200 # téléversés
+  field :max_preseizure_pieces_authorized, type: Integer, default: 100 # presaisies
+  field :max_expense_pieces_authorized,    type: Integer, default: 100 # notes de frais
+  # prix excès
+  field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
+  field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
+  field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
+  field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
   
   field :documents_name_tags, type: Array,   default: []
   field :pieces,              type: Integer, default: 0
@@ -64,13 +74,16 @@ class Scan::Period
   end
   
   def price_in_cents_of_total_excess
-    price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages
+    price_in_cents_of_excess_sheets +
+    price_in_cents_of_excess_uploaded_pages +
+    price_in_cents_of_excess_preseizures +
+    price_in_cents_of_excess_expenses
   end
   
   def price_in_cents_of_excess_sheets
     excess = excess_sheets
     if excess > 0
-      excess * 12
+      excess * unit_price_of_excess_sheet
     else
       0
     end
@@ -79,20 +92,65 @@ class Scan::Period
   def price_in_cents_of_excess_uploaded_pages
     excess = excess_uploaded_pages
     if excess > 0
-      (excess / 100) * 200 + (excess % 100 > 0 ? 200 : 0)
+      (excess / quantity_of_a_lot_of_upload) * price_of_a_lot_of_upload +
+      (excess % quantity_of_a_lot_of_upload > 0 ? price_of_a_lot_of_upload : 0)
+    else
+      0
+    end
+  end
+
+  def price_in_cents_of_excess_preseizures
+    excess = excess_preseizure_pieces
+    if excess > 0
+      excess * unit_price_of_excess_preseizure
+    else
+      0
+    end
+  end
+
+  def price_in_cents_of_excess_expenses
+    excess = excess_expense_pieces
+    if excess > 0
+      excess * unit_price_of_excess_expense
     else
       0
     end
   end
   
   def excess_sheets
-    excess  = sheets - uploaded_sheets - max_sheets_authorized
+    excess = sheets - uploaded_sheets - max_sheets_authorized
     excess > 0 ? excess : 0
   end
   
   def excess_uploaded_pages
     excess = uploaded_pages - max_upload_pages_authorized
     excess > 0 ? excess : 0
+  end
+
+  def excess_preseizure_pieces
+    excess = preseizure_pieces - max_preseizure_pieces_authorized
+    excess > 0 ? excess : 0
+  end
+
+  def excess_expense_pieces
+    excess = expense_pieces - max_expense_pieces_authorized
+    excess > 0 ? excess : 0
+  end
+
+  def preseizure_pieces
+    nb = 0
+    documents.each do |document|
+      nb += document.report.try(:preseizures).try(:count) || 0
+    end
+    nb
+  end
+
+  def expense_pieces
+    nb = 0
+    documents.each do |document|
+      nb += document.report.try(:expenses).try(:count) || 0
+    end
+    nb
   end
   
   def set_product_option_orders(product_options)
