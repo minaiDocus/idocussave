@@ -359,8 +359,8 @@ fr:
           deadline_date: 'Echéance'
           title: 'Libellé'
           piece: 'Nom de la pièce'
-          number: 'Nombre'
-          original_amount: "Montant d'origine"
+          number: 'Numéro de compte'
+          original_amount: 'Montant'
           currency: 'Devise'
           conversion_rate: 'Taux de conversion'
           third_party: 'Tiers'
