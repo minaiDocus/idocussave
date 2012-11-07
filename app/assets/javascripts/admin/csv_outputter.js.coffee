@@ -1,7 +1,7 @@
 initialize = ->
   $('#edit_csv_outputter option:selected').each (index,e) ->
     type = $(e).attr('value')
-    if type == 'date' || type == 'deadline_date' || type == 'relevant_date'
+    if type == 'date' || type == 'deadline_date' || type == 'period_date'
       $(e).parents('li').find('input[name=format]').removeAttr('disabled')
     else
       $(this).parents('li').find('input[name=format]').val('')
@@ -15,7 +15,7 @@ active_csv_field_action = ->
   $('#edit_csv_outputter select').unbind('change')
   $('#edit_csv_outputter select').bind 'change', ->
     type = $(this).children('option:selected').attr('value')
-    if type == 'date' || type == 'deadline_date' || type == 'relevant_date'
+    if type == 'date' || type == 'deadline_date' || type == 'period_date'
       $(this).parents('li').find('input[name=format]').removeAttr('disabled')
     else
       $(this).parents('li').find('input[name=format]').val('')

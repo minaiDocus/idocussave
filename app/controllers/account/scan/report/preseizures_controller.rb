@@ -22,7 +22,7 @@ class Account::Scan::Report::PreseizuresController < Account::AccountController
     respond_to do |format|
       format.html {}
       format.csv do
-        send_data(@report.to_csv(current_user.csv_outputter!), type: "text/csv", filename: "#{@report.pack.name.gsub(' ','_').sub('_all','')}.csv")
+        send_data(@report.to_csv(@report.pack.owner.csv_outputter!), type: "text/csv", filename: "#{@report.pack.name.gsub(' ','_').sub('_all','')}.csv")
       end
     end
   end
