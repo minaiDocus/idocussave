@@ -116,12 +116,17 @@ class Pack::Report
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
                     if piece and piece.preseizure.nil?
-                      preseizure               = Pack::Report::Preseizure.new
-                      preseizure.piece         = piece
-                      preseizure.date          = part.css('date').first.try(:content).try(:to_date)
-                      preseizure.deadline_date = part.css('echeance').first.try(:content).try(:to_date)
-                      preseizure.observation   = part.css('remarque').first.try(:content)
-                      preseizure.position      = index + 1
+                      preseizure                 = Pack::Report::Preseizure.new
+                      preseizure.piece           = piece
+                      preseizure.piece_number    = part.css('numero_piece').first.try(:content)
+                      preseizure.amount          = part.css('montant').first.try(:content)
+                      preseizure.currency        = part.css('devise').first.try(:content)
+                      preseizure.conversion_rate = part.css('taux_conversion').first.try(:content)
+                      preseizure.third_party     = part.css('tiers').first.try(:content)
+                      preseizure.date            = part.css('date').first.try(:content).try(:to_date)
+                      preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
+                      preseizure.observation     = part.css('remarque').first.try(:content)
+                      preseizure.position        = index + 1
                       preseizure.save
                       report.preseizures << preseizure
                       part.css('account').each_with_index do |account,index|

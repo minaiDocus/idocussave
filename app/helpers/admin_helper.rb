@@ -70,9 +70,8 @@ module AdminHelper
         [t('mongoid.models.csv_outputter.attributes.period'),:period],
         [t('mongoid.models.csv_outputter.attributes.piece_number'),:piece_number],
         [t('mongoid.models.csv_outputter.attributes.original_piece_number'),:original_piece_number],
-        [t('mongoid.models.csv_outputter.attributes.period'),:period],
         [t('mongoid.models.csv_outputter.attributes.date'),:date],
-        [t('mongoid.models.csv_outputter.attributes.relevant_date'),:relevant_date],
+        [t('mongoid.models.csv_outputter.attributes.period_date'),:period_date],
         [t('mongoid.models.csv_outputter.attributes.deadline_date'),:deadline_date],
         [t('mongoid.models.csv_outputter.attributes.title'),:title],
         [t('mongoid.models.csv_outputter.attributes.piece'),:piece],
@@ -85,6 +84,7 @@ module AdminHelper
         [t('mongoid.models.csv_outputter.attributes.lettering'),:lettering],
         [t('mongoid.models.csv_outputter.attributes.piece_url'),:piece_url],
         [t('mongoid.models.csv_outputter.attributes.remark'),:remark],
+        [t('mongoid.models.csv_outputter.attributes.third_party'),:third_party],
     ]
   end
 end
