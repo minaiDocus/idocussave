@@ -429,7 +429,7 @@ class Pack
           sheet.created_at = sheet.updated_at = Time.now
           sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
           sheet.start = current_page
-          sheet.end = current_page + page_number - 1
+          sheet.end = current_page + pages_number - 1
           sheet.is_an_upload = is_an_upload
           sheet.position = current_sheet_position
           pack.divisions << sheet
