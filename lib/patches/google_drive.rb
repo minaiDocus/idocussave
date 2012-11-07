@@ -1,6 +1,7 @@
 module GoogleDrive
   class Collection
     def upload_from_file(path, title,params = {})
+      find_and_remove_files(title)
       file = @session.upload_from_file(path, title, params)
       add file
       @session.root_collection.remove file
@@ -19,6 +20,12 @@ module GoogleDrive
         end
       end
       current_collection
+    end
+
+    def find_and_remove_files(title)
+      files.each do |file|
+        file.delete if file.title == title
+      end
     end
   end
 end
