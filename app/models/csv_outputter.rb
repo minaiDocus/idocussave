@@ -75,7 +75,7 @@ class CsvOutputter
           account.lettering
         else ''
       end
-      line += part[0] + result + part[3]
+      line += "#{part[0]}#{result}#{part[3]}"
     end
     line
   end
