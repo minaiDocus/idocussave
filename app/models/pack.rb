@@ -258,7 +258,7 @@ class Pack
             user = User.where(code: code).first
             account_book_type = nil
             account_book_type = user.account_book_types.where(name: journal).first if user
-            if account_book_type
+            if account_book_type && account_book_type.compta_processable?
               basename = [info[0],info[1],info[2]].join('_')
               type = account_book_type.compta_type
               FileUtils.mkdir_p(File.join([path, type, basename]))
