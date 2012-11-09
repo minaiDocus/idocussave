@@ -35,43 +35,41 @@ class CsvOutputter
         when /^deadline_date$/
           format = part[2].presence || "%d/%m/%Y"
           account.preseizure.deadline_date.try(:strftime,format) || ''
-        when /type/
+        when /^type$/
           account.preseizure.report.type
-        when /client_code/
+        when /^client_code$/
           account.preseizure.report.pack.owner.code
-        when /journal/
+        when /^journal$/
           account.preseizure.piece.name.split(' ')[1]
-        when /period/
+        when /^period$/
           account.preseizure.piece.name.split(' ')[2]
-        when /piece_number/
+        when /^piece_number$/
           account.preseizure.piece.name.split(' ')[3].to_i
-        when /original_piece_number/
+        when /^original_piece_number$/
           account.preseizure.piece_number
-        when /piece/
-          account.preseizure.piece.name
-        when /original_amount/
-          account.preseizure.amount
-        when /currency/
-          account.preseizure.currency
-        when /conversion_rate/
-          account.preseizure.conversion_rate
-        when /piece_url/
-          account.preseizure.piece.get_access_url
-        when /remark/
-          account.preseizure.observation
-        when /third_party/
-          account.preseizure.third_party
-        when /number/
-          account.number
-        when /debit/
-          account.debit
-        when /credit/
-          account.credit
-        when /title/
-          account.title
-        when /piece/
+        when /^piece$/
           account.preseizure.piece.try(:name).try(:gsub,' ','_')
-        when /lettering/
+        when /^original_amount$/
+          account.preseizure.amount
+        when /^currency$/
+          account.preseizure.currency
+        when /^conversion_rate$/
+          account.preseizure.conversion_rate
+        when /^piece_url$/
+          account.preseizure.piece.get_access_url
+        when /^remark$/
+          account.preseizure.observation
+        when /^third_party$/
+          account.preseizure.third_party
+        when /^number$/
+          account.number
+        when /^debit$/
+          account.debit
+        when /^credit$/
+          account.credit
+        when /^title$/
+          account.title
+        when /^lettering$/
           account.lettering
         else ''
       end
