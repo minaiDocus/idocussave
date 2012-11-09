@@ -13,7 +13,9 @@ Signal.trap("TERM") do
 end
 
 while($running) do
-  data = RegroupSheet::process
+  filesname = RegroupSheet::process
+  data = []
+  data += Pack.get_documents(filesname)
   filesname = Pack.get_file_from_numen
   data += Pack.get_documents(filesname)
   data.uniq!

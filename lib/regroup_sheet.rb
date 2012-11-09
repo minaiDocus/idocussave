@@ -15,9 +15,8 @@ module RegroupSheet
   end
 
   def self.process
-    datas = []
+    filesname = []
     not_processed_infos.each do |filename|
-      filesname = []
       # assemble
       output_path = Pack::FETCHING_PATH
       file = File.open(File.join(RegroupSheet::FILES_PATH,filename))
@@ -37,21 +36,7 @@ module RegroupSheet
           end
         end
       end
-      data = Pack.get_documents(filesname)
-      datas += data
-      # return related number
-      builder = Nokogiri::XML::Builder.new do |xml|
-        xml.assemble {
-          data.each do |info|
-            xml.lot(info[2], name: info[1])
-          end
-        }
-      end
-      filepath = File.join(RegroupSheet::FILES_PATH,filename.sub('.pdf','_retour.pdf'))
-      File.open(filepath,'w') do |f|
-        f.write builder.to_xml
-      end
     end
-    datas
+    filesname
   end
 end
