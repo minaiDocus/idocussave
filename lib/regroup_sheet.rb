@@ -27,7 +27,8 @@ module RegroupSheet
         if pack
           lot.css('piece').each do |piece|
             filespath = piece.css('sheet').map do |e|
-              File.join([RegroupSheet::CACHED_FILES_PATH,e.content])
+              filename = "#{lot['name']}_%0.3d.pdf" % e.content
+              File.join([RegroupSheet::CACHED_FILES_PATH,filename])
             end.join(' ')
             new_filename = "#{lot['name']}_#{'%0.3d' % piece['number']}.pdf"
             filesname << new_filename
