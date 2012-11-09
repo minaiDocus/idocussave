@@ -19,7 +19,7 @@ module RegroupSheet
     not_processed_infos.each do |filename|
       # assemble
       output_path = Pack::FETCHING_PATH
-      file = File.open(File.join(RegroupSheet::FILES_PATH,filename))
+      file = File.open(File.join(RegroupSheet::INFOS_PATH,filename))
       doc = Nokogiri::XML(file)
       doc.css('lot').each do |lot|
         name = lot['name'].gsub('_',' ') + ' all'
