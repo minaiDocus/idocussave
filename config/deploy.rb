@@ -1,83 +1,101 @@
+set :rvm_ruby_string, '1.9.3'
+require "rvm/capistrano"
+
+default_run_options[:pty] = true
+#ssh_options[:forward_agent] = true
+
+set :runner, "rails"
+set :user, "grevalis"
+set :password, "grevidoc"
+set :scm_username, "grevalis"
+set :scm_password, "grevidoc"
+set :use_sudo, false
+set :rails_env, "production"
+
 set :application, "idocus"
-set :repository,  "git@github.com:novelys/idocus"
+role :app, "grevalis.alwaysdata.net"
+set :deploy_to, "/home/grevalis/www/idocus"
 
 set :keep_releases, 5
 
+set :repository, "git@github.com:ftachot/idocus.git"
 set :scm, "git"
+set :branch, "master"
+set :deploy_via, :remote_cache
 set :repository_cache, "git_cache"
 set :copy_exclude, [".svn", ".DS_Store", ".git"]
-ssh_options[:forward_agent] = true
 
-require 'capistrano/ext/multistage'
-require 'hoptoad_notifier/capistrano'
-
-set :stages, %w(staging)
-
-after "deploy:update_code", "db:symlink", "bundler:create_symlink", "bundler:bundle_new_release"
-after "deploy:setup", "db:mkdir"
+before "deploy", "deploy:setup", "shared:mkdir"
+after "deploy:finalize_update", "shared:config"
+after "deploy:symlink", "shared:symlink"
 after "deploy", "deploy:cleanup"
 
-namespace :db do
-  desc "Make symlink for database yaml"
+namespace :shared do
+  desc "Make symlink"
   task :symlink do
-    run "ln -nfs #{shared_path}/config/mongoid.yml #{current_release}/config/mongoid.yml"
-    run "ln -nfs #{shared_path}/config/amazon_s3.yml #{current_release}/config/amazon_s3.yml"
-    run "ln -nfs #{shared_path}/config/paypal.yml #{current_release}/config/paypal.yml"
+    run "ln -nfs #{shared_path}/config/mongoid.yml #{deploy_to}/current/config/mongoid.yml"
+    run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{deploy_to}/current/config/initializers/address_delivery_list.rb"
+    run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{deploy_to}/current/config/initializers/error_notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{deploy_to}/current/config/initializers/fix_ssl.rb"
+    run "ln -nfs #{shared_path}/config/initializers/invoice_config.rb #{deploy_to}/current/config/initializers/invoice_config.rb"
+    run "ln -nfs #{shared_path}/public/system #{deploy_to}/current/public/system"
+    run "ln -s #{shared_path}/data #{deploy_to}/current/data"
+    run "ln -s #{shared_path}/files #{deploy_to}/current/files"
   end
 
   desc "Create necessary directories"
   task :mkdir do
-    run "mkdir -p #{shared_path}/config"
+    run "mkdir -p #{shared_path}/config/initializers"
+    run "mkdir -p #{shared_path}/public/system"
+    run "mkdir -p #{current_release}/tmp"
+    run "mkdir -p #{shared_path}/data"
+    run "mkdir -p #{shared_path}/files/tmp/uploads"
+    run "mkdir -p #{shared_path}/files/kit"
+    run "mkdir -p #{shared_path}/files/attachments/archives"
+  end
+
+  desc "Prepare config files"
+  task :config do
+    if File.exist? "#{shared_path}/config/initializers/error_notification.rb"
+      run "rm #{release_path}/config/initializers/error_notification.rb"
+    else
+      run "mv #{release_path}/config/initializers/error_notification.rb #{shared_path}/config/initializers"
+    end
+    if File.exist? "#{shared_path}/config/initializers/invoice_config.rb"
+      run "rm #{release_path}/config/initializers/invoice_config.rb"
+    else
+      run "mv #{release_path}/config/initializers/invoice_config.rb #{shared_path}/config/initializers"
+    end
+    if File.exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
+      run "rm #{release_path}/config/initializers/address_delivery_list.rb"
+    end
   end
 end
 
-
 namespace :mod_rails do
-  desc <<-DESC
-  Restart the application altering tmp/restart.txt for mod_rails.
-  DESC
+  desc "Restart the application altering tmp/restart.txt for mod_rails."
   task :restart, :roles => :app do
-    run "touch  #{current_release}/tmp/restart.txt"
+    run "touch #{current_release}/tmp/restart.txt"
   end
 end
 
 namespace :deploy do
   %w(start restart).each { |name| task name, :roles => :app do mod_rails.restart end }
-
-  desc "print revision number in admin template"
-  task :print_revision do
-    rake = fetch(:rake, "rake")
-    rails_env = fetch(:rails_env, "development")
-    run "cd #{release_path} && RAILS_ENV=#{rails_env} SVN_REVISION=#{real_revision.to_s[0,6]} #{rake} revision:print"
-  end
-end
-
-namespace :deploy do
-  desc "Update the crontab file"
-  task :update_crontab, :roles => :db do
-    run "cd #{current_release} && RAILS_ENV=#{rails_env} whenever --update-crontab #{application}"
-  end
-end
-
-namespace :bundler do
-  task :create_symlink, :roles => :app do
-    set :bundle_dir, File.join(release_path, 'vendor', 'bundle')
-
-    shared_dir = File.join(shared_path, 'bundle')
-    run "rm -rf #{bundle_dir}"
-    run "mkdir -p #{shared_dir} && ln -s #{shared_dir} #{bundle_dir}"
-  end
-
-  task :bundle_new_release, :roles => :app do
-    bundler.create_symlink
-    run "cd #{release_path} ; bundle install --deployment --without development test"
-  end
 end
 
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=1 --queues='documents thumbs,documents content' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=2 --queues='documents thumbs,documents content' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=3 --queues='documents thumbs,documents content' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=4 --queues='documents thumbs,documents content' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=5 --queues='documents thumbs,documents content' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=6 --queue='delivery' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=7 --queue='delivery' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=8 --queue='delivery' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=9 --queue='delivery' start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -i=10 --queue='delivery' start"
   end
 
   desc "Stop delayed_job process"
@@ -87,10 +105,27 @@ namespace :delayed_job do
 
   desc "Restart delayed_job process"
   task :restart, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job restart"
+    delayed_job.stop
+    delayed_job.start
   end
 end
 
+namespace :maintenance do
+  desc "Start maintenance process"
+  task :start, :roles => :app do
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/pack_delivery_ctl start"
+  end
 
-        require './config/boot'
-        require 'airbrake/capistrano'
+  desc "Stop maintenance process"
+  task :stop, :roles => :app do
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl stop"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/pack_delivery_ctl stop"
+  end
+
+  desc "Restart maintenance process"
+  task :restart, :roles => :app do
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl restart"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/pack_delivery_ctl restart"
+  end
+end
