@@ -4,7 +4,7 @@ class Pack::Report::Preseizure::Entry
   include Mongoid::Timestamps
 
   referenced_in :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :entries
-  referenced_in :account   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :entries
+  referenced_in :account   , class_name: 'Pack::Report::Preseizure::Account', inverse_of: :entries
 
   DEBIT  = 1
   CREDIT = 2
@@ -16,8 +16,6 @@ class Pack::Report::Preseizure::Entry
   validates_presence_of :type
   validates_presence_of :amount
 
-  alias :by_position :by_number
-
   def get_debit
     type == DEBIT ? amount : nil
   end
@@ -27,6 +25,10 @@ class Pack::Report::Preseizure::Entry
   end
 
   def self.by_number
+    asc(:type,:number)
+  end
+
+  def self.by_position
     asc(:type,:number)
   end
 end

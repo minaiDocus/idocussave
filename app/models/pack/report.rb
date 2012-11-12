@@ -134,7 +134,7 @@ class Pack::Report
                         paccount.type       = Pack::Report::Preseizure::Account.get_type(account['type'])
                         paccount.number     = account['number']
                         paccount.lettering  = account.css('lettrage').first.try(:content)
-                        paccount.css('debit').each do |debit|
+                        account.css('debit').each do |debit|
                           entry        = Pack::Report::Preseizure::Entry.new
                           entry.type   = Pack::Report::Preseizure::Entry::DEBIT
                           entry.number = debit['number'].to_i
@@ -143,7 +143,7 @@ class Pack::Report
                           paccount.entries << entry
                           preseizure.entries << entry
                         end
-                        paccount.css('credit').each do |credit|
+                        account.css('credit').each do |credit|
                           entry        = Pack::Report::Preseizure::Entry.new
                           entry.type   = Pack::Report::Preseizure::Entry::CREDIT
                           entry.number = credit['number'].to_i
