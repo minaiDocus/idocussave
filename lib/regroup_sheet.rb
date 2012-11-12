@@ -6,7 +6,7 @@ module RegroupSheet
 
   def self.processed_infos
     Dir.entries(RegroupSheet::INFOS_PATH).
-        select { |e| e.match(/^\d{8}\.txt$/) }
+        select { |e| e.match(/^\d{8}\.txt$/) }.
         map { |e| e.sub('txt','xml') }
   end
 
