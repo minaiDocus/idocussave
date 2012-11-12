@@ -26,11 +26,11 @@ module RegroupSheet
           filespath = piece.css('feuilles').map do |e|
             filename = "#{lot['name']}_%0.3d.pdf" % e.content.to_i
             File.join([RegroupSheet::CACHED_FILES_PATH,filename])
-          end.join(' ')
+          end
           new_filename = "#{lot['name']}_#{'%0.3d' % piece['number']}.pdf"
           filesname << new_filename
           filepath = File.join([output_path,new_filename])
-          `pdftk #{filespath} cat output #{filepath}`
+          `pdftk #{filespath.join(' ')} cat output #{filepath}`
           filespath.each do |f|
             File.delete(f)
           end
