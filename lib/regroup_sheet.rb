@@ -31,6 +31,9 @@ module RegroupSheet
           filesname << new_filename
           filepath = File.join([output_path,new_filename])
           `pdftk #{filespath} cat output #{filepath}`
+          filespath.each do |f|
+            File.delete(f)
+          end
         end
       end
       File.new(File.join(RegroupSheet::INFOS_PATH,filename.sub('.xml','.txt')))
