@@ -16,7 +16,7 @@ class Invoice
       thumb: ["46x67>", :png]
     },
     path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/invoices/:id/:style/:filename",
-    url: "/account/invoices/:id/download"
+    url: "/account/invoices/:id/download/:style"
 
   validates_presence_of :number
   validates_uniqueness_of :number

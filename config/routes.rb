@@ -7,7 +7,7 @@ Idocus::Application.routes.draw do
 
   match '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download', via: :get
   match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
-  match '/account/invoices/:id/download', controller: 'account/invoices', action: 'download', via: :get
+  match '/account/invoices/:id/download/:style', controller: 'account/invoices', action: 'download', via: :get
 
   namespace :account do
     root :to => "account/documents#index"
