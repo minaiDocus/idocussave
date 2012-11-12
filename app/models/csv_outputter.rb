@@ -15,62 +15,66 @@ class CsvOutputter
   def format(preseizures)
     lines = []
     preseizures.by_position.each do |preseizure|
-      preseizure.accounts.by_position.each do |account|
-        lines << format_line(account)
+      preseizure.entries.by_position.each do |entry|
+        lines << format_line(entry)
       end
     end
     lines.join("\n")
   end
 
-  def format_line(account)
+  def format_line(entry)
     line = ''
     to_a.each do |part|
       result = case part[1]
         when /^date$/
           format = part[2].presence || "%d/%m/%Y"
-          account.preseizure.date.try(:strftime,format) || ''
+          entry.preseizure.date.try(:strftime,format) || ''
         when /^period_date$/
           format = part[2].presence || "%d/%m/%Y"
-          account.preseizure.period_date.try(:strftime,format) || ''
+          if entry.preseizure.date < entry.preseizure.period_date
+            entry.preseizure.period_date.try(:strftime,format) || ''
+          else
+            entry.preseizure.date.try(:strftime,format) || ''
+          end
         when /^deadline_date$/
           format = part[2].presence || "%d/%m/%Y"
-          account.preseizure.deadline_date.try(:strftime,format) || ''
+          entry.preseizure.deadline_date.try(:strftime,format) || ''
         when /^type$/
-          account.preseizure.report.type
+          entry.preseizure.report.type
         when /^client_code$/
-          account.preseizure.report.pack.owner.code
+          entry.preseizure.report.pack.owner.code
         when /^journal$/
-          account.preseizure.piece.name.split(' ')[1]
+          entry.preseizure.piece.name.split(' ')[1]
         when /^period$/
-          account.preseizure.piece.name.split(' ')[2]
+          entry.preseizure.piece.name.split(' ')[2]
         when /^piece_number$/
-          account.preseizure.piece.name.split(' ')[3].to_i
+          entry.preseizure.piece.name.split(' ')[3].to_i
         when /^original_piece_number$/
-          account.preseizure.piece_number
+          entry.preseizure.piece_number
         when /^piece$/
-          account.preseizure.piece.try(:name).try(:gsub,' ','_')
+          entry.preseizure.piece.try(:name).try(:gsub,' ','_')
         when /^original_amount$/
-          account.preseizure.amount
+          entry.preseizure.amount
         when /^currency$/
-          account.preseizure.currency
+          entry.preseizure.currency
         when /^conversion_rate$/
-          account.preseizure.conversion_rate
+          entry.preseizure.conversion_rate
         when /^piece_url$/
-          account.preseizure.piece.get_access_url
+          entry.preseizure.piece.get_access_url
         when /^remark$/
-          account.preseizure.observation
+          entry.preseizure.observation
         when /^third_party$/
-          account.preseizure.third_party
+          entry.preseizure.third_party
         when /^number$/
-          account.number
+          entry.account.number
         when /^debit$/
-          account.debit
+          entry.get_debit
         when /^credit$/
-          account.credit
+          entry.get_credit
         when /^title$/
-          account.title
+          '' # TODO implement me
         when /^lettering$/
-          account.lettering
+          entry.account.lettering
         else ''
       end
       line += "#{part[0]}#{result}#{part[3]}"

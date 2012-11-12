@@ -355,7 +355,7 @@ fr:
           piece_number: 'Numéro de pièce iDocus'
           original_piece_number: "Numéro de pièce d\'origine"
           date: 'Date réelle'
-          period_date: 'Date 1er jour période'
+          period_date: '1er ou date réelle'
           deadline_date: 'Echéance'
           title: 'Libellé'
           piece: 'Nom de la pièce'

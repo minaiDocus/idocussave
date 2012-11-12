@@ -5,14 +5,15 @@ class Pack::Report::Preseizure
   referenced_in :report, class_name: 'Pack::Report', inverse_of: :preseizures
   referenced_in :piece, class_name: "Pack::Piece", inverse_of: :preseizure
   references_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
+  references_many :entries, class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :preseizure, dependent: :delete
 
-  field :date,          type: Time
-  field :deadline_date, type: Time
-  field :observation,   type: String
-  field :position,      type: Integer
-  field :piece_number,  type: Integer
-  field :amount,        type: Integer
-  field :currency,      type: Integer
+  field :date,            type: Time
+  field :deadline_date,   type: Time
+  field :observation,     type: String
+  field :position,        type: Integer
+  field :piece_number,    type: Integer
+  field :amount,          type: Integer
+  field :currency,        type: Integer
   field :conversion_rate, type: Integer
   field :third_party,     type: String
 
@@ -20,10 +21,6 @@ class Pack::Report::Preseizure
     year = piece.name.split(' ')[2][0..3]
     month = piece.name.split(' ')[2][4..5]
     Time.local(year,month,1)
-  end
-
-  def self.to_csv
-    self.by_position.map { |preseizure| preseizure.accounts.to_csv }.join("\n")
   end
 
   def self.by_position

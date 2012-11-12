@@ -119,7 +119,7 @@ class Pack::Report
                       preseizure                 = Pack::Report::Preseizure.new
                       preseizure.piece           = piece
                       preseizure.piece_number    = part.css('numero_piece').first.try(:content)
-                      preseizure.amount          = part.css('montant').first.try(:content)
+                      preseizure.amount          = part.css('montant_origine').first.try(:content)
                       preseizure.currency        = part.css('devise').first.try(:content)
                       preseizure.conversion_rate = part.css('taux_conversion').first.try(:content)
                       preseizure.third_party     = part.css('tiers').first.try(:content)
@@ -129,14 +129,29 @@ class Pack::Report
                       preseizure.position        = index + 1
                       preseizure.save
                       report.preseizures << preseizure
-                      part.css('account').each_with_index do |account,index|
+                      part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new
-                        paccount.title      = account['title']
+                        paccount.type       = Pack::Report::Preseizure::Account.get_type(account['type'])
                         paccount.number     = account['number']
-                        paccount.credit     = to_float(account.css('credit').first.try(:content))
-                        paccount.debit      = to_float(account.css('debit').first.try(:content))
                         paccount.lettering  = account.css('lettrage').first.try(:content)
-                        paccount.position   = index + 1
+                        account.css('debit').each do |debit|
+                          entry        = Pack::Report::Preseizure::Entry.new
+                          entry.type   = Pack::Report::Preseizure::Entry::DEBIT
+                          entry.number = debit['number'].to_i
+                          entry.amount = to_float(debit.content)
+                          entry.save
+                          paccount.entries << entry
+                          preseizure.entries << entry
+                        end
+                        account.css('credit').each do |credit|
+                          entry        = Pack::Report::Preseizure::Entry.new
+                          entry.type   = Pack::Report::Preseizure::Entry::CREDIT
+                          entry.number = credit['number'].to_i
+                          entry.amount = to_float(credit.content)
+                          entry.save
+                          paccount.entries << entry
+                          preseizure.entries << entry
+                        end
                         paccount.save
                         preseizure.accounts << paccount
                       end

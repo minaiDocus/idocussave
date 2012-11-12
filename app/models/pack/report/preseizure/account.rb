@@ -2,34 +2,26 @@ class Pack::Report::Preseizure::Account
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :accounts
+  referenced_in   :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
+  references_many :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :delete
 
-  field :title,     type: String
+  field :type,      type: Integer # TTC / HT / TVA
   field :number,    type: String
-  field :credit,    type: Float
-  field :debit,     type: Float
   field :lettering, type: String
-  field :position,  type: Integer
 
-  def self.to_csv
-    self.by_position.map(&:to_csv).join("\n")
-  end
-
-  def to_csv
-    [
-      preseizure.date.try(:strftime,'%d/%m/%Y'),
-      preseizure.report.type,
-      number,
-      debit,
-      credit,
-      title,
-      preseizure.piece.try(:name).try(:gsub,' ','_'),
-      lettering,
-      preseizure.deadline_date.try(:strftime,'%d/%m/%Y')
-    ].join(';')
+  def self.get_type(txt)
+    if txt == "TTC"
+      1
+    elsif txt == "HT"
+      2
+    elsif txt == "TVA"
+      3
+    else
+      nil
+    end
   end
 
   def self.by_position
-    asc(:position)
+    asc(:type)
   end
 end
