@@ -60,7 +60,7 @@ class CsvOutputter
         when /^conversion_rate$/
           entry.preseizure.conversion_rate
         when /^piece_url$/
-          entry.preseizure.piece.get_access_url
+          'http://www.idocus.com'+entry.preseizure.piece.get_access_url
         when /^remark$/
           entry.preseizure.observation
         when /^third_party$/
