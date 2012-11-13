@@ -26,21 +26,22 @@ set :repository_cache, "git_cache"
 set :copy_exclude, [".svn", ".DS_Store", ".git"]
 
 before "deploy", "deploy:setup", "shared:mkdir"
+before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"
-after "deploy:symlink", "shared:symlink"
+before "deploy:symlink", "shared:symlink"
 after "deploy", "deploy:cleanup"
 
 namespace :shared do
   desc "Make symlink"
   task :symlink do
-    run "ln -nfs #{shared_path}/config/mongoid.yml #{deploy_to}/current/config/mongoid.yml"
-    run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{deploy_to}/current/config/initializers/address_delivery_list.rb"
-    run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{deploy_to}/current/config/initializers/error_notification.rb"
-    run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{deploy_to}/current/config/initializers/fix_ssl.rb"
-    run "ln -nfs #{shared_path}/config/initializers/invoice_config.rb #{deploy_to}/current/config/initializers/invoice_config.rb"
-    run "ln -nfs #{shared_path}/public/system #{deploy_to}/current/public/system"
-    run "ln -s #{shared_path}/data #{deploy_to}/current/data"
-    run "ln -s #{shared_path}/files #{deploy_to}/current/files"
+    run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
+    run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
+    run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{release_path}/config/initializers/error_notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
+    run "ln -nfs #{shared_path}/config/initializers/invoice_config.rb #{release_path}/config/initializers/invoice_config.rb"
+    run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
+    run "ln -s #{shared_path}/data #{release_path}/data"
+    run "ln -s #{shared_path}/files #{release_path}/files"
   end
 
   desc "Create necessary directories"
@@ -81,6 +82,13 @@ end
 
 namespace :deploy do
   %w(start restart).each { |name| task name, :roles => :app do mod_rails.restart end }
+end
+
+namespace :git do
+  desc "Push code to origin"
+  task :push, :roles => :app do
+    %x(git push origin master)
+  end
 end
 
 namespace :delayed_job do
