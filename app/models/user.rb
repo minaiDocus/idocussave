@@ -57,6 +57,7 @@ class User
   field :is_reminder_email_active,       type: Boolean, default: true
 
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
+  field :is_stamp_background_filled,     type: Boolean, default: false
 
   attr_accessor :client_ids, :is_inactive
 
@@ -198,6 +199,12 @@ class User
 
   def csv_outputter!
     csv_outputter || CsvOutputter.create(user_id: self.id)
+  end
+
+  def propagate_stamp_background
+    if self.is_prescriber
+      self.clients.each { |client| client.update_attribute(:is_stamp_background_filled, self.is_stamp_background_filled) }
+    end
   end
   
 protected

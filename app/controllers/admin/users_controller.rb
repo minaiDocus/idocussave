@@ -66,6 +66,17 @@ class Admin::UsersController < Admin::AdminController
         end
     end
   end
+
+  def propagate_stamp_background
+    @user = User.find params[:id]
+    respond_to do |format|
+      if @user.propagate_stamp_background
+        format.json{ render json: {}, status: :ok }
+      else
+        format.json{ render json: {}, status: :unprocessable_entity }
+      end
+    end
+  end
   
   private
 

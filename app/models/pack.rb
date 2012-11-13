@@ -334,7 +334,7 @@ class Pack
       
       #  Renommage des fichiers.
       start_at_page = pack.divisions.pieces.count + 1
-      filesname = apply_new_name(filesname, start_at_page, user.stamp_name, is_an_upload)
+      filesname = apply_new_name(filesname, start_at_page, user.stamp_name, user.is_stamp_background_filled, is_an_upload)
 
       piece_position = pack.pieces_info.last.position + 1 rescue 1
       sheet_position = pack.sheets_info.last.position + 1 rescue 1
@@ -475,12 +475,12 @@ class Pack
       File.delete name + ".pdf" rescue nil
     end
   
-    def apply_new_name(filesname, starting_page, stamp_name, is_an_upload)
+    def apply_new_name(filesname, starting_page, stamp_name, is_stamp_background_filled, is_an_upload)
       filesname.each { |filename| File.rename filename, filename + "_"  }
       start = starting_page
       filesname.map do |filename|
         new_filename = generate_new_name(filename,(start += 1) - 1)
-        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_an_upload)
+        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
         system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
         system "rm #{filename}_"
         new_filename
@@ -492,15 +492,22 @@ class Pack
       filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
     end
     
-    def generate_stamp(text, stamp_name, is_an_upload)
+    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename)
+      filepath = './' + filename + '_'
+      size = Poppler::Document.new(filepath).pages[0].size
       txt = generate_stamp_name(text,stamp_name,is_an_upload)
-      
-      Prawn::Document.generate STAMP_PATH, :margin => 0 do
-        bounding_box([0, bounds.height - 5], :width => bounds.width, :height => 30) do
-          fill_color "FF0000"
-          text txt, :size => 10, :align => :center
+        Prawn::Document.generate STAMP_PATH, page_size: size, top_margin: 10 do
+          if is_stamp_background_filled
+            bounding_box([0, bounds.height], :width => bounds.width) do
+              data = [[txt]]
+              stroke_color "ffffff"
+              fill_color "ffffff"
+              table(data, row_colors: ["FF0000"], position: :center, font_size: 10 )
+            end
+          else
+            text txt, size: 10, :align => :center, :color => "FFFFFF"
+          end
         end
-      end
       STAMP_PATH
     end
   
@@ -509,7 +516,7 @@ class Pack
       info = text.split(' ')
       
       origin = is_an_upload ? "INF" : "PAP"
-      
+     
       txt.gsub(':code', info[0]).
       gsub(':account_book', info[1]).
       gsub(':period', info[2]).
