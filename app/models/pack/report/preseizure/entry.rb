@@ -14,7 +14,6 @@ class Pack::Report::Preseizure::Entry
   field :amount, type: Float
 
   validates_presence_of :type
-  validates_presence_of :amount
 
   def get_debit
     type == DEBIT ? amount : nil
