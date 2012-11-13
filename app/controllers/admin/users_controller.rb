@@ -101,6 +101,7 @@ class Admin::UsersController < Admin::AdminController
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
+    users = users.where(:prescriber_id => contains[:prescriber_id]) unless contains[:prescriber_id].blank?
     users
   end
 end
