@@ -33,6 +33,7 @@ GEM
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
+    anjlab-tesseract (0.1.1)
     archive-tar-minitar (0.5.2)
     arel (3.0.2)
     atk (1.1.5)
@@ -360,6 +361,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  anjlab-tesseract
   barby
   bootstrap-datepicker-rails
   box-api

@@ -186,9 +186,34 @@ class Document
   handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 0
 
   def extract_content!
+    if self.content.queued_for_write[:original]
+      path = self.content.queued_for_write[:original].path
+    else
+      path = self.content.path
+    end
     receiver = Receiver.new
-    result = PDF::Reader.file(self.content.path,receiver) rescue false
-    self.content_text = receiver.text.presence || "-[none]" if result
+    result = PDF::Reader.file(path,receiver) rescue false
+    if result
+      self.content_text = receiver.text.presence || "-[none]"
+    else
+      self.content_text = "-[none]"
+    end
+    if self.is_an_upload && self.content_text == "-[none]"
+      imagepath = "#{Rails.root}/tmp/image.tif"
+      system "convert -density 100 #{path} -colorspace Gray -depth 8 -alpha off #{imagepath}"
+      tess = Tesseract::Process.new(imagepath, lang: :fra )
+      words = tess.to_s.split(/\n/).join(' ').split(' ').uniq.select { |e| e.size > 1 }
+      self.content_text = ''
+      words.each do |word|
+        if Dictionary.find_one(word)
+          self.content_text += ' ' + word
+        end
+      end
+      File.delete(imagepath)
+      unless self.content_text.presence
+        self.content_text = " "
+      end
+    end
     save
   end
   handle_asynchronously :extract_content!, queue: 'documents content', priority: 10
