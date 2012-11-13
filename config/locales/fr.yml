@@ -278,6 +278,7 @@ fr:
           is_detail_authorized: 'Autoriser les détails ?'
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
+          prescriber: 'Prescripteur'
       address:
         zero: '0 adresses'
         one: '1 addresse'

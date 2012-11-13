@@ -294,10 +294,12 @@ class Scan::Period
     lists = []
     product_option_orders.by_position.each do |option|
       list = {}
-      list[:group_title] = option.group_title
-      list[:title] = option.title
-      list[:price] = format_price option.price_in_cents_wo_vat
-      lists << list
+      if option.position != -1
+        list[:group_title] = option.group_title
+        list[:title] = option.title
+        list[:price] = format_price option.price_in_cents_wo_vat
+        lists << list
+      end
     end
     invoice_link = ""
     invoice_number = ""

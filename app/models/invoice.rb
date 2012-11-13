@@ -52,7 +52,9 @@ class Invoice
       period = scan_subscription.find_or_create_period(time)
       options = period.product_option_orders
       options.each do |option|
-        @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+        if option.position != -1
+          @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+        end
       end
       @data << ["Dépassement",format_price(period.price_in_cents_of_total_excess) + " €"]
       @total += period.price_in_cents_wo_vat
