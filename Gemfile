@@ -36,6 +36,7 @@ gem 'bootstrap-datepicker-rails'
 gem 'google_drive'
 gem 'box-api'
 gem 'poppler'
+gem 'prawn-layout'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
