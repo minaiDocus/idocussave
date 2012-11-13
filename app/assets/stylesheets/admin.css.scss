@@ -191,9 +191,11 @@ table {
   top: 50%;
   left: 50%;
   display: none;
-  width: 816px;
-  margin: -220px 0 0 -408px !important; }
+  width: 900px;
+  margin: -300px 0 0 -450px !important; }
 #edit_csv_outputter .modal-body {
+  height: 490px;
+  max-height: 490px;
   overflow-y: scroll; }
 #edit_csv_outputter .box {
   border: 2px dashed grey;
@@ -209,7 +211,9 @@ table {
   width: auto;
   margin-bottom: 0; }
 #edit_csv_outputter input {
-  width: 200px;
+  width: 252px;
   margin-bottom: 0; }
 #edit_csv_outputter input[name=format] {
   width: 73px; }
+#edit_csv_outputter input, #edit_csv_outputter select {
+  font-size: 10px; }
