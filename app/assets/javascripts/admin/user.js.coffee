@@ -243,6 +243,13 @@ get_propagate_stamp_name = ->
     data: '',
     datatype: 'json',
     type: 'GET'
+
+get_propagate_stamp_background = ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/propagate_stamp_background',
+    data: '',
+    datatype: 'json',
+    type: 'GET'
   
 toggle_prescriber_options = ->
   if $('#user_is_prescriber').is(':checked')
@@ -363,4 +370,10 @@ jQuery ->
     value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
     if(value)
       get_propagate_stamp_name()
+    return false
+
+  $('#stamp_background_propagation').click ->
+    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
+    if(value)
+      get_propagate_stamp_background()
     return false

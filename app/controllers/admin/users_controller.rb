@@ -66,6 +66,17 @@ class Admin::UsersController < Admin::AdminController
         end
     end
   end
+
+  def propagate_stamp_background
+    @user = User.find params[:id]
+    respond_to do |format|
+      if @user.propagate_stamp_background
+        format.json{ render json: {}, status: :ok }
+      else
+        format.json{ render json: {}, status: :unprocessable_entity }
+      end
+    end
+  end
   
   private
 
@@ -101,6 +112,7 @@ class Admin::UsersController < Admin::AdminController
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
+    users = users.where(:prescriber_id => contains[:prescriber_id]) unless contains[:prescriber_id].blank?
     users
   end
 end

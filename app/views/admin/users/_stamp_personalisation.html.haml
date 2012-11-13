@@ -6,5 +6,13 @@
       %tr
         %th Nom
         %td
-          #stamp_propagation.pull-right= link_to icon_globe, '#', title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' }
           = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }
+        %td
+          #stamp_propagation.pull-right= link_to icon_globe, '#', title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' }
+      %tr
+        %th Fond présent ?
+        %td= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled
+        %td
+          #stamp_background_propagation.pull-right= link_to icon_globe, '#', title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' }
+         
+        

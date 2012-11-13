@@ -35,6 +35,7 @@ gem 'nested_form'
 gem 'bootstrap-datepicker-rails'
 gem 'google_drive'
 gem 'box-api'
+gem 'poppler'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
