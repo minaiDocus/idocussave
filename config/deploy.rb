@@ -127,8 +127,7 @@ namespace :maintenance do
 
   desc "Stop maintenance process"
   task :stop, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl stop"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/pack_delivery_ctl stop"
+    run "cd #{current_path}; touch tmp/stop_maintenance.txt"
   end
 
   desc "Restart maintenance process"
