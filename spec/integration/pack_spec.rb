@@ -23,7 +23,7 @@ describe "get_documents" do
         pdf.text "Page 2"
       end
     end
-    Pack.get_documents
+    Pack.get_documents([])
   end
 
   after(:each) do
@@ -67,7 +67,7 @@ describe "get_documents" do
           pdf.text "Page 2"
         end
       end
-      Pack.get_documents
+      Pack.get_documents([])
       pack = Pack.find_by_name(@name)
       ss = @user.scan_subscriptions.last
       period = ss.periods.first
