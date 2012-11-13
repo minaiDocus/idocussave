@@ -59,7 +59,7 @@ class CsvOutputter
         when /^currency$/
           entry.preseizure.currency
         when /^conversion_rate$/
-          entry.preseizure.conversion_rate
+          "%0.3f" % entry.preseizure.conversion_rate rescue ""
         when /^piece_url$/
           'http://www.idocus.com'+entry.preseizure.piece.get_access_url
         when /^remark$/
