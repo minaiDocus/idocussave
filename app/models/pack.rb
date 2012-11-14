@@ -505,7 +505,8 @@ class Pack
               table(data, row_colors: ["FF0000"], position: :center, font_size: 10 )
             end
           else
-            text txt, size: 10, :align => :center, :color => "FFFFFF"
+            fill_color "ff0000"
+            text txt, size: 10, :align => :center
           end
         end
       STAMP_PATH

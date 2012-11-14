@@ -13,6 +13,10 @@ Signal.trap("TERM") do
 end
 
 while($running) do
+  unless @filetime
+    @filetime = File.atime(File.join(Rails.root,'tmp','stop_maintenance.txt')) rescue Time.now
+  end
+
   filesname = RegroupSheet::process
   data = []
   data += Pack.get_documents(filesname)
@@ -21,6 +25,14 @@ while($running) do
   data.uniq!
   Pack.deliver_mail(data)
   ReminderEmail.deliver
-  
-  sleep(1800)
+
+  time = Time.now
+  while $running && (Time.now < (time + 30.minutes))
+    sleep(1)
+    new_filetime = File.atime(File.join(Rails.root,'tmp','stop_maintenance.txt')) rescue @filetime
+    if @filetime < new_filetime
+      $running = false
+      puts "[stopped by user]"
+    end
+  end
 end

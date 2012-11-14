@@ -25,6 +25,7 @@ gem 'rack-raw-upload'
 gem 'pdf-reader'
 gem 'savon_model'
 gem 'prawn'
+gem 'prawn-layout'
 gem 'to_xls'
 gem 'barby'
 gem 'chunky_png' # required by barby

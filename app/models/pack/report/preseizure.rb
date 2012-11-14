@@ -12,9 +12,9 @@ class Pack::Report::Preseizure
   field :observation,     type: String
   field :position,        type: Integer
   field :piece_number,    type: Integer
-  field :amount,          type: Integer
-  field :currency,        type: Integer
-  field :conversion_rate, type: Integer
+  field :amount,          type: Float
+  field :currency,        type: String
+  field :conversion_rate, type: Float
   field :third_party,     type: String
 
   def period_date

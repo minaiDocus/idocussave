@@ -119,9 +119,9 @@ class Pack::Report
                       preseizure                 = Pack::Report::Preseizure.new
                       preseizure.piece           = piece
                       preseizure.piece_number    = part.css('numero_piece').first.try(:content)
-                      preseizure.amount          = part.css('montant_origine').first.try(:content)
+                      preseizure.amount          = to_float(part.css('montant_origine').first.try(:content))
                       preseizure.currency        = part.css('devise').first.try(:content)
-                      preseizure.conversion_rate = part.css('taux_conversion').first.try(:content)
+                      preseizure.conversion_rate = to_float(part.css('taux_conversion').first.try(:content))
                       preseizure.third_party     = part.css('tiers').first.try(:content)
                       preseizure.date            = part.css('date').first.try(:content).try(:to_date)
                       preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
