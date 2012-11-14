@@ -13,8 +13,13 @@ Signal.trap("TERM") do
 end
 
 while($running) do
+  filepath = File.join(Rails.root,'tmp','stop_maintenance.txt')
   unless @filetime
-    @filetime = File.atime(File.join(Rails.root,'tmp','stop_maintenance.txt')) rescue Time.now
+    if File.exist? filepath
+      @filetime = File.atime(filepath)
+    else
+      @filetime = Time.now
+    end
   end
 
   Delivery::Queue.run
@@ -22,7 +27,11 @@ while($running) do
   time = Time.now
   while $running && (Time.now < (time + 60))
     sleep(1)
-    new_filetime = File.atime(File.join(Rails.root,'tmp','stop_maintenance.txt')) rescue @filetime
+    if File.exist? filepath
+      new_filetime = File.atime(filepath)
+    else
+      new_filetime = @filetime
+    end
     if @filetime < new_filetime
       $running = false
       puts "[stopped by user]"
