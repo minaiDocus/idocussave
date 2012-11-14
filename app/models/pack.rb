@@ -259,9 +259,8 @@ class Pack
             account_book_type = nil
             account_book_type = user.account_book_types.where(name: journal).first if user
             if account_book_type && account_book_type.compta_processable?
-              basename = [info[0],info[1],info[2]].join('_')
-              FileUtils.mkdir_p(File.join([path, basename]))
-              FileUtils.cp(filename,File.join([path, basename, filename]))
+              FileUtils.mkdir_p(path)
+              FileUtils.cp(filename,File.join([path, filename]))
               FileUtils.cp(filename,File.join([cached_path, filename]))
             else
               FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
