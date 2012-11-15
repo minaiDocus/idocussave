@@ -50,7 +50,11 @@ class Pack::Piece
     account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
     if account_book_type && account_book_type.compta_processable?
       compta_type = account_book_type.compta_type
-      path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
+      if self.is_an_upload
+        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'uploads',compta_type])
+      else
+        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
+      end
       filename = ''
       if compta_type == 'CB'
         filename = self.name.gsub(' ','_') + '_' + account_book_type.account_number + '_' + account_book_type.charge_account + '.pdf'
