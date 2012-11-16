@@ -48,6 +48,10 @@ class Scan::Period
   
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
+
+  def scanned_pages
+    self.pages - self.uploaded_pages
+  end
   
   def price_in_cents_w_vat
     self.price_in_cents_wo_vat * tva_ratio

@@ -86,15 +86,17 @@
                   %td.align-middle.block{ :colspan => period.duration }
                     %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
                       .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
-                        - if period.delivery.state == "wait"
+                        - if period.scanned_pages == 0 && period.uploaded_pages == 0
                           - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
-                          .badge.badge-important.pull-left
+                          .delivery_state.back_red
                         - elsif period.delivery.state == "received"
                           - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
-                          .badge.badge-warning.pull-left
-                        - elsif period.delivery.state == "delivered"
+                          .delivery_state.back_orange
+                        - else
                           - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
-                          .badge.badge-success.pull-left
+                          .delivery_state
+                            .half-delivery_state.left{ class: (period.scanned_pages > 0 ? 'received' : 'not_received') }
+                            .half-delivery_state.right{ class: (period.uploaded_pages > 0 ? 'received' : 'not_received') }
                         - period.documents_name_tags.each do |tags|
                           %span{ :class => tags }
                         .value
@@ -217,23 +219,33 @@
                 %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                   #{month}
 
-.modal.fade{ :id=>"legendModal" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3{ :style => "text-align:center;" }
-      Légende
-  .modal-body
-    %span.badge.badge-important
-    \: Documents papier attendus
-    %br
-    %br
-    %span.badge.badge-warning
-    \: Documents papier reçus
-    %br
-    %br
-    %span.badge.badge-success
-    \: Documents papier traités
-    %br
+  .modal.fade{ :id=>"legendModal" }
+    .modal-header
+      %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %h3{ :style => "text-align:center;" }
+        Légende
+    .modal-body
+      %span.badge.badge-important
+      \: Aucun documents reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.received
+        .half-delivery_state.right.not_received
+      \: Documents papier reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.not_received
+        .half-delivery_state.right.received
+      \: Documents téléversés reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.received
+        .half-delivery_state.right.received
+      \: Documents papier reçus et document téléversés reçus
+      %br
 
 .modal.fade{ :id=>"periodModal" }
   .modal-header
