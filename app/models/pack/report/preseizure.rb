@@ -11,7 +11,7 @@ class Pack::Report::Preseizure
   field :deadline_date,   type: Time
   field :observation,     type: String
   field :position,        type: Integer
-  field :piece_number,    type: Integer
+  field :piece_number,    type: String
   field :amount,          type: Float
   field :currency,        type: String
   field :conversion_rate, type: Float
