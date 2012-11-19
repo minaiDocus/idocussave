@@ -81,12 +81,7 @@ class TheBox
   
   def is_up_to_date?(folder, filepath)
     filename = File.basename(filepath)
-    begin
-      results = folder.files.select { |e| e.name == filename }
-    rescue => e
-      Delivery::Error.create(sender: 'Box', state: 'searching', filepath: "#{File.join([path,filename])}", message: e.message, user_id: external_file_storage.user.id)
-      results = []
-    end
+    results = folder.files.select { |e| e.name == filename }
     if results.any?
       size = results.first.data["size"].to_i
       if size == File.size(filepath)
@@ -117,26 +112,33 @@ class TheBox
     folder
   end
 
-  def deliver(filespath, delivery_path)
-    clean_path = delivery_path.sub(/\/$/,"")
-    folder = find_or_create_folder(clean_path)
-    if folder
-      filespath.each do |filepath|
-        filename = File.basename(filepath)
-        tries = 0
-        begin
-          if is_not_up_to_date?(folder,filepath)
-            print "sending #{clean_path}/#{filename} ..."
-            folder.upload(filename)
+  def sync(remote_files)
+    remote_files.each_with_index do |remote_file,index|
+      @remote_path ||= ExternalFileStorage::delivery_path(remote_file, self.path)
+      remote_filepath = File.join(@remote_path,remote_file.local_name)
+      tries = 0
+      begin
+        @folder ||= find_or_create_folder(@remote_path)
+        if @folder
+          remote_file.sending!(remote_filepath)
+          print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
+          if is_not_up_to_date?(@folder,remote_file.local_path)
+            print "sending..."
+            @folder.upload(remote_file.local_path)
             print "done\n"
+          else
+            print "is up to date\n"
           end
-        rescue Timeout::Error
-          tries += 1
-          print "failed\n"
-          puts "Trying again!"
-          retry if tries <= 3
-        rescue => e
-          Delivery::Error.create(sender: 'Box', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e.message, user_id: external_file_storage.user.id)
+          remote_file.synced!
+        end
+      rescue => e
+        tries += 1
+        print "failed : [#{e.class}] #{e.message}\n"
+        if tries < 3
+          retry
+        else
+          puts "\t[#{'%0.3d' % (index+1)}] Retrying later"
+          remote_file.not_synced!("[#{e.class}] #{e.message}")
         end
       end
     end

@@ -22,10 +22,10 @@ while($running) do
     end
   end
 
-  Delivery::Queue.run
+  Delivery::process('gdr')
 
   time = Time.now
-  while $running && (Time.now < (time + 60))
+  while $running && (Time.now < (time + 10))
     sleep(1)
     if File.exist? filepath
       new_filetime = File.atime(filepath)

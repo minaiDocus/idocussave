@@ -3,7 +3,7 @@ class ExternalFileStorage
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  SERVICES = ["Dropbox","Google Drive","FTP", "Box"]
+  SERVICES = ["Dropbox","Dropbox Extended","Google Drive","FTP", "Box"]
   
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
@@ -91,16 +91,18 @@ class ExternalFileStorage
   
   def services_authorized
     services  = []
-    services << "Dropbox" if authorized & F_DROPBOX > 0
-    services << "Google Drive" if authorized & F_GOOGLE_DOCS > 0
-    services << "FTP" if authorized & F_FTP > 0
-    services << "BOX" if authorized & F_BOX > 0
+    services << "Dropbox"          if authorized & F_DROPBOX > 0
+    services << "Dropbox Extended" if user.is_dropbox_extended_authorized
+    services << "Google Drive"     if authorized & F_GOOGLE_DOCS > 0
+    services << "FTP"              if authorized & F_FTP > 0
+    services << "Box"              if authorized & F_BOX > 0
     services.join(", ")
   end
   
   def services_authorized_count
     nb = 0
     nb += 1 if authorized & F_DROPBOX > 0
+    nb += 1 if user.is_dropbox_extended_authorized
     nb += 1 if authorized & F_GOOGLE_DOCS > 0
     nb += 1 if authorized & F_FTP > 0
     nb += 1 if authorized & F_BOX > 0
@@ -125,69 +127,34 @@ class ExternalFileStorage
   end
   
   def services_used
-    services  = []
-    services << "Dropbox" if used & F_DROPBOX > 0
-    services << "Google Drive" if used & F_GOOGLE_DOCS > 0
-    services << "FTP" if used & F_FTP > 0
-    services << "BOX" if used & F_BOX > 0
-    services.join(", ")
+    active_services_name.join(", ")
   end
   
   def services_used_count
     nb = 0
     nb += 1 if used & F_DROPBOX > 0
+    nb += 1 if user.is_dropbox_extended_authorized
     nb += 1 if used & F_GOOGLE_DOCS > 0
     nb += 1 if used & F_FTP > 0
     nb += 1 if used & F_BOX > 0
     nb
   end
-  
-  def deliver(filespath, info_path={}, flags=used)
-    is_ok = true
-    filespath.each do |filepath|
-      unless File.exist? filepath
-        is_ok = false
-      end
-    end
-    if is_ok
-      trusted_flags =  authorized & used & flags
-      delivery_path = ""
-      
-      if trusted_flags & F_DROPBOX > 0
-        if dropbox_basic and is_authorized?(F_DROPBOX) and dropbox_basic.is_configured?
-          delivery_path = is_path_used ? path : dropbox_basic.path
-          delivery_path = static_path(delivery_path,info_path)
-          dropbox_basic.deliver filespath, delivery_path
-        end
-      end
-      
-      if trusted_flags & F_GOOGLE_DOCS > 0
-        if google_doc and is_authorized?(F_GOOGLE_DOCS) and google_doc.is_configured?
-          delivery_path = is_path_used ? path : google_doc.path
-          delivery_path = static_path(delivery_path,info_path)
-          google_doc.deliver(filespath, delivery_path)
-        end
-      end
-      
-      if trusted_flags & F_FTP > 0
-        if ftp and is_authorized?(F_FTP) and ftp.is_configured?
-          delivery_path = is_path_used ? path : ftp.path
-          delivery_path = static_path(delivery_path,info_path)
-          ftp.deliver(filespath, delivery_path)
-        end
-      end
-      
-      if trusted_flags & F_BOX > 0
-        if the_box and is_authorized?(F_BOX) and the_box.is_configured?
-          delivery_path = is_path_used ? path : the_box.path
-          delivery_path = static_path(delivery_path,info_path)
-          the_box.deliver(filespath, delivery_path)
-        end
-      end
-    end
+
+  def active_services_name
+    services  = []
+    services << "Dropbox"          if authorized & used & F_DROPBOX     > 0
+    services << "Dropbox Extended" if user.is_dropbox_extended_authorized
+    services << "Google Drive"     if authorized & used & F_GOOGLE_DOCS > 0
+    services << "FTP"              if authorized & used & F_FTP         > 0
+    services << "Box"              if authorized & used & F_BOX         > 0
+    services
   end
-  
-  def static_path(path, info_path)
+
+  def dropbox_extended
+    DropboxExtended if user.is_dropbox_extended_authorized
+  end
+
+  def self.static_path(path, info_path)
     path.gsub(":code",info_path[:code]).
     gsub(":company",info_path[:company]).
     gsub(":account_book",info_path[:account_book]).
@@ -195,7 +162,12 @@ class ExternalFileStorage
     gsub(":month",info_path[:month]).
     gsub(":delivery_date",info_path[:delivery_date])
   end
-  
+
+  def self.delivery_path(remote_file, pseudo_path)
+    info_path = Pack.info_path(remote_file.local_name,remote_file.user)
+    static_path(pseudo_path.sub(/\/$/,""),info_path)
+  end
+
   protected
 
   def init_services

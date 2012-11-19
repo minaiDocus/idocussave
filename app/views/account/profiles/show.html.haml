@@ -217,6 +217,7 @@
             %a{ :class=>"close", "data-dismiss"=>"modal" } ×
             %h3 Configuration du service FTP
           %form.margin0bottom{ :action => configure_account_ftp_path, :method => "POST" }
+            != hidden_field_tag "authenticity_token", form_authenticity_token
             .modal-body
               %table
                 %tr

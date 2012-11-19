@@ -17,6 +17,7 @@ class Document
   field :token,              type: String
 
   references_many :document_tags, dependent: :destroy
+  references_many :remote_files, as: :remotable, dependent: :destroy
   referenced_in :pack
 
   has_mongoid_attached_file :content,
@@ -64,6 +65,19 @@ class Document
 
   def get_access_url(style=:original)
     content.url(style) + "&token=" + get_token
+  end
+
+  def get_remote_file(user,service_name)
+    remote_file = remote_files.of(user,service_name).first
+    unless remote_file
+      remote_file = RemoteFile.new
+      remote_file.user = user
+      remote_file.remotable = self
+      remote_file.pack = self.pack
+      remote_file.service_name = service_name
+      remote_file.save
+    end
+    remote_file
   end
 
   protected

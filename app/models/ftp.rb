@@ -1,4 +1,6 @@
 # -*- encoding : UTF-8 -*-
+require "net/ftp"
+
 class Ftp
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -20,7 +22,7 @@ class Ftp
 
   def client
     if is_configured?
-      Net::FTP.new(host.sub(/^ftp:\/\//,''), login, password)
+      @ftp ||= Net::FTP.new(host.sub(/^ftp:\/\//,''), login, password)
     else
       nil
     end
@@ -49,17 +51,17 @@ class Ftp
     self.is_configured
   end
   
-  def change_or_make_dir(pathname, ftp)
+  def change_or_make_dir(pathname)
     folders = pathname.split("/").reject { |e| e.empty? }
     folders.each do |folder|
-      ftp.mkdir(folder) rescue nil
-      ftp.chdir(folder)
+      client.mkdir(folder) rescue nil
+      client.chdir(folder)
     end
   end
   
-  def is_updated(filepath, ftp)
+  def is_updated(filepath)
     filename = File.basename(filepath)
-    result = ftp.list.select { |entry| entry.match(/#{filename}/) }.first
+    result = client.list.select { |entry| entry.match(/#{filename}/) }.first
     if result
       size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
       if size == File.size(filepath)
@@ -72,37 +74,45 @@ class Ftp
     end
   end
   
-  def is_not_updated(filepath, ftp)
-    !is_updated(filepath, ftp)
+  def is_not_updated(filepath)
+    !is_updated(filepath)
   end
-  
-  def deliver(filespath, folder_path)
-    clean_path = folder_path.sub(/\/$/,"")
-    
-    require "net/ftp"
-    
-    Net::FTP.open(host.sub(/^ftp:\/\//,'')) do |ftp|
-      ftp.login(login,password)
-      change_or_make_dir(clean_path, ftp)
-      filespath.each do |filepath|
-        filename = File.basename(filepath)
+
+  def sync(remote_files)
+    remote_files.each_with_index do |remote_file,index|
+      @remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, self.path)
+      is_ok = true
+      begin
+        change_or_make_dir(@remote_path)
+      rescue => e
+        is_ok = false
+        remote_file.not_synced!("[#{e.class}] #{e.message}")
+      end
+      if is_ok
+        remote_filepath = File.join(@remote_path,remote_file.local_name)
         tries = 0
         begin
-          if is_not_updated(filepath, ftp)
-            print "sending #{filepath} ..."
-            ftp.put(filepath)
+          remote_file.sending!(remote_filepath)
+          print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
+          if is_not_updated(remote_file.local_path)
+            print "sending..."
+            client.put(remote_file.local_path)
             print "done\n"
+          else
+            print "is up to date\n"
           end
-        rescue Timeout::Error
-          tries += 1
-          print "failed\n"
-          puts "Trying again!"
-          retry if tries < 3
+          remote_file.synced!
         rescue => e
-          Delivery::Error.create(sender: 'FTP', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e.message, user_id: external_file_storage.user)
+          tries += 1
+          print "failed : [#{e.class}] #{e.message}\n"
+          if tries < 3
+            retry
+          else
+            puts "\t[#{'%0.3d' % (index+1)}] Retrying later"
+            remote_file.not_synced!("[#{e.class}] #{e.message}")
+          end
         end
       end
-      true
     end
   end
 end
