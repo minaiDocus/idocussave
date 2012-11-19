@@ -36,7 +36,7 @@ module RegroupSheet
           end
         end
       end
-      File.new(File.join(RegroupSheet::INFOS_PATH,filename.sub('.xml','.txt')))
+      File.new(File.join(RegroupSheet::INFOS_PATH,filename.sub('.xml','.txt')),'w')
     end
     filesname
   end

@@ -10,7 +10,7 @@ class Pack
   references_and_referenced_in_many :users
 
   references_many :documents,                                                         dependent: :destroy
-  references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy
+  references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
   references_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
   references_many :document_tags,                                                     dependent: :destroy
   references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
@@ -467,7 +467,6 @@ class Pack
         piece.content = open(filename)
         piece.is_an_upload = is_an_upload
         piece.position = current_position
-        piece.save
         current_position += 1
       end
     end
