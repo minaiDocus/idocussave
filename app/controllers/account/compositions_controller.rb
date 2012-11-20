@@ -1,22 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::CompositionsController < Account::AccountController
-
-  before_filter :load_composition, :only => %w(destroy show reorder delete_document)
-
-protected
-
-  def load_composition
-    @composition = current_user.composition
-  end
-
-public
-
   def create
     params[:composition][:user_id] = current_user.id
     Composition.create_with_documents params[:composition]
-    composition = Composition.where(:user_id => current_user.id).first
     
-    @url = "/system/compositions/#{composition.id}/#{composition.name}.pdf"
+    @url = '/account/compositions/download'
     
     respond_to do |format|
       format.json do
@@ -25,27 +13,24 @@ public
     end
   end
 
-  def destroy
-    @composition.destroy
+  def download
+    @composition = current_user.composition
+    filepath = @composition.path
+    if File.exist?(filepath)
+      filename = File.basename(filepath)
+      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
+    else
+      render nothing: true, status: 404
+    end
+  end
+
+  def reset
+    @composition = current_user.composition
+    @composition.document_ids = []
+    @composition.save
     
     respond_to do |format|
       format.json{ render :json => @composition, :status => :ok }
-    end
-  end
-
-  def reorder
-    @composition.reorder params[:document_ids] if params[:document_ids].all?{|did| Document.find(did).user == current_user }
-
-    respond_to do |format|
-      format.json{ render :json => {}, :status => :ok }
-    end
-  end
-
-  def delete_document
-    @composition.delete_document params[:document_id]
-
-    respond_to do |format|
-      format.json{ render :json => {}, :status => :ok }
     end
   end
 end

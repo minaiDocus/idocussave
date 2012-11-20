@@ -8,6 +8,7 @@ Idocus::Application.routes.draw do
   match '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download', via: :get
   match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
   match '/account/invoices/:id/download/:style', controller: 'account/invoices', action: 'download', via: :get
+  match '/account/compositions/download', controller: 'account/compositions', action: 'download', via: :get
 
   namespace :account do
     root :to => "account/documents#index"
@@ -86,8 +87,7 @@ Idocus::Application.routes.draw do
       get 'return', :on => :member
     end
     resources :compositions do
-      post 'reorder', :on => :member
-      delete 'delete_document', :on => :member
+      delete 'reset', :on => :collection
     end
     resources :backups
   end

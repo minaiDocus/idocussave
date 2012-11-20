@@ -53,6 +53,7 @@ namespace :shared do
     run "mkdir -p #{shared_path}/files/tmp/uploads"
     run "mkdir -p #{shared_path}/files/kit"
     run "mkdir -p #{shared_path}/files/attachments/archives"
+    run "mkdir -p #{shared_path}/files/compositions"
   end
 
   desc "Prepare config files"

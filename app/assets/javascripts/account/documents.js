@@ -621,6 +621,22 @@
     $("a.removeAllSelection").click(function() {
       synchroniseRemovedSelection();
       $("#selectionlist .content ul").html("");
+      $.ajax({
+        url: '/account/compositions/reset',
+        data: { _method: 'DELETE' },
+        dataType: "json",
+        type: "POST",
+        beforeSend: function() {
+          logBeforeAction("Traitement en cours");
+        },
+        success: function(data){
+          logAfterAction();
+        },
+        error: function(data){
+          logAfterAction();
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue et l'administrateur a été informé.</span></div></div>");
+        }
+      });
     });
     
     $("#selectionlist .content ul").sortable({
