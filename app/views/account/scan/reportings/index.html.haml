@@ -11,9 +11,10 @@
           .row.margin1bottom
             .span11
               %form.margin0bottom{ :action => account_scan_reportings_path, :method => "GET" }
-                = label_tag :email, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
-                = text_field_tag :email, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => params[:email] ||= ""
+                = label_tag :code, "Voir le reporting de :", :class => "pull-left margin1right margin0bottom"
+                = text_field_tag :code, "", :class => "pull-left margin1right", :style => "margin-bottom:0;width:200px;height:13px;font-size:11px;", :value => params[:code] ||= ""
                 = submit_tag "valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+                = link_to "annuler", account_scan_reportings_path, class: 'btn margin0bottom', :style => "height:15px;padding-top:2px;"
           %hr.margin1top.margin1bottom
         .row
           .span2

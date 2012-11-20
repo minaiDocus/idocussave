@@ -3,9 +3,9 @@ class Account::Scan::ReportingsController < Account::AccountController
   layout "inner", :only => %w(index)
 
   def index
-    if params[:email] && current_user.is_admin
-      @user = User.find_by_email(params[:email])
-      flash[:notice] = "User unknow : #{params[:email]}" unless @user
+    if params[:code] && current_user.is_admin
+      @user = User.find_by_code(params[:code])
+      flash[:notice] = "User unknow : #{params[:code]}" unless @user
     end
     @user ||= current_user
 
