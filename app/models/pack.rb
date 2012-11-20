@@ -126,7 +126,7 @@ class Pack
         end
       end
       # report
-      if type.in? [Pack::ALL, Pack::REPORT] && report
+      if type.in?([Pack::ALL, Pack::REPORT]) && report
         current_remote_files + report.get_remote_files(user,service_name)
       end
     end
