@@ -28,6 +28,7 @@ while($running) do
   filesname = Pack.get_file_from_numen
   data += Pack.get_documents(filesname)
   data.uniq!
+  Pack::Report.fetch
   Pack.deliver_mail(data)
   ReminderEmail.deliver
 
