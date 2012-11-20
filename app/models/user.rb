@@ -174,14 +174,6 @@ class User
     find_or_create_external_file_storage
   end
 
-  def find_or_create_pack_delivery_list
-    if pack_delivery_list
-      pack_delivery_list
-    else
-      PackDeliveryList.create(user_id: self.id)
-    end
-  end
-
   def find_or_create_file_sending_kit
     if self.is_prescriber
       file_sending_kit || FileSendingKit.create(user_id: self.id, title: 'Title', logo_path: '/logo/path', left_logo_path: '/left/logo/path', right_logo_path: '/right/logo/path')

@@ -151,6 +151,12 @@
     var view = $("select[name=document_owner_list]").val();
     var per_page = $("select[name=per_page]").val();
     var page = typeof(PAGE) != 'undefined' ? PAGE : 1;
+
+    if (view == 'current_delivery') {
+      $('a.delivery').hide();
+    } else {
+      $('a.delivery').show();
+    }
     
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filtre;
     
@@ -171,7 +177,7 @@
         $("#panel1").show();
         
         packs_count = $("input[name=packs_count]").val();
-        $("#documentslist > .header > h3").text(packs_count + " documents");
+        $("#documentslist > .header > h3").text(packs_count + " document(s)");
         
         $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
         

@@ -1,4 +1,6 @@
 ﻿%ul.margin3top.margin0left
+  - if params[:view] == 'current_delivery'
+    %li.margin1bottom Fichier(s) restant(s) : #{@remaining_files}
   != render :partial => "pack", :collection => @packs
 
 .aligncenter

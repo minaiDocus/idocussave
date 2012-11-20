@@ -2,6 +2,10 @@
 class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
+
+  ALL           = 0
+  ORIGINAL_ONLY = 1
+  PIECES_ONLY   = 2
   
   FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
@@ -104,17 +108,21 @@ class Pack
     @events
   end
 
-  def init_delivery_for(user)
+  def init_delivery_for(user, type=Pack::ALL)
     current_remote_files = []
     efs = user.find_or_create_efs
     efs.active_services_name.each do |service_name|
       # original
-      remote_file = original_document.get_remote_file(user,service_name)
-      remote_file.waiting!
-      current_remote_files << remote_file
+      if type.in? [Pack::ALL, Pack::ORIGINAL_ONLY]
+        remote_file = original_document.get_remote_file(user,service_name)
+        remote_file.waiting!
+        current_remote_files << remote_file
+      end
       # pieces
-      self.pieces.each do |piece|
-        current_remote_files << piece.get_remote_file(user,service_name)
+      if type.in? [Pack::ALL, Pack::PIECES_ONLY]
+        self.pieces.each do |piece|
+          current_remote_files << piece.get_remote_file(user,service_name)
+        end
       end
       # report
       # TODO implement me

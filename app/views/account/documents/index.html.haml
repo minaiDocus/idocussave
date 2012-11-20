@@ -12,7 +12,7 @@
         = text_field_tag :filter, "", :id => :filter, :class => "pull-left"
         
         = label_tag :document_owner_list, "Afficher les documents :", :class => "pull-left margin1left"
-        = select_tag :document_owner_list, options_for_select([["tous","all"],["qui m'appartiennent","self"]]+linked_users_option), :class => "view_for pull-left wauto margin05left margin0bottom"
+        = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"],["qui m'appartiennent","self"]]+linked_users_option,["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
           
         = label_tag :per_page, "par :", :class => "pull-left margin1left"
         = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
@@ -29,9 +29,9 @@
       #documentslist.well.qtip-target
         .header
           %h3.pull-left
-            #{@packs_count} documents
+            #{@packs_count} document(s)
           .actiongroup.pull-right
-            %a.do-tooltip{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
+            %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
               %i.icon-share-alt
             %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
               %i.icon-tag

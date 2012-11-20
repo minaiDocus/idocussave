@@ -56,21 +56,28 @@ public
   end
   
   def packs
-    if params[:filtre]
-      contents = params[:filtre].gsub(/:_:/,' ')
-      @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
+    if params[:view] == "current_delivery"
+      pack_ids = @user.remote_files.not_processed.distinct(:pack_id)
+      @packs = @user.packs.any_in(_id: pack_ids)
+      @remaining_files = @user.remote_files.not_processed.count
     else
-      @packs = Pack.any_in(user_ids: [@user.id])
+      if params[:filtre]
+        contents = params[:filtre].gsub(/:_:/,' ')
+        @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
+      else
+        @packs = Pack.any_in(user_ids: [@user.id])
+      end
+
+      if params[:view] == "self"
+        @packs = @packs.where(:owner_id => @user.id)
+      elsif params[:view] != "all" and params[:view].present?
+        @other_user = User.find(params[:view])
+        @packs = @packs.where(:owner_id => @other_user.id)
+      end
     end
+
     @packs = @packs.order_by([:created_at, :desc])
-    
-    if params[:view] == "self"
-      @packs = @packs.where(:owner_id => @user.id)
-    elsif params[:view] != "all" and params[:view].present?
-      @other_user = User.find(params[:view])
-      @packs = @packs.where(:owner_id => @other_user.id)
-    end
-    
+
     @packs_count = @packs.count
     @packs = @packs.page(params[:page]).per(params[:per_page])
     load_entries
@@ -140,54 +147,21 @@ public
   end
   
   def sync_with_external_file_storage
-    packs = []
-    all_packs = Pack.any_in(:user_ids => [@user.id])
-    all_pack_ids = all_packs.distinct(:_id)
-    @pack_ids = []
     if params[:pack_ids].present?
-      clean_pack_ids = all_pack_ids.map { |id| "#{id}" }
-      @pack_ids = params[:pack_ids].select { |pack_id| clean_pack_ids.include?(pack_id) }
-    elsif params[:filter].present?
-      queries = params[:filter].split(':_:')
-      queries.each_with_index do |query,index|
-        if index == 0
-          f_pack_ids = Document::Index.find_pack_ids [query], @user
-          t_pack_ids = Pack.find_ids_by_tags [query], @user
-          @pack_ids += f_pack_ids + t_pack_ids
-        else
-          f_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Document::Index.find_pack_ids([query], @user)).distinct(:_id)
-          t_pack_ids = Pack.any_in(:_id => pack_ids).any_in(:_id => Pack.find_ids_by_tags([query], @user)).distinct(:_id)
-          @pack_ids += f_pack_ids + t_pack_ids
-        end
-      end
-      @pack_ids = @pack_ids.uniq
+      @packs = Pack.any_in(user_ids: [@user.id], _id: params[:pack_ids])
     else
-      @pack_ids = all_pack_ids
+      @packs = @user.packs
     end
+    @packs = @packs.order_by([:created_at, :desc])
+    type = params[:type].to_i || Pack::ALL
 
-    packs = Pack.any_in(:_id => @pack_ids)
-
-    if params[:view].present?
-      if params[:view] == "self"
-        packs = packs.where(:owner_id => @user.id)
-      elsif params[:view] != "all"
-        other_user = User.find(params[:view])
-        packs = packs.where(:owner_id => other_user.id)
-      end
+    @packs.each do |pack|
+      pack.init_delivery_for @user, type
     end
-
-    packs = packs.order_by([[:created_at, :desc]])
-    result_pack_ids = packs.distinct(:_id)
-
-    type = params[:type].to_i || PackDeliveryList::ALL
-    
-    pack_delivery_list = current_user.find_or_create_pack_delivery_list
-    pack_delivery_list.add!(result_pack_ids,type)
-    PackDeliveryList.delay(:queue => 'delivery', :priority => 5).process(pack_delivery_list.id)
 
     respond_to do |format|
-      format.html{ render :nothing => true, :status => 200 }
-      format.json { render :json => true, :status => :ok }
+      format.html { render nothing: true, status: 200 }
+      format.json { render json: true, status: :ok }
     end
   end
 
