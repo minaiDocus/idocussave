@@ -25,7 +25,7 @@ while($running) do
   filesname = RegroupSheet::process
   data = []
   data += Pack.get_documents(filesname)
-  #filesname = Pack.get_file_from_numen
+  filesname = Pack.get_file_from_numen
   data += Pack.get_documents(filesname)
   data.uniq!
   Pack.deliver_mail(data)
