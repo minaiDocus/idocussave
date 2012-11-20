@@ -242,7 +242,7 @@
     });
     
     $("a.do-select").unbind("click");
-    $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); });
+    $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); return false; });
   }
   
   function initEventOnHoverOnInformation() {
@@ -616,6 +616,7 @@
       
       $(".actiongroup.group1").show();
       $(".actiongroup.group2").hide();
+      return false;
     });
     
     $("a.removeAllSelection").click(function() {
