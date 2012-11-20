@@ -7,11 +7,55 @@ class Pack::Report
   referenced_in :document, class_name: 'Scan::Document', inverse_of: :report
   references_many :expenses, class_name: "Pack::Report::Expense", inverse_of: :report, dependent: :delete
   references_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :delete
+  references_many :remote_files, as: :remotable, dependent: :destroy
 
   field :type, type: String # NDF / AC / CB / VT
 
-  def to_csv(outputter=pack.owner.csv_outputter!)
+  def to_csv(outputter=pack.owner.csv_outputter!, preseizures)
     outputter.format(preseizures)
+  end
+
+  def get_remote_files(user, service_name)
+    current_remote_files = []
+    filespath = generate_files
+    filespath.each do |filepath|
+      remote_file = remote_files.of(user,service_name).where(temp_path: filepath).first
+      unless remote_file
+        remote_file = RemoteFile.new
+        remote_file.user = user
+        remote_file.remotable = self
+        remote_file.pack = self.pack
+        remote_file.service_name = service_name
+        remote_file.temp_path = filepath
+        remote_file.save
+      end
+      current_remote_files << remote_file
+    end
+    current_remote_files
+  end
+
+  def generate_files
+    # TODO implement me
+    generate_csv_files
+  end
+  
+  def generate_csv_files
+    outputter = pack.owner.csv_outputter!
+    filespath = []
+    if type != 'NDF'
+      tmp = self.preseizures.group_by { |p| p.created_at.strftime("%Y%m%d") }
+      tab = tmp.values
+      tab.each do |pre|
+        idx = pre.map(&:_id)
+        date = pre[0].created_at
+        data = to_csv(outputter, self.preseizures.any_in(_id: idx))
+        file= File.new("/tmp/L#{date.strftime("%Y%m%d")}.csv", "w")
+        file.write(data)
+        file.close
+        filespath << file.path
+      end
+    end
+    filespath
   end
 
   class << self
@@ -157,6 +201,7 @@ class Pack::Report
                       end
                     end
                   end
+                  pack.init_for_delivery(user, Pack::REPORT)
                 end
               end
             end

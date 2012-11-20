@@ -6,6 +6,7 @@ class Pack
   ALL           = 0
   ORIGINAL_ONLY = 1
   PIECES_ONLY   = 2
+  REPORT        = 3
   
   FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
@@ -125,7 +126,9 @@ class Pack
         end
       end
       # report
-      # TODO implement me
+      if type.in? [Pack::ALL, Pack::REPORT] && report
+        current_remote_files + report.get_remote_files(user,service_name)
+      end
     end
     current_remote_files
   end

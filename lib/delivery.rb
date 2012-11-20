@@ -33,7 +33,7 @@ module Delivery
         when 'ftp'
           :ftp
         else
-          'dbb'
+          :dropbox_basic
       end
     end
 

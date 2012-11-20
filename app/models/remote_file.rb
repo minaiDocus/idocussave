@@ -8,6 +8,7 @@ class RemoteFile
   referenced_in :remotable, polymorphic: true
 
   field :path,          type: String, default: ''
+  field :temp_path,     type: String, default: ''
   field :size,          type: Integer
   field :tried_at,      type: Time
   field :state,         type: String, default: 'waiting'
@@ -70,11 +71,16 @@ class RemoteFile
   end
 
   def local_path
-    remotable.content.path rescue nil
+    current_path = remotable.content.path rescue
+    current_path || self.temp_path
   end
 
   def local_name
     File.basename(local_path) rescue nil
+  end
+
+  def pack_name
+    self.pack.name.gsub(' ','_')
   end
 
   def local_size
