@@ -157,7 +157,9 @@
     } else {
       $('a.delivery').show();
     }
-    
+    $("#panel1 .header h3").text('Pages');
+    $("#panel1 > .content > ul").html("");
+
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filtre;
     
     $.ajax({
