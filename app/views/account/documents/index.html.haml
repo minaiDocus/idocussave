@@ -5,6 +5,13 @@
   .row-fluid
     .span12
       .actionbar.well.padding1top.margin1bottom
+        - if current_user.is_admin?
+          %form.margin0bottom{ :action => account_documents_path, :method => "GET" }
+            = label_tag :code, "Visualiser les documents de :", :class => "pull-left margin1right margin0bottom"
+            = text_field_tag :code, "", :class => "pull-left margin1right margin0bottom", :style => "width:200px;height:13px;font-size:11px;", :value => session[:acts_as] ||= ""
+            = submit_tag "valider", :class => "btn margin1right margin0bottom", :style => "height:23px;padding-top:2px;font-size:11px;"
+            = link_to "annuler", account_documents_path(code: current_user.code), class: 'btn margin0bottom', :style => "height:15px;padding-top:2px;"
+          %hr.margin1top.margin1bottom
         .feedback.inactive.pull-left
           %span.out
             Aucun traitement

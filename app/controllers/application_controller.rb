@@ -33,12 +33,12 @@ class ApplicationController < ActionController::Base
   end
 
   def load_user
-    if (params[:email].present? || session[:acts_as].present?) && current_user.try(:is_admin)
-      @user = User.find_by_email(params[:email] || session[:acts_as]) || current_user
+    if (params[:code].present? || session[:acts_as].present?) && current_user.try(:is_admin)
+      @user = User.find_by_code(params[:code] || session[:acts_as]) || current_user
       if @user == current_user
         session[:acts_as] = nil
       else
-        session[:acts_as] = @user.email
+        session[:acts_as] = @user.code
       end
     else
       @user = current_user
