@@ -13,15 +13,9 @@ Idocus::Application.routes.draw do
     root :to => "account/documents#index"
 
     resources :documents do
-      get 'invoice', :on => :member
       get 'packs', :on => :collection
       get 'search', :on => :collection
-      get 'find', :on => :collection
-      get 'reporting', :on => :collection
-      get 'search_user', :on => :collection
-      post 'reorder', :on => :collection
       get 'archive', :on => :member
-      get 'historic', :on => :member
       post 'sync_with_external_file_storage', :on => :collection
     end
 
@@ -35,7 +29,6 @@ Idocus::Application.routes.draw do
       end
       resource :upload
     end
-
 
     namespace :scan do
       resources :reportings

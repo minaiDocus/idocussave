@@ -8,7 +8,7 @@ class Account::DocumentsController < Account::AccountController
 
 protected
   def current_layout
-    if %w(index reporting).include? params[:action]
+    if params[:action] == 'index'
       'inner'
     else
       nil
@@ -90,34 +90,6 @@ public
       format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
     end
   end
-  
-  def find
-    query = params[:having].split(':_:')
-    
-    @documents = []
-
-    document_ids = ""
-    query.each_with_index do |tag,index|
-      if index == 0
-        DocumentTag.where(:name => /\w*#{tag}\w*/, :user_id => @user.id).each do |document_tag|
-          document_ids += " #{document_tag.document_id}"
-        end
-      else
-        document_ids_2 = document_ids
-        document_ids_2.split.each do |document_id|
-          if (DocumentTag.where(:document_id => document_id, :name => /\w*#{tag}\w*/).first).nil?
-            document_ids = document_ids.gsub(/#{document_id}/,'')
-            end
-        end
-      end
-    end
-    
-    @documents = Document.any_in(:_id => document_ids.split).without_original.entries
-    @documents += Document::Index.find_document(query, @user).entries
-    @documents = @documents.uniq
-    
-    render :action => "show"
-  end
     
   def archive
     if current_user.is_admin
@@ -135,15 +107,6 @@ public
     else
       render nothing: true, status: 404
     end
-  end
-
-  def historic
-    if params[:email].present? and (current_user.is_admin or current_user.is_prescriber)
-      @user = User.find_by_email(params[:email])
-    end
-    @user ||= current_user
-    @pack = Pack.where(:_id => params[:id]).any_in(:user_ids => [@user.id]).first
-    @events = @pack.historic
   end
   
   def sync_with_external_file_storage
