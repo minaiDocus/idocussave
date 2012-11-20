@@ -133,7 +133,6 @@ class ExternalFileStorage
   def services_used_count
     nb = 0
     nb += 1 if used & F_DROPBOX > 0
-    nb += 1 if user.is_dropbox_extended_authorized
     nb += 1 if used & F_GOOGLE_DOCS > 0
     nb += 1 if used & F_FTP > 0
     nb += 1 if used & F_BOX > 0

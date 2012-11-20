@@ -93,7 +93,6 @@ class User
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
   references_one :file_sending_kit
-  references_one :pack_delivery_list
   references_one :csv_outputter, autosave: true
   
   scope :prescribers,                 where: { is_prescriber: true }
