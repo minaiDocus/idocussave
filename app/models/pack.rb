@@ -2,6 +2,10 @@
 class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
+
+  ALL           = 0
+  ORIGINAL_ONLY = 1
+  PIECES_ONLY   = 2
   
   FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
@@ -14,8 +18,7 @@ class Pack
   references_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
   references_many :document_tags,                                                     dependent: :destroy
   references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
-  references_many :delivery_errors, class_name: "Delivery::Error", inverse_of: :pack, dependent: :destroy
-  references_many :delivery_queues, class_name: "Delivery::Queue", inverse_of: :pack, dependent: :destroy
+  references_many :remote_files,                                                      dependent: :destroy
   embeds_many :divisions
   
   field :name,                     type: String
@@ -105,18 +108,28 @@ class Pack
     @events
   end
 
-  def find_or_create_queue(user)
-    find_queue(user) || create_queue(user)
+  def init_delivery_for(user, type=Pack::ALL)
+    current_remote_files = []
+    efs = user.find_or_create_efs
+    efs.active_services_name.each do |service_name|
+      # original
+      if type.in? [Pack::ALL, Pack::ORIGINAL_ONLY]
+        remote_file = original_document.get_remote_file(user,service_name)
+        remote_file.waiting!
+        current_remote_files << remote_file
+      end
+      # pieces
+      if type.in? [Pack::ALL, Pack::PIECES_ONLY]
+        self.pieces.each do |piece|
+          current_remote_files << piece.get_remote_file(user,service_name)
+        end
+      end
+      # report
+      # TODO implement me
+    end
+    current_remote_files
   end
 
-  def find_queue(user)
-    delivery_queues.where(user_id: user.id).first
-  end
-
-  def create_queue(user)
-    Delivery::Queue.create(user_id: user.id, pack_id: self.id)
-  end
-  
   class << self
     def find_by_name(name)
       where(name: name).first
@@ -373,8 +386,8 @@ class Pack
         File.rename filename, "up_" + filename
       end
 
-      pack.find_or_create_queue(user).inc_counter!
-      pack.find_or_create_queue(user.prescriber).inc_counter! if user.prescriber
+      pack.init_delivery_for(user)
+      pack.init_delivery_for(user.prescriber) if user.prescriber
 
       [user.email,pack_filename,piece_position]
     end

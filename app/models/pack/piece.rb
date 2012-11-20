@@ -16,6 +16,7 @@ class Pack::Piece
   referenced_in :pack, inverse_of: :pieces
   references_one :expense, class_name: "Pack::Report::Expense", inverse_of: :piece
   references_one :preseizure, class_name: "Pack::Report::Preseizure", inverse_of: :piece
+  references_many :remote_files, as: :remotable, dependent: :destroy
 
   has_mongoid_attached_file :content,
                             path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/pieces/:id/:style/:filename",
@@ -65,5 +66,24 @@ class Pack::Piece
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
     end
+  end
+
+  def get_remote_file(user, service_name)
+    remote_file = remote_files.of(user,service_name).first
+    unless remote_file
+      remote_file = RemoteFile.new
+      remote_file.user = user
+      remote_file.remotable = self
+      remote_file.pack = self.pack
+      remote_file.service_name = service_name
+      remote_file.save
+    end
+    remote_file
+  end
+
+  def init_remote_file(user, service_name)
+    remote_file = get_remot_file(user, service_name)
+    remote_file.waiting!
+    remote_file
   end
 end

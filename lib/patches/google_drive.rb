@@ -3,8 +3,10 @@ module GoogleDrive
     def upload_from_file(path, title,params = {})
       find_and_remove_files(title)
       file = @session.upload_from_file(path, title, params)
-      add file
-      @session.root_collection.remove file
+      unless root?
+        add file
+        @session.root_collection.remove file
+      end
       file
     end
 

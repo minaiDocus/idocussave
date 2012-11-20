@@ -37,28 +37,18 @@ class DropboxExtended
       session.get_access_token
       save_session session
     end
+
+    def reset_session
+      File.delete("#{PATH}dropbox-session.txt")
+    end
     
     def client
       @client ||= DropboxClient.new(get_session, DropboxExtended::ACCESS_TYPE)
     end
 
-    def static_path(path, info_path)
-      path.gsub(":code",info_path[:code]).
-      gsub(":company",info_path[:company]).
-      gsub(":account_book",info_path[:account_book]).
-      gsub(":year",info_path[:year]).
-      gsub(":month",info_path[:month]).
-      gsub(":delivery_date",info_path[:delivery_date])
-    end
-
     def is_up_to_date(path, filepath)
       filename = File.basename(filepath)
-      begin
-        results = client.search(path,filename,1)
-      rescue DropboxError => e
-        Delivery::Error.create(sender: 'DropboxExtended', state: 'searching', filepath: "#{File.join([path,filename])}", message: e.message)
-        results = []
-      end
+      results = client.search(path,filename,1)
       if results.any?
         size = results.first["bytes"]
         if size == File.size(filepath)
@@ -74,34 +64,34 @@ class DropboxExtended
     def is_not_up_to_date(path, filepath)
       !is_up_to_date(path, filepath)
     end
-    
-    def deliver(filespath, folder, infopath)
-      if client
-        delivery_path = static_path(folder, infopath)
-        clean_path = delivery_path.sub(/\/$/,"")
-        filespath.each do |filepath|
-          filename = File.basename(filepath)
-          tries = 0
-          begin
-            if is_not_up_to_date(clean_path,filepath)
-              print "sending #{clean_path}/#{filename} ..."
-              client.put_file("#{clean_path}/#{filename}", open(filepath), true)
-              print "done\n"
-            end
-          rescue Timeout::Error
-            tries += 1
-            print "failed\n"
-            puts "Trying again!"
-            retry if tries < 3
-          rescue => e
-            Delivery::Error.create(sender: 'DropboxExtended', state: 'sending', filepath: "#{clean_path}/#{filename}", message: e.message)
+
+    def sync(remote_files)
+      remote_files.each_with_index do |remote_file,index|
+        @remote_path ||= ExternalFileStorage::delivery_path(remote_file, remote_file.user.dropbox_delivery_folder)
+        remote_filepath = File.join(@remote_path,remote_file.local_name)
+        tries = 0
+        begin
+          remote_file.sending!(remote_filepath)
+          print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
+          if is_not_up_to_date(@remote_path,remote_file.local_path)
+            print "sending..."
+            client.put_file("#{remote_filepath}", open(remote_file.local_path), true)
+            print "done\n"
+          else
+            print "is up to date\n"
+          end
+          remote_file.synced!
+        rescue => e
+          tries += 1
+          print "failed : [#{e.class}] #{e.message}\n"
+          if tries < 3
+            retry
+          else
+            puts "\t[#{'%0.3d' % (index+1)}] Retrying later"
+            remote_file.not_synced!("[#{e.class}] #{e.message}")
           end
         end
       end
-    end
-    
-    def reset_session
-      File.delete("#{PATH}dropbox-session.txt")
     end
   end
 end

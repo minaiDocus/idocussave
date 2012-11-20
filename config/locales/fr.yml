@@ -252,6 +252,14 @@ fr:
           "Cannot create scope :%{scope_name}, because of existing method
           %{model_name}.%{scope_name}."
         blank_on_locale: "can't be blank in %{location}"
+      models:
+        remote_file:
+          attributes:
+            state:
+              blank: 'doit être rempli(e)'
+            service_name:
+              blank: 'doit être rempli(e)'
+              inclusion: "n'est pas inclus(e) dans la liste"
     models:
       common:
         attributes:
@@ -370,3 +378,14 @@ fr:
           lettering: 'Lettrage'
           piece_url: 'URL pièce'
           remark: 'Remarque'
+      remote_file:
+        zero: '0 fichier distant'
+        one: '1 fichier distant'
+        other: '#{count} fichiers distant'
+        name: 'Fichier distant'
+        attributes:
+          path: 'chemin'
+          size: 'poids'
+          tried_at: 'dernière essaie le'
+          service_name: 'nom du service'
+          error_message: "message d\'erreur"

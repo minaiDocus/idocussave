@@ -58,12 +58,7 @@ class DropboxBasic
 
   def is_up_to_date(path, filepath)
     filename = File.basename(filepath)
-    begin
-      results = client.search(path,filename,1)
-    rescue DropboxError => e
-      Delivery::Error.create(sender: 'DropboxBasic', state: 'searching', filepath: "#{File.join([path,filename])}", message: e.message, user_id: external_file_storage.user)
-      results = []
-    end
+    results = client.search(path,filename,1)
     if results.any?
       size = results.first["bytes"]
       if size == File.size(filepath)
@@ -80,25 +75,30 @@ class DropboxBasic
     !is_up_to_date(path, filepath)
   end
 
-  def deliver filespath, folder_path
-    if client
-      clean_path = folder_path.sub(/\/$/,"")
-      filespath.each do |filepath|
-        filename = File.basename(filepath)
-        tries = 0
-        begin
-          if is_not_up_to_date(clean_path,filepath)
-            print "sending #{clean_path}/#{filename} ..."
-            client.put_file("#{clean_path}/#{filename}", open(filepath), true)
-            print "done\n"
-          end
-        rescue Timeout::Error
-          tries += 1
-          print "failed\n"
-          puts "Trying again!"
-          retry if tries < 3
-        rescue => e
-          Delivery::Error.create(sender: 'DropboxBasic', state: 'sending', filepath: "#{File.join([clean_path,filename])}", message: e.message, user_id: external_file_storage.user)
+  def sync(remote_files)
+    remote_files.each_with_index do |remote_file,index|
+      @remote_path ||= ExternalFileStorage::delivery_path(remote_file, self.path)
+      remote_filepath = File.join(@remote_path,remote_file.local_name)
+      tries = 0
+      begin
+        remote_file.sending!(remote_filepath)
+        print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
+        if is_not_up_to_date(@remote_path,remote_file.local_path)
+          print "sending..."
+          client.put_file("#{remote_filepath}", open(remote_file.local_path), true)
+          print "done\n"
+        else
+          print "is up to date\n"
+        end
+        remote_file.synced!
+      rescue => e
+        tries += 1
+        print "failed : [#{e.class}] #{e.message}\n"
+        if tries < 3
+          retry
+        else
+          puts "\t[#{'%0.3d' % (index+1)}] Retrying later"
+          remote_file.not_synced!("[#{e.class}] #{e.message}")
         end
       end
     end
