@@ -46,20 +46,20 @@ class GoogleDoc
 
   def sync(remote_files)
     remote_files.each_with_index do |remote_file,index|
-      @remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, self.path)
+      remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, self.path)
       tries = 0
       begin
-        @collection ||= session.root_collection.find_or_create_subcollections(@remote_path)
+        collection = session.root_collection.find_or_create_subcollections(remote_path)
       rescue => e
         remote_file.not_synced!("[#{e.class}] #{e.message}")
       end
-      if @collection
+      if collection
         begin
           basename = File.basename(remote_file.local_path, '.*')
-          remote_filepath = File.join(@remote_path, remote_file.local_name)
+          remote_filepath = File.join(remote_path, remote_file.local_name)
           remote_file.sending!(remote_filepath)
           print "\t[#{'%0.3d' % (index+1)}] #{remote_filepath} sending..."
-          @collection.upload_from_file(remote_file.local_path, basename, { content_type: type_of(remote_file.local_name) })
+          collection.upload_from_file(remote_file.local_path, basename, { content_type: type_of(remote_file.local_name) })
           remote_file.synced!
           print "done\n"
         rescue => e

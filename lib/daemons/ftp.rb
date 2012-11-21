@@ -25,7 +25,7 @@ while($running) do
   Delivery::process('ftp')
 
   time = Time.now
-  while $running && (Time.now < (time + 10))
+  while $running && (Time.now < (time + 1))
     sleep(1)
     if File.exist? filepath
       new_filetime = File.atime(filepath)

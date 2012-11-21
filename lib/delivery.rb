@@ -12,6 +12,9 @@ module Delivery
             puts "[#{service_name}] Synchronising files for user : #{user.info}..."
             pack = remote_file.pack
             remote_files = pack.remote_files.not_processed.of(user, service_name)
+            remote_files = remote_files.sort do |a,b|
+              a.local_name <=> b.local_name
+            end
             puts "\t#{pack.name}\t[#{remote_files.count}]"
             efs.send(service_class).sync(remote_files)
             puts "\tDone."

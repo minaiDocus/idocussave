@@ -110,16 +110,18 @@ public
   end
   
   def sync_with_external_file_storage
-    if params[:pack_ids].present?
-      @packs = Pack.any_in(user_ids: [@user.id], _id: params[:pack_ids])
-    else
-      @packs = @user.packs
-    end
-    @packs = @packs.order_by([:created_at, :desc])
-    type = params[:type].to_i || Pack::ALL
+    if current_user.is_admin
+      if params[:pack_ids].present?
+        @packs = Pack.any_in(user_ids: [@user.id], _id: params[:pack_ids])
+      else
+        @packs = @user.packs
+      end
+      @packs = @packs.order_by([:created_at, :desc])
+      type = params[:type].to_i || Pack::ALL
 
-    @packs.each do |pack|
-      pack.init_delivery_for current_user, type, true
+      @packs.each do |pack|
+        pack.delay.init_delivery_for @user, type, true
+      end
     end
 
     respond_to do |format|

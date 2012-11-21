@@ -67,13 +67,13 @@ class DropboxExtended
 
     def sync(remote_files)
       remote_files.each_with_index do |remote_file,index|
-        @remote_path ||= ExternalFileStorage::delivery_path(remote_file, remote_file.user.dropbox_delivery_folder)
-        remote_filepath = File.join(@remote_path,remote_file.local_name)
+        remote_path = ExternalFileStorage::delivery_path(remote_file, remote_file.user.dropbox_delivery_folder)
+        remote_filepath = File.join(remote_path,remote_file.local_name)
         tries = 0
         begin
           remote_file.sending!(remote_filepath)
           print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
-          if is_not_up_to_date(@remote_path,remote_file.local_path)
+          if is_not_up_to_date(remote_path,remote_file.local_path)
             print "sending..."
             client.put_file("#{remote_filepath}", open(remote_file.local_path), true)
             print "done\n"

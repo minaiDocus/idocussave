@@ -49,7 +49,8 @@ class Pack::Report
         idx = pre.map(&:_id)
         date = pre[0].created_at
         data = to_csv(outputter, self.preseizures.any_in(_id: idx))
-        file= File.new("/tmp/L#{date.strftime("%Y%m%d")}.csv", "w")
+        basename = self.pack.name.sub(' all','').gsub(' ','_')
+        file= File.new("/tmp/#{basename}_L#{date.strftime("%Y%m%d")}.csv", "w")
         file.write(data)
         file.close
         filespath << file.path

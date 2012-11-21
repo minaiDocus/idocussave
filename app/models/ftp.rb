@@ -80,16 +80,16 @@ class Ftp
 
   def sync(remote_files)
     remote_files.each_with_index do |remote_file,index|
-      @remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, self.path)
+      remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, self.path)
       is_ok = true
       begin
-        change_or_make_dir(@remote_path)
+        change_or_make_dir(remote_path)
       rescue => e
         is_ok = false
         remote_file.not_synced!("[#{e.class}] #{e.message}")
       end
       if is_ok
-        remote_filepath = File.join(@remote_path,remote_file.local_name)
+        remote_filepath = File.join(remote_path,remote_file.local_name)
         tries = 0
         begin
           remote_file.sending!(remote_filepath)

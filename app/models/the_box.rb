@@ -114,11 +114,11 @@ class TheBox
 
   def sync(remote_files)
     remote_files.each_with_index do |remote_file,index|
-      @remote_path ||= ExternalFileStorage::delivery_path(remote_file, self.path)
-      remote_filepath = File.join(@remote_path,remote_file.local_name)
+      remote_path = ExternalFileStorage::delivery_path(remote_file, self.path)
+      remote_filepath = File.join(remote_path,remote_file.local_name)
       tries = 0
       begin
-        @folder ||= find_or_create_folder(@remote_path)
+        @folder ||= find_or_create_folder(remote_path)
         if @folder
           remote_file.sending!(remote_filepath)
           print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "

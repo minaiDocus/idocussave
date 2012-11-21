@@ -38,8 +38,9 @@
           %h3.pull-left
             #{@packs_count} document(s)
           .actiongroup.pull-right
-            %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
-              %i.icon-share-alt
+            - if current_user.is_admin
+              %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
+                %i.icon-share-alt
             %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
               %i.icon-tag
             %a.do-tooltip{ "data-toggle"=>"modal", :href=>"#sharingDialog", :title => "Partage" }
