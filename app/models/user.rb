@@ -60,6 +60,7 @@ class User
   field :is_stamp_background_filled,     type: Boolean, default: false
 
   attr_accessor :client_ids, :is_inactive
+  attr_protected :is_admin, :is_prescriber
 
   # FIXME use another way
   before_save :set_timestamps_of_addresses

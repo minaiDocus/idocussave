@@ -17,7 +17,13 @@ class Admin::UsersController < Admin::AdminController
   def create
     params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
     params[:user][:last_name] = params[:user][:last_name].split.collect{|n| n.capitalize}.join(' ') if params[:user][:last_name]
+
+    is_admin = params[:user][:is_admin].presence ? params[:user].delete(:is_admin) : false
+    is_prescriber = params[:user][:is_prescriber].presence ? params[:user].delete(:is_prescriber) : false
+
     @user = User.new params[:user]
+    @user.is_admin = is_admin
+    @user.is_prescriber = is_prescriber
     @user.skip_confirmation!
     if @user.save
       flash[:notice] = "Crée avec succès."
@@ -31,6 +37,14 @@ class Admin::UsersController < Admin::AdminController
   def update
     @user = User.find params[:id]
     respond_to do |format|
+      if params[:user][:is_admin]
+        @user.is_admin = params[:user].delete(:is_admin)
+      end
+
+      if params[:user][:is_prescriber]
+        @user.is_prescriber = params[:user].delete(:is_prescriber)
+      end
+
       if @user.update_attributes(params[:user])
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
