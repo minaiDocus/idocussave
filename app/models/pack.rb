@@ -109,7 +109,7 @@ class Pack
     @events
   end
 
-  def init_delivery_for(user, type=Pack::ALL)
+  def init_delivery_for(user, type=Pack::ALL, force=false)
     current_remote_files = []
     efs = user.find_or_create_efs
     efs.active_services_name.each do |service_name|
@@ -122,12 +122,16 @@ class Pack
       # pieces
       if type.in? [Pack::ALL, Pack::PIECES_ONLY]
         self.pieces.each do |piece|
-          current_remote_files << piece.get_remote_file(user,service_name)
+          remote_file = piece.get_remote_file(user,service_name)
+          remote_file.waiting! if force
+          current_remote_files << remote_file
         end
       end
       # report
       if type.in?([Pack::ALL, Pack::REPORT]) && report
-        current_remote_files + report.get_remote_files(user,service_name)
+        temp_remote_files = report.get_remote_files(user,service_name)
+        temp_remote_files.each { |remote_file| remote_file.waiting! } if force
+        current_remote_files += temp_remote_files
       end
     end
     current_remote_files

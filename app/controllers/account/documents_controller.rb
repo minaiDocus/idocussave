@@ -119,7 +119,7 @@ public
     type = params[:type].to_i || Pack::ALL
 
     @packs.each do |pack|
-      pack.init_delivery_for @user, type
+      pack.init_delivery_for current_user, type, true
     end
 
     respond_to do |format|
