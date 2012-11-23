@@ -141,11 +141,11 @@ class ExternalFileStorage
 
   def active_services_name
     services  = []
-    services << "Dropbox"          if authorized & used & F_DROPBOX     > 0
+    services << "Dropbox"          if (authorized & used & F_DROPBOX     > 0) && dropbox_basic.is_configured?
     services << "Dropbox Extended" if user.is_dropbox_extended_authorized
-    services << "Google Drive"     if authorized & used & F_GOOGLE_DOCS > 0
-    services << "FTP"              if authorized & used & F_FTP         > 0
-    services << "Box"              if authorized & used & F_BOX         > 0
+    services << "Google Drive"     if (authorized & used & F_GOOGLE_DOCS > 0) && google_doc.is_configured?
+    services << "FTP"              if (authorized & used & F_FTP         > 0) && ftp.is_configured?
+    services << "Box"              if (authorized & used & F_BOX         > 0) && box.is_configured?
     services
   end
 

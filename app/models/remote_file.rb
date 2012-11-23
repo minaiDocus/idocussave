@@ -14,12 +14,14 @@ class RemoteFile
   field :state,         type: String, default: 'waiting'
   field :service_name,  type: String
   field :error_message, type: String
+  field :tried_count,   type: Integer, default: 0
 
   validates_presence_of :state
   validates_presence_of :service_name
   validates_inclusion_of :service_name, in: ExternalFileStorage::SERVICES
 
   scope :of, lambda { |user,service_name| where(user_id: user.id, service_name: service_name) }
+  scope :of_service, lambda { |service_name| where(service_name: service_name) }
 
   scope :waiting,    where: { state: :waiting }
   scope :cancelled,  where: { state: :cancelled }
@@ -30,6 +32,23 @@ class RemoteFile
   scope :processed,     any_in: { state: [:synced,:cancelled] }
   scope :not_processed, not_in: { state: [:synced,:cancelled] }
 
+  scope :retryable,     where: { :tried_count.lt => 10 }
+  scope :not_retryable, where: { :tried_count.gte => 10 }
+
+  def self.reset_all_tried_count!
+    all.each do |remote_file|
+      remote_file.tried_count = 0
+      remote_file.save
+    end
+  end
+
+  def self.cancel_all!
+    all.each do |remote_file|
+      remote_file.cancel!
+      remote_file.save
+    end
+  end
+
   def waiting!
     self.state = "waiting"
     reset
@@ -38,6 +57,7 @@ class RemoteFile
 
   def cancel!
     self.state = "cancelled"
+    self.tried_count = 0
     reset
     save
   end
@@ -51,12 +71,14 @@ class RemoteFile
 
   def synced!
     self.state = "synced"
+    self.tried_count = 0
     set_tried_at
     save
   end
 
   def not_synced!(message='')
     self.state = "not_synced"
+    self.tried_count += 1
     self.error_message = message
     set_tried_at
     save

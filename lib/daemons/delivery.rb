@@ -13,7 +13,7 @@ Signal.trap("TERM") do
 end
 
 while($running) do
-  filepath = File.join(Rails.root,'tmp','stop_maintenance.txt')
+  filepath = File.join(Rails.root,'tmp','stop_worker.txt')
   unless @filetime
     if File.exist? filepath
       @filetime = File.atime(filepath)
@@ -22,10 +22,10 @@ while($running) do
     end
   end
 
-  Delivery::process('gdr')
+  Delivery::process(ARGV.first || 'dbx')
 
   time = Time.now
-  while $running && (Time.now < (time + 1))
+  while $running && (Time.now < (time + 10))
     sleep(1)
     if File.exist? filepath
       new_filetime = File.atime(filepath)

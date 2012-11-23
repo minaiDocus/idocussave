@@ -15,11 +15,11 @@ require "active_support/core_ext/object"
 require "active_support/core_ext/hash"
 
 options = YAML.load(
-  ERB.new(
-    IO.read(
-      File.dirname(__FILE__) + "/../../config/daemons.yml"
-  )).result).with_indifferent_access
+    ERB.new(
+        IO.read(
+            File.dirname(__FILE__) + "/../../config/daemons.yml"
+        )).result).with_indifferent_access
 
 options[:dir_mode] = options[:dir_mode].to_sym
 
-Daemons.run File.dirname(__FILE__) + "/dropbox.rb", options
+Daemons.run File.dirname(__FILE__) + "/delivery.rb", options

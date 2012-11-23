@@ -95,7 +95,7 @@ end
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 10 start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 20 start"
   end
 
   desc "Stop delayed_job process"
@@ -110,29 +110,16 @@ namespace :delayed_job do
   end
 end
 
-namespace :maintenance do
-  desc "Start maintenance process"
+namespace :worker do
+  desc "Start worker process"
   task :start, :roles => :app do
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} god start delivery"
     run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/dropbox_extended_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/dropbox_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/google_drive_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/ftp_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/box_ctl start"
   end
 
-  desc "Stop maintenance process"
+  desc "Stop worker process"
   task :stop, :roles => :app do
-    run "cd #{current_path}; touch tmp/stop_maintenance.txt"
-  end
-
-  desc "Restart maintenance process"
-  task :restart, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl restart"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/dropbox_extended_ctl restart"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/dropbox_ctl restart"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/google_drive_ctl restart"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/ftp_ctl restart"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/box_ctl restart"
+    run "cd #{current_path}; god stop delivery"
+    run "cd #{current_path}; touch tmp/stop_worker.txt"
   end
 end
