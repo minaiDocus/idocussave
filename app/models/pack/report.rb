@@ -11,8 +11,8 @@ class Pack::Report
 
   field :type, type: String # NDF / AC / CB / VT
 
-  def to_csv(outputter=pack.owner.csv_outputter!, preseizures)
-    outputter.format(preseizures)
+  def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures)
+    outputter.format(ps)
   end
 
   def get_remote_files(user, service_name)
