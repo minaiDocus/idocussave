@@ -98,7 +98,7 @@ class RemoteFile
   end
 
   def formated_service_name
-    blank_size = 15 - self.service_name.size
+    blank_size = 16 - self.service_name.size
     blank_size = 0 if blank_size < 0
     "[#{service_name}" + (" "*blank_size) + "]"
   end
