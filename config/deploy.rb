@@ -121,5 +121,6 @@ namespace :worker do
   task :stop, :roles => :app do
     run "cd #{current_path}; god stop delivery"
     run "cd #{current_path}; touch tmp/stop_worker.txt"
+    run "cd #{current_path}; touch tmp/stop_maintenance.txt"
   end
 end
