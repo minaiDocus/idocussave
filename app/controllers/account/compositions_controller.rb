@@ -26,8 +26,7 @@ class Account::CompositionsController < Account::AccountController
 
   def reset
     @composition = current_user.composition
-    @composition.document_ids = []
-    @composition.save
+    @composition.update_attribute(:document_ids, []) if @composition
     
     respond_to do |format|
       format.json{ render :json => @composition, :status => :ok }
