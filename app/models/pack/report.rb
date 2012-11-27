@@ -202,7 +202,7 @@ class Pack::Report
                       end
                     end
                   end
-                  pack.init_for_delivery(user, Pack::REPORT)
+                  pack.init_delivery_for(user.prescriber || user, Pack::REPORT)
                 end
               end
             end
