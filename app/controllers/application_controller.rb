@@ -25,6 +25,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def after_sign_out_path_for(resource_or_scope)
+    'http://www.idocus.com'
+  end
+
   def login_user!
     unless current_user and request.path.match(/^\/users.*/)
       session[:targeted_path] = request.path
