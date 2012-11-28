@@ -4,7 +4,7 @@ class UserMailer < ActionMailer::Base
 
   def welcome(user)
     @user = user
-    @url = "https://www.idocus.com/users/sign_in"
+    @url = SITE_INNER_URL + "/users/sign_in"
     mail(:to => user.email, :subject => "Bienvenue sur le site www.idocus.com")
   end
 end

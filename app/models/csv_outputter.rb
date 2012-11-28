@@ -62,7 +62,7 @@ class CsvOutputter
           conversion_rate = "%0.3f" % entry.preseizure.conversion_rate rescue ""
           conversion_rate.sub('.',',')
         when /^piece_url$/
-          'http://www.idocus.com'+entry.preseizure.piece.get_access_url
+          SITE_INNER_URL + entry.preseizure.piece.get_access_url
         when /^remark$/
           entry.preseizure.observation
         when /^third_party$/

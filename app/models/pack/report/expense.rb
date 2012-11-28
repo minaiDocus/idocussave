@@ -183,7 +183,7 @@ class Pack::Report::Expense
 
   def to_row
     [
-      (Spreadsheet::Link.new(File.join(["http://www.idocus.com",piece.get_access_url]), piece.content_file_name) rescue nil),
+      (Spreadsheet::Link.new(File.join([SITE_INNER_URL,piece.get_access_url]), piece.content_file_name) rescue nil),
       (self.date.strftime('%d/%m/%Y') rescue nil),
       observation.to_s,
       self.type,
