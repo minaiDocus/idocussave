@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    'http://www.idocus.com'
+    SITE_DEFAULT_URL
   end
 
   def login_user!
