@@ -1,14 +1,59 @@
 = simple_form_for [:admin, @user, @account_book_type], html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   .modal-body
-    = f.input :name, label: 'Libellé'
-    = f.input :description, label: 'Déscription'
-    = f.input :entry_type, label: 'Type de saisie', collection: [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]], selected: @account_book_type['entry_type'], allow_blank: false
-    = f.input :account_number, label: 'Numéro de compte'
-    = f.input :charge_account, label: 'Compte charge'
+    - if @account_book_type.update_request.try(:values).try(:[],'name').present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_name', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.update_request.try(:values).try(:[],'name'))
+    - else
+      - hint = ''
+    = f.input :name, label: 'Libellé', hint: hint
+    - if @account_book_type.update_request.try(:values).try(:[],'description').present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_description', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.update_request.try(:values).try(:[],'description'))
+    - else
+      - hint = ''
+    = f.input :description, label: 'Description', hint: hint
+    - collection = [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]]
+    - value = @account_book_type.update_request.try(:values).try(:[],'entry_type')
+    - if value.present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_entry_type', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, collection[value][1], style: 'display:none')
+      - hint << content_tag(:span, collection[value][0])
+    - else
+      - hint = ''
+    = f.input :entry_type, label: 'Type de saisie', collection: collection, selected: @account_book_type['entry_type'], allow_blank: false, hint: hint
+    - if @account_book_type.update_request.try(:values).try(:[],'account_number').present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_account_number', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.update_request.try(:values).try(:[],'account_number'))
+    - else
+      - hint = ''
+    = f.input :account_number, label: 'Numéro de compte', hint: hint
+    - if @account_book_type.update_request.try(:values).try(:[],'charge_account').present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_charge_account', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.update_request.try(:values).try(:[],'charge_account'))
+    - else
+      - hint = ''
+    = f.input :charge_account, label: 'Compte charge', hint: hint
     = f.input :position, as: :integer, label: 'Position'
     .control-group
       %label.control-label Clients
       .controls
-        = f.collection_check_boxes :client_ids, @user.clients.active.asc(:code), :id, :info, {}, { class: 'pull-left', style: 'margin-right:5px;position:relative;top:-2px;' }
+        - @user.clients.active.asc(:code).each do |client|
+          = check_box_tag 'account_book_type[client_ids][]', client.id, @account_book_type.clients.include?(client), id: "account_book_type_client_ids_#{client.id}", class: 'pull-left', style: 'margin-right:5px;position:relative;top:-2px;'
+          - marker = ''
+          - if client.in?(@account_book_type.requested_clients) && !client.in?(@account_book_type.clients)
+            - marker = icon(icon: 'plus', class: 'display:inline', style: 'margin-left:5px')
+          - elsif !client.in?(@account_book_type.requested_clients) && client.in?(@account_book_type.clients)
+            - marker = icon(icon: 'remove', class: 'display:inline', style: 'margin-left:5px')
+          %label{ for: "account_book_type_client_ids_#{client.id}" }!= client.info + marker
+        = hidden_field_tag 'account_book_type[client_ids][]', ''
+
+    - if params[:action] == 'edit'
+      = f.input :force_assignment, label: 'Forcer les modifications pour le client', as: :boolean
+      = hidden_field_tag 'account_book_type[force_request_assignment]', '1'
   .modal-footer
     = f.submit t('actions.submit'), class: 'btn'

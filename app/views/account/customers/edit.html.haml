@@ -1,0 +1,12 @@
+.container-fluid
+ 
+  = render partial: 'navigation'
+  .row-fluid
+    .span.well
+      .pull-left
+        %h2= "#{t('actions.edit')} : #{@user.info}"
+
+  .row-fluid
+    .span12
+      = render partial: 'form'
+  

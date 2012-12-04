@@ -8,6 +8,7 @@ class Admin::UsersController < Admin::AdminController
 
   def show
     @user = User.find params[:id]
+    @user.update_request.try(:apply)
   end
 
   def new
@@ -91,6 +92,47 @@ class Admin::UsersController < Admin::AdminController
       end
     end
   end
+
+  def propagate_is_editable
+    @user = User.find params[:id]
+    respond_to do |format|
+      if @user.propagate_is_editable
+        format.json{ render json: {}, status: :ok }
+      else
+        format.json{ render json: {}, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def accept
+    @user = User.find params[:id]
+    if @user.accept!
+      flash[:notice] = 'Modifié avec succès.'
+    else
+      flash[:error] = "Impossible de modifier."
+    end
+    redirect_to admin_user_path(@user)
+  end
+
+  def activate
+    @user = User.find params[:id]
+    if @user.activate!
+      flash[:notice] = 'Activé avec succès.'
+    else
+      flash[:error] = "Impossible d'activer."
+    end
+    redirect_to admin_user_path(@user)
+  end
+
+  def destroy
+    @user = User.find params[:id]
+    if @user.is_new && @user.destroy
+      flash[:notice] = 'Supprimé avec succès.'
+    else
+      flash[:error] = 'Impossible de supprimer.'
+    end
+    redirect_to admin_users_path
+  end
   
   private
 
@@ -126,6 +168,7 @@ class Admin::UsersController < Admin::AdminController
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
+    users = users.where(:request_type => contains[:request_type]) unless contains[:request_type].blank?
     users = users.where(:prescriber_id => contains[:prescriber_id]) unless contains[:prescriber_id].blank?
     users
   end

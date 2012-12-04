@@ -16,6 +16,22 @@ namespace :maintenance do
     end
   end
 
+  namespace :notification do
+    desc "Send update request notification"
+    task :update_request => [:environment] do
+      if User.where(:request_type.gt => 0).count > 0
+        content = ""
+        content << "Bonjour,\n\n"
+        content << "Des requêtes de modification sont en attente de validation.\n\n"
+        content << "Cordialement, l'équipe iDocus"
+        NotificationMailer.notify('florent.tachot@idocus.com','Validation requise',content)
+        NotificationMailer.notify('lailol@directmada.com','Validation requise',content)
+      else
+        puts "No update request found."
+      end
+    end
+  end
+
   namespace :reporting do
     desc "Init current period"
     task :init => [:environment] do

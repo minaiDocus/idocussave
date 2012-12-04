@@ -186,10 +186,20 @@ fr:
 
   filters:
     name: 'Filtre'
+    action: 'Filtrer'
     cancel: 'Supprimer le(s) filtre(s)'
+    reset: 'Réinitialiser'
 
   yes_value: 'Oui'
   no_value: 'Non'
+
+  request:
+    name: 'Action demandée'
+    state: 'Action demandée à iDocus'
+    nothing: ''
+    adding: 'création'
+    updating: 'modification'
+    removing: 'suppression'
 
   mongoid:
     errors:
@@ -252,6 +262,9 @@ fr:
           "Cannot create scope :%{scope_name}, because of existing method
           %{model_name}.%{scope_name}."
         blank_on_locale: "can't be blank in %{location}"
+        blank: 'est vide'
+        too_short: 'est trop court'
+        too_long: 'est trop long'
       models:
         remote_file:
           attributes:
@@ -284,6 +297,7 @@ fr:
           is_prescriber: 'Est prescripteur ?'
           is_centralizer: 'Est centralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
+          is_editable: 'Est éditable ?'
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'
@@ -341,13 +355,14 @@ fr:
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'
+          groups: 'Groupes'
       product_group:
         zero: '0 groupes'
         one: '1 groupe'
         other: '%{count} groupes'
         name: 'Groupe de produit'
         attributes:
-          titre: 'Titre'
+          title: 'Titre'
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'
@@ -389,3 +404,18 @@ fr:
           tried_at: 'dernière essaie le'
           service_name: 'nom du service'
           error_message: "message d\'erreur"
+      account_book_type:
+        zero: '0 journal'
+        one: '1 journal'
+        other: '#{count} journaux'
+        name: 'Journal comptable'
+        attributes:
+          entry_type_0: 'Aucun'
+          entry_type_1: 'Notes de frais'
+          entry_type_2: 'Achat'
+          entry_type_3: 'Vente'
+          entry_type_4: 'Carte bancaire'
+        request:
+          confirm:
+            destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
+            cancel_destroy: 'Etes vous sûr de vouloir annuler la suppression ?'

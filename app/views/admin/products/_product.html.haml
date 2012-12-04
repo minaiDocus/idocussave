@@ -9,6 +9,6 @@
           = link_to icon_edit, edit_admin_product_path(product)
           = link_to icon_destroy, admin_product_path(product), :method => :delete, data: { :confirm => "Êtes-vous sûr ?" }
       
-      - product.product_groups.where(:product_supergroup_id => nil).by_position.entries.each do |product_group|
+      - product.product_groups.where(:product_supergroup_ids.size => 0).by_position.entries.each do |product_group|
         %ul
           != render :partial => "product_group", :locals => { :product_group => product_group, :product => product }

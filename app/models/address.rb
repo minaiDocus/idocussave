@@ -19,6 +19,7 @@ class Address
   field :is_for_shipping, type: Boolean, default: false
 
   embedded_in :user, inverse_of: :addresses
+  embeds_one :update_request, as: :updatable
 
   validates_presence_of :first_name, :last_name, :city, :zip
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }

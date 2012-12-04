@@ -22,6 +22,9 @@
             %ul{ :class=>"nav" }
               %li{ :class=>("active" if params[:controller] == "account/profiles") }
                 != link_to "Mon compte", account_profile_path
+              - if current_user.is_prescriber || current_user.is_admin
+                %li{ :class=>("active" if params[:controller].in?(%w(account/customers account/addresses account/journals account/subscriptions))) }
+                  != link_to "Mes clients", account_users_path
               %li{ :class=>("active" if params[:controller] == "account/documents" && params[:action] == "index") }
                 != link_to "Documents", account_documents_path
               /
@@ -62,8 +65,8 @@
       <!--[if lt IE 9]>
         <script src="/javascripts/html5.js" type="text/javascript"></script>
       <![endif]-->
-    - if params[:controller] == "account/documents" && params[:action] == "reporting"
-      != javascript_include_tag 'application', 'inner', 'reporting'
+    - if params[:controller].in? %w(account/customers account/journals account/subscriptions)
+      != javascript_include_tag 'application', 'inner', 'account/customers'
     - elsif params[:controller] == "account/scan/reportings" && params[:action] == "index"
       != javascript_include_tag 'application', 'inner', 'account/reporting'
     - elsif params[:controller] == "account/profiles" && params[:action] == "show"

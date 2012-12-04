@@ -174,6 +174,21 @@ get_account_book_types = ->
         if confirm('Etes vous sûr ?')
           destroy_account_book_type(id)
         return false
+      $('.remove_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          remove_account_book_type(id)
+        return false
+      $('.add_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          add_account_book_type(id)
+        return false
+      $('.accept_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          accept_account_book_type(id)
+        return false
 
 new_account_book_type = ->
   $.ajax
@@ -206,6 +221,10 @@ edit_account_book_type = (id) ->
     type: 'GET',
     success: (data) ->
       $('#edit_account_book_type .content').html(data)
+      $('.assign_value').click ->
+        value = $(this).next('span').text()
+        $($(this).attr('href')).attr('value',value)
+        return false
       $('.account_book_type.form').submit ->
         update_account_book_type(id)
         return false
@@ -229,6 +248,33 @@ destroy_account_book_type = (id) ->
     success: (data) ->
       get_account_book_types()
 
+remove_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/account_book_types/' + id + '/remove',
+    data: { _method: 'DELETE' },
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      get_account_book_types()
+
+add_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/account_book_types/' + id + '/add',
+    data: { _method: 'PUT' },
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      get_account_book_types()
+
+accept_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/account_book_types/' + id + '/accept',
+    data: { _method: 'PUT' },
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      get_account_book_types()
+
 update_user_clients = ->
   client_ids = $('#user_client_ids').val()
   $.ajax
@@ -237,27 +283,36 @@ update_user_clients = ->
     datatype: 'json',
     type: 'POST'
 
-get_propagate_stamp_name = ->
+propagate_stamp_name = ->
   $.ajax
     url: '/admin/users/' + user_id + '/propagate_stamp_name',
-    data: '',
+    data: { _method: 'PUT' },
     datatype: 'json',
-    type: 'GET'
+    type: 'POST'
 
-get_propagate_stamp_background = ->
+propagate_stamp_background = ->
   $.ajax
     url: '/admin/users/' + user_id + '/propagate_stamp_background',
-    data: '',
+    data: { _method: 'PUT' },
     datatype: 'json',
-    type: 'GET'
+    type: 'POST'
+
+propagate_is_editable = ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/propagate_is_editable',
+    data: { _method: 'PUT' },
+    datatype: 'json',
+    type: 'POST'
   
 toggle_prescriber_options = ->
   if $('#user_is_prescriber').is(':checked')
     $('#prescriber_options table').removeClass('hide')
     $('#stamp_propagation').show()
+    $('#is_editable_propagation').show()
   else
     $('#prescriber_options table').addClass('hide')
     $('#stamp_propagation').hide()
+    $('#is_editable_propagation').hide()
 
 jQuery ->
   $('input[type=checkbox]').click ->
@@ -364,16 +419,21 @@ jQuery ->
     get_reminder_emails()
     get_file_sending_kit()
     get_account_book_types()
-    get_propagate_stamp_name()
 
   $('#stamp_propagation').click ->
     value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
     if(value)
-      get_propagate_stamp_name()
+      propagate_stamp_name()
     return false
 
   $('#stamp_background_propagation').click ->
     value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
     if(value)
-      get_propagate_stamp_background()
+      propagate_stamp_background()
+    return false
+
+  $('#is_editable_propagation').click ->
+    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
+    if(value)
+      propagate_is_editable()
     return false

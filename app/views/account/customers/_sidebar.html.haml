@@ -1,0 +1,19 @@
+%h3 Filtres
+
+= form_tag account_users_path, method: :get, html: { class: 'form form-vertical' } do
+  %br
+  
+  = label_tag 'user_contains[company]', t('mongoid.models.user.attributes.company')
+  = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue ''), class: 'input-medium'
+  = label_tag 'user_contains[code]', t('mongoid.models.user.attributes.code')
+  = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'input-medium'
+  = label_tag 'user_contains[last_name]', t('mongoid.models.user.attributes.last_name')
+  = text_field_tag 'user_contains[last_name]', (params[:user_contains][:last_name] rescue ''), class: 'input-medium'
+  = label_tag 'user_contains[first_name]', t('mongoid.models.user.attributes.first_name')
+  = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue ''), class: 'input-medium'
+  = label_tag 'user_contains[email]', t('mongoid.models.user.attributes.email')
+  = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'input-medium'
+
+  %br
+  = submit_tag t('filters.action'), class: 'btn'
+  = link_to t('filters.reset'), account_users_path, class: 'btn'

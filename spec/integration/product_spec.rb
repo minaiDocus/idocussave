@@ -58,6 +58,6 @@ describe Product do
   end
   
   it "title should equal 'Game console'" do
-    @option1.product_group.product.title.should eq(@product.title)
+    @option1.product_group.products.first.title.should eq(@product.title)
   end
 end

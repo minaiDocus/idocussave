@@ -1,4 +1,4 @@
-# -*- encoding : UTF-8 -*-
+﻿# -*- encoding : UTF-8 -*-
 class Admin::Scan::SubscriptionsController < Admin::AdminController
   before_filter :load_user
 
@@ -18,7 +18,8 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
         @subscription = @user.find_or_create_scan_subscription
         @options = @subscription.product_option_orders.where(:group_position.gte => 1000).by_position
       else
-        @period = @user.find_or_create_scan_subscription.periods.desc(:created_at).first
+        @subscription = @user.find_or_create_scan_subscription
+        @period = @subscription.periods.desc(:created_at).first
       end
     else
       @period = nil
@@ -31,6 +32,7 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
       @products = Product.subscribable
       @subscription.remove_not_reusable_options
       @options = @subscription.product_option_orders.map { |option| [option.title, option.price_in_cents_wo_vat] }
+      @requested_options = @subscription.requested_product_option_orders.map { |option| [option.title, option.price_in_cents_wo_vat] }
     else
       @subscription = nil
     end
@@ -40,6 +42,7 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
     @subscription = @user.find_or_create_scan_subscription
     respond_to do |format|
       if @subscription.update_attributes params[:scan_subscription]
+        @user.set_request_type!
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else

@@ -4,15 +4,19 @@
     %br
       = simple_form_for [:admin, @product_group], html: { class: 'form form-horizontal' } do |f|
         .row-fluid
-          .span4
-            = f.input :name, label: "Nom du produit dans l'administration"
-            = f.input :title, label: 'Nom du produit dans le tunnel'
+          .span6
+            = f.input :name, label: "Libellé du produit"
+            = f.input :title, label: 'Nom du produit'
+          .span6
             = f.input :position, as: 'integer'
             = f.input :is_option_dependent, as: 'boolean', label: "Bouton radio ? (sinon case à cocher)"
+        .row-fluid
           .span4
-            = f.input :product_supergroup, as: 'select', collection: ProductGroup.asc(:name), label_method: :name, value_method: :id, selected: @product_group['product_supergroup_id'], label: 'Sélectionner un super groupe', include_blank: true
+            = f.association :products, as: :check_boxes, collection: Product.asc(:title), label_method: :title, value_method: :id, label: 'Sélectionner les produits'
+          .span4
+            = f.association :product_supergroups, as: :check_boxes, collection: ProductGroup.not_in(name: [@product_group.name]).asc(:name), label_method: :name, value_method: :id, label: 'Sélectionner les groupes parents'
+          .span4
             = f.input :product_require, as: 'select', collection: ProductGroup.asc(:name), label_method: :name, value_method: :id, selected: @product_group['product_require_id'], label: 'Sélectionner un groupe pour la dépendance', include_blank: true
-            = f.input :product, as: 'select', collection: Product.asc(:title), label_method: :title, value_method: :id, selected: @product_group['product_id'], label: 'Sélectionner un produit', include_blank: true
         .row-fluid
           .span12
             .form-actions

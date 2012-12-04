@@ -36,9 +36,9 @@
             %thead
               %tr
                 %th.first= t('mongoid.models.product_option.attributes.position')
-                %th.first= t('mongoid.models.product_option.attributes.name')
+                %th.first= t('mongoid.models.product_option.attributes.title')
                 %th.first= t('mongoid.models.product_option.attributes.price_in_cents_wo_vat')
-                %th.first= t('mopngoid.models.product_option.group')
+                %th.first= t('mongoid.models.product_option.group')
                 %th.first= t('actions.name')
             %tbody
               - @product_options.each do |product_option|
@@ -58,8 +58,8 @@
             %thead
               %tr
                 %th.first= t('mongoid.models.product_group.attributes.position')
-                %th.first= t('mongoid.models.product_group.attributes.name')
-                %th.first= t('mongoid.models.product.attributes.title')
+                %th.first= t('mongoid.models.product_group.attributes.title')
+                %th.first= t('mongoid.models.product.name').pluralize
                 %th.first Nombre d'option(s)
                 %th.first= t('actions.name')
             %tbody
@@ -67,7 +67,7 @@
                 %tr
                   %td.first= product_group.position
                   %td.first= product_group.title
-                  %td.first= product_group.product.title
+                  %td.first= product_group.products.map { |e| e.title }.join(', ')
                   %td.first= product_group.product_options.count
                   %td.first
                     = link_to icon_edit, edit_admin_product_group_path(product_group)

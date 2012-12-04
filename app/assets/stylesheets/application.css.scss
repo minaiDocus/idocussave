@@ -810,3 +810,21 @@ input.error:focus, select.error:focus, textarea.error:focus {
   display: none; }
 .pan.active {
   display: block; }
+
+/***** Customers *****/
+.price {
+  text-align:right !important; }
+
+.pannel {
+  padding: 14px 19px 14px;
+  background-color: white;
+  border: 1px solid #DDD;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .065);
+  -moz-box-shadow: 0 3px 5px rgba(0,0,0,.065);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, .065); }
+
+#customer.subscription table td.input {
+  width: 15px; }

@@ -1,0 +1,70 @@
+#customers.container-fluid
+  .row-fluid
+    .span4
+      .row-fluid
+        .span12.pannel
+          %h3 Journaux comptable
+          %table.table.table-striped.table-bordered.table-condensed.margin1top
+            %thead
+              %tr
+                %th Libellé court
+                %th Libellé long
+                %th Clients concernés
+                %th Action demandé à iDocus
+            %tbody
+              - current_user.my_account_book_types.unscoped.asc(:name).each do |journal|
+                %tr{ id: journal.slug }
+                  %td= journal.name
+                  %td= journal.description
+                  %td= journal.clients.count
+                  %td= t('request.'+journal.request_type) if journal.request_type.presence
+          = link_to 'Configurer les journaux comptable', account_account_book_types_path, class: 'btn'
+      .row-fluid
+        .span12.pannel.margin1top.margin1bottom
+          %h3.aligncenter Paramètres par défaut des abonnements
+          %hr
+          %h4.aligncenter
+            Configuration actuelle
+            = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
+          = render partial: 'options'
+
+          - if @subscription.is_update_requested?
+            %h4.aligncenter
+              Configuration souhaitée
+              = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
+            = render partial: 'requested_options'
+          - if current_user.is_editable
+            = link_to t('actions.edit'), edit_account_subscription_path(current_user), class: 'btn pull-right'
+
+    .span8.pannel
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Liste des clients
+          .pull-right
+            = link_to t('actions.new'), new_account_user_path, class: 'btn btn-primary'
+      .row-fluid.margin1top
+        .span9
+          %table.table.table-bordered.table-condensed.table-striped
+            %thead
+              %tr
+                %th
+                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { user_contains: user_contains }
+                %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier'), { user_contains: user_contains }
+                %th= t('request.state')
+                %th= t('actions.name').singularize
+            %tbody
+              - @users.each do |user|
+                %tr
+                  %td
+                    - unless user.is_editable
+                      = icon(icon: 'lock')
+                  %td= l(user.created_at)
+                  %td= user.info
+                  %td= t('request.'+User::REQUEST_TYPE_NAME[user.request_type]) if user.request_type && user.request_type.is_a?(Integer)
+                  %td
+                    = link_to icon_show, account_user_path(user), alt: t('actions.show'), title: t('actions.show')
+          .pull-right
+            = paginate @users
+        .span3.well
+          = render partial: 'sidebar'

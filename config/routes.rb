@@ -9,10 +9,21 @@ Idocus::Application.routes.draw do
   match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
   match '/account/invoices/:id/download/:style', controller: 'account/invoices', action: 'download', via: :get
   match '/account/compositions/download', controller: 'account/compositions', action: 'download', via: :get
+  match '/account' => redirect('/account/documents')
 
   namespace :account do
     root :to => "account/documents#index"
 
+    resources :customers, as: :users do
+      resources :addresses
+    end
+    resources :journals, as: :account_book_types do
+      post 'cancel_destroy',         :on => :member
+      get  'edit_requested_users',   :on => :member
+      post 'update_requested_users', :on => :member
+    end
+    resources :subscriptions
+    
     resources :documents do
       get 'packs', :on => :collection
       get 'search', :on => :collection
@@ -109,8 +120,11 @@ Idocus::Application.routes.draw do
     root :to => "admin#index"
     resources :users do
       get 'search_by_code', on: :collection
-      get 'propagate_stamp_name', on: :member
-      get 'propagate_stamp_background', on: :member
+      put 'propagate_stamp_name', on: :member
+      put 'propagate_stamp_background', on: :member
+      put 'propagate_is_editable', on: :member
+      put 'accept', on: :member
+      put 'activate', on: :member
       resources :addresses do
         get 'edit_multiple', on: :collection
         post 'update_multiple', on: :collection
@@ -128,7 +142,11 @@ Idocus::Application.routes.draw do
         get 'mail', on: :member
         get 'label', on: :member
       end
-      resources :account_book_types
+      resources :account_book_types do
+        put    'accept', on: :member
+        put    'add',    on: :member
+        delete 'remove', on: :member
+      end
       namespace :scan do
         resource :subscription
       end

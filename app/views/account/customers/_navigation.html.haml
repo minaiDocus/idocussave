@@ -1,0 +1,9 @@
+.navbar
+  .navbar-inner
+    .container-fluid
+      .nav-collapse
+        %ul.nav
+          %li{ class: ('active' if params[:controller] == 'account/customers' && params[:action] == 'index') }
+            = link_to 'Index', account_users_path
+          %li{ class: ('active' if params[:controller] == 'account/customers' && params[:action] == 'new') }
+            = link_to t('actions.new'), new_account_user_path

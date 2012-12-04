@@ -3,7 +3,7 @@ class Scan::Subscription < Subscription
   references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
-  attr_accessor :is_to_spreading, :update_period
+  attr_accessor :is_to_spreading, :update_period, :options, :force_assignment
 
   # quantité limite
   field :max_sheets_authorized,            type: Integer, default: 100 # numérisés
@@ -18,7 +18,7 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
 
   before_create :set_category, :create_period
-  before_save :check_propagation
+  before_save :check_propagation, :sync_assignment
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
   
   def set_category
@@ -86,7 +86,8 @@ class Scan::Subscription < Subscription
     self.price_of_a_lot_of_upload = scan_subscription.price_of_a_lot_of_upload
     self.unit_price_of_excess_preseizure = scan_subscription.unit_price_of_excess_preseizure
     self.unit_price_of_excess_expense = scan_subscription.unit_price_of_excess_expense
-    self.copy_options! scan_subscription.product_option_orders
+    self.copy_to_options! scan_subscription.product_option_orders
+  
     self.save
   end
   
@@ -155,11 +156,58 @@ class Scan::Subscription < Subscription
     end
     result
   end
+
+  def products_price_in_cents_wo_vat
+    product_option_orders.user_editable.sum(:price_in_cents_wo_vat) || 0
+  end
+
+  def products_price_in_cents_w_vat
+    products_price_in_cents_wo_vat * self.tva_ratio
+  end
+
+  def sync_assignment
+    if force_assignment.try(:to_i) == 1
+      copy_to_requested_options! self.product_option_orders
+    end
+  end
+
+  def is_update_requested?
+    result = false
+    product_option_orders.user_editable.each do |option|
+      unless option.in?(requested_product_option_orders)
+        result = true
+      end
+    end
+    requested_product_option_orders.user_editable.each do |option|
+      unless option.in?(product_option_orders)
+        result = true
+      end
+    end
+    result
+  end
+
+  def copy_to_options!(options)
+    self.product_option_orders = []
+    new_options = copy_options(options)
+    new_options.each do |new_option|
+      self.product_option_orders << new_option
+    end
+    new_options
+  end
+
+  def copy_to_requested_options!(options)
+    self.requested_product_option_orders = []
+    new_options = copy_options(options)
+    new_options.each do |new_option|
+      self.requested_product_option_orders << new_option
+    end
+    new_options
+  end
   
 protected
 
-  def copy_options!(options)
-    self.product_option_orders = []
+  def copy_options(options)
+    new_options = []
     options.each do |option|
       product_option_order = ProductOptionOrder.new
       product_option_order.fields.keys.each do |k|
@@ -167,7 +215,8 @@ protected
         value = option.send(k)
         product_option_order.send(setter, value)
       end
-      self.product_option_orders << product_option_order
+      new_options << product_option_order
     end
+    new_options
   end
 end

@@ -56,6 +56,16 @@ class User
   field :is_detail_authorized,           type: Boolean, default: false
   field :is_reminder_email_active,       type: Boolean, default: true
 
+  NOTHING  = 0
+  ADDING   = 1
+  UPDATING = 2
+  REQUEST_TYPE_NAME = %w(nothing adding updating)
+
+  field :is_new,                         type: Boolean, default: false
+  field :is_disabled,                    type: Boolean, default: false
+  field :is_editable,                    type: Boolean, default: true
+  field :request_type,                   type: Integer, default: 0
+
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
 
@@ -64,7 +74,9 @@ class User
 
   # FIXME use another way
   before_save :set_timestamps_of_addresses
+
   embeds_many :addresses
+  embeds_one :update_request, as: :update_requestable
 
   references_many :clients,  class_name: "User", inverse_of: :prescriber
   referenced_in :prescriber, class_name: "User", inverse_of: :clients
@@ -77,6 +89,7 @@ class User
   
   references_many :my_account_book_types, class_name: "AccountBookType", inverse_of: :owner
   references_and_referenced_in_many :account_book_types,  inverse_of: :clients
+  references_and_referenced_in_many :requested_account_book_types, class_name: "AccountBookType",  inverse_of: :requested_clients
 
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
@@ -100,7 +113,7 @@ class User
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
   
-  before_save :format_name, :update_clients, :set_inactive_at
+  before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -197,7 +210,76 @@ class User
       self.clients.each { |client| client.update_attribute(:is_stamp_background_filled, self.is_stamp_background_filled) }
     end
   end
+
+  def propagate_is_editable
+    if self.is_prescriber
+      self.clients.each { |client| client.update_attribute(:is_editable, self.is_editable) }
+    end
+  end
   
+  def update_requestable_attributes
+    [:email,:last_name,:first_name,:company,:code]
+  end
+
+  def active_for_authentication?
+    super && !self.is_disabled
+  end
+
+  def activate!
+    self.is_new = false
+    self.is_disabled = false
+    save
+  end
+
+  def accept!
+    if update_request
+      update_request.apply
+      update_request.values = {}
+    end
+    save
+  end
+
+  def is_update_requested?
+    result = false
+    # user
+    result = true if self.update_request.try(:values).present?
+    # journals
+    if self.is_prescriber
+      my_account_book_types.unscoped.each do |account_book_type|
+        result = true if account_book_type.is_update_requested?
+      end
+    else
+      result = true if account_book_types.unscoped != requested_account_book_types.unscoped
+    end
+    # subscription
+    result = true if scan_subscriptions.current.try(:is_update_requested?)
+    result
+  end
+
+  def set_request_type!
+    if is_prescriber
+      clients.active.each do |client|
+        client.set_request_type
+        client.save
+      end
+    elsif prescriber
+      prescriber.set_request_type
+      prescriber.save
+    end
+    set_request_type
+    save
+  end
+
+  def set_request_type
+    if self.is_new
+      self.request_type = ADDING
+    elsif is_update_requested?
+      self.request_type = UPDATING
+    else
+      self.request_type = NOTHING
+    end
+  end
+
 protected
 
   def update_clients

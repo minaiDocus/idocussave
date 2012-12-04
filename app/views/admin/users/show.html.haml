@@ -5,6 +5,11 @@
     .span12.well{ style: 'padding:5px 10px;' }
       .pull-left
         %h2= @user.info + (@user.inactive_at ? ' (Inactif)' : '')
+      - if @user.is_new
+        .pull-right
+          - if @user.is_new
+            = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-danger'
+            = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-danger'
 
   .row-fluid
     #information.span6

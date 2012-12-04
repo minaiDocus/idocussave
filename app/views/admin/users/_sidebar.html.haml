@@ -5,6 +5,8 @@
   - item = params[:user_contains][:prescriber_id] rescue ''
   = label_tag 'user_contains[prescriber_id]', t('mongoid.models.user.attributes.prescriber')
   = select_tag 'user_contains[prescriber_id]', options_from_collection_for_select(User.prescribers.asc(:code), :id, :info, selected: item), include_blank: true
+  = label_tag 'user_contains[request_type]', t('request.name')
+  = select_tag 'user_contains[request_type]', options_for_select(request_options_for_select,(params[:user_contains][:request_type] rescue '')), include_blank: false
   = label_tag 'user_contains[company]', t('mongoid.models.user.attributes.company')
   = text_field_tag 'user_contains[company]', (params[:user_contains][:company] rescue '')
   = label_tag 'user_contains[code]', t('mongoid.models.user.attributes.code')

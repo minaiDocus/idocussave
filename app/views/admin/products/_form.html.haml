@@ -6,6 +6,7 @@
         = f.input :title, label: 'Titre'
         = f.input :position, as: 'integer'
         = f.input :price_in_cents_wo_vat, as: 'integer', label: 'Prix (en centimes)'
+        = f.input :period_duration, label: 'Type de période', collection: [["mensuel",1],["trimestriel",3],["annuel",12]], include_blank: false
         = f.input :is_a_subscription, as: 'boolean', label: 'Abonnement ?'
         = f.input :require_billing_address, as: 'boolean', label: 'Adresse de facturation requise ?'
         .row-fluid

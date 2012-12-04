@@ -7,12 +7,14 @@
         %tr
           %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { user_contains: user_contains }
           %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier'), { user_contains: user_contains }
+          %th= sortable :request_type, t('request.name'), { user_contains: user_contains }
           %th= t('actions.name').pluralize
       %tbody
         - @users.each do |user|
           %tr
             %td= l(user.created_at)
             %td= user.info
+            %td= t('request.'+User::REQUEST_TYPE_NAME[user.request_type])
             %td
               = link_to icon_show, admin_user_path(user), alt: t('actions.show'), title: t('actions.show')
     .pull-right

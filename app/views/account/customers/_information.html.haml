@@ -1,0 +1,24 @@
+.label{ style: 'padding:3px 5px 3px' }
+  Informations
+.row-fluid
+  .span7
+    %table.table.table-striped.table-bordered.table-condensed.bestinplace
+      %tbody
+        %tr
+          %th.first= t('mongoid.models.common.attributes.created_at')
+          %td= l(@user.created_at)
+        %tr
+          %th.first= t('mongoid.attributes.user.email')
+          %td= @user.email
+        %tr
+          %th.first= t('mongoid.models.user.attributes.last_name')
+          %td= @user.last_name
+        %tr
+          %th.first= t('mongoid.models.user.attributes.first_name')
+          %td= @user.first_name
+        %tr
+          %th.first= t('mongoid.models.user.attributes.company')
+          %td= @user.company
+        %tr
+          %th.first= t('mongoid.models.user.attributes.code')
+          %td= @user.code

@@ -1,5 +1,7 @@
-.label{ style: 'padding:3px 5px 3px' }
+.label{ class: (@user.update_request.try(:values).present? ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
   Informations
+  - if @user.update_request.try(:values).present?
+    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-mini btn-danger'
 .row-fluid
   .span7
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
@@ -9,19 +11,19 @@
           %td= l(@user.created_at)
         %tr
           %th.first= t('mongoid.attributes.user.email')
-          %td= render partial: 'text_field', locals: { name: 'user[email]', value: @user.email }
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :email, name: 'user[email]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.last_name')
-          %td= render partial: 'text_field', locals: { name: 'user[last_name]', value: @user.last_name }
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :last_name, name: 'user[last_name]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.first_name')
-          %td= render partial: 'text_field', locals: { name: 'user[first_name]', value: @user.first_name }
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :first_name, name: 'user[first_name]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.company')
-          %td= render partial: 'text_field', locals: { name: 'user[company]', value: @user.company }
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :company, name: 'user[company]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.code')
-          %td= render partial: 'text_field', locals: { name: 'user[code]', value: @user.code }
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :code, name: 'user[code]' }
   .span5
     .row-fluid
       .span12
@@ -38,10 +40,11 @@
             %tr
               %th= t('mongoid.models.user.attributes.is_prescriber')
               %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber
-    .row-fluid
-      .span12
-        %table.table.table-striped.table-bordered.table-condensed
-          %tbody
+            %tr
+              %th= t('mongoid.models.user.attributes.is_editable')
+              %td.value
+                = check_box_tag 'user[is_editable]', 1, @user.is_editable
+                #is_editable_propagation.pull-right= icon_link_to '#', { icon: 'globe' }, { title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' } }
             %tr
               %th= t('mongoid.models.user.attributes.use_debit_mandate')
               %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate

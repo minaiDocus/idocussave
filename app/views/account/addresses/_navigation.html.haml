@@ -1,7 +1,10 @@
 .navbar
   .navbar-inner
     %ul.nav
+      - if @is_manager
+        %li
+          = link_to 'Retour', account_user_path(@user)
       %li{ class: (action_name == 'index' ? 'active' : '')}
-        = link_to 'Liste des adresses', account_addresses_path
+        = link_to 'Liste des adresses', @is_manager ? account_user_addresses_path(@user) : account_addresses_path
       %li{ class: (action_name == 'new' ? 'active' : '')}
-        = link_to 'Nouvelle adresse', new_account_address_path
+        = link_to 'Nouvelle adresse', @is_manager ? new_account_user_address_path(@user) : new_account_address_path

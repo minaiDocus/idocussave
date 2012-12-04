@@ -105,6 +105,9 @@ html, body {
 }
 /*****************/
 
+.aligncenter {
+  text-align: center; }
+
 table {
   tr {
     th.total, td.total {
@@ -217,3 +220,6 @@ table {
   width: 73px; }
 #edit_csv_outputter input, #edit_csv_outputter select {
   font-size: 10px; }
+
+#subscription .requested {
+  border: 1px solid orange; }

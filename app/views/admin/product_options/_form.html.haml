@@ -11,7 +11,7 @@
             = f.input :price_in_cents_wo_vat, as: 'integer', label: 'Prix (en centimes)'
             = f.input :duration, as: 'integer', label: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période) ?"
             = f.input :quantity, as: 'integer', label: 'Quantité'
-            = f.input :product_group, label: 'Groupe', collection: ProductGroup.asc(:name).map { |e| [e.name,e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
+            = f.input :product_group, label: 'Groupe', collection: ProductGroup.asc(:name).map { |e| [[e.products_title,e.name].join(' - '),e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
           .span4
             = f.input :description, label: t('mongoid.models.product_option.attributes.description'), as: 'text', input_html: { class: 'xxlarge' }
         .row-fluid
