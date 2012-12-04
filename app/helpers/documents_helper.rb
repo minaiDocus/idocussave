@@ -92,4 +92,57 @@ module DocumentsHelper
       end
     end
   end
+  
+  def thead(columns)
+    content_tag :thead do
+      content_tag :tr do 
+        columns.each do |c|
+          concat(content_tag(:th, c, style: 'text-align:right'))
+        end
+      end
+    end
+  end
+
+  def tbody(items)
+    content_tag :tbody do
+      items.each_with_index do |(k,v),index|
+        concat(content_tag(:tr){
+          concat content_tag :td, "#{index + 1}"
+          concat content_tag :td, "#{k[:date].strftime("%d/%m/%Y")}", style: 'text-align:right'
+          concat content_tag :td, "#{k[:uploaded]}", style: 'text-align:right'
+          concat content_tag :td, "#{k[:scanned]}", style: 'text-align:right'
+          }
+        )
+      end
+    end
+  end
+  
+  def custom_table_for(columns,items)
+    content_tag :table, class: 'table table-condensed table-striped' do
+      thead(columns) + tbody(items)
+    end
+  end
+  
+  def tinformations(pack, original_document, pages, content_width)   
+    content_tag :table, class: 'table table-condensed' do
+      content_tag :tbody do
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Nom du document"),       width: content_width) + content_tag(:td, "#{pack.name}.pdf")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de mise en ligne"), width: content_width) + content_tag(:td, "#{pack.created_at.strftime("%d/%m/%Y")}")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de modification"),  width: content_width) + content_tag(:td, "#{pack.updated_at.strftime("%d/%m/%Y")}")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pages.count}")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{tags_of(original_document,@all_tags)}")
+      end
+    end
+  end
+  
+  def html_pack_info(pack, original_document, pages)
+    columns = [ "N°","Date","Téléversées","Numérisées"]
+    
+    contents = ""
+    contents += content_tag :h4, "Informations"
+    contents += content_tag :div, tinformations(pack, original_document, pages, 120)
+    contents += content_tag :h4, "Historique des ajouts de pages"
+    contents += content_tag :div, custom_table_for(columns,pack.historic)
+    content_tag :div, contents
+    end
 end

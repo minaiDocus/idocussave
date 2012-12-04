@@ -30,7 +30,7 @@
 
 %li{ :id => "original_#{original_document.id}_#{pack.id}", :class => document_class }
   %span.action
-    %a.do-popover{"data-content" => "Nom du document\t : #{pack.name}.pdf<br />Date de mise en ligne\t: #{l(pack.created_at)}<br />Date de modification : #{l(pack.updated_at)}<br />Nombre de pages : #{pages.count}<br />Tags : #{tags_of(original_document,@all_tags)}", :href => "#"}
+    %a.do-popover{"data-content" => html_pack_info(pack, original_document, pages),:href => "#"}
       %i.icon-info-sign
     %a.do-select.do-tooltip{:href => "#", :title => "sélectionner"}
       %i.icon-ok
