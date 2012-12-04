@@ -16,7 +16,10 @@ protected
            Mongoid::Errors::DocumentNotFound
       render "/404.html.haml", :status => 404, :layout => "inner"
     rescue => e
-      user_info = ["#{current_user.try(:code)} :",current_user.try(:name),"<#{current_user.email}>"].reject{ |i| i.nil? }.join(' ')
+      user_info = "[visiteur]"
+      if current_user
+        user_info = ["#{current_user.try(:code)} :",current_user.try(:name),"<#{current_user.email}>"].reject{ |i| i.nil? }.join(' ')
+      end
       ExceptionNotifier::Notifier.exception_notification(request.env, e, :data => { :user_info => "#{user_info}" }).deliver
       render "/500.html.haml", :status => 500, :layout => "inner"
     end
