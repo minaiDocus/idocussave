@@ -2,7 +2,7 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  before_filter :load_user, :except => %w(download piece)
+  before_filter :load_user
   before_filter :find_last_composition, :only => %w(index)
   skip_before_filter :login_user!, :only => %w(download piece)
 
@@ -133,7 +133,7 @@ public
   def download
     document = Document.find params[:id]
     filepath = document.content.path(params[:style])
-    if File.exist?(filepath) && ((@user && @user.in?(document.pack.users)) || (current_user && current_user.is_admin)) or params[:token] == document.get_token
+    if File.exist?(filepath) && ((@user && @user.in?(document.pack.users)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
       type = document.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
@@ -145,7 +145,7 @@ public
   def piece
     piece = Pack::Piece.find params[:id]
     filepath = piece.content.path
-    if File.exist?(filepath) && ((@user && @user.in?(piece.pack.users)) || (current_user && current_user.is_admin)) || params[:token] == piece.get_token
+    if File.exist?(filepath) && ((@user && @user.in?(piece.pack.users)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
       filename = File.basename(filepath)
       type = piece.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true)
