@@ -249,7 +249,7 @@ class User
         result = true if account_book_type.is_update_requested?
       end
     else
-      result = true if account_book_types.unscoped != requested_account_book_types.unscoped
+      result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
     end
     # subscription
     result = true if scan_subscriptions.current.try(:is_update_requested?)
