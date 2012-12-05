@@ -4,7 +4,7 @@ namespace :maintenance do
     desc "Fecth documents"
     task :fetch => [:environment] do
       Pack.get_file_from_numen
-      Pack.get_documents
+      Pack.get_documents(nil)
       ReminderEmail.deliver
     end
   end
