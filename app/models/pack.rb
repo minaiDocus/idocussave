@@ -517,13 +517,18 @@ class Pack
         Prawn::Document.generate STAMP_PATH, page_size: size, top_margin: 10 do
           if is_stamp_background_filled
             bounding_box([0, bounds.height], :width => bounds.width) do
-              data = [[txt]]
-              stroke_color "ffffff"
-              fill_color "ffffff"
-              table(data, row_colors: ["FF0000"], position: :center, font_size: 10 )
-            end
+              data = [["","","","","","",""," ",txt," ","","","","","","",""]]
+              table(data, width: (size[0] - 72)) do
+                style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000", align: :center)
+                style(columns(0..7), border_color: "FFFFFF", text_color: "FFFFFF", background_color: "FFFFFF")
+                style(columns(9..16), border_color: "FFFFFF",text_color: "FFFFFF", background_color: "FFFFFF")
+                style(columns(7), border_right_color: "FF0000")
+                style(columns(8), background_color: "FF0000", border_color: "FF0000", align: :center)
+                style(columns(9), border_left_color: "FF0000")
+              end
+            end 
           else
-            fill_color "ff0000"
+            fill_color "FF0000"
             text txt, size: 10, :align => :center
           end
         end
