@@ -213,9 +213,7 @@ class Document
       self.content_text = "-[none]"
     end
     if self.is_an_upload && self.content_text == "-[none]"
-      imagepath = "#{Rails.root}/tmp/image.tif"
-      system "convert -density 100 #{path} -colorspace Gray -depth 8 -alpha off #{imagepath}"
-      tess = Tesseract::Process.new(imagepath, lang: :fra )
+      tess = Tesseract::Process.new(path, lang: :fra, convert_options: { input: ["-density 200 -colorspace Gray -depth 8 -alpha off"] } )
       words = tess.to_s.split(/\n/).join(' ').split(' ').uniq.select { |e| e.size > 1 }
       self.content_text = ''
       words.each do |word|
@@ -223,7 +221,6 @@ class Document
           self.content_text += ' ' + word
         end
       end
-      File.delete(imagepath)
       unless self.content_text.presence
         self.content_text = " "
       end
