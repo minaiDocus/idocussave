@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    Ascii85 (1.0.1)
+    Ascii85 (1.0.2)
     actionmailer (3.2.8)
       actionpack (= 3.2.8)
       mail (~> 2.4.4)
@@ -127,6 +127,7 @@ GEM
       activesupport (~> 3.0)
       haml (~> 3.0)
       railties (~> 3.0)
+    hashery (2.1.0)
     hike (1.2.1)
     hpricot (0.8.6)
     httmultiparty (0.3.8)
@@ -219,16 +220,17 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (>= 0.0.2)
       mime-types
-    pdf-reader (1.1.1)
+    pdf-reader (1.2.0)
       Ascii85 (~> 1.0.0)
+      hashery (~> 2.0)
       ruby-rc4
     pkg-config (1.1.4)
     polyglot (0.3.3)
     poppler (1.1.5)
       gtk2 (>= 1.1.5)
-    prawn (0.12.0)
+    prawn (1.0.0.rc1)
       pdf-reader (>= 0.9.0)
-      ttfunk (~> 1.0.2)
+      ttfunk (~> 1.0.3)
     quiet_assets (1.0.1)
       railties (~> 3.1)
     rack (1.4.1)
@@ -398,7 +400,7 @@ DEPENDENCIES
   paperclip (= 3.0.2)
   pdf-reader
   poppler
-  prawn
+  prawn (= 1.0.0.rc1)
   quiet_assets
   rack-raw-upload
   rails (= 3.2.8)

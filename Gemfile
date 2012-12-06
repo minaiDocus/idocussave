@@ -24,7 +24,7 @@ gem 'mongoid_session_store'
 gem 'rack-raw-upload'
 gem 'pdf-reader'
 gem 'savon_model'
-gem 'prawn'
+gem 'prawn', '1.0.0.rc1'
 gem 'to_xls'
 gem 'barby'
 gem 'chunky_png' # required by barby
