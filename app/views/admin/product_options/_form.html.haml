@@ -5,7 +5,8 @@
       = simple_form_for [:admin, @product_option], html: { class: 'form form-horizontal' } do |f|
         .row-fluid
           .span4
-            = f.input :title, label: 'Titre'
+            = f.input :name, label: 'Nom'
+            = f.input :title, label: 'Nom (public)'
             = f.input :position, as: 'integer'
             = f.input :require_addresses, as: 'boolean', label: 'Adresse requise ?'
             = f.input :price_in_cents_wo_vat, as: 'integer', label: 'Prix (en centimes)'

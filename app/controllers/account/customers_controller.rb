@@ -36,6 +36,8 @@ class Account::CustomersController < Account::AccountController
     @user.is_new = true
     @user.is_disabled = true
     @user.request_type = User::ADDING
+    @user.set_random_password
+    @user.skip_confirmation!
     if @user.save
       subscription = @user.find_or_create_scan_subscription
       new_options = current_user.find_or_create_scan_subscription.product_option_orders

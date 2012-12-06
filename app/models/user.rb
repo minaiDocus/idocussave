@@ -280,6 +280,12 @@ class User
     end
   end
 
+  def set_random_password
+    new_password = rand(36**20).to_s(36)
+    self.password = new_password
+    self.password_confirmation = new_password
+  end
+
 protected
 
   def update_clients

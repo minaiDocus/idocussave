@@ -31,8 +31,8 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
       @subscription = @user.find_or_create_scan_subscription
       @products = Product.subscribable
       @subscription.remove_not_reusable_options
-      @options = @subscription.product_option_orders.map { |option| [option.title, option.price_in_cents_wo_vat] }
-      @requested_options = @subscription.requested_product_option_orders.map { |option| [option.title, option.price_in_cents_wo_vat] }
+      @options = @subscription.product_option_orders.map { |option| option.to_a }
+      @requested_options = @subscription.requested_product_option_orders.map { |option| option.to_a }
     else
       @subscription = nil
     end

@@ -1,11 +1,12 @@
 # -*- encoding : UTF-8 -*-
 class ProductOptionOrder
   include Mongoid::Document
-  
+
+  field :name,                  type: String
   field :title,                 type: String
   field :group_title,           type: String
   field :description,           type: String
-  field :price_in_cents_wo_vat, type: Integer
+  field :price_in_cents_wo_vat, type: Float
   field :group_position,        type: Integer
   field :position,              type: Integer
   field :duration,              type: Integer
@@ -22,8 +23,9 @@ class ProductOptionOrder
   
   def ==(product_option_order)
     result = true
+    result = false unless self.name == product_option_order.name
     result = false unless self.title == product_option_order.title
-    result = false unless self.group_title == product_option_order.group_title 
+    result = false unless self.group_title == product_option_order.group_title
     result = false unless self.description == product_option_order.description 
     result = false unless self.price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat 
     result = false unless self.group_position == product_option_order.group_position 
@@ -35,5 +37,9 @@ class ProductOptionOrder
 
   def eql?(product_option_order)
     self == product_option_order
+  end
+
+  def to_a
+    [self.name, self.price_in_cents_wo_vat]
   end
 end

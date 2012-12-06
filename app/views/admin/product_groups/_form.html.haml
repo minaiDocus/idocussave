@@ -5,8 +5,8 @@
       = simple_form_for [:admin, @product_group], html: { class: 'form form-horizontal' } do |f|
         .row-fluid
           .span6
-            = f.input :name, label: "Libellé du produit"
-            = f.input :title, label: 'Nom du produit'
+            = f.input :name, label: "Nom"
+            = f.input :title, label: 'Nom (public)'
           .span6
             = f.input :position, as: 'integer'
             = f.input :is_option_dependent, as: 'boolean', label: "Bouton radio ? (sinon case à cocher)"

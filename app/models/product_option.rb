@@ -3,7 +3,8 @@ class ProductOption
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Slug
-  
+
+  field :name,                  type: String,  default: ""
   field :title
   field :description,           type: String,  default: ""
   field :price_in_cents_wo_vat, type: Float
@@ -12,7 +13,7 @@ class ProductOption
   field :duration,              type: Integer, default: 1
   field :quantity,              type: Integer, default: 1
   
-  validates_presence_of :title, :price_in_cents_wo_vat
+  validates_presence_of :title, :name, :price_in_cents_wo_vat
   
   slug :title
 
@@ -33,6 +34,14 @@ public
     def find_by_slug(txt)
       self.first conditions: { slug: txt }
     end
+  end
+
+  def first_attribute
+    self.name
+  end
+
+  def to_a
+    [first_attribute, self.price_in_cents_wo_vat]
   end
 
   def price_in_cents_w_vat

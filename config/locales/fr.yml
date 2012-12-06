@@ -351,7 +351,8 @@ fr:
         name: 'Option de produit'
         group: 'Groupe'
         attributes:
-          title: 'Titre'
+          name: 'Nom'
+          title: 'Nom (public)'
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'
@@ -362,7 +363,8 @@ fr:
         other: '%{count} groupes'
         name: 'Groupe de produit'
         attributes:
-          title: 'Titre'
+          name: 'Nom'
+          title: 'Nom (public)'
           position: 'Position'
           price_in_cents_wo_vat: 'Prix'
           description: 'Déscription'

@@ -21,7 +21,7 @@ class Account::SubscriptionsController < Account::AccountController
   public
 
   def edit
-    @options = @subscription.requested_product_option_orders.map { |option| [option.title, option.price_in_cents_wo_vat] }
+    @options = @subscription.requested_product_option_orders.map { |option| option.to_a }
   end
   
   def update

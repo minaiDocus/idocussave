@@ -9,12 +9,12 @@
             %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
             %th{ rowspan: 2, style: 'vertical-align:middle' } Clients concernés
             %th{ colspan: 3 } Traitement Pré-Saisie ou NDF
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Action demandé à iDocus
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Action demandée à iDocus
             - if @user.is_editable
               %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
           %tr
             %th Type
-            %th N°
+            %th N° de compte
             %th Compte charge
         %tbody
           - @journals.each do |journal|

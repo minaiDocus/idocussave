@@ -61,12 +61,12 @@ module AdminHelper
   def is_option_checked?(index, option, options)
     if option.product_group.is_option_dependent
       if options.any?
-        options.map{ |option| option[0] }.include?(option.title)
+        options.map{ |option| option[0] }.include?(option.first_attribute)
       else
         index == 0 ? true : false
       end
     else
-      [option.title, option.price_in_cents_wo_vat].in?(options)
+      option.to_a.in?(options)
     end
   end
 

@@ -38,14 +38,14 @@
               %h3.aligncenter Abonnement
               %hr
               %h4.aligncenter
-                Configuration souhaitée
-                = @subscription.period_duration == 1 ? '(Périodicité mensuel)' : '(Périodicité trimestriel)'
+                Configuration actuelle
+                = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
               = render partial: 'options'
 
               - if @subscription.is_update_requested?
                 %h4.aligncenter
-                  Options souhaitées
-                  = @subscription.period_duration == 1 ? '(Périodicité mensuel)' : '(Périodicité trimestriel)'
+                  Configuration souhaitée
+                  = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
                 = render partial: 'requested_options'
               - if @user.is_editable
                 = link_to t('actions.edit'), edit_account_subscription_path(@user), class: 'btn pull-right'

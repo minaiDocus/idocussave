@@ -36,6 +36,7 @@
             %thead
               %tr
                 %th.first= t('mongoid.models.product_option.attributes.position')
+                %th.first= t('mongoid.models.product_option.attributes.name')
                 %th.first= t('mongoid.models.product_option.attributes.title')
                 %th.first= t('mongoid.models.product_option.attributes.price_in_cents_wo_vat')
                 %th.first= t('mongoid.models.product_option.group')
@@ -44,6 +45,7 @@
               - @product_options.each do |product_option|
                 %tr
                   %td.first= product_option.position
+                  %td.first= product_option.name
                   %td.first= product_option.title
                   %td.price.first= format_price_00(product_option.price_in_cents_wo_vat) + ' €'
                   %td.first= product_option.product_group.try(:name)
@@ -58,6 +60,7 @@
             %thead
               %tr
                 %th.first= t('mongoid.models.product_group.attributes.position')
+                %th.first= t('mongoid.models.product_group.attributes.name')
                 %th.first= t('mongoid.models.product_group.attributes.title')
                 %th.first= t('mongoid.models.product.name').pluralize
                 %th.first Nombre d'option(s)
@@ -66,6 +69,7 @@
               - @product_groups.each do |product_group|
                 %tr
                   %td.first= product_group.position
+                  %td.first= product_group.name
                   %td.first= product_group.title
                   %td.first= product_group.products.map { |e| e.title }.join(', ')
                   %td.first= product_group.product_options.count
