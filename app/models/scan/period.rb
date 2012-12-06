@@ -131,6 +131,10 @@ class Scan::Period
     excess > 0 ? excess : 0
   end
 
+  def excess_compta_pieces
+    excess_preseizure_pieces + excess_expense_pieces
+  end
+
   def excess_preseizure_pieces
     excess = preseizure_pieces - max_preseizure_pieces_authorized
     excess > 0 ? excess : 0
@@ -139,6 +143,10 @@ class Scan::Period
   def excess_expense_pieces
     excess = expense_pieces - max_expense_pieces_authorized
     excess > 0 ? excess : 0
+  end
+
+  def compta_pieces
+    preseizure_pieces + expense_pieces
   end
 
   def preseizure_pieces

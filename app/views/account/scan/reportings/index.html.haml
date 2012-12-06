@@ -22,9 +22,9 @@
               %tr{ :style => "text-align:left;" }
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
-                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Pièces téléversées",4],["Pages téléversées",5],["Attaches",6],["Hors format",7]]
+                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
                 - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
-                  - options += [["Montant facture (€ HT)",8],["Dépassement (€ HT)",9]]
+                  - options += [["Dépassement (€ HT)",9],["Montant facture (€ HT)",8]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
           .span8
             %form#filter.margin0bottom
@@ -60,7 +60,7 @@
   
   - annual_summary = []
   - 12.times do
-    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
   
   .row
     .span12
@@ -117,6 +117,14 @@
                             #{period.paperclips}
                           %span{ :class => "hide oversized value_7" }
                             #{period.oversized}
+                          %span{ :class => "hide excess_sheets value_10" }
+                            #{period.excess_sheets}
+                          %span{ :class => "hide excess_uploaded_pages value_11" }
+                            #{period.excess_uploaded_pages}
+                          %span{ :class => "hide compta_pieces value_12" }
+                            #{period.compta_pieces}
+                          %span{ :class => "hide excess_compta_pieces value_13" }
+                            #{period.excess_compta_pieces}
                           - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
                             %span{ :class => "hide price value_8" }
                               #{format_price_00 period.price_in_cents_wo_vat} €
@@ -126,9 +134,13 @@
                           - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
                           - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
                           - annual_summary[period.end_at.month - 1][:pages] += period.pages
+                          - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
                           - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
                           - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets
                           - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
+                          - annual_summary[period.end_at.month - 1][:excess_uploaded_pages] += period.excess_uploaded_pages
+                          - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
+                          - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
                           - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
                           - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
                           - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
@@ -146,10 +158,18 @@
                     Nb de pièces numérisées
                   %span{ :class => "hide pages value_2" }
                     Nb de pages numérisées
+                  %span{ :class => "hide excess_sheets value_10" }
+                    Dépassement numérisation
                   %span{ :class => "hide uploaded_pieces value_4" }
                     Nb de pièces téléversées
                   %span{ :class => "hide uploaded_pages value_5" }
                     Nb de pages téléversées
+                  %span{ :class => "hide excess_uploaded_pages value_11" }
+                    Dépassement téléversement
+                  %span{ :class => "hide compta_pieces value_12" }
+                    Nb de pièces pré-affectées
+                  %span{ :class => "hide excess_compta_pieces value_13" }
+                    Dépassement pré-affectation
                   %span{ :class => "hide paperclips value_6" }
                     Nb d'attaches
                   %span{ :class => "hide oversized value_7" }
@@ -177,12 +197,20 @@
                       #{month[:sheets]}
                     %span{ :class => "hide pages value_2" }
                       #{month[:pages]}
+                    %span{ :class => "hide excess_sheets value_10" }
+                      #{month[:excess_sheets]}
                     %span{ :class => "hide uploaded_pieces value_4" }
                       #{month[:uploaded_pieces]}
                     %span{ :class => "hide uploaded_sheets value_3" }
                       #{month[:uploaded_sheets]}
                     %span{ :class => "hide uploaded_pages value_5" }
                       #{month[:uploaded_pages]}
+                    %span{ :class => "hide excess_uploaded_pages value_11" }
+                      #{month[:excess_uploaded_pages]}
+                    %span{ :class => "hide compta_pieces value_12" }
+                      #{month[:compta_pieces]}
+                    %span{ :class => "hide excess_compta_pieces value_13" }
+                      #{month[:excess_compta_pieces]}
                     %span{ :class => "hide paperclips value_6" }
                       #{month[:paperclips]}
                     %span{ :class => "hide oversized value_7" }
