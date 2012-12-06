@@ -7,4 +7,7 @@
   = f.input :email, label: 'Email'
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
-    = link_to t('actions.cancel'), account_user_path(@user.id), class: 'btn'
+    - if params[:action].in?(%w(new create))
+      = link_to t('actions.cancel'), account_users_path, class: 'btn'
+    - else
+      = link_to t('actions.cancel'), account_user_path(@user.id), class: 'btn'
