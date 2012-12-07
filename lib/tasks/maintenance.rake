@@ -38,7 +38,9 @@ namespace :maintenance do
       User.prescribers.each do |prescriber|
         prescriber.clients.active.each do |client|
           begin
-            client.scan_subscriptions.last.find_or_create_period Time.now
+            subscription = client.scan_subscriptions.current
+            subscription.remove_not_reusable_options
+            subscription.find_or_create_period Time.now
           rescue
             puts "Can't generate period for user #{client.code}<#{client.email}>, probably lack of scan_subscription entry."
           end

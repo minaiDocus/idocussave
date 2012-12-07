@@ -30,7 +30,6 @@ class Admin::Scan::SubscriptionsController < Admin::AdminController
     if @user.is_active?
       @subscription = @user.find_or_create_scan_subscription
       @products = Product.subscribable
-      @subscription.remove_not_reusable_options
       @options = @subscription.product_option_orders.map { |option| option.to_a }
       @requested_options = @subscription.requested_product_option_orders.map { |option| option.to_a }
     else

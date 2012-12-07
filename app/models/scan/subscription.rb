@@ -64,7 +64,6 @@ class Scan::Subscription < Subscription
       period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
 
       period.save
-      remove_not_reusable_options
       period
     end
   end
