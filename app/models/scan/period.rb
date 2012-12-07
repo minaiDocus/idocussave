@@ -103,6 +103,10 @@ class Scan::Period
     end
   end
 
+  def price_in_cents_of_excess_compta_pieces
+    price_in_cents_of_excess_preseizures + price_in_cents_of_excess_expenses
+  end
+
   def price_in_cents_of_excess_preseizures
     excess = excess_preseizure_pieces
     if excess > 0
@@ -296,7 +300,9 @@ class Scan::Period
       list: lists,
       total: total,
       excess: {
-        sheets: excess_sheets.to_s, uploaded_pages: excess_uploaded_pages.to_s
+        compta_pieces: compta_pieces.to_s,
+        sheets: excess_sheets.to_s,
+        uploaded_pages: excess_uploaded_pages.to_s
       },
       delivery: delivery.state
     }
@@ -324,7 +330,9 @@ class Scan::Period
     end
     {
         list: lists,
-        excess_price: format_price(price_in_cents_of_excess_sheets + price_in_cents_of_excess_uploaded_pages),
+        excess_sheets: format_price(price_in_cents_of_excess_sheets),
+        excess_uploaded_pages: format_price(price_in_cents_of_excess_uploaded_pages),
+        excess_compta_pieces: format_price(price_in_cents_of_excess_compta_pieces),
         total: format_price(price_in_cents_wo_vat),
         invoice_link: invoice_link,
         invoice_number: invoice_number

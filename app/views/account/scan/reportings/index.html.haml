@@ -241,9 +241,9 @@
           %tfooter
             %tr
               %th{ :style => "width:15%;" }
-                != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :email => (params[:email] || "")))
+                != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :code => (params[:code] || "")))
                 %span.margin1left.margin1right #{@year}
-                != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
+                != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :code => (params[:code] || "")))
               - months.each do |month|
                 %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
                   #{month}
@@ -359,14 +359,18 @@
           <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
           <td class="last"></td>
         </tr>
+      </table>
+      <hr>
+      <table class="table table-condensed">
         <tr>
-          <td><i>Dépassement</i></td>
-          <td></td>
-          <td class="center"><i>{%= o.documents.excess.sheets %}</i></td>
-          <td class="center"><i>{%= o.documents.excess.uploaded_pages %}</i></td>
-          <td></td>
-          <td></td>
-          <td class="last"></td>
+          <th class="center">Dépassement numérisation</th>
+          <th class="center">Dépassement téléversement</th>
+          <th class="center">Dépassement pré-affectation</th>
+        </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.sheets %} feuille(s)</td>
+          <td class="center">{%= o.documents.excess.uploaded_pages %} page(s)</td>
+          <td class="center">{%= o.documents.excess.compta_pieces %} pièce(s)</td>
         </tr>
       </table>
     </div>
@@ -388,9 +392,19 @@
             </tr>
           {% } %}
           <tr>
-            <td>Dépassement</td>
+            <td>Dépassement numérisation</td>
             <td></td>
-            <td style="text-align:right;">{%= o.options.excess_price%} €</td>
+            <td style="text-align:right;">{%= o.options.excess_sheets%} €</td>
+          </tr>
+          <tr>
+            <td>Dépassement téléversement</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_uploaded_pages%} €</td>
+          </tr>
+          <tr>
+            <td>Dépassement pré-affectation</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_compta_pieces%} €</td>
           </tr>
           <tr>
             <td></td>
