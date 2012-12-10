@@ -110,26 +110,30 @@ class Scan::Subscription < Subscription
     find_or_create_period(Time.now)
   end
 
+  def current_period
+    find_or_create_period(Time.now)
+  end
+
   def update_current_period
     if self.user.is_prescriber
       options = self.product_option_orders.where(:group_position.gte => 1000)
     else
       options = self.product_option_orders
     end
-    current_period = find_or_create_period(Time.now)
-    current_period.set_product_option_orders(options)
+    period = current_period
+    period.set_product_option_orders(options)
 
-    current_period.max_sheets_authorized = self.max_sheets_authorized
-    current_period.max_upload_pages_authorized = self.max_upload_pages_authorized
-    current_period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
-    current_period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
-    current_period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
-    current_period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
-    current_period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
-    current_period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
-    current_period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+    period.max_sheets_authorized = self.max_sheets_authorized
+    period.max_upload_pages_authorized = self.max_upload_pages_authorized
+    period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
+    period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
+    period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+    period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
+    period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
+    period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
+    period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
 
-    current_period.save
+    period.save
   end
 
   def total
@@ -172,13 +176,14 @@ class Scan::Subscription < Subscription
 
   def is_update_requested?
     result = false
-    product_option_orders.user_editable.each do |option|
+    period = current_period
+    period.product_option_orders.user_editable.each do |option|
       unless option.in?(requested_product_option_orders)
         result = true
       end
     end
     requested_product_option_orders.user_editable.each do |option|
-      unless option.in?(product_option_orders)
+      unless option.in?(period.product_option_orders)
         result = true
       end
     end
