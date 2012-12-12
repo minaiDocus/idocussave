@@ -273,6 +273,10 @@ fr:
             service_name:
               blank: 'doit être rempli(e)'
               inclusion: "n'est pas inclus(e) dans la liste"
+        user:
+          attributes:
+            reset_password_token:
+              invalid: 'est invalide'
     models:
       common:
         attributes:
