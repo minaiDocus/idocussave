@@ -29,15 +29,19 @@ class Scan::Period
   field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
   
-  field :documents_name_tags, type: Array,   default: []
-  field :pieces,              type: Integer, default: 0
-  field :sheets,              type: Integer, default: 0
-  field :pages,               type: Integer, default: 0
-  field :uploaded_pieces,     type: Integer, default: 0
-  field :uploaded_sheets,     type: Integer, default: 0
-  field :uploaded_pages,      type: Integer, default: 0
-  field :paperclips,          type: Integer, default: 0
-  field :oversized,           type: Integer, default: 0
+  field :documents_name_tags,      type: Array,   default: []
+  field :pieces,                   type: Integer, default: 0
+  field :sheets,                   type: Integer, default: 0
+  field :pages,                    type: Integer, default: 0
+  field :uploaded_pieces,          type: Integer, default: 0
+  field :uploaded_sheets,          type: Integer, default: 0
+  field :uploaded_pages,           type: Integer, default: 0
+  field :paperclips,               type: Integer, default: 0
+  field :oversized,                type: Integer, default: 0
+  field :preseizure_pieces,        type: Integer, default: 0
+  field :excess_preseizure_pieces, type: Integer, default: 0
+  field :expense_pieces,           type: Integer, default: 0
+  field :excess_expense_pieces,    type: Integer, default: 0
   
   scope :monthly,   where: { duration: 1 }
   scope :bimonthly, where: { duration: 2 }
@@ -80,8 +84,7 @@ class Scan::Period
   def price_in_cents_of_total_excess
     price_in_cents_of_excess_sheets +
     price_in_cents_of_excess_uploaded_pages +
-    price_in_cents_of_excess_preseizures +
-    price_in_cents_of_excess_expenses
+    price_in_cents_of_excess_compta_pieces
   end
   
   def price_in_cents_of_excess_sheets
@@ -139,13 +142,13 @@ class Scan::Period
     excess_preseizure_pieces + excess_expense_pieces
   end
 
-  def excess_preseizure_pieces
-    excess = preseizure_pieces - max_preseizure_pieces_authorized
+  def get_excess_preseizure_pieces
+    excess = get_preseizure_pieces - max_preseizure_pieces_authorized
     excess > 0 ? excess : 0
   end
 
-  def excess_expense_pieces
-    excess = expense_pieces - max_expense_pieces_authorized
+  def get_excess_expense_pieces
+    excess = get_expense_pieces - max_expense_pieces_authorized
     excess > 0 ? excess : 0
   end
 
@@ -153,7 +156,7 @@ class Scan::Period
     preseizure_pieces + expense_pieces
   end
 
-  def preseizure_pieces
+  def get_preseizure_pieces
     nb = 0
     documents.each do |document|
       nb += document.report.try(:preseizures).try(:count) || 0
@@ -161,7 +164,7 @@ class Scan::Period
     nb
   end
 
-  def expense_pieces
+  def get_expense_pieces
     nb = 0
     documents.each do |document|
       nb += document.report.try(:expenses).try(:count) || 0
@@ -214,10 +217,14 @@ class Scan::Period
     self.uploaded_pages = self.documents.sum(:uploaded_pages) || 0
     self.paperclips = self.documents.sum(:paperclips) || 0
     self.oversized = self.documents.sum(:oversized) || 0
+    self.preseizure_pieces = get_preseizure_pieces
+    self.excess_preseizure_pieces = get_excess_preseizure_pieces
+    self.expense_pieces = get_expense_pieces
+    self.excess_expense_pieces = get_excess_expense_pieces
     check_delivery
     update_price
   end
-  
+
   def render_json(viewer=self.user)
     hash = { documents: documents_json(viewer) }
     if viewer.is_admin or (viewer.is_prescriber && viewer == self.user.prescriber) or viewer.prescriber.try(:is_detail_authorized)

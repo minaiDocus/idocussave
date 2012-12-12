@@ -130,6 +130,7 @@ class Pack::Report
                   end
                 end
                 report.save
+                report.document.period.update_information!
               end
             end
           end
@@ -155,8 +156,6 @@ class Pack::Report
                   report.type = e
                   report.pack = pack
                   report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
-                  report.save
-                  report.document.save
                   lot.css('piece').each_with_index do |part,index|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
@@ -202,6 +201,8 @@ class Pack::Report
                       end
                     end
                   end
+                  report.save
+                  report.document.period.update_information!
                   pack.init_delivery_for(user.prescriber || user, Pack::REPORT)
                 end
               end
