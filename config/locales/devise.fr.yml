@@ -3,7 +3,7 @@ fr:
     messages:
       not_found: "non trouvé"
       already_confirmed: "a déjà été confirmé"
-      not_locked: "was not locked"
+      not_locked: "n'était pas vérrouillé"
 
   mongoid:
     errors:
