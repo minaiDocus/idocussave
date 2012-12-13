@@ -1,8 +1,5 @@
 ﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
 
-:javascript
-  var user_email = "#{params[:email] if @user.email == params[:email]}";
-
 #reporting.container
   .row
     .span12
@@ -68,9 +65,9 @@
         %thead
           %tr
             %th{ :style => "width:15%;" }
-              != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :email => (params[:email] || "")))
+              != link_to( (@year - 1), account_scan_reportings_path(:year => (@year - 1), :code => (params[:code] || "")))
               %span.margin1left.margin1right #{@year}
-              != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :email => (params[:email] || "")))
+              != link_to( (@year + 1), account_scan_reportings_path(:year => (@year + 1), :code => (params[:code] || "")))
             - months.each do |month|
               %th.month
                 #{month}
