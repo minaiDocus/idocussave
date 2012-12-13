@@ -759,8 +759,24 @@ input.error:focus, select.error:focus, textarea.error:focus {
     margin:-310px 0 0 -500px;
     height:464px;
     width:1015px; }
+#periodModal .modal-header {
+    padding-bottom:40px; }
+#periodModal .modal-header table {
+    min-height:50px;
+    float:left; }
+#periodModal .modal-header .user {
+    width:425px; }
+#periodModal .modal-header .period {
+    width:450px; }
 #periodModal .modal-body {
+    clear:both;
     height:330px; }
+#periodModal .modal-footer {
+    text-align:center;
+    height:24px; }
+#periodModal .modal-footer .legend {
+    position:relative;
+    top:4px; }
 #periodModal .documentslist {
     height:330px;
     width:630px;

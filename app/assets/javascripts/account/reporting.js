@@ -1,49 +1,116 @@
 var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 var year = $("#year").val();
+var max_period_y = $('.user').length;
+
 $(".period .value span").addClass("hide");
 $(".period .value .value_0").removeClass("hide");
 
-function render_data(refs){
-  if (refs != "") {
-    var _refs = refs.split("_");
-    var user_id = _refs[1];
-    var period_id = _refs[2];
-    var month = parseInt(_refs[3]);
-    var duration = parseInt(_refs[4]);
-    
+var period_x = 1;
+var period_y = 1;
+
+function go_left(){
+ return navigate(-1,0,true);
+}
+
+function left(){
+  return navigate(-1,0,false);
+}
+
+function go_right(){
+ return navigate(1,0,true);
+}
+
+function right(){
+  return navigate(1,0,false);
+}
+
+function go_up(){
+ return navigate(0,-1,true);
+}
+
+function up(){
+  return navigate(0,-1,false);
+}
+
+function go_down(){
+ return navigate(0,1,true);
+}
+
+function down(){
+  return navigate(0,1,false);
+}
+
+function refresh_navigation_button(){
+  if(left() != null){
+    $('a.left').removeClass('disabled');
+  }else{
+    $('a.left').addClass('disabled');
+  }
+  if(right() != null){
+    $('a.right').removeClass('disabled');
+  }else{
+    $('a.right').addClass('disabled');
+  }
+  if(up() != null){
+    $('a.up').removeClass('disabled');
+  }else{
+    $('a.up').addClass('disabled');
+  }
+  if(down() != null){
+    $('a.down').removeClass('disabled');
+  }else{
+    $('a.down').addClass('disabled');
+  }
+}
+
+function navigate(x,y,move){
+  if(!(x == 0 && y == 0)){
+    if(((period_x+x) > 0 && (period_x+x) < 13) && ((period_y+y) > 0 && (period_y+y) <= max_period_y)){
+      current_period = $('.pos_'+period_y+'_'+period_x)[0];
+      period = $('.pos_'+(period_y+y)+'_'+(period_x+x))[0];
+      if(period != null && period != current_period){
+        if(move == true){
+          period_x += x;
+          period_y += y;
+        }
+        return period;
+      }else{
+        new_x = x;
+        new_y = y;
+        if(x > 0){
+          new_x++;
+        }else if(x < 0){ 
+          new_x--;
+        }
+        if(y > 0){
+          new_y++;
+        }else if(y < 0){
+          new_y--;
+        }
+        return navigate(new_x,new_y,move);
+      }
+    }else{
+      return null;
+    }  
+  }else{
+    return null;
+  }
+}
+ 
+function render_data(period){
+  if(period != null){
+    var $period = $(period);
+    var period_id = $period.attr('id');
+    var user_id = $period.attr('user_id');
+    var month = parseInt($period.attr('month'));
+    var duration = parseInt($period.attr('duration'));
+
     var $periodModal = $("#periodModal");
     
-    var $prev = $(".user_id_" + user_id + ".n_" + (month - duration));
-    var prev_id = "";
-    if ($prev.length > 0) {
-      var _prev_refs = $prev.parent("a.do-show").attr("id").split("_");
-      var prev_period_id = _prev_refs[2];
-      var prev_month = _prev_refs[3];
-      var prev_duration = _prev_refs[4];
-      var prev_id = "link_" + user_id + "_" + prev_period_id + "_" + prev_month + "_" + prev_duration;
-      $periodModal.find(".prev").removeAttr("disabled");
-    } else {
-      $periodModal.find(".prev").attr("disabled","disabled");
-    }
-    $periodModal.find(".prev").attr("id",prev_id);
-    
-    var $next = $(".user_id_" + user_id + ".n_" + (month + duration));
-    var next_id = "";
-    if ($next.length > 0) {
-      var _next_refs = $next.parent("a.do-show").attr("id").split("_");
-      var next_period_id = _next_refs[2];
-      var next_month = _next_refs[3];
-      var next_duration = _next_refs[4];
-      var next_id = "link_" + user_id + "_" + next_period_id + "_" + next_month + "_" + next_duration;
-      $periodModal.find(".next").removeAttr("disabled");
-    } else {
-      $periodModal.find(".next").attr("disabled","disabled");
-    }
-    
-    $periodModal.find(".next").attr("id",next_id);
+    $("#periodModal .modal-header .user h4").text($("#user_"+user_id).find('td:first').text());
     
     if (duration == 1) {
-      $("#periodModal .modal-header h3").text(mois[month - 1] + " " + year);
+      $("#periodModal .modal-header .period h3").text(mois[month - 1] + " " + year);
     } else if (duration == 3) {
       if (month == 1) {
         $("#periodModal .modal-header h3").html("1<sup>er</sup> trimestre " + year);
@@ -89,7 +156,7 @@ function render_data(refs){
         $(".do-popover").popover({placement: 'right'});
       }
     });
-    
+    refresh_navigation_button();
     $periodModal.modal();
   }
 }
@@ -142,8 +209,11 @@ $(document).ready(function(){
   });
   
   $("a.do-show").click(function(){
-    render_data($(this).attr("id"));
-    false;
+    var $period = $(this).find('.period');
+    period_x = parseInt($period.attr('month'));
+    period_y = parseInt($period.attr('row'));
+    render_data($period);
+    return false;
   });
   
   $("span.badge").tooltip();
@@ -154,6 +224,7 @@ $(document).ready(function(){
     $("#year_filter").val("");
     $("#month_filter").val("");
     apply_filter();
+    return false;
   });
   
   $("#filter").submit(function(){
@@ -165,5 +236,25 @@ $(document).ready(function(){
     var val = $(this).val();
     $(".value span").addClass("hide");
     $(".value .value_"+val).removeClass("hide");
+  });
+  
+  $('a.up').click(function(){
+    render_data(go_up());
+    return false;
+  });
+  
+  $('a.down').click(function(){
+    render_data(go_down());
+    return false;
+  });
+  
+  $('a.left').click(function(){
+    render_data(go_left());
+    return false;
+  });
+  
+  $('a.right').click(function(){
+    render_data(go_right());
+    return false;
   });
 });

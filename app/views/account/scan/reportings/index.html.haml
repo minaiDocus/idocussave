@@ -75,18 +75,21 @@
               %th.month
                 #{month}
         %tbody
-          - @users.each do |user|
+          - @users.each_with_index do |user, idx|
             %tr{ :id => "user_#{user.id}", :class => "user" }
               %td.align-middle
                 #{[user.code,user.company].join(" - ")}
               - periods = annual_periods_for_user(user, @periods)
-              - periods.each do |period|
+              - periods.each_with_index do |period,index|
                 - if period
                   - period.duration.times do |i|
                     - annual_summary[period.start_at.month + i - 1][:active_user] += 1
                   %td.align-middle.block{ :colspan => period.duration }
-                    %a.do-show{ "href" => "#", :id => "refs_#{user.id}_#{period.id}_#{period.start_at.month}_#{period.duration}" }
-                      .period{ :class => "user_id_#{user.id} period_id_#{period.id} n_#{period.start_at.month}" }
+                    %a.do-show{ href: "#" }
+                      - pos = []
+                      - period.duration.times do |i|
+                        - pos << "pos_#{(idx + 1)}_#{(index + i + 1)}"
+                      .period{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: idx+1}
                         - if period.scanned_pages == 0 && period.uploaded_pages == 0
                           - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
                           .delivery_state.back_red
@@ -276,19 +279,29 @@
       \: Documents papier reçus et document téléversés reçus
       %br
 
-.modal.fade{ :id=>"periodModal" }
+.modal.fade{ id: "periodModal" }
   .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3.title_period{ :style => "text-align:center;" }
+    %table
+      %tr
+        %td.user
+          %h4
+        %td.period
+          %h3
+    %a{ class: "close", "data-dismiss" => "modal" } ×
     = hidden_field_tag :year, @year
   .modal-body
-  .modal-footer{ :style => "text-align:center;" }
-    %a.btn.prev.do-show.margin3left{ :style => "float:left;margin-left:0;" }
-      précédent
-    %span{ :style => "position:relative;top:6px;" }
+  .modal-footer
+    .pull-right
+      %a.left.btn
+        %i.icon-arrow-left
+      %a.up.btn
+        %i.icon-arrow-up
+      %a.down.btn
+        %i.icon-arrow-down
+      %a.right.btn
+        %i.icon-arrow-right
+    %span.legend
       Légende : total (numérisées, téléversées)
-    %a.btn.next.do-show{ :style => "float:right;" }
-      suivant
 
 .modal.fade.in{ :id=>"invoiceDialog", :style => "height:500px;" }
   .modal-header
@@ -296,7 +309,6 @@
     %h3
   .modal-body{ :style => "max-height:450px;" }
     %iframe{:src => "", :id => "invoice-show", :style => "width:843px; height:415px;" }
-
 
 %script{ :type => "text/x-tmpl", :id => "tmpl-period" }
   :plain
