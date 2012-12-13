@@ -138,7 +138,7 @@ function render_data(period){
         var month_filter = parseInt($("#month_filter").val());
         $("#periodModal .name").each(function(index){
           var is_ok = true;
-          var name = $(this).text().split(" ");
+          var name = $(this).text().trim().split(" ");
           var account_book_value = name[1];
           var year_value = parseInt(name[2].substr(0,4));
           var month_value = parseInt(name[2].substr(4,2));
