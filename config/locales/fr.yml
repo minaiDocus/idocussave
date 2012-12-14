@@ -302,6 +302,7 @@ fr:
           is_centralizer: 'Est centralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
+          is_invoiceable: 'Est facturable ?'
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'

@@ -38,7 +38,6 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
     run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{release_path}/config/initializers/error_notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
-    run "ln -nfs #{shared_path}/config/initializers/invoice_config.rb #{release_path}/config/initializers/invoice_config.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
     run "ln -s #{shared_path}/files #{release_path}/files"
@@ -62,11 +61,6 @@ namespace :shared do
       run "rm #{release_path}/config/initializers/error_notification.rb"
     else
       run "mv #{release_path}/config/initializers/error_notification.rb #{shared_path}/config/initializers"
-    end
-    if File.exist? "#{shared_path}/config/initializers/invoice_config.rb"
-      run "rm #{release_path}/config/initializers/invoice_config.rb"
-    else
-      run "mv #{release_path}/config/initializers/invoice_config.rb #{shared_path}/config/initializers"
     end
     if File.exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"

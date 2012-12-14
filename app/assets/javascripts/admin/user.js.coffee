@@ -38,6 +38,7 @@ get_scan_subscription = ->
     type: 'GET',
     success: (data) ->
       $('#scan_subscription').html(data)
+      checkbox_event_handler()
 
 edit_scan_subscription = ->
   $.ajax
@@ -314,8 +315,9 @@ toggle_prescriber_options = ->
     $('#stamp_propagation').hide()
     $('#is_editable_propagation').hide()
 
-jQuery ->
-  $('input[type=checkbox]').click ->
+checkbox_event_handler = ->
+  $('input[type=checkbox]').unbind 'click'
+  $('input[type=checkbox]').bind 'click', ->
     url = '/admin/users/' + user_id
     hsh = {}
     value = -1
@@ -329,6 +331,9 @@ jQuery ->
       data: hsh,
       dataType: 'json',
       type: 'PUT'
+
+jQuery ->
+  checkbox_event_handler()
 
   $('.edit').click ->
     parent = $(this).parents('.static')

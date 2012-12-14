@@ -69,6 +69,8 @@ class User
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
 
+  field :is_invoiceable,                 type: Boolean, default: true
+
   attr_accessor :client_ids, :is_inactive
   attr_protected :is_admin, :is_prescriber
 
@@ -112,6 +114,7 @@ class User
   scope :prescribers,                 where: { is_prescriber: true }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
+  scope :invoiceable,                 where: { is_invoiceable: true }
   
   before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
 
