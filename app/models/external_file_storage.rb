@@ -156,6 +156,7 @@ class ExternalFileStorage
   def self.static_path(path, info_path)
     path.gsub(":code",info_path[:code]).
     gsub(":company",info_path[:company]).
+    gsub(":company_of_customer",info_path[:company_of_customer]).
     gsub(":account_book",info_path[:account_book]).
     gsub(":year",info_path[:year]).
     gsub(":month",info_path[:month]).

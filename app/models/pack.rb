@@ -401,9 +401,11 @@ class Pack
     
     def info_path(pack_name, user=nil)
       name_info = pack_name.split("_")
+      pack = Pack.find_by_name(name_info.join(' '))
       info = {}
       info[:code] = name_info[0]
       info[:company] = user.try(:company)
+      info[:company_of_customer] = pack.owner.company
       info[:account_book] = name_info[1]
       info[:year] = name_info[2][0..3]
       info[:month] = name_info[2][4..5]
