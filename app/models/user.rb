@@ -70,6 +70,7 @@ class User
   field :is_stamp_background_filled,     type: Boolean, default: false
 
   field :is_invoiceable,                 type: Boolean, default: true
+  field :is_access_by_token_active,      type: Boolean, default: true
 
   attr_accessor :client_ids, :is_inactive
   attr_protected :is_admin, :is_prescriber

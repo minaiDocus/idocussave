@@ -12,17 +12,17 @@ class CsvOutputter
     end
   end
 
-  def format(preseizures)
+  def format(preseizures, is_access_url=true)
     lines = []
     preseizures.by_position.each do |preseizure|
       preseizure.entries.by_position.each do |entry|
-        lines << format_line(entry)
+        lines << format_line(entry, is_access_url)
       end
     end
     lines.join("\n")
   end
 
-  def format_line(entry)
+  def format_line(entry, is_access_url=true)
     line = ''
     to_a.each do |part|
       result = case part[1]
@@ -62,7 +62,11 @@ class CsvOutputter
           conversion_rate = "%0.3f" % entry.preseizure.conversion_rate rescue ""
           conversion_rate.sub('.',',')
         when /^piece_url$/
-          SITE_INNER_URL + entry.preseizure.piece.get_access_url
+          if is_access_url
+            SITE_INNER_URL + entry.preseizure.piece.get_access_url
+          else
+            SITE_INNER_URL + entry.preseizure.piece.content.url
+          end
         when /^remark$/
           entry.preseizure.observation
         when /^third_party$/

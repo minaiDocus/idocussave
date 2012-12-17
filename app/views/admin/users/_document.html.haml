@@ -1,6 +1,10 @@
 .label{ style: 'padding:3px 5px 3px' }
   = link_to icon_edit, '#edit_csv_outputter', 'data-toggle' => :modal
   Documents
+%table.table.table-striped.table-bordered.table-condensed.margin0bottom
+  %tr
+    %th= t('mongoid.models.user.attributes.is_access_by_token_active')
+    %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
 %table.table.table-striped.table-bordered.table-condensed
   %thead
     %tr

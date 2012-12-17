@@ -11,13 +11,13 @@ class Pack::Report
 
   field :type, type: String # NDF / AC / CB / VT
 
-  def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures)
-    outputter.format(ps)
+  def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures, is_access_url=true)
+    outputter.format(ps, is_access_url)
   end
 
   def get_remote_files(user, service_name)
     current_remote_files = []
-    filespath = generate_files
+    filespath = generate_files(user)
     filespath.each do |filepath|
       remote_file = remote_files.of(user,service_name).where(temp_path: filepath).first
       unless remote_file
@@ -34,12 +34,12 @@ class Pack::Report
     current_remote_files
   end
 
-  def generate_files
+  def generate_files(user=pack.owner)
     # TODO implement me
-    generate_csv_files
+    generate_csv_files(user)
   end
   
-  def generate_csv_files
+  def generate_csv_files(user=pack.owner)
     outputter = pack.owner.csv_outputter!
     filespath = []
     if type != 'NDF'
@@ -48,7 +48,7 @@ class Pack::Report
       tab.each do |pre|
         idx = pre.map(&:_id)
         date = pre[0].created_at
-        data = to_csv(outputter, self.preseizures.any_in(_id: idx))
+        data = to_csv(outputter, self.preseizures.any_in(_id: idx), user.is_access_by_token_active)
         basename = self.pack.name.sub(' all','').gsub(' ','_')
         file= File.new("/tmp/#{basename}_L#{date.strftime("%Y%m%d")}.csv", "w")
         file.write(data)
