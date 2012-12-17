@@ -261,9 +261,11 @@ class Pack
         end
 
         is_ok = true
+        filesname_with_error = []
         all_filesname.each do |filename|
           if `pdftk #{filename} dump_data`.empty?
             is_ok = false
+            filesname_with_error << filename
           end
         end
 
@@ -289,7 +291,7 @@ class Pack
           end
         else
           ErrorNotification::EMAILS.each do |email|
-            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
+            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par Numen sont corrompus :<br />#{filesname_with_error.join(', ')}." )
           end
         end
 
