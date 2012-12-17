@@ -288,7 +288,7 @@ class Pack
             end
           end
         else
-          ErrorNotitication::EMAILS.each do |email|
+          ErrorNotification::EMAILS.each do |email|
             NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
           end
         end
