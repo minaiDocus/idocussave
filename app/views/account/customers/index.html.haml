@@ -60,7 +60,7 @@
                   %td
                     - unless user.is_editable
                       = icon(icon: 'lock')
-                  %td= l(user.created_at)
+                  %td= l(user.created_at, format: :short)
                   %td= user.info
                   %td= t('request.'+User::REQUEST_TYPE_NAME[user.request_type]) if user.request_type && user.request_type.is_a?(Integer)
                   %td
