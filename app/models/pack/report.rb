@@ -161,6 +161,7 @@ class Pack::Report
                     piece = pack.pieces.where(name: part_name).first
                     if piece and piece.preseizure.nil?
                       preseizure                 = Pack::Report::Preseizure.new
+                      preseizure.report          = report
                       preseizure.piece           = piece
                       preseizure.piece_number    = part.css('numero_piece').first.try(:content)
                       preseizure.amount          = to_float(part.css('montant_origine').first.try(:content))
@@ -172,7 +173,6 @@ class Pack::Report
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = index + 1
                       preseizure.save
-                      report.preseizures << preseizure
                       part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new
                         paccount.type       = Pack::Report::Preseizure::Account.get_type(account['type'])
