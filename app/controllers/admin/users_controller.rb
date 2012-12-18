@@ -47,6 +47,10 @@ class Admin::UsersController < Admin::AdminController
       end
 
       if @user.update_attributes(params[:user])
+        if @user.update_request
+          @user.update_request.sync!
+          @user.save
+        end
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else

@@ -15,6 +15,8 @@ Idocus::Application.routes.draw do
     root :to => "account/documents#index"
 
     resources :customers, as: :users do
+      put 'stop_using',    on: :member
+      put 'restart_using', on: :member
       resources :addresses
     end
     resources :journals, as: :account_book_types do

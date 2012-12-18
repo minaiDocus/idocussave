@@ -3,7 +3,7 @@ class Account::CustomersController < Account::AccountController
   helper_method :sort_column, :sort_direction, :user_contains
   before_filter { |c| c.load_user :@possessed_user }
   before_filter :verify_management_access
-  before_filter :load_customer, only: %w(show edit update)
+  before_filter :load_customer, only: %w(show edit update stop_using restart_using)
   before_filter :verify_write_access, only: %w(edit update)
 
   private
@@ -75,6 +75,30 @@ class Account::CustomersController < Account::AccountController
     else
       render action: :edit
     end
+  end
+
+  def stop_using
+    @user.is_inactive = true
+    @user.update_request ||= UpdateRequest.new
+    update_request = @user.update_request
+    update_request.temp_values = @user.changes
+    @user.update_request.save
+    @user.reload
+    @user.set_request_type!
+    flash[:notice] = "En attente de validation de l'administrateur."
+    redirect_to account_user_path(@user)
+  end
+
+  def restart_using
+    @user.is_inactive = false
+    @user.update_request ||= UpdateRequest.new
+    update_request = @user.update_request
+    update_request.temp_values = @user.changes
+    @user.update_request.save
+    @user.reload
+    @user.set_request_type!
+    flash[:notice] = "En attente de validation de l'administrateur."
+    redirect_to account_user_path(@user)
   end
 
   private

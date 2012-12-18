@@ -71,8 +71,9 @@ class User
 
   field :is_invoiceable,                 type: Boolean, default: true
   field :is_access_by_token_active,      type: Boolean, default: true
+  field :is_inactive,                    type: Boolean, default: false
 
-  attr_accessor :client_ids, :is_inactive
+  attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
 
   # FIXME use another way
@@ -157,11 +158,11 @@ class User
   end
   
   def is_active?
-    inactive_at.nil? ? true : false
+    !is_inactive?
   end
   
   def is_inactive?
-    !is_active?
+    self.is_inactive
   end
 
   def find_or_create_scan_subscription
@@ -222,7 +223,7 @@ class User
   end
   
   def update_requestable_attributes
-    [:email,:last_name,:first_name,:company,:code]
+    [:email,:last_name,:first_name,:company,:code,:is_inactive]
   end
 
   def active_for_authentication?
@@ -301,9 +302,9 @@ protected
   end
 
   def set_inactive_at
-    if self.is_inactive == "1"
+    if is_inactive? && self.inactive_at.presence.nil?
       self.inactive_at = Time.now
-    elsif self.is_inactive == "0"
+    elsif is_active?
       self.inactive_at = nil
     end
   end

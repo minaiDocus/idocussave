@@ -8,7 +8,21 @@
 
   .row-fluid
     .span12.pannel
-      %h2= @user.info
+      .row-fluid
+        .span12
+          .pull-left
+            %h2= @user.info
+          .pull-right
+            - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
+              - if @user.update_request.try(:values).try(:[],'is_inactive')
+                = "(Arrêt en attente de validation par iDocus)"
+              - else
+                = "(Rétablissement en attente de validation par iDocus)"
+            - if @user.is_editable
+              - if @user.is_active? && !@user.update_request.try(:values).try(:[],:is_inactive)
+                = link_to "Arrêter l'abonnement", stop_using_account_user_path(@user), class: 'btn btn-danger', method: 'PUT', data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
+              - else
+                = link_to "Rétablir l'abonnement", restart_using_account_user_path(@user), class: 'btn btn-danger', method: 'PUT', data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
       .row-fluid
         .span6
           .row-fluid

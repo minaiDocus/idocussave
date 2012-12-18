@@ -223,3 +223,14 @@ table {
 
 #subscription .requested {
   border: 1px solid orange; }
+
+.user_status {
+  .title {
+    position:relative;
+    top:10px; }
+  .select-date {
+    width:66px !important;
+    height:26px !important;
+    margin-right:-3px !important;
+    padding-left:4px !important; }
+}
