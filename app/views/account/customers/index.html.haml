@@ -18,7 +18,7 @@
                   %td= journal.description
                   %td= journal.clients.count
                   %td= t('request.'+journal.request_type) if journal.request_type.presence
-          = link_to 'Configurer les journaux comptable', account_account_book_types_path, class: 'btn'
+          = link_to 'Configurer', account_account_book_types_path, class: 'btn pull-right'
       .row-fluid
         .span12.pannel.margin1top.margin1bottom
           %h3.aligncenter Paramètres par défaut des abonnements

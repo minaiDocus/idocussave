@@ -2,7 +2,7 @@
   .navbar-inner
     %ul.nav
       %li
-        = link_to 'Retour', account_users_path
+        = link_to 'Liste des clients', account_users_path
       %li{ class: (action_name == 'index' ? 'active' : '')}
         = link_to 'Liste des journaux comptable', account_account_book_types_path
       %li{ class: (action_name == 'new' ? 'active' : '')}
