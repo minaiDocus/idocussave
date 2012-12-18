@@ -5,6 +5,7 @@ default_run_options[:pty] = true
 #ssh_options[:forward_agent] = true
 
 set :runner, "rails"
+set :normalize_asset_timestamps, false
 set :user, "grevalis"
 set :password, "grevidoc"
 set :scm_username, "grevalis"
