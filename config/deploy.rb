@@ -31,6 +31,10 @@ after "deploy:finalize_update", "shared:config"
 before "deploy:symlink", "shared:symlink"
 after "deploy", "deploy:cleanup"
 
+def remote_file_exist?(filepath)
+  'true' == capture("if [ -e #{filepath} ]; then echo 'true'; fi").strip
+end
+
 namespace :shared do
   desc "Make symlink"
   task :symlink do
@@ -57,12 +61,12 @@ namespace :shared do
 
   desc "Prepare config files"
   task :config do
-    if File.exist? "#{shared_path}/config/initializers/error_notification.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/error_notification.rb"
       run "rm #{release_path}/config/initializers/error_notification.rb"
     else
       run "mv #{release_path}/config/initializers/error_notification.rb #{shared_path}/config/initializers"
     end
-    if File.exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"
     end
   end
