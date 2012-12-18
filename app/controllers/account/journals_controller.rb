@@ -6,10 +6,6 @@ class Account::JournalsController < Account::AccountController
 
   private
 
-  def load_user
-    @user = current_user
-  end
-
   def load_journal
     @journal = @user.my_account_book_types.unscoped.find_by_slug(params[:id])
   end

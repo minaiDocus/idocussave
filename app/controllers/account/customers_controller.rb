@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::AccountController
   helper_method :sort_column, :sort_direction, :user_contains
+  before_filter { |c| c.load_user :@possessed_user }
   before_filter :verify_management_access
   before_filter :load_customer, only: %w(show edit update)
   before_filter :verify_write_access, only: %w(edit update)
@@ -15,7 +16,7 @@ class Account::CustomersController < Account::AccountController
 
   def index
     @users = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
-    @subscription = current_user.find_or_create_scan_subscription
+    @subscription = @possessed_user.find_or_create_scan_subscription
     @period = @subscription.periods.desc(:created_at).first
   end
 
@@ -32,7 +33,7 @@ class Account::CustomersController < Account::AccountController
 
   def create
     @user = User.new params[:user]
-    @user.prescriber = current_user
+    @user.prescriber = @possessed_user
     @user.is_new = true
     @user.is_disabled = true
     @user.request_type = User::ADDING
@@ -40,7 +41,7 @@ class Account::CustomersController < Account::AccountController
     @user.skip_confirmation!
     if @user.save
       subscription = @user.find_or_create_scan_subscription
-      new_options = current_user.find_or_create_scan_subscription.product_option_orders
+      new_options = @possessed_user.find_or_create_scan_subscription.product_option_orders
       subscription.copy_to_options! new_options
       subscription.copy_to_requested_options! new_options
       subscription.save
@@ -104,7 +105,7 @@ class Account::CustomersController < Account::AccountController
   end
 
   def search(contains)
-    users = current_user.clients
+    users = @possessed_user.clients
     users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
     users = users.where(:last_name => /#{contains[:last_name]}/i) unless contains[:last_name].blank?
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?

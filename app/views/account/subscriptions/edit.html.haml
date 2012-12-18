@@ -1,11 +1,13 @@
 ﻿#customer.subscription.container-fluid
+  = render 'shared/as_user'
+
   .alerts
     = render partial: 'shared/messages'
 
   = render partial: 'account/customers/navigation'
   .row-fluid
     .span8.pannel
-      - if current_user == @user
+      - if @possessed_user == @user
         %h3 Edition de l'abonnement de base
       - else
         %h3 Edition de l'abonnement du client #{@user.info}
@@ -18,7 +20,7 @@
         = render partial: "product", collection: @products
         .form-actions
           = f.submit 'Valider', class: 'btn'
-          - if current_user == @user
+          - if @possessed_user == @user
             = link_to 'Annuler', account_users_path, class: 'btn'
           - else
             = link_to 'Annuler', account_user_path(@user), class: 'btn'

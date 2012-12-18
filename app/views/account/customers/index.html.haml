@@ -1,4 +1,5 @@
 #customers.container-fluid
+  = render 'shared/as_user'
   .row-fluid
     .span4
       .row-fluid
@@ -12,7 +13,7 @@
                 %th Clients concernés
                 %th Action demandé à iDocus
             %tbody
-              - current_user.my_account_book_types.unscoped.asc(:name).each do |journal|
+              - @possessed_user.my_account_book_types.unscoped.asc(:name).each do |journal|
                 %tr{ id: journal.slug }
                   %td= journal.name
                   %td= journal.description
@@ -33,8 +34,8 @@
               Configuration souhaitée
               = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
             = render partial: 'requested_options'
-          - if current_user.is_editable
-            = link_to t('actions.edit'), edit_account_subscription_path(current_user), class: 'btn pull-right'
+          - if @possessed_user.is_editable
+            = link_to t('actions.edit'), edit_account_subscription_path(@possessed_user), class: 'btn pull-right'
 
     .span8.pannel
       .row-fluid

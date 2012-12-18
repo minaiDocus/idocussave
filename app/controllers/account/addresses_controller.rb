@@ -1,19 +1,24 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::AddressesController < ApplicationController
-  before_filter :load_user
+  before_filter { |c| c.load_user :@possessed_user }
+  before_filter :load_local_user
   before_filter :load_address, only: %w(edit update destroy)
   
   layout "inner"
 
 private
 
-  def load_user
+  def load_local_user
     @is_manager = false
     if params[:user_id].present? && (current_user.is_prescriber or current_user.is_admin)
-      @user = User.find params[:user_id]
+      begin
+        @user = @possessed_user.clients.find params[:user_id]
+      rescue Mongoid::Errors::DocumentNotFound
+        redirect_to account_users_path
+      end
       @is_manager = true
     end
-    @user ||= current_user
+    @user ||= @possessed_user
   end
 
   def load_address
