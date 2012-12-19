@@ -2,10 +2,11 @@
   = render 'shared/as_user'
   = render partial: 'navigation'
   .row-fluid
-    .span7
+    .span8
       %table.table.table-striped.table-bordered.table-condensed.margin1top
         %thead
           %tr
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Par défaut ?
             %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
             %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
             %th{ rowspan: 2, style: 'vertical-align:middle' } Clients concernés
@@ -21,6 +22,9 @@
           - @journals.each do |journal|
             - journal.update_request.try(:apply)
             %tr{ id: journal.slug }
+              %td{ style: 'text-align:center;vertical-align:middle' }
+                = check_box_tag('account_book_type[is_default]', 1, journal.is_default, class: 'inplace', id: journal.slug)
+                = image_tag('application/spinner_gray_alpha.gif', style: 'display:none', id: "spinner_#{journal.slug}")
               %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'name' }
               %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'description' }
               %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'clients_count' }

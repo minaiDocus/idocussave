@@ -20,9 +20,10 @@ Idocus::Application.routes.draw do
       resources :addresses
     end
     resources :journals, as: :account_book_types do
-      post 'cancel_destroy',         :on => :member
-      get  'edit_requested_users',   :on => :member
-      post 'update_requested_users', :on => :member
+      post 'cancel_destroy',           :on => :member
+      get  'edit_requested_users',     :on => :member
+      post 'update_requested_users',   :on => :member
+      put  'update_is_default_status', :on => :member
     end
     resources :subscriptions
     

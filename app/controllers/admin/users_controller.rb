@@ -26,6 +26,10 @@ class Admin::UsersController < Admin::AdminController
     @user.is_admin = is_admin
     @user.is_prescriber = is_prescriber
     @user.skip_confirmation!
+    if @user.prescriber
+      @user.account_book_types = @user.prescriber.my_account_book_types.default
+      @user.requested_account_book_types = @user.prescriber.my_account_book_types.default
+    end
     if @user.save
       flash[:notice] = "Crée avec succès."
       redirect_to admin_users_path

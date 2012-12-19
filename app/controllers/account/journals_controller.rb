@@ -1,8 +1,8 @@
 class Account::JournalsController < Account::AccountController
   before_filter :verify_management_access
   before_filter :load_user
-  before_filter :load_journal, only: %w(edit update destroy cancel_destroy edit_requested_users update_requested_users)
-  before_filter :verify_write_access, only: %w(edit update destroy cancel_destroy edit_requested_users update_requested_users)
+  before_filter :load_journal, only: %w(edit update destroy cancel_destroy edit_requested_users update_requested_users update_is_default_status)
+  before_filter :verify_write_access, only: %w(edit update destroy cancel_destroy edit_requested_users update_requested_users update_is_default_status)
 
   private
 
@@ -73,6 +73,14 @@ class Account::JournalsController < Account::AccountController
     @journal.update_attribute(:request_type, 'updating') unless @journal.is_new
     @user.set_request_type!
     redirect_to account_account_book_types_path
+  end
+
+  def update_is_default_status
+    @journal.is_default = params[:value] == 'true' ? true : false
+    @journal.save
+    respond_to do |format|
+      format.json { render json: {}, status: :ok }
+    end
   end
 
   def destroy

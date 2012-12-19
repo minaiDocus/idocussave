@@ -39,6 +39,8 @@ class Account::CustomersController < Account::AccountController
     @user.request_type = User::ADDING
     @user.set_random_password
     @user.skip_confirmation!
+    @user.account_book_types = @possessed_user.my_account_book_types.default
+    @user.requested_account_book_types = @possessed_user.my_account_book_types.default
     if @user.save
       subscription = @user.find_or_create_scan_subscription
       new_options = @possessed_user.find_or_create_scan_subscription.product_option_orders

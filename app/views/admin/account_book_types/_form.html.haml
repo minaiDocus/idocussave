@@ -39,6 +39,7 @@
       - hint = ''
     = f.input :charge_account, label: 'Compte charge', hint: hint
     = f.input :position, as: :integer, label: 'Position'
+    = f.input :is_default, as: :boolean, label: 'Par défaut ?'
     .control-group
       %label.control-label Clients
       .controls
