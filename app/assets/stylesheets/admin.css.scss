@@ -234,3 +234,12 @@ table {
     margin-right:-3px !important;
     padding-left:4px !important; }
 }
+
+#external_file_storage th, #external_file_storage td {
+  vertical-align: middle; }
+
+#external_file_storage select {
+  margin-bottom: 0;
+  font-size: 10px;
+  width: 60px;
+  height: 23px; }

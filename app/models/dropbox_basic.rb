@@ -5,9 +5,10 @@ class DropboxBasic
 
   referenced_in :external_file_storage
   
-  field :session, type: String, default: ''
-  field :path,    type: String, default: ':code/:year:month/:account_book/'
-  
+  field :session,              type: String,  default: ''
+  field :path,                 type: String,  default: ':code/:year:month/:account_book/'
+  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
+
   def new_session
     unless @current_session
       if self.session.present?

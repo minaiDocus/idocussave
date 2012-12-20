@@ -3,6 +3,10 @@ class DropboxExtended
   PATH = "#{Rails.root}/data/"
   
   class << self
+    def file_type_to_deliver
+      ExternalFileStorage::PDF
+    end
+
     def get_session
       session = nil
       if File.exist? "#{PATH}dropbox-session.txt"

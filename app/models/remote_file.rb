@@ -22,6 +22,7 @@ class RemoteFile
 
   scope :of, lambda { |user,service_name| where(user_id: user.id, service_name: service_name) }
   scope :of_service, lambda { |service_name| where(service_name: service_name) }
+  scope :with_type, lambda { |type| any_of({ path: /\.#{type}$/}, { temp_path: /\.#{type}$/ }) }
 
   scope :waiting,    where: { state: :waiting }
   scope :cancelled,  where: { state: :cancelled }

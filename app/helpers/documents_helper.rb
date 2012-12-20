@@ -144,5 +144,13 @@ module DocumentsHelper
     contents += content_tag :h4, "Historique des ajouts de pages"
     contents += content_tag :div, custom_table_for(columns,pack.historic)
     content_tag :div, contents
-    end
+  end
+
+  def file_type_to_deliver_options
+    [
+        ['Tous', ExternalFileStorage::ALL_TYPES],
+        ['PDF', ExternalFileStorage::PDF],
+        ['TIFF', ExternalFileStorage::TIFF]
+    ]
+  end
 end

@@ -458,3 +458,14 @@ jQuery ->
         data: data,
         datatype: 'json',
         type: 'POST'
+
+  $('#external_file_storage select.inplace').change ->
+    name = $(this).attr('name')
+    value = $(this).attr('value')
+    data = { _method: 'PUT', }
+    data[name] = value
+    $.ajax
+      url: "/admin/users/" + user_id,
+      data: data,
+      datatype: 'json',
+      type: 'POST'

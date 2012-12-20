@@ -9,6 +9,10 @@ class ExternalFileStorage
   F_GOOGLE_DOCS = 4
   F_FTP         = 8
   F_BOX         = 16
+
+  ALL_TYPES = 1
+  PDF       = 2
+  TIFF      = 3
   
   referenced_in :user
   references_one :dropbox_basic, autosave: true
@@ -166,6 +170,23 @@ class ExternalFileStorage
   def self.delivery_path(remote_file, pseudo_path)
     info_path = Pack.info_path(remote_file.pack_name,remote_file.user)
     static_path(pseudo_path.sub(/\/$/,""),info_path)
+  end
+
+  def get_service_by_name(name)
+    case name
+      when "Dropbox"
+        dropbox_basic
+      when "Dropbox Extended"
+        DropboxExtended
+      when "Google Drive"
+        google_doc
+      when "FTP"
+        ftp
+      when "Box"
+        the_box
+      else
+        nil
+    end
   end
 
   protected

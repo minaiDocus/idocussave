@@ -5,10 +5,11 @@ class GoogleDoc
   
   referenced_in :external_file_storage
   
-  field :token,         type: String,  default: ''
-  field :secret,        type: String,  default: ''
-  field :is_configured, type: Boolean, default: false
-  field :path,          type: String,  default: 'iDocus/:code/:year:month/:account_book/'
+  field :token,                type: String,  default: ''
+  field :secret,               type: String,  default: ''
+  field :is_configured,        type: Boolean, default: false
+  field :path,                 type: String,  default: 'iDocus/:code/:year:month/:account_book/'
+  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   attr_accessor :consumer, :request_token, :access_token, :session
 

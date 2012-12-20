@@ -115,16 +115,16 @@ class Pack
     efs.active_services_name.each do |service_name|
       # original
       if type.in? [Pack::ALL, Pack::ORIGINAL_ONLY]
-        remote_file = original_document.get_remote_file(user,service_name)
-        remote_file.waiting!
-        current_remote_files << remote_file
+        temp_remote_files = original_document.get_remote_files(user,service_name)
+        temp_remote_files.each { |remote_file| remote_file.waiting! }
+        current_remote_files += temp_remote_files
       end
       # pieces
       if type.in? [Pack::ALL, Pack::PIECES_ONLY]
         self.pieces.each do |piece|
-          remote_file = piece.get_remote_file(user,service_name)
-          remote_file.waiting! if force
-          current_remote_files << remote_file
+          temp_remote_files = piece.get_remote_files(user,service_name)
+          temp_remote_files.each { |remote_file| remote_file.waiting! } if force
+          current_remote_files += temp_remote_files
         end
       end
       # report
