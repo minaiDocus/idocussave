@@ -11,7 +11,7 @@
                 %th Libellé court
                 %th Libellé long
                 %th Clients concernés
-                %th Action demandé à iDocus
+                %th Action demandée à iDocus
             %tbody
               - @possessed_user.my_account_book_types.unscoped.asc(:name).each do |journal|
                 %tr{ id: journal.slug }
