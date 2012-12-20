@@ -112,14 +112,14 @@ end
 namespace :worker do
   desc "Start worker process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} god start delivery"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
     run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
   end
 
   desc "Stop worker process"
   task :stop, :roles => :app do
-    run "cd #{current_path}; god stop delivery"
     run "cd #{current_path}; touch tmp/stop_worker.txt"
+    run "cd #{current_path}; god terminate"
     run "cd #{current_path}; touch tmp/stop_maintenance.txt"
   end
 end
