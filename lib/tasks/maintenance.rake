@@ -24,8 +24,8 @@ namespace :maintenance do
       if nb > 0
         subject = 'Validation requise'
         content = ""
-        content << "Bonjour,\n\n"
-        content << "Des requêtes de modification sont en attente de validation.\n\n"
+        content << "Bonjour,<br/><br/>"
+        content << "Des requêtes de modification sont en attente de validation.<br/><br/>"
         content << "Cordialement, l'équipe iDocus"
         EventNotification::EMAILS.each do |email|
           print "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] Sending email to <#{email}>..."
