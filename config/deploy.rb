@@ -26,11 +26,11 @@ set :deploy_via, :remote_cache
 set :repository_cache, "git_cache"
 set :copy_exclude, [".svn", ".DS_Store", ".git"]
 
-before "deploy", "deploy:setup", "shared:mkdir"
+before "deploy", "worker:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"
 before "deploy:symlink", "shared:symlink"
-after "deploy", "deploy:cleanup"
+after "deploy", "deploy:cleanup", "worker:start", "delayed_job:start"
 
 def remote_file_exist?(filepath)
   'true' == capture("if [ -e #{filepath} ]; then echo 'true'; fi").strip
