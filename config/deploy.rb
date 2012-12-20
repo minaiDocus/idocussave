@@ -41,7 +41,7 @@ namespace :shared do
   task :symlink do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
-    run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{release_path}/config/initializers/error_notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
@@ -62,10 +62,10 @@ namespace :shared do
 
   desc "Prepare config files"
   task :config do
-    if remote_file_exist? "#{shared_path}/config/initializers/error_notification.rb"
-      run "rm #{release_path}/config/initializers/error_notification.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/notification.rb"
+      run "rm #{release_path}/config/initializers/notification.rb"
     else
-      run "mv #{release_path}/config/initializers/error_notification.rb #{shared_path}/config/initializers"
+      run "mv #{release_path}/config/initializers/notification.rb #{shared_path}/config/initializers"
     end
     if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"
