@@ -16,14 +16,18 @@ class Account::Documents::UploadsController < Account::AccountController
         hsh[:new_name] = uploaded_file.pack_name + ".pdf"
         data << hsh
       # rescue extension
-      rescue TypeError
+      rescue UploadError::InvalidFormat
         hsh[:name] = params[:files][0].original_filename
-        hsh[:error] = "document non valide"
+        hsh[:error] = "extension non valide"
         data << hsh
       # rescue protected
-      rescue ArgumentError
+      rescue UploadError::ProtectedFile
         hsh[:name] = params[:files][0].original_filename
         hsh[:error] = "document protégé"
+        data << hsh
+      rescue UploadError::UnprocessableEntity
+        hsh[:name] = params[:files][0].original_filename
+        hsh[:error] = "fichier corrompu"
         data << hsh
       end
       

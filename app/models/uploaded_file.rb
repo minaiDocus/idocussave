@@ -32,10 +32,12 @@ public
     end
     
     def make(user, sAccountBookType, sOriginalFilename, tempfile, for_current_month)
+      raise UploadError::UnprocessableEntity.new('Corrupted file') unless system("identify #{tempfile.path}")
+
       Dir.chdir UPLOADED_FILE_PATH
       #  Validate extension.
       sExtension = File.extname(sOriginalFilename).downcase
-      raise TypeError, 'Extension is not valid' unless VALID_EXTENSION.include? sExtension
+      raise UploadError::InvalidFormat.new("Extension [#{sExtension}] is not valid") unless VALID_EXTENSION.include? sExtension
       
       #  Get basename.
       sBasename = ""
@@ -97,7 +99,7 @@ public
         user.uploaded_files.create(original_filename: sOriginalFilename, basename: sBasename, page_number: iPageNumber, account_book_type: sAccountBookType, is_delivered: true)
       else
         File.delete sNewFilename
-        raise ArgumentError, 'The file is password protected'
+        raise UploadError::ProtectedFile.new('The file is password protected')
       end
     end
     
