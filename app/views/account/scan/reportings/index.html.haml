@@ -232,7 +232,10 @@
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
                     - if @prescriber and @prescriber.is_centralizer
-                      - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
+                      - if index == 11
+                        - invoice = @prescriber.invoices.where(:number => /^#{@year+1}01/).first
+                      - else
+                        - invoice = @prescriber.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
                       - if invoice
                         - if invoice.content.try(:url)
                           %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
