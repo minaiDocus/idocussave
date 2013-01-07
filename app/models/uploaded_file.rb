@@ -43,8 +43,8 @@ public
       sBasename = ""
       is_current = true
       if for_current_month == "false"
-        sMonth = (Time.now.month - 1) > 9 ? (Time.now.month - 1).to_s : "0" + (Time.now.month - 1).to_s
-        sYear = (Time.now - 1.month).year.to_s
+        sMonth = "%0.2d" % 1.month.ago.month
+        sYear = "%0.2d" % 1.month.ago.year
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
         
         pack = user.packs.where(name: sBasename.gsub("_"," ") + " all").first
@@ -58,7 +58,7 @@ public
       end
       
       if is_current
-        sMonth = Time.now.month > 9 ? Time.now.month.to_s : "0"+Time.now.month.to_s
+        sMonth = "%0.2d" % Time.now.month
         sYear = Time.now.year.to_s
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
       end

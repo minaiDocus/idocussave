@@ -126,7 +126,7 @@ class Invoice
       # Information
       pdf.font_size(14) do
         pdf.move_down 30
-        pdf.text "Facture n°" + self.number.to_s + " du 1 " + current_month + " " + year.to_s, align: :left, style: :bold
+        pdf.text "Facture n°" + self.number.to_s + " du 1 " + current_month + " " + self.created_at.year.to_s, align: :left, style: :bold
       end
 
       pdf.move_down 14
