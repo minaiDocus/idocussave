@@ -153,4 +153,16 @@ module DocumentsHelper
         ['TIFF', ExternalFileStorage::TIFF]
     ]
   end
+
+  def quarterly_of_month(month)
+    if month < 4
+      1
+    elsif month < 7
+      2
+    elsif month < 10
+      3
+    else
+      4
+    end
+  end
 end

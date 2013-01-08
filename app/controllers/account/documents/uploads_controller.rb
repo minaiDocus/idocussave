@@ -10,7 +10,7 @@ class Account::Documents::UploadsController < Account::AccountController
     
     if type && !current_user.code.blank? && params[:files][0].original_filename && params[:files][0].tempfile
       begin
-        uploaded_file = UploadedFile.make current_user, type, params[:files][0].original_filename, params[:files][0].tempfile, params[:for_current_month]
+        uploaded_file = UploadedFile.make current_user, type, params[:files][0].original_filename, params[:files][0].tempfile, params[:for_current_period]
         hsh[:created_at] = l(uploaded_file.created_at)
         hsh[:name] = uploaded_file.original_filename
         hsh[:new_name] = uploaded_file.pack_name + ".pdf"
