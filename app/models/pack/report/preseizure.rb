@@ -18,9 +18,43 @@ class Pack::Report::Preseizure
   field :third_party,     type: String
 
   def period_date
-    year = piece.name.split(' ')[2][0..3]
-    month = piece.name.split(' ')[2][4..5]
     Time.local(year,month,1)
+  end
+
+  def end_period_date
+    if quarterly?
+      period_date + 3.months
+    else
+      period_date.end_of_month
+    end
+  end
+
+  def piece_info
+    piece.name.split(' ')
+  end
+
+  def syear
+    piece_info[2][0..3]
+  end
+
+  def year
+    syear.to_i
+  end
+
+  def smonth
+    piece_info[2][4..5]
+  end
+
+  def month
+    if quarterly?
+      (smonth[1].to_i * 3) - 2
+    else
+      smonth.to_i
+    end
+  end
+
+  def quarterly?
+    smonth[0] == 'T'
   end
 
   def self.by_position

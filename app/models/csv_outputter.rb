@@ -31,7 +31,7 @@ class CsvOutputter
           entry.preseizure.date.try(:strftime,format) || ''
         when /^period_date$/
           format = part[2].presence || "%d/%m/%Y"
-          result = entry.preseizure.date < entry.preseizure.period_date rescue true
+          result = entry.preseizure.date < entry.preseizure.period_date || entry.preseizure.date > entry.preseizure.end_period_date rescue true
           if result
             entry.preseizure.period_date.try(:strftime,format) || ''
           else
