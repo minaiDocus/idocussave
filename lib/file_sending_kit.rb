@@ -2,6 +2,7 @@
 require 'barby'
 require 'barby/barcode/code_39'
 require 'barby/outputter/png_outputter'
+require 'prawn/measurement_extensions'
 
 module FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/kit/"
@@ -210,6 +211,10 @@ private
             style(columns(0), :align => :right)
           end
         end
+      end
+
+      pdf.float do
+        pdf.image File.join([Rails.root,"app/assets/images/application/gabarit_A7.png"]), :width => 105.mm, :height => 74.mm, :vposition => :bottom
       end
       
       # BAR CODE
