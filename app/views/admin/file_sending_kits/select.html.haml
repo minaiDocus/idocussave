@@ -6,7 +6,7 @@
         %th Nom
         %th Début
         %th Durée
-      - @file_sending_kit.user.clients.active.each do |client|
+      - @file_sending_kit.user.clients.active.asc(:code).each do |client|
         %tr
           %td!= check_box_tag "users[#{client.id}][is_checked]", "true", false
           %td!= client.info
