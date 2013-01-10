@@ -9,25 +9,25 @@
       %h4 Logo
       .well
         %h4 Centre (affiché dans le mail)
-        = f.input :logo_path, label: 'Chemin'
+        = f.input :logo_path, label: 'Chemin', input_html: { class: 'span6' }
         = f.input :logo_height, label: 'Hauteur'
         = f.input :logo_width, label: 'Largeur'
 
       .well
         %h4 Gauche
-        = f.input :left_logo_path, label: 'Chemin'
+        = f.input :left_logo_path, label: 'Chemin', input_html: { class: 'span6' }
         = f.input :left_logo_height, label: 'Hauteur'
         = f.input :left_logo_width, label: 'Largeur'
 
       .well
         %h4 Droite
-        = f.input :right_logo_path, label: 'Chemin'
+        = f.input :right_logo_path, label: 'Chemin', input_html: { class: 'span6' }
         = f.input :right_logo_height, label: 'Hauteur'
         = f.input :right_logo_width, label: 'Largeur'
 
     .well
       %h4 Instructions
-      = f.input :instruction, as: :text, label: 'Instruction(s) de base'
-      = f.input :idocus_instruction, as: :text, label: 'Instruction(s) iDocus'
+      = f.input :instruction, as: :text, label: 'Instruction(s) de base', input_html: { class: 'span7' }
+      = f.input :idocus_instruction, as: :text, label: 'Instruction(s) iDocus', input_html: { class: 'span7' }
   .modal-footer
     = f.submit 'Valider', class: 'btn'
