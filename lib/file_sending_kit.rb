@@ -151,9 +151,6 @@ module KitGenerator
 private
 
   def KitGenerator.folder_bloc(pdf, folder, file_sending_kit)
-    pdf.font_size 6
-    pdf.text folder[:file_code], :align => :right
-    
     pdf.font_size 16
     
     # LEFT SIDE
@@ -179,7 +176,11 @@ private
     
     # RIGHT SIDE
     pdf.bounding_box([595, pdf.cursor], :width => 531, :height => 800) do
-      pdf.move_down 15
+      pdf.move_down 9
+      pdf.font_size 6
+      pdf.text folder[:file_code], :align => :right
+
+      pdf.move_down 6
       
       # LOGO
       pdf.float do
