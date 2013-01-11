@@ -249,16 +249,18 @@ class User
     result = false
     # user
     result = true if self.update_request.try(:values).present?
-    # journals
-    if self.is_prescriber
-      my_account_book_types.unscoped.each do |account_book_type|
-        result = true if account_book_type.is_update_requested?
+    unless self.update_request.try(:values) && self.update_request.try(:values).try(:[],:is_inactive)
+      # journals
+      if self.is_prescriber
+        my_account_book_types.unscoped.each do |account_book_type|
+          result = true if account_book_type.is_update_requested?
+        end
+      else
+        result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
       end
-    else
-      result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
+      # subscription
+      result = true if scan_subscriptions.current.try(:is_update_requested?)
     end
-    # subscription
-    result = true if scan_subscriptions.current.try(:is_update_requested?)
     result
   end
 
