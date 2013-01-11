@@ -181,7 +181,7 @@ private
       pdf.text folder[:file_code], :align => :right
 
       pdf.move_down 6
-      
+      pdf.font_size 16
       # LOGO
       pdf.float do
         pdf.bounding_box([0, pdf.cursor], :width => 265, :height => 169) do
