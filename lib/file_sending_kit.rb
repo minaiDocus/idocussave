@@ -31,7 +31,7 @@ private
       end_time = current_time + client_data[:offset_month].month
       while current_time < end_time
         client_data[:period_duration] = client_data[:user].scan_subscriptions.last.period_duration
-        client_data[:user].account_book_types.by_position.each do |account_book_type|
+        client_data[:user].account_book_types.asc(:name).each do |account_book_type|
           folders_data << to_folder(client_data, current_time, account_book_type)
         end
         current_time += client_data[:period_duration].month

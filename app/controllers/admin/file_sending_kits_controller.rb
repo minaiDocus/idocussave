@@ -48,7 +48,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
 
   def generate
     clients_data = []
-    @file_sending_kit.user.clients.active.each do |client|
+    @file_sending_kit.user.clients.active.asc(:code).each do |client|
       value = params[:users]["#{client.id}"][:is_checked] rescue nil
       if value == "true"
         clients_data << { :user => client, :start_month => params[:users]["#{client.id}"][:start_month].to_i, :offset_month => params[:users]["#{client.id}"][:offset_month].to_i }
