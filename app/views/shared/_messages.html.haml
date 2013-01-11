@@ -1,5 +1,6 @@
 - flash.each do |name, msg|
-  .row-fluid
-    .span12{ class: "alert #{twitterized_type(name)}" }
-      %a.close{ "data-dismiss" => "alert" } &#215;
-      = content_tag :div, msg, id: "flash_#{twitterized_type(name)}" if msg.is_a?(String)
+  - if msg.present?
+    .row-fluid
+      .span12{ class: "alert #{twitterized_type(name)}" }
+        %a.close{ "data-dismiss" => "alert" } &#215;
+        = content_tag :div, msg, id: "flash_#{twitterized_type(name)}" if msg.is_a?(String)

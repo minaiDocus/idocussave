@@ -42,6 +42,7 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
     run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
@@ -66,6 +67,11 @@ namespace :shared do
       run "rm #{release_path}/config/initializers/notification.rb"
     else
       run "mv #{release_path}/config/initializers/notification.rb #{shared_path}/config/initializers"
+    end
+    if remote_file_exist? "#{shared_path}/config/initializers/num.rb"
+      run "rm #{release_path}/config/initializers/num.rb"
+    else
+      run "mv #{release_path}/config/initializers/num.rb #{shared_path}/config/initializers"
     end
     if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"

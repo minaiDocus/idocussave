@@ -277,6 +277,14 @@ fr:
           attributes:
             reset_password_token:
               invalid: 'est invalide'
+        scan/document:
+          attributes:
+            name:
+              invalid: 'est invalide'
+            paperclips:
+              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+            oversized:
+              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
     models:
       common:
         attributes:

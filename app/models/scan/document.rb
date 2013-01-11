@@ -20,8 +20,11 @@ class Scan::Document
   field :is_shared,       type: Boolean, default: true
   
   validates_presence_of :name
+  validates_format_of :name, with: /^\w+ \w+ \d{4}[0-1T]\d all$/
   validate :uniqueness_of_name
-  
+  validates :paperclips, :numericality => { :greater_than_or_equal_to => 0 }
+  validates :oversized,  :numericality => { :greater_than_or_equal_to => 0 }
+
   scope :for_time, lambda { |start_time,end_time| where(:created_at.gte => start_time, :created_at.lte => end_time) }
   scope :shared, where: { is_shared: true }
   
@@ -32,7 +35,7 @@ class Scan::Document
   end
   
   def update_period
-    self.period.reload.save
+    self.period.reload.save if self.period
   end
   
   def scanned_pieces
@@ -67,9 +70,11 @@ class Scan::Document
 private
 
   def uniqueness_of_name
-    document = self.period.documents.where(name: name).first
-    if document and document != self
-      errors.add(:name, "Document with name '#{name}' already exist.")
+    if self.period
+      document = self.period.documents.where(name: name).first
+      if document and document != self
+        errors.add(:name, "Document with name '#{name}' already exist.")
+      end
     end
   end
 end

@@ -46,12 +46,19 @@ class Pack
   end
   
   def find_scan_document(start_time, end_time)
-    self.scan_documents.for_time(start_time,end_time).first
+    scan_document = self.scan_documents.for_time(start_time,end_time).first
+    scan_document = Scan::Document.all.for_time(start_time,end_time).first unless scan_document
+    scan_document
   end
   
   def find_or_create_scan_document(start_time, end_time, period)
     sd = find_scan_document(start_time, end_time)
     if sd
+      unless sd.period && sd.pack
+        sd.period ||= period
+        sd.pack ||= self
+        sd.save
+      end
       sd
     else
       sd = Scan::Document.new

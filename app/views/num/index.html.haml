@@ -1,0 +1,78 @@
+#num.container
+  .alerts
+    = render partial: 'shared/messages'
+
+  .row
+    .span12.margin2bottom
+      %table#navigation.table.table-bordered
+        %tr
+          %td.first= "#{l(Time.now, format: "%B").capitalize} #{Time.now.year.to_s}"
+          - time = Time.now.beginning_of_month
+          - while time.month == Time.now.end_of_month.month
+            - if time.day == (params[:day] ? params[:day].to_i : Time.now.day)
+              %td{ class: 'current' }= link_to time.day, "/num"
+            - else
+              - if @groups[time.day].present?
+                %td{ class: 'present' }= link_to time.day, "/num?day=#{time.day}"
+              - else
+                %td
+                  - if time.day == Time.now.day
+                    = link_to time.day, "/num"
+                  - else
+                    = time.day
+            - time = time + 1.day
+
+      - if session[:new_document] && @day == Time.now.day
+        .alert.alert-danger.already_exist
+          %b Ces valeurs concernent la chemise "#{session[:new_document][:name]}" déjà intégré dans la plateforme iDocus :
+          %br
+          %table.table.table-bordered.table-condensed
+            %tr
+              %td.first
+                Valeurs actuelles
+                = link_to "(#{session[:old_document].updated_at.strftime("%d/%m/%Y")})", "/num?day=#{session[:old_document].updated_at.day}"
+              %td= session[:old_document].paperclips
+              %td= session[:old_document].oversized
+              %td= link_to "Annuler", "/num/cancel", class: 'btn'
+            %tr
+              %td.first Nouvelles valeurs
+              %td= paperclips = session[:new_document][:paperclips]
+              %td= oversized = session[:new_document][:oversized]
+              %td= link_to "Remplacer", "/num/#{session[:old_document].id}/overwrite?paperclips=#{paperclips}&oversized=#{oversized}", method: 'PUT', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+            %tr
+              %td.first Nouvelles valeurs
+              %td= session[:old_document].paperclips + (paperclips = session[:new_document][:paperclips])
+              %td= session[:old_document].oversized + (oversized = session[:new_document][:oversized])
+              %td= link_to "Additionner", "/num/#{session[:old_document].id}/add?paperclips=#{paperclips}&oversized=#{oversized}", method: 'PUT', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+
+      %table.table.table-bordered.condensed
+        %tr
+          %th.date Heure
+          %th.name Nom
+          %th.paperclips Nombre d'attaches
+          %th.oversized Nombre de hors format
+          %th.actions Actions
+        - if @day == Time.now.day
+          %tr.form
+            != form_for @document, url: "/num" do |f|
+              %td.date -
+              %td
+                != f.text_field :name
+                %br
+                %span.errors!= @document.errors.messages[:name].try(:first)
+              %td.paperclips
+                != f.number_field :paperclips, class: 'span2'
+                %br
+                .errors.alignleft!= @document.errors.messages[:paperclips].try(:first)
+              %td.oversized
+                != f.number_field :oversized, class: 'span2'
+                %br
+                .errors.alignleft!= @document.errors.messages[:oversized].try(:first)
+              %td= submit_tag 'Valider', class: 'btn btn-primary'
+        - @documents.each do |document|
+          %tr
+            %td.date= document.updated_at.strftime("%H:%M")
+            %td= document.name
+            %td.paperclips= document.paperclips
+            %td.oversized= document.oversized
+            %td
