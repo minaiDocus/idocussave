@@ -138,7 +138,14 @@ module KitGenerator
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
       pdf.move_down 32
+      nb = 0
       labels.each_with_index do |label,index|
+        nb += 1
+        if nb == 15
+          pdf.start_new_page(:page_size => "A4", :margin => 0)
+          pdf.move_down 32
+          nb = 1
+        end
         if index % 2 == 0
           pdf.float { label_bloc(pdf,label) }
         else
