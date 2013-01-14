@@ -47,7 +47,7 @@ class Pack
   
   def find_scan_document(start_time, end_time)
     scan_document = self.scan_documents.for_time(start_time,end_time).first
-    scan_document = Scan::Document.all.for_time(start_time,end_time).first unless scan_document
+    scan_document = Scan::Document.where(name: self.name).for_time(start_time,end_time).first unless scan_document
     scan_document
   end
   
