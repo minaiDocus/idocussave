@@ -36,6 +36,7 @@ class NumController < ApplicationController
   def create
     if params[:scan_document] && params[:scan_document][:name] && params[:scan_document][:paperclips] && params[:scan_document][:oversized]
       params[:scan_document][:name].gsub!("_"," ")
+      params[:scan_document][:name] << " all" unless params[:scan_document][:name].match(/ all$/)
       @document = Scan::Document.where(name: params[:scan_document][:name], :updated_at.gt => Time.now.beginning_of_month).first || Scan::Document.new
       @document.assign_attributes(params[:scan_document])
       if @document.persisted? && @document.valid?
