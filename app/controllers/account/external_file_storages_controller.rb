@@ -25,26 +25,25 @@ public
     end
   end
   
-  def update_path_settings
+  def update
     result = ""
-    result = @external_file_storage.update_attributes(params[:external_file_storage])
-    if params[:external_file_storage][:dropbox_basic]
+    if params[:dropbox_basic]
       @external_file_storage.dropbox_basic.create if !@external_file_storage.dropbox_basic
-      result = @external_file_storage.dropbox_basic.update_attributes(params[:external_file_storage][:dropbox_basic])
-    elsif params[:external_file_storage][:google_doc]
+      result = @external_file_storage.dropbox_basic.update_attributes(params[:dropbox_basic])
+    elsif params[:google_doc]
       @external_file_storage.google_doc.create if !@external_file_storage.google_doc
-      result = @external_file_storage.google_doc.update_attributes(params[:external_file_storage][:google_doc])
-    elsif params[:external_file_storage][:ftp]
+      result = @external_file_storage.google_doc.update_attributes(params[:google_doc])
+    elsif params[:ftp]
       @external_file_storage.ftp.create if !@external_file_storage.ftp
-      result = @external_file_storage.ftp.update_attributes(params[:external_file_storage][:ftp])
-    elsif params[:external_file_storage][:the_box]
+      result = @external_file_storage.ftp.update_attributes(params[:ftp])
+    elsif params[:the_box]
       @external_file_storage.the_box.create if !@external_file_storage.the_box
-      result = @external_file_storage.the_box.update_attributes(params[:external_file_storage][:the_box])
+      result = @external_file_storage.the_box.update_attributes(params[:the_box])
     end
     if result == true
       flash[:notice] = "Modifié avec succés."
     else
-      flash[:error] = "Chemin non valide."
+      flash[:error] = "Donnée(s) saisie(s) non valide."
     end
     respond_to do |format|
       format.json{ render :json => result.to_json, :status => :ok }

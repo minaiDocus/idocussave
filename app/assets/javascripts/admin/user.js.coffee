@@ -38,6 +38,7 @@ get_scan_subscription = ->
     type: 'GET',
     success: (data) ->
       $('#scan_subscription').html(data)
+      checkbox_event_handler()
 
 edit_scan_subscription = ->
   $.ajax
@@ -314,8 +315,9 @@ toggle_prescriber_options = ->
     $('#stamp_propagation').hide()
     $('#is_editable_propagation').hide()
 
-jQuery ->
-  $('input[type=checkbox]').click ->
+checkbox_event_handler = ->
+  $('input[type=checkbox]').unbind 'click'
+  $('input[type=checkbox]').bind 'click', ->
     url = '/admin/users/' + user_id
     hsh = {}
     value = -1
@@ -329,6 +331,9 @@ jQuery ->
       data: hsh,
       dataType: 'json',
       type: 'PUT'
+
+jQuery ->
+  checkbox_event_handler()
 
   $('.edit').click ->
     parent = $(this).parents('.static')
@@ -437,3 +442,30 @@ jQuery ->
     if(value)
       propagate_is_editable()
     return false
+
+  $('.select-date').change ->
+    data = {}
+    value = $(this).val()
+    format = /\d{4}-\d{1,2}-\d{1,2}/
+    if value == "" || value.match(format)
+      if value == ""
+        data = { _method: 'PUT', user: { is_inactive: 0 } }
+      else
+        data = { _method: 'PUT', user: { is_inactive: 1, inactive_at: value } }
+
+      $.ajax
+        url: '/admin/users/' + user_id,
+        data: data,
+        datatype: 'json',
+        type: 'POST'
+
+  $('#external_file_storage select.inplace').change ->
+    name = $(this).attr('name')
+    value = $(this).attr('value')
+    data = { _method: 'PUT', }
+    data[name] = value
+    $.ajax
+      url: "/admin/users/" + user_id,
+      data: data,
+      datatype: 'json',
+      type: 'POST'

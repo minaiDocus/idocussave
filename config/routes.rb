@@ -11,16 +11,26 @@ Idocus::Application.routes.draw do
   match '/account/compositions/download', controller: 'account/compositions', action: 'download', via: :get
   match '/account' => redirect('/account/documents')
 
+  match 'num', controller: 'num', action: :index, via: :get
+  match 'num', controller: 'num', action: :create, via: :post
+  match 'num', controller: 'num', action: :create, via: :put
+  match 'num/cancel', controller: 'num', action: :cancel, via: :get
+  match 'num/:id/add', controller: 'num', action: :add, via: :put
+  match 'num/:id/overwrite', controller: 'num', action: :overwrite, via: :put
+
   namespace :account do
     root :to => "account/documents#index"
 
     resources :customers, as: :users do
+      put 'stop_using',    on: :member
+      put 'restart_using', on: :member
       resources :addresses
     end
     resources :journals, as: :account_book_types do
-      post 'cancel_destroy',         :on => :member
-      get  'edit_requested_users',   :on => :member
-      post 'update_requested_users', :on => :member
+      post 'cancel_destroy',           :on => :member
+      get  'edit_requested_users',     :on => :member
+      post 'update_requested_users',   :on => :member
+      put  'update_is_default_status', :on => :member
     end
     resources :subscriptions
     

@@ -1,12 +1,13 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::SubscriptionsController < Account::AccountController
   before_filter :verify_management_access
-  before_filter :load_user, :load_subscription, :load_product
+  before_filter { |c| c.load_user :@possessed_user }
+  before_filter :load_local_user, :load_subscription, :load_product
   before_filter :verify_write_access
   
   private
   
-  def load_user
+  def load_local_user
     @user = User.find params[:id]
   end
   
@@ -30,7 +31,7 @@ class Account::SubscriptionsController < Account::AccountController
       @subscription.update_attributes params[:scan_subscription]
       @user.set_request_type!
       flash[:notice] = "En attente de validation de l'administrateur."
-      if current_user == @user
+      if @possessed_user == @user
         redirect_to account_users_path
       else
         redirect_to account_user_path(@user)

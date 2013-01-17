@@ -1,0 +1,4 @@
+module Num
+  USERS = [
+  ]
+end

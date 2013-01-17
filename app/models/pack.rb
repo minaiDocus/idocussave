@@ -46,12 +46,19 @@ class Pack
   end
   
   def find_scan_document(start_time, end_time)
-    self.scan_documents.for_time(start_time,end_time).first
+    scan_document = self.scan_documents.for_time(start_time,end_time).first
+    scan_document = Scan::Document.where(name: self.name).for_time(start_time,end_time).first unless scan_document
+    scan_document
   end
   
   def find_or_create_scan_document(start_time, end_time, period)
     sd = find_scan_document(start_time, end_time)
     if sd
+      unless sd.period && sd.pack
+        sd.period ||= period
+        sd.pack ||= self
+        sd.save
+      end
       sd
     else
       sd = Scan::Document.new
@@ -115,16 +122,16 @@ class Pack
     efs.active_services_name.each do |service_name|
       # original
       if type.in? [Pack::ALL, Pack::ORIGINAL_ONLY]
-        remote_file = original_document.get_remote_file(user,service_name)
-        remote_file.waiting!
-        current_remote_files << remote_file
+        temp_remote_files = original_document.get_remote_files(user,service_name)
+        temp_remote_files.each { |remote_file| remote_file.waiting! }
+        current_remote_files += temp_remote_files
       end
       # pieces
       if type.in? [Pack::ALL, Pack::PIECES_ONLY]
         self.pieces.each do |piece|
-          remote_file = piece.get_remote_file(user,service_name)
-          remote_file.waiting! if force
-          current_remote_files << remote_file
+          temp_remote_files = piece.get_remote_files(user,service_name)
+          temp_remote_files.each { |remote_file| remote_file.waiting! } if force
+          current_remote_files += temp_remote_files
         end
       end
       # report
@@ -261,9 +268,11 @@ class Pack
         end
 
         is_ok = true
+        filesname_with_error = []
         all_filesname.each do |filename|
           if `pdftk #{filename} dump_data`.empty?
             is_ok = false
+            filesname_with_error << filename
           end
         end
 
@@ -288,8 +297,8 @@ class Pack
             end
           end
         else
-          ErrorNotitication::EMAILS.each do |email|
-            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />L'un au moins des fichiers livrés par Numen est corrompu." )
+          ErrorNotification::EMAILS.each do |email|
+            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par Numen sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
           end
         end
 
@@ -401,9 +410,11 @@ class Pack
     
     def info_path(pack_name, user=nil)
       name_info = pack_name.split("_")
+      pack = Pack.find_by_name(name_info.join(' '))
       info = {}
       info[:code] = name_info[0]
       info[:company] = user.try(:company)
+      info[:company_of_customer] = pack.owner.company
       info[:account_book] = name_info[1]
       info[:year] = name_info[2][0..3]
       info[:month] = name_info[2][4..5]

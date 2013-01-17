@@ -23,17 +23,21 @@
       = label_tag :account_book_type, "Type de document : ", :class => "pull-left padding1right", :style => "font-weight:900;"
       = select_tag "account_book_type", options_for_select(account_book_types_option), :class => 'text_field', :id => "account_book_type", :style =>"position:relative;bottom:5px;font-size:11px;"
       %br
-      = label_tag :for_current_month, "Mois concerné : ", :class => "pull-left padding1right", :style => "font-weight:900;"
-      - sCurrentMonth = Time.now.month > 9 ? Time.now.month.to_s : "0"+Time.now.month.to_s
-      - sPreviousMonth = (Time.now.month - 1) > 9 ? (Time.now.month - 1).to_s : "0"+(Time.now.month - 1).to_s
+      = label_tag :for_current_month, "Période concerné : ", :class => "pull-left padding1right", :style => "font-weight:900;"
+      - if current_user.scan_subscriptions.last.period_duration == 3
+        - sCurrentPeriod = "T#{quarterly_of_month(Time.now.month)}"
+        - sPreviousPeriod = "T#{quarterly_of_month((Time.now - 3.months).month)}"
+      - else
+        - sCurrentPeriod = "%0.2d" % Time.now.month
+        - sPreviousPeriod = "%0.2d" % 1.month.ago.month
       - sYear1 = Time.now.year.to_s
       - sYear2 = (Time.now - 1.month).year.to_s
-      = select_tag "for_current_month", options_for_select([[sCurrentMonth + " " + sYear1,"true"],[sPreviousMonth + " " + sYear2,"false"]]), :class => 'text_field', :id => :for_current_month, :style =>"position:relative;bottom:5px;font-size:11px;"
+      = select_tag "for_current_period", options_for_select([[sCurrentPeriod + " " + sYear1,"true"],[sPreviousPeriod + " " + sYear2,"false"]]), :class => 'text_field', :id => :for_current_month, :style =>"position:relative;bottom:5px;font-size:11px;"
       %br
       %span
         %span.label.label-warning.margin1right
           Attention :
-        Votre document ne pourra être attribué au mois précédant que si votre envoi "papier" n'a pas encore été traité par iDocus.
+        Votre document ne pourra être attribué à la période précédante que si votre envoi "papier" n'a pas encore été traité par iDocus.
       %br
       %br
       :plain

@@ -19,15 +19,19 @@ namespace :maintenance do
   namespace :notification do
     desc "Send update request notification"
     task :update_request => [:environment] do
-      if User.where(:request_type.gt => 0).count > 0
+      nb = User.where(:request_type.gt => 0).count
+      puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{nb} update request(s) found."
+      if nb > 0
+        subject = 'Validation requise'
         content = ""
-        content << "Bonjour,\n\n"
-        content << "Des requêtes de modification sont en attente de validation.\n\n"
+        content << "Bonjour,<br/><br/>"
+        content << "Des requêtes de modification sont en attente de validation.<br/><br/>"
         content << "Cordialement, l'équipe iDocus"
-        NotificationMailer.notify('florent.tachot@idocus.com','Validation requise',content)
-        NotificationMailer.notify('lailol@directmada.com','Validation requise',content)
-      else
-        puts "No update request found."
+        EventNotification::EMAILS.each do |email|
+          print "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] Sending email to <#{email}>..."
+          NotificationMailer.notify(email,subject,content).deliver
+          print "done.\n"
+        end
       end
     end
   end
@@ -52,7 +56,7 @@ namespace :maintenance do
   namespace :invoice do
     desc "Generate invoice"
     task :generate => [:environment] do
-      User.prescribers.not_in(:code => InvoiceConfig::IGNORE_CODES).each do |prescriber|
+      User.prescribers.invoiceable.each do |prescriber|
         puts Time.now
         if prescriber.is_centralizer
           puts "Generating invoice for prescriber : #{prescriber.name} <#{prescriber.email}>"

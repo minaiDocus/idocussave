@@ -116,7 +116,7 @@
             - if @external_file_storage.is_dropbox_basic_authorized?
               - service_number = ExternalFileStorage::F_DROPBOX
               - is_service_used = @external_file_storage.is_used?(service_number)
-              %div
+              .well
                 .row-fluid
                   .span12
                     != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
@@ -131,17 +131,12 @@
                       Pour connecter iDocus à votre compte Dropbox, cliquez
                       != link_to "ici", authorize_url_account_dropbox_path
                     #{"."}
-                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != hidden_field_tag "authenticity_token", form_authenticity_token
-                      != label_tag "external_file_storage[dropbox_basic][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[dropbox_basic][path]", "#{@external_file_storage.dropbox_basic.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.dropbox_basic }
 
             - if @external_file_storage.is_google_docs_authorized?
               - service_number = ExternalFileStorage::F_GOOGLE_DOCS
               - is_service_used = @external_file_storage.is_used?(service_number)
-              %hr{ :style => "margin:5px 0 5px 0;" }
-              %div
+              .well
                 .row-fluid
                   .span12
                     != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
@@ -156,17 +151,12 @@
                       Pour connecter iDocus à votre compte Google Drive, cliquez
                       != link_to "ici", authorize_url_account_google_doc_path
                     #{"."}
-                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != hidden_field_tag "authenticity_token", form_authenticity_token
-                      != label_tag "external_file_storage[google_doc][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[google_doc][path]", "#{@external_file_storage.google_doc.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.google_doc }
 
             - if @external_file_storage.is_ftp_authorized?
               - service_number = ExternalFileStorage::F_FTP
               - is_service_used = @external_file_storage.is_used?(service_number)
-              %hr{ :style => "margin:5px 0 5px 0;" }
-              %div
+              .well
                 .row-fluid
                   .span12
                     != check_box_tag :enable_ftp, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
@@ -181,17 +171,12 @@
                       Pour connecter iDocus à votre compte FTP, cliquez
                       != link_to "ici", "#ftpDialog", "data-toggle" => "modal"
                     \.
-                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != hidden_field_tag "authenticity_token", form_authenticity_token
-                      != label_tag "external_file_storage[ftp][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[ftp][path]", "#{@external_file_storage.ftp.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px; "
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.ftp }
 
             - if @external_file_storage.is_box_authorized?
               - service_number = ExternalFileStorage::F_BOX
               - is_service_used = @external_file_storage.is_used?(service_number)
-              %hr{ :style => "margin:5px 0 5px 0;" }
-              %div
+              .well
                 .row-fluid
                   .span12
                     != check_box_tag :enable_box, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
@@ -206,11 +191,7 @@
                       Pour connecter iDocus à votre compte Box, cliquez
                       != link_to "ici", authorize_url_account_box_path
                     #{"."}
-                    %form.margin0bottom{ :action => update_path_settings_account_external_file_storage_path, :method => "POST" }
-                      != hidden_field_tag "authenticity_token", form_authenticity_token
-                      != label_tag "external_file_storage[the_box][path]", "Chemin de livraison : ", :class => "pull-left margin1top", :style => "margin-right:4px;"
-                      != text_field_tag "external_file_storage[the_box][path]", "#{@external_file_storage.the_box.path}", :style => "margin:5px 0 5px 0;font-size:11px;width:400px;"
-                      != submit_tag "valider", :style => "margin:5px 0 5px 0;font-size:11px;"
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.the_box }
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
           .modal-header

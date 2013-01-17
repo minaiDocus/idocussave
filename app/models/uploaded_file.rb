@@ -31,18 +31,26 @@ public
       Dir.mkdir UPLOADED_FILE_PATH
     end
     
-    def make(user, sAccountBookType, sOriginalFilename, tempfile, for_current_month)
+    def make(user, sAccountBookType, sOriginalFilename, tempfile, for_current_period)
+      raise UploadError::UnprocessableEntity.new('Corrupted file') unless system("identify #{tempfile.path}")
+
       Dir.chdir UPLOADED_FILE_PATH
       #  Validate extension.
       sExtension = File.extname(sOriginalFilename).downcase
-      raise TypeError, 'Extension is not valid' unless VALID_EXTENSION.include? sExtension
-      
+      raise UploadError::InvalidFormat.new("Extension [#{sExtension}] is not valid") unless VALID_EXTENSION.include? sExtension
+
+      is_quarterly = user.scan_subscriptions.last.period_duration == 3
+
       #  Get basename.
       sBasename = ""
       is_current = true
-      if for_current_month == "false"
-        sMonth = (Time.now.month - 1) > 9 ? (Time.now.month - 1).to_s : "0" + (Time.now.month - 1).to_s
-        sYear = (Time.now - 1.month).year.to_s
+      if for_current_period == "false"
+        if is_quarterly
+          sMonth = "T#{quarterly_of_month(3.months.ago.month)}"
+        else
+          sMonth = "%0.2d" % 1.month.ago.month
+        end
+        sYear = "%0.2d" % 1.month.ago.year
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
         
         pack = user.packs.where(name: sBasename.gsub("_"," ") + " all").first
@@ -56,7 +64,11 @@ public
       end
       
       if is_current
-        sMonth = Time.now.month > 9 ? Time.now.month.to_s : "0"+Time.now.month.to_s
+        if is_quarterly
+          sMonth = "T#{quarterly_of_month(Time.now.month)}"
+        else
+          sMonth = "%0.2d" % Time.now.month
+        end
         sYear = Time.now.year.to_s
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
       end
@@ -97,7 +109,7 @@ public
         user.uploaded_files.create(original_filename: sOriginalFilename, basename: sBasename, page_number: iPageNumber, account_book_type: sAccountBookType, is_delivered: true)
       else
         File.delete sNewFilename
-        raise ArgumentError, 'The file is password protected'
+        raise UploadError::ProtectedFile.new('The file is password protected')
       end
     end
     
@@ -129,6 +141,18 @@ public
         !system("pdftk #{sFilename} dump_data output /dev/null")
       else
         false
+      end
+    end
+
+    def quarterly_of_month(month)
+      if month < 4
+        1
+      elsif month < 7
+        2
+      elsif month < 10
+        3
+      else
+        4
       end
     end
   end

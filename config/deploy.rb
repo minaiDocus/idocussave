@@ -5,6 +5,7 @@ default_run_options[:pty] = true
 #ssh_options[:forward_agent] = true
 
 set :runner, "rails"
+set :normalize_asset_timestamps, false
 set :user, "grevalis"
 set :password, "grevidoc"
 set :scm_username, "grevalis"
@@ -25,20 +26,24 @@ set :deploy_via, :remote_cache
 set :repository_cache, "git_cache"
 set :copy_exclude, [".svn", ".DS_Store", ".git"]
 
-before "deploy", "deploy:setup", "shared:mkdir"
+before "deploy", "worker:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"
 before "deploy:symlink", "shared:symlink"
-after "deploy", "deploy:cleanup"
+after "deploy", "deploy:cleanup", "worker:start", "delayed_job:start"
+
+def remote_file_exist?(filepath)
+  'true' == capture("if [ -e #{filepath} ]; then echo 'true'; fi").strip
+end
 
 namespace :shared do
   desc "Make symlink"
   task :symlink do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
-    run "ln -nfs #{shared_path}/config/initializers/error_notification.rb #{release_path}/config/initializers/error_notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
+    run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
-    run "ln -nfs #{shared_path}/config/initializers/invoice_config.rb #{release_path}/config/initializers/invoice_config.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
     run "ln -s #{shared_path}/files #{release_path}/files"
@@ -58,17 +63,17 @@ namespace :shared do
 
   desc "Prepare config files"
   task :config do
-    if File.exist? "#{shared_path}/config/initializers/error_notification.rb"
-      run "rm #{release_path}/config/initializers/error_notification.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/notification.rb"
+      run "rm #{release_path}/config/initializers/notification.rb"
     else
-      run "mv #{release_path}/config/initializers/error_notification.rb #{shared_path}/config/initializers"
+      run "mv #{release_path}/config/initializers/notification.rb #{shared_path}/config/initializers"
     end
-    if File.exist? "#{shared_path}/config/initializers/invoice_config.rb"
-      run "rm #{release_path}/config/initializers/invoice_config.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/num.rb"
+      run "rm #{release_path}/config/initializers/num.rb"
     else
-      run "mv #{release_path}/config/initializers/invoice_config.rb #{shared_path}/config/initializers"
+      run "mv #{release_path}/config/initializers/num.rb #{shared_path}/config/initializers"
     end
-    if File.exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
+    if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"
     end
   end
@@ -113,14 +118,14 @@ end
 namespace :worker do
   desc "Start worker process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} god start delivery"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
     run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
   end
 
   desc "Stop worker process"
   task :stop, :roles => :app do
-    run "cd #{current_path}; god stop delivery"
     run "cd #{current_path}; touch tmp/stop_worker.txt"
+    run "cd #{current_path}; god terminate"
     run "cd #{current_path}; touch tmp/stop_maintenance.txt"
   end
 end

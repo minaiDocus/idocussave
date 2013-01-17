@@ -7,11 +7,12 @@ class Ftp
   
   referenced_in :external_file_storage
   
-  field :host,          type: String,  default: 'ftp://ftp.example.com'
-  field :login,         type: String,  default: 'login'
-  field :password,      type: String,  default: 'password'
-  field :path,          type: String,  default: 'iDocus/:code/:year:month/:account_book/'
-  field :is_configured, type: Boolean, default: false
+  field :host,                 type: String,  default: 'ftp://ftp.example.com'
+  field :login,                type: String,  default: 'login'
+  field :password,             type: String,  default: 'password'
+  field :path,                 type: String,  default: 'iDocus/:code/:year:month/:account_book/'
+  field :is_configured,        type: Boolean, default: false
+  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
   
   scope :configured,     where: { is_configured: true }
   scope :not_configured, where: { is_configured: false }

@@ -2,6 +2,7 @@
 require 'barby'
 require 'barby/barcode/code_39'
 require 'barby/outputter/png_outputter'
+require 'prawn/measurement_extensions'
 
 module FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/kit/"
@@ -30,7 +31,7 @@ private
       end_time = current_time + client_data[:offset_month].month
       while current_time < end_time
         client_data[:period_duration] = client_data[:user].scan_subscriptions.last.period_duration
-        client_data[:user].account_book_types.by_position.each do |account_book_type|
+        client_data[:user].account_book_types.asc(:name).each do |account_book_type|
           folders_data << to_folder(client_data, current_time, account_book_type)
         end
         current_time += client_data[:period_duration].month
@@ -137,7 +138,14 @@ module KitGenerator
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
       pdf.move_down 32
+      nb = 0
       labels.each_with_index do |label,index|
+        nb += 1
+        if nb == 15
+          pdf.start_new_page(:page_size => "A4", :margin => 0)
+          pdf.move_down 32
+          nb = 1
+        end
         if index % 2 == 0
           pdf.float { label_bloc(pdf,label) }
         else
@@ -150,9 +158,6 @@ module KitGenerator
 private
 
   def KitGenerator.folder_bloc(pdf, folder, file_sending_kit)
-    pdf.font_size 6
-    pdf.text folder[:file_code], :align => :right
-    
     pdf.font_size 16
     
     # LEFT SIDE
@@ -178,8 +183,12 @@ private
     
     # RIGHT SIDE
     pdf.bounding_box([595, pdf.cursor], :width => 531, :height => 800) do
-      pdf.move_down 15
-      
+      pdf.move_down 9
+      pdf.font_size 6
+      pdf.text folder[:file_code], :align => :right
+
+      pdf.move_down 6
+      pdf.font_size 16
       # LOGO
       pdf.float do
         pdf.bounding_box([0, pdf.cursor], :width => 265, :height => 169) do
@@ -210,6 +219,10 @@ private
             style(columns(0), :align => :right)
           end
         end
+      end
+
+      pdf.float do
+        pdf.image File.join([Rails.root,"app/assets/images/application/gabarit_A7.png"]), :width => 105.mm, :height => 74.mm, :vposition => :bottom
       end
       
       # BAR CODE

@@ -36,20 +36,21 @@ class ApplicationController < ActionController::Base
     authenticate_user!
   end
 
-  def load_user
-    @user = nil
+  def load_user(name=:@user)
+    value = nil
     if current_user
       if (params[:code].present? || session[:acts_as].present?) && current_user.try(:is_admin)
-        @user = User.find_by_code(params[:code] || session[:acts_as]) || current_user
-        if @user == current_user
+        value = User.find_by_code(params[:code] || session[:acts_as]) || current_user
+        if value == current_user
           session[:acts_as] = nil
         else
-          session[:acts_as] = @user.code
+          session[:acts_as] = value.code
         end
       else
-        @user = current_user
+        value = current_user
       end
     end
+    instance_variable_set name, value
   end
 
 private

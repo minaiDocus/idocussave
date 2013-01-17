@@ -223,3 +223,30 @@ table {
 
 #subscription .requested {
   border: 1px solid orange; }
+
+.user_status {
+  .title {
+    position:relative;
+    top:10px; }
+  .select-date {
+    width:66px !important;
+    height:26px !important;
+    margin-right:-3px !important;
+    padding-left:4px !important; }
+}
+
+#external_file_storage th, #external_file_storage td {
+  vertical-align: middle; }
+
+#external_file_storage select {
+  margin-bottom: 0;
+  font-size: 10px;
+  width: 60px;
+  height: 23px; }
+
+#edit_file_sending_kit.modal {
+  top: 50%;
+  left: 50%;
+  display: none;
+  width: 914px;
+  margin: -300px 0 0 -457px !important; }

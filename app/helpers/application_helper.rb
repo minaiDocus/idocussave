@@ -109,4 +109,12 @@ module ApplicationHelper
         type.to_s
     end
   end
+
+  def current_url(params={})
+    url_for only_path: false, params: params
+  end
+
+  def current_user_info
+    session[:acts_as].presence || "Moi-même"
+  end
 end

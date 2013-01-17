@@ -9,6 +9,7 @@
         %th Autorisé ?
         %th Configuré ?
         %th Utilisé ?
+        %th Fichier(s)
         %th Chemin de livraison
     %tbody
       %tr
@@ -18,28 +19,33 @@
           = icon_tag(DropboxExtended.get_session.authorized?)
           = link_to "#{DropboxExtended.get_session.authorized? ? 're' : ''}configurer", authorize_url_admin_dropbox_path + "?user_id=#{@user.id}", class: 'btn btn-mini'
         %td
+        %td= select_tag "user[file_type_to_deliver]", options_for_select(file_type_to_deliver_options, @user.file_type_to_deliver), class: 'inplace'
         %td= render partial: 'text_field', locals: { name: 'user[dropbox_delivery_folder]', value: @user.dropbox_delivery_folder }
       %tr
         %th Dropbox
         %td= check_box_tag 'user[external_file_storage][is_dropbox_basic_authorized]', 1, external_file_storage.is_dropbox_basic_authorized?
         %td= icon_tag external_file_storage.dropbox_basic.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
+        %td= select_tag "user[external_file_storage][dropbox_basic][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.dropbox_basic.file_type_to_deliver), class: 'inplace'
         %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][dropbox_basic][path]', value: external_file_storage.dropbox_basic.path }
       %tr
         %th Google Drive
         %td= check_box_tag 'user[external_file_storage][is_google_docs_authorized]', 1, external_file_storage.is_google_docs_authorized?
         %td= icon_tag external_file_storage.google_doc.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS)
+        %td= select_tag "user[external_file_storage][google_doc][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.google_doc.file_type_to_deliver), class: 'inplace'
         %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][google_doc][path]', value: external_file_storage.google_doc.path }
       %tr
         %th FTP
         %td= check_box_tag 'user[external_file_storage][is_ftp_authorized]', 1, external_file_storage.is_ftp_authorized?
         %td= icon_tag external_file_storage.ftp.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
+        %td= select_tag "user[external_file_storage][ftp][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.ftp.file_type_to_deliver), class: 'inplace'
         %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][ftp][path]', value: external_file_storage.ftp.path }
       %tr
         %th Box
         %td= check_box_tag 'user[external_file_storage][is_box_authorized]', 1, external_file_storage.is_box_authorized?
         %td= icon_tag external_file_storage.the_box.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
+        %td= select_tag "user[external_file_storage][the_box][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.the_box.file_type_to_deliver), class: 'inplace'
         %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][the_box][path]', value: external_file_storage.the_box.path }

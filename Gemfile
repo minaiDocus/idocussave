@@ -37,6 +37,7 @@ gem 'google_drive'
 gem 'box-api'
 gem 'poppler'
 gem 'anjlab-tesseract', :require => 'tesseract'
+gem 'unicode_utils'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

@@ -30,10 +30,21 @@
         %table.table.table-striped.table-bordered.table-condensed
           %tbody
             %tr
-              %th= t('mongoid.models.user.attributes.is_inactive')
-              %td.value
-                = '(' + l(@user.inactive_at, format: :only_date) + ')' rescue ''
-                = check_box_tag 'user[is_inactive]', 1, @user.inactive_at.present?
+              %td.user_status{ colspan: 2 }
+                - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
+                  %div.alignright.padding1right
+                    %span.label.label-warning
+                      - if @user.update_request.try(:values).try(:[],'is_inactive')
+                        Arrêt demandé
+                      - else
+                        Rétablissement demandé
+                %div
+                  %b.title.pull-left
+                    = t('mongoid.models.user.attributes.is_inactive_since')
+                  .input-append.date.datepicker.pull-right
+                    = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
+                    %span.add-on
+                      %i.icon-th
             %tr
               %th= t('mongoid.models.user.attributes.is_admin')
               %td.value= check_box_tag 'user[is_admin]', 1, @user.is_admin

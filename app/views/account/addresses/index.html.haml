@@ -1,4 +1,6 @@
 #addresses.container-fluid
+  - if @is_manager
+    = render 'shared/as_user'
   .row-fluid
     .span12
       = render partial: 'navigation'

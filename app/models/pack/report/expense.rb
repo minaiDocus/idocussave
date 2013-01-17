@@ -67,7 +67,7 @@ class Pack::Report::Expense
       tmp_y
     end
 
-    def render_xls
+    def render_xls(is_access_url=true)
       report = self.first.report
       pack = report.pack
       book_name = pack.name.gsub(' ','_').sub('_all','')
@@ -121,7 +121,7 @@ class Pack::Report::Expense
 
       format1 = { :pattern => 1, :pattern_fg_color => :green, :color => :white }
       data = []
-      data << self.pro.map { |e| e.to_row }
+      data << self.pro.map { |e| e.to_row(is_access_url) }
       data << [self.pro.total_amount_in_cents_wo_vat,self.pro.total_vat,self.pro.total_amount_in_cents_w_vat]
       nb = table(sheet,"Dépenses avec le compte professionnel",data,1,nb,format1)
 
@@ -130,7 +130,7 @@ class Pack::Report::Expense
 
       format1 = { :pattern => 1, :pattern_fg_color => :blue, :color => :white }
       data = []
-      data << self.perso.map { |e| e.to_row }
+      data << self.perso.map { |e| e.to_row(is_access_url) }
       data << [self.perso.total_amount_in_cents_wo_vat,self.perso.total_vat,self.perso.total_amount_in_cents_w_vat]
       nb = table(sheet,"Dépenses avec le compte personnel",data,1,nb,format1)
 
@@ -181,9 +181,9 @@ class Pack::Report::Expense
     end
   end
 
-  def to_row
+  def to_row(is_access_url=true)
     [
-      (Spreadsheet::Link.new(File.join([SITE_INNER_URL,piece.get_access_url]), piece.content_file_name) rescue nil),
+      (Spreadsheet::Link.new(File.join([SITE_INNER_URL,(is_access_url ? piece.get_access_url : piece.content.url)]), piece.content_file_name) rescue nil),
       (self.date.strftime('%d/%m/%Y') rescue nil),
       observation.to_s,
       self.type,

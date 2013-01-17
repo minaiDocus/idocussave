@@ -24,6 +24,7 @@ class AccountBookType
   field :charge_account, type: String
   field :is_new,         type: Boolean
   field :request_type,   type: String,  default: "" # adding / updating /removing
+  field :is_default,     type: Boolean, default: false
   
   slug :name
 
@@ -34,7 +35,8 @@ class AccountBookType
 
   default_scope any_in: { request_type: ["",nil] }
 
-  scope :adding, where: { request_type: 'adding' }
+  scope :adding,  where: { request_type: 'adding' }
+  scope :default, where: { is_default: true }
   
 public
   ################################# COMPTA #################################

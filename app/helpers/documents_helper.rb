@@ -144,5 +144,25 @@ module DocumentsHelper
     contents += content_tag :h4, "Historique des ajouts de pages"
     contents += content_tag :div, custom_table_for(columns,pack.historic)
     content_tag :div, contents
+  end
+
+  def file_type_to_deliver_options
+    [
+        ['Tous', ExternalFileStorage::ALL_TYPES],
+        ['PDF', ExternalFileStorage::PDF],
+        ['TIFF', ExternalFileStorage::TIFF]
+    ]
+  end
+
+  def quarterly_of_month(month)
+    if month < 4
+      1
+    elsif month < 7
+      2
+    elsif month < 10
+      3
+    else
+      4
     end
+  end
 end

@@ -1,4 +1,6 @@
 ﻿.container-fluid
+  = render 'shared/as_user'
+
   .alerts
     = render partial: 'shared/messages'
 
@@ -6,7 +8,21 @@
 
   .row-fluid
     .span12.pannel
-      %h2= @user.info
+      .row-fluid
+        .span12
+          .pull-left
+            %h2= @user.info
+          .pull-right
+            - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
+              - if @user.update_request.try(:values).try(:[],'is_inactive')
+                = "(Arrêt en attente de validation par iDocus)"
+              - else
+                = "(Rétablissement en attente de validation par iDocus)"
+            - if @user.is_editable
+              - if @user.is_active? && !@user.update_request.try(:values).try(:[],:is_inactive)
+                = link_to "Arrêter l'abonnement", stop_using_account_user_path(@user), class: 'btn btn-danger', method: 'PUT', data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
+              - else
+                = link_to "Rétablir l'abonnement", restart_using_account_user_path(@user), class: 'btn btn-danger', method: 'PUT', data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
       .row-fluid
         .span6
           .row-fluid
@@ -71,7 +87,7 @@
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
                     %th{ colspan: 3 } Traitement Pré-Saisie ou NDF
-                    - if current_user.is_editable
+                    - if @possessed_user.is_editable
                       %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
                     %th Type
@@ -86,7 +102,7 @@
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
-                      - if current_user.is_editable
+                      - if @possessed_user.is_editable
                         %td
                           = link_to icon_edit, edit_account_account_book_type_path(journal)
                           = icon_link_to edit_requested_users_account_account_book_type_path(journal), { icon: 'user' }, { title: 'Clients concernés' }

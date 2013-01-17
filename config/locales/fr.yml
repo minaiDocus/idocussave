@@ -277,6 +277,14 @@ fr:
           attributes:
             reset_password_token:
               invalid: 'est invalide'
+        scan/document:
+          attributes:
+            name:
+              invalid: 'est invalide'
+            paperclips:
+              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+            oversized:
+              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
     models:
       common:
         attributes:
@@ -297,11 +305,14 @@ fr:
           email: 'Email'
           inactive_at: 'Est inactif depuis le'
           is_inactive: 'Est inactif ?'
+          is_inactive_since: 'Est inactif depuis le'
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
           is_centralizer: 'Est centralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
+          is_invoiceable: 'Est facturable ?'
+          is_access_by_token_active: 'Accès par jeton activé ?'
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'

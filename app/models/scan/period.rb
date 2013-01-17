@@ -307,7 +307,7 @@ class Scan::Period
       list: lists,
       total: total,
       excess: {
-        compta_pieces: compta_pieces.to_s,
+        compta_pieces: excess_compta_pieces.to_s,
         sheets: excess_sheets.to_s,
         uploaded_pages: excess_uploaded_pages.to_s
       },

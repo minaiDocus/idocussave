@@ -31,4 +31,12 @@ class UpdateRequest
     end
     self.values = clean_values
   end
+
+  def sync!
+    apply
+    self.values.reject do |k,v|
+      !k.to_s.in?(update_requestable.changed)
+    end
+    save
+  end
 end
