@@ -878,6 +878,12 @@ $actions: 100px;
     th, th.paperclips, th.oversized {
       text-align: center;
     }
+    tr.red {
+      color: red;
+    }
+    tr.green {
+      color: green;
+    }
     margin: auto;
     width: $date + $name + $paperclips + $oversized + $actions;
     .form {
