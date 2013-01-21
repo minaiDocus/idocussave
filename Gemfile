@@ -38,6 +38,7 @@ gem 'box-api'
 gem 'poppler'
 gem 'anjlab-tesseract', :require => 'tesseract'
 gem 'unicode_utils'
+gem 'axlsx', '1.3.4'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

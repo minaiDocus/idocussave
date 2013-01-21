@@ -19,10 +19,14 @@ class Account::Scan::Report::ExpensesController < Account::AccountController
   public
 
   def show
+    basename = "#{@report.pack.name.gsub(' ','_').sub('_all','')}"
     respond_to do |format|
       format.html {}
-      format.xls do
-        send_data(@report.expenses.render_xls, :type=> "application/vnd.ms-excel", :filename => "#{@report.pack.name.gsub(' ','_').sub('_all','')}.xls")
+      format.xlsx do
+        send_data(@report.expenses.render_xlsx, filename: "#{basename}.xlsx")
+      end
+      format.pdf do
+        send_data(@report.expenses.render_pdf, filename: "#{basename}.pdf")
       end
     end
   end
