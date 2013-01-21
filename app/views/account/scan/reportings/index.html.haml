@@ -73,81 +73,83 @@
                 #{month}
         %tbody
           - @users.each_with_index do |user, idx|
-            %tr{ :id => "user_#{user.id}", :class => "user" }
-              %td.align-middle
-                #{[user.code,user.company].join(" - ")}
-              - periods = annual_periods_for_user(user, @periods)
-              - periods.each_with_index do |period,index|
-                - if period
-                  - period.duration.times do |i|
-                    - annual_summary[period.start_at.month + i - 1][:active_user] += 1
-                  %td.align-middle.block{ :colspan => period.duration }
-                    %a.do-show{ href: "#" }
-                      - pos = []
-                      - period.duration.times do |i|
-                        - pos << "pos_#{(idx + 1)}_#{(index + i + 1)}"
-                      .period{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: idx+1}
-                        - if period.scanned_pages == 0 && period.uploaded_pages == 0
-                          - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
-                          .delivery_state.back_red
-                        - elsif period.delivery.state == "received"
-                          - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
-                          .delivery_state.back_orange
-                        - else
-                          - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
-                          .delivery_state
-                            .half-delivery_state.left{ class: (period.scanned_pages > 0 ? 'received' : 'not_received') }
-                            .half-delivery_state.right{ class: (period.uploaded_pages > 0 ? 'received' : 'not_received') }
-                        - period.documents_name_tags.each do |tags|
-                          %span{ :class => tags }
-                        .value
-                          %span{ :class => "hide pieces value_1" }
-                            #{period.pieces - period.uploaded_pieces}
-                          %span{ :class => "sheets value_0" }
-                            #{period.sheets - period.uploaded_sheets}
-                          %span{ :class => "hide pages value_2" }
-                            #{period.pages - period.uploaded_pages}
-                          %span{ :class => "hide uploaded_pieces value_4" }
-                            #{period.uploaded_pieces}
-                          %span{ :class => "hide uploaded_sheets value_3" }
-                            #{period.uploaded_sheets}
-                          %span{ :class => "hide uploaded_pages value_5" }
-                            #{period.uploaded_pages}
-                          %span{ :class => "hide paperclips value_6" }
-                            #{period.paperclips}
-                          %span{ :class => "hide oversized value_7" }
-                            #{period.oversized}
-                          %span{ :class => "hide excess_sheets value_10" }
-                            #{period.excess_sheets}
-                          %span{ :class => "hide excess_uploaded_pages value_11" }
-                            #{period.excess_uploaded_pages}
-                          %span{ :class => "hide compta_pieces value_12" }
-                            #{period.compta_pieces}
-                          %span{ :class => "hide excess_compta_pieces value_13" }
-                            #{period.excess_compta_pieces}
-                          - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
-                            %span{ :class => "hide price value_8" }
-                              #{format_price_00 period.price_in_cents_wo_vat} €
-                            %span{ :class => "hide excess_price value_9" }
-                              #{format_price_00 period.price_in_cents_of_total_excess} €
-                            
-                          - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
-                          - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
-                          - annual_summary[period.end_at.month - 1][:pages] += period.pages
-                          - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
-                          - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
-                          - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets
-                          - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
-                          - annual_summary[period.end_at.month - 1][:excess_uploaded_pages] += period.excess_uploaded_pages
-                          - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
-                          - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
-                          - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
-                          - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
-                          - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
-                          - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
-                - else
-                  %td.align-middle.block
-                    \-
+            - periods = annual_periods_for_user(user, @periods)
+            - if active_periods?(user, periods)
+              %tr{ :id => "user_#{user.id}", :class => "user" }
+                %td.align-middle
+                  #{[user.code,user.company].join(" - ")}
+                - periods = annual_periods_for_user(user, @periods)
+                - periods.each_with_index do |period,index|
+                  - if period
+                    - period.duration.times do |i|
+                      - annual_summary[period.start_at.month + i - 1][:active_user] += 1
+                    %td.align-middle.block{ :colspan => period.duration }
+                      %a.do-show{ href: "#" }
+                        - pos = []
+                        - period.duration.times do |i|
+                          - pos << "pos_#{(idx + 1)}_#{(index + i + 1)}"
+                        .period{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: idx+1}
+                          - if period.scanned_pages == 0 && period.uploaded_pages == 0
+                            - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
+                            .delivery_state.back_red
+                          - elsif period.delivery.state == "received"
+                            - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
+                            .delivery_state.back_orange
+                          - else
+                            - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
+                            .delivery_state
+                              .half-delivery_state.left{ class: (period.scanned_pages > 0 ? 'received' : 'not_received') }
+                              .half-delivery_state.right{ class: (period.uploaded_pages > 0 ? 'received' : 'not_received') }
+                          - period.documents_name_tags.each do |tags|
+                            %span{ :class => tags }
+                          .value
+                            %span{ :class => "hide pieces value_1" }
+                              #{period.pieces - period.uploaded_pieces}
+                            %span{ :class => "sheets value_0" }
+                              #{period.sheets - period.uploaded_sheets}
+                            %span{ :class => "hide pages value_2" }
+                              #{period.pages - period.uploaded_pages}
+                            %span{ :class => "hide uploaded_pieces value_4" }
+                              #{period.uploaded_pieces}
+                            %span{ :class => "hide uploaded_sheets value_3" }
+                              #{period.uploaded_sheets}
+                            %span{ :class => "hide uploaded_pages value_5" }
+                              #{period.uploaded_pages}
+                            %span{ :class => "hide paperclips value_6" }
+                              #{period.paperclips}
+                            %span{ :class => "hide oversized value_7" }
+                              #{period.oversized}
+                            %span{ :class => "hide excess_sheets value_10" }
+                              #{period.excess_sheets}
+                            %span{ :class => "hide excess_uploaded_pages value_11" }
+                              #{period.excess_uploaded_pages}
+                            %span{ :class => "hide compta_pieces value_12" }
+                              #{period.compta_pieces}
+                            %span{ :class => "hide excess_compta_pieces value_13" }
+                              #{period.excess_compta_pieces}
+                            - if current_user.is_admin or current_user.is_prescriber or (@prescriber and @prescriber.is_detail_authorized)
+                              %span{ :class => "hide price value_8" }
+                                #{format_price_00 period.price_in_cents_wo_vat} €
+                              %span{ :class => "hide excess_price value_9" }
+                                #{format_price_00 period.price_in_cents_of_total_excess} €
+                              
+                            - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
+                            - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
+                            - annual_summary[period.end_at.month - 1][:pages] += period.pages
+                            - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
+                            - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
+                            - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets
+                            - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
+                            - annual_summary[period.end_at.month - 1][:excess_uploaded_pages] += period.excess_uploaded_pages
+                            - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
+                            - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
+                            - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
+                            - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
+                            - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
+                            - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
+                  - else
+                    %td.align-middle.block
+                      \-
           - if current_user.is_prescriber || current_user.is_admin
             %tr#total
               %td
