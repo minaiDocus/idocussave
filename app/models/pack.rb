@@ -143,7 +143,144 @@ class Pack
     end
     current_remote_files
   end
-
+  
+  def update_name(new_name)
+    filename = new_name.split(" ").join("_") +".pdf"
+    
+    doc = self.original_document
+    
+    File.rename(doc.content.path, File.join(File.dirname(doc.content.path), filename))
+    
+    doc.content_file_name = filename
+    doc.save
+    
+    _division_new_name = new_name.split(" ")[0..2].join("_")+"_"
+    _older_name = self.name.split(" ")[0..2].join("_")+"_"
+    
+    dvx = self.divisions
+    dvx.each do |division| 
+      division.name =  division.name.sub(_older_name,_division_new_name)
+      division.save
+    end
+    
+    piece_name = new_name.split(" ")[0..2].join("_")
+   
+    pcx = self.pieces
+    pcx.each do |piece|
+      path = piece.content.path
+      piece_last_part = File.basename(path).split("_")[3]
+      File.rename(path, File.join(File.dirname(path),"#{piece_name}_#{piece_last_part}"))
+      piece.content_file_name = piece_name.concat "_#{piece_last_part}"
+      piece.name = piece.name.sub(self.name.split(" ")[0..2].join(" "), new_name.split(" ")[0..2].join(" "))
+      piece.save
+    end
+    
+    part_name = new_name.gsub(" ","_")
+    
+    pages.each do |page|
+      path = page.content.path
+      path_last_part = File.basename(path).split("_")[4..5].join("_")
+      File.rename(path, File.join(File.dirname(path),"#{part_name}_#{path_last_part}"))
+      
+      path_thumb = page.content.path(:thumb)
+      thumb_last_part = File.basename(path_thumb).split("_")[4..5].join("_")
+      File.rename(path_thumb, File.join(File.dirname(path_thumb), "#{part_name}_#{thumb_last_part}"))
+      
+      path_medium = page.content.path(:medium)
+      medium_last_part = File.basename(path_medium).split("_")[4..5].join("_")
+      File.rename(path_medium, File.join(File.dirname(path_medium), "#{part_name}_#{medium_last_part}"))
+      
+      file_name = page.content_file_name
+      file_name_last_part = File.basename(file_name).split("_")[4..5].join("_")
+      page.content_file_name = "#{part_name}_#{file_name_last_part}"
+      page.save
+    end
+    
+    pdx = self.owner.periods
+    
+    pdx.each do |period|
+      period.documents.each do |document|
+        if document.name == self.name
+          document.name = new_name
+          document.save
+        end
+      end
+    end
+    
+    self.name = new_name
+    self.save
+   
+    self.update_stamp   
+  end
+  
+  def regenerate_stamp_name(text, stamp_name, is_an_upload)
+    txt = stamp_name
+    info = text.split(' ')
+    
+    origin = is_an_upload ? "INF" : "PAP"
+   
+    txt.gsub(':code', info[0]).
+    gsub(':account_book', info[1]).
+    gsub(':period', info[2]).
+    gsub(':piece_num', info[3]).
+    gsub(':origin', origin)
+  end
+  
+  def regenerate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, path)
+    filepath = path + "_"
+    size = Poppler::Document.new(filepath).pages[0].size
+    temp_text = text.gsub("_"," ").sub("all pages","").sub(".pdf","").split(" ").join(" ")
+    txt = File.basename(regenerate_stamp_name(temp_text,stamp_name,is_an_upload))
+      Prawn::Document.generate STAMP_PATH, page_size: size, top_margin: 10 do
+        if is_stamp_background_filled
+          bounding_box([0, bounds.height], :width => bounds.width) do
+            data = [[txt]]
+            table(data, position: :center) do
+              style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
+              style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center)
+            end
+          end 
+        else
+          bounding_box([0, bounds.height], :width => bounds.width) do
+            stroke_color "FF0000"
+            data = [[txt]]
+            table(data, position: :center) do
+              style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
+              style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center, size: 10)
+            end
+          end 
+        end
+      end
+    STAMP_PATH
+  end
+  
+  def regenerate_new_name(filename, number)
+    zero_filler = "0" * (3 - number.to_s.size)
+    filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
+  end
+  
+  def reapply_new_name(filesname, starting_page, stamp_name, is_stamp_background_filled, is_an_upload)
+    filesname.each { |filename| File.rename filename, filename + "_"  }
+    start = starting_page
+    filesname.map do |filename|
+      new_filename = regenerate_new_name(filename,(start += 1) - 1)
+      stamp_path = regenerate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
+      system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
+      system "rm #{filename}_"
+      new_filename
+    end
+  end
+  
+  def update_stamp
+    pages = self.pages
+    starting_page = 1
+    filesname = []
+    pages.each do |page|
+      filesname << page.content.path
+    end
+    self.reapply_new_name(filesname, 1, self.owner.stamp_name, self.owner.is_stamp_background_filled, pages.first.is_an_upload)
+  end
+  
   class << self
     def find_by_name(name)
       where(name: name).first
@@ -426,7 +563,7 @@ class Pack
       part = pack_name.split "_"
       "/#{part[0]}/#{part[2]}/#{part[1]}/"
     end
-
+    
   private
 
     def update_division(filesname, pack, piece_position, sheet_position, is_an_upload)
