@@ -16,7 +16,7 @@
           .span4
             = f.association :product_supergroups, as: :check_boxes, collection: ProductGroup.not_in(name: [@product_group.name]).asc(:name), label_method: :name, value_method: :id, label: 'Sélectionner les groupes parents'
           .span4
-            = f.input :product_require, as: 'select', collection: ProductGroup.asc(:name), label_method: :name, value_method: :id, selected: @product_group['product_require_id'], label: 'Sélectionner un groupe pour la dépendance', include_blank: true
+            = f.input :product_require_id, as: 'select', collection: ProductGroup.asc(:name), label_method: :name, value_method: :id, selected: @product_group['product_require_id'], label: 'Sélectionner un groupe pour la dépendance', include_blank: true
         .row-fluid
           .span12
             .form-actions
