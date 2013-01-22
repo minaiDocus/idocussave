@@ -70,7 +70,7 @@
                 .errors.alignleft!= @document.errors.messages[:oversized].try(:first)
               %td= submit_tag 'Valider', class: 'btn btn-primary'
         - @documents.each do |document|
-          %tr
+          %tr{ class: (document.is_auto_filled ? 'red' : 'green') }
             %td.date= document.updated_at.strftime("%H:%M")
             %td= document.name
             %td.paperclips= document.paperclips

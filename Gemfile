@@ -53,7 +53,7 @@ gem 'jquery-rails'
 
 group :development, :test do
   gem 'thin'
-  gem 'ruby-debug19', :require => 'ruby-debug'
+  gem 'debugger'
   gem 'letter_opener'
   gem 'rspec-rails'
   gem 'quiet_assets'

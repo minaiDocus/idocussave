@@ -36,6 +36,7 @@ class NumController < ApplicationController
   def create
     if params[:scan_document] && params[:scan_document][:name] && params[:scan_document][:paperclips] && params[:scan_document][:oversized]
       params[:scan_document][:name].gsub!("_"," ")
+      params[:scan_document][:name].strip!
       params[:scan_document][:name] << " all" unless params[:scan_document][:name].match(/ all$/)
       @document = Scan::Document.where(name: params[:scan_document][:name], :updated_at.gt => Time.now.beginning_of_month).first || Scan::Document.new
       @document.assign_attributes(params[:scan_document])
@@ -47,6 +48,7 @@ class NumController < ApplicationController
         session[:new_document][:paperclips] = params[:scan_document][:paperclips].to_i
         session[:new_document][:oversized] = params[:scan_document][:oversized].to_i
       else
+        @document.is_auto_filled = false
         if @document.save
           flash[:success] = "Créé avec succès."
           flash[:error] = nil
@@ -66,6 +68,7 @@ class NumController < ApplicationController
     document.paperclips += params[:paperclips].to_i
     document.oversized += params[:oversized].to_i
     document.updated_at = Time.now
+    document.is_auto_filled = false
     document.save
     flash[:success] = "Modifié avec succès."
     reset_waiting_document
@@ -76,6 +79,7 @@ class NumController < ApplicationController
     document = Scan::Document.find params[:id]
     document.paperclips = params[:paperclips].to_i
     document.oversized = params[:oversized].to_i
+    document.is_auto_filled = false
     document.save
     reset_waiting_document
     flash[:success] = "Remplacé avec succès."
