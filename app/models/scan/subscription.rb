@@ -11,11 +11,15 @@ class Scan::Subscription < Subscription
   field :quantity_of_a_lot_of_upload,      type: Integer, default: 200 # téléversés
   field :max_preseizure_pieces_authorized, type: Integer, default: 100 # presaisies
   field :max_expense_pieces_authorized,    type: Integer, default: 100 # notes de frais
+  field :max_paperclips_authorized,        type: Integer, default: 0   # attaches
+  field :max_oversized_authorized,         type: Integer, default: 0   # hors format
   # prix excès
   field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
   field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
+  field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
+  field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
 
   before_create :set_category, :create_period
   before_save :check_propagation, :sync_assignment
@@ -58,10 +62,14 @@ class Scan::Subscription < Subscription
       period.quantity_of_a_lot_of_upload = self.quantity_of_a_lot_of_upload
       period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
       period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+      period.max_paperclips_authorized = self.max_paperclips_authorized
+      period.max_oversized_authorized = self.max_oversized_authorized
       period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
       period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
       period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
       period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+      period.unit_price_of_excess_paperclips = self.unit_price_of_excess_paperclips
+      period.unit_price_of_excess_oversized = self.unit_price_of_excess_oversized
 
       period.save
       period
@@ -81,10 +89,14 @@ class Scan::Subscription < Subscription
     self.quantity_of_a_lot_of_upload = scan_subscription.quantity_of_a_lot_of_upload
     self.max_preseizure_pieces_authorized = scan_subscription.max_preseizure_pieces_authorized
     self.max_expense_pieces_authorized = scan_subscription.max_expense_pieces_authorized
+    self.max_paperclips_authorized = scan_subscription.max_paperclips_authorized
+    self.max_oversized_authorized = scan_subscription.max_oversized_authorized
     self.unit_price_of_excess_sheet = scan_subscription.unit_price_of_excess_sheet
     self.price_of_a_lot_of_upload = scan_subscription.price_of_a_lot_of_upload
     self.unit_price_of_excess_preseizure = scan_subscription.unit_price_of_excess_preseizure
     self.unit_price_of_excess_expense = scan_subscription.unit_price_of_excess_expense
+    self.unit_price_of_excess_paperclips = scan_subscription.unit_price_of_excess_paperclips
+    self.unit_price_of_excess_oversized = scan_subscription.unit_price_of_excess_oversized
     self.copy_to_options! scan_subscription.product_option_orders
   
     self.save
@@ -128,10 +140,14 @@ class Scan::Subscription < Subscription
     period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
     period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
     period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+    period.max_paperclips_authorized = self.max_paperclips_authorized
+    period.max_oversized_authorized = self.max_oversized_authorized
     period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
     period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
     period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
     period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+    period.unit_price_of_excess_paperclips = self.unit_price_of_excess_paperclips
+    period.unit_price_of_excess_oversized = self.unit_price_of_excess_oversized
 
     period.save
   end

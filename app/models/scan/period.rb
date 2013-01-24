@@ -23,12 +23,16 @@ class Scan::Period
   field :quantity_of_a_lot_of_upload,      type: Integer, default: 200 # téléversés
   field :max_preseizure_pieces_authorized, type: Integer, default: 100 # presaisies
   field :max_expense_pieces_authorized,    type: Integer, default: 100 # notes de frais
+  field :max_paperclips_authorized,        type: Integer, default: 0   # attaches
+  field :max_oversized_authorized,         type: Integer, default: 0   # hors format
   # prix excès
   field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
   field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
-  
+  field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
+  field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
+
   field :documents_name_tags,      type: Array,   default: []
   field :pieces,                   type: Integer, default: 0
   field :sheets,                   type: Integer, default: 0
@@ -82,7 +86,7 @@ class Scan::Period
   end
   
   def price_in_cents_of_total_excess
-    price_in_cents_of_excess_sheets +
+    price_in_cents_of_excess_scan +
     price_in_cents_of_excess_uploaded_pages +
     price_in_cents_of_excess_compta_pieces
   end
@@ -94,6 +98,28 @@ class Scan::Period
     else
       0
     end
+  end
+
+  def price_in_cents_of_excess_paperclips
+    excess = excess_paperclips
+    if excess > 0
+      excess * unit_price_of_excess_paperclips
+    else
+      0
+    end
+  end
+
+  def price_in_cents_of_excess_oversized
+    excess = excess_oversized
+    if excess > 0
+      excess * unit_price_of_excess_oversized
+    else
+      0
+    end
+  end
+
+  def price_in_cents_of_excess_scan
+    price_in_cents_of_excess_sheets + price_in_cents_of_excess_paperclips + price_in_cents_of_excess_oversized
   end
   
   def price_in_cents_of_excess_uploaded_pages
@@ -130,6 +156,16 @@ class Scan::Period
   
   def excess_sheets
     excess = sheets - uploaded_sheets - max_sheets_authorized
+    excess > 0 ? excess : 0
+  end
+
+  def excess_paperclips
+    excess = paperclips - max_paperclips_authorized
+    excess > 0 ? excess : 0
+  end
+
+  def excess_oversized
+    excess = oversized - max_oversized_authorized
     excess > 0 ? excess : 0
   end
   
@@ -309,7 +345,9 @@ class Scan::Period
       excess: {
         compta_pieces: excess_compta_pieces.to_s,
         sheets: excess_sheets.to_s,
-        uploaded_pages: excess_uploaded_pages.to_s
+        uploaded_pages: excess_uploaded_pages.to_s,
+        paperclips: excess_paperclips.to_s,
+        oversized: excess_oversized.to_s
       },
       delivery: delivery.state
     }
@@ -338,7 +376,7 @@ class Scan::Period
     end
     {
         list: lists,
-        excess_sheets: format_price(price_in_cents_of_excess_sheets),
+        excess_scan: format_price(price_in_cents_of_excess_scan),
         excess_uploaded_pages: format_price(price_in_cents_of_excess_uploaded_pages),
         excess_compta_pieces: format_price(price_in_cents_of_excess_compta_pieces),
         total: format_price(price_in_cents_wo_vat),
