@@ -15,7 +15,7 @@ set :rails_env, "production"
 
 set :application, "idocus"
 role :app, "grevalis.alwaysdata.net"
-set :deploy_to, "/home/grevalis/www/idocus"
+set :deploy_to, "/home/grevalis/www/idocus#{ENV['RAILS_ENV'] == 'test' ? '_test' : ''}"
 
 set :keep_releases, 5
 
@@ -43,6 +43,7 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
     run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
+    run "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
@@ -73,6 +74,11 @@ namespace :shared do
     else
       run "mv #{release_path}/config/initializers/num.rb #{shared_path}/config/initializers"
     end
+    if remote_file_exist? "#{shared_path}/config/initializers/site.rb"
+      run "rm #{release_path}/config/initializers/site.rb"
+    else
+      run "mv #{release_path}/config/initializers/site.rb #{shared_path}/config/initializers"
+    end
     if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"
     end
@@ -100,7 +106,11 @@ end
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 20 start"
+    if ENV['RAILS_ENV'] == 'test'
+      run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job start"
+    else
+      run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 20 start"
+    end
   end
 
   desc "Stop delayed_job process"
@@ -118,14 +128,16 @@ end
 namespace :worker do
   desc "Start worker process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
+    unless ENV['RAILS_ENV'] == 'test'
+      run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
+      run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
+    end
   end
 
   desc "Stop worker process"
   task :stop, :roles => :app do
     run "cd #{current_path}; touch tmp/stop_worker.txt"
-    run "cd #{current_path}; god terminate"
     run "cd #{current_path}; touch tmp/stop_maintenance.txt"
+    run "cd #{current_path}; god terminate" unless ENV['RAILS_ENV'] == 'test'
   end
 end
