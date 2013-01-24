@@ -31,6 +31,15 @@
             = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
             = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
             %hr
+            %h4.aligncenter Attaches
+            %br
+            = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
+            = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+            %hr
+            %h4.aligncenter Hors format
+            %br
+            = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
+            = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
 
         != render partial: "product", collection: @products
 

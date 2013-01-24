@@ -387,6 +387,16 @@
           <td class="center">{%= o.documents.excess.uploaded_pages %} page(s)</td>
           <td class="center">{%= o.documents.excess.compta_pieces %} pièce(s)</td>
         </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.paperclips %} attache(s)</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.oversized %} hors format</td>
+          <td></td>
+          <td></td>
+        </tr>
       </table>
     </div>
   - if (@prescriber and @prescriber.is_detail_authorized) or current_user.is_prescriber or current_user.is_admin
@@ -409,7 +419,7 @@
           <tr>
             <td>Dépassement numérisation</td>
             <td></td>
-            <td style="text-align:right;">{%= o.options.excess_sheets%} €</td>
+            <td style="text-align:right;">{%= o.options.excess_scan%} €</td>
           </tr>
           <tr>
             <td>Dépassement téléversement</td>

@@ -18,7 +18,7 @@ class Scan::Document
   field :paperclips,      type: Integer, default: 0
   field :oversized,       type: Integer, default: 0
   field :is_shared,       type: Boolean, default: true
-  field :is_auto_filled,  type: Boolean, default: true
+  field :scanned_at,      type: Time
   
   validates_presence_of :name
   validates_format_of :name, with: /^\w+ \w+ \d{4}[0-1T]\d all$/
