@@ -15,7 +15,9 @@ class NumController < ApplicationController
 
   def load_resource
     @all_documents = Scan::Document.where(:updated_at.gte => Time.now.beginning_of_month)
-    @groups = @all_documents.group_by { |e| e.updated_at.day }
+    @groups = @all_documents.group_by do |e|
+      e.scanned_at.try(:day) || e.created_at.day
+    end
     @day = params[:day].try(:to_i) || Time.now.day
     time = Time.local(Time.now.year,Time.now.month,@day)
     @documents = Scan::Document.where(:updated_at.gte => time, :updated_at.lte => time.end_of_day).desc(:updated_at)
@@ -48,7 +50,7 @@ class NumController < ApplicationController
         session[:new_document][:paperclips] = params[:scan_document][:paperclips].to_i
         session[:new_document][:oversized] = params[:scan_document][:oversized].to_i
       else
-        @document.is_auto_filled = false
+        @document.scanned_at = Time.now
         if @document.save
           flash[:success] = "Créé avec succès."
           flash[:error] = nil
@@ -68,7 +70,7 @@ class NumController < ApplicationController
     document.paperclips += params[:paperclips].to_i
     document.oversized += params[:oversized].to_i
     document.updated_at = Time.now
-    document.is_auto_filled = false
+    document.scanned_at = Time.now
     document.save
     flash[:success] = "Modifié avec succès."
     reset_waiting_document
@@ -79,7 +81,7 @@ class NumController < ApplicationController
     document = Scan::Document.find params[:id]
     document.paperclips = params[:paperclips].to_i
     document.oversized = params[:oversized].to_i
-    document.is_auto_filled = false
+    document.scanned_at = Time.now
     document.save
     reset_waiting_document
     flash[:success] = "Remplacé avec succès."
