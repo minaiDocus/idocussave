@@ -19,14 +19,19 @@ namespace :maintenance do
   namespace :notification do
     desc "Send update request notification"
     task :update_request => [:environment] do
-      nb = User.where(:request_type.gt => 0).count
+      users = User.where(:request_type.gt => 0).asc([:code, :request_type])
+      nb = users.count
       puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{nb} update request(s) found."
       if nb > 0
         subject = 'Validation requise'
         content = ""
         content << "Bonjour,<br/><br/>"
-        content << "Des requêtes de modification sont en attente de validation.<br/><br/>"
-        content << "Cordialement, l'équipe iDocus"
+        content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
+        users.each do |user|
+          content << user.info + " - " + I18n.t('request.'+User::REQUEST_TYPE_NAME[user.request_type])
+          content << "<br/>"
+        end
+        content << "<br/>Cordialement, l'équipe iDocus"
         EventNotification::EMAILS.each do |email|
           print "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] Sending email to <#{email}>..."
           NotificationMailer.notify(email,subject,content).deliver
