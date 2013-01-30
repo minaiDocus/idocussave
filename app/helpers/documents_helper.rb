@@ -73,6 +73,11 @@ module DocumentsHelper
     end
     periods
   end
+
+  def active_periods?(user, periods)
+    result = periods.select { |e| e != nil }.count > 0
+    (!user.is_inactive && result) ? true : false
+  end
   
   def price_of_period_by_time(periods, time)
     periods.select { |period| period.start_at <= time and period.end_at >= time }.
