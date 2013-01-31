@@ -69,78 +69,26 @@ class Pack::Report::Expense
       index.times{ table(sheet) }
     end
     
-    def sum_index(total,value)
-      total.each_index{|i| total[i] << value[i]}
-      total
-    end
-    
-    def sum_total(total, expense, value)
-      self.distinct_type.each_with_index do |type,index|
-        if expense.type == type
-          sum_index(total[index], value)
-        end
-      end
-      total
-    end
-    
-    def total_type
-      total = []
-      self.distinct_type.each{ |v| total << [[],[],[]]}
-      total
-    end
-    
-    def total_row
-      total = total_type
-      i = 16 + self.distinct_type.count - 4
-      self.pro.each_with_index do |expense,index|
-        value = ["F#{i+index}","G#{i+index}","H#{i+index}"]
-        sum_total(total, expense,value)
-      end
-      i = 32 + self.distinct_type.count - 4
-      self.perso.each_with_index do |expense,index|
-        value = ["F#{i+index}","G#{i+index}","H#{i+index}"]
-        sum_total(total, expense,value)
-      end
-      total
-    end
-    
-    def concat(total)
-      total.map{|value| value.join("+")}
-    end
-    
-    def add_data(sheet, idx, value)
-      value.each_index do|index|
-        sheet.rows[idx].add_cell ("=#{value[index]}")
-      end
-    end
-    
-    def add_total_data(sheet, total)
-      idx = 5
-      total.each_index do |index|
-        tab = total[index]
-        add_data(sheet,idx, concat(tab))
-        idx +=1
-      end
-    end
-    
-    def update_row_color(sheet, style)
-      i = 6 
-      self.distinct_type.each_index do |index|
-        sheet["F#{i}:H#{i}"].each { |c| c.style = style }
-        i += 1
-      end
-    end
-    
-    def last_cell_index(sheet,expenses,index, is_access_url,style)
-      temp_index = index
+    def last_cell_index(sheet,expenses,first_index,is_access_url,style)
+      idx = first_index
       last_cell = 0
-      expenses.each_with_index do|pr, i|
-        table(sheet, [""].concat(pr.to_row(is_access_url)), style)
-        pr.add_link(sheet, temp_index, is_access_url)
-        temp_index +=1
+      expenses.each_with_index do|expense, i|
+        table(sheet, [""].concat(expense.to_row(is_access_url)), style)
+        expense.add_link(sheet, idx, is_access_url)
+        idx +=1
         last_cell += 1
       end
       last_cell
+    end
+    
+    # 12 => index of the first pro row
+    # 6 => gap between pro and perso rows
+    
+    def sum_total_cell(type, first_index= 12 + self.distinct_type.count , last_index=first_index + self.pro.count + self.perso.count + 6)
+      total = []
+      total <<  "=SUMIF(E#{first_index}:E#{last_index},\"#{type}\",F#{first_index}:F#{last_index})" 
+      total <<  "=SUMIF(E#{first_index}:E#{last_index},\"#{type}\",G#{first_index}:G#{last_index})"
+      total <<  "=SUMIF(E#{first_index}:E#{last_index},\"#{type}\",H#{first_index}:H#{last_index})"
     end
     
     def render_xlsx(is_access_url=true)
@@ -162,7 +110,7 @@ class Pack::Report::Expense
       cell_5               = format(s, { bg_color: "FAC090", b: true })
       last_cell            = format(s, { alignment: { horizontal: :right }, format_code: "#,##0.00" })
       
-      orange_cell_title          = [0,cell_2,0,0,cell_5,0,0,last_cell] 
+      orange_cell_title    = [0,cell_2,0,0,cell_5,0,0,last_cell] 
       orange_cell_type     = format(s, { alignment: { horizontal: :left }, bg_color: "FDE9D9" })
       orange_cell_price    = format(s, { alignment: { horizontal: :right}, bg_color: "FDE9D9", format_code: "#,##0.00"})
       orange_dynamic_row   = [0,0,0,0,orange_cell_type,orange_cell_price,orange_cell_price,orange_cell_price]
@@ -170,7 +118,7 @@ class Pack::Report::Expense
       price_cell           = format(s, { bg_color: "FAC090", alignment: { horizontal: :right }, format_code: "#,##0.00", b: true})
       owner_row            = [0,cell_1,0,0, cell_5, price_cell, price_cell, price_cell]
       
-      default_cell         = [0,cell_1,0,0,orange_cell_type]
+      default_cell         = [0,cell_1,0,0,orange_cell_type,orange_cell_price,orange_cell_price,orange_cell_price]
       
       green_cell_1         = format(s, { bg_color: "C2D69A", alignment: { horizontal: :right }, format_code: "#,##0.00", b: true})
       green_cell_title     = format(s, { bg_color: "C2D69A", b: true })
@@ -199,39 +147,51 @@ class Pack::Report::Expense
         table(sheet, ["","#{pack.owner.name}","","","Type de dépense","HT","TVA","TTC"], owner_row)
         
         self.distinct_type.each_with_index do |type,index|
+          result = sum_total_cell(type)
           if index == 0
-            table(sheet,["","","","",type], default_cell)
+            table(sheet,["","","","",type,result].flatten,default_cell)
           elsif index == 1
-            table(sheet,["",period,"","",type], default_cell)
+            table(sheet,["",period,"","",type,result].flatten,default_cell)
           else 
-            table(sheet,["","","","",type], orange_dynamic_row)
+            table(sheet,["","","","",type,result].flatten,default_cell)
           end
         end
         
-        total_row_count = self.distinct_type.count + 5
- 
-        table(sheet, ["","","","","","=SUM(F6:F#{total_row_count})","=SUM(G6:G#{total_row_count})","=SUM(H6:H#{total_row_count})"], total_sum_row)
+        total_row = self.distinct_type.count + 5
+        table(sheet, ["","","","","","=SUM(F6:F#{total_row})","=SUM(G6:G#{total_row})","=SUM(H6:H#{total_row})"], total_sum_row)
+     
         next_row(sheet, 2) 
+     
         table(sheet, ["","Dépenses avec le compte professionnel","","","","","","(en €)"], green_pro_row_title )
         table(sheet)
         table(sheet, [""].concat(title), green_row)
+       
+        pro_index = 12 + self.distinct_type.count
         
-        index = 16 + self.distinct_type.count - 4
-        i = last_cell_index(sheet,self.pro, index,is_access_url,green_each_row)
+        i = last_cell_index(sheet,self.pro, pro_index,is_access_url,green_each_row)
         
-        table(sheet,["","","","","","=SUM(F#{index}:F#{index+i-1})","=SUM(G#{index}:G#{index+i-1})","=SUM(H#{index}:H#{index+i-1})"], green_sum_row) 
+        if self.pro.count > 0
+          table(sheet,["","","","","","=SUM(F#{pro_index}:F#{pro_index+i-1})","=SUM(G#{pro_index}:G#{pro_index+i-1})","=SUM(H#{pro_index}:H#{pro_index+i-1})"], green_sum_row) 
+        else
+          table(sheet,["","","","","","0.00","0.00","0.00"],green_sum_row)
+        end
+        
         next_row(sheet, 3)  
+        
         table(sheet,["","Dépenses avec le compte personnel","","","","","","(en €)"], blue_perso_row_title)
         table(sheet)
         table(sheet, [""].concat(title), blue_row)
         
-        index = 32 + self.distinct_type.count - 4
-        i = last_cell_index(sheet,self.perso, index,is_access_url, blue_each_row)
-   
-        table(sheet, ["","","","","","=SUM(F#{index}:F#{index+i-1})","=SUM(G#{index}:G#{index+i-1})","=SUM(H#{index}:H#{index+i-1})"], blue_sum_row)         
-        add_total_data(sheet,total_row)    
-        update_row_color(sheet, orange_cell_price)
-     
+        perso_index = 19 + self.distinct_type.count + self.pro.count
+        
+        j = last_cell_index(sheet,self.perso, perso_index,is_access_url, blue_each_row)      
+        
+        if self.perso.count > 0
+          table(sheet, ["","","","","","=SUM(F#{perso_index}:F#{perso_index+j-1})","=SUM(G#{perso_index}:G#{perso_index+j-1})","=SUM(H#{perso_index}:H#{perso_index+j-1})"], blue_sum_row)         
+        else
+          table(sheet,["","","","","","0.00","0.00","0.00"],blue_sum_row)
+        end
+          
         sheet.column_widths 10, 37, 10, 30, 22, 10, 10, 10    
       end
 
@@ -281,7 +241,7 @@ class Pack::Report::Expense
       title                    = ["Nom de la pièce (url)", "Date","Observations", "Type de dépense", "HT", "TVA", "TTC"]
       
       default_cell             = { align: :center, size: 8, background_color: "F2F2F2", border_color: "F2F2F2" }
-      global_style             = { border_color: "FFFFFF", size: 8 }
+      global_style             = { border_color: "FFFFFF", size: 8}
       total_cell               = { align: :right, size: 8}
       
       orange_cell_title        = { background_color: "FAC090", size: 8, border_color: "FAC090", font_style: :bold}
@@ -296,7 +256,7 @@ class Pack::Report::Expense
       blue_cell_content        = { background_color: "DBEEF3", size: 8, border_color: "DBEEF3" }     
       blue_cell_total          = { align: :right, background_color: "93CDDD", size: 8, border_color: "93CDDD", font_style: :bold }
       
-      widths                   = [161,55,135,100,40,40,40]
+      widths                   = [161,55,135,82,46,46,46]
       
       Prawn::Document.generate("tmp/#{pdf_name}.pdf", page_size: 'A4',top_margin: 35, left_margin: 11, right_margin: 11) do
       
@@ -304,13 +264,15 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style ) do
           cells.column(0).style(align: :center, size: 8, background_color: "F2F2F2", border_color: "F2F2F2", font_style: :bold)
           cells.column(3).style(orange_cell_title)
-          cells.column(6).style(total_cell)  
+          cells.column(6).style(total_cell) 
+          row(0..-1).height =6.mm          
         end
         
         data = ["","","","","","",""]
         table([data], column_widths: widths, cell_style: { border_color: "FFFFFF" }) do
           cells.column(0).style(default_cell)
           cells.column(0..-1).height = 3
+          row(0..-1).height =6.mm  
         end
         
         data = ["#{pack.owner.name}","","","Type de dépense","HT","TVA","TTC"]
@@ -318,6 +280,7 @@ class Pack::Report::Expense
           cells.column(0).style(default_cell)
           cells.column(3..6).style(orange_cell_title)
           cells.column(4..6).style(total_cell)
+          row(0..-1).height =6.mm  
         end
   
         Pack::Report::Expense.distinct_type.each_with_index do|type,index|
@@ -326,6 +289,7 @@ class Pack::Report::Expense
           table([data],column_widths: widths, cell_style: global_style) do
             index == 0 ? cells.column(0).style(default_cell) : cells.column(0).style(background_color: "FFFFFF")
             cells.column(4..6).style(align: :right)
+            row(0..-1).height =6.mm  
           end
         end
         
@@ -348,6 +312,7 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style) do
           cells.column(0..-1).style(green_cell_title)
           cells.column(4..6).style(total_cell)
+          row(0..-1).height =6.mm  
         end
         
         Pack::Report::Expense.pro.each do |pr|
@@ -358,6 +323,7 @@ class Pack::Report::Expense
           table([data], column_widths: widths, cell_style: { inline_format: true, border_color: "FFFFFF", size: 8 }) do
             cells.column(4..6).style(total_cell)
             cells.column(0..-1).style(green_cell_content)
+            row(0..-1).height =6.mm  
           end
         end
         
@@ -365,6 +331,7 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style) do
           cells.column(0..-1).style(total_cell)
           cells.column(4..6).style(green_cell_title)
+          row(0..-1).height =6.mm  
         end
         
         move_down 40
@@ -373,6 +340,7 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style) do
           cells.column(0).style(blue_cell_title)
           cells.column(6).style(total_cell)
+          row(0..-1).height =6.mm  
         end
         
         move_down 5
@@ -381,16 +349,18 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style) do
           cells.column(0..-1).style(blue_cell_title)
           cells.column(4..6).style(total_cell)
+          row(0..-1).height =6.mm  
         end
        
-        Pack::Report::Expense.perso.each do |pr|
-          data = pr.to_row(is_access_url)
+        Pack::Report::Expense.perso.each do |expense|
+          data = expense.to_row(is_access_url)
           (4..6).each{|i| data[i] = Pack::Report::Expense.format_price(data[i]) }
-          cell_link = make_cell(content: "<link href='#{File.join([SITE_INNER_URL,(is_access_url ? pr.piece.get_access_url : pr.piece.content.url)])}'>#{data[0]}</link>")
+          cell_link = make_cell(content: "<link href='#{File.join([SITE_INNER_URL,(is_access_url ? expense.piece.get_access_url : expense.piece.content.url)])}'>#{data[0]}</link>")
           data[0] = cell_link
           table([data], column_widths: widths, cell_style: {inline_format: true, border_color: "FFFFFF", size: 8}) do
             cells.column(4..6).style(total_cell)
             cells.column(0..-1).style(blue_cell_content)
+            row(0..-1).height =6.mm  
           end
         end
         
@@ -398,6 +368,7 @@ class Pack::Report::Expense
         table([data], column_widths: widths, cell_style: global_style) do
           cells.column(0..-1).style(total_cell)
           cells.column(4..6).style(blue_cell_total)
+          row(0..-1).height =6.mm  
         end 
       end   
       open("tmp/#{pdf_name}.pdf",'rb') { |io| io.read }
