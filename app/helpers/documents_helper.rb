@@ -36,24 +36,21 @@ module DocumentsHelper
   def tags_of(document, tags)
     tags.select { |tag| tag[:user_id] == @user.id and tag[:document_id] == document.id }.first.try(:name)
   end
-  
-  def filter_list_of_users(users)
-    sorted_users = users.sort do |a,b|
-      if a.code and a.company and a.first_name and a.last_name and a.email and b.code and b.company and b.first_name and b.last_name and b.email
-        if a.code != b.code
-          a.code <=> b.code
-        elsif a.company != b.company
-          a.company <=> b.company
-          elsif (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-          (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
-        else
-          a.email <=> b.email
-        end
+
+  def active_users(users, year)
+    users.select do |u|
+      if u.created_at.year <= year
+        u.active ? true : u.inactive_at.year >= year
       else
-        1
+        false
       end
     end
-    sorted_users.collect { |u| [u.info,u.id] }
+  end
+  
+  def filter_list_of_users(users, year)
+    active_users(users,year).
+    sort_by { |u| [u.code,u.company,u.name,u.email] }.
+    collect { |u| [u.info,u.id] }
   end
 
   def annual_periods_for_user(user, all_periods)
@@ -74,9 +71,12 @@ module DocumentsHelper
     periods
   end
 
-  def active_periods?(user, periods)
-    result = periods.select { |e| e != nil }.count > 0
-    (!user.is_inactive && result) ? true : false
+  def active_periods?(user, periods, year)
+    if user.created_at.year <= year && (user.inactive_at || Time.now).year >= year && user.inactive_at.try(:month) != 1
+      true
+    else
+      periods.compact.size != 0
+    end
   end
   
   def price_of_period_by_time(periods, time)

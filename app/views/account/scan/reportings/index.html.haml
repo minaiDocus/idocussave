@@ -37,7 +37,7 @@
                   - opts = { :class => "margin1left margin0bottom", :style => "width:auto;position:relative;top:-4px;" }
                   - if !current_user.is_admin and !current_user.is_prescriber
                     - opts.merge!({ :disabled => :disabled})
-                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users) ),  opts)
+                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users, @year) ),  opts)
                   %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
@@ -74,11 +74,10 @@
         %tbody
           - @users.each_with_index do |user, idx|
             - periods = annual_periods_for_user(user, @periods)
-            - if active_periods?(user, periods)
+            - if active_periods?(user, periods, @year)
               %tr{ :id => "user_#{user.id}", :class => "user" }
                 %td.align-middle
                   #{[user.code,user.company].join(" - ")}
-                - periods = annual_periods_for_user(user, @periods)
                 - periods.each_with_index do |period,index|
                   - if period
                     - period.duration.times do |i|
@@ -132,7 +131,7 @@
                                 #{format_price_00 period.price_in_cents_wo_vat} €
                               %span{ :class => "hide excess_price value_9" }
                                 #{format_price_00 period.price_in_cents_of_total_excess} €
-                              
+
                             - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
                             - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
                             - annual_summary[period.end_at.month - 1][:pages] += period.pages
