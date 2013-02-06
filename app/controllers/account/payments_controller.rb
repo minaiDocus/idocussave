@@ -32,6 +32,13 @@ public
       format.html{ redirect_to account_profile_path }
     end
   end
+
+  def use_debit_mandate
+    if current_user.debit_mandate && current_user.debit_mandate.transactionStatus == "success"
+      current_user.update_attribute(:use_debit_mandate, true)
+    end
+    redirect_to account_profile_path(panel: "payment_management")
+  end
   
   def credit
     if params[:amount]
