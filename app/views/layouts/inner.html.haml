@@ -26,7 +26,7 @@
                 %li{ :class=>("active" if params[:controller].in?(%w(account/customers account/addresses account/journals account/subscriptions))) }
                   != link_to "Mes clients", account_users_path
               %li{ :class=>("active" if params[:controller] == "account/documents" && params[:action] == "index") }
-                != link_to "Documents", account_documents_path
+                != link_to "Mes documents", account_documents_path
               %li{ :class=>("active" if controller_name == 'reportings') }
                 != link_to "Mon reporting", account_scan_reportings_path
               /
