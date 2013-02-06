@@ -102,6 +102,7 @@ Idocus::Application.routes.draw do
       end
     resource :payment do
       post 'mode', :on => :member
+      get 'use_debit_mandate', :on => :member
       get 'credit', :on => :member
     end
     resource :debit_mandate do
