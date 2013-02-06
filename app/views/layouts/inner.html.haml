@@ -27,6 +27,8 @@
                   != link_to "Mes clients", account_users_path
               %li{ :class=>("active" if params[:controller] == "account/documents" && params[:action] == "index") }
                 != link_to "Documents", account_documents_path
+              %li{ :class=>("active" if controller_name == 'reportings') }
+                != link_to "Mon reporting", account_scan_reportings_path
               /
                 %li
                   != link_to "Passer une nouvelle commande »", new_tunnel_order_path
