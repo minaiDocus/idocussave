@@ -20,7 +20,16 @@ class NumController < ApplicationController
     end
     @day = params[:day].try(:to_i) || Time.now.day
     time = Time.local(Time.now.year,Time.now.month,@day)
-    @documents = Scan::Document.where(:updated_at.gte => time, :updated_at.lte => time.end_of_day).desc(:updated_at)
+    @documents = Scan::Document.any_of({
+                                          :scanned_at.gte => time,
+                                          :scanned_at.lte => time.end_of_day
+                                       },
+                                       {
+                                          scanned_at: nil,
+                                          :created_at.gte => time,
+                                          :created_at.lte => time.end_of_day
+                                       }).
+                                desc(:updated_at)
   end
 
   def reset_waiting_document
