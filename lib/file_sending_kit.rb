@@ -162,25 +162,15 @@ private
     
     # LEFT SIDE
     pdf.float do
-      pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 800) do
-        pdf.move_down 15
-        pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 389) do
-          pdf.stroke_bounds
-          pdf.bounding_box([15, pdf.cursor - 15], :width => 501, :height => 359) do
-            pdf.text file_sending_kit.instruction, :inline_format => true
-          end
-        end
-        
-        pdf.move_down 7
-        pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 389) do
-          pdf.stroke_bounds
-          pdf.bounding_box([15, pdf.cursor - 15], :width => 501, :height => 359) do
-            pdf.text file_sending_kit.idocus_instruction, :inline_format => true
-          end
+      pdf.move_down 15
+      pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 785) do
+        pdf.stroke_bounds
+        pdf.bounding_box([15, pdf.cursor - 15], :width => 501, :height => 755) do
+          pdf.text file_sending_kit.instruction, :inline_format => true
         end
       end
     end
-    
+
     # RIGHT SIDE
     pdf.bounding_box([595, pdf.cursor], :width => 531, :height => 800) do
       pdf.move_down 9
