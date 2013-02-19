@@ -47,15 +47,24 @@ class Admin::FileSendingKitsController < Admin::AdminController
   end
 
   def generate
+    without_shipping_address = []
     clients_data = []
     @file_sending_kit.user.clients.active.asc(:code).each do |client|
       value = params[:users]["#{client.id}"][:is_checked] rescue nil
-      if value == "true"
+      if value == 'true'
+        without_shipping_address << client unless client.addresses.for_shipping.first
         clients_data << { :user => client, :start_month => params[:users]["#{client.id}"][:start_month].to_i, :offset_month => params[:users]["#{client.id}"][:offset_month].to_i }
       end
     end
 
-    FileSendingKitGenerator::generate clients_data, @file_sending_kit
+    if without_shipping_address.count == 0
+      FileSendingKitGenerator::generate clients_data, @file_sending_kit
+    else
+      flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
+      without_shipping_address.each do |client|
+        flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
+      end
+    end
     respond_to do |format|
       format.json{ render json: {}, status: :ok }
       format.html{ redirect_to admin_user_path(@user) }
