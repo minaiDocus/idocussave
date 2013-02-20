@@ -417,6 +417,7 @@ class Pack
           path = File.join([RegroupSheet::FILES_PATH,Time.now.strftime('%Y%m%d')])
           cached_path = RegroupSheet::CACHED_FILES_PATH
           FileUtils.mkdir_p(cached_path)
+          user_codes = []
           all_filesname.each do |filename|
             info = filename.split('_')
             code = info[0]
@@ -425,12 +426,22 @@ class Pack
             account_book_type = nil
             account_book_type = user.account_book_types.where(name: journal).first if user
             if account_book_type && account_book_type.compta_processable?
+              user_codes << code
               FileUtils.mkdir_p(path)
               FileUtils.cp(filename,File.join([path, filename]))
               FileUtils.cp(filename,File.join([cached_path, filename]))
             else
               FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
               total_filesname << filename
+            end
+          end
+          user_codes.uniq!
+          begin
+            Ibiza.update_files_for(user_codes)
+          rescue => e
+            content = "#{e.class}<br /><br />#{e.message}"
+            ErrorNotification::EMAILS.each do |email|
+              NotificationMailer.notify(email, "[iDocus] Erreur de mise à jour de la base Ibiza", content).deliver
             end
           end
         else

@@ -113,6 +113,7 @@ class User
   references_one :external_file_storage, autosave: true
   references_one :file_sending_kit
   references_one :csv_outputter, autosave: true
+  has_one :ibiza
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }

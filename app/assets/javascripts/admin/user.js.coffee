@@ -158,6 +158,15 @@ generate_file_sending_kit = ->
     success: (data) ->
       $('#select_file_sending_kit').modal('hide')
 
+get_ibiza = ->
+  $.ajax
+    url: '/admin/users/' + user_id + '/ibiza',
+    data: '',
+    datatype: 'html',
+    type: 'GET',
+    success: (data) ->
+      $('#ibiza_options').html(data)
+
 get_account_book_types = ->
   $.ajax
     url: '/admin/users/' + user_id + '/account_book_types',
@@ -397,6 +406,8 @@ jQuery ->
   $('#select_file_sending_kit').on 'show', ->
     select_file_sending_kit()
 
+  get_ibiza()
+
   get_account_book_types()
 
   $('#new_account_book_type').on 'show', ->
@@ -424,6 +435,8 @@ jQuery ->
     get_reminder_emails()
     get_file_sending_kit()
     get_account_book_types()
+    get_ibiza()
+    return false
 
   $('#stamp_propagation').click ->
     value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
