@@ -112,6 +112,8 @@ Idocus::Application.routes.draw do
       delete 'reset', :on => :collection
     end
     resources :backups
+
+    resource :ibiza, controller: 'ibiza'
   end
 
   namespace :tunnel do
@@ -162,6 +164,7 @@ Idocus::Application.routes.draw do
         resource :subscription
       end
       resource :csv_outputter
+      resource :ibiza, controller: 'ibiza'
     end
     resources :pages
     resources :cms_images

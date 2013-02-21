@@ -56,7 +56,7 @@ class ReminderEmail
   end
   
   def deliver_if_its_time
-    if (delivered_at.nil? || delivered_at.month < Time.now.month) and Time.now.day == delivery_day
+    if (delivered_at.nil? || delivered_at < Time.now.beginning_of_month) and Time.now.day == delivery_day
       self.init if !delivered_at.nil? and delivered_at.month < Time.now.month
       deliver
     end

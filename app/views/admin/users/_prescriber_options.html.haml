@@ -6,6 +6,10 @@
       %tr
         %th= t('mongoid.models.user.attributes.is_centralizer')
         %td.value= check_box_tag 'user[is_centralizer]', 1, @user.is_centralizer
+      -# TODO fix centralization option
+      %tr
+        %th= t('mongoid.models.user.attributes.is_decentralizer')
+        %td.value= check_box_tag 'user[is_decentralizer]', 1, @user.is_decentralizer
       %tr
         %th= t('mongoid.models.user.attributes.is_detail_authorized')
         %td.value= check_box_tag 'user[is_detail_authorized]', 1, @user.is_detail_authorized

@@ -47,10 +47,11 @@ public
       if for_current_period == "false"
         if is_quarterly
           sMonth = "T#{quarterly_of_month(3.months.ago.month)}"
+          sYear = 3.month.ago.year.to_s
         else
           sMonth = "%0.2d" % 1.month.ago.month
+          sYear = 1.month.ago.year.to_s
         end
-        sYear = "%0.2d" % 1.month.ago.year
         sBasename = user.code + "_" + sAccountBookType + "_" + sYear + sMonth
         
         pack = user.packs.where(name: sBasename.gsub("_"," ") + " all").first

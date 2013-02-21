@@ -309,6 +309,7 @@ fr:
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
           is_centralizer: 'Est centralisateur ?'
+          is_decentralizer: 'Est décentralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
           is_invoiceable: 'Est facturable ?'
@@ -436,3 +437,16 @@ fr:
           confirm:
             destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
             cancel_destroy: 'Etes vous sûr de vouloir annuler la suppression ?'
+      ibiza:
+        zero: ''
+        one: 'ibiza'
+        other: ''
+        name: 'Ibiza'
+        attributes:
+          token: 'jeton'
+          state: 'Etat'
+          state_value:
+            none: 'non assigné'
+            waiting: 'en cours de validation'
+            valid: 'validé'
+            invalid: 'non valide'

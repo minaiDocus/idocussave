@@ -7,7 +7,7 @@
   - else
     - link_to_large = link_to_thumb = 'application/processing.png'
 
-  - page_number = document.content_file_name.scan(/(\d{3}).pdf/)[0][0].to_i rescue 1
+  - page_number = document.content_file_name.scan(/(\d{2,3}).pdf/)[0][0].to_i rescue 1
   - pieces_name = document.pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ')
   
   %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }

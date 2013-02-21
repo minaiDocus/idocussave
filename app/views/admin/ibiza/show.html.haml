@@ -1,0 +1,14 @@
+.label{ style: 'padding:3px 5px 3px' }
+  Options Ibiza
+- if @user.is_prescriber
+  = form_for @ibiza, url: admin_user_ibiza_path(@user), html: { class: 'form form-horizontal' } do |f|
+    %table.table.table-striped.table-bordered.table-condensed
+      %tr
+        %th= t('mongoid.models.ibiza.attributes.state').capitalize
+        %td
+          %span{ class: "label #{ibiza_state_label(@ibiza)}" } #{ibiza_state(@ibiza)}
+      %tr
+        %th= t('mongoid.models.ibiza.attributes.token').capitalize
+        %td
+          = f.text_field :token
+          = f.submit 'Valider', class: 'btn btn-mini'

@@ -55,7 +55,7 @@ namespace :shared do
     run "mkdir -p #{shared_path}/config/initializers"
     run "mkdir -p #{shared_path}/public/system"
     run "mkdir -p #{current_release}/tmp"
-    run "mkdir -p #{shared_path}/data"
+    run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/tmp/uploads"
     run "mkdir -p #{shared_path}/files/kit"
     run "mkdir -p #{shared_path}/files/attachments/archives"
