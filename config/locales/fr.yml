@@ -309,6 +309,7 @@ fr:
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
           is_centralizer: 'Est centralisateur ?'
+          is_decentralizer: 'Est décentralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
           is_invoiceable: 'Est facturable ?'
