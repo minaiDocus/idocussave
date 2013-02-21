@@ -26,4 +26,10 @@ class Admin::IbizaController < Admin::AdminController
     end
     redirect_to admin_user_path(@user)
   end
+
+  private
+
+  def load_user
+    @user = User.find params[:user_id]
+  end
 end
