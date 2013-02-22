@@ -57,7 +57,6 @@ class AddressDeliveryList
           f.write "AddressDeliveryList::LOGIN = 'depose'\n"
           f.write "AddressDeliveryList::PASSWORD = 'tran5fert'\n"
           f.write "AddressDeliveryList::DELIVERY_DIR = 'depose2diadeis/iDocus_adresses_retour'\n"
-          f.write "AddressDeliveryList::PRESCRIBERS_CODE  = []\n"
           f.write "AddressDeliveryList::EMAILS_TO_NOTIFY = []\n"
         end
       rescue
@@ -70,7 +69,7 @@ class AddressDeliveryList
     end
 
     def prescribers
-      (PRESCRIBERS_CODE.present? ? User.any_in(code: PRESCRIBERS_CODE) : User.prescribers).active.asc(:code).entries
+      User.not_fake_prescribers.active.asc(:code).entries
     end
 
     def is_updated
