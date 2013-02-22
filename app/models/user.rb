@@ -49,6 +49,7 @@ class User
   field :last_name,                      type: String
   field :company,                        type: String
   field :is_prescriber,                  type: Boolean, default: false
+  field :is_fake_prescriber,             type: Boolean, default: false
   field :inactive_at,                    type: Time
   field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_extended_authorized, type: Boolean, default: false
@@ -118,6 +119,8 @@ class User
   has_one :ibiza
   
   scope :prescribers,                 where: { is_prescriber: true }
+  scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
+  scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
   scope :invoiceable,                 where: { is_invoiceable: true }

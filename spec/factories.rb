@@ -31,6 +31,10 @@ FactoryGirl.define do
     factory :prescriber do
       is_prescriber true
     end
+    factory :fake_prescriber do
+      is_prescriber true
+      is_fake_prescriber true
+    end
   end
   
   factory Product do
