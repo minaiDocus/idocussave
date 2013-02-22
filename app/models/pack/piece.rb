@@ -57,11 +57,7 @@ class Pack::Piece
         path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
       end
       filename = ''
-      if compta_type == 'CB'
-        filename = self.name.gsub(' ','_') + '_' + account_book_type.account_number + '_' + account_book_type.charge_account + '.pdf'
-      else
-        filename = self.name.gsub(' ','_') + '.pdf'
-      end
+      filename = self.name.gsub(' ','_') + '_' + account_book_type.account_number + '_' + account_book_type.charge_account + '.pdf'
       FileUtils.mkdir_p(path)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
