@@ -362,100 +362,118 @@ class Pack
       Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
       Dir.chdir("NUMEN_DELIVERY_BACKUP")
 
-      require "net/ftp"
-
-      ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
-
-      ftp.chdir(target_dir)
-      root_files_name = ftp.nlst.sort
-      headers = root_files_name.select { |e| e.match(/\.txt$/) }
-
-      processed_headers = Dir.glob("*.txt")
-      headers = headers - processed_headers
-
       total_filesname = []
 
-      headers.each do |header|
-        folder_name = root_files_name.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
-        puts "Looking at folder : #{folder_name}"
-        ftp.chdir(folder_name)
-        folders_name = ftp.nlst.sort
+      require "net/ftp"
 
-        all_filesname = []
+      begin
+        try = 0
+        begin
+        ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
 
-        Dir.mkdir(folder_name) unless File.exist?(folder_name)
-        Dir.chdir(folder_name)
-        folders_name.each do |foldername|
-          ftp.chdir(foldername)
-          files_name = ftp.nlst.sort
-          all_filesname += files_name
-          files_name.each do |file_name|
-            if file_name.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
-              unless File.exist?(file_name)
-                print "\tTrying to fetch document named #{file_name}..."
-                ftp.getbinaryfile(file_name)
-                print "done\n"
-              else
-                puts "\tHad already fetched document named #{file_name}"
+        ftp.chdir(target_dir)
+        root_files_name = ftp.nlst.sort
+        headers = root_files_name.select { |e| e.match(/\.txt$/) }
+
+        processed_headers = Dir.glob("*.txt")
+        headers = headers - processed_headers
+
+        headers.each do |header|
+          folder_name = root_files_name.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
+          puts "Looking at folder : #{folder_name}"
+          ftp.chdir(folder_name)
+          folders_name = ftp.nlst.sort
+
+          all_filesname = []
+
+          Dir.mkdir(folder_name) unless File.exist?(folder_name)
+          Dir.chdir(folder_name)
+          folders_name.each do |foldername|
+            ftp.chdir(foldername)
+            files_name = ftp.nlst.sort
+            all_filesname += files_name
+            files_name.each do |file_name|
+              if file_name.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
+                unless File.exist?(file_name)
+                  print "\tTrying to fetch document named #{file_name}..."
+                  ftp.getbinaryfile(file_name)
+                  print "done\n"
+                else
+                  puts "\tHad already fetched document named #{file_name}"
+                end
+                # ftp.delete(fileName)
               end
-              # ftp.delete(fileName)
             end
+            ftp.chdir("../")
           end
-          ftp.chdir("../")
-        end
 
-        is_ok = true
-        filesname_with_error = []
-        all_filesname.each do |filename|
-          if `pdftk #{filename} dump_data`.empty?
-            is_ok = false
-            filesname_with_error << filename
-          end
-        end
-
-        if is_ok
-          path = File.join([RegroupSheet::FILES_PATH,Time.now.strftime('%Y%m%d')])
-          cached_path = RegroupSheet::CACHED_FILES_PATH
-          FileUtils.mkdir_p(cached_path)
-          user_codes = []
+          is_ok = true
+          filesname_with_error = []
           all_filesname.each do |filename|
-            info = filename.split('_')
-            code = info[0]
-            journal = info[1]
-            user = User.where(code: code).first
-            account_book_type = nil
-            account_book_type = user.account_book_types.where(name: journal).first if user
-            if account_book_type && account_book_type.compta_processable?
-              user_codes << code
-              FileUtils.mkdir_p(path)
-              FileUtils.cp(filename,File.join([path, filename]))
-              FileUtils.cp(filename,File.join([cached_path, filename]))
-            else
-              FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
-              total_filesname << filename
+            if `pdftk #{filename} dump_data`.empty?
+              is_ok = false
+              filesname_with_error << filename
             end
           end
-          user_codes.uniq!
-          begin
-            Ibiza.update_files_for(user_codes)
-          rescue => e
-            content = "#{e.class}<br /><br />#{e.message}"
+
+          if is_ok
+            path = File.join([RegroupSheet::FILES_PATH,Time.now.strftime('%Y%m%d')])
+            cached_path = RegroupSheet::CACHED_FILES_PATH
+            FileUtils.mkdir_p(cached_path)
+            user_codes = []
+            all_filesname.each do |filename|
+              info = filename.split('_')
+              code = info[0]
+              journal = info[1]
+              user = User.where(code: code).first
+              account_book_type = nil
+              account_book_type = user.account_book_types.where(name: journal).first if user
+              if account_book_type && account_book_type.compta_processable?
+                user_codes << code
+                FileUtils.mkdir_p(path)
+                FileUtils.cp(filename,File.join([path, filename]))
+                FileUtils.cp(filename,File.join([cached_path, filename]))
+              else
+                FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
+                total_filesname << filename
+              end
+            end
+            user_codes.uniq!
+            begin
+              Ibiza.update_files_for(user_codes)
+            rescue => e
+              content = "#{e.class}<br /><br />#{e.message}"
+              ErrorNotification::EMAILS.each do |email|
+                NotificationMailer.notify(email, "[iDocus] Erreur de mise à jour de la base Ibiza", content).deliver
+              end
+            end
+          else
             ErrorNotification::EMAILS.each do |email|
-              NotificationMailer.notify(email, "[iDocus] Erreur de mise à jour de la base Ibiza", content).deliver
+              NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par Numen sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
             end
           end
-        else
-          ErrorNotification::EMAILS.each do |email|
-            NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par Numen sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
-          end
+
+          Dir.chdir("..")
+          ftp.chdir("..")
+          File.new(header,"w")
         end
 
-        Dir.chdir("..")
-        ftp.chdir("..")
-        File.new(header,"w")
+        ftp.close
+        rescue Net::FTPTempError
+          if try < 3
+            try += 1
+            sleep(10)
+            retry
+          else
+            raise
+          end
+        end
+      rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError => e
+        content = "#{e.class}<br /><br />#{e.message}"
+        ErrorNotification::EMAILS.each do |email|
+          NotificationMailer.notify(email, "[iDocus] Erreur lors de la récupération des documents", content).deliver
+        end
       end
-
-      ftp.close
 
       total_filesname
     end
