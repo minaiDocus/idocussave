@@ -2,6 +2,7 @@ class CsvOutputter
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  field :comma_as_number_separator, type: Boolean, default: false
   field :directive, type: String, default: ""
 
   referenced_in :user
@@ -55,12 +56,12 @@ class CsvOutputter
         when /^piece$/
           entry.preseizure.piece.try(:name).try(:gsub,' ','_')
         when /^original_amount$/
-          entry.preseizure.amount
+          "#{entry.preseizure.amount}".gsub(/[\.,\,]/, separator)
         when /^currency$/
-          entry.preseizure.currency
+          "#{entry.preseizure.currency}".gsub(/[\.,\,]/, separator)
         when /^conversion_rate$/
           conversion_rate = "%0.3f" % entry.preseizure.conversion_rate rescue ""
-          conversion_rate.sub('.',',')
+          "#{conversion_rate}".gsub(/[\.,\,]/, separator)
         when /^piece_url$/
           if is_access_url
             SITE_INNER_URL + entry.preseizure.piece.get_access_url
@@ -74,9 +75,9 @@ class CsvOutputter
         when /^number$/
           entry.account.number
         when /^debit$/
-          entry.get_debit
+          "#{entry.get_debit}".gsub(/[\.,\,]/, separator)
         when /^credit$/
-          entry.get_credit
+          "#{entry.get_credit}".gsub(/[\.,\,]/, separator)
         when /^title$/
           '' # TODO implement me
         when /^lettering$/
@@ -86,5 +87,9 @@ class CsvOutputter
       line += "#{part[0]}#{result}#{part[3]}"
     end
     line
+  end
+
+  def separator
+    comma_as_number_separator ? ',' : '.'
   end
 end

@@ -66,6 +66,7 @@ put_csv_outputter = ->
     part = '{' + left_addition + '}' + field + '-' + format + '{' + right_addition + '}'
     directive.push(part)
   data['user']['csv_outputter']['directive'] = directive.join('|')
+  data['user']['csv_outputter']['comma_as_number_separator'] = $('#user_csv_outputter_comma_as_number_separator').is(':checked')
   data['_method'] = 'put'
   data['authenticity_token'] = $('#edit_csv_outputter input[name=authenticity_token]').val()
 

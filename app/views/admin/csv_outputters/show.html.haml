@@ -1,8 +1,12 @@
 .modal-body
   .row-fluid
     .span12
-      = link_to icon_new + 'Ajouter une entrée', '#', class: 'btn btn-small add_field'
-      = link_to icon_destroy + 'Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-small remove_all_fields'
+      .pull-left
+        = link_to icon_new + 'Ajouter une entrée', '#', class: 'btn btn-small add_field'
+        = link_to icon_destroy + 'Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-small remove_all_fields'
+      .pull-right
+        = label_tag 'user[csv_outputter][comma_as_number_separator]', 'Séparer les chiffres par une virgule', class: 'pull-left'
+        = check_box_tag 'user[csv_outputter][comma_as_number_separator]', 1, @csv_outputter.comma_as_number_separator, class: 'pull-right', style: 'width:30px'
   %br
   .row-fluid
     .box.span12
