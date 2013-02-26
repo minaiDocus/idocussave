@@ -18,6 +18,8 @@
       = link_to t('mongoid.models.product.name').pluralize, admin_products_path
     %li{ class: ('active' if params[:controller] == 'admin/log/visits') }
       = link_to "Historique", admin_log_visits_path
+    %li{ class: ('active' if controller_name == 'gray_labels') }
+      = link_to 'Marque Grise', admin_gray_labels_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

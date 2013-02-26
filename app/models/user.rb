@@ -117,6 +117,7 @@ class User
   references_one :file_sending_kit
   references_one :csv_outputter, autosave: true
   has_one :ibiza
+  has_one :gray_label
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
