@@ -18,6 +18,9 @@ Idocus::Application.routes.draw do
   match 'num/:id/add', controller: 'num', action: :add, via: :put
   match 'num/:id/overwrite', controller: 'num', action: :overwrite, via: :put
 
+  match 'gray_label/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
+  match 'gray_label/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
+
   namespace :account do
     root :to => "account/documents#index"
 
@@ -178,6 +181,7 @@ Idocus::Application.routes.draw do
     namespace :log do
       resources :visits
     end
+    resources :gray_labels
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

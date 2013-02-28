@@ -117,4 +117,12 @@ module ApplicationHelper
   def current_user_info
     session[:acts_as].presence || "Moi-même"
   end
+
+  def logo_url
+    @gray_label ? @gray_label.logo_url : asset_path('logo/tiny_logo.png')
+  end
+
+  def site_url
+    @gray_label ? @gray_label.site_url : SITE_DEFAULT_URL
+  end
 end

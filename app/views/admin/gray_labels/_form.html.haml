@@ -1,0 +1,10 @@
+= simple_nested_form_for [:admin, @gray_label], html: { class: 'form form-horizontal' } do |f|
+  = f.input :name, label: t('mongoid.models.gray_label.attributes.name')
+  = f.input :user_id, collection: User.prescribers.asc(:code), label_method: :info, value_method: :id, label: t('mongoid.models.gray_label.attributes.user'), include_blank: false
+  = f.input :site_url, label: t('mongoid.models.gray_label.attributes.site_url')
+  = f.input :logo_url, label: t('mongoid.models.gray_label.attributes.logo_url')
+  = f.input :back_url, label: t('mongoid.models.gray_label.attributes.back_url')
+  = f.input :is_active, as: 'boolean', wrapper: :inline_checkbox, label: t('mongoid.models.gray_label.attributes.is_active')
+  .form-actions
+    = f.submit t('actions.submit'), class: 'btn'
+    = link_to t('actions.cancel'), admin_gray_labels_path, class: 'btn'

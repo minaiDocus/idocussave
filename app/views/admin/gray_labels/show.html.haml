@@ -1,0 +1,36 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span.well
+    .pull-left
+      %h2= @gray_label.name
+    .pull-right
+      = link_to t('actions.edit'), edit_admin_gray_label_path(@gray_label), class: 'btn'
+      = link_to t('actions.destroy'), admin_gray_label_path(@gray_label), data: { confirm: t('actions.confirm') }, method: 'delete', class: 'btn'
+
+.row-fluid
+  .span9.well
+    %table.table.table-bordered.table-striped
+      %thead
+        %tbody
+          %tr
+            %th= t('mongoid.models.common.attributes.created_at')
+            %td= l(@gray_label.created_at)
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.name')
+            %td= @gray_label.name
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.user')
+            %td= @gray_label.user.info
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.site_url')
+            %td= @gray_label.site_url
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.logo_url')
+            %td= @gray_label.logo_url
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.back_url')
+            %td= @gray_label.back_url
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.is_active')
+            %td= @gray_label.is_active ? t('yes_value') : t('no_value')

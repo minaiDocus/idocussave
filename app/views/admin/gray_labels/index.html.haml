@@ -1,0 +1,27 @@
+= render partial: 'navigation'
+
+.row-fluid
+  .span9.well
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), gray_label_contains
+          %th= sortable :name, t('mongoid.models.gray_label.attributes.name'), gray_label_contains
+          %th= t('mongoid.models.gray_label.attributes.user')
+          %th= sortable :is_active, t('mongoid.models.gray_label.attributes.is_active'), gray_label_contains
+          %th= t('actions.name')
+      %tbody
+        - @gray_labels.each do |gray_label|
+          %tr
+            %td= l(gray_label.created_at)
+            %td= gray_label.name
+            %td= gray_label.user.info
+            %td= gray_label.is_active ? t('yes_value') : t('no_value')
+            %td
+              = link_to icon_show, admin_gray_label_path(gray_label)
+              = link_to icon_edit, edit_admin_gray_label_path(gray_label)
+              = link_to icon_destroy, admin_gray_label_path(gray_label), data: { confirm: t('actions.confirm') }, method: 'delete'
+    .pull-right
+      != paginate @gray_labels
+  .span3.well
+    = render partial: 'sidebar'
