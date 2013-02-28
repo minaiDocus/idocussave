@@ -15,8 +15,8 @@
             %span{ :class=>"icon-bar" }
             %span{ :class=>"icon-bar" }
             %span{ :class=>"icon-bar" }
-          %a{ :class=>"logo", :href=>SITE_DEFAULT_URL }
-            != image_tag "logo/tiny_logo.png", :alt => "logo"
+          %a.logo{ href: site_url }
+            %img{ src: logo_url, alt: 'logo' }
           .nav-collapse
             %ul{ :class=>"nav" }
               - pages_type.each do |page|
@@ -31,7 +31,7 @@
                 != link_to "Connexion à mon compte", new_user_session_path
 
               %li{ :class => controller.controller_name == 'passwords' ? 'active': '' }
-                != link_to "Mot de passe oublié ?", new_user_password_path
+                != link_to "Réinitialiser mon mot de passe", new_user_password_path
         .span9
           .well
             != yield

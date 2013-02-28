@@ -16,8 +16,8 @@
             %span{ :class=>"icon-bar" }
             %span{ :class=>"icon-bar" }
             %span{ :class=>"icon-bar" }
-          %a{ :class=>"logo", :href=>SITE_DEFAULT_URL }
-            != image_tag "logo/tiny_logo.png", :alt => "logo"
+          %a.logo{ href: site_url }
+            %img{ src: logo_url, alt: 'logo' }
           .nav-collapse
             %ul{ :class=>"nav" }
               %li{ :class=>("active" if params[:controller] == "account/profiles") }
