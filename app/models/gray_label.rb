@@ -15,4 +15,8 @@ class GrayLabel
   slug :name
 
   belongs_to :user
+
+  def link_to_session_create
+    "/gray_label/#{self.slug}/sessions/create"
+  end
 end

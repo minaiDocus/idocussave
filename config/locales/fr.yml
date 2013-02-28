@@ -452,6 +452,7 @@ fr:
           back_url: 'URL retour'
           is_active: 'Est actif ?'
           user: 'Prescripteur'
+          link_to_session_create: 'Chemin de création de la session'
       ibiza:
         zero: ''
         one: 'ibiza'

@@ -34,3 +34,7 @@
           %tr
             %th= t('mongoid.models.gray_label.attributes.is_active')
             %td= @gray_label.is_active ? t('yes_value') : t('no_value')
+          %tr
+            %th= t('mongoid.models.gray_label.attributes.link_to_session_create')
+            - url = File.join(root_url, @gray_label.link_to_session_create)
+            %td= link_to url, url
