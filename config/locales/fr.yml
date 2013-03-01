@@ -308,7 +308,9 @@ fr:
           is_inactive_since: 'Est inactif depuis le'
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
+          is_fake_prescriber: 'Est un faux prescripteur ?'
           is_centralizer: 'Est centralisateur ?'
+          is_decentralizer: 'Est décentralisateur ?'
           is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
           is_invoiceable: 'Est facturable ?'
@@ -316,6 +318,8 @@ fr:
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'
+          short:
+            balance_in_cents: 'Solde du compte'
       address:
         zero: '0 adresses'
         one: '1 addresse'
@@ -436,3 +440,29 @@ fr:
           confirm:
             destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
             cancel_destroy: 'Etes vous sûr de vouloir annuler la suppression ?'
+      gray_label:
+        zero: '0 marque grise'
+        one: '1 marque grise'
+        other: '#{} marques grise'
+        name: 'Marque grise'
+        attributes:
+          name: 'Nom'
+          site_url: 'URL site'
+          logo_url: 'URL logo'
+          back_url: 'URL retour'
+          is_active: 'Est actif ?'
+          user: 'Prescripteur'
+          link_to_session_create: 'Chemin de création de la session'
+      ibiza:
+        zero: ''
+        one: 'ibiza'
+        other: ''
+        name: 'Ibiza'
+        attributes:
+          token: 'jeton'
+          state: 'Etat'
+          state_value:
+            none: 'non assigné'
+            waiting: 'en cours de validation'
+            valid: 'validé'
+            invalid: 'non valide'

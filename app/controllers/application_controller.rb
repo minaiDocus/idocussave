@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :format_price, :format_price_00
 
   before_filter :redirect_to_https if Rails.env.production?
+  before_filter :load_gray_label
   around_filter :catch_error if %w(staging production test).include?(Rails.env)
   around_filter :log_visit if %w(staging production test).include?(Rails.env)
 
@@ -26,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    SITE_DEFAULT_URL
+    @gray_label ? "/gr/sessions/#{@gray_label.slug}/destroy" : SITE_DEFAULT_URL
   end
 
   def login_user!
@@ -110,5 +111,22 @@ protected
       end
     end
     yield
-  end 
+  end
+
+  def load_gray_label
+    unless request.fullpath.match('/admin')
+      if current_user
+        @gray_label = (current_user.try(:prescriber) || current_user).try(:gray_label)
+        if @gray_label && @gray_label.is_active
+          session[:gray_label_slug] = @gray_label.try(:slug)
+        else
+          @gray_label = nil
+        end
+        @gray_label
+      else
+        @gray_label = GrayLabel.find_by_slug session[:gray_label_slug]
+        @gray_label = nil unless @gray_label && @gray_label.is_active
+      end
+    end
+  end
 end

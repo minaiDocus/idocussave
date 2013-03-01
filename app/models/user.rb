@@ -49,11 +49,14 @@ class User
   field :last_name,                      type: String
   field :company,                        type: String
   field :is_prescriber,                  type: Boolean, default: false
+  field :is_fake_prescriber,             type: Boolean, default: false
   field :inactive_at,                    type: Time
   field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :file_type_to_deliver,           type: Integer, default: ExternalFileStorage::PDF
+  # TODO fix centralization option
   field :is_centralizer,                 type: Boolean, default: true
+  field :is_decentralizer,               type: Boolean, default: false
   field :is_detail_authorized,           type: Boolean, default: false
   field :is_reminder_email_active,       type: Boolean, default: true
 
@@ -113,8 +116,12 @@ class User
   references_one :external_file_storage, autosave: true
   references_one :file_sending_kit
   references_one :csv_outputter, autosave: true
+  has_one :ibiza
+  has_one :gray_label
   
   scope :prescribers,                 where: { is_prescriber: true }
+  scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
+  scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
   scope :invoiceable,                 where: { is_invoiceable: true }

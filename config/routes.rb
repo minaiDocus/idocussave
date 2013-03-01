@@ -18,6 +18,9 @@ Idocus::Application.routes.draw do
   match 'num/:id/add', controller: 'num', action: :add, via: :put
   match 'num/:id/overwrite', controller: 'num', action: :overwrite, via: :put
 
+  match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
+  match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
+
   namespace :account do
     root :to => "account/documents#index"
 
@@ -102,6 +105,7 @@ Idocus::Application.routes.draw do
       end
     resource :payment do
       post 'mode', :on => :member
+      get 'use_debit_mandate', :on => :member
       get 'credit', :on => :member
     end
     resource :debit_mandate do
@@ -111,6 +115,8 @@ Idocus::Application.routes.draw do
       delete 'reset', :on => :collection
     end
     resources :backups
+
+    resource :ibiza, controller: 'ibiza'
   end
 
   namespace :tunnel do
@@ -161,6 +167,7 @@ Idocus::Application.routes.draw do
         resource :subscription
       end
       resource :csv_outputter
+      resource :ibiza, controller: 'ibiza'
     end
     resources :pages
     resources :cms_images
@@ -174,6 +181,7 @@ Idocus::Application.routes.draw do
     namespace :log do
       resources :visits
     end
+    resources :gray_labels
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

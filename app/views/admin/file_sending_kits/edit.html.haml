@@ -4,6 +4,7 @@
       %h4 Détails
       = f.input :title, label: 'Titre'
       = f.input :position
+      = f.input :instruction, as: :text, label: 'Instruction(s)', input_html: { class: 'span7' }
 
     .well
       %h4 Logo
@@ -25,9 +26,5 @@
         = f.input :right_logo_height, label: 'Hauteur'
         = f.input :right_logo_width, label: 'Largeur'
 
-    .well
-      %h4 Instructions
-      = f.input :instruction, as: :text, label: 'Instruction(s) de base', input_html: { class: 'span7' }
-      = f.input :idocus_instruction, as: :text, label: 'Instruction(s) iDocus', input_html: { class: 'span7' }
   .modal-footer
     = f.submit 'Valider', class: 'btn'

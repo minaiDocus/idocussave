@@ -103,11 +103,11 @@
                             %span{ :class => tags }
                           .value
                             %span{ :class => "hide pieces value_1" }
-                              #{period.pieces - period.uploaded_pieces}
+                              #{period.scanned_pieces}
                             %span{ :class => "sheets value_0" }
-                              #{period.sheets - period.uploaded_sheets}
+                              #{period.scanned_sheets}
                             %span{ :class => "hide pages value_2" }
-                              #{period.pages - period.uploaded_pages}
+                              #{period.scanned_pages}
                             %span{ :class => "hide uploaded_pieces value_4" }
                               #{period.uploaded_pieces}
                             %span{ :class => "hide uploaded_sheets value_3" }
@@ -132,9 +132,9 @@
                               %span{ :class => "hide excess_price value_9" }
                                 #{format_price_00 period.price_in_cents_of_total_excess} €
 
-                            - annual_summary[period.end_at.month - 1][:pieces] += period.pieces
-                            - annual_summary[period.end_at.month - 1][:sheets] += period.sheets
-                            - annual_summary[period.end_at.month - 1][:pages] += period.pages
+                            - annual_summary[period.end_at.month - 1][:pieces] += period.scanned_pieces
+                            - annual_summary[period.end_at.month - 1][:sheets] += period.scanned_sheets
+                            - annual_summary[period.end_at.month - 1][:pages] += period.scanned_pages
                             - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
                             - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
                             - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets

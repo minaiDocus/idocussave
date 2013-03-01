@@ -13,14 +13,14 @@ describe User do
       @user3 = FactoryGirl.create(:user, first_name: 'User3', last_name: 'TEST', is_prescriber: true)
       @user3.save
       
-      @prescripteur = FactoryGirl.create(:user, first_name: 'admin', is_prescriber: true)
-      
-      @prescripteur.clients << @user
-      @prescripteur.clients << @user2
-      @prescripteur.save
+      @prescriber = FactoryGirl.create(:user, first_name: 'admin', is_prescriber: true)
+
+      @prescriber.clients << @user
+      @prescriber.clients << @user2
+      @prescriber.save
       
       @subscription = Scan::Subscription.new
-      @subscription.user = @prescripteur
+      @subscription.user = @prescriber
       @subscription.save
     end
       
@@ -42,17 +42,42 @@ describe User do
     end
     
     it "#update_clients" do 
-      @prescripteur.clients.should_not be_empty
+      @prescriber.clients.should_not be_empty
     end
     
     it "#find_or_create_scan_subscription should use find" do
-      @prescripteur.find_or_create_scan_subscription.should eq (@subscription)
+      @prescriber.find_or_create_scan_subscription.should eq (@subscription)
     end
     
     it "#find_or_create_scan_subscription should use create" do
       @user3.scan_subscriptions << @user3.find_or_create_scan_subscription
       @user3.scan_subscriptions.should_not be_empty  
-    end    
+    end
+  end
+
+  context 'prescribers' do
+    before(:each) do
+      User.destroy_all
+
+      @prescriber = FactoryGirl.create(:prescriber)
+      @fake_prescriber = FactoryGirl.create(:fake_prescriber)
+    end
+
+    it 'should find fake prescribers' do
+      User.fake_prescribers.entries.should eq([@fake_prescriber])
+    end
+
+    it 'should not find true prescribers' do
+      User.fake_prescribers.entries.should_not include([@prescriber])
+    end
+
+    it 'should find not fake prescribers' do
+      User.not_fake_prescribers.entries.should eq([@prescriber])
+    end
+
+    it 'should not find not fake prescribers' do
+      User.not_fake_prescribers.entries.should_not include([@fake_prescriber])
+    end
   end
 
   context "features" do

@@ -5,7 +5,6 @@ class FileSendingKit
   
   field :title,              type: String
   field :instruction,        type: String,  default: ''
-  field :idocus_instruction, type: String,  default: ''
   field :position,           type: Integer, default: 0
   
   field :logo_path,          type: String

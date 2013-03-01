@@ -57,6 +57,14 @@ class Scan::Period
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
 
+  def scanned_pieces
+    self.pieces - self.uploaded_pieces
+  end
+
+  def scanned_sheets
+    self.sheets - self.uploaded_sheets
+  end
+
   def scanned_pages
     self.pages - self.uploaded_pages
   end
@@ -366,7 +374,8 @@ class Scan::Period
     end
     invoice_link = ""
     invoice_number = ""
-    unless self.user.prescriber.try(:is_centralizer)
+    # TODO fix centralization option
+    if self.user.prescriber.try(:is_decentralizer) || !self.user.prescriber.try(:is_centralizer)
       time = self.end_at + 1.day
       invoice = self.user.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
       if invoice.try(:content).try(:url)
