@@ -127,29 +127,31 @@ class Scan::Subscription < Subscription
   end
 
   def update_current_period
-    if self.user.is_prescriber
-      options = self.product_option_orders.where(:group_position.gte => 1000)
-    else
-      options = self.product_option_orders
+    if self.user.active
+      if self.user.is_prescriber
+        options = self.product_option_orders.where(:group_position.gte => 1000)
+      else
+        options = self.product_option_orders
+      end
+      period = current_period
+      period.set_product_option_orders(options)
+
+      period.max_sheets_authorized = self.max_sheets_authorized
+      period.max_upload_pages_authorized = self.max_upload_pages_authorized
+      period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
+      period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
+      period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
+      period.max_paperclips_authorized = self.max_paperclips_authorized
+      period.max_oversized_authorized = self.max_oversized_authorized
+      period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
+      period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
+      period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
+      period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
+      period.unit_price_of_excess_paperclips = self.unit_price_of_excess_paperclips
+      period.unit_price_of_excess_oversized = self.unit_price_of_excess_oversized
+
+      period.save
     end
-    period = current_period
-    period.set_product_option_orders(options)
-
-    period.max_sheets_authorized = self.max_sheets_authorized
-    period.max_upload_pages_authorized = self.max_upload_pages_authorized
-    period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
-    period.max_preseizure_pieces_authorized = self.max_preseizure_pieces_authorized
-    period.max_expense_pieces_authorized = self.max_expense_pieces_authorized
-    period.max_paperclips_authorized = self.max_paperclips_authorized
-    period.max_oversized_authorized = self.max_oversized_authorized
-    period.unit_price_of_excess_sheet = self.unit_price_of_excess_sheet
-    period.price_of_a_lot_of_upload = self.price_of_a_lot_of_upload
-    period.unit_price_of_excess_preseizure = self.unit_price_of_excess_preseizure
-    period.unit_price_of_excess_expense = self.unit_price_of_excess_expense
-    period.unit_price_of_excess_paperclips = self.unit_price_of_excess_paperclips
-    period.unit_price_of_excess_oversized = self.unit_price_of_excess_oversized
-
-    period.save
   end
 
   def total
