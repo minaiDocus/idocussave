@@ -25,7 +25,7 @@
       %br
       = label_tag :for_current_month, "Période concerné : ", :class => "pull-left padding1right", :style => "font-weight:900;"
       - sYear1 = Time.now.year.to_s
-      - if current_user.scan_subscriptions.last.period_duration == 3
+      - if current_user.find_or_create_scan_subscription.period_duration == 3
         - sCurrentPeriod = "T#{quarterly_of_month(Time.now.month)}"
         - sPreviousPeriod = "T#{quarterly_of_month((Time.now - 3.months).month)}"
         - sYear2 = (Time.now - 3.month).year.to_s

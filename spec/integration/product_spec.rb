@@ -11,10 +11,10 @@ describe Product do
     @group1 = ProductGroup.create(position: 1, title: 'Pad', name: 'pad')
     @group2 = ProductGroup.create(position: 2, title: 'Game', name: 'game')
     
-    @option1 = FactoryGirl.create(:product_option, title: '1 pad')
-    @option2 = FactoryGirl.create(:product_option, title: '2 pads')
-    @option3 = FactoryGirl.create(:product_option, title: '3 games')
-    @option4 = FactoryGirl.create(:product_option, title: '5 games')
+    @option1 = FactoryGirl.create(:product_option, title: '1 pad', name: '1 pad')
+    @option2 = FactoryGirl.create(:product_option, title: '2 pads', name: '2 pads')
+    @option3 = FactoryGirl.create(:product_option, title: '3 games', name: '3 games')
+    @option4 = FactoryGirl.create(:product_option, title: '5 games', name: '5 games')
 
     @group1.product_options << @option1
     @group1.product_options << @option2

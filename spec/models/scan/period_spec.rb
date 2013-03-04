@@ -33,16 +33,19 @@ describe Scan::Period do
       period.uploaded_sheets = 11
       period.uploaded_pages = 22
 
-      period.stub(:preseizure_pieces){ 10 }
-      period.stub(:expense_pieces){ 10 }
+      period.excess_preseizure_pieces = 5
+      period.excess_expense_pieces = 5
+
+      period.stub(:get_preseizure_pieces){ 10 }
+      period.stub(:get_expense_pieces){ 10 }
 
       period
     }
 
     it { subject.excess_sheets.should eq(1) }
     it { subject.excess_uploaded_pages.should eq(7) }
-    it { subject.excess_preseizure_pieces.should eq(5) }
-    it { subject.excess_expense_pieces.should eq(5) }
+    it { subject.get_excess_preseizure_pieces.should eq(5) }
+    it { subject.get_excess_expense_pieces.should eq(5) }
 
     it { subject.price_in_cents_of_excess_sheets.should eq(12) }
     it { subject.price_in_cents_of_excess_uploaded_pages.should eq(50) }

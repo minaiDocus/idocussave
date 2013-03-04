@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe Scan::Subscription do
-  before (:each) do
+  before(:each) do
     @start_at = Time.now
 
     @user = User.new(:email => "client@example.com", :password => "secret", :code => "PRE0001")
@@ -51,9 +51,10 @@ describe Scan::Subscription do
     scan_subscription.category.should eq(1)
   end
   
-  it "should verify ponctual options not reused through month" do
+  it "should verify ponctual options not reused" do
     period = @scan_subscription.periods.first
     period.product_option_orders.count.should eq(2)
+    @scan_subscription.remove_not_reusable_options
     @scan_subscription.product_option_orders.count.should eq(1)
   end
 

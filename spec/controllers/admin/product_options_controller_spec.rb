@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Admin::ProductOptionsController do
   before(:each) do
     ProductOption.destroy_all
-    @product_option =  FactoryGirl.create(:product_option, title: 'game')
+    @product_option =  FactoryGirl.create(:product_option, title: 'game', name: 'game')
     @request.env["devise.mapping"] = Devise.mappings[:user]
     user = FactoryGirl.create(:admin)
     sign_in user

@@ -5,10 +5,10 @@ describe ProductOption do
     ProductGroup.destroy_all
     ProductOption.destroy_all
     
-    @option1 = ProductOption.create(position: 2, title: 'option1', price_in_cents_wo_vat: 300)
-    @option2 = ProductOption.create(position: 1, title: 'option2', price_in_cents_wo_vat: 400)
-    @option3 = ProductOption.create(position: 3, title: 'option3', price_in_cents_wo_vat: 200)
-    @option4 = ProductOption.create(position: 4, title: 'option4', price_in_cents_wo_vat: 100)
+    @option1 = ProductOption.create(position: 2, title: 'option1', name: 'option1', price_in_cents_wo_vat: 300)
+    @option2 = ProductOption.create(position: 1, title: 'option2', name: 'option2',  price_in_cents_wo_vat: 400)
+    @option3 = ProductOption.create(position: 3, title: 'option3', name: 'option3',  price_in_cents_wo_vat: 200)
+    @option4 = ProductOption.create(position: 4, title: 'option4', name: 'option4',  price_in_cents_wo_vat: 100)
     
     @group1 = ProductGroup.create(position: 2, title: 'groupe1', name: 'groupe1')
     @group2 = ProductGroup.create(position: 1, title: 'groupe2', name: 'groupe2')
