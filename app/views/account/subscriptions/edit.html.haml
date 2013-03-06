@@ -1,26 +1,24 @@
-﻿#customer.subscription.container-fluid
-  = render 'shared/as_user'
-
-  .alerts
-    = render partial: 'shared/messages'
-
-  = render partial: 'account/customers/navigation'
-  .row-fluid
-    .span8.pannel
-      - if @possessed_user == @user
-        %h3 Edition de l'abonnement de base
-      - else
-        %h3 Edition de l'abonnement du client #{@user.info}
-      %hr
-      = simple_form_for @subscription, :url => account_subscription_path(@user), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
-        - if @subscription.user.is_new
-          = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
+﻿.row-fluid
+  .span12.pannel.margin1bottom
+    .row-fluid
+      .span12
+        - if @possessed_user == @user
+          %h3.pull-left Edition de l'abonnement de base
+          = link_to "Annuler", account_organization_subscriptions_path, class: 'btn pull-left margin1left'
         - else
-          = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration
-        = render partial: "product", collection: @products
-        .form-actions
-          = f.submit 'Valider', class: 'btn'
-          - if @possessed_user == @user
-            = link_to 'Annuler', account_users_path, class: 'btn'
+          %h3 Edition de l'abonnement du client #{link_to @user.info, account_organization_customer_path(@user)}
+    %hr
+    .row-fluid
+      .span8
+        = simple_form_for @subscription, :url => account_organization_subscription_path(@user), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+          - if @subscription.user.is_new
+            = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
           - else
-            = link_to 'Annuler', account_user_path(@user), class: 'btn'
+            = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration
+          = render partial: 'account/subscriptions/product', collection: @products
+          .form-actions
+            = f.submit 'Valider', class: 'btn'
+            - if @possessed_user == @user
+              = link_to 'Annuler', account_organization_subscriptions_path, class: 'btn'
+            - else
+              = link_to 'Annuler', account_organization_customer_path(@user), class: 'btn'

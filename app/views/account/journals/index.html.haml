@@ -1,9 +1,16 @@
-.container-fluid
-  = render 'shared/as_user'
-  = render partial: 'navigation'
+#journals
   .row-fluid
-    .span8
-      %table.table.table-striped.table-bordered.table-condensed.margin1top
+    .span12.box
+      .pull-left
+        %h3 Listes des journaux comptables
+      .pull-right
+        = link_to t('actions.new'), new_account_organization_journal_path, class: 'btn btn-primary'
+      %br
+  .row-fluid
+    #assignment.span12.box
+  .row-fluid
+    .span12.box
+      %table.table.table-striped.table-bordered.table-condensed
         %thead
           %tr
             %th{ rowspan: 2, style: 'vertical-align:middle' } Par défaut ?
@@ -34,9 +41,8 @@
               %td= t('request.'+journal.request_type) if journal.request_type.presence
               - if @user.is_editable
                 %td
-                  = link_to icon_edit, edit_account_account_book_type_path(journal)
-                  = icon_link_to edit_requested_users_account_account_book_type_path(journal), { icon: 'user' }, { title: 'Clients concernés' }
+                  = link_to icon_edit, edit_account_organization_journal_path(journal)
                   - if journal.is_destroy_requested?
-                    = link_to icon_ban_circle, cancel_destroy_account_account_book_type_path(journal), method: :post, data: { confirm: t('mongoid.models.account_book_type.request.confirm.cancel_destroy') }, title: 'Annuler la suppression'
+                    = link_to icon_ban_circle, cancel_destroy_account_organization_journal_path(journal), method: :post, data: { confirm: t('mongoid.models.account_book_type.request.confirm.cancel_destroy') }, title: 'Annuler la suppression'
                   - else
-                    = link_to icon_destroy, account_account_book_type_path(journal), method: :delete, data: { confirm: t('mongoid.models.account_book_type.request.confirm.destroy') }
+                    = link_to icon_destroy, account_organization_journal_path(journal), method: :delete, data: { confirm: t('mongoid.models.account_book_type.request.confirm.destroy') }

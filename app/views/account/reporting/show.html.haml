@@ -1,0 +1,444 @@
+﻿- months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+
+#reporting.container
+  .row
+    .span12
+      .actionbar.well
+        = render 'shared/as_user'
+        - if current_user.is_admin
+          %hr.margin1top.margin1bottom
+        .row
+          .span2
+            %table
+              %tr{ :style => "text-align:left;" }
+                %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
+              %tr
+                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
+                - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                  - options += [["Dépassement (€ HT)",9],["Montant facture (€ HT)",8]]
+                %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
+          .span8
+            %form#filter.margin0bottom
+              %table
+                %tr{ :style => "text-align:left;" }
+                  %th= label_tag :user_filter, "Utilisateur : ", :class => "margin1left margin0bottom"
+                  %th= label_tag :account_book_filter, "Journal : ", :class => "margin0bottom"
+                  %th= label_tag :year_filter, "Année : ", :class => "margin0bottom"
+                  %th= label_tag :month_filter, "Mois : ", :class => "margin0bottom"
+                  %th
+                  %th
+                %tr
+                  - opts = { :class => "margin1left margin0bottom", :style => "width:auto;position:relative;top:-4px;" }
+                  - if !current_user.is_admin and !current_user.is_prescriber
+                    - opts.merge!({ :disabled => :disabled})
+                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users, @year) ),  opts)
+                  %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
+                  %td
+                    %a#reset_filter.btn.margin0bottom{ :style => "height:21px;font-size:11px;padding:0 8px 0;position:relative;top:-4px;" }
+                      %span{ :style => "position:relative;top:2px;" }
+                        reset
+                    != submit_tag "valider", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;position:relative;top:-4px;"
+                  %td#filter_results.padding1left{ :style => "color:green;" }
+          .span1{ :style => "line-height:24px;text-align:right;float:right;" }
+            .line1
+              %a.margin0bottom{ "data-toggle" => :modal, :href => "#legendModal" }
+                %span{ :style => "position:relative;top:3px;" }
+                  Légende
+            .line2
+              != link_to image_tag("application/icon-xls.png", :alt => "Export xls", :style => "position:relative;top:-2px;") + " Export xls", account_reporting_path({:format => :xls})
+  
+  - annual_summary = []
+  - 12.times do
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_sheets => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
+  
+  .row
+    .span12
+      %table.table.table-condensed
+        %thead
+          %tr
+            %th{ :style => "width:15%;" }
+              != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+              %span.margin1left.margin1right #{@year}
+              != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+            - months.each do |month|
+              %th.month
+                #{month}
+        %tbody
+          - @users.each_with_index do |user, idx|
+            - periods = annual_periods_for_user(user, @periods)
+            - if active_periods?(user, periods, @year)
+              %tr{ :id => "user_#{user.id}", :class => "user" }
+                %td.align-middle
+                  #{[user.code,user.company].join(" - ")}
+                - periods.each_with_index do |period,index|
+                  - if period
+                    - period.duration.times do |i|
+                      - annual_summary[period.start_at.month + i - 1][:active_user] += 1
+                    %td.align-middle.block{ :colspan => period.duration }
+                      %a.do-show{ href: "#" }
+                        - pos = []
+                        - period.duration.times do |i|
+                          - pos << "pos_#{(idx + 1)}_#{(index + i + 1)}"
+                        .period{ id: period.id, user_id: user.id, class: pos.join(' '), duration: period.duration, month: index+1, row: idx+1}
+                          - if period.scanned_pages == 0 && period.uploaded_pages == 0
+                            - annual_summary[period.end_at.month - 1][:delivery_status][0] += 1
+                            .delivery_state.back_red
+                          - elsif period.delivery.state == "received"
+                            - annual_summary[period.end_at.month - 1][:delivery_status][1] += 1
+                            .delivery_state.back_orange
+                          - else
+                            - annual_summary[period.end_at.month - 1][:delivery_status][2] += 1
+                            .delivery_state
+                              .half-delivery_state.left{ class: (period.scanned_pages > 0 ? 'received' : 'not_received') }
+                              .half-delivery_state.right{ class: (period.uploaded_pages > 0 ? 'received' : 'not_received') }
+                          - period.documents_name_tags.each do |tags|
+                            %span{ :class => tags }
+                          .value
+                            %span{ :class => "hide pieces value_1" }
+                              #{period.scanned_pieces}
+                            %span{ :class => "sheets value_0" }
+                              #{period.scanned_sheets}
+                            %span{ :class => "hide pages value_2" }
+                              #{period.scanned_pages}
+                            %span{ :class => "hide uploaded_pieces value_4" }
+                              #{period.uploaded_pieces}
+                            %span{ :class => "hide uploaded_sheets value_3" }
+                              #{period.uploaded_sheets}
+                            %span{ :class => "hide uploaded_pages value_5" }
+                              #{period.uploaded_pages}
+                            %span{ :class => "hide paperclips value_6" }
+                              #{period.paperclips}
+                            %span{ :class => "hide oversized value_7" }
+                              #{period.oversized}
+                            %span{ :class => "hide excess_sheets value_10" }
+                              #{period.excess_sheets}
+                            %span{ :class => "hide excess_uploaded_pages value_11" }
+                              #{period.excess_uploaded_pages}
+                            %span{ :class => "hide compta_pieces value_12" }
+                              #{period.compta_pieces}
+                            %span{ :class => "hide excess_compta_pieces value_13" }
+                              #{period.excess_compta_pieces}
+                            - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                              %span{ :class => "hide price value_8" }
+                                #{format_price_00 period.price_in_cents_wo_vat} €
+                              %span{ :class => "hide excess_price value_9" }
+                                #{format_price_00 period.price_in_cents_of_total_excess} €
+
+                            - annual_summary[period.end_at.month - 1][:pieces] += period.scanned_pieces
+                            - annual_summary[period.end_at.month - 1][:sheets] += period.scanned_sheets
+                            - annual_summary[period.end_at.month - 1][:pages] += period.scanned_pages
+                            - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
+                            - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
+                            - annual_summary[period.end_at.month - 1][:uploaded_sheets] += period.uploaded_sheets
+                            - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
+                            - annual_summary[period.end_at.month - 1][:excess_uploaded_pages] += period.excess_uploaded_pages
+                            - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
+                            - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
+                            - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
+                            - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
+                            - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
+                            - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.price_in_cents_of_total_excess
+                  - else
+                    %td.align-middle.block
+                      \-
+          - if current_user.is_prescriber || current_user.is_admin
+            %tr#total
+              %td
+                %b.value
+                  %span{ :class => "sheets value_0" }
+                    Nb de feuilles numérisées
+                  %span{ :class => "hide pieces value_1" }
+                    Nb de pièces numérisées
+                  %span{ :class => "hide pages value_2" }
+                    Nb de pages numérisées
+                  %span{ :class => "hide excess_sheets value_10" }
+                    Dépassement numérisation
+                  %span{ :class => "hide uploaded_pieces value_4" }
+                    Nb de pièces téléversées
+                  %span{ :class => "hide uploaded_pages value_5" }
+                    Nb de pages téléversées
+                  %span{ :class => "hide excess_uploaded_pages value_11" }
+                    Dépassement téléversement
+                  %span{ :class => "hide compta_pieces value_12" }
+                    Nb de pièces pré-affectées
+                  %span{ :class => "hide excess_compta_pieces value_13" }
+                    Dépassement pré-affectation
+                  %span{ :class => "hide paperclips value_6" }
+                    Nb d'attaches
+                  %span{ :class => "hide oversized value_7" }
+                    Nb de hors formats
+                  %span{ :class => "hide price value_8" }
+                    Montant facture (€ HT)
+                  %span{ :class => "hide price value_9" }
+                    Dépassement (€ HT)
+                %br
+                %span{ :style => "color:red;" } Non reçus
+                |
+                %span{ :style => "color:#F89406;" } Reçus
+                |
+                %span{ :style => "color:#468847;" } Traités
+                %br
+                Nombre de clients actifs
+                %br
+                Facture
+              - annual_summary.each_with_index do |month,index|
+                %td{ :style => "width:7%;text-align:right;padding-right:5px;" }
+                  %b.value
+                    %span{ :class => "hide pieces value_1" }
+                      #{month[:pieces]}
+                    %span{ :class => "sheets value_0" }
+                      #{month[:sheets]}
+                    %span{ :class => "hide pages value_2" }
+                      #{month[:pages]}
+                    %span{ :class => "hide excess_sheets value_10" }
+                      #{month[:excess_sheets]}
+                    %span{ :class => "hide uploaded_pieces value_4" }
+                      #{month[:uploaded_pieces]}
+                    %span{ :class => "hide uploaded_sheets value_3" }
+                      #{month[:uploaded_sheets]}
+                    %span{ :class => "hide uploaded_pages value_5" }
+                      #{month[:uploaded_pages]}
+                    %span{ :class => "hide excess_uploaded_pages value_11" }
+                      #{month[:excess_uploaded_pages]}
+                    %span{ :class => "hide compta_pieces value_12" }
+                      #{month[:compta_pieces]}
+                    %span{ :class => "hide excess_compta_pieces value_13" }
+                      #{month[:excess_compta_pieces]}
+                    %span{ :class => "hide paperclips value_6" }
+                      #{month[:paperclips]}
+                    %span{ :class => "hide oversized value_7" }
+                      #{month[:oversized]}
+                    %span{ :class => "hide price value_8" }
+                      - time = Time.local(@year,(index+1),15,0,0)
+                      - price = price_of_period_by_time(@user.periods,time)
+                      - month[:price_in_cents] = month[:price_in_cents] + price
+                      #{format_price_00 month[:price_in_cents]} €
+                    %span{ :class => "hide price value_9" }
+                      #{format_price_00 month[:price_in_cents_of_excess]} €
+                  %br
+                  %span{ :style => "color:red;" }= month[:delivery_status][0]
+                  |
+                  %span{ :style => "color:#F89406;" }= month[:delivery_status][1]
+                  |
+                  %span{ :style => "color:#468847;" }= month[:delivery_status][2]
+                  %br
+                  %span{ :style => "padding-right:3px;" }= month[:active_user]
+                  .invoice{ :style => "padding-right:3px;" }
+                    - if @user.organization && @user.organization.invoices.count > 0
+                      - if index == 11
+                        - invoice = @user.organization.invoices.where(:number => /^#{@year+1}01/).first
+                      - else
+                        - invoice = @user.organization.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
+                      - if invoice
+                        - if invoice.content.try(:url)
+                          %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
+                          %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
+        - if current_user.is_prescriber || current_user.is_admin
+          %tfooter
+            %tr
+              %th{ :style => "width:15%;" }
+                != link_to( (@year - 1), account_reporting_path(:year => (@year - 1), :code => (params[:code] || "")))
+                %span.margin1left.margin1right #{@year}
+                != link_to( (@year + 1), account_reporting_path(:year => (@year + 1), :code => (params[:code] || "")))
+              - months.each do |month|
+                %th{ :style => "width:7%;text-align:right;padding-right:7px;" }
+                  #{month}
+
+  .modal.fade{ :id=>"legendModal" }
+    .modal-header
+      %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+      %h3{ :style => "text-align:center;" }
+        Légende
+    .modal-body
+      %span.badge.badge-important
+      \: Aucun documents reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.received
+        .half-delivery_state.right.not_received
+      \: Documents papier reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.not_received
+        .half-delivery_state.right.received
+      \: Documents téléversés reçus
+      %br
+      %br
+      %span.delivery_state
+        .half-delivery_state.left.received
+        .half-delivery_state.right.received
+      \: Documents papier reçus et document téléversés reçus
+      %br
+
+.modal.fade{ id: "periodModal" }
+  .modal-header
+    %table
+      %tr
+        %td.user
+          %h4
+        %td.period
+          %h3
+    %a{ class: "close", "data-dismiss" => "modal" } ×
+    = hidden_field_tag :year, @year
+  .modal-body
+  .modal-footer
+    .pull-right
+      %a.left.btn
+        %i.icon-arrow-left
+      %a.up.btn
+        %i.icon-arrow-up
+      %a.down.btn
+        %i.icon-arrow-down
+      %a.right.btn
+        %i.icon-arrow-right
+    %span.legend
+      Légende : total (numérisées, téléversées)
+
+.modal.fade.in{ :id=>"invoiceDialog", :style => "height:500px;" }
+  .modal-header
+    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+    %h3
+  .modal-body{ :style => "max-height:450px;" }
+    %iframe{:src => "", :id => "invoice-show", :style => "width:843px; height:415px;" }
+
+%script{ :type => "text/x-tmpl", :id => "tmpl-period" }
+  :plain
+    <div class="documentslist">
+      <table class="table table-condensed">
+        <tr>
+          <th class="name">Nom des documents</th>
+          <th class="center">Pièces</th>
+          <th class="center">Feuilles</th>
+          <th class="center">Pages</th>
+          <th class="center">Attaches</th>
+          <th class="center">Hors format</th>
+          <th class="last"></th>
+        </tr>
+        {% for(var i=0; i<o.documents.list.length; i++) {
+            var content = "<table class='historic'><tr><th>N°</th><th>Date</th><th>Téléversées</th><th>Numérisées</th></tr>";
+            for(var k=0; k<o.documents.list[i].historic.length; k++) {
+              content += "<tr>";
+              content += "<td>"+(k+1)+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].date+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].uploaded+"</td>";
+              content += "<td>"+o.documents.list[i].historic[k].scanned+"</td>";
+              content += "</tr>";
+            }
+            content += "</table>";
+          %}
+          <tr>
+            <td class="name first">
+              <a href="#" class="do-popover" data-content="{%= content %}" data-original-title="Historique des ajouts de pages :"><i class="icon-info-sign" style="margin-right:3px;"></i></a>
+              {% if(o.documents.list[i].link != "#") { %}
+                <a href="{%= o.documents.list[i].link%}">{%= o.documents.list[i].name %}</a>
+              {% } else { %}
+                {%= o.documents.list[i].name %}
+              {% } %}
+            </td>
+            <td class="center">{%= o.documents.list[i].pieces %} ({%= (parseInt(o.documents.list[i].pieces) - parseInt(o.documents.list[i].uploaded_pieces)+'') %}, {%= o.documents.list[i].uploaded_pieces %})</td>
+            <td class="center">{%= (parseInt(o.documents.list[i].sheets) - parseInt(o.documents.list[i].uploaded_sheets))+'' %}</td>
+            <td class="center">{%= o.documents.list[i].pages %} ({%= (parseInt(o.documents.list[i].pages) - parseInt(o.documents.list[i].uploaded_pages))+'' %}, {%= o.documents.list[i].uploaded_pages %})</td>
+            <td class="center">{%= o.documents.list[i].paperclips %}</td>
+            <td class="center">{%= o.documents.list[i].oversized %}</td>
+            <td class="last">
+              {% if(o.documents.list[i].report_id != "#") { %}
+                {% if(o.documents.list[i].report_type == "NDF") { %}
+  = link_to(image_tag('application/icon-xls.png', title: 'Notes de frais', alt: 'NDF.xlsx'),"/account/report/expenses/{%= o.documents.list[i].report_id %}.xlsx")
+  = link_to(image_tag('application/icon-pdf.png', title: 'Notes de frais', alt: 'NDF.pdf'),"/account/report/expenses/{%= o.documents.list[i].report_id %}.pdf")
+  :plain
+                {% } else { %}
+  = link_to(image_tag('application/icon-csv.png', title: 'Fichier de pré-affectation comptable', alt: '{%= o.documents.list[i].report_type %}.csv'),"/account/report/preseizures/{%= o.documents.list[i].report_id %}.csv")
+  :plain
+                {% } %}
+              {% } %}
+            </td>
+          </tr>
+        {% } %}
+        <tr>
+          <td><b>Total</b></td>
+          <td class="center"><b>{%= o.documents.total.pieces %} ({%= (parseInt(o.documents.total.pieces) - parseInt(o.documents.total.uploaded_pieces))+'' %}, {%= o.documents.total.uploaded_pieces %})</b></td>
+          <td class="center"><b>{%= (parseInt(o.documents.total.sheets) - parseInt(o.documents.total.uploaded_sheets))+'' %}</b></td>
+          <td class="center"><b>{%= o.documents.total.pages %} ({%= (parseInt(o.documents.total.pages) - parseInt(o.documents.total.uploaded_pages))+'' %}, {%= o.documents.total.uploaded_pages %})</b></td>
+          <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
+          <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
+          <td class="last"></td>
+        </tr>
+      </table>
+      <hr>
+      <table class="table table-condensed">
+        <tr>
+          <th class="center">Dépassement numérisation</th>
+          <th class="center">Dépassement téléversement</th>
+          <th class="center">Dépassement pré-affectation</th>
+        </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.sheets %} feuille(s)</td>
+          <td class="center">{%= o.documents.excess.uploaded_pages %} page(s)</td>
+          <td class="center">{%= o.documents.excess.compta_pieces %} pièce(s)</td>
+        </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.paperclips %} attache(s)</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="center">{%= o.documents.excess.oversized %} hors format</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+  - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+    :plain
+      <div class="separator"></div>
+      <div class="optionslist">
+        <table class="table table-condensed">
+          <tr>
+            <th>Paramètre</th>
+            <th>Valeur</th>
+            <th style="text-align:right;">Prix HT</th>
+          </tr>
+          {% for(var i=0; i<o.options.list.length; i++) { %}
+            <tr>
+              <td>{%# o.options.list[i].group_title %}</td>
+              <td>{%# o.options.list[i].title %}</td>
+              <td style="text-align:right;">{%= o.options.list[i].price %} €</td>
+            </tr>
+          {% } %}
+          <tr>
+            <td>Dépassement numérisation</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_scan%} €</td>
+          </tr>
+          <tr>
+            <td>Dépassement téléversement</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_uploaded_pages%} €</td>
+          </tr>
+          <tr>
+            <td>Dépassement pré-affectation</td>
+            <td></td>
+            <td style="text-align:right;">{%= o.options.excess_compta_pieces%} €</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><b>Total :</b></td>
+            <td style="text-align:right;">{%= o.options.total%} €</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Facture :</td>
+            <td>
+              {% if (o.options.invoice_link != "") { %}
+                <a href="{%= o.options.invoice_link%}" class="icon-download-alt" style="width:16px;height:16px;"></a>
+                <a href="{%= o.options.invoice_link%}" class="icon-eye-open do-showInvoice" style="width:16px;height:16px;" title="{%= o.options.invoice_number %}.pdf"></a>
+              {% } %}
+            </td>
+          </tr>
+      </div>
+
+= render "help"

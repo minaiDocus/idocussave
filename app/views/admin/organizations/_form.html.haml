@@ -1,0 +1,50 @@
+= simple_nested_form_for [:admin, @organization], html: { class: 'form form-horizontal' } do |f|
+  %fieldset
+    %legend Informations
+    = f.input :name, label: t('mongoid.models.organization.attributes.name')
+    = f.input :code, label: t('mongoid.models.organization.attributes.code')
+    = f.input :description, as: :text, label: t('mongoid.models.organization.attributes.description')
+  %fieldset.row-fluid
+    %legend Adresses
+    = f.fields_for :addresses do |address|
+      .span4
+        = address.input :first_name,   label: t('mongoid.models.address.attributes.first_name')
+        = address.input :last_name,    label: t('mongoid.models.address.attributes.last_name')
+        = address.input :company,      label: t('mongoid.models.address.attributes.company')
+        = address.input :address_1,    label: t('mongoid.models.address.attributes.address_1')
+        = address.input :address_2,    label: t('mongoid.models.address.attributes.address_2')
+        = address.input :zip,          label: t('mongoid.models.address.attributes.zip')
+        = address.input :city,         label: t('mongoid.models.address.attributes.city')
+        = address.input :phone,        label: t('mongoid.models.address.attributes.phone')
+        = address.input :phone_mobile, label: t('mongoid.models.address.attributes.phone_mobile')
+        = address.input :is_for_billing, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la facturation ?'
+        = address.input :is_for_shipping, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la livraison ?'
+        .form-actions
+          = address.link_to_remove "Supprimer l'adresse", class: 'btn'
+    = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn'
+  %hr
+  %fieldset
+    %legend Autorisation
+    .row-fluid
+      .span4
+        = f.input :is_create_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_create_authorized')
+        = f.input :is_edit_authorized,    as: :boolean, label: t('mongoid.models.organization.attributes.is_edit_authorized')
+        = f.input :is_destroy_authorized, as: :boolean, label: t('mongoid.models.organization.attributes.is_destroy_authorized')
+      .span4
+        = f.input :is_add_authorized,     as: :boolean, label: t('mongoid.models.organization.attributes.is_add_authorized')
+        = f.input :is_remove_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_remove_authorized')
+      .span4
+        = f.input :is_detail_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_detail_authorized')
+        = f.input :is_test,               as: :boolean, label: t('mongoid.models.organization.attributes.is_test')
+  %fieldset
+    %legend Assignation
+    = f.input :leader_id,                                                                                          |
+      input_html: { data: { pre: [@organization.leader].compact.map{ |e| { id: e.id, name: e.info } }.to_json } }, |
+      label: t('mongoid.models.organization.attributes.leader'),                                                      |
+      required: true
+    = f.input :member_tokens,                                                                                        |
+      input_html: { data: { pre: @organization.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } }, |
+      label: t('mongoid.models.organization.attributes.members')
+  .form-actions
+    = f.submit "Valider", class: 'btn'
+    = link_to "Annuler", admin_organizations_path, class: 'btn'

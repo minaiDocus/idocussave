@@ -1,0 +1,37 @@
+#collaborators
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3 Liste des collaborateurs
+      .pull-right
+        = link_to t('actions.new'), new_account_organization_collaborator_path, class: 'btn btn-primary'
+      %br
+  .row-fluid
+    .span9.box
+      = render partial: 'list_options'
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
+            %thead
+              %tr
+                %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
+                %th
+            %tbody
+              - @collaborators.each do |collaborator|
+                %tr
+                  %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td.user_info
+                    %span.info
+                      = link_to collaborator.info, account_organization_collaborator_path(collaborator)
+                  %td.update_request_state
+                    - if !collaborator.is_inactive && collaborator.request_type && collaborator.request_type.is_a?(Integer)
+                      - if collaborator.request_type == User::ADDING
+                        = icon(icon: 'plus', title: 'Ajouté')
+                      - elsif collaborator.request_type == User::UPDATING
+                        = icon(icon: 'pencil', title: 'Modifié')
+                      - elsif collaborator.request_type == User::REMOVING
+                        = icon(icon: 'minus', title: 'Supprimé')
+      = render partial: 'list_options'
+    .span3.box
+      = render partial: 'sidebar'

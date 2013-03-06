@@ -109,11 +109,11 @@ class Scan::Subscription < Subscription
   end
   
   def propagate_changes
-   propagate_changes_for user.clients.active
+   propagate_changes_for organization.customers.active
   end
   
   def check_propagation
-    if is_to_spreading.try(:to_i) == 1 and user.is_prescriber
+    if is_to_spreading.try(:to_i) == 1 and organization
       propagate_changes
     end
   end
@@ -127,8 +127,8 @@ class Scan::Subscription < Subscription
   end
 
   def update_current_period
-    if self.user.active
-      if self.user.is_prescriber
+    if (self.user && self.user.try(:active)) || self.organization
+      if self.organization
         options = self.product_option_orders.where(:group_position.gte => 1000)
       else
         options = self.product_option_orders
@@ -156,8 +156,8 @@ class Scan::Subscription < Subscription
 
   def total
     result = 0
-    if user.is_prescriber
-      subscription_ids = Scan::Subscription.any_in(:user_id => user.clients.map { |e| e.id }).distinct(:_id)
+    if organization
+      subscription_ids = Scan::Subscription.any_in(:user_id => organization.customers.map { |e| e.id }).distinct(:_id)
       ps = Scan::Period.any_in(subscription_id: subscription_ids).
            where(:start_at.lt => Time.now, :end_at.gt => Time.now)
       ps.each do |period|

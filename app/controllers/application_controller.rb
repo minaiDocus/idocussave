@@ -54,6 +54,24 @@ class ApplicationController < ActionController::Base
     instance_variable_set name, value
   end
 
+  def load_user_and_role(name=:@user)
+    instance = load_user(name)
+    if instance.is_prescriber
+      if instance.my_organization
+        instance.extend OrganizationManagement::Leader
+      elsif instance.organization
+        instance.extend OrganizationManagement::Collaborator
+      end
+    end
+  end
+
+  def load_organization(name=:@user)
+    @organization = instance_variable_get(name).organization
+    if !@organization && controller_name != 'organizations' && action_name != 'show'
+      redirect_to account_organization_path
+    end
+  end
+
 private
 
   def format_price_00 price_in_cents

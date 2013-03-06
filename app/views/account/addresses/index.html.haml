@@ -1,18 +1,14 @@
 #addresses.container-fluid
-  - if @is_manager
-    = render 'shared/as_user'
+  .alerts
+    = render 'shared/messages'
+
   .row-fluid
     .span12
       = render partial: 'navigation'
-  - flash.each do |type, message|
-    .row-fluid
-      .span12.alert.alert-message.fade.in{ "data-alert" => "alert", :class => twitterized_type(type) }
-        %a.close{ 'data-dismiss' => :alert } ×
-        %span= message
-  - while @addresses.any?
-    - three_addresses = @addresses[0..2]
-    - @addresses = @addresses - three_addresses
-    .row-fluid
-      - three_addresses.each do |address|
-        .span4
-          = render partial: 'address', locals: { address: address, single: false }
+  - grouped_addresses = @addresses.in_groups_of(3)
+  - grouped_addresses.each_with_index do |addresses, index|
+    .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+      - addresses.each do |address|
+        - if address
+          .span4
+            = render partial: 'address', locals: { address: address, single: false }

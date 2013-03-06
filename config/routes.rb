@@ -23,20 +23,28 @@ Idocus::Application.routes.draw do
 
   namespace :account do
     root :to => "account/documents#index"
+    resource :organization do
+      resources :groups
+      resources :collaborators do
+        put 'stop_using',     on: :member
+        put 'restart_using',  on: :member
+      end
+      resources :customers do
+        get 'search_by_code', on: :collection
+        put 'stop_using',     on: :member
+        put 'restart_using',  on: :member
+        resources :addresses, controller: 'organization_addresses'
+      end
+      resources :journals do
+        post 'cancel_destroy',           :on => :member
+        post 'update_requested_users',   :on => :member
+        put  'update_is_default_status', :on => :member
+      end
+      resources :subscriptions
+      resource :default_subscription, controller: 'organization_subscriptions'
+      resource :ibiza, controller: 'ibiza'
+    end
 
-    resources :customers, as: :users do
-      put 'stop_using',    on: :member
-      put 'restart_using', on: :member
-      resources :addresses
-    end
-    resources :journals, as: :account_book_types do
-      post 'cancel_destroy',           :on => :member
-      get  'edit_requested_users',     :on => :member
-      post 'update_requested_users',   :on => :member
-      put  'update_is_default_status', :on => :member
-    end
-    resources :subscriptions
-    
     resources :documents do
       get 'packs', :on => :collection
       get 'search', :on => :collection
@@ -55,13 +63,11 @@ Idocus::Application.routes.draw do
       resource :upload
     end
 
-    namespace :scan do
-      resources :reportings
-      resources :periods
-      namespace :report do
-        resources :expenses
-        resources :preseizures
-      end
+    resource :reporting, controller: 'reporting'
+    resources :periods
+    namespace :report do
+      resources :expenses
+      resources :preseizures
     end
 
     resource :profile do
@@ -115,8 +121,6 @@ Idocus::Application.routes.draw do
       delete 'reset', :on => :collection
     end
     resources :backups
-
-    resource :ibiza, controller: 'ibiza'
   end
 
   namespace :tunnel do
@@ -145,29 +149,31 @@ Idocus::Application.routes.draw do
         get 'edit_multiple', on: :collection
         post 'update_multiple', on: :collection
       end
-      resources :reminder_emails do
-        get 'preview', on: :member
-        get 'deliver', on: :member
-        get 'edit_multiple', on: :collection
-        post 'update_multiple', on: :collection
-      end
-      resource :file_sending_kit do
-        get 'select', on: :member
-        post 'generate', on: :member
-        get 'folder', on: :member
-        get 'mail', on: :member
-        get 'label', on: :member
-      end
       resources :account_book_types do
         put    'accept', on: :member
         put    'add',    on: :member
         delete 'remove', on: :member
       end
-      namespace :scan do
-        resource :subscription
-      end
+      resource :scan_subscription
       resource :csv_outputter
+    end
+    resources :organizations do
+      resources :groups
+      resources :reminder_emails do
+        get  'preview',         on: :member
+        get  'deliver',         on: :member
+        get  'edit_multiple',   on: :collection
+        post 'update_multiple', on: :collection
+      end
+      resource :file_sending_kit do
+        get  'select',   on: :member
+        post 'generate', on: :member
+        get  'folder',   on: :member
+        get  'mail',     on: :member
+        get  'label',    on: :member
+      end
       resource :ibiza, controller: 'ibiza'
+      resource :subscription, controller: 'organization_subscriptions'
     end
     resources :pages
     resources :cms_images

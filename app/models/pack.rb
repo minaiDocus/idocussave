@@ -13,6 +13,7 @@ class Pack
 
   referenced_in :owner, class_name: "User", inverse_of: :own_packs
   references_and_referenced_in_many :users
+  belongs_to :organization
 
   references_many :documents,                                                         dependent: :destroy
   references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
@@ -549,8 +550,8 @@ class Pack
         #  Attribution du pack.
         pack.owner = user
         pack.users << user
-        pack.users << user.prescriber
         pack.users = pack.users + user.share_with
+        pack.organization = user.organization
 
         document = Document.new
         document.dirty = true

@@ -1,0 +1,24 @@
+#subscription
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span2
+        .span8
+          %h3.aligncenter Paramètres par défaut des abonnements
+        .span2.alignright
+          = icon_link_to edit_account_organization_default_subscription_path, { icon: 'edit' }, { class: 'btn' }
+
+  .box
+    .row-fluid
+      .span6
+        %h4.aligncenter
+          Configuration actuelle
+          = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
+        = render partial: 'account/customers/options'
+
+      - if @subscription.is_update_requested?
+        .span6
+          %h4.aligncenter
+            Configuration souhaitée
+            = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
+          = render partial: 'account/customers/requested_options'

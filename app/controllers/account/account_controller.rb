@@ -28,16 +28,16 @@ protected
 
   def verify_write_access
     unless @user.is_editable?
-      flash[:error] = "Vous ne disposez pas des droits nécessaires pour effectuer cette action."
-      redirect_to account_profile_path
+      redirect_to account_profile_path, flash: { error: "Vous ne disposez pas des droits nécessaires pour effectuer cette action." }
     end
     true
   end
 
   def verify_management_access
     unless current_user.is_prescriber || current_user.is_admin
-      raise ActionController::RoutingError.new('Not Found')
+      redirect_to account_profile_path, flash: { error: "Vous ne disposez pas des droits nécessaires pour effectuer cette action." }
     end
+    true
   end
 
 public

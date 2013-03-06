@@ -2,7 +2,7 @@ class Ibiza
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :user
+  belongs_to :organization
 
   field :token, type: String
   field :state, type: String, default: 'none'

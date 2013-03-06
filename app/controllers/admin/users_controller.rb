@@ -22,7 +22,7 @@ class Admin::UsersController < Admin::AdminController
     is_admin = params[:user][:is_admin].presence ? params[:user].delete(:is_admin) : false
     is_prescriber = params[:user][:is_prescriber].presence ? params[:user].delete(:is_prescriber) : false
 
-    @user = User.new params[:user]
+    @user = User.new user_params
     @user.is_admin = is_admin
     @user.is_prescriber = is_prescriber
     @user.skip_confirmation!
@@ -50,7 +50,7 @@ class Admin::UsersController < Admin::AdminController
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
 
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         if @user.update_request
           @user.update_request.sync!
           @user.save
@@ -66,11 +66,12 @@ class Admin::UsersController < Admin::AdminController
 
   def search_by_code
     tags = []
+    full_info = params[:full_info].present?
     if params[:q].present?
-      users = User.where(code: /.*#{params[:q]}.*/i)
+      users = User.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
       users = users.prescribers if params[:prescriber].present?
       users.each do |user|
-        tags << {id: user.id, name: user.code}
+        tags << {id: user.id, name: full_info ? user.info : user.code}
       end
     end
 
@@ -142,7 +143,11 @@ class Admin::UsersController < Admin::AdminController
     redirect_to admin_users_path
   end
   
-  private
+private
+
+  def user_params
+    params.require(:user).permit!
+  end
 
   def sort_column
     params[:sort] || 'created_at'

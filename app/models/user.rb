@@ -2,6 +2,7 @@
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
+  include ActiveModel::ForbiddenAttributesProtection
   # Include default devise modules. Others available are:
   # :registerable, :token_authenticatable, :lockable and :timeoutable
   devise :database_authenticatable, :confirmable,
@@ -54,15 +55,15 @@ class User
   field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :file_type_to_deliver,           type: Integer, default: ExternalFileStorage::PDF
-  # TODO fix centralization option
-  field :is_centralizer,                 type: Boolean, default: true
-  field :is_decentralizer,               type: Boolean, default: false
-  field :is_detail_authorized,           type: Boolean, default: false
   field :is_reminder_email_active,       type: Boolean, default: true
+  field :is_centralized,                 type: Boolean, default: true
+
+  validates_uniqueness_of :code
 
   NOTHING  = 0
   ADDING   = 1
   UPDATING = 2
+  REMOVING = 3
   REQUEST_TYPE_NAME = %w(nothing adding updating)
 
   field :is_new,                         type: Boolean, default: false
@@ -83,8 +84,12 @@ class User
   # FIXME use another way
   before_save :set_timestamps_of_addresses
 
-  embeds_many :addresses
+  embeds_many :addresses, as: :locatable
   embeds_one :update_request, as: :update_requestable
+
+  has_one :my_organization, class_name: 'Organization', inverse_of: 'leader'
+  belongs_to :organization, inverse_of: 'members'
+  has_and_belongs_to_many :groups, inverse_of: 'members'
 
   references_many :clients,  class_name: "User", inverse_of: :prescriber
   referenced_in :prescriber, class_name: "User", inverse_of: :clients
@@ -102,7 +107,6 @@ class User
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
 
-  references_many :reminder_emails, autosave: true
   references_many :invoices
   references_many :credits
   references_many :document_tags
@@ -114,9 +118,7 @@ class User
   references_one :composition
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
-  references_one :file_sending_kit
   references_one :csv_outputter, autosave: true
-  has_one :ibiza
   has_one :gray_label
   
   scope :prescribers,                 where: { is_prescriber: true }
@@ -125,12 +127,14 @@ class User
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
   scope :invoiceable,                 where: { is_invoiceable: true }
-  
+  scope :centralized,                 where: { is_centralized: true }
+  scope :not_centralized,             where: { is_centralized: false }
+  scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
+
   before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
-  accepts_nested_attributes_for :reminder_emails,       allow_destroy: true
   accepts_nested_attributes_for :csv_outputter
 
   def active
@@ -143,6 +147,10 @@ class User
 
   def info
     [self.code,self.company,self.name].reject { |e| e.blank? }.join(' - ')
+  end
+
+  def to_s
+    info
   end
 
   def self.find_by_email(param)
@@ -200,14 +208,6 @@ class User
     find_or_create_external_file_storage
   end
 
-  def find_or_create_file_sending_kit
-    if self.is_prescriber
-      file_sending_kit || FileSendingKit.create(user_id: self.id, title: 'Title', logo_path: '/logo/path', left_logo_path: '/left/logo/path', right_logo_path: '/right/logo/path')
-    else
-      nil
-    end
-  end
-  
   def propagate_stamp_name
     if self.is_prescriber
       self.clients.each { |client| client.update_attribute(:stamp_name, self.stamp_name) }
@@ -231,7 +231,7 @@ class User
   end
   
   def update_requestable_attributes
-    [:email,:last_name,:first_name,:company,:code,:is_inactive]
+    [:email,:last_name,:first_name,:company,:code,:is_inactive, :is_centralized]
   end
 
   def active_for_authentication?
@@ -272,15 +272,6 @@ class User
   end
 
   def set_request_type!
-    if is_prescriber
-      clients.active.each do |client|
-        client.set_request_type
-        client.save
-      end
-    elsif prescriber
-      prescriber.set_request_type
-      prescriber.save
-    end
     set_request_type
     save
   end
@@ -299,6 +290,14 @@ class User
     new_password = rand(36**20).to_s(36)
     self.password = new_password
     self.password_confirmation = new_password
+  end
+
+  def request_changes
+    self.update_request ||= UpdateRequest.new
+    self.update_request.temp_values = changes
+    self.update_request.save
+    reload
+    set_request_type!
   end
 
 protected

@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 namespace :maintenance do
   namespace :documents do
-    desc "Fecth documents"
+    desc 'Fecth documents'
     task :fetch => [:environment] do
       Pack.get_file_from_numen
       Pack.get_documents(nil)
@@ -10,14 +10,14 @@ namespace :maintenance do
   end
   
   namespace :address do
-    desc "Deliver updated address list"
+    desc 'Deliver updated address list'
     task :deliver_updated_list => [:environment] do
       AddressDeliveryList.process
     end
   end
 
   namespace :notification do
-    desc "Send update request notification"
+    desc 'Send update request notification'
     task :update_request => [:environment] do
       users = User.where(:request_type.gt => 0).asc([:code, :request_type])
       nb = users.count
@@ -42,16 +42,16 @@ namespace :maintenance do
   end
 
   namespace :reporting do
-    desc "Init current period"
+    desc 'Init current period'
     task :init => [:environment] do
-      User.prescribers.each do |prescriber|
-        prescriber.clients.active.each do |client|
+      Organization.each do |organization|
+        organization.customers.active.each do |customer|
           begin
-            subscription = client.scan_subscriptions.current
+            subscription = customer.scan_subscriptions.current
             subscription.remove_not_reusable_options
             subscription.find_or_create_period Time.now
           rescue
-            puts "Can't generate period for user #{client.code}<#{client.email}>, probably lack of scan_subscription entry."
+            puts "Can't generate period for user #{customer.info}, probably lack of scan_subscription entry."
           end
         end
       end
@@ -59,41 +59,50 @@ namespace :maintenance do
   end
   
   namespace :invoice do
-    desc "Generate invoice"
+    desc 'Generate invoice'
     task :generate => [:environment] do
-      User.prescribers.invoiceable.each do |prescriber|
-        puts Time.now
-        if prescriber.is_centralizer
-          puts "Generating invoice for prescriber : #{prescriber.name} <#{prescriber.email}>"
+      puts '##########################################################################################'
+      puts "Task beginning at #{Time.now}"
+      Organization.not_test.asc(:created_at).each do |organization|
+        puts "Generating invoice for organization : #{organization.name}"
+        if organization.customers.centralized.count > 0
           invoice = Invoice.new
-          invoice.user = prescriber
+          invoice.organization = organization
+          invoice.user = organization.leader
           invoice.save
+          print "-> Centralized invoice : #{invoice.number}..."
           invoice.create_pdf
-        else
-          puts "Prescriber #{prescriber.name} <#{prescriber.email}>"
-          clients = prescriber.clients - [prescriber]
-          clients.each do |client|
-            puts "\tgenerating invoice for client : #{client.name} <#{client.email}>"
-            invoice = Invoice.new
-            invoice.user = client
-            invoice.save
-            invoice.create_pdf
+          print "done\n"
+          organization.customers.centralized.asc(:code).each do |customer|
+            puts "\t#{customer.info}"
           end
         end
-        puts Time.now
+        if organization.customers.not_centralized.count > 0
+          puts "-> Not centralized invoices :"
+          organization.customers.not_centralized.asc(:code).each do |customer|
+            invoice = Invoice.new
+            invoice.user = customer
+            invoice.save
+            print "\t#{invoice.number} : #{customer.info}..."
+            invoice.create_pdf
+            print "done\n"
+          end
+        end
       end
+      puts "Task end at #{Time.now}"
+      puts '##########################################################################################'
     end
   end
 
   namespace :compta do
-    desc "Fetch report data"
+    desc 'Fetch report data'
     task :fetch_report, [:path] => :environment do
       Pack::Report.fetch
     end
   end
 
   namespace :lang do
-    desc "Feed dictionary"
+    desc 'Feed dictionary'
     task :feed, [:path] => :environment do |t,args|
       filename = File.expand_path(File.dirname(__FILE__)) + args[:path]
       

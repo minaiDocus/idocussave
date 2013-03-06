@@ -1,0 +1,7 @@
+<% if (@direction != undefined): %>
+    <button class='<%= @type %> btn btn-mini'><i class="icon-arrow-<%= @direction %>"></i></button>
+<% end %>
+<span class='label'>
+<%= @model.get('name') %>
+<%= @model.get('description') if @model.get('description').length > 0 %>
+</span>

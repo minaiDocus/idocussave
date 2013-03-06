@@ -26,8 +26,9 @@ class Subscription
   before_save :update_price, :set_start_date, :set_end_date
   
   referenced_in :user
-  references_many :invoices
-  
+  belongs_to :organization
+  has_many :invoices
+
   embeds_many :product_option_orders, as: :product_optionable
   embeds_many :requested_product_option_orders, class_name: 'ProductOptionOrder', as: :product_optionable
 

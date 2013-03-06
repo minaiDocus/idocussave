@@ -6,17 +6,19 @@
 .nav-collapse
   %ul.nav
     %li{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
-    %li{ class: ('active' if params[:controller] == 'admin/admin') }
+    %li{ class: ('active' if controller_name == 'admin') }
       = link_to 'Dashboard', admin_root_path
-    %li{ class: ('active' if params[:controller] == 'admin/users') }
+    %li{ class: ('active' if controller_name.in?(%w(organizations groups))) }
+      = link_to t('mongoid.models.organization.name').pluralize, admin_organizations_path
+    %li{ class: ('active' if controller_name == 'users') }
       = link_to t('mongoid.models.user.name').pluralize, admin_users_path
-    %li{ class: ('active' if params[:controller] == 'admin/pages') }
+    %li{ class: ('active' if controller_name == 'pages') }
       = link_to t('mongoid.models.page.name').pluralize, admin_pages_path
-    %li{ class: ('active' if params[:controller] == 'admin/cms_images') }
+    %li{ class: ('active' if controller_name == 'cms_images') }
       = link_to t('mongoid.models.cms_image.name').pluralize, admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to t('mongoid.models.product.name').pluralize, admin_products_path
-    %li{ class: ('active' if params[:controller] == 'admin/log/visits') }
+    %li{ class: ('active' if controller_name == 'visits') }
       = link_to "Historique", admin_log_visits_path
     %li{ class: ('active' if controller_name == 'gray_labels') }
       = link_to 'Marque Grise', admin_gray_labels_path

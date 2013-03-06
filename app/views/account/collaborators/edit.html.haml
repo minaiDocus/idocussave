@@ -1,0 +1,7 @@
+#collaborator
+  .row-fluid
+    .span12.box
+      %h3 Edition du collaborateur : #{ link_to @collaborator, account_organization_collaborator_path(@collaborator) }
+  .row-fluid
+    .span12.box
+      = render partial: 'form'

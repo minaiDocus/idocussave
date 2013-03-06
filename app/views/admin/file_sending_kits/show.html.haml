@@ -1,23 +1,23 @@
-.label{ style: 'padding:3px 5px 3px' }
-  - if @user.is_prescriber
-    = link_to icon_edit, '#edit_file_sending_kit', 'data-toggle' => :modal
-    = link_to content_tag(:i, '', class: 'icon-refresh'), '#select_file_sending_kit', 'data-toggle' => :modal
-  Kit d'envoi de documents
-- if @user.is_prescriber
-  %table.table.table-striped.table-bordered.table-condensed
-    %tbody
-      %tr
-        %th Chemise
-        %td
-          - if File.exist? "#{Rails.root}/files/kit/folder.pdf"
-            = link_to 'folder.pdf', folder_admin_user_file_sending_kit_path
-      %tr
-        %th Mail
-        %td
-          - if File.exist? "#{Rails.root}/files/kit/mail.pdf"
-            = link_to 'mail.pdf', mail_admin_user_file_sending_kit_path
-      %tr
-        %th Etiquette
-        %td
-          - if File.exist? "#{Rails.root}/files/kit/label.pdf"
-            = link_to 'label.pdf', label_admin_user_file_sending_kit_path
+%table.table.table-striped.table-bordered.table-condensed
+  %thead
+    %tr
+      %th{ colspan: 2 }
+        = link_to icon_edit, '#edit_file_sending_kit', 'data-toggle' => :modal, class: 'btn btn-small pull-right'
+        = link_to content_tag(:i, '', class: 'icon-refresh'), '#select_file_sending_kit', 'data-toggle' => :modal, class: 'btn btn-small pull-right margin1right'
+        %h3.pull-left= t('mongoid.models.file_sending_kit.name')
+  %tbody
+    %tr
+      %th= t('mongoid.models.file_sending_kit.attributes.folder')
+      %td
+        - if File.exist? "#{Rails.root}/files/kit/folder.pdf"
+          = link_to 'folder.pdf', folder_admin_organization_file_sending_kit_path
+    %tr
+      %th= t('mongoid.models.file_sending_kit.attributes.mail')
+      %td
+        - if File.exist? "#{Rails.root}/files/kit/mail.pdf"
+          = link_to 'mail.pdf', mail_admin_organization_file_sending_kit_path
+    %tr
+      %th= t('mongoid.models.file_sending_kit.attributes.label')
+      %td
+        - if File.exist? "#{Rails.root}/files/kit/label.pdf"
+          = link_to 'label.pdf', label_admin_organization_file_sending_kit_path

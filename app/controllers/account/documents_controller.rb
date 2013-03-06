@@ -2,17 +2,13 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  before_filter :load_user
+  before_filter :load_user_and_role
   before_filter :find_last_composition, :only => %w(index)
   skip_before_filter :login_user!, :only => %w(download piece)
 
 protected
   def current_layout
-    if params[:action] == 'index'
-      'inner'
-    else
-      nil
-    end
+    action_name == 'index' ? 'inner' : nil
   end
 
   def find_last_composition
@@ -32,12 +28,10 @@ protected
 
 public
   def index
-    @packs = Pack.any_in(:user_ids => [@user.id]).desc(:created_at)
+    @packs = @user.packs.desc(:created_at)
     @packs_count = @packs.count
     @packs = @packs.page(params[:page]).per(20)
-    if @last_composition
-      @composition = Document.any_in(:_id => @last_composition.document_ids)
-    end
+    @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     load_entries
   end
   
@@ -63,9 +57,9 @@ public
     else
       if params[:filtre]
         contents = params[:filtre].gsub(/:_:/,' ')
-        @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
+        @packs = @user.packs.search_for(contents)
       else
-        @packs = Pack.any_in(user_ids: [@user.id])
+        @packs = @user.packs
       end
 
       if params[:view] == "self"
@@ -84,7 +78,7 @@ public
   end
 
   def search
-    @results = Pack.any_in(user_ids: [@user.id]).find_words(params[:q])
+    @results = @user.packs.find_words(params[:q])
 
     respond_to do |format|
       format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
@@ -92,21 +86,13 @@ public
   end
     
   def archive
-    if current_user.is_admin
-      pack = Pack.find(params[:id])
-    else
-      pack = Pack.any_in(user_ids: [@user.id]).where(_id: params[:id]).first
-    end
-    if pack
-      filespath = pack.pieces.map { |e| e.content.path }
-      clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
-      filename = pack.name.gsub(/\s/,'_') + '.zip'
-      filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
-      system("zip -j #{filepath} #{clean_filespath}")
-      send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
-    else
-      render nothing: true, status: 404
-    end
+    pack = @user.packs.find params[:id]
+    filespath = pack.pieces.map { |e| e.content.path }
+    clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
+    filename = pack.name.gsub(/\s/,'_') + '.zip'
+    filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
+    system("zip -j #{filepath} #{clean_filespath}")
+    send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
   end
   
   def sync_with_external_file_storage

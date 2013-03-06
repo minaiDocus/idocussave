@@ -201,6 +201,9 @@ fr:
     updating: 'modification'
     removing: 'suppression'
 
+  common:
+    details: 'Détails'
+
   mongoid:
     errors:
       messages:
@@ -285,6 +288,10 @@ fr:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
             oversized:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+        doc/group:
+          attributes:
+            name:
+              already_exist: "déjà pris"
     models:
       common:
         attributes:
@@ -309,12 +316,11 @@ fr:
           is_admin: 'Est administrateur ?'
           is_prescriber: 'Est prescripteur ?'
           is_fake_prescriber: 'Est un faux prescripteur ?'
-          is_centralizer: 'Est centralisateur ?'
-          is_decentralizer: 'Est décentralisateur ?'
-          is_detail_authorized: 'Autoriser les détails ?'
           is_editable: 'Est éditable ?'
           is_invoiceable: 'Est facturable ?'
           is_access_by_token_active: 'Accès par jeton activé ?'
+          is_reminder_email_active: 'Rappel activé ?'
+          is_centralized: 'Est centralisé ?'
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'
@@ -332,6 +338,9 @@ fr:
           address_2: 'Addresse (suite)'
           city: 'Ville'
           zip: 'Code postal'
+          state: 'Etat'
+          phone: 'Tél fixe'
+          phone_mobile: 'Tél mobile'
           billing: 'Facturation'
           shipping: 'Retour'
           billing_address: 'Addressse de facturation'
@@ -440,6 +449,46 @@ fr:
           confirm:
             destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
             cancel_destroy: 'Etes vous sûr de vouloir annuler la suppression ?'
+      reminder_email:
+        zero: O email de rappel
+        one: 1 email de rappel
+        other: '#{count} emails de rappel'
+        name: Email de rappel
+        pluralized_name: Emails de rappels
+        attributes:
+          name: Nom
+          delivery_day: Jour de l'envoi
+          delivered_at: Délivrés le
+          summarize: Délivrés / Traités / Total
+          object: Objet
+          content: Contenu
+        actions:
+          add: Ajouter un email de rappel
+          send: Envoyer
+          send_confirmation: Voulez vous vraiment envoyer les rappels maintenant ?
+      file_sending_kit:
+        zero: O kit d'envoi de documents
+        one: 1 kit d'envoi de documents
+        other: "#{count} kit d'envoi de documents"
+        name: Kit d'envoi de documents
+        attributes:
+          title: Titre
+          instruction: Instruction(s)
+          position: Position
+          folder: Chemise
+          mail: Mail
+          label: Etiquettes
+          logo:
+            path: Chemin
+            height: Hauteur
+            width: Largeur
+            center:  Logo centre (affiché dans le mail)
+            left: Logo gauche
+            right: Logo droite
+        actions:
+          generate: Générer
+
+
       gray_label:
         zero: '0 marque grise'
         one: '1 marque grise'
@@ -466,3 +515,50 @@ fr:
             waiting: 'en cours de validation'
             valid: 'validé'
             invalid: 'non valide'
+      organization:
+        zero: '0 organisation'
+        one: '1 organisation'
+        other: '#{count} organisations'
+        name: 'Organisation'
+        attributes:
+          name: 'Nom'
+          description: 'Description'
+          leader: "Administrateur de l'organisation"
+          collaborators: 'Collaborateurs'
+          collaborators_count: 'Nombre de collaborateurs'
+          members: 'Membres'
+          members_count: 'Nombre de membres'
+          customers: 'Clients'
+          customers_count: 'Nombre de clients'
+          centralized_customers: 'Clients centralisés'
+          centralized_customers_count: 'Nombre de clients centralisés'
+          is_add_authorized: "Ajout d'un utilisateur à un groupe"
+          is_remove_authorized: "Retrait d'un utilisateur à un groupe"
+          is_create_authorized: "Création d'un utilisateur"
+          is_edit_authorized: "Edition d'un utilisateur"
+          is_destroy_authorized: "Suppression d'un utilisateur"
+          is_detail_authorized: 'Autoriser les détails ?'
+          is_test: 'Est une organization de test ?'
+          status:
+            admin: 'Administrateur'
+            collaborator: 'Collaborateur'
+            client: 'Client'
+      group:
+        zero: '0 groupe'
+        one: '1 groupe'
+        other: '#{count} groupes'
+        name: 'Groupe'
+        attributes:
+          name: 'Nom'
+          description: 'Description'
+          collaborators: 'Collaborateurs'
+          collaborators_count: 'Nombre de collaborateurs'
+          members: 'Membres'
+          members_count: 'Nombre de membres'
+          customers: 'Clients'
+          customers_count: 'Nombre de clients'
+          is_add_authorized: "Ajout d'un utilisateur à un groupe"
+          is_remove_authorized: "Retrait d'un utilisateur à un groupe"
+          is_create_authorized: "Création d'un utilisateur"
+          is_edit_authorized: "Edition d'un utilisateur"
+          is_destroy_authorized: "Suppression d'un utilisateur"

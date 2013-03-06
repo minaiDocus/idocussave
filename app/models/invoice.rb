@@ -28,27 +28,46 @@ class Invoice
   before_validation :set_number
 
   referenced_in :user
-  referenced_in :subscription
-  
-  public
+  belongs_to :organization
+  belongs_to :subscription
 
   def create_pdf
-    mois = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
-    
+    months = I18n.t('date.month_names').map { |e| e.capitalize if e }
+
     first_day_of_month = (self.created_at - 1.month).beginning_of_month.day
-    current_month = mois[self.created_at.month]
-    previous_month = mois[(self.created_at - 1.month).month]
+    current_month = months[self.created_at.month]
+    previous_month = months[(self.created_at - 1.month).month]
     year = (self.created_at - 1.month).year
     month = (self.created_at - 1.month).month
     
     @total = 0
     @data = []
-    
-    prescriber = user.prescriber ? user .prescriber : user
+
     time = self.created_at - 1.month
-    scan_subscription = user.scan_subscriptions.where(:start_at.lte => time, :end_at.gte => time).first
-    if (prescriber != user and !prescriber.is_centralizer)
-      # particular
+    if organization
+      scan_subscription = organization.scan_subscriptions.last
+      periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => organization.customers.centralized.active_at(time).map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
+          where(:start_at.lte => time, :end_at.gte => time).
+          select{ |period| period.end_at.month == time.month }
+
+      @total += periods.sum(&:price_in_cents_wo_vat)
+
+      @data = [
+          ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
+          ["Nombre de clients actifs : #{periods.count}",""]
+      ]
+
+      options = scan_subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
+          first.product_option_orders.
+          where(:group_position.gte => 1000).
+          by_position rescue []
+      options.each do |option|
+        @data << ["#{option.group_title} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
+        @total += option.price_in_cents_wo_vat
+      end
+      @address = organization.addresses.for_billing.first
+    else
+      scan_subscription = user.scan_subscriptions.last
       period = scan_subscription.find_or_create_period(time)
       options = period.product_option_orders
       options.each do |option|
@@ -58,30 +77,8 @@ class Invoice
       end
       @data << ["Dépassement",format_price(period.price_in_cents_of_total_excess) + " €"]
       @total += period.price_in_cents_wo_vat
-    else
-      # prescriber
-      periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => user.clients.map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
-      where(:start_at.lte => time, :end_at.gte => time).
-      select{ |period| period.end_at.month == time.month }
-
-      @total += periods.sum(&:price_in_cents_wo_vat)
-
-      @data = [
-        ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
-        ["Nombre de clients actifs : #{periods.count}",""]
-      ]
-
-      options = scan_subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
-      first.product_option_orders.
-      where(:group_position.gte => 1000).
-      by_position rescue []
-      options.each do |option|
-        @data << ["#{option.group_title} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
-        @total += option.price_in_cents_wo_vat
-      end
+      @address = user.addresses.for_billing.first
     end
-
-    @address = self.user.addresses.for_billing.first
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"
@@ -132,7 +129,7 @@ class Invoice
       pdf.move_down 14
       pdf.text "<b>Période concernée :</b> " + previous_month + " " + year.to_s, align: :left, inline_format: true
 
-      if (prescriber and prescriber != user and !prescriber.is_centralizer)
+      unless organization
         pdf.move_down 7
         pdf.text "<b>Votre code client :</b> #{user.code}", align: :left, inline_format: true
       end
@@ -177,7 +174,7 @@ class Invoice
       
       # Other information
       pdf.move_down 13
-      pdf.text "Cette somme sera prélevée sur votre compte le 4 #{mois[self.created_at.month].downcase} #{self.created_at.year}"
+      pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[self.created_at.month].downcase} #{self.created_at.year}"
       
       pdf.move_down 7
       pdf.text "Le détail de la prestation est consultable dans votre compte sur www.idocus.com"

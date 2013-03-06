@@ -1,0 +1,5 @@
+<a class="btn btn-mini" href="journals/<%= @model.get('slug') %>/edit"><i class="icon-edit"></i></a>
+<a href='#' class='assign' id='journal_<%= @model.get('id') %>' >
+  <%= @model.get('name') %>
+  <%= @model.get('description') if @model.get('description').length > 0 %>
+</a>

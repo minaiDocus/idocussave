@@ -5,6 +5,10 @@
  *= require common
  *= require jquery.fileupload-ui
  *= require_self
+ *= require account/organizations
+ *= require account/groups
+ *= require account/customers
+ *= require account/journals
 */
 
 html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
@@ -211,14 +215,16 @@ h2 { font-size: 16px; }
 .feedback.active span {
     color: #484848; }
 
-ul.token-input-list-facebook {
-    margin: 5px 0 0 5px;
-    height: 21px !important;
-    position: relative;
-    top: -5px; }
-li.token-input-token-facebook {
-    line-height: 15px;
-    margin: 2px 0 0 2px; }
+.actionbar {
+  ul.token-input-list-facebook {
+      margin: 5px 0 0 5px;
+      height: 21px !important;
+      position: relative;
+      top: -5px; }
+  li.token-input-token-facebook {
+      line-height: 15px;
+      margin: 2px 0 0 2px; }
+}
 .filter-result-type {
     color: gray;
     font-style: italic; }

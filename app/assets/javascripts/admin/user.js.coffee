@@ -32,7 +32,7 @@ edit_addresses = ->
 
 get_scan_subscription = ->
   $.ajax
-    url: '/admin/users/' + user_id + '/scan/subscription',
+    url: '/admin/users/' + user_id + '/scan_subscription',
     data: '',
     datatype: 'html',
     type: 'GET',
@@ -42,7 +42,7 @@ get_scan_subscription = ->
 
 edit_scan_subscription = ->
   $.ajax
-    url: '/admin/users/' + user_id + '/scan/subscription/edit',
+    url: '/admin/users/' + user_id + '/scan_subscription/edit',
     data: '',
     datatype: 'html',
     type: 'GET',
@@ -54,118 +54,13 @@ edit_scan_subscription = ->
 
 post_scan_subscription = ->
   $.ajax
-    url: '/admin/users/' + user_id + '/scan/subscription',
+    url: '/admin/users/' + user_id + '/scan_subscription',
     data: $('.scan_subscription.form').serialize() + '&_method=PUT',
     datatype: 'json',
     type: 'POST',
     success: (data) ->
       $('#edit_scan_subscription').modal('hide')
       get_scan_subscription()
-
-get_reminder_emails = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/reminder_emails',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#reminder_emails').html(data)
-      $('#user_is_reminder_email_active').change ->
-        is_ok = confirm 'Etes vous sûr ?'
-        if !is_ok
-          $(this).attr('checked',!$(this).is(':checked'))
-        else
-          form_data = $('#user_reminder_email_options').serialize()
-          $.ajax
-            url: '/admin/users/' + user_id,
-            data: form_data,
-            datatype: 'json',
-            type: 'POST'
-
-
-edit_reminder_emails = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/reminder_emails/edit_multiple',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#edit_reminder_emails .content').html(data)
-      $('.reminder_emails.form').submit ->
-        post_reminder_emails()
-        return false
-
-post_reminder_emails = ->
-  data = $('.reminder_emails.form').serialize().replace(new RegExp("put"),"post");
-  $.ajax
-    url: '/admin/users/' + user_id + '/reminder_emails/update_multiple',
-    data: data,
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      $('#edit_reminder_emails').modal('hide')
-      get_reminder_emails()
-
-get_file_sending_kit = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/file_sending_kit',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#file_sending_kit').html(data)
-
-edit_file_sending_kit = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/file_sending_kit/edit',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#edit_file_sending_kit .content').html(data)
-      $('.file_sending_kit.form').submit ->
-        post_file_sending_kit()
-        return false
-
-post_file_sending_kit = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/file_sending_kit',
-    data: $('.file_sending_kit.form').serialize(),
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      $('#edit_file_sending_kit').modal('hide')
-
-select_file_sending_kit = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/file_sending_kit/select',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#select_file_sending_kit .content').html(data)
-      $('.file_sending_kit.form').submit ->
-        generate_file_sending_kit()
-        return false
-
-generate_file_sending_kit = ->
-  data = $('.file_sending_kit.form').serialize.replace(new RegExp("put"),"post")
-  $.ajax
-    url: '/admin/users/' + user_id + '/file_sending_kit/generate',
-    data: data,
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      $('#select_file_sending_kit').modal('hide')
-
-get_ibiza = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/ibiza',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#ibiza_options').html(data)
 
 get_account_book_types = ->
   $.ajax
@@ -285,14 +180,6 @@ accept_account_book_type = (id) ->
     success: (data) ->
       get_account_book_types()
 
-update_user_clients = ->
-  client_ids = $('#user_client_ids').val()
-  $.ajax
-    url: '/admin/users/' + user_id,
-    data: { _method: 'PUT', 'user[client_ids]': client_ids },
-    datatype: 'json',
-    type: 'POST'
-
 propagate_stamp_name = ->
   $.ajax
     url: '/admin/users/' + user_id + '/propagate_stamp_name',
@@ -316,11 +203,9 @@ propagate_is_editable = ->
   
 toggle_prescriber_options = ->
   if $('#user_is_prescriber').is(':checked')
-    $('#prescriber_options table').removeClass('hide')
     $('#stamp_propagation').show()
     $('#is_editable_propagation').show()
   else
-    $('#prescriber_options table').addClass('hide')
     $('#stamp_propagation').hide()
     $('#is_editable_propagation').hide()
 
@@ -393,49 +278,16 @@ jQuery ->
   $('#edit_scan_subscription').on 'show', ->
     edit_scan_subscription()
 
-  get_reminder_emails()
-
-  $('#edit_reminder_emails').on 'show', ->
-    edit_reminder_emails()
-
-  get_file_sending_kit()
-
-  $('#edit_file_sending_kit').on 'show', ->
-    edit_file_sending_kit()
-
-  $('#select_file_sending_kit').on 'show', ->
-    select_file_sending_kit()
-
-  get_ibiza()
-
   get_account_book_types()
 
   $('#new_account_book_type').on 'show', ->
     new_account_book_type()
 
-  $('#user_client_ids').tokenInput "/admin/users/search_by_code.json",
-    theme: "facebook",
-    prePopulate: clients,
-    searchDelay: 500,
-    minChars: 1,
-    preventDuplicates: true,
-    hintText: "Tapez un code client à rechercher",
-    noResultsText: "Aucun résultat",
-    searchingText: "Recherche en cours...",
-    onAdd: (item) ->
-      update_user_clients()
-    ,
-    onDelete: (item) ->
-      update_user_clients()
-
   toggle_prescriber_options()
 
   $('#user_is_prescriber').click ->
     toggle_prescriber_options()
-    get_reminder_emails()
-    get_file_sending_kit()
     get_account_book_types()
-    get_ibiza()
     return false
 
   $('#stamp_propagation').click ->

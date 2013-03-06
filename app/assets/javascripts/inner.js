@@ -1,3 +1,15 @@
+//= require underscore
+//= require backbone
+//= require backbone-relational
+//= require idocus
+//= require_tree ../templates/account
+//= require ./models/journal
+//= require ./models/user
+//= require ./collections/journals
+//= require ./collections/users
+//= require_tree ./views/account
+//= require_tree ./routers/account
+
 var ActionPerformCount = 0;
 
 $(document).ajaxSend(function(e, xhr, options) {

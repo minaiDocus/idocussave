@@ -1,6 +1,7 @@
-﻿.container-fluid
-  = render 'shared/as_user'
-  = render partial: 'navigation'
+﻿#customer
   .row-fluid
-    .span12
+    .span12.box
+      %h3 Nouveau client
+  .row-fluid
+    .span12.box
       = render partial: 'form'

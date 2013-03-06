@@ -1,30 +1,32 @@
-= simple_form_for [:admin, @user, @file_sending_kit], html: { class: 'form form-horizontal file_sending_kit margin0' } do |f|
+= simple_form_for [:admin, @organization, @file_sending_kit], html: { class: 'form form-horizontal file_sending_kit margin0' } do |f|
   .modal-body
     .well
-      %h4 Détails
-      = f.input :title, label: 'Titre'
-      = f.input :position
-      = f.input :instruction, as: :text, label: 'Instruction(s)', input_html: { class: 'span7' }
+      %h4= t('common.details')
+      %hr
+      = f.input :title, label: t('mongoid.models.file_sending_kit.attributes.title')
+      = f.input :position, label: t('mongoid.models.file_sending_kit.attributes.position')
+      = f.input :instruction, as: :text, label: t('mongoid.models.file_sending_kit.attributes.instruction'), input_html: { class: 'span7' }
 
     .well
-      %h4 Logo
-      .well
-        %h4 Centre (affiché dans le mail)
-        = f.input :logo_path, label: 'Chemin', input_html: { class: 'span6' }
-        = f.input :logo_height, label: 'Hauteur'
-        = f.input :logo_width, label: 'Largeur'
+      %h4= t('mongoid.models.file_sending_kit.attributes.logo.center')
+      %hr
+      = f.input :logo_path,   label: t('mongoid.models.file_sending_kit.attributes.logo.path'), input_html: { class: 'span6' }
+      = f.input :logo_height, label: t('mongoid.models.file_sending_kit.attributes.logo.height')
+      = f.input :logo_width,  label: t('mongoid.models.file_sending_kit.attributes.logo.width')
 
-      .well
-        %h4 Gauche
-        = f.input :left_logo_path, label: 'Chemin', input_html: { class: 'span6' }
-        = f.input :left_logo_height, label: 'Hauteur'
-        = f.input :left_logo_width, label: 'Largeur'
+    .well
+      %h4= t('mongoid.models.file_sending_kit.attributes.logo.left')
+      %hr
+      = f.input :left_logo_path,   label: t('mongoid.models.file_sending_kit.attributes.logo.path'), input_html: { class: 'span6' }
+      = f.input :left_logo_height, label: t('mongoid.models.file_sending_kit.attributes.logo.height')
+      = f.input :left_logo_width,  label: t('mongoid.models.file_sending_kit.attributes.logo.width')
 
-      .well
-        %h4 Droite
-        = f.input :right_logo_path, label: 'Chemin', input_html: { class: 'span6' }
-        = f.input :right_logo_height, label: 'Hauteur'
-        = f.input :right_logo_width, label: 'Largeur'
+    .well
+      %h4= t('mongoid.models.file_sending_kit.attributes.logo.right')
+      %hr
+      = f.input :right_logo_path,   label: t('mongoid.models.file_sending_kit.attributes.logo.path'), input_html: { class: 'span6' }
+      = f.input :right_logo_height, label: t('mongoid.models.file_sending_kit.attributes.logo.height')
+      = f.input :right_logo_width,  label: t('mongoid.models.file_sending_kit.attributes.logo.width')
 
   .modal-footer
-    = f.submit 'Valider', class: 'btn'
+    = f.submit t('actions.submit'), class: 'btn'

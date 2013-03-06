@@ -1,8 +1,7 @@
-.container-fluid
-  = render 'shared/as_user'
-  = render partial: 'navigation'
+#journal
   .row-fluid
-    .span4
-      %h3 Edition
-      %hr
+    .span12.box
+      %h3 Edition du journal : #{@journal.name}
+  .row-fluid
+    .span12.box
       = render partial: 'form'

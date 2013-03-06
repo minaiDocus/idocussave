@@ -1,29 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Admin::FileSendingKitsController < Admin::AdminController
-  before_filter :load_user, :load_file_sending_kit
+  before_filter :load_organization, :load_file_sending_kit
 
   layout :nil_layout
-
-  private
-
-  def load_user
-    @user = User.find params[:user_id]
-  end
-
-  def load_file_sending_kit
-    @file_sending_kit = @user.find_or_create_file_sending_kit
-  end
-
-  def send_pdf(filename)
-    filepath = File.join([Rails.root,'/files/kit/' + filename])
-    if File.exist? filepath
-      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true)
-    else
-      render nothing: true, status: 404
-    end
-  end
-
-  public
 
   def show
   end
@@ -35,7 +14,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
     respond_to do |format|
       if @file_sending_kit.update_attributes(params[:file_sending_kit])
         format.json{ render json: {}, status: :ok }
-        format.html{ redirect_to admin_user_path(@user) }
+        format.html{ redirect_to admin_organization_path(@organization) }
       else
         format.json{ render json: @file_sending_kit.errors.to_json, status: :unprocessable_entity }
         format.html{ render action: :edit }
@@ -49,7 +28,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
   def generate
     without_shipping_address = []
     clients_data = []
-    @file_sending_kit.user.clients.active.asc(:code).each do |client|
+    @file_sending_kit.organization.customers.active.asc(:code).each do |client|
       value = params[:users]["#{client.id}"][:is_checked] rescue nil
       if value == 'true'
         without_shipping_address << client unless client.addresses.for_shipping.first
@@ -62,12 +41,12 @@ class Admin::FileSendingKitsController < Admin::AdminController
     else
       flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
       without_shipping_address.each do |client|
-        flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
+        flash[:error] << "</br><a href='#{admin_organization_path(client)}' target='_blank'>#{client.info}</a>"
       end
     end
     respond_to do |format|
       format.json{ render json: {}, status: :ok }
-      format.html{ redirect_to admin_user_path(@user) }
+      format.html{ redirect_to admin_organization_path(@organization) }
     end
   end
 
@@ -81,5 +60,20 @@ class Admin::FileSendingKitsController < Admin::AdminController
 
   def label
     send_pdf('label.pdf')
+  end
+
+private
+
+  def load_file_sending_kit
+    @file_sending_kit = @organization.find_or_create_file_sending_kit
+  end
+
+  def send_pdf(filename)
+    filepath = File.join([Rails.root,'/files/kit/' + filename])
+    if File.exist? filepath
+      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true)
+    else
+      render nothing: true, status: 404
+    end
   end
 end

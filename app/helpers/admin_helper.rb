@@ -31,21 +31,6 @@ module AdminHelper
           join(',')
   end
 
-  def sortable(column, title=nil, contains={})
-    title ||= column.titleize
-    direction = 'asc'
-    icon = ''
-    if column.to_s == sort_column
-      direction = sort_direction == 'asc' ? 'desc' : 'asc'
-      icon_direction = sort_direction == 'asc' ? 'down' : 'up'
-      icon = content_tag( :i, '', class: 'icon-chevron-' + icon_direction)
-    end
-    options = contains
-    options = options.merge(page: params[:page]) if params[:page]
-    options = options.merge(per_page: params[:per_page]) if params[:per_page]
-    link_to icon + title, { sort: column, direction: direction }.merge(options)
-  end
-
   def get_documents(packs)
     Document.any_in(:pack_id => packs.distinct(:_id))
   end
@@ -130,5 +115,27 @@ module AdminHelper
       result = true unless journal.in?(requested_journals)
     end
     result
+  end
+
+  def organization_link(user)
+    if user.organization
+      link_to user.organization.try(:name), admin_organization_path(user.organization)
+    else
+      nil
+    end
+  end
+
+  def organization_status(user)
+    if user.organization
+      if user.organization.leader == user
+        t('mongoid.models.organization.attributes.status.admin')
+      elsif user.is_prescriber
+        t('mongoid.models.organization.attributes.status.collaborator')
+      else
+        t('mongoid.models.organization.attributes.status.client')
+      end
+    else
+      nil
+    end
   end
 end

@@ -79,7 +79,7 @@ private
   
   def FileSendingKitGenerator.to_mail(user)
     mail = {}
-    mail[:prescriber_company] = user.prescriber.company
+    mail[:prescriber_company] = user.organization.leader.company
     mail[:client_email] = user.email
     mail[:client_password] = "v46hps32"
     mail[:client_code] = user.code

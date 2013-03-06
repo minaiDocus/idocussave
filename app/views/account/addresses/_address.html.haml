@@ -1,4 +1,4 @@
-%table.table.table-striped.table-bordered.table-condensed
+%table.table.table-striped.table-bordered.table-condensed.margin0bottom
   %thead.label
     %tr
       %th{ colspan: 2 }
@@ -6,14 +6,11 @@
           = is_for_billing ? t('mongoid.models.address.attributes.billing') : t('mongoid.models.address.attributes.shipping')
         - else
           - if address.is_for_billing || address.is_for_shipping
-            = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil),(address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil)].reject(&:nil?).join(t('support.array.two_words_connector'))
+            .pull-left
+              = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil),(address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil)].reject(&:nil?).join(t('support.array.two_words_connector'))
           .pull-right
-            - if @is_manager
-              = link_to icon_edit, edit_account_user_address_path(@user,address)
-              = link_to icon_destroy, account_user_address_path(@user,address), :method => :delete, data: { :confirm => t('actions.confirm') }
-            - else
-              = link_to icon_edit, edit_account_address_path(address)
-              = link_to icon_destroy, account_address_path(address), :method => :delete, data: { :confirm => t('actions.confirm') }
+            = link_to icon_edit, edit_account_address_path(address), class: 'btn btn-mini'
+            = link_to icon_destroy, account_address_path(address), :method => :delete, data: { :confirm => t('actions.confirm') }, class: 'btn btn-mini'
   - if address
     %tbody
       %tr

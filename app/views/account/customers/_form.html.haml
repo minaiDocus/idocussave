@@ -1,13 +1,13 @@
-﻿= simple_form_for [:account, @user], html: { class: 'form form-horizontal' } do |f|
-  %h2 Informations
-  = f.input :code, label: 'Code'
-  = f.input :company, label: 'Société'
-  = f.input :first_name, label: 'Prénom'
-  = f.input :last_name, label: 'Nom'
-  = f.input :email, label: 'Email'
+﻿= simple_form_for @user, url: customer_form_url(@user), html: { class: 'form form-horizontal' } do |f|
+  = f.input :code,           label: t('mongoid.models.user.attributes.code')
+  = f.input :company,        label: t('mongoid.models.user.attributes.company')
+  = f.input :first_name,     label: t('mongoid.models.user.attributes.first_name')
+  = f.input :last_name,      label: t('mongoid.models.user.attributes.last_name')
+  = f.input :email,          label: t('mongoid.models.user.attributes.email')
+  = f.input :is_centralized, label: t('mongoid.models.user.attributes.is_centralized'), as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     - if params[:action].in?(%w(new create))
-      = link_to t('actions.cancel'), account_users_path, class: 'btn'
+      = link_to t('actions.cancel'), account_organization_customers_path, class: 'btn'
     - else
-      = link_to t('actions.cancel'), account_user_path(@user.id), class: 'btn'
+      = link_to t('actions.cancel'), account_organization_customer_path(@user.id), class: 'btn'

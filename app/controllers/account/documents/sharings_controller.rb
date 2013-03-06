@@ -1,10 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::Documents::SharingsController < Account::AccountController
+  before_filter :load_user_and_role
   
   def create
-    users = User.find_by_emails(params[:email].split()) - [current_user]
+    users = User.find_by_emails(params[:email].split()) - [@user]
     
-    packs = Pack.find(params[:pack_ids].split()).select{|p| p.order.user == current_user}
+    packs = Pack.find(params[:pack_ids].split()).select { |p| p.owner == @user }
     
     packs.each do |pack|
       users.each do |user|
@@ -34,14 +35,11 @@ class Account::Documents::SharingsController < Account::AccountController
   end
   
   def destroy_multiple
-    packs = current_user.packs.find(params[:pack_ids]).select{|p| p.order.user != current_user} rescue []
+    packs = @user.packs.find(params[:pack_ids]).select{|p| p.owner != @user} rescue []
     
     packs.each do |pack|
-      current_user.packs -= [pack]
-      pack.users -= [current_user]
-      current_user.save
-      pack.save
-      DocumentTag.where(:pack_id => pack.id, :user_id => current_user.id).delete_all
+      @user.packs.delete pack
+      DocumentTag.where(:pack_id => pack.id, :user_id => @user.id).delete_all
     end
     
     respond_to do |format|

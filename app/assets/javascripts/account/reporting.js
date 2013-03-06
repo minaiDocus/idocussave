@@ -124,7 +124,7 @@ function render_data(period){
     }
     
     $.ajax({
-      url: "/account/scan/periods/" + period_id,
+      url: "/account/periods/" + period_id,
       data: "",
       dataType: "json",
       type: "GET",

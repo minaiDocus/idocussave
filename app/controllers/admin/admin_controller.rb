@@ -15,6 +15,12 @@ class Admin::AdminController < ApplicationController
     nil
   end
 
+  def load_organization
+    @organization = Organization.find_by_slug params[:organization_id]
+    raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:organization_id]) unless @organization
+    @organization
+  end
+
   public
 
   def index

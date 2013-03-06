@@ -1,0 +1,15 @@
+= simple_form_for @address, url: customer_address_form_url(@user, @address), html: { class: 'form form-horizontal ' } do |f|
+  = f.input :company,    label: t('mongoid.models.address.attributes.company')
+  = f.input :first_name, label: t('mongoid.models.address.attributes.first_name')
+  = f.input :last_name,  label: t('mongoid.models.address.attributes.last_name')
+  = f.input :address_1,  label: t('mongoid.models.address.attributes.address_1')
+  = f.input :address_2,  label: t('mongoid.models.address.attributes.address_2')
+  = f.input :city,       label: t('mongoid.models.address.attributes.city')
+  = f.input :zip,        label: t('mongoid.models.address.attributes.zip')
+  = f.input :is_for_billing, as: :boolean, label: 'Pour la facturation ?'
+  = f.input :is_for_shipping, as: :boolean, label: 'Pour le retour ?'
+  .form-actions
+    = f.submit t('actions.submit'), class: 'btn'
+    - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize
+    = link_to link_name, account_organization_customer_addresses_path(@user), class: 'btn'
+

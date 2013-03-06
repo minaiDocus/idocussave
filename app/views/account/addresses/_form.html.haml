@@ -1,4 +1,4 @@
-= simple_form_for (@is_manager ? [:account, @user, @address] : [:account, @address]), html: { class: 'form form-horizontal ' } do |f|
+= simple_form_for [:account, @address], html: { class: 'form form-horizontal ' } do |f|
   = f.input :company,    label: t('mongoid.models.address.attributes.company')
   = f.input :first_name, label: t('mongoid.models.address.attributes.first_name')
   = f.input :last_name,  label: t('mongoid.models.address.attributes.last_name')
@@ -11,8 +11,5 @@
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize
-    - if @is_manager
-      = link_to link_name, account_user_addresses_path(@user), class: 'btn'
-    - else
-      = link_to link_name, account_addresses_path, class: 'btn'
+    = link_to link_name, account_addresses_path, class: 'btn'
 

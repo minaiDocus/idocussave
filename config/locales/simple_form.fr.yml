@@ -23,4 +23,8 @@ fr:
     #   defaults:
     #     username: 'User name to sign in.'
     #     password: 'No special characters, please.'
-
+    labels:
+      doc_group:
+        leader: 'Prescripteur'
+        name: 'Nom'
+        description: 'Description'

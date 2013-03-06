@@ -1,0 +1,15 @@
+.row-fluid
+  .span3
+    .pull-left.padding1top
+      Afficher par :
+      = per_page_link 20
+      = per_page_link 50
+      = per_page_link 100
+  .span5.padding1top
+    - if params[:with_details].nil? || params[:with_details] == "true"
+      = link_to "Cacher les détails", params.merge({ with_details: false }), class: 'btn btn-mini'
+    - else
+      = link_to "Afficher les détails", params.merge({ with_details: true }), class: 'btn btn-mini'
+  .span4
+    .pull-right
+      = paginate @members

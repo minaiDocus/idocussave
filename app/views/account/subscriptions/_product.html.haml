@@ -4,4 +4,4 @@
   = label_tag "scan_subscription_requested_product_id_#{product.id}", product.title
 
   - product.product_groups.where(:product_supergroup_ids.size => 0, :position.lt => 1000).by_position.entries.each do |product_group|
-    = render partial: "product_group", locals: { product_group: product_group, product: product }
+    = render partial: 'account/subscriptions/product_group', locals: { product_group: product_group, product: product }

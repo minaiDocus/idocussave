@@ -1,0 +1,4 @@
+<a class="btn btn-mini" href="customers/<%= @model.get('id') %>"><i class="icon-edit"></i></a>
+<a href='#' class='assign' id='user_<%= @model.get('id') %>' >
+  <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
+</a>

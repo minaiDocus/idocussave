@@ -1,8 +1,10 @@
-.label{ style: 'padding:3px 5px 3px' }
-  Options Ibiza
-- if @user.is_prescriber
-  = form_for @ibiza, url: admin_user_ibiza_path(@user), html: { class: 'form form-horizontal' } do |f|
-    %table.table.table-striped.table-bordered.table-condensed
+= form_for @ibiza, url: admin_organization_ibiza_path(@organization), html: { class: 'form form-horizontal' } do |f|
+  %table.table.table-striped.table-bordered.table-condensed
+    %thead
+      %tr
+        %th
+          %h3 Options Ibiza
+    %tbody
       %tr
         %th= t('mongoid.models.ibiza.attributes.state').capitalize
         %td

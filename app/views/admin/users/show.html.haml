@@ -20,16 +20,6 @@
     .span5
       .row-fluid
         .span12
-          = render partial: 'prescriber_options'
-      .row-fluid
-        .span12
-          #reminder_emails
-      .row-fluid
-        #file_sending_kit.span12
-      .row-fluid
-        #ibiza_options.span12
-      .row-fluid
-        .span12
           = render partial: 'stamp_personalisation'
     .span7
       .row-fluid
@@ -49,4 +39,3 @@
 
 :javascript
   var user_id = "#{params[:id]}"
-  var clients = [#{user_codes_to_tokeninput_field(@user.clients)}]

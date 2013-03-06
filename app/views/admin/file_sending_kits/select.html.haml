@@ -1,4 +1,4 @@
-= form_tag generate_admin_user_file_sending_kit_path(@user), class: 'form form-horizontal file_sending_kit margin0' do
+= form_tag generate_admin_organization_file_sending_kit_path(@organization), class: 'form form-horizontal file_sending_kit margin0' do
   .modal-body
     %table.table.table-striped.table-bordered.table-condensed
       %tr
@@ -6,12 +6,12 @@
         %th Nom
         %th Début
         %th Durée
-      - @file_sending_kit.user.clients.active.asc(:code).each do |client|
+      - @file_sending_kit.organization.customers.active.asc(:code).each do |client|
         %tr
           %td!= check_box_tag "users[#{client.id}][is_checked]", "true", false
           %td!= client.info
           %td!= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
           %td!= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
   .modal-footer
-    = submit_tag 'Générer', class: 'btn'
+    = submit_tag t('mongoid.models.file_sending_kit.actions.generate'), class: 'btn'
 

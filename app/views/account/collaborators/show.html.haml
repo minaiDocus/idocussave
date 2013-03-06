@@ -1,0 +1,45 @@
+#collaborator
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3= @collaborator
+      .pull-right
+        - if @collaborator.update_request.try(:values).try(:[],'is_inactive') != nil
+          - if @collaborator.update_request.try(:values).try(:[],'is_inactive')
+            (Arrêt en attente de validation par iDocus)
+          - else
+            (Rétablissement en attente de validation par iDocus)
+        - if @collaborator.is_editable
+          - if @collaborator.is_active? && !@collaborator.update_request.try(:values).try(:[],'is_inactive')
+            = link_to "Arrêter le compte", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
+          - else
+            = link_to "Rétablir le compte", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span6
+          %table.table.table-bordered.table-striped
+            %thead
+              %tr
+                %td{ colspan: 2 }
+                  .pull-left
+                    %h3 Informations
+                  .pull-right
+                    - if @collaborator.is_editable
+                      = icon_link_to edit_account_organization_collaborator_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
+            %tbody
+              %tr
+                %th= t('mongoid.models.user.attributes.email')
+                %td= @collaborator.email
+              %tr
+                %th= t('mongoid.models.user.attributes.first_name')
+                %td= @collaborator.first_name
+              %tr
+                %th= t('mongoid.models.user.attributes.last_name')
+                %td= @collaborator.last_name
+              %tr
+                %th= t('mongoid.models.user.attributes.code')
+                %td= @collaborator.code
+              %tr
+                %th= t('mongoid.models.user.attributes.company')
+                %td= @collaborator.company
