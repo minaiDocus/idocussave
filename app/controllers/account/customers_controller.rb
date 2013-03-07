@@ -13,7 +13,7 @@ class Account::CustomersController < Account::AccountController
       format.html do
         @members = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
         @periods = ::Scan::Period.where(:user_id.in => @members.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
-        @groups = is_leader? ? @organization.groups : @possessed_user.collaboration_groups
+        @groups = is_leader? ? @organization.groups : @possessed_user.groups
         @groups = @groups.asc(:name).entries
       end
 

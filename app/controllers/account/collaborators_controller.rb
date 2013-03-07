@@ -22,13 +22,14 @@ class Account::CollaboratorsController < Account::AccountController
     @collaborator = User.new user_params
     @collaborator.is_new = true
     @collaborator.is_disabled = true
+    @collaborator.is_prescriber = true
     @collaborator.request_type = User::ADDING
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
     if @collaborator.save
       @organization.collaborators << @collaborator
       flash[:notice] = 'Demande de création envoyée.'
-      redirect_to account_organization_user_path(@collaborator)
+      redirect_to account_organization_collaborator_path(@collaborator)
     else
       flash[:error] = 'Données invalide.'
       render action: 'new'

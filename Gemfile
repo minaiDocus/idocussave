@@ -51,15 +51,11 @@ group :assets do
   gem 'therubyracer'
   gem 'jquery-ui-rails'
   gem 'backbone-on-rails'
-  gem 'backbone-relational-rails'
 end
 
 gem 'jquery-rails'
 
 group :development, :test do
-  gem 'better_errors', '0.3.2'
-  gem 'binding_of_caller'
-  gem 'meta_request'
   gem 'thin'
   gem 'debugger'
   gem 'letter_opener'

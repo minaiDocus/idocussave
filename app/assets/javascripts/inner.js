@@ -1,6 +1,5 @@
 //= require underscore
 //= require backbone
-//= require backbone-relational
 //= require idocus
 //= require_tree ../templates/account
 //= require ./models/journal
