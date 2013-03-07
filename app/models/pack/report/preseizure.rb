@@ -3,7 +3,7 @@ class Pack::Report::Preseizure
   include Mongoid::Timestamps
 
   referenced_in :report, class_name: 'Pack::Report', inverse_of: :preseizures
-  referenced_in :piece, class_name: "Pack::Piece", inverse_of: :preseizure
+  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :preseizures
   references_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
   references_many :entries, class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :preseizure, dependent: :delete
 

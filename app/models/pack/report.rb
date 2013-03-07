@@ -159,7 +159,7 @@ class Pack::Report
                   lot.css('piece').each_with_index do |part,index|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
-                    if piece and piece.preseizure.nil?
+                    if piece
                       preseizure                 = Pack::Report::Preseizure.new
                       preseizure.report          = report
                       preseizure.piece           = piece
