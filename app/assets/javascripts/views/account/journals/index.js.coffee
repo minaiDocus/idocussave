@@ -23,6 +23,9 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     _.bindAll(this, "removeJournal")
     Idocus.vent.bind("removeJournal", @removeJournal)
 
+    _.bindAll(this, "stopLoading")
+    Idocus.vent.bind("stopLoading", @stopLoading)
+
     @jCollection = new Idocus.Collections.Journals()
     @uCollection = new Idocus.Collections.Users()
     @jCollection.on 'reset', @setJCollection, this
@@ -37,7 +40,17 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     this
 
   cleanJView: ->
+    @stopJournalsLoading()
     $('#journals_list').html('')
+    this
+
+  startJournalsLoading: ->
+    $('.journals.loading').attr('src','/assets/application/spinner_gray_alpha.gif')
+    this
+
+  stopJournalsLoading: ->
+    $('.journals.loading').attr('src','/assets/application/spinner_stopped_gray_alpha.gif')
+    this
 
   setJCollection: (collection)->
     @cleanJView()
@@ -45,14 +58,25 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       collection.forEach(@addOneJ, this)
     else
       @jCollection.forEach(@addOneJ, this)
+    this
 
   addOneJ: (item) ->
     view = new Idocus.Views.Account.Journals.Journal(model: item)
     $('#journals_list').append(view.render().el)
-
+    this
 
   cleanUView: ->
+    @stopUsersLoading()
     $('#users_list').html('')
+    this
+
+  startUsersLoading: ->
+    $('.users.loading').attr('src','/assets/application/spinner_gray_alpha.gif')
+    this
+
+  stopUsersLoading: ->
+    $('.users.loading').attr('src','/assets/application/spinner_stopped_gray_alpha.gif')
+    this
 
   setUCollection: (collection)->
     @cleanUView()
@@ -60,24 +84,37 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       collection.forEach(@addOneU, this)
     else
       @uCollection.forEach(@addOneU, this)
+    this
 
   addOneU: (item) ->
     view = new Idocus.Views.Account.Journals.User(model: item)
     $('#users_list').append(view.render().el)
+    this
 
   clean: ->
     $('#assigned').html('')
     $('#unassigning').html('')
     $('#assigning').html('')
     $('#not_assigned').html('')
+    this
+
+  stopLoading: ->
+    @stopJournalsLoading()
+    @stopUsersLoading()
+    this
 
   showUsersList: (model) ->
     @current_model_name = 'Journal'
     @clean()
     @journal = model
     id = model.get('id')
-    $('#journals_list li a.assign, #users_list li a.assign').removeClass('label')
-    $('#journal_'+id).addClass('label')
+    $('#journals_list tr.current, #users_list tr.current').removeClass('current')
+    $('#journal_'+id).parents('tr').addClass('current')
+
+    $('h3.assigned').text("Journal #{@journal.get('name')} affecté aux clients suivants :")
+    $('h3.unassigning').text("Journal #{@journal.get('name')} retiré des clients suivants (en attente de validation) :")
+    $('h3.assigning').text("Journal #{@journal.get('name')} affecté aux clients suivants (en attente de validation) :")
+    $('h3.not_assigned').text("Journal #{@journal.get('name')} non affecté aux clients suivants :")
 
     collection
     filter = $('#second-search').val()
@@ -112,8 +149,10 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
       view = new Idocus.Views.Account.Journals.User2(model: user, is_up: is_up, type: name)
       $('#'+name).append(view.render().el)
+    this
 
   addUser: (model) ->
+    @startJournalsLoading()
     new_account_book_type_ids = _.union(model.get('requested_account_book_type_ids'), [@journal.get('id')])
     model.set(requested_account_book_type_ids: new_account_book_type_ids)
 
@@ -124,7 +163,9 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @journal.update_requested_users()
 
     false
+
   removeUser: (model) ->
+    @startJournalsLoading()
     new_account_book_type_ids = _.without(model.get('requested_account_book_type_ids'), @journal.get('id'))
     model.set(requested_account_book_type_ids: new_account_book_type_ids)
 
@@ -141,8 +182,13 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @clean()
     @user = model
     id = model.get('id')
-    $('#journals_list li a.assign, #users_list li a.assign').removeClass('label')
-    $('#user_'+id).addClass('label')
+    $('#journals_list tr.current, #users_list tr.current').removeClass('current')
+    $('#user_'+id).parents('tr').addClass('current')
+
+    $('h3.assigned').text("Client #{@user.get('code')} affecté aux journaux suivants :")
+    $('h3.unassigning').text("Client #{@user.get('code')} retiré des journaux suivants (en attente de validation) :")
+    $('h3.assigning').text("Client #{@user.get('code')} affecté aux journaux suivants (en attente de validation) :")
+    $('h3.not_assigned').text("Client #{@user.get('code')} non affecté aux journaux suivants :")
 
     collection
     filter = $('#second-search').val()
@@ -177,8 +223,10 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
       view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: is_up, type: name)
       $('#'+name).append(view.render().el)
+    this
 
   addJournal: (model) ->
+    @startUsersLoading()
     new_client_ids = _.union(model.get('requested_client_ids'), [@user.get('id')])
     model.set(requested_client_ids: new_client_ids)
 
@@ -189,7 +237,9 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     model.update_requested_users()
 
     false
+
   removeJournal: (model) ->
+    @startUsersLoading()
     new_client_ids = _.without(model.get('requested_client_ids'), @user.get('id'))
     model.set(requested_client_ids: new_client_ids)
 
@@ -223,6 +273,10 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       
   removeMainFilter: ->
     $('#main-search').val('')
+    $('h3.assigned').text('')
+    $('h3.unassigning').text('')
+    $('h3.assigning').text('')
+    $('h3.not_assigned').text('')
     @filterMainBoard()
 
   filterSecondBoard: (e)->
@@ -231,18 +285,8 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
         @showUsersList(@journal)
       else if @current_model_name == 'User'
         @showJournalsList(@user)
+    this
 
   removeSecondFilter: ->
     $('#second-search').val('')
     @filterSecondBoard()
-
-#  sync: (method, model, options) ->
-#    data = JSON.stringify model.toJSON()
-#    if (method == "create" || method == "update")
-#      json = model.attributes
-#      json = _.extend json, {tags_attributes: model.tags.toJSON()}
-#      data = JSON.stringify json
-#
-#      options.data = data
-#      options.contentType = 'application/json'
-#      Backbone.sync method, model, options

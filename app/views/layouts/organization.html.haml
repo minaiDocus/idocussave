@@ -53,9 +53,12 @@
       - else
         .row-fluid
           .span7.box.not-assigned-yet
-            Vous n'êtes pas encore assigné à une organisation.
-            Veuillez contacter l'administrateur, s'il vous plaît.
-            #{link_to 'Retour', account_root_path}.
+            Vous n'appartenez à aucune organisation.
+            %br
+            Veuillez contacter l'administrateur (#{ link_to 'support@idocus.com', 'mailto:support@idocus.com' }).
+            %br
+            %br
+            #{link_to 'Retour', account_root_path}
 
     != render :partial => "/shared/google_analytics"
     :plain

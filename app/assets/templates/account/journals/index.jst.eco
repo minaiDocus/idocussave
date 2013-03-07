@@ -1,26 +1,54 @@
 <div class='row-fluid'>
-    <div class='span6 margin1bottom'>
+    <div class='span6 left margin1bottom'>
         <div class='row-fluid input-prepend input-append margin0bottom'>
             <label for='main-search' class='span1 add-on margin0bottom'><i class='icon-search'></i></label>
             <input class='span10' id='main-search' type='text' placeholder='Recherche'>
             <span id='main-remove' class='add-on remove'><i class='icon-remove'></i></span>
         </div>
-        <div>
-            <ul id='journals_list'></ul>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+                <img class='pull-left journals loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
+                <h3>Liste des journaux</h3>
+            </div>
+            <table id='journals_list' class='table table-condensed'></table>
         </div>
-        <div>
-            <ul id='users_list'></ul>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+                <img class='pull-left users loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
+                <h3>Liste des clients</h3>
+            </div>
+            <table id='users_list' class='table table-condensed'></table>
         </div>
     </div>
-    <div class='span6'>
+    <div class='span6 right'>
         <div class='row-fluid input-prepend input-append margin0bottom'>
             <label for='second-search' class='span1 add-on margin0bottom'><i class='icon-search'></i></label>
             <input class='span10' id='second-search' type='text' placeholder='Recherche'>
             <span id='second-remove' class='add-on remove'><i class='icon-remove'></i></span>
         </div>
-        <ul id='assigned'></ul>
-        <ul id='unassigning'></ul>
-        <ul id='assigning'></ul>
-        <ul id='not_assigned'></ul>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+              <h3 class='assigned'></h3>
+            </div>
+            <table class='table table-condensed' id='assigned'></table>
+        </div>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+              <h3 class='unassigning'></h3>
+            </div>
+            <table class='table table-condensed' id='unassigning'></table>
+        </div>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+              <h3 class='assigning'></h3>
+            </div>
+            <table class='table table-condensed' id='assigning'></table>
+        </div>
+        <div class='list row-fluid'>
+            <div class='head span12'>
+              <h3 class='not_assigned'></h3>
+            </div>
+            <table class='table table-condensed' id='not_assigned'></table>
+        </div>
     </div>
 </div>

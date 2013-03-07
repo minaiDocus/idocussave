@@ -1,3 +1,3 @@
-class Idocus.Models.User extends Backbone.RelationalModel
+class Idocus.Models.User extends Backbone.Model
 
   urlRoot: 'customers'

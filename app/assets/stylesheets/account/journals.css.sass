@@ -1,31 +1,94 @@
 #journals
   #assignment
-    ul
+    .left
+      h3
+        font-size: 16px
+        text-align: center
+        position: relative
+        top: 2px
+        left: -16px
+    .right
+      h3
+        font-size: 14px
+        text-align: center
+    .head
       margin:
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+      border:
+        bottom: 1px solid #DDD
+      background-color: #f2f2f2
+    .list
+      margin:
+        top: 0
+        bottom: 10px
+        left: 0
+        right: 0
+      padding:
         top: 0
         bottom: 0
         left: 0
         right: 0
-      padding: 14px 19px 14px
       background-color: white
       border: 1px solid #DDD
       -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
       -moz-box-shadow: 0 1px 2px rgba(0,0,0,.065)
       box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
+    .request_type
+      width: 0
+    .request_type.adding
+      background-color: #959cff
+    .request_type.updating
+      background-color: #67D167
+    .request_type.removing
+      background-color: #da3536
+    .is_default
+      vertical-align: middle
+    table
+      margin:
+        bottom: 0
+      tr
+        td
+          padding:
+            left: 10px
+            right: 10px
+      tr.current
+        background-color: #E4E9FF
+      .assignation_summary
+        text-align: right
+        font-size: 24px
+        vertical-align: middle
     li
       list-style-type: none
+    .journal_info
+      font-size: 11px
+      margin:
+        top: 0
+        bottom: 0
+        left: 5px
+        right: 0
+      li
+        float: left
+        list-style-type: disc
+        margin-left: 28px
     span.remove
       position:  relative
       left: -3px
+    #assigned, #unassigning, #assigning
+      td
+        border:
+          color: gray
     #assigned
-      span.label
+      td
         background:
-          color: blue
+          color: #959cff
     #unassigning
-      span.label
+      td
         background:
-          color: red
+          color: #da3536
     #assigning
-      span.label
+      td
         background:
-          color: green
+          color: #67D167

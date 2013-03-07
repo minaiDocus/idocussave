@@ -1,6 +1,8 @@
-<% if (@direction != undefined): %>
-    <button class='<%= @type %> btn btn-mini'><i class="icon-arrow-<%= @direction %>"></i></button>
-<% end %>
-<span class='label'>
-<%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
-</span>
+<td>
+    <% if (@direction != undefined): %>
+        <a class='<%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+    <% end %>
+    <b>
+        <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
+    </b>
+</td>

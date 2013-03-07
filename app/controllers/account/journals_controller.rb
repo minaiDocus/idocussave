@@ -23,7 +23,6 @@ class Account::JournalsController < Account::AccountController
       @journal.request_type = 'adding'
       @journal.save
       @user.my_account_book_types << @journal
-      @user.save
       redirect_to account_organization_journals_path
     else
       render action: 'new'
@@ -49,7 +48,6 @@ class Account::JournalsController < Account::AccountController
             @journal.update_attribute(:request_type, '')
           end
         end
-        @user.set_request_type!
         format.json{ render json: @journal.to_json, status: :ok }
         format.html{ redirect_to account_organization_journals_path }
       else
@@ -60,19 +58,7 @@ class Account::JournalsController < Account::AccountController
   end
 
   def update_requested_users
-    ids = params[:account_book_type][:requested_client_ids]
-    if ids.is_a?(String) && ids == 'empty'
-      @journal.requested_clients.clear
-    else
-      user_ids = ids.delete_if{ |e| e.blank? }
-      users = @user.clients.find user_ids
-      @journal.requested_clients = []
-      users.each do |user|
-        @journal.requested_clients << user
-      end
-    end
-    @journal.update_attribute(:request_type, 'updating') unless @journal.is_new
-    @user.set_request_type!
+    @journal.update_requested_clients params[:account_book_type][:requested_client_ids]
     respond_to do |format|
       format.json{ render json: @journal.to_json, status: :ok }
       format.html{ redirect_to account_organization_journals_path }
@@ -89,13 +75,11 @@ class Account::JournalsController < Account::AccountController
 
   def destroy
     @journal.request_destroy
-    @user.set_request_type!
     redirect_to account_organization_journals_path
   end
 
   def cancel_destroy
     @journal.cancel_destroy_request
-    @user.set_request_type!
     redirect_to account_organization_journals_path
   end
 

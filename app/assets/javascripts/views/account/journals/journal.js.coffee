@@ -1,10 +1,13 @@
 class Idocus.Views.Account.Journals.Journal extends Backbone.View
 
-  tagName: 'li'
+  tagName: 'tr'
   template: JST['account/journals/journal']
 
   events:
-    'click a.assign': 'showUsersList'
+    'click td': 'showUsersList'
+
+  initialize: ->
+    @model.on 'change', @render, this
 
   render: ->
     @$el.html(@template(model: @model))

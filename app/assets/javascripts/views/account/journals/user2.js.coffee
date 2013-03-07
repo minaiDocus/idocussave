@@ -1,6 +1,6 @@
 class Idocus.Views.Account.Journals.User2 extends Backbone.View
 
-  tagName: 'li'
+  tagName: 'tr'
   template: JST['account/journals/user2']
 
   events:

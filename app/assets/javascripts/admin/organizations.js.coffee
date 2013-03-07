@@ -159,22 +159,23 @@ jQuery ->
     noResultsText: "Aucun résultat",
     searchingText: "Recherche en cours..."
 
-  get_scan_subscription()
+  if organization_id != undefined
+    get_scan_subscription()
 
-  $('#edit_scan_subscription').on 'show', ->
-    edit_scan_subscription()
+    $('#edit_scan_subscription').on 'show', ->
+      edit_scan_subscription()
 
-  get_reminder_emails()
+    get_reminder_emails()
 
-  $('#edit_reminder_emails').on 'show', ->
-    edit_reminder_emails()
+    $('#edit_reminder_emails').on 'show', ->
+      edit_reminder_emails()
 
-  get_file_sending_kit()
+    get_file_sending_kit()
 
-  $('#edit_file_sending_kit').on 'show', ->
-    edit_file_sending_kit()
+    $('#edit_file_sending_kit').on 'show', ->
+      edit_file_sending_kit()
 
-  $('#select_file_sending_kit').on 'show', ->
-    select_file_sending_kit()
+    $('#select_file_sending_kit').on 'show', ->
+      select_file_sending_kit()
 
-  get_ibiza()
+    get_ibiza()

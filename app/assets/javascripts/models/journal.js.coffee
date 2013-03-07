@@ -1,4 +1,4 @@
-class Idocus.Models.Journal extends Backbone.RelationalModel
+class Idocus.Models.Journal extends Backbone.Model
 
   urlRoot: 'journals'
 
@@ -11,3 +11,13 @@ class Idocus.Models.Journal extends Backbone.RelationalModel
       type: 'POST'
       data: data
       datatype: 'json'
+      complete: ->
+        Idocus.vent.trigger('stopLoading')
+      error: ->
+        $('.alerts').append("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'></a>Une erreur est survenue et l'administrateur a été prévenu.</div></div>")
+
+  unassigningUsers: ->
+    _.difference(@get('client_ids'), @get('requested_client_ids'))
+
+  assigningUsers: ->
+    _.difference(@get('requested_client_ids'), @get('client_ids'))

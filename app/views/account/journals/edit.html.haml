@@ -1,7 +1,10 @@
 #journal
   .row-fluid
     .span12.box
-      %h3 Edition du journal : #{@journal.name}
+      .pull-left
+        %h3 Edition du journal : #{@journal.name}
+      .pull-right
+        = link_to t('actions.destroy'), account_organization_journal_path(@journal), class: 'btn btn-danger', data: { method: :delete, confirm: t('actions.confirm') }
   .row-fluid
     .span12.box
       = render partial: 'form'

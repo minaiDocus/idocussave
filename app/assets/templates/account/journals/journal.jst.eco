@@ -1,5 +1,21 @@
-<a class="btn btn-mini" href="journals/<%= @model.get('slug') %>/edit"><i class="icon-edit"></i></a>
-<a href='#' class='assign' id='journal_<%= @model.get('id') %>' >
-  <%= @model.get('name') %>
-  <%= @model.get('description') if @model.get('description').length > 0 %>
-</a>
+<td class='is_default request_type <%= @model.get('request_type') %>'>
+  <% if @model.get('is_default'): %>
+    <i class='icon-ok'></i>
+  <% end %>
+</td>
+<td id='journal_<%= @model.get('id') %>'>
+    <b>
+        <%= @model.get('name') %>
+        <%= @model.get('description') if @model.get('description').length > 0 %>
+    </b>
+    <a href="journals/<%= @model.get('slug') %>/edit"><i class="icon-edit"></i></a>
+    <br/>
+    <ul class='journal_info'>
+        <li>Type : <%= @model.get('entry_type') || 'NA' %></li>
+        <li>N° de compte : <%= @model.get('account_number') || 'NA' %></li>
+        <li>Compte charge : <%= @model.get('charge_account') || 'NA' %></li>
+    </ul>
+</td>
+<td class='assignation_summary'>
+    <%= @model.get('requested_client_ids').length %>
+</td>
