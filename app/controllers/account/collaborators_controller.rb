@@ -27,7 +27,7 @@ class Account::CollaboratorsController < Account::AccountController
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
     if @collaborator.save
-      @organization.collaborators << @collaborator
+      @organization.members << @collaborator
       flash[:notice] = 'Demande de création envoyée.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else

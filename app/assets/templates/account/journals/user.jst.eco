@@ -1,6 +1,8 @@
+<td class='edit'>
+    <a href="customers/<%= @model.get('id') %>" class='edit hide'><i class="icon-edit"></i></a>
+</td>
 <td id='user_<%= @model.get('id') %>'>
-  <b>
-    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
-  </b>
-  <a href="customers/<%= @model.get('id') %>"><i class="icon-edit"></i></a>
+    <b>
+        <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
+    </b>
 </td>

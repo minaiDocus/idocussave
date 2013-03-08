@@ -22,7 +22,7 @@ class Account::GroupsController < Account::AccountController
     @group = @organization.groups.new group_params
     if @group.save
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_group_path(@group)
+      redirect_to account_organization_groups_path
     else
       render 'new'
     end
@@ -34,7 +34,7 @@ class Account::GroupsController < Account::AccountController
   def update
     if @group.update_attributes(group_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_group_path(@group)
+      redirect_to account_organization_groups_path
     else
       render 'edit'
     end

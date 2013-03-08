@@ -5,6 +5,8 @@ class Idocus.Views.Account.Journals.User extends Backbone.View
 
   events:
     'click td': 'showJournalsList'
+    'mouseenter td': 'showEdit'
+    'mouseleave td': 'hideEdit'
 
   render: ->
     @$el.html(@template(model: @model))
@@ -13,3 +15,9 @@ class Idocus.Views.Account.Journals.User extends Backbone.View
   showJournalsList: ->
     Idocus.vent.trigger('showJournalsList', @model)
     false
+
+  showEdit: ->
+    @$el.find('a.edit').removeClass('hide')
+
+  hideEdit: ->
+    @$el.find('a.edit').addClass('hide')

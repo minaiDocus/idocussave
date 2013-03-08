@@ -50,7 +50,7 @@ class Admin::UsersController < Admin::AdminController
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
 
-      if @user.update_attributes(user_params)
+      if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update_attributes(user_params))
         if @user.update_request
           @user.update_request.sync!
           @user.save
@@ -146,6 +146,7 @@ class Admin::UsersController < Admin::AdminController
 private
 
   def user_params
+    debugger
     params.require(:user).permit!
   end
 

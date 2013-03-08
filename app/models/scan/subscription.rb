@@ -192,6 +192,19 @@ class Scan::Subscription < Subscription
     end
   end
 
+  #def set_request_type!
+  #  set_request_type
+  #  save
+  #end
+  #
+  #def set_request_type
+  #  if is_update_requested?
+  #    self.request_type = User::UPDATING
+  #  else
+  #    self.request_type = 0
+  #  end
+  #end
+
   def is_update_requested?
     result = false
     period = current_period

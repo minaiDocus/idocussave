@@ -46,15 +46,16 @@ class Account::CustomersController < Account::AccountController
     @user.requested_account_book_types = @possessed_user.my_account_book_types.default
     if @user.save
       subscription = @user.find_or_create_scan_subscription
-      new_options = @possessed_user.find_or_create_scan_subscription.product_option_orders
+      new_options = @organization.find_or_create_subscription.product_option_orders
+      @organization.members << @user
       subscription.copy_to_options! new_options
       subscription.copy_to_requested_options! new_options
       subscription.save
-      flash[:notice] = "Demande de création envoyée."
+      flash[:notice] = 'Demande de création envoyée.'
       redirect_to account_organization_customer_path(@user)
     else
-      flash[:error] = "Données invalide."
-      render action: "new"
+      flash[:error] = 'Données invalide.'
+      render action: 'new'
     end
   end
 

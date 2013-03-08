@@ -21,7 +21,7 @@ class Account::OrganizationSubscriptionsController < Account::AccountController
       @subscription.update_attributes params[:scan_subscription]
       # @subscription.set_request_type!
       flash[:notice] = "En attente de validation de l'administrateur."
-      redirect_to account_organization_subscription_path
+      redirect_to account_organization_default_subscription_path
     else
       render action: :'edit'
     end

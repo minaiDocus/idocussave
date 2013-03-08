@@ -1,21 +1,33 @@
-<td class='is_default request_type <%= @model.get('request_type') %>'>
-  <% if @model.get('is_default'): %>
-    <i class='icon-ok'></i>
-  <% end %>
+<td class='edit request_type <%= @model.requestType() %>'>
+  <a href="journals/<%= @model.get('slug') %>/edit" class='edit hide'><i class="icon-edit"></i></a>
 </td>
-<td id='journal_<%= @model.get('id') %>'>
+<td class='is_default'>
+    <% if @model.get('is_default'): %>
+        <i class='icon-ok'></i>
+    <% end %>
+</td>
+<td id='journal_<%= @model.get('id') %>' class='selectable'>
     <b>
         <%= @model.get('name') %>
         <%= @model.get('description') if @model.get('description').length > 0 %>
     </b>
-    <a href="journals/<%= @model.get('slug') %>/edit"><i class="icon-edit"></i></a>
     <br/>
-    <ul class='journal_info'>
-        <li>Type : <%= @model.get('entry_type') || 'NA' %></li>
-        <li>N° de compte : <%= @model.get('account_number') || 'NA' %></li>
-        <li>Compte charge : <%= @model.get('charge_account') || 'NA' %></li>
-    </ul>
+    <% if(@model.get('entry_name') != 'Aucun'): %>
+        <ul class='journal_info'>
+            <li><%= @model.get('entry_name') %></li>
+            <li>N° de compte : <%= @model.get('account_number') %></li>
+            <li>Compte charge : <%= @model.get('charge_account') %></li>
+        </ul>
+    <% end %>
 </td>
-<td class='assignation_summary'>
-    <%= @model.get('requested_client_ids').length %>
+<td class='selectable summary'>
+    <span class='label requested'>
+        <%= @model.get('requested_client_ids').length %>
+    </span>
+    <span class='label assigning'>
+      <%= @model.assigningUsers().length %>
+    </span>
+    <span class='label unassigning'>
+      <%= @model.unassigningUsers().length %>
+    </span>
 </td>

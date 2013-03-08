@@ -20,7 +20,6 @@ class Admin::OrganizationSubscriptionsController < Admin::AdminController
     @subscription = @organization.find_or_create_subscription
     respond_to do |format|
       if @subscription.update_attributes params[:scan_subscription]
-        @user.set_request_type!
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else

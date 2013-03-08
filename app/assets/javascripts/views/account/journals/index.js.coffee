@@ -7,8 +7,18 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     'click #main-remove': 'removeMainFilter'
     'keypress #second-search': 'filterSecondBoard'
     'click #second-remove': 'removeSecondFilter'
+    'click #journals_list .sort i': 'jSort'
+    'click #users_list .sort i': 'uSort'
+    'mouseenter #journals_list .sort td': 'showJSortDirection'
+    'mouseleave #journals_list .sort td': 'hideJSortDirection'
 
   initialize: ->
+    @jSortDirection = 'desc'
+    @jSortColumn = 'is_default'
+
+    @uSortDirection = 'asc'
+    @uSortColumn = 'code'
+
     _.bindAll(this, "showUsersList")
     Idocus.vent.bind("showUsersList", @showUsersList)
     _.bindAll(this, "addUser")
@@ -32,16 +42,56 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @uCollection.on 'reset', @setUCollection, this
     @jCollection.fetch()
     @uCollection.fetch()
-    window.uc = @uCollection
-    window.jc = @jCollection
 
   render: ->
-    @$el.html(@template)
+    @$el.html(@template(jSortDirection: @jSortDirection, jSortColumn: @jSortColumn))
     this
+
+  jSort: (e) ->
+    previousSortColumn = @jSortColumn
+    if $(e.target).parents('td').hasClass('is_default')
+      @jSortColumn = 'is_default'
+    else if $(e.target).parents('td').hasClass('name')
+      @jSortColumn = 'name'
+
+    @$el.find('#journals_list .sort .asc, #journals_list .sort .desc').addClass('hide')
+    if previousSortColumn != @jSortColumn || @jSortDirection == 'desc'
+      @$el.find('#journals_list .sort .'+@jSortColumn+' .asc').removeClass('hide')
+      @jSortDirection = 'asc'
+    else if @jSortDirection == 'asc'
+      @$el.find('#journals_list .sort .'+@jSortColumn+' .desc').removeClass('hide')
+      @jSortDirection = 'desc'
+
+    @jCollection.changeSort(@jSortColumn, @jSortDirection)
+    @jCollection.sort()
+
+    @filterMainBoard()
+
+  uSort: ->
+    @$el.find('#users_list .sort .asc, #users_list .sort .desc').addClass('hide')
+    if @uSortDirection == 'desc'
+      @$el.find('#users_list .sort .'+@uSortColumn+' .asc').removeClass('hide')
+      @uSortDirection = 'asc'
+    else
+      @$el.find('#users_list .sort .'+@uSortColumn+' .desc').removeClass('hide')
+      @uSortDirection = 'desc'
+
+    @uCollection.changeSort(@uSortColumn, @uSortDirection)
+    @uCollection.sort()
+
+    @filterMainBoard()
+
+  showJSortDirection: (e) ->
+    unless $(e.target).hasClass(@jSortColumn)
+      $(e.target).find('i.asc').removeClass('hide')
+
+  hideJSortDirection: (e) ->
+    unless $(e.target).hasClass(@jSortColumn)
+      $(e.target).find('i').addClass('hide')
 
   cleanJView: ->
     @stopJournalsLoading()
-    $('#journals_list').html('')
+    $('#journals_list tbody').html('')
     this
 
   startJournalsLoading: ->
@@ -62,12 +112,12 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   addOneJ: (item) ->
     view = new Idocus.Views.Account.Journals.Journal(model: item)
-    $('#journals_list').append(view.render().el)
+    $('#journals_list tbody').append(view.render().el)
     this
 
   cleanUView: ->
     @stopUsersLoading()
-    $('#users_list').html('')
+    $('#users_list tbody').html('')
     this
 
   startUsersLoading: ->
@@ -88,10 +138,14 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   addOneU: (item) ->
     view = new Idocus.Views.Account.Journals.User(model: item)
-    $('#users_list').append(view.render().el)
+    $('#users_list tbody').append(view.render().el)
     this
 
   clean: ->
+    $('h3.assigned').text('')
+    $('h3.unassigning').text('')
+    $('h3.assigning').text('')
+    $('h3.not_assigned').text('')
     $('#assigned').html('')
     $('#unassigning').html('')
     $('#assigning').html('')
@@ -254,29 +308,24 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   filterMainBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
       filter = $('#main-search').val()
+      jCollection = @jCollection
+      uCollection = @uCollection
       if filter.length > 0
-        collection = _.filter @jCollection.models, (e)->
+        jCollection = _.filter @jCollection.models, (e) ->
           pattern = new RegExp(filter, 'gi')
           name = "#{e.get('name')} #{e.get('description')}"
           return pattern.test(name)
-        @setJCollection(collection)
 
-        collection = _.filter @uCollection.models, (e)->
+        uCollection = _.filter @uCollection.models, (e) ->
           pattern = new RegExp(filter, 'gi')
           name = "#{e.get('code')} #{e.get('first_name')} #{e.get('last_name')} #{e.get('company')}"
           return pattern.test(name)
-        @setUCollection(collection)
-      else
-        @setJCollection()
-        @setUCollection()
+      @setJCollection(jCollection)
+      @setUCollection(uCollection)
       @clean()
       
   removeMainFilter: ->
     $('#main-search').val('')
-    $('h3.assigned').text('')
-    $('h3.unassigning').text('')
-    $('h3.assigning').text('')
-    $('h3.not_assigned').text('')
     @filterMainBoard()
 
   filterSecondBoard: (e)->

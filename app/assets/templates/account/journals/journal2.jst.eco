@@ -1,15 +1,15 @@
+<td class='action'>
+    <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+</td>
 <td>
-  <% if (@direction != undefined): %>
-      <a class='<%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
-  <% end %>
-  <b>
-    <%= @model.get('name') %>
-    <%= @model.get('description') if @model.get('description').length > 0 %>
-  </b>
-  <br/>
-  <ul class='journal_info'>
-    <li>Type : <%= @model.get('entry_type') || 'NA' %></li>
-    <li>N° de compte : <%= @model.get('account_number') || 'NA' %></li>
-    <li>Compte charge : <%= @model.get('charge_account') || 'NA' %></li>
-  </ul>
+    <b>
+        <%= @model.get('name') %>
+        <%= @model.get('description') if @model.get('description').length > 0 %>
+    </b>
+    <br/>
+    <ul class='journal_info'>
+        <li>Type : <%= @model.get('entry_type') || 'NA' %></li>
+        <li>N° de compte : <%= @model.get('account_number') || 'NA' %></li>
+        <li>Compte charge : <%= @model.get('charge_account') || 'NA' %></li>
+    </ul>
 </td>

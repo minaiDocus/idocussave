@@ -1,6 +1,6 @@
 ﻿#subscription
   - if @subscription
-    = simple_form_for [:admin, @organization, @subscription], html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+    = simple_form_for @subscription, url: admin_organization_subscription_path(@organization, @subscription), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
       .modal-body
         .row-fluid
           .span12

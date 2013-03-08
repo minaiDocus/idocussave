@@ -177,6 +177,7 @@ fr:
     new: 'Nouveau'
     edit: 'Editer'
     destroy: 'Supprimer'
+    cancel_destroy: 'Annuler la suppression'
     cancel: 'Annuler'
     return: 'Retour'
     update: 'Mettre à jour'

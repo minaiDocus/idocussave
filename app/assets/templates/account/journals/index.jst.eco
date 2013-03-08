@@ -5,19 +5,47 @@
             <input class='span10' id='main-search' type='text' placeholder='Recherche'>
             <span id='main-remove' class='add-on remove'><i class='icon-remove'></i></span>
         </div>
+        <br />
         <div class='list row-fluid'>
             <div class='head span12'>
-                <img class='pull-left journals loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
                 <h3>Liste des journaux</h3>
+                <img class='pull-right journals loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
             </div>
-            <table id='journals_list' class='table table-condensed'></table>
+            <table id='journals_list' class='table table-condensed'>
+                <thead>
+                    <tr class='sort'>
+                        <td></td>
+                        <td class='is_default'>
+                            <i class='asc icon-chevron-up'></i>
+                            <i class='desc hide icon-chevron-down'></i>
+                        </td>
+                        <td class='name'>
+                            <i class='asc hide icon-chevron-up'></i>
+                            <i class='desc hide icon-chevron-down'></i>
+                        </td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
         <div class='list row-fluid'>
             <div class='head span12'>
-                <img class='pull-left users loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
                 <h3>Liste des clients</h3>
+                <img class='pull-right users loading' src='/assets/application/spinner_gray_alpha.gif' alt='loading' />
             </div>
-            <table id='users_list' class='table table-condensed'></table>
+            <table id='users_list' class='table table-condensed'>
+                <thead>
+                    <tr class='sort'>
+                        <td></td>
+                        <td class='code'>
+                            <i class='asc icon-chevron-up'></i>
+                            <i class='desc hide icon-chevron-down'></i>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
     <div class='span6 right'>
@@ -26,6 +54,7 @@
             <input class='span10' id='second-search' type='text' placeholder='Recherche'>
             <span id='second-remove' class='add-on remove'><i class='icon-remove'></i></span>
         </div>
+        <br />
         <div class='list row-fluid'>
             <div class='head span12'>
               <h3 class='assigned'></h3>

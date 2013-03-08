@@ -21,3 +21,12 @@ class Idocus.Models.Journal extends Backbone.Model
 
   assigningUsers: ->
     _.difference(@get('requested_client_ids'), @get('client_ids'))
+
+  requestType: ->
+    if @get('request_type') != 'adding' && @get('request_type') != 'removing'
+      if @assigningUsers().length > 0 || @unassigningUsers().length > 0
+        'updating'
+      else
+        ''
+    else
+      @get('request_type')

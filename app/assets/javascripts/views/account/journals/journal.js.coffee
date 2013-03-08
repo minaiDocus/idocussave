@@ -4,7 +4,9 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
   template: JST['account/journals/journal']
 
   events:
-    'click td': 'showUsersList'
+    'click td.selectable': 'showUsersList'
+    'mouseenter td': 'showEdit'
+    'mouseleave td': 'hideEdit'
 
   initialize: ->
     @model.on 'change', @render, this
@@ -16,3 +18,9 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
   showUsersList: ->
     Idocus.vent.trigger('showUsersList', @model)
     false
+
+  showEdit: ->
+    @$el.find('a.edit').removeClass('hide')
+
+  hideEdit: ->
+    @$el.find('a.edit').addClass('hide')
