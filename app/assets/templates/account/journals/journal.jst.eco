@@ -1,7 +1,5 @@
-<td class='request_type <%= @model.requestType() %>'>
-    <% if(@model.get('request_type') != ''): %>
-        <i class='icon-exclamation-sign'></i>
-    <% end %>
+<td class='selectable request_type <%= @model.requestType() %>'>
+    <input type="radio" name="journal" />
 </td>
 <td class='is_default'>
     <% if @model.get('is_default'): %>
@@ -18,6 +16,11 @@
             <li>N° de compte : <%= @model.get('account_number') %></li>
             <li>Compte charge : <%= @model.get('charge_account') %></li>
         </ul>
+    <% end %>
+</td>
+<td class='indicator'>
+    <% if(@model.get('request_type') != ''): %>
+        <i class='icon-exclamation-sign'></i>
     <% end %>
 </td>
 <td class='edit'>

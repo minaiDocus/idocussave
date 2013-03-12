@@ -1,3 +1,8 @@
+<td class='selection selectable'>
+    <% if @model.get('is_editable'): %>
+        <input type="radio" name="user" />
+    <% end %>
+</td>
 <td class='edit'>
     <% if @model.get('is_editable'): %>
         <a href="customers/<%= @model.get('id') %>" class='edit hide'><i class="icon-edit"></i></a>

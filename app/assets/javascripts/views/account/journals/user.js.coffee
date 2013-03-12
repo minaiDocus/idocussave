@@ -13,8 +13,8 @@ class Idocus.Views.Account.Journals.User extends Backbone.View
     this
 
   showJournalsList: ->
+    @$el.find('input[type=radio]').attr('checked','checked')
     Idocus.vent.trigger('showJournalsList', @model)
-    false
 
   showEdit: ->
     @$el.find('a.edit').removeClass('hide')
