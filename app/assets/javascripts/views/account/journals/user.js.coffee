@@ -4,7 +4,7 @@ class Idocus.Views.Account.Journals.User extends Backbone.View
   template: JST['account/journals/user']
 
   events:
-    'click td': 'showJournalsList'
+    'click td.selectable': 'showJournalsList'
     'mouseenter td': 'showEdit'
     'mouseleave td': 'hideEdit'
 

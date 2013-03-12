@@ -1,11 +1,6 @@
 # -*- encoding : UTF-8 -*-
-class Account::OrganizationSubscriptionsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter { |c| c.load_user :@possessed_user }
-  before_filter { |c| c.load_organization :@possessed_user }
-  before_filter :load_subscription, :load_product, except: 'index'
+class Account::OrganizationSubscriptionsController < Account::OrganizationController
+  before_filter :load_subscription, :load_product
 
   def show
     @subscription = @organization.find_or_create_subscription

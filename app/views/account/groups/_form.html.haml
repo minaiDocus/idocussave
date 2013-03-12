@@ -1,23 +1,30 @@
 = simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path : account_organization_group_path), html: { class: 'form form-horizontal' } do |f|
-  %fieldset
-    %legend Informations
-    = f.input :name, label: t('mongoid.models.group.attributes.name')
-    = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
-  %fieldset
-    %legend Autorisation
-    .row-fluid.padding1top
-      .span4
-        = f.input :is_create_authorized,  as: :boolean, label: t('mongoid.models.group.attributes.is_create_authorized')
-        = f.input :is_edit_authorized,    as: :boolean, label: t('mongoid.models.group.attributes.is_edit_authorized')
-        = f.input :is_destroy_authorized, as: :boolean, label: t('mongoid.models.group.attributes.is_destroy_authorized')
-      .span4
-        = f.input :is_add_authorized,     as: :boolean, label: t('mongoid.models.group.attributes.is_add_authorized')
-        = f.input :is_remove_authorized,  as: :boolean, label: t('mongoid.models.group.attributes.is_remove_authorized')
-  %fieldset
-    %legend Assignation
-    = f.input :member_tokens,                                                                                        |
-      input_html: { data: { pre: @group.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
-      label: t('mongoid.models.group.attributes.members')
+  - if is_leader?
+    %fieldset
+      %legend Informations
+      = f.input :name, label: t('mongoid.models.group.attributes.name')
+      = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
+    %fieldset
+      %legend Autorisation
+      .row-fluid.padding1top
+        .span4
+          = f.input :is_create_authorized,  as: :boolean, label: t('mongoid.models.group.attributes.is_create_authorized')
+          = f.input :is_edit_authorized,    as: :boolean, label: t('mongoid.models.group.attributes.is_edit_authorized')
+          = f.input :is_destroy_authorized, as: :boolean, label: t('mongoid.models.group.attributes.is_destroy_authorized')
+        .span4
+          = f.input :is_add_authorized,     as: :boolean, label: t('mongoid.models.group.attributes.is_add_authorized')
+          = f.input :is_remove_authorized,  as: :boolean, label: t('mongoid.models.group.attributes.is_remove_authorized')
+    %fieldset
+      %legend Assignation
+      = f.input :member_tokens,                                                                                        |
+        input_html: { data: { pre: @group.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
+        label: t('mongoid.models.group.attributes.members')
+  - else
+    %fieldset
+      %legend Assignation des clients
+      = f.input :customer_tokens,                                                                                        |
+        input_html: { data: { pre: @group.customers.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
+        label: t('mongoid.models.group.attributes.customers')
   .form-actions
     = f.submit 'Valider', class: 'btn'
     = link_to 'Annuler', account_organization_groups_path, class: 'btn'

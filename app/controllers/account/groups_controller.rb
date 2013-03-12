@@ -1,10 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::GroupsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter :load_user
-  before_filter :load_organization
+class Account::GroupsController < Account::OrganizationController
   before_filter :load_group, except: %w(index new create)
 
   def index
@@ -32,6 +27,7 @@ class Account::GroupsController < Account::AccountController
   end
 
   def update
+    @group.ensure_authorization = true unless is_leader?
     if @group.update_attributes(group_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_groups_path
@@ -49,15 +45,18 @@ class Account::GroupsController < Account::AccountController
 private
 
   def group_params
-    params.require(:group).permit(:name,
-                                  :description,
-                                  :collaborator_tokens,
-                                  :member_tokens,
-                                  :is_add_authorized,
-                                  :is_remove_authorized,
-                                  :is_create_authorized,
-                                  :is_edit_authorized,
-                                  :is_destroy_authorized)
+    if is_leader?
+      params.require(:group).permit(:name,
+                                    :description,
+                                    :member_tokens,
+                                    :is_add_authorized,
+                                    :is_remove_authorized,
+                                    :is_create_authorized,
+                                    :is_edit_authorized,
+                                    :is_destroy_authorized)
+    else
+      params.require(:group).permit(:customer_tokens)
+    end
   end
 
   def is_leader?

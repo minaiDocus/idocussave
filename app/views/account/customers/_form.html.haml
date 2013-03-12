@@ -1,4 +1,4 @@
-﻿= simple_form_for @user, url: customer_form_url(@user), html: { class: 'form form-horizontal' } do |f|
+﻿= simple_form_for @customer, url: customer_form_url(@customer), html: { class: 'form form-horizontal' } do |f|
   = f.input :code,           label: t('mongoid.models.user.attributes.code')
   = f.input :company,        label: t('mongoid.models.user.attributes.company')
   = f.input :first_name,     label: t('mongoid.models.user.attributes.first_name')
@@ -10,4 +10,4 @@
     - if params[:action].in?(%w(new create))
       = link_to t('actions.cancel'), account_organization_customers_path, class: 'btn'
     - else
-      = link_to t('actions.cancel'), account_organization_customer_path(@user.id), class: 'btn'
+      = link_to t('actions.cancel'), account_organization_customer_path(@customer.id), class: 'btn'

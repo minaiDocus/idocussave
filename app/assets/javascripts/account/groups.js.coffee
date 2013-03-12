@@ -1,5 +1,5 @@
 jQuery ->
-  $('#group_member_tokens').tokenInput "/account/organization/customers/search_by_code.json",
+  $('#group_member_tokens, #group_customer_tokens').tokenInput "/account/organization/customers/search_by_code.json",
     theme: "facebook",
     searchDelay: 500,
     minChars: 1,

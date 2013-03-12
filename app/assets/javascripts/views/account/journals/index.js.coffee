@@ -3,14 +3,19 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   template: JST['account/journals/index']
 
   events:
+    'click #assignation_tab a': 'clean'
     'keypress #main-search': 'filterMainBoard'
+    'keypress #main-user-search': 'filterMainUserBoard'
     'click #main-remove': 'removeMainFilter'
+    'click #main-user-remove': 'removeMainUserFilter'
     'keypress #second-search': 'filterSecondBoard'
     'click #second-remove': 'removeSecondFilter'
     'click #journals_list .sort i': 'jSort'
     'click #users_list .sort i': 'uSort'
     'mouseenter #journals_list .sort td': 'showJSortDirection'
     'mouseleave #journals_list .sort td': 'hideJSortDirection'
+    'click #show_details': 'toggleShowDetails'
+    'click #show_not_editable': 'toggleShowNotEditable'
 
   initialize: ->
     @jSortDirection = 'desc'
@@ -18,6 +23,9 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
     @uSortDirection = 'asc'
     @uSortColumn = 'code'
+
+    @showDetails = true
+    @showNotEditable = true
 
     _.bindAll(this, "showUsersList")
     Idocus.vent.bind("showUsersList", @showUsersList)
@@ -90,6 +98,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       $(e.target).find('i').addClass('hide')
 
   cleanJView: ->
+    @clean()
     @stopJournalsLoading()
     $('#journals_list tbody').html('')
     this
@@ -111,11 +120,12 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     this
 
   addOneJ: (item) ->
-    view = new Idocus.Views.Account.Journals.Journal(model: item)
+    view = new Idocus.Views.Account.Journals.Journal(model: item, showDetails: @showDetails)
     $('#journals_list tbody').append(view.render().el)
     this
 
   cleanUView: ->
+    @clean()
     @stopUsersLoading()
     $('#users_list tbody').html('')
     this
@@ -137,18 +147,16 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     this
 
   addOneU: (item) ->
-    view = new Idocus.Views.Account.Journals.User(model: item)
-    $('#users_list tbody').append(view.render().el)
+    if item.get('is_editable') || @showNotEditable
+      view = new Idocus.Views.Account.Journals.User(model: item)
+      $('#users_list tbody').append(view.render().el)
     this
 
   clean: ->
+    $('#journals_list tr.current, #users_list tr.current').removeClass('current')
     $('h3.assigned').text('')
-    $('h3.unassigning').text('')
-    $('h3.assigning').text('')
     $('h3.not_assigned').text('')
     $('#assigned').html('')
-    $('#unassigning').html('')
-    $('#assigning').html('')
     $('#not_assigned').html('')
     this
 
@@ -162,13 +170,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @clean()
     @journal = model
     id = model.get('id')
-    $('#journals_list tr.current, #users_list tr.current').removeClass('current')
     $('#journal_'+id).parents('tr').addClass('current')
-
-    $('h3.assigned').text("Journal #{@journal.get('name')} affecté aux clients suivants :")
-    $('h3.unassigning').text("Journal #{@journal.get('name')} retiré des clients suivants (en attente de validation) :")
-    $('h3.assigning').text("Journal #{@journal.get('name')} affecté aux clients suivants (en attente de validation) :")
-    $('h3.not_assigned').text("Journal #{@journal.get('name')} non affecté aux clients suivants :")
 
     collection
     filter = $('#second-search').val()
@@ -180,29 +182,30 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     else
       collection = @uCollection
 
+    showNotEditable = @showNotEditable
+    assignedCount = 0
+    notAssignedCount = 0
     collection.forEach (user) ->
-      name = 'not_assigned'
-      is_up = true
-      is_include = user.get('account_book_type_ids').some (e, i, a) -> return e == id
-      is_include2 = user.get('requested_account_book_type_ids').some (e, i, a) -> return e == id
-      if is_include && is_include2
-        name = 'assigned'
-        is_up = false
-      else
-        diff = _.difference(user.get('account_book_type_ids'),user.get('requested_account_book_type_ids'))
-        is_include = diff.some (e, i, a) -> return e == id
-        if is_include
-          name = 'unassigning'
-          is_up = true
+      if user.get('is_editable') || showNotEditable
+        name = 'not_assigned'
+        isUp = true
+        isWaiting = false
+        isIncluded = user.get('account_book_type_ids').some (e, i, a) -> return e == id
+        isIncludedInRequested = user.get('requested_account_book_type_ids').some (e, i, a) -> return e == id
+        if isIncludedInRequested
+          name = 'assigned'
+          isUp = false
+          assignedCount += 1
         else
-          diff = _.difference(user.get('requested_account_book_type_ids'),user.get('account_book_type_ids'))
-          is_include = diff.some (e, i, a) -> return e == id
-          if is_include
-            name = 'assigning'
-            is_up = false
+          notAssignedCount += 1
+        if isIncluded != isIncludedInRequested
+          isWaiting = true
 
-      view = new Idocus.Views.Account.Journals.User2(model: user, is_up: is_up, type: name)
-      $('#'+name).append(view.render().el)
+        view = new Idocus.Views.Account.Journals.User2(model: user, isUp: isUp, type: name, isWaiting: isWaiting)
+        $('#'+name).append(view.render().el)
+
+    $('h3.assigned').text("Journal #{@journal.get('name')} affecté aux clients suivants (#{assignedCount}) :")
+    $('h3.not_assigned').text("Journal #{@journal.get('name')} non affecté aux clients suivants (#{notAssignedCount}) :")
     this
 
   addUser: (model) ->
@@ -236,13 +239,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @clean()
     @user = model
     id = model.get('id')
-    $('#journals_list tr.current, #users_list tr.current').removeClass('current')
     $('#user_'+id).parents('tr').addClass('current')
-
-    $('h3.assigned').text("Client #{@user.get('code')} affecté aux journaux suivants :")
-    $('h3.unassigning').text("Client #{@user.get('code')} retiré des journaux suivants (en attente de validation) :")
-    $('h3.assigning').text("Client #{@user.get('code')} affecté aux journaux suivants (en attente de validation) :")
-    $('h3.not_assigned').text("Client #{@user.get('code')} non affecté aux journaux suivants :")
 
     collection
     filter = $('#second-search').val()
@@ -254,29 +251,29 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     else
       collection = @jCollection
 
+    showDetails = @showDetails
+    assignedCount = 0
+    notAssignedCount = 0
     collection.forEach (journal) ->
       name = 'not_assigned'
-      is_up = true
-      is_include = journal.get('client_ids').some (e, i, a) -> return e == id
-      is_include2 = journal.get('requested_client_ids').some (e, i, a) -> return e == id
-      if is_include && is_include2
+      isUp = true
+      isWaiting = false
+      isIncluded = journal.get('client_ids').some (e, i, a) -> return e == id
+      isIncludedInRequested = journal.get('requested_client_ids').some (e, i, a) -> return e == id
+      if isIncludedInRequested
         name = 'assigned'
-        is_up = false
+        isUp = false
+        assignedCount += 1
       else
-        diff = _.difference(journal.get('client_ids'),journal.get('requested_client_ids'))
-        is_include = diff.some (e, i, a) -> return e == id
-        if is_include
-          name = 'unassigning'
-          is_up = true
-        else
-          diff = _.difference(journal.get('requested_client_ids'),journal.get('client_ids'))
-          is_include = diff.some (e, i, a) -> return e == id
-          if is_include
-            name = 'assigning'
-            is_up = false
+        notAssignedCount += 1
+      if isIncluded != isIncludedInRequested
+        isWaiting = true
 
-      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: is_up, type: name)
+      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: isUp, type: name, showDetails: showDetails, isWaiting: isWaiting)
       $('#'+name).append(view.render().el)
+
+    $('h3.assigned').text("Client #{@user.get('code')} affecté aux journaux suivants (#{assignedCount}) :")
+    $('h3.not_assigned').text("Client #{@user.get('code')} non affecté aux journaux suivants (#{notAssignedCount}):")
     this
 
   addJournal: (model) ->
@@ -309,24 +306,33 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     if e == undefined || (e != undefined && e.keyCode == 13)
       filter = $('#main-search').val()
       jCollection = @jCollection
-      uCollection = @uCollection
       if filter.length > 0
         jCollection = _.filter @jCollection.models, (e) ->
           pattern = new RegExp(filter, 'gi')
           name = "#{e.get('name')} #{e.get('description')}"
           return pattern.test(name)
+      @setJCollection(jCollection)
+      @clean()
 
+  removeMainFilter: ->
+    $('#main-search').val('')
+    @filterMainBoard()
+
+  filterMainUserBoard: (e)->
+    if e == undefined || (e != undefined && e.keyCode == 13)
+      filter = $('#main-user-search').val()
+      uCollection = @uCollection
+      if filter.length > 0
         uCollection = _.filter @uCollection.models, (e) ->
           pattern = new RegExp(filter, 'gi')
           name = "#{e.get('code')} #{e.get('first_name')} #{e.get('last_name')} #{e.get('company')}"
           return pattern.test(name)
-      @setJCollection(jCollection)
       @setUCollection(uCollection)
       @clean()
-      
-  removeMainFilter: ->
-    $('#main-search').val('')
-    @filterMainBoard()
+
+  removeMainUserFilter: ->
+    $('#main-user-search').val('')
+    @filterMainUserBoard()
 
   filterSecondBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
@@ -339,3 +345,19 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   removeSecondFilter: ->
     $('#second-search').val('')
     @filterSecondBoard()
+
+  toggleShowDetails: ->
+    if @showDetails
+      @showDetails = false
+    else
+      @showDetails = true
+    @jCollection.trigger 'reset'
+    @uCollection.trigger 'reset'
+
+  toggleShowNotEditable: ->
+    if @showNotEditable
+      @showNotEditable = false
+    else
+      @showNotEditable = true
+    @jCollection.trigger 'reset'
+    @uCollection.trigger 'reset'

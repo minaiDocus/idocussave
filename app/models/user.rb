@@ -130,6 +130,7 @@ class User
   scope :centralized,                 where: { is_centralized: true }
   scope :not_centralized,             where: { is_centralized: false }
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
+  scope :editable,                    where: { is_editable: true }
 
   before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
 

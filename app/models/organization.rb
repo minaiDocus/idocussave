@@ -45,6 +45,8 @@ class Organization
 
   scope :not_test, where: { is_test: false }
 
+  before_save :ensure_leader_is_member
+
   def collaborators
     members.where(is_prescriber: true)
   end
@@ -79,8 +81,52 @@ class Organization
     self.name
   end
 
-  def authorized?(user)
-    leader == user
+  def authorized?(user, action, context, customer=nil)
+    if leader == user || user.is_admin
+      true
+    else
+      _action = action.to_sym
+      _context = context.to_sym
+      case _context
+        when :organization, :organizations
+          case _action
+            when :view, :show
+              true
+            when :edit
+              false
+          end
+        when :group, :groups
+          case _action
+            when :view, :index, :show, :edit, :update
+              true
+            when :new, :create, :destroy
+              false
+          end
+        when :collaborators
+          false
+        when :customer, :customers
+          case _action
+            when :view, :index, :show
+              true
+            when :new, :create
+              !user.groups.where(is_create_authorized: true).first.nil?
+            when :edit, :update
+              !user.groups.any_of({ is_create_authorized: true }, { is_edit_authorized: true }).first.nil? && customer.try(:is_editable)
+            when :destroy
+              !user.groups.where(is_destroy_authorized: true).first.nil?
+          end
+        when :addresses, :organization_addresses
+          user.customers.include? customer
+        when :subscriptions
+          !user.groups.where(is_edit_authorized: true).first.nil? && user.customers.include?(customer) && customer.try(:is_editable)
+        when :organization_subscriptions
+          false
+        when :journal, :journals
+          false
+        else
+          false
+      end
+    end
   end
 
   def find_or_create_file_sending_kit
@@ -101,4 +147,10 @@ class Organization
   alias :foc_subscription :find_or_create_subscription
   alias :find_or_create_scan_subscription :find_or_create_subscription
   alias :foc_scan_subscription :find_or_create_subscription
+
+private
+
+  def ensure_leader_is_member
+    members << leader unless members.include?(leader)
+  end
 end

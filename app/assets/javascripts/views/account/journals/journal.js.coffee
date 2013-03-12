@@ -8,11 +8,12 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
     'mouseenter td': 'showEdit'
     'mouseleave td': 'hideEdit'
 
-  initialize: ->
+  initialize: (options) ->
     @model.on 'change', @render, this
+    @showDetails = options.showDetails
 
   render: ->
-    @$el.html(@template(model: @model))
+    @$el.html(@template(model: @model, showDetails: @showDetails))
     this
 
   showUsersList: ->

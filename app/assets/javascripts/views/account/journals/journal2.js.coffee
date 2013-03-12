@@ -5,13 +5,13 @@ class Idocus.Views.Account.Journals.Journal2 extends Backbone.View
 
   events:
     'click .assigned':     'removeJournal'
-    'click .unassigning':  'addJournal'
-    'click .assigning':    'removeJournal'
     'click .not_assigned': 'addJournal'
 
   initialize: (options) ->
     @is_up = options.is_up
     @type = options.type
+    @showDetails = options.showDetails
+    @isWaiting = options.isWaiting
 
   render: ->
     if @is_up != undefined
@@ -21,7 +21,7 @@ class Idocus.Views.Account.Journals.Journal2 extends Backbone.View
         direction = 'down'
     else
       direction = undefined
-    @$el.html(@template(model: @model, type: @type, direction: direction))
+    @$el.html(@template(model: @model, type: @type, direction: direction, showDetails: @showDetails, isWaiting: @isWaiting))
     this
 
   addJournal: ->

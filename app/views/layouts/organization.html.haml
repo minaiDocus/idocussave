@@ -36,18 +36,24 @@
             .box.sidebar-nav
               %ul.nav.nav-list
                 %li.nav-header= @organization.name
-                %li{ class: (controller_name == 'organizations' ? 'active' : '') }
-                  = link_to 'Paramètres', account_organization_path
-                %li{ class: (controller_name == 'groups' ? 'active' : '') }
-                  = link_to 'Groupes', account_organization_groups_path
-                %li{ class: (controller_name == 'collaborators' ? 'active' : '') }
-                  = link_to 'Collaborateurs', account_organization_collaborators_path
-                %li{ class: (controller_name.in?(%w(customers addresses subscriptions)) ? 'active' : '') }
-                  = link_to 'Clients', account_organization_customers_path
-                %li{ class: (controller_name == 'journals' ? 'active' : '') }
-                  = link_to 'Journaux comptable', account_organization_journals_path
-                %li{ class: (controller_name == 'organization_subscriptions' ? 'active' : '') }
-                  = link_to 'Abonnement par défaut', account_organization_default_subscription_path
+                - if @organization.authorized?(@user, :view, :organization)
+                  %li{ class: (controller_name == 'organizations' ? 'active' : '') }
+                    = link_to 'Paramètres', account_organization_path
+                - if @organization.authorized?(@user, :view, :groups)
+                  %li{ class: (controller_name == 'groups' ? 'active' : '') }
+                    = link_to 'Groupes', account_organization_groups_path
+                - if @organization.authorized?(@user, :view, :collaborators)
+                  %li{ class: (controller_name == 'collaborators' ? 'active' : '') }
+                    = link_to 'Collaborateurs', account_organization_collaborators_path
+                - if @organization.authorized?(@user, :view, :customers)
+                  %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions)) ? 'active' : '') }
+                    = link_to 'Clients', account_organization_customers_path
+                - if @organization.authorized?(@user, :view, :journals)
+                  %li{ class: (controller_name == 'journals' ? 'active' : '') }
+                    = link_to 'Journaux comptable', account_organization_journals_path
+                - if @organization.authorized?(@user, :view, :default_subscription)
+                  %li{ class: (controller_name == 'organization_subscriptions' ? 'active' : '') }
+                    = link_to 'Abonnement par défaut', account_organization_default_subscription_path
           .span10
             != yield
       - else

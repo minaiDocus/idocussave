@@ -1,15 +1,11 @@
 # -*- encoding : UTF-8 -*-
-class Account::OrganizationAddressesController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter { |c| c.load_user :@possessed_user }
-  before_filter { |c| c.load_organization :@possessed_user }
+class Account::OrganizationAddressesController < Account::OrganizationController
   before_filter :load_customer
+  before_filter :verify_rights
   before_filter :load_address, only: %w(edit update destroy)
 
   def index
-    @addresses = @user.addresses.all
+    @addresses = @customer.addresses.all
   end
 
   def new
@@ -17,10 +13,10 @@ class Account::OrganizationAddressesController < Account::AccountController
   end
 
   def create
-    @address = @user.addresses.new(params[:address])
-    if @address.save && @user.save
+    @address = @customer.addresses.new(params[:address])
+    if @address.save && @customer.save
       flash[:success] = "L'adresse a été créé avec succès"
-      redirect_to account_organization_customer_addresses_path(@user)
+      redirect_to account_organization_customer_addresses_path(@customer)
     else
       flash[:error] = 'Impossible de créer cette adresse'
       render action: 'new'
@@ -31,9 +27,9 @@ class Account::OrganizationAddressesController < Account::AccountController
   end
 
   def update
-    if @address.update_attributes(params[:address]) && @user.save
+    if @address.update_attributes(params[:address]) && @customer.save
       flash[:success] = "L'adresse a été mis à jour avec succès"
-      redirect_to account_organization_customer_addresses_path(@user)
+      redirect_to account_organization_customer_addresses_path(@customer)
     else
       flash[:error] = 'Impossible de mettre à jour cette adresse'
       render action: 'edit'
@@ -43,17 +39,23 @@ class Account::OrganizationAddressesController < Account::AccountController
   def destroy
     if @address.destroy
       flash[:success] = 'Supprimé avec succès'
-      redirect_to account_organization_customer_addresses_path(@user)
+      redirect_to account_organization_customer_addresses_path(@customer)
     end
   end
 
   private
 
   def load_customer
-    @user = @organization.customers.find params[:customer_id]
+    @customer = @organization.customers.find params[:customer_id]
   end
 
   def load_address
-    @address = @user.addresses.find(params[:id])
+    @address = @customer.addresses.find(params[:id])
+  end
+
+  def verify_rights
+    unless @organization.authorized?(@user, action_name, controller_name, @customer)
+      redirect_to account_organization_path, flash: { error: t('authorization.unessessary_rights') }
+    end
   end
 end

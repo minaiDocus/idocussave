@@ -5,23 +5,22 @@ class Idocus.Views.Account.Journals.User2 extends Backbone.View
 
   events:
     'click .assigned':     'removeUser'
-    'click .unassigning':  'addUser'
-    'click .assigning':    'removeUser'
     'click .not_assigned': 'addUser'
 
   initialize: (options) ->
-    @is_up = options.is_up
+    @isUp = options.isUp
     @type = options.type
+    @isWaiting = options.isWaiting
 
   render: ->
-    if @is_up != undefined
-      if @is_up
+    if @isUp != undefined
+      if @isUp
         direction = 'up'
       else
         direction = 'down'
     else
       direction = undefined
-    @$el.html(@template(model: @model, type: @type, direction: direction))
+    @$el.html(@template(model: @model, type: @type, direction: direction, isWaiting: @isWaiting))
     this
 
   addUser: ->

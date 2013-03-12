@@ -1,11 +1,6 @@
 # -*- encoding : UTF-8 -*-
-class Account::OrganizationsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter :load_user
-  before_filter :load_organization
-  before_filter :verify_rights, only: %w(edit update)
+class Account::OrganizationsController < Account::OrganizationController
+  skip_before_filter :verify_rights, only: 'show'
 
   def show
     if @organization
@@ -20,7 +15,7 @@ class Account::OrganizationsController < Account::AccountController
   def update
     if @organization
       if @organization.update_attributes(organization_params)
-        flash[:success] = "Modifié avec succès."
+        flash[:success] = 'Modifié avec succès.'
         redirect_to account_organization_path
       else
         render 'edit'
@@ -29,13 +24,6 @@ class Account::OrganizationsController < Account::AccountController
   end
 
 private
-
-  def verify_rights
-    unless @organization && @organization.authorized?(@user)
-      flash[:error] = "Vous n'êtes pas autorisé à effectuer cette action."
-      redirect_to account_organization_path
-    end
-  end
 
   def organization_params
     params.require(:organization).permit(:name,

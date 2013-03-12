@@ -4,7 +4,8 @@
       .pull-left
         %h3 #{@group}
       .pull-right
-        = icon_link_to edit_account_organization_group_path(@group), { icon: 'edit' }, { class: 'btn' }
+        - if @organization.authorized?(@user, :edit, :group)
+          = icon_link_to edit_account_organization_group_path(@group), { icon: 'edit' }, { class: 'btn' }
       %br
   .row-fluid
     .span6

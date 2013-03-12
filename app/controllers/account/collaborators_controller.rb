@@ -1,10 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::CollaboratorsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter { |c| c.load_user_and_role :@possessed_user }
-  before_filter { |c| c.load_organization :@possessed_user }
+class Account::CollaboratorsController < Account::OrganizationController
   before_filter :load_collaborator, except: %w(index new create)
 
   def index

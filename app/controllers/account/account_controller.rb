@@ -26,21 +26,18 @@ protected
     end
   end
 
-  def verify_write_access
-    unless @user.is_editable?
-      redirect_to account_profile_path, flash: { error: "Vous ne disposez pas des droits nécessaires pour effectuer cette action." }
+  def load_user_and_role(name=:@user)
+    instance = load_user(name)
+    if instance.is_prescriber
+      if instance.my_organization
+        instance.extend OrganizationManagement::Leader
+      elsif instance.organization
+        instance.extend OrganizationManagement::Collaborator
+      end
     end
-    true
   end
 
-  def verify_management_access
-    unless current_user.is_prescriber || current_user.is_admin
-      redirect_to account_profile_path, flash: { error: "Vous ne disposez pas des droits nécessaires pour effectuer cette action." }
-    end
-    true
-  end
-
-public
+  public
   
   def index
   end

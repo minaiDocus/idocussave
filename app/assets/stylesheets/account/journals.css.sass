@@ -4,6 +4,18 @@ $red: #da3536
 
 #journals
   #assignment
+    .search
+      margin:
+        top: 2px
+      label
+        position: relative
+        right: -3px
+    .options
+      input
+        margin:
+          right: 5px
+        position: relative
+          top: -2px
     .left
       h3
         float: left
@@ -12,6 +24,10 @@ $red: #da3536
         font-size: 14px
         position: relative
         top: 2px
+      .request_type
+        background-color: $green
+      .request_type.removing
+        background-color: $red
     .right
       h3
         margin:
@@ -46,14 +62,6 @@ $red: #da3536
       -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
       -moz-box-shadow: 0 1px 2px rgba(0,0,0,.065)
       box-shadow: 0 1px 2px rgba(0, 0, 0, .065)
-    .request_type
-      width: 0
-    .request_type.adding
-      background-color: $blue
-    .request_type.updating
-      background-color: $green
-    .request_type.removing
-      background-color: $red
     table
       min-height: 20px
       height: auto !important
@@ -75,9 +83,9 @@ $red: #da3536
         td.request_type
           width: 14px
       tbody
-        td.edit
+        td.edit, td.is_default
           width: 14px
-        .request_type, .is_default
+        .is_default
           background-color: #FAF8F8
       tr.current
         background-color: #E4E9FF
@@ -94,12 +102,6 @@ $red: #da3536
             bottom: 0
             left: 0
             right: 3px
-        .requested
-          background-color: $blue
-        .assigning
-          background-color: $green
-        .unassigning
-          background-color: $red
     #journals_list, #users_list
       tr
         height: 26px
@@ -119,7 +121,7 @@ $red: #da3536
     span.remove
       position:  relative
       left: -3px
-    #assigned, #unassigning, #assigning, #not_assigned
+    #assigned, #not_assigned
       td
         border:
           color: gray
@@ -128,12 +130,8 @@ $red: #da3536
     #assigned
       td.action
         background:
-          color: $blue
-    #unassigning
+          color: $green
+    #not_assigned
       td.action
         background:
           color: $red
-    #assigning
-      td.action
-        background:
-          color: $green

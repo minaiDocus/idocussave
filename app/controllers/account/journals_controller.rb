@@ -1,11 +1,5 @@
-class Account::JournalsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter :load_user_and_role
-  before_filter :load_organization
+class Account::JournalsController < Account::OrganizationController
   before_filter :load_journal, except: %w(index new create)
-  before_filter :verify_write_access, except: %w(index new create)
 
   def index
     @journals = @user.my_account_book_types.unscoped.asc(:name)

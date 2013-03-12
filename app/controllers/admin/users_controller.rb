@@ -146,7 +146,6 @@ class Admin::UsersController < Admin::AdminController
 private
 
   def user_params
-    debugger
     params.require(:user).permit!
   end
 

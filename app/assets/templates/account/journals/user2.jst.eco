@@ -1,8 +1,15 @@
 <td class='action'>
-  <a class='<%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+    <% if @model.get('is_editable'): %>
+        <a class='<%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+    <% else: %>
+        <i class="icon-lock"></i>
+    <% end %>
 </td>
 <td>
-    <b>
-        <%= [@model.get('code'), [@model.get('first_name'), @model.get('last_name')].join(' '), @model.get('company')].join(' - ') %>
-    </b>
+    <%= [@model.get('code'), [@model.get('first_name'), @model.get('last_name')].join(' '), @model.get('company')].join(' - ') %>
+</td>
+<td class='request_type'>
+    <% if @isWaiting: %>
+        <i class="icon-exclamation-sign"></i>
+    <% end %>
 </td>

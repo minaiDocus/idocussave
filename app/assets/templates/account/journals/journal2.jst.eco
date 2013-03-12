@@ -2,14 +2,19 @@
     <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
 </td>
 <td>
-    <b>
-        <%= @model.get('name') %>
-        <%= @model.get('description') if @model.get('description').length > 0 %>
-    </b>
+    <%= @model.get('name') %>
+    <%= @model.get('description') if @model.get('description').length > 0 %>
     <br/>
-    <ul class='journal_info'>
-        <li>Type : <%= @model.get('entry_type') || 'NA' %></li>
-        <li>N° de compte : <%= @model.get('account_number') || 'NA' %></li>
-        <li>Compte charge : <%= @model.get('charge_account') || 'NA' %></li>
-    </ul>
+    <% if(@model.get('entry_name') != 'Aucun' && @showDetails): %>
+        <ul class='journal_info'>
+          <li><%= @model.get('entry_name') %></li>
+          <li>N° de compte : <%= @model.get('account_number') %></li>
+          <li>Compte charge : <%= @model.get('charge_account') %></li>
+        </ul>
+    <% end %>
+</td>
+<td class='request_type'>
+    <% if @isWaiting: %>
+        <i class="icon-exclamation-sign"></i>
+    <% end %>
 </td>

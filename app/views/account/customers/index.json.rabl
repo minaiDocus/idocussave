@@ -1,3 +1,3 @@
-collection @members
+collection @customers
 
 extends 'account/customers/show'

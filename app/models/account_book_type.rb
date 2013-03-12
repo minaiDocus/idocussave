@@ -40,18 +40,18 @@ class AccountBookType
 
   def update_requested_clients(ids)
     if ids.is_a?(String) && ids == 'empty'
-      requested_clients.clear
+      self.requested_clients = self.requested_clients - self.requested_clients.editable
     elsif owner.organization
       users = owner.organization.customers.find(ids)
 
-      sub_users = requested_clients - users
-      add_users = users - requested_clients
+      sub_users = self.requested_clients - users
+      add_users = users - self.requested_clients
 
       sub_users.each do |user|
-        requested_clients.delete(user)
+        self.requested_clients.delete(user)
       end
       add_users.each do |user|
-        requested_clients << user
+        self.requested_clients << user
       end
     end
   end

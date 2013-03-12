@@ -1,5 +1,7 @@
-<td class='edit request_type <%= @model.requestType() %>'>
-  <a href="journals/<%= @model.get('slug') %>/edit" class='edit hide'><i class="icon-edit"></i></a>
+<td class='request_type <%= @model.requestType() %>'>
+    <% if(@model.get('request_type') != ''): %>
+        <i class='icon-exclamation-sign'></i>
+    <% end %>
 </td>
 <td class='is_default'>
     <% if @model.get('is_default'): %>
@@ -7,12 +9,10 @@
     <% end %>
 </td>
 <td id='journal_<%= @model.get('id') %>' class='selectable'>
-    <b>
-        <%= @model.get('name') %>
-        <%= @model.get('description') if @model.get('description').length > 0 %>
-    </b>
+    <%= @model.get('name') %>
+    <%= @model.get('description') if @model.get('description').length > 0 %>
     <br/>
-    <% if(@model.get('entry_name') != 'Aucun'): %>
+    <% if(@model.get('entry_name') != 'Aucun' && @showDetails): %>
         <ul class='journal_info'>
             <li><%= @model.get('entry_name') %></li>
             <li>N° de compte : <%= @model.get('account_number') %></li>
@@ -20,14 +20,6 @@
         </ul>
     <% end %>
 </td>
-<td class='selectable summary'>
-    <span class='label requested'>
-        <%= @model.get('requested_client_ids').length %>
-    </span>
-    <span class='label assigning'>
-      <%= @model.assigningUsers().length %>
-    </span>
-    <span class='label unassigning'>
-      <%= @model.unassigningUsers().length %>
-    </span>
+<td class='edit'>
+    <a href="journals/<%= @model.get('slug') %>/edit" class='edit hide'><i class="icon-edit"></i></a>
 </td>

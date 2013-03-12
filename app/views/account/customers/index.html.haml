@@ -4,7 +4,8 @@
       .pull-left
         %h3 Liste des clients
       .pull-right
-        = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
+        - if @organization.authorized?(@user, :new, :customer)
+          = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
   .row-fluid
     .span9.box
       = render partial: 'list_options'
@@ -18,20 +19,20 @@
                 %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
                 %th
             %tbody
-              - @members.each do |member|
+              - @customers.each do |customer|
                 %tr
                   %td.active_state
-                    - if member.is_inactive
+                    - if customer.is_inactive
                       = icon(icon: 'remove')
-                    - elsif !is_editable?(member, @organization, @groups)
+                    - elsif !@organization.authorized?(@user, :edit, :customer, customer)
                       = icon(icon: 'lock')
-                  %td.date= member.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td.date= customer.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
                     %span.info
-                      = link_to member.info, account_organization_customer_path(member)
+                      = link_to customer.info, account_organization_customer_path(customer)
                     - unless params[:with_details] == "false"
                       %ul.subscription_info
-                        - period = @periods.select { |e| e.user == member }.first
+                        - period = @periods.select { |e| e.user == customer }.first
                         - if period
                           - period.product_option_orders.each do |option|
                             %li
@@ -39,12 +40,12 @@
                               \:
                               = option.title
                   %td.update_request_state
-                    - if !member.is_inactive && member.request_type && member.request_type.is_a?(Integer)
-                      - if member.request_type == User::ADDING
+                    - if !customer.is_inactive && customer.request_type && customer.request_type.is_a?(Integer)
+                      - if customer.request_type == User::ADDING
                         = icon(icon: 'plus', title: 'Ajouté')
-                      - elsif member.request_type == User::UPDATING
+                      - elsif customer.request_type == User::UPDATING
                         = icon(icon: 'pencil', title: 'Modifié')
-                      - elsif member.request_type == User::REMOVING
+                      - elsif customer.request_type == User::REMOVING
                         = icon(icon: 'minus', title: 'Supprimé')
       = render partial: 'list_options'
     .span3.box

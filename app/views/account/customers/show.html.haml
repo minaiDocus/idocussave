@@ -4,48 +4,48 @@
       .row-fluid
         .span12.box
           .pull-left
-            %h3= @user.info
+            %h3= @customer.info
           .pull-right
-            - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
-              - if @user.update_request.try(:values).try(:[],'is_inactive')
+            - if !@customer.update_request.try(:values).try(:[],'is_inactive').nil?
+              - if @customer.update_request.try(:values).try(:[],'is_inactive')
                 = "(Arrêt en attente de validation par iDocus)"
               - else
                 = "(Rétablissement en attente de validation par iDocus)"
-            - if @user.is_editable
-              - if @user.is_active? && !@user.update_request.try(:values).try(:[],'is_inactive')
-                = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@user), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
+            - if @customer.is_editable
+              - if @customer.is_active? && !@customer.update_request.try(:values).try(:[],'is_inactive')
+                = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
               - else
-                = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@user), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
+                = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
       .row-fluid
         .span6
           .row-fluid
             .span12.box
               %h3.aligncenter Information
-              %table.table.table-bordered.table-striped
+              %table.table.table-bordered.table-striped.margin0bottom
                 %thead
                   %tbody
                     %tr
                       %th= t('mongoid.models.user.attributes.email')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'email' }
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'email' }
                     %tr
                       %th= t('mongoid.models.user.attributes.first_name')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'first_name' }
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'first_name' }
                     %tr
                       %th= t('mongoid.models.user.attributes.last_name')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'last_name' }
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'last_name' }
                     %tr
                       %th= t('mongoid.models.user.attributes.code')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'code' }
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'code' }
                     %tr
                       %th= t('mongoid.models.user.attributes.company')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'company' }
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'company' }
                     %tr
                       %th= t('mongoid.models.user.attributes.is_centralized')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @user, key: 'is_centralized' }
-              - if @user.is_editable
-                .row-fluid
+                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'is_centralized' }
+              - if @customer.is_editable && @organization.authorized?(@user, :edit, :customer, @customer)
+                .row-fluid.margin1top
                   .span12
-                    = link_to t('actions.edit'), edit_account_organization_customer_path(@user), class: 'btn pull-right'
+                    = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
 
           .row-fluid
             .span12.box
@@ -57,14 +57,14 @@
               = render partial: 'options'
 
               - if @subscription.is_update_requested?
-                %h4.aligncenter
+                %h4.aligncenter.margin1top
                   Configuration souhaitée
                   = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
                 = render partial: 'requested_options'
-              - if @user.is_editable
-                .row-fluid
+              - if @customer.is_editable && @organization.authorized?(@user, :edit, :customer, @customer)
+                .row-fluid.margin1top
                   .span12
-                    = link_to t('actions.edit'), edit_account_organization_subscription_path(@user), class: 'btn pull-right'
+                    = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
 
         .span6
           .row-fluid
@@ -72,12 +72,12 @@
               %h3.aligncenter Gestion des adresses
               .row-fluid.margin1bottom
                 .span6
-                  = render partial: 'account/addresses/address', locals: { address: @user.billing_address,  single: true, is_for_billing: true }
+                  = render partial: 'account/addresses/address', locals: { address: @customer.billing_address,  single: true, is_for_billing: true }
                 .span6
-                  = render partial: 'account/addresses/address', locals: { address: @user.shipping_address, single: true, is_for_billing: false }
+                  = render partial: 'account/addresses/address', locals: { address: @customer.shipping_address, single: true, is_for_billing: false }
               .row-fluid
                 .span12.aligncenter
-                  = link_to 'Configurer', account_organization_customer_addresses_path(@user), class: 'btn'
+                  = link_to 'Configurer', account_organization_customer_addresses_path(@customer), class: 'btn'
           .row-fluid
             .span12.box
               %h3.aligncenter Journaux comptable
@@ -87,8 +87,6 @@
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
                     %th{ colspan: 3 } Traitement Pré-Saisie ou NDF
-                    - if @possessed_user.is_editable
-                      %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
                     %th Type
                     %th N°
@@ -102,6 +100,3 @@
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
-                      - if @possessed_user.is_editable
-                        %td
-                          = link_to icon_edit, edit_account_organization_journal_path(journal)

@@ -1,8 +1,10 @@
 <td class='edit'>
-    <a href="customers/<%= @model.get('id') %>" class='edit hide'><i class="icon-edit"></i></a>
+    <% if @model.get('is_editable'): %>
+        <a href="customers/<%= @model.get('id') %>" class='edit hide'><i class="icon-edit"></i></a>
+    <% else: %>
+        <i class="icon-lock"></i>
+    <% end %>
 </td>
-<td id='user_<%= @model.get('id') %>'>
-    <b>
-        <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
-    </b>
+<td id='user_<%= @model.get('id') %>' class='<%= 'selectable' if @model.get('is_editable') %>'>
+    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
 </td>

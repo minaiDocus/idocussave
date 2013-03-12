@@ -1,15 +1,10 @@
 ﻿# -*- encoding : UTF-8 -*-
-class Account::SubscriptionsController < Account::AccountController
-  layout 'organization'
-
-  before_filter :verify_management_access
-  before_filter { |c| c.load_user :@possessed_user }
-  before_filter { |c| c.load_organization :@possessed_user }
+class Account::SubscriptionsController < Account::OrganizationController
   before_filter :load_customer, :load_subscription, :load_product, :except => 'index'
-  before_filter :verify_write_access, :except => 'index'
+  before_filter :verify_rights, :except => 'index'
 
   def index
-    @subscription = @user.find_or_create_subscription
+    @subscription = @customer.find_or_create_subscription
   end
 
   def edit
@@ -20,12 +15,12 @@ class Account::SubscriptionsController < Account::AccountController
     # TODO sanitize params[:scan_subscription]
     if @subscription.valid?
       @subscription.update_attributes params[:scan_subscription]
-      @user.set_request_type!
+      @customer.set_request_type!
       flash[:notice] = "En attente de validation de l'administrateur."
-      if @possessed_user == @user
+      if @user == @customer
         redirect_to account_organization_subscriptions_path
       else
-        redirect_to account_organization_customer_path(@user)
+        redirect_to account_organization_customer_path(@customer)
       end
     else
       render action: :'edit'
@@ -35,14 +30,20 @@ class Account::SubscriptionsController < Account::AccountController
 private
 
   def load_customer
-    @user = User.find params[:id]
+    @customer = User.find params[:id]
   end
 
   def load_subscription
-    @subscription = @user.find_or_create_scan_subscription
+    @subscription = @customer.find_or_create_scan_subscription
   end
 
   def load_product
     @products = Product.subscribable
+  end
+
+  def verify_rights
+    unless @customer.is_editable? && @organization && @organization.authorized?(@user, action_name, controller_name, @customer)
+      redirect_to account_organization_path, flash: { error: t('authorization.unessessary_rights') }
+    end
   end
 end
