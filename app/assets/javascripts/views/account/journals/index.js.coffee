@@ -3,7 +3,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   template: JST['account/journals/index']
 
   events:
-    'click #assignation_tab a': 'clean'
+    'click #assignation_tab a': 'reinit'
     'keypress #main-search': 'filterMainBoard'
     'keypress #main-user-search': 'filterMainUserBoard'
     'click #main-remove': 'removeMainFilter'
@@ -50,6 +50,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @uCollection.on 'reset', @setUCollection, this
     @jCollection.fetch()
     @uCollection.fetch()
+    this
 
   render: ->
     @$el.html(@template(jSortDirection: @jSortDirection, jSortColumn: @jSortColumn))
@@ -92,13 +93,14 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   showJSortDirection: (e) ->
     unless $(e.target).hasClass(@jSortColumn)
       $(e.target).find('i.asc').removeClass('hide')
+    this
 
   hideJSortDirection: (e) ->
     unless $(e.target).hasClass(@jSortColumn)
       $(e.target).find('i').addClass('hide')
+    this
 
   cleanJView: ->
-    @clean()
     @stopJournalsLoading()
     $('#journals_list tbody').html('')
     this
@@ -117,6 +119,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       collection.forEach(@addOneJ, this)
     else
       @jCollection.forEach(@addOneJ, this)
+    @selectItem()
     this
 
   addOneJ: (item) ->
@@ -125,7 +128,6 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     this
 
   cleanUView: ->
-    @clean()
     @stopUsersLoading()
     $('#users_list tbody').html('')
     this
@@ -144,6 +146,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       collection.forEach(@addOneU, this)
     else
       @uCollection.forEach(@addOneU, this)
+    @selectItem()
     this
 
   addOneU: (item) ->
@@ -152,8 +155,28 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       $('#users_list tbody').append(view.render().el)
     this
 
+  selectItem: ->
+    if @current_model_name == 'Journal'
+      id = '#journal_' + @journal.get('id')
+      $tr = $(id).parents('tr')
+      $tr.addClass('current')
+      $tr.find('input[type=radio]').attr('checked','checked')
+      @showUsersList(@journal)
+    else if @current_model_name == 'User'
+      id = '#user_' + @user.get('id')
+      $tr = $(id).parents('tr')
+      $tr.addClass('current')
+      $tr.find('input[type=radio]').attr('checked','checked')
+      @showJournalsList(@user)
+    this
+
   clean: ->
+    $('input[type=radio]').removeAttr('checked')
     $('#journals_list tr.current, #users_list tr.current').removeClass('current')
+    @cleanSecondBoard()
+    this
+
+  cleanSecondBoard: ->
     $('h3.assigned').text('')
     $('h3.not_assigned').text('')
     $('#assigned').html('')
@@ -167,10 +190,9 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   showUsersList: (model) ->
     @current_model_name = 'Journal'
-    @clean()
     @journal = model
     id = model.get('id')
-    $('#journal_'+id).parents('tr').addClass('current')
+    @cleanSecondBoard()
 
     collection
     filter = $('#second-search').val()
@@ -236,7 +258,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   showJournalsList: (model) ->
     @current_model_name = 'User'
-    @clean()
+    @cleanSecondBoard()
     @user = model
     id = model.get('id')
     $('#user_'+id).parents('tr').addClass('current')
@@ -312,11 +334,13 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
           name = "#{e.get('name')} #{e.get('description')}"
           return pattern.test(name)
       @setJCollection(jCollection)
-      @clean()
+      @unSelect()
+    this
 
   removeMainFilter: ->
     $('#main-search').val('')
     @filterMainBoard()
+    this
 
   filterMainUserBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
@@ -328,11 +352,13 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
           name = "#{e.get('code')} #{e.get('first_name')} #{e.get('last_name')} #{e.get('company')}"
           return pattern.test(name)
       @setUCollection(uCollection)
-      @clean()
+      @unSelect()
+    this
 
   removeMainUserFilter: ->
     $('#main-user-search').val('')
     @filterMainUserBoard()
+    this
 
   filterSecondBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
@@ -345,19 +371,40 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
   removeSecondFilter: ->
     $('#second-search').val('')
     @filterSecondBoard()
+    this
+
+  reinit: ->
+    $('#main-search').val('')
+    $('#main-user-search').val('')
+    @filterMainBoard()
+    @filterMainUserBoard()
+    @unSelect()
+    this
+
+  unSelect: ->
+    @current_model_name = undefined
+    @model = undefined
+    $selector = $('input[type=radio]')
+    $selector.removeAttr('checked')
+    $selector.parents('tr').removeClass('current')
+    $('#second-search').val('')
+    @cleanSecondBoard()
+    this
 
   toggleShowDetails: ->
     if @showDetails
       @showDetails = false
     else
       @showDetails = true
-    @jCollection.trigger 'reset'
-    @uCollection.trigger 'reset'
+    @filterMainBoard()
+    @filterMainUserBoard()
+    this
 
   toggleShowNotEditable: ->
     if @showNotEditable
       @showNotEditable = false
     else
       @showNotEditable = true
-    @jCollection.trigger 'reset'
-    @uCollection.trigger 'reset'
+    @filterMainBoard()
+    @filterMainUserBoard()
+    this

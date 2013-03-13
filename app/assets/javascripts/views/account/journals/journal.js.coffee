@@ -11,14 +11,29 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
   initialize: (options) ->
     @model.on 'change', @render, this
     @showDetails = options.showDetails
+    @isSelected = options.isSelected
+    this
 
   render: ->
     @$el.html(@template(model: @model, showDetails: @showDetails))
+    @select() if @isSelected
     this
 
   showUsersList: ->
-    @$el.find('input[type=radio]').attr('checked','checked')
+    @select()
     Idocus.vent.trigger('showUsersList', @model)
+
+  select: ->
+    @unSelectAll()
+    @$el.find('input[type=radio]').attr('checked','checked')
+    @$el.addClass('current')
+    this
+
+  unSelectAll: ->
+    $selector = $('input[type=radio]')
+    $selector.removeAttr('checked')
+    $selector.parents('tr').removeClass('current')
+    this
 
   showEdit: ->
     @$el.find('a.edit').removeClass('hide')

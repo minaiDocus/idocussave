@@ -76,7 +76,6 @@
                     <thead>
                     <tr class='sort'>
                       <td></td>
-                      <td></td>
                       <td class='code'>
                         <i class='asc icon-chevron-up'></i>
                         <i class='desc hide icon-chevron-down'></i>
