@@ -1,38 +1,6 @@
 require 'spec_helper'
 
 describe 'Organization Management' do
-  context 'as a collaborator of organization A' do
-    describe 'creating group' do
-      it 'without rights, should fail' do
-        pending
-      end
-
-      it 'with rights, should succeed' do
-        pending
-      end
-    end
-
-    describe 'updating group' do
-      it 'without rights, should fail' do
-        pending
-      end
-
-      it 'with rights, should succeed' do
-        pending
-      end
-    end
-
-    describe 'removing group' do
-      it 'without rights, should fail' do
-        pending
-      end
-
-      it 'with rights, should succeed' do
-        pending
-      end
-    end
-  end
-
   describe 'relation' do
     before(:each) do
       @collaborator = FactoryGirl.create(:prescriber)
