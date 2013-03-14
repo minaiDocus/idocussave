@@ -89,14 +89,14 @@ module AdminHelper
     ]
   end
 
-  def is_journals_update_requested?(user)
+  def is_journals_update_requested?(instance)
     result = false
-    if user.is_prescriber
-      user.my_account_book_types.unscoped.each do |account_book_type|
+    if instance.class == 'Organization'
+      instance.account_book_types.unscoped.each do |account_book_type|
         result = true if account_book_type.is_update_requested?
       end
-    else
-      result = true if user.account_book_types != user.requested_account_book_types
+    elsif instance.class == 'User'
+      result = true if instance.account_book_types != instance.requested_account_book_types
     end
     result
   end

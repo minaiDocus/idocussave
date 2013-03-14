@@ -111,11 +111,10 @@ get_scan_subscription = ->
     type: 'GET',
     success: (data) ->
       $('#scan_subscription').html(data)
-      checkbox_event_handler()
 
 edit_scan_subscription = ->
   $.ajax
-    url: '/admin/organizations/' + organization_id + '/subscription/edit',
+    url: '/admin/organizations/' + organization_id + '/subscriptions/edit',
     data: '',
     datatype: 'html',
     type: 'GET',
@@ -134,6 +133,106 @@ post_scan_subscription = ->
     success: (data) ->
       $('#edit_scan_subscription').modal('hide')
       get_scan_subscription()
+
+get_account_book_types = ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals',
+    data: '',
+    datatype: 'html',
+    type: 'GET',
+    success: (data) ->
+      $('#account_book_types').html(data)
+      $('.edit_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        edit_account_book_type(id)
+        return false
+      $('.destroy_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          destroy_account_book_type(id)
+        return false
+      $('.remove_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          remove_account_book_type(id)
+        return false
+      $('.add_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          add_account_book_type(id)
+        return false
+      $('.accept_account_book_type').click ->
+        id = $(this).parents('tr').attr('id')
+        if confirm('Etes vous sûr ?')
+          accept_account_book_type(id)
+        return false
+
+new_account_book_type = ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals/new',
+    data: '',
+    datatype: 'html',
+    type: 'GET',
+    success: (data) ->
+      $('#new_account_book_type .content').html(data)
+      $('.account_book_type.form').submit ->
+        create_account_book_type()
+        return false
+
+create_account_book_type = ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals.json',
+    data: $('#new_account_book_type .form').serialize(),
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      $('#new_account_book_type').modal('hide')
+      get_account_book_types()
+
+edit_account_book_type = (id) ->
+  $('#edit_account_book_type').modal('show')
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals/' + id + '/edit',
+    data: '',
+    datatype: 'html',
+    type: 'GET',
+    success: (data) ->
+      $('#edit_account_book_type .content').html(data)
+      $('.assign_value').click ->
+        value = $(this).next('span').text()
+        $($(this).attr('href')).attr('value',value)
+        return false
+      $('.account_book_type.form').submit ->
+        update_account_book_type(id)
+        return false
+
+update_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals/' + id + '.json',
+    data: $('#edit_account_book_type .form').serialize(),
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      $('#edit_account_book_type').modal('hide')
+      get_account_book_types()
+
+destroy_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals/' + id,
+    data: { _method: 'DELETE' },
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      get_account_book_types()
+
+accept_account_book_type = (id) ->
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/journals/' + id + '/accept',
+    data: { _method: 'PUT' },
+    datatype: 'json',
+    type: 'POST',
+    success: (data) ->
+      get_account_book_types()
 
 jQuery ->
   window.organization_id = $('#organization').data('slug')
@@ -179,3 +278,8 @@ jQuery ->
       select_file_sending_kit()
 
     get_ibiza()
+
+    get_account_book_types()
+
+    $('#new_account_book_type').on 'show', ->
+      new_account_book_type()

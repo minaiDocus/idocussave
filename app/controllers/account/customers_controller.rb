@@ -41,7 +41,7 @@ class Account::CustomersController < Account::OrganizationController
     @customer.requested_account_book_types = @user.my_account_book_types.default
     if @customer.save
       subscription = @customer.find_or_create_scan_subscription
-      new_options = @organization.find_or_create_subscription.product_option_orders
+      new_options = @user.find_or_create_scan_subscription.product_option_orders
       @organization.members << @customer
       subscription.copy_to_options! new_options
       subscription.copy_to_requested_options! new_options

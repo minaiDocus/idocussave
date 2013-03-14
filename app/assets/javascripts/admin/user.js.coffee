@@ -70,15 +70,6 @@ get_account_book_types = ->
     type: 'GET',
     success: (data) ->
       $('#account_book_types').html(data)
-      $('.edit_account_book_type').click ->
-        id = $(this).parents('tr').attr('id')
-        edit_account_book_type(id)
-        return false
-      $('.destroy_account_book_type').click ->
-        id = $(this).parents('tr').attr('id')
-        if confirm('Etes vous sûr ?')
-          destroy_account_book_type(id)
-        return false
       $('.remove_account_book_type').click ->
         id = $(this).parents('tr').attr('id')
         if confirm('Etes vous sûr ?')
@@ -94,64 +85,6 @@ get_account_book_types = ->
         if confirm('Etes vous sûr ?')
           accept_account_book_type(id)
         return false
-
-new_account_book_type = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types/new',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#new_account_book_type .content').html(data)
-      $('.account_book_type.form').submit ->
-        create_account_book_type()
-        return false
-
-create_account_book_type = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types.json',
-    data: $('#new_account_book_type .form').serialize(),
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      $('#new_account_book_type').modal('hide')
-      get_account_book_types()
-
-edit_account_book_type = (id) ->
-  $('#edit_account_book_type').modal('show')
-  $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types/' + id + '/edit',
-    data: '',
-    datatype: 'html',
-    type: 'GET',
-    success: (data) ->
-      $('#edit_account_book_type .content').html(data)
-      $('.assign_value').click ->
-        value = $(this).next('span').text()
-        $($(this).attr('href')).attr('value',value)
-        return false
-      $('.account_book_type.form').submit ->
-        update_account_book_type(id)
-        return false
-
-update_account_book_type = (id) ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types/' + id + '.json',
-    data: $('#edit_account_book_type .form').serialize(),
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      $('#edit_account_book_type').modal('hide')
-      get_account_book_types()
-
-destroy_account_book_type = (id) ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/account_book_types/' + id,
-    data: { _method: 'DELETE' },
-    datatype: 'json',
-    type: 'POST',
-    success: (data) ->
-      get_account_book_types()
 
 remove_account_book_type = (id) ->
   $.ajax
@@ -179,35 +112,6 @@ accept_account_book_type = (id) ->
     type: 'POST',
     success: (data) ->
       get_account_book_types()
-
-propagate_stamp_name = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/propagate_stamp_name',
-    data: { _method: 'PUT' },
-    datatype: 'json',
-    type: 'POST'
-
-propagate_stamp_background = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/propagate_stamp_background',
-    data: { _method: 'PUT' },
-    datatype: 'json',
-    type: 'POST'
-
-propagate_is_editable = ->
-  $.ajax
-    url: '/admin/users/' + user_id + '/propagate_is_editable',
-    data: { _method: 'PUT' },
-    datatype: 'json',
-    type: 'POST'
-  
-toggle_prescriber_options = ->
-  if $('#user_is_prescriber').is(':checked')
-    $('#stamp_propagation').show()
-    $('#is_editable_propagation').show()
-  else
-    $('#stamp_propagation').hide()
-    $('#is_editable_propagation').hide()
 
 checkbox_event_handler = ->
   $('input[type=checkbox]').unbind 'click'
@@ -283,29 +187,8 @@ jQuery ->
   $('#new_account_book_type').on 'show', ->
     new_account_book_type()
 
-  toggle_prescriber_options()
-
   $('#user_is_prescriber').click ->
-    toggle_prescriber_options()
     get_account_book_types()
-    return false
-
-  $('#stamp_propagation').click ->
-    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
-    if(value)
-      propagate_stamp_name()
-    return false
-
-  $('#stamp_background_propagation').click ->
-    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
-    if(value)
-      propagate_stamp_background()
-    return false
-
-  $('#is_editable_propagation').click ->
-    value = confirm('Voulez vous vraiment propager les changements vers tout les clients ?')
-    if(value)
-      propagate_is_editable()
     return false
 
   $('.select-date').change ->

@@ -11,7 +11,7 @@ class AccountBookType
 
   attr_accessor :force_assignment, :force_request_assignment
   
-  referenced_in :owner, class_name: 'User', inverse_of: :my_account_book_types
+  belongs_to :organization
   references_and_referenced_in_many :clients, class_name: 'User', inverse_of: :account_book_types
   references_and_referenced_in_many :requested_clients, class_name: 'User', inverse_of: :requested_account_book_types
   embeds_one :update_request, as: :update_requestable
@@ -41,8 +41,8 @@ class AccountBookType
   def update_requested_clients(ids)
     if ids.is_a?(String) && ids == 'empty'
       self.requested_clients = self.requested_clients - self.requested_clients.editable
-    elsif owner.organization
-      users = owner.organization.customers.find(ids)
+    else
+      users = organization.customers.find(ids)
 
       sub_users = self.requested_clients - users
       add_users = users - self.requested_clients

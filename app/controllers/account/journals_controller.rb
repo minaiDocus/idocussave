@@ -3,7 +3,7 @@ class Account::JournalsController < Account::OrganizationController
   before_filter :load_journal, except: %w(index new create)
 
   def index
-    @journals = @user.my_account_book_types.unscoped.asc(:name)
+    @journals = @organization.account_book_types.unscoped.asc(:name)
   end
 
   def new
@@ -17,7 +17,7 @@ class Account::JournalsController < Account::OrganizationController
       @journal.is_new = true
       @journal.request_type = 'adding'
       @journal.save
-      @user.my_account_book_types << @journal
+      @organization.account_book_types << @journal
       redirect_to account_organization_journals_path
     else
       render action: 'new'
@@ -99,9 +99,9 @@ private
 
   def load_journal
     begin
-      @journal = @user.my_account_book_types.unscoped.find(params[:id])
+      @journal = @organization.account_book_types.unscoped.find(params[:id])
     rescue BSON::InvalidObjectId
-      @journal = @user.my_account_book_types.unscoped.find_by_slug(params[:id])
+      @journal = @organization.account_book_types.unscoped.find_by_slug(params[:id])
     end
   end
 end

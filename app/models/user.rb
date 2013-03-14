@@ -74,7 +74,6 @@ class User
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
 
-  field :is_invoiceable,                 type: Boolean, default: true
   field :is_access_by_token_active,      type: Boolean, default: true
   field :is_inactive,                    type: Boolean, default: false
 
@@ -100,8 +99,7 @@ class User
   
   references_many :own_packs, class_name: "Pack", inverse_of: :owner
   references_and_referenced_in_many :packs
-  
-  references_many :my_account_book_types, class_name: "AccountBookType", inverse_of: :owner
+
   references_and_referenced_in_many :account_book_types,  inverse_of: :clients
   references_and_referenced_in_many :requested_account_book_types, class_name: "AccountBookType",  inverse_of: :requested_clients
 
@@ -127,7 +125,6 @@ class User
   scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
-  scope :invoiceable,                 where: { is_invoiceable: true }
   scope :centralized,                 where: { is_centralized: true }
   scope :not_centralized,             where: { is_centralized: false }
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
@@ -211,26 +208,8 @@ class User
     find_or_create_external_file_storage
   end
 
-  def propagate_stamp_name
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:stamp_name, self.stamp_name) }
-    end
-  end
-
   def csv_outputter!
     csv_outputter || CsvOutputter.create(user_id: self.id)
-  end
-
-  def propagate_stamp_background
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:is_stamp_background_filled, self.is_stamp_background_filled) }
-    end
-  end
-
-  def propagate_is_editable
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:is_editable, self.is_editable) }
-    end
   end
   
   def update_requestable_attributes
@@ -261,13 +240,7 @@ class User
     result = true if self.update_request.try(:values).present?
     unless self.update_request.try(:values) && self.update_request.try(:values).try(:[],:is_inactive)
       # journals
-      if self.is_prescriber
-        my_account_book_types.unscoped.each do |account_book_type|
-          result = true if account_book_type.is_update_requested?
-        end
-      else
-        result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
-      end
+      result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
       # subscription
       result = true if scan_subscriptions.current.try(:is_update_requested?)
     end
@@ -305,6 +278,14 @@ class User
 
   def find_or_create_organization_rights
     organization_rights || create_organization_rights
+  end
+
+  def prescribers
+    if !self.is_prescriber
+      User.any_in(group_ids: self['group_ids']).prescribers
+    else
+      []
+    end
   end
 
 protected

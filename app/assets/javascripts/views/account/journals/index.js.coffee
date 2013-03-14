@@ -324,16 +324,20 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
     false
 
+  mainFilter: ->
+    filter = $('#main-search').val()
+    jCollection = @jCollection
+    if filter.length > 0
+      jCollection = _.filter @jCollection.models, (e) ->
+        pattern = new RegExp(filter, 'gi')
+        name = "#{e.get('name')} #{e.get('description')}"
+        return pattern.test(name)
+    @setJCollection(jCollection)
+    this
+
   filterMainBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
-      filter = $('#main-search').val()
-      jCollection = @jCollection
-      if filter.length > 0
-        jCollection = _.filter @jCollection.models, (e) ->
-          pattern = new RegExp(filter, 'gi')
-          name = "#{e.get('name')} #{e.get('description')}"
-          return pattern.test(name)
-      @setJCollection(jCollection)
+      @mainFilter()
       @unSelect()
     this
 
@@ -342,16 +346,20 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @filterMainBoard()
     this
 
+  mainUserFilter: ->
+    filter = $('#main-user-search').val()
+    uCollection = @uCollection
+    if filter.length > 0
+      uCollection = _.filter @uCollection.models, (e) ->
+        pattern = new RegExp(filter, 'gi')
+        name = "#{e.get('code')} #{e.get('first_name')} #{e.get('last_name')} #{e.get('company')}"
+        return pattern.test(name)
+    @setUCollection(uCollection)
+    this
+
   filterMainUserBoard: (e)->
     if e == undefined || (e != undefined && e.keyCode == 13)
-      filter = $('#main-user-search').val()
-      uCollection = @uCollection
-      if filter.length > 0
-        uCollection = _.filter @uCollection.models, (e) ->
-          pattern = new RegExp(filter, 'gi')
-          name = "#{e.get('code')} #{e.get('first_name')} #{e.get('last_name')} #{e.get('company')}"
-          return pattern.test(name)
-      @setUCollection(uCollection)
+      @mainUserFilter()
       @unSelect()
     this
 
@@ -396,8 +404,8 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       @showDetails = false
     else
       @showDetails = true
-    @filterMainBoard()
-    @filterMainUserBoard()
+    @mainFilter()
+    @mainUserFilter()
     this
 
   toggleShowNotEditable: ->
@@ -405,6 +413,6 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       @showNotEditable = false
     else
       @showNotEditable = true
-    @filterMainBoard()
-    @filterMainUserBoard()
+    @mainFilter()
+    @mainUserFilter()
     this

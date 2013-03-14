@@ -54,7 +54,11 @@ class Scan::Subscription < Subscription
     else
       period = Scan::Period.new(start_at: time, duration: period_duration)
       period.subscription = self
-      period.user = self.user
+      if organization
+        period.organization = self.organization
+      else
+        period.user = self.user
+      end
       period.set_product_option_orders self.product_option_orders
 
       period.max_sheets_authorized = self.max_sheets_authorized

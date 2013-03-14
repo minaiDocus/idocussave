@@ -27,9 +27,11 @@ class Organization
   has_many   :groups
   has_many   :subscriptions
   has_many   :scan_subscriptions, class_name: 'Scan::Subscription', inverse_of: 'organization'
+  has_many   :periods, class_name: 'Scan::Period', inverse_of: 'organization'
   has_many   :packs
   has_many   :invoices
   has_many   :reminder_emails, autosave: true
+  has_many   :account_book_types
   has_one    :file_sending_kit
   has_one    :ibiza
 

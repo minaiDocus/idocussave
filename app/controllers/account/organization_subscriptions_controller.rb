@@ -3,7 +3,6 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   before_filter :load_subscription, :load_product
 
   def show
-    @subscription = @organization.find_or_create_subscription
   end
 
   def edit
@@ -12,10 +11,8 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
   def update
     # TODO sanitize params[:scan_subscription]
-    if @subscription.valid?
-      @subscription.update_attributes params[:scan_subscription]
-      # @subscription.set_request_type!
-      flash[:notice] = "En attente de validation de l'administrateur."
+    if @subscription.update_attributes params[:scan_subscription]
+      flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_default_subscription_path
     else
       render action: :'edit'
@@ -25,7 +22,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 private
 
   def load_subscription
-    @subscription = @organization.find_or_create_subscription
+    @subscription = @user.find_or_create_scan_subscription
   end
 
   def load_product

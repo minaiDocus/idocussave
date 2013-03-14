@@ -8,11 +8,8 @@
     .row-fluid
       .span8
         = simple_form_for @subscription, :url => account_organization_default_subscription_path, html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
-          - if @organization.is_period_duration_editable
-            = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
-          - else
-            = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration
-          = render partial: 'account/subscriptions/product', collection: @products
+          = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
+          = render partial: 'product', collection: @products
           .form-actions
             = f.submit 'Valider', class: 'btn'
             = link_to 'Annuler', account_organization_default_subscription_path, class: 'btn'

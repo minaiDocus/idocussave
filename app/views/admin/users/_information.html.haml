@@ -64,9 +64,7 @@
               %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
             %tr
               %th= t('mongoid.models.user.attributes.is_editable')
-              %td.value
-                = check_box_tag 'user[is_editable]', 1, @user.is_editable
-                #is_editable_propagation.pull-right= icon_link_to '#', { icon: 'globe' }, { title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' } }
+              %td.value= check_box_tag 'user[is_editable]', 1, @user.is_editable
             %tr
               %th= t('mongoid.models.user.attributes.use_debit_mandate')
               %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate

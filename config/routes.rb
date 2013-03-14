@@ -141,9 +141,6 @@ Idocus::Application.routes.draw do
     root :to => "admin#index"
     resources :users do
       get 'search_by_code', on: :collection
-      put 'propagate_stamp_name', on: :member
-      put 'propagate_stamp_background', on: :member
-      put 'propagate_is_editable', on: :member
       put 'accept', on: :member
       put 'activate', on: :member
       resources :addresses do
@@ -160,6 +157,7 @@ Idocus::Application.routes.draw do
     end
     resources :organizations do
       resources :groups
+      resources :journals, controller: 'organization_journals'
       resources :reminder_emails do
         get  'preview',         on: :member
         get  'deliver',         on: :member

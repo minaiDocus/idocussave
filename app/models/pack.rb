@@ -570,7 +570,7 @@ class Pack
       end
 
       pack.init_delivery_for(user)
-      pack.init_delivery_for(user.prescriber) if user.prescriber
+      pack.init_delivery_for(user.prescribers) if user.prescribers.any?
 
       [user.email,pack_filename,piece_position]
     end
