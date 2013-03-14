@@ -24,16 +24,9 @@
     = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn'
   %hr
   %fieldset
-    %legend Autorisation
+    %legend Options
     .row-fluid
-      .span4
-        = f.input :is_create_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_create_authorized')
-        = f.input :is_edit_authorized,    as: :boolean, label: t('mongoid.models.organization.attributes.is_edit_authorized')
-        = f.input :is_destroy_authorized, as: :boolean, label: t('mongoid.models.organization.attributes.is_destroy_authorized')
-      .span4
-        = f.input :is_add_authorized,     as: :boolean, label: t('mongoid.models.organization.attributes.is_add_authorized')
-        = f.input :is_remove_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_remove_authorized')
-      .span4
+      .span12
         = f.input :is_detail_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_detail_authorized')
         = f.input :is_test,               as: :boolean, label: t('mongoid.models.organization.attributes.is_test')
   %fieldset

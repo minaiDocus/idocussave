@@ -2,11 +2,7 @@
   .span12.pannel.margin1bottom
     .row-fluid
       .span12
-        - if @possessed_user == @user
-          %h3.pull-left Edition de l'abonnement de base
-          = link_to "Annuler", account_organization_subscriptions_path, class: 'btn pull-left margin1left'
-        - else
-          %h3 Edition de l'abonnement du client #{link_to @user.info, account_organization_customer_path(@user)}
+        %h3 Edition de l'abonnement du client : #{link_to @user.info, account_organization_customer_path(@user)}
     %hr
     .row-fluid
       .span8
@@ -18,7 +14,4 @@
           = render partial: 'account/subscriptions/product', collection: @products
           .form-actions
             = f.submit 'Valider', class: 'btn'
-            - if @possessed_user == @user
-              = link_to 'Annuler', account_organization_subscriptions_path, class: 'btn'
-            - else
-              = link_to 'Annuler', account_organization_customer_path(@user), class: 'btn'
+            = link_to 'Annuler', account_organization_customer_path(@user), class: 'btn'

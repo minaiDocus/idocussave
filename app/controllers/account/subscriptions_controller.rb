@@ -1,11 +1,7 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::SubscriptionsController < Account::OrganizationController
-  before_filter :load_customer, :load_subscription, :load_product, :except => 'index'
-  before_filter :verify_rights, :except => 'index'
-
-  def index
-    @subscription = @customer.find_or_create_subscription
-  end
+  before_filter :load_customer, :load_subscription, :load_product
+  before_filter :verify_rights
 
   def edit
     @options = @subscription.requested_product_option_orders.map { |option| option.to_a }
@@ -42,8 +38,9 @@ private
   end
 
   def verify_rights
-    unless @customer.is_editable? && @organization && @organization.authorized?(@user, action_name, controller_name, @customer)
-      redirect_to account_organization_path, flash: { error: t('authorization.unessessary_rights') }
+    unless @customer.is_editable && (is_leader? || @user.can_manage_customers?)
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
     end
   end
 end

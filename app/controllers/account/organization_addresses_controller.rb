@@ -1,7 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::OrganizationAddressesController < Account::OrganizationController
   before_filter :load_customer
-  before_filter :verify_rights
   before_filter :load_address, only: %w(edit update destroy)
 
   def index
@@ -46,16 +45,11 @@ class Account::OrganizationAddressesController < Account::OrganizationController
   private
 
   def load_customer
-    @customer = @organization.customers.find params[:customer_id]
+    @customer = @user.customers.find params[:customer_id]
   end
 
   def load_address
     @address = @customer.addresses.find(params[:id])
   end
 
-  def verify_rights
-    unless @organization.authorized?(@user, action_name, controller_name, @customer)
-      redirect_to account_organization_path, flash: { error: t('authorization.unessessary_rights') }
-    end
-  end
 end

@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::GroupsController < Account::OrganizationController
+  before_filter :verify_rights, except: %w(index show)
   before_filter :load_group, except: %w(index new create)
 
   def index
@@ -14,7 +15,7 @@ class Account::GroupsController < Account::OrganizationController
   end
 
   def create
-    @group = @organization.groups.new group_params
+    @group = @organization.groups.new safe_group_params
     if @group.save
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_groups_path
@@ -27,8 +28,7 @@ class Account::GroupsController < Account::OrganizationController
   end
 
   def update
-    @group.ensure_authorization = true unless is_leader?
-    if @group.update_attributes(group_params)
+    if @group.update_attributes(safe_group_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_groups_path
     else
@@ -44,25 +44,40 @@ class Account::GroupsController < Account::OrganizationController
 
 private
 
+  def verify_rights
+    unless is_leader?
+      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && @user.cannot_manage_groups?)
+        flash[:error] = t('authorization.unessessary_rights')
+        redirect_to account_organization_path
+      end
+    end
+  end
+
   def group_params
     if is_leader?
       params.require(:group).permit(:name,
                                     :description,
-                                    :member_tokens,
-                                    :is_add_authorized,
-                                    :is_remove_authorized,
-                                    :is_create_authorized,
-                                    :is_edit_authorized,
-                                    :is_destroy_authorized)
+                                    :member_tokens)
     else
       params.require(:group).permit(:customer_tokens)
     end
   end
 
-  def is_leader?
-    @user == @organization.leader
+  def safe_group_params
+    if is_leader?
+      safe_ids = @organization.members.map(&:_id).map(&:to_s)
+      ids = params[:group][:member_tokens].split(',')
+      ids.delete_if { |id| !id.in?(safe_ids) }
+      params[:group][:member_tokens] = ids.join(',')
+      group_params
+    else
+      safe_ids = @user.customer_ids.map(&:to_s)
+      ids = params[:group][:customer_tokens].split(',')
+      ids.delete_if { |id| !id.in?(safe_ids) }
+      params[:group][:customer_tokens] = ids.join(',')
+      group_params
+    end
   end
-  helper_method :is_leader?
 
   def load_group
     @group = @organization.groups.find_by_slug params[:id]

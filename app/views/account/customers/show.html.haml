@@ -11,7 +11,7 @@
                 = "(Arrêt en attente de validation par iDocus)"
               - else
                 = "(Rétablissement en attente de validation par iDocus)"
-            - if @customer.is_editable
+            - if can_edit?
               - if @customer.is_active? && !@customer.update_request.try(:values).try(:[],'is_inactive')
                 = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
               - else
@@ -42,10 +42,11 @@
                     %tr
                       %th= t('mongoid.models.user.attributes.is_centralized')
                       %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'is_centralized' }
-              - if @customer.is_editable && @organization.authorized?(@user, :edit, :customer, @customer)
+              - if @customer.is_editable
                 .row-fluid.margin1top
                   .span12
-                    = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
+                    - if can_edit?
+                      = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
 
           .row-fluid
             .span12.box
@@ -61,10 +62,11 @@
                   Configuration souhaitée
                   = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
                 = render partial: 'requested_options'
-              - if @customer.is_editable && @organization.authorized?(@user, :edit, :customer, @customer)
+              - if @customer.is_editable
                 .row-fluid.margin1top
                   .span12
-                    = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
+                    - if can_edit?
+                      = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
 
         .span6
           .row-fluid
@@ -81,7 +83,7 @@
           .row-fluid
             .span12.box
               %h3.aligncenter Journaux comptable
-              %table.table.table-striped.table-bordered.table-condensed.margin1top
+              %table.table.table-striped.table-bordered.table-condensed.margin1top.margin0bottom
                 %thead
                   %tr
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::OrganizationsController < Account::OrganizationController
-  skip_before_filter :verify_rights, only: 'show'
+  before_filter :verify_rights, except: 'show'
 
   def show
     if @organization
@@ -28,13 +28,14 @@ private
   def organization_params
     params.require(:organization).permit(:name,
                                          :description,
-                                         :is_add_authorized,
-                                         :is_remove_authorized,
-                                         :is_create_authorized,
-                                         :is_edit_authorized,
-                                         :is_destroy_authorized,
-                                         :centralized_customer_tokens,
                                          :addresses_attributes)
+  end
+
+  def verify_rights
+    unless is_leader?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
+    end
   end
 
 end

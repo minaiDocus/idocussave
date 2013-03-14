@@ -27,17 +27,6 @@
                 .form-actions
                   = address.link_to_remove 'Supprimer l\'adresse', class: 'btn'
             = f.link_to_add 'Ajouter une adresse', :addresses, class: 'btn'
-        %br
-        %fieldset
-          %legend Autorisation
-          .row-fluid.padding2top
-            .span4
-              = f.input :is_create_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_create_authorized')
-              = f.input :is_edit_authorized,    as: :boolean, label: t('mongoid.models.organization.attributes.is_edit_authorized')
-              = f.input :is_destroy_authorized, as: :boolean, label: t('mongoid.models.organization.attributes.is_destroy_authorized')
-            .span4
-              = f.input :is_add_authorized,     as: :boolean, label: t('mongoid.models.organization.attributes.is_add_authorized')
-              = f.input :is_remove_authorized,  as: :boolean, label: t('mongoid.models.organization.attributes.is_remove_authorized')
         .form-actions
           = f.submit 'Valider', class: 'btn'
           = link_to 'Annuler', account_organization_path, class: 'btn'

@@ -5,7 +5,6 @@ class Account::OrganizationController < Account::AccountController
   before_filter :verify_access
   before_filter :load_user_and_role
   before_filter :load_organization
-  before_filter :verify_rights, unless: lambda { |c| c.controller_name.in? %w(customers organization_addresses subscriptions) }
 
 protected
 
@@ -23,11 +22,9 @@ protected
     end
   end
 
-  def verify_rights
-    unless @organization.authorized?(@user, action_name, controller_name)
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
-    end
+  def is_leader?
+    @user == @organization.leader
   end
+  helper_method :is_leader?
 
 end

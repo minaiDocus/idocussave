@@ -43,3 +43,23 @@
               %tr
                 %th= t('mongoid.models.user.attributes.company')
                 %td= @collaborator.company
+
+        .span6
+          %table.table.table-bordered.table-striped
+            %thead
+              %tr
+                %td{ colspan: 2 }
+                  .pull-left
+                    %h3 Autorisations
+                  .pull-right
+                    = icon_link_to edit_account_organization_collaborator_rights_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
+            %tbody
+              %tr
+                %th= t('mongoid.models.organization_rights.names.customers_management')
+                %td= @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
+              %tr
+                %th= t('mongoid.models.organization_rights.names.groups_management')
+                %td= @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
+              %tr
+                %th= t('mongoid.models.organization_rights.names.journals_management')
+                %td= @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')

@@ -86,6 +86,7 @@ class User
 
   embeds_many :addresses, as: :locatable
   embeds_one :update_request, as: :update_requestable
+  embeds_one :organization_rights
 
   has_one :my_organization, class_name: 'Organization', inverse_of: 'leader'
   belongs_to :organization, inverse_of: 'members'
@@ -137,6 +138,7 @@ class User
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
   accepts_nested_attributes_for :csv_outputter
+  accepts_nested_attributes_for :organization_rights
 
   def active
     inactive_at == nil
@@ -299,6 +301,10 @@ class User
     self.update_request.save
     reload
     set_request_type!
+  end
+
+  def find_or_create_organization_rights
+    organization_rights || create_organization_rights
   end
 
 protected

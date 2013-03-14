@@ -1,23 +1,4 @@
 module Account::OrganizationHelper
-  def is_editable?(customer, organization, groups)
-    if customer.is_editable && organization.is_edit_authorized
-      if groups.size == 0
-        true
-      else
-        temp_groups = groups.select { |e| e['customer_ids'].include? customer.id }
-        if temp_groups.size == 0
-          true
-        elsif temp_groups.size == 1
-          temp_groups.first.is_edit_authorized
-        else
-          temp_groups.inject { |m,e| m.is_edit_authorized || e.is_edit_authorized }
-        end
-      end
-    else
-      false
-    end
-  end
-
   def collaborator_form_url(collaborator)
     if action_name == 'new' || !collaborator.persisted?
       account_organization_collaborators_url

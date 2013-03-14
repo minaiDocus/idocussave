@@ -26,6 +26,7 @@ Idocus::Application.routes.draw do
     resource :organization do
       resources :groups
       resources :collaborators do
+        resource :rights
         put 'stop_using',     on: :member
         put 'restart_using',  on: :member
       end

@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::CollaboratorsController < Account::OrganizationController
+  before_filter :verify_rights
   before_filter :load_collaborator, except: %w(index new create)
 
   def index
@@ -79,6 +80,13 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
 private
+
+  def verify_rights
+    unless is_leader?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
+    end
+  end
 
   def load_collaborator
     @collaborator = @organization.collaborators.find params[:id]

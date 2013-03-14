@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, only: %w(show edit update stop_using restart_using)
-  before_filter :verify_rights, only: %w(edit update)
+  before_filter :verify_rights, except: %w(index show)
 
   def index
     respond_to do |format|
@@ -118,11 +118,24 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+protected
+
+  def can_edit?
+    @customer.is_editable && (is_leader? || @user.can_manage_customers?)
+  end
+  helper_method :can_edit?
+
+  def cannot_edit?
+    !can_edit?
+  end
+  helper_method :cannot_edit?
+
 private
 
   def verify_rights
-    unless @customer.is_editable? && @organization.authorized?(@user, action_name, controller_name, @customer)
-      redirect_to account_organization_path, flash: { error: t('authorization.unessessary_rights') }
+    unless can_edit?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
     end
   end
 
@@ -137,11 +150,6 @@ private
   def load_customer
     @customer = User.find params[:id]
   end
-
-  def is_leader?
-    @user == @organization.leader
-  end
-  helper_method :is_leader?
 
   def sort_column
     params[:sort] || 'created_at'

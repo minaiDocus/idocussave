@@ -1,4 +1,5 @@
 class Account::JournalsController < Account::OrganizationController
+  before_filter :verify_rights
   before_filter :load_journal, except: %w(index new create)
 
   def index
@@ -78,6 +79,13 @@ class Account::JournalsController < Account::OrganizationController
   end
 
 private
+
+  def verify_rights
+    unless is_leader? || @user.can_manage_journals?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
+    end
+  end
 
   def journal_params
     params.require(:account_book_type).permit(:name,

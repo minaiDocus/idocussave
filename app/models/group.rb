@@ -5,16 +5,9 @@ class Group
   include ActiveModel::ForbiddenAttributesProtection
 
   attr_reader :member_tokens, :customer_tokens
-  attr_accessor :ensure_authorization
 
   field :name,        type: String
   field :description, type: String
-  # Authorization
-  field :is_add_authorized,     type: Boolean, default: true
-  field :is_remove_authorized,  type: Boolean, default: true
-  field :is_create_authorized,  type: Boolean, default: true
-  field :is_edit_authorized,    type: Boolean, default: true
-  field :is_destroy_authorized, type: Boolean, default: true
 
   validates_presence_of :name, :organization_id
   validate :uniqueness_of_name
@@ -46,34 +39,10 @@ class Group
     elsif members.size > 0 && user_ids.size == 0
       self.members.clear
     end
-
-    #user_ids = ids.split(',')
-    #if (self.members.size > 0 && user_ids.size > 0) || (self.members.size == 0 && user_ids.size == 0) || (self.members.size == 0 && user_ids.size > 0)
-    #  member_ids = self.members.map { |m| m.id.to_s }
-    #  is_included = member_ids.inject { |a, id| a && id.in?(user_ids) } || false
-    #  if !is_included || user_ids.size != member_ids.size
-    #    users = User.find(user_ids)
-    #    add_users = users - self.members
-    #    if add_users.count > 0 && @ensure_authorization && !self.is_add_authorized
-    #      errors.add(:customer_tokens, I18n.t('authorization.unessessary_rights'))
-    #    else
-    #      add_users.each { |u| self.members << u }
-    #    end
-    #    sub_users = self.members - users
-    #    if sub_users.count > 0 && @ensure_authorization && !self.is_remove_authorized
-    #      errors.add(:customer_tokens, I18n.t('authorization.unessessary_rights'))
-    #    else
-    #      sub_users.each { |u| self.members.delete u }
-    #    end
-    #  end
-    #elsif members.size > 0 && user_ids.size == 0
-    #  self.members.clear
-    #end
   end
 
   def customer_tokens=(ids)
-    user_ids = ids.split(',')
-    self.member_tokens = (user_ids + self.collaborators.map(&:_id)).uniq
+    self.member_tokens = [ids, self.collaborators.map(&:_id).join(',')].join(',')
   end
 
   def to_s

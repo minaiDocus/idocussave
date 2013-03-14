@@ -536,11 +536,6 @@ fr:
           customers_count: 'Nombre de clients'
           centralized_customers: 'Clients centralisés'
           centralized_customers_count: 'Nombre de clients centralisés'
-          is_add_authorized: "Ajout d'un utilisateur à un groupe"
-          is_remove_authorized: "Retrait d'un utilisateur à un groupe"
-          is_create_authorized: "Création d'un utilisateur"
-          is_edit_authorized: "Edition d'un utilisateur"
-          is_destroy_authorized: "Suppression d'un utilisateur"
           is_detail_authorized: 'Autoriser les détails ?'
           is_test: 'Est une organization de test ?'
           status:
@@ -561,8 +556,16 @@ fr:
           members_count: 'Nombre de membres'
           customers: 'Clients'
           customers_count: 'Nombre de clients'
-          is_add_authorized: "Ajout d'un utilisateur à un groupe"
-          is_remove_authorized: "Retrait d'un utilisateur à un groupe"
-          is_create_authorized: "Création d'un utilisateur"
-          is_edit_authorized: "Edition d'un utilisateur"
-          is_destroy_authorized: "Suppression d'un utilisateur"
+      organization_rights:
+        zero: 0 droits
+        one: 1 droit
+        other: '#{count} droits'
+        name: Droits de l'organisation
+        names:
+          customers_management: Gestion des clients
+          groups_management: Gestion des groupes
+          journals_management: Gestion des journaux comptables
+        attributes:
+          is_customers_management_authorized: Gestion des clients autorisé ?
+          is_groups_management_authorized: Gestion des groupes autorisé ?
+          is_journals_management_authorized: Gestion des journaux comptables autorisé ?

@@ -8,7 +8,7 @@
               %th{ colspan: 2 }
                 .pull-left
                   %h3 Informations
-                - if @user == @organization.leader
+                - if is_leader?
                   .pull-right
                     = icon_link_to edit_account_organization_path, { icon: 'edit' }, { class: 'btn' }
           %tbody
@@ -30,44 +30,16 @@
             %tr
               %th= t('mongoid.models.organization.attributes.centralized_customers_count')
               %td= link_to @organization.customers.centralized.count, account_organization_customers_path
-      - if @organization.authorized?(@user, :edit, :organization)
-        .span6
-          %table.table.table-condensed.table-bordered.table-striped.margin0bottom
-            %thead
-              %tr
-                %th{ colspan: 2 }
-                  .pull-left
-                    %h3 Autorisations
-                  - if @user == @organization.leader
-                    .pull-right
-                      = icon_link_to edit_account_organization_path, { icon: 'edit' }, { class: 'btn' }
-            %tbody
-              %tr
-                %th= t('mongoid.models.organization.attributes.is_add_authorized')
-                %td= @organization.is_add_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization.attributes.is_remove_authorized')
-                %td= @organization.is_remove_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization.attributes.is_create_authorized')
-                %td= @organization.is_create_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization.attributes.is_edit_authorized')
-                %td= @organization.is_edit_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization.attributes.is_destroy_authorized')
-                %td= @organization.is_destroy_authorized ? t('yes_value') : t('no_value')
 
-    - if @organization.authorized?(@user, :edit, :organization)
-      #ibiza_options.row-fluid.margin1top
-        .span6
-          %h3.aligncenter Connexion à la production comptable
-          %hr
-          = simple_form_for (@organization.ibiza || Ibiza.new), url: account_organization_ibiza_path, html: { class: 'form form-horizontal' } do |f|
-            .control-group.string.optional
-              %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
-              .controls
-                %span{ class: "label #{ibiza_state_label(@organization.ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@organization.ibiza)}
-            = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
-            .form-actions
-              = f.submit 'Valider', class: 'btn'
+    #ibiza_options.row-fluid.margin1top
+      .span6
+        %h3.aligncenter Connexion à la production comptable
+        %hr
+        = simple_form_for (@organization.ibiza || Ibiza.new), url: account_organization_ibiza_path, html: { class: 'form form-horizontal' } do |f|
+          .control-group.string.optional
+            %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
+            .controls
+              %span{ class: "label #{ibiza_state_label(@organization.ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@organization.ibiza)}
+          = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
+          .form-actions
+            = f.submit 'Valider', class: 'btn'

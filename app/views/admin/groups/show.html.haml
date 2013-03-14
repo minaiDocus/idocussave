@@ -27,25 +27,3 @@
           %tr
             %th= t('mongoid.models.group.attributes.customers_count')
             %td= @group.customers.count
-    .span6
-      %table.table.table-condensed.table-bordered.table-striped
-        %thead
-          %tr
-            %th{ colspan: 2 }
-              %h3 Autorisations
-        %tbody
-          %tr
-            %th= t('mongoid.models.group.attributes.is_add_authorized')
-            %td= @group.is_add_authorized ? t('yes_value') : t('no_value')
-          %tr
-            %th= t('mongoid.models.group.attributes.is_remove_authorized')
-            %td= @group.is_remove_authorized ? t('yes_value') : t('no_value')
-          %tr
-            %th= t('mongoid.models.group.attributes.is_create_authorized')
-            %td= @group.is_create_authorized ? t('yes_value') : t('no_value')
-          %tr
-            %th= t('mongoid.models.group.attributes.is_edit_authorized')
-            %td= @group.is_edit_authorized ? t('yes_value') : t('no_value')
-          %tr
-            %th= t('mongoid.models.group.attributes.is_destroy_authorized')
-            %td= @group.is_destroy_authorized ? t('yes_value') : t('no_value')

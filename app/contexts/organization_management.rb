@@ -17,6 +17,34 @@ class OrganizationManagement
                     :user_ids.in => [self.id]
                   })
     end
+
+    def rights
+      find_or_create_organization_rights
+    end
+
+    def can_manage_customers?
+      rights.is_customers_management_authorized
+    end
+
+    def cannot_manage_customers?
+      !can_manage_customers?
+    end
+
+    def can_manage_groups?
+      rights.is_groups_management_authorized
+    end
+
+    def cannot_manage_groups?
+      !can_manage_groups?
+    end
+
+    def can_manage_journals?
+      rights.is_journals_management_authorized
+    end
+
+    def cannot_manage_journals?
+      !can_manage_journals?
+    end
   end
 
   module Leader

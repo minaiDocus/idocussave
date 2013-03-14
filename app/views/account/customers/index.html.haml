@@ -4,7 +4,7 @@
       .pull-left
         %h3 Liste des clients
       .pull-right
-        - if @organization.authorized?(@user, :new, :customer)
+        - if is_leader? || @user.can_manage_customers?
           = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
   .row-fluid
     .span9.box
@@ -24,7 +24,7 @@
                   %td.active_state
                     - if customer.is_inactive
                       = icon(icon: 'remove')
-                    - elsif !@organization.authorized?(@user, :edit, :customer, customer)
+                    - elsif !(customer.is_editable && (is_leader? || @user.can_manage_customers?))
                       = icon(icon: 'lock')
                   %td.date= customer.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info

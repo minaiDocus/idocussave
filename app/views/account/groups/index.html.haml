@@ -4,7 +4,7 @@
       .pull-left
         %h3 Liste des groupes
       .pull-right
-        - if @organization.authorized?(@user, :new, :group)
+        - if is_leader?
           = link_to t('actions.new'), new_account_organization_group_path, class: 'btn btn-primary'
   .row-fluid
     .span9.box
@@ -27,9 +27,9 @@
                   %td= group.collaborators.count
                   %td= group.customers.count
                   %td.last
-                    - if @organization.authorized?(@user, :edit, :group)
+                    - if is_leader? || @user.can_manage_groups?
                       = icon_link_to edit_account_organization_group_path(group), { icon: 'edit' }, { class: 'btn btn-mini' }
-                    - if @organization.authorized?(@user, :destroy, :group)
+                    - if is_leader?
                       = icon_link_to account_organization_group_path(group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: 'Etês vous sûr ?' } }
       = render partial: 'list_options'
     .span3.box
