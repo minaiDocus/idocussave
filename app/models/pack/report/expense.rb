@@ -14,6 +14,9 @@ class Pack::Report::Expense
   field :type,                   type: String
   field :origin,                 type: String
   field :obs_type,               type: Integer
+  field :position,               type: Integer
+
+  default_scope asc: :position
 
   scope :perso, where: { origin: /^perso$/i }
   scope :pro,   where: { origin: /^pro$/i }
