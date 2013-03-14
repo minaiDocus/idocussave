@@ -94,7 +94,7 @@ class Pack::Report
                 report.type = "NDF"
                 report.pack = pack
                 report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
-                lot.css('piece').each do |part|
+                lot.css('piece').each_with_index do |part,index|
                   part_name = part['number'].gsub('_',' ')
                   piece = pack.pieces.where(name: part_name).first
                   if piece and piece.expense.nil?
@@ -109,6 +109,7 @@ class Pack::Report
                     expense.type                   = part.css('type').first.try(:content)
                     expense.origin                 = part.css('source').first.try(:content)
                     expense.obs_type               = obs['type'].to_i
+                    expense.position               = index + 1
                     expense.save
                     report.expenses << expense
 
@@ -159,7 +160,7 @@ class Pack::Report
                   lot.css('piece').each_with_index do |part,index|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
-                    if piece and piece.preseizure.nil?
+                    if piece
                       preseizure                 = Pack::Report::Preseizure.new
                       preseizure.report          = report
                       preseizure.piece           = piece
