@@ -1,11 +1,13 @@
 #collaborators
   .row-fluid
     .span12.box
-      .pull-left
-        %h3 Liste des collaborateurs
-      .pull-right
-        = link_to t('actions.new'), new_account_organization_collaborator_path, class: 'btn btn-primary'
-      %br
+      .row-fuild
+        .span12
+          .pull-left
+            %h3 Liste des collaborateurs
+          .pull-right
+            = link_to t('actions.new'), new_account_organization_collaborator_path, class: 'btn btn-primary'
+
   .row-fluid
     .span9.box
       = render partial: 'list_options'

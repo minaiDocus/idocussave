@@ -90,10 +90,12 @@
         </div>
     </div>
     <div class='span6 right'>
-        <div class='row-fluid input-prepend input-append margin0bottom'>
-            <label for='second-search' class='span1 add-on margin0bottom'><i class='icon-search'></i></label>
-            <input class='span6' id='second-search' type='text' placeholder='Recherche' />
-            <span id='second-remove' class='add-on remove'><i class='icon-remove'></i></span>
+        <div class='search'>
+            <div class='row-fluid input-prepend input-append margin0bottom'>
+                <label for='second-search' class='span1 add-on margin0bottom'><i class='icon-search'></i></label>
+                <input class='span6' id='second-search' type='text' placeholder='Recherche' />
+                <span id='second-remove' class='add-on remove'><i class='icon-remove'></i></span>
+            </div>
         </div>
         <br />
         <div class='list row-fluid'>

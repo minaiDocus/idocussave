@@ -42,7 +42,7 @@ class Account::OrganizationAddressesController < Account::OrganizationController
     end
   end
 
-  private
+private
 
   def load_customer
     @customer = @user.customers.find params[:customer_id]

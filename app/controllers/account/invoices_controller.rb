@@ -2,7 +2,7 @@ class Account::InvoicesController < Account::AccountController
   def download
     invoice = Invoice.find params[:id]
     filepath = invoice.content.path params[:style]
-    if File.exist?(filepath) && (invoice.user == current_user || invoice.user.try(:prescriber) == current_user || current_user.is_admin)
+    if File.exist?(filepath) && (invoice.user == current_user || (invoice.organization && current_user.in?(invoice.organization.collaborators)) || current_user.is_admin)
       filename = File.basename filepath
       type = invoice.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')

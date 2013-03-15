@@ -1,10 +1,15 @@
 ﻿= simple_form_for @customer, url: customer_form_url(@customer), html: { class: 'form form-horizontal' } do |f|
-  = f.input :code,           label: t('mongoid.models.user.attributes.code')
-  = f.input :company,        label: t('mongoid.models.user.attributes.company')
-  = f.input :first_name,     label: t('mongoid.models.user.attributes.first_name')
-  = f.input :last_name,      label: t('mongoid.models.user.attributes.last_name')
-  = f.input :email,          label: t('mongoid.models.user.attributes.email')
-  = f.input :is_centralized, label: t('mongoid.models.user.attributes.is_centralized'), as: :boolean
+  .row-fluid
+    .span6
+      = f.input :code,           label: t('mongoid.models.user.attributes.code')
+      = f.input :company,        label: t('mongoid.models.user.attributes.company')
+      = f.input :first_name,     label: t('mongoid.models.user.attributes.first_name')
+      = f.input :last_name,      label: t('mongoid.models.user.attributes.last_name')
+      = f.input :email,          label: t('mongoid.models.user.attributes.email')
+      = f.input :is_centralized, label: t('mongoid.models.user.attributes.is_centralized'), as: :boolean
+    - if action_name == 'new' || @customer.is_new
+      .span6
+        = f.input :group_ids, collection: groups(@user).map { |g| [g.name, g.id] }, as: :check_boxes, label: t('mongoid.models.group.name').pluralize
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     - if params[:action].in?(%w(new create))

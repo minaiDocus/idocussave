@@ -11,7 +11,7 @@ class Account::Report::PreseizuresController < Account::AccountController
   end
 
   def verify_rights
-    if @report.pack.owner == current_user || @report.pack.owner.try(:prescriber) != current_user and !current_user.is_admin
+    if @report.pack.owner == current_user || !current_user.in?(@report.pack.owner.try(:prescribers) || []) and !current_user.is_admin
       redirect_to root_path
     end
   end

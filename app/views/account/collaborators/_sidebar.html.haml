@@ -1,7 +1,7 @@
 .row-fluid
   %h3 Filtres
 
-  = form_tag account_organization_collaborators_path, method: :get, html: { class: 'form form-vertical' } do
+  = form_tag account_organization_collaborators_path, method: :get, class: 'form form-vertical margin0bottom' do
     %br
     = hidden_field_tag :direction, sort_direction
     = hidden_field_tag :sort, sort_column

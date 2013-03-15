@@ -19,7 +19,7 @@
         %td= account_book_type.description
         %td
           - if account_book_type.is_new
-            - link = link_to icon(icon: 'ok'), accept_admin_organization_journals_path(@organization,account_book_type), method: :delete, data: { confirm: 'Etes vous sûr de vouloir valider ce journal ?' }, class: 'accept_account_book_type'
+            - link = link_to icon(icon: 'ok'), accept_admin_organization_journal_path(@organization,account_book_type), method: :put, data: { confirm: 'Etes vous sûr de vouloir valider ce journal ?' }, class: 'accept_account_book_type'
             .pull-left
               - if !account_book_type.is_destroy_requested?
                 .label.label-warning= link

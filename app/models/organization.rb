@@ -34,6 +34,7 @@ class Organization
   has_many   :account_book_types
   has_one    :file_sending_kit
   has_one    :ibiza
+  has_one    :gray_label
 
   embeds_many :addresses, as: :locatable
 

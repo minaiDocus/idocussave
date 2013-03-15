@@ -30,4 +30,12 @@ module Account::OrganizationHelper
       account_organization_journal_url(journal)
     end
   end
+
+  def groups(user)
+    if user.organization.leader == user
+      user.organization.groups
+    else
+      user.groups
+    end
+  end
 end

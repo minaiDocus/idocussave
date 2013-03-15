@@ -28,13 +28,7 @@ protected
 
   def load_user_and_role(name=:@user)
     instance = load_user(name)
-    if instance.is_prescriber
-      if instance.my_organization
-        instance.extend OrganizationManagement::Leader
-      elsif instance.organization
-        instance.extend OrganizationManagement::Collaborator
-      end
-    end
+    instance.extend_organization_role
   end
 
   public

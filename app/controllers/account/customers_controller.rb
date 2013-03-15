@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, only: %w(show edit update stop_using restart_using)
-  before_filter :verify_rights, except: %w(index show)
+  before_filter :verify_rights, except: 'index'
 
   def index
     respond_to do |format|
@@ -31,14 +31,13 @@ class Account::CustomersController < Account::OrganizationController
 
   def create
     @customer = User.new user_params
-    @customer.prescriber = @user
     @customer.is_new = true
     @customer.is_disabled = true
     @customer.request_type = User::ADDING
     @customer.set_random_password
     @customer.skip_confirmation!
-    @customer.account_book_types = @user.my_account_book_types.default
-    @customer.requested_account_book_types = @user.my_account_book_types.default
+    @customer.account_book_types = @organization.account_book_types.default
+    @customer.requested_account_book_types = @organization.account_book_types.default
     if @customer.save
       subscription = @customer.find_or_create_scan_subscription
       new_options = @user.find_or_create_scan_subscription.product_option_orders
@@ -120,8 +119,12 @@ class Account::CustomersController < Account::OrganizationController
 
 protected
 
+  def can_manage?
+    is_leader? || @user.can_manage_customers?
+  end
+
   def can_edit?
-    @customer.is_editable && (is_leader? || @user.can_manage_customers?)
+    @customer ? (@customer.is_editable && can_manage?) : can_manage?
   end
   helper_method :can_edit?
 
@@ -140,15 +143,20 @@ private
   end
 
   def user_params
-    params.require(:user).permit(:code,
-                                 :company,
-                                 :first_name,
-                                 :last_name,
-                                 :email)
+    _params = params.require(:user).permit(:code,
+                                           :company,
+                                           :first_name,
+                                           :last_name,
+                                           :email,
+                                           :is_centralized)
+    if action_name == 'create' or @customer && @customer.is_new
+      _params.merge! params.require(:user).permit(:group_ids)
+    end
+    _params
   end
 
   def load_customer
-    @customer = User.find params[:id]
+    @customer = @user.customers.find params[:id]
   end
 
   def sort_column

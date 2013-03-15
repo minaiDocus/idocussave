@@ -116,7 +116,7 @@ protected
   def load_gray_label
     unless request.fullpath.match('/admin')
       if current_user
-        @gray_label = (current_user.try(:prescriber) || current_user).try(:gray_label)
+        @gray_label = current_user.organization.try(:gray_label)
         if @gray_label && @gray_label.is_active
           session[:gray_label_slug] = @gray_label.try(:slug)
         else

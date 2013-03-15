@@ -2,11 +2,11 @@
   .span12.pannel.margin1bottom
     .row-fluid
       .span12
-        %h3 Edition de l'abonnement du client : #{link_to @user.info, account_organization_customer_path(@user)}
+        %h3 Edition de l'abonnement du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
     %hr
     .row-fluid
       .span8
-        = simple_form_for @subscription, :url => account_organization_subscription_path(@user), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+        = simple_form_for @subscription, :url => account_organization_subscription_path(@customer), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
           - if @subscription.user.is_new
             = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
           - else
@@ -14,4 +14,4 @@
           = render partial: 'account/subscriptions/product', collection: @products
           .form-actions
             = f.submit 'Valider', class: 'btn'
-            = link_to 'Annuler', account_organization_customer_path(@user), class: 'btn'
+            = link_to 'Annuler', account_organization_customer_path(@customer), class: 'btn'

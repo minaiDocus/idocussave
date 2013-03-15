@@ -11,7 +11,7 @@ class Account::Report::ExpensesController < Account::AccountController
   end
 
   def verify_rights
-    if @report.pack.owner != current_user and @report.pack.owner.try(:prescriber) != current_user and !current_user.is_admin
+    if @report.pack.owner != current_user and !current_user.in?(@report.pack.owner.try(:prescribers) || []) and !current_user.is_admin
       redirect_to root_path
     end
   end

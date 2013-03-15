@@ -1,11 +1,13 @@
 #customers
   .row-fluid
     .span12.box
-      .pull-left
-        %h3 Liste des clients
-      .pull-right
-        - if is_leader? || @user.can_manage_customers?
-          = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Liste des clients
+          .pull-right
+            - if is_leader? || @user.can_manage_customers?
+              = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
   .row-fluid
     .span9.box
       = render partial: 'list_options'

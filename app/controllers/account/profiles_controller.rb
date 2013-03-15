@@ -47,7 +47,7 @@ public
     if other
       if other != @user
         if !other.in?(@user.share_with)
-          if other != @user.prescriber
+          if !other.in?(@user.prescribers)
             @user.share_with << other
             if @user.save && other.save
               flash[:notice] = "Vous avez paramétré le partage automatique de vos documents avec #{other.email}."
@@ -71,7 +71,7 @@ public
 
   def unshare_documents_with
     other = User.where(email: params[:email]).first
-    if other && other != @user.prescriber && other.in?(@user.share_with)
+    if other && !other.in?(@user.prescribers) && other.in?(@user.share_with)
       @user.share_with -= [other]
       if @user.save && other.save
         flash[:notice] = "Vous avez supprimé le partage automatique de vos documents avec #{other.email}."

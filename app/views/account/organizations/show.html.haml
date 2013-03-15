@@ -23,7 +23,10 @@
               %td= @organization.leader.info
             %tr
               %th= t('mongoid.models.organization.attributes.collaborators_count')
-              %td= link_to @organization.collaborators.count, account_organization_collaborators_path
+              - if is_leader?
+                %td= link_to @organization.collaborators.count, account_organization_collaborators_path
+              - else
+                %td= @organization.collaborators.count
             %tr
               %th= t('mongoid.models.organization.attributes.customers_count')
               %td= link_to @organization.customers.count, account_organization_customers_path

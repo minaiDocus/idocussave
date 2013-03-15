@@ -91,9 +91,6 @@ class User
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
-  references_many :clients,  class_name: "User", inverse_of: :prescriber
-  referenced_in :prescriber, class_name: "User", inverse_of: :clients
-
   references_many :periods,            class_name: "Scan::Period",       inverse_of: :user
   references_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
   
@@ -118,7 +115,6 @@ class User
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
   references_one :csv_outputter, autosave: true
-  has_one :gray_label
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
@@ -130,7 +126,7 @@ class User
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
   scope :editable,                    where: { is_editable: true }
 
-  before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
+  before_save :format_name, :set_inactive_at, :set_request_type
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -288,15 +284,19 @@ class User
     end
   end
 
-protected
-
-  def update_clients
-    if self.client_ids != nil
-      self.clients = User.any_in(_id: client_ids.split(','))
+  def extend_organization_role
+    if self.is_prescriber
+      if self.my_organization
+        self.extend OrganizationManagement::Leader
+      elsif self.organization
+        self.extend OrganizationManagement::Collaborator
+      end
     else
       nil
     end
   end
+
+protected
 
   def set_inactive_at
     if is_inactive? && self.inactive_at.presence.nil?

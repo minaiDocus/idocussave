@@ -76,8 +76,9 @@ class AddressDeliveryList
       nb = 0
       time = checkpoint
       prescribers.each do |prescriber|
-        prescriber.clients.active.each do |client|
-          address = client.addresses.for_shipping.first
+        prescriber.extend_organization_role
+        prescriber.customers.active.each do |customer|
+          address = customer.addresses.for_shipping.first
           if address and address.updated_at > time
             nb += 1
           end
@@ -107,8 +108,9 @@ class AddressDeliveryList
     def create_file_for_prescribers(prescribers)
       users = []
       prescribers.each do |prescriber|
-        prescriber.clients.active.asc(:code).each do |client|
-          users << client if client != prescriber
+        prescriber.extend_organization_role
+        prescriber.customers.active.asc(:code).each do |customer|
+          users << customer if customer != prescriber
         end
       end
       create_file(users)

@@ -9,12 +9,12 @@ class GrayLabel
   field :back_url,  type: String
   field :is_active, type: Boolean, default: true
 
-  validates_presence_of :name, :user_id, :site_url, :logo_url
+  validates_presence_of :name, :organization_id, :site_url, :logo_url
   validates_uniqueness_of :name
 
   slug :name
 
-  belongs_to :user
+  belongs_to :organization
 
   def link_to_session_create
     "/gr/sessions/#{self.slug}/create"

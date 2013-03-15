@@ -157,7 +157,9 @@ Idocus::Application.routes.draw do
     end
     resources :organizations do
       resources :groups
-      resources :journals, controller: 'organization_journals'
+      resources :journals, controller: 'organization_journals' do
+        put 'accept', on: :member
+      end
       resources :reminder_emails do
         get  'preview',         on: :member
         get  'deliver',         on: :member

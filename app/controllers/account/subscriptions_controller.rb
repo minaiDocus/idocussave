@@ -26,7 +26,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 private
 
   def load_customer
-    @customer = User.find params[:id]
+    @customer = @user.customers.find params[:id]
   end
 
   def load_subscription

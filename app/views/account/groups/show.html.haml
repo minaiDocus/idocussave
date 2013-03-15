@@ -1,15 +1,17 @@
-#group.box
+#group
   .row-fluid
     .span12.box
-      .pull-left
-        %h3 #{@group}
-      .pull-right
-        - if is_leader? || @user.can_manage_groups?
-          = icon_link_to edit_account_organization_group_path(@group), { icon: 'edit' }, { class: 'btn' }
-      %br
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 #{@group}
+          .pull-right
+            - if is_leader? || @user.can_manage_groups?
+              = icon_link_to edit_account_organization_group_path(@group), { icon: 'edit' }, { class: 'btn' }
+
   .row-fluid
-    .span6
-      %table.table.table-condensed.table-bordered.table-striped
+    .span6.box
+      %table.table.table-condensed.table-bordered.table-striped.margin0bottom
         %thead
           %tr
             %th{ colspan: 2 }

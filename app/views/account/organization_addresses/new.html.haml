@@ -2,8 +2,10 @@
   .span12
     .row-fluid
       .span12.box
-        .pull-left
-          %h3 Nouvelle adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+        .row-fluid
+          .span12
+            .pull-left
+              %h3 Nouvelle adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer)}
     .row-fluid
       .span12.box
         = render partial: 'form'

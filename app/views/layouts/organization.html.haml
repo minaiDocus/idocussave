@@ -5,7 +5,9 @@
     %meta{ :content => 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
     %link{ :rel => 'shortcut icon', :type => 'image/ico', :href => asset_path('favicon.ico') }
     = csrf_meta_tag
-    != stylesheet_link_tag 'application'
+    != stylesheet_link_tag 'application', 'account/organizations'
+    - unless controller_name.in?(%w(subscriptions organization_subscriptions organization_addresses))
+      != stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization
     .navbar.navbar-fixed-top
@@ -41,7 +43,7 @@
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
                   = link_to 'Groupes', account_organization_groups_path
                 - if is_leader?
-                  %li{ class: (controller_name == 'collaborators' ? 'active' : '') }
+                  %li{ class: (controller_name.in?(%w(collaborators rights)) ? 'active' : '') }
                     = link_to 'Collaborateurs', account_organization_collaborators_path
                 %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions)) ? 'active' : '') }
                   = link_to 'Clients', account_organization_customers_path
@@ -71,5 +73,5 @@
     != javascript_include_tag 'application', 'inner'
     - if controller_name == 'journals'
       != javascript_include_tag 'account/journals' if action_name == 'index'
-    - elsif controller_name != 'rights'
+    - elsif !controller_name.in?(%w(rights collaborators organization_addresses))
       != javascript_include_tag "account/#{controller_name}"

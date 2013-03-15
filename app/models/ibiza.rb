@@ -45,12 +45,12 @@ class Ibiza
 
   def self.update_files_for(user_codes)
     users = User.any_in(code: user_codes).entries
-    grouped_users = users.group_by { |e| e.prescriber.try(:id) || e.id }
+    grouped_users = users.group_by { |e| e.organization.try(:id) || e.id }
     grouped_users.each do |e|
       users = e[1]
-      prescriber = users.first.prescriber || users.first
-      if prescriber.ibiza && prescriber.ibiza.is_configured?
-        prescriber.ibiza.update_files_for users
+      organization = users.first.organization
+      if organization.ibiza && organization.ibiza.is_configured?
+        organization.ibiza.update_files_for users
       end
     end
     true

@@ -3,19 +3,22 @@
     .span12
       .row-fluid
         .span12.box
-          .pull-left
-            %h3= @customer.info
-          .pull-right
-            - if !@customer.update_request.try(:values).try(:[],'is_inactive').nil?
-              - if @customer.update_request.try(:values).try(:[],'is_inactive')
-                = "(Arrêt en attente de validation par iDocus)"
-              - else
-                = "(Rétablissement en attente de validation par iDocus)"
-            - if can_edit?
-              - if @customer.is_active? && !@customer.update_request.try(:values).try(:[],'is_inactive')
-                = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
-              - else
-                = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
+          .row-fluid
+            .span12
+              .pull-left
+                %h3= @customer.info
+              .pull-right
+                - if !@customer.update_request.try(:values).try(:[],'is_inactive').nil?
+                  - if @customer.update_request.try(:values).try(:[],'is_inactive')
+                    = "(Arrêt en attente de validation par iDocus)"
+                  - else
+                    = "(Rétablissement en attente de validation par iDocus)"
+                - if can_edit?
+                  - if @customer.is_active? && !@customer.update_request.try(:values).try(:[],'is_inactive')
+                    = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
+                  - else
+                    = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
+
       .row-fluid
         .span6
           .row-fluid
