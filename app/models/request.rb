@@ -103,12 +103,12 @@ class Request
 private
 
   def set_action_and_state
-    if action.in?(%w(create destroy))
+    if self.action.in?(%w(create destroy))
       self.attribute_changes = {}
     else
-      if attribute_changes.any?
+      if self.attribute_changes.any?
         self.action = 'update'
-      elsif relation_action != 'update'
+      elsif self.relation_action != 'update'
         reset_to_default
       end
     end

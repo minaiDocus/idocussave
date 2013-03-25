@@ -5,17 +5,16 @@
         .span12
           .pull-left
             %h3= @collaborator
-          .pull-right
-            - if @collaborator.update_request.try(:values).try(:[],'is_inactive') != nil
-              - if @collaborator.update_request.try(:values).try(:[],'is_inactive')
-                (Arrêt en attente de validation par iDocus)
+          .pull-right        
+            - if @collaborator.is_inactive != @collaborator.is_inactive_was
+              - if @collaborator.is_inactive
+                = "(Arrêt en attente de validation par iDocus)"
               - else
-                (Rétablissement en attente de validation par iDocus)
-            - if @collaborator.is_editable
-              - if @collaborator.is_active? && !@collaborator.update_request.try(:values).try(:[],'is_inactive')
-                = link_to "Arrêter le compte", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
-              - else
-                = link_to "Rétablir le compte", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
+                = "(Rétablissement en attente de validation par iDocus)"
+            - if @collaborator.is_active? && @collaborator.is_inactive == @collaborator.is_inactive_was
+              = link_to "Arrêter l'abonnement", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
+            - else
+              = link_to "Rétablir l'abonnement", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
 
   .row-fluid
     .span12.box

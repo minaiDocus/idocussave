@@ -19,11 +19,11 @@ class Account::CollaboratorsController < Account::OrganizationController
     @collaborator.is_new = true
     @collaborator.is_disabled = true
     @collaborator.is_prescriber = true
-    @collaborator.request_type = User::ADDING
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
     if @collaborator.save
       @organization.members << @collaborator
+      @collaborator.request.update_attribute(:action, 'create')
       flash[:notice] = 'Demande de création envoyée.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else
@@ -36,18 +36,8 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def update
-    @collaborator.assign_attributes(user_params)
-    if @collaborator.valid?
-      if @collaborator.is_new
-        @collaborator.save
-      else
-        @collaborator.update_request ||= UpdateRequest.new
-        update_request = @collaborator.update_request
-        update_request.temp_values = @collaborator.changes
-        @collaborator.update_request.save
-        @collaborator.reload
-        @collaborator.set_request_type!
-      end
+    attrs = @collaborator.request.attribute_changes.merge(user_params)
+    if @collaborator.request.set_attributes(attrs, {}, @user)
       flash[:notice] = "En attente de validation de l'administrateur."
       redirect_to account_organization_user_path(@collaborator)
     else
@@ -56,10 +46,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def stop_using
-    @collaborator.update_request.try(:apply)
-    @collaborator.is_inactive = true
-    @collaborator.request_changes
-    if @collaborator.update_request.values.empty?
+    if @collaborator.request.set_attributes({ is_inactive: true }, {}, @user)
       flash[:notice] = 'Modifié avec succès'
     else
       flash[:notice] = "En attente de validation de l'administrateur."
@@ -68,10 +55,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def restart_using
-    @collaborator.update_request.try(:apply)
-    @collaborator.is_inactive = false
-    @collaborator.request_changes
-    if @collaborator.update_request.values.empty?
+    if @collaborator.request.set_attributes({ is_inactive: false }, {}, @user)
       flash[:notice] = 'Modifié avec succès'
     else
       flash[:notice] = "En attente de validation de l'administrateur."

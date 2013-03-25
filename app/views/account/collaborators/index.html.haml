@@ -27,13 +27,14 @@
                     %span.info
                       = link_to collaborator.info, account_organization_collaborator_path(collaborator)
                   %td.update_request_state
-                    - if !collaborator.is_inactive && collaborator.request_type && collaborator.request_type.is_a?(Integer)
-                      - if collaborator.request_type == User::ADDING
-                        = icon(icon: 'plus', title: 'Ajouté')
-                      - elsif collaborator.request_type == User::UPDATING
-                        = icon(icon: 'pencil', title: 'Modifié')
-                      - elsif collaborator.request_type == User::REMOVING
-                        = icon(icon: 'minus', title: 'Supprimé')
+                    - if !collaborator.is_inactive && collaborator.request_status.present?
+                      - case collaborator.request_status
+                        - when 'create'
+                          = icon(icon: 'plus', title: 'Ajouté')
+                        - when 'update'
+                          = icon(icon: 'pencil', title: 'Modifié')
+                        - when 'destroy'
+                          = icon(icon: 'minus', title: 'Supprimé')
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'
