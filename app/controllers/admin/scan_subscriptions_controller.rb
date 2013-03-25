@@ -16,6 +16,7 @@ class Admin::ScanSubscriptionsController < Admin::AdminController
   def edit
     if @user.is_active?
       @subscription = @user.find_or_create_scan_subscription
+      @subscription.force_assignment = 1 if @user.is_prescriber
       @products = Product.subscribable
       @options = @subscription.product_option_orders.map { |option| option.to_a }
       @requested_options = @subscription.requested_product_option_orders.map { |option| option.to_a }
@@ -27,8 +28,7 @@ class Admin::ScanSubscriptionsController < Admin::AdminController
   def update
     @subscription = @user.find_or_create_scan_subscription
     respond_to do |format|
-      if @subscription.update_attributes params[:scan_subscription]
-        @user.set_request_type!
+      if @subscription.update_attributes(scan_subscription_params)
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else
@@ -39,6 +39,10 @@ class Admin::ScanSubscriptionsController < Admin::AdminController
   end
 
 private
+
+  def scan_subscription_params
+    params.require(:scan_subscription).permit!
+  end
 
   def load_user
     @user = User.find params[:user_id]

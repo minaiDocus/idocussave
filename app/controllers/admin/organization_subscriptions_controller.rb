@@ -19,7 +19,7 @@ class Admin::OrganizationSubscriptionsController < Admin::AdminController
   def update
     @subscription = @organization.find_or_create_subscription
     respond_to do |format|
-      if @subscription.update_attributes params[:scan_subscription]
+      if @subscription.update_attributes(scan_subscription_params.merge({ force_assignment: 1 }))
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else
@@ -27,5 +27,11 @@ class Admin::OrganizationSubscriptionsController < Admin::AdminController
         format.html{ redirect_to admin_user_path(@user), error: "Impossible de modifier l'abonnement." }
       end
     end
+  end
+
+private
+
+  def scan_subscription_params
+    params.require(:scan_subscription).permit!
   end
 end

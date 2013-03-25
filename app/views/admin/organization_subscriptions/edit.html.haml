@@ -41,11 +41,10 @@
             = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
             = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
 
-        != render partial: 'admin/scan_subscriptions/product', collection: @products
+        != render partial: 'admin/organization_subscriptions/product', collection: @products
 
         .row-fluid
           .span12
-            = f.input :force_assignment, label: 'Forcer les changements pour le client', as: :Boolean
             = f.input :is_to_spreading, label: 'Propager les changements pour tout les clients ?', as: :boolean
       .modal-footer
         = f.submit 'Valider', class: 'btn'

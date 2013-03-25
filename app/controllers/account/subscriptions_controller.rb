@@ -8,22 +8,19 @@ class Account::SubscriptionsController < Account::OrganizationController
   end
   
   def update
-    # TODO sanitize params[:scan_subscription]
-    if @subscription.valid?
-      @subscription.update_attributes params[:scan_subscription]
-      @customer.set_request_type!
+    if @subscription.update_attributes(scan_subscription_params)
       flash[:notice] = "En attente de validation de l'administrateur."
-      if @user == @customer
-        redirect_to account_organization_subscriptions_path
-      else
-        redirect_to account_organization_customer_path(@customer)
-      end
+      redirect_to account_organization_customer_path(@customer)
     else
-      render action: :'edit'
+      render action: 'edit'
     end
   end
 
 private
+
+  def scan_subscription_params
+    params.require(:scan_subscription).permit(:period_duration, :requested_product)
+  end
 
   def load_customer
     @customer = @user.customers.find params[:id]

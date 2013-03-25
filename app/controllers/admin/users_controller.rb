@@ -8,7 +8,7 @@ class Admin::UsersController < Admin::AdminController
 
   def show
     @user = User.find params[:id]
-    @user.update_request.try(:apply)
+    @user.request.apply_attribute_changes
   end
 
   def new
@@ -47,15 +47,11 @@ class Admin::UsersController < Admin::AdminController
       end
 
       if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update_attributes(user_params))
-        if @user.update_request
-          @user.update_request.sync!
-          @user.save
-        end
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else
         format.json{ render json: @user.to_json, status: :unprocessable_entity }
-        format.html{ redirect_to admin_user_path(@user), error: "Impossible de modifier cette utilisateur." }
+        format.html{ redirect_to admin_user_path(@user), error: 'Impossible de modifier cette utilisateur.' }
       end
     end
   end
@@ -78,7 +74,7 @@ class Admin::UsersController < Admin::AdminController
 
   def accept
     @user = User.find params[:id]
-    if @user.accept!
+    if @user.request.accept!
       flash[:notice] = 'Modifié avec succès.'
     else
       flash[:error] = "Impossible de modifier."
@@ -98,7 +94,7 @@ class Admin::UsersController < Admin::AdminController
 
   def destroy
     @user = User.find params[:id]
-    if @user.is_new && @user.destroy
+    if @user.request.status == 'create' && @user.destroy
       flash[:notice] = 'Supprimé avec succès.'
     else
       flash[:error] = 'Impossible de supprimer.'
@@ -138,7 +134,13 @@ private
   end
 
   def search(contains)
-    users = User.all
+    if contains[:request_action].present?
+      user_ids = Request.where(requestable_type: 'User').any_of({ action: contains[:request_action] }, { relation_action: contains[:request_action] }).distinct(:requestable_id)
+      user_ids = user_ids + Scan::Subscription.where(request_action: contains[:request_action]).distinct(:user_id)
+      users = User.any_in(:_id => user_ids)
+    else
+      users = User.all
+    end
     users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
     users = users.where(:last_name => /#{contains[:last_name]}/i) unless contains[:last_name].blank?
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?

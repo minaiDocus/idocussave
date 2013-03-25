@@ -1,7 +1,7 @@
-.label{ class: (@user.update_request.try(:values).present? ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
+.label{ class: (@user.request.action != '' ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
   Informations
-  - if @user.update_request.try(:values).present?
-    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-mini btn-danger'
+  - if @user.request.action != ''
+    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-mini btn-danger'
 .row-fluid
   .span7
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
@@ -39,10 +39,10 @@
           %tbody
             %tr
               %td.user_status{ colspan: 2 }
-                - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
+                - if @user.is_inactive != @user.is_inactive_was
                   %div.alignright.padding1right
                     %span.label.label-warning
-                      - if @user.update_request.try(:values).try(:[],'is_inactive')
+                      - if @user.is_inactive
                         Arrêt demandé
                       - else
                         Rétablissement demandé

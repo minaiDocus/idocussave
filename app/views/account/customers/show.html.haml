@@ -8,13 +8,13 @@
               .pull-left
                 %h3= @customer.info
               .pull-right
-                - if !@customer.update_request.try(:values).try(:[],'is_inactive').nil?
-                  - if @customer.update_request.try(:values).try(:[],'is_inactive')
+                - if @customer.is_inactive != @customer.is_inactive_was
+                  - if @customer.is_inactive
                     = "(Arrêt en attente de validation par iDocus)"
                   - else
                     = "(Rétablissement en attente de validation par iDocus)"
                 - if can_edit?
-                  - if @customer.is_active? && !@customer.update_request.try(:values).try(:[],'is_inactive')
+                  - if @customer.is_active? && @customer.is_inactive == @customer.is_inactive_was
                     = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
                   - else
                     = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
@@ -60,7 +60,7 @@
                 = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
               = render partial: 'options'
 
-              - if @subscription.is_update_requested?
+              - if @subscription.request_action.present?
                 %h4.aligncenter.margin1top
                   Configuration souhaitée
                   = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
@@ -98,7 +98,6 @@
                     %th Compte charge
                 %tbody
                   - @journals.each do |journal|
-                    - journal.update_request.try(:apply)
                     %tr{ id: journal.slug }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'name' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'description' }

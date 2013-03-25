@@ -10,8 +10,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
   def update
-    # TODO sanitize params[:scan_subscription]
-    if @subscription.update_attributes params[:scan_subscription]
+    if @subscription.update_attributes(scan_subscription_params.merge({ force_assignment: 1 }))
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_default_subscription_path
     else
@@ -20,6 +19,10 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
 private
+
+  def scan_subscription_params
+    params.require(:scan_subscription).permit(:period_duration, :product)
+  end
 
   def load_subscription
     @subscription = @user.find_or_create_scan_subscription

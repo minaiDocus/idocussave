@@ -42,13 +42,14 @@
                               \:
                               = option.title
                   %td.update_request_state
-                    - if !customer.is_inactive && customer.request_type && customer.request_type.is_a?(Integer)
-                      - if customer.request_type == User::ADDING
-                        = icon(icon: 'plus', title: 'Ajouté')
-                      - elsif customer.request_type == User::UPDATING
-                        = icon(icon: 'pencil', title: 'Modifié')
-                      - elsif customer.request_type == User::REMOVING
-                        = icon(icon: 'minus', title: 'Supprimé')
+                    - if !customer.is_inactive
+                      - case customer.request_status
+                        - when 'create'
+                          = icon(icon: 'plus', title: 'Ajouté')
+                        - when 'update'
+                          = icon(icon: 'pencil', title: 'Modifié')
+                        - when 'destroy'
+                          = icon(icon: 'minus', title: 'Supprimé')
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

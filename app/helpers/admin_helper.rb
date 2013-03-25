@@ -84,8 +84,8 @@ module AdminHelper
   def request_options_for_select
     [
         ['',''],
-        [t('request.adding'), User::ADDING],
-        [t('request.updating'), User::UPDATING],
+        [t('request.create'), 'create'],
+        [t('request.update'), 'update'],
     ]
   end
 

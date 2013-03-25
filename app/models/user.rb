@@ -60,16 +60,8 @@ class User
 
   validates_uniqueness_of :code
 
-  NOTHING  = 0
-  ADDING   = 1
-  UPDATING = 2
-  REMOVING = 3
-  REQUEST_TYPE_NAME = %w(nothing adding updating)
-
-  field :is_new,                         type: Boolean, default: false
   field :is_disabled,                    type: Boolean, default: false
   field :is_editable,                    type: Boolean, default: true
-  field :request_type,                   type: Integer, default: 0
 
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
@@ -84,12 +76,14 @@ class User
   before_save :set_timestamps_of_addresses
 
   embeds_many :addresses, as: :locatable
-  embeds_one :update_request, as: :update_requestable
   embeds_one :organization_rights
 
   has_one :my_organization, class_name: 'Organization', inverse_of: 'leader'
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
+
+  has_one  :request,          as: :requestable,                              dependent: :destroy
+  has_many :requests,                                inverse_of: :requester, dependent: :destroy
 
   references_many :periods,            class_name: "Scan::Period",       inverse_of: :user
   references_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
@@ -98,7 +92,7 @@ class User
   references_and_referenced_in_many :packs
 
   references_and_referenced_in_many :account_book_types,  inverse_of: :clients
-  references_and_referenced_in_many :requested_account_book_types, class_name: "AccountBookType",  inverse_of: :requested_clients
+  references_and_referenced_in_many :requested_account_book_types, class_name: 'AccountBookType', inverse_of: :requested_clients
 
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
@@ -126,7 +120,7 @@ class User
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
   scope :editable,                    where: { is_editable: true }
 
-  before_save :format_name, :set_inactive_at, :set_request_type
+  before_save :format_name, :set_inactive_at
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -207,69 +201,20 @@ class User
   def csv_outputter!
     csv_outputter || CsvOutputter.create(user_id: self.id)
   end
-  
-  def update_requestable_attributes
-    [:email,:last_name,:first_name,:company,:code,:is_inactive, :is_centralized]
-  end
 
   def active_for_authentication?
     super && !self.is_disabled
   end
 
   def activate!
-    self.is_new = false
-    self.is_disabled = false
-    save
-  end
-
-  def accept!
-    if update_request
-      update_request.apply
-      update_request.values = {}
-    end
-    save
-  end
-
-  def is_update_requested?
-    result = false
-    # user
-    result = true if self.update_request.try(:values).present?
-    unless self.update_request.try(:values) && self.update_request.try(:values).try(:[],:is_inactive)
-      # journals
-      result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
-      # subscription
-      result = true if scan_subscriptions.current.try(:is_update_requested?)
-    end
-    result
-  end
-
-  def set_request_type!
-    set_request_type
-    save
-  end
-
-  def set_request_type
-    if self.is_new
-      self.request_type = ADDING
-    elsif is_update_requested?
-      self.request_type = UPDATING
-    else
-      self.request_type = NOTHING
-    end
+    request.accept!
+    update_attribute(:is_disabled, false)
   end
 
   def set_random_password
     new_password = rand(36**20).to_s(36)
     self.password = new_password
     self.password_confirmation = new_password
-  end
-
-  def request_changes
-    self.update_request ||= UpdateRequest.new
-    self.update_request.temp_values = changes
-    self.update_request.save
-    reload
-    set_request_type!
   end
 
   def find_or_create_organization_rights
@@ -296,6 +241,32 @@ class User
     end
   end
 
+  def requestable_on
+    [:email, :last_name, :first_name, :company, :code, :is_inactive, :is_centralized]
+  end
+
+  def self.init_customer customer, organization, requester=nil
+    customer.request.update_attributes(action: 'create', requester_id: requester.try(:id))
+    customer.is_disabled = true
+    customer.set_random_password
+    customer.skip_confirmation!
+    customer.account_book_types = customer.requested_account_book_types = organization.account_book_types.default
+    organization.members << customer
+    subscription = customer.find_or_create_scan_subscription
+    new_options = user.find_or_create_scan_subscription.product_option_orders
+    subscription.copy_to_options! new_options
+    subscription.copy_to_requested_options! new_options
+    customer.save && subscription.save
+  end
+
+  def request_status
+    if request.status.present?
+      request.status
+    else
+      find_or_create_scan_subscription.request_action
+    end
+  end
+  
 protected
 
   def set_inactive_at
@@ -305,7 +276,7 @@ protected
       self.inactive_at = nil
     end
   end
-  
+
   def format_name
     self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
     self.last_name = self.last_name.upcase rescue ""

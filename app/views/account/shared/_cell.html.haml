@@ -1,5 +1,5 @@
 - is_translatable ||= false
-- if instance.send(key.to_s+'_changed?') && !instance.is_new?
+- if instance.send(key.to_s+'_changed?') && instance.request.status != 'create'
   - if is_translatable
     = t('mongoid.models.'+instance.class.to_s.underscore+'.attributes.'+key.to_s+'_'+instance.send(key.to_s+'_was').to_s)
   - else

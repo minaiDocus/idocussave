@@ -22,29 +22,12 @@ class Admin::AccountBookTypesController < Admin::AdminController
     @requested_account_book_types = @user.requested_account_book_types.unscoped.by_position
   end
 
-  def accept
-    respond_to do |format|
-      if @account_book_type.accept!
-        @user.set_request_type!
-        format.json { render json: {}, status: :ok }
-        format.html { redirect_to admin_user_path(@user), notice: 'Modifié avec succès.' }
-      else
-        format.json { render json: @account_book_type.errors.to_json, status: :unprocessable_entity }
-        format.html { redirect_to admin_user_path(@user), error: 'Impossible de modifier ce journal.' }
-      end
-    end
-  end
-
   def add
     respond_to do |format|
-      if @user.account_book_types << @account_book_type
-        @user.set_request_type!
-        format.json { render json: {}, status: :ok }
-        format.html { redirect_to admin_user_path(@user), notice: 'Ajouté avec succès.' }
-      else
-        format.json { render json: @account_book_type.errors.to_json, status: :unprocessable_entity }
-        format.html { redirect_to admin_user_path(@user), error: 'Impossible de modifier ce journal.' }
-      end
+      @user.account_book_types << @account_book_type
+      @account_book_type.update_request_status!([@user])
+      format.json { render json: {}, status: :ok }
+      format.html { redirect_to admin_user_path(@user), notice: 'Ajouté avec succès.' }
     end
   end
 
@@ -52,14 +35,11 @@ class Admin::AccountBookTypesController < Admin::AdminController
     respond_to do |format|
       @account_book_type.clients = @account_book_type.clients - [@user]
       @user.account_book_types = @user.account_book_types.unscoped - [@account_book_type]
-      if @account_book_type.save
-        @user.set_request_type!
-        format.json { render json: {}, status: :ok }
-        format.html { redirect_to admin_user_path(@user), notice: 'Retiré avec succès.' }
-      else
-        format.json { render json: @account_book_type.errors.to_json, status: :unprocessable_entity }
-        format.html { redirect_to admin_user_path(@user), error: 'Impossible de modifier ce journal.' }
-      end
+      @account_book_type.save
+      @user.save
+      @account_book_type.update_request_status!([@user])
+      format.json { render json: {}, status: :ok }
+      format.html { redirect_to admin_user_path(@user), notice: 'Retiré avec succès.' }
     end
   end
 end

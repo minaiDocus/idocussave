@@ -71,4 +71,14 @@ FactoryGirl.define do
     left_logo_path "404.png"
     right_logo_path "404.png"
   end
+
+  factory Organization do
+    sequence(:name) { |n| "organization_#{n}" }
+    sequence(:code) { |n| "O#{n}" }
+  end
+
+  factory AccountBookType do
+    sequence(:name) { |n| "J#{n}" }
+    description '(description)'
+  end
 end

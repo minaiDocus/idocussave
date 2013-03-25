@@ -4,7 +4,8 @@
       .pull-left
         %h3 Edition du journal : #{@journal.name}
       .pull-right
-        - if @journal.request_type == 'removing'
+        - if @journal.request.status == 'destroy'
+          (suppression en attente de validation par iDocus)
           = link_to t('actions.cancel_destroy'), cancel_destroy_account_organization_journal_path(@journal), class: 'btn btn-danger', data: { method: :post, confirm: t('actions.confirm') }
         - else
           = link_to t('actions.destroy'), account_organization_journal_path(@journal), class: 'btn btn-danger', data: { method: :delete, confirm: t('actions.confirm') }

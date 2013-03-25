@@ -14,7 +14,7 @@ class Admin::OrganizationJournalsController < Admin::AdminController
   end
 
   def create
-    @account_book_type = AccountBookType.new(params[:account_book_type])
+    @account_book_type = AccountBookType.new(account_book_type_params)
     @account_book_type.organization = @organization
     respond_to do |format|
       if @account_book_type.save
@@ -32,7 +32,14 @@ class Admin::OrganizationJournalsController < Admin::AdminController
 
   def update
     respond_to do |format|
-      if @account_book_type.update_attributes(params[:account_book_type])
+      old_requested_clients = @account_book_type.clients
+      ids = (params[:account_book_type][:client_ids] || []).reject { |e| e.blank? }
+      new_requested_clients = User.find(ids)
+      added_clients = new_requested_clients - old_requested_clients
+      removed_clients = old_requested_clients - new_requested_clients
+      if @account_book_type.update_attributes(account_book_type_params)
+        modified_users = (added_clients + removed_clients).map { |e| e.reload }
+        @account_book_type.update_request_status!(modified_users)
         format.json { render json: {}, status: :ok }
         format.html { redirect_to admin_organization_path(@organization), notice: 'Modifié avec succès.' }
       else
@@ -56,7 +63,7 @@ class Admin::OrganizationJournalsController < Admin::AdminController
 
   def accept
     respond_to do |format|
-      if @account_book_type.accept!
+      if @account_book_type.request.update_attribute(:action, '')
         format.json { render json: {}, status: :ok }
         format.html { redirect_to admin_organization_path(@organization), notice: 'Modifié avec succès.' }
       else
@@ -67,6 +74,10 @@ class Admin::OrganizationJournalsController < Admin::AdminController
   end
 
 private
+
+  def account_book_type_params
+    params.require(:account_book_type).permit!
+  end
 
   def load_account_book_type
     @account_book_type = AccountBookType.unscoped.find_by_slug params[:id]

@@ -45,6 +45,6 @@
 
         .row-fluid
           .span12
-            = f.input :force_assignment, label: 'Forcer les changements pour le client', as: :Boolean
+            = f.input :force_assignment, label: "Forcer les changements pour le #{@user.is_prescriber ? 'prescripteur' : 'client'}", as: :Boolean
       .modal-footer
         = f.submit 'Valider', class: 'btn'

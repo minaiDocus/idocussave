@@ -3,14 +3,14 @@ object @customer
 attributes :id, :first_name, :last_name, :company, :code, :is_editable, :account_book_type_ids, :requested_account_book_type_ids
 
 node :request_type do |customer|
-  case customer.request_type
-    when 0
+  case customer.request.status
+    when ''
       ''
-    when 1
+    when 'create'
       'adding'
-    when 2
+    when 'update'
       'updating'
-    when 3
+    when 'destroy'
       'removing'
   end
 end

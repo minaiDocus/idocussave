@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Scan::Subscription < Subscription
+  include ActiveModel::ForbiddenAttributesProtection
+
   references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
@@ -20,10 +22,15 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
+  # Requête
+  field :request_action, type: String, default: ''
+
+  scope :update_requested, where: { request_action: 'update' }
 
   before_create :set_category, :create_period
   before_save :check_propagation, :sync_assignment
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
+  before_save :set_request_action
   
   def set_category
   	self.category = 1
@@ -61,6 +68,7 @@ class Scan::Subscription < Subscription
       end
       period.set_product_option_orders self.product_option_orders
 
+      period.duration = self.period_duration
       period.max_sheets_authorized = self.max_sheets_authorized
       period.max_upload_pages_authorized = self.max_upload_pages_authorized
       period.quantity_of_a_lot_of_upload = self.quantity_of_a_lot_of_upload
@@ -102,7 +110,8 @@ class Scan::Subscription < Subscription
     self.unit_price_of_excess_paperclips = scan_subscription.unit_price_of_excess_paperclips
     self.unit_price_of_excess_oversized = scan_subscription.unit_price_of_excess_oversized
     self.copy_to_options! scan_subscription.product_option_orders
-  
+    self.copy_to_requested_options! scan_subscription.product_option_orders
+
     self.save
   end
   
@@ -196,33 +205,24 @@ class Scan::Subscription < Subscription
     end
   end
 
-  #def set_request_type!
-  #  set_request_type
-  #  save
-  #end
-  #
-  #def set_request_type
-  #  if is_update_requested?
-  #    self.request_type = User::UPDATING
-  #  else
-  #    self.request_type = 0
-  #  end
-  #end
-
   def is_update_requested?
-    result = false
-    period = current_period
-    period.product_option_orders.user_editable.each do |option|
-      unless option.in?(requested_product_option_orders)
-        result = true
+    if self.organization && self.user.nil?
+      false
+    else
+      is_requested = false
+      period = current_period
+      period.product_option_orders.user_editable.each do |option|
+        unless option.in?(requested_product_option_orders)
+          is_requested = true
+        end
       end
-    end
-    requested_product_option_orders.user_editable.each do |option|
-      unless option.in?(period.product_option_orders)
-        result = true
+      requested_product_option_orders.user_editable.each do |option|
+        unless option.in?(period.product_option_orders)
+          is_requested = true
+        end
       end
+      is_requested
     end
-    result
   end
 
   def copy_to_options!(options)
@@ -241,6 +241,14 @@ class Scan::Subscription < Subscription
       self.requested_product_option_orders << new_option
     end
     new_options
+  end
+
+  def set_request_action
+    if is_update_requested?
+      self.request_action = 'update'
+    else
+      self.request_action = ''
+    end
   end
   
 protected

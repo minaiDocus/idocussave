@@ -1,11 +1,8 @@
-﻿- if @user.is_prescriber
-  .label{ style: 'padding:3px 5px 3px' } Abonnement
-- else
-  .label{ class: ((@subscription && @subscription.is_update_requested?) ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
-    = link_to icon_edit, '#edit_scan_subscription', 'data-toggle' => 'modal'
-    Abonnement en cours
-    - if @period
-      = @period.duration == 1 ? '(Mensuel)' : '(Trimestriel)'
+﻿.label{ class: ((@subscription && @subscription.request_action.present?) ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
+  = link_to icon_edit, '#edit_scan_subscription', 'data-toggle' => 'modal'
+  Abonnement en cours
+  - if @period
+    = @period.duration == 1 ? '(Mensuel)' : '(Trimestriel)'
 
 %table.table.table-striped.table-bordered.table-condensed
   - if @period

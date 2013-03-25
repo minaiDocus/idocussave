@@ -114,7 +114,7 @@ get_scan_subscription = ->
 
 edit_scan_subscription = ->
   $.ajax
-    url: '/admin/organizations/' + organization_id + '/subscriptions/edit',
+    url: '/admin/organizations/' + organization_id + '/subscription/edit',
     data: '',
     datatype: 'html',
     type: 'GET',

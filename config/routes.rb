@@ -38,8 +38,7 @@ Idocus::Application.routes.draw do
       end
       resources :journals do
         post 'cancel_destroy',           :on => :member
-        post 'update_requested_users',   :on => :member
-        put  'update_is_default_status', :on => :member
+        put  'update_requested_users',   :on => :member
       end
       resources :subscriptions
       resource :default_subscription, controller: 'organization_subscriptions'

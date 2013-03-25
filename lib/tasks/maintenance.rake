@@ -19,7 +19,9 @@ namespace :maintenance do
   namespace :notification do
     desc 'Send update request notification'
     task :update_request => [:environment] do
-      users = User.where(:request_type.gt => 0).asc([:code, :request_type])
+      user_ids = Request.active.where(requestable_type: 'User').asc([:action, :relation_action]).distinct(:requestable_id)
+      user_ids = user_ids + Scan::Subscription.update_requested.distinct(:user_id)
+      users = User.any_in(_id: user_ids).active.asc(:code)
       nb = users.count
       puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{nb} update request(s) found."
       if nb > 0
@@ -28,7 +30,7 @@ namespace :maintenance do
         content << "Bonjour,<br/><br/>"
         content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
         users.each do |user|
-          content << user.info + " - " + I18n.t('request.'+User::REQUEST_TYPE_NAME[user.request_type])
+          content << user.info + " - " + I18n.t("request.#{user.request.status}")
           content << "<br/>"
         end
         content << "<br/>Cordialement, l'équipe iDocus"

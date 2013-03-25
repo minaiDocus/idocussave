@@ -13,10 +13,8 @@ class Account::JournalsController < Account::OrganizationController
   def create
     @journal = AccountBookType.new journal_params
     if @journal.valid?
-      @journal.clients = []
-      @journal.is_new = true
-      @journal.request_type = 'adding'
       @journal.save
+      @journal.request.update_attributes(action: 'create', requester_id: @user.id)
       @organization.account_book_types << @journal
       redirect_to account_organization_journals_path
     else
@@ -25,24 +23,12 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def edit
-    @journal.apply_changes
+    @journal.request.apply_attribute_changes
   end
 
   def update
     respond_to do |format|
-      @journal.assign_attributes journal_params
-      if @journal.valid?
-        if @journal.is_new
-          @journal.save
-        else
-          @journal.request_changes!
-          if @journal.is_update_requested?
-            @journal.reload
-            @journal.update_attribute(:request_type, 'updating') unless @journal.is_new
-          else
-            @journal.update_attribute(:request_type, '')
-          end
-        end
+      if @journal.request.set_attributes(journal_params, {}, @user)
         format.json{ render json: @journal.to_json, status: :ok }
         format.html{ redirect_to account_organization_journals_path }
       else
@@ -53,28 +39,38 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def update_requested_users
-    @journal.update_requested_clients params[:account_book_type][:requested_client_ids]
-    respond_to do |format|
-      format.json{ render json: @journal.to_json, status: :ok }
-      format.html{ redirect_to account_organization_journals_path }
-    end
-  end
-
-  def update_is_default_status
-    @journal.is_default = params[:value] == 'true' ? true : false
-    @journal.save
-    respond_to do |format|
-      format.json { render json: {}, status: :ok }
+    attributes = journal_relation_params
+    attributes['requested_client_ids'] = [] if attributes['requested_client_ids'] == 'empty'
+    old_requested_clients = @journal.requested_clients
+    new_requested_clients = @user.customers.select { |e| e.id.to_s.in? attributes['requested_client_ids'] }
+    added_clients = new_requested_clients - old_requested_clients
+    removed_clients = old_requested_clients - new_requested_clients
+    @journal.requested_clients = new_requested_clients
+        respond_to do |format|
+      if @journal.save
+        modified_users = (added_clients + removed_clients).map { |e| e.reload }
+        @journal.update_request_status!(modified_users)
+        @journal.request.update_attribute(:requester_id, @user.id)
+        format.json{ render json: @journal.to_json, status: :ok }
+        format.html{ redirect_to account_organization_journals_path }
+      else
+        format.json{ render json: {}, status: :unprocessable_entity }
+        format.html{ redirect_to account_organization_journals_path }
+      end
     end
   end
 
   def destroy
-    @journal.request_destroy
+    if @journal.request.status == 'create'
+      @journal.destroy
+    else
+      @journal.request.update_attributes(action: 'destroy', requester_id: @user.id)
+    end
     redirect_to account_organization_journals_path
   end
 
   def cancel_destroy
-    @journal.cancel_destroy_request
+    @journal.request.update_attribute(:action, '')
     redirect_to account_organization_journals_path
   end
 
@@ -94,7 +90,12 @@ private
                                               :entry_type,
                                               :account_number,
                                               :charge_account,
-                                              :is_default)
+                                              :is_default,
+                                              :client_ids)
+  end
+
+  def journal_relation_params
+    params.require(:account_book_type).permit(:requested_client_ids)
   end
 
   def load_journal

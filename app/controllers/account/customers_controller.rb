@@ -2,6 +2,7 @@
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, only: %w(show edit update stop_using restart_using)
   before_filter :verify_rights, except: 'index'
+  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
     respond_to do |format|
@@ -13,16 +14,15 @@ class Account::CustomersController < Account::OrganizationController
       end
 
       format.json do
-        @customers = search(user_contains).order([sort_column,sort_direction])
+        @customers = search(user_contains).order([sort_column,sort_direction]).active
       end
     end
   end
 
   def show
-    @customer.update_request.try(:apply)
     @subscription = @customer.find_or_create_scan_subscription
     @period = @subscription.periods.desc(:created_at).first
-    @journals = @customer.requested_account_book_types.unscoped.asc(:name)
+    @journals = @customer.requested_account_book_types.asc(:name)
   end
 
   def new
@@ -31,72 +31,50 @@ class Account::CustomersController < Account::OrganizationController
 
   def create
     @customer = User.new user_params
-    @customer.is_new = true
-    @customer.is_disabled = true
-    @customer.request_type = User::ADDING
-    @customer.set_random_password
-    @customer.skip_confirmation!
-    @customer.account_book_types = @organization.account_book_types.default
-    @customer.requested_account_book_types = @organization.account_book_types.default
     if @customer.save
-      subscription = @customer.find_or_create_scan_subscription
-      new_options = @user.find_or_create_scan_subscription.product_option_orders
-      @organization.members << @customer
-      subscription.copy_to_options! new_options
-      subscription.copy_to_requested_options! new_options
-      subscription.save
-      flash[:notice] = 'Demande de création envoyée.'
+      User.init_customer @customer, @organization, @user
+      flash[:notice] = "En attente de validation de l'administrateur."
       redirect_to account_organization_customer_path(@customer)
     else
-      flash[:error] = 'Données invalide.'
       render action: 'new'
     end
   end
 
   def edit
-    @customer.update_request.try(:apply)
   end
 
   def update
-    @customer.assign_attributes(user_params)
-    if @customer.valid?
-      if @customer.is_new
-        @customer.save
+    attrs = @customer.request.attribute_changes.merge(user_params)
+    if @customer.request.set_attributes(attrs, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
       else
-        @customer.update_request ||= UpdateRequest.new
-        update_request = @customer.update_request
-        update_request.temp_values = @customer.changes
-        @customer.update_request.save
-        @customer.reload
-        @customer.set_request_type!
+        flash[:notice] = "En attente de validation de l'administrateur."
       end
-      flash[:notice] = "En attente de validation de l'administrateur."
       redirect_to account_organization_customer_path(@customer)
     else
-      render action: :edit
+      render action: 'edit'
     end
   end
 
   def stop_using
-    @customer.update_request.try(:apply)
-    @customer.is_inactive = true
-    @customer.request_changes
-    if @customer.update_request.values.empty?
-      flash[:notice] = 'Modifié avec succès'
-    else
-      flash[:notice] = "En attente de validation de l'administrateur."
+    if @customer.request.set_attributes({ is_inactive: true }, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
+      else
+        flash[:notice] = "En attente de validation de l'administrateur."
+      end
     end
     redirect_to account_organization_customer_path(@customer)
   end
 
   def restart_using
-    @customer.update_request.try(:apply)
-    @customer.is_inactive = false
-    @customer.request_changes
-    if @customer.update_request.values.empty?
-      flash[:notice] = 'Modifié avec succès'
-    else
-      flash[:notice] = "En attente de validation de l'administrateur."
+    if @customer.request.set_attributes({ is_inactive: false }, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
+      else
+        flash[:notice] = "En attente de validation de l'administrateur."
+      end
     end
     redirect_to account_organization_customer_path(@customer)
   end
@@ -136,7 +114,7 @@ protected
 private
 
   def verify_rights
-    unless can_edit?
+    unless action_name == 'show' && can_manage? or action_name != 'show' && can_edit?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
@@ -157,6 +135,10 @@ private
 
   def load_customer
     @customer = @user.customers.find params[:id]
+  end
+
+  def apply_attribute_changes
+    @customer.request.apply_attribute_changes
   end
 
   def sort_column

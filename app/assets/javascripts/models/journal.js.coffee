@@ -8,7 +8,7 @@ class Idocus.Models.Journal extends Backbone.Model
     data = { account_book_type: { requested_client_ids: ids } }
     $.ajax
       url: "#{@urlRoot}/#{@get('id')}/update_requested_users"
-      type: 'POST'
+      type: 'PUT'
       data: data
       datatype: 'json'
       complete: ->
