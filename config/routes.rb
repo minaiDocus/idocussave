@@ -63,7 +63,7 @@ Idocus::Application.routes.draw do
       resource :upload
     end
 
-    resource :reporting, controller: 'reporting'
+    resource :reporting
     resources :periods
     namespace :report do
       resources :expenses

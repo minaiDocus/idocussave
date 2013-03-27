@@ -39,6 +39,10 @@ class AccountBookType
     select { |e| e.request.status != 'create' }
   end
 
+  def info
+    [self.name, self.description].join(' ')
+  end
+
   def compta_processable?
     if entry_type > 0
       true

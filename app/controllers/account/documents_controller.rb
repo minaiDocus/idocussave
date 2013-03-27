@@ -36,10 +36,16 @@ public
   end
   
   def show
-    @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
+    id = BSON::ObjectId.from_string(params[:id])
+    if @user.organization && @user.organization.leader == @user
+      pack_ids = @user.packs.distinct(:_id)
+    else
+      pack_ids = @user.pack_ids
+    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
+    @pack = Pack.find(params[:id])
     
-    @documents = Pack.find(params[:id]).documents.without_original.asc(:position)
+    @documents = @pack.documents.without_original.asc(:position)
     document_ids = @documents.distinct(:_id)
     @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
 
@@ -86,7 +92,15 @@ public
   end
     
   def archive
-    pack = @user.packs.find params[:id]
+    id = BSON::ObjectId.from_string(params[:id])
+    if @user.organization && @user.organization.leader == @user
+      pack_ids = @user.packs.distinct(:_id)
+    else
+      pack_ids = @user.pack_ids
+    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
+    pack = Pack.find(params[:id])
+
     filespath = pack.pieces.map { |e| e.content.path }
     clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
     filename = pack.name.gsub(/\s/,'_') + '.zip'
@@ -119,7 +133,7 @@ public
   def download
     document = Document.find params[:id]
     filepath = document.content.path(params[:style])
-    if File.exist?(filepath) && ((@user && @user.in?(document.pack.users)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
+    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(document.pack.id)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
       type = document.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
@@ -131,7 +145,7 @@ public
   def piece
     piece = Pack::Piece.find params[:id]
     filepath = piece.content.path
-    if File.exist?(filepath) && ((@user && @user.in?(piece.pack.users)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
+    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
       filename = File.basename(filepath)
       type = piece.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true)

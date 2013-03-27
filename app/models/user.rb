@@ -223,7 +223,8 @@ class User
 
   def prescribers
     if !self.is_prescriber
-      User.any_in(group_ids: self['group_ids']).prescribers
+      leader_id = organization.try(:leader_id)
+      User.any_of({ :group_ids.in => self['group_ids'] }, { _id: leader_id }).prescribers.asc(:code)
     else
       []
     end

@@ -22,15 +22,24 @@ namespace :maintenance do
       user_ids = Request.active.where(requestable_type: 'User').asc([:action, :relation_action]).distinct(:requestable_id)
       user_ids = user_ids + Scan::Subscription.update_requested.distinct(:user_id)
       users = User.any_in(_id: user_ids).active.asc(:code)
-      nb = users.count
-      puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{nb} update request(s) found."
-      if nb > 0
+
+      journal_ids = Request.active.where(requestable_type: 'AccountBookType').asc([:action, :relation_action]).distinct(:requestable_id)
+      journals = AccountBookType.any_in(_id: journal_ids).asc([:name, :organization_id])
+
+      puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{users.count + journals.count} update request(s) found."
+      if users.count > 0 || journals.count > 0
         subject = 'Validation requise'
         content = ""
         content << "Bonjour,<br/><br/>"
         content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
         users.each do |user|
           content << user.info + " - " + I18n.t("request.#{user.request.status}")
+          content << "<br/>"
+        end
+        content << "<br/>" if users.count > 0 && journals.count > 0
+        content << "Des requêtes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
+        journals.each do |journal|
+          content << journal.organization.name + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
           content << "<br/>"
         end
         content << "<br/>Cordialement, l'équipe iDocus"

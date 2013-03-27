@@ -211,9 +211,10 @@
                     %span{ :class => "hide oversized value_7" }
                       #{month[:oversized]}
                     %span{ :class => "hide price value_8" }
-                      - time = Time.local(@year,(index+1),15,0,0)
-                      - price = price_of_period_by_time(@user.periods,time)
-                      - month[:price_in_cents] = month[:price_in_cents] + price
+                      - if @user.organization
+                        - time = Time.local(@year,(index+1),15,0,0)
+                        - price = price_of_period_by_time(@user.organization.periods,time)
+                        - month[:price_in_cents] = month[:price_in_cents] + price
                       #{format_price_00 month[:price_in_cents]} €
                     %span{ :class => "hide price value_9" }
                       #{format_price_00 month[:price_in_cents_of_excess]} €
@@ -226,7 +227,7 @@
                   %br
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
-                    - if @user.organization && @user.organization.invoices.count > 0
+                    - if @user.organization && @user.organization.leader == @user && @user.organization.invoices.count > 0
                       - if index == 11
                         - invoice = @user.organization.invoices.where(:number => /^#{@year+1}01/).first
                       - else

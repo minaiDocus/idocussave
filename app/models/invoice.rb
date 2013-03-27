@@ -45,7 +45,7 @@ class Invoice
 
     time = self.created_at - 1.month
     if organization
-      scan_subscription = organization.scan_subscriptions.last
+      scan_subscription = organization.scan_subscriptions.current
       periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => organization.customers.centralized.active_at(time).map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
           where(:start_at.lte => time, :end_at.gte => time).
           select{ |period| period.end_at.month == time.month }
@@ -180,7 +180,7 @@ class Invoice
       pdf.text "Le détail de la prestation est consultable dans votre compte sur www.idocus.com"
       
       pdf.move_up 4
-      pdf.text "Votre login d’accès au site : #{user.email}"
+      pdf.text "Votre login d’accès au site : #{(user || organization.leader).email}"
     end
     
     self.content = File.new "#{Rails.root}/tmp/#{self.number}.pdf"

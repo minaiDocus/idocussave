@@ -38,6 +38,8 @@ class Group
       end
     elsif members.size > 0 && user_ids.size == 0
       self.members.clear
+    elsif members.size == 0 && user_ids.size > 0
+      self.members = User.find(user_ids)
     end
   end
 
