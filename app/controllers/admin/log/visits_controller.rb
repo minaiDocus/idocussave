@@ -21,8 +21,8 @@ class Admin::Log::VisitsController < Admin::AdminController
           false
         end
       end
-      if params[:user]
-        user = User.where(params[:user]).first
+      if params[:user_contains] && params[:user_contains][:code]
+        user = User.find_by_code(params[:user_contains][:code])
         contains.merge!({ user_id: user.id }) if user
       else
         contains.merge!({ user_id: nil })
