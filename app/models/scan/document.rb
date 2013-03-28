@@ -21,7 +21,6 @@ class Scan::Document
   field :scanned_at,      type: Time
   
   validates_presence_of :name
-  validates_format_of :name, with: /^\w+ \w+ \d{4}[0-1T]\d all$/
   validates_format_of :name, with: /^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/
   validate :uniqueness_of_name
   validates :paperclips, :numericality => { :greater_than_or_equal_to => 0 }
