@@ -16,7 +16,6 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   def create
     @collaborator = User.new user_params
-    @collaborator.is_new = true
     @collaborator.is_disabled = true
     @collaborator.is_prescriber = true
     @collaborator.set_random_password
