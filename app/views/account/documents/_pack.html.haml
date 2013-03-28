@@ -38,7 +38,8 @@
       %i.icon-download-alt
     %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }
       %i.icon-download
-    %a.do-popover{ :href => "#", "data-content" => document_type_content }
-      %i.icon-star-empty.icon-document-type{ :class => document_class }
+    /
+      %a.do-popover{ :href => "#", "data-content" => document_type_content }
+        %i.icon-star-empty.icon-document-type{ :class => document_class }
   %span.name
     %a.do-show{ :href => "#"} #{pack.name.sub('all','')}

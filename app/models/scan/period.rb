@@ -233,7 +233,7 @@ class Scan::Period
   def set_documents_name_tags
     tags = []
     self.documents.each do |document|
-      if document.name.match(/\w+\s\w+\s\d{6}\sall$/)
+      if document.name.match(/^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/)
         name = document.name.split
         tags << "b_#{name[1]} y_#{name[2][0..3]} m_#{name[2][4..5].to_i}"
       end

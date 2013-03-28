@@ -1,13 +1,13 @@
 = simple_form_for @account_book_type, url: organization_journal_form_url(@organization, @account_book_type), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   .modal-body
-    - if @account_book_type.request.attribute_changes.try(:[],'name').present?
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'name').present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_name', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'name'))
     - else
       - hint = ''
     = f.input :name, label: 'Libellé', hint: hint
-    - if @account_book_type.request.attribute_changes.try(:[],'description').present?
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'description').present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_description', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'description'))
@@ -15,7 +15,10 @@
       - hint = ''
     = f.input :description, label: 'Description', hint: hint
     - collection = [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]]
-    - value = @account_book_type.request.attribute_changes.try(:[],'entry_type')
+    - if @account_book_type.request
+      - value = @account_book_type.request.attribute_changes.try(:[],'entry_type')
+    - else
+      - value = nil
     - if value.present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_entry_type', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
@@ -24,14 +27,14 @@
     - else
       - hint = ''
     = f.input :entry_type, label: 'Type de saisie', collection: collection, selected: @account_book_type['entry_type'], allow_blank: false, hint: hint
-    - if @account_book_type.request.attribute_changes.try(:[],'account_number').present?
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'account_number').present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_account_number', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'account_number'))
     - else
       - hint = ''
     = f.input :account_number, label: 'Numéro de compte', hint: hint
-    - if @account_book_type.request.attribute_changes.try(:[],'charge_account').present?
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'charge_account').present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_charge_account', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'charge_account'))

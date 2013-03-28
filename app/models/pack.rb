@@ -11,6 +11,13 @@ class Pack
   FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
 
+  CODE_PATTERN = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
+  JOURNAL_PATTERN = '[a-zA-Z0-9]+'
+  PERIOD_PATTERN = '\d{4}[01T]\d'
+  POSITION_PATTERN = '(all|\d{3})'
+  EXTENSION_PATTERN = '\.(pdf|PDF)'
+  FILENAME_PATTERN = /^#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}$/
+
   referenced_in :owner, class_name: "User", inverse_of: :own_packs
   references_and_referenced_in_many :users
   belongs_to :organization
@@ -343,7 +350,7 @@ class Pack
     end
     
     def valid_documents
-      Dir.entries("./").select{|f| f.match(/\w+_\w+_\w+_\d+\.(pdf|PDF)$/)}
+      Dir.entries("./").select { |f| f.match(FILENAME_PATTERN) }
     end
     
     def downcase_extension
@@ -394,7 +401,7 @@ class Pack
             files_name = ftp.nlst.sort
             all_filesname += files_name
             files_name.each do |file_name|
-              if file_name.match(/\w+_\w+_\w+_\d{3}\.(pdf|PDF)$/)
+              if file_name.match(FILENAME_PATTERN)
                 unless File.exist?(file_name)
                   print "\tTrying to fetch document named #{file_name}..."
                   ftp.getbinaryfile(file_name)
