@@ -2,7 +2,7 @@ class Admin::Log::VisitsController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :visit_contains
   
   def index
-    @visits = ::Log::Visit.where(visit_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @visits = search(visit_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -21,12 +21,6 @@ class Admin::Log::VisitsController < Admin::AdminController
           false
         end
       end
-      if params[:user_contains] && params[:user_contains][:code]
-        user = User.find_by_code(params[:user_contains][:code])
-        contains.merge!({ user_id: user.id }) if user
-      else
-        contains.merge!({ user_id: nil })
-      end
     end
     contains
   end
@@ -38,5 +32,14 @@ class Admin::Log::VisitsController < Admin::AdminController
   def sort_direction
     %w(asc desc).include?(params[:direction]) ? params[:direction] : 'desc'
   end
-  
+
+  def search(contains)
+    visits = ::Log::Visit.all
+    if params[:user_contains] && params[:user_contains][:code].present?
+      user_ids = User.where(code: /#{params[:user_contains][:code]}/).distinct(:_id)
+      visits = visits.any_in(user_id: user_ids)
+    end
+    visits = visits.where(path: /#{contains[:path]}/) if contains[:path].present?
+    visits
+  end
 end
