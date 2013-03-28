@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Scan::Subscription < Subscription
+  include ActiveModel::ForbiddenAttributesProtection
+
   references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
@@ -20,10 +22,15 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
+  # Requête
+  field :request_action, type: String, default: ''
+
+  scope :update_requested, where: { request_action: 'update' }
 
   before_create :set_category, :create_period
   before_save :check_propagation, :sync_assignment
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
+  before_save :set_request_action
   
   def set_category
   	self.category = 1
@@ -54,9 +61,14 @@ class Scan::Subscription < Subscription
     else
       period = Scan::Period.new(start_at: time, duration: period_duration)
       period.subscription = self
-      period.user = self.user
+      if organization
+        period.organization = self.organization
+      else
+        period.user = self.user
+      end
       period.set_product_option_orders self.product_option_orders
 
+      period.duration = self.period_duration
       period.max_sheets_authorized = self.max_sheets_authorized
       period.max_upload_pages_authorized = self.max_upload_pages_authorized
       period.quantity_of_a_lot_of_upload = self.quantity_of_a_lot_of_upload
@@ -98,7 +110,8 @@ class Scan::Subscription < Subscription
     self.unit_price_of_excess_paperclips = scan_subscription.unit_price_of_excess_paperclips
     self.unit_price_of_excess_oversized = scan_subscription.unit_price_of_excess_oversized
     self.copy_to_options! scan_subscription.product_option_orders
-  
+    self.copy_to_requested_options! scan_subscription.product_option_orders
+
     self.save
   end
   
@@ -109,11 +122,11 @@ class Scan::Subscription < Subscription
   end
   
   def propagate_changes
-   propagate_changes_for user.clients.active
+   propagate_changes_for organization.customers.active
   end
   
   def check_propagation
-    if is_to_spreading.try(:to_i) == 1 and user.is_prescriber
+    if is_to_spreading.try(:to_i) == 1 and organization
       propagate_changes
     end
   end
@@ -127,8 +140,8 @@ class Scan::Subscription < Subscription
   end
 
   def update_current_period
-    if self.user.active
-      if self.user.is_prescriber
+    if (self.user && self.user.try(:active)) || self.organization
+      if self.organization
         options = self.product_option_orders.where(:group_position.gte => 1000)
       else
         options = self.product_option_orders
@@ -156,8 +169,8 @@ class Scan::Subscription < Subscription
 
   def total
     result = 0
-    if user.is_prescriber
-      subscription_ids = Scan::Subscription.any_in(:user_id => user.clients.map { |e| e.id }).distinct(:_id)
+    if organization
+      subscription_ids = Scan::Subscription.any_in(:user_id => organization.customers.map { |e| e.id }).distinct(:_id)
       ps = Scan::Period.any_in(subscription_id: subscription_ids).
            where(:start_at.lt => Time.now, :end_at.gt => Time.now)
       ps.each do |period|
@@ -193,19 +206,23 @@ class Scan::Subscription < Subscription
   end
 
   def is_update_requested?
-    result = false
-    period = current_period
-    period.product_option_orders.user_editable.each do |option|
-      unless option.in?(requested_product_option_orders)
-        result = true
+    if self.organization && self.user.nil?
+      false
+    else
+      is_requested = false
+      period = current_period
+      period.product_option_orders.user_editable.each do |option|
+        unless option.in?(requested_product_option_orders)
+          is_requested = true
+        end
       end
-    end
-    requested_product_option_orders.user_editable.each do |option|
-      unless option.in?(period.product_option_orders)
-        result = true
+      requested_product_option_orders.user_editable.each do |option|
+        unless option.in?(period.product_option_orders)
+          is_requested = true
+        end
       end
+      is_requested
     end
-    result
   end
 
   def copy_to_options!(options)
@@ -224,6 +241,14 @@ class Scan::Subscription < Subscription
       self.requested_product_option_orders << new_option
     end
     new_options
+  end
+
+  def set_request_action
+    if is_update_requested?
+      self.request_action = 'update'
+    else
+      self.request_action = ''
+    end
   end
   
 protected

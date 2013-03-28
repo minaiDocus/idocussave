@@ -5,6 +5,7 @@
  *= require common
  *= require sass/fileuploader
  *= require_self
+ *= require admin/organizations
 */
 
 html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
@@ -105,8 +106,9 @@ html, body {
 }
 /*****************/
 
-.aligncenter {
-  text-align: center; }
+.aligncenter { text-align: center !important; }
+.alignleft { text-align: left !important; }
+.alignright {text-align: right !important; }
 
 table {
   tr {
@@ -158,11 +160,6 @@ table {
   #scan_subscription table td, #scan_subscription table th {
     vertical-align: middle; }
 }
-
-.alignleft {
-  text-align: left; }
-.alignright {
-  text-align: right; }
 
 #products, #pages {
   .form {
@@ -250,3 +247,19 @@ table {
   display: none;
   width: 914px;
   margin: -300px 0 0 -457px !important; }
+
+h3 a {
+  font-size: 18px;
+}
+
+.panel {
+  margin-bottom: 10px;
+  padding: 7px 19px 7px;
+  background-color: white;
+  border: 1px solid #DDD;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .065);
+  -moz-box-shadow: 0 3px 5px rgba(0,0,0,.065);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, .065); }

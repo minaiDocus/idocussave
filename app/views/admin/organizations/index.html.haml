@@ -1,0 +1,31 @@
+#organizations
+  .row-fluid.marginbottom
+    .span12.margin1bottom
+      .pull-left
+        %h3 Liste des organisations
+      .pull-right
+        = link_to t('actions.new'), new_admin_organization_path, class: 'btn btn-primary'
+  .row-fluid
+    .span9
+      = render partial: 'list_options'
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :name, t('mongoid.models.organization.attributes.name')
+                %th= t('mongoid.models.organization.attributes.leader')
+                %th Actions
+            %tbody
+              - @organizations.each do |organization|
+                %tr
+                  %td= l(organization.created_at)
+                  %td= link_to organization.name, admin_organization_path(organization)
+                  %td= link_to organization.leader.info, admin_user_path(organization.leader)
+                  %td
+                    = icon_link_to edit_admin_organization_path(organization), { icon: 'edit' }, { class: 'btn btn-mini' }
+                    = icon_link_to admin_organization_path(organization), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: t('actions.confirm') } }
+      = render partial: 'list_options'
+    .span3
+      = render partial: 'sidebar'

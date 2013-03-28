@@ -21,10 +21,10 @@ describe "user_rights" do
 		end
 		
 		it "should visit successfuly reportings" do
-			visit('/account/scan/reportings')
+			visit('/account/reporting')
 		
 			page.status_code.should eq(200)
-			page.current_path.should eq('/account/scan/reportings')
+			page.current_path.should eq('/account/reporting')
 		end
 	end	
 

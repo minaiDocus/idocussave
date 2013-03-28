@@ -1,0 +1,10 @@
+<td class='selection selectable'>
+    <% if @model.get('is_editable'): %>
+        <input type="radio" name="user" />
+    <% else: %>
+        <i class="icon-lock"></i>
+    <% end %>
+</td>
+<td id='user_<%= @model.get('id') %>' class='<%= 'selectable' if @model.get('is_editable') %>'>
+    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
+</td>

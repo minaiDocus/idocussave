@@ -1,0 +1,30 @@
+﻿%table.table.table-striped.table-bordered.table-condensed
+  %thead
+    %tr
+      %th{ colspan: 4, class: (@subscription.request_action.present? ? 'validation_required' : '') }
+        %h3.pull-left
+          Abonnement en cours
+          = @subscription.period_duration == 1 ? '(Mensuel)' : '(Trimestriel)'
+        = link_to icon_edit, '#edit_scan_subscription', 'data-toggle' => 'modal', class: 'btn btn-small pull-right'
+  %tbody
+    %tr
+      %th Option
+      %th Choix
+      %th.price Prix HT
+      %th.price Prix TTC
+    - @options.each do |option|
+      %tr
+        %td= option.group_title
+        %td= option.title
+        %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
+        %td.price= format_price_00(option.price_in_cents_wo_vat * @subscription.tva_ratio) + ' €'
+    %tr
+      %td
+      %th.total Total
+      %td.total.price= format_price_00(@subscription.total) + ' €'
+      %td.total.price= format_price_00(@subscription.total * @subscription.tva_ratio) + ' €'
+    %tr
+      %td
+      %th.total VAT (#{@subscription.tva_ratio})
+      %td
+      %td.total.price= format_price_00((@subscription.total * @subscription.tva_ratio) - @subscription.total) + ' €'

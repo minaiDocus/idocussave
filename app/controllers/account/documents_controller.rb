@@ -2,17 +2,13 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
-  before_filter :load_user
+  before_filter :load_user_and_role
   before_filter :find_last_composition, :only => %w(index)
   skip_before_filter :login_user!, :only => %w(download piece)
 
 protected
   def current_layout
-    if params[:action] == 'index'
-      'inner'
-    else
-      nil
-    end
+    action_name == 'index' ? 'inner' : nil
   end
 
   def find_last_composition
@@ -32,20 +28,24 @@ protected
 
 public
   def index
-    @packs = Pack.any_in(:user_ids => [@user.id]).desc(:created_at)
+    @packs = @user.packs.desc(:created_at)
     @packs_count = @packs.count
     @packs = @packs.page(params[:page]).per(20)
-    if @last_composition
-      @composition = Document.any_in(:_id => @last_composition.document_ids)
-    end
+    @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     load_entries
   end
   
   def show
-    @pack = Pack.any_in(:user_ids => [@user.id]).distinct(:_id).select { |pack_id| pack_id.to_s == params[:id] }.first
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
+    id = BSON::ObjectId.from_string(params[:id])
+    if @user.organization && @user.organization.leader == @user
+      pack_ids = @user.packs.distinct(:_id)
+    else
+      pack_ids = @user.pack_ids
+    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
+    @pack = Pack.find(params[:id])
     
-    @documents = Pack.find(params[:id]).documents.without_original.asc(:position)
+    @documents = @pack.documents.without_original.asc(:position)
     document_ids = @documents.distinct(:_id)
     @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
 
@@ -63,9 +63,9 @@ public
     else
       if params[:filtre]
         contents = params[:filtre].gsub(/:_:/,' ')
-        @packs = Pack.any_in(user_ids: [@user.id]).search_for(contents)
+        @packs = @user.packs.search_for(contents)
       else
-        @packs = Pack.any_in(user_ids: [@user.id])
+        @packs = @user.packs
       end
 
       if params[:view] == "self"
@@ -84,7 +84,7 @@ public
   end
 
   def search
-    @results = Pack.any_in(user_ids: [@user.id]).find_words(params[:q])
+    @results = @user.packs.find_words(params[:q])
 
     respond_to do |format|
       format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
@@ -92,21 +92,21 @@ public
   end
     
   def archive
-    if current_user.is_admin
-      pack = Pack.find(params[:id])
+    id = BSON::ObjectId.from_string(params[:id])
+    if @user.organization && @user.organization.leader == @user
+      pack_ids = @user.packs.distinct(:_id)
     else
-      pack = Pack.any_in(user_ids: [@user.id]).where(_id: params[:id]).first
+      pack_ids = @user.pack_ids
     end
-    if pack
-      filespath = pack.pieces.map { |e| e.content.path }
-      clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
-      filename = pack.name.gsub(/\s/,'_') + '.zip'
-      filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
-      system("zip -j #{filepath} #{clean_filespath}")
-      send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
-    else
-      render nothing: true, status: 404
-    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
+    pack = Pack.find(params[:id])
+
+    filespath = pack.pieces.map { |e| e.content.path }
+    clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
+    filename = pack.name.gsub(/\s/,'_') + '.zip'
+    filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
+    system("zip -j #{filepath} #{clean_filespath}")
+    send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
   end
   
   def sync_with_external_file_storage
@@ -133,7 +133,7 @@ public
   def download
     document = Document.find params[:id]
     filepath = document.content.path(params[:style])
-    if File.exist?(filepath) && ((@user && @user.in?(document.pack.users)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
+    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(document.pack.id)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
       type = document.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
@@ -145,7 +145,7 @@ public
   def piece
     piece = Pack::Piece.find params[:id]
     filepath = piece.content.path
-    if File.exist?(filepath) && ((@user && @user.in?(piece.pack.users)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
+    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
       filename = File.basename(filepath)
       type = piece.content_file_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true)

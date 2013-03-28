@@ -1,0 +1,11 @@
+.nav-collapse
+  %ul{ :class=>'nav' }
+    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
+      != link_to 'Mon compte', account_profile_path
+    - if current_user.is_prescriber || current_user.is_admin
+      %li{ class: ((controller_name.in?(%w(organizations groups collaborators customers journals subscriptions)) || request.path =~ /customers/)  ? 'active' : '') }
+        != link_to 'Mon organisation', account_organization_path
+    %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
+      != link_to 'Mes documents', account_documents_path
+    %li{ :class=>('active' if controller_name == 'reporting') }
+      != link_to 'Mon reporting', account_reporting_path

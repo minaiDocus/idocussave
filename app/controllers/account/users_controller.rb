@@ -10,7 +10,7 @@ public
   def update
     @user = current_user   
     if @user.valid_password?(params[:user][:current_password])
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
       else
         flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
@@ -20,5 +20,11 @@ public
     end
 
     redirect_to edit_account_user_path(@user)
+  end
+
+private
+
+  def user_params
+    params.require(:user).permit(:current_password, :password, :password_confirmation)
   end
 end

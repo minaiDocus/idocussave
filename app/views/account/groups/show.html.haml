@@ -1,0 +1,31 @@
+#group
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 #{@group}
+          .pull-right
+            - if is_leader? || @user.can_manage_groups?
+              = icon_link_to edit_account_organization_group_path(@group), { icon: 'edit' }, { class: 'btn' }
+
+  .row-fluid
+    .span6.box
+      %table.table.table-condensed.table-bordered.table-striped.margin0bottom
+        %thead
+          %tr
+            %th{ colspan: 2 }
+              %h3.aligncenter Informations
+        %tbody
+          %tr
+            %th= t('mongoid.models.group.attributes.name')
+            %td= @group.name
+          %tr
+            %th= t('mongoid.models.group.attributes.description')
+            %td= @group.description
+          %tr
+            %th= t('mongoid.models.group.attributes.collaborators_count')
+            %td= @group.collaborators.count
+          %tr
+            %th= t('mongoid.models.group.attributes.customers_count')
+            %td= @group.customers.count

@@ -1,0 +1,15 @@
+.row-fluid
+  .span12.pannel.margin1bottom
+    .row-fluid
+      .span12
+        %h3.pull-left Edition de l'abonnement de base
+        = link_to t('actions.cancel'), account_organization_default_subscription_path, class: 'btn pull-left margin1left'
+    %hr
+    .row-fluid
+      .span8
+        = simple_form_for @subscription, :url => account_organization_default_subscription_path, html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+          = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
+          = render partial: 'product', collection: @products
+          .form-actions
+            = f.submit 'Valider', class: 'btn'
+            = link_to 'Annuler', account_organization_default_subscription_path, class: 'btn'

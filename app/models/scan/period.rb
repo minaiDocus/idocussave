@@ -4,6 +4,7 @@ class Scan::Period
   include Mongoid::Timestamps
   
   referenced_in :user, inverse_of: :periods
+  belongs_to :organization, inverse_of: :periods
   referenced_in :subscription, class_name: "Scan::Subscription", inverse_of: :periods
   references_many :documents, class_name: "Scan::Document", inverse_of: :period
   references_one :invoice, inverse_of: :period
@@ -232,7 +233,7 @@ class Scan::Period
   def set_documents_name_tags
     tags = []
     self.documents.each do |document|
-      if document.name.match(/\w+\s\w+\s\d{6}\sall$/)
+      if document.name.match(/^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/)
         name = document.name.split
         tags << "b_#{name[1]} y_#{name[2][0..3]} m_#{name[2][4..5].to_i}"
       end
@@ -269,9 +270,9 @@ class Scan::Period
     update_price
   end
 
-  def render_json(viewer=self.user)
+  def render_json(viewer=(self.user || self.organization.leader))
     hash = { documents: documents_json(viewer) }
-    if viewer.is_admin or (viewer.is_prescriber && viewer == self.user.prescriber) or viewer.prescriber.try(:is_detail_authorized)
+    if viewer.is_admin or (viewer.is_prescriber && self.user.try(:organization) && self.user.organization.collaborators.include?(viewer)) or viewer.organization.try(:is_detail_authorized)
       hash.merge!({ options: options_json })
     end
     hash
@@ -316,7 +317,7 @@ class Scan::Period
         if document.report.try(:type) == "NDF"
           list[:report_id] = document.report.try(:id) || "#"
           list[:report_type] = document.report.try(:type) || ""
-        elsif viewer.is_admin or viewer == self.user.prescriber && viewer != self.user
+        elsif viewer.is_admin or self.user.try(:organization) && self.user.organization.collaborators.include?(viewer) && viewer != self.user
           list[:report_id] = document.report.try(:id) || "#"
           list[:report_type] = document.report.try(:type) || ""
         else
@@ -374,10 +375,16 @@ class Scan::Period
     end
     invoice_link = ""
     invoice_number = ""
-    # TODO fix centralization option
-    if self.user.prescriber.try(:is_decentralizer) || !self.user.prescriber.try(:is_centralizer)
+    if self.user && !self.user.is_centralized
       time = self.end_at + 1.day
       invoice = self.user.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
+      if invoice.try(:content).try(:url)
+        invoice_link = invoice.content.url
+        invoice_number = invoice.number
+      end
+    elsif self.organization
+      time = self.end_at + 1.day
+      invoice = self.organization.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
       if invoice.try(:content).try(:url)
         invoice_link = invoice.content.url
         invoice_number = invoice.number

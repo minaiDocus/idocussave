@@ -125,4 +125,30 @@ module ApplicationHelper
   def site_url
     @gray_label ? @gray_label.site_url : SITE_DEFAULT_URL
   end
+
+  def sortable(column, title=nil, contains={})
+    title ||= column.titleize
+    direction = 'asc'
+    icon = ''
+    if column.to_s == sort_column
+      direction = sort_direction == 'asc' ? 'desc' : 'asc'
+      icon_direction = sort_direction == 'asc' ? 'down' : 'up'
+      icon = content_tag( :i, '', class: 'icon-chevron-' + icon_direction)
+    end
+    options = params.merge(contains)
+    link_to icon + title, options.merge( sort: column, direction: direction )
+  end
+
+  def per_page
+    params[:per_page].try(:to_i) || 20
+  end
+
+  def per_page_link(number, options={})
+    temp_class = (options["class"] || options[:class] || "").split()
+    temp_class << 'label'
+    temp_class << 'label-info' if per_page == number
+    temp_class.uniq!
+    temp_options = options.merge( class: temp_class )
+    link_to number, params.merge( per_page: number ), temp_options
+  end
 end

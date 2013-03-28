@@ -11,11 +11,11 @@ class UpdateRequest
   
   before_save :filter_attributes
   
-  def apply(params=[])
+  def apply
     update_requestable.assign_attributes self.values
   end
   
-  def apply!(params=[])
+  def apply!
     apply
     self.values = {}
     save

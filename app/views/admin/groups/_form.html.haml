@@ -1,0 +1,13 @@
+= simple_form_for [:admin, @organization, @group], html: { class: 'form form-horizontal' } do |f|
+  %fieldset
+    %legend Informations
+    = f.input :name, label: t('mongoid.models.group.attributes.name')
+    = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
+  %fieldset
+    %legend Assignation
+    = f.input :member_tokens,                                                                                        |
+      input_html: { data: { pre: @group.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
+      label: t('mongoid.models.group.attributes.members')
+  .form-actions
+    = f.submit 'Valider', class: 'btn'
+    = link_to 'Annuler', admin_organization_path(@organization), class: 'btn'

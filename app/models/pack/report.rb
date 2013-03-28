@@ -204,7 +204,13 @@ class Pack::Report
                   end
                   report.save
                   report.document.period.update_information!
-                  pack.init_delivery_for(user.prescriber || user, Pack::REPORT)
+                  if user.prescribers.any?
+                    user.prescribers.each do |prescriber|
+                      pack.init_delivery_for(prescriber, Pack::REPORT)
+                    end
+                  else
+                    pack.init_delivery_for(user, Pack::REPORT)
+                  end
                 end
               end
             end

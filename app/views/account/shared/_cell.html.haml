@@ -1,12 +1,18 @@
 - is_translatable ||= false
-- if instance.send(key.to_s+'_changed?') && !instance.is_new?
+- if instance.send(key.to_s+'_changed?') && instance.request.status != 'create'
   - if is_translatable
     = t('mongoid.models.'+instance.class.to_s.underscore+'.attributes.'+key.to_s+'_'+instance.send(key.to_s+'_was').to_s)
   - else
-    = instance.send(key.to_s+'_was')
+    - if instance.send(key.to_s+'_was').is_a?(Boolean)
+      = instance.send(key.to_s+'_was') ? t('yes_value') : t('no_value')
+    - else
+      = instance.send(key.to_s+'_was')
   %hr.margin0
   = icon(icon: 'pencil')
 - if is_translatable
   = t('mongoid.models.'+instance.class.to_s.underscore+'.attributes.'+key.to_s+'_'+instance.send(key.to_s).to_s)
 - else
-  = instance.send(key)
+  - if instance.send(key).is_a?(Boolean)
+    = instance.send(key) ? t('yes_value') : t('no_value')
+  - else
+    = instance.send(key)

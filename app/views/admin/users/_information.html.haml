@@ -1,7 +1,7 @@
-.label{ class: (@user.update_request.try(:values).present? ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
+.label{ class: (@user.request.action != '' ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
   Informations
-  - if @user.update_request.try(:values).present?
-    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-mini btn-danger'
+  - if @user.request.action != ''
+    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-mini btn-danger'
 .row-fluid
   .span7
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
@@ -27,6 +27,11 @@
         %tr
           %th.first= t('mongoid.models.user.attributes.short.balance_in_cents')
           %td.value= format_price_00(@user.balance_in_cents) + ' €'
+        %tr
+          %th.first= t('mongoid.models.organization.name')
+          %td
+            = organization_link(@user)
+            = (result = organization_status(@user)) ? "(#{result})" : ''
   .span5
     .row-fluid
       .span12
@@ -34,10 +39,10 @@
           %tbody
             %tr
               %td.user_status{ colspan: 2 }
-                - if !@user.update_request.try(:values).try(:[],'is_inactive').nil?
+                - if @user.is_inactive != @user.is_inactive_was
                   %div.alignright.padding1right
                     %span.label.label-warning
-                      - if @user.update_request.try(:values).try(:[],'is_inactive')
+                      - if @user.is_inactive
                         Arrêt demandé
                       - else
                         Rétablissement demandé
@@ -59,9 +64,23 @@
               %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
             %tr
               %th= t('mongoid.models.user.attributes.is_editable')
-              %td.value
-                = check_box_tag 'user[is_editable]', 1, @user.is_editable
-                #is_editable_propagation.pull-right= icon_link_to '#', { icon: 'globe' }, { title: 'Propager', data: { confirm: 'Voulez vous vraiment propager les changements vers tout les clients ?' } }
+              %td.value= check_box_tag 'user[is_editable]', 1, @user.is_editable
             %tr
               %th= t('mongoid.models.user.attributes.use_debit_mandate')
               %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate
+            %tr
+              %th= t('mongoid.models.user.attributes.is_reminder_email_active')
+              %td.value= check_box_tag 'user[is_reminder_email_active]', 1, @user.is_reminder_email_active
+            - if @user.is_centralized_changed?
+              %tr
+                %th
+                  .label.label-warning= t('mongoid.models.user.attributes.is_centralized')
+                %td.value
+                  = icon(icon: 'pencil')
+                  = @user.is_centralized ? t('yes_value') : t('no_value')
+                  = check_box_tag 'user[is_centralized]', 1, @user.is_centralized_was
+            - else
+              %tr
+                %th= t('mongoid.models.user.attributes.is_centralized')
+                %td.value
+                  = check_box_tag 'user[is_centralized]', 1, @user.is_centralized

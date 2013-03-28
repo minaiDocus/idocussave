@@ -1,117 +1,155 @@
 # -*- encoding : UTF-8 -*-
-class Account::CustomersController < Account::AccountController
-  helper_method :sort_column, :sort_direction, :user_contains
-  before_filter { |c| c.load_user :@possessed_user }
-  before_filter :verify_management_access
+class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, only: %w(show edit update stop_using restart_using)
-  before_filter :verify_write_access, only: %w(edit update)
-
-  private
-
-  def load_customer
-    @user = User.find params[:id]
-  end
-
-  public
+  before_filter :verify_rights, except: 'index'
+  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
-    @users = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
-    @subscription = @possessed_user.find_or_create_scan_subscription
-    @period = @subscription.periods.desc(:created_at).first
+    respond_to do |format|
+      format.html do
+        @customers = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+        @periods = ::Scan::Period.where(:user_id.in => @customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
+        @groups = is_leader? ? @organization.groups : @user.groups
+        @groups = @groups.asc(:name).entries
+      end
+
+      format.json do
+        @customers = search(user_contains).order([sort_column,sort_direction]).active
+      end
+    end
   end
 
   def show
-    @user.update_request.try(:apply)
-    @subscription = @user.find_or_create_scan_subscription
+    @subscription = @customer.find_or_create_scan_subscription
     @period = @subscription.periods.desc(:created_at).first
-    @journals = @user.requested_account_book_types.unscoped.asc(:name)
+    @journals = @customer.requested_account_book_types.asc(:name)
   end
 
   def new
-    @user = User.new
+    @customer = User.new
   end
 
   def create
-    @user = User.new params[:user]
-    @user.prescriber = @possessed_user
-    @user.is_new = true
-    @user.is_disabled = true
-    @user.request_type = User::ADDING
-    @user.set_random_password
-    @user.skip_confirmation!
-    @user.account_book_types = @possessed_user.my_account_book_types.default
-    @user.requested_account_book_types = @possessed_user.my_account_book_types.default
-    if @user.save
-      subscription = @user.find_or_create_scan_subscription
-      new_options = @possessed_user.find_or_create_scan_subscription.product_option_orders
-      subscription.copy_to_options! new_options
-      subscription.copy_to_requested_options! new_options
-      subscription.save
-      flash[:notice] = "Demande de création envoyée."
-      redirect_to account_user_path(@user)
+    @customer = User.new user_params
+    if @customer.save
+      User.init_customer @customer, @organization, @user
+      flash[:notice] = "En attente de validation de l'administrateur."
+      redirect_to account_organization_customer_path(@customer)
     else
-      flash[:error] = "Données invalide."
-      render action: "new"
+      render action: 'new'
     end
   end
 
   def edit
-    @user.update_request.try(:apply)
   end
 
   def update
-    @user.assign_attributes(params[:user])
-    if @user.valid?
-      if @user.is_new
-        @user.save
+    attrs = @customer.request.attribute_changes.merge(user_params)
+    if @customer.request.set_attributes(attrs, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
       else
-        @user.update_request ||= UpdateRequest.new
-        update_request = @user.update_request
-        update_request.temp_values = @user.changes
-        @user.update_request.save
-        @user.reload
-        @user.set_request_type!
+        flash[:notice] = "En attente de validation de l'administrateur."
       end
-      flash[:notice] = "En attente de validation de l'administrateur."
-      redirect_to account_user_path(@user)
+      redirect_to account_organization_customer_path(@customer)
     else
-      render action: :edit
+      render action: 'edit'
     end
   end
 
   def stop_using
-    @user.is_inactive = true
-    @user.update_request ||= UpdateRequest.new
-    update_request = @user.update_request
-    update_request.temp_values = @user.changes
-    @user.update_request.save
-    @user.reload
-    @user.set_request_type!
-    flash[:notice] = "En attente de validation de l'administrateur."
-    redirect_to account_user_path(@user)
+    if @customer.request.set_attributes({ is_inactive: true }, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
+      else
+        flash[:notice] = "En attente de validation de l'administrateur."
+      end
+    end
+    redirect_to account_organization_customer_path(@customer)
   end
 
   def restart_using
-    @user.is_inactive = false
-    @user.update_request ||= UpdateRequest.new
-    update_request = @user.update_request
-    update_request.temp_values = @user.changes
-    @user.update_request.save
-    @user.reload
-    @user.set_request_type!
-    flash[:notice] = "En attente de validation de l'administrateur."
-    redirect_to account_user_path(@user)
+    if @customer.request.set_attributes({ is_inactive: false }, {}, @user)
+      if @customer.request.status == ''
+        flash[:success] = 'Modifié avec succès'
+      else
+        flash[:notice] = "En attente de validation de l'administrateur."
+      end
+    end
+    redirect_to account_organization_customer_path(@customer)
   end
 
-  private
+  def search_by_code
+    tags = []
+    full_info = params[:full_info].present?
+    if params[:q].present?
+      users = is_leader? ? @organization.members : @user.customers
+      users = users.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
+      users.each do |user|
+        tags << { id: user.id, name: full_info ? user.info : user.code }
+      end
+    end
+
+    respond_to do |format|
+      format.json{ render json: tags.to_json, status: :ok }
+    end
+  end
+
+protected
+
+  def can_manage?
+    is_leader? || @user.can_manage_customers?
+  end
+
+  def can_edit?
+    @customer ? (@customer.is_editable && can_manage?) : can_manage?
+  end
+  helper_method :can_edit?
+
+  def cannot_edit?
+    !can_edit?
+  end
+  helper_method :cannot_edit?
+
+private
+
+  def verify_rights
+    unless action_name == 'show' && can_manage? or action_name != 'show' && can_edit?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
+    end
+  end
+
+  def user_params
+    _params = params.require(:user).permit(:code,
+                                           :company,
+                                           :first_name,
+                                           :last_name,
+                                           :email,
+                                           :is_centralized)
+    if action_name == 'create' or @customer && @customer.is_new
+      _params.merge! params.require(:user).permit(:group_ids)
+    end
+    _params
+  end
+
+  def load_customer
+    @customer = @user.customers.find params[:id]
+  end
+
+  def apply_attribute_changes
+    @customer.request.apply_attribute_changes
+  end
 
   def sort_column
     params[:sort] || 'created_at'
   end
+  helper_method :sort_column
 
   def sort_direction
     params[:direction] || 'desc'
   end
+  helper_method :sort_direction
 
   def user_contains
     @contains ||= {}
@@ -129,14 +167,25 @@ class Account::CustomersController < Account::AccountController
     end
     @contains
   end
+  helper_method :user_contains
 
   def search(contains)
-    users = @possessed_user.clients
+    users = @user.customers
     users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
     users = users.where(:last_name => /#{contains[:last_name]}/i) unless contains[:last_name].blank?
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
+    if is_leader? && params[:collaborator_id].present?
+      ids = @organization.groups.any_in(collaborator_ids: [params[:collaborator_id]]).map(&:_id)
+      ids = ids.map { |e| e.to_s }
+      users = users.any_in(group_ids: ids)
+    elsif params[:group_ids].present?
+      ids = is_leader? ? @organization.groups.map(&:_id) : @user['group_ids']
+      ids = ids.map { |e| e.to_s }
+      params[:group_ids].delete_if { |e| !e.to_s.in? ids }
+      users = users.any_in(group_ids: params[:group_ids])
+    end
     users
   end
 end

@@ -1,0 +1,28 @@
+<td class='selectable request_type <%= @model.requestType() %>'>
+    <input type="radio" name="journal" />
+</td>
+<td class='is_default'>
+    <% if @model.get('is_default'): %>
+        <i class='icon-ok'></i>
+    <% end %>
+</td>
+<td id='journal_<%= @model.get('id') %>' class='selectable'>
+    <%= @model.get('name') %>
+    <%= @model.get('description') if @model.get('description').length > 0 %>
+    <br/>
+    <% if(@model.get('entry_name') != 'Aucun' && @showDetails): %>
+        <ul class='journal_info'>
+            <li><%= @model.get('entry_name') %></li>
+            <li>N° de compte : <%= @model.get('account_number') %></li>
+            <li>Compte charge : <%= @model.get('charge_account') %></li>
+        </ul>
+    <% end %>
+</td>
+<td class='indicator'>
+    <% if(@model.get('request_type') != ''): %>
+        <i class='icon-exclamation-sign'></i>
+    <% end %>
+</td>
+<td class='edit'>
+    <a href="journals/<%= @model.get('slug') %>/edit" class='edit hide'><i class="icon-edit"></i></a>
+</td>

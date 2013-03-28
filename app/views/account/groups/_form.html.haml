@@ -1,0 +1,20 @@
+= simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path : account_organization_group_path), html: { class: 'form form-horizontal' } do |f|
+  - if is_leader?
+    %fieldset
+      %legend Informations
+      = f.input :name, label: t('mongoid.models.group.attributes.name')
+      = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
+    %fieldset
+      %legend Assignation
+      = f.input :member_tokens,                                                                                        |
+        input_html: { data: { pre: @group.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
+        label: t('mongoid.models.group.attributes.members')
+  - else
+    %fieldset
+      %legend Assignation des clients
+      = f.input :customer_tokens,                                                                                        |
+        input_html: { data: { pre: @group.customers.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
+        label: t('mongoid.models.group.attributes.customers')
+  .form-actions
+    = f.submit 'Valider', class: 'btn'
+    = link_to 'Annuler', account_organization_groups_path, class: 'btn'

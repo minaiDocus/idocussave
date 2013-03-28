@@ -11,7 +11,7 @@ class DocumentTag
   def generate
     tags = ""
     self.document.pack.name.downcase.gsub('_',' ').split.each do |tag|
-      if tag.match(/^([a-z]|[0-9]|-|_)+$/)
+      if tag.match(/^([a-z]|[0-9]|-|_|%)+$/)
         tags += " "+tag
       end
     end

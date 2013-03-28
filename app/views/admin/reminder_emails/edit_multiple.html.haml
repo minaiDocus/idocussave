@@ -1,13 +1,13 @@
-= simple_nested_form_for [:admin, @user], url: update_multiple_admin_user_reminder_emails_path(@user), html: { class: 'form form-vertical reminder_emails margin0' } do |f|
+= simple_nested_form_for [:admin, @organization], url: update_multiple_admin_organization_reminder_emails_path(@organization), html: { class: 'form form-vertical reminder_emails margin0' } do |f|
   .modal-body
     = f.fields_for :reminder_emails do |reminder|
       .row-fluid
         .span12.well
           = reminder.link_to_remove icon_destroy, class: 'btn btn-mini'
-          = reminder.input :name, label: 'Label'
-          = reminder.input :delivery_day, label: "Jour de l'envoi", as: :integer
-          = reminder.input :subject, label: 'Objet'
-          = reminder.input :content, label: 'Contenu', as: :text
-    = f.link_to_add 'Ajouter un email de rappel', :reminder_emails, class: 'btn'
+          = reminder.input :name, label: t('mongoid.models.reminder_email.attributes.name')
+          = reminder.input :delivery_day, label: t('mongoid.models.reminder_email.attributes.delivery_day'), as: :integer
+          = reminder.input :subject, label: t('mongoid.models.reminder_email.attributes.object')
+          = reminder.input :content, label: t('mongoid.models.reminder_email.attributes.content'), as: :text
+    = f.link_to_add t('mongoid.models.reminder_email.actions.add'), :reminder_emails, class: 'btn'
   .modal-footer
-    = f.submit 'Valider', class: 'btn'
+    = f.submit t('actions.submit'), class: 'btn'

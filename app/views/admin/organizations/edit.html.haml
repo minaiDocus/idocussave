@@ -1,0 +1,7 @@
+#organization
+  .row-fluid
+    .span12.well
+      %h3 Edition de l'organisation : #{link_to @organization.name, admin_organization_path(@organization)}
+      %br
+      %br
+      = render partial: 'form'

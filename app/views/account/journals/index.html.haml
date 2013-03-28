@@ -1,42 +1,12 @@
-.container-fluid
-  = render 'shared/as_user'
-  = render partial: 'navigation'
+#journals
   .row-fluid
-    .span8
-      %table.table.table-striped.table-bordered.table-condensed.margin1top
-        %thead
-          %tr
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Par défaut ?
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Clients concernés
-            %th{ colspan: 3 } Traitement Pré-Saisie ou NDF
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Action demandée à iDocus
-            - if @user.is_editable
-              %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
-          %tr
-            %th Type
-            %th N° de compte
-            %th Compte charge
-        %tbody
-          - @journals.each do |journal|
-            - journal.update_request.try(:apply)
-            %tr{ id: journal.slug }
-              %td{ style: 'text-align:center;vertical-align:middle' }
-                = check_box_tag('account_book_type[is_default]', 1, journal.is_default, class: 'inplace', id: journal.slug)
-                = image_tag('application/spinner_gray_alpha.gif', style: 'display:none', id: "spinner_#{journal.slug}")
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'name' }
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'description' }
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'clients_count' }
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
-              %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
-              %td= t('request.'+journal.request_type) if journal.request_type.presence
-              - if @user.is_editable
-                %td
-                  = link_to icon_edit, edit_account_account_book_type_path(journal)
-                  = icon_link_to edit_requested_users_account_account_book_type_path(journal), { icon: 'user' }, { title: 'Clients concernés' }
-                  - if journal.is_destroy_requested?
-                    = link_to icon_ban_circle, cancel_destroy_account_account_book_type_path(journal), method: :post, data: { confirm: t('mongoid.models.account_book_type.request.confirm.cancel_destroy') }, title: 'Annuler la suppression'
-                  - else
-                    = link_to icon_destroy, account_account_book_type_path(journal), method: :delete, data: { confirm: t('mongoid.models.account_book_type.request.confirm.destroy') }
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Journaux comptables
+          .pull-right
+            = link_to t('actions.new'), new_account_organization_journal_path, class: 'btn btn-primary'
+
+  .row-fluid
+    #assignment.span12.box

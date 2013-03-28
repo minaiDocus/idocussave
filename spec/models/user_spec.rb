@@ -10,13 +10,11 @@ describe User do
       @user = FactoryGirl.create(:user, first_name: 'user1', code: 'TS0001')
       @user2 = FactoryGirl.create(:user, first_name: 'user2', code: 'TS0002')
       
-      @user3 = FactoryGirl.create(:user, first_name: 'User3', last_name: 'TEST', is_prescriber: true)
+      @user3 = FactoryGirl.create(:prescriber, first_name: 'User3', last_name: 'TEST', code: 'PRE001')
       @user3.save
       
-      @prescriber = FactoryGirl.create(:user, first_name: 'admin', is_prescriber: true)
+      @prescriber = FactoryGirl.create(:prescriber, first_name: 'Admin', last_name: 'Admin', code: 'PRE0002')
 
-      @prescriber.clients << @user
-      @prescriber.clients << @user2
       @prescriber.save
       
       @subscription = Scan::Subscription.new
@@ -39,10 +37,6 @@ describe User do
     it "#format_name" do
       @user.first_name.should eq('User1')
       @user.last_name.should eq('TEST')
-    end
-    
-    it "#update_clients" do 
-      @prescriber.clients.should_not be_empty
     end
     
     it "#find_or_create_scan_subscription should use find" do
@@ -77,27 +71,6 @@ describe User do
 
     it 'should not find not fake prescribers' do
       User.not_fake_prescribers.entries.should_not include([@fake_prescriber])
-    end
-  end
-
-  context "features" do
-    it 'should propagate successfully stamp name' do
-      prescriber = FactoryGirl.create(:prescriber)
-      client1 = FactoryGirl.create(:user)
-      client2 = FactoryGirl.create(:user)
-      prescriber.clients << client1
-      prescriber.clients << client2
-      prescriber.save
-
-      prescriber.update_attribute(:stamp_name, ':period')
-      prescriber.propagate_stamp_name
-
-      prescriber.reload
-      client1.reload
-      client2.reload
-      prescriber.stamp_name.should eq(':period')
-      client1.stamp_name.should eq(':period')
-      client2.stamp_name.should eq(':period')
     end
   end
 end

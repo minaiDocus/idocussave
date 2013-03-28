@@ -7,17 +7,16 @@ describe ReminderEmail do
       ReminderEmail.destroy_all
       User.destroy_all
       
-      @user1 = FactoryGirl.create(:user)
+      @user1 = FactoryGirl.create(:prescriber)
+      @organization = Organization.create(leader_id: @user1.id, name: 'iDocus', code: 'IDOC')
       @user2 = FactoryGirl.create(:user)
       @user3 = FactoryGirl.create(:user)
+
+      @organization.members << @user1
+      @organization.members << @user2
+      @organization.members << @user3
       
-      @user1.is_prescriber = true
-      @user1.clients << @user2
-      @user1.clients << @user3
-      
-      @user1.save
-      
-      @reminder_email = ReminderEmail.new(name: 'test_email1', subject: 'sujet 1', content: 'contenu1', user_id: @user1.id)
+      @reminder_email = ReminderEmail.new(name: 'test_email1', subject: 'sujet 1', content: 'contenu1', organization_id: @organization.id)
       @reminder_email.save
     end
     

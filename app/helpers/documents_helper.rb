@@ -1,8 +1,12 @@
 # -*- encoding : UTF-8 -*-
 module DocumentsHelper
   
-  def linked_users_option
-    user_ids = Pack.any_in(:user_ids => [@user.id]).not_in(:owner_id => [@user.id]).distinct(:owner_id)
+  def linked_users_option(user)
+    if user.is_prescriber && user.organization
+      user_ids = user.packs.distinct(:owner_id)
+    else
+      user_ids = Pack.any_in(:user_ids => [user.id]).not_in(:owner_id => [user.id]).distinct(:owner_id)
+    end
     users = User.any_in(:_id => user_ids)
 
     users = users.sort do |a,b|

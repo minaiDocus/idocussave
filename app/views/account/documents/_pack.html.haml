@@ -1,4 +1,4 @@
-- is_own = current_user.own_packs.include?(pack)
+- is_own = @user.own_packs.include?(pack)
 - users = @all_users.select { |user| pack[:user_ids].include?(user.id) }
 - owner = users.select { |user| pack[:owner_id] == user.id }.first
 
@@ -7,7 +7,7 @@
 - if users.size > 1 && is_own
   - document_class = "sharing"
   - document_type_title = "Mon document que je partage"
-- elsif users.size > 1 && !is_own
+- elsif !is_own
   - document_class = "shared"
   - document_type_title = "Document partagé par un autre utilisateur"
 - else
@@ -38,7 +38,8 @@
       %i.icon-download-alt
     %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }
       %i.icon-download
-    %a.do-popover{ :href => "#", "data-content" => document_type_content }
-      %i.icon-star-empty.icon-document-type{ :class => document_class }
+    /
+      %a.do-popover{ :href => "#", "data-content" => document_type_content }
+        %i.icon-star-empty.icon-document-type{ :class => document_class }
   %span.name
     %a.do-show{ :href => "#"} #{pack.name.sub('all','')}

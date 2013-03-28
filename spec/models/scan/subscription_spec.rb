@@ -5,15 +5,10 @@ describe Scan::Subscription do
   before(:each) do
     @start_at = Time.now
 
-    @user = User.new(:email => "client@example.com", :password => "secret", :code => "PRE0001")
+    @user = User.new(:email => "client@example.com", :password => "secret", :code => "TS0001")
     @user.skip_confirmation!
     @user.save
-    
-    @prescriber = User.new(:email => "prescriber@example.com", :password => "secret", :code => "PRE", :is_prescriber => true)
-    @prescriber.skip_confirmation!
-    @prescriber.save
 
-    @user.prescriber = @prescriber
     @user.save
     
     @poo = ProductOptionOrder.new(:title => "reuse", :price_in_cents_wo_vat => 1000, :duration => 1)
@@ -42,7 +37,7 @@ describe Scan::Subscription do
     @scan_subscription.unit_price_of_excess_expense.should eq(0)
     @scan_subscription.start_at.should eq(@start_at.beginning_of_month)
     @scan_subscription.end_at.should eq(@start_at.beginning_of_month + 12.month - 1.second)
-    @scan_subscription.code.should eq("PRE0001")
+    @scan_subscription.code.should eq("TS0001")
   end
   
   it "should set category to 1" do

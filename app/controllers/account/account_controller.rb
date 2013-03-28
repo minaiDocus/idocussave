@@ -26,21 +26,12 @@ protected
     end
   end
 
-  def verify_write_access
-    unless @user.is_editable?
-      flash[:error] = "Vous ne disposez pas des droits nécessaires pour effectuer cette action."
-      redirect_to account_profile_path
-    end
-    true
+  def load_user_and_role(name=:@user)
+    instance = load_user(name)
+    instance.extend_organization_role
   end
 
-  def verify_management_access
-    unless current_user.is_prescriber || current_user.is_admin
-      raise ActionController::RoutingError.new('Not Found')
-    end
-  end
-
-public
+  public
   
   def index
   end

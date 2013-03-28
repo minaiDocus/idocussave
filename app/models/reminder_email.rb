@@ -3,7 +3,7 @@ class ReminderEmail
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :user
+  belongs_to :organization
   
   field :name,               type: String
   field :subject,            type: String
@@ -13,26 +13,24 @@ class ReminderEmail
   field :delivered_user_ids, type: Array,   default: []
   field :processed_user_ids, type: Array,   default: []
   
-  validates_presence_of :name, :subject, :content, :user_id
+  validates_presence_of :name, :subject, :content, :organization_id
   
   def deliver
-    clients = user.clients.active - processed_users
+    clients = organization.customers.active - processed_users
     if clients.any?
       clients.each do |client|
-        if client != user
-          if client.is_reminder_email_active
-            now = Time.now
-            name = "#{client.code} #{now.year}#{now.month} all"
-            packs_delivered = client.own_packs.where(name: name, :created_at.gt => Time.now.beginning_of_month).scan_delivered.count
-            if packs_delivered == 0
-              ReminderMailer.remind(self,client).deliver
-              delivered_user_ids << client.id
-              save
-            end
+        if client.is_reminder_email_active
+          now = Time.now
+          name = "#{client.code} #{now.year}#{now.month} all"
+          packs_delivered = client.own_packs.where(name: name, :created_at.gt => Time.now.beginning_of_month).scan_delivered.count
+          if packs_delivered == 0
+            ReminderMailer.remind(self,client).deliver
+            delivered_user_ids << client.id
+            save
           end
-          processed_user_ids << client.id
-          save
         end
+        processed_user_ids << client.id
+        save
       end
       self.update_attributes(delivered_at: Time.now)
     else

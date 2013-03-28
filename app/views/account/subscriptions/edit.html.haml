@@ -1,26 +1,17 @@
-﻿#customer.subscription.container-fluid
-  = render 'shared/as_user'
-
-  .alerts
-    = render partial: 'shared/messages'
-
-  = render partial: 'account/customers/navigation'
-  .row-fluid
-    .span8.pannel
-      - if @possessed_user == @user
-        %h3 Edition de l'abonnement de base
-      - else
-        %h3 Edition de l'abonnement du client #{@user.info}
-      %hr
-      = simple_form_for @subscription, :url => account_subscription_path(@user), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
-        - if @subscription.user.is_new
-          = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
-        - else
-          = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration
-        = render partial: "product", collection: @products
-        .form-actions
-          = f.submit 'Valider', class: 'btn'
-          - if @possessed_user == @user
-            = link_to 'Annuler', account_users_path, class: 'btn'
+﻿.row-fluid
+  .span12.pannel.margin1bottom
+    .row-fluid
+      .span12
+        %h3 Edition de l'abonnement du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+    %hr
+    .row-fluid
+      .span8
+        = simple_form_for @subscription, :url => account_organization_subscription_path(@customer), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
+          - if @subscription.user.is_new
+            = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
           - else
-            = link_to 'Annuler', account_user_path(@user), class: 'btn'
+            = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration
+          = render partial: 'account/subscriptions/product', collection: @products
+          .form-actions
+            = f.submit 'Valider', class: 'btn'
+            = link_to 'Annuler', account_organization_customer_path(@customer), class: 'btn'

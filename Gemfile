@@ -13,7 +13,7 @@ gem 'haml-rails'
 gem 'devise'
 gem 'devise-encryptable'
 gem 'simple_form'
-gem 'kaminari'
+gem 'kaminari', '0.14.1'
 gem 'mongoid_slug', :require => 'mongoid/slug'
 gem 'state_machine'
 gem 'transitions', :require => %w(transitions active_record/transitions)
@@ -39,6 +39,9 @@ gem 'poppler'
 gem 'anjlab-tesseract', :require => 'tesseract'
 gem 'unicode_utils'
 gem 'axlsx', '1.3.4'
+gem 'breadcrumbs_on_rails'
+gem 'strong_parameters'
+gem 'rabl'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
@@ -47,6 +50,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
   gem 'therubyracer'
   gem 'jquery-ui-rails'
+  gem 'backbone-on-rails'
 end
 
 gem 'jquery-rails'

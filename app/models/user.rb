@@ -2,6 +2,7 @@
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
+  include ActiveModel::ForbiddenAttributesProtection
   # Include default devise modules. Others available are:
   # :registerable, :token_authenticatable, :lockable and :timeoutable
   devise :database_authenticatable, :confirmable,
@@ -54,26 +55,17 @@ class User
   field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :file_type_to_deliver,           type: Integer, default: ExternalFileStorage::PDF
-  # TODO fix centralization option
-  field :is_centralizer,                 type: Boolean, default: true
-  field :is_decentralizer,               type: Boolean, default: false
-  field :is_detail_authorized,           type: Boolean, default: false
   field :is_reminder_email_active,       type: Boolean, default: true
+  field :is_centralized,                 type: Boolean, default: true
 
-  NOTHING  = 0
-  ADDING   = 1
-  UPDATING = 2
-  REQUEST_TYPE_NAME = %w(nothing adding updating)
+  validates_uniqueness_of :code
 
-  field :is_new,                         type: Boolean, default: false
   field :is_disabled,                    type: Boolean, default: false
   field :is_editable,                    type: Boolean, default: true
-  field :request_type,                   type: Integer, default: 0
 
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
 
-  field :is_invoiceable,                 type: Boolean, default: true
   field :is_access_by_token_active,      type: Boolean, default: true
   field :is_inactive,                    type: Boolean, default: false
 
@@ -83,26 +75,28 @@ class User
   # FIXME use another way
   before_save :set_timestamps_of_addresses
 
-  embeds_many :addresses
-  embeds_one :update_request, as: :update_requestable
+  embeds_many :addresses, as: :locatable
+  embeds_one :organization_rights
 
-  references_many :clients,  class_name: "User", inverse_of: :prescriber
-  referenced_in :prescriber, class_name: "User", inverse_of: :clients
+  has_one :my_organization, class_name: 'Organization', inverse_of: 'leader'
+  belongs_to :organization, inverse_of: 'members'
+  has_and_belongs_to_many :groups, inverse_of: 'members'
+
+  has_one  :request,          as: :requestable,                              dependent: :destroy
+  has_many :requests,                                inverse_of: :requester, dependent: :destroy
 
   references_many :periods,            class_name: "Scan::Period",       inverse_of: :user
   references_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
   
   references_many :own_packs, class_name: "Pack", inverse_of: :owner
   references_and_referenced_in_many :packs
-  
-  references_many :my_account_book_types, class_name: "AccountBookType", inverse_of: :owner
+
   references_and_referenced_in_many :account_book_types,  inverse_of: :clients
-  references_and_referenced_in_many :requested_account_book_types, class_name: "AccountBookType",  inverse_of: :requested_clients
+  references_and_referenced_in_many :requested_account_book_types, class_name: 'AccountBookType', inverse_of: :requested_clients
 
   references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
   references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
 
-  references_many :reminder_emails, autosave: true
   references_many :invoices
   references_many :credits
   references_many :document_tags
@@ -114,24 +108,24 @@ class User
   references_one :composition
   references_one :debit_mandate
   references_one :external_file_storage, autosave: true
-  references_one :file_sending_kit
   references_one :csv_outputter, autosave: true
-  has_one :ibiza
-  has_one :gray_label
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
   scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
-  scope :invoiceable,                 where: { is_invoiceable: true }
-  
-  before_save :format_name, :update_clients, :set_inactive_at, :set_request_type
+  scope :centralized,                 where: { is_centralized: true }
+  scope :not_centralized,             where: { is_centralized: false }
+  scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
+  scope :editable,                    where: { is_editable: true }
+
+  before_save :format_name, :set_inactive_at
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
-  accepts_nested_attributes_for :reminder_emails,       allow_destroy: true
   accepts_nested_attributes_for :csv_outputter
+  accepts_nested_attributes_for :organization_rights
 
   def active
     inactive_at == nil
@@ -143,6 +137,10 @@ class User
 
   def info
     [self.code,self.company,self.name].reject { |e| e.blank? }.join(' - ')
+  end
+
+  def to_s
+    info
   end
 
   def self.find_by_email(param)
@@ -200,38 +198,8 @@ class User
     find_or_create_external_file_storage
   end
 
-  def find_or_create_file_sending_kit
-    if self.is_prescriber
-      file_sending_kit || FileSendingKit.create(user_id: self.id, title: 'Title', logo_path: '/logo/path', left_logo_path: '/left/logo/path', right_logo_path: '/right/logo/path')
-    else
-      nil
-    end
-  end
-  
-  def propagate_stamp_name
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:stamp_name, self.stamp_name) }
-    end
-  end
-
   def csv_outputter!
     csv_outputter || CsvOutputter.create(user_id: self.id)
-  end
-
-  def propagate_stamp_background
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:is_stamp_background_filled, self.is_stamp_background_filled) }
-    end
-  end
-
-  def propagate_is_editable
-    if self.is_prescriber
-      self.clients.each { |client| client.update_attribute(:is_editable, self.is_editable) }
-    end
-  end
-  
-  def update_requestable_attributes
-    [:email,:last_name,:first_name,:company,:code,:is_inactive]
   end
 
   def active_for_authentication?
@@ -239,60 +207,8 @@ class User
   end
 
   def activate!
-    self.is_new = false
-    self.is_disabled = false
-    save
-  end
-
-  def accept!
-    if update_request
-      update_request.apply
-      update_request.values = {}
-    end
-    save
-  end
-
-  def is_update_requested?
-    result = false
-    # user
-    result = true if self.update_request.try(:values).present?
-    unless self.update_request.try(:values) && self.update_request.try(:values).try(:[],:is_inactive)
-      # journals
-      if self.is_prescriber
-        my_account_book_types.unscoped.each do |account_book_type|
-          result = true if account_book_type.is_update_requested?
-        end
-      else
-        result = true if account_book_types.unscoped.entries != requested_account_book_types.unscoped.entries
-      end
-      # subscription
-      result = true if scan_subscriptions.current.try(:is_update_requested?)
-    end
-    result
-  end
-
-  def set_request_type!
-    if is_prescriber
-      clients.active.each do |client|
-        client.set_request_type
-        client.save
-      end
-    elsif prescriber
-      prescriber.set_request_type
-      prescriber.save
-    end
-    set_request_type
-    save
-  end
-
-  def set_request_type
-    if self.is_new
-      self.request_type = ADDING
-    elsif is_update_requested?
-      self.request_type = UPDATING
-    else
-      self.request_type = NOTHING
-    end
+    request.accept!
+    update_attribute(:is_disabled, false)
   end
 
   def set_random_password
@@ -301,15 +217,58 @@ class User
     self.password_confirmation = new_password
   end
 
-protected
+  def find_or_create_organization_rights
+    organization_rights || create_organization_rights
+  end
 
-  def update_clients
-    if self.client_ids != nil
-      self.clients = User.any_in(_id: client_ids.split(','))
+  def prescribers
+    if !self.is_prescriber
+      leader_id = organization.try(:leader_id)
+      User.any_of({ :group_ids.in => self['group_ids'] }, { _id: leader_id }).prescribers.asc(:code)
+    else
+      []
+    end
+  end
+
+  def extend_organization_role
+    if self.is_prescriber
+      if self.my_organization
+        self.extend OrganizationManagement::Leader
+      elsif self.organization
+        self.extend OrganizationManagement::Collaborator
+      end
     else
       nil
     end
   end
+
+  def requestable_on
+    [:email, :last_name, :first_name, :company, :code, :is_inactive, :is_centralized]
+  end
+
+  def self.init_customer customer, organization, requester=nil
+    customer.request.update_attributes(action: 'create', requester_id: requester.try(:id))
+    customer.is_disabled = true
+    customer.set_random_password
+    customer.skip_confirmation!
+    customer.account_book_types = customer.requested_account_book_types = organization.account_book_types.default
+    organization.members << customer
+    subscription = customer.find_or_create_scan_subscription
+    new_options = user.find_or_create_scan_subscription.product_option_orders
+    subscription.copy_to_options! new_options
+    subscription.copy_to_requested_options! new_options
+    customer.save && subscription.save
+  end
+
+  def request_status
+    if request.status.present?
+      request.status
+    else
+      find_or_create_scan_subscription.request_action
+    end
+  end
+  
+protected
 
   def set_inactive_at
     if is_inactive? && self.inactive_at.presence.nil?
@@ -318,7 +277,7 @@ protected
       self.inactive_at = nil
     end
   end
-  
+
   def format_name
     self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
     self.last_name = self.last_name.upcase rescue ""

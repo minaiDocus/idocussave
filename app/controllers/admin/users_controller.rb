@@ -8,7 +8,7 @@ class Admin::UsersController < Admin::AdminController
 
   def show
     @user = User.find params[:id]
-    @user.update_request.try(:apply)
+    @user.request.apply_attribute_changes
   end
 
   def new
@@ -22,14 +22,10 @@ class Admin::UsersController < Admin::AdminController
     is_admin = params[:user][:is_admin].presence ? params[:user].delete(:is_admin) : false
     is_prescriber = params[:user][:is_prescriber].presence ? params[:user].delete(:is_prescriber) : false
 
-    @user = User.new params[:user]
+    @user = User.new user_params
     @user.is_admin = is_admin
     @user.is_prescriber = is_prescriber
     @user.skip_confirmation!
-    if @user.prescriber
-      @user.account_book_types = @user.prescriber.my_account_book_types.default
-      @user.requested_account_book_types = @user.prescriber.my_account_book_types.default
-    end
     if @user.save
       flash[:notice] = "Crée avec succès."
       redirect_to admin_users_path
@@ -50,27 +46,24 @@ class Admin::UsersController < Admin::AdminController
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
 
-      if @user.update_attributes(params[:user])
-        if @user.update_request
-          @user.update_request.sync!
-          @user.save
-        end
+      if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update_attributes(user_params))
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else
         format.json{ render json: @user.to_json, status: :unprocessable_entity }
-        format.html{ redirect_to admin_user_path(@user), error: "Impossible de modifier cette utilisateur." }
+        format.html{ redirect_to admin_user_path(@user), error: 'Impossible de modifier cette utilisateur.' }
       end
     end
   end
 
   def search_by_code
     tags = []
+    full_info = params[:full_info].present?
     if params[:q].present?
-      users = User.where(code: /.*#{params[:q]}.*/i)
+      users = User.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
       users = users.prescribers if params[:prescriber].present?
       users.each do |user|
-        tags << {id: user.id, name: user.code}
+        tags << {id: user.id, name: full_info ? user.info : user.code}
       end
     end
 
@@ -78,43 +71,10 @@ class Admin::UsersController < Admin::AdminController
       format.json{ render json: tags.to_json, status: :ok }
     end
   end
-  
-  def propagate_stamp_name
-    @user = User.find params[:id]
-    respond_to do |format|
-        if @user.propagate_stamp_name
-          format.json{ render json: {}, status: :ok }
-        else
-          format.json{ render json: {}, status: :unprocessable_entity }
-        end
-    end
-  end
-
-  def propagate_stamp_background
-    @user = User.find params[:id]
-    respond_to do |format|
-      if @user.propagate_stamp_background
-        format.json{ render json: {}, status: :ok }
-      else
-        format.json{ render json: {}, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def propagate_is_editable
-    @user = User.find params[:id]
-    respond_to do |format|
-      if @user.propagate_is_editable
-        format.json{ render json: {}, status: :ok }
-      else
-        format.json{ render json: {}, status: :unprocessable_entity }
-      end
-    end
-  end
 
   def accept
     @user = User.find params[:id]
-    if @user.accept!
+    if @user.request.accept!
       flash[:notice] = 'Modifié avec succès.'
     else
       flash[:error] = "Impossible de modifier."
@@ -134,7 +94,7 @@ class Admin::UsersController < Admin::AdminController
 
   def destroy
     @user = User.find params[:id]
-    if @user.is_new && @user.destroy
+    if @user.request.status == 'create' && @user.destroy
       flash[:notice] = 'Supprimé avec succès.'
     else
       flash[:error] = 'Impossible de supprimer.'
@@ -142,7 +102,11 @@ class Admin::UsersController < Admin::AdminController
     redirect_to admin_users_path
   end
   
-  private
+private
+
+  def user_params
+    params.require(:user).permit!
+  end
 
   def sort_column
     params[:sort] || 'created_at'
@@ -170,14 +134,20 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def search(contains)
-    users = User.all
+    if contains[:request_action].present?
+      user_ids = Request.where(requestable_type: 'User').any_of({ action: contains[:request_action] }, { relation_action: contains[:request_action] }).distinct(:requestable_id)
+      user_ids = user_ids + Scan::Subscription.where(request_action: contains[:request_action]).distinct(:user_id)
+      users = User.any_in(:_id => user_ids)
+    else
+      users = User.all
+    end
     users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
     users = users.where(:last_name => /#{contains[:last_name]}/i) unless contains[:last_name].blank?
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
     users = users.where(:request_type => contains[:request_type]) unless contains[:request_type].blank?
-    users = users.where(:prescriber_id => contains[:prescriber_id]) unless contains[:prescriber_id].blank?
+    users = users.where(:organization_id => contains[:organization_id]) unless contains[:organization_id].blank?
     users
   end
 end

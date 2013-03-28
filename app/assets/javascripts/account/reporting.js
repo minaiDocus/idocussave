@@ -124,7 +124,7 @@ function render_data(period){
     }
     
     $.ajax({
-      url: "/account/scan/periods/" + period_id,
+      url: "/account/periods/" + period_id,
       data: "",
       dataType: "json",
       type: "GET",
@@ -154,6 +154,7 @@ function render_data(period){
         });
         
         $(".do-popover").popover({placement: 'right'});
+        initDoShowInvoice();
       }
     });
     refresh_navigation_button();
@@ -199,14 +200,20 @@ function apply_filter(){
   }
 }
 
-$(document).ready(function(){
-  $("a.do-showInvoice").click(function(){
+function initDoShowInvoice(){
+  $link = $("a.do-showInvoice");
+  $link.unbind('click');
+  $link.bind('click',function(e){
     $invoiceDialog = $("#invoiceDialog");
     $invoiceDialog.find("h3").text($(this).attr("title"));
     $invoiceDialog.find("#invoice-show").attr("src",$(this).attr("href"));
     $invoiceDialog.modal();
-    return false;
+    e.preventDefault();
   });
+}
+
+$(document).ready(function(){
+  initDoShowInvoice();
   
   $("a.do-show").click(function(){
     var $period = $(this).find('.period');

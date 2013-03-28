@@ -1,9 +1,10 @@
-= simple_form_for [:account, @journal], html: { class: 'form form-horizontal account_book_type margin0' } do |f|
+= simple_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   = f.input :name, label: 'Libellé'
   = f.input :description, label: 'Déscription'
   = f.input :entry_type, label: 'Type de saisie', collection: [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]], selected: @journal['entry_type'], allow_blank: false
   = f.input :account_number, label: 'Numéro de compte'
   = f.input :charge_account, label: 'Compte charge'
+  = f.input :is_default, label: 'Par défaut ?', as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
-    = link_to t('actions.cancel'), account_account_book_types_path, class: 'btn'
+    = link_to t('actions.cancel'), account_organization_journals_path, class: 'btn'

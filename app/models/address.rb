@@ -18,8 +18,7 @@ class Address
   field :is_for_billing,  type: Boolean, default: false
   field :is_for_shipping, type: Boolean, default: false
 
-  embedded_in :user, inverse_of: :addresses
-  embeds_one :update_request, as: :updatable
+  embedded_in :locatable, polymorphic: true
 
   validates_presence_of :first_name, :last_name, :city, :zip
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
@@ -44,7 +43,7 @@ class Address
 
   def set_billing_address
     if self.is_for_billing.in? ["1", true]
-      user.addresses.each do |address|
+      locatable.addresses.each do |address|
         address.is_for_billing = false
       end
       self.is_for_billing = true
@@ -56,7 +55,7 @@ class Address
 
   def set_shipping_address
     if self.is_for_shipping.in? ["1", true]
-      user.addresses.each do |address|
+      locatable.addresses.each do |address|
         address.is_for_shipping = false
       end
       self.is_for_shipping = true
@@ -64,5 +63,9 @@ class Address
       self.is_for_shipping = false
     end
     true
+  end
+
+  def info
+    [address_1, address_2, zip, city, state].select(&:present?).join(', ')
   end
 end

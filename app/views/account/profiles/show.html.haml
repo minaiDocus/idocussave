@@ -20,9 +20,6 @@
                 != link_to 'Mes partages',                        '#sharing_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
                 != link_to 'Mon abonnement',                      '#subscription_options', class: 'do-show'
-              - if @user.is_prescriber || @user.is_admin
-                %li{ class: "#{@active_panel == 'ibiza_options' ? 'active' : ''}" }
-                  != link_to 'Connexion à la production comptable', '#ibiza_options',        class: 'do-show'
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
@@ -249,18 +246,4 @@
               .form-actions
                 = f.submit 'Valider', class: 'btn'
 
-      - if @user.is_prescriber || @user.is_admin
-        #ibiza_options.row-fluid.pan{ class: (@active_panel == 'ibiza_options' ? 'active' : '')}
-          .span12
-            .well
-              %h3.aligncenter Connexion à la production comptable
-              %hr
-              = simple_form_for (@user.ibiza || Ibiza.new), url: account_ibiza_path(panel: 'ibiza_options'), html: { class: 'form form-horizontal' } do |f|
-                .control-group.string.optional
-                  %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
-                  .controls
-                    %span{ class: "label #{ibiza_state_label(@user.ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@user.ibiza)}
-                = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
-                .form-actions
-                  = f.submit 'Valider', class: 'btn'
 = render "help"

@@ -5,11 +5,10 @@
     .span12.well{ style: 'padding:5px 10px;' }
       .pull-left
         %h2= @user.info + (@user.inactive_at ? ' (Inactif)' : '')
-      - if @user.is_new
+      - if @user.request.status == 'create'
         .pull-right
-          - if @user.is_new
-            = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-danger'
-            = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: 'Etes vous sûr ?' }, class: 'btn btn-danger'
+          = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
+          = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
 
   .row-fluid
     #information.span6
@@ -20,14 +19,23 @@
     .span5
       .row-fluid
         .span12
-          = render partial: 'prescriber_options'
-      .row-fluid
-        .span12
-          #reminder_emails
-      .row-fluid
-        #file_sending_kit.span12
-      .row-fluid
-        #ibiza_options.span12
+          .label{ style: 'padding:3px 5px 3px' }
+            Autorisation de l'organisation
+          - if @user.organization && @user.organization.collaborators.include?(@user)
+            %table.table.table-striped.table-bordered.table-condensed
+              %tbody
+                %tr
+                  %th= t('mongoid.models.organization_rights.attributes.is_customers_management_authorized')
+                  %td.value
+                    = check_box_tag 'user[organization_rights][is_customers_management_authorized]', 1, @user.find_or_create_organization_rights.is_customers_management_authorized
+                %tr
+                  %th= t('mongoid.models.organization_rights.attributes.is_groups_management_authorized')
+                  %td.value
+                    = check_box_tag 'user[organization_rights][is_groups_management_authorized]', 1, @user.find_or_create_organization_rights.is_groups_management_authorized
+                %tr
+                  %th= t('mongoid.models.organization_rights.attributes.is_journals_management_authorized')
+                  %td.value
+                    = check_box_tag 'user[organization_rights][is_journals_management_authorized]', 1, @user.find_or_create_organization_rights.is_journals_management_authorized
       .row-fluid
         .span12
           = render partial: 'stamp_personalisation'
@@ -49,4 +57,3 @@
 
 :javascript
   var user_id = "#{params[:id]}"
-  var clients = [#{user_codes_to_tokeninput_field(@user.clients)}]

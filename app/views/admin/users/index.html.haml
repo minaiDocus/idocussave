@@ -14,7 +14,7 @@
           %tr
             %td= l(user.created_at)
             %td= user.info
-            %td= t('request.'+User::REQUEST_TYPE_NAME[user.request_type])
+            %td= t("request.#{user.request_status}") if user.request_status.present?
             %td
               = link_to icon_show, admin_user_path(user), alt: t('actions.show'), title: t('actions.show')
     .pull-right

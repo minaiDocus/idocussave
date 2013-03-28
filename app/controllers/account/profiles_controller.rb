@@ -18,7 +18,7 @@ public
   def update
     if params[:user][:current_password]
       if @user.valid_password?(params[:user][:current_password])
-        if @user.update_attributes(params[:user])
+        if @user.update_attributes(user_params)
           flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
         else
           flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
@@ -28,7 +28,7 @@ public
       end
     else
       params[:user].reject!{ |key,value| key == 'password' || key == 'password_confirmation' }
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         flash[:success] = "Modifié avec succès."
       else
         flash[:error] = "Impossible de sauvegarder."
@@ -47,7 +47,7 @@ public
     if other
       if other != @user
         if !other.in?(@user.share_with)
-          if other != @user.prescriber
+          if !other.in?(@user.prescribers)
             @user.share_with << other
             if @user.save && other.save
               flash[:notice] = "Vous avez paramétré le partage automatique de vos documents avec #{other.email}."
@@ -71,7 +71,7 @@ public
 
   def unshare_documents_with
     other = User.where(email: params[:email]).first
-    if other && other != @user.prescriber && other.in?(@user.share_with)
+    if other && !other.in?(@user.prescribers) && other.in?(@user.share_with)
       @user.share_with -= [other]
       if @user.save && other.save
         flash[:notice] = "Vous avez supprimé le partage automatique de vos documents avec #{other.email}."
@@ -82,5 +82,10 @@ public
       flash[:error] = "Utilisateur non valide : #{params[:email]}"
     end
     redirect_to account_profile_path(panel: 'sharing_management')
+  end
+
+private
+  def user_params
+    params.require(:user).permit(:current_password, :password, :password_confirmation, :is_reminder_email_active)
   end
 end
