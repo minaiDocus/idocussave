@@ -38,7 +38,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     attrs = @collaborator.request.attribute_changes.merge(user_params)
     if @collaborator.request.set_attributes(attrs, {}, @user)
       flash[:notice] = "En attente de validation de l'administrateur."
-      redirect_to account_organization_user_path(@collaborator)
+      redirect_to account_organization_collaborator_path(@collaborator)
     else
       render action: 'edit'
     end
@@ -50,7 +50,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     else
       flash[:notice] = "En attente de validation de l'administrateur."
     end
-    redirect_to account_organization_user_path(@collaborator)
+    redirect_to account_organization_collaborator_path(@collaborator)
   end
 
   def restart_using
@@ -59,7 +59,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     else
       flash[:notice] = "En attente de validation de l'administrateur."
     end
-    redirect_to account_organization_user_path(@collaborator)
+    redirect_to account_organization_collaborator_path(@collaborator)
   end
 
 private

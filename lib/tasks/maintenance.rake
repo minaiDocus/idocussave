@@ -55,7 +55,7 @@ namespace :maintenance do
   namespace :reporting do
     desc 'Init current period'
     task :init => [:environment] do
-      Organization.each do |organization|
+      Organization.all.each do |organization|
         organization.customers.active.each do |customer|
           begin
             subscription = customer.scan_subscriptions.current
