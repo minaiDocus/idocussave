@@ -33,13 +33,17 @@ namespace :maintenance do
         content << "Bonjour,<br/><br/>"
         content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
         users.each do |user|
-          content << user.info + " - " + I18n.t("request.#{user.request.status}")
+          url = File.join([SITE_INNER_URL, 'admin/users', user.id.to_s])
+          tag = helper.content_tag :a, user.info, href: url
+          content << tag + " - " + I18n.t("request.#{user.request.status}")
           content << "<br/>"
         end
         content << "<br/>" if users.count > 0 && journals.count > 0
         content << "Des requêtes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
         journals.each do |journal|
-          content << journal.organization.name + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
+          url = File.join([SITE_INNER_URL, 'admin/organizations', journal.organization.slug])
+          tag = helper.content_tag :a, journal.organization.name, href: url
+          content << tag + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
           content << "<br/>"
         end
         content << "<br/>Cordialement, l'équipe iDocus"
