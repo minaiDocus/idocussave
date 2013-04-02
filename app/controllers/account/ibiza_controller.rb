@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::IbizaController < Account::AccountController
-  before_filter :verify_management_access, :load_user, :load_organization
-
+class Account::IbizaController < Account::OrganizationController
   def create
     @organization.ibiza = Ibiza.new params[:ibiza]
     if @organization.ibiza.save
