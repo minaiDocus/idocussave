@@ -375,20 +375,20 @@ class Scan::Period
     end
     invoice_link = ""
     invoice_number = ""
-    if self.user && !self.user.is_centralized
-      time = self.end_at + 1.day
-      invoice = self.user.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
-      if invoice.try(:content).try(:url)
-        invoice_link = invoice.content.url
-        invoice_number = invoice.number
-      end
-    elsif self.organization
+    if self.organization
       time = self.end_at + 1.day
       invoice = self.organization.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
       if invoice.try(:content).try(:url)
         invoice_link = invoice.content.url
         invoice_number = invoice.number
       end
+    elsif self.user
+        time = self.end_at + 1.day
+        invoice = self.user.invoices.where(number: /^#{time.year}#{"%0.2d" % (time.month)}/).first
+        if invoice.try(:content).try(:url)
+          invoice_link = invoice.content.url
+          invoice_number = invoice.number
+        end
     end
     {
         list: lists,
