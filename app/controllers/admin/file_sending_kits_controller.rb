@@ -41,7 +41,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
     else
       flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
       without_shipping_address.each do |client|
-        flash[:error] << "</br><a href='#{admin_organization_path(client)}' target='_blank'>#{client.info}</a>"
+        flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
       end
     end
     respond_to do |format|

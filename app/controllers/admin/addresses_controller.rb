@@ -21,7 +21,7 @@ class Admin::AddressesController < Admin::AdminController
 
   def update_multiple
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else
@@ -31,4 +31,9 @@ class Admin::AddressesController < Admin::AdminController
     end
   end
 
+private
+
+  def user_params
+    params.require(:user).permit!
+  end
 end
