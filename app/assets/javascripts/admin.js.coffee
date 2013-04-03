@@ -1,8 +1,11 @@
 #//= require common.js
 #//= require jquery_nested_form
-#//= require fileuploader
-
-
+#//= require file-uploader/load-image.min
+#//= require file-uploader/jquery.iframe-transport
+#//= require file-uploader/jquery.fileupload
+#//= require file-uploader/jquery.fileupload-ui
+#//= require file-uploader/application
+#//= require file-uploader/cors/jquery.xdr-transport
 #//= require bootstrap-datepicker/core
 #//
 #// French translation for bootstrap-datepicker
@@ -19,22 +22,3 @@ jQuery ->
 
 jQuery ->
   $('.datepicker').datepicker format: 'yyyy-mm-dd', language: 'fr'
-
-  uploader_element = document.getElementById('file-uploader')
-  if uploader_element
-    uploader = new qq.FileUploader({
-      # pass the dom node (ex. $(selector)[0] for jQuery users)
-      element: uploader_element,
-      # path to server-side upload script
-      action: '#{ admin_cms_images_path }',
-      onComplete: (id, fileName, responseJSON) ->
-        if (responseJSON.success)
-          # $("#avatar").attr("src", responseJSON.url);
-          node = "<li><img src='"+responseJSON.url+"'/></li>"
-          $('#cms_images').append(node)
-          $$('.qq-upload-failed-text').first().update('Successfully Uploaded!')
-        else
-          $$('.qq-upload-failed-text').first().update('Hmm .. upload failed')
-    })
-
-

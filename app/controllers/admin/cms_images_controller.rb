@@ -8,13 +8,16 @@ class Admin::CmsImagesController < Admin::AdminController
 
   def create
     @cms_image = CmsImage.new
-    @cms_image.content = params[:file] || params[:qqfile]
+    @cms_image.original_file_name = params[:files][0].original_filename
+    @cms_image.content = params[:files][0].tempfile
     @cms_image.save
 
+    data = [{ thumb: @cms_image.content.url(:thumb).to_s, url: @cms_image.content.url.to_s, name: @cms_image.name }]
+
     respond_to do |format|
-      format.json{ render :json => {:success => true, :url => @cms_image.content.url.to_s} }
+      format.json{ render :json => data }
       # this one is for IE8 who is really dumb...
-      format.html{ render :json => {:success => true, :url => @cms_image.content.url.to_s} }
+      format.html{ render :json => data }
     end
   end
 

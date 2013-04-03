@@ -3,7 +3,7 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require common
- *= require sass/fileuploader
+ *= require jquery.fileupload-ui
  *= require_self
  *= require admin/organizations
 */
@@ -263,3 +263,7 @@ h3 a {
   -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .065);
   -moz-box-shadow: 0 3px 5px rgba(0,0,0,.065);
   box-shadow: 0 3px 5px rgba(0, 0, 0, .065); }
+
+.center {
+  vertical-align: middle !important;
+  text-align: center !important; }
