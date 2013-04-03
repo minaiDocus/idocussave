@@ -49,7 +49,7 @@
                   = link_to 'Clients', account_organization_customers_path
                 - if is_leader? || @user.can_manage_journals?
                   %li{ class: (controller_name == 'journals' ? 'active' : '') }
-                    = link_to 'Journaux comptable', account_organization_journals_path
+                    = link_to 'Journaux comptables', account_organization_journals_path
                 %li{ class: (controller_name == 'organization_subscriptions' ? 'active' : '') }
                   = link_to 'Abonnement par défaut', account_organization_default_subscription_path
           .span10
