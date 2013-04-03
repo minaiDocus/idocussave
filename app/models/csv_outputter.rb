@@ -5,7 +5,7 @@ class CsvOutputter
   field :comma_as_number_separator, type: Boolean, default: false
   field :directive, type: String, default: ""
 
-  referenced_in :user
+  belongs_to :user
 
   def to_a
     directive.split('|').map do |e|

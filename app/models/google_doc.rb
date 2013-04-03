@@ -3,7 +3,7 @@ class GoogleDoc
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :external_file_storage
+  belongs_to :external_file_storage
   
   field :token,                type: String,  default: ''
   field :secret,               type: String,  default: ''

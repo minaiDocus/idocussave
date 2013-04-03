@@ -3,10 +3,10 @@ class Scan::Document
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :subscription, class_name: "Scan::Subscription", inverse_of: :documents
-  referenced_in :period, class_name: "Scan::Period", inverse_of: :documents
-  referenced_in :pack, inverse_of: :scan_documents
-  references_one :report, class_name: 'Pack::Report', inverse_of: :document, dependent: :delete
+  belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :documents
+  belongs_to :period,       class_name: "Scan::Period",       inverse_of: :documents
+  belongs_to :pack,                                           inverse_of: :scan_documents
+  has_one    :report,       class_name: 'Pack::Report',       inverse_of: :document,       dependent: :delete
 
   field :name,            type: String,  default: ''
   field :pieces,          type: Integer, default: 0

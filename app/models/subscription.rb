@@ -25,7 +25,7 @@ class Subscription
   before_create :set_number
   before_save :update_price, :set_start_date, :set_end_date
   
-  referenced_in :user
+  belongs_to :user
   belongs_to :organization
   has_many :invoices
 

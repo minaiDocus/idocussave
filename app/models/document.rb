@@ -16,9 +16,9 @@ class Document
   field :dirty,              type: Boolean, default: true
   field :token,              type: String
 
-  references_many :document_tags, dependent: :destroy
-  references_many :remote_files, as: :remotable, dependent: :destroy
-  referenced_in :pack
+  has_many :document_tags,                 dependent: :destroy
+  has_many :remote_files,  as: :remotable, dependent: :destroy
+  belongs_to :pack
 
   has_mongoid_attached_file :content,
                             styles: {

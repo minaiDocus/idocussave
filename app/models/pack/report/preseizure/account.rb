@@ -2,8 +2,8 @@ class Pack::Report::Preseizure::Account
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in   :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
-  references_many :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :delete
+  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
+  has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :delete
 
   field :type,      type: Integer # TTC / HT / TVA
   field :number,    type: String

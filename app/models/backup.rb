@@ -3,7 +3,7 @@ class Backup
 	include Mongoid::Document
 	include Mongoid::Timestamps
 	
-	referenced_in :user
+	belongs_to :user
 	
 	field :account_number, :type => Integer
   field :account_name, :type => String

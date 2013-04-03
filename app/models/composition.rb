@@ -7,7 +7,7 @@ class Composition
   field :path
   field :document_ids
   
-  referenced_in :user
+  belongs_to :user
 
   def self.create_with_documents(options = {})
     name = options.delete(:name) || "Undefined"

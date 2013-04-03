@@ -2,9 +2,9 @@
 class DocumentTag
   include Mongoid::Document
   
-  referenced_in :user
-  referenced_in :document
-  referenced_in :pack
+  belongs_to :user
+  belongs_to :document
+  belongs_to :pack
   
   field :name, type: String, default: ""
   

@@ -3,9 +3,9 @@ class Pack::Report::Expense
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :report, class_name: "Pack::Report", inverse_of: :expenses
-  referenced_in :piece, class_name: "Pack::Piece", inverse_of: :expense
-  references_one :observation, class_name: "Pack::Report::Observation", inverse_of: :expense, dependent: :destroy
+  belongs_to :report,      class_name: "Pack::Report",              inverse_of: :expenses
+  belongs_to :piece,       class_name: "Pack::Piece",               inverse_of: :expense
+  has_one    :observation, class_name: "Pack::Report::Observation", inverse_of: :expense,  dependent: :destroy
 
   field :amount_in_cents_wo_vat, type: Float
   field :amount_in_cents_w_vat,  type: Float

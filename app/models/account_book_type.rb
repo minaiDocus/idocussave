@@ -13,8 +13,8 @@ class AccountBookType
   attr_accessor :force_assignment, :is_relation_updated, :removed_clients
   
   belongs_to :organization
-  references_and_referenced_in_many :clients, class_name: 'User', inverse_of: :account_book_types
-  references_and_referenced_in_many :requested_clients, class_name: 'User', inverse_of: :requested_account_book_types
+  has_and_belongs_to_many :clients,           class_name: 'User', inverse_of: :account_book_types
+  has_and_belongs_to_many :requested_clients, class_name: 'User', inverse_of: :requested_account_book_types
 
   has_one :request, as: :requestable, dependent: :destroy
 

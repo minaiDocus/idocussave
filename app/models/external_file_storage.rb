@@ -14,11 +14,11 @@ class ExternalFileStorage
   PDF       = 2
   TIFF      = 3
   
-  referenced_in :user
-  references_one :dropbox_basic, autosave: true
-  references_one :google_doc,    autosave: true
-  references_one :ftp,           autosave: true
-  references_one :the_box,       autosave: true
+  belongs_to :user
+  has_one :dropbox_basic, autosave: true
+  has_one :google_doc,    autosave: true
+  has_one :ftp,           autosave: true
+  has_one :the_box,       autosave: true
 
   accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :the_box
 

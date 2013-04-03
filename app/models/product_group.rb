@@ -14,14 +14,14 @@ class ProductGroup
   
   slug :name
 
-  references_and_referenced_in_many :products
-  references_many :product_options
+  has_and_belongs_to_many :products
+  has_many :product_options
 
-  references_many :product_required_for, class_name: 'ProductGroup', inverse_of: :product_require
-  referenced_in   :product_require,      class_name: 'ProductGroup', inverse_of: :product_required_for
+  has_many   :product_required_for, class_name: 'ProductGroup', inverse_of: :product_require
+  belongs_to :product_require,      class_name: 'ProductGroup', inverse_of: :product_required_for
 
-  references_and_referenced_in_many :product_subgroups,   class_name: 'ProductGroup', inverse_of: :product_supergroups
-  references_and_referenced_in_many :product_supergroups, class_name: 'ProductGroup', inverse_of: :product_subgroups
+  has_and_belongs_to_many :product_subgroups,   class_name: 'ProductGroup', inverse_of: :product_supergroups
+  has_and_belongs_to_many :product_supergroups, class_name: 'ProductGroup', inverse_of: :product_subgroups
   
   class << self
     def by_position

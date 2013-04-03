@@ -13,10 +13,10 @@ class Pack::Piece
   field :position,           type: Integer
   field :token,              type: String
 
-  referenced_in :pack, inverse_of: :pieces
-  references_one :expense, class_name: "Pack::Report::Expense", inverse_of: :piece
-  has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :piece
-  references_many :remote_files, as: :remotable, dependent: :destroy
+  belongs_to :pack,                                                 inverse_of: :pieces
+  has_one    :expense,      class_name: "Pack::Report::Expense",    inverse_of: :piece
+  has_many   :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :piece
+  has_many   :remote_files, as: :remotable, dependent: :destroy
 
   has_mongoid_attached_file :content,
                             path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/pieces/:id/:style/:filename",

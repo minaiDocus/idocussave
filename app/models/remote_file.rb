@@ -3,9 +3,9 @@ class RemoteFile
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :user
-  referenced_in :pack
-  referenced_in :remotable, polymorphic: true
+  belongs_to :user
+  belongs_to :pack
+  belongs_to :remotable, polymorphic: true
 
   field :path,          type: String, default: ''
   field :temp_path,     type: String, default: ''

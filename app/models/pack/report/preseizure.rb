@@ -2,10 +2,10 @@ class Pack::Report::Preseizure
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :report, class_name: 'Pack::Report', inverse_of: :preseizures
-  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :preseizures
-  references_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
-  references_many :entries, class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :preseizure, dependent: :delete
+  belongs_to :report, class_name: 'Pack::Report', inverse_of: :preseizures
+  belongs_to :piece,  class_name: 'Pack::Piece',  inverse_of: :preseizures
+  has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
+  has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :delete
 
   field :date,            type: Time
   field :deadline_date,   type: Time

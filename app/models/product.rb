@@ -19,8 +19,8 @@ class Product
 
   slug :title
 
-  references_and_referenced_in_many :product_groups
-  references_many :product_options
+  has_and_belongs_to_many :product_groups
+  has_many :product_options
   
   scope :subscribable,   where: { is_a_subscription: true }
   scope :unsubscribable, where: { is_a_subscription: false }

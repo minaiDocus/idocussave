@@ -3,13 +3,13 @@ class Scan::Period
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :user, inverse_of: :periods
-  belongs_to :organization, inverse_of: :periods
-  referenced_in :subscription, class_name: "Scan::Subscription", inverse_of: :periods
-  references_many :documents, class_name: "Scan::Document", inverse_of: :period
-  references_one :invoice, inverse_of: :period
+  belongs_to :user,                                           inverse_of: :periods
+  belongs_to :organization,                                   inverse_of: :periods
+  belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :periods
+  has_many   :documents,    class_name: "Scan::Document",     inverse_of: :period
+  has_one    :invoice,                                        inverse_of: :period
   embeds_many :product_option_orders, as: :product_optionable
-  embeds_one :delivery, class_name: "Scan::Delivery", inverse_of: :period
+  embeds_one  :delivery, class_name: "Scan::Delivery", inverse_of: :period
   
   field :start_at, type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
   field :end_at,   type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)

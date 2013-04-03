@@ -6,7 +6,7 @@ class UploadedFile
   VALID_EXTENSION = %w(.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)
   UPLOADED_FILE_PATH = File.join([Pack::FETCHING_PATH,'uploads'])
   
-  referenced_in :user
+  belongs_to :user
   
   field :basename,          type: String
   field :account_book_type, type: String

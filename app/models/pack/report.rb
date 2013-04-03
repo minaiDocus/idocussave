@@ -3,11 +3,11 @@ class Pack::Report
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :pack, inverse_of: :report
-  referenced_in :document, class_name: 'Scan::Document', inverse_of: :report
-  references_many :expenses, class_name: "Pack::Report::Expense", inverse_of: :report, dependent: :delete
-  references_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :delete
-  references_many :remote_files, as: :remotable, dependent: :destroy
+  belongs_to :pack,                                                inverse_of: :report
+  belongs_to :document,    class_name: 'Scan::Document',           inverse_of: :report
+  has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :delete
+  has_many   :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :delete
+  has_many   :remote_files, as: :remotable, dependent: :destroy
 
   field :type, type: String # NDF / AC / CB / VT
 

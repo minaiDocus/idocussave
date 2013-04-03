@@ -2,8 +2,8 @@
 class Scan::Subscription < Subscription
   include ActiveModel::ForbiddenAttributesProtection
 
-  references_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
-  references_many :documents, class_name: "Scan::Document", inverse_of: :subscription
+  has_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
+  has_many :documents, class_name: "Scan::Document", inverse_of: :subscription
   
   attr_accessor :is_to_spreading, :update_period, :options, :force_assignment
 

@@ -3,7 +3,7 @@ class DropboxBasic
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  referenced_in :external_file_storage
+  belongs_to :external_file_storage
   
   field :session,              type: String,  default: ''
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'

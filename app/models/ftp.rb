@@ -5,7 +5,7 @@ class Ftp
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :external_file_storage
+  belongs_to :external_file_storage
   
   field :host,                 type: String,  default: 'ftp://ftp.example.com'
   field :login,                type: String,  default: 'login'

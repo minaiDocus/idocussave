@@ -17,7 +17,7 @@ class Credit
   
   index :number, unique: true
 
-  referenced_in :user
+  belongs_to :user
   
   state_machine do
     state :unpaid

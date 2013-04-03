@@ -17,8 +17,8 @@ class ProductOption
   
   slug :title
 
-  referenced_in :product
-  referenced_in :product_group
+  belongs_to :product
+  belongs_to :product_group
   
 public
 

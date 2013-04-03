@@ -7,7 +7,7 @@ class Log::Visit
   field :number,     type: Integer
   field :ip_address, type: String
 
-  referenced_in :user, class_name: "User", inverse_of: :log_visits
+  belongs_to :user, class_name: "User", inverse_of: :log_visits
   
   validates_presence_of :path, :number
   

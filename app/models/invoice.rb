@@ -27,7 +27,7 @@ class Invoice
 
   before_validation :set_number
 
-  referenced_in :user
+  belongs_to :user
   belongs_to :organization
   belongs_to :subscription
 

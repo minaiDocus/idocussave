@@ -18,16 +18,16 @@ class Pack
   EXTENSION_PATTERN = '\.(pdf|PDF)'
   FILENAME_PATTERN = /^#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}$/
 
-  referenced_in :owner, class_name: "User", inverse_of: :own_packs
-  references_and_referenced_in_many :users
+  belongs_to :owner, class_name: "User", inverse_of: :own_packs
+  has_and_belongs_to_many :users
   belongs_to :organization
 
-  references_many :documents,                                                         dependent: :destroy
-  references_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
-  references_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
-  references_many :document_tags,                                                     dependent: :destroy
-  references_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
-  references_many :remote_files,                                                      dependent: :destroy
+  has_many :documents,                                                         dependent: :destroy
+  has_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
+  has_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
+  has_many :document_tags,                                                     dependent: :destroy
+  has_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
+  has_many :remote_files,                                                      dependent: :destroy
   embeds_many :divisions
   
   field :name,                     type: String

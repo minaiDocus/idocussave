@@ -85,30 +85,30 @@ class User
   has_one  :request,          as: :requestable,                              dependent: :destroy
   has_many :requests,                                inverse_of: :requester, dependent: :destroy
 
-  references_many :periods,            class_name: "Scan::Period",       inverse_of: :user
-  references_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
+  has_many :periods,            class_name: "Scan::Period",       inverse_of: :user
+  has_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
   
-  references_many :own_packs, class_name: "Pack", inverse_of: :owner
-  references_and_referenced_in_many :packs
+  has_many :own_packs, class_name: "Pack", inverse_of: :owner
+  has_and_belongs_to_many :packs
 
-  references_and_referenced_in_many :account_book_types,  inverse_of: :clients
-  references_and_referenced_in_many :requested_account_book_types, class_name: 'AccountBookType', inverse_of: :requested_clients
+  has_and_belongs_to_many :account_book_types,  inverse_of: :clients
+  has_and_belongs_to_many :requested_account_book_types, class_name: 'AccountBookType', inverse_of: :requested_clients
 
-  references_and_referenced_in_many :sharers, class_name: "User", inverse_of: :share_with
-  references_and_referenced_in_many :share_with, class_name: "User", inverse_of: :sharers
+  has_and_belongs_to_many :sharers, class_name: "User", inverse_of: :share_with
+  has_and_belongs_to_many :share_with, class_name: "User", inverse_of: :sharers
 
-  references_many :invoices
-  references_many :credits
-  references_many :document_tags
-  references_many :subscriptions
-  references_many :backups
-  references_many :uploaded_files
-  references_many :remote_files, dependent: :destroy
-  references_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
-  references_one :composition
-  references_one :debit_mandate
-  references_one :external_file_storage, autosave: true
-  references_one :csv_outputter, autosave: true
+  has_many :invoices
+  has_many :credits
+  has_many :document_tags
+  has_many :subscriptions
+  has_many :backups
+  has_many :uploaded_files
+  has_many :remote_files, dependent: :destroy
+  has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
+  has_one :composition
+  has_one :debit_mandate
+  has_one :external_file_storage, autosave: true
+  has_one :csv_outputter, autosave: true
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }

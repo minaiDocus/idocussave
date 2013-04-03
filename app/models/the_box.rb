@@ -5,7 +5,7 @@ class TheBox
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  referenced_in :external_file_storage
+  belongs_to :external_file_storage
   
   field :auth_token,           type: String,  default: ''
   field :ticket,               type: String,  default: ''
