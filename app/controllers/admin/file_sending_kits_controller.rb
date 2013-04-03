@@ -36,12 +36,27 @@ class Admin::FileSendingKitsController < Admin::AdminController
       end
     end
 
-    if without_shipping_address.count == 0
+    is_logo_present = true
+    is_logo_present = false unless File.file?(File.join([Rails.root,'public',@file_sending_kit.logo_path]))
+    is_logo_present = false unless File.file?(File.join([Rails.root,'public',@file_sending_kit.left_logo_path]))
+    is_logo_present = false unless File.file?(File.join([Rails.root,'public',@file_sending_kit.right_logo_path]))
+
+    if without_shipping_address.count == 0 && is_logo_present
       FileSendingKitGenerator::generate clients_data, @file_sending_kit
+      flash[:notice] = 'Généré avec succès.'
     else
-      flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
-      without_shipping_address.each do |client|
-        flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
+      flash[:error] = ''
+      if without_shipping_address.count != 0
+        flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
+        without_shipping_address.each do |client|
+          flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
+        end
+      end
+      unless is_logo_present
+        flash[:error] << "</br></br>" if without_shipping_address.count != 0
+        flash[:error] << "Logo central introuvable.</br>" unless File.file?(File.join([Rails.root,'public',@file_sending_kit.logo_path]))
+        flash[:error] << "Logo gauche introuvable.</br>" unless File.file?(File.join([Rails.root,'public',@file_sending_kit.left_logo_path]))
+        flash[:error] << "Logo droite introuvable.</br>" unless File.file?(File.join([Rails.root,'public',@file_sending_kit.right_logo_path]))
       end
     end
     respond_to do |format|
@@ -70,7 +85,7 @@ private
 
   def send_pdf(filename)
     filepath = File.join([Rails.root,'/files/kit/' + filename])
-    if File.exist? filepath
+    if File.file? filepath
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true)
     else
       render nothing: true, status: 404
