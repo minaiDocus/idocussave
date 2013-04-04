@@ -7,7 +7,7 @@
         %tr
           %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { user_contains: user_contains }
           %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier'), { user_contains: user_contains }
-          %th= sortable :request_type, t('request.name'), { user_contains: user_contains }
+          %th= t('request.name')
           %th= t('actions.name').pluralize
       %tbody
         - @users.each do |user|
