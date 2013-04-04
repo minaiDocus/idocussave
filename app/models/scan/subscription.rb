@@ -90,6 +90,7 @@ class Scan::Subscription < Subscription
   
   def remove_not_reusable_options
     product_option_orders.each { |e| e.destroy if e.duration == 1 }
+    product_option_orders
   end
   
   def copy!(scan_subscription)

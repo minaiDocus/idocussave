@@ -62,6 +62,7 @@ namespace :maintenance do
     desc 'Init current period'
     task :init => [:environment] do
       Organization.all.each do |organization|
+        organization.scan_subscriptions.current.remove_not_reusable_options
         organization.customers.active.each do |customer|
           begin
             subscription = customer.scan_subscriptions.current
