@@ -19,6 +19,8 @@ namespace :maintenance do
   namespace :notification do
     desc 'Send update request notification'
     task :update_request => [:environment] do
+      include ActionView::Helpers
+
       user_ids = Request.active.where(requestable_type: 'User').asc([:action, :relation_action]).distinct(:requestable_id)
       user_ids = user_ids + Scan::Subscription.update_requested.distinct(:user_id)
       users = User.any_in(_id: user_ids).active.asc(:code)
@@ -34,7 +36,7 @@ namespace :maintenance do
         content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
         users.each do |user|
           url = File.join([SITE_INNER_URL, 'admin/users', user.id.to_s])
-          tag = helper.content_tag :a, user.info, href: url
+          tag = content_tag :a, user.info, href: url
           content << tag + " - " + I18n.t("request.#{user.request.status}")
           content << "<br/>"
         end
@@ -42,7 +44,7 @@ namespace :maintenance do
         content << "Des requêtes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
         journals.each do |journal|
           url = File.join([SITE_INNER_URL, 'admin/organizations', journal.organization.slug])
-          tag = helper.content_tag :a, journal.organization.name, href: url
+          tag = content_tag :a, journal.organization.name, href: url
           content << tag + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
           content << "<br/>"
         end
