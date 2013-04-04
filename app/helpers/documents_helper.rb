@@ -83,10 +83,15 @@ module DocumentsHelper
     end
   end
   
-  def price_of_period_by_time(periods, time)
-    periods.select { |period| period.start_at <= time and period.end_at >= time }.
-    first.
-    try(:price_in_cents_wo_vat) || 0
+  def price_of_period_by_time(periods, time, is_customer=true)
+    period = periods.select { |period| period.start_at <= time and period.end_at >= time }.first
+    if is_customer
+      period.try(:price_in_cents_wo_vat) || 0
+    elsif period
+      period.product_option_orders.select { |o| o.group_position >= 1000 }.sum(&:price_in_cents_wo_vat)
+    else
+      0
+    end
   end
 
   def active_clients(clients, date)
