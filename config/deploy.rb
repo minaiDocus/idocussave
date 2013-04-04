@@ -7,9 +7,6 @@ default_run_options[:pty] = true
 set :runner, "rails"
 set :normalize_asset_timestamps, false
 set :user, "grevalis"
-set :password, "grevidoc"
-set :scm_username, "grevalis"
-set :scm_password, "grevidoc"
 set :use_sudo, false
 set :rails_env, "production"
 
@@ -20,6 +17,7 @@ set :deploy_to, "/home/grevalis/www/idocus#{ENV['RAILS_ENV'] == 'test' ? '_test'
 set :keep_releases, 5
 
 set :repository, "git@github.com:ftachot/idocus.git"
+set :local_repository, "~/git/repositories/idocus.git"
 set :scm, "git"
 set :branch, "master"
 set :deploy_via, :remote_cache
@@ -97,8 +95,9 @@ namespace :deploy do
 end
 
 namespace :git do
-  desc "Push code to origin"
+  desc "Push code to local and origin"
   task :push, :roles => :app do
+    %x(git push local master)
     %x(git push origin master)
   end
 end
