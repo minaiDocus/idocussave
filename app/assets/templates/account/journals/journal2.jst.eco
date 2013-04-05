@@ -1,5 +1,7 @@
 <td class='action'>
-    <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+    <% if(!@isAssignmentLocked): %>
+        <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
+    <% end %>
 </td>
 <td>
     <%= @model.get('name') %>

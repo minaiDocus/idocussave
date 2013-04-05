@@ -276,6 +276,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     showDetails = @showDetails
     assignedCount = 0
     notAssignedCount = 0
+    isAssignmentLocked = !@user.get('is_editable')
     collection.forEach (journal) ->
       name = 'not_assigned'
       isUp = true
@@ -291,7 +292,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
       if isIncluded != isIncludedInRequested
         isWaiting = true
 
-      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: isUp, type: name, showDetails: showDetails, isWaiting: isWaiting)
+      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: isUp, type: name, showDetails: showDetails, isWaiting: isWaiting, isAssignmentLocked: isAssignmentLocked)
       $('#'+name).append(view.render().el)
 
     $('h3.assigned').text("Client #{@user.get('code')} affecté aux journaux suivants (#{assignedCount}) :")

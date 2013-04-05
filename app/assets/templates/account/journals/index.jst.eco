@@ -80,6 +80,7 @@
                         <i class='asc icon-chevron-up'></i>
                         <i class='desc hide icon-chevron-down'></i>
                       </td>
+                      <td></td>
                     </tr>
                     </thead>
                     <tbody></tbody>

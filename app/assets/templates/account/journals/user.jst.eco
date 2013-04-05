@@ -1,10 +1,11 @@
 <td class='selection selectable'>
-    <% if @model.get('is_editable'): %>
-        <input type="radio" name="user" />
-    <% else: %>
+    <input type="radio" name="user" />
+</td>
+<td id='user_<%= @model.get('id') %>' class='selectable'>
+    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
+</td>
+<td class='indicator'>
+    <% if !@model.get('is_editable'): %>
         <i class="icon-lock"></i>
     <% end %>
-</td>
-<td id='user_<%= @model.get('id') %>' class='<%= 'selectable' if @model.get('is_editable') %>'>
-    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
 </td>

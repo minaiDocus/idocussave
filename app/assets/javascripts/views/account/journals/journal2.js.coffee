@@ -12,6 +12,7 @@ class Idocus.Views.Account.Journals.Journal2 extends Backbone.View
     @type = options.type
     @showDetails = options.showDetails
     @isWaiting = options.isWaiting
+    @isAssignmentLocked = options.isAssignmentLocked
 
   render: ->
     if @is_up != undefined
@@ -21,7 +22,7 @@ class Idocus.Views.Account.Journals.Journal2 extends Backbone.View
         direction = 'down'
     else
       direction = undefined
-    @$el.html(@template(model: @model, type: @type, direction: direction, showDetails: @showDetails, isWaiting: @isWaiting))
+    @$el.html(@template(model: @model, type: @type, direction: direction, showDetails: @showDetails, isWaiting: @isWaiting, isAssignmentLocked: @isAssignmentLocked))
     this
 
   addJournal: ->
