@@ -10,22 +10,22 @@
     <% if(@model.get('entry_name') != 'Aucun' && @showDetails): %>
         <ul class='journal_info'>
             <li><%= @model.get('entry_name') %></li>
-            <% if(@model.get('default_account_number').length > 0): %>
+            <% if(@model.get('default_account_number') != null && @model.get('default_account_number').length > 0): %>
                 <li>Compte de tiers par défaut : <%= @model.get('default_account_number') %></li>
             <% end %>
-            <% if(@model.get('account_number').length > 0): %>
+            <% if(@model.get('account_number') != null && @model.get('account_number').length > 0): %>
                 <li>Compte de tiers d'attente : <%= @model.get('account_number') %></li>
             <% end %>
-            <% if(@model.get('default_charge_account').length > 0): %>
+            <% if(@model.get('default_charge_account') != null && @model.get('default_charge_account').length > 0): %>
                 <li>Compte de charge / produit par défaut : <%= @model.get('default_charge_account') %></li>
             <% end %>
-            <% if(@model.get('charge_account').length > 0): %>
+            <% if(@model.get('charge_account') != null && @model.get('charge_account').length > 0): %>
                 <li>Compte de charge / produit d'attente : <%= @model.get('charge_account') %></li>
             <% end %>
-            <% if(@model.get('vat_account').length > 0): %>
+            <% if(@model.get('vat_account') != null && @model.get('vat_account').length > 0): %>
                 <li>Compte TVA : <%= @model.get('vat_account') %></li>
             <% end %>
-            <% if(@model.get('anomaly_account').length > 0): %>
+            <% if(@model.get('vat_account') != null && @model.get('anomaly_account').length > 0): %>
                 <li>Compte d'anomalie : <%= @model.get('anomaly_account') %></li>
             <% end %>
         </ul>

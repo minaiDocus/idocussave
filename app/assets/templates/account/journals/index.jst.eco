@@ -2,7 +2,7 @@
   <div class='span6'></div>
   <div class='span3'>
     <input type='checkbox' id='show_details' name='show_details' value='true' checked class='pull-left'/>
-    <label for='show_details'>Afficher les caractéristiques des journaux ?</label>
+    <label for='show_details'>Afficher les caractéristiques de préaffectation des journaux ?</label>
   </div>
   <div class='span3'>
     <input type='checkbox' id='show_not_editable' name='show_not_editable' value='true' checked class='pull-left'/>
