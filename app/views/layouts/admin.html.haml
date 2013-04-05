@@ -14,6 +14,7 @@
     != javascript_include_tag 'admin/user', 'admin/csv_outputter' if params[:controller] == 'admin/users'
     != javascript_include_tag 'admin/organizations' if controller_name == 'organizations'
     != javascript_include_tag 'admin/groups' if controller_name == 'groups'
+    != javascript_include_tag 'admin/invoices' if controller_name == 'invoices'
   %body
     .navbar.navbar-fixed-top
       .navbar-inner

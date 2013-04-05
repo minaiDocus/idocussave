@@ -177,6 +177,7 @@ Idocus::Application.routes.draw do
       resource :ibiza, controller: 'ibiza'
       resource :subscription, controller: 'organization_subscriptions'
     end
+    resources :invoices
     resources :pages
     resources :cms_images
     resources :products

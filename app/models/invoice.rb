@@ -5,11 +5,14 @@ class Invoice
   include Mongoid::Paperclip
   include Mongoid::Slug
   
-  field :number, type: String
+  field :number,                type: String
+  field :amount_in_cents_w_vat, type: Integer
+  field :requested_at,          type: Date
+  field :received_at,           type: Date
   field :content_file_name
   field :content_file_type
-  field :content_file_size, type: Integer
-  field :content_updated_at, type: Time
+  field :content_file_size,     type: Integer
+  field :content_updated_at,    type: Time
 
   has_mongoid_attached_file :content,
     styles: {
@@ -30,6 +33,10 @@ class Invoice
   belongs_to :user
   belongs_to :organization
   belongs_to :subscription
+
+  def self.find_by_number(number)
+    self.first conditions: { number: number }
+  end
 
   def create_pdf
     months = I18n.t('date.month_names').map { |e| e.capitalize if e }
@@ -79,6 +86,8 @@ class Invoice
       @total += period.price_in_cents_wo_vat
       @address = user.addresses.for_billing.first
     end
+
+    self.amount_in_cents_w_vat = @total * 1.196
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"

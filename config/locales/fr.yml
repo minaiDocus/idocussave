@@ -583,3 +583,14 @@ fr:
           is_customers_management_authorized: Gestion des clients autorisé ?
           is_groups_management_authorized: Gestion des groupes autorisé ?
           is_journals_management_authorized: Gestion des journaux comptables autorisé ?
+      invoice:
+        zero: 0 facture
+        one: 1 facture
+        other: '#{count} factures'
+        name: Facture
+        attributes:
+          number: Numéro
+          amount_w_vat: Montant (TTC)
+          amount_in_cents_w_vat: Montant en centime (TTC)
+          requested_at: Order de prlv. envoyé le
+          received_at: Rglet. effectué le
