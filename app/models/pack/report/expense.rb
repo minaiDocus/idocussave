@@ -198,8 +198,8 @@ class Pack::Report::Expense
         sheet.column_widths 10, 37, 10, 30, 22, 10, 10, 10    
       end
 
-      p.serialize "tmp/#{book_name}.xlsx"
-      open("tmp/#{book_name}.xlsx",'rb') { |io| io.read }
+      p.serialize "/tmp/#{book_name}.xlsx"
+      open("/tmp/#{book_name}.xlsx",'rb') { |io| io.read }
     end
     
     def total_amount_in_cents_wo_vat
@@ -261,7 +261,7 @@ class Pack::Report::Expense
       
       widths                   = [161,55,135,82,46,46,46]
       
-      Prawn::Document.generate("tmp/#{pdf_name}.pdf", page_size: 'A4',top_margin: 35, left_margin: 11, right_margin: 11) do
+      Prawn::Document.generate("/tmp/#{pdf_name}.pdf", page_size: 'A4',top_margin: 35, left_margin: 11, right_margin: 11) do
       
         data = ["Notes de frais","","","Total","","","(en €)"]
         table([data], column_widths: widths, cell_style: global_style ) do
@@ -374,7 +374,7 @@ class Pack::Report::Expense
           row(0..-1).height =6.mm  
         end 
       end   
-      open("tmp/#{pdf_name}.pdf",'rb') { |io| io.read }
+      open("/tmp/#{pdf_name}.pdf",'rb') { |io| io.read }
     end 
   end
 end
