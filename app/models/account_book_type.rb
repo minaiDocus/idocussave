@@ -38,6 +38,7 @@ class AccountBookType
   validates :description, length: { in: 2..50 }
 
   scope :default, where: { is_default: true }
+  scope :compta_processable, where: { :entry_type.gt => 0 }
 
   def self.active
     select { |e| e.request.status != 'create' }
