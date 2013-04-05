@@ -267,6 +267,10 @@ class User
       find_or_create_scan_subscription.request_action
     end
   end
+
+  def compta_processable_journals
+    account_book_types.compta_processable
+  end
   
 protected
 

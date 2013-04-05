@@ -11,6 +11,8 @@ Idocus::Application.routes.draw do
   match '/account/compositions/download', controller: 'account/compositions', action: 'download', via: :get
   match '/account' => redirect('/account/documents')
 
+  resources :compta
+
   match 'num', controller: 'num', action: :index, via: :get
   match 'num', controller: 'num', action: :create, via: :post
   match 'num', controller: 'num', action: :create, via: :put
