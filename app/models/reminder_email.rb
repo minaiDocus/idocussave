@@ -22,7 +22,12 @@ class ReminderEmail
         if client.is_reminder_email_active
           now = Time.now
           name = "#{client.code} #{now.year}#{now.month} all"
-          packs_delivered = client.own_packs.where(name: name, :created_at.gt => Time.now.beginning_of_month).scan_delivered.count
+          period = client.periods.last
+          if period
+            packs_delivered = client.own_packs.where(name: name, :created_at.gt => period.start_at).scan_delivered.count
+          else
+            packs_delivered = 0
+          end
           if packs_delivered == 0
             ReminderMailer.remind(self,client).deliver
             delivered_user_ids << client.id
