@@ -112,6 +112,18 @@ private
 
   def sync_assignment
     if self.force_assignment.try(:to_i) == 1
+      client_ids = self['client_ids']
+      requested_client_ids = self['requested_client_ids']
+      added_client_ids = client_ids.reject { |id| id.in? requested_client_ids }
+      added_client_ids.each do |id|
+        user = User.find id
+        requested_clients << user
+      end
+      removed_client_ids = requested_client_ids.reject { |id| id.in? client_ids }
+      removed_client_ids.each do |id|
+        user = requested_clients.select { |c| c.id == id }.first
+        requested_clients.delete(user)
+      end
       request.update_attribute(:attribute_changes, {})
     end
   end
