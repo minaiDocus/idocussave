@@ -88,8 +88,12 @@ private
                                               :description,
                                               :position,
                                               :entry_type,
+                                              :default_account_number,
                                               :account_number,
+                                              :default_charge_account,
                                               :charge_account,
+                                              :vat_account,
+                                              :anomaly_account,
                                               :is_default,
                                               :client_ids)
   end

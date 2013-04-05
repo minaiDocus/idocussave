@@ -1,10 +1,14 @@
 = simple_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
-  = f.input :name, label: 'Libellé'
-  = f.input :description, label: 'Déscription'
-  = f.input :entry_type, label: 'Type de saisie', collection: [['aucun',0],['notes de frais',1],['achat',2],['vente',3],['carte bancaire',4]], selected: @journal['entry_type'], allow_blank: false
-  = f.input :account_number, label: 'Numéro de compte'
-  = f.input :charge_account, label: 'Compte charge'
-  = f.input :is_default, label: 'Par défaut ?', as: :boolean
+  = f.input :name, label: t('mongoid.models.account_book_type.attributes.label')
+  = f.input :description, label: t('mongoid.models.account_book_type.attributes.description')
+  = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3],[t('mongoid.models.account_book_type.attributes.entry_type_4'),4]], selected: @journal['entry_type'], allow_blank: false
+  = f.input :default_account_number, label: t('mongoid.models.account_book_type.attributes.default_account_number')
+  = f.input :account_number, label: t('mongoid.models.account_book_type.attributes.account_number')
+  = f.input :default_charge_account, label: t('mongoid.models.account_book_type.attributes.default_charge_account')
+  = f.input :charge_account, label: t('mongoid.models.account_book_type.attributes.charge_account')
+  = f.input :vat_account, label: t('mongoid.models.account_book_type.attributes.vat_account')
+  = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account')
+  = f.input :is_default, label: t('mongoid.models.account_book_type.attributes.is_default'), as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     = link_to t('actions.cancel'), account_organization_journals_path, class: 'btn'

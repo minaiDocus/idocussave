@@ -446,11 +446,24 @@ fr:
         other: '#{count} journaux'
         name: 'Journal comptable'
         attributes:
+          label: Libellé
+          description: Description
+          default_account_number: Compte de tiers par défaut
+          account_number: Compte de tiers d'attente
+          default_charge_account: Compte de charge / produit par défaut
+          charge_account: Compte de charge / produit d'attente
+          vat_account: Compte TVA
+          anomaly_account: Compte d'anomalie
+          position: Position
+          is_default: Par défaut ?
+          entry_type: Type de saisie
           entry_type_0: 'Aucun'
           entry_type_1: 'Notes de frais'
           entry_type_2: 'Achat'
           entry_type_3: 'Vente'
           entry_type_4: 'Carte bancaire'
+          clients: Clients
+          force_assignment: Forcer les modifications pour le client
         request:
           confirm:
             destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
