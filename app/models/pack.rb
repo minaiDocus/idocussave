@@ -679,29 +679,31 @@ class Pack
       Dir.chdir name
       File.delete name + ".pdf" rescue nil
     end
-  
+
     def apply_new_name(filesname, starting_page, stamp_name, is_stamp_background_filled, is_an_upload)
       filesname.each { |filename| File.rename filename, filename + "_"  }
       start = starting_page
       filesname.map do |filename|
         new_filename = generate_new_name(filename,(start += 1) - 1)
-        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
+        filepath = './' + filename + '_'
+        sizes = Poppler::Document.new(filepath).pages.map(&:size)
+        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename, sizes)
         system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
         system "rm #{filename}_"
         new_filename
       end
     end
-    
+
     def generate_new_name(filename, number)
       zero_filler = "0" * (3 - number.to_s.size)
       filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
     end
-    
-    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename)
-      filepath = './' + filename + '_'
-      size = Poppler::Document.new(filepath).pages[0].size
-      txt = generate_stamp_name(text,stamp_name,is_an_upload)
-        Prawn::Document.generate STAMP_PATH, page_size: size, top_margin: 10 do
+
+    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename, sizes)
+      txt = generate_stamp_name(text, stamp_name, is_an_upload)
+      Prawn::Document.generate STAMP_PATH, page_size: sizes.first, top_margin: 10 do
+        sizes.each_with_index do |size, index|
+          start_new_page(size: size) if index != 0
           if is_stamp_background_filled
             bounding_box([0, bounds.height], :width => bounds.width) do
               data = [[txt]]
@@ -709,12 +711,13 @@ class Pack
                 style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
                 style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center)
               end
-            end 
+            end
           else
             fill_color "FF0000"
             text txt, size: 10, :align => :center
           end
         end
+      end
       STAMP_PATH
     end
   
