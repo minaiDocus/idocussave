@@ -1,6 +1,5 @@
 var mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 var year = $("#year").val();
-var max_period_y = $('.user').length;
 
 $(".period .value span").addClass("hide");
 $(".period .value .value_0").removeClass("hide");
@@ -213,6 +212,8 @@ function initDoShowInvoice(){
 }
 
 $(document).ready(function(){
+  max_period_y = $('.user').length;
+
   initDoShowInvoice();
   
   $("a.do-show").click(function(){
