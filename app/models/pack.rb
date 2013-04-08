@@ -685,9 +685,7 @@ class Pack
       start = starting_page
       filesname.map do |filename|
         new_filename = generate_new_name(filename,(start += 1) - 1)
-        filepath = './' + filename + '_'
-        sizes = Poppler::Document.new(filepath).pages.map(&:size)
-        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename, sizes)
+        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
         system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
         system "rm #{filename}_"
         new_filename
@@ -699,7 +697,9 @@ class Pack
       filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
     end
 
-    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename, sizes)
+    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename)
+      filepath = './' + filename + '_'
+      sizes = Poppler::Document.new(filepath).pages.map(&:size)
       txt = generate_stamp_name(text, stamp_name, is_an_upload)
       Prawn::Document.generate STAMP_PATH, page_size: sizes.first, top_margin: 10 do
         sizes.each_with_index do |size, index|
