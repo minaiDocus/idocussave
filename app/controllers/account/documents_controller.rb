@@ -2,9 +2,9 @@
 class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
+  skip_before_filter :login_user!, :only => %w(download piece)
   before_filter :load_user_and_role
   before_filter :find_last_composition, :only => %w(index)
-  skip_before_filter :login_user!, :only => %w(download piece)
 
 protected
   def current_layout

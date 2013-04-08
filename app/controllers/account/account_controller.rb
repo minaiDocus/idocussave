@@ -28,7 +28,7 @@ protected
 
   def load_user_and_role(name=:@user)
     instance = load_user(name)
-    instance.extend_organization_role
+    instance.extend_organization_role if instance
   end
 
   public
