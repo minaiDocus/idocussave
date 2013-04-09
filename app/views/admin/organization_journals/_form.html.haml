@@ -16,7 +16,7 @@
       - hint = ''
     = f.input :description, label: t('mongoid.models.account_book_type.attributes.description'), hint: hint
 
-    - collection = [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3],[t('mongoid.models.account_book_type.attributes.entry_type_4'),4]]
+    - collection = [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3]]
     - if @account_book_type.request
       - value = @account_book_type.request.attribute_changes.try(:[],'entry_type')
     - else

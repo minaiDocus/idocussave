@@ -275,6 +275,7 @@ fr:
         blank: 'est vide'
         too_short: 'est trop court'
         too_long: 'est trop long'
+        inclusion: n'est pas inclus(e) dans la liste
       models:
         remote_file:
           attributes:
@@ -461,7 +462,6 @@ fr:
           entry_type_1: 'Notes de frais'
           entry_type_2: 'Achat'
           entry_type_3: 'Vente'
-          entry_type_4: 'Carte bancaire'
           clients: Clients
           force_assignment: Forcer les modifications pour le client
         request:
