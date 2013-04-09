@@ -1,0 +1,34 @@
+.modal-body
+  .row-fluid
+    .span12
+      .pull-left
+        = link_to icon_new + 'Ajouter une entrée', '#', class: 'btn btn-small add_field'
+        = link_to icon_destroy + 'Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn btn-small remove_all_fields'
+      .pull-right
+        = label_tag 'organization[csv_outputter][comma_as_number_separator]', 'Séparer les chiffres par une virgule', class: 'pull-left'
+        = check_box_tag 'organization[csv_outputter][comma_as_number_separator]', 1, @csv_outputter.comma_as_number_separator, class: 'pull-right', style: 'width:30px'
+  %br
+  .row-fluid
+    .box.span12
+      = simple_form_for [:admin,@organization] do
+        %ul.list
+          - @csv_outputter.to_a.each do |part|
+            = render partial: 'admin/csv_outputters/field', locals: { part: part }
+
+  %ul.template.hide
+    = render 'admin/csv_outputters/field', locals: { selected: :date }
+.modal-footer
+  .pull-left{ style: 'vertical-align: middle;' }
+    %span.well.well-small
+      %span.label.label-info %Y
+      \: Année
+    %span.well.well-small
+      %span.label.label-info %m
+      \: Mois
+    %span.well.well-small
+      %span.label.label-info %d
+      \: Jour
+    %span.well.well-small
+      %span.label.label-info %%
+      \: %
+  = link_to 'Valider', '#', class: 'btn submit'
