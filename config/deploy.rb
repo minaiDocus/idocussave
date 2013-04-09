@@ -11,8 +11,6 @@ set :use_sudo, false
 set :rails_env, "production"
 
 set :application, "idocus"
-role :app, "grevalis.alwaysdata.net"
-set :deploy_to, "/home/grevalis/www/idocus#{ENV['RAILS_ENV'] == 'test' ? '_test' : ''}"
 
 set :keep_releases, 5
 
@@ -23,6 +21,12 @@ set :branch, "master"
 set :deploy_via, :remote_cache
 set :repository_cache, "git_cache"
 set :copy_exclude, [".svn", ".DS_Store", ".git"]
+
+role :app, "grevalis.alwaysdata.net"
+
+set :stages, %w(production staging sandbox)
+set :default_stage, %w(production)
+require 'capistrano/ext/multistage'
 
 before "deploy", "worker:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
@@ -111,11 +115,7 @@ end
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    if ENV['RAILS_ENV'] == 'test'
-      run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job start"
-    else
-      run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 20 start"
-    end
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job start"
   end
 
   desc "Stop delayed_job process"
@@ -133,16 +133,11 @@ end
 namespace :worker do
   desc "Start worker process"
   task :start, :roles => :app do
-    unless ENV['RAILS_ENV'] == 'test'
-      run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
-      run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
-    end
+    # nothing to do
   end
 
   desc "Stop worker process"
   task :stop, :roles => :app do
-    run "cd #{current_path}; touch tmp/stop_worker.txt"
-    run "cd #{current_path}; touch tmp/stop_maintenance.txt"
-    run "cd #{current_path}; god terminate" unless ENV['RAILS_ENV'] == 'test'
+    # nothing to do
   end
 end
