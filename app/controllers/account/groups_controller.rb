@@ -66,15 +66,15 @@ private
   def safe_group_params
     if is_leader?
       safe_ids = @organization.members.map(&:_id).map(&:to_s)
-      ids = params[:group][:member_tokens].split(',')
+      ids = params[:group][:member_tokens]
       ids.delete_if { |id| !id.in?(safe_ids) }
-      params[:group][:member_tokens] = ids.join(',')
+      params[:group][:member_tokens] = ids
       group_params
     else
       safe_ids = @user.customer_ids.map(&:to_s)
-      ids = params[:group][:customer_tokens].split(',')
+      ids = params[:group][:customer_tokens]
       ids.delete_if { |id| !id.in?(safe_ids) }
-      params[:group][:customer_tokens] = ids.join(',')
+      params[:group][:customer_tokens] = ids
       group_params
     end
   end

@@ -25,8 +25,7 @@ class Group
     members.where(is_prescriber: false)
   end
 
-  def member_tokens=(ids)
-    user_ids = ids.split(',')
+  def member_tokens=(user_ids)
     if (members.size > 0 && user_ids.size > 0) || (members.size == 0 && user_ids.size == 0)
       member_ids = members.map { |m| m.id.to_s }
       is_included = true
@@ -44,7 +43,7 @@ class Group
   end
 
   def customer_tokens=(ids)
-    self.member_tokens = [ids, self.collaborators.map(&:_id).join(',')].join(',')
+    self.member_tokens = ids + self.collaborators.map(&:_id)
   end
 
   def to_s

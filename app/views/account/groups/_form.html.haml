@@ -6,15 +6,33 @@
       = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
     %fieldset
       %legend Assignation
-      = f.input :member_tokens,                                                                                        |
-        input_html: { data: { pre: @group.members.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
-        label: t('mongoid.models.group.attributes.members')
+      .control-group
+        .controls
+          .span6
+            %label
+              %b= t('mongoid.models.group.attributes.collaborators')
+            %br
+            - @organization.collaborators.asc(:code).each do |collaborator|
+              = check_box_tag 'group[member_tokens][]', collaborator.id, @group.collaborators.include?(collaborator), id: "group_member_tokens_#{collaborator.id}"
+              %label{ for: "group_member_tokens_#{collaborator.id}" }= collaborator.info
+          .span6
+            %label
+              %b= t('mongoid.models.group.attributes.customers')
+            %br
+            - @organization.customers.asc(:code).each do |customer|
+              = check_box_tag 'group[member_tokens][]', customer.id, @group.customers.include?(customer), id: "group_member_tokens_#{customer.id}"
+              %label{ for: "group_member_tokens_#{customer.id}" }= customer.info
+          = hidden_field_tag 'group[member_tokens][]', ''
   - else
     %fieldset
       %legend Assignation des clients
-      = f.input :customer_tokens,                                                                                        |
-        input_html: { data: { pre: @group.customers.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } },        |
-        label: t('mongoid.models.group.attributes.customers')
+      .control-group
+        %label.control-label= t('mongoid.models.group.attributes.customers')
+        .controls
+          - @user.customers.asc(:code).each do |customer|
+            = check_box_tag 'group[customer_tokens][]', customer.id, @group.customers.include?(customer), id: "group_customer_tokens_#{customer.id}"
+            %label{ for: "group_customer_tokens_#{customer.id}" }= customer.info
+          = hidden_field_tag 'group[customer_tokens][]', ''
   .form-actions
     = f.submit 'Valider', class: 'btn'
     = link_to 'Annuler', account_organization_groups_path, class: 'btn'
