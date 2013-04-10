@@ -176,6 +176,10 @@ Idocus::Application.routes.draw do
       end
       resource :ibiza, controller: 'ibiza'
       resource :subscription, controller: 'organization_subscriptions'
+      resource :csv_outputter, controller: 'organization_csv_outputters' do
+        get 'select_propagation_options', on: :collection
+        post 'propagate', on: :collection
+      end
     end
     resources :invoices
     resources :pages

@@ -5,8 +5,7 @@
  *= require common
  *= require jquery.fileupload-ui
  *= require_self
- *= require admin/organizations
- *= require admin/invoices
+ *= require_tree ./admin
 */
 
 html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
@@ -187,37 +186,6 @@ table {
   table th.first, table td.first {
     text-align: right; }
 }
-
-#edit_csv_outputter.modal {
-  top: 50%;
-  left: 50%;
-  display: none;
-  width: 900px;
-  margin: -300px 0 0 -450px !important; }
-#edit_csv_outputter .modal-body {
-  height: 490px;
-  max-height: 490px;
-  overflow-y: scroll; }
-#edit_csv_outputter .box {
-  border: 2px dashed grey;
-  padding: 0 0 5px 0;
-  height: 100%; }
-#edit_csv_outputter .list {
-  list-style-type: none;
-  margin: 5px; }
-#edit_csv_outputter .field {
-  margin: 3px;
-  padding: 3px; }
-#edit_csv_outputter select {
-  width: auto;
-  margin-bottom: 0; }
-#edit_csv_outputter input {
-  width: 252px;
-  margin-bottom: 0; }
-#edit_csv_outputter input[name=format] {
-  width: 73px; }
-#edit_csv_outputter input, #edit_csv_outputter select {
-  font-size: 10px; }
 
 #subscription .requested {
   border: 1px solid orange; }
