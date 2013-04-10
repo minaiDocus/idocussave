@@ -8,6 +8,7 @@
   = f.input :charge_account, label: t('mongoid.models.account_book_type.attributes.charge_account')
   = f.input :vat_account, label: t('mongoid.models.account_book_type.attributes.vat_account')
   = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account')
+  = f.input :instructions, as: :text, label: t('mongoid.models.account_book_type.attributes.instructions'), input_html: { maxlength: 400 }
   = f.input :is_default, label: t('mongoid.models.account_book_type.attributes.is_default'), as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'

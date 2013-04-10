@@ -455,6 +455,7 @@ fr:
           charge_account: Compte de charge / produit d'attente
           vat_account: Compte TVA
           anomaly_account: Compte d'anomalie
+          instructions: Instructions (400 char. max.)
           position: Position
           is_default: Par défaut ?
           entry_type: Type de saisie

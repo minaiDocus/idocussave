@@ -78,6 +78,14 @@
       - hint = ''
     = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account'), hint: hint
 
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'instructions').is_a?(String)
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_instructions', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'instructions'))
+    - else
+      - hint = ''
+    = f.input :instructions, as: :text, label: t('mongoid.models.account_book_type.attributes.instructions'), hint: hint, input_html: { maxlength: 400 }
+
     = f.input :position, as: :integer, label: t('mongoid.models.account_book_type.attributes.position')
     = f.input :is_default, as: :boolean, label: t('mongoid.models.account_book_type.attributes.is_default')
     .control-group
