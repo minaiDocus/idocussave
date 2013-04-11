@@ -19,8 +19,6 @@ namespace :maintenance do
   namespace :notification do
     desc 'Send update request notification'
     task :update_request => [:environment] do
-      include ActionView::Helpers
-
       user_ids = Request.active.where(requestable_type: 'User').asc([:action, :relation_action]).distinct(:requestable_id)
       user_ids = user_ids + Scan::Subscription.update_requested.distinct(:user_id)
       users = User.any_in(_id: user_ids).active.asc(:code)
@@ -33,22 +31,22 @@ namespace :maintenance do
         subject = 'Validation requise'
         content = ""
         content << "Bonjour,<br/><br/>"
-        content << "Des requêtes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
+        content << "Des requ&ecirc;tes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
         users.each do |user|
           url = File.join([SITE_INNER_URL, 'admin/users', user.id.to_s])
-          tag = content_tag :a, user.info, href: url
-          content << tag + " - " + I18n.t("request.#{user.request.status}")
+          tag = "<a href='#{url}'>#{user.info}</a>"
+          content << tag + " - " + I18n.t("request.#{user.request_status}")
           content << "<br/>"
         end
         content << "<br/>" if users.count > 0 && journals.count > 0
-        content << "Des requêtes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
+        content << "Des requ&ecirc;tes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
         journals.each do |journal|
           url = File.join([SITE_INNER_URL, 'admin/organizations', journal.organization.slug])
-          tag = content_tag :a, journal.organization.name, href: url
+          tag = "<a href='#{url}'>#{journal.organization.name}</a>"
           content << tag + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
           content << "<br/>"
         end
-        content << "<br/>Cordialement, l'équipe iDocus"
+        content << "<br/>Cordialement, l'&eacute;quipe iDocus"
         EventNotification::EMAILS.each do |email|
           print "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] Sending email to <#{email}>..."
           NotificationMailer.notify(email,subject,content).deliver
