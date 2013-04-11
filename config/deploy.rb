@@ -25,7 +25,6 @@ set :copy_exclude, [".svn", ".DS_Store", ".git"]
 role :app, "grevalis.alwaysdata.net"
 
 set :stages, %w(production staging sandbox)
-set :default_stage, %w(production)
 require 'capistrano/ext/multistage'
 
 before "deploy", "worker:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"

@@ -1,4 +1,4 @@
-set :deploy_to, "/home/lola/www/idocus/production"
+set :deploy_to, "/home/grevalis/www/idocus/production"
 
 namespace :delayed_job do
   desc "Start delayed_job process"
