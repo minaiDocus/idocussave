@@ -31,6 +31,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def create
     @customer = User.new user_params
+    @customer.set_random_password
     if @customer.save
       User.init_customer @customer, @organization, @user
       flash[:notice] = "En attente de validation de l'administrateur."
