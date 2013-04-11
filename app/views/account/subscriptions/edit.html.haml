@@ -7,7 +7,7 @@
     .row-fluid
       .span8
         = simple_form_for @subscription, :url => account_organization_subscription_path(@customer), html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
-          - if @subscription.user.is_new
+          - if @subscription.user.request.action == 'create'
             = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
           - else
             = hidden_field_tag :scan_subscription_period_duration, @subscription.period_duration

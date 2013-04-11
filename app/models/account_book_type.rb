@@ -5,8 +5,8 @@ class AccountBookType
   include Mongoid::Slug
   include ActiveModel::ForbiddenAttributesProtection
 
-  ENTRY_TYPE = %w(no expense buying selling bank)
-  TYPES_NAME = %w(AC VT BC NDF)
+  ENTRY_TYPE = %w(no expense buying selling)
+  TYPES_NAME = %w(AC VT NDF)
 
   before_save :upcase_name, :sync_assignment
 
@@ -29,11 +29,14 @@ class AccountBookType
   field :vat_account,            type: String
   field :anomaly_account,        type: String
   field :is_default,             type: Boolean, default: false
+  field :instructions,            type: String
   
   slug :name
 
-  validates_presence_of :name
-  validates_presence_of :description
+  validates_presence_of  :name
+  validates_presence_of  :description
+  validates_inclusion_of :entry_type, in: 0..3
+  validates_length_of    :instructions, maximum: 400
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
 
@@ -60,7 +63,6 @@ class AccountBookType
     return 'NDF' if self.entry_type == 1
     return 'AC'  if self.entry_type == 2
     return 'VT'  if self.entry_type == 3
-    return 'CB'  if self.entry_type == 4
     return nil
   end
 
@@ -98,6 +100,7 @@ class AccountBookType
       :charge_account,
       :vat_account,
       :anomaly_account,
+      :instructions,
       :is_default
     ]
   end

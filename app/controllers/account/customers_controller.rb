@@ -127,7 +127,7 @@ private
                                            :last_name,
                                            :email,
                                            :is_centralized)
-    if action_name == 'create' or @customer && @customer.is_new
+    if action_name == 'create' or @customer && @customer.request.action == 'create'
       _params.merge! params.require(:user).permit(:group_ids)
     end
     _params

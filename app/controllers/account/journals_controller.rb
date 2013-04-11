@@ -94,6 +94,7 @@ private
                                               :charge_account,
                                               :vat_account,
                                               :anomaly_account,
+                                              :instructions,
                                               :is_default,
                                               :client_ids)
   end

@@ -62,6 +62,7 @@ private
       folder[:period] = "#{KitGenerator::TRIMESTRE[part_number]} #{period.year}"
     end
     folder[:account_book_type] = "#{account_book_type.name} #{account_book_type.description.upcase}"
+    folder[:instructions] = account_book_type.instructions || ''
     if client_data[:period_duration] == 1
       folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
     elsif client_data[:period_duration] == 3
@@ -203,8 +204,9 @@ private
         pdf.bounding_box([0, pdf.cursor], :width => 416, :height => 512) do
 
           data = [["CODE :","<b>#{folder[:code]}</b>"],["NOM :","<b>#{folder[:company]}</b>"],["PERIODE :","<b>#{folder[:period]}</b>"],["JOURNAL :","<b>#{folder[:account_book_type]}</b>"]]
+          data << ["INSTRUCTIONS :","<font size='11'>#{folder[:instructions]}"] if folder[:instructions].present?
 
-          pdf.table(data, :width => 416, :cell_style => { :inline_format => true, :padding => [12, 4, 12, 4] }, :column_widths => { 0 => 100}) do
+          pdf.table(data, :width => 416, :cell_style => { :inline_format => true, :padding => [12, 4, 12, 4] }, :column_widths => { 0 => 150 }) do
             style(row(0..-1), :borders => [])
             style(columns(0), :align => :right)
           end

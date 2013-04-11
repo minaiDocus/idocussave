@@ -4,7 +4,11 @@
       .pull-left
         %h2 Organisation #{'(test)' if @organization.is_test} : #{@organization.name}
       .pull-right
-        = icon_link_to edit_admin_organization_path(@organization), { icon: 'edit' }, { class: 'btn' }
+        .pull-right.margin1left
+          = icon_link_to edit_admin_organization_path(@organization), { icon: 'edit' }, { class: 'btn' }
+        .btn-group.pull-right
+          = link_to 'CSV', '#edit_csv_outputter', data: { toggle: :modal }, class: 'btn btn-primary'
+          = link_to icon_globe, '#propagate_csv_outputter', data: { toggle: :modal }, class: 'btn btn-primary'
       %br
   .row-fluid
     .span6

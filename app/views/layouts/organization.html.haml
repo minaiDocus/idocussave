@@ -73,5 +73,5 @@
     != javascript_include_tag 'application', 'inner'
     - if controller_name == 'journals'
       != javascript_include_tag 'account/journals' if action_name == 'index'
-    - elsif !controller_name.in?(%w(rights collaborators organization_addresses))
+    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses))
       != javascript_include_tag "account/#{controller_name}"
