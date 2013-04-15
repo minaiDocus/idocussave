@@ -1,4 +1,4 @@
-= simple_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
+= simple_nested_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   = f.input :name, label: t('mongoid.models.account_book_type.attributes.label')
   = f.input :description, label: t('mongoid.models.account_book_type.attributes.description')
   = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3]], selected: @journal['entry_type'], allow_blank: false
@@ -8,6 +8,16 @@
   = f.input :charge_account, label: t('mongoid.models.account_book_type.attributes.charge_account')
   = f.input :vat_account, label: t('mongoid.models.account_book_type.attributes.vat_account')
   = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account')
+  - if @journal.persisted? && @journal.request.action != 'create' && @journal.is_expense_categories_editable
+    .control-group
+      %label.control-label= t('mongoid.models.account_book_type.attributes.expense_categories')
+      .controls
+        = f.fields_for :expense_categories do |category|
+          .well
+            = category.link_to_remove icon_destroy, class: 'btn btn-mini'
+            = category.input :name, label: t('mongoid.models.expense_category.attributes.name')
+            = category.input :description, label: t('mongoid.models.expense_category.attributes.description'), as: :text, input_html: { rows: 3 }
+        = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
   = f.input :instructions, as: :text, label: t('mongoid.models.account_book_type.attributes.instructions'), input_html: { maxlength: 400 }
   = f.input :is_default, label: t('mongoid.models.account_book_type.attributes.is_default'), as: :boolean
   .form-actions

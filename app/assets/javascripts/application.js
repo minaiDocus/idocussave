@@ -5,9 +5,3 @@
 // the compiled file.
 //
 //= require common.js
-//= require file-uploader/load-image.min
-//= require file-uploader/jquery.iframe-transport
-//= require file-uploader/jquery.fileupload
-//= require file-uploader/jquery.fileupload-ui
-//= require file-uploader/application
-//= require file-uploader/cors/jquery.xdr-transport

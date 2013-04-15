@@ -1,4 +1,4 @@
-= simple_form_for @account_book_type, url: organization_journal_form_url(@organization, @account_book_type), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
+= simple_nested_form_for [:admin, @organization, @account_book_type], html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   .modal-body
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'name').present?
       - hint = ''
@@ -77,6 +77,18 @@
     - else
       - hint = ''
     = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account'), hint: hint
+
+    = f.input :is_expense_categories_editable, label: t('mongoid.models.account_book_type.attributes.is_expense_categories_editable'), as: :boolean
+
+    .control-group
+      %label.control-label= t('mongoid.models.account_book_type.attributes.expense_categories')
+      .controls
+        = f.fields_for :expense_categories do |category|
+          .well
+            = category.link_to_remove icon_destroy, class: 'btn btn-mini'
+            = category.input :name, label: t('mongoid.models.expense_category.attributes.name')
+            = category.input :description, label: t('mongoid.models.expense_category.attributes.description'), as: :text, input_html: { rows: 3 }
+        = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'instructions').is_a?(String)
       - hint = ''

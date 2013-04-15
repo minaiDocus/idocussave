@@ -18,18 +18,23 @@ class AccountBookType
 
   has_one :request, as: :requestable, dependent: :destroy
 
-  field :name,                   type: String
-  field :description,            type: String,  default: ""
-  field :position,               type: Integer, default: 0
-  field :entry_type,             type: Integer, default: 0
-  field :account_number,         type: String
-  field :default_account_number, type: String
-  field :charge_account,         type: String
-  field :default_charge_account, type: String
-  field :vat_account,            type: String
-  field :anomaly_account,        type: String
-  field :is_default,             type: Boolean, default: false
-  field :instructions,            type: String
+  embeds_many :expense_categories, cascade_callbacks: true
+  
+  accepts_nested_attributes_for :expense_categories, allow_destroy: true
+  
+  field :name,                           type: String
+  field :description,                    type: String,  default: ""
+  field :position,                       type: Integer, default: 0
+  field :entry_type,                     type: Integer, default: 0
+  field :account_number,                 type: String
+  field :default_account_number,         type: String
+  field :charge_account,                 type: String
+  field :default_charge_account,         type: String
+  field :vat_account,                    type: String
+  field :anomaly_account,                type: String
+  field :is_default,                     type: Boolean, default: false
+  field :is_expense_categories_editable, type: Boolean, default: false
+  field :instructions,                   type: String
   
   slug :name
 

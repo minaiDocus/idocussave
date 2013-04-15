@@ -455,6 +455,8 @@ fr:
           charge_account: Compte de charge / produit d'attente
           vat_account: Compte TVA
           anomaly_account: Compte d'anomalie
+          is_expense_categories_editable: Catégories de dépenses editable ?
+          expense_categories: Catégories de dépenses
           instructions: Instructions (400 char. max.)
           position: Position
           is_default: Par défaut ?
@@ -595,3 +597,11 @@ fr:
           amount_in_cents_w_vat: Montant en centime (TTC)
           requested_at: Order de prlv. envoyé le
           received_at: Rglet. effectué le
+      expense_category:
+        zero: 0 catégorie de dépense
+        one: 1 catégorie de dépense
+        other: '#{count} catégories de dépenses'
+        name: Catégorie de dépense
+        attributes:
+          name: Nom
+          description: Description

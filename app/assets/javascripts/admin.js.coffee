@@ -1,11 +1,4 @@
 #//= require common.js
-#//= require jquery_nested_form
-#//= require file-uploader/load-image.min
-#//= require file-uploader/jquery.iframe-transport
-#//= require file-uploader/jquery.fileupload
-#//= require file-uploader/jquery.fileupload-ui
-#//= require file-uploader/application
-#//= require file-uploader/cors/jquery.xdr-transport
 #//= require bootstrap-datepicker/core
 #//
 #// French translation for bootstrap-datepicker

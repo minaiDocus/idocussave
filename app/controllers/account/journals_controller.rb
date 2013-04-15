@@ -28,7 +28,11 @@ class Account::JournalsController < Account::OrganizationController
 
   def update
     respond_to do |format|
-      if @journal.request.set_attributes(journal_params, {}, @user)
+      result = true
+      if (attrs = expense_categories_params).present?
+        result = @journal.update_attributes(attrs)
+      end
+      if result && @journal.request.set_attributes(journal_params, {}, @user)
         format.json{ render json: @journal.to_json, status: :ok }
         format.html{ redirect_to account_organization_journals_path }
       else
@@ -97,6 +101,14 @@ private
                                               :instructions,
                                               :is_default,
                                               :client_ids)
+  end
+
+  def expense_categories_params
+    if @journal.persisted? && @journal.request.action != 'create' && @journal.is_expense_categories_editable
+      params.require(:account_book_type).permit(:expense_categories_attributes)
+    else
+      {}
+    end
   end
 
   def journal_relation_params

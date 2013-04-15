@@ -158,7 +158,7 @@ Idocus::Application.routes.draw do
     end
     resources :organizations do
       resources :groups
-      resources :journals, controller: 'organization_journals' do
+      resources :journals, as: :account_book_types, controller: 'organization_journals' do
         put 'accept', on: :member
       end
       resources :reminder_emails do
