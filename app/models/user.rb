@@ -249,7 +249,6 @@ class User
   def self.init_customer customer, organization, requester=nil
     customer.request.update_attributes(action: 'create', requester_id: requester.try(:id))
     customer.is_disabled = true
-    customer.skip_confirmation!
     customer.account_book_types = customer.requested_account_book_types = organization.account_book_types.default
     organization.members << customer
     subscription = customer.find_or_create_scan_subscription
