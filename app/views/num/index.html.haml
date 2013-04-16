@@ -51,6 +51,8 @@
           %th.name Nom
           %th.paperclips Nombre d'attaches
           %th.oversized Nombre de hors format
+          - if current_user
+            %th Numérisé par
           %th.actions Actions
         - if @day == Time.now.day
           %tr.form
@@ -68,6 +70,8 @@
                 != f.number_field :oversized, class: 'span2'
                 %br
                 .errors.alignleft!= @document.errors.messages[:oversized].try(:first)
+              - if current_user
+                %td
               %td= submit_tag 'Valider', class: 'btn btn-primary'
         - @documents.each do |document|
           %tr{ class: (document.scanned_at.nil? ? 'red' : 'green') }
@@ -79,4 +83,6 @@
             %td= document.name
             %td.paperclips= document.paperclips
             %td.oversized= document.oversized
+            - if current_user
+              %td= document.scanned_by
             %td

@@ -8,13 +8,18 @@ class NumController < ApplicationController
   private
 
   def authenticate
-    authenticate_or_request_with_http_basic do |name, password|
-      [name, password].in? Num::USERS
+    unless current_user && current_user.is_admin
+      authenticate_or_request_with_http_basic do |name, password|
+        @user = Num::USERS.select { |u| u[0] == name && u[1] == password }.first
+        @user.present?
+      end
     end
   end
 
   def load_resource
+    @scanned_by = @user.try(:[], 2)
     @all_documents = Scan::Document.where(:updated_at.gte => Time.now.beginning_of_month)
+    @all_documents = @all_documents.where(scanned_by: /#{@scanned_by}/) if @scanned_by.present?
     @groups = @all_documents.group_by do |e|
       e.scanned_at.try(:day) || e.created_at.day
     end
@@ -30,6 +35,7 @@ class NumController < ApplicationController
                                           :created_at.lte => time.end_of_day
                                        }).
                                 desc(:updated_at)
+    @documents = @documents.where(scanned_by: /#{@scanned_by}/) if @scanned_by.present?
   end
 
   def reset_waiting_document
@@ -60,6 +66,7 @@ class NumController < ApplicationController
         session[:new_document][:oversized] = params[:scan_document][:oversized].to_i
       else
         @document.scanned_at = Time.now
+        @document.scanned_by = @scanned_by
         if @document.save
           flash[:success] = "Créé avec succès."
           flash[:error] = nil

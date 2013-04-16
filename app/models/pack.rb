@@ -365,10 +365,8 @@ class Pack
       `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i rescue 0
     end
 
-    def get_file_from_numen(target_dir="diadeis2depose/LIVRAISON")
-      Dir.chdir FETCHING_PATH
-      Dir.mkdir("NUMEN_DELIVERY_BACKUP") unless File.exist?("NUMEN_DELIVERY_BACKUP")
-      Dir.chdir("NUMEN_DELIVERY_BACKUP")
+    def get_file_from_ftp(url, login, password, target_dir='/', service='')
+      Dir.chdir(File.join([FETCHING_PATH, 'DELIVERY_BACKUP']))
 
       total_filesname = []
 
@@ -377,13 +375,22 @@ class Pack
       begin
         try = 0
         begin
-        ftp = Net::FTP.new('193.168.63.12', 'depose', 'tran5fert')
+        ftp = Net::FTP.new(url, login, password)
 
         ftp.chdir(target_dir)
         root_files_name = ftp.nlst.sort
+
+        processed_csv_files = Dir.glob("*\.csv")
+        remote_csv_files = root_files_name.select { |e| e.match(/\.csv$/) }
+        csv_files = remote_csv_files - processed_csv_files
+        csv_files.each do |csv_file|
+          ftp.getbinaryfile(csv_file)
+        end
+
         headers = root_files_name.select { |e| e.match(/\.txt$/) }
 
-        processed_headers = Dir.glob("*.txt")
+        processed_headers = Dir.glob("#{service}[0-9]*.txt").
+                                map { |e| e.sub(/^#{service}/,'') }
         headers = headers - processed_headers
 
         headers.each do |header|
@@ -398,19 +405,17 @@ class Pack
           Dir.chdir(folder_name)
           folders_name.each do |foldername|
             ftp.chdir(foldername)
-            files_name = ftp.nlst.sort
+            files_name = ftp.nlst.sort.select { |f| f.match(FILENAME_PATTERN) }
             all_filesname += files_name
             files_name.each do |file_name|
-              if file_name.match(FILENAME_PATTERN)
-                unless File.exist?(file_name)
-                  print "\tTrying to fetch document named #{file_name}..."
-                  ftp.getbinaryfile(file_name)
-                  print "done\n"
-                else
-                  puts "\tHad already fetched document named #{file_name}"
-                end
-                # ftp.delete(fileName)
+              unless File.exist?(file_name)
+                print "\tTrying to fetch document named #{file_name}..."
+                ftp.getbinaryfile(file_name)
+                print "done\n"
+              else
+                puts "\tHad already fetched document named #{file_name}"
               end
+              # ftp.delete(fileName)
             end
             ftp.chdir("../")
           end
@@ -463,7 +468,7 @@ class Pack
 
           Dir.chdir("..")
           ftp.chdir("..")
-          File.new(header,"w")
+          File.new("#{service}#{header}","w")
         end
 
         ftp.close
@@ -484,6 +489,38 @@ class Pack
       end
 
       total_filesname
+    end
+
+    def get_csv_files(service='')
+      require 'csv'
+
+      Dir.chdir(File.join([FETCHING_PATH, 'DELIVERY_BACKUP']))
+      all_csv_files = Dir.glob("*.csv")
+      processed_csv_files = Dir.glob("*.csv.ok").map { |e| e.sub(/\.ok$/,'') }
+      csv_files = all_csv_files - processed_csv_files
+      csv_files.each do |csv_file|
+        print "Processing csv file : #{csv_file}..."
+        rows = CSV.read(csv_file).
+                   map { |e| e.first.split(';') }.
+                   reject { |e| e.empty? || !e.first.match(/^#{CODE_PATTERN} #{JOURNAL_PATTERN} #{PERIOD_PATTERN}/) }
+        rows.each do |row|
+          name, paperclips, oversized = row
+          code = name.split[0]
+          user = User.find_by_code code
+          if user
+            period = user.find_or_create_scan_subscription.
+                          find_or_create_period(Time.now)
+            document = Scan::Document.where(name: "#{name} all").for_time(period.start_at,period.end_at).first
+            document = Scan::Document.new(name: "#{name} all") unless document
+            document.scanned_by = service
+            document.paperclips += paperclips.to_i
+            document.oversized += oversized.to_i
+            document.save
+          end
+        end
+        File.new("#{csv_file}.ok",'w')
+        print "done\n"
+      end
     end
     
     def get_documents(files)

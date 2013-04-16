@@ -19,6 +19,7 @@ class Scan::Document
   field :oversized,       type: Integer, default: 0
   field :is_shared,       type: Boolean, default: true
   field :scanned_at,      type: Time
+  field :scanned_by,      type: String
   
   validates_presence_of :name
   validates_format_of :name, with: /^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/

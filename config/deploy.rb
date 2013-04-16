@@ -59,6 +59,7 @@ namespace :shared do
     run "mkdir -p #{current_release}/tmp"
     run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/tmp/uploads"
+    run "mkdir -p #{shared_path}/files/tmp/DELIVERY_BACKUP"
     run "mkdir -p #{shared_path}/files/kit"
     run "mkdir -p #{shared_path}/files/attachments/archives"
     run "mkdir -p #{shared_path}/files/compositions"
