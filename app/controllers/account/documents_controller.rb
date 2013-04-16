@@ -135,8 +135,12 @@ public
     filepath = document.content.path(params[:style])
     if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(document.pack.id)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
-      type = document.content_file_type || 'application/pdf'
-      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+      if File.extname(filepath) == '.png'
+        mime_type = 'image/png'
+      else
+        mime_type = 'application/pdf'
+      end
+      send_file(filepath, type: mime_type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
