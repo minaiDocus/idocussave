@@ -46,7 +46,13 @@ class Account::JournalsController < Account::OrganizationController
     attributes = journal_relation_params
     attributes['requested_client_ids'] = [] if attributes['requested_client_ids'] == 'empty'
     old_requested_clients = @journal.requested_clients
-    new_requested_clients = @user.customers.select { |e| e.is_editable && e.id.to_s.in?(attributes['requested_client_ids']) }
+    new_requested_clients = @user.customers.select do |e|
+      if attributes['requested_client_ids'].include?(e.id.to_s)
+        @journal.requested_clients.include?(e) ? true : e.is_editable
+      else
+        false
+      end
+    end
     added_clients = new_requested_clients - old_requested_clients
     removed_clients = old_requested_clients - new_requested_clients
     @journal.requested_clients = new_requested_clients
