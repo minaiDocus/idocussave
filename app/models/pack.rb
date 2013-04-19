@@ -52,6 +52,18 @@ class Pack
   def pieces_info
     self.divisions.pieces
   end
+
+  def cover_info
+    pieces_info.covers.first
+  end
+
+  def has_cover?
+    cover_info.present?
+  end
+
+  def cover_name
+    cover_info.name.gsub('_',' ') rescue ''
+  end
   
   def find_scan_document(start_time, end_time)
     scan_document = self.scan_documents.for_time(start_time,end_time).first
@@ -572,24 +584,49 @@ class Pack
       pack.is_open_for_upload = false if is_an_upload == false
       
       #  Renommage des fichiers.
-      start_at_page = pack.divisions.pieces.count + 1
+      cover = nil
+      is_cover_page_exist = filesname.select { |e| e.match /_000\.pdf$/ }.first.present?
+      if pack.new?
+        start_at_page = is_cover_page_exist ? 0 : 1
+      else
+        start_at_page = pack.pieces_info.not_covers.count + 1
+      end
+      cover = filesname.select { |e| e.match /_000\.pdf$/ }.first
+      filesname = filesname - [cover]
+      if is_cover_page_exist && !pack.has_cover?
+        apply_new_name([cover], 0, user.stamp_name, user.is_stamp_background_filled, false)
+      elsif is_cover_page_exist
+        File.rename cover, "na_#{cover}"
+      end
       filesname = apply_new_name(filesname, start_at_page, user.stamp_name, user.is_stamp_background_filled, is_an_upload)
 
-      piece_position = pack.pieces_info.last.position + 1 rescue 1
-      sheet_position = pack.sheets_info.last.position + 1 rescue 1
-      update_pieces(filesname, pack, piece_position, is_an_upload)
-      update_division(filesname, pack, piece_position, sheet_position, is_an_upload)
+      if is_cover_page_exist && pack.new?
+        piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 0
+        sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 0
+      else
+        piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 1
+        sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 1
+      end
+      update_pieces(filesname, pack, piece_position, is_an_upload, cover)
+      update_division(filesname, pack, piece_position, sheet_position, is_an_upload, cover)
 
       #  Création du fichier all.
-      filesname_list = filesname.sum { |f| " " + f }
-      system "pdftk #{filesname_list} cat output #{pack_filename}"
+      combined_file = nil
+      if filesname.present?
+        filesname_list = filesname.sum { |f| " " + f }
+        system "pdftk #{filesname_list} cat output #{pack_filename}"
+        combined_file = pack_filename
+      end
       
       #  Vérification de l'existance ou pas.
       if pack.persisted?
         #  Mise à jour des documents.
-        Document.update_file pack, pack_filename, is_an_upload
+        Document.update_file pack, combined_file, cover, is_an_upload
         pack.updated_at = Time.now
         pack.save
+        pack.pieces.each do |piece|
+          piece.save if piece.changed?
+        end
       else
         #  Attribution du pack.
         pack.owner = user
@@ -612,6 +649,7 @@ class Pack
       filesname.each do |filename|
         File.rename filename, "up_" + filename
       end
+      File.rename cover, "up_" + cover if cover
 
       pack.init_delivery_for(user)
       user.prescribers.each do |prescriber|
@@ -642,9 +680,33 @@ class Pack
     
   private
 
-    def update_division(filesname, pack, piece_position, sheet_position, is_an_upload)
+    def update_division(filesname, pack, piece_position, sheet_position, is_an_upload, cover)
+      if cover
+        piece = Division.new
+        piece.level = Division::PIECES_LEVEL
+        piece.created_at = piece.updated_at = Time.now
+        piece.name = cover.sub(".pdf",'')
+        piece.start = 0
+        piece.end = 0
+        piece.is_an_upload = false
+        piece.is_a_cover = true
+        piece.position = 0
+        pack.divisions << piece
+
+        sheet = Division.new
+        sheet.level = Division::SHEETS_LEVEL
+        sheet.created_at = sheet.updated_at = Time.now
+        sheet.name = cover.sub(".pdf",'')
+        sheet.start = 0
+        sheet.end = 0
+        sheet.is_an_upload = false
+        sheet.is_a_cover = true
+        sheet.position = 0
+        pack.divisions << sheet
+      end
+
       total_pages = 0
-      count = pack.documents.count
+      count = pack.documents.not_covers.count
       current_page = (count == 0) ? 1 : count
       current_piece_position = piece_position
       current_sheet_position = sheet_position
@@ -697,7 +759,16 @@ class Pack
       end
     end
 
-    def update_pieces(filesname, pack, position, is_an_upload)
+    def update_pieces(filesname, pack, position, is_an_upload, cover)
+      if cover.present?
+        piece = Pack::Piece.new
+        piece.pack = pack
+        piece.name = File.basename(cover,'.pdf').gsub('_',' ')
+        piece.content = open(cover)
+        piece.is_an_upload = false
+        piece.is_a_cover = true
+        piece.position = 0
+      end
       current_position = position
       filesname.each do |filename|
         piece = Pack::Piece.new

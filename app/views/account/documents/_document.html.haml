@@ -7,8 +7,13 @@
   - else
     - link_to_large = link_to_thumb = 'application/processing.png'
 
-  - page_number = document.content_file_name.scan(/(\d{2,3}).pdf/)[0][0].to_i rescue 1
-  - pieces_name = document.pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ')
+  - if document.is_a_cover
+    - page_number = document.position + 3
+    - pieces_name = document.pack.cover_name
+  - else
+    - page_number = document.content_file_name.scan(/(\d{1,3}).pdf/)[0][0].to_i rescue 1
+    - pieces_name = document.pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ') rescue ""
+    - page_number += 2 if document.pack.has_cover?
   
   %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }
   %input{ :type => :hidden, :name => :page_number, :value => "#{page_number}" }

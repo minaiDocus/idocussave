@@ -10,6 +10,7 @@ class Pack::Piece
   field :content_file_size,  type: Integer
   field :content_updated_at, type: Time
   field :is_an_upload,       type: Boolean, default: false
+  field :is_a_cover,         type: Boolean, default: false
   field :position,           type: Integer
   field :token,              type: String
 
@@ -24,6 +25,9 @@ class Pack::Piece
 
   scope :uploaded, where: { is_an_upload: true }
   scope :scanned,  where: { is_an_upload: false }
+  
+  scope :covers,     where:  { is_a_cover: true }
+  scope :not_covers, any_in: { is_a_cover: [false, nil] }
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 

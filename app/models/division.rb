@@ -13,6 +13,7 @@ class Division
   field :start,        type: Integer, default: 0
   field :end,          type: Integer, default: 0
   field :is_an_upload, type: Boolean, default: false
+  field :is_a_cover,   type: Boolean, default: false
   field :position,     type: Integer, default: 0
   
   scope :uploaded,      where: { is_an_upload: true }
@@ -22,6 +23,9 @@ class Division
   scope :of_month,      lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
   validates_presence_of :name, :start, :end
+
+  scope :covers,     where:  { is_a_cover: true }
+  scope :not_covers, any_in: { is_a_cover: [false, nil] }
 
   def self.last
     desc(:position).first

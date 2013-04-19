@@ -11,6 +11,7 @@ class Document
   field :content_text,       type: String,  default: ""
   field :is_an_original,     type: Boolean, default: false
   field :is_an_upload,       type: Boolean, default: false
+  field :is_a_cover,         type: Boolean, default: false
   field :tags,               type: String,  default: ""
   field :position,           type: Integer
   field :dirty,              type: Boolean, default: true
@@ -51,6 +52,9 @@ class Document
 
   scope :uploaded,         where:  { is_an_upload: true }
   scope :scanned,          where:  { is_an_upload: false }
+
+  scope :covers,           where:  { is_a_cover: true }
+  scope :not_covers,       any_in: { is_a_cover: [false, nil] }
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
@@ -182,41 +186,62 @@ class Document
       any_in(_id: ids)
     end
 
-    def update_file pack, filename, is_an_upload=false
-      start_at_page = pack.documents.size
+    def update_file pack, combined_file, cover, is_an_upload=false
+      start_at_page = pack.pages.not_covers.size + 1
       temp_path = pack.original_document.content.path
       basename = File.basename(temp_path,".pdf")
-      system "pdftk #{filename} burst output #{basename}_pages_%03d.pdf_"
-      rename_pages start_at_page
-      add_pages pack, basename, start_at_page, is_an_upload
-      update_original_file temp_path, filename
+      if cover.present?
+        system "pdftk #{cover} burst output #{basename}_covers_%d.pdf"
+        add_pages pack, basename, -2, false, true
+      end
+      if combined_file.present?
+        system "pdftk #{combined_file} burst output #{basename}_pages_%03d.pdf_"
+        rename_pages start_at_page
+        add_pages pack, basename, start_at_page, is_an_upload
+      end
+      update_original_file temp_path, combined_file, cover
     end
 
     def rename_pages start_at_page
       Dir.glob("*_pages*").each_with_index do |file,index|
-        number = (start_at_page + index).to_s
-        new_name = file.sub /[0-9]{3}\.pdf_/, "0" * (3 - number.size) + number + ".pdf"
+        number = start_at_page + index
+        new_name = file.sub /[0-9]{3}\.pdf_/, ("%03d" % number) + ".pdf"
         File.rename file, new_name
       end
     end
 
-    def add_pages pack, basename, start_at_page, is_an_upload
-      Dir.glob("#{basename}_pages*").sort.each_with_index do |file, index|
+    def add_pages(pack, basename, start_at_page, is_an_upload, is_a_cover=false)
+      pattern = is_a_cover ? "*_covers*" : "*_pages*"
+      Dir.glob("#{basename}" + pattern).sort.each_with_index do |file, index|
         document = Document.new
         document.dirty = true
         document.pack = pack
         document.position = start_at_page + index
         document.content = File.new file
         document.is_an_upload = is_an_upload
+        document.is_a_cover = is_a_cover
         document.save
         File.delete file
       end
     end
 
-    def update_original_file temp_path, filename
+    def update_original_file temp_path, combined_file, cover
       File.rename temp_path, temp_path + "_"
-      system "pdftk A=#{temp_path}_ B=#{filename} cat A B output #{temp_path}"
-      system "rm #{temp_path}_ #{filename}"
+      input = ''
+      order = ''
+      if cover.present?
+        input << "A=#{cover}"
+        order << "A"
+      end
+      input << " B=#{temp_path}_"
+      order << " B"
+      if combined_file.present?
+        input << " C=#{combined_file}"
+        order << " C"
+      end
+
+      system "pdftk #{input} cat #{order} output #{temp_path}"
+      system "rm #{temp_path}_ #{combined_file}"
       system "cp #{temp_path} ./"
     end
   end
