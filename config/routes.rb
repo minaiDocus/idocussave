@@ -195,6 +195,7 @@ Idocus::Application.routes.draw do
       resources :visits
     end
     resources :gray_labels
+    resources :scanning_providers
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

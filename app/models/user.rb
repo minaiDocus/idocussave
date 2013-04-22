@@ -109,6 +109,8 @@ class User
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true
   has_one :csv_outputter, autosave: true
+
+  belongs_to :scanning_provider, inverse_of: 'customers'
   
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }

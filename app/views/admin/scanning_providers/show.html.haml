@@ -1,0 +1,45 @@
+#scanning_provider
+  .row-fluid
+    .span12.panel
+      .pull-left
+        %h2 Atelier : #{@scanning_provider}
+      .pull-right
+        = icon_link_to edit_admin_scanning_provider_path(@scanning_provider), { icon: 'edit' }, { class: 'btn' }
+      %br
+  .row-fluid
+    .span4
+      %table.table.table-condensed.table-bordered.table-striped
+        %thead
+          %tr
+            %th{ colspan: 2 }
+              %h3 Informations
+        %tbody
+          %tr
+            %th= t('mongoid.models.common.attributes.created_at')
+            %td= l(@scanning_provider.created_at)
+          %tr
+            %th= t('mongoid.models.scanning_provider.attributes.name')
+            %td= @scanning_provider
+      %table.table.table-condensed.table-bordered.table-striped
+        %thead
+          %tr
+            %th
+              .pull-left
+                %h3 Liste des clients
+              .pull-right
+                %h3= @scanning_provider.customers.count
+        %tbody
+          - @scanning_provider.customers.asc(:code).each do |customer|
+            %tr
+              %td= link_to customer.info, [:admin, customer]
+    .span8
+      .well
+        %h3 Adresses
+        %hr
+        - grouped_addresses = @scanning_provider.addresses.in_groups_of(3)
+        - grouped_addresses.each_with_index do |addresses, index|
+          .row-fluid{ class: ((index + 1) < grouped_addresses.size ? 'margin1bottom' : '') }
+            - addresses.each do |address|
+              - if address
+                .span4
+                  = render partial: 'address', locals: { address: address, single: false }

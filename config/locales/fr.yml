@@ -605,3 +605,12 @@ fr:
         attributes:
           name: Nom
           description: Description
+      scanning_provider:
+        zero: 0 atelier
+        one: 1 atelier
+        other: '#{count} ateliers'
+        name: Atelier
+        attributes:
+          name: Nom
+          customers: Clients
+          customers_count: Nombre de clients
