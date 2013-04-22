@@ -359,7 +359,8 @@
       return false;
     });
     
-    $("#documentsTaggingButton").click(function() {
+    $("#documentsTaggingButton").click(function(e) {
+      e.preventDefault();
       var document_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[1] });
       var $documentsTags = $("#documentsTags");
       
@@ -374,13 +375,13 @@
         postTags(tags,document_ids);
         aTags = tags.split(" ");
         $("#documentslist > .content > ul > li.selected").each(function(i,li){
-          var link = $(li).children(".action").children(".do-popover");
-          var other_content = link.attr("data-content").split("Tags :")[0];
-          var oTags = link.attr("data-content").split("Tags :")[1];
+          var $link = $(li).children(".action").children(".do-popover");
+          var $content = $($link.attr("data-content"));
+          var oTags = $content.find('.tags').text();
           
           for ( var i=aTags.length-1; i>=0; --i ){
             if (aTags[i].match("-")) {
-              var reg = new RegExp(aTags[i].replace("-",""),"g");
+              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
               oTags = oTags.replace(reg,"");
             } else {
               if (!oTags.match(aTags[i])) {
@@ -388,11 +389,11 @@
               }
             }
           }
-          link.attr("data-content",other_content + "Tags : " + oTags);
+          $content.find('.tags').text(oTags);
+          $link.attr("data-content", '<div>'+$content.html()+'</div>');
         });
         $("#documentsTaggingDialog").modal('hide');
       }
-      return false;
     });
     
     $("#documentsTaggingDialog").on("hidden",function() {
@@ -405,8 +406,10 @@
       $("#documentsTaggingDialog .names_alert").html("");
     });
     
-    $("#pagesTaggingButton").click(function() {
-      var document_ids = $.map($("#panel1 > .content > ul > li.selected"), function(li){ return li.id.split("_")[1] });
+    $("#pagesTaggingButton").click(function(e) {
+      e.preventDefault();
+      var $documents = $("#panel1 > .content > ul > li.selected");
+      var document_ids = $.map($documents, function(li){ return li.id.split("_")[1] });
       var $pagesTags = $("#pagesTags");
       
       if (document_ids.length <= 0)
@@ -416,10 +419,25 @@
       
       if (document_ids.length > 0 && $pagesTags.val().length > 0) {
         postTags($pagesTags.val(),document_ids);
+        var aTags = $pagesTags.val().split(' ');
+        for(var k=0; k<$documents.length; k++ ) {
+          var $document = $($documents[k]);
+          tags = $document.find('input[name=tags]').val();
+          for ( var i=aTags.length-1; i>=0; --i ) {
+            if (aTags[i].match("-")) {
+              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
+              tags = tags.replace(reg,"");
+            } else {
+              if (!tags.match(aTags[i])) {
+                tags = tags + " " + aTags[i];
+              }
+            }
+          }
+          $document.find('input[name=tags]').val(tags);
+        }
         $pagesTags.val("");
         $("#pagesTaggingDialog").modal("hide");
       }
-      return false;
     });
     
     $("#pagesTaggingDialog").on("hidden",function() {
@@ -432,8 +450,10 @@
       $("#pagesTaggingDialog .names_alert").html("");
     });
     
-    $("#selectionsTaggingButton").click(function(){
+    $("#selectionsTaggingButton").click(function(e){
+      e.preventDefault();
       var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
+      var $documents = $($.map(document_ids, function(id) { return '#document_' + id }).join(','));
       var $selectionsTags = $("#selectionsTags");
       
       if (document_ids.length <= 0)
@@ -443,10 +463,25 @@
 
       if (document_ids.length > 0 && $selectionsTags.val().length > 0) {
         postTags($selectionsTags.val(),document_ids);
+        var aTags = $selectionsTags.val().split(' ');
+        for(var k=0; k<$documents.length; k++ ) {
+          var $document = $($documents[k]);
+          tags = $document.find('input[name=tags]').val();
+          for ( var i=aTags.length-1; i>=0; --i ) {
+            if (aTags[i].match("-")) {
+              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
+              tags = tags.replace(reg,"");
+            } else {
+              if (!tags.match(aTags[i])) {
+                tags = tags + " " + aTags[i];
+              }
+            }
+          }
+          $document.find('input[name=tags]').val(tags);
+        }
         $selectionsTags.val("");
         $("#selectionTaggingDialog").modal("hide");
       }
-      return false;
     });
     
     $("#selectionTaggingDialog").on("hidden",function() {

@@ -7,7 +7,7 @@ class Account::Documents::TagsController < Account::AccountController
     add = ""
     params[:tags].downcase.split.each do |tag|
       if tag.match(/-*\w*/)
-        if tag[0] == 45 # '45' = '-'
+        if tag[0] == '-'
           sous += " #{tag.sub("-","").sub("*","(.*)")}"
           else
           add += " #{tag}"

@@ -144,7 +144,7 @@ module DocumentsHelper
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de mise en ligne"), width: content_width) + content_tag(:td, "#{pack.created_at.strftime("%d/%m/%Y")}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de modification"),  width: content_width) + content_tag(:td, "#{pack.updated_at.strftime("%d/%m/%Y")}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pages.count}")
-        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{tags_of(original_document,@all_tags)}")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{tags_of(original_document,@all_tags)}", class: 'tags')
       end
     end
   end
