@@ -51,6 +51,7 @@ class NumController < ApplicationController
   end
 
   def create
+    @scanned_by = @user.try(:[], 2)
     if params[:scan_document] && params[:scan_document][:name] && params[:scan_document][:paperclips] && params[:scan_document][:oversized]
       params[:scan_document][:name].gsub!("_"," ")
       params[:scan_document][:name].strip!
