@@ -20,7 +20,8 @@ class Address
 
   embedded_in :locatable, polymorphic: true
 
-  validates_presence_of :first_name, :last_name, :city, :zip
+  validates_presence_of :first_name, :last_name, unless: Proc.new { |e| e.locatable.try(:class) == ScanningProvider }
+  validates_presence_of :city, :zip
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
   validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
 

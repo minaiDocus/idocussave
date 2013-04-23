@@ -7,17 +7,22 @@
         %h3.pull-left= t('mongoid.models.file_sending_kit.name')
   %tbody
     %tr
-      %th= t('mongoid.models.file_sending_kit.attributes.folder')
+      %th= t('mongoid.models.file_sending_kit.attributes.folders')
       %td
-        - if File.exist? "#{Rails.root}/files/kit/folder.pdf"
-          = link_to 'folder.pdf', folder_admin_organization_file_sending_kit_path
+        - if File.exist? "#{Rails.root}/files/kit/folders.pdf"
+          = link_to 'folders.pdf', folders_admin_organization_file_sending_kit_path, target: '_blank'
     %tr
-      %th= t('mongoid.models.file_sending_kit.attributes.mail')
+      %th= t('mongoid.models.file_sending_kit.attributes.mails')
       %td
-        - if File.exist? "#{Rails.root}/files/kit/mail.pdf"
-          = link_to 'mail.pdf', mail_admin_organization_file_sending_kit_path
+        - if File.exist? "#{Rails.root}/files/kit/mails.pdf"
+          = link_to 'mails.pdf', mails_admin_organization_file_sending_kit_path, target: '_blank'
     %tr
-      %th= t('mongoid.models.file_sending_kit.attributes.label')
+      %th= t('mongoid.models.file_sending_kit.attributes.customer_labels')
       %td
-        - if File.exist? "#{Rails.root}/files/kit/label.pdf"
-          = link_to 'label.pdf', label_admin_organization_file_sending_kit_path
+        - if File.exist? "#{Rails.root}/files/kit/customer_labels.pdf"
+          = link_to 'customer_labels.pdf', customer_labels_admin_organization_file_sending_kit_path, target: '_blank'
+    %tr
+      %th= t('mongoid.models.file_sending_kit.attributes.workshop_labels')
+      %td
+        - if File.exist? "#{Rails.root}/files/kit/workshop_labels.pdf"
+          = link_to 'workshop_labels.pdf', workshop_labels_admin_organization_file_sending_kit_path, target: '_blank'

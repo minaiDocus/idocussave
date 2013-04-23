@@ -65,16 +65,20 @@ class Admin::FileSendingKitsController < Admin::AdminController
     end
   end
 
-  def folder
-    send_pdf('folder.pdf')
+  def folders
+    send_pdf('folders.pdf')
   end
 
-  def mail
-    send_pdf('mail.pdf')
+  def mails
+    send_pdf('mails.pdf')
   end
 
-  def label
-    send_pdf('label.pdf')
+  def customer_labels
+    send_pdf('customer_labels.pdf')
+  end
+
+  def workshop_labels
+    send_pdf('workshop_labels.pdf')
   end
 
 private
@@ -86,7 +90,7 @@ private
   def send_pdf(filename)
     filepath = File.join([Rails.root,'/files/kit/' + filename])
     if File.file? filepath
-      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true)
+      send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
