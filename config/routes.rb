@@ -168,11 +168,12 @@ Idocus::Application.routes.draw do
         post 'update_multiple', on: :collection
       end
       resource :file_sending_kit do
-        get  'select',   on: :member
-        post 'generate', on: :member
-        get  'folder',   on: :member
-        get  'mail',     on: :member
-        get  'label',    on: :member
+        get  'select',          on: :member
+        post 'generate',        on: :member
+        get  'folders',         on: :member
+        get  'mails',           on: :member
+        get  'customer_labels', on: :member
+        get  'workshop_labels', on: :member
       end
       resource :ibiza, controller: 'ibiza'
       resource :subscription, controller: 'organization_subscriptions'
@@ -195,6 +196,7 @@ Idocus::Application.routes.draw do
       resources :visits
     end
     resources :gray_labels
+    resources :scanning_providers
   end
 
   get "/preview/(:id)", controller: :homepage, action: :preview

@@ -15,6 +15,7 @@ module FileSendingKitGenerator
     KitGenerator::folder to_folders(clients_data), file_sending_kit
     KitGenerator::mail to_mails(clients), file_sending_kit
     KitGenerator::label to_labels(clients)
+    KitGenerator::workshop_labels to_workshop_labels(clients_data)
   end
   
 private
@@ -103,7 +104,44 @@ private
     ].
     reject { |e| e.nil? or e.empty? }
   end
-  
+
+  def self.to_workshop_labels(clients_data)
+    data = []
+    clients_data.each do |client_data|
+      user = client_data[:user]
+      if user.scanning_provider && user.scanning_provider.addresses.any?
+        data += to_workshop_label(client_data)
+      end
+    end
+    data
+  end
+
+  def self.to_workshop_label(client_data)
+    data = []
+    user = client_data[:user]
+    BarCode.generate_png(user.code, 20, 0)
+    current_time = Time.now
+    current_time += client_data[:start_month].month
+    end_time = current_time + client_data[:offset_month].month
+    period_duration = user.scan_subscriptions.last.period_duration
+    address = user.scanning_provider.addresses.first
+    stringified_address = stringify_address(address)
+    while current_time < end_time
+      data << [user.code] + stringified_address
+      current_time += period_duration.month
+    end
+    data
+  end
+
+  def self.stringify_address(address)
+    [
+      address.company,
+      address.address_1,
+      address.address_2,
+      [address.zip, address.city].join(' ')
+    ].
+    reject { |e| e.nil? or e.empty? }
+  end
 end
 
 module KitGenerator
@@ -111,7 +149,7 @@ module KitGenerator
   TRIMESTRE = [nil,"1er Trimestre","2e Trimestre","3e Trimestre","4e Trimestre"]
   
   def KitGenerator.folder(folders,file_sending_kit)
-    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folder.pdf", :page_layout => :landscape, :page_size => "A3", :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7 do |pdf|
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folders.pdf", :page_layout => :landscape, :page_size => "A3", :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7 do |pdf|
       folders.each_with_index do |folder,index|
         folder_bloc(pdf,folder,file_sending_kit)
         if !folders[index+1].nil?
@@ -122,7 +160,7 @@ module KitGenerator
   end
   
   def KitGenerator.mail(mails,file_sending_kit)
-    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/mail.pdf", :left_margin => 70, :right_margin => 70 do |pdf|
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/mails.pdf", :left_margin => 70, :right_margin => 70 do |pdf|
       pdf.font "Helvetica"
       
       mails.each_with_index do |mail,index|
@@ -132,11 +170,10 @@ module KitGenerator
         end
       end
     end
-
   end
   
   def KitGenerator.label(labels)
-    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/label.pdf", :page_size => "A4", :margin => 0 do |pdf|
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/customer_labels.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
       pdf.move_down 32
       nb = 0
@@ -151,6 +188,27 @@ module KitGenerator
           pdf.float { label_bloc(pdf,label) }
         else
           label_bloc(pdf,label,297)
+        end
+      end
+    end
+  end
+
+  def self.workshop_labels(labels)
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/workshop_labels.pdf", :page_size => "A4", :margin => 0 do |pdf|
+      pdf.font_size 9
+      pdf.move_down 32
+      nb = 0
+      labels.each_with_index do |label,index|
+        nb += 1
+        if nb == 15
+          pdf.start_new_page(:page_size => "A4", :margin => 0)
+          pdf.move_down 32
+          nb = 1
+        end
+        if index % 2 == 0
+          pdf.float { workshop_label_bloc(pdf,label) }
+        else
+          workshop_label_bloc(pdf,label,297)
         end
       end
     end
@@ -312,6 +370,35 @@ private
       end
     end
   end
+
+  def KitGenerator.workshop_label_bloc(pdf, label, y=0)
+    pdf.bounding_box([y, pdf.cursor], :width => 297, :height => 111) do
+      pdf.move_down 18
+      pdf.bounding_box([15, pdf.cursor], :width => 297) do
+        label.each_with_index do |field, index|
+          if index == 0
+            width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.chop.split('x').map(&:to_i)
+            w = width - ((width*20) / 100)
+            pdf.float do
+              pdf.bounding_box([0, pdf.cursor], :width => w) do
+                pdf.image "#{BarCode::TEMPDIR_PATH}/#{field}.png", :height => height, :width => w
+              end
+            end
+            pdf.bounding_box([w + 5, pdf.cursor], :width => 297-w, :height => height) do
+              pdf.font_size 8
+              pdf.move_down 8
+              pdf.text field, :inline_format => true
+            end
+            pdf.move_down 4
+          else
+            pdf.font_size 9
+            pdf.text field, :inline_format => true
+            pdf.move_down 2
+          end
+        end
+      end
+    end
+  end
   
 end
 
@@ -326,12 +413,12 @@ module BarCode
     end
   end
 
-  def BarCode.generate_png text
+  def BarCode.generate_png(text, height = 50, margin = 5)
     tempfile_path = "#{TEMPDIR_PATH}/#{text.gsub(" ","_")}.png"
   
     barcode = Barby::Code39.new(text)
     File.open(tempfile_path,"w") do |f|
-      f.write barcode.to_png(:height => 50, :margin => 5)
+      f.write barcode.to_png(:height => height, :margin => margin)
     end
     
     tempfile_path

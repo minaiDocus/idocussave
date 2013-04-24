@@ -497,9 +497,10 @@ fr:
           title: Titre
           instruction: Instruction(s)
           position: Position
-          folder: Chemise
-          mail: Mail
-          label: Etiquettes
+          folders: Chemises
+          mails: Mails
+          customer_labels: Etiquettes clients
+          workshop_labels: Etiquettes ateliers
           logo:
             path: Chemin
             height: Hauteur
@@ -605,3 +606,12 @@ fr:
         attributes:
           name: Nom
           description: Description
+      scanning_provider:
+        zero: 0 atelier
+        one: 1 atelier
+        other: '#{count} ateliers'
+        name: Atelier
+        attributes:
+          name: Nom
+          customers: Clients
+          customers_count: Nombre de clients

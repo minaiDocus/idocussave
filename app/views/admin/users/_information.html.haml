@@ -32,6 +32,12 @@
           %td
             = organization_link(@user)
             = (result = organization_status(@user)) ? "(#{result})" : ''
+        %tr
+          %th.first= t('mongoid.models.scanning_provider.name')
+          %td
+            - if @user.scanning_provider
+              .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
+              .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
   .span5
     .row-fluid
       .span12
