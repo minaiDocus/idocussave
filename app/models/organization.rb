@@ -18,7 +18,7 @@ class Organization
 
   validates_presence_of :name, :leader_id
   validates_uniqueness_of :name
-  validates_length_of :code, in: 2..4
+  validates_length_of :code, in: 1..4
 
   slug :name
 
