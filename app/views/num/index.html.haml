@@ -1,9 +1,13 @@
 #num.container
   .alerts
     = render partial: 'shared/messages'
-
+      
   .row
-    .span12.margin2bottom
+    - if is_return_labels_authorized?
+      .span1.margin2bottom
+        %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
+
+    .margin2bottom{ class: (is_return_labels_authorized? ? 'span11' : 'span12') }
       %table#navigation.table.table-bordered
         %tr
           %td.first= "#{l(Time.now, format: "%B").capitalize} #{Time.now.year.to_s}"
@@ -86,3 +90,11 @@
             - if current_user
               %td= document.scanned_by
             %td
+  - if (@user && @user[3]) or current_user
+    #returnLabelsDialog.modal.hide.fade
+      .modal-header
+        %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
+        %h3 Génération des étiquettes de retour
+      .modal-body
+        #returnLabelsForm
+        %iframe{ :src => "", :id => "returnLabelsShow" }

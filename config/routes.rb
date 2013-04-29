@@ -20,6 +20,10 @@ Idocus::Application.routes.draw do
   match 'num/:id/add', controller: 'num', action: :add, via: :put
   match 'num/:id/overwrite', controller: 'num', action: :overwrite, via: :put
 
+  namespace :num do
+    resource :return_labels
+  end
+
   match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
   match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
 

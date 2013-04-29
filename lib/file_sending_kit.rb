@@ -14,8 +14,8 @@ module FileSendingKitGenerator
     
     KitGenerator::folder to_folders(clients_data), file_sending_kit
     KitGenerator::mail to_mails(clients), file_sending_kit
-    KitGenerator::label to_labels(clients)
-    KitGenerator::workshop_labels to_workshop_labels(clients_data)
+    KitGenerator::customer_labels to_labels(clients)
+    KitGenerator::labels to_workshop_labels(clients_data)
   end
   
 private
@@ -142,6 +142,35 @@ private
     ].
     reject { |e| e.nil? or e.empty? }
   end
+
+  def self.to_return_labels(clients_data)
+    data = []
+    clients_data.each { |client_data| data += to_return_label(client_data) }
+    data
+  end
+
+  def self.to_return_label(client_data)
+    customer = client_data[:customer]
+    address = customer.addresses.for_shipping.first
+    BarCode.generate_png(customer.code, 20, 0)
+    stringified_address = stringify_return_address(address)
+    data = []
+    client_data[:number].times do
+      data << [customer.code] + stringified_address
+    end
+    data
+  end
+
+  def self.stringify_return_address(address)
+    [
+      address.company,
+      address.name,
+      address.address_1,
+      address.address_2,
+      [address.zip, address.city].join(' ')
+    ].
+    reject { |e| e.nil? || e.empty? }
+  end
 end
 
 module KitGenerator
@@ -172,9 +201,30 @@ module KitGenerator
     end
   end
   
-  def KitGenerator.label(labels)
+  def KitGenerator.customer_labels(labels)
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/customer_labels.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
+      pdf.move_down 32
+      nb = 0
+      labels.each_with_index do |label,index|
+        nb += 1
+        if nb == 15
+          pdf.start_new_page(:page_size => "A4", :margin => 0)
+          pdf.move_down 32
+          nb = 1
+        end
+        if index % 2 == 0
+          pdf.float { customer_label_bloc(pdf,label) }
+        else
+          customer_label_bloc(pdf,label,297)
+        end
+      end
+    end
+  end
+
+  def self.labels(labels, filename = 'workshop_labels.pdf')
+    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/#{filename}", :page_size => "A4", :margin => 0 do |pdf|
+      pdf.font_size 9
       pdf.move_down 32
       nb = 0
       labels.each_with_index do |label,index|
@@ -188,27 +238,6 @@ module KitGenerator
           pdf.float { label_bloc(pdf,label) }
         else
           label_bloc(pdf,label,297)
-        end
-      end
-    end
-  end
-
-  def self.workshop_labels(labels)
-    Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/workshop_labels.pdf", :page_size => "A4", :margin => 0 do |pdf|
-      pdf.font_size 9
-      pdf.move_down 32
-      nb = 0
-      labels.each_with_index do |label,index|
-        nb += 1
-        if nb == 15
-          pdf.start_new_page(:page_size => "A4", :margin => 0)
-          pdf.move_down 32
-          nb = 1
-        end
-        if index % 2 == 0
-          pdf.float { workshop_label_bloc(pdf,label) }
-        else
-          workshop_label_bloc(pdf,label,297)
         end
       end
     end
@@ -359,7 +388,7 @@ private
     pdf.text "L’équipe iDocus", :align => :center
   end
   
-  def KitGenerator.label_bloc(pdf, label, y=0)
+  def KitGenerator.customer_label_bloc(pdf, label, y=0)
     pdf.bounding_box([y, pdf.cursor], :width => 297, :height => 111) do
       pdf.move_down 18
       pdf.bounding_box([15, pdf.cursor], :width => 297) do
@@ -371,7 +400,7 @@ private
     end
   end
 
-  def KitGenerator.workshop_label_bloc(pdf, label, y=0)
+  def KitGenerator.label_bloc(pdf, label, y=0)
     pdf.bounding_box([y, pdf.cursor], :width => 297, :height => 111) do
       pdf.move_down 18
       pdf.bounding_box([15, pdf.cursor], :width => 297) do
@@ -399,7 +428,6 @@ private
       end
     end
   end
-  
 end
 
 module BarCode

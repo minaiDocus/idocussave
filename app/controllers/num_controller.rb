@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class NumController < ApplicationController
-  layout "pages"
+  layout "num"
 
   before_filter :authenticate
   before_filter :load_resource, only: :index
@@ -109,4 +109,9 @@ class NumController < ApplicationController
     reset_waiting_document
     redirect_to "/num"
   end
+
+  def is_return_labels_authorized?
+    (@user && @user[3]) or current_user
+  end
+  helper_method :is_return_labels_authorized?
 end

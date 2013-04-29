@@ -1,0 +1,16 @@
+= form_tag num_return_labels_path, class: 'form' do
+  .list
+    %table.table.table-striped.table-condensed
+      %thead
+        %tr
+          %th
+          %th Code
+          %th Nombre
+      %tbody
+        - @customers.each do |customer|
+          %tr
+            %td.check_box= check_box_tag "return_labels[customers][#{customer.id}][is_checked]", true, !customer.is_return_label_generated_today?, id: "return_labels_customers_#{customer.id}"
+            %td= label_tag "return_labels_customers_#{customer.id}", customer.code
+            %td= number_field_tag "return_labels[customers][#{customer.id}][number]", 1, :in => 1...100
+  .action
+    = submit_tag 'Générer', class: 'btn btn-primary margin1top'
