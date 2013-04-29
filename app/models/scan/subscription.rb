@@ -65,6 +65,7 @@ class Scan::Subscription < Subscription
         period.organization = self.organization
       else
         period.user = self.user
+        period.is_centralized = self.user.is_centralized
       end
       period.set_product_option_orders self.product_option_orders
 

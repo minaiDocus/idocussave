@@ -11,9 +11,10 @@ class Scan::Period
   embeds_many :product_option_orders, as: :product_optionable
   embeds_one  :delivery, class_name: "Scan::Delivery", inverse_of: :period
   
-  field :start_at, type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
-  field :end_at,   type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
-  field :duration, type: Integer, default: 1
+  field :start_at,       type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
+  field :end_at,         type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
+  field :duration,       type: Integer, default: 1
+  field :is_centralized, type: Boolean, default: true
   
   field :price_in_cents_wo_vat,       type: Integer, default: 0
   field :tva_ratio,                   type: Float,   default: 1.196
@@ -52,6 +53,9 @@ class Scan::Period
   scope :bimonthly, where: { duration: 2 }
   scope :quarterly, where: { duration: 3 }
   scope :annual,    where: { duration: 12 }
+
+  scope :centralized,     where: { is_centralized: true }
+  scope :not_centralized, where: { is_centralized: false }
   
   # validate :attributes_year_and_month_is_uniq
   
@@ -83,11 +87,16 @@ class Scan::Period
   end
   
   def update_price!
-    update_attributes(price_in_cents_wo_vat: total_price_in_cents_wo_vat)
+    update_price
+    save
   end
   
   def total_price_in_cents_wo_vat
-    products_total_price_in_cents_wo_vat + price_in_cents_of_total_excess
+    if user
+      products_total_price_in_cents_wo_vat + price_in_cents_of_total_excess
+    else
+      product_option_orders.select { |e| e.group_position >= 1000 }.sum(&:price_in_cents_wo_vat) || 0
+    end
   end
   
   def products_total_price_in_cents_wo_vat

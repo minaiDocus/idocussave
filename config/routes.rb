@@ -199,6 +199,8 @@ Idocus::Application.routes.draw do
     resources :scanning_providers
   end
 
+  match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
+
   get "/preview/(:id)", controller: :homepage, action: :preview
   
   match '*a', :to => 'errors#routing'
