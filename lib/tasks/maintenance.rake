@@ -81,7 +81,7 @@ namespace :maintenance do
       puts "Task beginning at #{Time.now}"
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        if organization.customers.centralized.count > 0
+        if organization.customers.active.centralized.count > 0
           invoice = Invoice.new
           invoice.organization = organization
           invoice.user = organization.leader
@@ -89,13 +89,13 @@ namespace :maintenance do
           print "-> Centralized invoice : #{invoice.number}..."
           invoice.create_pdf
           print "done\n"
-          organization.customers.centralized.asc(:code).each do |customer|
+          organization.customers.active.centralized.asc(:code).each do |customer|
             puts "\t#{customer.info}"
           end
         end
-        if organization.customers.not_centralized.count > 0
+        if organization.customers.active.not_centralized.count > 0
           puts "-> Not centralized invoices :"
-          organization.customers.not_centralized.asc(:code).each do |customer|
+          organization.customers.active.not_centralized.asc(:code).each do |customer|
             invoice = Invoice.new
             invoice.user = customer
             invoice.save
