@@ -712,20 +712,16 @@ input.error:focus, select.error:focus, textarea.error:focus {
     width:6px;
     margin-top:1px;
     padding:3px; }
-#legendModal .badge {
-    height:6px;
-    width:6px;
-    padding:0 7px 0;
-    margin-right:5px; }
 #reporting .badge-important {
     background-color:red; }
 #reporting .delivery_state {
     -webkit-border-radius:7px;
     -moz-border-radius:7px;
     -khtml-border-radius:7px;
+    margin-top:2px;
     float:left;
-    width:14px;
-    height:14px; }
+    width:10px;
+    height:10px; }
 .modal .delivery_state {
     margin-right:5px; }
 .delivery_state .received {
@@ -734,8 +730,8 @@ input.error:focus, select.error:focus, textarea.error:focus {
   background-color:whiteSmoke; }
 #reporting .half-delivery_state {
     float:left;
-    width:7px;
-    height:14px; }
+    width:5px;
+    height:10px; }
 #reporting .half-delivery_state.left {
     -webkit-border-top-left-radius:7px;
     -moz-border-top-left-radius:7px;
@@ -750,6 +746,11 @@ input.error:focus, select.error:focus, textarea.error:focus {
     -webkit-border-bottom-right-radius:7px;
     -moz-border-bottom-right-radius:7px;
     -khtml-border-bottom-right-radius:7px; }
+#legendModal {
+  .delivery_state {
+    margin-top: 5px;
+  }
+}
 #reporting .period .value {
     display:inline-block;
     text-align:right;
