@@ -73,3 +73,10 @@ jQuery ->
       result = confirm("En décochant cette case, vous demandez à ne plus recevoir de mails automatiques de relance pour l'envoi de vos documents papier à iDocus.\nAfin de bénéficier pleinement du service, nous vous conseillons de respecter les dates préconisées par votre cabinet.")
       if result == false
         $(this).attr('checked', true)
+
+  $('a.do-showInvoice').click (e) ->
+    e.preventDefault()
+    $invoiceDialog = $('#showInvoice')
+    $invoiceDialog.find('h3').text($(this).attr('title'))
+    $invoiceDialog.find("iframe").attr('src',$(this).attr('href'))
+    $invoiceDialog.modal()

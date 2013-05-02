@@ -12,6 +12,11 @@ public
     @external_file_storage = @user.find_or_create_external_file_storage
     @billing_address = @user.addresses.for_billing.first
     @shipping_address = @user.addresses.for_shipping.first
+    if @user.my_organization
+      @invoices = @user.my_organization.invoices.desc(:created_at).page(params[:page])
+    else
+      @invoices = @user.invoices.desc(:created_at).page(params[:page])
+    end
     @active_panel = params[:panel] || 'change_password'
   end
   

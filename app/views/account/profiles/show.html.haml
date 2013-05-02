@@ -9,17 +9,19 @@
           .well.sidebar-nav
             %ul.nav.nav-list.dlink
               %li{ class: "#{@active_panel == 'change_password'      ? 'active' : ''}" }
-                != link_to 'Changer mon mot de passe',            '#change_password',      class: 'do-show'
+                != link_to 'Changer mon mot de passe',       '#change_password',      class: 'do-show'
               %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
-                != link_to 'Gestion de mes adresses',             '#addresses_management', class: 'do-show'
+                != link_to 'Gestion de mes adresses',        '#addresses_management', class: 'do-show'
               %li{ class: "#{@active_panel == 'payment_management'   ? 'active' : ''}" }
-                != link_to 'Mode de paiement',                    '#payment_management',   class: 'do-show'
+                != link_to 'Mode de paiement',               '#payment_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
-                != link_to 'Mes services de stockages externes',  '#efs_management',       class: 'do-show'
+                != link_to 'Services de stockages externes', '#efs_management',       class: 'do-show'
               %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
-                != link_to 'Mes partages',                        '#sharing_management',   class: 'do-show'
+                != link_to 'Partages',                       '#sharing_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
-                != link_to 'Mon abonnement',                      '#subscription_options', class: 'do-show'
+                != link_to 'Abonnement',                     '#subscription_options', class: 'do-show'
+              %li{ class: "#{@active_panel == 'invoices'             ? 'active' : ''}" }
+                != link_to 'Factures',                       '#invoices',             class: 'do-show'
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
@@ -245,5 +247,30 @@
               = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
               .form-actions
                 = f.submit 'Valider', class: 'btn'
+      #invoices.row-fluid.pan{ class: (@active_panel == 'invoices' ? 'active' : '')}
+        .span12
+          .well
+            %h3.aligncenter Factures
+            %table.table.table-bordered.table-striped
+              %thead
+                %tr
+                  %th Numéro
+                  %th Montant
+                  %th Actions
+              %tbody
+                - @invoices.each do |invoice|
+                  %tr
+                    %td= invoice.number
+                    %th.price= "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                    %td.actions
+                      = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                      = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
+            = paginate @invoices
+        #showInvoice.modal.hide.fade
+          .modal-header
+            %a.close{ data: { dismiss: :modal } } ×
+            %h3
+          .modal-body
+            %iframe{ :src => '' }
 
 = render "help"
