@@ -6,10 +6,12 @@ class ScanningProvider
   attr_reader :customer_tokens
 
   field :name, type: String
+  field :code, type: String
 
   slug :name
 
   validates_presence_of :name
+  validates_presence_of :code
 
   has_many :customers, class_name: 'User', inverse_of: 'scanning_provider'
 

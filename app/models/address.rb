@@ -29,6 +29,10 @@ class Address
   scope :for_shipping, where: { is_for_shipping: true }
 
   before_save :set_billing_address, :set_shipping_address
+
+  def name
+    [self.first_name, self.last_name].join(' ')
+  end
   
   def as_location
     self.attributes.delete_if { |key, value| key == '_id' }

@@ -69,6 +69,8 @@ class User
   field :is_access_by_token_active,      type: Boolean, default: true
   field :is_inactive,                    type: Boolean, default: false
 
+  field :return_label_generated_at, type: Time
+
   attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
 
@@ -270,6 +272,14 @@ class User
 
   def compta_processable_journals
     account_book_types.compta_processable
+  end
+
+  def is_return_label_generated_today?
+    if self.return_label_generated_at
+      self.return_label_generated_at > Time.now.beginning_of_day
+    else
+      false
+    end
   end
   
 protected
