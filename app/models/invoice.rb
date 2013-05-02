@@ -33,6 +33,7 @@ class Invoice
   belongs_to :user
   belongs_to :organization
   belongs_to :subscription
+  belongs_to :period, class_name: 'Scan::Period'
 
   def self.find_by_number(number)
     self.first conditions: { number: number }

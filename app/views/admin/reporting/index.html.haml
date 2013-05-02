@@ -1,0 +1,67 @@
+#reporting
+  .row-fluid.margin1bottom
+    .span12
+      %h3 Reporting de l'année #{@year}
+  .row-fluid
+    .span12
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th.year
+              = link_to (@year - 1), "/admin/reporting/#{(@year - 1)}"
+              \-
+              = @year
+              \-
+              = link_to (@year + 1), "/admin/reporting/#{(@year + 1)}"
+            - t('date.month_names').compact.each do |month_name|
+              %th= month_name.capitalize
+        %tbody
+          - @total = Array.new(12, 0)
+          - @organizations.each do |organization|
+            %tr
+              %td.organization= link_to organization.name, [:admin, organization]
+              - user_ids = organization.customers.distinct(:_id)
+              - 12.times.each do |i|
+                %td
+                  - time = Time.local(@year, i+1, 15)
+                  - centralized_periods, not_centralized_periods = periods_at(time, organization, user_ids)
+                  - total_price_in_cents_wo_vat = centralized_periods.sum(&:price_in_cents_wo_vat)
+                  - if not_centralized_periods.count > 0 || total_price_in_cents_wo_vat > 0
+                    %div
+                      = "#{format_price_00(total_price_in_cents_wo_vat)} €"
+                      %span.df_symbol HT
+                    - invoice = invoice_at(time, organization, @invoices)
+                    - if invoice
+                      %div
+                        != link_to "#{format_price_00(centralized_periods.sum(&:price_in_cents_w_vat))} €", admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                        %span.vat_symbol TTC
+                    - else
+                      %div
+                        = "#{format_price_00(centralized_periods.sum(&:price_in_cents_w_vat))} €"
+                        %span.vat_symbol TTC
+                    - @total[i] += centralized_periods.sum(&:price_in_cents_w_vat)
+                  - else
+                    \-
+                  - if not_centralized_periods.count > 0
+                    %div
+                      = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_wo_vat))} €"
+                      %span.df_symbol HT
+                    %div
+                      = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_w_vat))} €"
+                      %span.vat_symbol TTC
+                    - @total[i] += not_centralized_periods.sum(&:price_in_cents_w_vat)
+          %tr
+            %td.total Total
+            - 12.times.each do |i|
+              %td
+                - if @total[i] != 0
+                  %b= "#{format_price_00(@total[i])} €"
+                - else
+                  \-
+  
+  #showInvoice.modal.hide.fade
+    .modal-header
+      %a.close{ data: { dismiss: :modal } } ×
+      %h3
+    .modal-body
+      %iframe{ :src => '' }

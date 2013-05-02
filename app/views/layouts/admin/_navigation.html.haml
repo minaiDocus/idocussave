@@ -10,6 +10,8 @@
       = link_to 'Dashboard', admin_root_path
     %li{ class: ('active' if controller_name.in?(%w(organizations groups))) }
       = link_to t('mongoid.models.organization.name').pluralize, admin_organizations_path
+    %li{ class: ('active' if controller_name == 'reporting') }
+      = link_to 'Reporting', '/admin/reporting'
     %li{ class: ('active' if controller_name == 'invoices') }
       = link_to t('mongoid.models.invoice.name').pluralize, admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }

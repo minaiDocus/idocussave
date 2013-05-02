@@ -85,6 +85,7 @@ namespace :maintenance do
           invoice = Invoice.new
           invoice.organization = organization
           invoice.user = organization.leader
+          invoice.period = organization.periods.current
           invoice.save
           print "-> Centralized invoice : #{invoice.number}..."
           invoice.create_pdf
@@ -98,6 +99,7 @@ namespace :maintenance do
           organization.customers.active.not_centralized.asc(:code).each do |customer|
             invoice = Invoice.new
             invoice.user = customer
+            invoice.period = customer.periods.current
             invoice.save
             print "\t#{invoice.number} : #{customer.info}..."
             invoice.create_pdf
