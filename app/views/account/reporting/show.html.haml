@@ -322,13 +322,13 @@
           <th class="last"></th>
         </tr>
         {% for(var i=0; i<o.documents.list.length; i++) {
-            var content = "<table class='historic'><tr><th>N°</th><th>Date</th><th>Téléversées</th><th>Numérisées</th></tr>";
+            var content = "<table class='historic table table-striped table-condensed'><tr><th>N°</th><th>Date</th><th style='text-align:right'>Téléversées</th><th style='text-align:right'>Numérisées</th></tr>";
             for(var k=0; k<o.documents.list[i].historic.length; k++) {
               content += "<tr>";
               content += "<td>"+(k+1)+"</td>";
               content += "<td>"+o.documents.list[i].historic[k].date+"</td>";
-              content += "<td>"+o.documents.list[i].historic[k].uploaded+"</td>";
-              content += "<td>"+o.documents.list[i].historic[k].scanned+"</td>";
+              content += "<td class='right'>"+o.documents.list[i].historic[k].uploaded+"</td>";
+              content += "<td class='right'>"+o.documents.list[i].historic[k].scanned+"</td>";
               content += "</tr>";
             }
             content += "</table>";

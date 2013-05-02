@@ -810,10 +810,10 @@ input.error:focus, select.error:focus, textarea.error:focus {
 
 #reporting .table tbody tr:hover td, #reporting  .table tbody tr:hover th {
     background-color: none; }
-
 #reporting table.historic th, table.historic td {
-    text-align:center;
     padding: 5px; }
+#reporting table.historic th.right, table.historic td.right {
+    text-align: right; }
 #reporting table.historic .first {
     padding-left: 0; }
 .popover-title {
