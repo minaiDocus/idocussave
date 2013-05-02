@@ -88,7 +88,7 @@ class Invoice
       @address = user.addresses.for_billing.first
     end
 
-    self.amount_in_cents_w_vat = @total * 1.196
+    self.amount_in_cents_w_vat = (@total * 1.196).round
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"
