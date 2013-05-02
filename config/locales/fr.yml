@@ -296,10 +296,6 @@ fr:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
             oversized:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
-        doc/group:
-          attributes:
-            name:
-              already_exist: "déjà pris"
     models:
       common:
         attributes:
