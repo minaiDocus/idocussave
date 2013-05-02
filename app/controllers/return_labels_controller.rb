@@ -21,9 +21,11 @@ class ReturnLabelsController < ApplicationController
   end
 
   def create
-    @return_labels = ReturnLabels.new(params[:return_labels])
-    @return_labels.render_pdf
-    redirect_to num_return_labels_path
+    if params[:return_labels] && params[:return_labels][:customers]
+      @return_labels = ReturnLabels.new(params[:return_labels])
+      @return_labels.render_pdf
+    end
+    redirect_to '/num/return_labels'
   end
 
 private
