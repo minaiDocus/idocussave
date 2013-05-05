@@ -1,0 +1,125 @@
+@import common
+
+// Admin
+body
+  padding-top: 30px
+
+/* Sticky footer */
+html, body
+  height: 100%
+
+.wrapper
+  min-height: 100%
+  height: auto !important
+  height: 100%
+  margin: 0 auto -4em
+
+.footer, .push
+  height: 4em
+
+/*****************/
+
+table
+  tr
+    th.total, td.total
+      text-align: right
+      font-weight: bold
+    td.price
+      text-align: right
+
+#cms_images img
+  max-width: 250px
+  max-height: 75px
+
+#user
+  input[type=text], input[type=textarea]
+    padding: 0
+    margin: 0
+    width: 75%
+    height: 14px
+    font-size: 11px
+  .price
+    text-align: right
+  table th.first
+    width: 100px
+  table td.checkbox
+    width: 25px
+  table td.value
+    width: auto
+    text-align: right
+  #edit_addresses
+    width: 80%
+  #edit_scan_subscription
+    input
+      position: relative
+      top: -3px
+      margin: 0 7px 0 0
+  ul.token-input-list-facebook
+    margin: auto
+    width: 100%
+  #scan_subscription table td, #scan_subscription table th
+    vertical-align: middle
+
+#products, #pages
+  .form
+    .control-label
+      width: 160px
+    .controls
+      margin-left: 180px
+    .checkbox.inline
+      padding-left: 0
+      .control-label
+        text-align: left
+    textarea
+      width: auto
+      height: 180px
+  table th, table td
+    text-align: left
+  table th.first, table td.first
+    text-align: right
+
+#subscription .requested
+  border: 1px solid orange
+
+.user_status
+  .title
+    position: relative
+    top: 10px 
+  .select-date
+    width: 66px !important
+    height: 26px !important
+    margin-right: -3px !important
+    padding-left: 4px !important
+
+#external_file_storage
+  th, td
+    vertical-align: middle
+  select
+    margin-bottom: 0
+    font-size: 10px
+    width: 60px
+    height: 23px
+
+#edit_file_sending_kit.modal
+  top: 50%
+  left: 50%
+  display: none
+  width: 914px
+  margin: -300px 0 0 -457px !important
+
+h3 a
+  font-size: 18px
+
+.panel
+  margin-bottom: 10px
+  padding: 7px 19px 7px
+  background-color: white
+  border: 1px solid #DDD
+  +border-radius(4px)
+  +box-shadow(rgba(0, 0, 0, .065) 0 3px 5px)
+
+.center
+  vertical-align: middle !important
+  text-align: center !important
+
+@import "admin/*"

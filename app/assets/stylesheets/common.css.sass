@@ -1,0 +1,124 @@
+@import compass/css3
+@import bootstrap_and_overrides
+@import margin-padding-control
+@import jquery.ui.all
+@import jquery.qtip.min
+@import jquery.fileupload-ui
+@import token-input
+@import token-input-facebook
+@import bootstrap-datepicker
+
+// Defaults
+html, body, div, span, object, iframe, hr, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, samp, small, strike, strong tt, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td
+  :font-size 11px
+  :font-family Arial, Helvetica, sans-serif !important
+
+h1, h2, h3, h4
+  :color #584528
+h2
+  :font-size 16px
+.container
+  :color #584528
+.container  a, .container-fluid a
+  :text-decoration none
+
+.navbar-inner
+  :background-color #3e2f24
+  :background-image none
+.navbar a, footer a
+  :color #c9dd03 !important
+  :text-decoration none !important
+.navbar a:hover, footer a:hover
+  :text-decoration underline
+.navbar .logo
+  :width 76px
+  :height 36px
+  :float left
+  :display block
+  :padding 0
+  :margin 0 20px 4px 0
+  :background-color white
+  +border-radius(0 0 6px 6px)
+  +box-shadow(#ffffff 0 1px 0px inset)
+.navbar .logo img
+  :position relative
+  :top 7px
+  :left 11px
+.navbar p
+  :font-size 11px
+
+.subnav
+  :display block
+  :margin-left 0
+  :margin-bottom 18px
+  :list-style none
+.subnav > li > a
+  :display block
+.subnav > li > ahover
+  :text-decoration none
+  :background-color #eeeeee
+
+.navbar .subnav
+  :position relative
+  :left 0
+  :display block
+  :float left
+  :margin 0 10px 0 0
+.navbar .subnav.pull-right
+  :float right
+.navbar .subnav > li
+  :display block
+  :float left
+.navbar .subnav > li > a
+  :float none
+  :padding 10px 10px 11px
+  :line-height 19px
+  :color #999999
+  :text-decoration none
+  :text-shadow 0 -1px 0 rgba(0, 0, 0, 0.25)
+.navbar .subnav > li > ahover
+  :background-color transparent
+  :color #ffffff
+  :text-decoration none
+.navbar .subnav .active > a, .navbar .subnav .active > ahover
+  :color #ffffff
+  :text-decoration none
+  :background-color #222222
+  :background-color rgba(0, 0, 0, 0.5)
+
+// WorkingClass
+.pull-none
+  float: none
+
+.tal, .alignleft
+  :text-align left !important 
+.tar, .alignright
+  :text-align right !important 
+.tac, .aligncenter
+  :text-align center !important 
+
+.setredbg
+  :background-color red !important
+.setgreenbg
+  :background-color green !important
+.setbluebg
+  :background-color blue !important
+.setyellowbg
+  :background-color yellow !important
+.setgraybg
+  :background-color gray !important
+
+.hide
+  :display none
+
+.red, a.red
+  :color #ad3737
+.green, a.green
+  :color #53ad37
+
+.nobg
+  :background-color transparent !important
+.nobrd
+  :border-width 0px !important
