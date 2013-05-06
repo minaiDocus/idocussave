@@ -93,7 +93,7 @@ public
     
   def archive
     id = BSON::ObjectId.from_string(params[:id])
-    if @user.organization && @user.organization.leader == @user
+    if @user.organization && @user.is_prescriber
       pack_ids = @user.packs.distinct(:_id)
     else
       pack_ids = @user.pack_ids
