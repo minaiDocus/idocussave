@@ -1,0 +1,49 @@
+$VAL_MAX_MULTI : 50
+$VAL_POS_UNIT  : 10
+
+@mixin GenerateMarginTopClass
+  $i: $VAL_MAX_MULTI
+  @while $i >= 0
+    .margin#{$i}top
+      :margin-top $VAL_POS_UNIT * $i + px
+    .padding#{$i}top
+      :padding-top $VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginLeftClass
+  $i: $VAL_MAX_MULTI
+  @while $i >= 0
+    .margin#{$i}left
+      :margin-left $VAL_POS_UNIT * $i + px
+    .padding#{$i}left
+      :padding-left $VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginRightClass
+  $i: $VAL_MAX_MULTI
+  @while $i >= 0
+    .margin#{$i}right
+      :margin-right $VAL_POS_UNIT * $i + px
+    .padding#{$i}right
+      :padding-right $VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@mixin GenerateMarginBottomClass
+  $i: $VAL_MAX_MULTI
+  @while $i >= 0
+    .margin#{$i}bottom
+      :margin-bottom $VAL_POS_UNIT * $i + px
+    .padding#{$i}bottom
+      :padding-bottom $VAL_POS_UNIT * $i + px
+    $i: $i - 1
+
+@include GenerateMarginTopClass
+@include GenerateMarginLeftClass
+@include GenerateMarginRightClass
+@include GenerateMarginBottomClass
+
+.margin0
+  margin: 0px
+
+.padding0
+  padding: 0px

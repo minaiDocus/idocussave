@@ -51,6 +51,7 @@ group :assets do
   gem 'therubyracer'
   gem 'jquery-ui-rails'
   gem 'backbone-on-rails'
+  gem 'compass-rails'
 end
 
 gem 'jquery-rails'
