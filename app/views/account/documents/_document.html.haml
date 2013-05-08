@@ -17,7 +17,7 @@
   
   %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }
   %input{ :type => :hidden, :name => :page_number, :value => "#{page_number}" }
-  %input{ :type => :hidden, :name => :tags, :value => "#{tags_of(document,@all_tags)}" }
+  %input{ :type => :hidden, :name => :tags, :value => "#{document.tags.join(' ')}" }
   - if !@is_composition
     = link_to "", document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
   .toolbar

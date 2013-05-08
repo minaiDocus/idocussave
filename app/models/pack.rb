@@ -25,7 +25,6 @@ class Pack
   has_many :documents,                                                         dependent: :destroy
   has_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
   has_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
-  has_many :document_tags,                                                     dependent: :destroy
   has_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
   has_many :remote_files,                                                      dependent: :destroy
   embeds_many :divisions
@@ -319,22 +318,10 @@ class Pack
       any_in(_id: search_ids_by_contents(contents))
     end
 
-    def search_ids_by_tags(tags)
-      queries = tags.split(' ').map { |e| /#{e}/i }
-      pack_ids = self.all.distinct(:_id)
-      DocumentTag.any_in(pack_id: pack_ids).
-                  all_in(name: queries).
-                  distinct(:pack_id)
-    end
-
-    def search_by_tags(tags)
-      any_in(_id: search_ids_by_tags(tags))
-    end
-
     def search_for(contents)
       pack_ids = []
       contents.split(' ').each_with_index do |content,index|
-        temp_pack_ids = search_ids_by_contents(content) + search_ids_by_tags(content)
+        temp_pack_ids = search_ids_by_contents(content)
         if index != 0
           pack_ids = temp_pack_ids.select { |e| e.in? pack_ids }
         else
@@ -342,12 +329,6 @@ class Pack
         end
       end
       any_in(_id: pack_ids)
-    end
-
-    def find_words_by_tag(tag)
-      contents = DocumentTag.any_in(pack_id: self.all.distinct(:_id)).where(name: /\w*#{tag}\w*/).distinct(:name)
-      words = contents.map { |e| e.scan(/\w*#{tag}\w*/) }.flatten
-      words.uniq.map { |e| { id: '1', name: e } }
     end
 
     def find_words_by_content(content)
@@ -358,7 +339,7 @@ class Pack
     end
 
     def find_words(word)
-      (find_words_by_content(word) + find_words_by_tag(word)).uniq.sort { |a,b| a[:name] <=> b[:name] }
+      find_words_by_content(word).uniq.sort { |a,b| a[:name] <=> b[:name] }
     end
     
     def valid_documents

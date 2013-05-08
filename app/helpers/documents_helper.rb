@@ -36,10 +36,6 @@ module DocumentsHelper
       [u.name + description, u.name]
     end
   end
-  
-  def tags_of(document, tags)
-    tags.select { |tag| tag[:user_id] == @user.id and tag[:document_id] == document.id }.first.try(:name)
-  end
 
   def active_users(users, year)
     users.select do |u|
@@ -148,7 +144,7 @@ module DocumentsHelper
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de mise en ligne"), width: content_width) + content_tag(:td, "#{l(pack.created_at)}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de modification"),  width: content_width) + content_tag(:td, "#{l(pack.updated_at)}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pages.count}")
-        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{tags_of(original_document,@all_tags)}", class: 'tags')
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{original_document.tags.join(' ')}", class: 'tags')
       end
     end
   end

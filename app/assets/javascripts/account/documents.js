@@ -374,14 +374,15 @@
         $documentsTags.val("");
         postTags(tags,document_ids);
         aTags = tags.split(" ");
-        $("#documentslist > .content > ul > li.selected").each(function(i,li){
+        $("#documentslist > .content > ul > li.selected").each(function(i,li) {
           var $link = $(li).children(".action").children(".do-popover");
           var $content = $($link.attr("data-content"));
           var oTags = $content.find('.tags').text();
           
-          for ( var i=aTags.length-1; i>=0; --i ){
+          for ( var i=0; i<aTags.length; ++i ) {
             if (aTags[i].match("-")) {
-              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
+              pattern = "\\s" + aTags[i].replace("-","").replace("*",".*");
+              var reg = new RegExp(pattern,"g");
               oTags = oTags.replace(reg,"");
             } else {
               if (!oTags.match(aTags[i])) {
@@ -423,9 +424,10 @@
         for(var k=0; k<$documents.length; k++ ) {
           var $document = $($documents[k]);
           tags = $document.find('input[name=tags]').val();
-          for ( var i=aTags.length-1; i>=0; --i ) {
+          for ( var i=0; i<aTags.length; ++i ) {
             if (aTags[i].match("-")) {
-              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
+              pattern = "\\s" + aTags[i].replace("-","").replace("*",".*");
+              var reg = new RegExp(pattern,"g");
               tags = tags.replace(reg,"");
             } else {
               if (!tags.match(aTags[i])) {
@@ -467,9 +469,10 @@
         for(var k=0; k<$documents.length; k++ ) {
           var $document = $($documents[k]);
           tags = $document.find('input[name=tags]').val();
-          for ( var i=aTags.length-1; i>=0; --i ) {
+          for ( var i=0; i<aTags.length; ++i ) {
             if (aTags[i].match("-")) {
-              var reg = new RegExp(" " + aTags[i].replace("-",""),"g");
+              pattern = "\\s" + aTags[i].replace("-","").replace("*",".*");
+              var reg = new RegExp(pattern,"g");
               tags = tags.replace(reg,"");
             } else {
               if (!tags.match(aTags[i])) {

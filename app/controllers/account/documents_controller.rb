@@ -16,13 +16,9 @@ protected
   end
   
   def load_entries
-    pack_ids = @packs.map { |pack| pack.id }
-    packs = Pack.any_in(:_id => pack_ids)
+    pack_ids = @packs.map(&:_id)
     @all_documents = Document.any_in(:pack_id => pack_ids).entries
-    @all_original_documents = @all_documents.select{ |document| document.is_an_original }
-    original_document_ids = @all_original_documents.map { |document| document.id }
-    @all_tags = DocumentTag.any_in(:document_id => original_document_ids).entries
-    user_ids = packs.distinct(:user_ids)
+    user_ids = @packs.map { |pack| pack['user_ids'] }.flatten.uniq
     @all_users = User.any_in(:_id => user_ids).entries
   end
 
@@ -46,8 +42,6 @@ public
     @pack = Pack.find(params[:id])
     
     @documents = @pack.documents.without_original.asc(:position)
-    document_ids = @documents.distinct(:_id)
-    @all_tags = DocumentTag.any_in(:document_id => document_ids).entries
 
     if params[:filtre]
       contents = params[:filtre].gsub(/:_:/,' ')

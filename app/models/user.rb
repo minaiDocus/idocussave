@@ -101,7 +101,6 @@ class User
 
   has_many :invoices
   has_many :credits
-  has_many :document_tags
   has_many :subscriptions
   has_many :backups
   has_many :uploaded_files

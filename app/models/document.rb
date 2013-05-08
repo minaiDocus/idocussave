@@ -12,12 +12,11 @@ class Document
   field :is_an_original,     type: Boolean, default: false
   field :is_an_upload,       type: Boolean, default: false
   field :is_a_cover,         type: Boolean, default: false
-  field :tags,               type: String,  default: ""
+  field :tags,               type: Array,   default: []
   field :position,           type: Integer
   field :dirty,              type: Boolean, default: true
   field :token,              type: String
 
-  has_many :document_tags,                 dependent: :destroy
   has_many :remote_files,  as: :remotable, dependent: :destroy
   belongs_to :pack
 
@@ -37,7 +36,8 @@ class Document
     end
   end
 
-  after_create :split_pages, :add_tags
+  before_create :init_tags
+  after_create :split_pages
   after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original || Rails.env.test? }
 
   scope :without_original, where:  { :is_an_original.in => [false, nil] }
@@ -135,18 +135,18 @@ class Document
     end
   end
 
-  def add_tags
-    self.pack.users.each do |user|
-      document_tag = DocumentTag.new
-      document_tag.document = self
-      document_tag.pack = self.pack
-      document_tag.user = user
-      document_tag.generate
-      document_tag.save
+  public
+
+  def init_tags
+    self.tags = pack.name.downcase.sub(' all', '').split
+    if !self.is_an_original && number
+      self.tags << number
     end
   end
 
-  public
+  def number
+    File.basename(self.content_file_name,'.pdf').split('_')[5].to_i.to_s rescue nil
+  end
 
   class << self
     def by_position
@@ -162,21 +162,10 @@ class Document
       all_in(content_text: queries)
     end
 
-    def search_ids_by_tags(tags)
-      queries = tags.split(' ').map { |e| /#{e}/i }
-      document_ids = self.all.distinct(:_id)
-      document_tags = DocumentTag.any_in(document_id: document_ids).all_in(name: queries)
-      document_tags.distinct(:document_id)
-    end
-
-    def search_by_tags(tags)
-      any_in(_id: search_ids_by_tags(tags))
-    end
-
     def search_for(contents)
       ids = []
       contents.split(' ').each_with_index do |content,index|
-        temp_ids = search_ids_by_contents(content) + search_ids_by_tags(content)
+        temp_ids = search_ids_by_contents(content)
         if index != 0
           ids = temp_ids.select { |e| e.in? ids }
         else
