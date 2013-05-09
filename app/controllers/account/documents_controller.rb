@@ -24,9 +24,15 @@ protected
 
 public
   def index
-    @packs = @user.packs.desc(:created_at)
-    @packs_count = @packs.count
-    @packs = @packs.page(params[:page]).per(20)
+    owner_ids = []
+    if @user.is_prescriber
+      owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
+    else
+      owner_ids = [@user.id.to_s]
+    end
+    @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page] || 1, per_page: params[:per_page] || 20)
+    @packs_count = @packs.total
+    
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     load_entries
   end
@@ -40,49 +46,37 @@ public
     end
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     @pack = Pack.find(params[:id])
-    
-    @documents = @pack.documents.without_original.asc(:position)
-
-    if params[:filtre]
-      contents = params[:filtre].gsub(/:_:/,' ')
-      @documents = @documents.search_for(contents).asc(:position)
-    end
+    @documents = Document.search(params[:filter], pack_id: params[:id], is_an_original: false, per_page: 10000)
   end
-  
+
   def packs
     if params[:view] == "current_delivery"
       pack_ids = @user.remote_files.not_processed.distinct(:pack_id)
       @packs = @user.packs.any_in(_id: pack_ids)
       @remaining_files = @user.remote_files.not_processed.count
+      @packs_count = @packs.count
+      @packs = @packs.page(params[:page]).per(params[:per_page])
     else
-      if params[:filtre]
-        contents = params[:filtre].gsub(/:_:/,' ')
-        @packs = @user.packs.search_for(contents)
+      owner_ids = []
+      if @user.is_prescriber
+        if params[:view].present? && params[:view] != 'all'
+          @other_user = @user.customers.find(params[:view])
+          owner_ids = [@other_user.id.to_s] if @other_user
+        else
+          owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
+        end
       else
-        @packs = @user.packs
+        if params[:view].present? && params[:view] != 'all'
+          @other_user = User.find(params[:view])
+          owner_ids = [@other_user.id.to_s] if @other_user
+        else
+          owner_ids = [@user.id.to_s]
+        end
       end
-
-      if params[:view] == "self"
-        @packs = @packs.where(:owner_id => @user.id)
-      elsif params[:view] != "all" and params[:view].present?
-        @other_user = User.find(params[:view])
-        @packs = @packs.where(:owner_id => @other_user.id)
-      end
+      @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page], per_page: params[:per_page])
+      @packs_count = @packs.total
     end
-
-    @packs = @packs.order_by([:created_at, :desc])
-
-    @packs_count = @packs.count
-    @packs = @packs.page(params[:page]).per(params[:per_page])
     load_entries
-  end
-
-  def search
-    @results = @user.packs.find_words(params[:q])
-
-    respond_to do |format|
-      format.json{ render json: @results.to_json, callback: params[:callback], status: :ok }
-    end
   end
     
   def archive

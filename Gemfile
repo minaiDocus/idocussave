@@ -42,6 +42,7 @@ gem 'axlsx', '1.3.4'
 gem 'breadcrumbs_on_rails'
 gem 'strong_parameters'
 gem 'rabl'
+gem 'tire'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

@@ -3,6 +3,8 @@ class Document
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Paperclip
+  include Tire::Model::Search
+  include Tire::Model::Callbacks
 
   field :content_file_name
   field :content_file_type
@@ -39,6 +41,7 @@ class Document
   before_create :init_tags
   after_create :split_pages
   after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.is_an_original || Rails.env.test? }
+  after_save :update_pack!
 
   scope :without_original, where:  { :is_an_original.in => [false, nil] }
   scope :originals,        where:  { is_an_original: true }
@@ -57,6 +60,44 @@ class Document
   scope :not_covers,       any_in: { is_a_cover: [false, nil] }
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
+
+  mapping do
+    indexes :id, as: 'stringified_id'
+    indexes :pack_id
+    indexes :created_at, type: 'date'
+    indexes :tags
+    indexes :content_file_name
+    indexes :content_file_type
+    indexes :content_text
+    indexes :is_an_original, type: 'boolean'
+    indexes :is_an_upload, type: 'boolean'
+    indexes :is_a_cover, type: 'boolean'
+    indexes :position, type: 'integer'
+  end
+
+  def self.search(query, params = {})
+    tire.search(page: params[:page], per_page: params[:per_page], load: true) do
+      filter :term, id: params[:id] if params[:id].present?
+      filter :term, pack_id: params[:pack_id] if params[:pack_id].present?
+      filter :term, is_an_original: params[:is_an_original] unless params[:is_an_original].nil?
+      filter :term, is_an_upload: params[:is_an_upload] unless params[:is_an_upload].nil?
+      filter :term, is_a_cover: params[:is_a_cover] unless params[:is_a_cover].nil?
+      sort { by :position, 'asc' }
+      query { string(query) } if query.present?
+    end
+  end
+
+  def stringified_id
+    self.id.to_s
+  end
+
+  def update_pack!
+    if self.content_text_changed? || (self.is_an_original && self.tags_changed?)
+      Pack.without_callback(:save, :after, :update_reporting_document) do
+        pack.timeless.save
+      end
+    end
+  end
 
   def get_token
     if token.present?
@@ -151,28 +192,6 @@ class Document
   class << self
     def by_position
       asc(:position)
-    end
-
-    def search_ids_by_contents(contents)
-      search_by_contents(contents).distinct(:_id)
-    end
-
-    def search_by_contents(contents)
-      queries = contents.split(' ').map { |e| /#{e}/i }
-      all_in(content_text: queries)
-    end
-
-    def search_for(contents)
-      ids = []
-      contents.split(' ').each_with_index do |content,index|
-        temp_ids = search_ids_by_contents(content)
-        if index != 0
-          ids = temp_ids.select { |e| e.in? ids }
-        else
-          ids = temp_ids
-        end
-      end
-      any_in(_id: ids)
     end
 
     def update_file pack, combined_file, cover, is_an_upload=false

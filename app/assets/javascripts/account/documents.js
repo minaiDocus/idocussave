@@ -25,10 +25,10 @@
   function showPages(link) {
     var document_id = link.parents("li").attr("id").split("_")[2];
     
-    var filtre = $("#filter").val();
-    if (filtre != "")
-      filtre = "?filtre="+filtre;
-    var url = "/account/documents/"+document_id+filtre;
+    var filter = $("#filter").val();
+    if (filter != "")
+      filter = "?filter="+filter;
+    var url = "/account/documents/"+document_id+filter;
     
     $("#panel2").hide();
     $("#panel1").show();
@@ -145,9 +145,9 @@
 
   // fetch list of packs
   function getPacks(PAGE) {
-    var filtre = $("#filter").val();
-    if (filtre != "")
-      filtre = ";filtre="+filtre;
+    var filter = $("#filter").val();
+    if (filter != "")
+      filter = ";filter="+filter;
     var view = $("select[name=document_owner_list]").val();
     var per_page = $("select[name=per_page]").val();
     var page = typeof(PAGE) != 'undefined' ? PAGE : 1;
@@ -160,7 +160,7 @@
     $("#panel1 .header h3").text('Pages');
     $("#panel1 > .content > ul").html("");
 
-    var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filtre;
+    var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
     
     $.ajax({
       url: Url,
@@ -260,36 +260,10 @@
   
   // initialize once
   function initManager() {
-    // filter autocompletion
-    $("#filter").tokenInput("/account/documents/search.json", {
-      theme: "facebook",
-      hintText: "Tapez au moins 2 caractères pour commencer la recherche.",
-      noResultsText: "Aucun résultat",
-      searchingText: "Recherche en cours...",
-      tokenDelimiter: ":_:",
-      tokenValue: "name",
-      propertyToSearch: "name",
-      preventDuplicates: false,
-      minChars: 2,
-      resultsFormatter: function(item) {
-        var type  = "";
-        if (item.id == 1)
-          type = " - tag";
-        else if (item.id == 2)
-          type = " - inconnu";
-        return "<li>" + item.name + "<span class='filter-result-type'>"+type+"</span></li>";
-      },
-      tokenFormatter: function(item) {  return "<li>" + item.name + "</li>" },
-      onAdd: function (item) {
-        $("#panel1 .header h3").text("");
-        $("#panel1 > .content > ul").html("");
-        getPacks();
-      },
-      onDelete: function (item) {
-        $("#panel1 .header h3").text("");
-        $("#panel1 > .content > ul").html("");
-        getPacks();
-      }
+    $("#filter").change(function(){
+      $("#panel1 .header h3").text("");
+      $("#panel1 > .content > ul").html("");
+      getPacks();
     });
     
     $("#sharingButton").click(function() {

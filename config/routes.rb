@@ -53,7 +53,6 @@ Idocus::Application.routes.draw do
 
     resources :documents do
       get 'packs', :on => :collection
-      get 'search', :on => :collection
       get 'archive', :on => :member
       post 'sync_with_external_file_storage', :on => :collection
     end
