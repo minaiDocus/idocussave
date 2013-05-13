@@ -292,11 +292,7 @@ class Receiver
   def show_text(string, *params)
     string.split().each do |dirty_word|
       word = dirty_word.scan(/[\w|.|@|_|-]+/).join().downcase
-      if word.length > 1 and word.length <= 50
-        if Dictionary.find_one(word)
-          @text += " #{word}"
-        end
-      end
+      @text += " #{word}" if word.length <= 50
     end
   end
   def show_text_with_positioning(array, *params)
