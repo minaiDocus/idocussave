@@ -31,8 +31,13 @@ class Pack
   has_many :remote_files,                                                      dependent: :destroy
   embeds_many :divisions
   
-  field :name,                     type: String
-  field :is_open_for_upload, type: Boolean, default: true
+  field :name,                 type: String
+  field :is_open_for_upload,   type: Boolean, default: true
+  field :original_document_id, type: String
+  field :content_url,          type: String
+  field :content_historic,     type: Array,   default: []
+  field :tags,                 type: Array,   default: []
+  field :pages_count,          type: Integer, default: 0
   
   after_save :update_reporting_document
 
@@ -43,7 +48,7 @@ class Pack
     indexes :owner_id
     indexes :created_at, type: 'date'
     indexes :name
-    indexes :tags, as: 'tags'
+    indexes :tags
     indexes :content_text, as: 'content_text'
   end
 
@@ -66,8 +71,24 @@ class Pack
     self.pages.map(&:content_text).join(' ')
   end
 
-  def tags
-    original_document.tags
+  def set_tags
+    self.tags = original_document.tags
+  end
+
+  def set_pages_count
+    self.pages_count = pages.size
+  end
+
+  def set_original_document_id
+    self.original_document_id = original_document.id.to_s
+  end
+
+  def set_content_url
+    self.content_url = original_document.content.url
+  end
+
+  def set_historic
+    self.content_historic = historic
   end
 
   def pages
@@ -605,6 +626,8 @@ class Pack
         #  Mise à jour des documents.
         Document.update_file pack, combined_file, cover, is_an_upload
         pack.updated_at = Time.now
+        pack.set_pages_count
+        pack.set_historic
         pack.save
         pack.pieces.each do |piece|
           piece.save if piece.changed?
@@ -624,6 +647,10 @@ class Pack
         document.content = File.new pack_filename
 
         document.save
+        pack.set_original_document_id
+        pack.set_content_url
+        pack.set_pages_count
+        pack.set_historic
         pack.save
       end
 

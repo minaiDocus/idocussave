@@ -122,9 +122,9 @@ module DocumentsHelper
       items.each_with_index do |(k,v),index|
         concat(content_tag(:tr){
           concat content_tag :td, "#{index + 1}"
-          concat content_tag :td, "#{l(k[:date])}"
-          concat content_tag :td, "#{k[:uploaded]}", style: 'text-align:right'
-          concat content_tag :td, "#{k[:scanned]}", style: 'text-align:right'
+          concat content_tag :td, "#{l(k['date'])}"
+          concat content_tag :td, "#{k['uploaded']}", style: 'text-align:right'
+          concat content_tag :td, "#{k['scanned']}", style: 'text-align:right'
           }
         )
       end
@@ -137,26 +137,26 @@ module DocumentsHelper
     end
   end
   
-  def tinformations(pack, original_document, pages, content_width)   
+  def tinformations(pack, content_width)   
     content_tag :table, class: 'table table-condensed' do
       content_tag :tbody do
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Nom du document"),       width: content_width) + content_tag(:td, "#{pack.name}.pdf")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de mise en ligne"), width: content_width) + content_tag(:td, "#{l(pack.created_at)}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de modification"),  width: content_width) + content_tag(:td, "#{l(pack.updated_at)}")
-        concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pages.count}")
-        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{original_document.tags.join(' ')}", class: 'tags')
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pack.pages_count}")
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{pack.tags.join(' ')}", class: 'tags')
       end
     end
   end
   
-  def html_pack_info(pack, original_document, pages)
+  def html_pack_info(pack)
     columns = [ "N°","Date","Télév.","Num."]
     
     contents = ""
     contents += content_tag :h4, "Informations"
-    contents += content_tag :div, tinformations(pack, original_document, pages, 120)
+    contents += content_tag :div, tinformations(pack, 120)
     contents += content_tag :h4, "Historique des ajouts de pages"
-    contents += content_tag :div, custom_table_for(columns,pack.historic)
+    contents += content_tag :div, custom_table_for(columns,pack.content_historic)
     content_tag :div, contents
   end
 
@@ -177,6 +177,14 @@ module DocumentsHelper
       3
     else
       4
+    end
+  end
+
+  def document_class(pack, user)
+    if pack['owner_id'] == @user.id
+      pack['user_ids'].size > 1 ? 'sharing' : 'scanned'
+    else
+      'shared'
     end
   end
 end

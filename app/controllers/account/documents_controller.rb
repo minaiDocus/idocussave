@@ -14,27 +14,21 @@ protected
   def find_last_composition
     @last_composition = @user.composition
   end
-  
-  def load_entries
-    pack_ids = @packs.map(&:_id)
-    @all_documents = Document.any_in(:pack_id => pack_ids).entries
-    user_ids = @packs.map { |pack| pack['user_ids'] }.flatten.uniq
-    @all_users = User.any_in(:_id => user_ids).entries
-  end
 
 public
   def index
-    owner_ids = []
+    options = {}
     if @user.is_prescriber
       owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
+      options = { owner_ids: owner_ids }
     else
-      owner_ids = [@user.id.to_s]
+      pack_ids = @user.packs.distinct(:_id).map(&:to_s)
+      options = { ids: pack_ids }
     end
-    @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page] || 1, per_page: params[:per_page] || 20)
+    @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
     @packs_count = @packs.total
     
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
-    load_entries
   end
   
   def show
@@ -57,26 +51,37 @@ public
       @packs_count = @packs.count
       @packs = @packs.page(params[:page]).per(params[:per_page])
     else
+      options = {}
       owner_ids = []
       if @user.is_prescriber
         if params[:view].present? && params[:view] != 'all'
-          @other_user = @user.customers.find(params[:view])
+          if params[:view] == 'self'
+            @other_user = @user
+          else
+            @other_user = @user.customers.find(params[:view])
+          end
           owner_ids = [@other_user.id.to_s] if @other_user
         else
           owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
         end
+        @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page], per_page: params[:per_page])
       else
         if params[:view].present? && params[:view] != 'all'
-          @other_user = User.find(params[:view])
-          owner_ids = [@other_user.id.to_s] if @other_user
+          if params[:view] == 'self'
+            @other_user = @user
+          else
+            @other_user = User.find(params[:view])
+          end
+          owner_id = @other_user.id.to_s
+          pack_ids = @user.packs.distinct(:_id).map(&:to_s)
+          @packs = Pack.search(params[:filter], ids: pack_ids, owner_id: owner_id, page: params[:page], per_page: params[:per_page])
         else
-          owner_ids = [@user.id.to_s]
+          pack_ids = @user.packs.distinct(:_id).map(&:to_s)
+          @packs = Pack.search(params[:filter], ids: pack_ids, page: params[:page], per_page: params[:per_page])
         end
       end
-      @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page], per_page: params[:per_page])
       @packs_count = @packs.total
     end
-    load_entries
   end
     
   def archive

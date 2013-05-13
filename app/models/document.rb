@@ -92,7 +92,7 @@ class Document
   end
 
   def update_pack!
-    if self.content_text_changed? || (self.is_an_original && self.tags_changed?)
+    if (self.content_text_changed? || (self.is_an_original && self.tags_changed?)) && pack.persisted?
       Pack.without_callback(:save, :after, :update_reporting_document) do
         pack.timeless.save
       end

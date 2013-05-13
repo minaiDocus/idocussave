@@ -5,23 +5,13 @@ class Account::Documents::SharingsController < Account::AccountController
   def create
     users = User.find_by_emails(params[:email].split()) - [@user]
     
-    packs = Pack.find(params[:pack_ids].split()).select { |p| p.owner == @user }
+    packs = Pack.find(params[:pack_ids].split()).select { |p| p['owner_id'] == @user.id }
     
     packs.each do |pack|
       users.each do |user|
-        if user.packs.where(:_id => pack.id).empty?
+        unless user.packs.include?(pack)
           user.packs << pack
-          user.save
-          tags = ""
-          pack.documents.each_with_index do |document,i|
-            if i == 0
-              document_tag = DocumentTag.create(:document_id => document.id, :pack_id => document.pack.id, :user_id => user.id)
-              tags = document_tag.generate
-            else
-              document_tag = DocumentTag.create(:document_id => document.id, :pack_id => document.pack.id, :user_id => user.id, :name => tags)
-            end
-          end
-          pack.save
+          pack.users << user
         end
       end
     end
@@ -31,16 +21,20 @@ class Account::Documents::SharingsController < Account::AccountController
     end
   end
   
-  def destroy_multiple_selected
-  end
-  
   def destroy_multiple
-    packs = @user.packs.find(params[:pack_ids]).select{|p| p.owner != @user} rescue []
-    
-    packs.each do |pack|
-      @user.packs.delete pack
-      DocumentTag.where(:pack_id => pack.id, :user_id => @user.id).delete_all
+    own_pack_ids = @user.own_packs.distinct(:_id).map(&:to_s)
+    pack_ids = @user.packs.distinct(:_id).map(&:to_s)
+    clean_pack_ids = params[:pack_ids].select { |e| e.in?(pack_ids) && !e.in?(own_pack_ids) }
+    packs = Pack.any_in(_id: clean_pack_ids)
+
+    Pack.without_callback(:save, :after, :update_reporting_document) do
+      packs.each do |pack|
+        @user['pack_ids'] = @user['pack_ids'] - [pack.id]
+        pack['user_ids'] = pack['user_ids'] - [@user.id]
+        pack.save
+      end
     end
+    @user.save
     
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }

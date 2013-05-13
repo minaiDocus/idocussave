@@ -60,7 +60,6 @@ Idocus::Application.routes.draw do
     namespace :documents do
       resource :sharings do
         post 'destroy_multiple', :on => :collection
-        post 'destroy_multiple_selected', :on => :collection
       end
       resource :tags do
         post 'update_multiple', :on => :collection

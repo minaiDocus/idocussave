@@ -51,11 +51,17 @@ describe "get_documents" do
       pack.historic.should eq([{date: pack.pages.first.created_at, uploaded: 0, scanned: 10 }])
       period.delivery.state.should eq("delivered")
       pack.scan_documents.count.should eq(1)
+      pack.pages_count.should eq(10)
+      pack.original_document_id.should eq(pack.original_document.id.to_s)
+      pack.content_url.should eq(pack.original_document.content.url)
     end
   end
 
   describe "twice" do
     it "should be integrated successfully" do
+      pack = Pack.find_by_name(@name)
+      original_document_id = pack.original_document_id
+      content_url = pack.original_document.content.url
       5.times do |i|
         num = ("_%0.3d" % (i+1))
         name = @basename.gsub(' ','_') + num
@@ -86,6 +92,9 @@ describe "get_documents" do
       pack.historic.should eq([{date: pack.pages.first.created_at, uploaded: 0, scanned: 20 }])
       period.delivery.state.should eq("delivered")
       pack.scan_documents.count.should eq(1)
+      pack.pages_count.should eq(20)
+      pack.original_document_id.should eq(original_document_id)
+      pack.content_url.should eq(content_url)
     end
   end
 
