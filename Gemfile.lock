@@ -441,7 +441,6 @@ DEPENDENCIES
   net-sftp
   oauth
   paperclip (= 3.0.2)
-  pdf-reader
   poppler
   prawn (= 1.0.0.rc1)
   quiet_assets

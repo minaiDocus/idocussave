@@ -267,43 +267,28 @@ class Document
     else
       path = self.content.path
     end
-    receiver = Receiver.new
-    result = PDF::Reader.file(path,receiver) rescue false
-    if result
-      self.content_text = receiver.text.presence || "-[none]"
-    else
-      self.content_text = "-[none]"
+    words = []
+    `pdftotext -raw -nopgbrk -q #{path}`
+    dirname = File.dirname(path)
+    filename = File.basename(path, '.pdf') + '.txt'
+    filepath = File.join(dirname, filename)
+    if File.exist?(filepath)
+      text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
+      text.split().each do |dirty_word|
+        word = dirty_word.scan(/[[:alpha:]|@|_|-]+/).join().downcase
+        words << word if word.present?
+      end
+      self.content_text = words.join(' ')
     end
-    if self.is_an_upload && self.content_text == "-[none]"
+    self.content_text = '-[none]' unless self.content_text.present?
+
+    if self.is_an_upload && self.content_text == '-[none]'
       tess = Tesseract::Process.new(path, lang: :fra, convert_options: { input: ["-density 200 -colorspace Gray -depth 8 -alpha off"] } )
       words = tess.to_s.split(/\n/).join(' ').split(' ').uniq.select { |e| e.size > 1 }
-      self.content_text = ''
-      words.each do |word|
-        if Dictionary.find_one(word)
-          self.content_text += ' ' + word
-        end
-      end
-      unless self.content_text.presence
-        self.content_text = " "
-      end
+      self.content_text = words.join(' ')
+      self.content_text = ' ' unless self.content_text.presence
     end
-    save
+    save if self.content_text_changed?
   end
   handle_asynchronously :extract_content!, queue: 'documents content', priority: 10
-end
-
-class Receiver
-  attr_reader :text
-  def initialize
-    @text = ""
-  end
-  def show_text(string, *params)
-    string.split().each do |dirty_word|
-      word = dirty_word.scan(/[\w|.|@|_|-]+/).join().downcase
-      @text += " #{word}" if word.length <= 50
-    end
-  end
-  def show_text_with_positioning(array, *params)
-    show_text array.select { |element| element.is_a? String }.join()
-  end
 end
