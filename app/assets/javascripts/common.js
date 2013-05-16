@@ -13,3 +13,4 @@
 //= require file-uploader/jquery.fileupload-ui
 //= require file-uploader/application
 //= require file-uploader/cors/jquery.xdr-transport
+//= require bootstrap-filestyle.min

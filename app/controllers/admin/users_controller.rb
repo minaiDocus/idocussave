@@ -25,6 +25,7 @@ class Admin::UsersController < Admin::AdminController
     @user = User.new user_params
     @user.is_admin = is_admin
     @user.is_prescriber = is_prescriber
+    AccountingPlan.create(user_id: @user.id)
     @user.skip_confirmation!
     if @user.save
       flash[:notice] = "Crée avec succès."

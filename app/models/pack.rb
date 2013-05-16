@@ -468,7 +468,7 @@ class Pack
             end
             user_codes.uniq!
             begin
-              Ibiza.update_files_for(user_codes)
+              AccountingPlan.update_files_for(user_codes)
             rescue => e
               content = "#{e.class}<br /><br />#{e.message}"
               ErrorNotification::EMAILS.each do |email|

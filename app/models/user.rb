@@ -110,6 +110,7 @@ class User
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true
   has_one :csv_outputter, autosave: true
+  has_one :accounting_plan
 
   belongs_to :scanning_provider, inverse_of: 'customers'
   
@@ -258,6 +259,7 @@ class User
     new_options = requester.find_or_create_scan_subscription.product_option_orders
     subscription.copy_to_options! new_options
     subscription.copy_to_requested_options! new_options
+    AccountingPlan.create(user_id: customer.id)
     customer.save && subscription.save
   end
 

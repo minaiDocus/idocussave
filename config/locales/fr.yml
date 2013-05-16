@@ -611,3 +611,20 @@ fr:
           name: Nom
           customers: Clients
           customers_count: Nombre de clients
+      accounting_plan:
+        zero: 0 plan de compte
+        one: 1 plan de compte
+        other: '%{count} plan de compte'
+        name: Plan de compte
+        attributes:
+          providers: Fournisseurs
+          customers: Clients
+      accounting_plan_item:
+        zero: 0 item de plan de compte
+        one: 1 item de plan de compte
+        other: '%{count} items de plan de compte'
+        name: Item de plan de compte
+        attributes:
+          third_party_account: Compte tiers
+          third_party_name: Nom tiers
+          conterpart_account: Compte contrepartie

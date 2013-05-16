@@ -104,3 +104,10 @@
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
+          - if @organization.ibiza.try(:token).blank?
+            .row-fluid
+              .span12.box
+                %h3.aligncenter.margin1bottom Plan comptable
+                .row-fluid
+                  .span12.aligncenter
+                    = link_to 'Configurer', account_organization_customer_accounting_plan_path(@customer), class: 'btn'

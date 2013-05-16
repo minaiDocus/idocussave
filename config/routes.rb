@@ -41,6 +41,13 @@ Idocus::Application.routes.draw do
         put 'stop_using',     on: :member
         put 'restart_using',  on: :member
         resources :addresses, controller: 'organization_addresses'
+        resource :accounting_plan do
+          member do
+            put :import
+            delete :destroy_providers
+            delete :destroy_customers
+          end
+        end
       end
       resources :journals do
         post 'cancel_destroy',           :on => :member
