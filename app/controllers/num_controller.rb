@@ -3,6 +3,7 @@ class NumController < ApplicationController
   layout "num"
 
   before_filter :authenticate
+  before_filter :load_scanned_by
   before_filter :load_resource, only: :index
 
   private
@@ -16,8 +17,11 @@ class NumController < ApplicationController
     end
   end
 
-  def load_resource
+  def load_scanned_by
     @scanned_by = @user.try(:[], 2)
+  end
+
+  def load_resource
     @all_documents = Scan::Document.where(:updated_at.gte => Time.now.beginning_of_month)
     @all_documents = @all_documents.where(scanned_by: /#{@scanned_by}/) if @scanned_by.present?
     @groups = @all_documents.group_by do |e|
@@ -51,7 +55,6 @@ class NumController < ApplicationController
   end
 
   def create
-    @scanned_by = @user.try(:[], 2)
     if params[:scan_document] && params[:scan_document][:name] && params[:scan_document][:paperclips] && params[:scan_document][:oversized]
       params[:scan_document][:name].gsub!("_"," ")
       params[:scan_document][:name].strip!
@@ -88,6 +91,7 @@ class NumController < ApplicationController
     document.oversized += params[:oversized].to_i
     document.updated_at = Time.now
     document.scanned_at = Time.now
+    document.scanned_by = @scanned_by
     document.save
     flash[:success] = "Modifié avec succès."
     reset_waiting_document
@@ -99,6 +103,7 @@ class NumController < ApplicationController
     document.paperclips = params[:paperclips].to_i
     document.oversized = params[:oversized].to_i
     document.scanned_at = Time.now
+    document.scanned_by = @scanned_by
     document.save
     reset_waiting_document
     flash[:success] = "Remplacé avec succès."
