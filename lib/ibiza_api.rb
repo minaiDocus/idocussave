@@ -89,11 +89,3 @@ module IbizaAPI
     end
   end
 end
-
-#client = IbizaAPI::API::Client.new('dB4gJ3w/M1AqOzDk6Uq51S8MEb1YyfpfqRA4JKysN5FztrUWSBseow2jv3bSMK1p/ObSIyLxb8SVhPvHSYQdVO8gLhaYomMk2bV2lYLH9TAvUAGofofYr2xktuqLEiddv5YXOzvhEURX8oZXExptVg==')
-#res = client.company
-#if res.result == 'Success'
-#  id = res.company.select { |e| e[:name] == 'AA CONSULTANT' }.first[:id]
-#  data = client.accounts(id, 'Category', '10')
-#  Preseizure.make_file('AC0007_1', data)
-#end
