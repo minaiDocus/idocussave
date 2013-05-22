@@ -52,6 +52,7 @@ Spork.prefork do
       DatabaseCleaner.clean
     end
 
+    config.include Capybara::DSL
     config.include Mongoid::Matchers
     config.include FactoryGirl::Syntax::Methods
     config.extend LoginMacros
