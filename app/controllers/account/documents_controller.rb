@@ -23,7 +23,11 @@ public
       options = { owner_ids: owner_ids }
     else
       pack_ids = @user.packs.distinct(:_id).map(&:to_s)
-      options = { ids: pack_ids }
+      if pack_ids.any?
+        options = { ids: pack_ids }
+      else
+        options = { owner_id: @user.id }
+      end
     end
     @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
     @packs_count = @packs.total
