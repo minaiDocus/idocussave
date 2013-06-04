@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::PackReportsController < Account::OrganizationController
+  before_filter :load_report, except: :index
+
   def index
     @pack_reports = Pack::Report.preseizures.any_in(user_id: @user.customer_ids)
     if params[:name]
@@ -10,14 +12,19 @@ class Account::PackReportsController < Account::OrganizationController
   end
 
   def deliver
-    pack_ids = @user.packs.distinct(:_id)
-    if BSON::ObjectId.from_string(params[:id]).in?(pack_ids)
-      if @user.organization.ibiza && @user.organization.ibiza.is_configured?
-        @user.organization.ibiza.export(@pack.report.preseizures)
-      end
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured?
+      @user.organization.ibiza.export(@report.preseizures)
     end
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end
+  end
+
+private
+
+  def load_report
+    @report = Pack::Report.find params[:id]
+    pack_ids = @user.packs.distinct(:_id)
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id]) unless @report.pack.id.in?(pack_ids)
   end
 end
