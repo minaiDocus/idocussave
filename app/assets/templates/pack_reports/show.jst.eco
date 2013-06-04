@@ -5,4 +5,9 @@
     </a>
   <% end %>
 </div>
+<div class="option pull-left">
+  <a class="download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>">
+    <i class="icon-download"></i>
+  </a>
+</div>
 <a class="selectable" href="#<%= @model.get('name').replace(/\s/g, '_') %>"><%= @model.get('name') %></a>

@@ -11,6 +11,15 @@ class Account::PackReportsController < Account::OrganizationController
     @pack_reports = @pack_reports.desc(:created_at).limit(20).page(params[:page]).per(params[:per_page])
   end
 
+  def show
+    respond_to do |format|
+      format.html {}
+      format.csv do
+        send_data(@report.to_csv(@report.pack.owner.csv_outputter!), type: "text/csv", filename: "#{@report.pack.name.gsub(' ','_').sub('_all','')}.csv")
+      end
+    end
+  end
+
   def deliver
     if @user.organization.ibiza && @user.organization.ibiza.is_configured?
       @user.organization.ibiza.export(@report.preseizures)
