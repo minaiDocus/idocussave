@@ -3,6 +3,8 @@ class Pack::Report
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  belongs_to :organization,                                        inverse_of: :report
+  belongs_to :user,                                                inverse_of: :pack_reports
   belongs_to :pack,                                                inverse_of: :report
   belongs_to :document,    class_name: 'Scan::Document',           inverse_of: :report
   has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :delete
@@ -10,6 +12,10 @@ class Pack::Report
   has_many   :remote_files, as: :remotable, dependent: :destroy
 
   field :type, type: String # NDF / AC / CB / VT
+  field :is_delivered, type: Boolean, default: false
+
+  scope :preseizures, not_in: { type: ['NDF'] }
+  scope :expenses, where: { type: 'NDF' }
 
   def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
@@ -92,7 +98,9 @@ class Pack::Report
               if pack
                 report = pack.report || Pack::Report.new
                 report.type = "NDF"
+                report.user = pack.owner
                 report.pack = pack
+                report.organization = pack.owner.organization
                 report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                 lot.css('piece').each_with_index do |part,index|
                   part_name = part['number'].gsub('_',' ')
@@ -150,12 +158,15 @@ class Pack::Report
             user = User.find_by_code(code)
             if user
               customer.css('lot').each do |lot|
+                preseizures = []
                 name = lot['name'].gsub('_',' ') + ' all'
                 pack = Pack.find_by_name(name)
                 if pack
                   report = pack.report || Pack::Report.new
                   report.type = e
+                  report.user = pack.owner
                   report.pack = pack
+                  report.organization = pack.owner.organization
                   report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   lot.css('piece').each_with_index do |part,index|
                     part_name = part['number'].gsub('_',' ')
@@ -174,6 +185,7 @@ class Pack::Report
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = index + 1
                       preseizure.save
+                      preseizures << preseizure
                       part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new
                         paccount.type       = Pack::Report::Preseizure::Account.get_type(account['type'])
@@ -204,6 +216,13 @@ class Pack::Report
                   end
                   report.save
                   report.document.period.update_information!
+                  if preseizures.any?
+                    if report.organization && report.organization.ibiza && report.organization.ibiza.is_configured? && report.organization.ibiza.is_auto_deliver
+                      report.organization.ibiza.export(preseizures)
+                    else
+                      report.update_attribute(:is_delivered, false)
+                    end
+                  end
                   if user.prescribers.any?
                     user.prescribers.each do |prescriber|
                       pack.init_delivery_for(prescriber, Pack::REPORT)

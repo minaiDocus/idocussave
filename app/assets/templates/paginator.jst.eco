@@ -1,0 +1,17 @@
+<nav class="pagination aligncenter">
+  <ul>
+    <% if(@collection.pages['first'] != @collection.page): %>
+      <li class="first"><a href="#<%= @prefix %>page/<%= @collection.pages['first'] %>">&laquo;</a></li>
+    <% end %>
+    <% if(@collection.pages['previous'] != null): %>
+      <li class="next"><a href="#<%= @prefix %>page/<%= @collection.pages['previous'] %>"><%= @collection.pages['previous'] %></a></li>
+    <% end %>
+    <li class="active"><a href="#<%= @prefix %>page/<%= @collection.page %>"><%= @collection.page %></a></li>
+    <% if(@collection.pages['next'] != null): %>
+      <li class="prev"><a href="#<%= @prefix %>page/<%= @collection.pages['next'] %>"><%= @collection.pages['next'] %></a></li>
+    <% end %>
+    <% if(@collection.pages['last'] != @collection.page): %>
+      <li class="last"><a href="#<%= @prefix %>page/<%= @collection.pages['last'] %>">&raquo;</a></li>
+    <% end %>
+  </ul>
+</nav>

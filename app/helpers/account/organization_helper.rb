@@ -38,4 +38,15 @@ module Account::OrganizationHelper
       user.groups
     end
   end
+
+  def description_keys(ibiza)
+    if ibiza
+      used_fields = ibiza.description.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
+      sorted_used_fields = used_fields.sort { |(ak,av),(bk,bv)| av['position'] <=> bv['position'] }
+      keys = sorted_used_fields.map { |k,_| k }
+      keys.empty? ? [:third_party] : keys
+    else
+      [:third_party]
+    end
+  end
 end

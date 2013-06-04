@@ -42,6 +42,7 @@ gem 'breadcrumbs_on_rails'
 gem 'strong_parameters'
 gem 'rabl'
 gem 'tire'
+gem 'typhoeus'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
@@ -50,7 +51,8 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
   gem 'therubyracer'
   gem 'jquery-ui-rails'
-  gem 'backbone-on-rails'
+  gem 'backbone-on-rails', '0.9.9.0'
+  gem 'backbone-forms-on-rails'
   gem 'compass-rails'
 end
 

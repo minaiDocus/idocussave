@@ -106,6 +106,7 @@ class User
   has_many :uploaded_files
   has_many :remote_files, dependent: :destroy
   has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
+  has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true

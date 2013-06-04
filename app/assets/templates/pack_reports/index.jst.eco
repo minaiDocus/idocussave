@@ -1,0 +1,10 @@
+<div class="search input-prepend input-append">
+  <span class="add-on left">
+    <i class="icon-search"></i>
+  </span>
+  <input class="span8" id="pack_reports_search" name="pack_reports_search" type="text" placeholder="Nom">
+  <span class="add-on right">
+    <a href="#"><i class="icon-remove"></i></a>
+  </span>
+</div>
+<ul class="nav nav-list"></ul>

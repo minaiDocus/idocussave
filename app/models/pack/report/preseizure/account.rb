@@ -1,9 +1,12 @@
 class Pack::Report::Preseizure::Account
   include Mongoid::Document
   include Mongoid::Timestamps
+  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
   has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :delete
+
+  accepts_nested_attributes_for :entries
 
   field :type,      type: Integer # TTC / HT / TVA
   field :number,    type: String

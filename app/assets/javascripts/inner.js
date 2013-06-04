@@ -1,13 +1,12 @@
 //= require underscore
 //= require backbone
+//= require backbone-forms-on-rails
 //= require idocus
-//= require_tree ../templates/account
-//= require ./models/journal
-//= require ./models/user
-//= require ./collections/journals
-//= require ./collections/users
-//= require_tree ./views/account
-//= require_tree ./routers/account
+//= require_tree ../templates
+//= require_tree ./models
+//= require_tree ./collections
+//= require_tree ./views
+//= require_tree ./routers
 
 var ActionPerformCount = 0;
 

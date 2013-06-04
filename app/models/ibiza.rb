@@ -1,15 +1,18 @@
 class Ibiza
   include Mongoid::Document
   include Mongoid::Timestamps
+  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :organization
 
   field :token, type: String
   field :state, type: String, default: 'none'
 
-  validates_inclusion_of :state, in: %w(none waiting valid invalid)
+  field :description,           type: Hash,    default: {}
+  field :description_separator, type: Hash,    default: ' - '
+  field :is_auto_deliver,       type: Boolean, default: false
 
-  attr_accessible :token
+  validates_inclusion_of :state, in: %w(none waiting valid invalid)
 
   before_save :set_state, if: Proc.new { |e| 'token'.in?(e.changed) }
 
@@ -31,8 +34,8 @@ class Ibiza
   end
 
   def verify_token
-    response = client.company
-    if response.is_a?(OpenStruct) && response.result == 'Success'
+    client.company?
+    if client.response.success?
       reload
       self.state = 'valid' if self.token.present?
     else
@@ -57,21 +60,27 @@ class Ibiza
   end
 
   def update_files_for(users)
-    response = client.company
-    if response.is_a?(OpenStruct) && response.result == 'Success'
+    client.company?
+    if client.response.success?
       if File.exist?("#{Rails.root}/data/compta/mapping/fetch_error.txt")
         `rm #{Rails.root}/data/compta/mapping/fetch_error.txt`
       end
       users.each do |user|
-        id = response.company.select { |e| e[:name] == user.company }.first.try(:[],:id)
+        id = client.response.data.select { |e| e['name'] == user.company }.first.try(:[],:database)
         if id
-          body = client.raw_accounts(id)
-          body.force_encoding('UTF-8')
-          if File.exist?("#{Rails.root}/data/compta/mapping/#{user.code}.error")
-            `rm #{Rails.root}/data/compta/mapping/#{user.code}.error`
-          end
-          File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
-            f.write body
+          client.request.clear
+          client.company(id).accounts?
+          if client.response.success?
+            body = client.response.body
+            body.force_encoding('UTF-8')
+            if File.exist?("#{Rails.root}/data/compta/mapping/#{user.code}.error")
+              `rm #{Rails.root}/data/compta/mapping/#{user.code}.error`
+            end
+            File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
+              f.write body
+            end
+          else
+            `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`  
           end
         else
           `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
@@ -82,4 +91,26 @@ class Ibiza
       `touch #{Rails.root}/data/compta/mapping/fetch_error.txt`
     end
   end
+
+  def export(preseizures)
+    client.company?
+    if client.response.success?
+      id = client.response.data.select { |e| e['name'] == preseizures.first.report.pack.owner.company }.first['database']
+      if id
+        client.request.clear
+        data = IbizaAPI::Utils.to_import_xml(preseizures, self.description, self.description_separator)
+        client.company(id).entries!(data)
+        if client.response.success?
+          preseizures.each do |preseizure|
+            preseizure.update_attribute(:is_delivered, true)
+          end
+        end
+        report = preseizures.first.report
+        if report.preseizures.not_delivered.count == 0
+          report.update_attribute(:is_delivered, true)
+        end
+      end
+    end
+  end
+  handle_asynchronously :export, queue: 'ibiza export', priority: 2
 end

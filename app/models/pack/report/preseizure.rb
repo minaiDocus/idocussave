@@ -1,6 +1,7 @@
 class Pack::Report::Preseizure
   include Mongoid::Document
   include Mongoid::Timestamps
+  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :report, class_name: 'Pack::Report', inverse_of: :preseizures
   belongs_to :piece,  class_name: 'Pack::Piece',  inverse_of: :preseizures
@@ -16,6 +17,10 @@ class Pack::Report::Preseizure
   field :currency,        type: String
   field :conversion_rate, type: Float
   field :third_party,     type: String
+  field :is_delivered,    type: Boolean, default: false
+
+  scope :delivered,     where: { is_delivered: true }
+  scope :not_delivered, where: { is_delivered: false }
 
   def period_date
     Time.local(year,month,1)

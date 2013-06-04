@@ -526,8 +526,11 @@ fr:
         other: ''
         name: 'Ibiza'
         attributes:
+          is_auto_deliver: Livraison automatique ?
           token: 'jeton'
           state: 'Etat'
+          description: Description
+          description_separator: Séparateur du champ description
           state_value:
             none: 'non assigné'
             waiting: 'en cours de validation'

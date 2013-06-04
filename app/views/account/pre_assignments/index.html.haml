@@ -1,0 +1,105 @@
+#pre_assignments
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Pré-affectations
+          - if is_leader?
+            .pull-right
+              = icon_link_to "#settings", { icon: 'cog' }, class: 'btn', data: { toggle: 'modal' }
+  .row-fluid
+    #pack_reports.span3.box
+      %h4.aligncenter Lots
+      %hr.margin0top.margin0bottom
+      .content
+    #preseizures.span5.box
+      %h4.aligncenter Pièces
+      %hr.margin0top.margin0bottom
+      .content
+    #preseizure_accounts.span4.box
+      %h4.aligncenter Ecritures
+      %hr.margin0top.margin0bottom
+      .content
+
+  #settings.modal.fade
+    .modal-header
+      %a.close{ data: { dismiss: "modal" } } ×
+      %h3.aligncenter Paramétres
+    = simple_form_for (@ibiza || Ibiza.new), url: account_organization_ibiza_path, html: { class: 'form form-horizontal' } do |f|
+      .modal-body
+        .row-fluid
+          .span6
+            %h4.margin1bottom Connexion à la production comptable
+            .control-group.string.optional
+              %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
+              .controls
+                %span{ class: "label #{ibiza_state_label(@ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@ibiza)}
+            = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
+            = f.input :is_auto_deliver, as: :boolean, label: t('mongoid.models.ibiza.attributes.is_auto_deliver')
+          .span6.description_field
+            %h4.margin1bottom Champ description
+            %table.table.table-condensed.margin0bottom
+              %thead
+                %tr
+                  %th Valeur
+                  %th Position
+              %tbody
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][date][is_used]", 1, (@ibiza.description['date']['is_used'] rescue false)
+                      Date
+                  %td= number_field_tag "ibiza[description][date][position]", (@ibiza.description['date']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][third_party][is_used]", 1, (@ibiza.description['third_party']['is_used'] rescue false)
+                      Tiers
+                  %td= number_field_tag "ibiza[description][third_party][position]", (@ibiza.description['third_party']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
+                      Numéro de pièce (Original)
+                  %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
+                      Montant d'origine
+                  %td= number_field_tag "ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][currency][is_used]", 1, (@ibiza.description['currency']['is_used'] rescue false)
+                      Devise
+                  %td= number_field_tag "ibiza[description][currency][position]", (@ibiza.description['currency']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][conversion_rate][is_used]", 1, (@ibiza.description['conversion_rate']['is_used'] rescue false)
+                      Taux de convertion
+                  %td= number_field_tag "ibiza[description][conversion_rate][position]", (@ibiza.description['conversion_rate']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][observation][is_used]", 1, (@ibiza.description['observation']['is_used'] rescue false)
+                      Remarque
+                  %td= number_field_tag "ibiza[description][observation][position]", (@ibiza.description['observation']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][journal][is_used]", 1, (@ibiza.description['journal']['is_used'] rescue false)
+                      Journal
+                  %td= number_field_tag "ibiza[description][journal][position]", (@ibiza.description['journal']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][piece_name][is_used]", 1, (@ibiza.description['piece_name']['is_used'] rescue false)
+                      Nom de pièce (iDocus)
+                  %td= number_field_tag "ibiza[description][piece_name][position]", (@ibiza.description['piece_name']['position'] rescue 1)
+            = f.input :description_separator, label: t('mongoid.models.ibiza.attributes.description_separator'), input_html: { class: 'span3' }
+      .modal-footer
+        %a.btn{ data: { dismiss: "modal" } } Fermer
+        = f.submit t('actions.submit'), class: 'btn btn-primary'

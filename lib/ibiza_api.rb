@@ -1,91 +1,165 @@
 module IbizaAPI
-  class Client < Struct.new(:token)
-    def request(path)
-      url = File.join(IbizaAPI::Config::ROOT_URL, path)
-      uri = URI(URI.escape(url))
-      request = Net::HTTP::Get.new uri.request_uri
-      request.add_field 'partnerID', IbizaAPI::Config::PARTNER_ID
-      request.add_field 'irfToken', self.token
+  class Utils
+    def self.description(preseizure, fields, separator)
+      used_fields = fields.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
+      sorted_used_fields = used_fields.sort { |(ak,av),(bk,bv)| av['position'] <=> bv['position'] }
+      results = sorted_used_fields.map do |k,_|
+        preseizure[k].presence
+      end
+      if results.empty?
+        preseizure.third_party
+      else
+        results.compact.join(separator)
+      end
+    end
 
-      begin
-        response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-          http.request(request)
+    def self.to_import_xml(preseizures, fields = {}, separator = ' - ')
+      builder = Nokogiri::XML::Builder.new do |xml|
+        xml.importEntryRequest {
+          xml.importDate "#{preseizures.first.piece.name.split[2][0..3]}-12-31"
+          xml.wsImportEntry {
+            preseizures.each do |preseizure|
+              preseizure.accounts.each do |account|
+                xml.importEntry {
+                  xml.journalRef preseizure.piece.journal
+                  xml.date preseizure.period_date.to_date
+                  xml.piece preseizure.piece.name
+                  xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
+                  xml.accountNumber account.number
+                  xml.accountName preseizure.third_party
+                  xml.description description(preseizure, fields, separator)
+                  if account.entries.first.type == Pack::Report::Preseizure::Entry::DEBIT
+                    xml.debit account.entries.first.amount
+                  else
+                    xml.credit account.entries.first.amount
+                  end
+                }
+              end
+            end
+          }
+        }
+      end
+      builder.to_xml
+    end
+  end
+
+  class Client
+    class Request #:nodoc:
+      attr_accessor :client, :path, :method, :body, :original
+
+      def initialize(client)
+        @client = client
+        @path = ''
+        @method = :get
+        @body = ''
+      end
+      
+      def <<(path)
+        @path << "/#{path}"
+      end
+      
+      def path?
+        @path.length > 0
+      end
+    
+      def url
+        "#{base}#{@path}"
+      end
+
+      def base
+        IbizaAPI::Config::ROOT_URL
+      end
+
+      def clear
+        @method = :get
+        @path = ''
+      end
+
+      def run
+        @original = Typhoeus::Request.new(
+          url,
+          method:  @method,
+          body:    @body,
+          headers: {
+                      'content-type' => 'application/xml',
+                      irfToken: @client.token,
+                      partnerID: @client.partner_id
+                    }
+        )
+        @client.response.original = @original.run
+        @client.response.result || @client.response.code
+      end
+    end
+
+    class Response
+      attr_accessor :original, :result, :datetime, :message, :data_type, :data
+
+      def method_missing name, *args
+        begin
+          @original.send(name, *args)
+        rescue NoMethodError
+          parse_body(name)
         end
-        if response.is_a?(Net::HTTPSuccess)
-          response.body
+      end
+
+      def original=(original)
+        @original = original
+        if original.headers['Content-Type'].split(';')[0] == 'application/xml'
+          hash = Hash.from_xml(original.body).first
+          response = hash.last['response']
+          @result = response['result']
+          @datetime = response['datetime'].to_time
+          @message = response['message'].gsub('&lt;','<').gsub('&gt;','>') if response['message'].present?
+          if hash.last['data']
+            @data_type, @data = hash.last['data'].first
+          end
         else
-          response
+          @result = @datetime = @message = @data_type = @data = nil
         end
-      rescue Timeout::Error,
-          Errno::ECONNRESET,
-          EOFError,
-          Net::HTTPBadResponse,
-          Net::HTTPHeaderSyntaxError,
-          Net::ProtocolError => e
-        e
+      end
+
+      def success?
+        @result.downcase == 'success'
       end
     end
 
-    def parse_result(body)
-      data = OpenStruct.new
+    attr_accessor :token, :partner_id, :request, :response
 
-      doc = Nokogiri::XML(body)
-      data.datetime = doc.css('datetime').first.try(:text)
-      data.result   = doc.css('result').first.try(:text)
-      data.message  = doc.css('message').first.try(:text)
+    def initialize(token)
+      @token = token
+      @partner_id = IbizaAPI::Config::PARTNER_ID
+      @request = Request.new(self)
+      @response = Response.new
+    end
 
-      if data.result == 'Success'
-        data.company = []
-        doc.css('wsPracticeDatabase').each do |e|
-          id = e.children.css('database').first.try(:text)
-          name = e.children.css('name').first.try(:text)
-          data.company << { id: id, name: name }
+    def method_missing(name, *args)
+      append(name, *args)
+    end
+
+    def append(name, *args)
+      name = name.to_s
+      if name.to_s =~ /^(.*)(!|\?)$/
+        @request << $1
+        if args.any?
+          if $2 == '!'
+            @request.body = args.first
+          else
+            args.each do |arg|
+              @request << arg
+            end
+          end
         end
-
-        data.accounts = []
-        doc.css('wsAccounts').each do |e|
-          account = {}
-          account['associate']        = e.children.css('associate').first.try(:text)
-          account['auditable']        = e.children.css('auditable').first.try(:text)
-          account['bankReconcilable'] = e.children.css('bankReconcilable').first.try(:text)
-          account['category']         = e.children.css('category').first.try(:text)
-          account['centralisable']    = e.children.css('centralisable').first.try(:text)
-          account['closed']           = e.children.css('closed').first.try(:text)
-          account['collectif']        = e.children.css('collectif').first.try(:text)
-          account['name']             = e.children.css('name').first.try(:text)
-          account['number']           = e.children.css('number').first.try(:text)
-          account['reconcilable']     = e.children.css('reconcilable').first.try(:text)
-          data.accounts << account
+        @request.method = $2 == '!' ? :post : :get
+        return @request.run
+      else
+        @request << name
+        if args.any?
+          args.each do |arg|
+            @request << arg
+          end
         end
+        self
       end
-      data
-    end
-
-    def company
-      result = raw_company
-      result.is_a?(String) ? parse_result(result) : result
-    end
-
-    def raw_company
-      request(IbizaAPI::Config::COMPANY_PATH)
-    end
-
-    def accounts(id, filter_field=nil, filter_value=nil)
-      result = raw_accounts(id, filter_field, filter_value)
-      result.is_a?(String) ? parse_result(result) : result
-    end
-
-    def raw_accounts(id, filter_field=nil, filter_value=nil)
-      path = File.join(
-                        [
-                          IbizaAPI::Config::COMPANY_PATH,
-                          id,
-                          IbizaAPI::Config::ACCOUNTS_PATH,
-                          filter_field,
-                          filter_value
-                        ].compact
-                      )
-      request(path)
     end
   end
 end

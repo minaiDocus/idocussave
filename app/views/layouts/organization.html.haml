@@ -52,6 +52,8 @@
                     = link_to 'Journaux comptables', account_organization_journals_path
                 %li{ class: (controller_name == 'organization_subscriptions' ? 'active' : '') }
                   = link_to 'Abonnement par défaut', account_organization_default_subscription_path
+                %li{ class: (controller_name == 'pre_assignments' ? 'active' : '') }
+                  = link_to 'Pré-affectations', account_organization_pre_assignments_path
           .span10
             != yield
       - else

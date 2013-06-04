@@ -56,6 +56,14 @@ Idocus::Application.routes.draw do
       resources :subscriptions
       resource :default_subscription, controller: 'organization_subscriptions'
       resource :ibiza, controller: 'ibiza'
+      resources :pre_assignments
+      resources :pack_reports do
+        post 'deliver', on: :member
+      end
+      resources :preseizures do
+        post 'deliver', on: :member
+      end
+      resources :preseizure_accounts
     end
 
     resources :documents do

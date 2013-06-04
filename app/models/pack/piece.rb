@@ -50,6 +50,10 @@ class Pack::Piece
     content.url + "&token=" + get_token
   end
 
+  def journal
+    name.split[1]
+  end
+
   def send_to_compta
     account_book = name.split(' ')[1]
     account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil

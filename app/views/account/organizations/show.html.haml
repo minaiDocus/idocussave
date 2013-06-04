@@ -33,16 +33,3 @@
             %tr
               %th= t('mongoid.models.organization.attributes.centralized_customers_count')
               %td= link_to @organization.customers.centralized.count, account_organization_customers_path
-
-    #ibiza_options.row-fluid.margin1top
-      .span6
-        %h3.aligncenter Connexion à la production comptable
-        %hr
-        = simple_form_for (@organization.ibiza || Ibiza.new), url: account_organization_ibiza_path, html: { class: 'form form-horizontal' } do |f|
-          .control-group.string.optional
-            %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
-            .controls
-              %span{ class: "label #{ibiza_state_label(@organization.ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@organization.ibiza)}
-          = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
-          .form-actions
-            = f.submit 'Valider', class: 'btn'

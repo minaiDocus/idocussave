@@ -1,0 +1,8 @@
+<div class="option pull-left">
+  <% if(@model.get('is_delivered') == false): %>
+    <a class="deliver" href="">
+      <i class="icon-refresh"></i>
+    </a>
+  <% end %>
+</div>
+<a class="selectable" href="#<%= @model.get('name').replace(/\s/g, '_') %>"><%= @model.get('name') %></a>

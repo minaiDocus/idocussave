@@ -32,6 +32,7 @@ class Organization
   has_many   :invoices
   has_many   :account_book_types
   has_many   :reminder_emails,    autosave: true
+  has_many   :reports,            class_name: 'Pack::Report',       inverse_of: 'organization'
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label

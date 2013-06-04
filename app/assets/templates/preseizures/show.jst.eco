@@ -1,0 +1,24 @@
+<table class="pull-left">
+  <tr>
+    <td class="option">
+      <% if(@model.get('is_delivered') == false): %>
+        <a class="deliver" href="">
+          <i class="icon-refresh"></i>
+        </a>
+      <% end %>
+    </td>
+    <td class="option">
+      <a class="edit" href="">
+        <i class="icon-edit"></i>
+      </a>
+    </td>
+    <td>
+      <a class="label" href="<%= @model.get('url') %>" target="_blank">
+        <%= ("000" + @model.get('position')).slice(-3) %>
+      </a>
+    </td>
+  </tr>
+</table>
+<a class="selectable" href="#<%= @packName %>/<%= @model.get('position') %>">
+  <%= @model.description() %>
+</a>
