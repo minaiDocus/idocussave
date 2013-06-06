@@ -71,7 +71,7 @@ class DropboxExtended
 
     def sync(remote_files)
       remote_files.each_with_index do |remote_file,index|
-        remote_path = ExternalFileStorage::delivery_path(remote_file, remote_file.user.dropbox_delivery_folder)
+        remote_path = ExternalFileStorage::delivery_path(remote_file, remote_file.receiver.dropbox_delivery_folder)
         remote_filepath = File.join(remote_path,remote_file.local_name)
         tries = 0
         begin

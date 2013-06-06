@@ -27,3 +27,7 @@
           %tr
             %th= t('mongoid.models.group.attributes.customers_count')
             %td= @group.customers.count
+          - if @group.is_xdropbox_authorized
+            %tr
+              %th Dropbox Extended
+              %td= file_type_to_deliver(@group.file_type_to_deliver)

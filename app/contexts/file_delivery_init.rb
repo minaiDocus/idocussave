@@ -13,37 +13,51 @@ class FileDeliveryInit
       users.each do |user|
         pack.init_delivery_for(user, options)
       end
+    elsif options[:groups].present?
+      groups = options.delete(:groups)
+      groups.each do |group|
+        pack.init_delivery_for(group, options)
+      end
     else
       owner = pack.owner
       pack.init_delivery_for(owner, options)
       owner.prescribers.each do |prescriber|
         pack.init_delivery_for(prescriber, options)
       end
+      owner.groups.each do |group|
+        if group.is_dropbox_authorized
+          pack.init_delivery_for(group, options)
+        end
+      end
     end
   end
 
   module RemotePack
-    def init_delivery_for(user, options)
+    def init_delivery_for(object, options)
       if options[:delay]
-        Delayed::Job.enqueue FileDeliveryJob.new(self, user, options)
+        Delayed::Job.enqueue FileDeliveryJob.new(self, object, options)
       else
-        init_delivery(user, options)
+        init_delivery(object, options)
       end
     end
 
-    def init_delivery(user, options)
+    def init_delivery(object, options)
       type = options[:type]
       force = options[:force]
       current_remote_files = []
-      efs = user.find_or_create_efs
-      efs.active_services_name.each do |service_name|
+      if object.class.name == User.name
+        services_name = object.find_or_create_efs.active_services_name
+      else
+        services_name = ['Dropbox Extended']
+      end
+      services_name.each do |service_name|
         # original
         if type.in? [RemoteFile::ALL, RemoteFile::ORIGINAL_ONLY]
           document = original_document
           document.extend FileDeliveryInit::RemoteFile
-          temp_remote_files = document.get_remote_files(user,service_name)
+          temp_remote_files = document.get_remote_files(object,service_name)
           temp_remote_files.each do |remote_file|
-            remote_file.waiting! unless remote_file.state == 'waiting'
+            remote_file.waiting!
           end
           current_remote_files += temp_remote_files
         end
@@ -51,10 +65,10 @@ class FileDeliveryInit
         if type.in? [RemoteFile::ALL, RemoteFile::PIECES_ONLY]
           pieces.each do |piece|
             piece.extend FileDeliveryInit::RemoteFile
-            temp_remote_files = piece.get_remote_files(user,service_name)
+            temp_remote_files = piece.get_remote_files(object,service_name)
             if force
               temp_remote_files.each do |remote_file|
-                remote_file.waiting! unless remote_file.state == 'waiting'
+                remote_file.waiting!
               end
             end
             current_remote_files += temp_remote_files
@@ -63,10 +77,10 @@ class FileDeliveryInit
         # report
         if type.in?([RemoteFile::ALL, RemoteFile::REPORT]) && report
           report.extend FileDeliveryInit::RemoteReport
-          temp_remote_files = report.get_remote_files(user,service_name)
+          temp_remote_files = report.get_remote_files(object,service_name)
           if force
             temp_remote_files.each do |remote_file|
-              remote_file.waiting! unless remote_file.state == 'waiting'
+              remote_file.waiting!
             end
           end
           current_remote_files += temp_remote_files
@@ -89,11 +103,11 @@ class FileDeliveryInit
       temp_path
     end
 
-    def get_remote_file(user,service_name,extension='.pdf')
-      remote_file = remote_files.of(user,service_name).with_extension(extension).first
+    def get_remote_file(object,service_name,extension='.pdf')
+      remote_file = remote_files.of(object,service_name).with_extension(extension).first
       unless remote_file
         remote_file = ::RemoteFile.new
-        remote_file.user = user
+        remote_file.receiver = object
         remote_file.pack = self.pack
         remote_file.service_name = service_name
         if extension == '.pdf'
@@ -107,21 +121,21 @@ class FileDeliveryInit
       remote_file
     end
 
-    def get_remote_files(user,service_name)
+    def get_remote_files(object,service_name)
       current_remote_files = []
       if service_name == 'Dropbox Extended'
-        if user.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
-          current_remote_files << get_remote_file(user,service_name,'.pdf')
+        if object.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
+          current_remote_files << get_remote_file(object,service_name,'.pdf')
         end
-        if user.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
-          current_remote_files << get_remote_file(user,service_name,'.tiff')
+        if object.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
+          current_remote_files << get_remote_file(object,service_name,'.tiff')
         end
       else
-        if user.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
-          current_remote_files << get_remote_file(user,service_name,'.pdf')
+        if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
+          current_remote_files << get_remote_file(object,service_name,'.pdf')
         end
-        if user.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
-          current_remote_files << get_remote_file(user,service_name,'.tiff')
+        if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
+          current_remote_files << get_remote_file(object,service_name,'.tiff')
         end
       end
       current_remote_files
@@ -129,14 +143,18 @@ class FileDeliveryInit
   end
 
   module RemoteReport
-    def get_remote_files(user, service_name)
+    def get_remote_files(object, service_name)
       current_remote_files = []
-      filespath = generate_files(user)
+      if object.class.name == User.name
+        filespath = generate_files(object)
+      else
+        filespath = generate_files
+      end
       filespath.each do |filepath|
-        remote_file = remote_files.of(user,service_name).where(temp_path: filepath).first
+        remote_file = remote_files.of(object,service_name).where(temp_path: filepath).first
         unless remote_file
           remote_file = ::RemoteFile.new
-          remote_file.user = user
+          remote_file.receiver = object
           remote_file.remotable = self
           remote_file.pack = self.pack
           remote_file.service_name = service_name
@@ -150,9 +168,9 @@ class FileDeliveryInit
   end
 end
 
-class FileDeliveryJob < Struct.new(:pack, :user, :options)
+class FileDeliveryJob < Struct.new(:pack, :object, :options)
   def perform
     pack.extend FileDeliveryInit::RemotePack
-    pack.init_delivery(user, options)
+    pack.init_delivery(object, options)
   end
 end

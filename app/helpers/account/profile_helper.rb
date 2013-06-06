@@ -23,4 +23,16 @@ module Account::ProfileHelper
         ['TIFF', ExternalFileStorage::TIFF]
     ]
   end
+
+  def file_type_to_deliver(number)
+    if number == ExternalFileStorage::ALL_TYPES
+      'Tous'
+    elsif number == ExternalFileStorage::PDF
+      '.pdf'
+    elsif number == ExternalFileStorage::TIFF
+      '.tiff'
+    else
+      ''
+    end
+  end
 end

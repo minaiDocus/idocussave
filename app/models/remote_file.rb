@@ -5,6 +5,7 @@ class RemoteFile
 
   belongs_to :user
   belongs_to :pack
+  belongs_to :group
   belongs_to :remotable, polymorphic: true
 
   field :path,          type: String, default: ''
@@ -21,7 +22,7 @@ class RemoteFile
   validates_presence_of :service_name
   validates_inclusion_of :service_name, in: ExternalFileStorage::SERVICES
 
-  scope :of, lambda { |user,service_name| where(user_id: user.id, service_name: service_name) }
+  scope :of, lambda { |object,service_name| any_of({ user_id: object.id }, { group_id: object.id }).where(service_name: service_name) }
   scope :of_service, lambda { |service_name| where(service_name: service_name) }
   scope :with_extension, lambda { |extension| where(extension: extension) }
 
@@ -141,10 +142,25 @@ class RemoteFile
     end
   end
 
+  def receiver
+    user || group
+  end
+
+  def receiver=(object)
+    if object.class.name == User.name
+      self.user = object
+    elsif object.class.name == Group.name
+      self.group = object
+    else
+      nil
+    end
+  end
+
   protected
 
   def reset
     reset_tried_at
+    self.tried_count = 0
     self.error_message = ""
   end
 
