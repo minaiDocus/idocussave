@@ -114,10 +114,10 @@ public
         @packs = @user.packs
       end
       @packs = @packs.order_by([:created_at, :desc])
-      type = params[:type].to_i || Pack::ALL
+      type = params[:type].to_i || FileDeliveryInit::RemoteFile::ALL
 
       @packs.each do |pack|
-        pack.delay.init_delivery_for @user, type, true
+        FileDeliveryInit.prepare(pack, users: [@user], type: type, force: true, delay: true)
       end
     end
 

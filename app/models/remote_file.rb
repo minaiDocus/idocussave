@@ -9,6 +9,7 @@ class RemoteFile
 
   field :path,          type: String, default: ''
   field :temp_path,     type: String, default: ''
+  field :extension,     type: String, default: '.pdf'
   field :size,          type: Integer
   field :tried_at,      type: Time
   field :state,         type: String, default: 'waiting'
@@ -22,7 +23,7 @@ class RemoteFile
 
   scope :of, lambda { |user,service_name| where(user_id: user.id, service_name: service_name) }
   scope :of_service, lambda { |service_name| where(service_name: service_name) }
-  scope :with_type, lambda { |type| any_of({ path: /\.#{type}$/}, { temp_path: /\.#{type}$/ }) }
+  scope :with_extension, lambda { |extension| where(extension: extension) }
 
   scope :waiting,    where: { state: :waiting }
   scope :cancelled,  where: { state: :cancelled }
