@@ -28,6 +28,11 @@ class Admin::UsersController < Admin::AdminController
     AccountingPlan.create(user_id: @user.id)
     @user.skip_confirmation!
     if @user.save
+      if @user.is_prescriber
+        WelcomeMailer.welcome_collaborator(@user).deliver
+      else
+        WelcomeMailer.welcome_customer(@user).deliver
+      end
       flash[:notice] = "Crée avec succès."
       redirect_to admin_users_path
     else
@@ -86,6 +91,11 @@ class Admin::UsersController < Admin::AdminController
   def activate
     @user = User.find params[:id]
     if @user.activate!
+      if @user.is_prescriber
+        WelcomeMailer.welcome_collaborator(@user).deliver
+      else
+        WelcomeMailer.welcome_customer(@user).deliver
+      end
       flash[:notice] = 'Activé avec succès.'
     else
       flash[:error] = "Impossible d'activer."
