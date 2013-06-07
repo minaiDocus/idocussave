@@ -30,11 +30,8 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = User.new user_params
-    @customer.set_random_password
-    @customer.skip_confirmation!
-    if @customer.save
-      User.init_customer @customer, @organization, @user
+    @customer = CreateCustomer.new(@organization, @user, user_params).customer
+    if @customer.persisted?
       flash[:notice] = "En attente de validation de l'administrateur."
       redirect_to account_organization_customer_path(@customer)
     else

@@ -16,14 +16,12 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   def create
     @collaborator = User.new user_params
-    @collaborator.is_disabled = true
     @collaborator.is_prescriber = true
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
     if @collaborator.save
       @organization.members << @collaborator
-      @collaborator.request.update_attribute(:action, 'create')
-      flash[:notice] = 'Demande de création envoyée.'
+      flash[:notice] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else
       flash[:error] = 'Données invalide.'
