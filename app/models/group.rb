@@ -9,6 +9,11 @@ class Group
   field :name,        type: String
   field :description, type: String
 
+  # Dropbox Extended
+  field :dropbox_delivery_folder, type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
+  field :is_dropbox_authorized,   type: Boolean, default: false
+  field :file_type_to_deliver,    type: Integer, default: ExternalFileStorage::PDF
+
   validates_presence_of :name, :organization_id
   validate :uniqueness_of_name
 
@@ -16,6 +21,11 @@ class Group
 
   belongs_to :organization
   has_and_belongs_to_many :members, class_name: 'User', inverse_of: 'groups'
+  has_many :remote_files
+
+  def info
+    name
+  end
 
   def collaborators
     members.where(is_prescriber: true)

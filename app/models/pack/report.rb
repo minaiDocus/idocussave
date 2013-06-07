@@ -21,25 +21,6 @@ class Pack::Report
     outputter.format(ps, is_access_url)
   end
 
-  def get_remote_files(user, service_name)
-    current_remote_files = []
-    filespath = generate_files(user)
-    filespath.each do |filepath|
-      remote_file = remote_files.of(user,service_name).where(temp_path: filepath).first
-      unless remote_file
-        remote_file = RemoteFile.new
-        remote_file.user = user
-        remote_file.remotable = self
-        remote_file.pack = self.pack
-        remote_file.service_name = service_name
-        remote_file.temp_path = filepath
-        remote_file.save
-      end
-      current_remote_files << remote_file
-    end
-    current_remote_files
-  end
-
   def generate_files(user=pack.owner)
     # TODO implement me
     generate_csv_files(user)
@@ -223,13 +204,7 @@ class Pack::Report
                       report.update_attribute(:is_delivered, false)
                     end
                   end
-                  if user.prescribers.any?
-                    user.prescribers.each do |prescriber|
-                      pack.init_delivery_for(prescriber, Pack::REPORT)
-                    end
-                  else
-                    pack.init_delivery_for(user, Pack::REPORT)
-                  end
+                  FileDeliveryInit.prepare(report)
                 end
               end
             end

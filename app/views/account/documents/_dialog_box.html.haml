@@ -238,12 +238,12 @@
         .warn_selected_file
           En validant cette fenêtre, vous allez envoyer vers vos services de stockage externe le(s) document(s) que vous avez sélectionné(s).
         Selon le volume, cette action peut prendre du temps.
-      != radio_button_tag :delivery_type, Pack::ALL, true, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{Pack::ALL}", "Document global et pièces séparées"
-      != radio_button_tag :delivery_type, Pack::ORIGINAL_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{Pack::ORIGINAL_ONLY}", "Document global seulement"
-      != radio_button_tag :delivery_type, Pack::PIECES_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
-      != label_tag "delivery_type_#{Pack::PIECES_ONLY}", "Pièces séparées seulement"
+      != radio_button_tag :delivery_type, FileDeliveryInit::RemoteFile::ALL, true, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{FileDeliveryInit::RemoteFile::ALL}", "Document global et pièces séparées"
+      != radio_button_tag :delivery_type, FileDeliveryInit::RemoteFile::ORIGINAL_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{FileDeliveryInit::RemoteFile::ORIGINAL_ONLY}", "Document global seulement"
+      != radio_button_tag :delivery_type, FileDeliveryInit::RemoteFile::PIECES_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
+      != label_tag "delivery_type_#{FileDeliveryInit::RemoteFile::PIECES_ONLY}", "Pièces séparées seulement"
     .modal-footer
       %a#deliverButton.btn{ :href => "#" }
         Valider

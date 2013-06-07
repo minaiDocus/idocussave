@@ -159,7 +159,8 @@ class ExternalFileStorage
 
   def self.static_path(path, info_path)
     path.gsub(":code",info_path[:code]).
-    gsub(":company",info_path[:company]).
+    gsub(":company",info_path[:company] || '').
+    gsub(":group",info_path[:group] || '').
     gsub(":company_of_customer",info_path[:company_of_customer]).
     gsub(":account_book",info_path[:account_book]).
     gsub(":year",info_path[:year]).
@@ -168,7 +169,7 @@ class ExternalFileStorage
   end
 
   def self.delivery_path(remote_file, pseudo_path)
-    info_path = Pack.info_path(remote_file.pack_name,remote_file.user)
+    info_path = Pack.info_path(remote_file.pack_name,remote_file.receiver)
     static_path(pseudo_path.sub(/\/$/,""),info_path)
   end
 

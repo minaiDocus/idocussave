@@ -4,11 +4,6 @@ class Pack
   include Mongoid::Timestamps
   include Tire::Model::Search
   include Tire::Model::Callbacks
-
-  ALL           = 0
-  ORIGINAL_ONLY = 1
-  PIECES_ONLY   = 2
-  REPORT        = 3
   
   FETCHING_PATH = "#{Rails.root}/files/tmp"
   STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
@@ -190,34 +185,6 @@ class Pack
     @events
   end
 
-  def init_delivery_for(user, type=Pack::ALL, force=false)
-    current_remote_files = []
-    efs = user.find_or_create_efs
-    efs.active_services_name.each do |service_name|
-      # original
-      if type.in? [Pack::ALL, Pack::ORIGINAL_ONLY]
-        temp_remote_files = original_document.get_remote_files(user,service_name)
-        temp_remote_files.each { |remote_file| remote_file.waiting! }
-        current_remote_files += temp_remote_files
-      end
-      # pieces
-      if type.in? [Pack::ALL, Pack::PIECES_ONLY]
-        self.pieces.each do |piece|
-          temp_remote_files = piece.get_remote_files(user,service_name)
-          temp_remote_files.each { |remote_file| remote_file.waiting! } if force
-          current_remote_files += temp_remote_files
-        end
-      end
-      # report
-      if type.in?([Pack::ALL, Pack::REPORT]) && report
-        temp_remote_files = report.get_remote_files(user,service_name)
-        temp_remote_files.each { |remote_file| remote_file.waiting! } if force
-        current_remote_files += temp_remote_files
-      end
-    end
-    current_remote_files
-  end
-  
   def update_name(new_name)
     filename = new_name.split(" ").join("_") +".pdf"
     
@@ -660,20 +627,21 @@ class Pack
       end
       File.rename cover, "up_" + cover if cover
 
-      pack.init_delivery_for(user)
-      user.prescribers.each do |prescriber|
-        pack.init_delivery_for(prescriber)
-      end
+      FileDeliveryInit.prepare(pack)
 
       [user.email,pack_filename,piece_position]
     end
     
-    def info_path(pack_name, user=nil)
+    def info_path(pack_name, receiver=nil)
       name_info = pack_name.split("_")
       pack = Pack.find_by_name(name_info.join(' '))
       info = {}
       info[:code] = name_info[0]
-      info[:company] = user.try(:company)
+      if receiver.class.name == User.name
+        info[:company] = receiver.try(:company)
+      else
+        info[:group] = receiver.try(:name)
+      end
       info[:company_of_customer] = pack.owner.company
       info[:account_book] = name_info[1]
       info[:year] = name_info[2][0..3]

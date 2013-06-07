@@ -160,14 +160,6 @@ module DocumentsHelper
     content_tag :div, contents
   end
 
-  def file_type_to_deliver_options
-    [
-        ['Tous', ExternalFileStorage::ALL_TYPES],
-        ['PDF', ExternalFileStorage::PDF],
-        ['TIFF', ExternalFileStorage::TIFF]
-    ]
-  end
-
   def quarterly_of_month(month)
     if month < 4
       1
