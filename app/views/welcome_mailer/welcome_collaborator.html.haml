@@ -1,0 +1,57 @@
+!!!
+%html
+  %head
+    %title Création de compte iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }/
+  %body
+    Bonjour,
+    %br/
+    %br/
+    Vous bénéficiez d'un espace personnel sur la plateforme iDocus qui vous permet de consulter et gérer les informations concernant vos clients qui utilisent notre service (pièces comptables, reporting, abonnements…).
+    %br/
+    %br/
+    Nous venons de vous créer un compte pour y accéder.
+    %br/
+    %br/
+    Votre identifiant est :
+    %b #{link_to @collaborator.email, "mailto:#{@collaborator.email}"}
+    %br/
+    Merci de bien vouloir cliquer sur ce lien et de suivre les instructions afin de générer votre mot de passe : #{link_to new_user_password_url, new_user_password_url}
+    %br/
+    %br/
+    %i
+      En cas de difficultés, voici les étapes à suivre :
+      %br/
+      %br/
+      %div{ style: 'margin-left: 25px' }
+        1 - Allez sur la page : #{link_to new_user_password_url, new_user_password_url}
+        %br/
+        %br/
+        2 - Sur cette page, entrez votre adresse e-mail et cliquez sur 'VALIDER'
+        %br/
+        %br/
+        3 - Allez dans votre boîte mail et ouvrez le message ayant pour objet : 'iDocus - Instructions pour changer votre mot de passe'
+        %br/
+        %br/
+        4 - Dans ce mail, cliquez sur le lien. Cela vous fera arriver sur la page qui vous demandera votre nouveau mot de passe
+        %br/
+        %br/
+        5 - Entrez deux fois votre mot de passe et cliquez sur 'VALIDER'
+        %br/
+        %br/
+        6 - Vous êtes maintenant connecté à votre compte
+    %br/
+    %br/
+    Nous vous souhaitons une bonne utilisation de notre service.
+    %br/
+    %br/
+    Cordialement
+    %br/
+    %br/
+    \---
+    %br/
+    %br/
+    L’équipe iDocus
+    %br/
+    = link_to "support@idocus.com", "mailto:support@idocus.com"
+    %br/

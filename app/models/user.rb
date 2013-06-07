@@ -251,19 +251,6 @@ class User
     [:email, :last_name, :first_name, :company, :code, :is_inactive, :is_centralized]
   end
 
-  def self.init_customer customer, organization, requester=nil
-    customer.request.update_attributes(action: 'create', requester_id: requester.try(:id))
-    customer.is_disabled = true
-    customer.account_book_types = customer.requested_account_book_types = organization.account_book_types.default
-    organization.members << customer
-    subscription = customer.find_or_create_scan_subscription
-    new_options = requester.find_or_create_scan_subscription.product_option_orders
-    subscription.copy_to_options! new_options
-    subscription.copy_to_requested_options! new_options
-    AccountingPlan.create(user_id: customer.id)
-    customer.save && subscription.save
-  end
-
   def request_status
     if request.status.present?
       request.status
