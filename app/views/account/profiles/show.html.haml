@@ -110,10 +110,10 @@
                     %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
                     %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
 
-      - if @external_file_storage.authorized > 0
-        #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
-          .span12.well
-            %h3.aligncenter Stockage externe des documents
+      #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
+        .span12.well
+          %h3.aligncenter Stockage externe des documents
+          - if @external_file_storage.authorized > 0
             %br
             - if @external_file_storage.is_dropbox_basic_authorized?
               - service_number = ExternalFileStorage::F_DROPBOX
