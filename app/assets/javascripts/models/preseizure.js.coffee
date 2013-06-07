@@ -29,7 +29,11 @@ class Idocus.Models.Preseizure extends Backbone.Model
     @get('description_keys').forEach (e, i, a) ->
       results.push obj.get(e)
     results = _.compact(results)
-    results.join(@get('description_separator'))
+    text = results.join(@get('description_separator'))
+    if text == ""
+      "-"
+    else
+      text
 
   deliver: ->
     $.ajax
