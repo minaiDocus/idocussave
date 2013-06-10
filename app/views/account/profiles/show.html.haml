@@ -143,7 +143,7 @@
                   .span12
                     != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
                     %b
-                      != label_tag :"service_#{service_number}", "GOOGLE DRIVE"
+                      != label_tag :"service_#{service_number}", "GOOGLE DRIVE (Beta)"
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
                     - if @external_file_storage.google_doc.is_configured?
