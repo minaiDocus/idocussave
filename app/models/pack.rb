@@ -625,7 +625,6 @@ class Pack
       filesname.each do |filename|
         File.rename filename, "up_" + filename
       end
-      File.rename cover, "up_" + cover if cover
 
       FileDeliveryInit.prepare(pack)
 
