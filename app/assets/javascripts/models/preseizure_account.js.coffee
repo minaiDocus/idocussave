@@ -8,8 +8,6 @@ class Idocus.Models.PreseizureAccount extends Backbone.Model
     resp
 
   schema:
-    type:
-      type: "Select", title: "Type", options: [{ val: 1, label: 'TTC' }, { val: 2, label: 'HT' }, { val: 3, label: 'TVA' }]
     number:
       type: "Text", title: "Numéro de compte"
     lettering:

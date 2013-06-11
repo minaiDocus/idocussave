@@ -33,6 +33,6 @@ class Account::PreseizureAccountsController < Account::OrganizationController
 private
 
   def account_params
-    params.require(:account).permit(:type, :number, :lettering, entries_attributes: [:id, :type, :amount])
+    params.require(:account).permit(:number, :lettering, entries_attributes: [:id, :type, :amount])
   end
 end
