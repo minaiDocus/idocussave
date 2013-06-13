@@ -13,10 +13,10 @@ module IbizaAPI
       end
     end
 
-    def self.to_import_xml(preseizures, fields = {}, separator = ' - ')
+    def self.to_import_xml(period_end_date, preseizures, fields = {}, separator = ' - ')
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.importEntryRequest {
-          xml.importDate "#{preseizures.first.piece.name.split[2][0..3]}-12-31"
+          xml.importDate period_end_date
           xml.wsImportEntry {
             preseizures.each do |preseizure|
               preseizure.accounts.each do |account|
@@ -112,6 +112,7 @@ module IbizaAPI
           @message = response['message'].gsub('&lt;','<').gsub('&gt;','>') if response['message'].present?
           if hash.last['data']
             @data_type, @data = hash.last['data'].first
+            @data = [@data] if @data.is_a? Hash
           end
         else
           @result = @datetime = @message = @data_type = @data = nil

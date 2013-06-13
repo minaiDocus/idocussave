@@ -95,22 +95,54 @@ class Ibiza
   def export(preseizures)
     client.company?
     if client.response.success?
-      id = client.response.data.select { |e| e['name'] == preseizures.first.report.pack.owner.company }.first['database']
-      if id
-        client.request.clear
-        data = IbizaAPI::Utils.to_import_xml(preseizures, self.description, self.description_separator)
-        client.company(id).entries!(data)
-        if client.response.success?
-          preseizures.each do |preseizure|
-            preseizure.update_attribute(:is_delivered, true)
+      result = client.response.data.select { |e| e['name'] == preseizures.first.report.pack.owner.company }.first
+      if(id = result.try(:[], 'database'))
+        if(e = exercice(id, preseizures.first.report.pack))
+          client.request.clear
+          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
+          client.company(id).entries!(data)
+          if client.response.success?
+            preseizures.each do |preseizure|
+              preseizure.update_attribute(:is_delivered, true)
+            end
           end
-        end
-        report = preseizures.first.report
-        if report.preseizures.not_delivered.count == 0
-          report.update_attribute(:is_delivered, true)
+          report = preseizures.first.report
+          if report.preseizures.not_delivered.count == 0
+            report.update_attribute(:is_delivered, true)
+          end
         end
       end
     end
   end
-  handle_asynchronously :export, queue: 'ibiza export', priority: 2
+
+  def exercice(id, pack)
+    client.request.clear
+    client.company(id).exercices?
+    if client.response.success?
+      exercices = client.response.data.select do |e|
+        e['state'].to_i.in? [0,1]
+      end
+      part = pack.name.split[2]
+      year = part[0..3].to_i
+      month = part[4..5]
+      case month
+      when "1T"
+        month = 1
+      when "2T"
+        month = 4
+      when "3T"
+        month = 7
+      when "4T"
+        month = 10
+      else
+        month = month.to_i
+      end
+      period = Date.new(year, month, 1)
+      exercices.select do |e|
+        e['start'].to_date < period && e['end'].to_date > period
+      end.first
+    else
+      raise "[#{pack.name}] No exercice found in #{id}"
+    end
+  end
 end
