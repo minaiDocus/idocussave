@@ -1,5 +1,5 @@
 Airbrake.configure do |config|
-  config.api_key = 'b8e0bcf2dec9a1605f9cbeccc07b0c77'
+  config.api_key = 'api_key'
   config.host    = 'errbit.idocus.com'
   config.port    = 443
   config.secure  = config.port == 443

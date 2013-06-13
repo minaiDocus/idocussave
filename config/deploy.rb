@@ -51,6 +51,7 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
+    run "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
     run "ln -s #{shared_path}/files #{release_path}/files"
@@ -95,6 +96,11 @@ namespace :shared do
       run "rm #{release_path}/config/initializers/tire.rb"
     else
       run "mv #{release_path}/config/initializers/tire.rb #{shared_path}/config/initializers"
+    end
+    if remote_file_exist? "#{shared_path}/config/initializers/errbit.rb"
+      run "rm #{release_path}/config/initializers/errbit.rb"
+    else
+      run "mv #{release_path}/config/initializers/errbit.rb #{shared_path}/config/initializers"
     end
     if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
       run "rm #{release_path}/config/initializers/address_delivery_list.rb"
