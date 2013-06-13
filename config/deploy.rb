@@ -1,6 +1,9 @@
 set :rvm_ruby_string, '1.9.3'
 require "rvm/capistrano"
 
+# notify deploy to airbrake
+require 'airbrake/capistrano'
+
 default_run_options[:pty] = true
 #ssh_options[:forward_agent] = true
 

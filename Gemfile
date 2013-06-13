@@ -29,7 +29,7 @@ gem 'barby'
 gem 'chunky_png' # required by barby
 gem 'oauth'
 gem 'delayed_job_mongoid'
-gem 'exception_notification'
+gem 'airbrake'
 gem 'nested_form'
 gem 'bootstrap-datepicker-rails'
 gem 'google_drive'

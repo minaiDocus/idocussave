@@ -25,7 +25,19 @@ while($running) do
     end
   end
 
-  result = ReturnLabels.fetch_data('ftp-clients.ppp-idc.com', 'idocus_pCompta', 'ipC2903!*', '/', 'ppp')
+  begin
+    result = ReturnLabels.fetch_data('ftp-clients.ppp-idc.com', 'idocus_pCompta', 'ipC2903!*', '/', 'ppp')
+  rescue => e
+    ::Airbrake.notify_or_ignore(
+      :error_class   => e.class.name,
+      :error_message => "#{e.class.name}: #{e.message}",
+      :backtrace     => e.backtrace,
+      :controller    => "return_labels_updater",
+      :action        => "process",
+      :cgi_data      => ENV
+    )
+    raise
+  end
 
   if result
     @sleep_type = 0

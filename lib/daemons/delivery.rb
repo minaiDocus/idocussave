@@ -22,7 +22,20 @@ while($running) do
     end
   end
 
-  Delivery::process(ARGV.first || 'dbx')
+  begin
+    service_name = ARGV.first || 'dbx'
+    Delivery::process(service_name)
+  rescue => e
+    ::Airbrake.notify_or_ignore(
+      :error_class   => e.class.name,
+      :error_message => "#{e.class.name}: #{e.message}",
+      :backtrace     => e.backtrace,
+      :controller    => "delivery",
+      :action        => "process_#{service_name}",
+      :cgi_data      => ENV
+    )
+    raise
+  end
 
   time = Time.now
   while $running && (Time.now < (time + 10))

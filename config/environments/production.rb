@@ -56,12 +56,6 @@ Idocus::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
   
-  config.middleware.use ExceptionNotifier,
-    :email_prefix => "[iDocus] ",
-    :sender_address => %{"notifier" <notifier@idocus.com>},
-    :exception_recipients => %w{lolalaikam@idocus.com lailol@directmada.com florent.tachot@idocus.com},
-    :ignore_exceptions => ExceptionNotifier.default_ignore_exceptions + [Mongoid::Errors::DocumentNotFound, BSON::InvalidObjectId]
-
   # Compress JavaScript and CSS
   config.assets.compress = true
 

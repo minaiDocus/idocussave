@@ -140,6 +140,14 @@ class User
     [self.first_name,self.last_name].join(' ') || self.email
   end
 
+  def username
+    self.code
+  end
+
+  def username=(param)
+    self.code = param
+  end
+
   def info
     [self.code,self.company,self.name].reject { |e| e.blank? }.join(' - ')
   end
