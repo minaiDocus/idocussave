@@ -6,6 +6,7 @@
           = reminder.link_to_remove icon_destroy, class: 'btn btn-mini'
           = reminder.input :name, label: t('mongoid.models.reminder_email.attributes.name')
           = reminder.input :delivery_day, label: t('mongoid.models.reminder_email.attributes.delivery_day'), as: :integer
+          = reminder.input :period, label: t('mongoid.models.reminder_email.attributes.period'), collection: [[t('mongoid.models.reminder_email.attributes.period_options.monthly'), 1], [t('mongoid.models.reminder_email.attributes.period_options.quarterly'), 3]], include_blank: false
           = reminder.input :subject, label: t('mongoid.models.reminder_email.attributes.object')
           = reminder.input :content, label: t('mongoid.models.reminder_email.attributes.content'), as: :text
     = f.link_to_add t('mongoid.models.reminder_email.actions.add'), :reminder_emails, class: 'btn'

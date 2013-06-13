@@ -476,6 +476,10 @@ fr:
         attributes:
           name: Nom
           delivery_day: Jour de l'envoi
+          period: Période
+          period_options:
+            monthly: Mensuel
+            quarterly: Trimestriel
           delivered_at: Délivrés le
           summarize: Délivrés / Traités / Total
           object: Objet

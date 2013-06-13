@@ -14,7 +14,9 @@
     - @reminder_emails.each do |reminder_email|
       %tr
         %td= link_to reminder_email.name, preview_admin_organization_reminder_email_path(@organization, reminder_email), target: :_blank
-        %td= reminder_email.delivery_day
+        %td
+          = reminder_email.delivery_day
+          = "(#{period_type reminder_email.period})"
         %td= l(reminder_email.delivered_at) rescue ''
         %td
           != reminder_email.delivered_users.count

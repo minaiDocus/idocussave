@@ -138,4 +138,14 @@ module AdminHelper
       nil
     end
   end
+
+  def period_type(number)
+    if number == 1
+      'mensuel'
+    elsif number == 3
+      'trimestriel'
+    else
+      ''
+    end
+  end
 end

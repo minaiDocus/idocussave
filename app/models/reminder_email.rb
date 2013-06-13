@@ -9,11 +9,13 @@ class ReminderEmail
   field :subject,            type: String
   field :content,            type: String
   field :delivery_day,       type: Integer, default: 1
+  field :period,             type: Integer, default: 1
   field :delivered_at,       type: Time
   field :delivered_user_ids, type: Array,   default: []
   field :processed_user_ids, type: Array,   default: []
   
   validates_presence_of :name, :subject, :content, :organization_id
+  validates_inclusion_of :period, in: [1,3]
   
   def deliver
     clients = organization.customers.active - processed_users
@@ -59,9 +61,21 @@ class ReminderEmail
   end
   
   def deliver_if_its_time
-    if (delivered_at.nil? || delivered_at < Time.now.beginning_of_month) and Time.now.day == delivery_day
-      self.init if !delivered_at.nil? and delivered_at.month < Time.now.month
+    if end_of_period.nil? or end_of_period < Time.now && self.delivery_day == Time.now.day
+      init if self.delivered_at.present? && end_of_period < Time.now
       deliver
+    end
+  end
+
+  def end_of_period
+    if self.delivered_at
+      if self.period == 1
+        self.delivered_at.end_of_month
+      elsif self.period == 3
+        self.delivered_at.end_of_quarter
+      end
+    else
+      nil
     end
   end
   

@@ -15,7 +15,7 @@ class Admin::ReminderEmailsController < Admin::AdminController
 
   def update_multiple
     respond_to do |format|
-      if @organization.update_attributes(params[:organization])
+      if @organization.update_attributes(organization_params)
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_organization_path(@organization) }
       else
@@ -40,5 +40,11 @@ class Admin::ReminderEmailsController < Admin::AdminController
       flash[:error] = 'Une erreur est survenu lors de la livraison.'
     end
     redirect_to admin_organization_path(@organization)
+  end
+
+private
+
+  def organization_params
+    params.require(:organization).permit!
   end
 end
