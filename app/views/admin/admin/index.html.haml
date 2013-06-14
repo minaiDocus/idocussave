@@ -1,3 +1,4 @@
+
 .row-fluid
   .span4
     %h3.label{ style: 'padding:3px 5px 3px;' } Dernier documents
@@ -13,24 +14,56 @@
             %td= pack.name
             %td= pack.documents.count - 1
   .span3
-    %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
-    %table.table.table-striped.table-condensed.table-bordered
-      %tbody
-        %tr
-          %th Total
-          %td= Document.count
-        %tr
-          %th Numérisés
-          %td= Document.scanned.count
-        %tr
-          %th Téléversés
-          %td= Document.uploaded.count
-        %tr
-          %th Vignettes restante
-          %td= Document.not_clean.without_original.count
-        %tr
-          %th Extraction restante
-          %td= Document.not_extracted.without_original.count
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
+        %table.table.table-striped.table-condensed.table-bordered
+          %tbody
+            %tr
+              %th Total
+              %td= Document.count
+            %tr
+              %th Numérisés
+              %td= Document.scanned.count
+            %tr
+              %th Téléversés
+              %td= Document.uploaded.count
+            %tr
+              %th Vignettes restante
+              %td= Document.not_clean.without_original.count
+            %tr
+              %th Extraction restante
+              %td= Document.not_extracted.without_original.count
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %tr
+              %th Service
+              %th Restant
+              %th Echoué
+          %tbody
+            %tr
+              %td Dropbox Extended
+              %td= RemoteFile.of_service('Dropbox Extended').not_processed.count
+              %td= RemoteFile.of_service('Dropbox Extended').not_retryable.count
+            %tr
+              %td Dropbox Basic
+              %td= RemoteFile.of_service('Dropbox').not_processed.count
+              %td= RemoteFile.of_service('Dropbox').not_retryable.count
+            %tr
+              %td Google Drive
+              %td= RemoteFile.of_service('Google Drive').not_processed.count
+              %td= RemoteFile.of_service('Google Drive').not_retryable.count
+            %tr
+              %td Box
+              %td= RemoteFile.of_service('Box').not_processed.count
+              %td= RemoteFile.of_service('Box').not_retryable.count
+            %tr
+              %td FTP
+              %td= RemoteFile.of_service('FTP').not_processed.count
+              %td= RemoteFile.of_service('FTP').not_retryable.count
   .span4
     %h3.label{ style: 'padding:3px 5px 3px;' } Livraison de la liste des adresses de retour
     %table.table.table-striped.table-condensed.table-bordered
