@@ -169,7 +169,7 @@ class Document
     end
 
     def rename_pages start_at_page
-      Dir.glob("*_pages*").each_with_index do |file,index|
+      Dir.glob("*_pages*").sort.each_with_index do |file,index|
         number = start_at_page + index
         new_name = file.sub /[0-9]{3}\.pdf_/, ("%03d" % number) + ".pdf"
         File.rename file, new_name

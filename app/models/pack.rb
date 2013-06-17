@@ -557,7 +557,7 @@ class Pack
       cover = nil
       is_cover_page_exist = filesname.select { |e| e.match /_000\.pdf$/ }.first.present?
       if pack.new?
-        start_at_page = is_cover_page_exist ? 0 : 1
+        start_at_page = 1
       else
         start_at_page = pack.pieces_info.not_covers.count + 1
       end
@@ -567,16 +567,12 @@ class Pack
         apply_new_name([cover], 0, user.stamp_name, user.is_stamp_background_filled, false)
       elsif is_cover_page_exist
         File.rename cover, "na_#{cover}"
+        cover = nil
       end
       filesname = apply_new_name(filesname, start_at_page, user.stamp_name, user.is_stamp_background_filled, is_an_upload)
 
-      if is_cover_page_exist && pack.new?
-        piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 0
-        sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 0
-      else
-        piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 1
-        sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 1
-      end
+      piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 1
+      sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 1
       update_pieces(filesname, pack, piece_position, is_an_upload, cover)
       update_division(filesname, pack, piece_position, sheet_position, is_an_upload, cover)
 
@@ -625,6 +621,7 @@ class Pack
       filesname.each do |filename|
         File.rename filename, "up_" + filename
       end
+      File.rename cover, "up_" + cover if cover
 
       FileDeliveryInit.prepare(pack)
 
