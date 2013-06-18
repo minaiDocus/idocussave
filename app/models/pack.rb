@@ -444,7 +444,7 @@ class Pack
             end
           else
             ErrorNotification::EMAILS.each do |email|
-              NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par #{service} sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
+              NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par #{service.presence || 'Numen'} sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
             end
           end
 
