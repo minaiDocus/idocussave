@@ -153,7 +153,7 @@ class Document
     end
 
     def update_file pack, combined_file, cover, is_an_upload=false
-      start_at_page = pack.pages.not_covers.size + 1
+      start_at_page = pack.pages.not_covers.size
       temp_path = pack.original_document.content.path
       basename = File.basename(temp_path,".pdf")
       if cover.present?
