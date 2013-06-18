@@ -608,8 +608,9 @@ class Pack
         document.is_an_upload = is_an_upload
         document.pack = pack
         document.content = File.new pack_filename
-
         document.save
+        Document.update_file pack, nil, cover, is_an_upload
+
         pack.set_original_document_id
         pack.set_content_url
         pack.set_pages_count
