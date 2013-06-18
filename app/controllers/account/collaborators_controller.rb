@@ -21,6 +21,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     @collaborator.skip_confirmation!
     if @collaborator.save
       @organization.members << @collaborator
+      WelcomeMailer.welcome_collaborator(@collaborator).deliver
       flash[:notice] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else
