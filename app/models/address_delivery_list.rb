@@ -69,7 +69,12 @@ class AddressDeliveryList
     end
 
     def prescribers
-      User.not_fake_prescribers.active.asc(:code).entries
+      leader_ids = Organization.not_test.distinct(:leader_id)
+      User.any_in(_id: leader_ids).
+           active.
+           not_fake_prescribers.
+           asc(:code).
+           entries
     end
 
     def is_updated
