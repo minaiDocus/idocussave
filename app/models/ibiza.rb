@@ -65,8 +65,9 @@ class Ibiza
       if File.exist?("#{Rails.root}/data/compta/mapping/fetch_error.txt")
         `rm #{Rails.root}/data/compta/mapping/fetch_error.txt`
       end
+      data = client.response.data.dup
       users.each do |user|
-        id = client.response.data.select { |e| e['name'] == user.company }.first.try(:[],:database)
+        id = data.select { |e| e['name'] == user.company }.first.try(:[],'database')
         if id
           client.request.clear
           client.company(id).accounts?
