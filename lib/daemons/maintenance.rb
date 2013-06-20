@@ -21,6 +21,14 @@ while($running) do
       @filetime = Time.now
     end
   end
+  wakeup_filepath = File.join(Rails.root,'tmp','wakeup_maintenance.txt')
+  unless @wakeup_filetime
+    if File.exist? wakeup_filepath
+      @wakeup_filetime = File.atime(wakeup_filepath)
+    else
+      @wakeup_filetime = Time.now
+    end
+  end
 
   begin
     filesname = RegroupSheet::process
@@ -47,7 +55,8 @@ while($running) do
   end
 
   time = Time.now
-  while $running && (Time.now < (time + 30.minutes))
+  wakeup = false
+  while $running && (Time.now < (time + 30.minutes)) && wakeup == false
     sleep(1)
     if File.exist? filepath
       new_filetime = File.atime(filepath)
@@ -57,6 +66,16 @@ while($running) do
     if @filetime < new_filetime
       $running = false
       puts "[stopped by user]"
+    end
+    if File.exist? wakeup_filepath
+      new_wakeup_filetime = File.atime(wakeup_filepath)
+    else
+      new_wakeup_filetime = @wakeup_filetime
+    end
+    if @wakeup_filetime < new_wakeup_filetime
+      puts "[waked up by user]"
+      @wakeup_filetime = new_wakeup_filetime
+      wakeup = true
     end
   end
 end

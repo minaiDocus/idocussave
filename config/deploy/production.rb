@@ -26,6 +26,13 @@ namespace :worker do
     run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/return_labels_updater_ctl start"
   end
 
+  namespace :maintenance do
+    desc "Wakeup the maintenance process"
+    task :wakeup, :roles => :app do
+      run "cd #{current_path}/tmp; touch wakeup_maintenance.txt"
+    end
+  end
+
   desc "Stop worker process"
   task :stop, :roles => :app do
     run "cd #{current_path}; touch tmp/stop_worker.txt"
