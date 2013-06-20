@@ -1,6 +1,5 @@
 <% for entry in @model.get('entries').models: %>
   <td><%= @model.get('number') %></td>
-  <td><%= @model.typeName() %></td>
   <td>
     <a class="edit" href="">
       <i class="icon-edit"></i>

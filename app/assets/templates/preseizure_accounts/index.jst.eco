@@ -2,7 +2,6 @@
   <thead>
     <tr>
       <th>Numéro de compte</th>
-      <th>Type</th>
       <th></th>
       <th class="amount">Débit</th>
       <th class="amount">Crédit</th>
