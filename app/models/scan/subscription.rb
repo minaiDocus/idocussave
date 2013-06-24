@@ -153,6 +153,7 @@ class Scan::Subscription < Subscription
       period = current_period
       period.set_product_option_orders(options)
 
+      period.duration = self.period_duration
       period.max_sheets_authorized = self.max_sheets_authorized
       period.max_upload_pages_authorized = self.max_upload_pages_authorized
       period.quantity_of_a_lot_of_upload =  self.quantity_of_a_lot_of_upload
