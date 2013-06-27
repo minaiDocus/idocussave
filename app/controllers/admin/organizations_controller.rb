@@ -49,6 +49,7 @@ private
 
   def load_organization
     @organization = Organization.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:id]) unless @organization
   end
 
   def sort_column
