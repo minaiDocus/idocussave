@@ -12,7 +12,7 @@ class ReturnLabels
   end
 
   def users
-    documents = Scan::Document.where(:scanned_at.gt => Time.now.beginning_of_day, scanned_by: /#{@scanned_by}/)
+    documents = Scan::Document.any_of({ :created_at.gt => Time.now.beginning_of_day }, { :scanned_at.gt => Time.now.beginning_of_day }).where(scanned_by: /#{@scanned_by}/)
     codes = documents.map { |e| e.name.split[0] }.uniq
     User.any_in(code: codes)
   end
