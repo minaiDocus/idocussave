@@ -43,6 +43,7 @@ gem 'strong_parameters'
 gem 'rabl'
 gem 'tire'
 gem 'typhoeus'
+gem 'depsio'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
