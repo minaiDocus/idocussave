@@ -35,7 +35,7 @@ class FileDeliveryInit
   module RemotePack
     def init_delivery_for(object, options)
       if options[:delay]
-        Delayed::Job.enqueue FileDeliveryJob.new(self, object, options)
+        Delayed::Job.enqueue ::FileDeliveryJob.new(self, object, options)
       else
         init_delivery(object, options)
       end
@@ -165,12 +165,5 @@ class FileDeliveryInit
       end
       current_remote_files
     end
-  end
-end
-
-class FileDeliveryJob < Struct.new(:pack, :object, :options)
-  def perform
-    pack.extend FileDeliveryInit::RemotePack
-    pack.init_delivery(object, options)
   end
 end
