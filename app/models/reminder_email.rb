@@ -64,10 +64,14 @@ class ReminderEmail
   end
   
   def deliver_if_its_time
-    if end_of_period.nil? or end_of_period < Time.now && self.delivery_day == Time.now.day
+    if is_time_to_deliver?
       init if self.delivered_at.present? && end_of_period < Time.now
       deliver
     end
+  end
+
+  def is_time_to_deliver?
+    (end_of_period.nil? or end_of_period < Time.now) && self.delivery_day == Time.now.day
   end
 
   def end_of_period
