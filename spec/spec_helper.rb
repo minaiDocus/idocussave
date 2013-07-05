@@ -23,6 +23,7 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  counter = -1
   RSpec.configure do |config|
     # == Mock Framework
     #
@@ -50,6 +51,18 @@ Spork.prefork do
     
     config.after(:each) do
       DatabaseCleaner.clean
+
+      counter += 1
+      if counter > 9
+        GC.enable
+        GC.start
+        GC.disable
+        counter = 0
+      end
+    end
+
+    config.after(:suite) do
+      counter = 0
     end
 
     config.include Capybara::DSL
@@ -61,6 +74,8 @@ Spork.prefork do
 end
 
 Spork.each_run do
+  GC.disable
+
   if ENV['DRB']
     require 'simplecov'
     SimpleCov.start 'rails'
