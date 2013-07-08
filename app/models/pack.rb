@@ -483,8 +483,9 @@ class Pack
       csv_files.each do |csv_file|
         print "Processing csv file : #{csv_file}..."
         rows = CSV.read(csv_file).
+                   reject(&:empty?).
                    map { |e| e.first.split(';') }.
-                   reject { |e| e.empty? || !e.first.match(/^#{CODE_PATTERN} #{JOURNAL_PATTERN} #{PERIOD_PATTERN}/) }
+                   reject { |e| !e.first.match(/^#{CODE_PATTERN} #{JOURNAL_PATTERN} #{PERIOD_PATTERN}/) }
         rows.each do |row|
           name, paperclips, oversized = row
           code = name.split[0]
@@ -495,6 +496,7 @@ class Pack
             document = Scan::Document.where(name: "#{name} all").for_time(period.start_at,period.end_at).first
             document = Scan::Document.new(name: "#{name} all") unless document
             document.scanned_by = service
+            document.scanned_at = Time.now
             document.paperclips += paperclips.to_i
             document.oversized += oversized.to_i
             document.save
