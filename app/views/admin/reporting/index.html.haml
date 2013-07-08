@@ -16,7 +16,7 @@
             - t('date.month_names').compact.each do |month_name|
               %th= month_name.capitalize
         %tbody
-          - @total = 12.times.map { |e| [0,0] }
+          - @total = 12.times.map { |e| [0,0,0] }
           - @organizations.each do |organization|
             %tr
               %td.organization= link_to organization.name, [:admin, organization]
@@ -39,19 +39,22 @@
                       %div
                         = "#{format_price_00(centralized_periods.sum(&:price_in_cents_w_vat))} €"
                         %span.vat_symbol TTC
-                    - @total[i][0] += centralized_periods.sum(&:price_in_cents_w_vat)
-                    - @total[i][1] += centralized_periods.sum(&:price_in_cents_wo_vat)
+                    - @total[i][0] += centralized_periods.sum(&:price_in_cents_wo_vat)
+                    - @total[i][1] += centralized_periods.sum(&:price_in_cents_w_vat)
+                    - if not_centralized_periods.count > 0
+                      %div
+                        = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_wo_vat))} €"
+                        %span.df_symbol HT
+                      %div
+                        = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_w_vat))} €"
+                        %span.vat_symbol TTC
+                      - @total[i][0] += not_centralized_periods.sum(&:price_in_cents_wo_vat)
+                      - @total[i][1] += not_centralized_periods.sum(&:price_in_cents_w_vat)
+                    %div
+                      = centralized_periods.size + not_centralized_periods.size
+                      - @total[i][2] += centralized_periods.size + not_centralized_periods.size
                   - else
                     \-
-                  - if not_centralized_periods.count > 0
-                    %div
-                      = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_wo_vat))} €"
-                      %span.df_symbol HT
-                    %div
-                      = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_w_vat))} €"
-                      %span.vat_symbol TTC
-                    - @total[i][0] += not_centralized_periods.sum(&:price_in_cents_w_vat)
-                    - @total[i][1] += not_centralized_periods.sum(&:price_in_cents_wo_vat)
           %tr
             %td.total Total
             - 12.times.each do |i|
@@ -59,10 +62,12 @@
                 - if @total[i][0] != 0
                   %div
                     %b= "#{format_price_00(@total[i][0])} €"
-                    %span.vat_symbol TTC
+                    %span.df_symbol HT
                   %div
                     %b= "#{format_price_00(@total[i][1])} €"
-                    %span.df_symbol HT
+                    %span.vat_symbol TTC
+                  %div
+                    %b= @total[i][2]
                 - else
                   \-
   
