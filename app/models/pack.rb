@@ -483,7 +483,7 @@ class Pack
       csv_files.each do |csv_file|
         print "Processing csv file : #{csv_file}..."
         rows = CSV.read(csv_file).
-                   reject(&:empty?).
+                   reject { |e| e.empty? || e.first.match(/^;*$/) }.
                    map { |e| e.first.split(';') }.
                    reject { |e| !e.first.match(/^#{CODE_PATTERN} #{JOURNAL_PATTERN} #{PERIOD_PATTERN}/) }
         rows.each do |row|
