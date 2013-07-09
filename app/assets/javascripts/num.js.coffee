@@ -1,6 +1,10 @@
-create_return_labels = ->
+year = -> $('#date_year').val()
+month = -> $('#date_month').val()
+day = -> $('#date_day').val()
+
+create_return_labels = ->  
   $.ajax
-    url: '/num/return_labels',
+    url: "/num/return_labels/#{year()}/#{month()}/#{day()}",
     data: $('#returnLabelsForm .form').serialize(),
     datatype: 'json',
     type: 'POST',
@@ -12,7 +16,7 @@ new_return_labels = ->
   $('#returnLabelsForm').html('')
   $('#returnLabelsDialog iframe').attr('src', '')
   $.ajax
-    url: '/num/return_labels/new',
+    url: "/num/return_labels/new/#{year()}/#{month()}/#{day()}",
     data: {},
     datatype: 'json',
     type: 'GET',
@@ -27,3 +31,6 @@ new_return_labels = ->
 jQuery ->
   $('#returnLabelsDialog').on 'show', ->
     new_return_labels()
+
+  $('.date select').on 'change', ->
+    window.location.href = "/num/#{year()}/#{month()}/#{day()}"

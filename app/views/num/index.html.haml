@@ -10,23 +10,30 @@
     .margin2bottom{ class: (is_return_labels_authorized? ? 'span11' : 'span12') }
       %table#navigation.table.table-bordered
         %tr
-          %td.first= "#{l(Time.now, format: "%B").capitalize} #{Time.now.year.to_s}"
+          %td.first.date
+            = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
+            = select_month @current_time.to_date, use_month_numbers: true
+            = hidden_field_tag :date_day, @day
           - time = Time.now.beginning_of_month
           - while time.month == Time.now.end_of_month.month
-            - if time.day == (params[:day] ? params[:day].to_i : Time.now.day)
-              %td{ class: 'current' }= link_to time.day, "/num"
+            - if time.day == @day
+              %td{ class: 'current' }
+                - if @groups[time.day].present?
+                  = link_to time.day, "/num/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                - else
+                  = time.day
             - else
               - if @groups[time.day].present?
-                %td{ class: 'present' }= link_to time.day, "/num?day=#{time.day}"
+                %td{ class: 'present' }= link_to time.day, "/num/#{@current_time.year}/#{@current_time.month}/#{time.day}"
               - else
                 %td
-                  - if time.day == Time.now.day
-                    = link_to time.day, "/num"
+                  - if time.to_date == Time.now.to_date
+                    = link_to time.day, "/num/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                   - else
                     = time.day
             - time = time + 1.day
 
-      - if session[:new_document] && @day == Time.now.day
+      - if session[:new_document] && @current_time.to_date == Date.today
         .alert.alert-danger.already_exist
           %b Ces valeurs concernent la chemise "#{session[:new_document][:name]}" déjà intégré dans la plateforme iDocus :
           %br
@@ -42,12 +49,20 @@
               %td.first Nouvelles valeurs
               %td= paperclips = session[:new_document][:paperclips]
               %td= oversized = session[:new_document][:oversized]
-              %td= link_to "Remplacer", "/num/#{session[:old_document].id}/overwrite?paperclips=#{paperclips}&oversized=#{oversized}", method: 'PUT', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+              %td
+                = form_tag "/num/#{session[:old_document].id}/overwrite", method: 'put', class: 'margin0bottom' do
+                  = hidden_field_tag :paperclips, paperclips
+                  = hidden_field_tag :oversized, oversized
+                  = submit_tag "Remplacer", class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
             %tr
               %td.first Nouvelles valeurs
               %td= session[:old_document].paperclips + (paperclips = session[:new_document][:paperclips])
               %td= session[:old_document].oversized + (oversized = session[:new_document][:oversized])
-              %td= link_to "Additionner", "/num/#{session[:old_document].id}/add?paperclips=#{paperclips}&oversized=#{oversized}", method: 'PUT', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+              %td
+                = form_tag "/num/#{session[:old_document].id}/add", method: 'put', class: 'margin0bottom' do
+                  = hidden_field_tag :paperclips, paperclips
+                  = hidden_field_tag :oversized, oversized
+                  = submit_tag "Additionner", class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
 
       %table.table.table-bordered.condensed
         %tr
@@ -58,7 +73,7 @@
           - if current_user
             %th Numérisé par
           %th.actions Actions
-        - if @day == Time.now.day
+        - if @current_time.to_date == Date.today
           %tr.form
             != form_for @document, url: "/num" do |f|
               %td.date -

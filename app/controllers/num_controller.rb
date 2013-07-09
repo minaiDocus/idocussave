@@ -4,6 +4,7 @@ class NumController < ApplicationController
 
   before_filter :authenticate
   before_filter :load_scanned_by
+  before_filter :load_current_time
   before_filter :load_resource, only: :index
 
   private
@@ -21,14 +22,26 @@ class NumController < ApplicationController
     @scanned_by = @user.try(:[], 2)
   end
 
+  def load_current_time
+    if params[:year] && params[:month] && params[:day]
+      begin
+        @current_time = "#{params[:year]}/#{params[:month]}/#{params[:day]}".to_time
+      rescue ArgumentError
+        @current_time = Time.now
+      end
+    else
+      @current_time = Time.now
+    end
+  end
+
   def load_resource
-    @all_documents = Scan::Document.where(:updated_at.gte => Time.now.beginning_of_month)
+    @all_documents = Scan::Document.where(:updated_at.gte => @current_time.beginning_of_month, :updated_at.lte => @current_time.end_of_month)
     @all_documents = @all_documents.where(scanned_by: /#{@scanned_by}/) if @scanned_by.present?
     @groups = @all_documents.group_by do |e|
       e.scanned_at.try(:day) || e.created_at.day
     end
-    @day = params[:day].try(:to_i) || Time.now.day
-    time = Time.local(Time.now.year,Time.now.month,@day)
+    @day = @current_time.day
+    time = @current_time.beginning_of_day
     @documents = Scan::Document.any_of({
                                           :scanned_at.gte => time,
                                           :scanned_at.lte => time.end_of_day
@@ -59,7 +72,10 @@ class NumController < ApplicationController
       params[:scan_document][:name].gsub!("_"," ")
       params[:scan_document][:name].strip!
       params[:scan_document][:name] << " all" unless params[:scan_document][:name].match(/ all$/)
-      @document = Scan::Document.where(name: params[:scan_document][:name], :updated_at.gt => Time.now.beginning_of_month).first || Scan::Document.new
+      @document = Scan::Document.where(name: params[:scan_document][:name]).desc(:created_at).first
+      if (@document.nil?) || (@document && @document.period && @document.period.end_at < Time.now)
+        @document = Scan::Document.new
+      end
       @document.assign_attributes(params[:scan_document])
       if @document.persisted? && @document.valid?
         session[:document] = nil

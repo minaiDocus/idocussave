@@ -13,16 +13,19 @@ Idocus::Application.routes.draw do
 
   resources :compta
 
-  match 'num', controller: 'num', action: :index, via: :get
-  match 'num', controller: 'num', action: :create, via: :post
-  match 'num', controller: 'num', action: :create, via: :put
-  match 'num/cancel', controller: 'num', action: :cancel, via: :get
-  match 'num/:id/add', controller: 'num', action: :add, via: :put
-  match 'num/:id/overwrite', controller: 'num', action: :overwrite, via: :put
+  get  'num',                   controller: 'num', action: 'index'
+  get  'num/:year/:month/:day', controller: 'num', action: 'index',    constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
+  post 'num',                   controller: 'num', action: 'create'
+  put  'num',                   controller: 'num', action: 'create'
+  get  'num/cancel',            controller: 'num', action: 'cancel'
+  put  'num/:id/add',           controller: 'num', action: 'add'
+  put  'num/:id/overwrite',     controller: 'num', action: 'overwrite'
 
   scope '/num' do
     resource :return_labels
   end
+  get  '/num/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
+  post '/num/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
 
   match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
   match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get

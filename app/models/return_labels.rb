@@ -3,7 +3,7 @@ class ReturnLabels
   FILE_NAME = 'return_labels.pdf'
   FILE_PATH = File.join([Rails.root, 'files', 'kit', FILE_NAME])
 
-  attr_accessor :scanned_by, :customers
+  attr_accessor :scanned_by, :customers, :time
 
   def initialize(attributes = {})
     attributes.each do |key, value|
@@ -11,8 +11,14 @@ class ReturnLabels
     end
   end
 
+  def current_time
+    time || Time.now
+  end
+
   def users
-    documents = Scan::Document.any_of({ :created_at.gt => Time.now.beginning_of_day }, { :scanned_at.gt => Time.now.beginning_of_day }).where(scanned_by: /#{@scanned_by}/)
+    documents = Scan::Document.any_of({ :created_at.gt => current_time.beginning_of_day, :created_at.lt => current_time.end_of_day },
+                                      { :scanned_at.gt => current_time.beginning_of_day, :scanned_at.lt => current_time.end_of_day }).
+                               where(scanned_by: /#{@scanned_by}/)
     codes = documents.map { |e| e.name.split[0] }.uniq
     User.any_in(code: codes)
   end
