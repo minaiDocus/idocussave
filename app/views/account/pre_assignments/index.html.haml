@@ -60,12 +60,6 @@
                 %tr
                   %td
                     %label.checkbox
-                      = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
-                      Numéro de pièce (Original)
-                  %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
-                %tr
-                  %td
-                    %label.checkbox
                       = check_box_tag "ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
                       Montant d'origine
                   %td= number_field_tag "ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)

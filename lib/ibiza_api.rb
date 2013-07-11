@@ -25,6 +25,7 @@ module IbizaAPI
                   xml.date preseizure.period_date.to_date
                   xml.piece preseizure.piece.name
                   xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
+                  xml.voucherRef preseizure.piece_number if preseizure.piece_number
                   xml.accountNumber account.number
                   xml.accountName preseizure.third_party
                   xml.description description(preseizure, fields, separator)
