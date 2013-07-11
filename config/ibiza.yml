@@ -1,0 +1,8 @@
+test:
+  root_url: https://beta.irf-cloud.com/IRFService/services/IRFService.svc
+
+development:
+  root_url: https://beta.irf-cloud.com/IRFService/services/IRFService.svc
+
+production:
+  root_url: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc
