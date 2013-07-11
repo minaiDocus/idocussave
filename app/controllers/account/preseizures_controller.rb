@@ -20,8 +20,10 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured?
-      @user.organization.ibiza.export([@preseizure])
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_delivered
+      @user.organization.ibiza.
+        delay(queue: 'ibiza export', priority: 2).
+        export([@preseizure])
     end
     respond_to do |format|
       format.json { render json: { status: :ok } }
