@@ -6,7 +6,7 @@ class Account::PreseizuresController < Account::OrganizationController
   def index
     @pack = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first
     if @pack && @pack.report
-      @preseizures = @pack.report.preseizures.page(params[:page]).per(params[:per_page])
+      @preseizures = @pack.report.preseizures.by_position.page(params[:page]).per(params[:per_page])
     else
       @preseizures = []
     end

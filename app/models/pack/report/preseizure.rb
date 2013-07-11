@@ -22,6 +22,10 @@ class Pack::Report::Preseizure
   scope :delivered,     where: { is_delivered: true }
   scope :not_delivered, where: { is_delivered: false }
 
+  def self.by_position
+    asc(:position)
+  end
+
   def period_date
     Time.local(year,month,1)
   end

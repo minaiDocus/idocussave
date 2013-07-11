@@ -24,7 +24,7 @@ class Account::PackReportsController < Account::OrganizationController
     if @user.organization.ibiza && @user.organization.ibiza.is_configured?
       @user.organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
-        export(@report.preseizures.not_delivered.entries)
+        export(@report.preseizures.by_position.not_delivered.entries)
     end
     respond_to do |format|
       format.json { render json: { status: :ok } }
