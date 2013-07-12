@@ -12,16 +12,18 @@
                 != link_to 'Changer mon mot de passe',       '#change_password',      class: 'do-show'
               %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
                 != link_to 'Gestion de mes adresses',        '#addresses_management', class: 'do-show'
-              %li{ class: "#{@active_panel == 'payment_management'   ? 'active' : ''}" }
-                != link_to 'Mode de paiement',               '#payment_management',   class: 'do-show'
+              - if @user.is_prescriber || !@user.is_centralized
+                %li{ class: "#{@active_panel == 'payment_management' ? 'active' : ''}" }
+                  != link_to 'Mode de paiement',             '#payment_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
                 != link_to 'Services de stockages externes', '#efs_management',       class: 'do-show'
               %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
                 != link_to 'Partages',                       '#sharing_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
                 != link_to 'Abonnement',                     '#subscription_options', class: 'do-show'
-              %li{ class: "#{@active_panel == 'invoices'             ? 'active' : ''}" }
-                != link_to 'Factures',                       '#invoices',             class: 'do-show'
+              - if @user.is_prescriber || !@user.is_centralized
+                %li{ class: "#{@active_panel == 'invoices'           ? 'active' : ''}" }
+                  != link_to 'Factures',                     '#invoices',             class: 'do-show'
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
@@ -63,52 +65,53 @@
             .span12.aligncenter
               = link_to "Configurer", account_addresses_path, class: 'btn'
 
-      #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
-        .span12.gray.well.paymentslist_container
-          %h3.aligncenter Mode de paiement
-          %br/
-          .row-fluid
-            /
+      - if @user.is_prescriber || !@user.is_centralized
+        #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
+          .span12.gray.well.paymentslist_container
+            %h3.aligncenter Mode de paiement
+            %br/
+            .row-fluid
+              /
+                .span6
+                  .paymentslist
+                    .header
+                      !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+                      %span
+                        %a{ :href => "#" }
+                          %label{ :for => "pp" } compte prépayé
+                    %form{ :method => :get, :action => credit_account_payment_path }
+                      .content
+                        %span
+                          %label{ :for => "amount" } Somme à créditer (€):
+                          %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
+                          %br/
+                          Payer avec :
+                      .footer
+                        %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
+                        %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
               .span6
                 .paymentslist
                   .header
-                    !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
+                    !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
                     %span
                       %a{ :href => "#" }
-                        %label{ :for => "pp" } compte prépayé
-                  %form{ :method => :get, :action => credit_account_payment_path }
-                    .content
-                      %span
-                        %label{ :for => "amount" } Somme à créditer (€):
-                        %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
-                        %br/
-                        Payer avec :
-                    .footer
-                      %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
-                      %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
-            .span6
-              .paymentslist
-                .header
-                  !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
-                  %span
-                    %a{ :href => "#" }
-                      %label{ :for => "prlv" } prélèvement
-                .content
-                  %span
-                    Etat :
-                    - if @user.debit_mandate
-                      - if @user.debit_mandate.transactionStatus == "success"
-                        ok
+                        %label{ :for => "prlv" } prélèvement
+                  .content
+                    %span
+                      Etat :
+                      - if @user.debit_mandate
+                        - if @user.debit_mandate.transactionStatus == "success"
+                          ok
+                        - else
+                          information non valide
                       - else
-                        information non valide
-                    - else
-                      non configuré
-                  %span
-                    Banque : #{@user.debit_mandate.bic rescue ""}
-                .footer.padding1bottom
-                  %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
-                    %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
-                    %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
+                        non configuré
+                    %span
+                      Banque : #{@user.debit_mandate.bic rescue ""}
+                  .footer.padding1bottom
+                    %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
+                      %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
+                      %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
 
       #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
         .span12.well
@@ -247,30 +250,32 @@
               = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
               .form-actions
                 = f.submit 'Valider', class: 'btn'
-      #invoices.row-fluid.pan{ class: (@active_panel == 'invoices' ? 'active' : '')}
-        .span12
-          .well
-            %h3.aligncenter Factures
-            %table.table.table-bordered.table-striped
-              %thead
-                %tr
-                  %th Numéro
-                  %th Montant
-                  %th Actions
-              %tbody
-                - @invoices.each do |invoice|
+      
+      - if @user.is_prescriber || !@user.is_centralized
+        #invoices.row-fluid.pan{ class: (@active_panel == 'invoices' ? 'active' : '')}
+          .span12
+            .well
+              %h3.aligncenter Factures
+              %table.table.table-bordered.table-striped
+                %thead
                   %tr
-                    %td= invoice.number
-                    %th.price= "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
-                    %td.actions
-                      = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                      = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
-            = paginate @invoices
-        #showInvoice.modal.hide.fade
-          .modal-header
-            %a.close{ data: { dismiss: :modal } } ×
-            %h3
-          .modal-body
-            %iframe{ :src => '' }
+                    %th Numéro
+                    %th Montant
+                    %th Actions
+                %tbody
+                  - @invoices.each do |invoice|
+                    %tr
+                      %td= invoice.number
+                      %th.price= "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                      %td.actions
+                        = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                        = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
+              = paginate @invoices
+          #showInvoice.modal.hide.fade
+            .modal-header
+              %a.close{ data: { dismiss: :modal } } ×
+              %h3
+            .modal-body
+              %iframe{ :src => '' }
 
 = render "help"
