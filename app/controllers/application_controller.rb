@@ -4,10 +4,10 @@ class ApplicationController < ActionController::Base
 
   helper_method :format_price, :format_price_00
 
-  before_filter :redirect_to_https if Rails.env.production?
+  before_filter :redirect_to_https %w(staging sandbox production).include?(Rails.env)
   before_filter :load_gray_label
-  around_filter :catch_error if %w(staging production test).include?(Rails.env)
-  around_filter :log_visit if %w(staging production test).include?(Rails.env)
+  around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
+  around_filter :log_visit if %w(staging sandbox production test).include?(Rails.env)
 
   def after_sign_in_path_for(resource_or_scope)
     if session[:targeted_path]
