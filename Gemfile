@@ -20,7 +20,6 @@ gem 'transitions', :require => %w(transitions active_record/transitions)
 gem 'hpricot'
 gem 'jonathantron-paypal'
 gem 'net-sftp'
-gem 'mongoid_session_store'
 gem 'rack-raw-upload'
 gem 'savon_model'
 gem 'prawn', '1.0.0.rc1'
@@ -44,6 +43,7 @@ gem 'rabl'
 gem 'tire'
 gem 'typhoeus'
 gem 'depsio'
+gem 'dalli'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
