@@ -71,6 +71,8 @@ class User
 
   field :return_label_generated_at, type: Time
 
+  field :ibiza_id, type: String
+
   attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
 

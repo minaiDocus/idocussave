@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaController < Account::OrganizationController
   before_filter :verify_rights
-  before_filter :ibiza_params
+  before_filter :ibiza_params, except: :refresh_users_cache
 
   def create
     @ibiza = Ibiza.new
@@ -21,6 +21,16 @@ class Account::IbizaController < Account::OrganizationController
       flash[:error] = 'Impossible de modifier.'
     end
     redirect_to account_organization_pre_assignments_path
+  end
+
+  def refresh_users_cache
+    if @organization.ibiza.try(:is_configured?)
+      @organization.ibiza.flush_users_cache
+      @organization.ibiza.get_users_only_once
+      flash[:success] = 'Rafraîchissement de la liste des dossiers Ibiza en cours.'
+    end
+    path = params[:back].present? ? params[:back] : account_organization_path
+    redirect_to path
   end
 
 private

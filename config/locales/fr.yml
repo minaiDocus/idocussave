@@ -327,6 +327,7 @@ fr:
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'
+          ibiza_id: 'Compte lié Ibiza'
           short:
             balance_in_cents: 'Solde du compte'
       address:

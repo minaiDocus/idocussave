@@ -43,6 +43,7 @@ Idocus::Application.routes.draw do
         get 'search_by_code', on: :collection
         put 'stop_using',     on: :member
         put 'restart_using',  on: :member
+        put 'update_ibiza',   on: :member
         resources :addresses, controller: 'organization_addresses'
         resource :accounting_plan do
           member do
@@ -58,7 +59,9 @@ Idocus::Application.routes.draw do
       end
       resources :subscriptions
       resource :default_subscription, controller: 'organization_subscriptions'
-      resource :ibiza, controller: 'ibiza'
+      resource :ibiza, controller: 'ibiza' do
+        get 'refresh_users_cache', on: :member
+      end
       resources :pre_assignments
       resources :pack_reports do
         post 'deliver', on: :member

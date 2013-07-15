@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, only: %w(show edit update stop_using restart_using)
+  before_filter :load_customer, only: %w(show edit update stop_using restart_using update_ibiza)
   before_filter :verify_rights, except: 'index'
   before_filter :apply_attribute_changes, only: %w(show edit)
 
@@ -54,6 +54,15 @@ class Account::CustomersController < Account::OrganizationController
     else
       render action: 'edit'
     end
+  end
+
+  def update_ibiza
+    if @customer.update_attribute(:ibiza_id, params[:user][:ibiza_id])
+      flash[:success] = 'Modifié avec succès'
+    else
+      flash[:error] = 'Impossible de modifier'
+    end
+    redirect_to account_organization_customer_path(@customer)
   end
 
   def stop_using
@@ -113,7 +122,7 @@ protected
 private
 
   def verify_rights
-    unless action_name == 'show' && can_manage? or action_name != 'show' && can_edit?
+    unless action_name.in?(%w(show update_ibiza)) && can_manage? or !action_name.in?(%w(show update_ibiza)) && can_edit?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end

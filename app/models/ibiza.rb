@@ -15,6 +15,7 @@ class Ibiza
   validates_inclusion_of :state, in: %w(none waiting valid invalid)
 
   before_save :set_state, if: Proc.new { |e| 'token'.in?(e.changed) }
+  after_update :flush_users_cache, if: Proc.new { |e| 'token'.in?(e.changed) }
 
   def is_configured?
     state == 'valid'
@@ -60,57 +61,94 @@ class Ibiza
   end
 
   def update_files_for(users)
-    client.company?
-    if client.response.success?
-      if File.exist?("#{Rails.root}/data/compta/mapping/fetch_error.txt")
-        `rm #{Rails.root}/data/compta/mapping/fetch_error.txt`
-      end
-      data = client.response.data.dup
-      users.each do |user|
-        id = data.select { |e| e['name'] == user.company }.first.try(:[],'database')
-        if id
-          client.request.clear
-          client.company(id).accounts?
-          if client.response.success?
-            body = client.response.body
-            body.force_encoding('UTF-8')
-            if File.exist?("#{Rails.root}/data/compta/mapping/#{user.code}.error")
-              `rm #{Rails.root}/data/compta/mapping/#{user.code}.error`
-            end
-            File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
-              f.write body
-            end
-          else
-            `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`  
+    users.each do |user|
+      if user.ibiza_id
+        client.request.clear
+        client.company(user.ibiza_id).accounts?
+        if client.response.success?
+          body = client.response.body
+          body.force_encoding('UTF-8')
+          if File.exist?("#{Rails.root}/data/compta/mapping/#{user.code}.error")
+            `rm #{Rails.root}/data/compta/mapping/#{user.code}.error`
+          end
+          File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
+            f.write body
           end
         else
-          `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
+          `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`  
+        end
+      else
+        `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
+      end
+    end
+    true
+  end
+
+  # nil : updating cache
+  # [...] : cached values
+  # false : error occurs
+  def users
+    result = Rails.cache.read([:ibiza, id, :users])
+    get_users_only_once if result.nil?
+    result
+  end
+
+  def get_users_only_once
+    unless Rails.cache.read([:ibiza, id, :users_is_flushing])
+      get_users
+      Rails.cache.write([:ibiza, id, :users_is_flushing], true)
+    end
+  end
+
+  def get_users
+    client.request.clear
+    client.company?
+    result = nil
+    if client.response.success?
+      result = client.response.data.map do |e|
+        o = OpenStruct.new
+        o.name = e['name']
+        o.id = e['database']
+        o
+      end
+    else
+      result = false
+    end
+    Rails.cache.write([:ibiza, id, :users_is_flushing], false)
+    Rails.cache.write([:ibiza, id, :users], result)
+    result
+  end
+  handle_asynchronously :get_users, queue: 'ibiza get users', priority: 1
+
+  def flush_users_cache
+    Rails.cache.delete([:ibiza, id, :users])
+  end
+
+  def auto_assign_users
+    get_users_without_delay
+    if users
+      organization.customers.each do |customer|
+        if (e = users.select { |e| e.name == customer.company }.first)
+          customer.update_attribute(:ibiza_id, e.id)
         end
       end
-      true
-    else
-      `touch #{Rails.root}/data/compta/mapping/fetch_error.txt`
     end
   end
 
   def export(preseizures)
-    client.company?
-    if client.response.success?
-      result = client.response.data.select { |e| e['name'] == preseizures.first.report.pack.owner.company }.first
-      if(id = result.try(:[], 'database'))
-        if(e = exercice(id, preseizures.first.report.pack))
-          client.request.clear
-          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
-          client.company(id).entries!(data)
-          if client.response.success?
-            preseizures.each do |preseizure|
-              preseizure.update_attribute(:is_delivered, true)
-            end
+    if(id = preseizures.first.report.pack.owner.ibiza_id)
+      if(e = exercice(id, preseizures.first.report.pack))
+        client.request.clear
+        data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
+        client.company(id).entries!(data)
+        if client.response.success?
+          preseizures.each do |preseizure|
+            preseizure.update_attribute(:is_delivered, true)
           end
-          report = preseizures.first.report
-          if report.preseizures.not_delivered.count == 0
-            report.update_attribute(:is_delivered, true)
-          end
+        end
+        report = preseizures.first.report
+        if report.preseizures.not_delivered.count == 0
+          report.update_attribute(:is_delivered, true)
         end
       end
     end
