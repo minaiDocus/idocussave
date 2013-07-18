@@ -46,6 +46,7 @@ fr:
       invalid_token: "Clé d'authentification invalide."
       timeout: 'Votre session a expiré, merci de vous identifier à nouveau.'
       inactive: "Votre compte n'a pas encore été activé."
+      already_authenticated: "Vous êtes déjà connecté."
     user_sessions:
       user:
         signed_in: "Vous êtes maintenant connecté."
