@@ -19,6 +19,8 @@ class Account::CollaboratorsController < Account::OrganizationController
     @collaborator.is_prescriber = true
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
+    @collaborator.reset_password_token = User.reset_password_token
+    @collaborator.reset_password_sent_at = Time.now
     if @collaborator.save
       @organization.members << @collaborator
       WelcomeMailer.welcome_collaborator(@collaborator).deliver

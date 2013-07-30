@@ -27,6 +27,8 @@ class Admin::UsersController < Admin::AdminController
     @user.is_prescriber = is_prescriber
     AccountingPlan.create(user_id: @user.id)
     @user.skip_confirmation!
+    @user.reset_password_token = User.reset_password_token
+    @user.reset_password_sent_at = Time.now
     if @user.save
       if @user.is_prescriber
         WelcomeMailer.welcome_collaborator(@user).deliver
@@ -91,6 +93,9 @@ class Admin::UsersController < Admin::AdminController
   def activate
     @user = User.find params[:id]
     if @user.activate!
+      @user.reset_password_token = User.reset_password_token
+      @user.reset_password_sent_at = Time.now
+      @user.save
       if @user.is_prescriber
         WelcomeMailer.welcome_collaborator(@user).deliver
       else

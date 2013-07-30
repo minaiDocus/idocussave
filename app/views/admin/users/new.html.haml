@@ -15,6 +15,7 @@
         = f.input :last_name, label: 'Nom'
         = f.input :code, label: 'Code'
         = f.input :company, label: 'Société'
+        = f.input :organization_id, lbale: t('mongoid.models.user.attributes.organization'), collection: Organization.asc(:name), label_method: :name, value_method: :id, include_blank: false
     .row-fluid
       .form-actions
         = f.submit t('actions.submit'), class: 'btn'

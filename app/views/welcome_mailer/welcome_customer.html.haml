@@ -4,7 +4,7 @@
     %title Création de compte iDocus
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }/
   %body
-    Bonjour,
+    Bonjour #{@user.name},
     %br/
     %br/
     Le cabinet 
@@ -12,60 +12,24 @@
     , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
     %br/
     %br/
-    Cette prestation, assurée par iDocus, va vous permettre un accès rapide et pratique à vos documents.
-    %br/
-    Ils seront disponibles dans votre espace personnel sur notre site à l'adresse : #{link_to SITE_INNER_URL, SITE_INNER_URL}
-    %br/
-    %br/
+    Cette prestation, assurée par iDocus, va vous permettre un accès rapide et pratique à vos documents qui seront disponibles dans votre espace personnel.
     %br/
     Nous venons de vous créer un compte pour y accéder.
     %br/
     %br/
-    Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+    Merci de bien vouloir cliquer sur ce lien afin de générer wvotre mot de passe : #{link_to edit_user_password_url(reset_password_token: @user.reset_password_token), edit_user_password_url(reset_password_token: @user.reset_password_token) }
     %br/
+    %br/
+    Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères) 
     %br/
     Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
     %br/
-    %br/
     Vos documents qui sont déjà sous format électronique sont à intégrer dans iDocus grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
-    %br/
     %br/
     Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
     %br/
     %br/
-    \---
-    %br/
-    %br/
-    Merci de bien vouloir cliquer sur ce lien et de suivre les instructions afin de générer votre mot de passe : #{link_to new_user_password_url, new_user_password_url}
-    %br/
-    %br/
-    Votre identifiant est :
-    %b #{link_to @user.email, "mailto:#{@user.email}"}
-    %br/
-    %br/
-    %br/
-    %br/
-    %i
-      En cas de difficultés, voici les étapes à suivre :
-      %br/
-      %br/
-      %div{ style: 'margin-left: 25px' }
-        1 - Allez sur la page : #{link_to new_user_password_url, new_user_password_url}
-        %br/
-        %br/
-        2 - Sur cette page, entrez votre adresse e-mail et cliquez sur 'VALIDER'
-        %br/
-        %br/
-        3 - Allez dans votre boîte mail et ouvrez le message ayant pour objet : 'iDocus - Instructions pour changer votre mot de passe'
-        %br/
-        %br/
-        4 - Dans ce mail, cliquez sur le lien. Cela vous fera arriver sur la page qui vous demandera votre nouveau mot de passe
-        %br/
-        %br/
-        5 - Entrez deux fois votre mot de passe et cliquez sur 'VALIDER'
-        %br/
-        %br/
-        6 - Vous êtes maintenant connecté à votre compte
+    Votre identifiant est : #{@user.email}
     %br/
     %br/
     Nous vous souhaitons une bonne utilisation de notre service.
