@@ -4,5 +4,5 @@
   != render :partial => "pack", :collection => @packs
 
 .aligncenter
-  != paginate @packs
+  != paginate @packs rescue nil
   %input{ :type => :hidden, :name => :packs_count, :value => "#{@packs_count}" }

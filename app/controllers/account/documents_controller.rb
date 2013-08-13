@@ -81,10 +81,14 @@ public
           @packs = Pack.search(params[:filter], ids: pack_ids, owner_id: owner_id, page: params[:page], per_page: params[:per_page])
         else
           pack_ids = @user.packs.distinct(:_id).map(&:to_s)
-          @packs = Pack.search(params[:filter], ids: pack_ids, page: params[:page], per_page: params[:per_page])
+          if pack_ids.any?
+            @packs = Pack.search(params[:filter], ids: pack_ids, page: params[:page], per_page: params[:per_page])
+          else
+            @packs = []
+          end
         end
       end
-      @packs_count = @packs.total
+      @packs_count = @packs.total rescue 0
     end
   end
     
