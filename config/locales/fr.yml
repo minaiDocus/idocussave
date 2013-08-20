@@ -288,6 +288,7 @@ fr:
           attributes:
             reset_password_token:
               invalid: 'est invalide'
+              expired: 'jeton expiré'
         scan/document:
           attributes:
             name:
