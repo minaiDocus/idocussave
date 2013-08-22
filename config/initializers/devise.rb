@@ -99,6 +99,16 @@ Devise.setup do |config|
   # Time interval to unlock the account if :time is enabled as unlock_strategy.
   # config.unlock_in = 1.hour
 
+  # ==> Configuration for :recoverable
+  #
+  # Defines which key will be used when recovering the password for an account
+  # config.reset_password_keys = [ :email ]
+
+  # Time interval you can reset your password with a reset password key.
+  # Don't put a too small interval or your users won't have the time to
+  # change their passwords.
+  config.reset_password_within = 2.days
+
   # ==> Configuration for :token_authenticatable
   # Defines name of the authentication token params key
   # config.token_authentication_key = :auth_token

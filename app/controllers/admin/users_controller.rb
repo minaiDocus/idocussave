@@ -2,12 +2,13 @@
 class Admin::UsersController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :user_contains
 
+  before_filter :load_user, only: %w(show update accept activate destroy send_reset_password_instructions)
+
   def index
     @users = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
-    @user = User.find params[:id]
     @user.request.apply_attribute_changes
   end
 
@@ -44,7 +45,6 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def update
-    @user = User.find params[:id]
     respond_to do |format|
       if params[:user][:is_admin]
         @user.is_admin = params[:user].delete(:is_admin)
@@ -81,7 +81,6 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def accept
-    @user = User.find params[:id]
     if @user.request.accept!
       flash[:notice] = 'Modifié avec succès.'
     else
@@ -91,7 +90,6 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def activate
-    @user = User.find params[:id]
     if @user.activate!
       @user.reset_password_token = User.reset_password_token
       @user.reset_password_sent_at = Time.now
@@ -109,7 +107,6 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def destroy
-    @user = User.find params[:id]
     if @user.request.status == 'create' && @user.destroy
       flash[:notice] = 'Supprimé avec succès.'
     else
@@ -117,8 +114,18 @@ class Admin::UsersController < Admin::AdminController
     end
     redirect_to admin_users_path
   end
+
+  def send_reset_password_instructions
+    @user.send_reset_password_instructions
+    flash[:notice] = 'Email envoyé avec succès.'
+    redirect_to admin_user_path(@user)
+  end
   
 private
+
+  def load_user
+    @user = User.find params[:id]
+  end
 
   def user_params
     params.require(:user).permit!

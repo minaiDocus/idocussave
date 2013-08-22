@@ -167,6 +167,7 @@ Idocus::Application.routes.draw do
       get 'search_by_code', on: :collection
       put 'accept', on: :member
       put 'activate', on: :member
+      post 'send_reset_password_instructions', on: :member
       resources :addresses do
         get 'edit_multiple', on: :collection
         post 'update_multiple', on: :collection
