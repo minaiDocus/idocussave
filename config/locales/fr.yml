@@ -639,3 +639,23 @@ fr:
           third_party_account: Compte tiers
           third_party_name: Nom tiers
           conterpart_account: Compte contrepartie
+      dematbox_file:
+        zero: 0 fichier dematbox
+        one: 1 fichier dematbox
+        other: '%{count} fichiers dematbox'
+        name: Fichier dematbox
+        attributes:
+          user: Client
+          user_code: Code utilisateur
+          journal_name: Journal
+          period: Période
+          box_id: Id box
+          doc_id: Id doc
+          service_id: Id service
+          text: Texte
+          is_processed: 'Etat'
+          is_processed_state:
+            wait: 'En attente'
+            processed: 'Traité'
+          content_file_name: Nom du document
+          content_file_size: Taille (Mo)

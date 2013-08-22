@@ -115,6 +115,9 @@ class User
   has_one :csv_outputter, autosave: true
   has_one :accounting_plan
 
+  has_one :dematbox
+  has_many :dematbox_files
+
   belongs_to :scanning_provider, inverse_of: 'customers'
   
   scope :prescribers,                 where: { is_prescriber: true }

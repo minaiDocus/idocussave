@@ -1,0 +1,21 @@
+#dematboxes
+  = render 'navigation'
+  .row-fluid
+    .span3
+      %h3 Dematboxes
+      %table.table.table-striped.table-bordered.table-condensed
+        %thead
+          %tr
+            %th Numéro
+            %th Client
+            %th Nombre de service
+            %th Actions
+        %tbody
+          - @dematboxes.each do |dematbox|
+            %tr
+              %td= dematbox.number
+              %td= link_to dematbox.user.code, admin_user_path(dematbox.user)
+              %td= link_to dematbox.services.count, admin_dematbox_path(dematbox)
+              %td
+                = link_to icon(icon: 'refresh'), subscribe_admin_dematbox_path(dematbox), title: 'Réassigner les services', data: { method: 'post', confirm: t('actions.confirm') }
+                = link_to icon_destroy, admin_dematbox_path(dematbox), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }

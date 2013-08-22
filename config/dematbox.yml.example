@@ -1,0 +1,32 @@
+defaults: &defaults
+  wsdl: http://preprod.dematbox.sagemcom.com/Frontal/WS/FrontalService?wsdl
+  namespace: http://service.frontal.dematbox.sagemcom.com/
+  log_level: debug
+  operator_id: 276
+  username: dematbox
+  password: CMWrK3481bHSjiSnet0h
+  ssl_verify_mode: none
+  ssl_version: TLSv1
+  ssl_cert_file: data/cert/idocus.com.crt
+  ssl_cert_key_file: data/cert/idocus.com.key
+  ssl_ca_cert_file: data/cert/dematbox_pre_ca.crt
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  wsdl: https://dematbox.sagemcom.com/Frontal/WS/FrontalService?wsdl
+  log_level: info
+  operator_id: 192
+  ssl_verify_mode: peer
+  ssl_ca_cert_file: data/cert/dematbox_int_ca.crt

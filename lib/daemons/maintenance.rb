@@ -34,6 +34,8 @@ while($running) do
     filesname = RegroupSheet::process
     data = []
     data += Pack.get_documents(filesname)
+    filesname = DematboxFile.prepare
+    data += Pack.get_documents(filesname)
     filesname = Pack.get_file_from_ftp('193.168.63.12', 'depose', 'tran5fert', 'diadeis2depose/LIVRAISON')
     filesname += Pack.get_file_from_ftp('ftp-clients.ppp-idc.com', 'idocus_pCompta', 'ipC2903!*', '/', 'ppp')
     Pack.get_csv_files('ppp')

@@ -1,0 +1,22 @@
+#dematbox
+  = render 'admin/dematboxes/navigation'
+  .row-fluid
+    .span12
+      %h3 Liste des services pour la dematbox de #{link_to @dematbox.user.code, [:admin, @dematbox.user]}
+  .row-fluid.margin2top
+    .span4
+      %table.table.table-striped.table-bordered.table-condensed
+        %tr
+          %th Groupe Id
+          %th Groupe
+          %th Id
+          %th Nom
+          %th Période
+        - @dematbox.services.asc([:group_name, :name]).each do |service|
+          %tr
+            %td= service.group_pid
+            %td= service.group_name
+            %td= service.pid
+            %td= service.name
+            %td= dematbox_period service.is_for_current_period
+      = link_to t('actions.return'), admin_dematboxes_path, class: 'btn'

@@ -1,0 +1,32 @@
+#dematboxes
+  = render 'admin/dematboxes/navigation'
+  .row-fluid
+    .span9
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Services et Groupes
+          .pull-right
+            = link_to 'Mettre à jour', load_from_external_admin_dematbox_services_path, class: 'btn btn-mini', data: { method: :post }
+      %table.table.table-striped.table-bordered.table-condensed
+        %thead
+          %tr
+            %th Id
+            %th Type
+            %th Nom
+            %th Groupe
+            %th Période
+            %th Etat
+            %th Actions
+        %tbody
+          - @dematbox_services.each do |dematbox_service|
+            %tr
+              %td= dematbox_service.pid
+              %td= dematbox_type dematbox_service.type
+              %td= dematbox_service.name
+              %td= dematbox_service.group.try(:name)
+              %td= dematbox_period dematbox_service.is_for_current_period
+              %td= dematbox_state dematbox_service.state
+              %td
+                = link_to icon_edit, edit_admin_dematbox_service_path(dematbox_service), title: 'Editer'
+                = link_to icon_destroy, admin_dematbox_service_path(dematbox_service), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }

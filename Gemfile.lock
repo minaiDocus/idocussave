@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:Pikomu/wash_out.git
+  revision: dc50a89cb75ebef25abf77e6dec65ddeefb9509a
+  branch: removing_model_integration
+  specs:
+    wash_out (0.7.1)
+      nori (>= 2.0.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -176,7 +184,7 @@ GEM
     guard-spork (1.1.0)
       guard (>= 1.1)
       spork (>= 0.8.4)
-    gyoku (0.4.6)
+    gyoku (1.0.0)
       builder (>= 2.1.2)
     haml (3.1.6)
     haml-rails (0.3.4)
@@ -197,7 +205,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml
     httpauth (0.1)
-    httpi (0.9.7)
+    httpi (2.0.2)
       rack
     i18n (0.6.1)
     jonathantron-paypal (3.0.0pre6)
@@ -260,8 +268,8 @@ GEM
     net-sftp (2.0.5)
       net-ssh (>= 2.0.9)
     net-ssh (2.5.2)
-    nokogiri (1.5.5)
-    nori (1.1.0)
+    nokogiri (1.5.9)
+    nori (2.1.0)
     oauth (0.4.6)
     oauth2 (0.7.1)
       faraday (~> 0.8)
@@ -355,17 +363,14 @@ GEM
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    savon (0.9.7)
-      akami (~> 1.0)
+    savon (2.2.0)
+      akami (~> 1.2.0)
       builder (>= 2.1.2)
-      gyoku (>= 0.4.0)
-      httpi (~> 0.9)
+      gyoku (~> 1.0.0)
+      httpi (~> 2.0.2)
       nokogiri (>= 1.4.0)
-      nori (~> 1.0)
-      wasabi (~> 2.0)
-    savon_model (1.2.0)
-      httpi (>= 0.7.8)
-      savon (>= 0.8.2, < 0.9.8)
+      nori (~> 2.1.0)
+      wasabi (~> 3.1.0)
     simple_form (2.0.2)
       actionpack (~> 3.0)
       activemodel (~> 3.0)
@@ -382,7 +387,7 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    state_machine (0.9.4)
+    state_machine (1.2.0)
     stringex (1.4.0)
     strong_parameters (0.1.6)
       actionpack (~> 3.0)
@@ -390,7 +395,7 @@ GEM
       railties (~> 3.0)
     therubyracer (0.10.1)
       libv8 (~> 3.3.10)
-    thin (1.4.1)
+    thin (1.5.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
@@ -425,7 +430,8 @@ GEM
     unicode_utils (1.0.0)
     warden (1.2.1)
       rack (>= 1.0)
-    wasabi (2.1.0)
+    wasabi (3.1.0)
+      httpi (~> 2.0)
       nokogiri (>= 1.4.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
@@ -478,6 +484,7 @@ DEPENDENCIES
   mongoid_slug
   nested_form
   net-sftp
+  nokogiri
   oauth
   paperclip (= 3.0.2)
   poppler
@@ -489,7 +496,7 @@ DEPENDENCIES
   rake (= 10.1.0)
   rspec-rails
   sass-rails (~> 3.2.3)
-  savon_model
+  savon
   simple_form
   simplecov
   spork (= 1.0.0rc3)
@@ -504,3 +511,4 @@ DEPENDENCIES
   typhoeus
   uglifier (>= 1.0.3)
   unicode_utils
+  wash_out!

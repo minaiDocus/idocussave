@@ -59,7 +59,7 @@ module Idocus
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :rawScan, :improvedScan]
 
     config.generators do |g|
       g.orm :mongoid
@@ -77,5 +77,9 @@ module Idocus
     config.assets.version = '1.0'
 
     config.mongoid.observers = :user_observer, :account_book_type_observer
+
+    config.wash_out.parser = :nokogiri
+    config.wash_out.camelize_wsdl = true
+    config.wash_out.namespace = 'http://service.operator.dematbox.sagemcom.com/'
   end
 end
