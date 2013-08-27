@@ -10,4 +10,5 @@ coverage/
 doc_data.txt
 .sass-cache
 config/mongoid.yml
+config/dematbox.yml
 Sporkfile.rb

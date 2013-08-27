@@ -28,6 +28,8 @@
       = link_to 'Marque Grise', admin_gray_labels_path
     %li{ class: ('active' if controller_name == 'scanning_providers') }
       = link_to 'Ateliers', admin_scanning_providers_path
+    %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
+      = link_to 'Dematbox', admin_dematboxes_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

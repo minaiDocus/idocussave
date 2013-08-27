@@ -1,6 +1,8 @@
 Idocus::Application.routes.draw do
   root :to => "homepage#index"
 
+  wash_out :dematbox
+
   devise_for :users
 
   resources :pages
@@ -146,6 +148,7 @@ Idocus::Application.routes.draw do
       delete 'reset', :on => :collection
     end
     resources :backups
+    resource :dematbox
   end
 
   namespace :tunnel do
@@ -221,6 +224,13 @@ Idocus::Application.routes.draw do
     end
     resources :gray_labels
     resources :scanning_providers
+    resources :dematboxes do
+      post 'subscribe', on: :member
+    end
+    resources :dematbox_services do
+      post 'load_from_external', on: :collection
+    end
+    resources :dematbox_files
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index

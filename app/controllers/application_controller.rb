@@ -97,7 +97,7 @@ protected
   end
   
   def log_visit
-    unless request.path.match('(system|assets|num)') || !params[:action].in?(%w(index show))
+    unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show))
       unless current_user && current_user.is_admin
         visit            = ::Log::Visit.new
         visit.path       = request.path

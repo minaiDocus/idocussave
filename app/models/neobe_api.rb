@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class NeobeApi
-  include Savon::Model
+  # TODO reimplement savon model
+  # include Savon::Model
   
-  endpoint "https://api.neobe.com:443/soap_srv.php?key=#{NEOBE_KEY}"
-  namespace "urn:ApiWsdl"
+  # endpoint "https://api.neobe.com:443/soap_srv.php?key=#{NEOBE_KEY}"
+  # namespace "urn:ApiWsdl"
   
   METHOD_LIST = [
                               "get_list_account()",
