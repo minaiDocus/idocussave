@@ -69,6 +69,8 @@ class User
   field :is_access_by_token_active,      type: Boolean, default: true
   field :is_inactive,                    type: Boolean, default: false
 
+  field :is_dematbox_authorized,         type: Boolean, default: false
+
   field :return_label_generated_at, type: Time
 
   field :ibiza_id, type: String

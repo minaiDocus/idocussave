@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::DematboxController < Account::AccountController
+  before_filter :verify_access
   before_filter :load_dematbox
 
   def create
@@ -10,6 +11,13 @@ class Account::DematboxController < Account::AccountController
   end
 
 private
+
+  def verify_access
+    unless current_user.is_dematbox_authorized
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_profile_path
+    end
+  end
 
   def load_dematbox
     @dematbox = current_user.dematbox || Dematbox.create(user_id: current_user.id)

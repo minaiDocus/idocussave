@@ -5,6 +5,9 @@
   %tr
     %th= t('mongoid.models.user.attributes.is_access_by_token_active')
     %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
+  %tr
+    %th= t('mongoid.models.user.attributes.is_dematbox_authorized')
+    %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
 %table.table.table-striped.table-bordered.table-condensed
   %thead
     %tr

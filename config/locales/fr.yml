@@ -325,6 +325,7 @@ fr:
           is_access_by_token_active: 'Accès par jeton activé ?'
           is_reminder_email_active: 'Rappel activé ?'
           is_centralized: 'Est centralisé ?'
+          is_dematbox_authorized: Dematbox autorisé ?
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'

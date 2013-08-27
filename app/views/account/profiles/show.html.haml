@@ -21,8 +21,9 @@
                 != link_to 'Partages',                       '#sharing_management',   class: 'do-show'
               %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
                 != link_to 'Abonnement',                     '#subscription_options', class: 'do-show'
-              %li{ class: "#{@active_panel == 'dematbox'             ? 'active' : ''}" }
-                != link_to 'Dematbox',                       '#dematbox',             class: 'do-show'
+              - if @user.is_dematbox_authorized
+                %li{ class: "#{@active_panel == 'dematbox'           ? 'active' : ''}" }
+                  != link_to 'Dematbox',                     '#dematbox',             class: 'do-show'
               - if @user.is_prescriber || !@user.is_centralized
                 %li{ class: "#{@active_panel == 'invoices'           ? 'active' : ''}" }
                   != link_to 'Factures',                     '#invoices',             class: 'do-show'
@@ -243,32 +244,33 @@
               = text_field_tag :email, "", style: 'margin-bottom:0;width:400px;'
               = submit_tag "Ajouter", class: 'btn'
 
-      #dematbox.row-fluid.pan{ class: (@active_panel == 'dematbox' ? 'active' : '') }
-        .span12
-          .well
-            %h3.aligncenter.margin2bottom Dematbox
-            - if @user.dematbox.try(:services).try(:any?)
-              %h4.margin1bottom Liste des services
-              %table.table.table-striped.table-bordered.table-condensed.margin0bottom
-                %thead
-                  %tr
-                    %th Groupe
-                    %th Nom
-                %tbody
-                  - @user.dematbox.services.asc([:group_name, :name]).each do |service|
+      - if @user.is_dematbox_authorized
+        #dematbox.row-fluid.pan{ class: (@active_panel == 'dematbox' ? 'active' : '') }
+          .span12
+            .well
+              %h3.aligncenter.margin2bottom Dematbox
+              - if @user.dematbox.try(:services).try(:any?)
+                %h4.margin1bottom Liste des services
+                %table.table.table-striped.table-bordered.table-condensed.margin0bottom
+                  %thead
                     %tr
-                      %td= service.group_name
-                      %td= service.name
-            - elsif @user.dematbox.try(:beginning_configuration_at).present?
-              Configuration en cours...veuillez recharger votre page dans quelques secondes.
-            - else
-              = form_tag account_dematbox_path, method: :post, class: 'form-horizontal margin2top margin0bottom' do
-                .control-group.string
-                  = label_tag :pairing_code, 'Code PIN', class: 'control-label string'
-                  .controls
-                    = text_field_tag :pairing_code, '', class: 'string'
-                .form-actions.margin0bottom.padding0bottom
-                  = submit_tag t('actions.submit'), class: 'btn'
+                      %th Groupe
+                      %th Nom
+                  %tbody
+                    - @user.dematbox.services.asc([:group_name, :name]).each do |service|
+                      %tr
+                        %td= service.group_name
+                        %td= service.name
+              - elsif @user.dematbox.try(:beginning_configuration_at).present?
+                Configuration en cours...veuillez recharger votre page dans quelques secondes.
+              - else
+                = form_tag account_dematbox_path, method: :post, class: 'form-horizontal margin2top margin0bottom' do
+                  .control-group.string
+                    = label_tag :pairing_code, 'Code PIN', class: 'control-label string'
+                    .controls
+                      = text_field_tag :pairing_code, '', class: 'string'
+                  .form-actions.margin0bottom.padding0bottom
+                    = submit_tag t('actions.submit'), class: 'btn'
 
       #subscription_options.row-fluid.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
         .span12
