@@ -98,7 +98,7 @@ class DematboxFile
 
   def set_params(params)
     dematbox = Dematbox.find_by_number params['virtual_box_id']
-    self.user = dematbox.user
+    self.user = dematbox.try(:user)
     if self.user
       self.box_id       = params['box_id']
       self.service_id   = params['service_id']
