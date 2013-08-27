@@ -464,7 +464,7 @@ class Pack
           end
         end
       rescue Errno::ETIMEDOUT
-        Rails.logger "[#{Time.now}] FTP: connect to #{url} : timeout"
+        Rails.logger.info "[#{Time.now}] FTP: connect to #{url} : timeout"
       rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError => e
         content = "#{e.class}<br /><br />#{e.message}"
         ErrorNotification::EMAILS.each do |email|
