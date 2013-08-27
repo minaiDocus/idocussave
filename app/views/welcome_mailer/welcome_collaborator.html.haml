@@ -15,6 +15,10 @@
     %br/
     Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @collaborator.reset_password_token), edit_user_password_url(reset_password_token: @collaborator.reset_password_token) }
     %br/
+    Par mesure de sécurité, ce lien est actif pendant 7 jours.
+    %br/
+    Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
+    %br/
     %br/
     %br/
     Votre identifiant est : #{@collaborator.email}
