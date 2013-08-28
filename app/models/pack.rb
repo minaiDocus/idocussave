@@ -321,6 +321,30 @@ class Pack
     end
     self.reapply_new_name(filesname, 1, self.owner.stamp_name, self.owner.is_stamp_background_filled, pages.first.is_an_upload)
   end
+
+  def zip_name
+    self.name.gsub(/\s/,'_') + '.zip'
+  end
+
+  def zip
+    filespath = pieces.map { |e| e.content.path }
+    clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
+    filepath = File.join([Rails.root,'files/attachments/archives/',zip_name])
+    cmd = "zip -j0 #{filepath} #{clean_filespath}"
+    pid = Process.spawn(cmd)
+    Rails.logger.debug "[#{pid}] zip pack '#{self.name}' with :\n\t#{cmd}"
+    begin
+      Timeout.timeout(60) do
+        Process.wait(pid)
+        Rails.logger.debug "[#{pid}] zip pack '#{self.name}' done."
+      end
+      filepath
+    rescue Timeout::Error
+      Rails.logger.debug "[#{pid}] zip pack '#{self.name}' not finished in time, killing it"
+      Process.kill('TERM', pid)
+      false
+    end
+  end
   
   class << self
     def find_by_name(name)

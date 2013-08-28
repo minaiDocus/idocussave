@@ -102,12 +102,12 @@ public
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     pack = Pack.find(params[:id])
 
-    filespath = pack.pieces.map { |e| e.content.path }
-    clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
-    filename = pack.name.gsub(/\s/,'_') + '.zip'
-    filepath = File.join([Rails.root,'files/attachments/archives/'+filename])
-    system("zip -j #{filepath} #{clean_filespath}")
-    send_file(filepath, type: 'application/zip', filename: filename, x_sendfile: true)
+    result = pack.zip
+    if result
+      send_file(result, type: 'application/zip', filename: pack.zip_name, x_sendfile: true)
+    else
+      render text: 'Timeout'
+    end
   end
   
   def sync_with_external_file_storage
