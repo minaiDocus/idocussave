@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DematboxController < ApplicationController
   before_filter :authenticate if %w(staging sandbox production).include?(Rails.env)
+  skip_before_filter :verify_authenticity_token
 
   include WashOut::SOAP
 
@@ -29,7 +30,8 @@ class DematboxController < ApplicationController
       Airbrake.notify(e, airbrake_request_data) if %w(staging sandbox production).include?(Rails.env)
       @response = '501:Action failed'
     end
-    render :template => 'dematbox/send_file_response.xml',
+    render :template => 'dematbox/send_file_response',
+           :formats => [:xml],
            :layout => false,
            :content_type => 'text/xml'
   end
@@ -38,7 +40,8 @@ class DematboxController < ApplicationController
               :return => { 'errorReturn' => :string }
   def PingOperator
     @response = '200:OK'
-    render :template => 'dematbox/ping_operator_response.xml',
+    render :template => 'dematbox/ping_operator_response',
+           :formats => [:xml],
            :layout => false,
            :content_type => 'text/xml'
   end
