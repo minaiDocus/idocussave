@@ -326,19 +326,22 @@ class Pack
     self.name.gsub(/\s/,'_') + '.zip'
   end
 
-  def zip
+  def zip_file_path
+    File.join([Rails.root,'files/archives/',zip_name])
+  end
+
+  def make_zip
     filespath = pieces.map { |e| e.content.path }
     clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
-    filepath = File.join([Rails.root,'files/attachments/archives/',zip_name])
-    cmd = "zip -j0 #{filepath} #{clean_filespath}"
+    cmd = "zip -j #{zip_file_path} #{clean_filespath}"
     pid = Process.spawn(cmd)
     Rails.logger.debug "[#{pid}] zip pack '#{self.name}' with :\n\t#{cmd}"
     begin
-      Timeout.timeout(60) do
+      Timeout.timeout(120) do
         Process.wait(pid)
         Rails.logger.debug "[#{pid}] zip pack '#{self.name}' done."
       end
-      filepath
+      zip_file_path
     rescue Timeout::Error
       Rails.logger.debug "[#{pid}] zip pack '#{self.name}' not finished in time, killing it"
       Process.kill('TERM', pid)
@@ -652,6 +655,7 @@ class Pack
       end
       File.rename cover, "up_" + cover if cover
 
+      pack.make_zip
       FileDeliveryInit.prepare(pack)
 
       [user.email,pack_filename,piece_position]
