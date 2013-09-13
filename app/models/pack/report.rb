@@ -84,7 +84,7 @@ class Pack::Report
                 report.organization = pack.owner.organization
                 report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                 report.document ||= pack.scan_documents.desc(:created_at).first
-                lot.css('piece').each_with_index do |part,index|
+                lot.css('piece').each do |part|
                   part_name = part['number'].gsub('_',' ')
                   piece = pack.pieces.where(name: part_name).first
                   if piece and piece.expense.nil?
@@ -99,7 +99,7 @@ class Pack::Report
                     expense.type                   = part.css('type').first.try(:content)
                     expense.origin                 = part.css('source').first.try(:content)
                     expense.obs_type               = obs['type'].to_i
-                    expense.position               = index + 1
+                    expense.position               = piece.position
                     expense.save
                     report.expenses << expense
 
@@ -151,7 +151,7 @@ class Pack::Report
                   report.organization = pack.owner.organization
                   report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   report.document ||= pack.scan_documents.desc(:created_at).first
-                  lot.css('piece').each_with_index do |part,index|
+                  lot.css('piece').each_with do |part|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
                     if piece
@@ -166,7 +166,7 @@ class Pack::Report
                       preseizure.date            = part.css('date').first.try(:content).try(:to_date)
                       preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
                       preseizure.observation     = part.css('remarque').first.try(:content)
-                      preseizure.position        = index + 1
+                      preseizure.position        = piece.position
                       preseizure.save
                       preseizures << preseizure
                       part.css('account').each do |account|
