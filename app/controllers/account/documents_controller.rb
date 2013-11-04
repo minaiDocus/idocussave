@@ -102,8 +102,8 @@ public
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     pack = Pack.find(params[:id])
 
-    if File.exist? pack.zip_file_path
-      send_file(pack.zip_file_path, type: 'application/zip', filename: pack.zip_name, x_sendfile: true)
+    if File.exist? pack.archive_file_path
+      send_file(pack.archive_file_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
     else
       render text: 'File unavalaible'
     end
