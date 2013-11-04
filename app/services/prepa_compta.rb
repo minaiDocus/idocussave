@@ -43,7 +43,7 @@ class PrepaCompta
               doc = Nokogiri::XML f
             end
             doc.css('lot').each do |lot|
-              pack_name = lot.gsub('_', ' ') + ' all'
+              pack_name = lot['name'].gsub('_', ' ') + ' all'
               temp_pack = TempPack.where(name: pack_name).first
 
               ['upload', 'dematbox_san', 'scan'].each do |origin|
