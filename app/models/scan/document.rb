@@ -5,7 +5,7 @@ class Scan::Document
   
   belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :documents
   belongs_to :period,       class_name: "Scan::Period",       inverse_of: :documents
-  belongs_to :pack,                                           inverse_of: :scan_documents
+  belongs_to :pack,                                           inverse_of: :periodic_metadata
   has_one    :report,       class_name: 'Pack::Report',       inverse_of: :document,       dependent: :delete
 
   field :name,            type: String,  default: ''
