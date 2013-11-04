@@ -99,7 +99,7 @@ class FileDeliveryInit
     def get_tiff_file
       file_path = self.content.path
       temp_path = "/tmp/#{self.content_file_name.sub(/\.pdf$/,'.tiff')}"
-      PdfDocument::Utils.generate_tiff_file(file_path, temp_path)
+      DocumentTools.generate_tiff_file(file_path, temp_path)
       temp_path
     end
 

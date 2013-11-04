@@ -19,17 +19,9 @@ class DematboxController < ApplicationController
                          },
               :return => { 'errorReturn' => :string }
   def SendFile
-    begin
-      dematbox_file = DematboxFile.from_params(params)
-      if dematbox_file.persisted?
-        @response = '200:OK'
-      else
-        @response = '600:Argument value invalid'
-      end
-    rescue => e
-      Airbrake.notify(e, airbrake_request_data) if %w(staging sandbox production).include?(Rails.env)
-      @response = '501:Action failed'
-    end
+    dematbox_document = DematboxDocument.new(params)
+    @response = present(dematbox_document).response
+    
     render :template => 'dematbox/send_file_response',
            :formats => [:xml],
            :layout => false,

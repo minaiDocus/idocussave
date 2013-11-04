@@ -4,7 +4,7 @@ class Account::InvoicesController < Account::AccountController
     filepath = invoice.content.path params[:style]
     if File.exist?(filepath) && (invoice.user == current_user || (invoice.organization && invoice.organization.leader == current_user) || current_user.is_admin)
       filename = File.basename filepath
-      type = invoice.content_file_type || 'application/pdf'
+      type = invoice.content_content_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404

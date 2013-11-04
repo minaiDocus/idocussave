@@ -10,7 +10,7 @@ class Admin::InvoicesController < Admin::AdminController
     file_path = @invoice.content.path params[:style]
     if File.exist?(file_path)
       filename = File.basename file_path
-      type = @invoice.content_file_type || 'application/pdf'
+      type = @invoice.content_content_type || 'application/pdf'
       send_file(file_path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404

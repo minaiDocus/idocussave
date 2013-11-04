@@ -275,10 +275,11 @@
       #subscription_options.row-fluid.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
         .span12
           .well
-            %h3.aligncenter Relance automatique par mail
+            %h3.aligncenter Notification par mail
             = simple_form_for @user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
               = hidden_field_tag :panel, 'subscription_options'
               = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
+              = f.input :is_document_notifier_active, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouveaux documents sont disponibles", wrapper: :inline_checkbox
               .form-actions
                 = f.submit 'Valider', class: 'btn'
       

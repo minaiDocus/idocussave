@@ -62,6 +62,17 @@ class Scan::Period
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
 
+  def self.period_name(duration, is_current=true)
+    time = Time.now
+    time -= duration.month unless is_current
+    if duration == 1
+      time.strftime('%Y%m')
+    elsif duration == 3
+      time = time.beginning_of_quarter
+      "#{time.year}T#{(time.month/3.0).ceil}"
+    end
+  end
+
   def scanned_pieces
     self.pieces - self.uploaded_pieces
   end
@@ -306,7 +317,7 @@ class Scan::Period
         pack = document.pack
         if pack
           list[:historic] = pack.historic.each { |h| h[:date] = h[:date].strftime("%d/%m/%Y") }
-          list[:link] = document.pack.documents.originals.first.content.url
+          list[:link] = document.pack.original_document.content.url
         else
           list[:historic] = ""
           list[:link] = ""

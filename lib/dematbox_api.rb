@@ -72,7 +72,8 @@ class DematboxApi
         'ser:operatorId' => DematboxConfig::OPERATOR_ID,
         'ser:boxId' => box_id,
         'ser:docId' => doc_id,
-        'ser:message' => message
+        'ser:message' => message,
+        'ser:messageDuration' => 5
       }
       response = client.call :upload_notification, message: message
       response.body[:upload_notification_response][:error_return]

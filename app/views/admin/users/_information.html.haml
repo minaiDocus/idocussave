@@ -77,6 +77,9 @@
             %tr
               %th= t('mongoid.models.user.attributes.is_reminder_email_active')
               %td.value= check_box_tag 'user[is_reminder_email_active]', 1, @user.is_reminder_email_active
+            %tr
+              %th= t('mongoid.models.user.attributes.is_document_notifier_active')
+              %td.value= check_box_tag 'user[is_document_notifier_active]', 1, @user.is_document_notifier_active
             - if @user.is_centralized_changed?
               %tr
                 %th

@@ -9,5 +9,5 @@
 #   inflect.uncountable %w( fish sheep )
 # end
 ActiveSupport::Inflector.inflections do |inflect|
-   inflect.uncountable %w( rights organization_rights reporting compta return_labels dematbox )
+   inflect.uncountable %w( rights organization_rights reporting compta return_labels dematbox periodic_metadata)
 end

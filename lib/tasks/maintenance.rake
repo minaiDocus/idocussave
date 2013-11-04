@@ -1,14 +1,5 @@
 # -*- encoding : UTF-8 -*-
 namespace :maintenance do
-  namespace :documents do
-    desc 'Fecth documents'
-    task :fetch => [:environment] do
-      Pack.get_file_from_numen
-      Pack.get_documents(nil)
-      ReminderEmail.deliver
-    end
-  end
-  
   namespace :address do
     desc 'Deliver updated address list'
     task :deliver_updated_list => [:environment] do
@@ -53,6 +44,16 @@ namespace :maintenance do
           print "done.\n"
         end
       end
+    end
+
+    desc 'Notify updated documents'
+    task :document_updated => [:environment] do
+      DocumentNotifier.notify_updated
+    end
+
+    desc 'Notify pending documents'
+    task :document_pending => [:environment] do
+      DocumentNotifier.notify_pending
     end
   end
 
@@ -109,13 +110,6 @@ namespace :maintenance do
       end
       puts "Task end at #{Time.now}"
       puts '##########################################################################################'
-    end
-  end
-
-  namespace :compta do
-    desc 'Fetch report data'
-    task :fetch_report, [:path] => :environment do
-      Pack::Report.fetch
     end
   end
 

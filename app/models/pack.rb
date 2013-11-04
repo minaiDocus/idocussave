@@ -4,9 +4,6 @@ class Pack
   include Mongoid::Timestamps
   include Tire::Model::Search
   include Tire::Model::Callbacks
-  
-  FETCHING_PATH = "#{Rails.root}/files/tmp"
-  STAMP_PATH = "#{Rails.root}/tmp/stamp.pdf"
 
   CODE_PATTERN = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
   JOURNAL_PATTERN = '[a-zA-Z0-9]+'
@@ -15,28 +12,40 @@ class Pack
   EXTENSION_PATTERN = '\.(pdf|PDF)'
   FILENAME_PATTERN = /^#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}$/
 
+  # TODO fix this
+  PeriodicMetadata = Scan::Document
+
   belongs_to :owner, class_name: "User", inverse_of: :own_packs
   has_and_belongs_to_many :users
   belongs_to :organization
 
-  has_many :documents,                                                         dependent: :destroy
-  has_many :pieces,          class_name: "Pack::Piece",     inverse_of: :pack, dependent: :destroy, autosave: true
-  has_one  :report,          class_name: "Pack::Report",    inverse_of: :pack
-  has_many :scan_documents,  class_name: "Scan::Document",  inverse_of: :pack
-  has_many :remote_files,                                                      dependent: :destroy
-  embeds_many :divisions
+  has_many :documents,                                                          dependent: :destroy
+  has_many :pieces,            class_name: 'Pack::Piece',    inverse_of: :pack, dependent: :destroy, autosave: true
+  has_one  :report,            class_name: 'Pack::Report',   inverse_of: :pack
+  has_many :periodic_metadata, class_name: 'Scan::Document', inverse_of: :pack
+  has_many :remote_files,                                                       dependent: :destroy
+  has_many :dividers,          class_name: 'PackDivider',    inverse_of: :pack, dependent: :destroy
   
   field :name,                 type: String
-  field :is_open_for_upload,   type: Boolean, default: true
   field :original_document_id, type: String
   field :content_url,          type: String
   field :content_historic,     type: Array,   default: []
   field :tags,                 type: Array,   default: []
   field :pages_count,          type: Integer, default: 0
-  
-  after_save :update_reporting_document
+  field :scanned_pages_count,  type: Integer, default: 0
+  field :uploaded_pages_count, type: Integer, default: 0
+  field :notified_pages_count, type: Integer, default: 0
 
-  scope :scan_delivered, where: { is_open_for_upload: false }
+  index :pages_count
+  index :scanned_pages_count
+  index :uploaded_pages_count
+  index :notified_pages_count
+
+  validates_presence_of :name
+  validates_uniqueness_of :name
+
+  scope :scan_delivered, where: { :scanned_pages_count.gt => 0 }
+  scope :updated,        where: { :pages_count.gt => 'this.notified_pages_count' }
 
   mapping do
     indexes :id, as: 'stringified_id'
@@ -49,9 +58,9 @@ class Pack
 
   def self.search(query, params = {})
     tire.search(page: params[:page], per_page: params[:per_page], load: true) do
-      filter :term, id: params[:id] if params[:id].present?
-      filter :terms, id: params[:ids] if params[:ids].present?
-      filter :term, owner_id: params[:owner_id] if params[:owner_id].present?
+      filter :term,  id:       params[:id]        if params[:id].present?
+      filter :terms, id:       params[:ids]       if params[:ids].present?
+      filter :term,  owner_id: params[:owner_id]  if params[:owner_id].present?
       filter :terms, owner_id: params[:owner_ids] if params[:owner_ids].present?
       sort { by :created_at, 'desc' }
       query { string(query) } if query.present?
@@ -71,6 +80,8 @@ class Pack
   end
 
   def set_pages_count
+    self.scanned_pages_count = pages.scanned.size
+    self.uploaded_pages_count = pages.uploaded.size
     self.pages_count = pages.size
   end
 
@@ -87,19 +98,19 @@ class Pack
   end
 
   def pages
-    self.documents.without_original
+    self.documents.not_mixed
   end
 
   def original_document
-    documents.originals.first
+    documents.mixed.first
   end
   
   def sheets_info
-    self.divisions.sheets
+    self.dividers.sheets
   end
   
   def pieces_info
-    self.divisions.pieces
+    self.dividers.pieces
   end
 
   def cover_info
@@ -114,59 +125,8 @@ class Pack
     cover_info.name.gsub('_',' ') rescue ''
   end
   
-  def find_scan_document(start_time, end_time)
-    scan_document = self.scan_documents.for_time(start_time,end_time).first
-    scan_document = Scan::Document.where(name: self.name).for_time(start_time,end_time).first unless scan_document
-    scan_document
-  end
-  
-  def find_or_create_scan_document(start_time, end_time, period)
-    sd = find_scan_document(start_time, end_time)
-    if sd
-      unless sd.period && sd.pack
-        sd.period ||= period
-        sd.pack ||= self
-        sd.save
-      end
-      sd
-    else
-      sd = Scan::Document.new
-      sd.name = name
-      sd.period = period
-      sd.pack = self
-      sd.save
-      sd
-    end
-  end
-  
-  def update_reporting_document
-    total = divisions.size
-    time = created_at
-    while total > 0
-      period = owner.find_or_create_scan_subscription.find_or_create_period(time)
-      current_divisions = divisions.of_month(time)
-      if current_divisions.any?
-        document = find_or_create_scan_document(period.start_at,period.end_at,period)
-        if document
-          document.sheets = current_divisions.sheets.count
-          document.pieces = current_divisions.pieces.count
-          document.pages = self.pages.of_month(time).count
-          document.uploaded_pieces = current_divisions.uploaded.pieces.count
-          document.uploaded_sheets = current_divisions.uploaded.sheets.count
-          document.uploaded_pages = self.pages.uploaded.of_month(time).count
-          document.save
-        end
-        if document.pages - document.uploaded_pages > 0
-          period.delivery.update_attributes(:state => "delivered")
-        end
-      end
-      total -= current_divisions.count
-      time += period.duration.month
-    end
-  end
-  
   def historic
-    _documents = self.documents.asc(:created_at).without_original.entries
+    _documents = self.pages.asc(:created_at).entries
     current_date = _documents.first.created_at
     @events = [{:date => current_date, :uploaded => 0, :scanned => 0}]
     current_offset = 0
@@ -176,7 +136,7 @@ class Pack
         current_offset += 1
         @events << {:date => current_date, :uploaded => 0, :scanned => 0}
       end
-      if document.is_an_upload
+      if document.uploaded?
         @events[current_offset][:uploaded] += 1
       else
         @events[current_offset][:scanned] += 1
@@ -185,482 +145,23 @@ class Pack
     @events
   end
 
-  def update_name(new_name)
-    filename = new_name.split(" ").join("_") +".pdf"
-    
-    doc = self.original_document
-    
-    File.rename(doc.content.path, File.join(File.dirname(doc.content.path), filename))
-    
-    doc.content_file_name = filename
-    doc.save
-    
-    _division_new_name = new_name.split(" ")[0..2].join("_")+"_"
-    _older_name = self.name.split(" ")[0..2].join("_")+"_"
-    
-    dvx = self.divisions
-    dvx.each do |division| 
-      division.name =  division.name.sub(_older_name,_division_new_name)
-      division.save
-    end
-    
-    piece_name = new_name.split(" ")[0..2].join("_")
-   
-    pcx = self.pieces
-    pcx.each do |piece|
-      path = piece.content.path
-      piece_last_part = File.basename(path).split("_")[3]
-      File.rename(path, File.join(File.dirname(path),"#{piece_name}_#{piece_last_part}"))
-      piece.content_file_name = piece_name.concat "_#{piece_last_part}"
-      piece.name = piece.name.sub(self.name.split(" ")[0..2].join(" "), new_name.split(" ")[0..2].join(" "))
-      piece.save
-    end
-    
-    part_name = new_name.gsub(" ","_")
-    
-    pages.each do |page|
-      path = page.content.path
-      path_last_part = File.basename(path).split("_")[4..5].join("_")
-      File.rename(path, File.join(File.dirname(path),"#{part_name}_#{path_last_part}"))
-      
-      path_thumb = page.content.path(:thumb)
-      thumb_last_part = File.basename(path_thumb).split("_")[4..5].join("_")
-      File.rename(path_thumb, File.join(File.dirname(path_thumb), "#{part_name}_#{thumb_last_part}"))
-      
-      path_medium = page.content.path(:medium)
-      medium_last_part = File.basename(path_medium).split("_")[4..5].join("_")
-      File.rename(path_medium, File.join(File.dirname(path_medium), "#{part_name}_#{medium_last_part}"))
-      
-      file_name = page.content_file_name
-      file_name_last_part = File.basename(file_name).split("_")[4..5].join("_")
-      page.content_file_name = "#{part_name}_#{file_name_last_part}"
-      page.save
-    end
-    
-    pdx = self.owner.periods
-    
-    pdx.each do |period|
-      period.documents.each do |document|
-        if document.name == self.name
-          document.name = new_name
-          document.save
-        end
-      end
-    end
-    
-    self.name = new_name
-    self.save
-   
-    self.update_stamp   
-  end
-  
-  def regenerate_stamp_name(text, stamp_name, is_an_upload)
-    txt = stamp_name
-    info = text.split(' ')
-    
-    origin = is_an_upload ? "INF" : "PAP"
-   
-    txt.gsub(':code', info[0]).
-    gsub(':account_book', info[1]).
-    gsub(':period', info[2]).
-    gsub(':piece_num', info[3]).
-    gsub(':origin', origin)
-  end
-  
-  def regenerate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, path)
-    filepath = path + "_"
-    size = Poppler::Document.new(filepath).pages[0].size
-    temp_text = text.gsub("_"," ").sub("all pages","").sub(".pdf","").split(" ").join(" ")
-    txt = File.basename(regenerate_stamp_name(temp_text,stamp_name,is_an_upload))
-      Prawn::Document.generate STAMP_PATH, page_size: size, top_margin: 10 do
-        if is_stamp_background_filled
-          bounding_box([0, bounds.height], :width => bounds.width) do
-            data = [[txt]]
-            table(data, position: :center) do
-              style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
-              style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center)
-            end
-          end 
-        else
-          bounding_box([0, bounds.height], :width => bounds.width) do
-            stroke_color "FF0000"
-            data = [[txt]]
-            table(data, position: :center) do
-              style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
-              style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center, size: 10)
-            end
-          end 
-        end
-      end
-    STAMP_PATH
-  end
-  
-  def regenerate_new_name(filename, number)
-    zero_filler = "0" * (3 - number.to_s.size)
-    filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
-  end
-  
-  def reapply_new_name(filesname, starting_page, stamp_name, is_stamp_background_filled, is_an_upload)
-    filesname.each { |filename| File.rename filename, filename + "_"  }
-    start = starting_page
-    filesname.map do |filename|
-      new_filename = regenerate_new_name(filename,(start += 1) - 1)
-      stamp_path = regenerate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
-      system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
-      system "rm #{filename}_"
-      new_filename
-    end
-  end
-  
-  def update_stamp
-    pages = self.pages
-    starting_page = 1
-    filesname = []
-    pages.each do |page|
-      filesname << page.content.path
-    end
-    self.reapply_new_name(filesname, 1, self.owner.stamp_name, self.owner.is_stamp_background_filled, pages.first.is_an_upload)
+  def archive_name
+    name.gsub(/\s/,'_') + '.zip'
   end
 
-  def zip_name
-    self.name.gsub(/\s/,'_') + '.zip'
+  def archive_file_path
+    File.join([Rails.root, 'files', Rails.env, 'archives', archive_name])
   end
 
-  def zip_file_path
-    File.join([Rails.root,'files/archives/',zip_name])
-  end
-
-  def make_zip
-    filespath = pieces.map { |e| e.content.path }
-    clean_filespath = filespath.map { |e| "'#{e}'" }.join(' ')
-    cmd = "zip -j #{zip_file_path} #{clean_filespath}"
-    pid = Process.spawn(cmd)
-    Rails.logger.debug "[#{pid}] zip pack '#{self.name}' with :\n\t#{cmd}"
-    begin
-      Timeout.timeout(120) do
-        Process.wait(pid)
-        Rails.logger.debug "[#{pid}] zip pack '#{self.name}' done."
-      end
-      zip_file_path
-    rescue Timeout::Error
-      Rails.logger.debug "[#{pid}] zip pack '#{self.name}' not finished in time, killing it"
-      Process.kill('TERM', pid)
-      false
-    end
-  end
-  
   class << self
     def find_by_name(name)
       where(name: name).first
     end
 
-    def find_or_create_by_name(name, user)
-      find_by_name(name) || Pack.new(owner_id: user.id, name: name)
-    end
-    
-    def valid_documents
-      Dir.entries("./").select { |f| f.match(FILENAME_PATTERN) }
-    end
-    
-    def downcase_extension
-      valid_documents.each do |file_name|
-        if file_name.match(/\.PDF$/)
-          File.rename(file_name, file_name.sub(/\.PDF$/,'.pdf'))
-        end
-      end
-    end
-    
-    def page_number_of(document)
-      `pdftk #{document} dump_data`.scan(/NumberOfPages: [0-9]+/).join().scan(/[0-9]+/).join().to_i rescue 0
+    def find_or_initialize(name, user)
+      find_by_name(name) || Pack.new(name: name, owner_id: user.id)
     end
 
-    def get_file_from_ftp(url, login, password, target_dir='/', service='')
-      Dir.chdir(File.join([FETCHING_PATH, 'DELIVERY_BACKUP']))
-
-      total_filesname = []
-
-      require "net/ftp"
-
-      begin
-        try = 0
-        begin
-        ftp = Net::FTP.new(url, login, password)
-
-        ftp.chdir(target_dir)
-        root_files_name = ftp.nlst.sort
-
-        processed_csv_files = Dir.glob("*\.csv")
-        remote_csv_files = root_files_name.select { |e| e.match(/\.csv$/) }
-        csv_files = remote_csv_files - processed_csv_files
-        csv_files.each do |csv_file|
-          ftp.getbinaryfile(csv_file)
-        end
-
-        headers = root_files_name.select { |e| e.match(/\.txt$/) }
-
-        processed_headers = Dir.glob("#{service}[0-9]*.txt").
-                                map { |e| e.sub(/^#{service}/,'') }
-        headers = headers - processed_headers
-
-        headers.each do |header|
-          folder_name = root_files_name.select { |e| e.match(/#{File.basename(header,".txt")}$/) }.first
-          puts "Looking at folder : #{folder_name}"
-          ftp.chdir(folder_name)
-          folders_name = ftp.nlst.sort
-
-          all_filesname = []
-
-          Dir.mkdir(folder_name) unless File.exist?(folder_name)
-          Dir.chdir(folder_name)
-          folders_name.each do |foldername|
-            ftp.chdir(foldername)
-            files_name = ftp.nlst.sort.select { |f| f.match(FILENAME_PATTERN) }
-            all_filesname += files_name
-            files_name.each do |file_name|
-              unless File.exist?(file_name)
-                print "\tTrying to fetch document named #{file_name}..."
-                ftp.getbinaryfile(file_name)
-                print "done\n"
-              else
-                puts "\tHad already fetched document named #{file_name}"
-              end
-              # ftp.delete(fileName)
-            end
-            ftp.chdir("../")
-          end
-
-          is_ok = true
-          filesname_with_error = []
-          all_filesname.each do |filename|
-            if `pdftk #{filename} dump_data`.empty?
-              is_ok = false
-              filesname_with_error << filename
-            end
-          end
-
-          if is_ok
-            path = File.join([RegroupSheet::FILES_PATH,Time.now.strftime('%Y%m%d')])
-            cached_path = RegroupSheet::CACHED_FILES_PATH
-            FileUtils.mkdir_p(cached_path)
-            user_codes = []
-            all_filesname.each do |filename|
-              info = filename.split('_')
-              code = info[0]
-              journal = info[1]
-              user = User.where(code: code).first
-              account_book_type = nil
-              account_book_type = user.account_book_types.where(name: journal).first if user
-              if account_book_type && account_book_type.compta_processable?
-                user_codes << code
-                FileUtils.mkdir_p(path)
-                FileUtils.cp(filename,File.join([path, filename]))
-                FileUtils.cp(filename,File.join([cached_path, filename]))
-              else
-                FileUtils.cp(filename,File.join([Pack::FETCHING_PATH,filename]))
-                total_filesname << filename
-              end
-            end
-            user_codes.uniq!
-            begin
-              AccountingPlan.update_files_for(user_codes)
-            rescue => e
-              content = "#{e.class}<br /><br />#{e.message}"
-              ErrorNotification::EMAILS.each do |email|
-                NotificationMailer.notify(email, "[iDocus] Erreur de mise à jour de la base Ibiza", content).deliver
-              end
-            end
-          else
-            ErrorNotification::EMAILS.each do |email|
-              NotificationMailer.notify(email,"Récupération des documents","Bonjour,<br /><br />Les fichiers suivant livrés par #{service.presence || 'Numen'} sont corrompus :<br />#{filesname_with_error.join(', ')}." ).deliver
-            end
-          end
-
-          Dir.chdir("..")
-          ftp.chdir("..")
-          File.new("#{service}#{header}","w")
-        end
-
-        ftp.close
-        rescue Errno::ETIMEDOUT
-          if try < 3
-            try += 1
-            sleep(10)
-            retry
-          else
-            raise
-          end
-        end
-      rescue Errno::ETIMEDOUT
-        Rails.logger.info "[#{Time.now}] FTP: connect to #{url} : timeout"
-      rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError => e
-        content = "#{e.class}<br /><br />#{e.message}"
-        ErrorNotification::EMAILS.each do |email|
-          NotificationMailer.notify(email, "[iDocus] Erreur lors de la récupération des documents", content).deliver
-        end
-      end
-
-      total_filesname
-    end
-
-    def get_csv_files(service='')
-      require 'csv'
-
-      Dir.chdir(File.join([FETCHING_PATH, 'DELIVERY_BACKUP']))
-      all_csv_files = Dir.glob("*.csv")
-      processed_csv_files = Dir.glob("*.csv.ok").map { |e| e.sub(/\.ok$/,'') }
-      csv_files = all_csv_files - processed_csv_files
-      csv_files.each do |csv_file|
-        print "Processing csv file : #{csv_file}..."
-        rows = CSV.read(csv_file).
-                   reject { |e| e.empty? || e.first.match(/^;*$/) }.
-                   map { |e| e.first.split(';') }.
-                   reject { |e| !e.first.match(/^#{CODE_PATTERN} #{JOURNAL_PATTERN} #{PERIOD_PATTERN}/) }
-        rows.each do |row|
-          name, paperclips, oversized = row
-          code = name.split[0]
-          user = User.find_by_code code
-          if user
-            period = user.find_or_create_scan_subscription.
-                          find_or_create_period(Time.now)
-            document = Scan::Document.where(name: "#{name} all").for_time(period.start_at,period.end_at).first
-            document = Scan::Document.new(name: "#{name} all") unless document
-            document.scanned_by = service
-            document.scanned_at = Time.now
-            document.paperclips += paperclips.to_i
-            document.oversized += oversized.to_i
-            document.save
-          end
-        end
-        File.new("#{csv_file}.ok",'w')
-        print "done\n"
-      end
-    end
-    
-    def get_documents(files)
-      Dir.chdir FETCHING_PATH
-      if files.nil?
-        filesname = []
-      else
-        if files.empty?
-          downcase_extension
-          filesname = valid_documents.sort
-        else
-          filesname = files
-        end
-      end
-      data = []
-      # traiter un document à la fois
-      while !filesname.empty?
-        filename = filesname.first
-        basename = filename.sub(/_[0-9]{3}\.pdf/,"")
-        user_code = filename.split("_")[0]
-        pack_filesname = filesname.find_all { |f| f.match(/#{basename}/) }
-        if user = User.where(:code => user_code).first
-          pack = find_or_create_by_name basename.gsub("_"," ") + " all", user
-          data << add(pack_filesname, pack)
-        end
-        Dir.chdir FETCHING_PATH
-        
-        filesname -= pack_filesname
-      end
-      data
-    end
-
-    def deliver_mail(data)
-      while data.any?
-        email = data.first[0]
-        tempdata = data.select { |d| d[0] == email }
-        filesname = tempdata.map { |e| e[1] }
-        PackMailer.new_document_available(User.find_by_email(email), filesname).deliver
-        data = data - tempdata
-      end
-    end
-    
-    def add(filesname, pack, is_an_upload=false)
-      user = pack.owner
-      pack_name = pack.name.gsub(" ","_")
-      pack_filename = pack_name + ".pdf"
-      
-      init_and_moov_to pack_name, filesname
-      pack.is_open_for_upload = false if is_an_upload == false
-      
-      #  Renommage des fichiers.
-      cover = nil
-      is_cover_page_exist = filesname.select { |e| e.match /_000\.pdf$/ }.first.present?
-      if pack.new?
-        start_at_page = 1
-      else
-        start_at_page = pack.pieces_info.not_covers.count + 1
-      end
-      cover = filesname.select { |e| e.match /_000\.pdf$/ }.first
-      filesname = filesname - [cover]
-      if is_cover_page_exist && !pack.has_cover?
-        apply_new_name([cover], 0, user.stamp_name, user.is_stamp_background_filled, false)
-      elsif is_cover_page_exist
-        File.rename cover, "na_#{cover}"
-        cover = nil
-      end
-      filesname = apply_new_name(filesname, start_at_page, user.stamp_name, user.is_stamp_background_filled, is_an_upload)
-
-      piece_position = pack.pieces_info.not_covers.last.position + 1 rescue 1
-      sheet_position = pack.sheets_info.not_covers.last.position + 1 rescue 1
-      update_pieces(filesname, pack, piece_position, is_an_upload, cover)
-      update_division(filesname, pack, piece_position, sheet_position, is_an_upload, cover)
-
-      #  Création du fichier all.
-      combined_file = nil
-      if filesname.present?
-        filesname_list = filesname.sum { |f| " " + f }
-        system "pdftk #{filesname_list} cat output #{pack_filename}"
-        combined_file = pack_filename
-      end
-      
-      #  Vérification de l'existance ou pas.
-      if pack.persisted?
-        #  Mise à jour des documents.
-        Document.update_file pack, combined_file, cover, is_an_upload
-        pack.updated_at = Time.now
-        pack.set_pages_count
-        pack.set_historic
-        pack.save
-        pack.pieces.each do |piece|
-          piece.save if piece.changed?
-        end
-      else
-        #  Attribution du pack.
-        pack.owner = user
-        pack.users << user
-        pack.users = pack.users + user.share_with
-        pack.organization = user.organization
-
-        document = Document.new
-        document.dirty = true
-        document.is_an_original = true
-        document.is_an_upload = is_an_upload
-        document.pack = pack
-        document.content = File.new pack_filename
-        document.save
-        Document.update_file pack, nil, cover, is_an_upload
-
-        pack.set_original_document_id
-        pack.set_content_url
-        pack.set_pages_count
-        pack.set_historic
-        pack.save
-      end
-
-      #  Marquage des fichiers comme étant traité.
-      filesname.each do |filename|
-        File.rename filename, "up_" + filename
-      end
-      File.rename cover, "up_" + cover if cover
-
-      pack.make_zip
-      FileDeliveryInit.prepare(pack)
-
-      [user.email,pack_filename,piece_position]
-    end
-    
     def info_path(pack_name, receiver=nil)
       name_info = pack_name.split("_")
       pack = Pack.find_by_name(name_info.join(' '))
@@ -677,175 +178,6 @@ class Pack
       info[:month] = name_info[2][4..5]
       info[:delivery_date] = Time.now.strftime("%Y%m%d")
       info
-    end
-    
-    def default_delivery_path(pack_name)
-      part = pack_name.split "_"
-      "/#{part[0]}/#{part[2]}/#{part[1]}/"
-    end
-    
-  private
-
-    def update_division(filesname, pack, piece_position, sheet_position, is_an_upload, cover)
-      if cover
-        piece = Division.new
-        piece.level = Division::PIECES_LEVEL
-        piece.created_at = piece.updated_at = Time.now
-        piece.name = cover.sub(".pdf",'')
-        piece.start = 0
-        piece.end = 0
-        piece.is_an_upload = false
-        piece.is_a_cover = true
-        piece.position = 0
-        pack.divisions << piece
-
-        sheet = Division.new
-        sheet.level = Division::SHEETS_LEVEL
-        sheet.created_at = sheet.updated_at = Time.now
-        sheet.name = cover.sub(".pdf",'')
-        sheet.start = 0
-        sheet.end = 0
-        sheet.is_an_upload = false
-        sheet.is_a_cover = true
-        sheet.position = 0
-        pack.divisions << sheet
-      end
-
-      total_pages = 0
-      count = pack.documents.not_covers.count
-      current_page = (count == 0) ? 1 : count
-      current_piece_position = piece_position
-      current_sheet_position = sheet_position
-
-      filesname.each do |filename|
-        name = filename.sub(".pdf","")
-        pages_number = page_number_of filename
-
-        piece = Division.new
-        piece.level = Division::PIECES_LEVEL
-        
-        piece.created_at = piece.updated_at = Time.now
-        
-        piece.name = name
-        piece.start = current_page
-        piece.end = current_page + pages_number - 1
-        piece.is_an_upload = is_an_upload
-        piece.position = current_piece_position
-        pack.divisions << piece
-
-        if is_an_upload
-          sheet = Division.new
-          sheet.level = Division::SHEETS_LEVEL
-          sheet.created_at = sheet.updated_at = Time.now
-          sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
-          sheet.start = current_page
-          sheet.end = current_page + pages_number - 1
-          sheet.is_an_upload = is_an_upload
-          sheet.position = current_sheet_position
-          pack.divisions << sheet
-          current_sheet_position += 1
-        else
-          (pages_number / 2).times do |i|
-            sheet = Division.new
-            sheet.level = Division::SHEETS_LEVEL
-            sheet.created_at = sheet.updated_at = Time.now
-            sheet.name = name.sub(/\d{3}$/,'%0.3d' % current_sheet_position)
-            sheet.start = current_page + (i*2)
-            sheet.end = current_page + (i*2) + 1
-            sheet.is_an_upload = is_an_upload
-            sheet.position = current_sheet_position
-            pack.divisions << sheet
-            current_sheet_position += 1
-          end
-        end
-
-        current_page += pages_number
-        current_piece_position += 1
-        total_pages += pages_number
-      end
-    end
-
-    def update_pieces(filesname, pack, position, is_an_upload, cover)
-      if cover.present?
-        piece = Pack::Piece.new
-        piece.pack = pack
-        piece.name = File.basename(cover,'.pdf').gsub('_',' ')
-        piece.content = open(cover)
-        piece.is_an_upload = false
-        piece.is_a_cover = true
-        piece.position = 0
-      end
-      current_position = position
-      filesname.each do |filename|
-        piece = Pack::Piece.new
-        piece.pack = pack
-        piece.name = File.basename(filename,'.pdf').gsub('_',' ')
-        piece.content = open(filename)
-        piece.is_an_upload = is_an_upload
-        piece.position = current_position
-        current_position += 1
-      end
-    end
-  
-    def init_and_moov_to(name, filesname)
-      Dir.mkdir name rescue nil
-      filesname.each { |filename| system "mv #{filename} #{name}" }
-      Dir.chdir name
-      File.delete name + ".pdf" rescue nil
-    end
-
-    def apply_new_name(filesname, starting_page, stamp_name, is_stamp_background_filled, is_an_upload)
-      filesname.each { |filename| File.rename filename, filename + "_"  }
-      start = starting_page
-      filesname.map do |filename|
-        new_filename = generate_new_name(filename,(start += 1) - 1)
-        stamp_path = generate_stamp(new_filename.gsub("_"," ").sub(".pdf",""), stamp_name, is_stamp_background_filled, is_an_upload, filename)
-        system "pdftk #{filename}_ stamp #{stamp_path} output #{new_filename}"
-        system "rm #{filename}_"
-        new_filename
-      end
-    end
-
-    def generate_new_name(filename, number)
-      zero_filler = "0" * (3 - number.to_s.size)
-      filename.sub /[0-9]{3}\.pdf/, zero_filler + number.to_s + ".pdf"
-    end
-
-    def generate_stamp(text, stamp_name, is_stamp_background_filled, is_an_upload, filename)
-      filepath = './' + filename + '_'
-      sizes = Poppler::Document.new(filepath).pages.map(&:size)
-      txt = generate_stamp_name(text, stamp_name, is_an_upload)
-      Prawn::Document.generate STAMP_PATH, page_size: sizes.first, top_margin: 10 do
-        sizes.each_with_index do |size, index|
-          start_new_page(size: size) if index != 0
-          if is_stamp_background_filled
-            bounding_box([0, bounds.height], :width => bounds.width) do
-              data = [[txt]]
-              table(data, position: :center) do
-                style(row(0), border_color: "FF0000", text_color: "FFFFFF", background_color: "FF0000")
-                style(columns(0), background_color: "FF0000", border_color: "FF0000", align: :center)
-              end
-            end
-          else
-            fill_color "FF0000"
-            text txt, size: 10, :align => :center
-          end
-        end
-      end
-      STAMP_PATH
-    end
-  
-    def generate_stamp_name(text, stamp_name, is_an_upload)
-      txt = stamp_name
-      info = text.split(' ')
-      
-      origin = is_an_upload ? "INF" : "PAP"
-     
-      txt.gsub(':code', info[0]).
-      gsub(':account_book', info[1]).
-      gsub(':period', info[2]).
-      gsub(':piece_num', info[3]).
-      gsub(':origin', origin)
     end
   end
 end

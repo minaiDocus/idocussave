@@ -1,0 +1,104 @@
+# -*- encoding : UTF-8 -*-
+require 'spec_helper'
+
+describe DematboxDocument do
+  describe '.new' do
+    before(:all) do
+      Timecop.freeze(Time.local(2013,1,1))
+      DatabaseCleaner.start
+
+      File.open("#{Rails.root}/spec/support/files/completed.pdf", "r") do |f|
+        @content64 = Base64::encode64(f.readlines.join)
+      end
+
+      @params = {
+        'virtual_box_id' => '1',
+        'service_id' => '1',
+        'improved_scan' => @content64,
+        'doc_id' => '1',
+        'box_id' => '1',
+        'text' => nil
+      }
+
+      user = FactoryGirl.create(:user, code: 'TS0001')
+      dematbox = Dematbox.new(number: 1)
+      dematbox.user = user
+      service = DematboxSubscribedService.new
+      service.pid = '1'
+      service.is_for_current_period = true
+      service.name = 'TS'
+      dematbox.services << service
+      dematbox.save
+    end
+
+    after(:all) do
+      DatabaseCleaner.clean
+      Timecop.return
+    end
+
+    context 'once' do
+      context 'when arguments are valid' do
+        before(:all) do
+          @dematbox_document = DematboxDocument.new(@params)
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_valid }
+
+        describe 'temp_document' do
+          subject { @dematbox_document.temp_document }
+
+          it { should be_persisted }
+          its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+        end
+      end
+
+      context 'when virtual_box_id is not valid' do
+        before(:all) do
+          params = @params.merge({ 'virtual_box_id' => '2' })
+          @dematbox_document = DematboxDocument.new(params)
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_invalid }
+      end
+
+      context 'when service_id is not valid' do
+        before(:all) do
+          params = @params.merge({ 'service_id' => '2' })
+          @dematbox_document = DematboxDocument.new(params)
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_invalid }
+      end
+
+      context 'when content is not valid' do
+        before(:all) do
+          @dematbox_document = DematboxDocument.new(@params.merge({ 'improved_scan' => 'CONTENT' }))
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_invalid }
+      end
+    end
+
+    context 'twice' do
+      context 'when arguments are valid' do
+        before(:all) do
+          @dematbox_document = DematboxDocument.new(@params)
+          @dematbox_document2 = DematboxDocument.new(@params.merge({ 'doc_id' => 2 }))
+        end
+
+        it 'should create 2 temp_documents' do
+          temp_pack = TempPack.where(name: 'TS0001 TS 201301 all').first
+          expect(temp_pack.temp_documents.count).to eq(2)
+        end
+      end
+    end
+  end
+end

@@ -82,4 +82,5 @@ group :test do
   gem 'guard-spork'
   gem 'guard-rspec'
   gem 'database_cleaner'
+  gem 'timecop'
 end

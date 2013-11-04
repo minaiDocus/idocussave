@@ -27,7 +27,7 @@ class Account::Documents::SharingsController < Account::AccountController
     clean_pack_ids = params[:pack_ids].select { |e| e.in?(pack_ids) && !e.in?(own_pack_ids) }
     packs = Pack.any_in(_id: clean_pack_ids)
 
-    Pack.without_callback(:save, :after, :update_reporting_document) do
+    Pack.observers.disable :all do
       packs.each do |pack|
         @user['pack_ids'] = @user['pack_ids'] - [pack.id]
         pack['user_ids'] = pack['user_ids'] - [@user.id]

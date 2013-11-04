@@ -54,6 +54,11 @@ class ApplicationController < ActionController::Base
     instance_variable_set name, value
   end
 
+  def present(object, klass=nil)
+    klass ||= "#{object.class}Presenter".constantize
+    klass.new(object)
+  end
+
 private
 
   def format_price_00 price_in_cents

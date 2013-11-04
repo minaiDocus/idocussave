@@ -3,7 +3,6 @@
 # contributor: Sebastien Grosjean - ZenCocoon.com
 
 fr:
-  
   date:
     formats:
       default: "%d/%m/%Y"
@@ -297,6 +296,12 @@ fr:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
             oversized:
               greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+        uploaded_document:
+          attributes:
+            file_size_is_too_big: 'taille %{size_in_mo} Mo trop gros (50 Mo max.)'
+            invalid_file_extension: 'extension %{extension} invalide (.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)'
+            journal_unknown: 'journal %{journal} inconnu'
+            file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mot de passe'
     models:
       common:
         attributes:
@@ -324,6 +329,7 @@ fr:
           is_editable: 'Est éditable ?'
           is_access_by_token_active: 'Accès par jeton activé ?'
           is_reminder_email_active: 'Rappel activé ?'
+          is_document_notifier_active: 'Notification des nouveaux documents activé ?'
           is_centralized: 'Est centralisé ?'
           is_dematbox_authorized: Dematbox autorisé ?
           use_debit_mandate: 'Utilise le prélévement ?'
@@ -641,23 +647,35 @@ fr:
           third_party_account: Compte tiers
           third_party_name: Nom tiers
           conterpart_account: Compte contrepartie
-      dematbox_file:
-        zero: 0 fichier dematbox
-        one: 1 fichier dematbox
-        other: '%{count} fichiers dematbox'
-        name: Fichier dematbox
+      temp_document:
+        zero: 0 fichier
+        one: 1 fichier
+        other: '%{count} fichiers'
+        name: Fichier temporaire
         attributes:
-          user: Client
-          user_code: Code utilisateur
-          journal_name: Journal
-          period: Période
-          box_id: Id box
-          doc_id: Id doc
-          service_id: Id service
-          text: Texte
-          is_processed: 'Etat'
-          is_processed_state:
-            wait: 'En attente'
-            processed: 'Traité'
+          original_file_name: Nom original du document
           content_file_name: Nom du document
+          content_content_type: Type
           content_file_size: Taille (Mo)
+          content_updated_at: Contenu mise à jour le
+          position: Position
+          is_an_original: Original ?
+          delivered_by: Delivré par
+          delivery_type: Origine du document
+          dematbox_doc_id: Id document
+          dematbox_box_id: Id box
+          dematbox_service_id: Id service
+          dematbox_text: Texte
+          dematbox_is_notified: Notifié ?
+          dematbox_notified_at: Notifié le
+          state:
+            name: 'Etat'
+            values:
+              created: Créé
+              unreadable: Corrompu
+              ready: Prêt
+              bundle_needed: Requière un regroupement
+              bundling: Regroupé
+              processed: Traité
+          stated_at: Etat mise à jour le
+          is_locked: Bloqué ?

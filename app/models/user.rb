@@ -56,6 +56,7 @@ class User
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :file_type_to_deliver,           type: Integer, default: ExternalFileStorage::PDF
   field :is_reminder_email_active,       type: Boolean, default: true
+  field :is_document_notifier_active,    type: Boolean, default: true
   field :is_centralized,                 type: Boolean, default: true
 
   validates_uniqueness_of :code
@@ -107,7 +108,6 @@ class User
   has_many :credits
   has_many :subscriptions
   has_many :backups
-  has_many :uploaded_files
   has_many :remote_files, dependent: :destroy
   has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
@@ -118,7 +118,6 @@ class User
   has_one :accounting_plan
 
   has_one :dematbox
-  has_many :dematbox_files
 
   belongs_to :scanning_provider, inverse_of: 'customers'
   

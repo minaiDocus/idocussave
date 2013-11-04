@@ -31,11 +31,11 @@ set :stages, %w(production staging sandbox)
 set :default_stage, "production"
 require 'capistrano/ext/multistage'
 
-before "deploy", "worker:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
+before "deploy", "manager:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"
 before "deploy:symlink", "shared:symlink"
-after "deploy", "deploy:cleanup", "worker:start", "delayed_job:start"
+after "deploy", "deploy:cleanup", "manager:start", "delayed_job:start"
 
 def remote_file_exist?(filepath)
   'true' == capture("if [ -e #{filepath} ]; then echo 'true'; fi").strip
@@ -62,14 +62,14 @@ namespace :shared do
   desc "Create necessary directories"
   task :mkdir do
     run "mkdir -p #{shared_path}/config/initializers"
-    run "mkdir -p #{shared_path}/public/system"
+    run "mkdir -p #{shared_path}/public/system/#{rails_env}"
     run "mkdir -p #{current_release}/tmp/barcode"
     run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/tmp/uploads"
     run "mkdir -p #{shared_path}/files/tmp/DELIVERY_BACKUP"
-    run "mkdir -p #{shared_path}/files/kit"
-    run "mkdir -p #{shared_path}/files/attachments/archives"
-    run "mkdir -p #{shared_path}/files/compositions"
+    run "mkdir -p #{shared_path}/files/#{rails_env}/kit"
+    run "mkdir -p #{shared_path}/files/#{rails_env}/archives"
+    run "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
   end
 
   desc "Prepare config files"
@@ -150,13 +150,13 @@ namespace :delayed_job do
   end
 end
 
-namespace :worker do
-  desc "Start worker process"
+namespace :manager do
+  desc "Start manager process"
   task :start, :roles => :app do
     # nothing to do
   end
 
-  desc "Stop worker process"
+  desc "Stop manager process"
   task :stop, :roles => :app do
     # nothing to do
   end

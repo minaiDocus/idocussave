@@ -44,7 +44,7 @@ public
     end
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     @pack = Pack.find(params[:id])
-    @documents = Document.search(params[:filter], pack_id: params[:id], is_an_original: false, per_page: 10000)
+    @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan'], per_page: 10000)
   end
 
   def packs
@@ -151,7 +151,7 @@ public
     filepath = piece.content.path
     if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
       filename = File.basename(filepath)
-      type = piece.content_file_type || 'application/pdf'
+      type = piece.content_content_type || 'application/pdf'
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404

@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe 'Logging visit' do
+  before(:each) do
+    DatabaseCleaner.start
+  end
+
+  after(:each) do
+    DatabaseCleaner.clean
+  end
+  
   context 'as visitor' do
     it 'should log successfully homepage visit' do
       visit '/'

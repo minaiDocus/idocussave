@@ -1,7 +1,15 @@
 require 'spec_helper'
 
 describe PagesController do
-	describe 'Visiting page About' do
+	before(:each) do
+    DatabaseCleaner.start
+  end
+
+  after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  describe 'Visiting page About' do
 		it 'should be successful' do
 			Page.create(title: 'about', label: 'about', tag: 'about')
 			get :show, id: 'about'

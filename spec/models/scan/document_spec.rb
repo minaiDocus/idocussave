@@ -3,6 +3,14 @@ require 'spec_helper'
 
 describe Scan::Document do
   before(:each) do
+    DatabaseCleaner.start
+  end
+
+  after(:each) do
+    DatabaseCleaner.clean
+  end
+  
+  before(:each) do
     @period = Scan::Period.create!(:start_at => Time.now, :end_in => 1)
     @document_name = "TS0001 XX #{Time.now.strftime('%Y%m')} all"
     @document_name2 = "TS0001 ZZ #{Time.now.strftime('%Y%m')} all"

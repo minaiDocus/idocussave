@@ -7,24 +7,20 @@
         %thead
           %tr
             %th= t('mongoid.models.common.attributes.created_at')
-            %th= t('mongoid.models.dematbox_file.attributes.doc_id')
-            %th= t('mongoid.models.dematbox_file.attributes.user')
-            %th= t('mongoid.models.dematbox_file.attributes.user_code')
-            %th= t('mongoid.models.dematbox_file.attributes.journal_name')
-            %th= t('mongoid.models.dematbox_file.attributes.period')
-            %th= t('mongoid.models.dematbox_file.attributes.content_file_size')
-            %th= t('mongoid.models.dematbox_file.attributes.is_processed')
+            %th= t('mongoid.models.temp_document.attributes.dematbox_doc_id')
+            %th= t('mongoid.models.temp_document.attributes.delivered_by')
+            %th= t('mongoid.models.temp_document.attributes.content_file_name')
+            %th= t('mongoid.models.temp_document.attributes.content_file_size')
+            %th= t('mongoid.models.temp_document.attributes.state.name')
         %tbody
           - @dematbox_files.each do |file|
             %tr
               %td= l file.created_at
-              %td= file.doc_id
-              %td= link_to file.user.code, [:admin, file.user]
-              %td= file.user_code
-              %td= file.journal_name
-              %td= file.period
+              %td= file.dematbox_doc_id
+              %td= file.delivered_by
+              %td= file.content_file_name
               %td= file_size file.content_file_size
-              %td= dematbox_file_state file.is_processed
+              %td= t("mongoid.models.temp_document.attributes.state.values.#{file.state}")
       .pull-right
         = paginate @dematbox_files
     .span3

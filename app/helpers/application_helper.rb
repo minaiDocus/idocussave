@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 module ApplicationHelper
-  include StaticList::Helpers
-
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",").gsub(/,00/, "")
@@ -150,5 +148,12 @@ module ApplicationHelper
     temp_class.uniq!
     temp_options = options.merge( class: temp_class )
     link_to number, params.merge( per_page: number ), temp_options
+  end
+
+  def present(object, klass=nil)
+    klass ||= "#{object.class}Presenter".constantize
+    presenter = klass.new(object, self)
+    yield presenter if block_given?
+    presenter
   end
 end

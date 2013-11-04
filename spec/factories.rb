@@ -54,9 +54,12 @@ FactoryGirl.define do
   end
   
   factory Pack do
+    name { "TS0001 TS #{Time.now.strftime('%Y%m')} all" }
     factory :division do
       sequence(:position) { |n| n+1 }
-      name { |division| "TEST0001_TS_#{Time.now.strftime('%Y%m')}_all_pages_#{"%03d" % division.position}.pdf" }
+      name { |division| "TS0001_TS_#{Time.now.strftime('%Y%m')}_#{"%03d" % division.position}" }
+      sequence(:start) { |n| n+1 }
+      sequence(:end) { |n| n+1 }
     end
   end
 

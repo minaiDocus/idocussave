@@ -3,7 +3,7 @@ set :deploy_to, "/home/grevalis/www/idocus/production"
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 20 start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 5 start"
   end
 
   desc "Stop delayed_job process"
@@ -18,26 +18,17 @@ namespace :delayed_job do
   end
 end
 
-namespace :worker do
-  desc "Start worker process"
+namespace :manager do
+  desc "Start manager"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} god -c script/idocus.god"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/maintenance_ctl start"
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/return_labels_updater_ctl start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/manager_ctl start"
   end
 
-  namespace :maintenance do
-    desc "Wakeup the maintenance process"
-    task :wakeup, :roles => :app do
-      run "cd #{current_path}/tmp; touch wakeup_maintenance.txt"
-    end
-  end
-
-  desc "Stop worker process"
+  desc "Stop manager"
   task :stop, :roles => :app do
-    run "cd #{current_path}; touch tmp/stop_worker.txt"
-    run "cd #{current_path}; touch tmp/stop_maintenance.txt"
-    run "cd #{current_path}; touch tmp/stop_return_labels_updater.txt"
-    run "cd #{current_path}; god terminate"
+    file_path = "#{current_path}/log/manager.rb.pid"
+    if remote_file_exist?(file_path)
+      run "cd #{current_path}; kill -TERM $(cat #{file_path})"
+    end
   end
 end

@@ -4,15 +4,17 @@ class Pack::Piece
   include Mongoid::Timestamps
   include Mongoid::Paperclip
 
-  field :name,               type: String
+  field :name
   field :content_file_name
-  field :content_file_type
-  field :content_file_size,  type: Integer
-  field :content_updated_at, type: Time
-  field :is_an_upload,       type: Boolean, default: false
-  field :is_a_cover,         type: Boolean, default: false
-  field :position,           type: Integer
-  field :token,              type: String
+  field :content_content_type
+  field :content_file_size,    type: Integer
+  field :content_updated_at,   type: Time
+  field :is_a_cover,           type: Boolean, default: false
+  field :origin
+  field :position,             type: Integer
+  field :token
+
+  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan)
 
   belongs_to :pack,                                                 inverse_of: :pieces
   has_one    :expense,      class_name: "Pack::Report::Expense",    inverse_of: :piece
@@ -20,11 +22,12 @@ class Pack::Piece
   has_many   :remote_files, as: :remotable, dependent: :destroy
 
   has_mongoid_attached_file :content,
-                            path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/pieces/:id/:style/:filename",
+                            path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
                             url: "/account/documents/pieces/:id/download"
 
-  scope :uploaded, where: { is_an_upload: true }
-  scope :scanned,  where: { is_an_upload: false }
+  scope :scanned,          where: { origin: 'scan' }
+  scope :uploaded,         where: { origin: 'upload' }
+  scope :dematbox_scanned, where: { origin: 'dematbox_scan' }
   
   scope :covers,     where:  { is_a_cover: true }
   scope :not_covers, any_in: { is_a_cover: [false, nil] }
@@ -54,12 +57,24 @@ class Pack::Piece
     name.split[1]
   end
 
+  def scanned?
+    origin == 'scan'
+  end
+
+  def uploaded?
+    origin == 'upload'
+  end
+
+  def dematbox_scanned?
+    origin == 'dematbox_scan'
+  end
+
   def send_to_compta
     account_book = name.split(' ')[1]
     account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
-    if account_book_type && account_book_type.compta_processable?
+    if account_book_type && account_book_type.compta_processable? && !self.is_a_cover
       compta_type = account_book_type.compta_type
-      if self.is_an_upload
+      if uploaded?
         path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'uploads',compta_type])
       else
         path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])

@@ -3,7 +3,7 @@ class Admin::DematboxFilesController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :page_contains
 
   def index
-    @dematbox_files = DematboxFile.where(dematbox_file_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @dematbox_files = TempDocument.dematbox_scan.where(dematbox_file_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
 private

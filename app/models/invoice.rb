@@ -10,7 +10,7 @@ class Invoice
   field :requested_at,          type: Date
   field :received_at,           type: Date
   field :content_file_name
-  field :content_file_type
+  field :content_content_type
   field :content_file_size,     type: Integer
   field :content_updated_at,    type: Time
 
@@ -18,7 +18,7 @@ class Invoice
     styles: {
       thumb: ["46x67>", :png]
     },
-    path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/invoices/:id/:style/:filename",
+    path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
     url: "/account/invoices/:id/download/:style"
 
   validates_presence_of :number

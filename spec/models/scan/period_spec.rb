@@ -54,4 +54,30 @@ describe Scan::Period do
 
     it { subject.price_in_cents_of_total_excess.should eq(182) }
   end
+
+  describe ".period_name" do
+    before(:all) do
+      Timecop.freeze(Time.local(2013,1,1))
+    end
+
+    after(:all) do
+      Timecop.return
+    end
+
+    it 'should return 201309' do
+      expect(Scan::Period.period_name 1, true).to eq('201301')
+    end
+
+    it 'should return 201308' do
+      expect(Scan::Period.period_name 1, false).to eq('201212')
+    end
+
+    it 'should return 201309' do
+      expect(Scan::Period.period_name 3, true).to eq('2013T1')
+    end
+
+    it 'should return 201308' do
+      expect(Scan::Period.period_name 3, false).to eq('2012T4')
+    end
+  end
 end

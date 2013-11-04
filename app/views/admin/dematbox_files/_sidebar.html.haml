@@ -11,16 +11,12 @@
       = text_field_tag 'dematbox_file_contains[created_at][$lte]', (params['dematbox_file_contains']['created_at']['$lte'] rescue ''), class: 'span4'
       %span.add-on
         %i.icon-th
-    = label_tag 'dematbox_file_contains[doc_id]', t('mongoid.models.dematbox_file.attributes.doc_id')
-    = text_field_tag 'dematbox_file_contains[doc_id]', (params[:dematbox_file_contains][:doc_id] rescue '')
-    = label_tag 'dematbox_file_contains[user_code]', t('mongoid.models.dematbox_file.attributes.user_code')
-    = text_field_tag 'dematbox_file_contains[user_code]', (params[:dematbox_file_contains][:user_code] rescue '')
-    = label_tag 'dematbox_file_contains[journal_name]', t('mongoid.models.dematbox_file.attributes.journal_name')
-    = text_field_tag 'dematbox_file_contains[journal_name]', (params[:dematbox_file_contains][:journal_name] rescue '')
-    = label_tag 'dematbox_file_contains[period]', t('mongoid.models.dematbox_file.attributes.period')
-    = text_field_tag 'dematbox_file_contains[period]', (params[:dematbox_file_contains][:period] rescue '')
-    = label_tag 'dematbox_file_contains[is_processed]', t('mongoid.models.dematbox_file.attributes.is_processed')
-    = select_tag 'dematbox_file_contains[is_processed]', options_for_select([[t('mongoid.models.dematbox_file.attributes.is_processed_state.wait'),0],[t('mongoid.models.dematbox_file.attributes.is_processed_state.processed'),1]], (params[:dematbox_file_contains][:is_processed] rescue ''))
+    = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('mongoid.models.temp_document.attributes.dematbox_doc_id')
+    = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue '')
+    = label_tag 'dematbox_file_contains[delivered_by]', t('mongoid.models.temp_document.attributes.delivered_by')
+    = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue '')
+    = label_tag 'dematbox_file_contains[content_file_name]', t('mongoid.models.temp_document.attributes.content_file_name')
+    = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue '')
     .form-actions.margin0bottom.padding0bottom
       = submit_tag t('filters.action'), class: 'btn'
       = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'

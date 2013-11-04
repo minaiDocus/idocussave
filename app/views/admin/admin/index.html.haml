@@ -30,10 +30,10 @@
               %td= Document.uploaded.count
             %tr
               %th Vignettes restante
-              %td= Document.not_clean.without_original.count
+              %td= Document.not_clean.not_mixed.count
             %tr
               %th Extraction restante
-              %td= Document.not_extracted.without_original.count
+              %td= Document.not_extracted.not_mixed.count
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents

@@ -5,7 +5,7 @@ require 'barby/outputter/png_outputter'
 require 'prawn/measurement_extensions'
 
 module FileSendingKitGenerator
-  TEMPDIR_PATH = "#{Rails.root}/files/kit/"
+  TEMPDIR_PATH = "#{Rails.root}/files/#{Rails.env}/kit/"
   
   def FileSendingKitGenerator.generate(clients_data,file_sending_kit)
     BarCode::init

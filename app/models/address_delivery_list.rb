@@ -5,7 +5,7 @@ class AddressDeliveryList
   include Mongoid::Paperclip
 
   has_mongoid_attached_file :content,
-                            path: ":rails_root/files/#{Rails.env.test? ? 'test_' : ''}attachments/address_delivery_lists/:filename",
+                            path: ":rails_root/files/:rails_env/:class/:attachment/:filename",
                             url: "/address_delivery_lists/:filename"
 
   field :is_checkpoint,    type: Boolean, default: false

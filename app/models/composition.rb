@@ -33,13 +33,13 @@ class Composition
     if composition.nil?
       composition = Composition.new
       composition.user_id = user_id
-      cmd = "cd #{Rails.root}/files/compositions && mkdir #{composition.id}"
+      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions && mkdir #{composition.id}"
       system(cmd)
     else
-      cmd = "cd #{Rails.root}/files/compositions/#{composition.id} && rm *.pdf"
+      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions/#{composition.id} && rm *.pdf"
       system(cmd)
     end
-    combined_name  = "#{Rails.root}/files/compositions/#{composition.id}/#{name}.pdf"
+    combined_name  = "#{Rails.root}/files/#{Rails.env}/compositions/#{composition.id}/#{name}.pdf"
     cmd = "pdftk #{ temp_paths.join(" ") } output #{combined_name}"
     Rails.logger.debug("Will compose new document with #{cmd}")
     system(cmd)

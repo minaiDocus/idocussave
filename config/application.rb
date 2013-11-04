@@ -76,7 +76,9 @@ module Idocus
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.mongoid.observers = :user_observer, :account_book_type_observer
+    config.mongoid.observers = :user_observer,
+                               :account_book_type_observer,
+                               :pack_observer
 
     config.wash_out.parser = :nokogiri
     config.wash_out.camelize_wsdl = true

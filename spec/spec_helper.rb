@@ -25,6 +25,8 @@ Spork.prefork do
 
   counter = -1
   RSpec.configure do |config|
+    config.pattern = "**/*_spec.rb"
+    
     # == Mock Framework
     #
     # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -45,13 +47,15 @@ Spork.prefork do
       DatabaseCleaner.clean_with(:truncation)
     end
     
-    config.before(:each) do
+    config.before(:all) do
       DatabaseCleaner.start
+    end
+
+    config.after(:all) do
+      DatabaseCleaner.clean
     end
     
     config.after(:each) do
-      DatabaseCleaner.clean
-
       counter += 1
       if counter > 9
         GC.enable
