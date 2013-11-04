@@ -63,7 +63,7 @@ namespace :shared do
   task :mkdir do
     run "mkdir -p #{shared_path}/config/initializers"
     run "mkdir -p #{shared_path}/public/system/#{rails_env}"
-    run "mkdir -p #{current_release}/tmp/barcode"
+    run "mkdir -p #{release_path}/tmp/barcode"
     run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/tmp/uploads"
     run "mkdir -p #{shared_path}/files/tmp/DELIVERY_BACKUP"
