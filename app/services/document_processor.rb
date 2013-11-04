@@ -122,6 +122,7 @@ class DocumentProcessor
         pack.set_content_url
         pack.set_pages_count
         pack.set_historic
+        pack.is_update_notified = false
         pack.save
 
         piece_files_path = pack.pieces.by_position.map { |e| e.content.path }

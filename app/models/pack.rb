@@ -34,18 +34,18 @@ class Pack
   field :pages_count,          type: Integer, default: 0
   field :scanned_pages_count,  type: Integer, default: 0
   field :uploaded_pages_count, type: Integer, default: 0
-  field :notified_pages_count, type: Integer, default: 0
+  field :is_update_notified,   type: Boolean, default: false
 
   index :pages_count
   index :scanned_pages_count
   index :uploaded_pages_count
-  index :notified_pages_count
+  index :is_update_notified
 
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  scope :scan_delivered, where: { :scanned_pages_count.gt => 0 }
-  scope :updated,        where: { :pages_count.gt => 'this.notified_pages_count' }
+  scope :scan_delivered,      where: { :scanned_pages_count.gt => 0 }
+  scope :not_notified_update, where: { is_update_notified: false }
 
   mapping do
     indexes :id, as: 'stringified_id'

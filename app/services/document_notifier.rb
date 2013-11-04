@@ -7,7 +7,7 @@ class DocumentNotifier
           document_names = documents.map(&:name)
           PackMailer.new_document_available(owner, document_names).deliver
           documents.each do |document|
-            document.update_attribute(:notified_pages_count, document.pages_count)
+            document.update_attribute(:is_update_notified, true)
           end
         end
       end
@@ -19,7 +19,7 @@ class DocumentNotifier
     end
 
     def new_documents
-      Pack.updated.group_by(&:owner)
+      Pack.not_notified_update.group_by(&:owner)
     end
   end
 end
