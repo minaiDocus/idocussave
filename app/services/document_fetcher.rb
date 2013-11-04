@@ -14,6 +14,7 @@ class DocumentFetcher
         ftp.chdir dir
         date = dir[0..9]
         position = dir[11..-7] || 1
+        corrupted_documents = []
         document_delivery = DocumentDelivery.find_or_create_by(date, provider, position)
 
         file_names = valid_file_names(ftp.nlst.sort)
@@ -29,6 +30,7 @@ class DocumentFetcher
               end
             end
             documents << document
+            corrupted_documents << document if document.unreadable? && !document.is_corruption_notified
           end
           if documents.select(&:unreadable?).count == 0 && documents.select(&:is_locked).count > 0
             document_ids = documents.map(&:_id)
@@ -39,6 +41,17 @@ class DocumentFetcher
         if document_delivery.valid_documents?
           document_delivery.processed
           ftp.rename dir, fetched_dir(dir)
+        end
+        # notify corrupted documents
+        if corrupted_documents.count > 0
+          subject = '[iDocus] Documents corrompus'
+          content = "Livraison : #{dir}\n"
+          content = "Total : #{corrupted_documents.count}\n"
+          content << "Fichier(s) : #{corrupted_documents.map(&:original_file_name).join(', ')}"
+          ErrorNotification::EMAILS.each do |email|
+            NotificationMailer.notify(email, subject, content)
+          end
+          corrupted_documents.each(&:corruption_notified)
         end
       end
       ftp.close

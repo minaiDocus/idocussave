@@ -22,6 +22,9 @@ class TempDocument
   field :dematbox_is_notified
   field :dematbox_notified_at
 
+  field :is_corruption_notified, type: Boolean
+  field :corruption_notified_at, type: Time
+
   field :state,                    default: 'created'
   field :stated_at, type: Time
   field :is_locked, type: Boolean, default: false
@@ -166,5 +169,11 @@ class TempDocument
 
   def burst(dir='/tmp')
     Pdftk.new.burst content.path, dir, name_with_position, DocumentProcessor::POSITION_SIZE
+  end
+
+  def corruption_notified
+    self.is_corruption_notified = true
+    self.corruption_notified_at = Time.now
+    save
   end
 end
