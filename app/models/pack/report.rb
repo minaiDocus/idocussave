@@ -151,7 +151,7 @@ class Pack::Report
                   report.organization = pack.owner.organization
                   report.document = pack.scan_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   report.document ||= pack.scan_documents.desc(:created_at).first
-                  lot.css('piece').each_with do |part|
+                  lot.css('piece').each do |part|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
                     if piece

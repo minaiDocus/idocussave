@@ -628,6 +628,7 @@ fr:
         name: Atelier
         attributes:
           name: Nom
+          code: Code
           customers: Clients
           customers_count: Nombre de clients
       accounting_plan:
