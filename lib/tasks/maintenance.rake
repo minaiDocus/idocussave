@@ -1,12 +1,5 @@
 # -*- encoding : UTF-8 -*-
 namespace :maintenance do
-  namespace :address do
-    desc 'Deliver updated address list'
-    task :deliver_updated_list => [:environment] do
-      AddressDeliveryList.process
-    end
-  end
-
   namespace :notification do
     desc 'Send update request notification'
     task :update_request => [:environment] do

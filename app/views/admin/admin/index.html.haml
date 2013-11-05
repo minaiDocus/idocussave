@@ -64,22 +64,3 @@
               %td FTP
               %td= RemoteFile.of_service('FTP').not_processed.count
               %td= RemoteFile.of_service('FTP').not_retryable.count
-  .span4
-    %h3.label{ style: 'padding:3px 5px 3px;' } Livraison de la liste des adresses de retour
-    %table.table.table-striped.table-condensed.table-bordered
-      %thead
-        %tr
-          %th{ style: "width: 80px;"} Date
-          %th Etat
-          %th Détails
-      %tbody
-        - @address_delivery_lists.each do |address_delivery_list|
-          %tr
-            %td{ style: 'vertical-align:middle;' }= l(address_delivery_list.created_at, format: :short)
-            - if address_delivery_list.error.present?
-              %td{ style: 'vertical-align:middle;' } Erreur
-              %td= "#{address_delivery_list.error[0..97]}#{address_delivery_list.error.size > 97 ? '...' : ''}"
-            - else
-              %td{ style: 'vertical-align:middle;' } Ok
-              %td= address_delivery_list.emails_notified.join(', ')
-
