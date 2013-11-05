@@ -46,7 +46,6 @@ namespace :shared do
   task :symlink do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
-    run "ln -nfs #{shared_path}/config/initializers/address_delivery_list.rb #{release_path}/config/initializers/address_delivery_list.rb"
     run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     run "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
@@ -103,9 +102,6 @@ namespace :shared do
       run "rm #{release_path}/config/initializers/errbit.rb"
     else
       run "mv #{release_path}/config/initializers/errbit.rb #{shared_path}/config/initializers"
-    end
-    if remote_file_exist? "#{shared_path}/config/initializers/address_delivery_list.rb"
-      run "rm #{release_path}/config/initializers/address_delivery_list.rb"
     end
     unless remote_file_exist? "#{shared_path}/config/dematbox.yml"
       run "cp #{release_path}/config/dematbox.yml.example #{shared_path}/config/dematbox.yml"

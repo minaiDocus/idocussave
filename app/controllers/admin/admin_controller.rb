@@ -25,6 +25,5 @@ class Admin::AdminController < ApplicationController
 
   def index
     @last_packs = Pack.desc(:created_at).limit(10)
-    @address_delivery_lists = AddressDeliveryList.desc(:created_at).limit(10)
   end
 end
