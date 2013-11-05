@@ -54,19 +54,19 @@ end
 pids = []
 
 [
-  { name: 'ftp_fecther',           sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
-  { name: 'bundler',               sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
-  { name: 'processor',             sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
-  { name: 'preassignment_fetcher', sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
-  { name: 'dropbox_extended',      sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
-  { name: 'dropbox_basic',         sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
-  { name: 'google_drive',          sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },
-  { name: 'ftp',                   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('ftp') } },
-  { name: 'box',                   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } }
+  { name: 'ftp_fecther',               sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
+  { name: 'bundler',                   sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
+  { name: 'processor',                 sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
+  { name: 'preassignment_fetcher',     sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
+  { name: 'delivery-dropbox_extended', sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
+  { name: 'delivery-dropbox_basic',    sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
+  { name: 'delivery-google_drive',     sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },
+  { name: 'delivery-ftp',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('ftp') } },
+  { name: 'delivery-box',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } }
 ].each do |program|
   pids << fork do
     while($running)
-      with_state "delivery-#{program[:name]}", program[:sleep_duration] do
+      with_state program[:name], program[:sleep_duration] do
         program[:cmd].call
       end
     end
