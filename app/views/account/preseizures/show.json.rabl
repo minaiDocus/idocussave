@@ -20,4 +20,12 @@ node :url do |preseizure|
   preseizure.piece.content.url
 end
 
+node :journal do |preseizure|
+  preseizure.piece.journal
+end
+
+node :piece_name do |preseizure|
+  preseizure.piece.name
+end
+
 attributes :id, :position, :observation, :piece_number, :amount, :currency, :conversion_rate, :third_party, :is_delivered

@@ -4,7 +4,13 @@ module IbizaAPI
       used_fields = fields.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
       sorted_used_fields = used_fields.sort { |(ak,av),(bk,bv)| av['position'] <=> bv['position'] }
       results = sorted_used_fields.map do |k,_|
-        preseizure[k].presence
+        if k == 'journal'
+          preseizure.piece.journal
+        elsif k == 'piece_name'
+          preseizure.piece.name
+        else
+          preseizure[k].presence
+        end
       end
       if results.empty?
         preseizure.third_party
