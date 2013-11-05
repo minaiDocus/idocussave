@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ReturnLabels
   FILE_NAME = 'return_labels.pdf'
-  FILE_PATH = File.join([Rails.root, 'files', 'kit', FILE_NAME])
+  FILE_PATH = File.join([Rails.root, 'files', Rails.env, 'kit', FILE_NAME])
 
   attr_accessor :scanned_by, :customers, :time
 

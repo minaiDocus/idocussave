@@ -88,7 +88,7 @@ private
   end
 
   def send_pdf(filename)
-    filepath = File.join([Rails.root,'/files/kit/' + filename])
+    filepath = File.join([Rails.root, 'files', Rails.env, 'kit', filename])
     if File.file? filepath
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
