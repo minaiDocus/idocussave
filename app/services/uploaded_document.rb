@@ -11,7 +11,11 @@ class UploadedDocument
     @journal = journal
 
     @code = @user.code
-    @is_current_period = is_current_period == 'true'
+    if is_current_period == true || is_current_period == 'true'
+      @is_current_period = true
+    else
+      @is_current_period = false
+    end
 
     @errors = []
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
