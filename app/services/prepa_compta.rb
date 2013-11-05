@@ -39,20 +39,23 @@ class PrepaCompta
         not_processed_dirs.each do |dir|
           file_path = File.join(dir, 'regroupments', 'result.xml')
           if File.exist? file_path
-            File.open(file_path) do |f|
-              doc = Nokogiri::XML f
-            end
-            doc.css('lot').each do |lot|
-              pack_name = lot['name'].gsub('_', ' ') + ' all'
-              temp_pack = TempPack.where(name: pack_name).first
+            begin
+              file = File.open(file_path)
+              doc = Nokogiri::XML file
+              doc.css('lot').each do |lot|
+                pack_name = lot['name'].gsub('_', ' ') + ' all'
+                temp_pack = TempPack.where(name: pack_name).first
 
-              ['upload', 'dematbox_san', 'scan'].each do |origin|
-                lot.css("piece[origin=#{origin}]").each do |piece|
-                  create_piece temp_pack, piece, dir, origin
+                ['upload', 'dematbox_scan', 'scan'].each do |origin|
+                  lot.css("piece[origin=#{origin}]").each do |piece|
+                    create_piece temp_pack, piece, dir, origin
+                  end
                 end
               end
+              mark_as_processed dir
+            ensure
+              file.close
             end
-            mark_as_processed dir
           end
         end
       end
@@ -61,15 +64,14 @@ class PrepaCompta
         Dir.mktmpdir do |tmpdir|
           file_path = File.join(tmpdir, temp_pack.basefilename)
 
-          positions = piece('').map do |original_piece|
-            original_piece.content.to_i
+          positions = []
+          file_paths = piece.css('file_name').map do |file_name|
+            positions << file_name.content.split('_')[3].to_i
+            File.join(dir, 'regroupments', origin, file_name)
           end
+
           temp_documents = temp_pack.temp_documents.any_in(position: positions).by_position
           original_temp_document = temp_documents.first
-
-          piece.css('file_name').each do |file_name|
-            file_paths = File.join(dir, origin, file_name)
-          end
 
           if file_paths.size > 1
             Pdftk.new.merge file_paths, file_path
@@ -97,7 +99,7 @@ class PrepaCompta
 
       def current_folder_name
         name = Date.today.to_s
-        last_name = Dir.glob("#{name}*").sort.last
+        last_name = Dir.glob("#{PrepaCompta::PATH}/*#{name}*").sort.last
         if last_name
           if (number=last_name.split('_')[1])
             "#{name}_#{number.to_i+1}"
@@ -112,7 +114,7 @@ class PrepaCompta
       def prepare_folder(path)
         FileUtils.mkdir_p File.join(path, 'scan')
         FileUtils.mkdir_p File.join(path, 'upload')
-        FileUtils.mkdir_p File.join(path, 'dematbox')
+        FileUtils.mkdir_p File.join(path, 'dematbox_scan')
         Dir.chdir path
       end
 

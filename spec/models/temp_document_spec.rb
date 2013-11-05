@@ -30,6 +30,20 @@ describe TempDocument do
     expect(temp_document.file_name_with_position).to eq('TS0001_TS_201301_003.pdf')
   end
 
+  it '#file_name_with_position return TS0001_TS_201301_003.pdf' do
+    temp_document = TempDocument.new
+    temp_document.delivery_type = 'scan'
+    temp_document.position = 3
+    Dir.mktmpdir do |dir|
+      original_file_path = File.join(Rails.root, 'spec/support/files/completed.pdf')
+      file_path = File.join(dir, 'TS0001_TS_201301_001.pdf')
+      FileUtils.cp original_file_path, file_path
+      temp_document.content = open file_path
+      temp_document.save
+    end
+    expect(temp_document.file_name_with_position).to eq('TS0001_TS_201301_003.pdf')
+  end
+
   it '#is_a_cover return true' do
     temp_document = TempDocument.new
     temp_document.delivery_type = 'scan'

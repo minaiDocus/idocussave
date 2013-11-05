@@ -34,10 +34,10 @@ class TempPack
       else
         is_bundle_needed = false
         user_code, journal_name = name.split[0..1]
-        user = User.find_by_code user
+        user = User.find_by_code user_code
         if user
           journal = user.account_book_types.where(name: journal_name).first
-          is_bundle_needed = journal.is_compta_processable? if journal
+          is_bundle_needed = journal.compta_processable? if journal
         end
         TempPack.create(name: name, is_bundle_needed: is_bundle_needed)
       end
