@@ -130,4 +130,18 @@ namespace :maintenance do
       end
     end
   end
+
+  namespace :prepacompta do
+    desc 'Update accounting plan'
+    task :update_accounting_plan => [:environment] do
+      users = []
+      Organization.not_test.each do |organization|
+        organization.account_book_types.compta_processable.each do |journal|
+          users += journal.clients
+        end
+      end
+      users.uniq!
+      AccountingPlan.update_files_for(users.map(&:code))
+    end
+  end
 end
