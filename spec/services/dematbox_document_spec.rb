@@ -27,7 +27,12 @@ describe DematboxDocument do
       service.pid = '1'
       service.is_for_current_period = true
       service.name = 'TS'
+      service2 = DematboxSubscribedService.new
+      service2.pid = '2'
+      service2.is_for_current_period = false
+      service2.name = 'TS'
       dematbox.services << service
+      dematbox.services << service2
       dematbox.save
     end
 
@@ -40,6 +45,47 @@ describe DematboxDocument do
       context 'when arguments are valid' do
         before(:all) do
           @dematbox_document = DematboxDocument.new(@params)
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_valid }
+
+        describe 'temp_document' do
+          subject { @dematbox_document.temp_document }
+
+          it { should be_persisted }
+          its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+        end
+      end
+
+      context 'when previous period is valid' do
+        before(:all) do
+          @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+        end
+
+        subject { @dematbox_document }
+
+        it { should be_valid }
+
+        describe 'temp_document' do
+          subject { @dematbox_document.temp_document }
+
+          it { should be_persisted }
+          its(:content_file_name) { should eq('TS0001_TS_201212.pdf') }
+        end
+      end
+
+      context 'when previous period is not valid' do
+        before(:all) do
+          Timecop.return
+          Timecop.freeze(Time.local(2013,1,11))
+          @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+        end
+
+        after(:all) do
+          Timecop.return
+          Timecop.freeze(Time.local(2013,1,1))
         end
 
         subject { @dematbox_document }
@@ -67,7 +113,7 @@ describe DematboxDocument do
 
       context 'when service_id is not valid' do
         before(:all) do
-          params = @params.merge({ 'service_id' => '2' })
+          params = @params.merge({ 'service_id' => '3' })
           @dematbox_document = DematboxDocument.new(params)
         end
 
