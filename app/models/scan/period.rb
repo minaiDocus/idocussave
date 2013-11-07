@@ -440,20 +440,8 @@ private
   end
   
   def set_start_date
-    year = start_at.year
-    month = start_at.month
-    if duration == 3
-      if start_at.month <= 3
-        month = 1
-      elsif start_at.month <= 6
-        month = 4
-      elsif start_at.month <= 9
-        month = 7
-      elsif start_at.month <= 12
-        month = 10
-      end
-    end
-    self.start_at = Time.local year,month,1,0,0,0
+    month = duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
+    self.start_at = Time.local start_at.year, month, 1
   end
   
   def set_end_date

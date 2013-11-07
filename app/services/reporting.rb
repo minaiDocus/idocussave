@@ -6,16 +6,17 @@ class Reporting
       time = pack.created_at
       while remaining_dividers > 0
         period = pack.owner.find_or_create_scan_subscription.find_or_create_period(time)
-        current_dividers = pack.dividers.of_month(time)
+        is_monthly = period.duration == 1
+        current_dividers = pack.dividers.of_period(time, is_monthly)
         if current_dividers.any?
           p_metadata = find_or_create_periodic_metadata(pack, period.start_at, period.end_at, period)
           if p_metadata
             p_metadata.sheets          = current_dividers.sheets.count
             p_metadata.pieces          = current_dividers.pieces.count
-            p_metadata.pages           = pack.pages_count
+            p_metadata.pages           = pack.pages.of_period(time, is_monthly).count
             p_metadata.uploaded_pieces = current_dividers.uploaded.pieces.count
             p_metadata.uploaded_sheets = current_dividers.uploaded.sheets.count
-            p_metadata.uploaded_pages  = pack.uploaded_pages_count
+            p_metadata.uploaded_pages  = pack.pages.of_period(time, is_monthly).uploaded.count
             p_metadata.save
           end
           if p_metadata.pages - p_metadata.uploaded_pages > 0

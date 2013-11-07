@@ -64,7 +64,11 @@ class Document
   scope :covers,           where:  { is_a_cover: true }
   scope :not_covers,       any_in: { is_a_cover: [false, nil] }
 
-  scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
+  scope :of_period, lambda { |time, is_monthly|
+    start_at = is_monthly ? time.beginning_of_month : time.beginning_of_quarter
+    end_at = is_monthly ? time.end_of_month : time.end_of_quarter
+    where(created_at: { '$gte' => start_at, '$lte' => end_at })
+  }
 
   mapping do
     indexes :id, as: 'stringified_id'

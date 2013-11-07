@@ -25,7 +25,12 @@ class PackDivider
   scope :dematbox_scanned, where: { origin: 'dematbox_scan' }
   scope :sheets,           where: { type: 'sheet' }
   scope :pieces,           where: { type: 'piece' }
-  scope :of_month,         lambda { |time| where(created_at: { '$gte' => time.beginning_of_month, '$lte' => time.end_of_month }) }
+  
+  scope :of_period, lambda { |time, is_monthly|
+    start_at = is_monthly ? time.beginning_of_month : time.beginning_of_quarter
+    end_at = is_monthly ? time.end_of_month : time.end_of_quarter
+    where(created_at: { '$gte' => start_at, '$lte' => end_at })
+  }
 
   scope :covers,     where: { is_a_cover: true }
   scope :not_covers, where: { is_a_cover: false }

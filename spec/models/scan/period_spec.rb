@@ -9,6 +9,30 @@ describe Scan::Period do
     period.should be_persisted
   end
 
+  context 'when duration is 1' do
+    it '#start_at should equal 2013-02-01 00:00:00' do
+      period = Scan::Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
+      expect(period.start_at).to eq(Time.local(2013, 2, 1))
+    end
+
+    it '#end_at should equal 2013-02-30 23:59:59' do
+      period = Scan::Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
+      expect(period.end_at).to eq(Time.local(2013, 2, 28, 23, 59, 59))
+    end
+  end
+
+  context 'when duration is 3' do
+    it '#start_at should equal 2013-04-01 00:00:00' do
+      period = Scan::Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
+      expect(period.start_at).to eq(Time.local(2013, 4, 1))
+    end
+
+    it '#end_at should equal 2013-06-30 23:59:59' do
+      period = Scan::Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
+      expect(period.end_at).to eq(Time.local(2013, 6, 30, 23, 59, 59))
+    end
+  end
+
   describe "should return right values" do
     subject(:period) {
       period = Scan::Period.new
