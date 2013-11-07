@@ -139,7 +139,7 @@ class TempDocument
 
   def name_with_position
     name = File.basename self.content_file_name, '.*'
-    name = name.split('_')[0..2].join('_')
+    name.sub!(/_\d+$/, '') if scanned?
     "#{name}_%0#{DocumentProcessor::POSITION_SIZE}d" % position
   end
 
