@@ -37,12 +37,16 @@ describe Scan::Period do
     subject(:period) {
       period = Scan::Period.new
 
-      period.max_sheets_authorized = 8
+      period.max_sheets_authorized = 5
       period.unit_price_of_excess_sheet = 12
 
       period.max_upload_pages_authorized = 15
-      period.quantity_of_a_lot_of_upload = 10
+      period.quantity_of_a_lot_of_upload = 15
       period.price_of_a_lot_of_upload = 50
+
+      period.max_dematbox_scan_pages_authorized = 15
+      period.quantity_of_a_lot_of_dematbox_scan = 15
+      period.price_of_a_lot_of_dematbox_scan = 50
 
       period.max_preseizure_pieces_authorized = 5
       period.unit_price_of_excess_preseizure = 12
@@ -50,12 +54,15 @@ describe Scan::Period do
       period.max_expense_pieces_authorized = 5
       period.unit_price_of_excess_expense = 12
 
-      period.pieces = 20
-      period.sheets = 20
-      period.pages = 40
-      period.uploaded_pieces = 11
-      period.uploaded_sheets = 11
-      period.uploaded_pages = 22
+      period.pieces = 30
+      period.pages = 70
+      period.scanned_pieces = 10
+      period.scanned_sheets = 10
+      period.scanned_pages = 20
+      period.dematbox_scanned_pieces = 10
+      period.dematbox_scanned_pages = 20
+      period.uploaded_pieces = 10
+      period.uploaded_pages = 30
 
       period.excess_preseizure_pieces = 5
       period.excess_expense_pieces = 5
@@ -66,17 +73,19 @@ describe Scan::Period do
       period
     }
 
-    it { subject.excess_sheets.should eq(1) }
-    it { subject.excess_uploaded_pages.should eq(7) }
+    it { subject.excess_sheets.should eq(5) }
+    it { subject.excess_uploaded_pages.should eq(15) }
+    it { subject.excess_dematbox_scanned_pages.should eq(5) }
     it { subject.get_excess_preseizure_pieces.should eq(5) }
     it { subject.get_excess_expense_pieces.should eq(5) }
 
-    it { subject.price_in_cents_of_excess_sheets.should eq(12) }
+    it { subject.price_in_cents_of_excess_sheets.should eq(60) }
     it { subject.price_in_cents_of_excess_uploaded_pages.should eq(50) }
+    it { subject.price_in_cents_of_excess_dematbox_scanned_pages.should eq(50) }
     it { subject.price_in_cents_of_excess_preseizures.should eq(60) }
-    it { subject.price_in_cents_of_excess_preseizures.should eq(60) }
+    it { subject.price_in_cents_of_excess_expenses.should eq(60) }
 
-    it { subject.price_in_cents_of_total_excess.should eq(182) }
+    it { subject.price_in_cents_of_total_excess.should eq(280) }
   end
 
   describe ".period_name" do

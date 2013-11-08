@@ -125,6 +125,7 @@ module DocumentsHelper
           concat content_tag :td, "#{l(k['date'])}"
           concat content_tag :td, "#{k['uploaded']}", style: 'text-align:right'
           concat content_tag :td, "#{k['scanned']}", style: 'text-align:right'
+          concat content_tag :td, "#{k['dematbox_scanned']}", style: 'text-align:right'
           }
         )
       end
@@ -150,7 +151,7 @@ module DocumentsHelper
   end
   
   def html_pack_info(pack)
-    columns = [ "N°","Date","Télév.","Num."]
+    columns = ['N°', 'Date', 'Télév.', 'Num.', "iDocus'Box"]
     
     contents = ""
     contents += content_tag :h4, "Informations"

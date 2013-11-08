@@ -8,18 +8,21 @@ class Scan::Document
   belongs_to :pack,                                           inverse_of: :periodic_metadata
   has_one    :report,       class_name: 'Pack::Report',       inverse_of: :document,       dependent: :delete
 
-  field :name,            type: String,  default: ''
-  field :pieces,          type: Integer, default: 0
-  field :sheets,          type: Integer, default: 0
-  field :pages,           type: Integer, default: 0
-  field :uploaded_pieces, type: Integer, default: 0
-  field :uploaded_sheets, type: Integer, default: 0
-  field :uploaded_pages,  type: Integer, default: 0
-  field :paperclips,      type: Integer, default: 0
-  field :oversized,       type: Integer, default: 0
-  field :is_shared,       type: Boolean, default: true
-  field :scanned_at,      type: Time
-  field :scanned_by,      type: String
+  field :name,                    type: String,  default: ''
+  field :pieces,                  type: Integer, default: 0
+  field :pages,                   type: Integer, default: 0
+  field :scanned_pieces,          type: Integer, default: 0
+  field :scanned_sheets,          type: Integer, default: 0
+  field :scanned_pages,           type: Integer, default: 0
+  field :dematbox_scanned_pieces, type: Integer, default: 0
+  field :dematbox_scanned_pages,  type: Integer, default: 0
+  field :uploaded_pieces,         type: Integer, default: 0
+  field :uploaded_pages,          type: Integer, default: 0
+  field :paperclips,              type: Integer, default: 0
+  field :oversized,               type: Integer, default: 0
+  field :is_shared,               type: Boolean, default: true
+  field :scanned_at,              type: Time
+  field :scanned_by,              type: String
   
   validates_presence_of :name
   validates_format_of :name, with: /^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/
@@ -38,18 +41,6 @@ class Scan::Document
   
   def update_period
     self.period.reload.save if self.period
-  end
-  
-  def scanned_pieces
-    pieces - uploaded_pieces
-  end
-  
-  def scanned_sheets
-    sheets - uploaded_sheets
-  end
-  
-  def scanned_pages
-    pages - uploaded_pages
   end
   
   def self.find_by_name(name)

@@ -33,12 +33,10 @@ class Pack
   field :tags,                 type: Array,   default: []
   field :pages_count,          type: Integer, default: 0
   field :scanned_pages_count,  type: Integer, default: 0
-  field :uploaded_pages_count, type: Integer, default: 0
   field :is_update_notified,   type: Boolean, default: false
 
   index :pages_count
   index :scanned_pages_count
-  index :uploaded_pages_count
   index :is_update_notified
 
   validates_presence_of :name
@@ -81,7 +79,6 @@ class Pack
 
   def set_pages_count
     self.scanned_pages_count = pages.scanned.size
-    self.uploaded_pages_count = pages.uploaded.size
     self.pages_count = pages.size
   end
 
@@ -128,16 +125,18 @@ class Pack
   def historic
     _documents = self.pages.asc(:created_at).entries
     current_date = _documents.first.created_at
-    @events = [{:date => current_date, :uploaded => 0, :scanned => 0}]
+    @events = [{:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0}]
     current_offset = 0
     _documents.each do |document|
       if document.created_at > current_date.end_of_day
         current_date = document.created_at
         current_offset += 1
-        @events << {:date => current_date, :uploaded => 0, :scanned => 0}
+        @events << {:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0}
       end
       if document.uploaded?
         @events[current_offset][:uploaded] += 1
+      elsif document.dematbox_scanned?
+        @events[current_offset][:dematbox_scanned] += 1
       else
         @events[current_offset][:scanned] += 1
       end
