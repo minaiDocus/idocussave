@@ -11,12 +11,16 @@ class Reporting
         if current_dividers.any?
           p_metadata = find_or_create_periodic_metadata(pack, period.start_at, period.end_at, period)
           if p_metadata
-            p_metadata.sheets          = current_dividers.sheets.count
-            p_metadata.pieces          = current_dividers.pieces.count
-            p_metadata.pages           = pack.pages.of_period(time, is_monthly).count
-            p_metadata.uploaded_pieces = current_dividers.uploaded.pieces.count
-            p_metadata.uploaded_sheets = current_dividers.uploaded.sheets.count
-            p_metadata.uploaded_pages  = pack.pages.of_period(time, is_monthly).uploaded.count
+            current_pages = pack.pages.of_period(time, is_monthly)
+            p_metadata.pieces                  = current_dividers.pieces.count
+            p_metadata.pages                   = current_pages.count
+            p_metadata.scanned_pieces          = current_dividers.scanned.pieces.count
+            p_metadata.scanned_sheets          = current_dividers.scanned.sheets.count
+            p_metadata.scanned_pages           = current_pages.scanned.count
+            p_metadata.dematbox_scanned_pieces = current_dividers.dematbox_scanned.pieces.count
+            p_metadata.dematbox_scanned_pages  = current_pages.dematbox_scanned.count
+            p_metadata.uploaded_pieces         = current_dividers.uploaded.pieces.count
+            p_metadata.uploaded_pages          = current_pages.uploaded.count
             p_metadata.save
           end
           if p_metadata.pages - p_metadata.uploaded_pages > 0

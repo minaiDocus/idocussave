@@ -20,16 +20,19 @@ class Scan::Period
   field :tva_ratio,                   type: Float,   default: 1.196
 
   # quantité limite
-  field :max_sheets_authorized,            type: Integer, default: 100 # numérisés
-  field :max_upload_pages_authorized,      type: Integer, default: 200 # téléversés
-  field :quantity_of_a_lot_of_upload,      type: Integer, default: 200 # téléversés
-  field :max_preseizure_pieces_authorized, type: Integer, default: 100 # presaisies
-  field :max_expense_pieces_authorized,    type: Integer, default: 100 # notes de frais
-  field :max_paperclips_authorized,        type: Integer, default: 0   # attaches
-  field :max_oversized_authorized,         type: Integer, default: 0   # hors format
+  field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
+  field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
+  field :quantity_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
+  field :max_dematbox_scan_pages_authorized, type: Integer, default: 200 # iDocus'Box
+  field :quantity_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
+  field :max_preseizure_pieces_authorized,   type: Integer, default: 100 # presaisies
+  field :max_expense_pieces_authorized,      type: Integer, default: 100 # notes de frais
+  field :max_paperclips_authorized,          type: Integer, default: 0   # attaches
+  field :max_oversized_authorized,           type: Integer, default: 0   # hors format
   # prix excès
   field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
   field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
+  field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
   field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
   field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
@@ -37,10 +40,13 @@ class Scan::Period
 
   field :documents_name_tags,      type: Array,   default: []
   field :pieces,                   type: Integer, default: 0
-  field :sheets,                   type: Integer, default: 0
   field :pages,                    type: Integer, default: 0
+  field :scanned_pieces,           type: Integer, default: 0
+  field :scanned_sheets,           type: Integer, default: 0
+  field :scanned_pages,            type: Integer, default: 0
+  field :dematbox_scanned_pieces,  type: Integer, default: 0
+  field :dematbox_scanned_pages,   type: Integer, default: 0
   field :uploaded_pieces,          type: Integer, default: 0
-  field :uploaded_sheets,          type: Integer, default: 0
   field :uploaded_pages,           type: Integer, default: 0
   field :paperclips,               type: Integer, default: 0
   field :oversized,                type: Integer, default: 0
@@ -71,18 +77,6 @@ class Scan::Period
       time = time.beginning_of_quarter
       "#{time.year}T#{(time.month/3.0).ceil}"
     end
-  end
-
-  def scanned_pieces
-    self.pieces - self.uploaded_pieces
-  end
-
-  def scanned_sheets
-    self.sheets - self.uploaded_sheets
-  end
-
-  def scanned_pages
-    self.pages - self.uploaded_pages
   end
   
   def price_in_cents_w_vat
@@ -115,8 +109,9 @@ class Scan::Period
   end
   
   def price_in_cents_of_total_excess
-    price_in_cents_of_excess_scan +
     price_in_cents_of_excess_uploaded_pages +
+    price_in_cents_of_excess_scan +
+    price_in_cents_of_excess_dematbox_scanned_pages +
     price_in_cents_of_excess_compta_pieces
   end
   
@@ -161,6 +156,16 @@ class Scan::Period
     end
   end
 
+  def price_in_cents_of_excess_dematbox_scanned_pages
+    excess = excess_dematbox_scanned_pages
+    if excess > 0
+      (excess / quantity_of_a_lot_of_dematbox_scan) * price_of_a_lot_of_dematbox_scan +
+      (excess % quantity_of_a_lot_of_dematbox_scan > 0 ? price_of_a_lot_of_dematbox_scan : 0)
+    else
+      0
+    end
+  end
+
   def price_in_cents_of_excess_compta_pieces
     price_in_cents_of_excess_preseizures + price_in_cents_of_excess_expenses
   end
@@ -184,7 +189,7 @@ class Scan::Period
   end
   
   def excess_sheets
-    excess = sheets - uploaded_sheets - max_sheets_authorized
+    excess = scanned_sheets - max_sheets_authorized
     excess > 0 ? excess : 0
   end
 
@@ -200,6 +205,11 @@ class Scan::Period
   
   def excess_uploaded_pages
     excess = uploaded_pages - max_upload_pages_authorized
+    excess > 0 ? excess : 0
+  end
+
+  def excess_dematbox_scanned_pages
+    excess = dematbox_scanned_pages - max_dematbox_scan_pages_authorized
     excess > 0 ? excess : 0
   end
 
@@ -262,7 +272,7 @@ class Scan::Period
   end
   
   def check_delivery
-    if self.sheets - self.uploaded_sheets > 0
+    if self.scanned_sheets > 0
       self.delivery.state = "delivered"
     end
   end
@@ -274,18 +284,21 @@ class Scan::Period
   
   def update_information
     set_documents_name_tags
-    self.pieces = self.documents.sum(:pieces) || 0
-    self.sheets = self.documents.sum(:sheets) || 0
-    self.pages = self.documents.sum(:pages) || 0
-    self.uploaded_pieces = self.documents.sum(:uploaded_pieces) || 0
-    self.uploaded_sheets = self.documents.sum(:uploaded_sheets) || 0
-    self.uploaded_pages = self.documents.sum(:uploaded_pages) || 0
-    self.paperclips = self.documents.sum(:paperclips) || 0
-    self.oversized = self.documents.sum(:oversized) || 0
-    self.preseizure_pieces = get_preseizure_pieces
+    self.pieces                   = self.documents.sum(:pieces)                  || 0
+    self.pages                    = self.documents.sum(:pages)                   || 0
+    self.scanned_pieces           = self.documents.sum(:scanned_pieces)          || 0
+    self.scanned_sheets           = self.documents.sum(:scanned_sheets)          || 0
+    self.scanned_pages            = self.documents.sum(:scanned_pages)           || 0
+    self.dematbox_scanned_pieces  = self.documents.sum(:dematbox_scanned_pieces) || 0
+    self.dematbox_scanned_pages   = self.documents.sum(:dematbox_scanned_pages)  || 0
+    self.uploaded_pieces          = self.documents.sum(:uploaded_pieces)         || 0
+    self.uploaded_pages           = self.documents.sum(:uploaded_pages)          || 0
+    self.paperclips               = self.documents.sum(:paperclips)              || 0
+    self.oversized                = self.documents.sum(:oversized)               || 0
+    self.preseizure_pieces        = get_preseizure_pieces
     self.excess_preseizure_pieces = get_excess_preseizure_pieces
-    self.expense_pieces = get_expense_pieces
-    self.excess_expense_pieces = get_excess_expense_pieces
+    self.expense_pieces           = get_expense_pieces
+    self.excess_expense_pieces    = get_excess_expense_pieces
     check_delivery
     update_price
   end
@@ -300,14 +313,17 @@ class Scan::Period
   
   def documents_json(viewer)
     total = {}
-    total[:pieces] = 0
-    total[:sheets] = 0
-    total[:pages] = 0
-    total[:uploaded_pieces] = 0
-    total[:uploaded_sheets] = 0
-    total[:uploaded_pages] = 0
-    total[:paperclips] = 0
-    total[:oversized] = 0
+    total[:pieces]                  = 0
+    total[:pages]                   = 0
+    total[:scanned_pieces]          = 0
+    total[:scanned_sheets]          = 0
+    total[:scanned_pages]           = 0
+    total[:dematbox_scanned_pieces] = 0
+    total[:dematbox_scanned_pages]  = 0
+    total[:uploaded_pieces]         = 0
+    total[:uploaded_pages]          = 0
+    total[:paperclips]              = 0
+    total[:oversized]               = 0
     
     lists = []
     documents.each do |document|
@@ -325,14 +341,17 @@ class Scan::Period
       rescue
         list[:link] = "#"
       end
-      list[:pieces] = document.pieces.to_s
-      list[:sheets] = document.sheets.to_s
-      list[:pages] = document.pages.to_s
-      list[:uploaded_pieces] = document.uploaded_pieces.to_s
-      list[:uploaded_sheets] = document.uploaded_sheets.to_s
-      list[:uploaded_pages] = document.uploaded_pages.to_s
-      list[:paperclips] = document.paperclips.to_s
-      list[:oversized] = document.oversized.to_s
+      list[:pieces]                  = document.pieces.to_s
+      list[:pages]                   = document.pages.to_s
+      list[:scanned_pieces]          = document.scanned_pieces.to_s
+      list[:scanned_sheets]          = document.scanned_sheets.to_s
+      list[:scanned_pages]           = document.scanned_pages.to_s
+      list[:dematbox_scanned_pieces] = document.dematbox_scanned_pieces.to_s
+      list[:dematbox_scanned_pages]  = document.dematbox_scanned_pages.to_s
+      list[:uploaded_pieces]         = document.uploaded_pieces.to_s
+      list[:uploaded_pages]          = document.uploaded_pages.to_s
+      list[:paperclips]              = document.paperclips.to_s
+      list[:oversized]               = document.oversized.to_s
       if document.report.try(:type)
         if document.report.try(:type) == "NDF"
           list[:report_id] = document.report.try(:id) || "#"
@@ -349,24 +368,30 @@ class Scan::Period
 
       lists << list
       
-      total[:pieces] += document.pieces
-      total[:sheets] += document.sheets
-      total[:pages] += document.pages
-      total[:uploaded_pieces] += document.uploaded_pieces
-      total[:uploaded_sheets] += document.uploaded_sheets
-      total[:uploaded_pages] += document.uploaded_pages
-      total[:paperclips] += document.paperclips
-      total[:oversized] += document.oversized
+      total[:pieces]                  += document.pieces
+      total[:pages]                   += document.pages
+      total[:scanned_pieces]          += document.scanned_pieces
+      total[:scanned_sheets]          += document.scanned_sheets
+      total[:scanned_pages]           += document.scanned_pages
+      total[:dematbox_scanned_pieces] += document.dematbox_scanned_pieces
+      total[:dematbox_scanned_pages]  += document.dematbox_scanned_pages
+      total[:uploaded_pieces]         += document.uploaded_pieces
+      total[:uploaded_pages]          += document.uploaded_pages
+      total[:paperclips]              += document.paperclips
+      total[:oversized]               += document.oversized
     end
     
-    total[:pieces] = total[:pieces].to_s
-    total[:sheets] = total[:sheets].to_s
-    total[:pages] = total[:pages].to_s
-    total[:uploaded_pieces] = total[:uploaded_pieces].to_s
-    total[:uploaded_sheets] = total[:uploaded_sheets].to_s
-    total[:uploaded_pages] = total[:uploaded_pages].to_s
-    total[:paperclips] = total[:paperclips].to_s
-    total[:oversized] = total[:oversized].to_s
+    total[:pieces]                  = total[:pieces].to_s
+    total[:pages]                   = total[:pages].to_s
+    total[:scanned_pieces]          = total[:scanned_pieces].to_s
+    total[:scanned_sheets]          = total[:scanned_sheets].to_s
+    total[:scanned_pages]           = total[:scanned_pages].to_s
+    total[:dematbox_scanned_pieces] = total[:dematbox_scanned_pieces].to_s
+    total[:dematbox_scanned_pages]  = total[:dematbox_scanned_pages].to_s
+    total[:uploaded_pieces]         = total[:uploaded_pieces].to_s
+    total[:uploaded_pages]          = total[:uploaded_pages].to_s
+    total[:paperclips]              = total[:paperclips].to_s
+    total[:oversized]               = total[:oversized].to_s
     
     {
       list: lists,
@@ -375,6 +400,7 @@ class Scan::Period
         compta_pieces: excess_compta_pieces.to_s,
         sheets: excess_sheets.to_s,
         uploaded_pages: excess_uploaded_pages.to_s,
+        dematbox_scanned_pages: excess_dematbox_scanned_pages.to_s,
         paperclips: excess_paperclips.to_s,
         oversized: excess_oversized.to_s
       },
@@ -412,8 +438,9 @@ class Scan::Period
     end
     {
         list: lists,
-        excess_scan: format_price(price_in_cents_of_excess_scan),
         excess_uploaded_pages: format_price(price_in_cents_of_excess_uploaded_pages),
+        excess_scan: format_price(price_in_cents_of_excess_scan),
+        excess_dematbox_scanned_pages: format_price(price_in_cents_of_excess_dematbox_scanned_pages),
         excess_compta_pieces: format_price(price_in_cents_of_excess_compta_pieces),
         total: format_price(price_in_cents_wo_vat),
         invoice_link: invoice_link,

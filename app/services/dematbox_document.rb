@@ -101,8 +101,17 @@ private
     @user.periods.last.duration rescue 1
   end
 
+  def previous_period_open?
+    Time.now.day < 11
+  end
+
+  def previous_period_closed?
+    !previous_period_open?
+  end
+
   def period
-    @period ||= Scan::Period.period_name period_duration, service.is_for_current_period
+    is_current = service.is_for_current_period || previous_period_closed?
+    @period ||= Scan::Period.period_name period_duration, is_current
   end
 
   def content_file_valid?

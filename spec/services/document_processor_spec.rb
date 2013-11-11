@@ -607,7 +607,6 @@ describe DocumentProcessor do
         it { should be_persisted }
         its(:name) { should eq('TS0001 TS 201301 all') }
         its(:pages_count) { should eq(11) }
-        its(:uploaded_pages_count) { should eq(3) }
 
         describe 'global document' do
           subject { @pack.original_document }
