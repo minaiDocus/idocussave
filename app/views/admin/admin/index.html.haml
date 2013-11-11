@@ -64,3 +64,24 @@
               %td FTP
               %td= RemoteFile.of_service('FTP').not_processed.count
               %td= RemoteFile.of_service('FTP').not_retryable.count
+  .span3
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
+        %table.table.table-striped.table-condensed.table-bordered
+          %tbody
+            %tr
+              %th Corrompus
+              %td= TempDocument.unreadable.count
+            %tr
+              %th Bloqués
+              %td= TempDocument.locked.count
+            %tr
+              %th A regrouper
+              %td= TempDocument.bundle_needed.count
+            %tr
+              %th Prêt à être intégrés
+              %td= TempDocument.ready.count
+            %tr
+              %th Intégrés
+              %td= TempDocument.processed.pages_count
