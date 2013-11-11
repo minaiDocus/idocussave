@@ -121,7 +121,7 @@ class PrepaCompta
       def create_info_file(pack_names, path)
         File.open(File.join([path, 'info.csv']), 'w') do |f|
           pack_names.each do |pack_name|
-            f.write pack_name
+            f.puts pack_name.sub(' all', '')
           end
         end
       end
