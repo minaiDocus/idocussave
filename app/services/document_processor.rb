@@ -65,7 +65,7 @@ class DocumentProcessor
               pack_divider.type         = 'sheet'
               pack_divider.origin       = temp_document.delivery_type
               pack_divider.is_a_cover   = is_a_cover
-              pack_divider.name         = "#{base_file_name}_%0#{POSITION_SIZE}d" % position
+              pack_divider.name         = base_file_name + "_%0#{POSITION_SIZE}d" % position
               pack_divider.pages_number = 2
               pack_divider.position     = position
               pack_divider.save
