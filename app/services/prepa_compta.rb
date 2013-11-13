@@ -66,7 +66,12 @@ class PrepaCompta
 
           positions = []
           file_paths = piece.css('file_name').map do |file_name|
-            positions << file_name.content.split('_')[3].to_i
+            part = file_name.content.sub(/\.pdf\z/i, '').split('_')
+            if part.size == 4
+              positions << part[-1].to_i
+            elsif part.size == 5
+              positions << part[-2].to_i
+            end
             File.join(dir, 'regroupments', origin, file_name)
           end
 
@@ -82,6 +87,7 @@ class PrepaCompta
           temp_document                     = TempDocument.new
           temp_document.temp_pack           = temp_pack
           temp_document.is_an_original      = false
+          temp_document.is_a_cover          = original_temp_document.is_a_cover?
           temp_document.content             = open(file_path)
           temp_document.position            = temp_pack.next_document_position
           temp_document.delivered_by        = original_temp_document.delivered_by

@@ -11,6 +11,7 @@ class TempDocument
   field :content_updated_at,   type: Time
   field :position,             type: Integer
   field :is_an_original,       type: Boolean, default: true # original or bundled
+  field :is_a_cover,           type: Boolean, default: false
 
   field :delivered_by
   field :delivery_type
@@ -162,7 +163,11 @@ class TempDocument
 
   def is_a_cover?
     if scanned?
-      File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/^0*$/).present?
+      if original_file_name.present?
+        File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/^0*$/).present?
+      else
+        is_a_cover
+      end
     else
       false
     end
