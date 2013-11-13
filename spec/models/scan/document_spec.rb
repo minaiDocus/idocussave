@@ -22,23 +22,7 @@ describe Scan::Document do
     document.save
     document.should be_persisted
   end
-  
-  it "should verify scanned count" do
-    document = Scan::Document.new(:name => @document_name)
-    document.period = @period
-    document.pieces = 30
-    document.sheets = 30
-    document.pages = 80
-    document.uploaded_pieces = 5
-    document.uploaded_sheets = 5
-    document.uploaded_pages = 30
-    document.save
-    
-    document.scanned_pieces.should eq(25)
-    document.scanned_sheets.should eq(25)
-    document.scanned_pages.should eq(50)
-  end
-  
+
   it "should find document named \"#{@document_name}\"" do
     document = Scan::Document.new(:name => @document_name)
     document.period = @period
@@ -75,35 +59,44 @@ describe Scan::Document do
   
   it "should hook update process for period after saved" do
     document = Scan::Document.new(:name => @document_name, :period_id => @period.id)
-    document.pieces = 5
-    document.sheets = 5
-    document.pages = 20
+    document.pieces = 20
+    document.pages = 44
     document.uploaded_pieces = 2
-    document.uploaded_sheets = 2
-    document.uploaded_pages = 14
+    document.uploaded_pages = 8
+    document.scanned_pieces = 8
+    document.scanned_pages = 16
+    document.scanned_sheets = 8
+    document.dematbox_scanned_pieces = 10
+    document.dematbox_scanned_pages = 20
     document.paperclips = 2
     document.oversized = 2
     document.save
     
     document2 = Scan::Document.new(:name => @document_name2, :period_id => @period.id)
-    document2.pieces = 5
-    document2.sheets = 5
-    document2.pages = 20
-    document2.uploaded_pieces = 2
-    document2.uploaded_sheets = 2
-    document2.uploaded_pages = 14
+    document2.pieces = 17
+    document2.pages = 39
+    document2.uploaded_pieces = 4
+    document2.uploaded_pages = 10
+    document2.scanned_pieces = 10
+    document2.scanned_pages = 20
+    document2.scanned_sheets = 10
+    document2.dematbox_scanned_pieces = 3
+    document2.dematbox_scanned_pages = 9
     document2.paperclips = 2
     document2.oversized = 2
     document2.save
     
     @period.reload
     @period.documents_name_tags.should eq(["b_XX y_#{Time.now.year} m_#{Time.now.month}","b_ZZ y_#{Time.now.year} m_#{Time.now.month}"])
-    @period.pieces.should eq(10)
-    @period.sheets.should eq(10)
-    @period.pages.should eq(40)
-    @period.uploaded_pieces.should eq(4)
-    @period.uploaded_sheets.should eq(4)
-    @period.uploaded_pages.should eq(28)
+    @period.pieces.should eq(37)
+    @period.pages.should eq(83)
+    @period.uploaded_pieces.should eq(6)
+    @period.uploaded_pages.should eq(18)
+    @period.scanned_pieces.should eq(18)
+    @period.scanned_pages.should eq(36)
+    @period.scanned_sheets.should eq(18)
+    @period.dematbox_scanned_pieces.should eq(13)
+    @period.dematbox_scanned_pages.should eq(29)
     @period.paperclips.should eq(4)
     @period.oversized.should eq(4)
   end
