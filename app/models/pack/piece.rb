@@ -74,14 +74,9 @@ class Pack::Piece
     account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
     if account_book_type && account_book_type.compta_processable? && !self.is_a_cover
       compta_type = account_book_type.compta_type
-      if uploaded?
-        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'uploads',compta_type])
-      else
-        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
-      end
-      filename = ''
-      filename = self.name.gsub(' ','_') + '_' + account_book_type.account_number + '_' + account_book_type.charge_account + '.pdf'
+      path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
       FileUtils.mkdir_p(path)
+      filename = DocumentTools.file_name(self.name)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
     end
