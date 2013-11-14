@@ -54,7 +54,7 @@ end
 pids = []
 
 [
-  { name: 'ftp_fecther',               sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
+  { name: 'ftp_fetcher',               sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
   { name: 'bundler',                   sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
   { name: 'processor',                 sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
   { name: 'preassignment_fetcher',     sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
