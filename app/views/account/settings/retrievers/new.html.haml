@@ -1,0 +1,17 @@
+#fiduceo_retrievers.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
+
+  .row-fluid
+    .span3
+      = render partial: 'layouts/account/me/navigation'
+    .span9
+      = render partial: 'navigation'
+      .row-fluid
+        .span12
+          .well
+            %h3 Configuration d'un nouveau récupérateur
+      .row-fluid
+        .span12
+          .well
+            = render partial: 'form'

@@ -48,6 +48,8 @@ class Scan::Period
   field :dematbox_scanned_pages,   type: Integer, default: 0
   field :uploaded_pieces,          type: Integer, default: 0
   field :uploaded_pages,           type: Integer, default: 0
+  field :fiduceo_pieces,           type: Integer, default: 0
+  field :fiduceo_pages,            type: Integer, default: 0
   field :paperclips,               type: Integer, default: 0
   field :oversized,                type: Integer, default: 0
   field :preseizure_pieces,        type: Integer, default: 0
@@ -293,6 +295,8 @@ class Scan::Period
     self.dematbox_scanned_pages   = self.documents.sum(:dematbox_scanned_pages)  || 0
     self.uploaded_pieces          = self.documents.sum(:uploaded_pieces)         || 0
     self.uploaded_pages           = self.documents.sum(:uploaded_pages)          || 0
+    self.fiduceo_pieces           = self.documents.sum(:fiduceo_pieces)          || 0
+    self.fiduceo_pages            = self.documents.sum(:fiduceo_pages)           || 0
     self.paperclips               = self.documents.sum(:paperclips)              || 0
     self.oversized                = self.documents.sum(:oversized)               || 0
     self.preseizure_pieces        = get_preseizure_pieces
@@ -322,6 +326,8 @@ class Scan::Period
     total[:dematbox_scanned_pages]  = 0
     total[:uploaded_pieces]         = 0
     total[:uploaded_pages]          = 0
+    total[:fiduceo_pieces]          = 0
+    total[:fiduceo_pages]           = 0
     total[:paperclips]              = 0
     total[:oversized]               = 0
     
@@ -350,6 +356,8 @@ class Scan::Period
       list[:dematbox_scanned_pages]  = document.dematbox_scanned_pages.to_s
       list[:uploaded_pieces]         = document.uploaded_pieces.to_s
       list[:uploaded_pages]          = document.uploaded_pages.to_s
+      list[:fiduceo_pieces]          = document.fiduceo_pieces.to_s
+      list[:fiduceo_pages]           = document.fiduceo_pages.to_s
       list[:paperclips]              = document.paperclips.to_s
       list[:oversized]               = document.oversized.to_s
       if document.report.try(:type)
@@ -377,6 +385,8 @@ class Scan::Period
       total[:dematbox_scanned_pages]  += document.dematbox_scanned_pages
       total[:uploaded_pieces]         += document.uploaded_pieces
       total[:uploaded_pages]          += document.uploaded_pages
+      total[:fiduceo_pieces]          += document.fiduceo_pieces
+      total[:fiduceo_pages]           += document.fiduceo_pages
       total[:paperclips]              += document.paperclips
       total[:oversized]               += document.oversized
     end
@@ -390,6 +400,8 @@ class Scan::Period
     total[:dematbox_scanned_pages]  = total[:dematbox_scanned_pages].to_s
     total[:uploaded_pieces]         = total[:uploaded_pieces].to_s
     total[:uploaded_pages]          = total[:uploaded_pages].to_s
+    total[:fiduceo_pieces]          = total[:fiduceo_pieces].to_s
+    total[:fiduceo_pages]           = total[:fiduceo_pages].to_s
     total[:paperclips]              = total[:paperclips].to_s
     total[:oversized]               = total[:oversized].to_s
     

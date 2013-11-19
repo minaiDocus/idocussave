@@ -76,6 +76,9 @@ class User
 
   field :ibiza_id, type: String
 
+  field :is_fiduceo_authorized, type: Boolean, default: false
+  field :fiduceo_id
+
   attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
 
@@ -111,6 +114,9 @@ class User
   has_many :remote_files, dependent: :destroy
   has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
+  has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :user
+  has_many :fiduceo_retrievers,   dependent: :destroy
+  has_many :fiduceo_transactions, dependent: :destroy
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true

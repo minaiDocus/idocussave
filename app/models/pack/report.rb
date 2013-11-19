@@ -7,15 +7,20 @@ class Pack::Report
   belongs_to :user,                                                inverse_of: :pack_reports
   belongs_to :pack,                                                inverse_of: :report
   belongs_to :document,    class_name: 'Scan::Document',           inverse_of: :report
-  has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :delete
-  has_many   :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :delete
+  has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :destroy
+  has_many   :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :destroy
   has_many   :remote_files, as: :remotable, dependent: :destroy
 
-  field :type, type: String # NDF / AC / CB / VT
+  field :name
+  field :type, type: String # NDF / AC / CB / VT / FLUX
   field :is_delivered, type: Boolean, default: false
 
   scope :preseizures, not_in: { type: ['NDF'] }
   scope :expenses, where: { type: 'NDF' }
+
+  def pack_name
+    name || pack.name.sub(' all','')
+  end
 
   def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)

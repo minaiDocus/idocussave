@@ -21,6 +21,8 @@ class Reporting
             p_metadata.dematbox_scanned_pages  = current_pages.dematbox_scanned.count
             p_metadata.uploaded_pieces         = current_dividers.uploaded.pieces.count
             p_metadata.uploaded_pages          = current_pages.uploaded.count
+            p_metadata.fiduceo_pieces          = current_dividers.fiduceo.pieces.count
+            p_metadata.fiduceo_pages           = current_pages.fiduceo.count
             p_metadata.save
           end
           if p_metadata.pages - p_metadata.uploaded_pages > 0

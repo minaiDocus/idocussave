@@ -6,27 +6,7 @@
     .span3
       .row-fluid
         .span12
-          .well.sidebar-nav
-            %ul.nav.nav-list.dlink
-              %li{ class: "#{@active_panel == 'change_password'      ? 'active' : ''}" }
-                != link_to 'Changer mon mot de passe',       '#change_password',      class: 'do-show'
-              %li{ class: "#{@active_panel == 'addresses_management' ? 'active' : ''}" }
-                != link_to 'Gestion de mes adresses',        '#addresses_management', class: 'do-show'
-              - if @user.is_prescriber || !@user.is_centralized
-                %li{ class: "#{@active_panel == 'payment_management' ? 'active' : ''}" }
-                  != link_to 'Mode de paiement',             '#payment_management',   class: 'do-show'
-              %li{ class: "#{@active_panel == 'efs_management'       ? 'active' : ''}" }
-                != link_to 'Services de stockages externes', '#efs_management',       class: 'do-show'
-              %li{ class: "#{@active_panel == 'sharing_management'   ? 'active' : ''}" }
-                != link_to 'Partages',                       '#sharing_management',   class: 'do-show'
-              %li{ class: "#{@active_panel == 'subscription_options' ? 'active' : ''}" }
-                != link_to 'Abonnement',                     '#subscription_options', class: 'do-show'
-              - if @user.is_dematbox_authorized
-                %li{ class: "#{@active_panel == 'dematbox'           ? 'active' : ''}" }
-                  != link_to 'Dematbox',                     '#dematbox',             class: 'do-show'
-              - if @user.is_prescriber || !@user.is_centralized
-                %li{ class: "#{@active_panel == 'invoices'           ? 'active' : ''}" }
-                  != link_to 'Factures',                     '#invoices',             class: 'do-show'
+          = render partial: 'layouts/account/me/navigation'
 
     .span9
       #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}

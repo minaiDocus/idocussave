@@ -4,9 +4,10 @@ class Account::PreseizuresController < Account::OrganizationController
   before_filter :load_preseizure, except: :index
 
   def index
-    @pack = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first
-    if @pack && @pack.report
-      @preseizures = @pack.report.preseizures.by_position.page(params[:page]).per(params[:per_page])
+    report = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first.try(:report)
+    report = @user.organization.reports.where(:name => /#{params[:name].gsub('_',' ')}/).first unless report
+    if report
+      @preseizures = report.preseizures.by_position.page(params[:page]).per(params[:per_page])
     else
       @preseizures = []
     end
@@ -34,7 +35,7 @@ private
 
   def load_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id]) unless @user.packs.include? @preseizure.report.pack
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id]) unless @preseizure.report.user.in? @user.customers
   end
 
   def preseizure_params

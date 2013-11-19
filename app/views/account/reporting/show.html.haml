@@ -13,7 +13,7 @@
               %tr{ :style => "text-align:left;" }
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
-                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
+                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
                 - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
                   - options += [["Dépassement (€ HT)",9],["Montant facture (€ HT)",8]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
@@ -51,7 +51,7 @@
   
   - annual_summary = []
   - 12.times do
-    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :fiduceo_pieces => 0, :fiduceo_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
   
   .row
     .span12
@@ -112,6 +112,10 @@
                               #{period.dematbox_scanned_pieces}
                             %span{ :class => "hide dematbox_scanned_pages value_15" }
                               #{period.dematbox_scanned_pages}
+                            %span{ :class => "hide fiduceo_pieces value_17" }
+                              #{period.fiduceo_pieces}
+                            %span{ :class => "hide fiduceo_pages value_18" }
+                              #{period.fiduceo_pages}
                             %span{ :class => "hide paperclips value_6" }
                               #{period.paperclips}
                             %span{ :class => "hide oversized value_7" }
@@ -142,6 +146,8 @@
                             - annual_summary[period.end_at.month - 1][:dematbox_scanned_pieces] += period.dematbox_scanned_pieces
                             - annual_summary[period.end_at.month - 1][:dematbox_scanned_pages] += period.dematbox_scanned_pages
                             - annual_summary[period.end_at.month - 1][:excess_dematbox_scanned_pages] += period.excess_dematbox_scanned_pages
+                            - annual_summary[period.end_at.month - 1][:fiduceo_pieces] += period.fiduceo_pieces
+                            - annual_summary[period.end_at.month - 1][:fiduceo_pages] += period.fiduceo_pages
                             - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
                             - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
                             - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
@@ -175,6 +181,10 @@
                     Nb de pages iDocus'Box
                   %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
                     Dépassement iDocus'Box
+                  %span{ :class => "hide fiduceo_pieces value_17" }
+                    Nb de pièces Automatique
+                  %span{ :class => "hide fiduceo_pages value_18" }
+                    Nb de pages Automatique
                   %span{ :class => "hide compta_pieces value_12" }
                     Nb de pièces pré-affectées
                   %span{ :class => "hide excess_compta_pieces value_13" }
@@ -220,6 +230,10 @@
                       #{month[:dematbox_scanned_pages]}
                     %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
                       #{month[:excess_dematbox_scanned_pages]}
+                    %span{ :class => "hide fiduceo_pieces value_17" }
+                      #{month[:fiduceo_pieces]}
+                    %span{ :class => "hide fiduceo_pages value_18" }
+                      #{month[:fiduceo_pages]}
                     %span{ :class => "hide compta_pieces value_12" }
                       #{month[:compta_pieces]}
                     %span{ :class => "hide excess_compta_pieces value_13" }
@@ -315,7 +329,7 @@
       %a.right.btn
         %i.icon-arrow-right
     %span.legend
-      Légende : Total (Téléversées, Numérisées, iDocus'Box)
+      Légende : Total (Téléversées, Numérisées, iDocus'Box, Automatique)
 
 .modal.fade.in{ :id=>"invoiceDialog", :style => "height:500px;" }
   .modal-header
@@ -338,7 +352,7 @@
           <th class="last"></th>
         </tr>
         {% for(var i=0; i<o.documents.list.length; i++) {
-            var content = "<table class='historic table table-striped table-condensed'><tr><th>N°</th><th>Date</th><th class='right'>Téléversées</th><th class='right'>Numérisées</th><th class='right'>iDocus'Box</th></tr>";
+            var content = "<table class='historic table table-striped table-condensed'><tr><th>N°</th><th>Date</th><th class='right'>Téléversées</th><th class='right'>Numérisées</th><th class='right'>iDocus'Box</th><th class='right'>Automatique</th></tr>";
             for(var k=0; k<o.documents.list[i].historic.length; k++) {
               content += "<tr>";
               content += "<td>"+(k+1)+"</td>";
@@ -346,6 +360,7 @@
               content += "<td class='right'>"+o.documents.list[i].historic[k].uploaded+"</td>";
               content += "<td class='right'>"+o.documents.list[i].historic[k].scanned+"</td>";
               content += "<td class='right'>"+o.documents.list[i].historic[k].dematbox_scanned+"</td>";
+              content += "<td class='right'>"+o.documents.list[i].historic[k].fiduceo+"</td>";
               content += "</tr>";
             }
             content += "</table>";
@@ -359,9 +374,9 @@
                 {%= o.documents.list[i].name %}
               {% } %}
             </td>
-            <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %})</td>
+            <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %}, {%= o.documents.list[i].fiduceo_pieces %})</td>
             <td class="center">{%= o.documents.list[i].scanned_sheets %}</td>
-            <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %})</td>
+            <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %}, {%= o.documents.list[i].fiduceo_pages %})</td>
             <td class="center">{%= o.documents.list[i].paperclips %}</td>
             <td class="center">{%= o.documents.list[i].oversized %}</td>
             <td class="last">
@@ -380,9 +395,9 @@
         {% } %}
         <tr>
           <td><b>Total</b></td>
-          <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %}, {%= o.documents.total.fiduceo_pieces %})</b></td>
           <td class="center"><b>{%= o.documents.total.scanned_sheets %}</b></td>
-          <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %}, {%= o.documents.total.fiduceo_pages %})</b></td>
           <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
           <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
           <td class="last"></td>

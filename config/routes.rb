@@ -149,6 +149,14 @@ Idocus::Application.routes.draw do
     end
     resources :backups
     resource :dematbox
+
+    namespace :settings do
+      resources :retrievers, as: :fiduceo_retrievers do
+        post 'fetch', :on => :member
+        get 'select_documents', :on => :member
+        put 'update_documents', :on => :member
+      end
+    end
   end
 
   namespace :tunnel do

@@ -12,4 +12,8 @@ class UserObserver < Mongoid::Observer
       user.request.sync_with_requestable!
     end
   end
+
+  def before_destroy(user)
+    FiduceoUser.new(user, false).destroy rescue nil
+  end
 end

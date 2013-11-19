@@ -332,6 +332,7 @@ fr:
           is_document_notifier_active: 'Notification des nouveaux documents activé ?'
           is_centralized: 'Est centralisé ?'
           is_dematbox_authorized: Dematbox autorisé ?
+          is_fiduceo_authorized: Fiduceo autorisé ?
           use_debit_mandate: 'Utilise le prélévement ?'
           balance_in_cents: 'Solde du compte prépayé'
           prescriber: 'Prescripteur'
@@ -680,3 +681,24 @@ fr:
               processed: Traité
           stated_at: Etat mise à jour le
           is_locked: Bloqué ?
+      fiduceo_retriever:
+        zero: 0 récupérateur
+        one: 1 récupérateur
+        other: '%{count} récupérateurs'
+        name: Récupérateur Fiduceo
+        attributes:
+          name: Nom
+          type: Type
+          type_values:
+            provider: Documents
+            bank: Opérations bancaire
+          state: Etat
+          is_active: Activer ?
+    state_machines:
+      fiduceo_retriever:
+        states:
+          scheduled: En attente de traitement
+          disabled: Désactivé
+          processing: En cours de traitement
+          error: Erreur
+          wait_user_action: Sélection des premiers documents

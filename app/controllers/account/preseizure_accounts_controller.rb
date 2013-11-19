@@ -4,14 +4,15 @@ class Account::PreseizureAccountsController < Account::OrganizationController
 
   def index
     if params[:name]
-      pack = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first
-      if pack && pack.report
+      report = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first.try(:report)
+      report = @user.organization.reports.where(:name => /#{params[:name].gsub('_',' ')}/).first unless report
+      if report
         if params[:position].presence && params[:position].match(/\d+/)
           position = params[:position].to_i
         else
           position = 1
         end
-        preseizure = pack.report.preseizures.where(position: position).first
+        preseizure = report.preseizures.where(position: position).first
         @preseizure_accounts = preseizure.accounts.by_position
       else
         @preseizure_accounts = []
@@ -23,7 +24,7 @@ class Account::PreseizureAccountsController < Account::OrganizationController
 
   def update
     @account = Pack::Report::Preseizure::Account.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure::Account, params[:id]) unless @user.packs.include? @account.preseizure.report.pack
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure::Account, params[:id]) unless @account.preseizure.report.user.in? @user.customers
     @account.update_attributes(account_params)
     respond_to do |format|
       format.json { render json: { status: :ok } }

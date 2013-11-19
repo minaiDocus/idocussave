@@ -18,6 +18,8 @@ class Scan::Document
   field :dematbox_scanned_pages,  type: Integer, default: 0
   field :uploaded_pieces,         type: Integer, default: 0
   field :uploaded_pages,          type: Integer, default: 0
+  field :fiduceo_pieces,          type: Integer, default: 0
+  field :fiduceo_pages,           type: Integer, default: 0
   field :paperclips,              type: Integer, default: 0
   field :oversized,               type: Integer, default: 0
   field :is_shared,               type: Boolean, default: true

@@ -29,6 +29,9 @@
               %th Téléversés
               %td= Document.uploaded.count
             %tr
+              %th Auto
+              %td= Document.fiduceo.count
+            %tr
               %th Vignettes restante
               %td= Document.not_clean.not_mixed.count
             %tr
@@ -76,6 +79,9 @@
             %tr
               %th Bloqués
               %td= TempDocument.locked.count
+            %tr
+              %th Rejetés
+              %td= TempDocument.rejected.count
             %tr
               %th A regrouper
               %td= TempDocument.bundle_needed.count

@@ -1,0 +1,20 @@
+#fiduceo_retrievers#select_documents.container-fluid
+  .row-fluid
+    .span3
+      = render partial: 'layouts/account/me/navigation'
+    .span9
+      = render partial: 'navigation'
+      .alerts
+        = render partial: 'shared/messages'
+      .well
+        %h2.aligncenter Sélection des documents à récupérer
+        = form_tag update_documents_account_settings_fiduceo_retriever_path(@fiduceo_retriever), method: 'PUT', class: 'form form-horizontal' do
+          - @documents.each do |document|
+            .control-group
+              %label.checkbox
+                = hidden_field_tag "document_ids[#{document.id}]", 0, id: "document_#{document.id}"
+                = check_box_tag "document_ids[#{document.id}]", 1
+                = document.original_file_name
+          .form-actions
+            = submit_tag t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_settings_fiduceo_retrievers_path, class: 'btn'

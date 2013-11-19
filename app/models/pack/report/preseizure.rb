@@ -3,11 +3,14 @@ class Pack::Report::Preseizure
   include Mongoid::Timestamps
   include ActiveModel::ForbiddenAttributesProtection
 
+  belongs_to :user, inverse_of: :preseizures
   belongs_to :report, class_name: 'Pack::Report', inverse_of: :preseizures
   belongs_to :piece,  class_name: 'Pack::Piece',  inverse_of: :preseizures
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
-  has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :delete
+  has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
 
+  field :name
+  field :type
   field :date,            type: Time
   field :deadline_date,   type: Time
   field :observation,     type: String
@@ -18,9 +21,18 @@ class Pack::Report::Preseizure
   field :conversion_rate, type: Float
   field :third_party,     type: String
   field :is_delivered,    type: Boolean, default: false
+  field :fiduceo_id
 
   scope :delivered,     where: { is_delivered: true }
   scope :not_delivered, where: { is_delivered: false }
+
+  def piece_name
+    name || piece.name rescue nil
+  end
+
+  def piece_content_url
+    piece.try(:content).try(:url)
+  end
 
   def self.by_position
     asc(:position)
@@ -39,7 +51,7 @@ class Pack::Report::Preseizure
   end
 
   def piece_info
-    piece.name.split(' ')
+    piece_name.split(' ')
   end
 
   def syear
@@ -64,6 +76,10 @@ class Pack::Report::Preseizure
 
   def quarterly?
     smonth[0] == 'T'
+  end
+
+  def amount_in_cents
+    amount * 100 rescue nil
   end
 
   def self.by_position

@@ -44,7 +44,7 @@ public
     end
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     @pack = Pack.find(params[:id])
-    @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan'], per_page: 10000)
+    @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan', 'fiduceo'], per_page: 10000)
   end
 
   def packs

@@ -17,6 +17,7 @@ class AccountBookType
   has_and_belongs_to_many :requested_clients, class_name: 'User', inverse_of: :requested_account_book_types
 
   has_one :request, as: :requestable, dependent: :destroy
+  has_many :fiduceo_retrievers, inverse_of: 'journal'
 
   embeds_many :expense_categories, cascade_callbacks: true
   

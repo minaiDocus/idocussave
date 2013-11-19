@@ -24,6 +24,10 @@ class Pack::Report::Preseizure::Entry
     type == CREDIT ? amount : nil
   end
 
+  def amount_in_cents
+    amount * 100 rescue nil
+  end
+
   def self.by_number
     asc(:type,:number)
   end

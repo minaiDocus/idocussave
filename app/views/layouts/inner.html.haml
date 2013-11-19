@@ -8,6 +8,7 @@
     = csrf_meta_tag
     != stylesheet_link_tag 'application'
     != stylesheet_link_tag 'account/profiles' if controller_name == 'profiles'
+    != stylesheet_link_tag 'account/fiduceo_retrievers' if controller_name == 'retrievers'
 
   %body
     .navbar.navbar-fixed-top
@@ -49,7 +50,11 @@
                   %a{ :href=>"users/password/new", :class=>"btn" } Aide
                   %a{ :href=>"#", :class=>"modal-close btn" } Close
     
-    != yield
+    - if controller_name.in? %w(profiles retrievers)
+      #profile#settings
+        != yield
+    - else
+      != yield
 
     != render :partial => "/shared/google_analytics"
     :plain
@@ -60,5 +65,7 @@
       != javascript_include_tag 'application', 'inner', 'account/reporting'
     - elsif controller_name == 'profiles' && action_name == 'show'
       != javascript_include_tag 'application', 'inner', 'account/profile'
+    - elsif controller_name == 'retrievers' && action_name.in?(%w(new create edit update))
+      != javascript_include_tag 'application', 'inner', 'account/fiduceo_retrievers'
     - else
       != javascript_include_tag 'application', 'inner', 'account/documents'

@@ -4,7 +4,7 @@ class Pack::Report::Preseizure::Account
   include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
-  has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :delete
+  has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :destroy
 
   accepts_nested_attributes_for :entries
 

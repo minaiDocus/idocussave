@@ -23,6 +23,10 @@ class TempDocument
   field :dematbox_is_notified
   field :dematbox_notified_at
 
+  field :fiduceo_id
+
+  field :signature
+
   field :is_corruption_notified, type: Boolean
   field :corruption_notified_at, type: Time
 
@@ -30,7 +34,7 @@ class TempDocument
   field :stated_at, type: Time
   field :is_locked, type: Boolean, default: false
 
-  validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan)
+  validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan fiduceo)
 
   index :delivery_type
   index :state
@@ -38,6 +42,8 @@ class TempDocument
 
   belongs_to :temp_pack
   belongs_to :document_delivery
+  belongs_to :fiduceo_retriever
+  belongs_to :fiduceo_transaction
   has_mongoid_attached_file :content, path: ":rails_root/files/:rails_env/:class/:id/:filename"
 
   scope :locked,        where: { is_locked: true }
@@ -46,12 +52,14 @@ class TempDocument
   scope :scan,          where: { delivery_type: 'scan' }
   scope :upload,        where: { delivery_type: 'upload' }
   scope :dematbox_scan, where: { delivery_type: 'dematbox_scan' }
+  scope :fiduceo,       where: { delivery_type: 'fiduceo' }
 
   scope :originals,     where: { is_an_original: true }
   scope :bundled,       where: { is_an_original: false }
 
   scope :created,       where:  { state: 'created' }
   scope :unreadable,    where:  { state: 'unreadable' }
+  scope :rejected,      where:  { state: 'rejected' }
   scope :bundle_needed, where:  { state: 'bundle_needed', is_locked: false }
   scope :bundling,      where:  { state: 'bundling' }
   scope :ready,         where:  { state: 'ready', is_locked: false }
@@ -62,6 +70,7 @@ class TempDocument
   state_machine :initial => :created do
     state :created
     state :unreadable
+    state :rejected
     state :bundle_needed
     state :bundling
     state :ready
@@ -89,6 +98,10 @@ class TempDocument
 
     event :unreadable do
       transition :created => :unreadable
+    end
+
+    event :reject do
+      transition :ready => :rejected
     end
 
     event :bundle_needed do
@@ -159,6 +172,10 @@ class TempDocument
 
   def scanned_by_dematbox?
     delivery_type == 'dematbox_scan'
+  end
+
+  def fiduceo?
+    delivery_type == 'fiduceo'
   end
 
   def is_a_cover?

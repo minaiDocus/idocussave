@@ -38,7 +38,7 @@ private
     
     # Document
     sheet1 = book.create_worksheet :name => "Production"
-    sheet1.row(0).concat ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces numérisées", "Piéces versées", "Piéces iDocus'Box", "Feuilles numérisées", "Pages total", "Pages numérisées", "Pages versées", "Pages iDocus'Box", "Attache" ,"Hors format"]
+    sheet1.row(0).concat ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces numérisées", "Piéces versées", "Piéces iDocus'Box", "Piéces automatique", "Feuilles numérisées", "Pages total", "Pages numérisées", "Pages versées", "Pages iDocus'Box", "Pages automatique", "Attache" ,"Hors format"]
     
     nb = 1
     periods.each do |period|
@@ -53,11 +53,13 @@ private
                     document.scanned_pieces,
                     document.uploaded_pieces,
                     document.dematbox_scanned_pieces,
+                    document.fiduceo_pieces,
                     document.scanned_sheets,
                     document.pages,
                     document.scanned_pages,
                     document.uploaded_pages,
                     document.dematbox_scanned_pages,
+                    document.fiduceo_pages,
                     document.paperclips,
                     document.oversized
                   ]

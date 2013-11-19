@@ -14,7 +14,7 @@ class Pack::Piece
   field :position,             type: Integer
   field :token
 
-  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan)
+  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 
   belongs_to :pack,                                                 inverse_of: :pieces
   has_one    :expense,      class_name: "Pack::Report::Expense",    inverse_of: :piece
@@ -28,6 +28,7 @@ class Pack::Piece
   scope :scanned,          where: { origin: 'scan' }
   scope :uploaded,         where: { origin: 'upload' }
   scope :dematbox_scanned, where: { origin: 'dematbox_scan' }
+  scope :fiduceo,          where: { origin: 'fiduceo' }
   
   scope :covers,     where:  { is_a_cover: true }
   scope :not_covers, any_in: { is_a_cover: [false, nil] }
@@ -74,7 +75,11 @@ class Pack::Piece
     account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
     if account_book_type && account_book_type.compta_processable? && !self.is_a_cover
       compta_type = account_book_type.compta_type
-      path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
+      if fiduceo?
+        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'fiduceo',compta_type])
+      else
+        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
+      end
       FileUtils.mkdir_p(path)
       filename = DocumentTools.file_name(self.name)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path

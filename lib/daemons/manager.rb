@@ -58,6 +58,7 @@ pids = []
   { name: 'bundler',                   sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
   { name: 'processor',                 sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
   { name: 'preassignment_fetcher',     sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
+  { name: 'fiduceo_document_fetcher',  sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
   { name: 'delivery-dropbox_extended', sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
   { name: 'delivery-dropbox_basic',    sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
   { name: 'delivery-google_drive',     sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },

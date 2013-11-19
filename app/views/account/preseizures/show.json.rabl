@@ -1,7 +1,7 @@
 object @preseizure
 
 node :name do |preseizure|
-  preseizure.piece.name
+  preseizure.piece_name
 end
 
 node :date do |preseizure|
@@ -17,7 +17,7 @@ node :period_date do |preseizure|
 end
 
 node :url do |preseizure|
-  preseizure.piece.content.url
+  preseizure.piece_content_url
 end
 
 node :journal do |preseizure|
@@ -28,4 +28,8 @@ node :piece_name do |preseizure|
   preseizure.piece.name
 end
 
-attributes :id, :position, :observation, :piece_number, :amount, :currency, :conversion_rate, :third_party, :is_delivered
+node :amount do |preseizure|
+  format_price_00 preseizure.amount_in_cents rescue nil
+end
+
+attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered

@@ -18,7 +18,7 @@ class Document
   field :dirty,                type: Boolean, default: true
   field :token
 
-  validates_inclusion_of :origin, within: %w(mixed scan upload dematbox_scan)
+  validates_inclusion_of :origin, within: %w(mixed scan upload dematbox_scan fiduceo)
 
   index :origin
   index :is_a_cover
@@ -60,6 +60,7 @@ class Document
   scope :scanned,          where:  { origin: 'scan' }
   scope :uploaded,         where:  { origin: 'upload' }
   scope :dematbox_scanned, where:  { origin: 'dematbox_scan' }
+  scope :fiduceo,          where:  { origin: 'fiduceo' }
 
   scope :covers,           where:  { is_a_cover: true }
   scope :not_covers,       any_in: { is_a_cover: [false, nil] }
@@ -162,6 +163,10 @@ class Document
 
   def dematbox_scanned?
     origin == 'dematbox_scan'
+  end
+
+  def fiduceo?
+    origin == 'fiduceo'
   end
 
   class << self

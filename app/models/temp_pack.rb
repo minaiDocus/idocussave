@@ -56,6 +56,9 @@ class TempPack
     if options[:dematbox_doc_id].present?
       opts = { dematbox_doc_id: options[:dematbox_doc_id] }
       temp_document = TempDocument.find_or_initialize_with opts
+    elsif options[:signature].present?
+      opts = { signature: options[:signature] }
+      temp_document = TempDocument.find_or_initialize_with opts
     else
       temp_document ||= TempDocument.new
     end
@@ -63,7 +66,9 @@ class TempPack
     temp_document.is_locked           = options[:is_locked] || false
     temp_document.temp_pack           = self
     temp_document.original_file_name  = options[:original_file_name]
-    temp_document.content             = file
+    unless options[:delivery_type] == 'fiduceo' && temp_document.persisted?
+      temp_document.content           = file
+    end
     temp_document.position            = next_document_position
 
     temp_document.delivered_by        = options[:delivered_by]
@@ -73,9 +78,15 @@ class TempPack
     temp_document.dematbox_service_id = options[:dematbox_service_id] if options[:dematbox_service_id]
     temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
 
+    temp_document.fiduceo_id          = options[:fiduceo_id]          if options[:fiduceo_id]
+
     temp_document.save
     if options[:is_content_file_valid]
-      is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+      if temp_document.fiduceo?
+        temp_document.ready
+      else
+        is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+      end
     else
       temp_document.unreadable
     end
@@ -100,9 +111,14 @@ class TempPack
     temp_documents.upload.by_position.ready
   end
 
+  def ready_fiduceo_documents
+    temp_documents.fiduceo.by_position.ready
+  end
+
   def ready_documents
     documents = ready_uploaded_documents
     documents += ready_dematbox_documents
+    documents += ready_fiduceo_documents
     documents += ready_scanned_documents
     documents
   end
