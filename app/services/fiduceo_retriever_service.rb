@@ -6,8 +6,11 @@ class FiduceoRetrieverService
       retriever.user = user
       if retriever.valid?
         client = Fiduceo::Client.new user.fiduceo_id
-        client.retriever(nil, :put, format_params(retriever))
-        retriever.save if client.response.code == 200
+        result = client.retriever(nil, :put, format_params(retriever))
+        if client.response.code == 200
+          retriever.fiduceo_id = result['id']
+          retriever.save
+        end
       end
       retriever
     end

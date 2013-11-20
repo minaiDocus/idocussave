@@ -56,7 +56,7 @@ class FiduceoTransaction
   has_many   :temp_documents
 
   scope :processed,     where: { :status.in => FINISHED_STATUSES }
-  scope :not_processed, any_of({ :status.in => NOT_FINISHED_STATUSES }, { :retrieved_document_ids.gt => 0, is_processed: false })
+  scope :not_processed, any_of({ :status.in => NOT_FINISHED_STATUSES }, { :retrieved_document_ids.nin => [], is_processed: false })
 
   def processing?
     status.in? NOT_FINISHED_STATUSES

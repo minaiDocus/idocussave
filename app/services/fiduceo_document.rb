@@ -20,7 +20,7 @@ class FiduceoDocument
         signature:             document['documentHash'],
         fiduceo_id:            document['id'],
         is_content_file_valid: true,
-        is_locked:             transaction.retriever.is_documents_locked
+        is_locked:             transaction.retriever.wait_user_action?
       }
       @temp_document = pack.add file, options
       transaction.temp_documents << @temp_document
