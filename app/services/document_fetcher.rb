@@ -58,7 +58,7 @@ class DocumentFetcher
     rescue Errno::ETIMEDOUT
       Rails.logger.info "[#{Time.now}] FTP: connect to #{url} : timeout"
       false
-    rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError => e
+    rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
       content = "#{e.class}<br /><br />#{e.message}"
       ErrorNotification::EMAILS.each do |email|
         NotificationMailer.notify(email, "[iDocus] Erreur lors de la récupération des documents", content).deliver
