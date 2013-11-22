@@ -67,9 +67,9 @@ class PrepaCompta
           positions = []
           file_paths = piece.css('file_name').map do |file_name|
             part = file_name.content.sub(/\.pdf\z/i, '').split('_')
-            if part.size == 4
+            if part.size.in?([4, 5]) && origin == 'scan'
               positions << part[-1].to_i
-            elsif part.size == 5
+            elsif part.size.in?([5, 6])
               positions << part[-2].to_i
             end
             File.join(dir, 'regroupments', origin, file_name)
