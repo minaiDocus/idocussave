@@ -688,6 +688,7 @@ fr:
         name: Récupérateur Fiduceo
         attributes:
           name: Nom
+          service_name: Service
           type: Type
           type_values:
             provider: Documents
@@ -697,8 +698,8 @@ fr:
     state_machines:
       fiduceo_retriever:
         states:
-          scheduled: En attente de traitement
+          scheduled: Programmé
           disabled: Désactivé
-          processing: En cours de traitement
+          processing: Traitement en cours
           error: Erreur
-          wait_user_action: Sélection des premiers documents
+          wait_user_action: En attente de l'utilisateur

@@ -24,6 +24,7 @@ class TempDocument
   field :dematbox_notified_at
 
   field :fiduceo_id
+  field :fiduceo_metadata, type: Hash
 
   field :signature
 

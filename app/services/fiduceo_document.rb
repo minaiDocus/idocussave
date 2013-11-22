@@ -18,6 +18,7 @@ class FiduceoDocument
         delivered_by:          'fiduceo',
         delivery_type:         'fiduceo',
         signature:             document['documentHash'],
+        fiduceo_metadata:      format_metadata(document['metadatas']['metadata']),
         fiduceo_id:            document['id'],
         is_content_file_valid: true,
         is_locked:             transaction.retriever.wait_user_action?
@@ -83,5 +84,13 @@ private
   def decoded_data
     Base64::decode64(@fileb64.gsub(/\\n/,"\n")).
       force_encoding('UTF-8')
+  end
+
+  def format_metadata(metadata)
+    hsh = {}
+    metadata.each do |e|
+      hsh[e['name'].downcase] = e['value']
+    end
+    hsh
   end
 end

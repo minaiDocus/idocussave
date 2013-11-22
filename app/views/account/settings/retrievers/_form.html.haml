@@ -1,11 +1,12 @@
-#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s }.to_json } }
-#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s }.to_json } }
+#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
+#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
 
 = simple_form_for [:account, :settings, @fiduceo_retriever], html: { class: 'form form-horizontal' } do |f|
   = f.input :name
-  = f.input :type, collection: [['Documents', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false
-  = f.input :provider_id, required: true
-  = f.input :bank_id, required: true
+  = f.input :type, collection: [['Documents', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
+  = f.input :service_name, as: :hidden
+  = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
+  = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
   = f.input :journal, collection: current_user.account_book_types, include_blank: false
   = f.input :login
   = f.input :pass, required: true, as: :password

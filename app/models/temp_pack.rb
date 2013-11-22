@@ -79,6 +79,7 @@ class TempPack
     temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
 
     temp_document.fiduceo_id          = options[:fiduceo_id]          if options[:fiduceo_id]
+    temp_document.fiduceo_metadata    = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
 
     temp_document.save
     if options[:is_content_file_valid]

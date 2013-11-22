@@ -59,6 +59,15 @@ update_selects_list = (show_provider)->
     $('#fiduceo_retriever_provider_id').parents('.controls').parents('.control-group').hide()
     $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').show()
 
+update_service_name = ->
+  unless $('#fiduceo_retriever_provider_id').is(':disabled') && $('#fiduceo_retriever_bank_id').is(':disabled')
+    result = null
+    result = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').tokenInput('get')[0]
+    if result
+      $('#fiduceo_retriever_service_name').val(result.name)
+    else
+      $('#fiduceo_retriever_service_name').val('')
+
 jQuery ->
   window.providers = $('#providers').data('providers')
   window.selected_providers = $('#providers').data('selected_providers')
@@ -70,35 +79,48 @@ jQuery ->
   $('#fiduceo_retriever_type').on 'change', ->
     update_selects_list($(this).val() == 'provider')
     update_form()
+    update_service_name()
 
-  $('#fiduceo_retriever_provider_id').tokenInput window.providers,
-    theme: 'facebook'
-    searchDelay: 500
-    minChars: 1
-    resultsLimit: 10
-    tokenLimit: 1
-    preventDuplicates: true
-    prePopulate: window.selected_providers
-    hintText: 'Tapez un fournisseur à rechercher'
-    noResultsText: 'Aucun résultat'
-    searchingText: 'Recherche en cours...'
-    onAdd: (item) ->
-      update_form()
-    onDelete: (item) ->
-      update_form()
+  update_form()
 
-  $('#fiduceo_retriever_bank_id').tokenInput window.banks,
-    theme: 'facebook'
-    searchDelay: 500
-    minChars: 1
-    resultsLimit: 10
-    tokenLimit: 1
-    preventDuplicates: true
-    prePopulate: window.selected_banks
-    hintText: 'Tapez une banque à rechercher'
-    noResultsText: 'Aucun résultat'
-    searchingText: 'Recherche en cours...'
-    onAdd: (item) ->
-      update_form()
-    onDelete: (item) ->
-      update_form()
+  if $('#fiduceo_retriever_provider_id').is(':disabled')
+    $('#fiduceo_retriever_provider_id').val($('#fiduceo_retriever_service_name').val())
+  else
+    $('#fiduceo_retriever_provider_id').tokenInput window.providers,
+      theme: 'facebook'
+      searchDelay: 500
+      minChars: 1
+      resultsLimit: 10
+      tokenLimit: 1
+      preventDuplicates: true
+      prePopulate: window.selected_providers
+      hintText: 'Tapez un fournisseur à rechercher'
+      noResultsText: 'Aucun résultat'
+      searchingText: 'Recherche en cours...'
+      onAdd: (item) ->
+        update_form()
+        update_service_name()
+      onDelete: (item) ->
+        update_form()
+        update_service_name()
+
+  if $('#fiduceo_retriever_bank_id').is(':disabled')
+    $('#fiduceo_retriever_bank_id').val($('#fiduceo_retriever_service_name').val())
+  else
+    $('#fiduceo_retriever_bank_id').tokenInput window.banks,
+      theme: 'facebook'
+      searchDelay: 500
+      minChars: 1
+      resultsLimit: 10
+      tokenLimit: 1
+      preventDuplicates: true
+      prePopulate: window.selected_banks
+      hintText: 'Tapez une banque à rechercher'
+      noResultsText: 'Aucun résultat'
+      searchingText: 'Recherche en cours...'
+      onAdd: (item) ->
+        update_form()
+        update_service_name()
+      onDelete: (item) ->
+        update_form()
+        update_service_name()

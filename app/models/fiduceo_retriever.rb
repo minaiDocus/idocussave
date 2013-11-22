@@ -13,6 +13,7 @@ class FiduceoRetriever
   field :fiduceo_id
   field :provider_id
   field :bank_id
+  field :service_name
   field :type,                               default: 'provider'
   field :name
   field :login
@@ -20,7 +21,7 @@ class FiduceoRetriever
   field :is_active,           type: Boolean, default: true
   field :is_documents_locked, type: Boolean, default: true
 
-  validates_presence_of :type, :name, :login
+  validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
 
   scope :providers, where: { type: 'provider' }
@@ -53,4 +54,12 @@ class FiduceoRetriever
   scope :scheduled,  where: { state: 'scheduled', is_active: true }
   scope :processing, where: { state: 'processing' }
   scope :error,      where: { state: 'error' }
+
+  def provider?
+    type == 'provider'
+  end
+
+  def bank?
+    type == 'bank'
+  end
 end

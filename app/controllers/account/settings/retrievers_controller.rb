@@ -15,7 +15,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
 
   def create
     @fiduceo_retriever = FiduceoRetrieverService.create(current_user, fiduceo_retriever_params)
-    if @fiduceo_retriever.valid?
+    if @fiduceo_retriever.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_settings_fiduceo_retrievers_path
     else
@@ -113,7 +113,11 @@ private
   end
 
   def fiduceo_retriever_params
-    params.require(:fiduceo_retriever).permit(:provider_id, :bank_id, :type, :journal, :name, :login, :pass, :param1, :param2, :param3, :is_active)
+    if action_name == 'update'
+      params.require(:fiduceo_retriever).permit(:journal, :name, :login, :pass, :param1, :param2, :param3, :is_active)
+    else
+      params.require(:fiduceo_retriever).permit(:provider_id, :bank_id, :type, :service_name, :journal, :name, :login, :pass, :param1, :param2, :param3, :is_active)
+    end
   end
 
   def load_fiduceo_user_id
