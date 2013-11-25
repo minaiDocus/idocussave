@@ -21,11 +21,11 @@ node :url do |preseizure|
 end
 
 node :journal do |preseizure|
-  preseizure.piece.journal
+  preseizure.piece.journal rescue nil
 end
 
 node :piece_name do |preseizure|
-  preseizure.piece.name
+  preseizure.piece.name rescue nil
 end
 
 node :amount do |preseizure|

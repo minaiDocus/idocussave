@@ -9,14 +9,15 @@ class FiduceoOperationProcessor
     per_page = 1000
     page = 1
     result = client.operations(page, per_page)
-    if result
+    if client.response.code == 200 && result['operation'].present?
+      operations += result['operation']
       operations_count = result['count'].to_i
       previous_operations_count = operations_count
 
       while operations.count < operations_count
         page += 1
         result = client.operations(page, per_page)
-        if result
+        if client.response.code == 200 && result['operation'].present?
           previous_operations_count = operations.count
           operations += result['operation']
           operations.uniq!
@@ -142,9 +143,9 @@ private
       # DB Accounting Plan
       if @user.accounting_plan
         provider = @user.accounting_plan.providers.select do |provider|
-          label.match /#{provider}/
+          label.match /#{provider.third_party_name}/
         end.first
-        number = provider.third_party_name if provider
+        number = provider.third_party_account if provider
       end
     end
     number = '471000' unless number.present?
