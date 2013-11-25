@@ -46,6 +46,8 @@ gem 'typhoeus'
 gem 'depsio'
 gem 'dalli'
 gem 'nokogiri'
+gem 'capistrano', :require => false
+gem 'capistrano_colors', :require => false
 
 group :assets do
   gem 'twitter-bootstrap-rails'

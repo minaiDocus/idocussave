@@ -1,6 +1,3 @@
-set :rvm_ruby_string, '1.9.3'
-require "rvm/capistrano"
-
 # notify deploy to airbrake
 require 'airbrake/capistrano'
 
@@ -34,7 +31,7 @@ require 'capistrano/ext/multistage'
 before "deploy", "manager:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"
-before "deploy:symlink", "shared:symlink"
+before "deploy:create_symlink", "shared:create_symlink"
 after "deploy", "deploy:cleanup", "manager:start", "delayed_job:start"
 
 def remote_file_exist?(filepath)
@@ -42,8 +39,8 @@ def remote_file_exist?(filepath)
 end
 
 namespace :shared do
-  desc "Make symlink"
-  task :symlink do
+  desc "Create symlink"
+  task :create_symlink do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
     run "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
@@ -65,8 +62,6 @@ namespace :shared do
     run "mkdir -p #{shared_path}/public/system/#{rails_env}"
     run "mkdir -p #{release_path}/tmp/barcode"
     run "mkdir -p #{shared_path}/data/compta/mapping"
-    run "mkdir -p #{shared_path}/files/tmp/uploads"
-    run "mkdir -p #{shared_path}/files/tmp/DELIVERY_BACKUP"
     run "mkdir -p #{shared_path}/files/#{rails_env}/kit"
     run "mkdir -p #{shared_path}/files/#{rails_env}/archives"
     run "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
