@@ -114,9 +114,9 @@ private
 
   def fiduceo_retriever_params
     if action_name == 'update'
-      params.require(:fiduceo_retriever).permit(:journal, :name, :login, :pass, :param1, :param2, :param3, :is_active)
+      params.require(:fiduceo_retriever).permit(:journal_id, :name, :login, :pass, :param1, :param2, :param3, :is_active)
     else
-      params.require(:fiduceo_retriever).permit(:provider_id, :bank_id, :type, :service_name, :journal, :name, :login, :pass, :param1, :param2, :param3, :is_active)
+      params.require(:fiduceo_retriever).permit(:provider_id, :bank_id, :type, :service_name, :journal_id, :name, :login, :pass, :param1, :param2, :param3, :is_active)
     end
   end
 

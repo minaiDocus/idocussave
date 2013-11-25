@@ -55,9 +55,11 @@ update_selects_list = (show_provider)->
   if show_provider
     $('#fiduceo_retriever_provider_id').parents('.controls').parents('.control-group').show()
     $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').hide()
+    $('#fiduceo_retriever_journal_id').parents('.controls').parents('.control-group').show()
   else
     $('#fiduceo_retriever_provider_id').parents('.controls').parents('.control-group').hide()
     $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').show()
+    $('#fiduceo_retriever_journal_id').parents('.controls').parents('.control-group').hide()
 
 update_service_name = ->
   unless $('#fiduceo_retriever_provider_id').is(':disabled') && $('#fiduceo_retriever_bank_id').is(':disabled')

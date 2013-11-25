@@ -9,7 +9,10 @@ class FiduceoRetrieverService
         result = client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.fiduceo_id = result['id']
-          retriever.is_documents_locked = false if retriever.bank?
+          if retriever.bank?
+            retriever.is_documents_locked = false
+            retriever.journal = nil
+          end
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
