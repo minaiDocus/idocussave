@@ -18,9 +18,9 @@ class DocumentProcessor
         current_piece_position = pack.pieces.count + 1
         current_page_position = pack.pages.count + 1
         temp_documents = temp_pack.ready_documents.entries
-        temp_documents.each_with_index do |temp_document, index|
+        temp_documents.each do |temp_document|
           Dir.mktmpdir do |dir|
-            ## Name
+            ## Initialization
             is_a_cover = temp_document.is_a_cover?
             basename = pack.name.sub(' all', '')
             piece_position = is_a_cover ? 0 : current_piece_position
