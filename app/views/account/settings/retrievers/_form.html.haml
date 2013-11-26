@@ -12,10 +12,16 @@
   = f.input :pass, required: true, as: :password
   .param1{ style: 'display:none' }
     = f.input :param1
+  .sparam1{ style: 'display:none' }
+    = f.input :sparam1, collection: [], include_blank: false
   .param2{ style: 'display:none' }
     = f.input :param2
+  .sparam2{ style: 'display:none' }
+    = f.input :sparam2, collection: [], include_blank: false
   .param3{ style: 'display:none' }
     = f.input :param3
+  .sparam3{ style: 'display:none' }
+    = f.input :sparam3, collection: [], include_blank: false
   = f.input :is_active, as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
