@@ -10,11 +10,21 @@ class Idocus.Collections.PackReports extends Backbone.Collection
     lastPage = @lastPage(@total, @perPage)
     @pages = {
       first: 1
-      previous: @previousPage(@page)
-      next: @nextPage(@page, lastPage)
       last: lastPage
     }
     resp.items
+
+  pageRange: ->
+    lastPage = @lastPage(@total, @perPage)
+    first = @page - 3
+    first = 1 if first < 1
+    last = @page + 3
+    last = lastPage if last > lastPage
+
+    range = []
+    for i in [first..last] by 1
+      range.push(i)
+    range
 
   previousPage: (page) ->
     if page <= 1

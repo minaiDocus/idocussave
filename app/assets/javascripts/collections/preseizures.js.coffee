@@ -4,20 +4,31 @@ class Idocus.Collections.Preseizures extends Backbone.Collection
   model: Idocus.Models.Preseizure
 
   parse: (resp) ->
+    window.precol = @
     @page = parseInt(resp.page) || 0
     @perPage = parseInt(resp.per_page) || 0
     @total = parseInt(resp.total) || 0
     lastPage = @lastPage(@total, @perPage)
     @pages = {
       first: 1
-      previous: @previousPage(@page)
-      next: @nextPage(@page, lastPage)
       last: lastPage
     }
     resp.items.forEach (e, i, a) ->
       e.description_keys = resp.description_keys
       e.description_separator = resp.description_separator
     resp.items
+
+  pageRange: ->
+    lastPage = @lastPage(@total, @perPage)
+    first = @page - 4
+    first = 1 if first < 1
+    last = @page + 4
+    last = lastPage if last > lastPage
+
+    range = []
+    for i in [first..last] by 1
+      range.push(i)
+    range
 
   previousPage: (page) ->
     if page <= 1
