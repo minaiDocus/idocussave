@@ -26,6 +26,7 @@ class TempDocument
   field :fiduceo_id
   field :fiduceo_metadata, type: Hash
 
+  field :user_id
   field :signature
 
   field :is_corruption_notified, type: Boolean
@@ -44,7 +45,6 @@ class TempDocument
   belongs_to :temp_pack
   belongs_to :document_delivery
   belongs_to :fiduceo_retriever
-  belongs_to :fiduceo_transaction
   has_mongoid_attached_file :content, path: ":rails_root/files/:rails_env/:class/:id/:filename"
 
   scope :locked,        where: { is_locked: true }

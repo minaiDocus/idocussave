@@ -25,7 +25,10 @@ class FiduceoRetrieverService
       if retriever.valid?
         client = Fiduceo::Client.new retriever.user.fiduceo_id
         client.retriever(nil, :put, format_params(retriever))
-        retriever.save if client.response.code == 200
+        if client.response.code == 200
+          retriever.save
+          FiduceoDocumentFetcher.initiate_transactions retriever
+        end
       end
       retriever
     end

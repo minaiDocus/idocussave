@@ -703,3 +703,22 @@ fr:
           processing: Traitement en cours
           error: Erreur
           wait_user_action: En attente de l'utilisateur
+      fiduceo_transaction:
+        status:
+          pending: en attente
+          scheduled: programmé
+          in_progress: en cours
+          wait_for_user_action: en attente de l'utilisateur
+          completed: fini
+          completed_nothing_to_download: fini sans rien a télécharger
+          completed_nothing_new_to_download: fini sans nouveau document
+          completed_with_missing_docs: fini avec des documents manquant
+          completed_with_errors: fini avec erreur
+          login_failed: authentification échoué
+          unexpected_account_data: compte non valide
+          check_account: vérification du compte
+          dematerialisation_needed: besoin de dématérialisation
+          retriever_error: erreur fonctionnel
+          provider_unavailable: fournisseur indisponible
+          timeout: delai d'attente dépassé
+          broker_unavailable: service indisponible

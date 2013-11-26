@@ -29,8 +29,8 @@ class FiduceoDocumentFetcher
       FiduceoTransaction.not_processed.each do |transaction|
         update_transaction transaction
 
-        if transaction.success? && transaction.retrieved_document_ids.count > 0
-          fetch_documents transaction
+        if transaction.success? && transaction.retriever.pending_document_ids.size > 0
+          fetch_documents transaction.retriever
         end
       end
     end
@@ -51,19 +51,18 @@ class FiduceoDocumentFetcher
       end
     end
 
-    def fetch_documents(transaction)
-      client = Fiduceo::Client.new transaction.user.fiduceo_id
-      fetched_document_ids = transaction.temp_documents.distinct(:fiduceo_id)
-      transaction.retrieved_document_ids.each do |id|
+    def fetch_documents(retriever)
+      client = Fiduceo::Client.new retriever.user.fiduceo_id
+      fetched_document_ids = retriever.temp_documents.distinct(:fiduceo_id)
+      retriever.pending_document_ids.each do |id|
         unless id.in? fetched_document_ids
           document = client.document id
           if client.response.code == 200
-            FiduceoDocument.new transaction, document
+            FiduceoDocument.new retriever, document
           end
         end
+        retriever.safely.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
       end
-      transaction.is_processed = true
-      transaction.save
     end
   end
 end

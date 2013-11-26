@@ -3,7 +3,7 @@ class FiduceoRetriever
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  attr_accessor :pass, :param1, :param2, :param3
+  attr_accessor :pass, :param1, :param2, :param3, :sparam1, :sparam2, :sparam3
 
   belongs_to :user
   belongs_to :journal,        class_name: 'AccountBookType',    inverse_of: 'fiduceo_retrievers'
@@ -14,12 +14,13 @@ class FiduceoRetriever
   field :provider_id
   field :bank_id
   field :service_name
-  field :type,                               default: 'provider'
+  field :type,                                default: 'provider'
   field :name
   field :login
   field :state
-  field :is_active,           type: Boolean, default: true
-  field :is_documents_locked, type: Boolean, default: true
+  field :is_active,            type: Boolean, default: true
+  field :is_documents_locked,  type: Boolean, default: true
+  field :pending_document_ids, type: Array,   default: []
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)

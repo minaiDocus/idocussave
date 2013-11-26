@@ -57,7 +57,7 @@ class TempPack
       opts = { dematbox_doc_id: options[:dematbox_doc_id] }
       temp_document = TempDocument.find_or_initialize_with opts
     elsif options[:signature].present?
-      opts = { signature: options[:signature] }
+      opts = { signature: options[:signature], user_id: options[:user_id] }
       temp_document = TempDocument.find_or_initialize_with opts
     else
       temp_document ||= TempDocument.new

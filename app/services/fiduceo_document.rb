@@ -2,9 +2,9 @@
 class FiduceoDocument
   attr_reader :temp_document
 
-  def initialize(transaction, document)
-    @user = transaction.user
-    @journal = transaction.retriever.journal
+  def initialize(retriever, document)
+    @user = retriever.user
+    @journal = retriever.journal
     @fileb64 = document['binaryData']
 
     label = document['metadatas']['metadata'].select { |e| e['name'] == 'LIBELLE' }.first['value']
@@ -18,14 +18,14 @@ class FiduceoDocument
         delivered_by:          'fiduceo',
         delivery_type:         'fiduceo',
         signature:             document['documentHash'],
+        user_id:               @user.id,
         fiduceo_metadata:      format_metadata(document['metadatas']['metadata']),
         fiduceo_id:            document['id'],
         is_content_file_valid: true,
-        is_locked:             transaction.retriever.wait_user_action?
+        is_locked:             retriever.wait_user_action?
       }
       @temp_document = pack.add file, options
-      transaction.temp_documents << @temp_document
-      transaction.retriever.temp_documents << @temp_document
+      retriever.temp_documents << @temp_document
     end
     clean_tmp
   end

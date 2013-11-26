@@ -53,10 +53,9 @@ class FiduceoTransaction
 
   belongs_to :user
   belongs_to :retriever,      class_name: 'FiduceoRetriever', inverse_of: 'transactions'
-  has_many   :temp_documents
 
   scope :processed,     where: { :status.in => FINISHED_STATUSES }
-  scope :not_processed, any_of({ :status.in => NOT_FINISHED_STATUSES }, { :retrieved_document_ids.nin => [], is_processed: false })
+  scope :not_processed, where: { :status.in => NOT_FINISHED_STATUSES }
 
   def processing?
     status.in? NOT_FINISHED_STATUSES
@@ -72,5 +71,13 @@ class FiduceoTransaction
 
   def error?
     status.in? ERROR_STATUSES
+  end
+
+  def retryable?
+    error? && !status.in?(%w(UNEXPECTED_ACCOUNT_DATA CHECK_ACCOUNT DEMATERIALISATION_NEEDED RETRIEVER_ERROR BROKER_UNAVAILABLE))
+  end
+
+  def not_retryable?
+    !retryable?
   end
 end
