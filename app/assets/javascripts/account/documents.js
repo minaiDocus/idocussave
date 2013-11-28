@@ -111,7 +111,7 @@
   // fecth all pages of the documents
   function getPages(url,title) {
     $.ajax({
-      url: url,
+      url: encodeURI(url),
       data: "",
       dataType: "html",
       type: "GET",
@@ -163,7 +163,7 @@
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
     
     $.ajax({
-      url: Url,
+      url: encodeURI(Url),
       data: "",
       dataType: "html",
       type: "GET",
