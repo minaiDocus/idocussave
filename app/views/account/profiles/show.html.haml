@@ -225,10 +225,10 @@
               = submit_tag "Ajouter", class: 'btn'
 
       - if @user.is_dematbox_authorized
-        #dematbox.row-fluid.pan{ class: (@active_panel == 'dematbox' ? 'active' : '') }
+        #idocus_box.row-fluid.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
           .span12
             .well
-              %h3.aligncenter.margin2bottom Dematbox
+              %h3.aligncenter.margin2bottom iDocus'Box
               - if @user.dematbox.try(:services).try(:any?)
                 %h4.margin1bottom Liste des services
                 %table.table.table-striped.table-bordered.table-condensed.margin0bottom

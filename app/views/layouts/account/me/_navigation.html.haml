@@ -9,7 +9,7 @@
       %li= link_to 'Partages',                        account_profile_path(panel: 'sharing_management')
       %li= link_to 'Abonnement',                      account_profile_path(panel: 'subscription_options')
       - if current_user.is_dematbox_authorized
-        %li= link_to 'Dematbox',                      account_profile_path(panel: 'dematbox')
+        %li= link_to "iDocus'Box",                    account_profile_path(panel: 'idocus_box')
       - if current_user.is_prescriber || !current_user.is_centralized
         %li= link_to 'Factures',                      account_profile_path(panel: 'invoices')
       %li.active= link_to 'Automate de récupération', account_settings_fiduceo_retrievers_path
@@ -28,8 +28,8 @@
       %li{ class: ('active' if @active_panel == 'subscription_options') }
         != link_to 'Abonnement', '#subscription_options', class: 'do-show'
       - if current_user.is_dematbox_authorized
-        %li{ class: ('active' if @active_panel == 'dematbox') }
-          != link_to 'Dematbox', '#dematbox', class: 'do-show'
+        %li{ class: ('active' if @active_panel == 'idocus_box') }
+          != link_to "iDocus'Box", '#idocus_box', class: 'do-show'
       - if current_user.is_prescriber || !current_user.is_centralized
         %li{ class: ('active' if @active_panel == 'invoices') }
           != link_to 'Factures', '#invoices', class: 'do-show'
