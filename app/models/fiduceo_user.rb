@@ -15,7 +15,7 @@ class FiduceoUser
       @client = nil
       @user.fiduceo_id = @attributes['id']
       @user.save if @auto_update
-      client.user_preferences is_bank_pro_available: true
+      client.user_preferences is_bank_pro_available: true, max_data_bancaire_retrievers: 10000
       @user.fiduceo_id
     else
       nil

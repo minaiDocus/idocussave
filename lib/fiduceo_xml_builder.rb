@@ -360,7 +360,7 @@ module Fiduceo
               xml.userId options[:user_id] if options[:user_id]
               xml.defaultEcheanceMonth options[:default_echeance_month] if options[:default_echeance_month]
               xml.isBankProAvailable options[:is_bank_pro_available] if options[:is_bank_pro_available]
-              xml.maxbodyBancaireRetrievers options[:max_body_bancaire_retrievers] if options[:max_body_bancaire_retrievers]
+              xml.maxDataBancaireRetrievers options[:max_data_bancaire_retrievers] if options[:max_data_bancaire_retrievers]
               xml.maxRetrievers options[:max_retrievers] if options[:max_retrievers]
             }
           end
