@@ -118,17 +118,19 @@ class DocumentProcessor
           temp_document.processed
         end
 
-        pack.set_original_document_id
-        pack.set_content_url
-        pack.set_pages_count
-        pack.set_historic
-        pack.is_update_notified = false
-        pack.save
+        unless temp_documents.size == 0
+          pack.set_original_document_id
+          pack.set_content_url
+          pack.set_pages_count
+          pack.set_historic
+          pack.is_update_notified = false
+          pack.save
 
-        piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
-        DocumentTools.archive(pack.archive_file_path, piece_files_path)
+          piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
+          DocumentTools.archive(pack.archive_file_path, piece_files_path)
 
-        FileDeliveryInit.prepare(pack)
+          FileDeliveryInit.prepare(pack)
+        end
       end
     end
   end
