@@ -5,14 +5,14 @@ class Account::GoogleDocsController < Account::AccountController
   
 private
   def service_authorized?
-    unless current_user.find_or_create_efs.is_google_docs_authorized?
+    unless @user.find_or_create_efs.is_google_docs_authorized?
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Google Drive."
       redirect_to account_profile_path
     end
   end
   
   def load_google_doc
-    @google_doc = current_user.find_or_create_efs.google_doc
+    @google_doc = @user.find_or_create_efs.google_doc
   end
   
 public

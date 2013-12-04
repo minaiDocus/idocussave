@@ -2,7 +2,6 @@
 class Account::AddressesController < Account::AccountController
   layout 'inner'
 
-  before_filter :load_user
   before_filter :load_address, only: %w(edit update destroy)
 
   def index
@@ -45,10 +44,6 @@ class Account::AddressesController < Account::AccountController
   end
 
 private
-
-  def load_user
-    @user = current_user
-  end
 
   def load_address
     @address = @user.addresses.find(params[:id])

@@ -1,6 +1,7 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::AccountController < ApplicationController
   before_filter :login_user!
+  before_filter :load_user_and_role
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
   
   layout "inner"

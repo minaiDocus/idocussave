@@ -4,13 +4,12 @@ class Account::FtpsController < Account::AccountController
   
 private
   def load_ftp
-    user = current_user
-    user.external_file_storage.create if !user.external_file_storage
-    if !user.external_file_storage.ftp
-      user.external_file_storage.ftp = Ftp.new
-      user.external_file_storage.ftp.save
+    @user.external_file_storage.create if !@user.external_file_storage
+    if !@user.external_file_storage.ftp
+      @user.external_file_storage.ftp = Ftp.new
+      @user.external_file_storage.ftp.save
     end
-    @ftp = user.external_file_storage.ftp
+    @ftp = @user.external_file_storage.ftp
   end
   
 public

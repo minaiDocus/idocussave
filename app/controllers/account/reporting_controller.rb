@@ -2,8 +2,6 @@
 class Account::ReportingController < Account::AccountController
   layout 'inner', :only => %w(show)
 
-  before_filter :load_user_and_role
-
   def show
     @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
 

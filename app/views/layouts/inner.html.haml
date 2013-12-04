@@ -50,11 +50,10 @@
                   %a{ :href=>"users/password/new", :class=>"btn" } Aide
                   %a{ :href=>"#", :class=>"modal-close btn" } Close
     
-    - if controller_name.in? %w(profiles retrievers)
-      #profile#settings
-        != yield
-    - else
-      != yield
+    - if current_user.is_admin
+      .container-fluid
+        = render 'shared/as_user'
+    != yield
 
     != render :partial => "/shared/google_analytics"
     :plain

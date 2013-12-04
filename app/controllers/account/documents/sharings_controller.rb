@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::Documents::SharingsController < Account::AccountController
-  before_filter :load_user_and_role
-  
   def create
     users = User.find_by_emails(params[:email].split()) - [@user]
     

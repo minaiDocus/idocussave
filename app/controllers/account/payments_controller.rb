@@ -11,13 +11,13 @@ public
     response = 0
     if params[:mode]
       if params[:mode] == "1"
-        current_user.use_debit_mandate = false
-        current_user.save
+        @user.use_debit_mandate = false
+        @user.save
         response = 1
-      elsif params[:mode] == "2" && current_user.debit_mandate != nil
-        if current_user.debit_mandate.transactionStatus == "success"
-          current_user.use_debit_mandate = true
-          current_user.save
+      elsif params[:mode] == "2" && @user.debit_mandate != nil
+        if @user.debit_mandate.transactionStatus == "success"
+          @user.use_debit_mandate = true
+          @user.save
           response = 2
         else
           response = 3
@@ -34,8 +34,8 @@ public
   end
 
   def use_debit_mandate
-    if current_user.debit_mandate && current_user.debit_mandate.transactionStatus == "success"
-      current_user.update_attribute(:use_debit_mandate, true)
+    if @user.debit_mandate && @user.debit_mandate.transactionStatus == "success"
+      @user.update_attribute(:use_debit_mandate, true)
     end
     redirect_to account_profile_path(panel: "payment_management")
   end
@@ -43,9 +43,9 @@ public
   def credit
     if params[:amount]
       amount = params[:amount].to_f * 100
-      ok = Credit.where(:state => "unpaid", :user_id => current_user.id).last.amount != amount rescue true
+      ok = Credit.where(:state => "unpaid", :user_id => @user.id).last.amount != amount rescue true
     	if ok
-    	  @credit = Credit.create!(:amount => amount, :user => current_user)
+    	  @credit = Credit.create!(:amount => amount, :user => @user)
       else
         @credit = Credit.last
       end
