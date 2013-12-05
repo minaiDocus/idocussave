@@ -209,7 +209,7 @@ class Document
       self.content_text = words.join(' ')
       self.content_text = ' ' unless self.content_text.presence
     end
-    save if self.content_text_changed?
+    save
   end
   handle_asynchronously :extract_content!, queue: 'documents content', priority: 10, :run_at => Proc.new { 5.minutes.from_now }
 end
