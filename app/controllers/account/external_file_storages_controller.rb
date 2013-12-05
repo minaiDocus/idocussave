@@ -1,11 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::ExternalFileStoragesController < Account::AccountController
-  
   before_filter :load_external_file_storage
   
 private
   def load_external_file_storage
-    @user = current_user
     @user.external_file_storage.create if !@user.external_file_storage
     @external_file_storage = @user.external_file_storage
   end

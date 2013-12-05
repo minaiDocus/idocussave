@@ -3,7 +3,7 @@ class Account::Documents::UploadsController < Account::AccountController
   def create
     uploaded_document = UploadedDocument.new params[:files][0].tempfile,
                                              params[:files][0].original_filename,
-                                             current_user,
+                                             @user,
                                              params[:account_book_type],
                                              params[:for_current_period]
     tempfile_path = params[:files][0].tempfile.path

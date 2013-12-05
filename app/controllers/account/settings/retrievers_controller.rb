@@ -14,7 +14,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
   end
 
   def create
-    @fiduceo_retriever = FiduceoRetrieverService.create(current_user, fiduceo_retriever_params)
+    @fiduceo_retriever = FiduceoRetrieverService.create(@user, fiduceo_retriever_params)
     if @fiduceo_retriever.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_settings_fiduceo_retrievers_path
@@ -72,7 +72,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
 private
 
   def verify_rights
-    unless current_user.is_fiduceo_authorized
+    unless @user.is_fiduceo_authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
     end
@@ -107,7 +107,7 @@ private
   helper_method :fiduceo_retriever_contains
 
   def search(contains)
-    fiduceo_retrievers = current_user.fiduceo_retrievers
+    fiduceo_retrievers = @user.fiduceo_retrievers
     fiduceo_retrievers = fiduceo_retrievers.where(:name => /#{contains[:name]}/i) unless contains[:name].blank?
     fiduceo_retrievers
   end
@@ -121,7 +121,7 @@ private
   end
 
   def load_fiduceo_user_id
-    @fiduceo_user_id = current_user.fiduceo_id || FiduceoUser.new(current_user).create
+    @fiduceo_user_id = @user.fiduceo_id || FiduceoUser.new(@user).create
   end
 
   def load_fiduceo_retriever

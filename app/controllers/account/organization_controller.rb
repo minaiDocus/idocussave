@@ -2,7 +2,6 @@
 class Account::OrganizationController < Account::AccountController
   layout 'organization'
 
-  before_filter :load_user_and_role
   before_filter :verify_access
   before_filter :load_organization
 

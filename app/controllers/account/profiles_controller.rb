@@ -1,13 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::ProfilesController < Account::AccountController
-  before_filter :load_user
-
-private
-  def load_user
-    @user = current_user
-  end
-  
-public
   def show
     @external_file_storage = @user.find_or_create_external_file_storage
     @billing_address = @user.addresses.for_billing.first

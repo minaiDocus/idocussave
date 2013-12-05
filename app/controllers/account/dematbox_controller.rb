@@ -13,13 +13,13 @@ class Account::DematboxController < Account::AccountController
 private
 
   def verify_access
-    unless current_user.is_dematbox_authorized
+    unless @user.is_dematbox_authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_profile_path
     end
   end
 
   def load_dematbox
-    @dematbox = current_user.dematbox || Dematbox.create(user_id: current_user.id)
+    @dematbox = @user.dematbox || Dematbox.create(user_id: @user.id)
   end
 end

@@ -1,7 +1,7 @@
 - if current_user.is_admin?
   .row-fluid
-    .span12.box
-      - if action_name == 'index' || (controller_name == 'organizations' && action_name == 'show') || (controller_name == 'reporting' && action_name == 'show')
+    .span12.box.as_user
+      - if action_name == 'index' || (controller_name == 'organizations' && action_name == 'show') || (controller_name == 'reporting' && action_name == 'show') || controller_name == 'profiles'
         %form{ action: current_url, method: "GET", class: 'form-inline margin0bottom' }
           = label_tag :code, 'Visualiser et agir en tant que :'
           = text_field_tag :code, (session[:acts_as] ||= ''), class: 'input-medium search-query', placeholder: 'code'
