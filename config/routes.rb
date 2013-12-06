@@ -157,6 +157,11 @@ Idocus::Application.routes.draw do
         put 'update_documents', :on => :member
       end
     end
+
+    namespace :charts do
+      resources :operations
+      resources :balances
+    end
   end
 
   namespace :tunnel do

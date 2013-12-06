@@ -9,6 +9,7 @@
     != stylesheet_link_tag 'application'
     != stylesheet_link_tag 'account/profiles' if controller_name == 'profiles'
     != stylesheet_link_tag 'account/fiduceo_retrievers' if controller_name == 'retrievers'
+    != stylesheet_link_tag 'account/charts' if controller_name.in? %w(operations balances)
 
   %body
     .navbar.navbar-fixed-top
@@ -66,5 +67,7 @@
       != javascript_include_tag 'application', 'inner', 'account/profile'
     - elsif controller_name == 'retrievers' && action_name.in?(%w(new create edit update))
       != javascript_include_tag 'application', 'inner', 'account/fiduceo_retrievers'
+    - elsif controller_name.in? %w(operations balances)
+      != javascript_include_tag 'application', 'inner', 'aight.min', 'aight.d3.min', 'sizzle', 'd3', 'd3-tip', 'account/charts', "account/charts/#{controller_name}"
     - else
       != javascript_include_tag 'application', 'inner', 'account/documents'

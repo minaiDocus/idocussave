@@ -1,0 +1,31 @@
+.container-fluid{ id: controller_name }
+  .navbar
+    .navbar-inner
+      .container-fluid
+        .nav-collapse
+          %ul.nav
+            %li{ :class=>('active' if controller_name == 'operations') }
+              != link_to 'Opérations bancaires', account_charts_operations_path
+            %li{ :class=>('active' if controller_name == 'balances') }
+              != link_to 'Soldes', account_charts_balances_path
+  .row-fluid
+    .span12.box
+      %h3.pull-left Filtres
+      = form_tag current_url, method: 'GET', class: 'filter margin0bottom form-inline' do
+        = label_tag 'bank_account_id', 'Compte bancaire :', class: 'margin2left'
+        = select_tag 'bank_account_id', options_for_select(@bank_accounts, @bank_accounts.select { |e| e[1] == @bank_account_id }.first)
+        = label_tag 'start_date[day]', 'Date de début :', class: 'margin2left'
+        = select_date @start_date, prefix: 'start_date', start_year: Time.now.year - 20, end_year: Time.now.year + 1
+        = label_tag 'end_date[day]', 'Date de fin :', class: 'margin2left'
+        = select_date @end_date, prefix: 'end_date', start_year: Time.now.year - 20, end_year: Time.now.year + 1
+        = submit_tag t('filters.action'), class: 'btn btn-primary margin2left margin1right'
+        = link_to t('actions.cancel'), current_url, class: 'btn'
+  .row-fluid
+    .span12.box{ class: controller_name }
+      #chart{ data: { bank_account_id: @bank_account_id, start_date: @start_date.to_time.strftime("%Y-%m-%d"), end_date: @end_date.to_time.strftime("%Y-%m-%d") } }
+        .load_container
+          .load
+            = image_tag 'application/spinner_gray_alpha.gif', alt: 'Loading'
+            %span Chargement en cours...
+        .chart_alert
+        %svg.chart

@@ -9,3 +9,6 @@
       != link_to 'Mes documents', account_documents_path
     %li{ :class=>('active' if controller_name == 'reporting') }
       != link_to 'Mon reporting', account_reporting_path
+    - if @user.is_fiduceo_authorized
+      %li{ :class=>('active' if controller_name.in? %w(operations balances)) }
+        != link_to 'Mes graphiques', account_charts_operations_path

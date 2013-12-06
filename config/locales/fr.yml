@@ -715,9 +715,9 @@ fr:
           completed_with_missing_docs: fini avec des documents manquant
           completed_with_errors: fini avec erreur
           login_failed: authentification échoué
-          unexpected_account_data: compte non valide
-          check_account: vérification du compte
-          dematerialisation_needed: besoin de dématérialisation
+          unexpected_account_data: donnée(s) de login non valide
+          check_account: vérifier votre compte
+          dematerialisation_needed: dématérialisation requise
           retriever_error: erreur fonctionnel
           provider_unavailable: fournisseur indisponible
           timeout: delai d'attente dépassé

@@ -6,7 +6,8 @@ namespace :fiduceo do
       user_ids = FiduceoRetriever.active.banks.distinct(:user_id)
       users = User.find user_ids
       users.each do |user|
-        FiduceoOperationProcessor.new user if user.is_fiduceo_authorized
+        fop = FiduceoOperationProcessor.new user if user.is_fiduceo_authorized
+        fop.process
       end
     end
   end

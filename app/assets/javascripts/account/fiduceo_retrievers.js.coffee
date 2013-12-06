@@ -18,9 +18,13 @@ update_form = ->
 
     content = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][0]['name']
     $("label[for='fiduceo_retriever_login']").html(content)
+    if retriever['inputs'][0]['info'] != 'NONE' && retriever['inputs'][0]['info'] != undefined
+      $('#fiduceo_retriever_login').attr('placeholder', retriever['inputs'][0]['info'])
 
     content = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][1]['name']
     $("label[for='fiduceo_retriever_pass']").html(content)
+    if retriever['inputs'][1]['info'] != 'NONE' && retriever['inputs'][1]['info'] != undefined
+      $('#fiduceo_retriever_pass').attr('placeholder', retriever['inputs'][1]['info'])
 
     if retriever['inputs'][2]
       label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][2]['name']
@@ -34,6 +38,8 @@ update_form = ->
       else
         $("label[for='fiduceo_retriever_param1']").html(label)
         $('.param1').show()
+        if retriever['inputs'][2]['info'] != 'NONE' && retriever['inputs'][2]['info'] != undefined
+          $('#fiduceo_retriever_param1').attr('placeholder', retriever['inputs'][2]['info'])
 
     if retriever['inputs'][3]
       label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][3]['name']
@@ -47,6 +53,8 @@ update_form = ->
       else
         $("label[for='fiduceo_retriever_param2']").html(label)
         $('.param2').show()
+        if retriever['inputs'][3]['info'] != 'NONE' && retriever['inputs'][3]['info'] != undefined
+          $('#fiduceo_retriever_param2').attr('placeholder', retriever['inputs'][3]['info'])
 
     if retriever['inputs'][4]
       label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][4]['name']
@@ -60,12 +68,16 @@ update_form = ->
       else
         $("label[for='fiduceo_retriever_param3']").html(label)
         $('.param3').show()
+        if retriever['inputs'][4]['info'] != 'NONE' && retriever['inputs'][4]['info'] != undefined
+          $('#fiduceo_retriever_param3').attr('placeholder', retriever['inputs'][4]['info'])
   else
     content = '<abbr title="champ requis">*</abbr> Identifiant'
     $("label[for='fiduceo_retriever_login']").html(content)
+    $("#fiduceo_retriever_login").removeAttr('placeholder')
 
     content = '<abbr title="champ requis">*</abbr> Mot de passe'
     $("label[for='fiduceo_retriever_pass']").html(content)
+    $("#fiduceo_retriever_pass").removeAttr('placeholder')
 
     $('.param1').hide()
     $('.param2').hide()
@@ -73,6 +85,9 @@ update_form = ->
     $('.sparam1').hide()
     $('.sparam2').hide()
     $('.sparam3').hide()
+    $('#fiduceo_retriever_param1').removeAttr('placeholder')
+    $('#fiduceo_retriever_param2').removeAttr('placeholder')
+    $('#fiduceo_retriever_param3').removeAttr('placeholder')
 
 update_selects_list = (show_provider)->
   if show_provider
