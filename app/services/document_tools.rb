@@ -16,7 +16,7 @@ class DocumentTools
     def modifiable?(file_path)
       begin
         document = Poppler::Document.new(file_path)
-        document.permissions.ok_to_modify?
+        document.permissions.full?
       rescue GLib::Error
         false
       end
