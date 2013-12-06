@@ -120,10 +120,6 @@ private
     end
   end
 
-  def load_fiduceo_user_id
-    @fiduceo_user_id = @user.fiduceo_id || FiduceoUser.new(@user).create
-  end
-
   def load_fiduceo_retriever
     @fiduceo_retriever = FiduceoRetriever.find params[:id]
   end

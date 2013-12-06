@@ -59,6 +59,7 @@ group :assets do
   gem 'backbone-on-rails', '0.9.9.0'
   gem 'backbone-forms-on-rails'
   gem 'compass-rails'
+  gem 'd3_rails'
 end
 
 gem 'jquery-rails'

@@ -118,12 +118,11 @@ module Fiduceo
   end
 
   class Client
-    attr_reader :config, :user_id, :cache, :request, :response
+    attr_reader :config, :user_id, :request, :response
 
     def initialize(user_id, options={})
       @user_id = user_id
       @config = Fiduceo.config.dup
-      @cache = options[:cache] || false
     end
 
     # PUT
@@ -225,13 +224,7 @@ module Fiduceo
     end
 
     def bank_accounts
-      if @cache
-        Rails.cache.fetch ['fiduceo', @user_id, 'bank_accounts'] do
-          perform 'bankaccounts', {}, is_deep: true
-        end
-      else
-        perform 'bankaccounts', {}, is_deep: true
-      end
+      perform 'bankaccounts', {}, is_deep: true
     end
 
     # GET || DELETE
@@ -240,13 +233,7 @@ module Fiduceo
     end
 
     def bank_account_balances(id, type, history_count, previ_count)
-      if @cache
-        Rails.cache.fetch ['fiduceo', @user_id, 'bank_account_balances', id, type, history_count, previ_count] do
-          perform "bankaccount/#{id}/balances/#{type}/#{history_count}/#{previ_count}", {}, is_deep: true
-        end
-      else
-        perform "bankaccount/#{id}/balances/#{type}/#{history_count}/#{previ_count}", {}, is_deep: true
-      end
+      perform "bankaccount/#{id}/balances/#{type}/#{history_count}/#{previ_count}", {}, is_deep: true
     end
 
     def put_bank_account(params)
@@ -306,7 +293,7 @@ module Fiduceo
       unless params.empty?
         options.merge!({ method: :post, body: Fiduceo::XML::Builder.operation_filter(params) })
       end
-      perform "operations/#{page}/#{per_page}", options
+      perform "operations/#{page}/#{per_page}", options, is_deep: true
     end
 
     def put_operations(params)
@@ -462,10 +449,12 @@ module Fiduceo
       if is_deep
         results = result[result.keys.last]
         if results.is_a?(String)
-          []
+          [0, []]
         else
           results = [results] unless results.is_a? Array
-          to_objects(results)
+          count = result['count'].try(:to_i)
+          count = results.size unless count
+          [count, to_objects(results)]
         end
       else
         result
@@ -474,7 +463,11 @@ module Fiduceo
 
     def to_objects(entries)
       entries.map do |entry|
-        OpenStruct.new entry
+        _entry = {}
+        entry.each_pair do |k,v|
+          _entry[k.underscore] = v
+        end
+        OpenStruct.new _entry
       end
     end
   end

@@ -1,6 +1,6 @@
 class FiduceoDocumentFetcher
   class << self
-    def initiate_transactions(retrievers)
+    def initiate_transactions(retrievers=nil)
       _retrievers = Array(retrievers).presence || FiduceoRetriever.active.providers.scheduled
       _retrievers.each do |retriever|
         if retriever.scheduled? && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0

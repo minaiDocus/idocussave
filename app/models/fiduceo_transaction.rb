@@ -74,7 +74,7 @@ class FiduceoTransaction
   end
 
   def retryable?
-    error? && !status.in?(%w(UNEXPECTED_ACCOUNT_DATA CHECK_ACCOUNT DEMATERIALISATION_NEEDED RETRIEVER_ERROR BROKER_UNAVAILABLE))
+    error? && !status.in?(%w(RETRIEVER_ERROR BROKER_UNAVAILABLE))
   end
 
   def not_retryable?

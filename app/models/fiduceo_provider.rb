@@ -1,77 +1,86 @@
 class FiduceoProvider
   attr_accessor :user_id
 
-  def initialize(user)
-    if user.is_a? User
-      @user_id = user.fiduceo_id
-    elsif user.is_a? String
-      @user_id = user
-    end
-  end
-
-  def list
-    Rails.cache.fetch(['fiduceo', user_id, 'list'], :expires_in => 7.days, :compress => true) do
-      (banks + providers).uniq.sort do |a,b|
-        (a['type'] + a['name']) <=> (b['type'] + b['name'])
-      end
-    end
-  end
-
-  def clear_list_cache
-    Rails.cache.delete(['fiduceo', user_id, 'list'])
+  def initialize(user_id)
+    @user_id = user_id
+    Rails.cache.fetch(['fiduceo_provider_cache_list']) { [] }
   end
 
   def banks
     if @user_id
-      Rails.cache.fetch(['fiduceo', user_id, 'banks'], :expires_in => 7.days, :compress => true) do
-        result = client.banks
-        if result.class == Array
-          Rails.cache.write(['fiduceo', user_id, 'raw_banks'], result, :expires_in => 7.days, :compress => true)
-          result.map do |bank|
+      cache_name = "fiduceo_#{user_id}_banks"
+      result = Rails.cache.read(cache_name)
+      if result.is_a? Array
+        result
+      else
+        results = client.banks
+        if client.response.code == 200
+          results = results[1].map do |bank|
             _bank = { name: bank.name, type: 'bank' }
-            _bank['id']     = bank.providerId
+            _bank['id']     = bank.provider_id
             _bank['inputs'] = bank.inputs['input']
             _bank
           end
-        else
-          []
         end
+        register_to_cache_list cache_name
+        Rails.cache.write(cache_name, results, :expires_in => 7.days, :compress => true)
+        results
       end
     else
       []
     end
   end
 
-  def clear_banks_cache
+  def flush_banks_cache
     Rails.cache.delete(['fiduceo', user_id, 'banks'])
     Rails.cache.delete(['fiduceo', user_id, 'raw_banks'])
   end
 
   def providers
-    Rails.cache.fetch('fiduceo_provider_providers', :expires_in => 7.days, :compress => true) do
-      result = Fiduceo.providers
-      if result.class == Array
-        Rails.cache.write('fiduceo_provider_raw_providers', result, :expires_in => 7.days, :compress => true)
-        result.map do |provider|
-          _provider = { name: provider.name, type: 'provider' }
-          _provider['id'] = provider.id
-          _provider['inputs'] = provider.inputs['input']
-          _provider
-        end
-      else
-        []
-      end
-    end
+    FiduceoProvider.providers
   end
 
-  def clear_providers_cache
-    Rails.cache.delete('fiduceo_provider_providers')
-    Rails.cache.delete('fiduceo_provider_raw_providers')
+  class << self
+    def flush_all_cache
+      list = Rails.cache.fetch(['fiduceo_provider_cache_list']) { [] }
+      list.each do |cache_name|
+        Rails.cache.delete cache_name
+      end
+      flush_providers_cache
+      Rails.cache.delete(['fiduceo_provider_cache_list'])
+    end
+
+    def flush_providers_cache
+      Rails.cache.delete('fiduceo_provider_providers')
+      Rails.cache.delete('fiduceo_provider_raw_providers')
+    end
+
+    def providers
+      Rails.cache.fetch('fiduceo_provider_providers', :expires_in => 7.days, :compress => true) do
+        results = Fiduceo.providers
+        if results.class == Array
+          Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 7.days, :compress => true)
+          results.map do |provider|
+            _provider = { name: provider.name, type: 'provider' }
+            _provider['id'] = provider.id
+            _provider['inputs'] = provider.inputs['input']
+            _provider
+          end
+        else
+          []
+        end
+      end
+    end
   end
 
 private
 
   def client
     @client ||= Fiduceo::Client.new @user_id
+  end
+
+  def register_to_cache_list(cache_name)
+    new_value = (Rails.cache.read('fiduceo_provider_cache_list') + [cache_name]).uniq
+    Rails.cache.write('fiduceo_provider_cache_list', new_value)
   end
 end

@@ -5,88 +5,67 @@ class FiduceoOperationProcessor
   end
 
   def process
-    operations = []
-    per_page = 1000
-    page = 1
-    result = client.operations(page, per_page)
-    if client.response.code == 200 && result['operation'].present?
-      operations += result['operation']
-      operations_count = result['count'].to_i
-      previous_operations_count = operations_count
-
-      while operations.count < operations_count
-        page += 1
-        result = client.operations(page, per_page)
-        if client.response.code == 200 && result['operation'].present?
-          previous_operations_count = operations.count
-          operations += result['operation']
-          operations.uniq!
-          break if previous_operations_count == operations.count
-        else
-          break
-        end
-      end
+    fiduceo_operation = FiduceoOperation.new @user.fiduceo_id
+    operations = fiduceo_operation.operations
     
-      operations.sort! do |a,b|
-        a['dateOp'] <=> b['dateOp']
-      end
+    if operations && operations.any?
+      operations.sort! { |a,b| a.date <=> b.date }
 
-      if operations.count > 0
-        preseizures_count = pack_report.preseizures.count
-        operations.each_with_index do |operation, index|
-          preseizure = find_or_initialize_preseizure(operation['id'])
-          unless preseizure.persisted?
-            preseizure.name = pack_report.pack_name
-            preseizure.date = operation['dateOp']
-            preseizure.position = preseizures_count + index + 1
-            preseizure.amount = operation['amount'].to_f
-            preseizure.currency = '€'
-            preseizure.observation = operation['label']
-            preseizure.save
-            pack_report.preseizures << preseizure
-            
-            ####################### 1 #######################
-            account           = Pack::Report::Preseizure::Account.new
-            account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number    = 512000
-            preseizure.accounts << account
-            account.save
-            
-            entry = Pack::Report::Preseizure::Entry.new
-            amount = operation['amount'].to_f
-            if amount < 0
-              entry.type = Pack::Report::Preseizure::Entry::CREDIT
-            else
-              entry.type = Pack::Report::Preseizure::Entry::DEBIT
-            end
-            entry.number = 1
-            entry.amount = amount.abs
-            account.entries << entry
-            preseizure.entries << entry
-            entry.save
-
-            ####################### 2 #######################
-            account           = Pack::Report::Preseizure::Account.new
-            account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number    = account_number(operation['label'])
-            preseizure.accounts << account
-            account.save
-            
-            entry = Pack::Report::Preseizure::Entry.new
-            if amount < 0
-              entry.type = Pack::Report::Preseizure::Entry::DEBIT
-            else
-              entry.type = Pack::Report::Preseizure::Entry::CREDIT
-            end
-            entry.number = 1
-            entry.amount = amount.abs
-            account.entries << entry
-            preseizure.entries << entry
-            entry.save
+      preseizures_count = pack_report.preseizures.count
+      operations.each_with_index do |operation, index|
+        preseizure = find_or_initialize_preseizure(operation.id)
+        unless preseizure.persisted?
+          preseizure.name = pack_report.pack_name
+          preseizure.date = operation.date_op
+          preseizure.position = preseizures_count + index + 1
+          preseizure.amount = operation.amount
+          preseizure.currency = '€'
+          preseizure.observation = [operation.label, operation.category].join(' - ')
+          preseizure.category_id = operation.category_id
+          preseizure.save
+          pack_report.preseizures << preseizure
+          
+          ####################### 1 #######################
+          account           = Pack::Report::Preseizure::Account.new
+          account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
+          account.number    = 512000
+          preseizure.accounts << account
+          account.save
+          
+          entry = Pack::Report::Preseizure::Entry.new
+          amount = operation.amount
+          if amount < 0
+            entry.type = Pack::Report::Preseizure::Entry::CREDIT
+          else
+            entry.type = Pack::Report::Preseizure::Entry::DEBIT
           end
+          entry.number = 1
+          entry.amount = amount.abs
+          account.entries << entry
+          preseizure.entries << entry
+          entry.save
+
+          ####################### 2 #######################
+          account           = Pack::Report::Preseizure::Account.new
+          account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
+          account.number    = account_number(operation.label)
+          preseizure.accounts << account
+          account.save
+          
+          entry = Pack::Report::Preseizure::Entry.new
+          if amount < 0
+            entry.type = Pack::Report::Preseizure::Entry::DEBIT
+          else
+            entry.type = Pack::Report::Preseizure::Entry::CREDIT
+          end
+          entry.number = 1
+          entry.amount = amount.abs
+          account.entries << entry
+          preseizure.entries << entry
+          entry.save
         end
-        pack_report.preseizures
       end
+      pack_report.preseizures
     end
   end
 

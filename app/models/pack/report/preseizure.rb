@@ -22,6 +22,7 @@ class Pack::Report::Preseizure
   field :third_party,     type: String
   field :is_delivered,    type: Boolean, default: false
   field :fiduceo_id
+  field :category_id,     type: Integer
 
   scope :delivered,     where: { is_delivered: true }
   scope :not_delivered, where: { is_delivered: false }
