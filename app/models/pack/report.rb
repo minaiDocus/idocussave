@@ -18,21 +18,17 @@ class Pack::Report
   scope :preseizures, not_in: { type: ['NDF'] }
   scope :expenses, where: { type: 'NDF' }
 
-  def pack_name
-    name || pack.name.sub(' all','')
-  end
-
-  def to_csv(outputter=pack.owner.csv_outputter!, ps=self.preseizures, is_access_url=true)
+  def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
   end
 
-  def generate_files(user=pack.owner)
+  def generate_files(user=self.user)
     # TODO implement me
     generate_csv_files(user)
   end
   
-  def generate_csv_files(user=pack.owner)
-    outputter = pack.owner.csv_outputter!
+  def generate_csv_files(user=self.user)
+    outputter = self.user.csv_outputter!
     filespath = []
     if type != 'NDF'
       tmp = self.preseizures.group_by { |p| p.created_at.strftime("%Y%m%d") }
@@ -41,7 +37,7 @@ class Pack::Report
         idx = pre.map(&:_id)
         date = pre[0].created_at
         data = to_csv(outputter, self.preseizures.any_in(_id: idx), user.is_access_by_token_active)
-        basename = self.pack.name.sub(' all','').gsub(' ','_')
+        basename = self.name.gsub(' ','_')
         file= File.new("/tmp/#{basename}_L#{date.strftime("%Y%m%d")}.csv", "w")
         file.write(data)
         file.close
@@ -84,6 +80,7 @@ class Pack::Report
               if pack
                 report = pack.report || Pack::Report.new
                 report.type = "NDF"
+                report.name = pack.name.sub(/ all$/, '')
                 report.user = pack.owner
                 report.pack = pack
                 report.organization = pack.owner.organization
@@ -151,6 +148,7 @@ class Pack::Report
                 if pack
                   report = pack.report || Pack::Report.new
                   report.type = e
+                  report.name = pack.name.sub(/ all$/, '')
                   report.user = pack.owner
                   report.pack = pack
                   report.organization = pack.owner.organization

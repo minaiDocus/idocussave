@@ -11,7 +11,7 @@ class Account::Report::ExpensesController < Account::AccountController
   end
 
   def verify_rights
-    if @report.pack.owner != current_user and !current_user.in?(@report.pack.owner.try(:prescribers) || []) and !current_user.is_admin
+    if @report.user != current_user and !current_user.in?(@report.user.try(:prescribers) || []) and !current_user.is_admin
       redirect_to root_path
     end
   end
@@ -19,7 +19,7 @@ class Account::Report::ExpensesController < Account::AccountController
   public
 
   def show
-    basename = "#{@report.pack.name.gsub(' ','_').sub('_all','')}"
+    basename = @report.name.gsub(' ','_')
     respond_to do |format|
       format.html {}
       format.xlsx do

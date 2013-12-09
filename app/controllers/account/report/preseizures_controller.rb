@@ -11,7 +11,7 @@ class Account::Report::PreseizuresController < Account::AccountController
   end
 
   def verify_rights
-    if @report.pack.owner == current_user || !current_user.in?(@report.pack.owner.try(:prescribers) || []) and !current_user.is_admin
+    if @report.user == current_user || !current_user.in?(@report.user.try(:prescribers) || []) and !current_user.is_admin
       redirect_to root_path
     end
   end
@@ -22,7 +22,7 @@ class Account::Report::PreseizuresController < Account::AccountController
     respond_to do |format|
       format.html {}
       format.csv do
-        send_data(@report.to_csv(@report.pack.owner.csv_outputter!), type: "text/csv", filename: "#{@report.pack.name.gsub(' ','_').sub('_all','')}.csv")
+        send_data(@report.to_csv(@report.user.csv_outputter!), type: "text/csv", filename: "#{@report.name.gsub(' ','_')}.csv")
       end
     end
   end

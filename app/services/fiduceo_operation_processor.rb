@@ -15,7 +15,7 @@ class FiduceoOperationProcessor
       operations.each_with_index do |operation, index|
         preseizure = find_or_initialize_preseizure(operation.id)
         unless preseizure.persisted?
-          preseizure.name = pack_report.pack_name
+          preseizure.name = pack_report.name
           preseizure.date = operation.date_op
           preseizure.position = preseizures_count + index + 1
           preseizure.amount = operation.amount

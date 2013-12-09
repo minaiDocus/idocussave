@@ -136,8 +136,8 @@ class Ibiza
   end
 
   def export(preseizures)
-    if(id = preseizures.first.report.pack.owner.ibiza_id)
-      if(e = exercice(id, preseizures.first.report.pack))
+    if(id = preseizures.first.report.user.ibiza_id)
+      if(e = exercice(id, preseizures.first.report.name))
         client.request.clear
         data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
         client.company(id).entries!(data)
@@ -154,14 +154,14 @@ class Ibiza
     end
   end
 
-  def exercice(id, pack)
+  def exercice(id, name)
     client.request.clear
     client.company(id).exercices?
     if client.response.success?
       exercices = client.response.data.select do |e|
         e['state'].to_i.in? [0,1]
       end
-      part = pack.name.split[2]
+      part = name.split[2]
       year = part[0..3].to_i
       month = part[4..5]
       case month
@@ -181,7 +181,7 @@ class Ibiza
         e['start'].to_date < period && e['end'].to_date > period
       end.first
     else
-      raise "[#{pack.name}] No exercice found in #{id}"
+      raise "[#{name}] No exercice found in #{id}"
     end
   end
 end

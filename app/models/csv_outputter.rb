@@ -45,7 +45,7 @@ class CsvOutputter
         when /^type$/
           entry.preseizure.report.type
         when /^client_code$/
-          entry.preseizure.report.pack.owner.code
+          entry.preseizure.report.user.code
         when /^journal$/
           entry.preseizure.piece.name.split(' ')[1]
         when /^period$/
