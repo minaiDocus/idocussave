@@ -18,8 +18,6 @@ class FiduceoOperationProcessor
           preseizure.name = pack_report.name
           preseizure.date = operation.date_op
           preseizure.position = preseizures_count + index + 1
-          preseizure.amount = operation.amount
-          preseizure.currency = '€'
           preseizure.observation = [operation.label, operation.category].join(' - ')
           preseizure.category_id = operation.category_id
           preseizure.save

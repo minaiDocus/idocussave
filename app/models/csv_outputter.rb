@@ -47,15 +47,15 @@ class CsvOutputter
         when /^client_code$/
           entry.preseizure.report.user.code
         when /^journal$/
-          entry.preseizure.piece.name.split(' ')[1]
+          entry.preseizure.piece_name.try(:split).try(:[], 1)
         when /^period$/
-          entry.preseizure.piece.name.split(' ')[2]
+          entry.preseizure.piece_name.try(:split).try(:[], 2)
         when /^piece_number$/
-          entry.preseizure.piece.name.split(' ')[3].to_i
+          entry.preseizure.piece_name.try(:split).try(:[], 3).try(:to_i)
         when /^original_piece_number$/
           entry.preseizure.piece_number
         when /^piece$/
-          entry.preseizure.piece.try(:name).try(:gsub,' ','_')
+          entry.preseizure.piece_name.try(:gsub, ' ', '_')
         when /^original_amount$/
           "#{entry.preseizure.amount}".gsub(/[\.,\,]/, separator)
         when /^currency$/
@@ -65,9 +65,9 @@ class CsvOutputter
           "#{conversion_rate}".gsub(/[\.,\,]/, separator)
         when /^piece_url$/
           if is_access_url
-            SITE_INNER_URL + entry.preseizure.piece.get_access_url
+            SITE_INNER_URL + entry.preseizure.piece.try(:get_access_url)
           else
-            SITE_INNER_URL + entry.preseizure.piece.content.url
+            SITE_INNER_URL + entry.preseizure.piece_content_url
           end
         when /^remark$/
           entry.preseizure.observation
