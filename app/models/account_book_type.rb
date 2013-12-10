@@ -7,6 +7,7 @@ class AccountBookType
 
   ENTRY_TYPE = %w(no expense buying selling)
   TYPES_NAME = %w(AC VT NDF)
+  DOMAINS = ['', 'AC', 'VT', 'BQ', 'OD', 'NF']
 
   before_save :upcase_name, :sync_assignment
 
@@ -27,6 +28,7 @@ class AccountBookType
   field :description,                    type: String,  default: ""
   field :position,                       type: Integer, default: 0
   field :entry_type,                     type: Integer, default: 0
+  field :domain,                         type: String,  default: ''
   field :account_number,                 type: String
   field :default_account_number,         type: String
   field :charge_account,                 type: String
@@ -42,6 +44,7 @@ class AccountBookType
   validates_presence_of  :name
   validates_presence_of  :description
   validates_inclusion_of :entry_type, in: 0..3
+  validates_inclusion_of :domain, in: DOMAINS
   validates_length_of    :instructions, maximum: 400
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
@@ -99,6 +102,7 @@ class AccountBookType
       :name,
       :description,
       :position,
+      :domain,
       :entry_type,
       :default_account_number,
       :account_number,

@@ -471,6 +471,7 @@ fr:
           entry_type_1: 'Notes de frais'
           entry_type_2: 'Achat'
           entry_type_3: 'Vente'
+          domain: Domaine
           clients: Clients
           force_assignment: Forcer les modifications pour le client
         request:

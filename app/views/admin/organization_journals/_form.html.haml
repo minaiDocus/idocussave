@@ -16,6 +16,19 @@
       - hint = ''
     = f.input :description, label: t('mongoid.models.account_book_type.attributes.description'), hint: hint
 
+    - if @account_book_type.request
+      - value = @account_book_type.request.attribute_changes.try(:[],'domain')
+    - else
+      - value = nil
+    - if value.present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_domain', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, value, style: 'display:none')
+      - hint << content_tag(:span, value)
+    - else
+      - hint = ''
+    = f.input :domain, label: t('mongoid.models.account_book_type.attributes.domain'), collection: journal_domain_for_select, selected: @account_book_type['domain'], include_blank: false, hint: hint
+
     - collection = [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3]]
     - if @account_book_type.request
       - value = @account_book_type.request.attribute_changes.try(:[],'entry_type')
@@ -28,7 +41,7 @@
       - hint << content_tag(:span, collection[value][0])
     - else
       - hint = ''
-    = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: collection, selected: @account_book_type['entry_type'], allow_blank: false, hint: hint
+    = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: collection, selected: @account_book_type['entry_type'], include_blank: false, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'default_account_number').is_a?(String)
       - hint = ''

@@ -97,6 +97,7 @@ private
     params.require(:account_book_type).permit(:name,
                                               :description,
                                               :position,
+                                              :domain,
                                               :entry_type,
                                               :default_account_number,
                                               :account_number,
