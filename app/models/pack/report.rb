@@ -47,6 +47,10 @@ class Pack::Report
     filespath
   end
 
+  def journal
+    name.split[1]
+  end
+
   class << self
     # fetch Compta info
     def fetch(time=Time.now)
