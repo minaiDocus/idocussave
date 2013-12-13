@@ -37,7 +37,7 @@ protected
     if fiduceo_client.response.code == 200 && results[1].any?
       @bank_accounts = results[1].map do |bank_account|
         retriever = FiduceoRetriever.where(fiduceo_id: bank_account.retriever_id).first
-        name = [retriever.try(:name), bank_account.name].compact.join(' - ')
+        name = [retriever.try(:name), bank_account.name, bank_account.account_number].compact.join(' - ')
         [name, bank_account.id]
       end
       ids = results[1].map(&:id)
