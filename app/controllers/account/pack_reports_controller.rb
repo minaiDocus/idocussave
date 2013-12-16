@@ -18,7 +18,7 @@ class Account::PackReportsController < Account::OrganizationController
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured?
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && @report.type != 'FLUX'
       @user.organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
         export(@report.preseizures.by_position.not_delivered.entries)

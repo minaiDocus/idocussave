@@ -32,4 +32,4 @@ node :amount do |preseizure|
   format_price_00 preseizure.amount_in_cents rescue nil
 end
 
-attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered
+attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type
