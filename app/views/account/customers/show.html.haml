@@ -104,6 +104,9 @@
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
+              - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
+                .aligncenter.margin1top
+                  = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@customer), class: 'btn'
           .row-fluid
             .span12.box
               %h3.aligncenter.margin1bottom Divers

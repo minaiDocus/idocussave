@@ -54,6 +54,7 @@ Idocus::Application.routes.draw do
             delete :destroy_customers
           end
         end
+        resources :bank_accounts
       end
       resources :journals do
         post 'cancel_destroy',           :on => :member

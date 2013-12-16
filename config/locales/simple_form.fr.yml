@@ -41,3 +41,7 @@ fr:
         login: Identifiant
         pass: Mot de passe
         is_active: Activer ?
+      bank_account:
+        number: Numéro de compte
+        journal: Journal
+        accounting_number: Numéro de compte comptable
