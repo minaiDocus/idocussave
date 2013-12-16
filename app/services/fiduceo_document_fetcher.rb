@@ -42,7 +42,7 @@ class FiduceoDocumentFetcher
         transaction.status = result['transactionStatus']
         transaction.events = result['transactionEvents']
         if result['retrievedDocuments']
-          transaction.retrieved_document_ids = result['retrievedDocuments']['documentId'] || []
+          transaction.retrieved_document_ids = Array(result['retrievedDocuments']['documentId'])
         end
         FiduceoTransactionTracker.track(transaction)
         transaction.save
