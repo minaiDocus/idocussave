@@ -104,23 +104,23 @@
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
                       %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
-            .row-fluid
-              .span12.box
-                %h3.aligncenter.margin1bottom Divers
-                .row-fluid
-                  .span12.aligncenter
-                    - if @organization.ibiza.try(:is_configured?)
-                      = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@customer), html: { class: 'form margin0bottom' } do |f|
-                        - users = @organization.ibiza.users
-                        - if users.is_a?(Array)
-                          - hint = link_to('Rafraîchir la liste', refresh_users_cache_account_organization_ibiza_path(back: account_organization_customer_path(@customer)))
-                        - elsif users.nil?
-                          - users = []
-                          - hint = 'Mise à jour en cours, veuillez rafraîchir la page dans quelques secondes'
-                        - else
-                          - users = []
-                          - hint = 'Erreur'
-                        = f.input :ibiza_id,   label: t('mongoid.models.user.attributes.ibiza_id'), collection: users, input_html: { class: 'margin0bottom' }, hint: hint
-                        = f.submit t('actions.submit'), class: 'btn'
-                    - if @organization.ibiza.try(:token).blank?
-                      = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
+          .row-fluid
+            .span12.box
+              %h3.aligncenter.margin1bottom Divers
+              .row-fluid
+                .span12.aligncenter
+                  - if @organization.ibiza.try(:is_configured?)
+                    = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@customer), html: { class: 'form margin0bottom' } do |f|
+                      - users = @organization.ibiza.users
+                      - if users.is_a?(Array)
+                        - hint = link_to('Rafraîchir la liste', refresh_users_cache_account_organization_ibiza_path(back: account_organization_customer_path(@customer)))
+                      - elsif users.nil?
+                        - users = []
+                        - hint = 'Mise à jour en cours, veuillez rafraîchir la page dans quelques secondes'
+                      - else
+                        - users = []
+                        - hint = 'Erreur'
+                      = f.input :ibiza_id,   label: t('mongoid.models.user.attributes.ibiza_id'), collection: users, input_html: { class: 'margin0bottom' }, hint: hint
+                      = f.submit t('actions.submit'), class: 'btn'
+                  - if @organization.ibiza.try(:token).blank?
+                    = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
