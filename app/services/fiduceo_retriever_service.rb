@@ -38,7 +38,7 @@ class FiduceoRetrieverService
       if retriever.bank?
         results = client.bank_accounts
         if client.response.code == 200
-          results.each do |bank_account|
+          results[1].each do |bank_account|
             if bank_account.retriever_id == retriever.fiduceo_id
               client.bank_account(bank_account.id, :delete)
             end
