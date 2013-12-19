@@ -5,7 +5,7 @@ class FiduceoTransactionTracker
     if transaction.status_changed?
       if transaction.success?
         if retriever.is_documents_locked
-          if transaction.retrieved_document_ids.count > 0
+          if transaction.retrieved_document_ids.count > 0 && retriever.temp_documents.count > 0
             retriever.wait_user_action
           else
             retriever.schedule
@@ -16,7 +16,7 @@ class FiduceoTransactionTracker
         end
       elsif transaction.error?
         retriever.error
-        if transaction.not_retryable?
+        if transaction.critical_error?
           content = ""
           content << "Utilisateur : #{transaction.user.code}<br>"
           content << "Récupérateur : #{transaction.retriever.name} - (#{transaction.retriever.service_name})<br>"

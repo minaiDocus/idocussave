@@ -691,14 +691,14 @@ fr:
         other: '%{count} récupérateurs'
         name: Récupérateur Fiduceo
         attributes:
-          name: Nom
+          name: Nom personnalisé
           service_name: Service
           type: Type
           type_values:
             provider: Documents
-            bank: Opérations bancaire
+            bank: Op. bancaires
           state: Etat
-          is_active: Activer ?
+          is_active: Activer le récupérateur ?
       bank_account:
         zero: 0 Compte bancaire
         one: 1 Compte bancaire

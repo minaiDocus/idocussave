@@ -7,58 +7,9 @@
       .alerts
         = render partial: 'shared/messages'
       .row-fluid
-        .span9
-          .well
-            = render partial: 'list_options'
-            %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-              %thead
-                %tr
-                  %th= sortable :created_at,   t('mongoid.models.common.attributes.created_at')
-                  %th= sortable :updated_at,   t('mongoid.models.common.attributes.updated_at')
-                  %th= sortable :type,         t('mongoid.models.fiduceo_retriever.attributes.type')
-                  %th= sortable :service_name, t('mongoid.models.fiduceo_retriever.attributes.service_name')
-                  %th= sortable :name,         t('mongoid.models.fiduceo_retriever.attributes.name')
-                  %th= sortable :state,        t('mongoid.models.fiduceo_retriever.attributes.state')
-                  %th.last= t('actions.name')
-              %tbody
-                - @fiduceo_retrievers.each do |fiduceo_retriever|
-                  %tr
-                    %td= l(fiduceo_retriever.created_at)
-                    %td= l(fiduceo_retriever.updated_at)
-                    %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{fiduceo_retriever.type}")
-                    %td= fiduceo_retriever.service_name
-                    %td= fiduceo_retriever.name
-                    %td
-                      - if fiduceo_retriever.is_active
-                        - if fiduceo_retriever.scheduled?
-                          %span.label
-                            = fiduceo_retriever_state(fiduceo_retriever)
-                          = link_to icon(icon: 'download'), fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Lancer maintenant'
-                        - elsif fiduceo_retriever.wait_user_action?
-                          - if fiduceo_retriever.pending_document_ids.empty?
-                            %span.label
-                              = fiduceo_retriever_state(fiduceo_retriever)
-                            = link_to icon(icon: 'check'), select_documents_account_settings_fiduceo_retriever_path(fiduceo_retriever), title: 'Sélectionner vos documents maintenant'
-                          - else
-                            %span.label
-                              Preparation des documents
-                        - elsif fiduceo_retriever.error?
-                          %span.label
-                            = fiduceo_retriever_state(fiduceo_retriever)
-                          - if fiduceo_retriever.transactions.last.retryable?
-                            = link_to icon(icon: 'download'), fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Réessayer maintenant'
-                          - else
-                            %span
-                              = icon(icon: 'warning-sign', title: "Veuillez contacter le support<support@idocus.com>")
-                        - else
-                          %span.label
-                            = fiduceo_retriever_state(fiduceo_retriever)
-                      - else
-                        %span.label= t('mongoid.state_machines.fiduceo_retriever.states.disabled')
-                    %td.last
-                      = link_to icon_edit, edit_account_settings_fiduceo_retriever_path(fiduceo_retriever)
-                      = link_to icon_destroy, account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :delete, confirm: t('actions.confirm') }
-            = render partial: 'list_options'
-        .span3
+        .span12
           .well
             = render partial: 'sidebar'
+      .row-fluid
+        .span12
+          .retrievers_list.well

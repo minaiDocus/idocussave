@@ -27,6 +27,7 @@ class FiduceoRetrieverService
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.save
+          retriever.schedule if retriever.error? && params[:pass].present?
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
       end

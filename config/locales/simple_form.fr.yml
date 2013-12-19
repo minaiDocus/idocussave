@@ -37,10 +37,10 @@ fr:
         bank_id: Banque
         type: Type
         journal: Journal
-        name: Nom
+        name: Nom personnalisé
         login: Identifiant
         pass: Mot de passe
-        is_active: Activer ?
+        is_active: Activer le récupérateur ?
       bank_account:
         number: Numéro de compte
         journal: Journal

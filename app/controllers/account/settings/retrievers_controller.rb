@@ -7,6 +7,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
 
   def index
     @fiduceo_retrievers = search(fiduceo_retriever_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    render partial: 'retrievers' if params[:part].present?
   end
 
   def new
@@ -16,7 +17,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
   def create
     @fiduceo_retriever = FiduceoRetrieverService.create(@user, fiduceo_retriever_params)
     if @fiduceo_retriever.persisted?
-      flash[:success] = 'Créé avec succès.'
+      flash[:success] = 'Récupérateur paramétré.'
       redirect_to account_settings_fiduceo_retrievers_path
     else
       render action: :new
@@ -53,11 +54,12 @@ class Account::Settings::RetrieversController < Account::SettingsController
   end
 
   def update_documents
-    rejected_document_ids = params[:document_ids].select { |_,v| v == "0" }.map { |k,_| k }
+    document_ids = params[:document_ids].presence || []
+    rejected_document_ids = document_ids.select { |_,v| v == "0" }.map { |k,_| k }
     rejected_documents = @fiduceo_retriever.temp_documents.any_in(_id: rejected_document_ids)
     rejected_documents.update_all(state: 'rejected')
 
-    document_ids = params[:document_ids].map { |k,_| k }
+    document_ids = document_ids.map { |k,_| k }
     documents = @fiduceo_retriever.temp_documents.any_in(_id: document_ids)
     documents.update_all(is_locked: false)
 

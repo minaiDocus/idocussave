@@ -1,0 +1,80 @@
+# -*- encoding : UTF-8 -*-
+class FiduceoRetrieverPresenter < BasePresenter
+  presents :fiduceo_retriever
+  delegate :name, :service_name, :type, to: :fiduceo_retriever
+
+  def state
+    if fiduceo_retriever.is_active
+      if fiduceo_retriever.wait_user_action?
+        if fiduceo_retriever.pending_document_ids.any?
+          h.content_tag :span, 'Preparation des documents', class: 'label'
+        else
+          h.link_to 'Sélectionnez vos documents', h.select_documents_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+        end
+      else
+        if fiduceo_retriever.processing?
+          if (content = last_event.presence)
+            result = h.content_tag :span, content, class: 'label'
+          else
+            result = h.content_tag :span, formatted_state, class: 'label'
+          end
+        else
+          result = h.content_tag :span, formatted_state, class: 'label'
+        end
+        if fiduceo_retriever.error? && fiduceo_retriever.transactions.last.critical_error?
+          result += h.content_tag :span, icon(icon: 'warning-sign', title: 'Veuillez contacter le support<support@idocus.com>'), class: 'label'
+        end
+        result
+      end
+    else
+      h.content_tag :span, t('mongoid.state_machines.fiduceo_retriever.states.disabled'), class: 'label'
+    end
+  end
+
+  def events
+    fiduceo_retriever.transactions.last.events
+  end
+
+  def action_link
+    if fiduceo_retriever.is_active
+      if fiduceo_retriever.scheduled? && fiduceo_retriever.provider?
+        h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Lancer la récupération', rel: 'tooltip'
+      elsif fiduceo_retriever.error? && fiduceo_retriever.transactions.last.retryable?
+        h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Réessayer maintenant', rel: 'tooltip'
+      else
+        ''
+      end
+    else
+      ''
+    end
+  end
+
+private
+
+  def formatted_state
+    result = FiduceoRetriever.state_machine.states[fiduceo_retriever.state].human_name
+    if fiduceo_retriever.error?
+      result << ': '
+      result << t('mongoid.state_machines.fiduceo_transaction.status.' + fiduceo_retriever.transactions.last.status.downcase)
+    end
+    result
+  end
+
+  def last_event
+    fiduceo_retriever.transactions.last.try(:events).try(:[], 'lastUserInfo')
+  end
+
+  def formatted_events
+    if (_events = fiduceo_retriever.transactions.last.events['transactionEvent'])
+      if _events.is_a? Hash
+        _events['status']
+      else
+        _events.map do |event|
+          event['status']
+        end.join('<br>')
+      end
+    else
+      ''
+    end
+  end
+end
