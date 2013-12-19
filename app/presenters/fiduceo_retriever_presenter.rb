@@ -5,11 +5,15 @@ class FiduceoRetrieverPresenter < BasePresenter
 
   def state
     if fiduceo_retriever.is_active
-      if fiduceo_retriever.wait_user_action?
-        if fiduceo_retriever.pending_document_ids.any?
-          h.content_tag :span, 'Preparation des documents', class: 'label'
+      if fiduceo_retriever.wait_selection?
+        if fiduceo_retriever.provider?
+          if fiduceo_retriever.pending_document_ids.any?
+            h.content_tag :span, 'Preparation des documents', class: 'label'
+          else
+            h.link_to 'Sélectionnez vos documents', h.select_documents_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+          end
         else
-          h.link_to 'Sélectionnez vos documents', h.select_documents_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
         end
       else
         if fiduceo_retriever.processing?

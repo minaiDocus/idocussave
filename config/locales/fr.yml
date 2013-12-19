@@ -706,6 +706,7 @@ fr:
         name: Compte bancaire
         attributes:
           bank_name: Banque
+          name: Nom
           number: Numéro de compte
           journal: Journal
           accounting_number: Numéro de compte comptable
@@ -716,6 +717,7 @@ fr:
           disabled: Désactivé
           processing: Traitement en cours
           error: Erreur
+          wait_selection: En attente de sélection
           wait_user_action: En attente de l'utilisateur
       fiduceo_transaction:
         status:

@@ -5,7 +5,7 @@ class Account::BankAccountsController < Account::OrganizationController
   before_filter :load_bank_account, except: 'index'
 
   def index
-    @bank_accounts = BankAccountService.new(@customer).bank_accounts
+    @bank_accounts = @customer.bank_accounts
   end
 
   def edit
@@ -34,10 +34,10 @@ private
   end
 
   def load_bank_account
-    @bank_account = BankAccountService.new(@customer).find(params[:id])
+    @bank_account = @customer.bank_accounts.find params[:id]
   end
 
   def bank_account_params
-    params.require(:bank_account).permit(:number, :journal, :accounting_number)
+    params.require(:bank_account).permit(:journal, :accounting_number)
   end
 end

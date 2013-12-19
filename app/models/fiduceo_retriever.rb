@@ -9,6 +9,7 @@ class FiduceoRetriever
   belongs_to :journal,        class_name: 'AccountBookType',    inverse_of: 'fiduceo_retrievers'
   has_many   :transactions,   class_name: 'FiduceoTransaction', inverse_of: 'retriever',          dependent: :destroy
   has_many   :temp_documents
+  has_many   :bank_accounts,                                    inverse_of: 'retriever',          dependent: :destroy
 
   field :fiduceo_id
   field :provider_id
@@ -19,7 +20,7 @@ class FiduceoRetriever
   field :login
   field :state
   field :is_active,            type: Boolean, default: true
-  field :is_documents_locked,  type: Boolean, default: true
+  field :is_selection_needed,  type: Boolean, default: true
   field :pending_document_ids, type: Array,   default: []
 
   validates_presence_of :type, :name, :login, :service_name
@@ -32,15 +33,20 @@ class FiduceoRetriever
   state_machine initial: :scheduled do
     state :scheduled
     state :processing
+    state :wait_selection
     state :wait_user_action
     state :error
 
     event :schedule do
-      transition [:processing, :wait_user_action, :error] => :scheduled
+      transition [:processing, :wait_selection, :error] => :scheduled
     end
 
     event :fetch do
-      transition :scheduled => :processing
+      transition [:scheduled, :wait_user_action] => :processing
+    end
+
+    event :wait_selection do
+      transition :processing => :wait_selection
     end
 
     event :wait_user_action do

@@ -22,7 +22,7 @@ class FiduceoDocument
         fiduceo_metadata:      format_metadata(document['metadatas']['metadata']),
         fiduceo_id:            document['id'],
         is_content_file_valid: true,
-        is_locked:             retriever.wait_user_action?
+        is_locked:             retriever.wait_selection?
       }
       @temp_document = pack.add file, options
       retriever.temp_documents << @temp_document

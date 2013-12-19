@@ -172,7 +172,7 @@ jQuery ->
         onDelete: (item) ->
           update_form()
           update_service_name()
-  if $('#select_documents').length > 0
+  if $('#select_documents, #select_bank_accounts').length > 0
     $('#master_checkbox').change ->
       if $(this).is(':checked')
         $('.checkbox').attr('checked', true);

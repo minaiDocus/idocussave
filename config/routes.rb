@@ -153,9 +153,11 @@ Idocus::Application.routes.draw do
 
     namespace :settings do
       resources :retrievers, as: :fiduceo_retrievers do
-        post 'fetch', :on => :member
-        get 'select_documents', :on => :member
-        put 'update_documents', :on => :member
+        post 'fetch',                :on => :member
+        get  'select_documents',     :on => :member
+        put  'update_documents',     :on => :member
+        get  'select_bank_accounts', :on => :member
+        post 'create_bank_accounts', :on => :member
       end
     end
 

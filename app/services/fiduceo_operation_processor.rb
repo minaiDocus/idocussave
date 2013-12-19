@@ -14,7 +14,7 @@ class FiduceoOperationProcessor
       end
 
       grouped_operations.each do |account_id, operations|
-        bank_account = @user.bank_accounts.select do |bank_account|
+        bank_account = @user.bank_accounts.valid.select do |bank_account|
           bank_account.fiduceo_id == account_id
         end.first
         if bank_account

@@ -471,4 +471,8 @@ module Fiduceo
       end
     end
   end
+
+  class Errors
+    class ServiceUnavailable < RuntimeError; end
+  end
 end
