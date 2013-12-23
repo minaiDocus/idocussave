@@ -94,7 +94,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
           new_bank_account.save
         end
       end
-      flash[:success] = 'Les comptes bancaires sélectionnés ont été prise en compte.'
+      flash[:success] = 'Les comptes bancaires sélectionnés ont été pris en compte.'
       redirect_to account_settings_fiduceo_retrievers_path
     else
       flash[:error] = "Vous n'avez sélectionné aucun compte."
