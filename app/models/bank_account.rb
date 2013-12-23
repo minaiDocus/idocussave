@@ -17,8 +17,6 @@ class BankAccount
   field :journal
   field :accounting_number, default: '512000'
 
-  index :number, unique: true
-
   validates_presence_of :fiduceo_id, :bank_name, :name, :number
   validate :uniqueness_of_number
 
@@ -36,7 +34,8 @@ private
   end
 
   def uniqueness_of_number
-    if self.user.bank_accounts.where(number: self.number).first
+    bank_account = self.user.bank_accounts.where(number: self.number).first
+    if bank_account && bank_account != self
       errors.add(:number, :taken)
     end
   end
