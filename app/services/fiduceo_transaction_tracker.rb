@@ -6,7 +6,7 @@ class FiduceoTransactionTracker
       if transaction.success?
         if retriever.is_selection_needed
           if retriever.provider?
-            if transaction.retrieved_document_ids.count > 0 && retriever.temp_documents.count > 0
+            if transaction.retrieved_document_ids.count > 0
               retriever.wait_selection
             else
               retriever.schedule
