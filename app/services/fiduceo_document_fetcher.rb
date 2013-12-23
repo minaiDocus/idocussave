@@ -63,6 +63,9 @@ class FiduceoDocumentFetcher
         end
         retriever.safely.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
       end
+      if retriever.wait_selection? && retriever.temp_documents.count == 0
+        retriever.schedule
+      end
     end
   end
 end
