@@ -127,7 +127,7 @@ private
       # DB Accounting Plan
       if @user.accounting_plan
         provider = @user.accounting_plan.providers.select do |provider|
-          label.match /#{provider.third_party_name}/
+          label.match /#{provider.third_party_name}/i
         end.first
         number = provider.third_party_account if provider
       end
