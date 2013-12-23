@@ -28,7 +28,12 @@ module IbizaAPI
               preseizure.accounts.each do |account|
                 xml.importEntry {
                   xml.journalRef preseizure.report.journal
-                  xml.date preseizure.period_date.to_date
+                  result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
+                  if result
+                    xml.date preseizure.period_date.to_date
+                  else
+                    xml.date preseizure.date.to_date
+                  end
                   if preseizure.piece
                     xml.piece preseizure.piece.name
                     xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
