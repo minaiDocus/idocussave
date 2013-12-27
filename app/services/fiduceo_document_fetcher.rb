@@ -25,7 +25,20 @@ class FiduceoDocumentFetcher
       end
     end
 
+    def prepare_retryable_retrievers
+      FiduceoRetriever.error.where(:updated_at.gte => 6.minutes.ago, :updated_at.lte => 5.minutes.ago).each do |retriever|
+        last_transaction = retriever.transactions.desc(:created_at).first
+        previous_transaction = retriever.transactions.where(:updated_at.lt => last_transaction.created_at,
+                                                            :updated_at.gte => (last_transaction.created_at - 6.minutes)).first
+        if previous_transaction.blank? && last_transaction.retryable?
+          retriever.schedule
+          initiate_transactions retriever
+        end
+      end
+    end
+
     def fetch
+      prepare_retryable_retrievers
       FiduceoTransaction.not_processed.each do |transaction|
         update_transaction transaction
 
