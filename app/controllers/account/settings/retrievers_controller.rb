@@ -46,8 +46,9 @@ class Account::Settings::RetrieversController < Account::SettingsController
   end
 
   def fetch
+    @fiduceo_retriever.schedule if @fiduceo_retriever.error?
     FiduceoDocumentFetcher.initiate_transactions(@fiduceo_retriever)
-    flash[:success] = 'Récupération en cours...'
+    flash[:success] = 'Traitement en cours...'
     redirect_to account_settings_fiduceo_retrievers_path
   end
 
