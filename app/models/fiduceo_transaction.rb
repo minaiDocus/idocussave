@@ -74,7 +74,7 @@ class FiduceoTransaction
   end
 
   def retryable?
-    error? && !status.in?(%w(RETRIEVER_ERROR BROKER_UNAVAILABLE LOGIN_FAILED UNEXPECTED_ACCOUNT_DATA))
+    error? && !status.in?(%w(LOGIN_FAILED UNEXPECTED_ACCOUNT_DATA))
   end
 
   def not_retryable?

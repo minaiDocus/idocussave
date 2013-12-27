@@ -16,6 +16,12 @@ namespace :fiduceo do
     desc 'Initiate fiduceo transactions'
     task :initiate => [:environment] do
       FiduceoDocumentFetcher.initiate_transactions
+      retrievers = FiduceoRetriever.active.banks
+      retrievers.each do |retriever|
+        if retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))
+          FiduceoDocumentFetcher.create_transaction(retriever)
+        end
+      end
     end
   end
 end
