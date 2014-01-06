@@ -1,7 +1,7 @@
 <table class="pull-left">
   <tr>
     <td class="option">
-      <% if(@model.get('is_delivered') == false && @model.is_deliverable()): %>
+      <% if(@model.get('is_delivered') == false): %>
         <a class="deliver" href="">
           <i class="icon-refresh"></i>
         </a>

@@ -8,6 +8,3 @@ class Idocus.Models.PackReport extends Backbone.Model
       type: 'POST'
       data: ''
       datatype: 'json'
-
-  is_deliverable: ->
-    @get('type') != 'FLUX'

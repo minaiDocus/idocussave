@@ -42,8 +42,5 @@ class Idocus.Models.Preseizure extends Backbone.Model
       data: ''
       datatype: 'json'
 
-  is_deliverable: ->
-    @get('type') != 'FLUX'
-
   has_link: ->
     @get('type') != 'FLUX'
