@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 module Admin::ReportingHelper
   def invoice_at(time, organization, invoices)
-    current_time = time + 1.month
+    start_time = (time + 1.month).beginning_of_month
+    end_time = start_time.end_of_month
     invoices.select do |invoice|
-      invoice.number.match(/^#{current_time.strftime('%Y%m')}/) && invoice['organization_id'] == organization.id
+      invoice.created_at > start_time && invoice.created_at < end_time && invoice['organization_id'] == organization.id
     end.first
   end
 
