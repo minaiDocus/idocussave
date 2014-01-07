@@ -117,6 +117,7 @@ class User
   has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :user
   has_many :fiduceo_retrievers,   dependent: :destroy
   has_many :fiduceo_transactions, dependent: :destroy
+  has_many :bank_accounts,        dependent: :destroy
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true

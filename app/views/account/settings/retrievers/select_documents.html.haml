@@ -1,4 +1,4 @@
-#fiduceo_retrievers#select_documents.container-fluid
+#fiduceo_retriever#select_documents.container-fluid
   .row-fluid
     .span3
       = render partial: 'layouts/account/me/navigation'
@@ -16,6 +16,7 @@
                   %thead
                     %tr
                       %th
+                        = check_box_tag 'master_checkbox', 0, false
                       %th Nom
                       %th Date
                       %th Montant
@@ -24,7 +25,7 @@
                       %tr
                         %td
                           = hidden_field_tag "document_ids[#{document.id}]", 0, id: "document_#{document.id}"
-                          = check_box_tag "document_ids[#{document.id}]", 1
+                          = check_box_tag "document_ids[#{document.id}]", 1, false, class: 'checkbox'
                         %td= label_tag "document_ids[#{document.id}]", document.original_file_name
                         %td= label_tag "document_ids[#{document.id}]", document.fiduceo_metadata['date']
                         - if document.fiduceo_metadata['currency'].present?

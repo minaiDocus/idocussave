@@ -59,7 +59,7 @@ module Idocus
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :rawScan, :improvedScan]
+    config.filter_parameters += [:password, :rawScan, :improvedScan, :pass, :param1, :param2, :param3]
 
     config.generators do |g|
       g.orm :mongoid

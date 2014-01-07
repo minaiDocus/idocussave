@@ -302,6 +302,10 @@ fr:
             invalid_file_extension: 'extension %{extension} invalide (.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)'
             journal_unknown: 'journal %{journal} inconnu'
             file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mot de passe'
+        bank_account:
+          attributes:
+            journal:
+              invalid: Invalide ( doit être composé uniquement des caractéres A à Z et des chiffres 0 à 9 )
     models:
       common:
         attributes:
@@ -688,14 +692,25 @@ fr:
         other: '%{count} récupérateurs'
         name: Récupérateur Fiduceo
         attributes:
-          name: Nom
+          name: Nom personnalisé
           service_name: Service
           type: Type
           type_values:
             provider: Documents
-            bank: Opérations bancaire
+            bank: Op. bancaires
           state: Etat
-          is_active: Activer ?
+          is_active: Activer le récupérateur ?
+      bank_account:
+        zero: 0 Compte bancaire
+        one: 1 Compte bancaire
+        other: '%{count} Comptes bancaires'
+        name: Compte bancaire
+        attributes:
+          bank_name: Banque
+          name: Nom
+          number: Numéro de compte
+          journal: Journal
+          accounting_number: Numéro de compte comptable
     state_machines:
       fiduceo_retriever:
         states:
@@ -703,6 +718,7 @@ fr:
           disabled: Désactivé
           processing: Traitement en cours
           error: Erreur
+          wait_selection: En attente de sélection
           wait_user_action: En attente de l'utilisateur
       fiduceo_transaction:
         status:
@@ -719,7 +735,7 @@ fr:
           unexpected_account_data: donnée(s) de login non valide
           check_account: vérifier votre compte
           dematerialisation_needed: dématérialisation requise
-          retriever_error: erreur fonctionnel
+          retriever_error: erreur fonctionnelle
           provider_unavailable: fournisseur indisponible
           timeout: delai d'attente dépassé
           broker_unavailable: service indisponible

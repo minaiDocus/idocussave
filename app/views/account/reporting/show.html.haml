@@ -257,10 +257,9 @@
                   %span{ :style => "padding-right:3px;" }= month[:active_user]
                   .invoice{ :style => "padding-right:3px;" }
                     - if @user.organization && @user.organization.leader == @user && @user.organization.invoices.count > 0
-                      - if index == 11
-                        - invoice = @user.organization.invoices.where(:number => /^#{@year+1}01/).first
-                      - else
-                        - invoice = @user.organization.invoices.where(:number => /^#{@year}#{"%0.2d" % (index+2)}/).first
+                      - start_time = Time.local(@year, index+1, 1) + 1.month
+                      - end_time = start_time.end_of_month
+                      - invoice  = @user.organization.invoices.where(:created_at.gt => start_time, :created_at.lt => end_time).first
                       - if invoice
                         - if invoice.content.try(:url)
                           %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }

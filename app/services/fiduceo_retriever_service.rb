@@ -9,10 +9,7 @@ class FiduceoRetrieverService
         result = client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.fiduceo_id = result['id']
-          if retriever.bank?
-            retriever.is_documents_locked = false
-            retriever.journal = nil
-          end
+          retriever.journal = nil if retriever.bank?
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
@@ -27,6 +24,7 @@ class FiduceoRetrieverService
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.save
+          retriever.schedule if retriever.error? && params[:pass].present?
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
       end
@@ -35,6 +33,16 @@ class FiduceoRetrieverService
 
     def destroy(retriever)
       client = Fiduceo::Client.new(retriever.user.fiduceo_id)
+      if retriever.bank?
+        results = client.bank_accounts
+        if client.response.code == 200
+          results[1].each do |bank_account|
+            if bank_account.retriever_id == retriever.fiduceo_id
+              client.bank_account(bank_account.id, :delete)
+            end
+          end
+        end
+      end
       client.retriever(retriever.fiduceo_id, :delete)
       retriever.destroy
     end

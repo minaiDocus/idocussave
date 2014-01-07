@@ -1,0 +1,13 @@
+#bank_accounts
+  .row-fluid
+    .span12.box
+      %h3 Edition d'un compte bancaire du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+  .row-fluid
+    .span12.box
+      = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@customer, @bank_account), method: 'PUT', html: { class: 'form form-horizontal' } do |f|
+        = f.input :number,            disabled: true
+        = f.input :journal,           required: true
+        = f.input :accounting_number, required: true
+        .form-actions
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_bank_accounts_path(@customer), class: 'btn btn-danger'

@@ -7,92 +7,99 @@ class FiduceoOperationProcessor
   def process
     fiduceo_operation = FiduceoOperation.new @user.fiduceo_id
     operations = fiduceo_operation.operations
-    
+
     if operations && operations.any?
-      operations.sort! { |a,b| a.date <=> b.date }
+      grouped_operations = operations.group_by do |operation|
+        operation.account_id
+      end
 
-      preseizures_count = pack_report.preseizures.count
-      operations.each_with_index do |operation, index|
-        preseizure = find_or_initialize_preseizure(operation.id)
-        unless preseizure.persisted?
-          preseizure.name = pack_report.name
-          preseizure.date = operation.date_op
-          preseizure.position = preseizures_count + index + 1
-          preseizure.observation = [operation.label, operation.category].join(' - ')
-          preseizure.category_id = operation.category_id
-          preseizure.save
-          pack_report.preseizures << preseizure
-          
-          ####################### 1 #######################
-          account           = Pack::Report::Preseizure::Account.new
-          account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-          account.number    = 512000
-          preseizure.accounts << account
-          account.save
-          
-          entry = Pack::Report::Preseizure::Entry.new
-          amount = operation.amount
-          if amount < 0
-            entry.type = Pack::Report::Preseizure::Entry::CREDIT
-          else
-            entry.type = Pack::Report::Preseizure::Entry::DEBIT
-          end
-          entry.number = 1
-          entry.amount = amount.abs
-          account.entries << entry
-          preseizure.entries << entry
-          entry.save
+      grouped_operations.each do |account_id, operations|
+        bank_account = @user.bank_accounts.valid.select do |bank_account|
+          bank_account.fiduceo_id == account_id
+        end.first
+        if bank_account
+          operations.sort! { |a,b| a.date <=> b.date }
+          pack_report = find_or_create_pack_report(bank_account.journal)
+          preseizures_count = pack_report.preseizures.count
 
-          ####################### 2 #######################
-          account           = Pack::Report::Preseizure::Account.new
-          account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-          account.number    = account_number(operation.label)
-          preseizure.accounts << account
-          account.save
-          
-          entry = Pack::Report::Preseizure::Entry.new
-          if amount < 0
-            entry.type = Pack::Report::Preseizure::Entry::DEBIT
-          else
-            entry.type = Pack::Report::Preseizure::Entry::CREDIT
+          operations.each_with_index do |operation, index|
+            preseizure = find_or_initialize_preseizure(operation.id)
+            unless preseizure.persisted?
+              preseizure.name = pack_report.name
+              preseizure.date = operation.date_op
+              preseizure.position = preseizures_count + index + 1
+              preseizure.observation = [operation.label, operation.category].join(' - ')
+              preseizure.category_id = operation.category_id
+              preseizure.save
+              pack_report.preseizures << preseizure
+              
+              ####################### 1 #######################
+              account           = Pack::Report::Preseizure::Account.new
+              account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
+              account.number    = bank_account.accounting_number
+              preseizure.accounts << account
+              account.save
+              
+              entry = Pack::Report::Preseizure::Entry.new
+              amount = operation.amount
+              if amount < 0
+                entry.type = Pack::Report::Preseizure::Entry::CREDIT
+              else
+                entry.type = Pack::Report::Preseizure::Entry::DEBIT
+              end
+              entry.number = 1
+              entry.amount = amount.abs
+              account.entries << entry
+              preseizure.entries << entry
+              entry.save
+
+              ####################### 2 #######################
+              account           = Pack::Report::Preseizure::Account.new
+              account.type      = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
+              account.number    = account_number(operation.label)
+              preseizure.accounts << account
+              account.save
+              
+              entry = Pack::Report::Preseizure::Entry.new
+              if amount < 0
+                entry.type = Pack::Report::Preseizure::Entry::DEBIT
+              else
+                entry.type = Pack::Report::Preseizure::Entry::CREDIT
+              end
+              entry.number = 1
+              entry.amount = amount.abs
+              account.entries << entry
+              preseizure.entries << entry
+              entry.save
+            end
           end
-          entry.number = 1
-          entry.amount = amount.abs
-          account.entries << entry
-          preseizure.entries << entry
-          entry.save
         end
       end
-      pack_report.preseizures
     end
   end
 
 private
 
-  def pack_name
-    "#{@user.code} FLUX #{current_period_name}"
+  def pack_name(journal='FLUX')
+    "#{@user.code} #{journal} #{current_period_name}"
   end
 
   def current_period_name
     Time.now.strftime("%Y%m")
   end
 
-  def pack_report
-    if @pack_report
-      @pack_report
-    else
-      @pack_report = Pack::Report.where(name: pack_name).first
-      unless @pack_report
-        @pack_report = Pack::Report.new
-        @pack_report.organization = @user.organization
-        @pack_report.user = @user
-        @pack_report.type = 'FLUX'
-        @pack_report.name = pack_name
-        @pack_report.save
-        @pack_report
-      end
-      @pack_report
+  def find_or_create_pack_report(journal='FLUX')
+    pack_report = Pack::Report.where(name: pack_name(journal)).first
+    unless pack_report
+      pack_report = Pack::Report.new
+      pack_report.organization = @user.organization
+      pack_report.user = @user
+      pack_report.type = 'FLUX'
+      pack_report.name = pack_name(journal)
+      pack_report.save
+      pack_report
     end
+    pack_report
   end
 
   def find_or_initialize_preseizure(id)
@@ -120,7 +127,7 @@ private
       # DB Accounting Plan
       if @user.accounting_plan
         provider = @user.accounting_plan.providers.select do |provider|
-          label.match /#{provider.third_party_name}/
+          label.match /#{provider.third_party_name}/i
         end.first
         number = provider.third_party_account if provider
       end

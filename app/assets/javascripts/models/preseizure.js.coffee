@@ -41,3 +41,6 @@ class Idocus.Models.Preseizure extends Backbone.Model
       type: 'POST'
       data: ''
       datatype: 'json'
+
+  has_link: ->
+    @get('type') != 'FLUX'

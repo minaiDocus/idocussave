@@ -65,7 +65,7 @@
       != javascript_include_tag 'application', 'inner', 'account/reporting'
     - elsif controller_name == 'profiles' && action_name == 'show'
       != javascript_include_tag 'application', 'inner', 'account/profile'
-    - elsif controller_name == 'retrievers' && action_name.in?(%w(new create edit update))
+    - elsif controller_name == 'retrievers'
       != javascript_include_tag 'application', 'inner', 'account/fiduceo_retrievers'
     - elsif controller_name.in? %w(operations balances)
       != javascript_include_tag 'application', 'inner', 'aight.min', 'aight.d3.min', 'sizzle', 'd3', 'd3-tip', 'account/charts', "account/charts/#{controller_name}"

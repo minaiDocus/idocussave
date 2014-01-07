@@ -141,6 +141,10 @@ module ApplicationHelper
     params[:per_page].try(:to_i) || 20
   end
 
+  def page
+    params[:page].try(:to_i) || 1
+  end
+
   def per_page_link(number, options={})
     temp_class = (options["class"] || options[:class] || "").split()
     temp_class << 'label'

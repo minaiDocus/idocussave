@@ -4,19 +4,23 @@ class FiduceoTransactionTracker
     retriever = transaction.retriever
     if transaction.status_changed?
       if transaction.success?
-        if retriever.is_documents_locked
-          if transaction.retrieved_document_ids.count > 0
-            retriever.wait_user_action
+        if retriever.is_selection_needed
+          if retriever.provider?
+            if transaction.retrieved_document_ids.count > 0
+              retriever.wait_selection
+            else
+              retriever.schedule
+            end
           else
-            retriever.schedule
+            retriever.wait_selection
           end
-          retriever.update_attribute(:is_documents_locked, false)
+          retriever.update_attribute(:is_selection_needed, false)
         else
           retriever.schedule
         end
       elsif transaction.error?
         retriever.error
-        if transaction.not_retryable?
+        if transaction.critical_error?
           content = ""
           content << "Utilisateur : #{transaction.user.code}<br>"
           content << "Récupérateur : #{transaction.retriever.name} - (#{transaction.retriever.service_name})<br>"

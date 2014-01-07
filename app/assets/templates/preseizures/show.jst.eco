@@ -13,9 +13,13 @@
       </a>
     </td>
     <td>
-      <a class="label" href="<%= @model.get('url') %>" target="_blank">
-        <%= ("000" + @model.get('position')).slice(-3) %>
-      </a>
+      <% if(@model.has_link()): %>
+        <a class="label" href="<%= @model.get('url') %>" target="_blank">
+          <%= ("000" + @model.get('position')).slice(-3) %>
+        </a>
+      <% else: %>
+        <span class="label"><%= ("000" + @model.get('position')).slice(-3) %></span>
+      <% end %>
     </td>
   </tr>
 </table>

@@ -146,13 +146,17 @@ public
   end
 
   def piece
-    piece = Pack::Piece.find params[:id]
-    filepath = piece.content.path
-    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
-      filename = File.basename(filepath)
-      type = piece.content_content_type || 'application/pdf'
-      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
-    else
+    begin
+      piece = Pack::Piece.find params[:id]
+      filepath = piece.content.path
+      if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
+        filename = File.basename(filepath)
+        type = piece.content_content_type || 'application/pdf'
+        send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+      else
+        render nothing: true, status: 404
+      end
+    rescue Mongoid::Errors::DocumentNotFound
       render nothing: true, status: 404
     end
   end

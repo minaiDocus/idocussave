@@ -3,7 +3,7 @@ class FiduceoDocumentFetcher
     def initiate_transactions(retrievers=nil)
       _retrievers = Array(retrievers).presence || FiduceoRetriever.active.providers.scheduled
       _retrievers.each do |retriever|
-        if retriever.scheduled? && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
+        if (retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
           create_transaction(retriever)
         end
       end
@@ -25,7 +25,20 @@ class FiduceoDocumentFetcher
       end
     end
 
+    def prepare_retryable_retrievers
+      FiduceoRetriever.error.where(:updated_at.gte => 6.minutes.ago, :updated_at.lte => 5.minutes.ago).each do |retriever|
+        last_transaction = retriever.transactions.desc(:created_at).first
+        previous_transaction = retriever.transactions.where(:updated_at.lt => last_transaction.created_at,
+                                                            :updated_at.gte => (last_transaction.created_at - 6.minutes)).first
+        if previous_transaction.blank? && last_transaction.retryable?
+          retriever.schedule
+          initiate_transactions retriever
+        end
+      end
+    end
+
     def fetch
+      prepare_retryable_retrievers
       FiduceoTransaction.not_processed.each do |transaction|
         update_transaction transaction
 
@@ -42,7 +55,7 @@ class FiduceoDocumentFetcher
         transaction.status = result['transactionStatus']
         transaction.events = result['transactionEvents']
         if result['retrievedDocuments']
-          transaction.retrieved_document_ids = result['retrievedDocuments']['documentId'] || []
+          transaction.retrieved_document_ids = Array(result['retrievedDocuments']['documentId'])
         end
         FiduceoTransactionTracker.track(transaction)
         transaction.save
@@ -62,6 +75,9 @@ class FiduceoDocumentFetcher
           end
         end
         retriever.safely.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+      end
+      if retriever.wait_selection? && retriever.temp_documents.count == 0
+        retriever.schedule
       end
     end
   end
