@@ -63,7 +63,7 @@ namespace :shared do
     run "mkdir -p #{release_path}/tmp/barcode"
     run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/#{rails_env}/kit"
-    run "mkdir -p #{shared_path}/files/#{rails_env}/archives"
+    run "mkdir -p #{shared_path}/files/#{rails_env}/archives/invoices"
     run "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
   end
 

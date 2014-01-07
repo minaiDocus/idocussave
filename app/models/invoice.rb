@@ -35,8 +35,27 @@ class Invoice
   belongs_to :subscription
   belongs_to :period, class_name: 'Scan::Period'
 
-  def self.find_by_number(number)
-    self.first conditions: { number: number }
+  class << self
+    def find_by_number(number)
+      self.first conditions: { number: number }
+    end
+
+    def archive(time=Time.now)
+      file_path = archive_path archive_name(time)
+      _time = time + 1.month
+      invoices = Invoice.where(:created_at.gte => _time.beginning_of_month, :created_at.lte => _time.end_of_month)
+      files_path = invoices.map { |e| e.content.path }
+      DocumentTools.archive(file_path, files_path)
+    end
+
+    def archive_name(time=Time.now)
+      "invoices_#{time.strftime('%Y%m')}.zip"
+    end
+
+    def archive_path(file_name)
+      _file_name = File.basename file_name
+      File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
+    end
   end
 
   def create_pdf
@@ -203,7 +222,7 @@ class Invoice
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",")
   end
-  
+
 private
   def set_number
     unless self.number

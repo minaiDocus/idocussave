@@ -101,6 +101,7 @@ namespace :maintenance do
           end
         end
       end
+      Invoice.archive
       puts "Task end at #{Time.now}"
       puts '##########################################################################################'
     end

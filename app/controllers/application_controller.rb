@@ -83,6 +83,7 @@ protected
     begin
       yield
     rescue ActionController::UnknownController,
+           ActionController::RoutingError,
            AbstractController::ActionNotFound,
            BSON::InvalidObjectId,
            Mongoid::Errors::DocumentNotFound

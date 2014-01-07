@@ -1,9 +1,18 @@
 # -*- encoding : UTF-8 -*-
 class Admin::InvoicesController < Admin::AdminController
-  before_filter :load_invoice, except: :index
+  before_filter :load_invoice, except: %w(index archive)
 
   def index
     @invoices = search(invoice_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+  end
+
+  def archive
+    file_path = Invoice.archive_path(params[:file_name])
+    if File.exist? file_path
+      send_file(file_path, type: 'application/zip', filename: params[:file_name], x_sendfile: true)
+    else
+      raise ActionController::RoutingError.new('Not Found')
+    end
   end
 
   def show

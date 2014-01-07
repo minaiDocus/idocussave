@@ -225,7 +225,9 @@ Idocus::Application.routes.draw do
         post 'propagate', on: :collection
       end
     end
-    resources :invoices
+    resources :invoices do
+      get 'archive', on: :collection
+    end
     resources :pages
     resources :cms_images
     resources :products
