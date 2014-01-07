@@ -178,7 +178,7 @@ class Ibiza
       end
       period = Date.new(year, month, 1)
       exercices.select do |e|
-        e['start'].to_date < period && e['end'].to_date > period
+        e['start'].to_date <= period && e['end'].to_date >= period
       end.first
     else
       raise "[#{name}] No exercice found in #{id}"
