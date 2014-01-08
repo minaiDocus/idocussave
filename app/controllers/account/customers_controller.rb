@@ -179,11 +179,11 @@ private
 
   def search(contains)
     users = @user.customers
-    users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
-    users = users.where(:last_name => /#{contains[:last_name]}/i) unless contains[:last_name].blank?
-    users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
-    users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
-    users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
+    users = users.where(:first_name => /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
+    users = users.where(:last_name => /#{Regexp.quote(contains[:last_name])}/i) unless contains[:last_name].blank?
+    users = users.where(:email => /#{Regexp.quote(contains[:email])}/i) unless contains[:email].blank?
+    users = users.where(:company => /#{Regexp.quote(contains[:company])}/i) unless contains[:company].blank?
+    users = users.where(:code => /#{Regexp.quote(contains[:code])}/i) unless contains[:code].blank?
     if is_leader? && params[:collaborator_id].present?
       ids = @organization.groups.any_in(collaborator_ids: [params[:collaborator_id]]).map(&:_id)
       ids = ids.map { |e| e.to_s }

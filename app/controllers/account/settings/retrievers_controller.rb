@@ -142,7 +142,7 @@ private
 
   def search(contains)
     fiduceo_retrievers = @user.fiduceo_retrievers
-    fiduceo_retrievers = fiduceo_retrievers.where(:name => /#{contains[:name]}/i) unless contains[:name].blank?
+    fiduceo_retrievers = fiduceo_retrievers.where(:name => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
     fiduceo_retrievers
   end
 
