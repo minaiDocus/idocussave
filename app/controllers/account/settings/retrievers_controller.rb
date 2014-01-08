@@ -95,6 +95,16 @@ class Account::Settings::RetrieversController < Account::SettingsController
           new_bank_account.save
         end
       end
+      emails = []
+      collaborators = @user.groups.map(&:collaborators).flatten
+      if collaborators.any?
+        emails = collaborators.map(&:email)
+      else
+        emails = [@user.organization.leader.email]
+      end
+      emails.each do |email|
+        NotificationMailer.delay(priority: 1).new_bank_accounts(@fiduceo_retriever, email)
+      end
       flash[:success] = 'Les comptes bancaires sélectionnés ont été pris en compte.'
       redirect_to account_settings_fiduceo_retrievers_path
     else
