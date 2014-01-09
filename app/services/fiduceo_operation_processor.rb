@@ -20,14 +20,14 @@ class FiduceoOperationProcessor
         if bank_account
           operations.sort! { |a,b| a.date <=> b.date }
           pack_report = find_or_create_pack_report(bank_account.journal)
-          preseizures_count = pack_report.preseizures.count
-
-          operations.each_with_index do |operation, index|
+          counter = pack_report.preseizures.count
+          operations.each do |operation|
             preseizure = find_or_initialize_preseizure(operation.id)
             unless preseizure.persisted?
+              counter += 1
               preseizure.name = pack_report.name
               preseizure.date = operation.date_op
-              preseizure.position = preseizures_count + index + 1
+              preseizure.position = counter
               preseizure.observation = [operation.label, operation.category].join(' - ')
               preseizure.category_id = operation.category_id
               preseizure.save
