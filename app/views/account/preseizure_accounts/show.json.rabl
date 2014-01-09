@@ -6,7 +6,7 @@ child :entries do
   attributes :id, :type
 
   node :amount do |entry|
-    format_price_00 entry.amount_in_cents rescue nil
+    format_price_with_dot entry.amount_in_cents rescue nil
   end
 
   node :number do |entry|

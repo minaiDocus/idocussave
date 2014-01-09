@@ -1,18 +1,15 @@
 # -*- encoding : UTF-8 -*-
 module ApplicationHelper
-  def format_price price_in_cents
-    price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
-    ("%0.2f" % price_in_euros).gsub(".", ",").gsub(/,00/, "")
-  end
-  
-  def format_price_00 price_in_cents
-    price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
-    ("%0.2f" % price_in_euros).gsub(".", ",")
-  end
-  
   def format_price_with_dot price_in_cents
-    price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
-    ("%0.2f" % price_in_euros).gsub(/.00/, "")
+    "%0.2f" % (price_in_cents.round/100.0)
+  end
+
+  def format_price_00 price_in_cents
+    format_price_with_dot(price_in_cents).gsub(".", ",")
+  end
+
+  def format_price price_in_cents
+    format_price_00(price_in_cents).gsub(/,00/, "")
   end
 
   def format_tiny_price price_in_cents
