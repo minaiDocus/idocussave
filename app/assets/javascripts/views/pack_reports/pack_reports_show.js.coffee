@@ -21,9 +21,10 @@ class Idocus.Views.PackReportsShow extends Backbone.View
 
   deliver: (e) ->
     e.preventDefault()
-    @model.deliver()
-    @model.set('is_delivered', true)
-    @render()
+    if confirm("Vous êtes sur le point d'envoyer des écritures dans Ibiza. Etes-vous sûr ?")
+      @model.deliver()
+      @model.set('is_delivered', true)
+      @render()
     this
 
   details: ->
