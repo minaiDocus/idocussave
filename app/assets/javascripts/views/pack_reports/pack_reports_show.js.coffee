@@ -29,13 +29,13 @@ class Idocus.Views.PackReportsShow extends Backbone.View
 
   details: ->
     content = "<table class=\"table table-striped table-condensed margin0bottom\">"
-    content += "<tr><td><b>Date de création du lot</b></td><td>" + @model.get('created_at') + "</td></tr>"
-    content += "<tr><td><b>Date de dernière modification du lot</b></td><td>" + @model.get('updated_at') + "</td></tr>"
-    content += "<tr><td><b>Date d'envoi dans Ibiza</b></td><td>"
+    content += "<tr><td><b>Date d'ajout de la première écriture :</b></td><td>" + @model.get('created_at') + "</td></tr>"
+    content += "<tr><td><b>Date d'ajout de la dernière écriture :</b></td><td>" + @model.get('updated_at') + "</td></tr>"
+    content += "<tr><td><b>Date du dernier envoi dans Ibiza :</b></td><td>"
     if @model.get('delivery_tried_at') != null
       content += @model.get('delivery_tried_at')
     content += "</td></tr>"
-    content += "<tr><td colspan=\"2\"><b>Message retour Ibiza (si erreur) :</b><br>"
+    content += "<tr><td colspan=\"2\"><b>Message d'erreur d'envoi dans Ibiza :</b><br>"
     if @model.get('delivery_message') != null
       content += @model.get('delivery_message')
     content += "</td></tr>"

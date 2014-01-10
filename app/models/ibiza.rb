@@ -155,10 +155,10 @@ class Ibiza
             report.update_attribute(:is_delivered, true)
           end
         else
-          report.delivery_message = "L'exercice correspondant n'est pas défini dans ibiza."
+          report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
         end
       else
-        report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte ibiza lié."
+        report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte Ibiza lié."
       end
       report.delivery_tried_at = Time.now
       report.save
