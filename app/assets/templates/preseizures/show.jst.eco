@@ -8,6 +8,11 @@
       <% end %>
     </td>
     <td class="option">
+      <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="Pièce/Opération N°<%= @model.get('position') %>">
+        <i class="icon-info-sign"></i>
+      </a>
+    </td>
+    <td class="option">
       <a class="edit" href="">
         <i class="icon-edit"></i>
       </a>

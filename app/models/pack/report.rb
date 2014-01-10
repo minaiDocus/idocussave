@@ -12,8 +12,10 @@ class Pack::Report
   has_many   :remote_files, as: :remotable, dependent: :destroy
 
   field :name
-  field :type, type: String # NDF / AC / CB / VT / FLUX
-  field :is_delivered, type: Boolean, default: false
+  field :type # NDF / AC / CB / VT / FLUX
+  field :is_delivered,      type: Boolean, default: false
+  field :delivery_tried_at, type: Time
+  field :delivery_message
 
   scope :preseizures, not_in: { type: ['NDF'] }
   scope :expenses, where: { type: 'NDF' }

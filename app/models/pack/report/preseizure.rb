@@ -20,9 +20,11 @@ class Pack::Report::Preseizure
   field :currency,        type: String
   field :conversion_rate, type: Float
   field :third_party,     type: String
-  field :is_delivered,    type: Boolean, default: false
   field :fiduceo_id
   field :category_id,     type: Integer
+
+  field :is_delivered,      type: Boolean, default: false
+  field :delivery_tried_at, type: Time
 
   scope :delivered,     where: { is_delivered: true }
   scope :not_delivered, where: { is_delivered: false }

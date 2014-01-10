@@ -5,9 +5,12 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
   className: 'piece'
 
   events:
-    'click a.selectable': 'select'
-    'click a.edit': 'edit'
-    'click a.deliver': 'deliver'
+    'mouseenter a.details': 'showDetails'
+    'mouseleave a.details': 'hideDetails'
+    'click a.details':      'preventDefault'
+    'click a.selectable':   'select'
+    'click a.edit':         'edit'
+    'click a.deliver':      'deliver'
 
   initialize: (options) ->
     @packName = options.packName
@@ -15,7 +18,7 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     this
 
   render: ->
-    @$el.html(@template(model: @model, packName: @packName))
+    @$el.html(@template(model: @model, packName: @packName, details: @details()))
     this
 
   select: ->
@@ -39,3 +42,23 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     @model.set('is_delivered', true)
     @render()
     this
+
+  details: ->
+    content = "<table class=\"table table-striped table-condensed margin0bottom\">"
+    content += "<tr><td><b>Date de création du lot</b></td><td>" + @model.get('created_at') + "</td></tr>"
+    content += "<tr><td><b>Date de dernière modification du lot</b></td><td>" + @model.get('updated_at') + "</td></tr>"
+    content += "<tr><td><b>Date d'envoi dans Ibiza</b></td><td>"
+    if @model.get('delivery_tried_at') != null
+      content += @model.get('delivery_tried_at')
+    content += "</td></tr>"
+    content += "</table>"
+    content
+
+  showDetails: (e) ->
+    this.$('.details').popover('show');
+
+  hideDetails: (e) ->
+    this.$('.details').popover('hide');
+
+  preventDefault: (e) ->
+    e.preventDefault()

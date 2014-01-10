@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 class Ibiza
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -136,21 +137,32 @@ class Ibiza
   end
 
   def export(preseizures)
-    if(id = preseizures.first.report.user.ibiza_id)
-      if(e = exercice(id, preseizures.first.report.name))
-        client.request.clear
-        data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
-        client.company(id).entries!(data)
-        if client.response.success?
-          preseizures.each do |preseizure|
-            preseizure.update_attribute(:is_delivered, true)
+    if preseizures.any?
+      report = preseizures.first.report
+      if(id = report.user.ibiza_id)
+        if(e = exercice(id, report.name))
+          client.request.clear
+          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
+          client.company(id).entries!(data)
+          if client.response.success?
+            ids = preseizures.map(&:id)
+            Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true, delivery_tried_at: Time.now)
+            report.delivery_message = ''
+          else
+            report.delivery_message = client.response.message
           end
+          if report.preseizures.not_delivered.count == 0
+            report.update_attribute(:is_delivered, true)
+          end
+        else
+          report.delivery_message = "L'exercice correspondant n'est pas défini dans ibiza."
         end
-        report = preseizures.first.report
-        if report.preseizures.not_delivered.count == 0
-          report.update_attribute(:is_delivered, true)
-        end
+      else
+        report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte ibiza lié."
       end
+      report.delivery_tried_at = Time.now
+      report.save
+      report.delivery_message
     end
   end
 
