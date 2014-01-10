@@ -5,7 +5,7 @@ class Account::PackReportsController < Account::OrganizationController
   def index
     @pack_reports = Pack::Report.preseizures.any_in(user_id: @user.customer_ids)
     @pack_reports = @pack_reports.where(name: /#{Regexp.quote(params[:name])}/) if params[:name].present?
-    @pack_reports = @pack_reports.desc(:created_at).limit(20).page(params[:page]).per(params[:per_page])
+    @pack_reports = @pack_reports.desc(:updated_at).limit(20).page(params[:page]).per(params[:per_page])
   end
 
   def show
