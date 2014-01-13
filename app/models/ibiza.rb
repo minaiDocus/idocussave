@@ -193,7 +193,7 @@ class Ibiza
         e['start'].to_date <= period && e['end'].to_date >= period
       end.first
     else
-      raise "[#{name}] No exercice found in #{id}"
+      nil
     end
   end
 end
