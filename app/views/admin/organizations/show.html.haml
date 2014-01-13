@@ -25,6 +25,12 @@
             %th= t('mongoid.models.organization.attributes.description')
             %td= @organization.description
           %tr
+            %th= t('mongoid.models.common.attributes.created_at')
+            %td= l(@organization.created_at)
+          %tr
+            %th= t('mongoid.models.common.attributes.updated_at')
+            %td= l(@organization.updated_at)
+          %tr
             %th= t('mongoid.models.organization.attributes.leader')
             %td= @organization.leader.info
           %tr
