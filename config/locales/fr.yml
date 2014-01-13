@@ -32,51 +32,51 @@ fr:
       only_second: "%S"
       only_date: "%d/%m/%y"
       default_date: "%d %B %Y"
-    am: 'am'
-    pm: 'pm'
+    am: am
+    pm: pm
 
   datetime:
     distance_in_words:
-      half_a_minute: "une demi-minute"
+      half_a_minute: une demi-minute
       less_than_x_seconds:
-        zero: "moins d'une seconde"
-        one: "moins de 1 seconde"
-        other: "moins de {{count}} secondes"
+        zero: moins d'une seconde
+        one: moins de 1 seconde
+        other: 'moins de %{count} secondes'
       x_seconds:
-        one: "1 seconde"
-        other: "{{count}} secondes"
+        one: 1 seconde
+        other: '%{count} secondes'
       less_than_x_minutes:
-        zero: "moins d'une minute"
-        one: "moins de 1 minute"
-        other: "moins de {{count}} minutes"
+        zero: moins d'une minute
+        one: moins de 1 minute
+        other: 'moins de %{count} minutes'
       x_minutes:
-        one: "1 minute"
-        other: "{{count}} minutes"
+        one: 1 minute
+        other: '%{count} minutes'
       about_x_hours:
-        one: "environ une heure"
-        other: "environ {{count}} heures"
+        one: environ une heure
+        other: 'environ %{count} heures'
       x_days:
-        one: "1 jour"
-        other: "{{count}} jours"
+        one: 1 jour
+        other: '%{count} jours'
       about_x_months:
-        one: "environ un mois"
-        other: "environ {{count}} mois"
+        one: environ un mois
+        other: 'environ %{count} mois'
       x_months:
-        one: "1 mois"
-        other: "{{count}} mois"
+        one: 1 mois
+        other: '%{count} mois'
       about_x_years:
-        one: "environ un an"
-        other: "environ {{count}} ans"
+        one: environ un an
+        other: 'environ %{count} ans'
       over_x_years:
-        one: "plus d'un an"
-        other: "plus de {{count}} ans"
+        one: plus d'un an
+        other: 'plus de %{count} ans'
     prompts:
-      year: "Année"
-      month: "Mois"
-      day: "Jour"
-      hour: "Heure"
-      minute: "Minute"
-      second: "Seconde"
+      year: Année
+      month: Mois
+      day: Jour
+      hour: Heure
+      minute: Minute
+      second: Seconde
 
   number:
     format:
@@ -92,120 +92,118 @@ fr:
       format:
         precision: 2
       storage_units:
-        format: "%n %u"
+        format: '%n %u'
         units:
           byte:
-            one:   "octet"
-            other: "octets"
-          kb: "ko"
-          mb: "Mo"
-          gb: "Go"
-          tb: "To"
+            one:   octet
+            other: octets
+          kb: Ko
+          mb: Mo
+          gb: Go
+          tb: To
 
   support:
     array:
-      sentence_connector: 'et'
+      sentence_connector: et
       skip_last_comma: true
-      word_connector: ", "
-      two_words_connector: " et "
-      last_word_connector: " et "
+      word_connector: ', '
+      two_words_connector: ' et '
+      last_word_connector: ' et '
 
-
-  previous: 'précédent'
-  next: 'suivant'
+  previous: précédent
+  next: suivant
 
   activemodel:
     errors:
       messages:
-        inclusion: "n'est pas inclus(e) dans la liste"
-        exclusion: "n'est pas disponible"
-        invalid: "n'est pas valide"
-        confirmation: "ne concorde pas avec sa confirmation"
-        accepted: "doit être accepté(e)"
-        empty: "doit être rempli(e)"
-        blank: "doit être rempli(e)"
-        too_long: "est trop long (pas plus de {{count}} caractères)"
-        too_short: "est trop court (au moins {{count}} caractères)"
-        wrong_length: "ne fait pas la bonne longueur (doit comporter {{count}} caractères)"
-        taken: "n'est pas disponible"
-        not_a_number: "n'est pas un nombre"
-        greater_than: "doit être supérieur à {{count}}"
-        greater_than_or_equal_to: "doit être supérieur ou égal à {{count}}"
-        equal_to: "doit être égal à {{count}}"
-        less_than: "doit être inférieur à {{count}}"
-        less_than_or_equal_to: "doit être inférieur ou égal à {{count}}"
-        odd: "doit être impair"
-        even: "doit être pair"
-        record_invalid: "La validation a échoué : {{errors}}"
+        inclusion: n'est pas inclus(e) dans la liste
+        exclusion: n'est pas disponible
+        invalid: n'est pas valide
+        confirmation: ne concorde pas avec sa confirmation
+        accepted: doit être accepté(e)
+        empty: doit être rempli(e)
+        blank: doit être rempli(e)
+        too_long: 'est trop long (pas plus de %{count} caractères)'
+        too_short: 'est trop court (au moins %{count} caractères)'
+        wrong_length: 'ne fait pas la bonne longueur (doit comporter %{count} caractères)'
+        taken: n'est pas disponible
+        not_a_number: n'est pas un nombre
+        greater_than: 'doit être supérieur à %{count}'
+        greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        equal_to: 'doit être égal à %{count}'
+        less_than: 'doit être inférieur à %{count}'
+        less_than_or_equal_to: 'doit être inférieur ou égal à %{count}'
+        odd: doit être impair
+        even: doit être pair
+        record_invalid: 'La validation a échoué : %{errors}'
       models:
         user:
           attributes:
             email:
-              blank: "doit être renseigné"
-              taken: "a déjà été saisi"
+              blank: doit être renseigné
+              taken: a déjà été saisi
             password:
-              too_short: "doit contenir 6 caractères au minimum."
-              too_long: "doit contenir 20 caractères au maximum."
-              blank: "doit être renseigné"
-              confirmation: "et la confirmation du mot de passe doivent être identiques."
+              too_short: doit contenir 6 caractères au minimum.
+              too_long: doit contenir 20 caractères au maximum.
+              blank: doit être renseigné
+              confirmation: et la confirmation du mot de passe doivent être identiques.
     attributes:
       address:
-        first_name: "Prénom"
-        last_name: "Nom"
-        address_1: "Addresse"
-        city: "Ville"
-        zip: "Code postale"
+        first_name: Prénom
+        last_name: Nom
+        address_1: Addresse
+        city: Ville
+        zip: Code postale
       order:
-        billing_address: "Addressse de facturation"
-        shipping_address: "Addresse de retour"
+        billing_address: Addressse de facturation
+        shipping_address: Addresse de retour
 
-  order: "Commande"
-  composition: "Composition"
+  order: Commande
+  composition: Composition
 
   views:
     pagination:
-      first: "&laquo;"
-      last: "&raquo;"
-      previous: "&lsaquo;"
-      next: "&rsaquo;"
-      truncate: "..."
+      first: '&laquo;'
+      last: '&raquo;'
+      previous: '&lsaquo;'
+      next: '&rsaquo;'
+      truncate: '...'
 
   actions:
-    name: 'Actions'
-    show: 'Voir'
-    new: 'Nouveau'
-    edit: 'Editer'
-    destroy: 'Supprimer'
-    cancel_destroy: 'Annuler la suppression'
-    cancel: 'Annuler'
-    return: 'Retour'
-    update: 'Mettre à jour'
-    submit: 'Valider'
-    confirm: 'Êtes-vous sûr ?'
-    
+    name: Actions
+    show: Voir
+    new: Nouveau
+    edit: Editer
+    destroy: Supprimer
+    cancel_destroy: Annuler la suppression
+    cancel: Annuler
+    return: Retour
+    update: Mettre à jour
+    submit: Valider
+    confirm: Êtes-vous sûr ?
 
   filters:
-    name: 'Filtre'
-    action: 'Filtrer'
-    cancel: 'Supprimer le(s) filtre(s)'
-    reset: 'Réinitialiser'
+    name: Filtre
+    action: Filtrer
+    cancel: Supprimer le(s) filtre(s)
+    reset: Réinitialiser
 
-  yes_value: 'Oui'
-  no_value: 'Non'
+  yes_value: Oui
+  no_value: Non
 
   request:
-    name: 'Action demandée'
-    state: 'Action demandée à iDocus'
-    nothing: ''
-    create: 'création'
-    update: 'modification'
-    destroy: 'suppression'
-    adding: 'création'
-    updating: 'modification'
-    removing: 'suppression'
+    name: Action demandée
+    state: Action demandée à iDocus
+    nothing:
+    create: création
+    update: modification
+    destroy: suppression
+    adding: création
+    updating: modification
+    removing: suppression
 
   common:
-    details: 'Détails'
+    details: Détails
 
   authorization:
     unessessary_rights: Vous ne disposez pas des droits nécessaires pour effectuer cette action.
@@ -216,27 +214,27 @@ fr:
         taken:
           est déjà pris.
         callbacks:
-          "Calling %{method} on %{klass} resulted in a false return from a callback."
+          'Calling %{method} on %{klass} resulted in a false return from a callback.'
         document_not_found:
-          Document introuvable pour la classe %{klass} avec les ids %{identifiers}.
+          'Document introuvable pour la classe %{klass} avec les ids %{identifiers}.'
         eager_load:
-          "Eager loading :%{name} is not supported due to it being a many-to-many
-          or polymorphic belongs_to relation."
+          'Eager loading :%{name} is not supported due to it being a many-to-many
+          or polymorphic belongs_to relation.'
         invalid_time:
           "'%{value}' is not a valid Time."
         invalid_database:
-          La base de données doit être une Mongo::DB, pas %{name}.
+          'La base de données doit être une Mongo::DB, pas %{name}.'
         invalid_type:
-          Le champ a été défini comme un(e) %{klass} mais a reçu un(e)
-          %{other} avec la valeur %{value}.
+          'Le champ a été défini comme un(e) %{klass} mais a reçu un(e)
+          %{other} avec la valeur %{value}.'
         invalid_options:
-          "Invalid option :%{invalid} provided to relation :%{name}. Valid options
-          are: %{valid}."
+          'Invalid option :%{invalid} provided to relation :%{name}. Valid options
+          are: %{valid}.'
         unsupported_version:
           "MongoDB %{version} n'est pas supporté, veuillez mettre à jour avec
           %{mongo_version}"
         validations:
-          La validation a échouée - %{errors}.
+          'La validation a échouée - %{errors}.'
         invalid_collection:
           "L'accès à la collection pour %{klass} n'est pas autorisé puisque
           ce n'est pas un document embarqué, veuillez accéder à la collection
@@ -250,8 +248,8 @@ fr:
           "Le nombre d'attributs imbriqués pour %{association} est limité à
           %{limit} enregistrements."
         embedded_in_must_have_inverse_of:
-          Les options pour les associations embedded_in doivent inclure
-          inverse_of.
+          'Les options pour les associations embedded_in doivent inclure
+          inverse_of.'
         dependent_only_references_one_or_many:
           "L'option dependent => destroy|delete fournie est seulement valide
           pour les associations references_on ou references_many."
@@ -259,11 +257,11 @@ fr:
           "Definir un inverse_of pour cette association n'est pas autorisé.
           Utilisez cette option seulement sur embedded_in ou references_many."
         unsaved_document:
-          You cannot call create or create! through a relational association
-          relation (%{document}) who's parent (%{base}) is not already saved.
+          "You cannot call create or create! through a relational association
+          relation (%{document}) who's parent (%{base}) is not already saved."
         mixed_relations:
-          Referencing a(n) %{embedded} document from the %{root} document via a
-          relational association is not allowed since the %{embedded} is embedded.
+          'Referencing a(n) %{embedded} document from the %{root} document via a
+          relational association is not allowed since the %{embedded} is embedded.'
         no_environment:
           "Mongoid attempted to find the appropriate environment but no Rails.env,
           Sinatra::Base.environment, or RACK_ENV could be found."
@@ -271,37 +269,37 @@ fr:
           "Cannot create scope :%{scope_name}, because of existing method
           %{model_name}.%{scope_name}."
         blank_on_locale: "can't be blank in %{location}"
-        blank: 'est vide'
-        too_short: 'est trop court'
-        too_long: 'est trop long'
+        blank: est vide
+        too_short: est trop court
+        too_long: est trop long
         inclusion: n'est pas inclus(e) dans la liste
       models:
         remote_file:
           attributes:
             state:
-              blank: 'doit être rempli(e)'
+              blank: doit être rempli(e)
             service_name:
-              blank: 'doit être rempli(e)'
-              inclusion: "n'est pas inclus(e) dans la liste"
+              blank: doit être rempli(e)
+              inclusion: n'est pas inclus(e) dans la liste
         user:
           attributes:
             reset_password_token:
-              invalid: 'est invalide'
-              expired: 'jeton expiré'
+              invalid: est invalide
+              expired: jeton expiré
         scan/document:
           attributes:
             name:
-              invalid: 'est invalide'
+              invalid: est invalide
             paperclips:
-              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             oversized:
-              greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
         uploaded_document:
           attributes:
             file_size_is_too_big: 'taille %{size_in_mo} Mo trop gros (50 Mo max.)'
             invalid_file_extension: 'extension %{extension} invalide (.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)'
             journal_unknown: 'journal %{journal} inconnu'
-            file_is_corrupted_or_protected: 'fichier corrompu ou protégé par mot de passe'
+            file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
         bank_account:
           attributes:
             journal:
@@ -309,153 +307,153 @@ fr:
     models:
       common:
         attributes:
-          created_at: 'Date de création'
-          updated_at: 'Date de modification'
+          created_at: Date de création
+          updated_at: Date de modification
       user:
-        zero: '0 utilisateurs'
-        one: '1 utilisateur'
+        zero: 0 utilisateurs
+        one: 1 utilisateur
         other: '%{count} utilisateurs'
-        name: 'Utilisateur'
+        name: Utilisateur
         attributes:
-          name: 'Nom complet'
-          formatted_identifier: 'Identifiant'
-          company: 'Société'
-          code: 'Code'
-          first_name: 'Prénom'
-          last_name: 'Nom'
-          email: 'Email'
-          inactive_at: 'Est inactif depuis le'
-          is_inactive: 'Est inactif ?'
-          is_inactive_since: 'Est inactif depuis le'
-          is_admin: 'Est administrateur ?'
-          is_prescriber: 'Est prescripteur ?'
-          is_fake_prescriber: 'Est un faux prescripteur ?'
-          is_editable: 'Est éditable ?'
-          is_access_by_token_active: 'Accès par jeton activé ?'
-          is_reminder_email_active: 'Rappel activé ?'
-          is_document_notifier_active: 'Notification des nouveaux documents activé ?'
-          is_centralized: 'Est centralisé ?'
+          name: Nom complet
+          formatted_identifier: Identifiant
+          company: Société
+          code: Code
+          first_name: Prénom
+          last_name: Nom
+          email: Email
+          inactive_at: Est inactif depuis le
+          is_inactive: Est inactif ?
+          is_inactive_since: Est inactif depuis le
+          is_admin: Est administrateur ?
+          is_prescriber: Est prescripteur ?
+          is_fake_prescriber: Est un faux prescripteur ?
+          is_editable: Est éditable ?
+          is_access_by_token_active: Accès par jeton activé ?
+          is_reminder_email_active: Rappel activé ?
+          is_document_notifier_active: Notification des nouveaux documents activé ?
+          is_centralized: Est centralisé ?
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
-          use_debit_mandate: 'Utilise le prélévement ?'
-          balance_in_cents: 'Solde du compte prépayé'
-          prescriber: 'Prescripteur'
-          ibiza_id: 'Compte lié Ibiza'
+          use_debit_mandate: Utilise le prélévement ?
+          balance_in_cents: Solde du compte prépayé
+          prescriber: Prescripteur
+          ibiza_id: Compte lié Ibiza
           short:
-            balance_in_cents: 'Solde du compte'
+            balance_in_cents: Solde du compte
       address:
-        zero: '0 adresses'
-        one: '1 addresse'
+        zero: 0 adresses
+        one: 1 addresse
         other: '%{count} addresses'
         attributes:
-          first_name: 'Prénom'
-          last_name: 'Nom'
-          company: 'Société'
-          address_1: 'Addresse'
-          address_2: 'Addresse (suite)'
-          city: 'Ville'
-          zip: 'Code postal'
-          state: 'Etat'
-          phone: 'Tél fixe'
-          phone_mobile: 'Tél mobile'
-          billing: 'Facturation'
-          shipping: 'Retour'
-          billing_address: 'Addressse de facturation'
-          shipping_address: 'Addresse de retour'
+          first_name: Prénom
+          last_name: Nom
+          company: Société
+          address_1: Addresse
+          address_2: Addresse (suite)
+          city: Ville
+          zip: Code postal
+          state: Etat
+          phone: Tél fixe
+          phone_mobile: Tél mobile
+          billing: Facturation
+          shipping: Retour
+          billing_address: Addressse de facturation
+          shipping_address: Addresse de retour
       page:
-        zero: '0 pages'
-        one: '1 page'
+        zero: 0 pages
+        one: 1 page
         other: '%{count} pages'
-        name: 'Page'
+        name: Page
         attributes:
-          title: 'Titre'
-          position: 'Position'
-          tag: 'Type du contenu'
-          is_visible: 'Est visible'
-          is_invisible: 'Est invisible'
-          label: 'Libellé'
-          is_footer: 'Afficher dans le footer'
+          title: Titre
+          position: Position
+          tag: Type du contenu
+          is_visible: Est visible
+          is_invisible: Est invisible
+          label: Libellé
+          is_footer: Afficher dans le footer
       cms_image:
-        zero: '0 images'
-        one: '1 image'
+        zero: 0 images
+        one: 1 image
         other: '%{count} images'
-        name: 'CMS Image'
+        name: CMS Image
       product:
-        zero: '0 produits'
-        one: '1 produit'
+        zero: 0 produits
+        one: 1 produit
         other: '%{count} produits'
-        name: 'Produit'
+        name: Produit
         attributes:
-          title: 'Titre'
-          position: 'Position'
-          price_in_cents_wo_vat: 'Prix'
+          title: Titre
+          position: Position
+          price_in_cents_wo_vat: Prix
       product_option:
-        zero: '0 options'
-        one: '1 option'
+        zero: 0 options
+        one: 1 option
         other: '%{count} options'
-        name: 'Option de produit'
-        group: 'Groupe'
+        name: Option de produit
+        group: Groupe
         attributes:
-          name: 'Nom'
-          title: 'Nom (public)'
-          position: 'Position'
-          price_in_cents_wo_vat: 'Prix'
-          description: 'Déscription'
-          groups: 'Groupes'
+          name: Nom
+          title: Nom (public)
+          position: Position
+          price_in_cents_wo_vat: Prix
+          description: Description
+          groups: Groupes
       product_group:
-        zero: '0 groupes'
-        one: '1 groupe'
+        zero: 0 groupes
+        one: 1 groupe
         other: '%{count} groupes'
-        name: 'Groupe de produit'
+        name: Groupe de produit
         attributes:
-          name: 'Nom'
-          title: 'Nom (public)'
-          position: 'Position'
-          price_in_cents_wo_vat: 'Prix'
-          description: 'Déscription'
+          name: Nom
+          title: Nom (public)
+          position: Position
+          price_in_cents_wo_vat: Prix
+          description: Description
       csv_outputter:
-        zero: '0 csv formateur'
-        one: '1 csv formateur'
-        other: '#{count} csv formateur'
-        name: 'CSV Formateur'
+        zero: 0 csv formateur
+        one: 1 csv formateur
+        other: '%{count} csv formateur'
+        name: CSV Formateur
         attributes:
-          client_code: 'Code client'
-          journal: 'Journal'
-          type: 'Type de traitement'
-          period: 'Période iDocus'
-          piece_number: 'Numéro de pièce iDocus'
-          original_piece_number: "Numéro de pièce d\'origine"
-          date: 'Date réelle'
-          period_date: '1er ou date réelle'
-          deadline_date: 'Echéance'
-          title: 'Libellé'
-          piece: 'Nom de la pièce'
-          number: 'Numéro de compte'
-          original_amount: 'Montant'
-          currency: 'Devise'
-          conversion_rate: 'Taux de conversion'
-          third_party: 'Tiers'
-          credit: 'Crédit'
-          debit: 'Débit'
-          lettering: 'Lettrage'
-          piece_url: 'URL pièce'
-          remark: 'Remarque'
+          client_code: Code client
+          journal: Journal
+          type: Type de traitement
+          period: Période iDocus
+          piece_number: Numéro de pièce iDocus
+          original_piece_number: Numéro de pièce d'origine
+          date: Date réelle
+          period_date: 1er ou date réelle
+          deadline_date: Echéance
+          title: Libellé
+          piece: Nom de la pièce
+          number: Numéro de compte
+          original_amount: Montant
+          currency: Devise
+          conversion_rate: Taux de conversion
+          third_party: Tiers
+          credit: Crédit
+          debit: Débit
+          lettering: Lettrage
+          piece_url: URL pièce
+          remark: Remarque
       remote_file:
-        zero: '0 fichier distant'
-        one: '1 fichier distant'
-        other: '#{count} fichiers distant'
-        name: 'Fichier distant'
+        zero: 0 fichier distant
+        one: 1 fichier distant
+        other: '%{count} fichiers distant'
+        name: Fichier distant
         attributes:
-          path: 'chemin'
-          size: 'poids'
-          tried_at: 'dernière essaie le'
-          service_name: 'nom du service'
-          error_message: "message d\'erreur"
+          path: chemin
+          size: poids
+          tried_at: dernière essaie le
+          service_name: nom du service
+          error_message: message d'erreur
       account_book_type:
-        zero: '0 journal'
-        one: '1 journal'
-        other: '#{count} journaux'
-        name: 'Journal comptable'
+        zero: 0 journal
+        one: 1 journal
+        other: '%{count} journaux'
+        name: Journal comptable
         attributes:
           label: Libellé
           description: Description
@@ -471,20 +469,20 @@ fr:
           position: Position
           is_default: Par défaut ?
           entry_type: Type de saisie
-          entry_type_0: 'Aucun'
-          entry_type_1: 'Notes de frais'
-          entry_type_2: 'Achat'
-          entry_type_3: 'Vente'
+          entry_type_0: Aucun
+          entry_type_1: Notes de frais
+          entry_type_2: Achat
+          entry_type_3: Vente
           clients: Clients
           force_assignment: Forcer les modifications pour le client
         request:
           confirm:
-            destroy: 'Etes vous sûr de vouloir demander à supprimer ce journal ?'
-            cancel_destroy: 'Etes vous sûr de vouloir annuler la suppression ?'
+            destroy: Etes vous sûr de vouloir demander à supprimer ce journal ?
+            cancel_destroy: Etes vous sûr de vouloir annuler la suppression ?
       reminder_email:
         zero: O email de rappel
         one: 1 email de rappel
-        other: '#{count} emails de rappel'
+        other: '%{count} emails de rappel'
         name: Email de rappel
         pluralized_name: Emails de rappels
         attributes:
@@ -505,7 +503,7 @@ fr:
       file_sending_kit:
         zero: O kit d'envoi de documents
         one: 1 kit d'envoi de documents
-        other: "#{count} kit d'envoi de documents"
+        other: "%{count} kit d'envoi de documents"
         name: Kit d'envoi de documents
         attributes:
           title: Titre
@@ -524,80 +522,78 @@ fr:
             right: Logo droite
         actions:
           generate: Générer
-
-
       gray_label:
-        zero: '0 marque grise'
-        one: '1 marque grise'
-        other: '#{} marques grise'
-        name: 'Marque grise'
+        zero: 0 marque grise
+        one: 1 marque grise
+        other: '%{count} marques grise'
+        name: Marque grise
         attributes:
-          name: 'Nom'
-          site_url: 'URL site'
-          logo_url: 'URL logo'
-          back_url: 'URL retour'
-          is_active: 'Est actif ?'
-          link_to_session_create: 'Chemin de création de la session'
+          name: Nom
+          site_url: URL site
+          logo_url: URL logo
+          back_url: URL retour
+          is_active: Est actif ?
+          link_to_session_create: Chemin de création de la session
       ibiza:
-        zero: ''
-        one: 'ibiza'
-        other: ''
-        name: 'Ibiza'
+        zero: 0 Ibiza
+        one: Ibiza
+        other: '%{count} Ibiza'
+        name: Ibiza
         attributes:
           is_auto_deliver: Livraison automatique ?
-          token: 'jeton'
-          state: 'Etat'
+          token: Jeton
+          state: Etat
           description: Description
           description_separator: Séparateur du champ description
           state_value:
-            none: 'non assigné'
-            waiting: 'en cours de validation'
-            valid: 'validé'
-            invalid: 'non valide'
+            none: non assigné
+            waiting: en cours de validation
+            valid: validé
+            invalid: non valide
       organization:
-        zero: '0 organisation'
-        one: '1 organisation'
-        other: '#{count} organisations'
-        name: 'Organisation'
+        zero: 0 organisation
+        one: 1 organisation
+        other: '%{count} organisations'
+        name: Organisation
         attributes:
-          name: 'Nom'
-          description: 'Description'
-          leader: "Administrateur de l'organisation"
-          collaborators: 'Collaborateurs'
-          collaborators_count: 'Nombre de collaborateurs'
-          members: 'Membres'
-          members_count: 'Nombre de membres'
-          customers: 'Clients'
-          customers_count: 'Nombre de clients'
-          centralized_customers: 'Clients centralisés'
-          centralized_customers_count: 'Nombre de clients centralisés'
-          is_detail_authorized: 'Autoriser les détails ?'
-          is_test: 'Est une organization de test ?'
+          name: Nom
+          description: Description
+          leader: Administrateur de l'organisation
+          collaborators: Collaborateurs
+          collaborators_count: Nombre de collaborateurs
+          members: Membres
+          members_count: Nombre de membres
+          customers: Clients
+          customers_count: Nombre de clients
+          centralized_customers: Clients centralisés
+          centralized_customers_count: Nombre de clients centralisés
+          is_detail_authorized: Autoriser les détails ?
+          is_test: Est une organization de test ?
           status:
-            admin: 'Administrateur'
-            collaborator: 'Collaborateur'
-            client: 'Client'
+            admin: Administrateur
+            collaborator: Collaborateur
+            client: Client
       group:
-        zero: '0 groupe'
-        one: '1 groupe'
-        other: '#{count} groupes'
-        name: 'Groupe'
+        zero: 0 groupe
+        one: 1 groupe
+        other: '%{count} groupes'
+        name: Groupe
         attributes:
-          name: 'Nom'
-          description: 'Description'
-          collaborators: 'Collaborateurs'
-          collaborators_count: 'Nombre de collaborateurs'
-          members: 'Membres'
-          members_count: 'Nombre de membres'
-          customers: 'Clients'
-          customers_count: 'Nombre de clients'
+          name: Nom
+          description: Description
+          collaborators: Collaborateurs
+          collaborators_count: Nombre de collaborateurs
+          members: Membres
+          members_count: Nombre de membres
+          customers: Clients
+          customers_count: Nombre de clients
           dropbox_delivery_folder: Chemin de livraison
           is_dropbox_authorized: Autorisé ?
           file_type_to_deliver: Format des fichiers à livrer
       organization_rights:
         zero: 0 droits
         one: 1 droit
-        other: '#{count} droits'
+        other: '%{count} droits'
         name: Droits de l'organisation
         names:
           customers_management: Gestion des clients
@@ -610,7 +606,7 @@ fr:
       invoice:
         zero: 0 facture
         one: 1 facture
-        other: '#{count} factures'
+        other: '%{count} factures'
         name: Facture
         attributes:
           number: Numéro
@@ -621,7 +617,7 @@ fr:
       expense_category:
         zero: 0 catégorie de dépense
         one: 1 catégorie de dépense
-        other: '#{count} catégories de dépenses'
+        other: '%{count} catégories de dépenses'
         name: Catégorie de dépense
         attributes:
           name: Nom
@@ -629,7 +625,7 @@ fr:
       scanning_provider:
         zero: 0 atelier
         one: 1 atelier
-        other: '#{count} ateliers'
+        other: '%{count} ateliers'
         name: Atelier
         attributes:
           name: Nom
@@ -675,7 +671,7 @@ fr:
           dematbox_is_notified: Notifié ?
           dematbox_notified_at: Notifié le
           state:
-            name: 'Etat'
+            name: Etat
             values:
               created: Créé
               unreadable: Corrompu
