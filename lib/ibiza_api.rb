@@ -134,7 +134,7 @@ module IbizaAPI
       end
 
       def success?
-        @result.downcase == 'success'
+        @result.try(:downcase) == 'success'
       end
     end
 
