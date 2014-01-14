@@ -118,7 +118,7 @@ class Invoice
       pdf.default_leading 4
       header_data = [
         [
-          "IDOCUS / GREVALIS\n5, rue de Douai\n75009 Paris",
+          "IDOCUS / GREVALIS\n6, rue de Saint Petersbourg\n75008 Paris.",
           "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
           "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
         ]
