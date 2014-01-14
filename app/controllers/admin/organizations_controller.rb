@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::OrganizationsController < Admin::AdminController
+  layout :layout_by_action
+
   before_filter :load_organization, except: %w(index new create)
 
   def index
@@ -41,7 +43,25 @@ class Admin::OrganizationsController < Admin::AdminController
     redirect_to admin_organizations_path
   end
 
+  def select_propagation_options
+    @customers = @organization.customers.active.asc(:code)
+  end
+
+  def propagate
+    @organization.copy_to_users(params[:customers])
+    flash[:notice] = 'Options des périodes, propagés avec succès.'
+    redirect_to admin_organization_path(@organization)
+  end
+
 private
+
+  def layout_by_action
+    if action_name == 'select_propagation_options'
+      nil
+    else
+      'admin'
+    end
+  end
 
   def organization_params
     params.require(:organization).permit!

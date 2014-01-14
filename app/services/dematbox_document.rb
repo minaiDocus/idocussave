@@ -97,21 +97,13 @@ private
     @journal ||= service.name
   end
 
-  def period_duration
-    @user.periods.last.duration rescue 1
-  end
-
-  def previous_period_open?
-    Time.now.day < 11
-  end
-
-  def previous_period_closed?
-    !previous_period_open?
+  def period_service
+    @period_service ||= PeriodService.new user: @user
   end
 
   def period
-    is_current = service.is_for_current_period || previous_period_closed?
-    @period ||= Scan::Period.period_name period_duration, is_current
+    prev_period_offset = service.is_for_current_period ? 0 : 1
+    @period ||= Scan::Period.period_name period_service.period_duration, prev_period_offset
   end
 
   def content_file_valid?

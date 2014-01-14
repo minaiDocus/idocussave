@@ -181,4 +181,27 @@ module DocumentsHelper
       'shared'
     end
   end
+
+  def options_for_period(period_service=@period_service, time=Time.now)
+    current_time = time
+    period_duration = period_service.period_duration
+    results = [[period_option_label(period_duration, time), 0]]
+    if period_service.prev_expires_at.nil? || period_service.prev_expires_at > Time.now
+      period_service.authd_prev_period.times do |i|
+        current_time -= period_duration.month
+        results << [period_option_label(period_duration, current_time), i+1]
+      end
+    end
+    results
+  end
+
+  def period_option_label(period_duration, time)    
+    if period_duration == 1
+      month = time.strftime('%m')
+    elsif period_duration == 3
+      month = "T#{quarterly_of_month(time.month)}"
+    end
+    year = time.year
+    "#{month} #{year}"
+  end
 end

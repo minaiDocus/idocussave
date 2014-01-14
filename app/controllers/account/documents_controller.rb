@@ -32,6 +32,7 @@ public
     @packs_count = @packs.total
     
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
+    @period_service = PeriodService.new user: @user
   end
   
   def show

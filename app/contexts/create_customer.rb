@@ -15,6 +15,9 @@ class CreateCustomer
       subscription.extend NewSubscription
       subscription.copy requester_subscription
       AccountingPlan.create(user_id: @customer.id)
+      @customer.authd_prev_period            = organization.authd_prev_period
+      @customer.auth_prev_period_until_day   = organization.auth_prev_period_until_day
+      @customer.auth_prev_period_until_month = organization.auth_prev_period_until_month
       @customer.save && subscription.save
     end
   end

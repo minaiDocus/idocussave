@@ -42,10 +42,12 @@ Idocus::Application.routes.draw do
         put 'restart_using',  on: :member
       end
       resources :customers do
-        get 'search_by_code', on: :collection
-        put 'stop_using',     on: :member
-        put 'restart_using',  on: :member
-        put 'update_ibiza',   on: :member
+        get 'search_by_code',        on: :collection
+        put 'stop_using',            on: :member
+        put 'restart_using',         on: :member
+        put 'update_ibiza',          on: :member
+        get 'edit_period_options',   on: :member
+        put 'update_period_options', on: :member
         resources :addresses, controller: 'organization_addresses'
         resource :accounting_plan do
           member do
@@ -200,6 +202,8 @@ Idocus::Application.routes.draw do
       resource :csv_outputter
     end
     resources :organizations do
+      get  'select_propagation_options', on: :member
+      post 'propagate',                  on: :member
       resources :groups
       resources :journals, as: :account_book_types, controller: 'organization_journals' do
         put 'accept', on: :member

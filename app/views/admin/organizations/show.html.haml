@@ -52,6 +52,22 @@
           %tr
             %th= t('mongoid.models.organization.attributes.is_detail_authorized')
             %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
+      %table.table.table-condensed.table-bordered.table-striped
+        %thead
+          %tr
+            %th{ colspan: 2 }
+              %h3.pull-left Options des périodes
+              = link_to icon_globe, '#propagate_period_options', 'data-toggle' => 'modal', class: 'btn btn-small pull-right'
+        %tbody
+          %tr
+            %th= t('mongoid.models.organization.attributes.authd_prev_period')
+            %td= @organization.authd_prev_period
+          %tr
+            %th= t('mongoid.models.organization.attributes.auth_prev_period_until_day')
+            %td= @organization.auth_prev_period_until_day
+          %tr
+            %th= t('mongoid.models.organization.attributes.auth_prev_period_until_month')
+            %td= @organization.auth_prev_period_until_month
 
   .row-fluid
     .span6

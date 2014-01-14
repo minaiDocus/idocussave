@@ -97,20 +97,28 @@ describe Scan::Period do
       Timecop.return
     end
 
-    it 'should return 201309' do
-      expect(Scan::Period.period_name 1, true).to eq('201301')
+    it 'should return 201301' do
+      expect(Scan::Period.period_name 1, 0).to eq('201301')
     end
 
-    it 'should return 201308' do
-      expect(Scan::Period.period_name 1, false).to eq('201212')
+    it 'should return 201212' do
+      expect(Scan::Period.period_name 1, 1).to eq('201212')
     end
 
-    it 'should return 201309' do
-      expect(Scan::Period.period_name 3, true).to eq('2013T1')
+    it 'should return 201211' do
+      expect(Scan::Period.period_name 1, 2).to eq('201211')
     end
 
-    it 'should return 201308' do
-      expect(Scan::Period.period_name 3, false).to eq('2012T4')
+    it 'should return 2013T1' do
+      expect(Scan::Period.period_name 3, 0).to eq('2013T1')
+    end
+
+    it 'should return 2012T4' do
+      expect(Scan::Period.period_name 3, 1).to eq('2012T4')
+    end
+
+    it 'should return 2012T3' do
+      expect(Scan::Period.period_name 3, 2).to eq('2012T3')
     end
   end
 end

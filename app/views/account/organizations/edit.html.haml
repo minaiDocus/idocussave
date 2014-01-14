@@ -27,6 +27,12 @@
                 .form-actions
                   = address.link_to_remove 'Supprimer l\'adresse', class: 'btn'
             = f.link_to_add 'Ajouter une adresse', :addresses, class: 'btn'
+        %hr
+        %fieldset
+          %legend Options des périodes
+          = f.input :authd_prev_period,            as: :integer, input_html: { min: 0 }
+          = f.input :auth_prev_period_until_day,   as: :integer, input_html: { min: 0, max: 28 }, hint: '0 à 28'
+          = f.input :auth_prev_period_until_month, as: :integer, input_html: { min: 0, max: 2 }, hint: '0 = actuel, 1 = le mois suivant, 2 = dans 2 mois'
         .form-actions
           = f.submit 'Valider', class: 'btn'
           = link_to 'Annuler', account_organization_path, class: 'btn'

@@ -28,7 +28,10 @@ private
   def organization_params
     params.require(:organization).permit(:name,
                                          :description,
-                                         :addresses_attributes)
+                                         :addresses_attributes,
+                                         :authd_prev_period,
+                                         :auth_prev_period_until_day,
+                                         :auth_prev_period_until_month)
   end
 
   def verify_rights

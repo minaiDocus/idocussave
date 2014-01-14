@@ -16,6 +16,14 @@ class Organization
   # Misc
   field :is_test, type: Boolean, default: false
 
+  field :authd_prev_period,            type: Integer, default: 1
+  field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
+  field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3
+
+  validates :authd_prev_period, numericality: { :greater_than_or_equal_to => 0 }
+  validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
+  validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
+
   validates_presence_of :name, :leader_id
   validates_uniqueness_of :name
   validates_length_of :code, in: 1..4
@@ -108,6 +116,18 @@ class Organization
 
   def create_csv_outputter
     CsvOutputter.create(organization_id: self.id)
+  end
+
+  def copy_to_users(user_ids)
+    users = User.find user_ids
+    User.observers.disable :all do
+      users.each do |user|
+        user.authd_prev_period            = self.authd_prev_period
+        user.auth_prev_period_until_day   = self.auth_prev_period_until_day
+        user.auth_prev_period_until_month = self.auth_prev_period_until_month
+        user.save
+      end
+    end
   end
 
 private

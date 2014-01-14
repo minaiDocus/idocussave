@@ -1,24 +1,20 @@
 # -*- encoding : UTF-8 -*-
 class UploadedDocument
-  attr_reader :file, :original_file_name, :user, :code, :journal, :errors, :temp_document
+  attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
 
   VALID_EXTENSION = %w(.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)
 
-  def initialize(file, original_file_name, user, journal, is_current_period)
+  def initialize(file, original_file_name, user, journal, prev_period_offset)
     @file = file
     @original_file_name = original_file_name.gsub(/\0/,'')
     @user = user
-    @journal = journal
-
     @code = @user.code
-    if is_current_period == true || is_current_period == 'true'
-      @is_current_period = true
-    else
-      @is_current_period = false
-    end
+    @journal = journal
+    @prev_period_offset = prev_period_offset.to_i
 
     @errors = []
     @errors << [:journal_unknown, journal: @journal] unless valid_journal?
+    @errors << [:invalid_period, period: period] unless valid_prev_period_offset?
     @errors << [:invalid_file_extension, extension: extension] unless valid_extension?
     @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
     unless DocumentTools.modifiable?(processed_file.path)
@@ -88,21 +84,8 @@ private
     extension.in? VALID_EXTENSION
   end
 
-  def period_duration
-    Scan::Period.where(user_id: @user.id).desc(:created_at).first.duration rescue 1
-  end
-  
-  def previous_period_open?
-    Time.now.day < 11
-  end
-
-  def previous_period_closed?
-    !previous_period_open?
-  end
-
   def period
-    is_current = @is_current_period || previous_period_closed?
-    @period = Scan::Period.period_name(period_duration, is_current)
+    @period ||= Scan::Period.period_name(period_service.period_duration, @prev_period_offset)
   end
 
   def pack_name
@@ -111,6 +94,22 @@ private
 
   def valid_journal?
     @user.account_book_types.where(name: @journal).first.present?
+  end
+
+  def period_service
+    @period_service ||= PeriodService.new user: @user
+  end
+
+  def valid_prev_period_offset?
+    if @prev_period_offset.in? 0..period_service.authd_prev_period
+      if period_service.prev_expires_at
+        period_service.prev_expires_at > Time.now
+      else
+        true
+      end
+    else
+      false
+    end
   end
 
   def valid_file_size?

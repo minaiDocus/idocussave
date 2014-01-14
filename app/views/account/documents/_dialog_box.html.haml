@@ -23,23 +23,15 @@
       = label_tag :account_book_type, "Type de document : ", :class => "pull-left padding1right", :style => "font-weight:900;"
       = select_tag "account_book_type", options_for_select(account_book_types_option), :class => 'text_field', :id => "account_book_type", :style =>"position:relative;bottom:5px;font-size:11px;"
       %br
-      = label_tag :for_current_month, "Période concerné : ", :class => "pull-left padding1right", :style => "font-weight:900;"
-      - sYear1 = Time.now.year.to_s
-      - if @user.find_or_create_scan_subscription.period_duration == 3
-        - sCurrentPeriod = "T#{quarterly_of_month(Time.now.month)}"
-        - sPreviousPeriod = "T#{quarterly_of_month((Time.now - 3.months).month)}"
-        - sYear2 = (Time.now - 3.month).year.to_s
-      - else
-        - sCurrentPeriod = "%0.2d" % Time.now.month
-        - sPreviousPeriod = "%0.2d" % 1.month.ago.month
-        - sYear2 = (Time.now - 1.month).year.to_s
-      = select_tag "for_current_period", options_for_select([[sCurrentPeriod + " " + sYear1,"true"],[sPreviousPeriod + " " + sYear2,"false"]]), :class => 'text_field', :id => :for_current_month, :style =>"position:relative;bottom:5px;font-size:11px;"
-      %br
-      %span
-        %span.label.label-warning.margin1right
-          Attention :
-        Votre document ne pourra être attribué à la période précédante que si votre envoi "papier" n'a pas encore été traité par iDocus.
-      %br
+      = label_tag :prev_period_offset, "Période concerné : ", :class => "pull-left padding1right", :style => "font-weight:900;"
+      = select_tag :prev_period_offset, options_for_select(options_for_period), :class => 'text_field', :id => :prev_period_offset, :style =>"position:relative;bottom:5px;font-size:11px;"
+      - if @period_service.prev_expires_at
+        %br
+        %span
+          %span.label.label-warning.margin1right
+            Attention :
+          Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période précédente après le #{l(@period_service.prev_expires_at, format: '%d %B %Y à %H:%M')}.
+        %br
       %br
       :plain
         <div class="row fileupload-buttonbar">

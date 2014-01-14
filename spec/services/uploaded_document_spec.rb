@@ -27,7 +27,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             journal = AccountBookType.create(name: 'TS', description: 'TEST')
             journal.clients << @user
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', true)
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
           end
 
@@ -58,7 +58,7 @@ describe UploadedDocument do
             @scan_subscription.update_attribute(:period_duration, 3)
             journal = AccountBookType.create(name: 'TS', description: 'TEST')
             journal.clients << @user
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', true)
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
           end
 
@@ -93,7 +93,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             journal = AccountBookType.create(name: 'TS', description: 'TEST')
             journal.clients << @user
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', false)
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document
           end
 
@@ -124,7 +124,7 @@ describe UploadedDocument do
             @scan_subscription.update_attribute(:period_duration, 3)
             journal = AccountBookType.create(name: 'TS', description: 'TEST')
             journal.clients << @user
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', false)
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document
           end
 
@@ -151,76 +151,6 @@ describe UploadedDocument do
           end
         end
       end
-
-      context 'when previous period is not accepted' do
-        context 'when periodicity is monthly' do
-          before(:all) do
-            DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
-            Timecop.return
-            Timecop.freeze(Time.local(2013,1,11))
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', false)
-            @temp_document = @uploaded_document.temp_document
-          end
-
-          after(:all) do
-            DatabaseCleaner.clean
-            Timecop.return
-            Timecop.freeze(Time.local(2013,1,10))
-          end
-
-          it { expect(@uploaded_document).to be_valid }
-
-          describe 'temp_document' do
-            subject { @temp_document }
-
-            it { should be_valid }
-            it { should be_persisted }
-            its(:content_file_name)  { should eq('TS0001_TS_201301.pdf') }
-          end
-        end
-
-        context 'when periodicity is quarterly' do
-          before(:all) do
-            DatabaseCleaner.start
-            @user = FactoryGirl.create(:user, code: 'TS0001')
-            @scan_subscription = @user.find_or_create_scan_subscription
-            @scan_subscription.update_attribute(:period_duration, 3)
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
-            Timecop.return
-            Timecop.freeze(Time.local(2013,1,11))
-            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', false)
-            @temp_document = @uploaded_document.temp_document
-          end
-
-          after(:all) do
-            DatabaseCleaner.clean
-            Timecop.return
-            Timecop.freeze(Time.local(2013,1,10))
-          end
-
-          it 'temp_pack.name should equal TS0001 TS 2013T1 all' do
-            expect(@temp_document.temp_pack.name).to eq('TS0001 TS 2013T1 all')
-          end
-
-          it { expect(@uploaded_document).to be_valid }
-
-          describe 'temp_document' do
-            subject { @temp_document }
-
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_2013T1.pdf') }
-          end
-        end
-      end
     end
 
     context 'when extension is .tiff' do
@@ -230,7 +160,7 @@ describe UploadedDocument do
         file = File.open("#{Rails.root}/spec/support/files/upload.tiff", "r")
         journal = AccountBookType.create(name: 'TS', description: 'TEST')
         journal.clients << @user
-        @uploaded_document = UploadedDocument.new(file, 'upload.tiff', @user, 'TS', true)
+        @uploaded_document = UploadedDocument.new(file, 'upload.tiff', @user, 'TS', 0)
         @temp_document = @uploaded_document.temp_document
       end
 
@@ -256,7 +186,7 @@ describe UploadedDocument do
     describe 'when argument is not valid' do
       before(:all) do
         DatabaseCleaner.start
-        @user = FactoryGirl.create(:user, code: 'TS0001')
+        @user = FactoryGirl.create(:user, code: 'TS0001', authd_prev_period: 0, auth_prev_period_until_day: 11)
         @journal = AccountBookType.create(name: 'TS', description: 'TEST')
         @journal.clients << @user
       end
@@ -265,10 +195,43 @@ describe UploadedDocument do
         DatabaseCleaner.clean
       end
 
+      context 'when period 201212 are unknown' do
+        before(:each) do
+          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
+        end
+
+        subject { @uploaded_document }
+
+        it { should be_invalid }
+        its(:errors) { should eq([[:invalid_period, period: '201212']]) }
+        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212')) }
+      end
+
+      context 'when period 201212 are expired' do
+        before(:each) do
+          @user.authd_prev_period = 1
+          @user.auth_prev_period_until_day = 9
+          @user.save
+          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
+        end
+
+        after(:all) do
+          @user.authd_prev_period = 0
+          @user.auth_prev_period_until_day = 11
+          @user.save
+        end
+
+        subject { @uploaded_document }
+
+        it { should be_invalid }
+        its(:errors) { should eq([[:invalid_period, period: '201212']]) }
+        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212')) }
+      end
+
       context 'when file size are too big' do
         before(:each) do
           @file.stub(:size).and_return(52428801)
-          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', true)
+          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }
@@ -280,7 +243,7 @@ describe UploadedDocument do
 
       context 'when extension is invalid' do
         before(:each) do
-          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', true)
+          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }
@@ -293,7 +256,7 @@ describe UploadedDocument do
       context 'when file is corrupted' do
         before(:each) do
           file = File.open("#{Rails.root}/spec/support/files/corrupted.pdf", "r")
-          @uploaded_document = UploadedDocument.new(file, 'upload.pdf', @user, 'TS', true)
+          @uploaded_document = UploadedDocument.new(file, 'upload.pdf', @user, 'TS', 0)
           file.close
         end
 
@@ -320,7 +283,7 @@ describe UploadedDocument do
       context 'when journal is unknown' do
         before(:all) do
           @journal.destroy
-          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', true)
+          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }
@@ -332,7 +295,7 @@ describe UploadedDocument do
 
       context 'when multiple arguments are invalid' do
         before(:all) do
-          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', true)
+          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }

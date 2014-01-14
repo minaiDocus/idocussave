@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, only: %w(show edit update stop_using restart_using update_ibiza)
+  before_filter :load_customer, only: %w(show edit update stop_using restart_using update_ibiza edit_period_options update_period_options)
   before_filter :verify_rights, except: 'index'
   before_filter :apply_attribute_changes, only: %w(show edit)
 
@@ -87,6 +87,18 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@customer)
   end
 
+  def edit_period_options
+  end
+
+  def update_period_options
+    if @customer.update_attributes(period_options_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_customer_path(@customer)
+    else
+      render 'edit_period_options'
+    end
+  end
+
   def search_by_code
     tags = []
     full_info = params[:full_info].present?
@@ -139,6 +151,12 @@ private
       _params.merge! params.require(:user).permit(:group_ids)
     end
     _params
+  end
+
+  def period_options_params
+    params.require(:user).permit(:authd_prev_period,
+                                 :auth_prev_period_until_day,
+                                 :auth_prev_period_until_month)
   end
 
   def load_customer

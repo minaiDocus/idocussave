@@ -299,11 +299,16 @@ fr:
             file_size_is_too_big: 'taille %{size_in_mo} Mo trop gros (50 Mo max.)'
             invalid_file_extension: 'extension %{extension} invalide (.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)'
             journal_unknown: 'journal %{journal} inconnu'
+            invalid_period: "période '%{period}' inconnu"
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
         bank_account:
           attributes:
             journal:
               invalid: Invalide ( doit être composé uniquement des caractéres A à Z et des chiffres 0 à 9 )
+        organization:
+          attributes:
+            authd_prev_period:
+              greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
     models:
       common:
         attributes:
@@ -341,6 +346,9 @@ fr:
           ibiza_id: Compte lié Ibiza
           short:
             balance_in_cents: Solde du compte
+          authd_prev_period: Nombre de période précédente additionnel
+          auth_prev_period_until_day: Jour de clôture de l'envoi (à 23:59:59)
+          auth_prev_period_until_month: Mois de clôture de l'envoi
       address:
         zero: 0 adresses
         one: 1 addresse
@@ -573,6 +581,9 @@ fr:
             admin: Administrateur
             collaborator: Collaborateur
             client: Client
+          authd_prev_period: Nombre de période précédente additionnel
+          auth_prev_period_until_day: Jour de clôture de l'envoi (à 23:59:59)
+          auth_prev_period_until_month: Mois de clôture de l'envoi
       group:
         zero: 0 groupe
         one: 1 groupe
