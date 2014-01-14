@@ -1,12 +1,14 @@
 <table class="pull-left">
   <tr>
-    <td class="option">
-      <% if(@model.get('is_delivered') == false): %>
-        <a class="deliver" href="">
-          <i class="icon-refresh"></i>
-        </a>
-      <% end %>
-    </td>
+    <% if(window.is_ibiza_configured): %>
+      <td class="option">
+        <% if(@model.get('is_delivered') == false): %>
+          <a class="deliver" href="">
+            <i class="icon-refresh"></i>
+          </a>
+        <% end %>
+      </td>
+    <% end %>
     <td class="option">
       <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="Pièce/Opération N°<%= @model.get('position') %>">
         <i class="icon-info-sign"></i>

@@ -1,10 +1,12 @@
-<div class="option pull-left">
-  <% if(@model.get('is_delivered') == false): %>
-    <a class="deliver" href="">
-      <i class="icon-refresh"></i>
-    </a>
-  <% end %>
-</div>
+<% if(window.is_ibiza_configured): %>
+  <div class="option pull-left">
+    <% if(@model.get('is_delivered') == false): %>
+      <a class="deliver" href="">
+        <i class="icon-refresh"></i>
+      </a>
+    <% end %>
+  </div>
+<% end %>
 <div class="option pull-left">
   <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="<%= @model.get('name') %>">
     <i class="icon-info-sign"></i>

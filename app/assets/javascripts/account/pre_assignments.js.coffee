@@ -1,3 +1,5 @@
+window.is_ibiza_configured = $('#pre_assignments').data().is_ibiza_configured
+
 Idocus.vent = _.extend({}, Backbone.Events);
 
 Idocus.initialize = ->

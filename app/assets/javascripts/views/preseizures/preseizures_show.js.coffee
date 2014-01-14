@@ -48,10 +48,11 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     content = "<table class=\"table table-striped table-condensed margin0bottom\">"
     content += "<tr><td><b>Date de création</b></td><td>" + @model.get('created_at') + "</td></tr>"
     content += "<tr><td><b>Date de modification</b></td><td>" + @model.get('updated_at') + "</td></tr>"
-    content += "<tr><td><b>Date d'envoi dans Ibiza</b></td><td>"
-    if @model.get('delivery_tried_at') != null
-      content += @model.get('delivery_tried_at')
-    content += "</td></tr>"
+    if window.is_ibiza_configured
+      content += "<tr><td><b>Date d'envoi dans Ibiza</b></td><td>"
+      if @model.get('delivery_tried_at') != null
+        content += @model.get('delivery_tried_at')
+      content += "</td></tr>"
     content += "</table>"
     content
 
