@@ -21,7 +21,8 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_delivered
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_locked && !@preseizure.is_delivered
+      @preseizure.update_attribute(:is_locked, true)
       @user.organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
         export([@preseizure])

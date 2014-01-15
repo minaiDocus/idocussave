@@ -1,6 +1,6 @@
 <% if(window.is_ibiza_configured): %>
   <div class="option pull-left">
-    <% if(@model.get('is_delivered') == false): %>
+    <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
       <a class="deliver" href="">
         <i class="icon-refresh"></i>
       </a>

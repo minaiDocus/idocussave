@@ -44,4 +44,4 @@ node :delivery_tried_at do |report|
   I18n.l(report.delivery_tried_at) if report.delivery_tried_at
 end
 
-attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type
+attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked

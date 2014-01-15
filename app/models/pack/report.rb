@@ -16,9 +16,13 @@ class Pack::Report
   field :is_delivered,      type: Boolean, default: false
   field :delivery_tried_at, type: Time
   field :delivery_message
+  field :is_locked,         type: Boolean, default: false
 
   scope :preseizures, not_in: { type: ['NDF'] }
   scope :expenses, where: { type: 'NDF' }
+
+  scope :locked,     where: { is_locked: true }
+  scope :not_locked, where: { is_locked: false }
 
   def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
@@ -157,6 +161,7 @@ class Pack::Report
                   report.name = pack.name.sub(/ all$/, '')
                   report.user = pack.owner
                   report.pack = pack
+                  report.is_locked = true
                   report.organization = pack.owner.organization
                   report.document = pack.periodic_metadata.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   report.document ||= pack.periodic_metadata.desc(:created_at).first
@@ -176,6 +181,7 @@ class Pack::Report
                       preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = piece.position
+                      preseizure.is_locked       = true
                       preseizure.save
                       preseizures << preseizure
                       part.css('account').each do |account|
@@ -216,7 +222,10 @@ class Pack::Report
                     if report.organization && report.organization.ibiza && report.organization.ibiza.is_configured? && report.organization.ibiza.is_auto_deliver
                       report.organization.ibiza.export(preseizures)
                     end
+                    ids = preseizures.map(&:id)
+                    Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
                   end
+                  report.update_attribute(:is_locked, false)
                   FileDeliveryInit.prepare(report)
                 end
               end

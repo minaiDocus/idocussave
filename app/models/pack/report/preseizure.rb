@@ -25,9 +25,13 @@ class Pack::Report::Preseizure
 
   field :is_delivered,      type: Boolean, default: false
   field :delivery_tried_at, type: Time
+  field :is_locked,         type: Boolean, default: false
 
   scope :delivered,     where: { is_delivered: true }
   scope :not_delivered, where: { is_delivered: false }
+
+  scope :locked,     where: { is_locked: true }
+  scope :not_locked, where: { is_locked: false }
 
   def piece_name
     name || piece.name rescue nil

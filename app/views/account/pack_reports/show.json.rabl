@@ -20,4 +20,4 @@ node :delivery_message do |report|
   report.delivery_message
 end
 
-attributes :id, :is_delivered, :type
+attributes :id, :is_delivered, :type, :is_locked
