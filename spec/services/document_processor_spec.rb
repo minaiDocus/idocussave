@@ -23,8 +23,8 @@ describe DocumentProcessor do
 
     context 'with 2 uploaded files' do
       before(:all) do
-        UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', true
-        UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', true
+        UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', 0
+        UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
 
         DocumentProcessor.process
         @user.reload
@@ -520,8 +520,8 @@ describe DocumentProcessor do
     context 'with 2 uploaded files, 2 dematbox scanned files, 1 cover scanned file and 1 scanned file' do
       before(:all) do
         # 2 uploaded files
-        UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', true
-        UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', true
+        UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', 0
+        UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
 
         params = {
           'virtual_box_id' => '1',
