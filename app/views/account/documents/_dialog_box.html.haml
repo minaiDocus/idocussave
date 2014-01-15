@@ -30,7 +30,7 @@
         %span
           %span.label.label-warning.margin1right
             Attention :
-          Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période précédente après le #{l(@period_service.prev_expires_at, format: '%d %B %Y à %H:%M')}.
+          Pour des raisons de clôture de période comptable, vous ne pouvez plus affecter de documents à la période #{period_option_label(@period_service.period_duration, Time.now - @period_service.period_duration.month)} après le #{l(@period_service.prev_expires_at, format: '%d %B %Y à %H:%M')}.
         %br
       %br
       :plain

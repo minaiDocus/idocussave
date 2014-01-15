@@ -195,7 +195,7 @@ module DocumentsHelper
     results
   end
 
-  def period_option_label(period_duration, time)    
+  def period_option_label(period_duration, time)
     if period_duration == 1
       month = time.strftime('%m')
     elsif period_duration == 3

@@ -155,8 +155,7 @@ private
 
   def period_options_params
     params.require(:user).permit(:authd_prev_period,
-                                 :auth_prev_period_until_day,
-                                 :auth_prev_period_until_month)
+                                 :auth_prev_period_until_day)
   end
 
   def load_customer

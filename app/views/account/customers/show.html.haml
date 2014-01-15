@@ -65,9 +65,6 @@
                   %tr
                     %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
                     %td= @customer.auth_prev_period_until_day
-                  %tr
-                    %th= t('mongoid.models.user.attributes.auth_prev_period_until_month')
-                    %td= @customer.auth_prev_period_until_month
               .row-fluid.margin1top
                 .span12
                   = link_to t('actions.edit'), edit_period_options_account_organization_customer_path(@customer), class: 'btn pull-right'

@@ -59,7 +59,7 @@ describe DematboxDocument do
         end
       end
 
-      context 'when previous period is used' do
+      context 'when previous period is accepted' do
         context 'when monthly' do
           before(:all) do
             @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
@@ -94,6 +94,51 @@ describe DematboxDocument do
 
             it { should be_persisted }
             its(:content_file_name) { should eq('TS0001_TS_2012T4.pdf') }
+          end
+        end
+      end
+
+      context 'when previous period is not accepted' do
+        context 'when monthly' do
+          before(:all) do
+            @user.auth_prev_period_until_day = 10
+            @user.save
+            time = Time.local(2013,1,11)
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2', current_time: time }))
+          end
+
+          subject { @dematbox_document }
+
+          it { should be_valid }
+
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+          end
+        end
+
+        context 'when quarterly' do
+          before(:all) do
+            @user.auth_prev_period_until_day = 10
+            @user.save
+            time = Time.local(2013,1,11)
+            scan_subscription = @user.find_or_create_scan_subscription
+            scan_subscription.update_attribute(:period_duration, 3)
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2', current_time: time }))
+            scan_subscription.periods.destroy_all
+          end
+
+          subject { @dematbox_document }
+
+          it { should be_valid }
+
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_2013T1.pdf') }
           end
         end
       end

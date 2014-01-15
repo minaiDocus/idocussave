@@ -30,8 +30,7 @@ private
                                          :description,
                                          :addresses_attributes,
                                          :authd_prev_period,
-                                         :auth_prev_period_until_day,
-                                         :auth_prev_period_until_month)
+                                         :auth_prev_period_until_day)
   end
 
   def verify_rights
