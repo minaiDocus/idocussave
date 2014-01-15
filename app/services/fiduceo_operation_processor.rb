@@ -2,6 +2,7 @@
 class FiduceoOperationProcessor
   def initialize(user)
     @user = user
+    @ibiza = user.organization.ibiza
   end
 
   def process
@@ -13,6 +14,7 @@ class FiduceoOperationProcessor
         operation.account_id
       end
 
+      preseizures = []
       grouped_operations.each do |account_id, operations|
         bank_account = @user.bank_accounts.valid.select do |bank_account|
           bank_account.fiduceo_id == account_id
@@ -31,6 +33,7 @@ class FiduceoOperationProcessor
               preseizure.observation = [operation.label, operation.category].join(' - ')
               preseizure.category_id = operation.category_id
               preseizure.save
+              preseizures << preseizure
               pack_report.preseizures << preseizure
               
               ####################### 1 #######################
@@ -72,6 +75,20 @@ class FiduceoOperationProcessor
               preseizure.entries << entry
               entry.save
             end
+          end
+        end
+      end
+      if preseizures.any?
+        grouped_preseizures = preseizures.group_by do |preseizure|
+          preseizure.report
+        end
+        grouped_preseizures.each do |report, preseizures|
+          report.is_delivered = false
+          report.delivery_tried_at = nil
+          report.delivery_message = ''
+          report.save
+          if @ibiza && @ibiza.is_configured? && @ibiza.is_auto_deliver
+            @ibiza.export(preseizures)
           end
         end
       end

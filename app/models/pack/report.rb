@@ -209,10 +209,12 @@ class Pack::Report
                   report.save
                   report.document.period.update_information!
                   if preseizures.any?
+                    report.is_delivered = false
+                    report.delivery_tried_at = nil
+                    report.delivery_message = ''
+                    report.save
                     if report.organization && report.organization.ibiza && report.organization.ibiza.is_configured? && report.organization.ibiza.is_auto_deliver
                       report.organization.ibiza.export(preseizures)
-                    else
-                      report.update_attribute(:is_delivered, false)
                     end
                   end
                   FileDeliveryInit.prepare(report)
