@@ -5,7 +5,6 @@ class DematboxDocument
   def initialize(args)
     params = Hash[args.map {|k, v| [k.to_s.underscore, v] }]
 
-    @current_time    = params['current_time'] || Time.now
     @virtual_box_id  = params['virtual_box_id']
     @service_id      = params['service_id']
     @improved_scan64 = params['improved_scan']
@@ -107,7 +106,7 @@ private
       prev_period_offset = 0
     else
       if period_service.prev_expires_at
-        prev_period_offset = @current_time < period_service.prev_expires_at ? 1 : 0
+        prev_period_offset = Time.now < period_service.prev_expires_at ? 1 : 0
       else
         prev_period_offset = 1
       end
