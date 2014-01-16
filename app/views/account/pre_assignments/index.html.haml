@@ -7,7 +7,7 @@
             %h3 Pré-affectations
           - if is_leader?
             .pull-right
-              = icon_link_to "#settings", { icon: 'cog' }, class: 'btn', data: { toggle: 'modal' }
+              = icon_link_to "#settings", { icon: 'cog' }, class: 'btn settings', data: { toggle: 'modal' }, title: 'Paramètres'
   .row-fluid
     #pack_reports.span3.box
       %h4.aligncenter Lots

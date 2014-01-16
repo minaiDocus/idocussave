@@ -1,7 +1,7 @@
 <% for entry in @model.get('entries').models: %>
   <td><%= @model.get('number') %></td>
   <td>
-    <a class="edit" href="">
+    <a class="tip edit" href="" title="Editer">
       <i class="icon-edit"></i>
     </a>
   </td>
@@ -13,7 +13,7 @@
     <td class="amount"><%= entry.get('amount') %> €</td>
   <% end %>
   <td>
-    <a class="edit_entry" href="" data-id="<%= entry.get('id') %>">
+    <a class="tip edit_entry" href="" data-id="<%= entry.get('id') %>" title="Editer">
       <i class="icon-edit"></i>
     </a>
   </td>

@@ -1,7 +1,7 @@
 <% if(window.is_ibiza_configured): %>
   <div class="option pull-left">
     <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
-      <a class="deliver" href="">
+      <a class="tip deliver" href="" title="Envoyer vers Ibiza">
         <i class="icon-refresh"></i>
       </a>
     <% end %>
@@ -13,7 +13,7 @@
   </a>
 </div>
 <div class="option pull-left">
-  <a class="download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>">
+  <a class="tip download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>" title="Télécharger le fichier .csv">
     <i class="icon-download"></i>
   </a>
 </div>

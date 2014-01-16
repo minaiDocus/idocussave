@@ -7,6 +7,8 @@ class Idocus.Views.PackReportsShow extends Backbone.View
   events:
     'mouseenter a.details': 'showDetails'
     'mouseleave a.details': 'hideDetails'
+    'mouseenter a.tip':     'showTip'
+    'mouseleave a.tip':     'hideTip'
     'click a.details':      'preventDefault'
     'click a.selectable':   'select'
     'click a.deliver':      'deliver'
@@ -44,10 +46,16 @@ class Idocus.Views.PackReportsShow extends Backbone.View
     content
 
   showDetails: (e) ->
-    this.$('.details').popover('show');
+    this.$('.details').popover('show')
 
   hideDetails: (e) ->
-    this.$('.details').popover('hide');
+    this.$('.details').popover('hide')
 
   preventDefault: (e) ->
     e.preventDefault()
+
+  showTip: (e) ->
+    $(e.currentTarget).tooltip('show')
+
+  hideTip: (e) ->
+    $(e.currentTarget).tooltip('hide')
