@@ -25,5 +25,9 @@ class Admin::AdminController < ApplicationController
 
   def index
     @last_packs = Pack.desc(:created_at).limit(10)
+    @awaiting_pre_assignments = Pack::Piece.collection.group keyf: "function(x) { name = x.name.split(' '); name.pop(); name = name.join(' '); return { name: name }; }",
+                                                             cond: { is_awaiting_pre_assignment: true },
+                                                             initial: { count: 0 },
+                                                             reduce: "function(current, result) { return result.count++; }"
   end
 end

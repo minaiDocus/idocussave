@@ -13,7 +13,7 @@
             %td= l(pack.updated_at)
             %td= pack.name
             %td= pack.pages_count
-  .span3
+  .span2
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
@@ -67,7 +67,7 @@
               %td FTP
               %td= RemoteFile.of_service('FTP').not_processed.count
               %td= RemoteFile.of_service('FTP').not_retryable.count
-  .span3
+  .span2
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
@@ -91,3 +91,17 @@
             %tr
               %th Intégrés
               %td= TempDocument.processed.count
+  .span4
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation en attente
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %tr
+              %th Nom
+              %th Nb de pièces
+          %tbody
+            - @awaiting_pre_assignments.each do |pre_assignment|
+              %tr
+                %td= pre_assignment['name']
+                %td= pre_assignment['count'].to_i
