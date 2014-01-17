@@ -23,6 +23,7 @@ describe UploadedDocument do
       context 'when current period' do
         context 'when periodicity is monthly' do
           before(:all) do
+            Timecop.freeze(Time.local(2013,1,12))
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
             journal = AccountBookType.create(name: 'TS', description: 'TEST')
@@ -33,6 +34,7 @@ describe UploadedDocument do
 
           after(:all) do
             DatabaseCleaner.clean
+            Timecop.freeze(Time.local(2013,1,10))
           end
 
           it { expect(@uploaded_document).to be_valid }
@@ -52,6 +54,7 @@ describe UploadedDocument do
 
         context 'when periodicity is quarterly' do
           before(:all) do
+            Timecop.freeze(Time.local(2013,1,12))
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @scan_subscription = @user.find_or_create_scan_subscription
@@ -64,6 +67,7 @@ describe UploadedDocument do
 
           after(:all) do
             DatabaseCleaner.clean
+            Timecop.freeze(Time.local(2013,1,10))
           end
 
           it 'temp_pack.name should equal TS0001 TS 2013T1 all' do

@@ -102,10 +102,14 @@ private
 
   def valid_prev_period_offset?
     if @prev_period_offset.in? 0..period_service.authd_prev_period
-      if period_service.prev_expires_at
-        period_service.prev_expires_at > Time.now
-      else
+      if @prev_period_offset == 0
         true
+      else
+        if period_service.prev_expires_at
+          period_service.prev_expires_at > Time.now
+        else
+          true
+        end
       end
     else
       false
