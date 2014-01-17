@@ -98,7 +98,7 @@ class FiduceoOperationProcessor
         Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
       end
       ids = pack_reports.map(&:id)
-      Pack::Report.where(:_id.in => ids).update_all(:is_locked, false)
+      Pack::Report.where(:_id.in => ids).update_all(is_locked: false)
     end
   end
 
