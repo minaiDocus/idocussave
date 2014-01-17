@@ -107,7 +107,7 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def destroy
-    if @user.request.status == 'create' && @user.destroy
+    if (@user.request.status == 'create' || @user.is_disabled) && @user.destroy
       flash[:notice] = 'Supprimé avec succès.'
     else
       flash[:error] = 'Impossible de supprimer.'
