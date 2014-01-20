@@ -146,7 +146,7 @@ class Ibiza
           data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
           client.company(id).entries!(data)
           if client.response.success?
-            Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true, delivery_tried_at: Time.now)
+            Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true)
             report.delivery_message = ''
           else
             report.delivery_message = client.response.message
@@ -160,7 +160,7 @@ class Ibiza
       else
         report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte Ibiza lié."
       end
-      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
+      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
       report.delivery_tried_at = Time.now
       report.is_locked = false
       report.save

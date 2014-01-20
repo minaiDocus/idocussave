@@ -67,7 +67,6 @@
               %td FTP
               %td= RemoteFile.of_service('FTP').not_processed.count
               %td= RemoteFile.of_service('FTP').not_retryable.count
-  .span2
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
@@ -91,10 +90,10 @@
             %tr
               %th Intégrés
               %td= TempDocument.processed.count
-  .span4
+  .span6
     .row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation en attente
+      .span6
+        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - En attente
         %table.table.table-striped.table-condensed.table-bordered
           %thead
             %tr
@@ -105,3 +104,32 @@
               %tr
                 %td= pre_assignment['name']
                 %td= pre_assignment['count'].to_i
+      .span6
+        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison en cours
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %tr
+              %th Nom
+              %th Nb de pièces
+          %tbody
+            - @reports_delivery.each do |report|
+              %tr
+                %td= report.name
+                %td= report.preseizures.locked.count
+    #failed_reports_delivery.row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison échouées
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %tr
+              %th.first Date
+              %th.second Nom
+              %th.third Nb
+              %th.last Message d'erreur
+          %tbody
+            - @failed_reports_delivery.each do |delivery|
+              %tr
+                %td.first= l(delivery['failed_at'], format: '%e %b %Y %H:%M')
+                %td.second= delivery['name']
+                %td.third= delivery['count']
+                %td.last= delivery['delivery_message']
