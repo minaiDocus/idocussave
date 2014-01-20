@@ -89,7 +89,8 @@ class Pack::Piece
       filename = DocumentTools.file_name(self.name)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
-      self.update_attribute(:is_awaiting_pre_assignment, true)
+      self.is_awaiting_pre_assignment = true
+      self.save if persisted?
     end
   end
 end
