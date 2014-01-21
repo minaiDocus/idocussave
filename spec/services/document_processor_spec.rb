@@ -7,8 +7,8 @@ describe DocumentProcessor do
       Timecop.freeze(Time.local(2013,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      journal = AccountBookType.create(name: 'TS', description: 'TEST')
-      journal.clients << @user
+      @journal = AccountBookType.create(name: 'TS', description: 'TEST')
+      @journal.clients << @user
 
       @upload_file = File.open File.join(Rails.root, 'spec', 'support', 'files', 'upload.pdf'), 'r'
       @file_with_2_pages = File.open File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf'), 'r'
@@ -937,6 +937,48 @@ describe DocumentProcessor do
             its(:position) { should eq(5) }
           end
         end
+      end
+    end
+
+    context 'with 1 scanned file with preassignment activated' do
+      before(:all) do
+        Dir.mktmpdir do |dir|
+          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+
+          file_name = 'TS0001_TS_201301_001.pdf'
+          file_path = File.join(dir, file_name)
+          FileUtils.cp @file_with_2_pages, file_path
+          temp_document = TempDocument.new
+
+          temp_document.temp_pack          = temp_pack
+          temp_document.original_file_name = file_name
+          temp_document.content            = open(file_path)
+          temp_document.position           = temp_pack.next_document_position
+
+          temp_document.delivered_by       = 'ppp'
+          temp_document.delivery_type      = 'scan'
+
+          temp_document.save
+          temp_document.ready
+        end
+
+        @journal.update_attribute(:entry_type, 2)
+
+        DocumentProcessor.process
+        @user.reload
+        @pack = @user.packs.first
+        @temp_pack = TempPack.where(name: @pack.name).first
+        @path = File.join([Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'AC'], 'TS0001_TS_201301_001.pdf')
+      end
+
+      after(:all) do
+        TempPack.destroy_all
+        Pack.destroy_all
+        File.delete @path
+      end
+
+      it 'should create file to preassign successfully' do
+        expect(File.exists?(@path)).to be_true
       end
     end
   end
