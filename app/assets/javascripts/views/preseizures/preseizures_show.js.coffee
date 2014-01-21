@@ -41,6 +41,7 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
   deliver: (e) ->
     e.preventDefault()
     if confirm("Vous êtes sur le point d'envoyer des écritures dans Ibiza. Etes-vous sûr ?")
+      $(e.currentTarget).tooltip('hide')
       @model.deliver()
       @model.set('is_delivered', true)
       @render()
