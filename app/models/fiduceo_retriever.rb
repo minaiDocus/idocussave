@@ -58,9 +58,11 @@ class FiduceoRetriever
     end
   end
 
-  scope :scheduled,  where: { state: 'scheduled', is_active: true }
-  scope :processing, where: { state: 'processing' }
-  scope :error,      where: { state: 'error' }
+  scope :scheduled,        where: { state: 'scheduled', is_active: true }
+  scope :processing,       where: { state: 'processing' }
+  scope :wait_selection,   where: { state: 'wait_selection' }
+  scope :wait_user_action, where: { state: 'wait_user_action' }
+  scope :error,            where: { state: 'error' }
 
   def provider?
     type == 'provider'

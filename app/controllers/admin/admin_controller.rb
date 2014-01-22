@@ -37,7 +37,13 @@ class Admin::AdminController < ApplicationController
     end.sort! do |a,b|
       b['updated_at'] <=> a['updated_at']
     end
-    @last_packs               = Pack.desc(:updated_at).limit(15)
+    @last_packs               = Pack.desc(:updated_at).limit(15).entries
+
+    @document_retrievers         = FiduceoRetriever.providers.desc(:created_at).limit(5).entries
+    @operation_retrievers        = FiduceoRetriever.banks.desc(:created_at).limit(5).entries
+    @failed_document_retrievers  = FiduceoRetriever.providers.error.desc(:updated_at)
+    @failed_operation_retrievers = FiduceoRetriever.banks.error.desc(:updated_at)
+
     @awaiting_pre_assignments = Pack::Piece.collection.group(
       keyf: "function(x) { name = x.name.split(' '); name.pop(); name = name.join(' '); return { name: name }; }",
       cond: { is_awaiting_pre_assignment: true },
