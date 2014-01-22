@@ -17,7 +17,7 @@ class Scan::Period
   field :is_centralized, type: Boolean, default: true
   
   field :price_in_cents_wo_vat,       type: Integer, default: 0
-  field :tva_ratio,                   type: Float,   default: 1.196
+  field :tva_ratio,                   type: Float,   default: 1.2
 
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés

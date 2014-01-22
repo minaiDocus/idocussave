@@ -107,7 +107,7 @@ class Invoice
       @address = user.addresses.for_billing.first
     end
 
-    self.amount_in_cents_w_vat = (@total * 1.196).round
+    self.amount_in_cents_w_vat = (@total * 1.2).round
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"
@@ -186,9 +186,9 @@ class Invoice
 
       pdf.move_down 7
       pdf.float do
-        pdf.text_box "TVA (19.6%)", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
+        pdf.text_box "TVA (20%)", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.196 - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * 1.2 - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
 
@@ -196,7 +196,7 @@ class Invoice
       pdf.float do
         pdf.text_box "Total TTC", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.196) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * 1.2) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_color "000000"
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor

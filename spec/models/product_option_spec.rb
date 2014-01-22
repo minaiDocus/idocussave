@@ -45,10 +45,10 @@ describe ProductOption do
     it { subject[3].should eq(@group2.title) }
   end
   
-  describe "#price_in_cents_w_vat should equal 358.8" do
+  describe "#price_in_cents_w_vat should equal 360" do
     subject(:option) { @option1.price_in_cents_w_vat }
     
-    it { subject.should eq(358.8) }
+    it { subject.should eq(360) }
   end
   
   describe "#group title should equal 'groupe1' " do

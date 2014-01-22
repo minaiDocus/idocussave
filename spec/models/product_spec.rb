@@ -34,6 +34,6 @@ describe Product do
 
   it "#price_in_cents_w_vat" do
     @product1.price_in_cents_wo_vat = 1000
-    @product1.price_in_cents_w_vat.should eq(1196)
+    @product1.price_in_cents_w_vat.should eq(1200)
   end
 end
