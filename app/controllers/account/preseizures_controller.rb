@@ -13,6 +13,37 @@ class Account::PreseizuresController < Account::OrganizationController
     end
   end
 
+  def show
+    if params[:format] == 'xml'
+      if current_user.is_admin
+        report = @preseizure.report
+        position = "%0#{DocumentProcessor::POSITION_SIZE}d" % @preseizure.position
+        file_name = "#{report.name.sub(' ','_')}_#{position}.xml"
+        ibiza = @organization.ibiza
+        if ibiza && report.user.ibiza_id
+          exercice = ibiza.exercice(report.user.ibiza_id, report.name)
+          if exercice
+            data = IbizaAPI::Utils.to_import_xml(exercice['end'], [@preseizure], ibiza.description, ibiza.description_separator)
+          else
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+          end
+        else
+          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+        end
+      else
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+      end
+    end
+    respond_to do |format|
+      format.html do
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id])
+      end
+      format.xml do
+        send_data(data, type: 'application/xml', filename: file_name)
+      end
+    end
+  end
+
   def update
     @preseizure.update_attributes(preseizure_params)
     respond_to do |format|

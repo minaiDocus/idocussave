@@ -9,10 +9,33 @@ class Account::PackReportsController < Account::OrganizationController
   end
 
   def show
+    if params[:format] == 'xml'
+      if current_user.is_admin
+        file_name = "#{@report.name.gsub(' ','_')}.xml"
+        ibiza = @organization.ibiza
+        if ibiza && @report.user.ibiza_id
+          exercice = ibiza.exercice(@report.user.ibiza_id, @report.name)
+          if exercice
+            data = IbizaAPI::Utils.to_import_xml(exercice['end'], @report.preseizures, ibiza.description, ibiza.description_separator)
+          else
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+          end
+        else
+          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+        end
+      else
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+      end
+    end
     respond_to do |format|
-      format.html {}
+      format.html do
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id])
+      end
       format.csv do
-        send_data(@report.to_csv(@report.user.csv_outputter!), type: "text/csv", filename: "#{@report.name.gsub(' ','_')}.csv")
+        send_data(@report.to_csv(@report.user.csv_outputter!), type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
+      end
+      format.xml do
+        send_data(data, type: 'application/xml', filename: file_name)
       end
     end
   end

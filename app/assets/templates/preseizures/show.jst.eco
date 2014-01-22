@@ -8,6 +8,13 @@
           </a>
         <% end %>
       </td>
+      <% if(@model.get('download_xml') == true): %>
+        <td class="option">
+          <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le .xml">
+            <i class="icon-download-alt"></i>
+          </a>
+        </td>
+      <% end %>
     <% end %>
     <td class="option">
       <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="Pièce/Opération N°<%= @model.get('position') %>">
