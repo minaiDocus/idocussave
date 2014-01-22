@@ -63,10 +63,11 @@ class TempDocument
   scope :rejected,      where:  { state: 'rejected' }
   scope :bundle_needed, where:  { state: 'bundle_needed', is_locked: false }
   scope :bundling,      where:  { state: 'bundling' }
+  scope :bundled,       where:  { state: 'bundled' }
   scope :ready,         where:  { state: 'ready', is_locked: false }
-  scope :processed,     any_in: { state: %w(processed bundling) }
+  scope :processed,     any_in: { state: %w(processed bundled) }
   scope :not_processed, not_in: { state: %w(processed) }
-  scope :valid,         any_in: { state: %w(ready bundle_needed bundling processed) }
+  scope :valid,         any_in: { state: %w(ready bundle_needed bundling bundled processed) }
 
   state_machine :initial => :created do
     state :created
@@ -74,6 +75,7 @@ class TempDocument
     state :rejected
     state :bundle_needed
     state :bundling
+    state :bundled
     state :ready
     state :processed
 
@@ -90,11 +92,16 @@ class TempDocument
     end
 
     after_transition on: :bundle_needed do |temp_document, transition|
-      temp_document.temp_pack.safely.inc(:document_not_bundled_count, 1)
+      temp_document.temp_pack.safely.inc(:document_bundle_needed_count, 1)
     end
 
     after_transition on: :bundling do |temp_document, transition|
-      temp_document.temp_pack.safely.inc(:document_not_bundled_count, -1)
+      temp_document.temp_pack.safely.inc(:document_bundle_needed_count, -1)
+      temp_document.temp_pack.safely.inc(:document_bundling_count, 1)
+    end
+
+    after_transition on: :bundled do |temp_document, transition|
+      temp_document.temp_pack.safely.inc(:document_bundling_count, -1)
     end
 
     event :unreadable do
@@ -111,6 +118,10 @@ class TempDocument
 
     event :bundling do
       transition :bundle_needed => :bundling
+    end
+
+    event :bundled do
+      transition :bundling => :bundled
     end
 
     event :ready do

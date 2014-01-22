@@ -6,7 +6,8 @@ class TempPack
   field :name # ex : TS0001 TS 201301 all
   field :position_counter,             type: Integer, default: 0
   field :document_not_processed_count, type: Integer, default: 0
-  field :document_not_bundled_count,   type: Integer, default: 0
+  field :document_bundling_count,      type: Integer, default: 0
+  field :document_bundle_needed_count, type: Integer, default: 0
   field :is_bundle_needed,             type: Boolean, default: false
 
   validates_presence_of :name
@@ -14,13 +15,15 @@ class TempPack
 
   index :name, unique: true
   index :document_not_processed_count
-  index :document_not_bundled_count
+  index :document_bundling_count
+  index :document_bundle_needed_count
 
   belongs_to :document_delivery
   has_many :temp_documents, dependent: :destroy
 
   scope :not_processed, where: { :document_not_processed_count.gt => 0 }
-  scope :not_bundled,   where: { :document_not_bundled_count.gt => 0 }
+  scope :bundling,      where: { :document_bundling_count.gt => 0 }
+  scope :bundle_needed, where: { :document_bundle_needed_count.gt => 0 }
   scope :not_recently_updated, lambda { where(:updated_at.lt => 5.minutes.ago) }
 
   class << self
