@@ -14,14 +14,16 @@
               = provider.input :third_party_account, label: t('mongoid.models.accounting_plan_item.attributes.third_party_account')
               = provider.input :third_party_name, label: t('mongoid.models.accounting_plan_item.attributes.third_party_name')
               = provider.input :conterpart_account, label: t('mongoid.models.accounting_plan_item.attributes.conterpart_account')
+              = provider.input :code, label: t('mongoid.models.accounting_plan_item.attributes.code')
             = f.link_to_add 'Ajouter un fournisseur', :providers, class: 'btn'
           .span6
-            %h3 Clients    
+            %h3 Clients
             = f.fields_for :customers do |customer|
               = customer.link_to_remove icon_destroy, class: 'btn btn-mini'
               = customer.input :third_party_account, label: t('mongoid.models.accounting_plan_item.attributes.third_party_account')
               = customer.input :third_party_name, label: t('mongoid.models.accounting_plan_item.attributes.third_party_name')
               = customer.input :conterpart_account, label: t('mongoid.models.accounting_plan_item.attributes.conterpart_account')
+              = customer.input :code, label: t('mongoid.models.accounting_plan_item.attributes.code')
             = f.link_to_add 'Ajouter un client', :customers, class: 'btn'
 
         = f.submit t('actions.submit'), class: 'btn'

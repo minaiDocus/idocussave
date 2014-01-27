@@ -55,6 +55,10 @@ Idocus::Application.routes.draw do
             delete :destroy_providers
             delete :destroy_customers
           end
+          resources :vat_accounts do
+            get 'edit_multiple',   on: :collection
+            put 'update_multiple', on: :collection
+          end
         end
         resources :bank_accounts
       end

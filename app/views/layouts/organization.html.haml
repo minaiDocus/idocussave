@@ -45,7 +45,7 @@
                 - if is_leader?
                   %li{ class: (controller_name.in?(%w(collaborators rights)) ? 'active' : '') }
                     = link_to 'Collaborateurs', account_organization_collaborators_path
-                %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions accounting_plans bank_accounts)) ? 'active' : '') }
+                %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions accounting_plans bank_accounts vat_accounts)) ? 'active' : '') }
                   = link_to 'Clients', account_organization_customers_path
                 - if is_leader? || @user.can_manage_journals?
                   %li{ class: (controller_name == 'journals' ? 'active' : '') }

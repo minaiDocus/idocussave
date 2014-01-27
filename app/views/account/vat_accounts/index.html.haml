@@ -1,0 +1,21 @@
+#vat_accounts
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Paramètrage des TVA du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+          .pull-right
+            = link_to icon_edit, edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'
+  .row-fluid
+    .span12.box
+      %table.table.table-striped.table-condensed.margin0bottom
+        %tr
+          %th= t('mongoid.models.vat_account.attributes.code')
+          %th= t('mongoid.models.vat_account.attributes.nature')
+          %th= t('mongoid.models.vat_account.attributes.account_number')
+        - @vat_accounts.each do |vat_account|
+          %tr
+            %td= vat_account.code
+            %td= vat_account.nature
+            %td= vat_account.account_number

@@ -53,3 +53,7 @@ fr:
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
         auth_prev_period_until_day: Jour de clôture de la période précédente
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+      vat_account:
+        code: Code TVA
+        nature: Nature
+        account_number: Numéro de compte

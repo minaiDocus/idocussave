@@ -141,3 +141,4 @@
                       = f.submit t('actions.submit'), class: 'btn'
                   - if @organization.ibiza.try(:token).blank?
                     = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
+                    = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'

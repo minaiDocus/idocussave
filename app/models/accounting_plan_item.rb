@@ -7,6 +7,7 @@ class AccountingPlanItem
   field :third_party_account
   field :third_party_name
   field :conterpart_account
+  field :code
 
   validates_presence_of :third_party_account
   validates_presence_of :third_party_name
@@ -16,5 +17,9 @@ class AccountingPlanItem
 
   def self.find_by_name(name)
     where(third_party_name: name).first
+  end
+
+  def self.find_by_code(code)
+    where(code: code).first
   end
 end

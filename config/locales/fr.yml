@@ -657,9 +657,10 @@ fr:
         other: '%{count} items de plan de compte'
         name: Item de plan de compte
         attributes:
-          third_party_account: Compte tiers
-          third_party_name: Nom tiers
-          conterpart_account: Compte contrepartie
+          third_party_account: Compte de tiers
+          third_party_name: Nom du tiers
+          conterpart_account: Compte de contrepartie
+          code: Code TVA
       temp_document:
         zero: 0 fichier
         one: 1 fichier
@@ -717,6 +718,15 @@ fr:
           number: Numéro de compte
           journal: Journal
           accounting_number: Numéro de compte comptable
+      vat_account:
+        zero: 0 compte de TVA
+        one: 1 compta de TVA
+        other: '%{count} Comptes de TVA'
+        name: Compte de TVA
+        attributes:
+          code: Code TVA
+          nature: Nature
+          account_number: Numéro de compte
     state_machines:
       fiduceo_retriever:
         states:
