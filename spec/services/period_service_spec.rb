@@ -121,4 +121,18 @@ describe PeriodService do
       expect(periods.prev_expires_at).to be_nil
     end
   end
+
+  # TODO implement me
+  describe '.total_price_in_cents_wo_vat' do
+  end
+
+  describe '.vat_ratio' do
+    it 'return 1.196' do
+      PeriodService.vat_ratio(Time.local(2013,12,31))
+    end
+
+    it 'return 1.2' do
+      PeriodService.vat_ratio(Time.local(2014,1,1))
+    end
+  end
 end

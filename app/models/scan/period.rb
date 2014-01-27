@@ -7,7 +7,7 @@ class Scan::Period
   belongs_to :organization,                                   inverse_of: :periods
   belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :periods
   has_many   :documents,    class_name: "Scan::Document",     inverse_of: :period
-  has_one    :invoice,                                        inverse_of: :period
+  has_many   :invoices,                                       inverse_of: :period
   embeds_many :product_option_orders, as: :product_optionable
   embeds_one  :delivery, class_name: "Scan::Delivery", inverse_of: :period
   
@@ -15,9 +15,14 @@ class Scan::Period
   field :end_at,         type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
   field :duration,       type: Integer, default: 1
   field :is_centralized, type: Boolean, default: true
+
+  # quarterly only
+  field :is_charged_several_times, type: Boolean, default: true
   
-  field :price_in_cents_wo_vat,       type: Integer, default: 0
-  field :tva_ratio,                   type: Float,   default: 1.2
+  field :price_in_cents_wo_vat,          type: Integer, default: 0
+  field :products_price_in_cents_wo_vat, type: Integer, default: 0
+  field :excesses_price_in_cents_wo_vat, type: Integer, default: 0
+  field :tva_ratio,                      type: Float,   default: 1.2
 
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
@@ -85,11 +90,21 @@ class Scan::Period
     self.price_in_cents_wo_vat * tva_ratio
   end
   
+  def products_price_in_cents_w_vat
+    self.products_price_in_cents_wo_vat * tva_ratio
+  end
+  
+  def excesses_price_in_cents_w_vat
+    self.excesses_price_in_cents_wo_vat * tva_ratio
+  end
+  
   def total_vat
     price_in_cents_w_vat - self.price_in_cents_wo_vat
   end
   
   def update_price
+    self.excesses_price_in_cents_wo_vat = price_in_cents_of_total_excess
+    self.products_price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
     self.price_in_cents_wo_vat = total_price_in_cents_wo_vat
   end
   
@@ -431,21 +446,17 @@ class Scan::Period
         lists << list
       end
     end
-    invoice_link = ""
-    invoice_number = ""
-    start_time = (self.start_at + 1.month).beginning_of_month
-    end_time = start_time.end_of_month
-    if self.organization
-      invoice = self.organization.invoices.where(:created_at.gt => start_time, :created_at.lt => end_time).first
-      if invoice.try(:content).try(:url)
-        invoice_link = invoice.content.url
-        invoice_number = invoice.number
+    _invoices = []
+    if self.organization || self.user
+      start_time = (self.start_at + 1.month).beginning_of_month
+      if self.duration == 1
+        end_time = start_time.end_of_month
+      elsif self.duration == 3
+        end_time = start_time + 3.months - 1
       end
-    elsif self.user
-      invoice = self.user.invoices.where(:created_at.gt => start_time, :created_at.lt => end_time).first
-      if invoice.try(:content).try(:url)
-        invoice_link = invoice.content.url
-        invoice_number = invoice.number
+      _invoices = (self.organization || self.user).invoices.where(:created_at.gte => start_time, :created_at.lte => end_time)
+      _invoices = _invoices.map do |invoice|
+        { number: invoice.number, link: invoice.content.url }
       end
     end
     {
@@ -455,8 +466,7 @@ class Scan::Period
         excess_dematbox_scanned_pages: format_price(price_in_cents_of_excess_dematbox_scanned_pages),
         excess_compta_pieces: format_price(price_in_cents_of_excess_compta_pieces),
         total: format_price(price_in_cents_wo_vat),
-        invoice_link: invoice_link,
-        invoice_number: invoice_number
+        invoices: _invoices
     }
   end
   

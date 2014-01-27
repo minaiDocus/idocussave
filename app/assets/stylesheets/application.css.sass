@@ -677,12 +677,19 @@ input.error:focus, select.error:focus, textarea.error:focus
   .half-delivery_state.right
     +border-top-right-radius(7px)
     +border-bottom-right-radius(7px)
-  .period .value
-    display: inline-block
-    text-align: right
-    width: 43px
-    position: relative
-    top: -2px
+  .period
+    .value
+      display: inline-block
+      text-align: right
+      position: relative
+      top: -2px
+      .period_1, .period_2, .period_3
+        float: left
+        width: 45px
+      .period_2
+        margin-left: 37px
+      .period_3
+        margin-left: 37px
   .table tbody tr:hover td, .table tbody tr:hover th
     background-color: none
 

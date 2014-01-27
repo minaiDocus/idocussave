@@ -6,6 +6,7 @@ class Invoice
   include Mongoid::Slug
   
   field :number,                type: String
+  field :vat_ratio,             type: Float,   default: 1.2
   field :amount_in_cents_w_vat, type: Integer
   field :requested_at,          type: Date
   field :received_at,           type: Date
@@ -74,11 +75,9 @@ class Invoice
     if organization
       scan_subscription = organization.scan_subscriptions.current
       periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => organization.customers.centralized.active_at(time).map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
-          where(:start_at.lte => time, :end_at.gte => time).
-          select{ |period| period.end_at.month == time.month }
+          where(:start_at.lte => time, :end_at.gte => time)
 
-      @total += periods.sum(&:price_in_cents_wo_vat)
-
+      @total = PeriodService.total_price_in_cents_wo_vat(time, periods)
       @data = [
           ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
           ["Nombre de clients actifs : #{periods.count}",""]
@@ -97,17 +96,31 @@ class Invoice
       scan_subscription = user.scan_subscriptions.last
       period = scan_subscription.find_or_create_period(time)
       options = period.product_option_orders
-      options.each do |option|
-        if option.position != -1
-          @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+      if period.duration == 1 || !period.is_charged_several_times
+        options.each do |option|
+          if option.position != -1
+            @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+          end
+        end
+        @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
+        @total += period.price_in_cents_wo_vat
+      elsif period.duration == 3 && period.is_charged_several_times
+        options.each do |option|
+          if option.position != -1
+            price = option.price_in_cents_wo_vat / 3
+            @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
+          end
+        end
+        @total += period.products_price_in_cents_wo_vat / 3
+        if time.month == time.end_of_quarter.month
+          @total += period.excesses_price_in_cents_wo_vat
+          @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         end
       end
-      @data << ["Dépassement",format_price(period.price_in_cents_of_total_excess) + " €"]
-      @total += period.price_in_cents_wo_vat
       @address = user.addresses.for_billing.first
     end
 
-    self.amount_in_cents_w_vat = (@total * 1.2).round
+    self.amount_in_cents_w_vat = (@total * self.vat_ratio).round
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"
@@ -188,7 +201,7 @@ class Invoice
       pdf.float do
         pdf.text_box "TVA (20%)", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.2 - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * self.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
 
@@ -196,7 +209,7 @@ class Invoice
       pdf.float do
         pdf.text_box "Total TTC", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.2) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * self.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_color "000000"
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor

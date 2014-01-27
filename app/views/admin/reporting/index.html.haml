@@ -25,34 +25,40 @@
                 %td
                   - time = Time.local(@year, i+1, 15)
                   - centralized_periods, not_centralized_periods = periods_at(time, organization, user_ids)
-                  - total_price_in_cents_wo_vat = centralized_periods.sum(&:price_in_cents_wo_vat)
-                  - if not_centralized_periods.count > 0 || total_price_in_cents_wo_vat > 0
+                  - price_in_cents_wo_vat = PeriodService.total_price_in_cents_wo_vat(time, centralized_periods)
+                  - price_in_cents_w_vat = price_in_cents_wo_vat * PeriodService.vat_ratio(time)
+                  - not_centralized_price_in_cents_wo_vat = PeriodService.total_price_in_cents_wo_vat(time, not_centralized_periods)
+                  - not_centralized_price_in_cents_w_vat = not_centralized_price_in_cents_wo_vat * PeriodService.vat_ratio(time)
+
+                  - if price_in_cents_wo_vat > 0 || not_centralized_price_in_cents_wo_vat > 0
                     %div
-                      = "#{format_price_00(total_price_in_cents_wo_vat)} €"
+                      = "#{format_price_00(price_in_cents_wo_vat)} €"
                       %span.df_symbol HT
                     - invoice = invoice_at(time, organization, @invoices)
                     - if invoice
                       %div
-                        != link_to "#{format_price_00(centralized_periods.sum(&:price_in_cents_w_vat))} €", admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                        != link_to "#{format_price_00(price_in_cents_w_vat)} €", admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
                         %span.vat_symbol TTC
                     - else
                       %div
-                        = "#{format_price_00(centralized_periods.sum(&:price_in_cents_w_vat))} €"
+                        = "#{format_price_00(price_in_cents_w_vat)} €"
                         %span.vat_symbol TTC
-                    - @total[i][0] += centralized_periods.sum(&:price_in_cents_wo_vat)
-                    - @total[i][1] += centralized_periods.sum(&:price_in_cents_w_vat)
-                    - if not_centralized_periods.count > 0
+                    - @total[i][0] += price_in_cents_wo_vat
+                    - @total[i][1] += price_in_cents_w_vat
+                    - if not_centralized_price_in_cents_wo_vat > 0
                       %div
-                        = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_wo_vat))} €"
+                        = "#{format_price_00(not_centralized_price_in_cents_wo_vat)} €"
                         %span.df_symbol HT
                       %div
-                        = "#{format_price_00(not_centralized_periods.sum(&:price_in_cents_w_vat))} €"
+                        = "#{format_price_00(not_centralized_price_in_cents_w_vat)} €"
                         %span.vat_symbol TTC
-                      - @total[i][0] += not_centralized_periods.sum(&:price_in_cents_wo_vat)
-                      - @total[i][1] += not_centralized_periods.sum(&:price_in_cents_w_vat)
+                      - @total[i][0] += not_centralized_price_in_cents_wo_vat
+                      - @total[i][1] += not_centralized_price_in_cents_w_vat
                     %div
-                      = centralized_periods.size + not_centralized_periods.size
-                      - @total[i][2] += centralized_periods.size + not_centralized_periods.size
+                      - organization_periods = centralized_periods.select { |e| e.organization }
+                      - size = centralized_periods.size + not_centralized_periods.size - organization_periods.size
+                      = size
+                      - @total[i][2] += size
                   - else
                     \-
           %tr
