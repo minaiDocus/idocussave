@@ -19,10 +19,12 @@ class Scan::Period
   # quarterly only
   field :is_charged_several_times, type: Boolean, default: true
   
-  field :price_in_cents_wo_vat,          type: Integer, default: 0
-  field :products_price_in_cents_wo_vat, type: Integer, default: 0
-  field :excesses_price_in_cents_wo_vat, type: Integer, default: 0
-  field :tva_ratio,                      type: Float,   default: 1.2
+  field :price_in_cents_wo_vat,                    type: Integer, default: 0
+  field :products_price_in_cents_wo_vat,           type: Integer, default: 0
+  field :recurrent_products_price_in_cents_wo_vat, type: Integer, default: 0
+  field :ponctual_products_price_in_cents_wo_vat,  type: Integer, default: 0
+  field :excesses_price_in_cents_wo_vat,           type: Integer, default: 0
+  field :tva_ratio,                                type: Float,   default: 1.2
 
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
@@ -93,6 +95,14 @@ class Scan::Period
   def products_price_in_cents_w_vat
     self.products_price_in_cents_wo_vat * tva_ratio
   end
+
+  def ponctual_products_price_in_cents_w_vat
+    self.ponctual_products_price_in_cents_wo_vat * tva_ratio
+  end
+
+  def recurrent_products_price_in_cents_w_vat
+    recurrent_products_price_in_cents_wo_vat * tva_ratio
+  end
   
   def excesses_price_in_cents_w_vat
     self.excesses_price_in_cents_wo_vat * tva_ratio
@@ -103,6 +113,8 @@ class Scan::Period
   end
   
   def update_price
+    self.recurrent_products_price_in_cents_wo_vat = recurrent_products_total_price_in_cents_wo_vat
+    self.ponctual_products_price_in_cents_wo_vat = ponctual_products_total_price_in_cents_wo_vat
     self.excesses_price_in_cents_wo_vat = price_in_cents_of_total_excess
     self.products_price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
     self.price_in_cents_wo_vat = total_price_in_cents_wo_vat
@@ -123,6 +135,14 @@ class Scan::Period
   
   def products_total_price_in_cents_wo_vat
     product_option_orders.sum(:price_in_cents_wo_vat) || 0
+  end
+
+  def recurrent_products_total_price_in_cents_wo_vat
+    ((self.products_price_in_cents_wo_vat - self.ponctual_products_price_in_cents_wo_vat).to_f / self.duration).round
+  end
+
+  def ponctual_products_total_price_in_cents_wo_vat
+    product_option_orders.where(duration: 1).sum(:price_in_cents_wo_vat) || 0
   end
   
   def price_in_cents_of_total_excess

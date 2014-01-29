@@ -134,10 +134,12 @@
                                 - elsif period.duration == 3
                                   - period.duration.times do |i|
                                     %div{ class: "period_#{i+1}" }
-                                      - if i < 2
-                                        #{format_price_00(period.products_price_in_cents_wo_vat/period.duration)} €
-                                      - else
-                                        #{format_price_00((period.products_price_in_cents_wo_vat/period.duration)+period.excesses_price_in_cents_wo_vat)} €
+                                      - if i == 0
+                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat+period.ponctual_products_price_in_cents_wo_vat)} €
+                                      - elsif i == 1
+                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat)} €
+                                      - elsif i == 2
+                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat+period.excesses_price_in_cents_wo_vat)} €
                               %span{ :class => "hide excess_price value_9" }
                                 #{format_price_00 period.excesses_price_in_cents_wo_vat} €
 
@@ -160,9 +162,10 @@
                             - if period.duration == 1 || !period.is_charged_several_times
                               - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
                             - else
-                              - price = period.products_price_in_cents_wo_vat / period.duration
+                              - price = period.recurrent_products_price_in_cents_wo_vat
                               - period.duration.times do |i|
                                 - annual_summary[period.start_at.month + i - 1][:price_in_cents] += price
+                              - annual_summary[period.start_at.month - 1][:price_in_cents] += period.ponctual_products_price_in_cents_wo_vat
                               - annual_summary[period.end_at.month - 1][:price_in_cents] += period.excesses_price_in_cents_wo_vat
                             - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.excesses_price_in_cents_wo_vat
                   - else

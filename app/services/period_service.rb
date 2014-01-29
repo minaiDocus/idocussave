@@ -53,7 +53,10 @@ class PeriodService
       total = monthly_periods.sum(&:price_in_cents_wo_vat)
       quarterly_periods.each do |period|
         if period.is_charged_several_times
-          total += period.products_price_in_cents_wo_vat / 3
+          total += period.recurrent_products_price_in_cents_wo_vat
+          if time.month == time.beginning_of_quarter.month
+            total += period.ponctual_products_price_in_cents_wo_vat
+          end
           if time.month == time.end_of_quarter.month
             total += period.excesses_price_in_cents_wo_vat
           end

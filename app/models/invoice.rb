@@ -105,15 +105,22 @@ class Invoice
         @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         @total += period.price_in_cents_wo_vat
       elsif period.duration == 3 && period.is_charged_several_times
+        @total = PeriodService.total_price_in_cents_wo_vat(time, [period])
         options.each do |option|
-          if option.position != -1
+          if option.position != -1 && option.duration != 1
             price = option.price_in_cents_wo_vat / 3
             @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
           end
         end
-        @total += period.products_price_in_cents_wo_vat / 3
+        if time.month == time.beginning_of_quarter.month
+          options.each do |option|
+            if option.duration == 1
+              price = option.price_in_cents_wo_vat
+              @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
+            end
+          end
+        end
         if time.month == time.end_of_quarter.month
-          @total += period.excesses_price_in_cents_wo_vat
           @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         end
       end
