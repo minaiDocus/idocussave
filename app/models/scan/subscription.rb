@@ -149,11 +149,9 @@ class Scan::Subscription < Subscription
     result = 0
     if organization
       subscription_ids = Scan::Subscription.any_in(:user_id => organization.customers.map { |e| e.id }).distinct(:_id)
-      ps = Scan::Period.any_in(subscription_id: subscription_ids).
+      periods = Scan::Period.any_in(subscription_id: subscription_ids).
            where(:start_at.lt => Time.now, :end_at.gt => Time.now)
-      ps.each do |period|
-        result += period.total_price_in_cents_wo_vat
-      end
+      result = PeriodService.total_price_in_cents_wo_vat(Time.now, periods)
       acs = nil
       if(p = find_period(Time.now))
         acs = p
