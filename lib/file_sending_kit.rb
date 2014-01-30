@@ -127,7 +127,7 @@ private
         data << [user.code] + stringified_address
       end
     else
-      current_time = Time.now
+      current_time = Time.now.beginning_of_month
       current_time += client_data[:start_month].month
       end_time = current_time + client_data[:offset_month].month
       period_duration = user.scan_subscriptions.last.period_duration
