@@ -7,7 +7,7 @@ require 'prawn/measurement_extensions'
 module FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/#{Rails.env}/kit/"
   
-  def FileSendingKitGenerator.generate(clients_data,file_sending_kit)
+  def FileSendingKitGenerator.generate(clients_data,file_sending_kit, one_workshop_labels_page_per_customer=false)
     BarCode::init
     
     clients = to_clients(clients_data)
@@ -15,7 +15,7 @@ module FileSendingKitGenerator
     KitGenerator::folder to_folders(clients_data), file_sending_kit
     KitGenerator::mail to_mails(clients), file_sending_kit
     KitGenerator::customer_labels to_labels(clients)
-    KitGenerator::labels to_workshop_labels(clients_data)
+    KitGenerator::labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
   end
   
 private
@@ -105,30 +105,36 @@ private
     reject { |e| e.nil? or e.empty? }
   end
 
-  def self.to_workshop_labels(clients_data)
+  def self.to_workshop_labels(clients_data, one_workshop_labels_page_per_customer=false)
     data = []
     clients_data.each do |client_data|
       user = client_data[:user]
       if user.scanning_provider && user.scanning_provider.addresses.any?
-        data += to_workshop_label(client_data)
+        data += to_workshop_label(client_data, one_workshop_labels_page_per_customer)
       end
     end
     data
   end
 
-  def self.to_workshop_label(client_data)
+  def self.to_workshop_label(client_data, one_workshop_labels_page_per_customer=false)
     data = []
     user = client_data[:user]
     BarCode.generate_png(user.code, 20, 0)
-    current_time = Time.now
-    current_time += client_data[:start_month].month
-    end_time = current_time + client_data[:offset_month].month
-    period_duration = user.scan_subscriptions.last.period_duration
     address = user.scanning_provider.addresses.first
     stringified_address = stringify_address(address)
-    while current_time < end_time
-      data << [user.code] + stringified_address
-      current_time += period_duration.month
+    if one_workshop_labels_page_per_customer
+      14.times do
+        data << [user.code] + stringified_address
+      end
+    else
+      current_time = Time.now
+      current_time += client_data[:start_month].month
+      end_time = current_time + client_data[:offset_month].month
+      period_duration = user.scan_subscriptions.last.period_duration
+      while current_time < end_time
+        data << [user.code] + stringified_address
+        current_time += period_duration.month
+      end
     end
     data
   end

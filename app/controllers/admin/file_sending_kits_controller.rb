@@ -42,7 +42,7 @@ class Admin::FileSendingKitsController < Admin::AdminController
     is_logo_present = false unless File.file?(File.join([Rails.root,'public',@file_sending_kit.right_logo_path]))
 
     if without_shipping_address.count == 0 && is_logo_present
-      FileSendingKitGenerator::generate clients_data, @file_sending_kit
+      FileSendingKitGenerator::generate clients_data, @file_sending_kit, (params[:one_workshop_labels_page_per_customer] == '1' ? true : false)
       flash[:notice] = 'Généré avec succès.'
     else
       flash[:error] = ''
