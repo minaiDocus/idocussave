@@ -58,7 +58,7 @@ namespace :maintenance do
         organization.customers.active.each do |customer|
           begin
             subscription = customer.scan_subscriptions.current
-            if subscription.duration == 1 || Time.now.month == Time.now.beginning_of_quarter.month
+            if subscription.period_duration == 1 || Time.now.month == Time.now.beginning_of_quarter.month
               subscription.remove_not_reusable_options
             end
             subscription.find_or_create_period Time.now
