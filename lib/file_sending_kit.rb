@@ -27,7 +27,7 @@ private
   def FileSendingKitGenerator.to_folders(clients_data)
     folders_data = []
     clients_data.each do |client_data|
-      current_time = Time.now
+      current_time = Time.now.beginning_of_month
       current_time += client_data[:start_month].month
       end_time = current_time + client_data[:offset_month].month
       while current_time < end_time
