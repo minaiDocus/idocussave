@@ -135,6 +135,7 @@ private
         requested_clients.delete(user)
       end
       request.update_attribute(:attribute_changes, {})
+      request.update_relation_action_status!
     end
   end
 
