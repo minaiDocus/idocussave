@@ -74,8 +74,8 @@ class Invoice
     time = self.created_at - 1.month
     if organization
       scan_subscription = organization.scan_subscriptions.current
-      periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => organization.customers.centralized.active_at(time).map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
-          where(:start_at.lte => time, :end_at.gte => time)
+      periods = Scan::Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
+        where(:start_at.lte => time, :end_at.gte => time)
 
       @total = PeriodService.total_price_in_cents_wo_vat(time, periods)
       @data = [
