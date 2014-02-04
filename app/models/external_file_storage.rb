@@ -149,7 +149,7 @@ class ExternalFileStorage
     services << "Dropbox Extended" if user.is_dropbox_extended_authorized
     services << "Google Drive"     if (authorized & used & F_GOOGLE_DOCS > 0) && google_doc.is_configured?
     services << "FTP"              if (authorized & used & F_FTP         > 0) && ftp.is_configured?
-    services << "Box"              if (authorized & used & F_BOX         > 0) && box.is_configured?
+    services << "Box"              if (authorized & used & F_BOX         > 0) && the_box.is_configured?
     services
   end
 
