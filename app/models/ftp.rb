@@ -60,12 +60,11 @@ class Ftp
     end
   end
   
-  def is_updated(filepath)
-    filename = File.basename(filepath)
-    result = client.list.select { |entry| entry.match(/#{filename}/) }.first
+  def is_updated(remote_file_name, file_path)
+    result = client.list.select { |entry| entry.match(/#{remote_file_name}/) }.first
     if result
       size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
-      if size == File.size(filepath)
+      if size == File.size(file_path)
         true
       else
         false
@@ -75,8 +74,8 @@ class Ftp
     end
   end
   
-  def is_not_updated(filepath)
-    !is_updated(filepath)
+  def is_not_updated(remote_file_name, file_path)
+    !is_updated(remote_file_name, file_path)
   end
 
   def sync(remote_files)
@@ -90,14 +89,14 @@ class Ftp
         remote_file.not_synced!("[#{e.class}] #{e.message}")
       end
       if is_ok
-        remote_filepath = File.join(remote_path,remote_file.local_name)
+        remote_filepath = File.join(remote_path, remote_file.name)
         tries = 0
         begin
           remote_file.sending!(remote_filepath)
           print "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\" "
-          if is_not_updated(remote_file.local_path)
+          if is_not_updated(remote_file.name, remote_file.local_path)
             print "sending..."
-            client.put(remote_file.local_path)
+            client.put(remote_file.local_path, remote_file.name)
             print "done\n"
           else
             print "is up to date\n"
@@ -115,5 +114,6 @@ class Ftp
         end
       end
     end
+    client.chdir('/')
   end
 end

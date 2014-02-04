@@ -88,7 +88,22 @@ class RemoteFile
   end
 
   def name
-    File.basename(path)
+    if remotable && remotable.class.name == Pack::Piece.name && pack.organization.is_file_naming_policy_active
+      part = remotable.name.split
+      result = pack.organization.file_naming_policy.
+        gsub('customer_code', part[0].sub(/.*%/,'')).
+        gsub('journal',       part[1]).
+        gsub('period',        [part[2][0..3], part[2][4..5]].join('-')).
+        gsub('position',      "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3])
+      if remotable.try(:preseizures).try(:any?)
+        preseizure = remotable.preseizures.first
+        result = result.gsub('third_party', preseizure.third_party).
+          gsub('date', preseizure.date.try(:to_date).try(:to_s))
+      end
+      result + '.pdf'
+    else
+      local_name
+    end
   end
 
   def basename

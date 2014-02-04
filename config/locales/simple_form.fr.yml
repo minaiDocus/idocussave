@@ -53,6 +53,8 @@ fr:
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
         auth_prev_period_until_day: Jour de clôture de la période précédente
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+        file_naming_policy: Charte de nommage des fichiers
+        is_file_naming_policy_active: Activer la charte
       vat_account:
         code: Code TVA
         nature: Nature

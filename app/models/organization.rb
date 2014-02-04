@@ -16,6 +16,13 @@ class Organization
   # Misc
   field :is_test, type: Boolean, default: false
 
+  field :file_naming_policy,           type: String,  default: 'customer_code journal period position'
+  field :is_file_naming_policy_active, type: Boolean, default: false
+
+  validates_length_of :file_naming_policy, maximum: 80
+  validates_presence_of :file_naming_policy
+  validate :file_naming_policy_elements
+
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
   field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3
@@ -130,9 +137,26 @@ class Organization
     end
   end
 
+  def self.valid_file_naming_policy_elements
+    %w(customer_code journal period position third_party date - _)
+  end
+
+  def self.formatted_valid_file_naming_policy_elements
+    valid_file_naming_policy_elements.join(', ')
+  end
+
 private
 
   def ensure_leader_is_member
     members << leader unless members.include?(leader)
+  end
+
+  def file_naming_policy_elements
+    file_naming_policy.split(' ').each do |element|
+      unless element.is_a?(String) && element.in?(Organization.valid_file_naming_policy_elements)
+        errors.add(:file_naming_policy, :invalid)
+        break
+      end
+    end
   end
 end

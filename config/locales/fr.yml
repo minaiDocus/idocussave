@@ -309,6 +309,8 @@ fr:
           attributes:
             authd_prev_period:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+            file_naming_policy:
+              invalid: "Invalide ( doit être composé des élements suivants : customer_code, journal, period, position, third_party, date, - et _)"
     models:
       common:
         attributes:
@@ -584,6 +586,8 @@ fr:
           authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
           auth_prev_period_until_day: Jour de clôture de la période précédente
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+          file_naming_policy: Charte de nommage des fichiers
+          is_file_naming_policy_active: Charte de nommage activé ?
       group:
         zero: 0 groupe
         one: 1 groupe
