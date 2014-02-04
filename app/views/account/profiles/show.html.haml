@@ -278,7 +278,9 @@
                   - @invoices.each do |invoice|
                     %tr
                       %td= invoice.number
-                      %th.price= "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                      %th.price
+                        - if invoice.amount_in_cents_w_vat
+                          = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
                       %td.actions
                         = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
                         = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
