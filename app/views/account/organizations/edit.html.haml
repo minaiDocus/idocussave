@@ -3,7 +3,7 @@
     .span12
       %h2 Edition
       %br
-      = simple_nested_form_for [:account, @organization], html: { class: 'form form-horizontal' } do |f|
+      = simple_nested_form_for @organization, url: account_organization_path, html: { class: 'form form-horizontal' } do |f|
         %fieldset
           %legend Informations
           = f.input :name, label: t('mongoid.models.organization.attributes.name')
