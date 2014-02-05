@@ -42,9 +42,8 @@ class Invoice
     end
 
     def archive(time=Time.now)
-      file_path = archive_path archive_name(time)
-      _time = time + 1.month
-      invoices = Invoice.where(:created_at.gte => _time.beginning_of_month, :created_at.lte => _time.end_of_month)
+      file_path = archive_path archive_name(time - 1.month)
+      invoices = Invoice.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month)
       files_path = invoices.map { |e| e.content.path }
       DocumentTools.archive(file_path, files_path)
     end
@@ -246,8 +245,9 @@ class Invoice
 private
   def set_number
     unless self.number
-      txt = DbaSequence.next("invoice_"+Time.now.strftime("%Y%m"))
-      self.slug = self.number = Time.now.strftime("%Y%m") + ("%0.4d" % txt)
+      prefix = 1.month.ago.strftime('%Y%m')
+      txt = DbaSequence.next('invoice_' + prefix)
+      self.slug = self.number = prefix + ("%0.4d" % txt)
     end
   end
 
