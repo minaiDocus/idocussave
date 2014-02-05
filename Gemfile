@@ -86,4 +86,6 @@ group :test do
   gem 'guard-rspec'
   gem 'database_cleaner'
   gem 'timecop'
+  gem 'vcr'
+  gem 'webmock'
 end

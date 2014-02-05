@@ -111,6 +111,8 @@ GEM
       sass (~> 3.1)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
+    crack (0.4.1)
+      safe_yaml (~> 0.9.0)
     d3_rails (3.3.11)
       railties (>= 3.1.0)
     daemons (1.1.8)
@@ -372,6 +374,7 @@ GEM
     ruby-ole (1.2.11.3)
     ruby-rc4 (0.1.5)
     rubyzip (0.9.9)
+    safe_yaml (0.9.7)
     sass (3.1.20)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -443,11 +446,15 @@ GEM
       execjs (>= 0.3.0)
       multi_json (~> 1.3)
     unicode_utils (1.0.0)
+    vcr (2.8.0)
     warden (1.2.1)
       rack (>= 1.0)
     wasabi (3.1.0)
       httpi (~> 2.0)
       nokogiri (>= 1.4.0)
+    webmock (1.17.1)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -530,4 +537,6 @@ DEPENDENCIES
   typhoeus
   uglifier (>= 1.0.3)
   unicode_utils
+  vcr
   wash_out!
+  webmock
