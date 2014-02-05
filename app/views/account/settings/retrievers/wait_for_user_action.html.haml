@@ -1,0 +1,25 @@
+#fiduceo_retriever.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
+
+  .row-fluid
+    .span3
+      = render partial: 'layouts/account/me/navigation'
+    .span9
+      = render partial: 'navigation'
+      .row-fluid
+        .span12
+          .well
+            %h3 #{@fiduceo_retriever.name} - Veuillez répondre à la/aux question(s) ci-dessous pour poursuivre
+      .row-fluid
+        .span12
+          .well
+            = form_tag update_transaction_account_settings_fiduceo_retriever_path(@fiduceo_retriever), method: :put, class: 'form form-horizontal margin0bottom' do
+              - @questions.each do |question|
+                .control-group
+                  = label_tag 'answers[]', question, class: 'control-label'
+                  .controls
+                    = text_field_tag 'answers[]'
+              .form-actions.margin0bottom.padding0bottom
+                = submit_tag 'Valider', class: 'btn btn-primary'
+                = link_to t('actions.cancel'), account_settings_fiduceo_retrievers_path(@fiduceo_retriever), class: 'btn'

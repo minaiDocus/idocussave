@@ -164,6 +164,8 @@ Idocus::Application.routes.draw do
         put  'update_documents',     :on => :member
         get  'select_bank_accounts', :on => :member
         post 'create_bank_accounts', :on => :member
+        get  'wait_for_user_action', :on => :member
+        put  'update_transaction',   :on => :member
       end
     end
 
