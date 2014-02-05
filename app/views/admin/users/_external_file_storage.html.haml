@@ -45,7 +45,7 @@
       %tr
         %th Box
         %td= check_box_tag 'user[external_file_storage][is_box_authorized]', 1, external_file_storage.is_box_authorized?
-        %td= icon_tag external_file_storage.the_box.is_configured?
+        %td= icon_tag external_file_storage.box.is_configured?
         %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
-        %td= select_tag "user[external_file_storage][the_box][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.the_box.file_type_to_deliver), class: 'inplace'
-        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][the_box][path]', value: external_file_storage.the_box.path }
+        %td= select_tag "user[external_file_storage][box][file_type_to_deliver]", options_for_select(file_type_to_deliver_options, external_file_storage.box.file_type_to_deliver), class: 'inplace'
+        %td= render partial: 'text_field', locals: { name: 'user[external_file_storage][box][path]', value: external_file_storage.box.path }

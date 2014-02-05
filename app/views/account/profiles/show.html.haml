@@ -172,14 +172,14 @@
                       != label_tag :"service_#{service_number}", "BOX"
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
-                    - if @external_file_storage.the_box.is_configured?
+                    - if @external_file_storage.box.is_configured?
                       Votre compte iDocus est connecté à votre compte Box.
                       != link_to "Paramètres", authorize_url_account_box_path
                     - else
                       Pour connecter iDocus à votre compte Box, cliquez
                       != link_to "ici", authorize_url_account_box_path
                     #{"."}
-                    = render partial: 'storage_form', locals: { instance: @external_file_storage.the_box }
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.box }
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
           .modal-header

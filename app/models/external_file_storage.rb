@@ -18,9 +18,9 @@ class ExternalFileStorage
   has_one :dropbox_basic, autosave: true
   has_one :google_doc,    autosave: true
   has_one :ftp,           autosave: true
-  has_one :the_box,       autosave: true
+  has_one :box,           autosave: true
 
-  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :the_box
+  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :box
 
   field :path,         type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   field :is_path_used, type: Boolean, default: false
@@ -149,7 +149,7 @@ class ExternalFileStorage
     services << "Dropbox Extended" if user.is_dropbox_extended_authorized
     services << "Google Drive"     if (authorized & used & F_GOOGLE_DOCS > 0) && google_doc.is_configured?
     services << "FTP"              if (authorized & used & F_FTP         > 0) && ftp.is_configured?
-    services << "Box"              if (authorized & used & F_BOX         > 0) && the_box.is_configured?
+    services << "Box"              if (authorized & used & F_BOX         > 0) && box.is_configured?
     services
   end
 
@@ -184,7 +184,7 @@ class ExternalFileStorage
       when "FTP"
         ftp
       when "Box"
-        the_box
+        box
       else
         nil
     end
@@ -196,7 +196,7 @@ class ExternalFileStorage
     DropboxBasic.create(external_file_storage_id: self.id)
     GoogleDoc.create(external_file_storage_id: self.id)
     Ftp.create(external_file_storage_id: self.id)
-    TheBox.create(external_file_storage_id: self.id)
+    Box.create(external_file_storage_id: self.id)
     true
   end
 end

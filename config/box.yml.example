@@ -1,0 +1,19 @@
+defaults: &defaults
+  client_id: w8uh98pnv7uljit81f2j5g7p5z4xbex0
+  client_secret: WY0YUUT5ef1xPWwJdT39XqKw91FeDb94
+  callback_url: http://localhost:3000/account/box/callback
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  callback_url: https://staging.idocus.com/account/box/callback
+
+production:
+  client_id: p4p4x2q2kw0ckr3czz58up3hshccrvbp
+  client_secret: VS8jHqxp2P5F0fGEKsPeyA27PZ9K0OUV
+  callback_url: https://my.idocus.com/account/box/callback

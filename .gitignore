@@ -12,4 +12,5 @@ doc_data.txt
 config/mongoid.yml
 config/dematbox.yml
 config/fiduceo.yml
+config/box.yml
 Sporkfile.rb
