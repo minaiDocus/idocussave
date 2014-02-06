@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::CompositionsController < Account::AccountController
   def create
-    params[:composition][:user_id] = current_user.id
+    params[:composition][:user_id] = @user.id
     Composition.create_with_documents params[:composition]
     
     @url = '/account/compositions/download'
@@ -14,7 +14,7 @@ class Account::CompositionsController < Account::AccountController
   end
 
   def download
-    @composition = current_user.composition
+    @composition = @user.composition
     filepath = @composition.path
     if File.exist?(filepath)
       filename = File.basename(filepath)
@@ -25,7 +25,7 @@ class Account::CompositionsController < Account::AccountController
   end
 
   def reset
-    @composition = current_user.composition
+    @composition = @user.composition
     @composition.update_attribute(:document_ids, []) if @composition
     
     respond_to do |format|

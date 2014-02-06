@@ -4,16 +4,15 @@ class Account::DebitMandatesController < Account::AccountController
 
 public
   def show
-    @debit_mandate = DebitMandate.where(:user_id => current_user.id).first
+    @debit_mandate = DebitMandate.where(:user_id => @user.id).first
   end
   
   def new
-    @user = current_user
     @debit_mandate = DebitMandate.new
   end
   
   def return
-    if current_user.debit_mandate.transactionStatus == "success"
+    if @user.debit_mandate.transactionStatus == "success"
       flash[:notice] = "Vos information de prélévement bancaire on bien été pris en compte par nos services."
       render :action => "show"
     else
