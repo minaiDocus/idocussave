@@ -16,7 +16,7 @@ class Organization
   # Misc
   field :is_test, type: Boolean, default: false
 
-  field :file_naming_policy,           type: String,  default: 'customer_code journal period position'
+  field :file_naming_policy,           type: String,  default: 'customerCode_journal_period_position'
   field :is_file_naming_policy_active, type: Boolean, default: false
 
   validates_length_of :file_naming_policy, maximum: 80
@@ -138,7 +138,7 @@ class Organization
   end
 
   def self.valid_file_naming_policy_elements
-    %w(customer_code journal period position third_party date - _)
+    %w(customerCode journal period position thirdParty date - _)
   end
 
   def self.formatted_valid_file_naming_policy_elements
@@ -152,7 +152,7 @@ private
   end
 
   def file_naming_policy_elements
-    file_naming_policy.split(' ').each do |element|
+    file_naming_policy.gsub(/(-|_)/, ' ').split.each do |element|
       unless element.is_a?(String) && element.in?(Organization.valid_file_naming_policy_elements)
         errors.add(:file_naming_policy, :invalid)
         break

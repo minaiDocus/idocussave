@@ -310,7 +310,7 @@ fr:
             authd_prev_period:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             file_naming_policy:
-              invalid: "Invalide ( doit être composé des élements suivants : customer_code, journal, period, position, third_party, date, - et _)"
+              invalid: "Invalide ( doit être composé des élements suivants : customerCode, journal, period, position, thirdParty, date, - et _)"
     models:
       common:
         attributes:
