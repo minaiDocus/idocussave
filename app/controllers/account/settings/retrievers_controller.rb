@@ -113,6 +113,23 @@ class Account::Settings::RetrieversController < Account::SettingsController
     end
   end
 
+  def wait_for_user_action
+    transaction = @fiduceo_retriever.transactions.last
+    @questions = transaction.wait_for_user_labels
+  end
+
+  def update_transaction
+    transaction = @fiduceo_retriever.transactions.last
+    if FiduceoDocumentFetcher.send_additionnal_information(transaction, params[:answers])
+      @fiduceo_retriever.fetch
+      flash[:info] = 'Poursuite de la transaction'
+      redirect_to account_settings_fiduceo_retrievers_path
+    else
+      flash[:error] = "Impossible d'enregistrer les modifications."
+      render action: 'wait_for_user_action'
+    end
+  end
+
 private
 
   def verify_rights

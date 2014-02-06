@@ -734,12 +734,13 @@ fr:
     state_machines:
       fiduceo_retriever:
         states:
+          ready: Prêt
           scheduled: Programmé
           disabled: Désactivé
           processing: Traitement en cours
           error: Erreur
           wait_selection: En attente de sélection
-          wait_user_action: En attente de l'utilisateur
+          wait_for_user_action: En attente de l'utilisateur
       fiduceo_transaction:
         status:
           pending: en attente

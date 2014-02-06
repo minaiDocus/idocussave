@@ -48,6 +48,7 @@ class FiduceoTransaction
   field :fiduceo_id
   field :status,                                default: 'PENDING'
   field :events,                 type: Hash
+  field :wait_for_user_labels,   type: Array,   default: []
   field :retrieved_document_ids, type: Array,   default: []
   field :is_processed,           type: Boolean, default: false
 
@@ -59,6 +60,10 @@ class FiduceoTransaction
 
   def processing?
     status.in? NOT_FINISHED_STATUSES
+  end
+
+  def wait_for_user_action?
+    status == 'WAIT_FOR_USER_ACTION'
   end
 
   def finished?

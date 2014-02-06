@@ -21,6 +21,8 @@ class FiduceoRetriever
   field :state
   field :is_active,            type: Boolean, default: true
   field :is_selection_needed,  type: Boolean, default: true
+  field :wait_for_user,        type: Boolean, default: false
+  field :wait_for_user_label
   field :pending_document_ids, type: Array,   default: []
 
   validates_presence_of :type, :name, :login, :service_name
@@ -31,38 +33,49 @@ class FiduceoRetriever
   scope :active,    where: { is_active: true }
 
   state_machine initial: :scheduled do
+    state :ready
     state :scheduled
     state :processing
     state :wait_selection
-    state :wait_user_action
+    state :wait_for_user_action
     state :error
 
+    after_transition any => :scheduled do |retriever, transition|
+      if retriever.wait_for_user && retriever.service_name != 'Boursorama'
+        retriever.ready
+      end
+    end
+
     event :schedule do
-      transition [:processing, :wait_selection, :error] => :scheduled
+      transition [:ready, :processing, :wait_selection, :error] => :scheduled
+    end
+
+    event :ready do
+      transition [:scheduled, :processing, :wait_selection, :error] => :ready
     end
 
     event :fetch do
-      transition [:scheduled, :wait_user_action] => :processing
+      transition [:scheduled, :wait_for_user_action] => :processing
     end
 
     event :wait_selection do
       transition :processing => :wait_selection
     end
 
-    event :wait_user_action do
-      transition :processing => :wait_user_action
+    event :wait_for_user_action do
+      transition :processing => :wait_for_user_action
     end
 
     event :error do
-      transition :processing => :error
+      transition [:processing, :wait_for_user_action] => :error
     end
   end
 
-  scope :scheduled,        where: { state: 'scheduled', is_active: true }
-  scope :processing,       where: { state: 'processing' }
-  scope :wait_selection,   where: { state: 'wait_selection' }
-  scope :wait_user_action, where: { state: 'wait_user_action' }
-  scope :error,            where: { state: 'error' }
+  scope :scheduled,            where: { state: 'scheduled', is_active: true }
+  scope :processing,           where: { state: 'processing' }
+  scope :wait_selection,       where: { state: 'wait_selection' }
+  scope :wait_for_user_action, where: { state: 'wait_for_user_action' }
+  scope :error,                where: { state: 'error' }
 
   def provider?
     type == 'provider'

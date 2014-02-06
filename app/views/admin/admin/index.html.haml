@@ -92,8 +92,8 @@
           %th= FiduceoRetriever.state_machine.states['wait_selection'].human_name
           %td= FiduceoRetriever.wait_selection.count
         %tr
-          %th= FiduceoRetriever.state_machine.states['wait_user_action'].human_name
-          %td= FiduceoRetriever.wait_user_action.count
+          %th= FiduceoRetriever.state_machine.states['wait_for_user_action'].human_name
+          %td= FiduceoRetriever.wait_for_user_action.count
         %tr
           %th= FiduceoRetriever.state_machine.states['error'].human_name
           %td= FiduceoRetriever.error.count

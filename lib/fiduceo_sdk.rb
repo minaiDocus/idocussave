@@ -197,8 +197,14 @@ module Fiduceo
     end
 
     def put_transaction(id, params)
-      perform "transaction/#{id}", method: :put,
-                                   body: Fiduceo::XML::Builder.transaction(params)
+      if params.is_a? Hash
+        body = Fiduceo::XML::Builder.transaction(params)
+      elsif params.is_a? String
+        body = params
+      else
+        raise ArgumentError.new("params must be Hash or String, #{params.class} given")
+      end
+      perform "transaction/#{id}", method: :put, body: body
     end
 
     def alerts
