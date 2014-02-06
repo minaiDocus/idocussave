@@ -30,11 +30,11 @@ class Composition
     }
 
     composition = Composition.where(:user_id => user_id).first
+    cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions && mkdir -p #{composition.id}"
+    system(cmd)
     if composition.nil?
       composition = Composition.new
       composition.user_id = user_id
-      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions && mkdir #{composition.id}"
-      system(cmd)
     else
       cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions/#{composition.id} && rm *.pdf"
       system(cmd)
