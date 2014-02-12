@@ -30,15 +30,12 @@ class Composition
     }
 
     composition = Composition.where(:user_id => user_id).first
+    composition = Composition.create(user_id: user_id) unless composition
     cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions && mkdir -p #{composition.id}"
     system(cmd)
-    if composition.nil?
-      composition = Composition.new
-      composition.user_id = user_id
-    else
-      cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions/#{composition.id} && rm *.pdf"
-      system(cmd)
-    end
+    cmd = "cd #{Rails.root}/files/#{Rails.env}/compositions/#{composition.id} && rm *.pdf"
+    system(cmd)
+
     combined_name  = "#{Rails.root}/files/#{Rails.env}/compositions/#{composition.id}/#{name}.pdf"
     cmd = "pdftk #{ temp_paths.join(" ") } output #{combined_name}"
     Rails.logger.debug("Will compose new document with #{cmd}")
