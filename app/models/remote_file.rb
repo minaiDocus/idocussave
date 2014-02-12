@@ -94,11 +94,13 @@ class RemoteFile
         gsub('customerCode', part[0].sub(/.*%/,'')).
         gsub('journal',      part[1]).
         gsub('period',       [part[2][0..3], part[2][4..5]].join('-')).
-        gsub('position',     "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3])
+        gsub('position',     "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3].to_i)
       if remotable.try(:preseizures).try(:any?)
         preseizure = remotable.preseizures.first
-        result = result.gsub('thirdParty', preseizure.third_party).
+        result = result.gsub('thirdParty', preseizure.third_party.to_s).
           gsub('date', preseizure.date.try(:to_date).try(:to_s))
+      else
+        result = result.gsub('thirdParty', '').gsub('date', '')
       end
       result + '.pdf'
     else
