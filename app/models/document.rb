@@ -102,6 +102,7 @@ class Document
   def update_pack!
     if (self.content_text_changed? || (self.mixed? && self.tags_changed?)) && pack && pack.persisted?
       Pack.observers.disable :all do
+        pack.set_tags
         pack.timeless.save
       end
     end
