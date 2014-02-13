@@ -8,7 +8,7 @@
   </div>
   <% if(@model.get('download_xml') == true): %>
     <div class="option pull-left">
-      <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le .xml">
+      <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le fichier .xml">
         <i class="icon-download-alt"></i>
       </a>
     </div>

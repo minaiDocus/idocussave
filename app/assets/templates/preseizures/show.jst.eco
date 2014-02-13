@@ -10,7 +10,7 @@
       </td>
       <% if(@model.get('download_xml') == true): %>
         <td class="option">
-          <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le .xml">
+          <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le fichier .xml">
             <i class="icon-download-alt"></i>
           </a>
         </td>
