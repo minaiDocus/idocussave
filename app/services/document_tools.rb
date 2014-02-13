@@ -14,20 +14,28 @@ class DocumentTools
     end
 
     def modifiable?(file_path)
-      begin
-        document = Poppler::Document.new(file_path)
-        document.permissions.full?
-      rescue GLib::Error
+      if completed? file_path
+        begin
+          document = Poppler::Document.new(file_path)
+          document.permissions.full?
+        rescue GLib::Error
+          false
+        end
+      else
         false
       end
     end
 
     def completed?(file_path)
+      is_ok = true
       begin
         Poppler::Document.new(file_path)
       rescue GLib::Error
-        false
+        is_ok = false
       end
+      is_ok = false unless `pdftk #{file_path} dump_data; echo $?`.to_i == 0
+      is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
+      is_ok
     end
 
     def corrupted?(file_path)
