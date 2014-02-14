@@ -307,7 +307,7 @@ private
       end
 
       pdf.float do
-        pdf.image File.join([Rails.root,"app/assets/images/application/gabarit_A7.png"]), :width => 105.mm, :height => 74.mm, :vposition => :bottom
+        pdf.image File.join([Rails.root,"app/assets/images/application/kit_info.png"]), :width => 105.mm, :height => 74.mm, :vposition => :bottom
       end
       
       # BAR CODE
