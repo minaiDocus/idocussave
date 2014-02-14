@@ -20,37 +20,37 @@ describe Organization do
   end
 
   it 'should be valid' do
-    @organization.file_naming_policy = 'customerCode journal period position thirdParty date - _'
+    @organization.file_naming_policy = ':customerCode :journal :period :position :thirdParty :date - _'
     expect(@organization).to be_valid
   end
 
   it 'should be valid' do
-    @organization.file_naming_policy = 'customerCode - journal - period - position'
+    @organization.file_naming_policy = ':customerCode - :journal - :period - :position'
     expect(@organization).to be_valid
   end
 
   it 'should be valid' do
-    @organization.file_naming_policy = 'customerCode-journal-period-position'
+    @organization.file_naming_policy = ':customerCode-:journal-:period-:position'
     expect(@organization).to be_valid
   end
 
   it 'should be valid' do
-    @organization.file_naming_policy = 'customerCode_journal_period_position'
+    @organization.file_naming_policy = ':customerCode_:journal_:period_:position'
     expect(@organization).to be_valid
   end
 
   it 'should be valid' do
-    @organization.file_naming_policy = 'customerCode-journal_period-position'
+    @organization.file_naming_policy = ':customerCode-:journal_:period-:position'
+    expect(@organization).to be_valid
+  end
+
+  it 'should be valid' do
+    @organization.file_naming_policy = ':customerCode:journal:period:position'
     expect(@organization).to be_valid
   end
 
   it 'should be invalid' do
-    @organization.file_naming_policy = 'test'
-    expect(@organization).to be_invalid
-  end
-
-  it 'should be invalid' do
-    @organization.file_naming_policy = 'customerCodejournal'
+    @organization.file_naming_policy = 'test :test'
     expect(@organization).to be_invalid
   end
 end

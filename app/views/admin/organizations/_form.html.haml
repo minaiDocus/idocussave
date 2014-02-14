@@ -42,7 +42,7 @@
     %legend Charte de nommage des fichiers
     .row-fluid
       .span12
-        = f.input :file_naming_policy,                          hint: "peuvent être utilisés : #{Organization.formatted_valid_file_naming_policy_elements}"
+        = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
         = f.input :is_file_naming_policy_active, as: 'boolean'
   %hr
   %fieldset

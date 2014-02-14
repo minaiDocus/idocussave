@@ -91,18 +91,18 @@ class RemoteFile
     if remotable && remotable.class.name == Pack::Piece.name && pack.organization.is_file_naming_policy_active
       part = remotable.name.split
       result = pack.organization.file_naming_policy.
-        gsub('customerCode', part[0].sub(/.*%/,'')).
-        gsub('journal',      part[1]).
-        gsub('position',     "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3].to_i)
+        gsub(':customerCode', part[0].sub(/.*%/,'')).
+        gsub(':journal',      part[1]).
+        gsub(':position',     "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3].to_i)
       if remotable.try(:preseizures).try(:any?)
         preseizure = remotable.preseizures.first
-        result = result.gsub('thirdParty', preseizure.third_party.to_s).
-          gsub('date',   preseizure.date.try(:to_date).try(:to_s)).
-          gsub('period', [part[2][0..3], part[2][4..5]].join('-'))
+        result = result.gsub(':thirdParty', preseizure.third_party.to_s).
+          gsub(':date',   preseizure.date.try(:to_date).try(:to_s)).
+          gsub(':period', [part[2][0..3], part[2][4..5]].join('-'))
       else
-        result = result.gsub('thirdParty', '').
-          gsub('date',   '').
-          gsub('period', [part[2][0..3], part[2][4..5]].join)
+        result = result.gsub(':thirdParty', '').
+          gsub(':date',   '').
+          gsub(':period', [part[2][0..3], part[2][4..5]].join)
       end
       result + '.pdf'
     else

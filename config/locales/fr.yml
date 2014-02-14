@@ -106,7 +106,7 @@ fr:
     array:
       sentence_connector: et
       skip_last_comma: true
-      word_connector: ', '
+      words_connector: ', '
       two_words_connector: ' et '
       last_word_connector: ' et '
 
@@ -310,7 +310,7 @@ fr:
             authd_prev_period:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             file_naming_policy:
-              invalid: "Invalide ( doit être composé des élements suivants : customerCode, journal, period, position, thirdParty, date, - et _)"
+              invalid: "Invalide ( doit être composé des élements suivants : customerCode, journal, period, position, thirdParty, date, -, _ et [espace])"
     models:
       common:
         attributes:
