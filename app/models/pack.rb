@@ -168,16 +168,23 @@ class Pack
       pack = Pack.find_by_name(name_info.join(' '))
       info = {}
       info[:code] = name_info[0]
+      if info[:code].match /%/
+        info[:organization_code] = info[:code].split('%')[0]
+        info[:customer_code]     = info[:code].split('%')[1]
+      else
+        info[:organization_code] = ''
+        info[:customer_code]     = info[:code]
+      end
       if receiver.class.name == User.name
         info[:company] = receiver.try(:company)
       else
-        info[:group] = receiver.try(:name)
+        info[:group]   = receiver.try(:name)
       end
       info[:company_of_customer] = pack.owner.company
-      info[:account_book] = name_info[1]
-      info[:year] = name_info[2][0..3]
-      info[:month] = name_info[2][4..5]
-      info[:delivery_date] = Time.now.strftime("%Y%m%d")
+      info[:account_book]        = name_info[1]
+      info[:year]                = name_info[2][0..3]
+      info[:month]               = name_info[2][4..5]
+      info[:delivery_date]       = Time.now.strftime("%Y%m%d")
       info
     end
   end

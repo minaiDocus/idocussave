@@ -158,14 +158,17 @@ class ExternalFileStorage
   end
 
   def self.static_path(path, info_path)
-    path.gsub(":code",info_path[:code]).
-    gsub(":company",info_path[:company] || '').
-    gsub(":group",info_path[:group] || '').
-    gsub(":company_of_customer",info_path[:company_of_customer]).
-    gsub(":account_book",info_path[:account_book]).
-    gsub(":year",info_path[:year]).
-    gsub(":month",info_path[:month]).
-    gsub(":delivery_date",info_path[:delivery_date])
+    path.gsub(":code",           info_path[:code]).
+    gsub(":customer_code",       info_path[:customer_code]).
+    gsub(":organization_code",   info_path[:organization_code] || '').
+    gsub(":company",             info_path[:company] || '').
+    gsub(":group",               info_path[:group] || '').
+    gsub(":company_of_customer", info_path[:company_of_customer]).
+    gsub(":account_book",        info_path[:account_book]).
+    gsub(":year",                info_path[:year]).
+    gsub(":month",               info_path[:month]).
+    gsub(":delivery_date",       info_path[:delivery_date]).
+    split('/').select(&:present?).join('/')
   end
 
   def self.delivery_path(remote_file, pseudo_path)
