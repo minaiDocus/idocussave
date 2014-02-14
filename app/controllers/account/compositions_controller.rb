@@ -15,8 +15,8 @@ class Account::CompositionsController < Account::AccountController
 
   def download
     @composition = @user.composition
-    filepath = @composition.path
-    if File.exist?(filepath)
+    filepath = @composition.try(:path).to_s
+    if File.exists?(filepath)
       filename = File.basename(filepath)
       send_file(filepath, type: 'application/pdf', filename: filename, x_sendfile: true, disposition: 'inline')
     else
