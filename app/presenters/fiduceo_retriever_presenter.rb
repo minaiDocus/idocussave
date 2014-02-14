@@ -19,11 +19,8 @@ class FiduceoRetrieverPresenter < BasePresenter
         h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
       else
         if fiduceo_retriever.processing?
-          if (content = last_event.presence)
-            result = h.content_tag :span, content, class: 'label'
-          else
-            result = h.content_tag :span, formatted_state, class: 'label'
-          end
+          content = last_event.presence || 'En attente de traitement ...'
+          result = h.content_tag :span, content, class: 'label'
         else
           result = h.content_tag :span, formatted_state, class: 'label'
         end
