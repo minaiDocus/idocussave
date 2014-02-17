@@ -27,6 +27,10 @@
             %table.table.table-striped.table-bordered.table-condensed
               %tbody
                 %tr
+                  %th= t('mongoid.models.organization_rights.attributes.is_collaborators_management_authorized')
+                  %td.value
+                    = check_box_tag 'user[organization_rights][is_collaborators_management_authorized]', 1, @user.find_or_create_organization_rights.is_collaborators_management_authorized
+                %tr
                   %th= t('mongoid.models.organization_rights.attributes.is_customers_management_authorized')
                   %td.value
                     = check_box_tag 'user[organization_rights][is_customers_management_authorized]', 1, @user.find_or_create_organization_rights.is_customers_management_authorized

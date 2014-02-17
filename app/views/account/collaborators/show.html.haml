@@ -11,10 +11,11 @@
                 = "(Arrêt en attente de validation par iDocus)"
               - else
                 = "(Rétablissement en attente de validation par iDocus)"
-            - if @collaborator.is_active? && @collaborator.is_inactive == @collaborator.is_inactive_was
-              = link_to "Arrêter l'abonnement", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
-            - else
-              = link_to "Rétablir l'abonnement", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
+            - if is_leader?
+              - if @collaborator.is_active? && @collaborator.is_inactive == @collaborator.is_inactive_was
+                = link_to "Arrêter l'abonnement", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
+              - else
+                = link_to "Rétablir l'abonnement", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
 
   .row-fluid
     .span12.box
@@ -56,6 +57,9 @@
                   .pull-right
                     = icon_link_to edit_account_organization_collaborator_rights_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
             %tbody
+              %tr
+                %th= t('mongoid.models.organization_rights.names.collaborators_management')
+                %td= @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
               %tr
                 %th= t('mongoid.models.organization_rights.names.customers_management')
                 %td= @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')

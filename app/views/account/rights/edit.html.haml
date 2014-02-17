@@ -6,6 +6,7 @@
     .span12.box
       = simple_form_for @collaborator, url: account_organization_collaborator_rights_url(@collaborator), html: { class: 'form form-horizontal' } do |f|
         = f.simple_fields_for :organization_rights do |rf|
+          = rf.input :is_collaborators_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.collaborators_management')
           = rf.input :is_customers_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.customers_management')
           = rf.input :is_groups_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.groups_management')
           = rf.input :is_journals_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.journals_management')

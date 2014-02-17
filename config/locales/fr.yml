@@ -611,10 +611,12 @@ fr:
         other: '%{count} droits'
         name: Droits de l'organisation
         names:
+          collaborators_management: Gestion des collaborateurs
           customers_management: Gestion des clients
           groups_management: Gestion des groupes
           journals_management: Gestion des journaux comptables
         attributes:
+          is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
           is_customers_management_authorized: Gestion des clients autorisé ?
           is_groups_management_authorized: Gestion des groupes autorisé ?
           is_journals_management_authorized: Gestion des journaux comptables autorisé ?

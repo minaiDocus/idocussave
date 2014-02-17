@@ -19,7 +19,15 @@ class OrganizationManagement
     end
 
     def rights
-      find_or_create_organization_rights
+      @rights ||= find_or_create_organization_rights
+    end
+
+    def can_manage_collaborators?
+      rights.is_collaborators_management_authorized
+    end
+
+    def cannot_manage_collaborators?
+      !can_manage_collaborators?
     end
 
     def can_manage_customers?

@@ -42,7 +42,7 @@
                   = link_to 'Paramètres', account_organization_path
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
                   = link_to 'Groupes', account_organization_groups_path
-                - if is_leader?
+                - if is_leader? || @user.can_manage_collaborators?
                   %li{ class: (controller_name.in?(%w(collaborators rights)) ? 'active' : '') }
                     = link_to 'Collaborateurs', account_organization_collaborators_path
                 %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions accounting_plans bank_accounts vat_accounts)) ? 'active' : '') }

@@ -15,7 +15,7 @@ class Account::RightsController < Account::OrganizationController
 private
 
   def verify_rights
-    unless is_leader?
+    unless is_leader? || @user.can_manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
