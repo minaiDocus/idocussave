@@ -33,19 +33,19 @@
             %tbody
               %tr
                 %th= t('mongoid.models.user.attributes.email')
-                %td= @collaborator.email
+                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'email' }
               %tr
                 %th= t('mongoid.models.user.attributes.first_name')
-                %td= @collaborator.first_name
+                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'first_name' }
               %tr
                 %th= t('mongoid.models.user.attributes.last_name')
-                %td= @collaborator.last_name
+                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'last_name' }
               %tr
                 %th= t('mongoid.models.user.attributes.code')
-                %td= @collaborator.code
+                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'code' }
               %tr
                 %th= t('mongoid.models.user.attributes.company')
-                %td= @collaborator.company
+                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'company' }
 
         .span6
           %table.table.table-bordered.table-striped.margin0bottom

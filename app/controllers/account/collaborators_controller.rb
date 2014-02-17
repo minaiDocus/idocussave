@@ -2,6 +2,7 @@
 class Account::CollaboratorsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_collaborator, except: %w(index new create)
+  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
     @collaborators = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
@@ -82,6 +83,10 @@ private
                                  :first_name,
                                  :last_name,
                                  :email)
+  end
+
+  def apply_attribute_changes
+    @collaborator.request.apply_attribute_changes
   end
 
   def sort_column
