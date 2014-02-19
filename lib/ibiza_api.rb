@@ -9,7 +9,7 @@ module IbizaAPI
         elsif k == 'piece_name' && preseizure.piece
           preseizure.piece.name
         elsif k == 'date' && preseizure[k]
-          preseizure[k].to_date.to_s
+          preseizure[k].in_time_zone('Paris').to_date.to_s
         else
           preseizure[k].presence
         end
