@@ -37,19 +37,21 @@ class DematboxService
   def self.load_from_external
     services = []
     DematboxApi::services.each do |raw_service|
-      _attributes = {
-        name: raw_service[:service_name],
-        pid:  raw_service[:service_id],
-        type: raw_service[:type]
-      }
-      service = DematboxService.where(pid: raw_service[:service_id]).first
-      if service
-        service.update_attributes(_attributes)
-      else
-        service = DematboxService.create(_attributes)
+      unless raw_service[:service_id] == DematboxServiceApi.config.service_id.to_s
+        _attributes = {
+          name: raw_service[:service_name],
+          pid:  raw_service[:service_id],
+          type: raw_service[:type]
+        }
+        service = DematboxService.where(pid: raw_service[:service_id]).first
+        if service
+          service.update_attributes(_attributes)
+        else
+          service = DematboxService.create(_attributes)
+        end
+        service.verified unless service.verified?
+        services << service
       end
-      service.verified unless service.verified?
-      services << service
     end
     removed_services = DematboxService.all.entries - services
     removed_services.each do |removed_service|

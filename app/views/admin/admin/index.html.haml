@@ -10,8 +10,10 @@
           %th Numérisés
           %td= Document.scanned.count
         %tr
-          %th Téléversés
-          %td= Document.uploaded.count
+          %th Téléversés (OCR)
+          %td
+            = Document.uploaded.count
+            (#{TempDocument.ocr_layer_applied.sum(:pages_number).to_i})
         %tr
           %th Auto
           %td= Document.fiduceo.count
@@ -64,6 +66,9 @@
           %th Rejetés
           %td= TempDocument.rejected.count
         %tr
+          %th OCR
+          %td= TempDocument.ocr_needed.count
+        %tr
           %th A regrouper
           %td= TempDocument.bundle_needed.count
         %tr
@@ -99,6 +104,20 @@
           %td= FiduceoRetriever.error.count
 .row-fluid
   .span6
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } OCR - En attente (#{@ocr_needed_temp_packs.count})
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %th Date
+            %th Nom
+            %th Nb pièces
+          %tbody
+            - @ocr_needed_temp_packs.each do |temp_pack|
+              %tr
+                %td= l(temp_pack['updated_at'])
+                %td= temp_pack['name']
+                %td= temp_pack['count']
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Regroupement - En attente (#{@bundle_needed_temp_packs.count})

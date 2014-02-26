@@ -9,18 +9,31 @@ class DematboxDocument
     @service_id      = params['service_id']
     @improved_scan64 = params['improved_scan']
     @doc_id          = params['doc_id']
+    @temp_document   = TempDocument.where(dematbox_doc_id: @doc_id).first if upload?
+
     if valid?
-      pack = TempPack.find_or_create_by_name pack_name
-      options = {
-        delivered_by:          user.code,
-        delivery_type:         'dematbox_scan',
-        dematbox_doc_id:       params['doc_id'],
-        dematbox_box_id:       params['box_id'],
-        dematbox_service_id:   params['service_id'],
-        dematbox_text:         params['text'],
-        is_content_file_valid: true
-      }
-      @temp_document = pack.add file, options
+      if @service_id == DematboxServiceApi.config.service_id.to_s
+        @temp_document.raw_content          = File.open(@temp_document.content.path)
+        @temp_document.content              = file
+        @temp_document.is_ocr_layer_applied = true
+        @temp_document.dematbox_box_id      = params['box_id']
+        @temp_document.dematbox_service_id  = params['service_id']
+        @temp_document.dematbox_text        = params['text']
+        @temp_document.save
+        @temp_document.temp_pack.is_bundle_needed ? @temp_document.bundle_needed : @temp_document.ready
+      else
+        pack = TempPack.find_or_create_by_name pack_name
+        options = {
+          delivered_by:          user.code,
+          delivery_type:         'dematbox_scan',
+          dematbox_doc_id:       params['doc_id'],
+          dematbox_box_id:       params['box_id'],
+          dematbox_service_id:   params['service_id'],
+          dematbox_text:         params['text'],
+          is_content_file_valid: true
+        }
+        @temp_document = pack.add file, options
+      end
       DematboxDocument.notify_uploaded(@temp_document.id) if Rails.env != 'test'
     end
     clean_tmp
@@ -31,11 +44,19 @@ class DematboxDocument
   end
 
   def file_name
-    "#{user.code}_#{journal}_#{period}.pdf"
+    if upload?
+      @temp_document.content_file_name
+    else
+      "#{user.code}_#{journal}_#{period}.pdf"
+    end
   end
 
   def valid?
-    dematbox.present? && service.present? && content_file_valid? && @doc_id.present?
+    if upload?
+      @doc_id.present? && content_file_valid?
+    else
+      dematbox.present? && service.present? && @doc_id.present? && content_file_valid?
+    end
   end
 
   def invalid?
@@ -49,12 +70,18 @@ class DematboxDocument
       if result == '200:OK'
         temp_document.dematbox_is_notified = true
         temp_document.dematbox_notified_at = Time.now
-        temp_document.save
-      else
-        result
+        result = temp_document.save
+        upload_notification(id) if temp_document.uploaded?
       end
+      result
     end
     handle_asynchronously :notify_uploaded, priority: 0
+
+    def upload_notification(id)
+      temp_document  = TempDocument.find id
+      DematboxServiceApi.upload_notification temp_document.dematbox_doc_id, temp_document.dematbox_box_id
+    end
+    handle_asynchronously :upload_notification, priority: 0
   end
 
 private
@@ -120,5 +147,9 @@ private
     else
       @is_content_file_valid = DocumentTools.modifiable?(file.path)
     end
+  end
+
+  def upload?
+    @virtual_box_id == DematboxServiceApi.config.virtual_box_id.to_s
   end
 end

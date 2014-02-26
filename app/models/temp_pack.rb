@@ -89,7 +89,11 @@ class TempPack
       if temp_document.fiduceo?
         temp_document.ready
       else
-        is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+        if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
+          temp_document.ocr_needed
+        else
+          is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+        end
       end
     else
       temp_document.unreadable

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="WSFrontalDematboxImplService" targetNamespace="http://serviceImpl.dematbox.frontal.dematbox.sagemcom.com/" xmlns:ns1="http://service.dematbox.frontal.dematbox.sagemcom.com/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://serviceImpl.dematbox.frontal.dematbox.sagemcom.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:import location="https://dematbox.sagemcom.com/FrontalDematbox/FrontalDematboxService?wsdl=IWSFrontalDematbox.wsdl" namespace="http://service.dematbox.frontal.dematbox.sagemcom.com/">
+    </wsdl:import>
+  <wsdl:binding name="WSFrontalDematboxImplServiceSoapBinding" type="ns1:IWSFrontalDematbox">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="PingFrontal">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="PingFrontal">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="PingFrontalResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ServiceState">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ServiceState">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ServiceStateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendFileError">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="SendFileError">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SendFileErrorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendFile">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="SendFile">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SendFileResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Presence">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="Presence">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="PresenceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ScannerState">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ScannerState">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ScannerStateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UploadNotification">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="UploadNotification">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UploadNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSFrontalDematboxImplService">
+    <wsdl:port binding="tns:WSFrontalDematboxImplServiceSoapBinding" name="WSFrontalDematboxImplPort">
+      <soap:address location="https://dematbox.sagemcom.com/FrontalDematbox/FrontalDematboxService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

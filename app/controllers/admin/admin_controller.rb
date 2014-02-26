@@ -24,6 +24,17 @@ class Admin::AdminController < ApplicationController
   public
 
   def index
+    @ocr_needed_temp_packs    = TempDocument.collection.group(
+      key: [:temp_pack_id],
+      cond: { state: 'ocr_needed' },
+      initial: { updated_at: 0, count: 0 },
+      reduce: "function(current, result) { result.count++; result.updated_at = current.updated_at; return result; }"
+    ).each do |temp_pack|
+      temp_pack['name'] = TempPack.find(temp_pack['temp_pack_id']).name
+      temp_pack['count'] = temp_pack['count'].to_i
+    end.sort! do |a,b|
+      b['updated_at'] <=> a['updated_at']
+    end
     @bundle_needed_temp_packs = TempPack.desc(:updated_at).bundle_needed
     @bundling_temp_packs      = TempPack.desc(:updated_at).bundling
     @processing_temp_packs    = TempDocument.collection.group(

@@ -1,5 +1,5 @@
 defaults: &defaults
-  wsdl: http://preprod.dematbox.sagemcom.com/Frontal/WS/FrontalService?wsdl
+  wsdl: config/wsdl/dematbox_service.wsdl
   namespace: http://service.frontal.dematbox.sagemcom.com/
   log_level: debug
   operator_id: 276
@@ -25,7 +25,7 @@ staging:
 
 production:
   <<: *defaults
-  wsdl: https://dematbox.sagemcom.com/Frontal/WS/FrontalService?wsdl
+  wsdl: config/wsdl/dematbox_service.tls.wsdl
   log_level: info
   operator_id: 192
   ssl_verify_mode: peer

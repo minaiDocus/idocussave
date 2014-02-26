@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="WSProvisioningDematboxImplService" targetNamespace="http://provisioning.dematbox.frontal.dematbox.sagemcom.com/" xmlns:ns1="http://service.dematbox.frontal.dematbox.sagemcom.com/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://provisioning.dematbox.frontal.dematbox.sagemcom.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:import location="http://preprod.dematbox.sagemcom.com/FrontalDematbox/ProvisioningDematboxService?wsdl=IWSProvisioningDematbox.wsdl" namespace="http://service.dematbox.frontal.dematbox.sagemcom.com/">
+    </wsdl:import>
+  <wsdl:binding name="WSProvisioningDematboxImplServiceSoapBinding" type="ns1:IWSProvisioningDematbox">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Settings">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="Settings">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SettingsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ServicesList">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ServicesList">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ServicesListResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ServicesListV2">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ServicesListV2">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ServicesListV2Response">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSProvisioningDematboxImplService">
+    <wsdl:port binding="tns:WSProvisioningDematboxImplServiceSoapBinding" name="WSProvisioningDematboxImplPort">
+      <soap:address location="http://preprod.dematbox.sagemcom.com/FrontalDematbox/ProvisioningDematboxService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
