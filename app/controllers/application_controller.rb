@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
   before_filter :load_gray_label
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
-  around_filter :log_visit if %w(staging sandbox production test).include?(Rails.env)
+  around_filter :log_visit # if %w(staging sandbox production test).include?(Rails.env)
 
   def after_sign_in_path_for(resource_or_scope)
     if session[:targeted_path]
@@ -106,7 +106,7 @@ protected
   end
   
   def log_visit
-    unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show))
+    unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?)
       unless current_user && current_user.is_admin
         visit            = ::Log::Visit.new
         visit.path       = request.path
