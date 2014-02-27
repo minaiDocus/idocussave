@@ -59,3 +59,27 @@ fr:
         code: Code TVA
         nature: Nature
         account_number: Numéro de compte
+      account_book_type:
+        name: Libellé
+        description: Description
+        entry_type: Type de saisie
+        entry_type_0: Aucun
+        entry_type_1: Notes de frais
+        entry_type_2: Achat
+        entry_type_3: Vente
+        default_account_number: Compte de tiers par défaut
+        account_number: Compte de tiers d'attente
+        default_charge_account: Compte de charge / produit par défaut
+        charge_account: Compte de charge / produit d'attente
+        vat_account: Compte TVA
+        anomaly_account: Compte d'anomalie
+        is_expense_categories_editable: Catégories de dépenses editable ?
+        expense_categories: Catégories de dépenses
+        expense_category:
+          name: Nom
+          description: Description
+        instructions: Instructions (400 char. max.)
+        position: Position
+        is_default: Par défaut ?
+        clients: Clients
+        force_assignment: Forcer les modifications pour le client

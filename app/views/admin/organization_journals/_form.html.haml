@@ -6,7 +6,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'name'))
     - else
       - hint = ''
-    = f.input :name, label: t('mongoid.models.account_book_type.attributes.label'), hint: hint
+    = f.input :name, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'description').present?
       - hint = ''
@@ -14,9 +14,9 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'description'))
     - else
       - hint = ''
-    = f.input :description, label: t('mongoid.models.account_book_type.attributes.description'), hint: hint
+    = f.input :description, hint: hint
 
-    - collection = [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3]]
+    - collection = [[t('simple_form.labels.account_book_type.entry_type_0'),0],[t('simple_form.labels.account_book_type.entry_type_1'),1],[t('simple_form.labels.account_book_type.entry_type_2'),2],[t('simple_form.labels.account_book_type.entry_type_3'),3]]
     - if @account_book_type.request
       - value = @account_book_type.request.attribute_changes.try(:[],'entry_type')
     - else
@@ -28,7 +28,7 @@
       - hint << content_tag(:span, collection[value][0])
     - else
       - hint = ''
-    = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: collection, selected: @account_book_type['entry_type'], allow_blank: false, hint: hint
+    = f.input :entry_type, collection: collection, selected: @account_book_type['entry_type'], allow_blank: false, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'default_account_number').is_a?(String)
       - hint = ''
@@ -36,7 +36,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'default_account_number'))
     - else
       - hint = ''
-    = f.input :default_account_number, label: t('mongoid.models.account_book_type.attributes.default_account_number'), hint: hint
+    = f.input :default_account_number, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'account_number').is_a?(String)
       - hint = ''
@@ -44,7 +44,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'account_number'))
     - else
       - hint = ''
-    = f.input :account_number, label: t('mongoid.models.account_book_type.attributes.account_number'), hint: hint
+    = f.input :account_number, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'default_charge_account').is_a?(String)
       - hint = ''
@@ -52,7 +52,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'default_charge_account'))
     - else
       - hint = ''
-    = f.input :default_charge_account, label: t('mongoid.models.account_book_type.attributes.default_charge_account'), hint: hint
+    = f.input :default_charge_account, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'charge_account').is_a?(String)
       - hint = ''
@@ -60,7 +60,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'charge_account'))
     - else
       - hint = ''
-    = f.input :charge_account, label: t('mongoid.models.account_book_type.attributes.charge_account'), hint: hint
+    = f.input :charge_account, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'vat_account').is_a?(String)
       - hint = ''
@@ -68,7 +68,7 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'vat_account'))
     - else
       - hint = ''
-    = f.input :vat_account, label: t('mongoid.models.account_book_type.attributes.vat_account'), hint: hint
+    = f.input :vat_account, hint: hint
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'anomaly_account').is_a?(String)
       - hint = ''
@@ -76,18 +76,18 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'anomaly_account'))
     - else
       - hint = ''
-    = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account'), hint: hint
+    = f.input :anomaly_account, hint: hint
 
-    = f.input :is_expense_categories_editable, label: t('mongoid.models.account_book_type.attributes.is_expense_categories_editable'), as: :boolean
+    = f.input :is_expense_categories_editable, as: :boolean
 
     .control-group
-      %label.control-label= t('mongoid.models.account_book_type.attributes.expense_categories')
+      %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
       .controls
         = f.fields_for :expense_categories do |category|
           .well
             = category.link_to_remove icon_destroy, class: 'btn btn-mini'
-            = category.input :name, label: t('mongoid.models.expense_category.attributes.name')
-            = category.input :description, label: t('mongoid.models.expense_category.attributes.description'), as: :text, input_html: { rows: 3 }
+            = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
+            = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
         = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
 
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'instructions').is_a?(String)
@@ -96,12 +96,12 @@
       - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'instructions'))
     - else
       - hint = ''
-    = f.input :instructions, as: :text, label: t('mongoid.models.account_book_type.attributes.instructions'), hint: hint, input_html: { maxlength: 400 }
+    = f.input :instructions, as: :text, hint: hint, input_html: { maxlength: 400 }
 
-    = f.input :position, as: :integer, label: t('mongoid.models.account_book_type.attributes.position')
-    = f.input :is_default, as: :boolean, label: t('mongoid.models.account_book_type.attributes.is_default')
+    = f.input :position, as: :integer
+    = f.input :is_default, as: :boolean
     .control-group
-      %label.control-label= t('mongoid.models.account_book_type.attributes.clients')
+      %label.control-label= t('simple_form.labels.account_book_type.clients')
       .controls
         - @organization.customers.active.asc(:code).each do |client|
           = check_box_tag 'account_book_type[client_ids][]', client.id, @account_book_type.clients.include?(client), id: "account_book_type_client_ids_#{client.id}", class: 'pull-left', style: 'margin-right:5px;position:relative;top:-2px;'
@@ -114,6 +114,6 @@
         = hidden_field_tag 'account_book_type[client_ids][]', ''
 
     - if params[:action] == 'edit'
-      = f.input :force_assignment, label: t('mongoid.models.account_book_type.attributes.force_assignment'), as: :boolean
+      = f.input :force_assignment, as: :boolean
   .modal-footer
     = f.submit t('actions.submit'), class: 'btn'
