@@ -95,6 +95,7 @@ private
 
   def journal_params
     params.require(:account_book_type).permit(:name,
+                                              :pseudonym,
                                               :description,
                                               :position,
                                               :entry_type,

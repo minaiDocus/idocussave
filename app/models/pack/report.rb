@@ -54,7 +54,12 @@ class Pack::Report
   end
 
   def journal
-    name.split[1]
+    result = name.split[1]
+    if user
+      user.account_book_types.where(name: result).first.try(:get_name) || result
+    else
+      result
+    end
   end
 
   class << self

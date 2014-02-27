@@ -1,5 +1,6 @@
 = simple_nested_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
   = f.input :name
+  = f.input :pseudonym
   = f.input :description
   = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0],[t('simple_form.labels.account_book_type.entry_type_1'),1],[t('simple_form.labels.account_book_type.entry_type_2'),2],[t('simple_form.labels.account_book_type.entry_type_3'),3]], selected: @journal['entry_type'], allow_blank: false
   = f.input :default_account_number

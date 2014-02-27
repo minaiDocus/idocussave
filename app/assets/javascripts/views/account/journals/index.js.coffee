@@ -268,7 +268,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     if filter.length > 0
       collection = _.filter @jCollection.models, (e)->
         pattern = new RegExp(filter, 'gi')
-        name = "#{e.get('name')} #{e.get('description')}"
+        name = "#{e.get('name')} #{e.get('description')} #{e.get('pseudonym')}"
         return pattern.test(name)
     else
       collection = @jCollection
@@ -331,7 +331,7 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     if filter.length > 0
       jCollection = _.filter @jCollection.models, (e) ->
         pattern = new RegExp(filter, 'gi')
-        name = "#{e.get('name')} #{e.get('description')}"
+        name = "#{e.get('name')} #{e.get('description')} #{e.get('pseudonym')}"
         return pattern.test(name)
     @setJCollection(jCollection)
     this

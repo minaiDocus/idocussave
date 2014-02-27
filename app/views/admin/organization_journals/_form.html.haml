@@ -8,6 +8,14 @@
       - hint = ''
     = f.input :name, hint: hint
 
+    - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'pseudonym').present?
+      - hint = ''
+      - hint << icon_link_to('#account_book_type_pseudonym', { icon: 'pencil' }, { class: 'assign_value' }) << ' '
+      - hint << content_tag(:span, @account_book_type.request.attribute_changes.try(:[],'pseudonym'))
+    - else
+      - hint = ''
+    = f.input :pseudonym, hint: hint
+
     - if @account_book_type.request && @account_book_type.request.attribute_changes.try(:[],'description').present?
       - hint = ''
       - hint << icon_link_to('#account_book_type_description', { icon: 'pencil' }, { class: 'assign_value' }) << ' '

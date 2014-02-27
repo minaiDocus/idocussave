@@ -61,6 +61,7 @@ fr:
         account_number: Numéro de compte
       account_book_type:
         name: Libellé
+        pseudonym: Alias
         description: Description
         entry_type: Type de saisie
         entry_type_0: Aucun
