@@ -79,6 +79,9 @@ class User
   field :is_fiduceo_authorized, type: Boolean, default: false
   field :fiduceo_id
 
+  # Used in preassignment export
+  field :is_computed_date_used, type: Boolean, default: false
+
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
   field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3

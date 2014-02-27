@@ -342,6 +342,7 @@ fr:
           is_centralized: Est centralisé ?
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
+          is_computed_date_used: Recalculer la date (XML) ?
           use_debit_mandate: Utilise le prélévement ?
           balance_in_cents: Solde du compte prépayé
           prescriber: Prescripteur
