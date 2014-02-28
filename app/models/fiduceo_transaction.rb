@@ -23,7 +23,8 @@ class FiduceoTransaction
                         'RETRIEVER_ERROR',
                         'PROVIDER_UNAVAILABLE',
                         'TIMEOUT',
-                        'BROKER_UNAVAILABLE'
+                        'BROKER_UNAVAILABLE',
+                        'REJECTED'
                       ]
 
   SUCCESS_STATUSES = [
@@ -42,7 +43,8 @@ class FiduceoTransaction
                       'RETRIEVER_ERROR',
                       'PROVIDER_UNAVAILABLE',
                       'TIMEOUT',
-                      'BROKER_UNAVAILABLE'
+                      'BROKER_UNAVAILABLE',
+                      'REJECTED'
                    ]
 
   field :fiduceo_id

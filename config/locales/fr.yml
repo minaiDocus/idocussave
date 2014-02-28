@@ -763,3 +763,4 @@ fr:
           provider_unavailable: fournisseur indisponible
           timeout: delai d'attente dépassé
           broker_unavailable: service indisponible
+          rejected: trop de tentative
