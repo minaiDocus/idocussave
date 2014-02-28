@@ -4,6 +4,7 @@ class FiduceoDocumentFetcher
       _retrievers = Array(retrievers).presence || FiduceoRetriever.active.providers.scheduled
       _retrievers.each do |retriever|
         if (retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
+          retriever.schedule if retriever.error?
           create_transaction(retriever)
         end
       end
