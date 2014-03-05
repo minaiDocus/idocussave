@@ -6,28 +6,7 @@ class Dematbox
   belongs_to :user
   embeds_many :services, class_name: 'DematboxSubscribedService', inverse_of: :dematbox
 
-  field :number,                     type: Integer
   field :beginning_configuration_at, type: Time
-
-  def self.find_by_number(number)
-    where(number: number).first
-  end
-
-  def self.sequence_name
-    'dematbox_number'
-  end
-
-  def self.current_number
-    DbaSequence.current(sequence_name)
-  end
-
-  def self.next_number
-    DbaSequence.next(sequence_name)
-  end
-
-  def set_new_number
-    update_attribute(:number, Dematbox.next_number)
-  end
 
   def journal_names
     user.account_book_types.asc(:name).map(&:name)
@@ -72,7 +51,7 @@ class Dematbox
 
   def subscribe(pairing_code=nil)
     _services = build_services
-    result = DematboxApi.subscribe(self.number, _services, pairing_code)
+    result = DematboxApi.subscribe(user.code, _services, pairing_code)
     update_attribute(:beginning_configuration_at, nil) unless beginning_configuration_at.nil?
     if result.match(/^200\s*:\s*OK$/)
       services.destroy_all
@@ -103,7 +82,7 @@ class Dematbox
   end
 
   def unsubscribe
-    result = DematboxApi.unsubscribe(self.number)
+    result = DematboxApi.unsubscribe(user.code)
     if result.match(/^200\s*:\s*OK$/)
       destroy
     end

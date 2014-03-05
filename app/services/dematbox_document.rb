@@ -87,7 +87,7 @@ class DematboxDocument
 private
 
   def dematbox
-    @dematbox ||= Dematbox.find_by_number(@virtual_box_id)
+    @dematbox ||= user.dematbox
   end
 
   def service
@@ -117,7 +117,7 @@ private
   end
 
   def user
-    @user ||= dematbox.user
+    @user ||= User.find_by_code(@virtual_box_id)
   end
 
   def journal
