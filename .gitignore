@@ -2,8 +2,8 @@
 ./doc/
 log/
 tmp/
-data/
-files/
+/data/
+/files/
 public/system
 public/assets
 coverage/
