@@ -694,9 +694,12 @@ fr:
             values:
               created: Créé
               unreadable: Corrompu
-              ready: Prêt
+              rejected: Rejeté
+              ocr_needed: Besoin de traitement OCR
               bundle_needed: Requière un regroupement
-              bundling: Regroupé
+              bundling: En cours de regroupement
+              bundled: Regroupé
+              ready: Prêt
               processed: Traité
           stated_at: Etat mise à jour le
           is_locked: Bloqué ?
