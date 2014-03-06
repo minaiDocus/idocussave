@@ -12,7 +12,7 @@ describe DematboxDocument do
       end
 
       @params = {
-        'virtual_box_id' => '1',
+        'virtual_box_id' => 'TS0001',
         'service_id' => '1',
         'improved_scan' => @content64,
         'doc_id' => '1',
@@ -153,7 +153,7 @@ describe DematboxDocument do
 
       context 'when virtual_box_id is not valid' do
         before(:all) do
-          params = @params.merge({ 'virtual_box_id' => '2' })
+          params = @params.merge({ 'virtual_box_id' => 'TS0002' })
           @dematbox_document = DematboxDocument.new(params)
         end
 

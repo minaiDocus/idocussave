@@ -87,7 +87,7 @@ class DematboxDocument
 private
 
   def dematbox
-    @dematbox ||= user.dematbox
+    @dematbox ||= user.try(:dematbox)
   end
 
   def service

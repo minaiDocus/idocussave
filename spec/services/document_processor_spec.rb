@@ -384,7 +384,7 @@ describe DocumentProcessor do
     context 'with 1 dematbox scanned files' do
       before(:all) do
         params = {
-          'virtual_box_id' => '1',
+          'virtual_box_id' => 'TS0001',
           'service_id' => '1',
           'improved_scan' => @content64,
           'doc_id' => '1',
@@ -524,7 +524,7 @@ describe DocumentProcessor do
         UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
 
         params = {
-          'virtual_box_id' => '1',
+          'virtual_box_id' => 'TS0001',
           'service_id' => '1',
           'improved_scan' => @content64,
           'doc_id' => '1',
@@ -545,7 +545,7 @@ describe DocumentProcessor do
         DematboxDocument.new(params)
 
         params2 = {
-          'virtual_box_id' => '1',
+          'virtual_box_id' => 'TS0001',
           'service_id' => '1',
           'improved_scan' => @content64,
           'doc_id' => '2',
