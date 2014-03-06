@@ -3,22 +3,15 @@ class DematboxService
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  has_many   :services, class_name: 'DematboxService', inverse_of: :group
-  belongs_to :group,    class_name: 'DematboxService', inverse_of: :services
-
-  field :name,                  type: String
-  field :pid,                   type: String
-  field :type,                  type: String
-  field :state,                 type: String,  default: 'unknown'
-  field :is_for_current_period, type: Boolean, default: true
+  field :name,  type: String
+  field :pid,   type: String
+  field :type,  type: String
+  field :state, type: String,  default: 'unknown'
 
   validates_presence_of :name, :pid, :type, :state
 
   scope :services, where: { type: 'service' }
   scope :groups,   where: { type: 'group' }
-
-  scope :current,  where: { is_for_current_period: true }
-  scope :previous, where: { is_for_current_period: false }
 
   state_machine initial: :unknown do
     state :unknown
@@ -60,19 +53,11 @@ class DematboxService
     services
   end
 
-  def to_params(journal_name=nil)
-    if type == 'service'
-      {
-        type: 'service',
-        service_name: journal_name,
-        service_id: pid
-      }
-    elsif type == 'group'
-      {
-        type: 'group',
-        service_name: name,
-        service_id: pid
-      }
-    end
+  def to_params(name=self.name)
+    {
+      type:         type,
+      service_name: name,
+      service_id:   pid
+    }
   end
 end

@@ -13,35 +13,28 @@ class Dematbox
   end
 
   def build_services
-    _services = {}
-    current_services = DematboxService.current.services.asc(:name).entries
-    previous_services = DematboxService.previous.services.asc(:name).entries
-    journal_names.each do |journal_name|
-      current_service = current_services.shift
-      previous_service = previous_services.shift
-      if current_service && previous_service
-        group = current_service.group
-        if group
-          unless _services["group_#{group.id}"]
-            _services["group_#{group.id}"] = group.to_params.merge({ services: { service: [] } })
-          end
-          _services["group_#{group.id}"][:services][:service] << current_service.to_params(journal_name)
-        else
-          _services["service_#{current_service.id}"] = current_service.to_params(journal_name)
-        end
+    all_services = DematboxService.services.asc(:name).entries
+    all_groups   = DematboxService.groups.asc(:name).entries
 
-        group = previous_service.group
-        if group
-          unless _services["group_#{group.id}"]
-            _services["group_#{group.id}"] = group.to_params.merge({ services: { service: [] } })
-          end
-          _services["group_#{group.id}"][:services][:service] << previous_service.to_params(journal_name)
-        else
-          _services["service_#{previous_service.id}"] = previous_service.to_params(journal_name)
+    current_group  = all_groups.shift
+    previous_group = all_groups.shift
+
+    if current_group && previous_group
+      current_group_params  = current_group.to_params('Période Actuelle').merge({ services: { service: [] } })
+      previous_group_params = previous_group.to_params('Période Précédente').merge({ services: { service: [] } })
+
+      journal_names.each do |journal_name|
+        current_service  = all_services.shift
+        previous_service = all_services.shift
+
+        if current_service && previous_service
+          current_group_params[:services][:service] << current_service.to_params(journal_name)
+          previous_group_params[:services][:service] << previous_service.to_params(journal_name)
         end
       end
+
+      [current_group_params, previous_group_params]
     end
-    _services.values
   end
 
   def async_subscribe(pairing_code=nil)
@@ -54,27 +47,26 @@ class Dematbox
     result = DematboxApi.subscribe(user.code, _services, pairing_code)
     update_attribute(:beginning_configuration_at, nil) unless beginning_configuration_at.nil?
     if result.match(/^200\s*:\s*OK$/)
-      services.destroy_all
-      _services.each do |_service|
-        if _service[:type] == 'service'
-          service = services.build
-          service.name = _service[:service_name]
-          service.pid = _service[:service_id]
-        elsif _service[:type] == 'group'
-          _service[:services][:service].each do |__service|
-            service = services.build
-            service.name = __service[:service_name]
-            service.pid = __service[:service_id]
-            service.group_name = _service[:service_name]
-            service.group_pid = _service[:service_id]
-            service.is_for_current_period = DematboxService.where(pid: service.group_pid).first.is_for_current_period
-          end
-        end
-      end
-      save
+      set_services(_services)
     else
       result
     end
+  end
+
+  def set_services(_services)
+    services.destroy_all
+    _services.each do |group|
+      group[:services][:service].each do |service|
+        new_service                       = DematboxSubscribedService.new
+        new_service.name                  = service[:service_name]
+        new_service.pid                   = service[:service_id]
+        new_service.group_name            = group[:service_name]
+        new_service.group_pid             = group[:service_id]
+        new_service.is_for_current_period = group[:service_name] == 'Période Actuelle'
+        services << new_service
+      end
+    end
+    save
   end
 
   def to_s

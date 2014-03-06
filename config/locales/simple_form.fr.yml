@@ -28,10 +28,6 @@ fr:
         leader: 'Prescripteur'
         name: 'Nom'
         description: 'Description'
-      dematbox_service:
-        is_for_current_period: 'Pour la période en cours ?'
-        group: 'Groupe'
-        group_id: 'Groupe'
       fiduceo_retriever:
         provider_id: Fournisseur
         bank_id: Banque

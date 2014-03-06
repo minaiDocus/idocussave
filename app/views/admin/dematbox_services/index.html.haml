@@ -1,7 +1,7 @@
 #dematboxes
   = render 'admin/dematboxes/navigation'
   .row-fluid
-    .span9
+    .span6
       .row-fluid
         .span12
           .pull-left
@@ -14,19 +14,14 @@
             %th Id
             %th Type
             %th Nom
-            %th Groupe
-            %th Période
             %th Etat
-            %th Actions
+            %th Action
         %tbody
           - @dematbox_services.each do |dematbox_service|
             %tr
               %td= dematbox_service.pid
               %td= dematbox_type dematbox_service.type
               %td= dematbox_service.name
-              %td= dematbox_service.group.try(:name)
-              %td= dematbox_period dematbox_service.is_for_current_period
               %td= dematbox_state dematbox_service.state
               %td
-                = link_to icon_edit, edit_admin_dematbox_service_path(dematbox_service), title: 'Editer'
                 = link_to icon_destroy, admin_dematbox_service_path(dematbox_service), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }
