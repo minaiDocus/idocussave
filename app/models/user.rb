@@ -176,6 +176,10 @@ class User
     [self.code,self.company,self.name].reject { |e| e.blank? }.join(' - ')
   end
 
+  def short_info
+    [self.code, self.company].join(' - ')
+  end
+
   def to_s
     info
   end

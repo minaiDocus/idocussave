@@ -1,9 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::Documents::UploadsController < Account::AccountController
   def create
+    customer = @user.customers.active.find_by_code params[:file_code] if @user.is_prescriber
+    customer ||= @user
     uploaded_document = UploadedDocument.new params[:files][0].tempfile,
                                              params[:files][0].original_filename,
-                                             @user,
+                                             customer,
                                              params[:account_book_type],
                                              params[:prev_period_offset]
     tempfile_path = params[:files][0].tempfile.path
