@@ -6,8 +6,8 @@ class Account::Documents::UploadsController < Account::AccountController
     uploaded_document = UploadedDocument.new params[:files][0].tempfile,
                                              params[:files][0].original_filename,
                                              customer,
-                                             params[:account_book_type],
-                                             params[:prev_period_offset]
+                                             params[:file_account_book_type],
+                                             params[:file_prev_period_offset]
     tempfile_path = params[:files][0].tempfile.path
     if File.exist? tempfile_path
       File.delete tempfile_path
