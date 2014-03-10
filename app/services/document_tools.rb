@@ -34,7 +34,8 @@ class DocumentTools
         is_ok = false
       end
       is_ok = false unless `pdftk #{file_path} dump_data; echo $?`.to_i == 0
-      is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
+      # consumes too much cpu cycle
+      # is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
       is_ok
     end
 
