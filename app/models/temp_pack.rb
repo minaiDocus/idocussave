@@ -72,7 +72,7 @@ class TempPack
     unless options[:delivery_type] == 'fiduceo' && temp_document.persisted?
       temp_document.content           = file
     end
-    temp_document.position            = next_document_position
+    temp_document.position            = next_document_position        unless temp_document.position
 
     temp_document.delivered_by        = options[:delivered_by]
     temp_document.delivery_type       = options[:delivery_type]
