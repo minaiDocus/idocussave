@@ -687,7 +687,8 @@
         }
       }
 
-      file_upload_update_fields($("#file_code").val());
+      if($("#file_code").val() != null)
+        file_upload_update_fields($("#file_code").val());
 
       $("#file_code").on('change', function() {
         file_upload_update_fields($(this).val());
