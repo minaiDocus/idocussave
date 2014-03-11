@@ -21,6 +21,9 @@ Idocus::Application.configure do
   # See everything in the log (default is :info)
   config.log_level = :info
 
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :uuid ]
+
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
