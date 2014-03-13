@@ -32,9 +32,12 @@ class Account::Charts::OperationsController < Account::AccountController
                                                                    from_date: @start_date.strftime("%d/%m/%Y"),
                                                                    to_date: @end_date.strftime("%d/%m/%Y")
         @categories = fiduceo_operation.by_category
-        @categories = @categories.select { |e| e.amount <= 0 }
-        @categories.each { |e| e.amount = e.amount.abs }
-        render json: 'Service temporairement indisponible.', status: 503 unless @categories
+        if @categories
+          @categories = @categories.select { |e| e.amount <= 0 }
+          @categories.each { |e| e.amount = e.amount.abs }
+        else
+          render json: 'Service temporairement indisponible.', status: 503
+        end
       end
     end
   end
