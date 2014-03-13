@@ -17,7 +17,7 @@ class UploadedDocument
     @errors << [:invalid_period, period: period] unless valid_prev_period_offset?
     @errors << [:invalid_file_extension, extension: extension] unless valid_extension?
     @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
-    unless DocumentTools.modifiable?(processed_file.path)
+    unless File.exists?(@file.path) && DocumentTools.modifiable?(processed_file.path)
       @errors << [:file_is_corrupted_or_protected, nil]
     end
 
