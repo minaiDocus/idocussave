@@ -129,7 +129,7 @@ module IbizaAPI
 
       def original=(original)
         @original = original
-        if original.headers['Content-Type'].split(';')[0] == 'application/xml'
+        if original.headers['Content-Type'].present? && original.headers['Content-Type'].split(';')[0] == 'application/xml'
           hash = Hash.from_xml(original.body).first
           response = hash.last['response']
           @result = response['result']
