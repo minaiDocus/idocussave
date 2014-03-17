@@ -64,7 +64,7 @@ module IbizaAPI
           }
         }
       end
-      builder.to_xml
+      builder.to_xml.gsub('&', '&amp;') # TODO use better regex
     end
   end
 
