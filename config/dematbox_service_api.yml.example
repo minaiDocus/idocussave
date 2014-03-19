@@ -1,0 +1,46 @@
+defaults: &defaults
+  is_active:             false
+  wsdl:                  config/wsdl/dematbox.wsdl
+  provisioning_wsdl:     config/wsdl/dematbox_provisioning.wsdl
+  virtual_box_id:        0
+  box_id:                LT12326A1A40502
+  service_id:            1013
+  associated_service_id: 6716
+  namespace:             http://service.dematbox.frontal.dematbox.sagemcom.com/
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  is_active:             true
+  wsdl:                  config/wsdl/dematbox.tls.wsdl
+  provisioning_wsdl:     config/wsdl/dematbox_provisioning.tls.wsdl
+  box_id:                
+  service_id:            
+  associated_service_id: 
+  ssl_verify_mode:       peer
+  ssl_version:           TLSv1
+  ssl_cert_file:         data/cert/dematbox_staging_client.crt
+  ssl_cert_key_file:     data/cert/dematbox_staging_client.key
+  ssl_ca_cert_file:      data/cert/dematbox_staging_int_ca.crt
+
+production:
+  <<: *defaults
+  is_active:             true
+  wsdl:                  config/wsdl/dematbox.tls.wsdl
+  provisioning_wsdl:     config/wsdl/dematbox_provisioning.tls.wsdl
+  box_id:                ID14048A3AE0001
+  service_id:            
+  associated_service_id: 
+  ssl_verify_mode:       peer
+  ssl_version:           TLSv1
+  ssl_cert_file:         
+  ssl_cert_key_file:     
+  ssl_ca_cert_file:      

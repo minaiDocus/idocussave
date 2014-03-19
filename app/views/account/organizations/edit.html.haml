@@ -3,7 +3,7 @@
     .span12
       %h2 Edition
       %br
-      = simple_nested_form_for [:account, @organization], html: { class: 'form form-horizontal' } do |f|
+      = simple_nested_form_for @organization, url: account_organization_path, html: { class: 'form form-horizontal' } do |f|
         %fieldset
           %legend Informations
           = f.input :name, label: t('mongoid.models.organization.attributes.name')
@@ -27,6 +27,15 @@
                 .form-actions
                   = address.link_to_remove 'Supprimer l\'adresse', class: 'btn'
             = f.link_to_add 'Ajouter une adresse', :addresses, class: 'btn'
+        %hr
+        %fieldset
+          %legend Options des périodes
+          = f.input :authd_prev_period,          as: :integer, input_html: { min: 0 }
+          = f.input :auth_prev_period_until_day, as: :integer, input_html: { min: 0, max: 28 }, hint: '0 à 28'
+        %fieldset
+          %legend Charte de nommage des fichiers
+          = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
+          = f.input :is_file_naming_policy_active, as: 'boolean'
         .form-actions
           = f.submit 'Valider', class: 'btn'
           = link_to 'Annuler', account_organization_path, class: 'btn'

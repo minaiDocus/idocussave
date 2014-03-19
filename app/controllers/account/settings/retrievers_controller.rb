@@ -95,11 +95,38 @@ class Account::Settings::RetrieversController < Account::SettingsController
           new_bank_account.save
         end
       end
+      emails = []
+      collaborators = @user.groups.map(&:collaborators).flatten
+      if collaborators.any?
+        emails = collaborators.map(&:email)
+      else
+        emails = [@user.organization.leader.email]
+      end
+      emails.each do |email|
+        NotificationMailer.delay(priority: 1).new_bank_accounts(@fiduceo_retriever, email)
+      end
       flash[:success] = 'Les comptes bancaires sélectionnés ont été pris en compte.'
       redirect_to account_settings_fiduceo_retrievers_path
     else
       flash[:error] = "Vous n'avez sélectionné aucun compte."
       render 'select_bank_accounts'
+    end
+  end
+
+  def wait_for_user_action
+    transaction = @fiduceo_retriever.transactions.last
+    @questions = transaction.wait_for_user_labels
+  end
+
+  def update_transaction
+    transaction = @fiduceo_retriever.transactions.last
+    if FiduceoDocumentFetcher.send_additionnal_information(transaction, params[:answers])
+      @fiduceo_retriever.fetch
+      flash[:info] = 'Poursuite de la transaction'
+      redirect_to account_settings_fiduceo_retrievers_path
+    else
+      flash[:error] = "Impossible d'enregistrer les modifications."
+      render action: 'wait_for_user_action'
     end
   end
 
@@ -142,7 +169,7 @@ private
 
   def search(contains)
     fiduceo_retrievers = @user.fiduceo_retrievers
-    fiduceo_retrievers = fiduceo_retrievers.where(:name => /#{contains[:name]}/i) unless contains[:name].blank?
+    fiduceo_retrievers = fiduceo_retrievers.where(:name => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
     fiduceo_retrievers
   end
 

@@ -47,7 +47,7 @@ class CsvOutputter
         when /^client_code$/
           entry.preseizure.report.user.code
         when /^journal$/
-          entry.preseizure.piece_name.try(:split).try(:[], 1)
+          entry.preseizure.report.journal
         when /^period$/
           entry.preseizure.piece_name.try(:split).try(:[], 2)
         when /^piece_number$/

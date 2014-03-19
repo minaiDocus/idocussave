@@ -28,10 +28,6 @@ fr:
         leader: 'Prescripteur'
         name: 'Nom'
         description: 'Description'
-      dematbox_service:
-        is_for_current_period: 'Pour la période en cours ?'
-        group: 'Groupe'
-        group_id: 'Groupe'
       fiduceo_retriever:
         provider_id: Fournisseur
         bank_id: Banque
@@ -45,3 +41,43 @@ fr:
         number: Numéro de compte
         journal: Journal
         accounting_number: Numéro de compte comptable
+      user:
+        authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
+        auth_prev_period_until_day: Jour de clôture de la période précédente
+        auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+      organization:
+        authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
+        auth_prev_period_until_day: Jour de clôture de la période précédente
+        auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+        file_naming_policy: Charte de nommage des fichiers
+        is_file_naming_policy_active: Activer la charte
+      vat_account:
+        code: Code TVA
+        nature: Nature
+        account_number: Numéro de compte
+      account_book_type:
+        name: Libellé
+        pseudonym: Alias
+        description: Description
+        domain: Domaine
+        entry_type: Type de saisie
+        entry_type_0: Aucun
+        entry_type_1: Notes de frais
+        entry_type_2: Achat
+        entry_type_3: Vente
+        default_account_number: Compte de tiers par défaut
+        account_number: Compte de tiers d'attente
+        default_charge_account: Compte de charge / produit par défaut
+        charge_account: Compte de charge / produit d'attente
+        vat_account: Compte TVA
+        anomaly_account: Compte d'anomalie
+        is_expense_categories_editable: Catégories de dépenses editable ?
+        expense_categories: Catégories de dépenses
+        expense_category:
+          name: Nom
+          description: Description
+        instructions: Instructions (400 char. max.)
+        position: Position
+        is_default: Par défaut ?
+        clients: Clients
+        force_assignment: Forcer les modifications pour le client

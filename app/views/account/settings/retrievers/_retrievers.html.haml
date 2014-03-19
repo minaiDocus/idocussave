@@ -2,7 +2,11 @@
 = hidden_field_tag :sort, sort_column
 = hidden_field_tag :per_page, per_page
 = hidden_field_tag :page, page
-= render partial: 'list_options'
+.row-fluid
+  .span6
+    = render partial: 'list_options'
+  .span6
+    = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger', data: { toggle: 'modal' }
 %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
   %thead
     %tr

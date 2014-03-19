@@ -9,7 +9,17 @@ class FiduceoRetrieverService
         result = client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.fiduceo_id = result['id']
-          retriever.journal = nil if retriever.bank?
+          list = FiduceoProvider.new user.fiduceo_id
+          if retriever.bank?
+            retriever.journal = nil
+            bank = list.banks.select { |e| e[:id] == params[:bank_id] }.first
+            retriever.wait_for_user = bank[:wait_for_user]
+            retriever.wait_for_user_label = bank[:wait_for_user_label]
+          elsif retriever.provider?
+            provider = list.providers.select { |e| e[:id] == params[:provider_id] }.first
+            retriever.wait_for_user = provider[:wait_for_user]
+            retriever.wait_for_user_label = provider[:wait_for_user_label]
+          end
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever
         end

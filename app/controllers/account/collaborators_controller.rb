@@ -2,6 +2,7 @@
 class Account::CollaboratorsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_collaborator, except: %w(index new create)
+  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
     @collaborators = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
@@ -66,7 +67,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 private
 
   def verify_rights
-    unless is_leader?
+    unless is_leader? || (@user.can_manage_collaborators? && !action_name.in?(%w(stop_using restart_using)))
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
@@ -82,6 +83,10 @@ private
                                  :first_name,
                                  :last_name,
                                  :email)
+  end
+
+  def apply_attribute_changes
+    @collaborator.request.apply_attribute_changes
   end
 
   def sort_column
@@ -114,11 +119,11 @@ private
 
   def search(contains)
     users = @organization.collaborators
-    users = users.where(:first_name => /#{contains[:first_name]}/i) unless contains[:first_name].blank?
-    users = users.where(:last_name  => /#{contains[:last_name]}/i)  unless contains[:last_name].blank?
-    users = users.where(:email      => /#{contains[:email]}/i)      unless contains[:email].blank?
-    users = users.where(:company    => /#{contains[:company]}/i)    unless contains[:company].blank?
-    users = users.where(:code       => /#{contains[:code]}/i)       unless contains[:code].blank?
+    users = users.where(:first_name => /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
+    users = users.where(:last_name  => /#{Regexp.quote(contains[:last_name])}/i)  unless contains[:last_name].blank?
+    users = users.where(:email      => /#{Regexp.quote(contains[:email])}/i)      unless contains[:email].blank?
+    users = users.where(:company    => /#{Regexp.quote(contains[:company])}/i)    unless contains[:company].blank?
+    users = users.where(:code       => /#{Regexp.quote(contains[:code])}/i)       unless contains[:code].blank?
     users
   end
 end

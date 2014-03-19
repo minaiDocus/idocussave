@@ -18,9 +18,9 @@ class ExternalFileStorage
   has_one :dropbox_basic, autosave: true
   has_one :google_doc,    autosave: true
   has_one :ftp,           autosave: true
-  has_one :the_box,       autosave: true
+  has_one :box,           autosave: true
 
-  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :the_box
+  accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :box
 
   field :path,         type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   field :is_path_used, type: Boolean, default: false
@@ -158,14 +158,17 @@ class ExternalFileStorage
   end
 
   def self.static_path(path, info_path)
-    path.gsub(":code",info_path[:code]).
-    gsub(":company",info_path[:company] || '').
-    gsub(":group",info_path[:group] || '').
-    gsub(":company_of_customer",info_path[:company_of_customer]).
-    gsub(":account_book",info_path[:account_book]).
-    gsub(":year",info_path[:year]).
-    gsub(":month",info_path[:month]).
-    gsub(":delivery_date",info_path[:delivery_date])
+    path.gsub(":code",           info_path[:code]).
+    gsub(":customer_code",       info_path[:customer_code]).
+    gsub(":organization_code",   info_path[:organization_code] || '').
+    gsub(":company",             info_path[:company] || '').
+    gsub(":group",               info_path[:group] || '').
+    gsub(":company_of_customer", info_path[:company_of_customer]).
+    gsub(":account_book",        info_path[:account_book]).
+    gsub(":year",                info_path[:year]).
+    gsub(":month",               info_path[:month]).
+    gsub(":delivery_date",       info_path[:delivery_date]).
+    split('/').select(&:present?).join('/')
   end
 
   def self.delivery_path(remote_file, pseudo_path)
@@ -184,7 +187,7 @@ class ExternalFileStorage
       when "FTP"
         ftp
       when "Box"
-        the_box
+        box
       else
         nil
     end
@@ -196,7 +199,7 @@ class ExternalFileStorage
     DropboxBasic.create(external_file_storage_id: self.id)
     GoogleDoc.create(external_file_storage_id: self.id)
     Ftp.create(external_file_storage_id: self.id)
-    TheBox.create(external_file_storage_id: self.id)
+    Box.create(external_file_storage_id: self.id)
     true
   end
 end

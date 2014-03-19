@@ -181,4 +181,52 @@ module DocumentsHelper
       'shared'
     end
   end
+
+  def options_for_period(period_service=@period_service, time=Time.now)
+    current_time = time
+    period_duration = period_service.period_duration
+    results = [[period_option_label(period_duration, time), 0]]
+    if period_service.prev_expires_at.nil? || period_service.prev_expires_at > Time.now
+      period_service.authd_prev_period.times do |i|
+        current_time -= period_duration.month
+        results << [period_option_label(period_duration, current_time), i+1]
+      end
+    end
+    results
+  end
+
+  def period_option_label(period_duration, time)
+    if period_duration == 1
+      month = time.strftime('%m')
+    elsif period_duration == 3
+      month = "T#{quarterly_of_month(time.month)}"
+    end
+    year = time.year
+    "#{month} #{year}"
+  end
+
+  def file_upload_params
+    if @user.is_prescriber
+      result = {}
+      @user.customers.active.each do |customer|
+        period_service = PeriodService.new user: customer
+        hsh = {
+          journals: customer.account_book_types.asc(:name).map(&:name),
+          periods:  options_for_period(period_service)
+        }
+        if period_service.prev_expires_at
+          hsh.merge!({
+            message: {
+              period: period_option_label(period_service.period_duration, Time.now - period_service.period_duration.month),
+              date:   l(period_service.prev_expires_at, format: '%d %B %Y à %H:%M')
+            }
+          })
+        end
+        result[customer.code] = hsh
+      end
+      result
+    else
+      {}
+    end
+  end
 end

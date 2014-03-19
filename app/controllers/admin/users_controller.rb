@@ -107,7 +107,7 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def destroy
-    if @user.request.status == 'create' && @user.destroy
+    if (@user.request.status == 'create' || @user.is_disabled) && @user.destroy
       flash[:notice] = 'Supprimé avec succès.'
     else
       flash[:error] = 'Impossible de supprimer.'
@@ -169,7 +169,6 @@ private
     users = users.where(:email => /#{contains[:email]}/i) unless contains[:email].blank?
     users = users.where(:company => /#{contains[:company]}/i) unless contains[:company].blank?
     users = users.where(:code => /#{contains[:code]}/i) unless contains[:code].blank?
-    users = users.where(:request_type => contains[:request_type]) unless contains[:request_type].blank?
     users = users.where(:organization_id => contains[:organization_id]) unless contains[:organization_id].blank?
     users
   end

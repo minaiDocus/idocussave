@@ -50,7 +50,7 @@ module Delivery
         when 'gdr'
           :google_doc
         when 'box'
-          :the_box
+          :box
         when 'ftp'
           :ftp
         else

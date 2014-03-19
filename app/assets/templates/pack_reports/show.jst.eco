@@ -1,12 +1,26 @@
-<div class="option pull-left">
-  <% if(@model.get('is_delivered') == false): %>
-    <a class="deliver" href="">
-      <i class="icon-refresh"></i>
-    </a>
+<% if(window.is_ibiza_configured): %>
+  <div class="option pull-left">
+    <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
+      <a class="tip deliver" href="" title="Envoyer vers Ibiza">
+        <i class="icon-refresh"></i>
+      </a>
+    <% end %>
+  </div>
+  <% if(@model.get('download_xml') == true): %>
+    <div class="option pull-left">
+      <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le fichier .xml">
+        <i class="icon-download-alt"></i>
+      </a>
+    </div>
   <% end %>
+<% end %>
+<div class="option pull-left">
+  <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="<%= @model.get('name') %>">
+    <i class="icon-info-sign"></i>
+  </a>
 </div>
 <div class="option pull-left">
-  <a class="download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>">
+  <a class="tip download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>" title="Télécharger le fichier .csv">
     <i class="icon-download"></i>
   </a>
 </div>

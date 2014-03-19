@@ -42,16 +42,22 @@ Idocus::Application.routes.draw do
         put 'restart_using',  on: :member
       end
       resources :customers do
-        get 'search_by_code', on: :collection
-        put 'stop_using',     on: :member
-        put 'restart_using',  on: :member
-        put 'update_ibiza',   on: :member
+        get 'search_by_code',        on: :collection
+        put 'stop_using',            on: :member
+        put 'restart_using',         on: :member
+        put 'update_ibiza',          on: :member
+        get 'edit_period_options',   on: :member
+        put 'update_period_options', on: :member
         resources :addresses, controller: 'organization_addresses'
         resource :accounting_plan do
           member do
             put :import
             delete :destroy_providers
             delete :destroy_customers
+          end
+          resources :vat_accounts do
+            get 'edit_multiple',   on: :collection
+            put 'update_multiple', on: :collection
           end
         end
         resources :bank_accounts
@@ -158,6 +164,8 @@ Idocus::Application.routes.draw do
         put  'update_documents',     :on => :member
         get  'select_bank_accounts', :on => :member
         post 'create_bank_accounts', :on => :member
+        get  'wait_for_user_action', :on => :member
+        put  'update_transaction',   :on => :member
       end
     end
 
@@ -200,6 +208,8 @@ Idocus::Application.routes.draw do
       resource :csv_outputter
     end
     resources :organizations do
+      get  'select_propagation_options', on: :member
+      post 'propagate',                  on: :member
       resources :groups
       resources :journals, as: :account_book_types, controller: 'organization_journals' do
         put 'accept', on: :member
@@ -225,7 +235,9 @@ Idocus::Application.routes.draw do
         post 'propagate', on: :collection
       end
     end
-    resources :invoices
+    resources :invoices do
+      get 'archive', on: :collection
+    end
     resources :pages
     resources :cms_images
     resources :products

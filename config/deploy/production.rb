@@ -21,7 +21,7 @@ end
 namespace :manager do
   desc "Start manager"
   task :start, :roles => :app do
-    run "cd #{current_path}; RAILS_ENV=#{rails_env} lib/daemons/manager_ctl start"
+    run "cd #{current_path}; RAILS_ENV=#{rails_env} bundle exec lib/daemons/manager_ctl start"
   end
 
   desc "Stop manager"

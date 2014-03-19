@@ -1,14 +1,28 @@
 <table class="pull-left">
   <tr>
-    <td class="option">
-      <% if(@model.get('is_delivered') == false): %>
-        <a class="deliver" href="">
-          <i class="icon-refresh"></i>
-        </a>
+    <% if(window.is_ibiza_configured): %>
+      <td class="option">
+        <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
+          <a class="tip deliver" href="" title="Envoyer vers Ibiza">
+            <i class="icon-refresh"></i>
+          </a>
+        <% end %>
+      </td>
+      <% if(@model.get('download_xml') == true): %>
+        <td class="option">
+          <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le fichier .xml">
+            <i class="icon-download-alt"></i>
+          </a>
+        </td>
       <% end %>
+    <% end %>
+    <td class="option">
+      <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="Pièce/Opération N°<%= @model.get('position') %>">
+        <i class="icon-info-sign"></i>
+      </a>
     </td>
     <td class="option">
-      <a class="edit" href="">
+      <a class="tip edit" href="" title="Editer">
         <i class="icon-edit"></i>
       </a>
     </td>

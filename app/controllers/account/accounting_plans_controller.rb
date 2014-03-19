@@ -12,7 +12,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   end
 
   def update
-    if @accounting_plan.update_attributes(params[:accounting_plan])
+    if @accounting_plan.update_attributes(accounting_plan_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_accounting_plan_path(@customer)
     else
@@ -76,5 +76,9 @@ private
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
+  end
+
+  def accounting_plan_params
+    params.require(:accounting_plan).permit(:providers_attributes, :customers_attributes)
   end
 end

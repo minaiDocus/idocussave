@@ -6,7 +6,8 @@ class TempPack
   field :name # ex : TS0001 TS 201301 all
   field :position_counter,             type: Integer, default: 0
   field :document_not_processed_count, type: Integer, default: 0
-  field :document_not_bundled_count,   type: Integer, default: 0
+  field :document_bundling_count,      type: Integer, default: 0
+  field :document_bundle_needed_count, type: Integer, default: 0
   field :is_bundle_needed,             type: Boolean, default: false
 
   validates_presence_of :name
@@ -14,13 +15,15 @@ class TempPack
 
   index :name, unique: true
   index :document_not_processed_count
-  index :document_not_bundled_count
+  index :document_bundling_count
+  index :document_bundle_needed_count
 
   belongs_to :document_delivery
   has_many :temp_documents, dependent: :destroy
 
   scope :not_processed, where: { :document_not_processed_count.gt => 0 }
-  scope :not_bundled,   where: { :document_not_bundled_count.gt => 0 }
+  scope :bundling,      where: { :document_bundling_count.gt => 0 }
+  scope :bundle_needed, where: { :document_bundle_needed_count.gt => 0 }
   scope :not_recently_updated, lambda { where(:updated_at.lt => 5.minutes.ago) }
 
   class << self
@@ -69,7 +72,7 @@ class TempPack
     unless options[:delivery_type] == 'fiduceo' && temp_document.persisted?
       temp_document.content           = file
     end
-    temp_document.position            = next_document_position
+    temp_document.position            = next_document_position        unless temp_document.position
 
     temp_document.delivered_by        = options[:delivered_by]
     temp_document.delivery_type       = options[:delivery_type]
@@ -86,7 +89,11 @@ class TempPack
       if temp_document.fiduceo?
         temp_document.ready
       else
-        is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+        if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
+          temp_document.ocr_needed
+        else
+          is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+        end
       end
     else
       temp_document.unreadable

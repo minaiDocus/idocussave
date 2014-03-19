@@ -16,7 +16,12 @@ class FiduceoProvider
         results = client.banks
         if client.response.code == 200
           results = results[1].map do |bank|
-            _bank = { name: bank.name, type: 'bank' }
+            _bank = {
+              name: bank.name,
+              type: 'bank',
+              wait_for_user: bank.wait_for_user == 'true' ? true : false,
+              wait_for_user_label: bank.wait_for_user_label == 'NONE' ? nil : bank.wait_for_user_label
+            }.with_indifferent_access
             _bank['id']     = bank.provider_id
             _bank['inputs'] = bank.inputs['input']
             _bank
@@ -61,7 +66,12 @@ class FiduceoProvider
         if results.class == Array
           Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 7.days, :compress => true)
           results.map do |provider|
-            _provider = { name: provider.name, type: 'provider' }
+            _provider = {
+              name: provider.name,
+              type: 'provider',
+              wait_for_user: provider.wait_for_user == 'true' ? true : false,
+              wait_for_user_label: provider.wait_for_user_label == 'NONE' ? nil : provider.wait_for_user_label
+            }.with_indifferent_access
             _provider['id'] = provider.id
             _provider['inputs'] = provider.inputs['input']
             _provider

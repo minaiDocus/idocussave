@@ -1,26 +1,27 @@
 = simple_nested_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
-  = f.input :name, label: t('mongoid.models.account_book_type.attributes.label')
-  = f.input :description, label: t('mongoid.models.account_book_type.attributes.description')
-  = f.input :domain, label: t('mongoid.models.account_book_type.attributes.domain'), collection: journal_domain_for_select, select: @journal['domain'], include_blank: false
-  = f.input :entry_type, label: t('mongoid.models.account_book_type.attributes.entry_type'), collection: [[t('mongoid.models.account_book_type.attributes.entry_type_0'),0],[t('mongoid.models.account_book_type.attributes.entry_type_1'),1],[t('mongoid.models.account_book_type.attributes.entry_type_2'),2],[t('mongoid.models.account_book_type.attributes.entry_type_3'),3]], selected: @journal['entry_type'], include_blank: false
-  = f.input :default_account_number, label: t('mongoid.models.account_book_type.attributes.default_account_number')
-  = f.input :account_number, label: t('mongoid.models.account_book_type.attributes.account_number')
-  = f.input :default_charge_account, label: t('mongoid.models.account_book_type.attributes.default_charge_account')
-  = f.input :charge_account, label: t('mongoid.models.account_book_type.attributes.charge_account')
-  = f.input :vat_account, label: t('mongoid.models.account_book_type.attributes.vat_account')
-  = f.input :anomaly_account, label: t('mongoid.models.account_book_type.attributes.anomaly_account')
+  = f.input :name
+  = f.input :pseudonym
+  = f.input :description
+  = f.input :domain, collection: journal_domain_for_select, select: @journal['domain'], include_blank: false
+  = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0],[t('simple_form.labels.account_book_type.entry_type_1'),1],[t('simple_form.labels.account_book_type.entry_type_2'),2],[t('simple_form.labels.account_book_type.entry_type_3'),3]], selected: @journal['entry_type'], allow_blank: false
+  = f.input :default_account_number
+  = f.input :account_number
+  = f.input :default_charge_account
+  = f.input :charge_account
+  = f.input :vat_account
+  = f.input :anomaly_account
   - if @journal.persisted? && @journal.request.action != 'create' && @journal.is_expense_categories_editable
     .control-group
-      %label.control-label= t('mongoid.models.account_book_type.attributes.expense_categories')
+      %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
       .controls
         = f.fields_for :expense_categories do |category|
           .well
             = category.link_to_remove icon_destroy, class: 'btn btn-mini'
-            = category.input :name, label: t('mongoid.models.expense_category.attributes.name')
-            = category.input :description, label: t('mongoid.models.expense_category.attributes.description'), as: :text, input_html: { rows: 3 }
+            = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
+            = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
         = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
-  = f.input :instructions, as: :text, label: t('mongoid.models.account_book_type.attributes.instructions'), input_html: { maxlength: 400 }
-  = f.input :is_default, label: t('mongoid.models.account_book_type.attributes.is_default'), as: :boolean
+  = f.input :instructions, as: :text, input_html: { maxlength: 400 }
+  = f.input :is_default, as: :boolean
   .form-actions
     = f.submit t('actions.submit'), class: 'btn'
     = link_to t('actions.cancel'), account_organization_journals_path, class: 'btn'

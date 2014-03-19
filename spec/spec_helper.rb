@@ -14,6 +14,11 @@ Spork.prefork do
   
   # This file is copied to spec/ when you run 'rails generate rspec:install'
   ENV["RAILS_ENV"] ||= 'test'
+
+  # Set webmock, that is used by vcr, to allow net connections BEFORE we require the environment file
+  require 'webmock'
+  WebMock.disable_net_connect!(:allow_localhost => true) # or whatever method you want WebMock to allow connections
+  
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
   require 'capybara/rails'
@@ -40,6 +45,13 @@ Spork.prefork do
     # examples within a transaction, comment the following line or assign false
     # instead of true.
     # config.use_transactional_fixtures = false
+
+    config.treat_symbols_as_metadata_keys_with_true_values = true
+    config.around(:each, :vcr) do |example|
+      name = example.metadata[:full_description].split(/\s+/, 2).join("/").underscore.gsub(/[^\w\/]+/, "_")
+      options = example.metadata.slice(:record, :match_requests_on).except(:example_group)
+      VCR.use_cassette(name, options) { example.call }
+    end
     
     config.before(:suite) do
       DatabaseCleaner.orm = "mongoid"

@@ -12,6 +12,7 @@
           %td!= client.info
           %td!= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
           %td!= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
+    = check_box_tag 'one_workshop_labels_page_per_customer', 1, false, class: 'pull-left'
+    = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'margin2left'
   .modal-footer
     = submit_tag t('mongoid.models.file_sending_kit.actions.generate'), class: 'btn'
-

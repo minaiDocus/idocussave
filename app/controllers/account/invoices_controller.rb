@@ -4,9 +4,16 @@ class Account::InvoicesController < Account::AccountController
     filepath = invoice.content.path params[:style]
 
     owner = invoice.user
-    current_user.extend_organization_role
+    organization = invoice.organization
+    @user.extend_organization_role
     authorized = false
-    authorized = true if current_user == owner || current_user.is_admin || current_user.my_organization == owner.organization || current_user.customers.include?(owner)
+    if owner && (@user == owner || @user.my_organization == owner.organization || @user.customers.include?(owner))
+      authorized = true 
+    elsif organization && @user.my_organization == organization
+      authorized = true
+    elsif @user.is_admin
+      authorized = true
+    end
     if File.exist?(filepath) && authorized
       filename = File.basename filepath
       type = invoice.content_content_type || 'application/pdf'

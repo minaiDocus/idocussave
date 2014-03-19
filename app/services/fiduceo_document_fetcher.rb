@@ -4,6 +4,7 @@ class FiduceoDocumentFetcher
       _retrievers = Array(retrievers).presence || FiduceoRetriever.active.providers.scheduled
       _retrievers.each do |retriever|
         if (retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
+          retriever.schedule if retriever.error?
           create_transaction(retriever)
         end
       end
@@ -54,6 +55,9 @@ class FiduceoDocumentFetcher
       if client.response.code == 200
         transaction.status = result['transactionStatus']
         transaction.events = result['transactionEvents']
+        if result['waitForUserLabel']
+          transaction.wait_for_user_labels = result['waitForUserLabel'].split('||')
+        end
         if result['retrievedDocuments']
           transaction.retrieved_document_ids = Array(result['retrievedDocuments']['documentId'])
         end
@@ -62,6 +66,12 @@ class FiduceoDocumentFetcher
       else
         nil
       end
+    end
+
+    def send_additionnal_information(transaction, answers)
+      client = Fiduceo::Client.new transaction.user.fiduceo_id
+      client.put_transaction transaction.fiduceo_id, answers.join('||')
+      client.response.code == 200
     end
 
     def fetch_documents(retriever)

@@ -16,6 +16,21 @@ class Organization
   # Misc
   field :is_test, type: Boolean, default: false
 
+  field :file_naming_policy,           type: String,  default: ':customerCode_:journal_:period_:position'
+  field :is_file_naming_policy_active, type: Boolean, default: false
+
+  validates_length_of :file_naming_policy, maximum: 80
+  validates_presence_of :file_naming_policy
+  validate :file_naming_policy_elements
+
+  field :authd_prev_period,            type: Integer, default: 1
+  field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
+  field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3
+
+  validates :authd_prev_period, numericality: { :greater_than_or_equal_to => 0 }
+  validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
+  validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
+
   validates_presence_of :name, :leader_id
   validates_uniqueness_of :name
   validates_length_of :code, in: 1..4
@@ -110,9 +125,31 @@ class Organization
     CsvOutputter.create(organization_id: self.id)
   end
 
+  def copy_to_users(user_ids)
+    users = User.find user_ids
+    User.observers.disable :all do
+      users.each do |user|
+        user.authd_prev_period            = self.authd_prev_period
+        user.auth_prev_period_until_day   = self.auth_prev_period_until_day
+        user.auth_prev_period_until_month = self.auth_prev_period_until_month
+        user.save
+      end
+    end
+  end
+
+  def self.valid_file_naming_policy_elements
+    %w(:customerCode :journal :period :position :thirdParty :date - _ \ )
+  end
+
 private
 
   def ensure_leader_is_member
     members << leader unless members.include?(leader)
+  end
+
+  def file_naming_policy_elements
+    if file_naming_policy.gsub(/(#{Organization.valid_file_naming_policy_elements.join('|')})/, '').present?
+      errors.add(:file_naming_policy, :invalid)
+    end
   end
 end

@@ -5,9 +5,14 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
   className: 'piece'
 
   events:
-    'click a.selectable': 'select'
-    'click a.edit': 'edit'
-    'click a.deliver': 'deliver'
+    'mouseenter a.details': 'showDetails'
+    'mouseleave a.details': 'hideDetails'
+    'mouseenter a.tip':     'showTip'
+    'mouseleave a.tip':     'hideTip'
+    'click a.details':      'preventDefault'
+    'click a.selectable':   'select'
+    'click a.edit':         'edit'
+    'click a.deliver':      'deliver'
 
   initialize: (options) ->
     @packName = options.packName
@@ -15,7 +20,7 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     this
 
   render: ->
-    @$el.html(@template(model: @model, packName: @packName))
+    @$el.html(@template(model: @model, packName: @packName, details: @details()))
     this
 
   select: ->
@@ -35,7 +40,40 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
 
   deliver: (e) ->
     e.preventDefault()
-    @model.deliver()
-    @model.set('is_delivered', true)
-    @render()
+    if confirm("Vous êtes sur le point d'envoyer des écritures dans Ibiza. Etes-vous sûr ?")
+      $(e.currentTarget).tooltip('hide')
+      @model.deliver()
+      @model.set('is_delivered', true)
+      @render()
     this
+
+  details: ->
+    content = "<table class=\"table table-striped table-condensed margin0bottom\">"
+    content += "<tr><td><b>Date de création :</b></td><td>" + @model.get('created_at') + "</td></tr>"
+    content += "<tr><td><b>Date de modification :</b></td><td>" + @model.get('updated_at') + "</td></tr>"
+    if window.is_ibiza_configured
+      content += "<tr><td><b>Date du dernier envoi dans Ibiza :</b></td><td>"
+      if @model.get('delivery_tried_at') != null
+        content += @model.get('delivery_tried_at')
+      content += "</td></tr>"
+      content += "<tr><td colspan=\"2\"><b>Message d'erreur d'envoi dans Ibiza :</b><br>"
+      if @model.get('delivery_message') != null
+        content += @model.get('delivery_message')
+      content += "</td></tr>"
+    content += "</table>"
+    content
+
+  showDetails: (e) ->
+    this.$('.details').popover('show');
+
+  hideDetails: (e) ->
+    this.$('.details').popover('hide');
+
+  preventDefault: (e) ->
+    e.preventDefault()
+
+  showTip: (e) ->
+    $(e.currentTarget).tooltip('show')
+
+  hideTip: (e) ->
+    $(e.currentTarget).tooltip('hide')

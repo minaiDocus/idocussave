@@ -660,6 +660,41 @@
 
     // do_qtip(["left bottom"],["top right"],["#documentslist"],["#help1"],["jtools"]);
 
+    if ($("#file_code").length > 0) {
+      file_upload_params = $('#fileupload').data('params')
+
+      function file_upload_update_fields(code) {
+        var account_book_types = file_upload_params[code]['journals'];
+        var content = '';
+        for (var i=0; i<account_book_types.length; i++) {
+          content = content + "<option value=" + account_book_types[i] + ">" + account_book_types[i] + "</option>";
+        }
+        $('#file_account_book_type').html(content);
+
+        var periods = file_upload_params[code]['periods'];
+        content = '';
+        for (var i=0; i<periods.length; i++) {
+          content = content + "<option value=" + periods[i][1] + ">" + periods[i][0] + "</option>";
+        }
+        $('#file_prev_period_offset').html(content);
+
+        if (file_upload_params[code]['message'] != undefined) {
+          $('.prev_period_offset .help-block .period').html(file_upload_params[code]['message']['period']);
+          $('.prev_period_offset .help-block .date').html(file_upload_params[code]['message']['date']);
+          $('.prev_period_offset .help-block').show();
+        } else {
+          $('.prev_period_offset .help-block').hide();
+        }
+      }
+
+      if($("#file_code").val() != null)
+        file_upload_update_fields($("#file_code").val());
+
+      $("#file_code").on('change', function() {
+        file_upload_update_fields($(this).val());
+      });
+    }
+
   });
   
 })(jQuery);

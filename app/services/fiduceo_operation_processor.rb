@@ -2,6 +2,7 @@
 class FiduceoOperationProcessor
   def initialize(user)
     @user = user
+    @ibiza = user.organization.ibiza
   end
 
   def process
@@ -13,6 +14,8 @@ class FiduceoOperationProcessor
         operation.account_id
       end
 
+      preseizures = []
+      pack_reports = []
       grouped_operations.each do |account_id, operations|
         bank_account = @user.bank_accounts.valid.select do |bank_account|
           bank_account.fiduceo_id == account_id
@@ -20,17 +23,20 @@ class FiduceoOperationProcessor
         if bank_account
           operations.sort! { |a,b| a.date <=> b.date }
           pack_report = find_or_create_pack_report(bank_account.journal)
-          preseizures_count = pack_report.preseizures.count
-
-          operations.each_with_index do |operation, index|
+          pack_reports << pack_report
+          counter = pack_report.preseizures.count
+          operations.each do |operation|
             preseizure = find_or_initialize_preseizure(operation.id)
             unless preseizure.persisted?
+              counter += 1
               preseizure.name = pack_report.name
               preseizure.date = operation.date_op
-              preseizure.position = preseizures_count + index + 1
+              preseizure.position = counter
               preseizure.observation = [operation.label, operation.category].join(' - ')
               preseizure.category_id = operation.category_id
+              preseizure.is_locked = true
               preseizure.save
+              preseizures << preseizure
               pack_report.preseizures << preseizure
               
               ####################### 1 #######################
@@ -75,6 +81,24 @@ class FiduceoOperationProcessor
           end
         end
       end
+      if preseizures.any?
+        ids = preseizures.map(&:id)
+        grouped_preseizures = preseizures.group_by do |preseizure|
+          preseizure.report
+        end
+        grouped_preseizures.each do |report, preseizures|
+          report.is_delivered = false
+          report.delivery_tried_at = nil
+          report.delivery_message = ''
+          report.save
+          if @ibiza && @ibiza.is_configured? && @ibiza.is_auto_deliver
+            @ibiza.export(preseizures)
+          end
+        end
+        Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
+      end
+      ids = pack_reports.map(&:id)
+      Pack::Report.where(:_id.in => ids).update_all(is_locked: false)
     end
   end
 
@@ -99,6 +123,7 @@ private
       pack_report.save
       pack_report
     end
+    pack_report.update_attribute(:is_locked, true)
     pack_report
   end
 

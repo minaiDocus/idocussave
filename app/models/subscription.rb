@@ -15,7 +15,7 @@ class Subscription
   field :number,                type: Integer
   field :payment_type,          type: Integer, default: PREPAYED
   field :price_in_cents_wo_vat, type: Integer, default: 0
-  field :tva_ratio,             type: Float,   default: 1.196
+  field :tva_ratio,             type: Float,   default: 1.2
   
   validates_uniqueness_of :number
   

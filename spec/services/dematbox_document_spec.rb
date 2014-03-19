@@ -12,7 +12,7 @@ describe DematboxDocument do
       end
 
       @params = {
-        'virtual_box_id' => '1',
+        'virtual_box_id' => 'TS0001',
         'service_id' => '1',
         'improved_scan' => @content64,
         'doc_id' => '1',
@@ -20,9 +20,9 @@ describe DematboxDocument do
         'text' => nil
       }
 
-      user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryGirl.create(:user, code: 'TS0001')
       dematbox = Dematbox.new(number: 1)
-      dematbox.user = user
+      dematbox.user = @user
       service = DematboxSubscribedService.new
       service.pid = '1'
       service.is_for_current_period = true
@@ -59,50 +59,101 @@ describe DematboxDocument do
         end
       end
 
-      context 'when previous period is valid' do
-        before(:all) do
-          @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+      context 'when previous period is accepted' do
+        context 'when monthly' do
+          before(:all) do
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+          end
+
+          subject { @dematbox_document }
+
+          it { should be_valid }
+
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_201212.pdf') }
+          end
         end
 
-        subject { @dematbox_document }
+        context 'when quarterly' do
+          before(:all) do
+            scan_subscription = @user.find_or_create_scan_subscription
+            scan_subscription.update_attribute(:period_duration, 3)
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            scan_subscription.periods.destroy_all
+          end
 
-        it { should be_valid }
+          subject { @dematbox_document }
 
-        describe 'temp_document' do
-          subject { @dematbox_document.temp_document }
+          it { should be_valid }
 
-          it { should be_persisted }
-          its(:content_file_name) { should eq('TS0001_TS_201212.pdf') }
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_2012T4.pdf') }
+          end
         end
       end
 
-      context 'when previous period is not valid' do
-        before(:all) do
-          Timecop.return
-          Timecop.freeze(Time.local(2013,1,11))
-          @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+      context 'when previous period is not accepted' do
+        context 'when monthly' do
+          before(:all) do
+            @user.auth_prev_period_until_day = 10
+            @user.save
+            Timecop.freeze(Time.local(2013,1,11))
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+          end
+
+          after(:all) do
+            Timecop.freeze(Time.local(2013,1,1))
+          end
+
+          subject { @dematbox_document }
+
+          it { should be_valid }
+
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+          end
         end
 
-        after(:all) do
-          Timecop.return
-          Timecop.freeze(Time.local(2013,1,1))
-        end
+        context 'when quarterly' do
+          before(:all) do
+            @user.auth_prev_period_until_day = 10
+            @user.save
+            Timecop.freeze(Time.local(2013,1,11))
+            scan_subscription = @user.find_or_create_scan_subscription
+            scan_subscription.update_attribute(:period_duration, 3)
+            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            scan_subscription.periods.destroy_all
+          end
 
-        subject { @dematbox_document }
+          after(:all) do
+            Timecop.freeze(Time.local(2013,1,1))
+          end
 
-        it { should be_valid }
+          subject { @dematbox_document }
 
-        describe 'temp_document' do
-          subject { @dematbox_document.temp_document }
+          it { should be_valid }
 
-          it { should be_persisted }
-          its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+          describe 'temp_document' do
+            subject { @dematbox_document.temp_document }
+
+            it { should be_persisted }
+            its(:content_file_name) { should eq('TS0001_TS_2013T1.pdf') }
+          end
         end
       end
 
       context 'when virtual_box_id is not valid' do
         before(:all) do
-          params = @params.merge({ 'virtual_box_id' => '2' })
+          params = @params.merge({ 'virtual_box_id' => 'TS0002' })
           @dematbox_document = DematboxDocument.new(params)
         end
 

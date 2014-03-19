@@ -25,6 +25,7 @@ class AccountBookType
   accepts_nested_attributes_for :expense_categories, allow_destroy: true
   
   field :name,                           type: String
+  field :pseudonym
   field :description,                    type: String,  default: ""
   field :position,                       type: Integer, default: 0
   field :entry_type,                     type: Integer, default: 0
@@ -58,6 +59,10 @@ class AccountBookType
 
   def info
     [self.name, self.description].join(' ')
+  end
+
+  def get_name
+    pseudonym.presence || name
   end
 
   def compta_processable?
@@ -100,6 +105,7 @@ class AccountBookType
   def requestable_on
     [
       :name,
+      :pseudonym,
       :description,
       :position,
       :domain,
@@ -139,6 +145,7 @@ private
         requested_clients.delete(user)
       end
       request.update_attribute(:attribute_changes, {})
+      request.update_relation_action_status!
     end
   end
 

@@ -113,8 +113,8 @@ private
 
   def search(contains)
     groups = is_leader? ? @organization.groups : @user.groups
-    groups = groups.where(:name => /#{contains[:name]}/i) unless contains[:name].blank?
-    groups = groups.where(:description => /#{contains[:description]}/i) unless contains[:description].blank?
+    groups = groups.where(:name => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
+    groups = groups.where(:description => /#{Regexp.quote(contains[:description])}/i) unless contains[:description].blank?
     groups
   end
 end

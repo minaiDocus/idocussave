@@ -6,6 +6,7 @@ class Invoice
   include Mongoid::Slug
   
   field :number,                type: String
+  field :vat_ratio,             type: Float,   default: 1.2
   field :amount_in_cents_w_vat, type: Integer
   field :requested_at,          type: Date
   field :received_at,           type: Date
@@ -35,8 +36,26 @@ class Invoice
   belongs_to :subscription
   belongs_to :period, class_name: 'Scan::Period'
 
-  def self.find_by_number(number)
-    self.first conditions: { number: number }
+  class << self
+    def find_by_number(number)
+      self.first conditions: { number: number }
+    end
+
+    def archive(time=Time.now)
+      file_path = archive_path archive_name(time - 1.month)
+      invoices = Invoice.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month)
+      files_path = invoices.map { |e| e.content.path }
+      DocumentTools.archive(file_path, files_path)
+    end
+
+    def archive_name(time=Time.now)
+      "invoices_#{time.strftime('%Y%m')}.zip"
+    end
+
+    def archive_path(file_name)
+      _file_name = File.basename file_name
+      File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
+    end
   end
 
   def create_pdf
@@ -54,12 +73,10 @@ class Invoice
     time = self.created_at - 1.month
     if organization
       scan_subscription = organization.scan_subscriptions.current
-      periods = Scan::Period.any_in(subscription_id: Scan::Subscription.any_in(:user_id => organization.customers.centralized.active_at(time).map { |e| e.id }).not_in(_id: [scan_subscription.id]).distinct(:_id)).
-          where(:start_at.lte => time, :end_at.gte => time).
-          select{ |period| period.end_at.month == time.month }
+      periods = Scan::Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
+        where(:start_at.lte => time, :end_at.gte => time)
 
-      @total += periods.sum(&:price_in_cents_wo_vat)
-
+      @total = PeriodService.total_price_in_cents_wo_vat(time, periods)
       @data = [
           ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
           ["Nombre de clients actifs : #{periods.count}",""]
@@ -78,17 +95,38 @@ class Invoice
       scan_subscription = user.scan_subscriptions.last
       period = scan_subscription.find_or_create_period(time)
       options = period.product_option_orders
-      options.each do |option|
-        if option.position != -1
-          @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+      if period.duration == 1 || !period.is_charged_several_times
+        options.each do |option|
+          if option.position != -1
+            @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
+          end
+        end
+        @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
+        @total += period.price_in_cents_wo_vat
+      elsif period.duration == 3 && period.is_charged_several_times
+        @total = PeriodService.total_price_in_cents_wo_vat(time, [period])
+        options.each do |option|
+          if option.position != -1 && option.duration != 1
+            price = option.price_in_cents_wo_vat / 3
+            @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
+          end
+        end
+        if time.month == time.beginning_of_quarter.month
+          options.each do |option|
+            if option.duration == 1
+              price = option.price_in_cents_wo_vat
+              @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
+            end
+          end
+        end
+        if time.month == time.end_of_quarter.month
+          @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         end
       end
-      @data << ["Dépassement",format_price(period.price_in_cents_of_total_excess) + " €"]
-      @total += period.price_in_cents_wo_vat
       @address = user.addresses.for_billing.first
     end
 
-    self.amount_in_cents_w_vat = (@total * 1.196).round
+    self.amount_in_cents_w_vat = (@total * self.vat_ratio).round
 
     Prawn::Document.generate "#{Rails.root}/tmp/#{self.number}.pdf" do |pdf|
       pdf.font "Helvetica"
@@ -99,7 +137,7 @@ class Invoice
       pdf.default_leading 4
       header_data = [
         [
-          "IDOCUS / GREVALIS\n5, rue de Douai\n75009 Paris",
+          "IDOCUS / GREVALIS\n6, rue de Saint Petersbourg\n75008 Paris.",
           "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
           "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
         ]
@@ -167,9 +205,9 @@ class Invoice
 
       pdf.move_down 7
       pdf.float do
-        pdf.text_box "TVA (19.6%)", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
+        pdf.text_box "TVA (20%)", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.196 - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * self.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
 
@@ -177,7 +215,7 @@ class Invoice
       pdf.float do
         pdf.text_box "Total TTC", at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * 1.196) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * self.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_color "000000"
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
@@ -203,12 +241,13 @@ class Invoice
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",")
   end
-  
+
 private
   def set_number
     unless self.number
-      txt = DbaSequence.next("invoice_"+Time.now.strftime("%Y%m"))
-      self.slug = self.number = Time.now.strftime("%Y%m") + ("%0.4d" % txt)
+      prefix = 1.month.ago.strftime('%Y%m')
+      txt = DbaSequence.next('invoice_' + prefix)
+      self.slug = self.number = prefix + ("%0.4d" % txt)
     end
   end
 

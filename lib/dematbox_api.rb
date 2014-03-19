@@ -32,10 +32,10 @@ class DematboxApi
       end
     end
 
-    def subscribe(number, services, pairing_code=nil)
+    def subscribe(code, services, pairing_code=nil)
       message = {
         'ser:operatorId' => DematboxConfig::OPERATOR_ID,
-        'ser:virtualBoxId' => number,
+        'ser:virtualBoxId' => code,
         'ser:services' => { service: services }
       }
       message.merge!({ 'ser:pairingCode' => pairing_code }) if pairing_code.present?
@@ -45,10 +45,10 @@ class DematboxApi
       "[#{e.class}] #{e.message}"
     end
 
-    def unsubscribe(number)
+    def unsubscribe(code)
       message = {
         'ser:operatorId' => DematboxConfig::OPERATOR_ID,
-        'ser:virtualBoxId' => number
+        'ser:virtualBoxId' => code
       }
       response = client.call :service_unsubscribe, message: message
       response.body[:service_unsubscribe_response][:error_return]
@@ -56,10 +56,10 @@ class DematboxApi
       "[#{e.class}] #{e.message}"
     end
 
-    def subscribed(number)
+    def subscribed(code)
       message = {
         'ser:operatorId' => DematboxConfig::OPERATOR_ID,
-        'ser:virtualBoxId' => number
+        'ser:virtualBoxId' => code
       }
       response = client.call :get_service_subscribed, message: message
       response.body[:get_service_subscribed_response][:services][:service]

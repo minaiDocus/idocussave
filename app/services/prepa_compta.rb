@@ -5,7 +5,7 @@ class PrepaCompta
   class DocumentBundler
     class << self
       def prepare
-        temp_packs = TempPack.not_bundled.not_recently_updated
+        temp_packs = TempPack.bundle_needed.not_recently_updated
         if temp_packs.any?
           pack_names = []
           documents = []
@@ -95,7 +95,10 @@ class PrepaCompta
           temp_document.dematbox_box_id     = original_temp_document.dematbox_box_id     if original_temp_document.dematbox_box_id
           temp_document.dematbox_service_id = original_temp_document.dematbox_service_id if original_temp_document.dematbox_service_id
           temp_document.dematbox_text       = original_temp_document.dematbox_text       if original_temp_document.dematbox_text
-          temp_document.ready if temp_document.save
+          if temp_document.save
+            temp_document.ready
+            temp_documents.each(&:bundled)
+          end
         end
       end
 

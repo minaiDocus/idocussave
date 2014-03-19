@@ -7,12 +7,13 @@ class Pack::Piece
   field :name
   field :content_file_name
   field :content_content_type
-  field :content_file_size,    type: Integer
-  field :content_updated_at,   type: Time
-  field :is_a_cover,           type: Boolean, default: false
+  field :content_file_size,          type: Integer
+  field :content_updated_at,         type: Time
+  field :is_a_cover,                 type: Boolean, default: false
   field :origin
-  field :position,             type: Integer
+  field :position,                   type: Integer
   field :token
+  field :is_awaiting_pre_assignment, type: Boolean, default: false
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 
@@ -88,6 +89,8 @@ class Pack::Piece
       filename = DocumentTools.file_name(self.name)
       content_path = (self.content.queued_for_write[:original].presence || self.content).path
       FileUtils.cp(content_path, File.join([path,filename]))
+      self.is_awaiting_pre_assignment = true
+      self.save if persisted?
     end
   end
 end

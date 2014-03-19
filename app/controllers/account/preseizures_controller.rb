@@ -4,12 +4,47 @@ class Account::PreseizuresController < Account::OrganizationController
   before_filter :load_preseizure, except: :index
 
   def index
-    report = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first.try(:report)
-    report = @user.organization.reports.where(:name => /#{params[:name].gsub('_',' ')}/).first unless report
-    if report
-      @preseizures = report.preseizures.by_position.page(params[:page]).per(params[:per_page])
+    if params[:name].present?
+      report = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first.try(:report)
+      report = @user.organization.reports.where(:name => /#{params[:name].gsub('_',' ')}/).first unless report
+      if report
+        @preseizures = report.preseizures.by_position.page(params[:page]).per(params[:per_page])
+      else
+        @preseizures = []
+      end
     else
-      @preseizures = []
+      redirect_to root_path
+    end
+  end
+
+  def show
+    if params[:format] == 'xml'
+      if current_user.is_admin
+        report = @preseizure.report
+        position = "%0#{DocumentProcessor::POSITION_SIZE}d" % @preseizure.position
+        file_name = "#{report.name.sub(' ','_')}_#{position}.xml"
+        ibiza = @organization.ibiza
+        if ibiza && report.user.ibiza_id
+          exercice = ibiza.exercice(report.user.ibiza_id, report.name)
+          if exercice
+            data = IbizaAPI::Utils.to_import_xml(exercice['end'], [@preseizure], ibiza.description, ibiza.description_separator)
+          else
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+          end
+        else
+          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+        end
+      else
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
+      end
+    end
+    respond_to do |format|
+      format.html do
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id])
+      end
+      format.xml do
+        send_data(data, type: 'application/xml', filename: file_name)
+      end
     end
   end
 
@@ -21,7 +56,8 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_delivered
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_locked && !@preseizure.is_delivered
+      @preseizure.update_attribute(:is_locked, true)
       @user.organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
         export([@preseizure])

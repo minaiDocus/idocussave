@@ -32,4 +32,20 @@ node :amount do |preseizure|
   format_price_00 preseizure.amount_in_cents rescue nil
 end
 
-attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type
+node :created_at do |preseizure|
+  I18n.l(preseizure.created_at)
+end
+
+node :updated_at do |preseizure|
+  I18n.l(preseizure.updated_at)
+end
+
+node :delivery_tried_at do |preseizure|
+  I18n.l(preseizure.delivery_tried_at) if preseizure.delivery_tried_at
+end
+
+node :download_xml do |preseizure|
+  current_user.is_admin
+end
+
+attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked, :delivery_message

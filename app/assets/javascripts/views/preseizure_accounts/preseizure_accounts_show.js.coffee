@@ -5,7 +5,9 @@ class Idocus.Views.PreseizureAccountsShow extends Backbone.View
   tagName: 'tr'
 
   events:
-    'click a.edit': 'edit'
+    'mouseenter a.tip':   'showTip'
+    'mouseleave a.tip':   'hideTip'
+    'click a.edit':       'edit'
     'click a.edit_entry': 'edit_entry'
 
   initialize: ->
@@ -41,3 +43,9 @@ class Idocus.Views.PreseizureAccountsShow extends Backbone.View
       form.parentModel.save()
     bootstrapModal.open()
     this
+
+  showTip: (e) ->
+    $(e.currentTarget).tooltip('show')
+
+  hideTip: (e) ->
+    $(e.currentTarget).tooltip('hide')

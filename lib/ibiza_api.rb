@@ -8,6 +8,17 @@ module IbizaAPI
           preseizure.report.journal
         elsif k == 'piece_name' && preseizure.piece
           preseizure.piece.name
+        elsif k == 'date' && preseizure[k]
+          if preseizure.user.is_computed_date_used
+            result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
+            if result
+              preseizure.period_date.in_time_zone('Paris').to_date.to_s
+            else
+              preseizure.date.in_time_zone('Paris').to_date.to_s
+            end
+          else
+            preseizure.date.in_time_zone('Paris').to_date.to_s
+          end
         else
           preseizure[k].presence
         end
@@ -53,7 +64,7 @@ module IbizaAPI
           }
         }
       end
-      builder.to_xml
+      builder.to_xml.gsub('&', '&amp;') # TODO use better regex
     end
   end
 
@@ -118,14 +129,15 @@ module IbizaAPI
 
       def original=(original)
         @original = original
-        if original.headers['Content-Type'].split(';')[0] == 'application/xml'
+        if original.headers['Content-Type'].present? && original.headers['Content-Type'].split(';')[0] == 'application/xml'
           hash = Hash.from_xml(original.body).first
           response = hash.last['response']
           @result = response['result']
           @datetime = response['datetime'].to_time
           @message = response['message'].gsub('&lt;','<').gsub('&gt;','>') if response['message'].present?
           if hash.last['data']
-            @data_type, @data = hash.last['data'].first
+            @data_type = hash.last['data'].keys.last
+            @data = hash.last['data'][@data_type]
             @data = [@data] if @data.is_a? Hash
           end
         else
@@ -134,7 +146,7 @@ module IbizaAPI
       end
 
       def success?
-        @result.downcase == 'success'
+        @result.try(:downcase) == 'success'
       end
     end
 

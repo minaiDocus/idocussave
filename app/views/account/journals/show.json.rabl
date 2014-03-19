@@ -1,6 +1,6 @@
 object @journal
 
-attributes :id, :slug, :name, :description, :entry_type, :default_account_number, :account_number, :default_charge_account, :charge_account, :vat_account, :anomaly_account, :is_default, :client_ids, :requested_client_ids
+attributes :id, :slug, :name, :pseudonym, :description, :entry_type, :default_account_number, :account_number, :default_charge_account, :charge_account, :vat_account, :anomaly_account, :is_default, :client_ids, :requested_client_ids
 
 node :request_type do |journal|
   case journal.request.status

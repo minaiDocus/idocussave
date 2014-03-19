@@ -9,12 +9,11 @@ module Admin::ReportingHelper
   end
 
   def periods_at(time, organization, user_ids)
-    end_of_month = time.end_of_month
     periods = Scan::Period.any_of(
                                   { :user_id.in => user_ids },
                                   { organization_id: organization.id }
                                  ).
-                           where(end_at: end_of_month).entries
+                           where(:start_at.lte => time, :end_at.gte => time).entries
     [
       periods.select { |e| e.is_centralized },
       periods.select { |e| !e.is_centralized }

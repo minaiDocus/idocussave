@@ -312,8 +312,29 @@ propagate_csv_outputter = ->
     success: (data) ->
       $('#propagate_csv_outputter .content').html(data)
 
+propagate_period_options = ->
+  $('#propagate_period_options .content').html('')
+  $.ajax
+    url: '/admin/organizations/' + organization_id + '/select_propagation_options',
+    data: '',
+    datatype: 'json',
+    type: 'GET'
+    success: (data) ->
+      $('#propagate_period_options .content').html(data)
+
 jQuery ->
   window.organization_id = $('#organization').data('slug')
+
+  $('#organization_authd_prev_period').on 'change', ->
+    if $(this).val() != '1'
+      $('#organization_auth_prev_period_until_day').val(0)
+      $('#organization_auth_prev_period_until_month').val(0)
+
+  $('#organization_auth_prev_period_until_day').on 'change', ->
+    $('#organization_authd_prev_period').val(1)
+
+  $('#organization_auth_prev_period_until_month').on 'change', ->
+    $('#organization_authd_prev_period').val(1)
 
   $('#organization_leader_id').tokenInput "/admin/users/search_by_code.json?full_info=true",
     theme: "facebook",
@@ -367,3 +388,6 @@ jQuery ->
 
     $('#propagate_csv_outputter').on 'show', ->
       propagate_csv_outputter()
+
+    $('#propagate_period_options').on 'show', ->
+      propagate_period_options()

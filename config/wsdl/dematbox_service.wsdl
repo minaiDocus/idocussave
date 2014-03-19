@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="WSFrontalImplService" targetNamespace="http://serviceImpl.operator.frontal.dematbox.sagemcom.com/" xmlns:ns1="http://service.frontal.dematbox.sagemcom.com/" xmlns:ns3="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://serviceImpl.operator.frontal.dematbox.sagemcom.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:import location="http://preprod.dematbox.sagemcom.com/Frontal/WS/FrontalService?wsdl=IWSFrontal.wsdl" namespace="http://service.frontal.dematbox.sagemcom.com/">
+    </wsdl:import>
+  <wsdl:binding name="WSFrontalImplServiceSoapBinding" type="ns1:IWSFrontal">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ServiceUnsubscribe">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ServiceUnsubscribe">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ServiceUnsubscribeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetServiceList">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="GetServiceList">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetServiceListResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetServiceSubscribed">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="GetServiceSubscribed">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetServiceSubscribedResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ServiceSubscribe">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ServiceSubscribe">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ServiceSubscribeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UploadNotification">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="UploadNotification">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UploadNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PutServiceSubscribe">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="PutServiceSubscribe">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="PutServiceSubscribeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SoapFaultException">
+        <soap:fault name="SoapFaultException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSFrontalImplService">
+    <wsdl:port binding="tns:WSFrontalImplServiceSoapBinding" name="WSFrontalImplPort">
+      <soap:address location="http://preprod.dematbox.sagemcom.com/Frontal/WS/FrontalService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -58,7 +58,9 @@ namespace :maintenance do
         organization.customers.active.each do |customer|
           begin
             subscription = customer.scan_subscriptions.current
-            subscription.remove_not_reusable_options
+            if subscription.period_duration == 1 || Time.now.month == Time.now.beginning_of_quarter.month
+              subscription.remove_not_reusable_options
+            end
             subscription.find_or_create_period Time.now
           rescue
             puts "Can't generate period for user #{customer.info}, probably lack of scan_subscription entry."
@@ -101,6 +103,7 @@ namespace :maintenance do
           end
         end
       end
+      Invoice.archive
       puts "Task end at #{Time.now}"
       puts '##########################################################################################'
     end

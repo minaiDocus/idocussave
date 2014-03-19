@@ -45,7 +45,7 @@ public
   end
 
   def price_in_cents_w_vat
-    price_in_cents_wo_vat * 1.196
+    price_in_cents_wo_vat * 1.2
   end
   
   def group_title

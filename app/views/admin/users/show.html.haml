@@ -8,7 +8,7 @@
 
       .pull-right
         = link_to 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
-        - if @user.request.status == 'create'
+        - if @user.request.status == 'create' || @user.is_disabled
           = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger margin3left'
           = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
 
@@ -26,6 +26,10 @@
           - if @user.organization && @user.organization.collaborators.include?(@user)
             %table.table.table-striped.table-bordered.table-condensed
               %tbody
+                %tr
+                  %th= t('mongoid.models.organization_rights.attributes.is_collaborators_management_authorized')
+                  %td.value
+                    = check_box_tag 'user[organization_rights][is_collaborators_management_authorized]', 1, @user.find_or_create_organization_rights.is_collaborators_management_authorized
                 %tr
                   %th= t('mongoid.models.organization_rights.attributes.is_customers_management_authorized')
                   %td.value

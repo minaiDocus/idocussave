@@ -56,6 +56,20 @@
               %h3.aligncenter Abonnement
               %hr
               %h4.aligncenter.margin1bottom
+                Options des périodes
+              %table.table.table-striped.table-condensed.table-bordered
+                %tbody
+                  %tr
+                    %th= t('mongoid.models.user.attributes.authd_prev_period')
+                    %td= @customer.authd_prev_period
+                  %tr
+                    %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
+                    %td= @customer.auth_prev_period_until_day
+              .row-fluid.margin1top
+                .span12
+                  = link_to t('actions.edit'), edit_period_options_account_organization_customer_path(@customer), class: 'btn pull-right'
+              %hr
+              %h4.aligncenter.margin1bottom
                 Configuration actuelle
                 = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
               = render partial: 'options'
@@ -127,3 +141,4 @@
                       = f.submit t('actions.submit'), class: 'btn'
                   - if @organization.ibiza.try(:token).blank?
                     = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
+                    = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'

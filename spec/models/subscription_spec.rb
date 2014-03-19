@@ -30,12 +30,12 @@ describe Subscription do
     it { subject[1].should eq(@subscription1.start_at) }
   end
   
-  it "#price_in_cents_w_vat should equal 1794" do
-    @subscription1.price_in_cents_w_vat.should eq(1794)
+  it "#price_in_cents_w_vat should equal 1800" do
+    @subscription1.price_in_cents_w_vat.should eq(1800)
   end 
   
-  it "#total_vat should equal 294" do
-    @subscription1.total_vat.should eq(294)
+  it "#total_vat should equal 300" do
+    @subscription1.total_vat.should eq(300)
   end
   
   it "#update_price should equal 1500" do
@@ -50,8 +50,8 @@ describe Subscription do
     @subscription1.products_total_price_in_cents_wo_vat.should eq(1500)
   end
   
-  it "#products_total_price_in_cents_w_vat should equal 1794" do
-    @subscription1.products_total_price_in_cents_w_vat.should eq(1794)
+  it "#products_total_price_in_cents_w_vat should equal 1800" do
+    @subscription1.products_total_price_in_cents_w_vat.should eq(1800)
   end
   
   it ".current should equal subscription 1" do

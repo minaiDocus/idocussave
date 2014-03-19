@@ -172,18 +172,18 @@
                       != label_tag :"service_#{service_number}", "BOX"
                 .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                   .span12
-                    - if @external_file_storage.the_box.is_configured?
+                    - if @external_file_storage.box.is_configured?
                       Votre compte iDocus est connecté à votre compte Box.
                       != link_to "Paramètres", authorize_url_account_box_path
                     - else
                       Pour connecter iDocus à votre compte Box, cliquez
                       != link_to "ici", authorize_url_account_box_path
                     #{"."}
-                    = render partial: 'storage_form', locals: { instance: @external_file_storage.the_box }
+                    = render partial: 'storage_form', locals: { instance: @external_file_storage.box }
 
         .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
           .modal-header
-            %a{ :class=>"close", "data-dismiss"=>"modal" } ×
+            %a.close{ href: '#', data: { dismiss: 'modal' } } ×
             %h3 Configuration du service FTP
           %form.margin0bottom{ :action => configure_account_ftp_path, :method => "POST" }
             != hidden_field_tag "authenticity_token", form_authenticity_token
@@ -206,7 +206,7 @@
                     != password_field_tag "ftp[password]", @external_file_storage.ftp.password
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
-              %a{ :href=>"#", :class=>"modal-close btn" } Fermer
+              %a.btn{ href: '#', data: { dismiss: 'modal' } } Fermer
       #sharing_management.row-fluid.pan{ class: (@active_panel == 'sharing_management' ? 'active' : '')}
         .span12
           .well
@@ -278,7 +278,9 @@
                   - @invoices.each do |invoice|
                     %tr
                       %td= invoice.number
-                      %th.price= "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
+                      %th.price
+                        - if invoice.amount_in_cents_w_vat
+                          = "#{format_price_00(invoice.amount_in_cents_w_vat)} €"
                       %td.actions
                         = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
                         = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }

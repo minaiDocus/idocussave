@@ -12,11 +12,17 @@ class Pack::Report
   has_many   :remote_files, as: :remotable, dependent: :destroy
 
   field :name
-  field :type, type: String # NDF / AC / CB / VT / FLUX
-  field :is_delivered, type: Boolean, default: false
+  field :type # NDF / AC / CB / VT / FLUX
+  field :is_delivered,      type: Boolean, default: false
+  field :delivery_tried_at, type: Time
+  field :delivery_message
+  field :is_locked,         type: Boolean, default: false
 
   scope :preseizures, not_in: { type: ['NDF'] }
   scope :expenses, where: { type: 'NDF' }
+
+  scope :locked,     where: { is_locked: true }
+  scope :not_locked, where: { is_locked: false }
 
   def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
@@ -48,7 +54,12 @@ class Pack::Report
   end
 
   def journal
-    name.split[1]
+    result = name.split[1]
+    if user
+      user.account_book_types.where(name: result).first.try(:get_name) || result
+    else
+      result
+    end
   end
 
   class << self
@@ -108,6 +119,7 @@ class Pack::Report
                     expense.position               = piece.position
                     expense.save
                     report.expenses << expense
+                    piece.update_attribute(:is_awaiting_pre_assignment, false)
 
                     observation         = Pack::Report::Observation.new
                     observation.expense = expense
@@ -155,6 +167,7 @@ class Pack::Report
                   report.name = pack.name.sub(/ all$/, '')
                   report.user = pack.owner
                   report.pack = pack
+                  report.is_locked = true
                   report.organization = pack.owner.organization
                   report.document = pack.periodic_metadata.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   report.document ||= pack.periodic_metadata.desc(:created_at).first
@@ -174,7 +187,9 @@ class Pack::Report
                       preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = piece.position
+                      preseizure.is_locked       = true
                       preseizure.save
+                      piece.update_attribute(:is_awaiting_pre_assignment, false)
                       preseizures << preseizure
                       part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new
@@ -207,12 +222,17 @@ class Pack::Report
                   report.save
                   report.document.period.update_information!
                   if preseizures.any?
+                    report.is_delivered = false
+                    report.delivery_tried_at = nil
+                    report.delivery_message = ''
+                    report.save
                     if report.organization && report.organization.ibiza && report.organization.ibiza.is_configured? && report.organization.ibiza.is_auto_deliver
                       report.organization.ibiza.export(preseizures)
-                    else
-                      report.update_attribute(:is_delivered, false)
                     end
+                    ids = preseizures.map(&:id)
+                    Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
                   end
+                  report.update_attribute(:is_locked, false)
                   FileDeliveryInit.prepare(report)
                 end
               end

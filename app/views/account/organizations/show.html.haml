@@ -31,5 +31,14 @@
               %th= t('mongoid.models.organization.attributes.customers_count')
               %td= link_to @organization.customers.count, account_organization_customers_path
             %tr
-              %th= t('mongoid.models.organization.attributes.centralized_customers_count')
-              %td= link_to @organization.customers.centralized.count, account_organization_customers_path
+              %th= t('mongoid.models.organization.attributes.authd_prev_period')
+              %td= @organization.authd_prev_period
+            %tr
+              %th= t('mongoid.models.organization.attributes.auth_prev_period_until_day')
+              %td= @organization.auth_prev_period_until_day
+            %tr
+              %th= t('mongoid.models.organization.attributes.file_naming_policy')
+              %td= @organization.file_naming_policy
+            %tr
+              %th= t('mongoid.models.organization.attributes.is_file_naming_policy_active')
+              %td= @organization.is_file_naming_policy_active ? t('yes_value') : t('no_value')

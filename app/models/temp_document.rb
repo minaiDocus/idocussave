@@ -5,13 +5,22 @@ class TempDocument
   include Mongoid::Paperclip
 
   field :original_file_name
+
   field :content_file_name
   field :content_content_type
   field :content_file_size,    type: Integer
   field :content_updated_at,   type: Time
+
+  field :raw_content_file_name
+  field :raw_content_content_type
+  field :raw_content_file_size,    type: Integer
+  field :raw_content_updated_at,   type: Time
+  field :pages_number,             type: Integer
+
   field :position,             type: Integer
   field :is_an_original,       type: Boolean, default: true # original or bundled
   field :is_a_cover,           type: Boolean, default: false
+  field :is_ocr_layer_applied, type: Boolean
 
   field :delivered_by
   field :delivery_type
@@ -45,35 +54,42 @@ class TempDocument
   belongs_to :temp_pack
   belongs_to :document_delivery
   belongs_to :fiduceo_retriever
-  has_mongoid_attached_file :content, path: ":rails_root/files/:rails_env/:class/:id/:filename"
+  has_mongoid_attached_file :content,     path: ":rails_root/files/:rails_env/:class/:id/:filename"
+  has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/:raw_content/:filename"
 
-  scope :locked,        where: { is_locked: true }
-  scope :not_locked,    where: { is_locked: false }
+  scope :locked,            where: { is_locked: true }
+  scope :not_locked,        where: { is_locked: false }
 
-  scope :scan,          where: { delivery_type: 'scan' }
-  scope :upload,        where: { delivery_type: 'upload' }
-  scope :dematbox_scan, where: { delivery_type: 'dematbox_scan' }
-  scope :fiduceo,       where: { delivery_type: 'fiduceo' }
+  scope :scan,              where: { delivery_type: 'scan' }
+  scope :upload,            where: { delivery_type: 'upload' }
+  scope :dematbox_scan,     where: { delivery_type: 'dematbox_scan' }
+  scope :fiduceo,           where: { delivery_type: 'fiduceo' }
 
-  scope :originals,     where: { is_an_original: true }
-  scope :bundled,       where: { is_an_original: false }
+  scope :originals,         where: { is_an_original: true }
+  scope :bundled,           where: { is_an_original: false }
 
-  scope :created,       where:  { state: 'created' }
-  scope :unreadable,    where:  { state: 'unreadable' }
-  scope :rejected,      where:  { state: 'rejected' }
-  scope :bundle_needed, where:  { state: 'bundle_needed', is_locked: false }
-  scope :bundling,      where:  { state: 'bundling' }
-  scope :ready,         where:  { state: 'ready', is_locked: false }
-  scope :processed,     any_in: { state: %w(processed bundling) }
-  scope :not_processed, not_in: { state: %w(processed) }
-  scope :valid,         any_in: { state: %w(ready bundle_needed bundling processed) }
+  scope :ocr_layer_applied, where: { is_ocr_layer_applied: true }
+
+  scope :created,           where:  { state: 'created' }
+  scope :unreadable,        where:  { state: 'unreadable' }
+  scope :rejected,          where:  { state: 'rejected' }
+  scope :ocr_needed,        where:  { state: 'ocr_needed' }
+  scope :bundle_needed,     where:  { state: 'bundle_needed', is_locked: false }
+  scope :bundling,          where:  { state: 'bundling' }
+  scope :bundled,           where:  { state: 'bundled' }
+  scope :ready,             where:  { state: 'ready', is_locked: false }
+  scope :processed,         any_in: { state: %w(processed bundled) }
+  scope :not_processed,     not_in: { state: %w(processed) }
+  scope :valid,             any_in: { state: %w(ready ocr_needed bundle_needed bundling bundled processed) }
 
   state_machine :initial => :created do
     state :created
     state :unreadable
     state :rejected
+    state :ocr_needed
     state :bundle_needed
     state :bundling
+    state :bundled
     state :ready
     state :processed
 
@@ -90,11 +106,22 @@ class TempDocument
     end
 
     after_transition on: :bundle_needed do |temp_document, transition|
-      temp_document.temp_pack.safely.inc(:document_not_bundled_count, 1)
+      temp_document.temp_pack.safely.inc(:document_bundle_needed_count, 1)
     end
 
     after_transition on: :bundling do |temp_document, transition|
-      temp_document.temp_pack.safely.inc(:document_not_bundled_count, -1)
+      temp_document.temp_pack.safely.inc(:document_bundle_needed_count, -1)
+      temp_document.temp_pack.safely.inc(:document_bundling_count, 1)
+    end
+
+    after_transition on: :bundled do |temp_document, transition|
+      temp_document.temp_pack.safely.inc(:document_bundling_count, -1)
+    end
+
+    after_transition on: :ocr_needed do |temp_document, transition|
+      temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
+      temp_document.save
+      TempDocument.send_to_ocr_processor(temp_document.id)
     end
 
     event :unreadable do
@@ -105,16 +132,24 @@ class TempDocument
       transition :ready => :rejected
     end
 
+    event :ocr_needed do
+      transition :created => :ocr_needed
+    end
+
     event :bundle_needed do
-      transition [:created, :unreadable] => :bundle_needed
+      transition [:created, :unreadable, :ocr_needed] => :bundle_needed
     end
 
     event :bundling do
       transition :bundle_needed => :bundling
     end
 
+    event :bundled do
+      transition :bundling => :bundled
+    end
+
     event :ready do
-      transition [:created, :unreadable] => :ready
+      transition [:created, :unreadable, :ocr_needed] => :ready
     end
 
     event :processed do
@@ -150,6 +185,13 @@ class TempDocument
         TempDocument.new(dematbox_doc_id: id)
       end
     end
+
+    def send_to_ocr_processor(id)
+      temp_document = TempDocument.find id
+      doc_id = DematboxServiceApi.send_file(temp_document.content.path)
+      temp_document.update_attribute(:dematbox_doc_id, doc_id)
+    end
+    handle_asynchronously :send_to_ocr_processor, priority: 0
   end
 
   def name_with_position

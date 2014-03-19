@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '3.2.17'
 
 gem 'rake', '10.1.0'
 gem 'bson_ext', '1.6.2'
@@ -33,7 +33,7 @@ gem 'airbrake'
 gem 'nested_form'
 gem 'bootstrap-datepicker-rails'
 gem 'google_drive'
-gem 'box-api'
+gem 'ruby-box'
 gem 'poppler'
 gem 'anjlab-tesseract', :require => 'tesseract'
 gem 'unicode_utils'
@@ -86,4 +86,6 @@ group :test do
   gem 'guard-rspec'
   gem 'database_cleaner'
   gem 'timecop'
+  gem 'vcr'
+  gem 'webmock'
 end

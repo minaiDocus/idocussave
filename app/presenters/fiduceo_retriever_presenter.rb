@@ -15,13 +15,12 @@ class FiduceoRetrieverPresenter < BasePresenter
         else
           h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
         end
+      elsif fiduceo_retriever.wait_for_user_action?
+        h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
       else
         if fiduceo_retriever.processing?
-          if (content = last_event.presence)
-            result = h.content_tag :span, content, class: 'label'
-          else
-            result = h.content_tag :span, formatted_state, class: 'label'
-          end
+          content = last_event.presence || 'En attente de traitement ...'
+          result = h.content_tag :span, content, class: 'label'
         else
           result = h.content_tag :span, formatted_state, class: 'label'
         end
@@ -41,7 +40,7 @@ class FiduceoRetrieverPresenter < BasePresenter
 
   def action_link
     if fiduceo_retriever.is_active
-      if fiduceo_retriever.scheduled? && fiduceo_retriever.provider?
+      if fiduceo_retriever.scheduled? && fiduceo_retriever.provider? or fiduceo_retriever.ready?
         h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Lancer la récupération', rel: 'tooltip'
       elsif fiduceo_retriever.error? && fiduceo_retriever.transactions.last.retryable?
         h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Réessayer maintenant', rel: 'tooltip'

@@ -3,7 +3,9 @@ class FiduceoTransactionTracker
   def self.track(transaction)
     retriever = transaction.retriever
     if transaction.status_changed?
-      if transaction.success?
+      if transaction.wait_for_user_action?
+        retriever.wait_for_user_action
+      elsif transaction.success?
         if retriever.is_selection_needed
           if retriever.provider?
             if transaction.retrieved_document_ids.count > 0

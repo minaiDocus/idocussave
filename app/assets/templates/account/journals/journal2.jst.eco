@@ -7,6 +7,9 @@
     <%= @model.get('name') %>
     <%= @model.get('description') if @model.get('description').length > 0 %>
     <br/>
+    <% if(@model.get('pseudonym') != null && @model.get('pseudonym').length > 0): %>
+        <ul class='journal_info'><li>Alias : <%= @model.get('pseudonym') %></li></ul>
+    <% end %>
     <% if(@model.get('entry_name') != 'Aucun' && @showDetails): %>
         <ul class='journal_info'>
             <li><%= @model.get('entry_name') %></li>

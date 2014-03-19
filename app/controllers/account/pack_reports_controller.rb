@@ -4,24 +4,51 @@ class Account::PackReportsController < Account::OrganizationController
 
   def index
     @pack_reports = Pack::Report.preseizures.any_in(user_id: @user.customer_ids)
-    @pack_reports = @pack_reports.where(name: /#{params[:name]}/) if params[:name].present?
-    @pack_reports = @pack_reports.desc(:created_at).limit(20).page(params[:page]).per(params[:per_page])
+    @pack_reports = @pack_reports.where(name: /#{Regexp.quote(params[:name])}/) if params[:name].present?
+    @pack_reports = @pack_reports.desc(:updated_at).limit(20).page(params[:page]).per(params[:per_page])
   end
 
   def show
+    if params[:format] == 'xml'
+      if current_user.is_admin
+        file_name = "#{@report.name.gsub(' ','_')}.xml"
+        ibiza = @organization.ibiza
+        if ibiza && @report.user.ibiza_id
+          exercice = ibiza.exercice(@report.user.ibiza_id, @report.name)
+          if exercice
+            data = IbizaAPI::Utils.to_import_xml(exercice['end'], @report.preseizures, ibiza.description, ibiza.description_separator)
+          else
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+          end
+        else
+          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+        end
+      else
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+      end
+    end
     respond_to do |format|
-      format.html {}
+      format.html do
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id])
+      end
       format.csv do
-        send_data(@report.to_csv(@report.user.csv_outputter!), type: "text/csv", filename: "#{@report.name.gsub(' ','_')}.csv")
+        send_data(@report.to_csv(@report.user.csv_outputter!), type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
+      end
+      format.xml do
+        send_data(data, type: 'application/xml', filename: file_name)
       end
     end
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured?
+    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@report.is_locked
+      @report.update_attribute(:is_locked, true)
+      preseizures = @report.preseizures.by_position.not_locked.not_delivered.entries
+      ids = preseizures.map(&:id)
+      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
       @user.organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
-        export(@report.preseizures.by_position.not_delivered.entries)
+        export(preseizures)
     end
     respond_to do |format|
       format.json { render json: { status: :ok } }

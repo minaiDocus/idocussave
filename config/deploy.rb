@@ -44,6 +44,8 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     run "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
     run "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
+    run "ln -nfs #{shared_path}/config/box.yml #{release_path}/config/box.yml"
+    run "ln -nfs #{shared_path}/config/dematbox_service_api.yml #{release_path}/config/dematbox_service_api.yml"
     run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     run "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
@@ -63,7 +65,7 @@ namespace :shared do
     run "mkdir -p #{release_path}/tmp/barcode"
     run "mkdir -p #{shared_path}/data/compta/mapping"
     run "mkdir -p #{shared_path}/files/#{rails_env}/kit"
-    run "mkdir -p #{shared_path}/files/#{rails_env}/archives"
+    run "mkdir -p #{shared_path}/files/#{rails_env}/archives/invoices"
     run "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
   end
 
@@ -104,6 +106,12 @@ namespace :shared do
     end
     unless remote_file_exist? "#{shared_path}/config/fiduceo.yml"
       run "cp #{release_path}/config/fiduceo.yml.example #{shared_path}/config/fiduceo.yml"
+    end
+    unless remote_file_exist? "#{shared_path}/config/box.yml"
+      run "cp #{release_path}/config/box.yml.example #{shared_path}/config/box.yml"
+    end
+    unless remote_file_exist? "#{shared_path}/config/dematbox_service_api.yml"
+      run "cp #{release_path}/config/dematbox_service_api.yml.example #{shared_path}/config/dematbox_service_api.yml"
     end
   end
 end

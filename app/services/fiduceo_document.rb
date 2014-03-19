@@ -52,12 +52,12 @@ private
     !valid?
   end
 
-  def period_duration
-    @user.periods.last.duration rescue 1
+  def period_service
+    @period_service ||= PeriodService.new user: @user
   end
 
   def period
-    @period ||= Scan::Period.period_name period_duration, true
+    @period ||= Scan::Period.period_name period_service.period_duration, 0
   end
 
   def file
