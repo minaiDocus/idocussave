@@ -4,6 +4,8 @@
       .nav-collapse
         %ul.nav
           %li{ class: ('active' if action_name == 'index') }
-            = link_to 'Liste', account_settings_fiduceo_retrievers_path
+            = link_to 'Mes récupérateurs', account_settings_fiduceo_retrievers_path
           %li{ class: ('active' if action_name == 'new') }
-            = link_to 'Nouveau', new_account_settings_fiduceo_retriever_path
+            = link_to 'Ajouter', new_account_settings_fiduceo_retriever_path
+          %li{ class: ('active' if action_name == 'list') }
+            = link_to 'Liste', list_account_settings_fiduceo_retrievers_path

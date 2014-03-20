@@ -2,9 +2,9 @@
 class Account::Settings::RetrieversController < Account::SettingsController
   before_filter :verify_rights
   before_filter :load_fiduceo_user_id
-  before_filter :load_fiduceo_retriever, except: %w(index new create)
+  before_filter :load_fiduceo_retriever, except: %w(index list new create)
   before_filter :verify_selection, only: %w(select_documents update_documents select_bank_accounts create_bank_accounts)
-  before_filter :load_providers_and_banks, only: %w(new create edit update)
+  before_filter :load_providers_and_banks, only: %w(list new create edit update)
   before_filter :load_bank_accounts, only: %w(select_bank_accounts create_bank_accounts)
 
   def index
@@ -12,8 +12,15 @@ class Account::Settings::RetrieversController < Account::SettingsController
     render partial: 'retrievers' if params[:part].present?
   end
 
+  def list
+  end
+
   def new
     @fiduceo_retriever = FiduceoRetriever.new
+    @fiduceo_retriever.provider_id  = params[:provider_id]
+    @fiduceo_retriever.bank_id      = params[:bank_id]
+    @fiduceo_retriever.service_name = params[:service_name]
+    @fiduceo_retriever.type         = params[:bank_id].present? ? 'bank' : 'provider'
   end
 
   def create
