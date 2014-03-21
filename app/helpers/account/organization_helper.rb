@@ -31,6 +31,14 @@ module Account::OrganizationHelper
     end
   end
 
+  def exercice_form_url(customer, exercice)
+    if action_name == 'new' || !exercice.persisted?
+      account_organization_customer_exercices_url(customer)
+    else
+      account_organization_customer_exercice_url(customer, exercice)
+    end
+  end
+
   def groups(user)
     if user.organization.leader == user
       user.organization.groups

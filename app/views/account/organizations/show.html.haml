@@ -31,6 +31,9 @@
               %th= t('mongoid.models.organization.attributes.customers_count')
               %td= link_to @organization.customers.count, account_organization_customers_path
             %tr
+              %th= t('mongoid.models.organization.attributes.centralized_customers_count')
+              %td= link_to @organization.customers.centralized.count, account_organization_customers_path
+            %tr
               %th= t('mongoid.models.organization.attributes.authd_prev_period')
               %td= @organization.authd_prev_period
             %tr
@@ -42,3 +45,33 @@
             %tr
               %th= t('mongoid.models.organization.attributes.is_file_naming_policy_active')
               %td= @organization.is_file_naming_policy_active ? t('yes_value') : t('no_value')
+      .span6
+        %table.table.table-condensed.table-bordered.table-striped.margin0bottom
+          %thead
+            %tr
+              %th{ colspan: 2 }
+                .pull-left
+                  %h3 Knowings
+                - if is_leader?
+                  .pull-right
+                    - if @organization.knowings
+                      = icon_link_to edit_account_organization_knowings_path, { icon: 'edit' }, { class: 'btn' }
+                    - else
+                      = icon_link_to new_account_organization_knowings_path, { icon: 'edit' }, { class: 'btn' }
+          - if @organization.knowings
+            %tbody
+              %tr
+                %th= t('mongoid.models.knowings.attributes.is_active')
+                %td= @organization.knowings.is_active ? t('yes_value') : t('no_value')
+              %tr
+                %th= t('mongoid.models.knowings.attributes.state')
+                %td= Knowings.state_machine.states[@organization.knowings.state].human_name
+              %tr
+                %th= t('mongoid.models.knowings.attributes.url')
+                %td= @organization.knowings.url
+              %tr
+                %th= t('mongoid.models.knowings.attributes.is_third_party_included')
+                %td= @organization.knowings.is_third_party_included ? t('yes_value') : t('no_value')
+              %tr
+                %th= t('mongoid.models.knowings.attributes.is_pre_assignment_state_included')
+                %td= @organization.knowings.is_pre_assignment_state_included ? t('yes_value') : t('no_value')

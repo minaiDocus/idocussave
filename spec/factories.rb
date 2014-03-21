@@ -84,4 +84,11 @@ FactoryGirl.define do
     sequence(:name) { |n| "J#{n}" }
     description '(description)'
   end
+
+  factory Knowings do
+    username 'test@example.com'
+    password 'secret'
+    path '/root'
+    is_active true
+  end
 end

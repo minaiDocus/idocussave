@@ -130,5 +130,24 @@ class DocumentTools
       system(cmd)
       file_path
     end
+
+    def to_period(name)
+      part = name.split[2]
+      year = part[0..3].to_i
+      month = part[4..5]
+      case month
+      when "T1"
+        month = 1
+      when "T2"
+        month = 4
+      when "T3"
+        month = 7
+      when "T4"
+        month = 10
+      else
+        month = month.to_i
+      end
+      period = Date.new(year, month, 1)
+    end
   end
 end

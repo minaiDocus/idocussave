@@ -1,0 +1,15 @@
+defaults: &defaults
+  protocol: http
+  path: /alfresco/webdav
+
+test:
+  <<: *defaults
+  domain: demopackec.knowings.fr
+
+development:
+  <<: *defaults
+  domain: demopackec.knowings.fr
+
+production:
+  <<: *defaults
+  domain: webservice.knowings.fr

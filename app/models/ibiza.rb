@@ -141,7 +141,8 @@ class Ibiza
       ids = preseizures.map(&:id)
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
-        if(e = exercice(id, report.name))
+        period = DocumentTools.to_period(report.name)
+        if(e = exercice(id, period))
           client.request.clear
           data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
           client.company(id).entries!(data)
@@ -172,34 +173,24 @@ class Ibiza
     end
   end
 
-  def exercice(id, name)
-    client.request.clear
-    client.company(id).exercices?
-    if client.response.success?
-      exercices = client.response.data.select do |e|
-        e['state'].to_i.in? [0,1]
-      end
-      part = name.split[2]
-      year = part[0..3].to_i
-      month = part[4..5]
-      case month
-      when "1T"
-        month = 1
-      when "2T"
-        month = 4
-      when "3T"
-        month = 7
-      when "4T"
-        month = 10
+  def exercices(id)
+    Rails.cache.fetch "ibiza_#{id}_exercices", expires_in: 1.hour do
+      client.request.clear
+      client.company(id).exercices?
+      if client.response.success?
+        client.response.data
       else
-        month = month.to_i
+        raise NoExercicesFound, "for #{id}"
       end
-      period = Date.new(year, month, 1)
-      exercices.select do |e|
-        e['start'].to_date <= period && e['end'].to_date >= period
-      end.first
-    else
-      nil
     end
   end
+
+  def exercice(id, period)
+    data = exercices(id)
+    data.select do |e|
+      e['state'].to_i.in? [0,1] && e['start'].to_date <= period && e['end'].to_date >= period
+    end.first
+  end
+
+  class NoExercicesFound < RuntimeError; end
 end

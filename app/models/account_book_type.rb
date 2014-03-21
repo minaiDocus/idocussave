@@ -7,7 +7,7 @@ class AccountBookType
 
   ENTRY_TYPE = %w(no expense buying selling)
   TYPES_NAME = %w(AC VT NDF)
-  DOMAINS = ['', 'AC', 'VT', 'BQ', 'OD', 'NF']
+  DOMAINS = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais']
 
   before_save :upcase_name, :sync_assignment
 

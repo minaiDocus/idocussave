@@ -81,3 +81,15 @@ fr:
         is_default: Par défaut ?
         clients: Clients
         force_assignment: Forcer les modifications pour le client
+      knowings:
+        is_active: Activer la livraison ?
+        username: Identifiant
+        password: Mot de passe
+        url: URL
+        state: Etat
+        is_third_party_included: Inclure le tiers ?
+        is_pre_assignment_state_included: Inclure l'état de la pré-affectation ?
+      exercice:
+        start_date: Date de début
+        end_date: Date de fin
+        is_closed: Fermé ?

@@ -52,6 +52,10 @@
           %td FTP
           %td= RemoteFile.of_service('FTP').not_processed.count
           %td= RemoteFile.of_service('FTP').not_retryable.count
+        %tr
+          %td Knowings
+          %td= RemoteFile.of_service('Knowings').not_processed.count
+          %td= RemoteFile.of_service('Knowings').not_retryable.count
   .span3
     %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
     %table.table.table-striped.table-condensed.table-bordered

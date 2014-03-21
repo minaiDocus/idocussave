@@ -311,6 +311,12 @@ fr:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             file_naming_policy:
               invalid: "Invalide ( doit être composé des élements suivants : customerCode, journal, period, position, thirdParty, date, -, _ et [espace])"
+        exercice:
+          attributes:
+            start_date:
+              taken: existe déjà
+            end_date:
+              taken: existe déjà
     models:
       common:
         attributes:
@@ -737,6 +743,28 @@ fr:
           code: Code TVA
           nature: Nature
           account_number: Numéro de compte
+      knowings:
+        zero: 0 knowings
+        one: 1 knowings
+        other: '%{count} knowings'
+        name: Knowings
+        attributes:
+          is_active: Activer la livraison ?
+          username: Identifiant
+          password: Mot de passe
+          url: URL
+          state: Etat
+          is_third_party_included: Tiers inclus ?
+          is_pre_assignment_state_included: Etat de la pré-affectation inclus ?
+      exercice:
+        zero: 0 exercice
+        one: 1 exercice
+        other: '%{count} exercices'
+        name: Exercice
+        attributes:
+          start_date: Date de début
+          end_date: Date de fin
+          is_closed: Fermé ?
     state_machines:
       fiduceo_retriever:
         states:
@@ -767,3 +795,9 @@ fr:
           timeout: delai d'attente dépassé
           broker_unavailable: service indisponible
           rejected: trop de tentative
+      knowings:
+        states:
+          not_performed: Non configuré
+          verifying: En cours de vérification
+          invalid: Echoué
+          valid: Vérifié
