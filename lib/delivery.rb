@@ -6,7 +6,7 @@ module Delivery
 
       processed_receiver_ids = []
       while RemoteFile.not_processed.of_service(service_name).retryable.first
-        remote_file = RemoteFile.not_processed.not_in(user_id: processed_receiver_ids, group_id: processed_receiver_ids).of_service(service_name).retryable.first
+        remote_file = RemoteFile.not_processed.not_in(user_id: processed_receiver_ids, group_id: processed_receiver_ids, organization_id: processed_receiver_ids).of_service(service_name).retryable.first
         unless remote_file
           remote_file = RemoteFile.not_processed.where(service_name: service_name).retryable.first
           processed_receiver_ids = []
@@ -17,10 +17,14 @@ module Delivery
         if receiver.class.name == User.name
           efs = receiver.find_or_create_efs
           services_name = efs.active_services_name
-          is_group = false
+        elsif receiver.class.name == Organization.name
+          if receiver.knowings.try(:is_configured?)
+            services_name = ['Knowings']
+          else
+            services_name = []
+          end
         else
           services_name = ['Dropbox Extended']
-          is_group = true
         end
         if service_name.in? services_name
           puts "[#{service_name}] Synchronising files for #{receiver.class.name.downcase} : #{receiver.info}..."
@@ -28,8 +32,10 @@ module Delivery
             a.local_name <=> b.local_name
           end
           puts "\t#{pack.name}\t[#{remote_files.count}]"
-          if is_group
+          if receiver.class.name == Group.name
             DropboxExtended.sync(remote_files)
+          elsif receiver.class.name == Organization.name
+            receiver.knowings.sync(remote_files)
           else
             efs.send(service_class).sync(remote_files)
           end
@@ -53,6 +59,8 @@ module Delivery
           :box
         when 'ftp'
           :ftp
+        when 'kwg'
+          :knowings
         else
           :dropbox_basic
       end
@@ -70,6 +78,8 @@ module Delivery
           'Box'
         when 'ftp'
           'FTP'
+        when 'kwg'
+          'Knowings'
         else
           ''
       end

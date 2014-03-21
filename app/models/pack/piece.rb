@@ -75,10 +75,16 @@ class Pack::Piece
     origin == 'fiduceo'
   end
 
+  def account_book_type
+    @account_book_type ||= pack.owner.account_book_types.where(name: journal).first
+  end
+
+  def compta_processable?
+    account_book_type && account_book_type.compta_processable? && !is_a_cover
+  end
+
   def send_to_compta
-    account_book = name.split(' ')[1]
-    account_book_type = self.pack.owner.account_book_types.where(name: account_book).first rescue nil
-    if account_book_type && account_book_type.compta_processable? && !self.is_a_cover
+    if compta_processable?
       compta_type = account_book_type.compta_type
       if fiduceo?
         path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'fiduceo',compta_type])

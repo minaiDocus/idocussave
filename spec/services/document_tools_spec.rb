@@ -108,4 +108,12 @@ describe DocumentTools do
       expect(DocumentTools.stamp_name(':period :account_book :piece_num :origin', 'TS0001 TS 201301 005', 'upload')).to eq('201301 TS 005 UPL')
     end
   end
+
+  it '.to_period return Date(2013-01-01)' do
+    expect(DocumentTools.to_period('TS0001 TS 201301 all')).to eq(Date.new(2013, 1, 1))
+  end
+
+  it '.to_period return Date(2013-03-01)' do
+    expect(DocumentTools.to_period('TS0001 TS 201303 all')).to eq(Date.new(2013, 3, 1))
+  end
 end

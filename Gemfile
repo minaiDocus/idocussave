@@ -48,6 +48,7 @@ gem 'dalli'
 gem 'nokogiri'
 gem 'capistrano', :require => false
 gem 'capistrano_colors', :require => false
+gem 'validate_url'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

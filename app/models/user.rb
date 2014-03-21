@@ -129,6 +129,7 @@ class User
   has_many :fiduceo_retrievers,   dependent: :destroy
   has_many :fiduceo_transactions, dependent: :destroy
   has_many :bank_accounts,        dependent: :destroy
+  has_many :exercices
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true

@@ -1,0 +1,13 @@
+#exercice.edit
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Edition d'un exercice comptable pour l'utilisateur : #{link_to @customer.code, account_organization_customer_path(@customer)}
+          .pull-right
+            = link_to 'Retour', account_organization_customer_exercices_path(@customer), class: 'btn'
+
+  .row-fluid
+    .span12.box
+      = render 'form'

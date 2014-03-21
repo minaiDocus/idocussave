@@ -3,7 +3,7 @@ class ExternalFileStorage
   include Mongoid::Document
   include Mongoid::Timestamps
   
-  SERVICES = ["Dropbox","Dropbox Extended","Google Drive","FTP", "Box"]
+  SERVICES = ["Dropbox", "Dropbox Extended", "Google Drive", "FTP", "Box", "Knowings"]
   
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4

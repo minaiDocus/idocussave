@@ -48,10 +48,12 @@ class Organization
   has_many   :account_book_types
   has_many   :reminder_emails,    autosave: true
   has_many   :reports,            class_name: 'Pack::Report',       inverse_of: 'organization'
+  has_many   :remote_files
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label
   has_one    :csv_outputter, autosave: true
+  has_one    :knowings
 
   embeds_many :addresses, as: :locatable
 
@@ -94,6 +96,10 @@ class Organization
   end
 
   def to_s
+    self.name
+  end
+
+  def info
     self.name
   end
 

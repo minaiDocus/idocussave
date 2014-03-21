@@ -98,6 +98,7 @@ private
                                               :pseudonym,
                                               :description,
                                               :position,
+                                              :domain,
                                               :entry_type,
                                               :default_account_number,
                                               :account_number,

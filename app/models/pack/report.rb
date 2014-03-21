@@ -234,6 +234,7 @@ class Pack::Report
                   end
                   report.update_attribute(:is_locked, false)
                   FileDeliveryInit.prepare(report)
+                  FileDeliveryInit.prepare(pack)
                 end
               end
             end

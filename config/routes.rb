@@ -35,6 +35,7 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     resource :organization do
+      resource :knowings
       resources :groups
       resources :collaborators do
         resource :rights
@@ -61,6 +62,7 @@ Idocus::Application.routes.draw do
           end
         end
         resources :bank_accounts
+        resources :exercices
       end
       resources :journals do
         post 'cancel_destroy',           :on => :member

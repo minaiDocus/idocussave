@@ -53,6 +53,7 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
     run "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
+    run "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
     run "ln -s #{shared_path}/files #{release_path}/files"
@@ -112,6 +113,9 @@ namespace :shared do
     end
     unless remote_file_exist? "#{shared_path}/config/dematbox_service_api.yml"
       run "cp #{release_path}/config/dematbox_service_api.yml.example #{shared_path}/config/dematbox_service_api.yml"
+    end
+    unless remote_file_exist? "#{shared_path}/config/knowings.yml"
+      run "cp #{release_path}/config/knowings.yml.example #{shared_path}/config/knowings.yml"
     end
   end
 end

@@ -63,7 +63,8 @@ pids = []
   { name: 'delivery-dropbox_basic',    sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
   { name: 'delivery-google_drive',     sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },
   { name: 'delivery-ftp',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('ftp') } },
-  { name: 'delivery-box',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } }
+  { name: 'delivery-box',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } },
+  { name: 'delivery-knowings',         sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('kwg') } }
 ].each do |program|
   pids << fork do
     while($running)
