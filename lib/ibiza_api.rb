@@ -9,7 +9,7 @@ module IbizaAPI
         elsif k == 'piece_name' && preseizure.piece
           preseizure.piece.name
         elsif k == 'date' && preseizure[k]
-          if preseizure.user.is_computed_date_used
+          if preseizure.report.user.try(:is_computed_date_used)
             result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
             if result
               preseizure.period_date.in_time_zone('Paris').to_date.to_s
