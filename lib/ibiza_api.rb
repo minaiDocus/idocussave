@@ -9,16 +9,7 @@ module IbizaAPI
         elsif k == 'piece_name' && preseizure.piece
           preseizure.piece.name
         elsif k == 'date' && preseizure[k]
-          if preseizure.report.user.try(:is_computed_date_used)
-            result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
-            if result
-              preseizure.period_date.in_time_zone('Paris').to_date.to_s
-            else
-              preseizure.date.in_time_zone('Paris').to_date.to_s
-            end
-          else
-            preseizure.date.in_time_zone('Paris').to_date.to_s
-          end
+          preseizure.date.in_time_zone('Paris').to_date.to_s
         else
           preseizure[k].presence
         end
@@ -39,9 +30,13 @@ module IbizaAPI
               preseizure.accounts.each do |account|
                 xml.importEntry {
                   xml.journalRef preseizure.report.journal
-                  result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
-                  if result
-                    xml.date preseizure.period_date.to_date
+                  if preseizure.report.user.try(:is_computed_date_used)
+                    result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
+                    if result
+                      xml.date preseizure.period_date.to_date
+                    else
+                      xml.date preseizure.date.to_date
+                    end
                   else
                     xml.date preseizure.date.to_date
                   end

@@ -49,7 +49,7 @@
                   %td
                     %label.checkbox
                       = check_box_tag "ibiza[description][date][is_used]", 1, (@ibiza.description['date']['is_used'] rescue false)
-                      Date
+                      Date réelle
                   %td= number_field_tag "ibiza[description][date][position]", (@ibiza.description['date']['position'] rescue 1)
                 %tr
                   %td
