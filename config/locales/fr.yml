@@ -786,7 +786,7 @@ fr:
           completed_nothing_new_to_download: fini sans nouveau document
           completed_with_missing_docs: fini avec des documents manquant
           completed_with_errors: fini avec erreur
-          login_failed: authentification échoué
+          login_failed: authentification échouée
           unexpected_account_data: donnée(s) de login non valide
           check_account: vérifier votre compte
           dematerialisation_needed: dématérialisation requise
