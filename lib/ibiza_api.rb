@@ -21,7 +21,24 @@ module IbizaAPI
       end
     end
 
-    def self.to_import_xml(period_end_date, preseizures, fields = {}, separator = ' - ')
+    def self.piece_name(name, format, separator)
+      data = name.split(' ')
+      used_fields = format.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
+      sorted_used_fields = used_fields.sort { |(ak,av),(bk,bv)| av['position'] <=> bv['position'] }
+      results = sorted_used_fields.map do |key,_|
+        case key
+        when 'code'    then data[0]
+        when 'code_wp' then data[0].match('%') ? data[0].split('%')[1] : data[0]
+        when 'journal' then data[1]
+        when 'period'  then data[2]
+        when 'number'  then data[3]
+        else nil
+        end
+      end
+      results.empty? ? name : results.compact.join(separator)
+    end
+
+    def self.to_import_xml(period_end_date, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.importEntryRequest {
           xml.importDate period_end_date
@@ -41,7 +58,7 @@ module IbizaAPI
                     xml.date preseizure.date.to_date
                   end
                   if preseizure.piece
-                    xml.piece preseizure.piece.name
+                    xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
                     xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
                     xml.voucherRef preseizure.piece_number
                   end

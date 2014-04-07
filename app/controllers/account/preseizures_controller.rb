@@ -27,7 +27,7 @@ class Account::PreseizuresController < Account::OrganizationController
         if ibiza && report.user.ibiza_id
           exercice = ibiza.exercice(report.user.ibiza_id, report.name)
           if exercice
-            data = IbizaAPI::Utils.to_import_xml(exercice['end'], [@preseizure], ibiza.description, ibiza.description_separator)
+            data = IbizaAPI::Utils.to_import_xml(exercice['end'], [@preseizure], ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
           else
             raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
           end

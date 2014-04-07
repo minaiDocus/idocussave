@@ -43,6 +43,6 @@ private
   end
 
   def ibiza_params
-    params.require(:ibiza).permit(:token, :is_auto_deliver, :description, :description_separator)
+    params.require(:ibiza).permit(:token, :is_auto_deliver, :description, :description_separator, :piece_name_format, :piece_name_format_sep)
   end
 end

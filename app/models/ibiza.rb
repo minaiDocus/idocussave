@@ -10,7 +10,9 @@ class Ibiza
   field :state, type: String, default: 'none'
 
   field :description,           type: Hash,    default: {}
-  field :description_separator, type: Hash,    default: ' - '
+  field :description_separator, type: String,  default: ' - '
+  field :piece_name_format,     type: Hash,    default: {}
+  field :piece_name_format_sep, type: String,  default: ' '
   field :is_auto_deliver,       type: Boolean, default: false
 
   validates_inclusion_of :state, in: %w(none waiting valid invalid)
@@ -144,7 +146,7 @@ class Ibiza
         period = DocumentTools.to_period(report.name)
         if(e = exercice(id, period))
           client.request.clear
-          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator)
+          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
           client.company(id).entries!(data)
           if client.response.success?
             Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true)
