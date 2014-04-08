@@ -190,7 +190,7 @@ class Ibiza
   def exercice(id, period)
     data = exercices(id)
     data.select do |e|
-      e['state'].to_i.in? [0,1] && e['start'].to_date <= period && e['end'].to_date >= period
+      e['state'].to_i.in?([0,1]) && e['start'].to_date <= period && e['end'].to_date >= period
     end.first
   end
 

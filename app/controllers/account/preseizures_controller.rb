@@ -25,7 +25,8 @@ class Account::PreseizuresController < Account::OrganizationController
         file_name = "#{report.name.sub(' ','_')}_#{position}.xml"
         ibiza = @organization.ibiza
         if ibiza && report.user.ibiza_id
-          exercice = ibiza.exercice(report.user.ibiza_id, report.name)
+          date = DocumentTools.to_period(report.name)
+          exercice = ibiza.exercice(report.user.ibiza_id, date)
           if exercice
             data = IbizaAPI::Utils.to_import_xml(exercice['end'], [@preseizure], ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
           else
