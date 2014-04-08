@@ -67,9 +67,10 @@ class RemoteFile
   end
 
   def sending!(rpath='')
-    self.state = "sending"
-    self.path = rpath
-    reset
+    self.state         = 'sending'
+    self.path          = rpath
+    self.error_message = ''
+    self.tried_at      = nil
     save
   end
 

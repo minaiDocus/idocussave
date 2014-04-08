@@ -44,7 +44,9 @@ class Pack::Report
         date = pre[0].created_at
         data = to_csv(outputter, self.preseizures.any_in(_id: idx), user.is_access_by_token_active)
         basename = self.name.gsub(' ','_')
-        file= File.new("/tmp/#{basename}_L#{date.strftime("%Y%m%d")}.csv", "w")
+        name = "#{basename}_L#{date.strftime("%Y%m%d")}"
+        dir = Dir.mktmpdir("#{name}__")
+        file = File.new("#{dir}/#{name}.csv", "w")
         file.write(data)
         file.close
         filespath << file.path
