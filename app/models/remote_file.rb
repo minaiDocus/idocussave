@@ -39,18 +39,11 @@ class RemoteFile
   scope :retryable,     where: { :tried_count.lt => 10 }
   scope :not_retryable, where: { :tried_count.gte => 10 }
 
-  def self.reset_all_tried_count!
-    all.each do |remote_file|
-      remote_file.tried_count = 0
-      remote_file.save
-    end
-  end
-
-  def self.cancel_all!
-    all.each do |remote_file|
-      remote_file.cancel!
-      remote_file.save
-    end
+  def self.cancel_all
+    update_all state:         'cancelled',
+               tried_count:   0,
+               tried_at:      nil,
+               error_message: ''
   end
 
   def waiting!
