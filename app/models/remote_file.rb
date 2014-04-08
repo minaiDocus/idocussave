@@ -116,7 +116,7 @@ class RemoteFile
   end
 
   def local_path
-    temp_path || remotable.content.path
+    temp_path.presence || remotable.content.path
   end
 
   def local_name
