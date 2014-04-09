@@ -32,7 +32,9 @@ class FiduceoOperationProcessor
               preseizure.name = pack_report.name
               preseizure.date = operation.date_op
               preseizure.position = counter
-              preseizure.observation = [operation.label, operation.category].join(' - ')
+              # TODO fix me : temporarily disabled
+              # preseizure.observation = [operation.label, operation.category].join(' - ')
+              preseizure.observation = operation.label
               preseizure.category_id = operation.category_id
               preseizure.is_locked = true
               preseizure.save
