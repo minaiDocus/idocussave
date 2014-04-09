@@ -72,6 +72,8 @@ class DematboxDocument
         temp_document.dematbox_notified_at = Time.now
         result = temp_document.save
         upload_notification(id) if temp_document.uploaded?
+      elsif result.split(':')[0].to_i.in?([0, 501, 603, 701, 703, 704]) && temp_document.updated_at > 5.minutes.ago
+        DematboxDocument.delay(run_at: 15.from_now, priority: 0).notify_uploaded_without_delay(id)
       end
       result
     end
@@ -79,7 +81,11 @@ class DematboxDocument
 
     def upload_notification(id)
       temp_document  = TempDocument.find id
-      DematboxServiceApi.upload_notification temp_document.dematbox_doc_id, temp_document.dematbox_box_id
+      result = DematboxServiceApi.upload_notification temp_document.dematbox_doc_id, temp_document.dematbox_box_id
+      if result != '200:OK' && temp_document.updated_at > 5.minutes.ago
+        DematboxDocument.delay(run_at: 15.from_now, priority: 0).upload_notification_without_delay(id)
+      end
+      result
     end
     handle_asynchronously :upload_notification, priority: 0
   end
