@@ -34,6 +34,9 @@ private
       contains['created_at']['$gte'] = contains['created_at']['$gte'].try(:to_time)
       contains['created_at']['$lte'] = contains['created_at']['$lte'].try(:to_time).try(:end_of_day)
     end
+    if contains['dematbox_is_notified']
+      contains['dematbox_is_notified'] = contains['dematbox_is_notified'].to_i == 1 ? true : nil
+    end
     contains
   end
 end

@@ -2,6 +2,7 @@
   %h3 Filtres
 
   = form_tag admin_dematbox_files_path, method: :get, class: 'form form-vertical margin2top margin0bottom' do
+    = hidden_field_tag :per_page, per_page
     = label_tag 'dematbox_file_contains[created_at][$lt]', t('mongoid.models.common.attributes.created_at')
     .input-append.date.datepicker
       = text_field_tag 'dematbox_file_contains[created_at][$gte]', (params['dematbox_file_contains']['created_at']['$gte'] rescue ''), class: 'span4'
@@ -17,6 +18,8 @@
     = text_field_tag 'dematbox_file_contains[delivered_by]', (params[:dematbox_file_contains][:delivered_by] rescue '')
     = label_tag 'dematbox_file_contains[content_file_name]', t('mongoid.models.temp_document.attributes.content_file_name')
     = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue '')
+    = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('mongoid.models.temp_document.attributes.dematbox_is_notified')
+    = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true
     .form-actions.margin0bottom.padding0bottom
       = submit_tag t('filters.action'), class: 'btn'
       = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'
