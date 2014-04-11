@@ -53,7 +53,7 @@ class DematboxDocument
 
   def valid?
     if upload?
-      @doc_id.present? && content_file_valid?
+      @temp_document.present? && content_file_valid?
     else
       dematbox.present? && service.present? && @doc_id.present? && content_file_valid?
     end
