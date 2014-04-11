@@ -66,7 +66,9 @@ class DematboxDocument
   class << self
     def notify_uploaded(id)
       temp_document  = TempDocument.find id
-      result = DematboxApi.notify_uploaded temp_document.dematbox_doc_id, temp_document.dematbox_box_id, 'OK'
+      pages_number = DocumentTools.pages_number(temp_document.content.path)
+      message = "Envoi OK : %02d p." % pages_number
+      result = DematboxApi.notify_uploaded temp_document.dematbox_doc_id, temp_document.dematbox_box_id, message
       if result == '200:OK'
         temp_document.dematbox_is_notified = true
         temp_document.dematbox_notified_at = Time.now
