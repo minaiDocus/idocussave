@@ -7,29 +7,29 @@
   %ul.nav
     %li{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
     %li{ class: ('active' if controller_name == 'admin') }
-      = link_to 'Dashboard', admin_root_path
+      = link_to 'Tableau de bord', admin_root_path
     %li{ class: ('active' if controller_name.in?(%w(organizations groups))) }
-      = link_to t('mongoid.models.organization.name').pluralize, admin_organizations_path
+      = link_to 'Org.', admin_organizations_path
     %li{ class: ('active' if controller_name == 'reporting') }
-      = link_to 'Reporting', '/admin/reporting'
+      = link_to 'Rep.', '/admin/reporting'
     %li{ class: ('active' if controller_name == 'invoices') }
-      = link_to t('mongoid.models.invoice.name').pluralize, admin_invoices_path
+      = link_to 'Fac.', admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }
-      = link_to t('mongoid.models.user.name').pluralize, admin_users_path
+      = link_to 'Utili.', admin_users_path
     %li{ class: ('active' if controller_name == 'pages') }
-      = link_to t('mongoid.models.page.name').pluralize, admin_pages_path
+      = link_to 'Pag.', admin_pages_path
     %li{ class: ('active' if controller_name == 'cms_images') }
-      = link_to t('mongoid.models.cms_image.name').pluralize, admin_cms_images_path
+      = link_to 'CMS Img.', admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
-      = link_to t('mongoid.models.product.name').pluralize, admin_products_path
+      = link_to 'Prod.', admin_products_path
     %li{ class: ('active' if controller_name == 'visits') }
-      = link_to "Historique", admin_log_visits_path
+      = link_to "Histo.", admin_log_visits_path
     %li{ class: ('active' if controller_name == 'gray_labels') }
-      = link_to 'Marque Grise', admin_gray_labels_path
+      = link_to 'Marque G.', admin_gray_labels_path
     %li{ class: ('active' if controller_name == 'scanning_providers') }
-      = link_to 'Ateliers', admin_scanning_providers_path
+      = link_to 'Atel.', admin_scanning_providers_path
     %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
-      = link_to 'Dematbox', admin_dematboxes_path
+      = link_to 'D\'box', admin_dematboxes_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')
