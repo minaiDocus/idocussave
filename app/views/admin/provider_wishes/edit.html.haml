@@ -1,0 +1,12 @@
+#provider_wish
+  .row-fluid
+    .span12.well
+      %h3 Raison du rejet
+  
+  .row-fluid
+    .span12.well
+      = simple_form_for @provider_wish, url: reject_admin_fiduceo_provider_wish_path(@provider_wish), class: 'form form-horizontal' do |f|
+        = f.input :message, as: 'text', input_html: {  :style =>"width:100%" }
+        .form-actions
+          = f.submit t('actions.submit'), class: 'btn'
+          = link_to t('actions.cancel'), admin_fiduceo_provider_wishes_path, class: 'btn'

@@ -1,0 +1,19 @@
+Bonjour #{@user.name},
+%br
+%br
+- if @accepted.any?
+  Les demandes suivantes ont été acceptés :
+  %br
+  %ul
+    - @accepted.each do |provider_wish|
+      %li= provider_wish.name
+  %br
+- if @rejected.any?
+  Les demandes suivantes ont été rejetés :
+  %ul
+    - @rejected.each do |provider_wish|
+      %li= provider_wish.name
+  %br
+Cordialement,
+%br
+L'équipe iDocus.

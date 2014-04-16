@@ -170,6 +170,7 @@ Idocus::Application.routes.draw do
         get  'wait_for_user_action', :on => :member
         put  'update_transaction',   :on => :member
       end
+      resources :provider_wishes, as: :fiduceo_provider_wishes
     end
 
     namespace :charts do
@@ -262,6 +263,11 @@ Idocus::Application.routes.draw do
       post 'load_from_external', on: :collection
     end
     resources :dematbox_files
+    resources :provider_wishes, as: :fiduceo_provider_wishes do
+      put 'start_process', on: :member
+      put 'reject',        on: :member
+      put 'accept',        on: :member
+    end
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index

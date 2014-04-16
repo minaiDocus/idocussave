@@ -1,0 +1,44 @@
+#provider_wishes
+  .row-fluid.marginbottom
+    .span12.margin1bottom
+      %h3 Liste des demandes de nouveaux fournisseurs
+  .row-fluid
+    .span9
+      = render partial: 'list_options'
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at,    t('mongoid.models.common.attributes.created_at')
+                %th= sortable :updated_at,    t('mongoid.models.common.attributes.updated_at')
+                %th= sortable :user_id,       t('mongoid.models.user.name')
+                %th= sortable :state,         t('mongoid.models.fiduceo_provider_wish.attributes.state')
+                %th= sortable :name,          t('mongoid.models.fiduceo_provider_wish.attributes.name')
+                %th= sortable :url,           t('mongoid.models.fiduceo_provider_wish.attributes.url')
+                %th= sortable :login,         t('mongoid.models.fiduceo_provider_wish.attributes.login')
+                %th= sortable :notified_at,   t('mongoid.models.fiduceo_provider_wish.attributes.notified_at')
+                %th= sortable :processing_at, t('mongoid.models.fiduceo_provider_wish.attributes.processing_at')
+                %th Actions
+            %tbody
+              - @provider_wishes.each do |provider_wish|
+                %tr
+                  %td= l(provider_wish.created_at, format: '%d %b %Y %H:%M')
+                  %td= l(provider_wish.updated_at, format: '%d %b %Y %H:%M')
+                  %td= link_to provider_wish.user.code, [:admin, provider_wish.user]
+                  %td= provider_wish_state(provider_wish)
+                  %td= provider_wish.name
+                  %td= provider_wish.url
+                  %td= provider_wish.login
+                  %td= l(provider_wish.notified_at, format: '%d %b %Y %H:%M') rescue nil
+                  %td= l(provider_wish.processing_at, format: '%d %b %Y %H:%M') rescue nil
+                  %td
+                    - if provider_wish.pending?
+                      = link_to icon_ok, start_process_admin_fiduceo_provider_wish_path(provider_wish), method: 'PUT', class: 'btn btn-mini', data: { confirm: t('actions.confirm') }, title: 'Démarrer le traitement'
+                    - if provider_wish.processing?
+                      = link_to icon_ok, accept_admin_fiduceo_provider_wish_path(provider_wish), method: 'PUT', class: 'btn btn-mini btn-success', data: { confirm: t('actions.confirm') }, title: 'Accepter'
+                    - if provider_wish.pending? || provider_wish.processing?
+                      = link_to icon_not_ok, edit_admin_fiduceo_provider_wish_path(provider_wish), class: 'btn btn-mini btn-danger', title: 'Rejeter'
+      = render partial: 'list_options'
+    .span3
+      = render partial: 'sidebar'

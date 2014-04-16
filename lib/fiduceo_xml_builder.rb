@@ -20,6 +20,20 @@ module Fiduceo
           builder.to_xml
         end
 
+        def provider_wish(options)
+          builder = Nokogiri::XML::Builder.new do |xml|
+            xml.providerWishList {
+              xml.providerName         options[:name]                   if options[:name]
+              xml.providerUrl          options[:url]                    if options[:url]
+              xml.login                options[:login]                  if options[:login]
+              xml.pass                 options[:pass]                   if options[:pass]
+              xml.customConnectionInfo options[:custom_connection_info] if options[:custom_connection_info]
+              xml.description          options[:description]            if options[:description]
+            }
+          end
+          builder.to_xml
+        end
+
         def alert(options)
           builder = Nokogiri::XML::Builder.new do |xml|
             xml.alert {

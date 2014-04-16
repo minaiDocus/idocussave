@@ -1,0 +1,31 @@
+#fiduceo_provider_wishes.container-fluid
+  .row-fluid
+    .span3
+      = render partial: 'layouts/account/me/navigation'
+    .span9
+      = render partial: 'account/settings/retrievers/navigation'
+      .alerts
+        = render partial: 'shared/messages'
+      .row-fluid
+        .span12
+          .well
+            = render partial: 'list_options'
+            %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+              %thead
+                %tr
+                  %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                  %th= sortable :updated_at, t('mongoid.models.common.attributes.updated_at')
+                  %th= sortable :state,      t('mongoid.models.fiduceo_provider_wish.attributes.state')
+                  %th= sortable :name,       t('mongoid.models.fiduceo_provider_wish.attributes.name')
+                  %th= sortable :url,        t('mongoid.models.fiduceo_provider_wish.attributes.url')
+                  %th= sortable :login,      t('mongoid.models.fiduceo_provider_wish.attributes.login')
+              %tbody
+                - @provider_wishes.each do |provider_wish|
+                  %tr
+                    %td= l(provider_wish.created_at)
+                    %td= l(provider_wish.updated_at)
+                    %td= provider_wish_state(provider_wish)
+                    %td= provider_wish.name
+                    %td= provider_wish.url
+                    %td= provider_wish.login
+            = render partial: 'list_options'

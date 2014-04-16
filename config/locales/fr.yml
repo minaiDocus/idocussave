@@ -725,6 +725,23 @@ fr:
             bank: Op. bancaires
           state: Etat
           is_active: Activer le récupérateur ?
+      fiduceo_provider_wish:
+        zero: 0 fournisseur
+        one: 1 fournisseur
+        other: '%{count} fournisseurs'
+        name: Fournisseur Fiduceo
+        attributes:
+          state: Etat
+          name: Nom
+          url: URL
+          login: Identifiant
+          password: Mot de passe
+          description: Description
+          custom_connection_info: Information de connexion supplémentaire
+          message: Message
+          is_notified: Notifié ?
+          notified_at: Notifié le
+          processing_at: Traitement démarré le
       bank_account:
         zero: 0 Compte bancaire
         one: 1 Compte bancaire
@@ -797,6 +814,12 @@ fr:
           timeout: delai d'attente dépassé
           broker_unavailable: service indisponible
           rejected: trop de tentative
+      fiduceo_provider_wish:
+        states:
+          pending: En attente
+          processing: Traitement en cours
+          rejected: Rejeté
+          accepted: Traité
       knowings:
         states:
           not_performed: Non configuré

@@ -37,6 +37,14 @@ fr:
         login: Identifiant
         pass: Mot de passe
         is_active: Activer le récupérateur ?
+      fiduceo_provider_wish:
+        state: Etat
+        name: Nom
+        url: URL
+        login: Identifiant
+        password: Mot de passe
+        description: Description
+        custom_connection_info: Information de connexion supplémentaire
       bank_account:
         number: Numéro de compte
         journal: Journal
