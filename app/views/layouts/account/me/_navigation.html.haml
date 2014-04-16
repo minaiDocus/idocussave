@@ -1,6 +1,6 @@
 .well.sidebar-nav
   %ul.nav.nav-list.dlink
-    - if controller_name == 'retrievers'
+    - if controller_name.in? %w(retrievers provider_wishes)
       %li= link_to 'Changer mon mot de passe',        account_profile_path(panel: 'change_password')
       %li= link_to 'Gestion de mes adresses',         account_profile_path(panel: 'addresses_management')
       - if @user.is_prescriber || !@user.is_centralized

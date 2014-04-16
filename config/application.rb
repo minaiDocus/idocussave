@@ -59,7 +59,7 @@ module Idocus
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :rawScan, :improvedScan, :pass, :param1, :param2, :param3]
+    config.filter_parameters += [:password, :rawScan, :improvedScan, :pass, :param1, :param2, :param3, :custom_connection_info]
 
     config.generators do |g|
       g.orm :mongoid
@@ -79,7 +79,8 @@ module Idocus
     config.mongoid.observers = :user_observer,
                                :account_book_type_observer,
                                :pack_observer,
-                               :fiduceo_retriever_observer
+                               :fiduceo_retriever_observer,
+                               :fiduceo_provider_wish_observer
 
     config.wash_out.parser = :nokogiri
     config.wash_out.camelize_wsdl = true

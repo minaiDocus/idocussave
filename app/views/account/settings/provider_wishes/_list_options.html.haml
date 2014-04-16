@@ -1,0 +1,10 @@
+.list_options.row-fluid
+  .span6
+    .pull-left.padding1top
+      Afficher par :
+      = per_page_link 20
+      = per_page_link 50
+      = per_page_link 100
+  .span6
+    .pull-right
+      = paginate @provider_wishes

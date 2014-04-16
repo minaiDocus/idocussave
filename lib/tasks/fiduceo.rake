@@ -24,4 +24,11 @@ namespace :fiduceo do
       end
     end
   end
+
+  namespace :provider do
+    desc 'Notify processed wishes'
+    task :notify_processed_wishes do
+      FiduceoProviderWish.deliver_mails
+    end
+  end
 end

@@ -30,6 +30,8 @@
       = link_to 'Atel.', admin_scanning_providers_path
     %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
       = link_to 'D\'box', admin_dematboxes_path
+    %li{ class: ('active' if controller_name == 'provider_wishes') }
+      = link_to 'Demandes F.', admin_fiduceo_provider_wishes_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

@@ -192,6 +192,10 @@ module Fiduceo
       perform "retriever/#{id}/bankaccounts"
     end
 
+    def put_provider_wish(params)
+      perform 'providerwishlist', method: :put, body: Fiduceo::XML::Builder.provider_wish(params)
+    end
+
     def transaction(id)
       perform "transaction/#{id}"
     end

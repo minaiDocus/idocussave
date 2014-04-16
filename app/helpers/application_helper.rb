@@ -157,4 +157,11 @@ module ApplicationHelper
     yield presenter if block_given?
     presenter
   end
+
+  def provider_wish_state(provider_wish)
+    klass = 'label'
+    klass += ' label-success'   if provider_wish.accepted?
+    klass += ' label-important' if provider_wish.rejected?
+    content_tag :span, FiduceoProviderWish.state_machine.states[provider_wish.state].human_name, class: klass
+  end
 end
