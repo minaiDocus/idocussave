@@ -180,6 +180,22 @@
                 %td= pack.pages_count
     .row-fluid
       .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %th Date
+            %th Client
+            %th Nom
+            %th Etat
+          %tbody
+            - @provider_wishes.each do |provider_wish|
+              %tr
+                %td= l(provider_wish.created_at, format: '%e %b %H:%M')
+                %td= link_to provider_wish.user.code, account_settings_fiduceo_provider_wishes_path(code: provider_wish.user.code)
+                %td= provider_wish.name
+                %td= provider_wish_state(provider_wish)
+    .row-fluid
+      .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques - Documents - Nouveaux (#{@document_retrievers.size})
         %table.table.table-striped.table-condensed.table-bordered
           %thead
