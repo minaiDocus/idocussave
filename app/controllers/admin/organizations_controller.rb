@@ -102,8 +102,8 @@ private
 
   def search(contains)
     organizations = Organization.all
-    organizations = organizations.where(:name => /#{contains[:name]}/i) unless contains[:name].blank?
-    organizations = organizations.where(:description => /#{contains[:description]}/i) unless contains[:description].blank?
+    organizations = organizations.where(name:        /#{Regexp.quote(contains[:name])}/i)        unless contains[:name].blank?
+    organizations = organizations.where(description: /#{Regexp.quote(contains[:description])}/i) unless contains[:description].blank?
     organizations
   end
 end

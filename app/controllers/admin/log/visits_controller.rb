@@ -36,10 +36,10 @@ class Admin::Log::VisitsController < Admin::AdminController
   def search(contains)
     visits = ::Log::Visit.all
     if params[:user_contains] && params[:user_contains][:code].present?
-      user_ids = User.where(code: /#{params[:user_contains][:code]}/).distinct(:_id)
+      user_ids = User.where(code: /#{Regexp.quote(params[:user_contains][:code])}/).distinct(:_id)
       visits = visits.any_in(user_id: user_ids)
     end
-    visits = visits.where(path: /#{contains[:path]}/) if contains[:path].present?
+    visits = visits.where(path: /#{Regexp.quote(contains[:path])}/) if contains[:path].present?
     visits
   end
 end

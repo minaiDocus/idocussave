@@ -70,15 +70,15 @@ private
       user_ids = User.where(code: /#{Regexp.quote(params[:user_contains][:code])}/i).distinct(:_id)
     end
     provider_wishes = FiduceoProviderWish.all
-    provider_wishes = provider_wishes.where(created_at:    contains[:created_at])                  unless contains[:created_at].blank?
-    provider_wishes = provider_wishes.where(updated_at:    contains[:updated_at])                  unless contains[:updated_at].blank?
-    provider_wishes = provider_wishes.any_in(user_id:      user_ids) if user_ids.any?
-    provider_wishes = provider_wishes.where(state:         contains[:state])                       unless contains[:state].blank?
-    provider_wishes = provider_wishes.where(name:          /#{Regexp.quote(contains[:name])}/i)    unless contains[:name].blank?
-    provider_wishes = provider_wishes.where(url:           /#{Regexp.quote(contains[:url])}/i)     unless contains[:url].blank?
-    provider_wishes = provider_wishes.where(login:         /#{Regexp.quote(contains[:login])}/i)   unless contains[:login].blank?
-    provider_wishes = provider_wishes.where(notified_at:   contains[:notified_at])                 unless contains[:notified_at].blank?
-    provider_wishes = provider_wishes.where(processing_at: contains[:processing_at])               unless contains[:processing_at].blank?
+    provider_wishes = provider_wishes.where(created_at:    contains[:created_at])                unless contains[:created_at].blank?
+    provider_wishes = provider_wishes.where(updated_at:    contains[:updated_at])                unless contains[:updated_at].blank?
+    provider_wishes = provider_wishes.any_in(user_id:      user_ids)                             if user_ids.any?
+    provider_wishes = provider_wishes.where(state:         contains[:state])                     unless contains[:state].blank?
+    provider_wishes = provider_wishes.where(name:          /#{Regexp.quote(contains[:name])}/i)  unless contains[:name].blank?
+    provider_wishes = provider_wishes.where(url:           /#{Regexp.quote(contains[:url])}/i)   unless contains[:url].blank?
+    provider_wishes = provider_wishes.where(login:         /#{Regexp.quote(contains[:login])}/i) unless contains[:login].blank?
+    provider_wishes = provider_wishes.where(notified_at:   contains[:notified_at])               unless contains[:notified_at].blank?
+    provider_wishes = provider_wishes.where(processing_at: contains[:processing_at])             unless contains[:processing_at].blank?
     if contains[:is_notified]
       if contains[:is_notified].to_i == 1
         provider_wishes = provider_wishes.notified
