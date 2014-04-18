@@ -147,7 +147,7 @@ class DocumentTools
       else
         month = month.to_i
       end
-      period = Date.new(year, month, 1)
+      Date.new(year, month, 1)
     end
   end
 end
