@@ -133,7 +133,7 @@
           %tbody
             - @bundle_needed_temp_packs.each do |temp_pack|
               %tr
-                %td= l(temp_pack.temp_documents.bundle_needed.by_position.first.updated_at)
+                %td= l(temp_pack.temp_documents.bundle_needed.by_position.first.updated_at) rescue '-'
                 %td= temp_pack.name
                 %td= temp_pack.temp_documents.bundle_needed.count
     .row-fluid
@@ -147,7 +147,7 @@
           %tbody
             - @bundling_temp_packs.each do |temp_pack|
               %tr
-                %td= l(temp_pack.temp_documents.bundling.by_position.first.updated_at)
+                %td= l(temp_pack.temp_documents.bundling.by_position.first.updated_at) rescue '-'
                 %td= temp_pack.name
                 %td= temp_pack.temp_documents.bundling.count
     .row-fluid
