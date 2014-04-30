@@ -140,6 +140,8 @@ class Ibiza
 
   def export(preseizures)
     if preseizures.any?
+      is_error_present = false
+      data = nil
       ids = preseizures.map(&:id)
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
@@ -153,6 +155,7 @@ class Ibiza
             report.delivery_message = ''
           else
             report.delivery_message = client.response.message
+            is_error_present = true
           end
           if report.preseizures.not_delivered.count == 0
             report.update_attribute(:is_delivered, true)
@@ -162,6 +165,7 @@ class Ibiza
             report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
           else
             report.delivery_message = client.response.message
+            is_error_present = true
           end
         end
       else
@@ -171,6 +175,7 @@ class Ibiza
       report.delivery_tried_at = Time.now
       report.is_locked = false
       report.save
+      IbizaMailer.notify_error(self, report, data).deliver if is_error_present
       report.delivery_message
     end
   end

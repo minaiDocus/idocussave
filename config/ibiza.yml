@@ -1,5 +1,6 @@
 defaults: &defaults
   root_url: https://beta.irf-cloud.com/IRFService/services/IRFService.svc
+  notify_error_to: emmanuel.pliez@ibizasoftware.fr
 
 test:
   <<: *defaults
@@ -15,3 +16,4 @@ staging:
 
 production:
   root_url: https://webservice.irf-cloud.com/IRFService/services/IRFService.svc
+  notify_error_to: emmanuel.pliez@ibizasoftware.fr
