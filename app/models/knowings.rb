@@ -56,6 +56,10 @@ class Knowings
     configuration_valid?
   end
 
+  def ready?
+    is_configured? && active?
+  end
+
   def configuration_changed?
     username_changed? || password_changed? || url_changed? || is_active_changed?
   end
