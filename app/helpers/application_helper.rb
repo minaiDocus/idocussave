@@ -164,4 +164,24 @@ module ApplicationHelper
     klass += ' label-important' if provider_wish.rejected?
     content_tag :span, FiduceoProviderWish.state_machine.states[provider_wish.state].human_name, class: klass
   end
+
+  def knowings_visibility_options
+    [
+      [t('mongoid.models.user.attributes.knowings_visibility_options.private'),    KnowingsApi::PRIVATE],
+      [t('mongoid.models.user.attributes.knowings_visibility_options.restricted'), KnowingsApi::RESTRICTED],
+      [t('mongoid.models.user.attributes.knowings_visibility_options.visible'),    KnowingsApi::VISIBLE]
+    ]
+  end 
+
+  def knowings_visibility(value)
+    if value == KnowingsApi::PRIVATE
+      t('mongoid.models.user.attributes.knowings_visibility_options.private')
+    elsif value == KnowingsApi::RESTRICTED
+      t('mongoid.models.user.attributes.knowings_visibility_options.restricted')
+    elsif value == KnowingsApi::VISIBLE
+      t('mongoid.models.user.attributes.knowings_visibility_options.visible')
+    else
+      ''
+    end
+  end
 end

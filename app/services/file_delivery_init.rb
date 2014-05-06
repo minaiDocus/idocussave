@@ -130,6 +130,7 @@ class FileDeliveryInit
         end
         options = {}
         options[:user_code]       = user.knowings_code.presence || user.code
+        options[:visibility]      = user.knowings_visibility
         options[:user_company]    = user.company
         if exercice
           options[:exercice]      = true

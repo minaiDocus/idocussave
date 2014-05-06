@@ -28,6 +28,9 @@
           %th.first= t('mongoid.models.user.attributes.knowings_code')
           %td= render partial: 'text_field2', locals: { instance: @user, key: :knowings_code, name: 'user[knowings_code]' }
         %tr
+          %th.first= t('mongoid.models.user.attributes.knowings_visibility')
+          %td= render partial: 'text_field2', locals: { instance: @user, key: :knowings_visibility, name: 'user[knowings_visibility]' }
+        %tr
           %th.first= t('mongoid.models.user.attributes.short.balance_in_cents')
           %td.value= format_price_00(@user.balance_in_cents) + ' €'
         %tr

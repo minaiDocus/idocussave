@@ -333,6 +333,11 @@ fr:
           company: Société
           code: Code
           knowings_code: Code Knowings
+          knowings_visibility: Visibilité Knowings
+          knowings_visibility_options:
+            private: Confidentiel
+            restricted: Restreint
+            visible: Visible
           first_name: Prénom
           last_name: Nom
           email: Email

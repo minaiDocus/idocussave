@@ -30,7 +30,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomer.new(@organization, @user, user_params).customer
+    @customer = CreateCustomer.new(@organization, @user, user_params.merge(knowings_params)).customer
     if @customer.persisted?
       flash[:notice] = "En attente de validation de l'administrateur."
       redirect_to account_organization_customer_path(@customer)
@@ -43,13 +43,9 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update
-    _params = user_params
-    if _params[:knowings_code]
-      knowings_code = _params.delete(:knowings_code)
-      @customer.update_attribute(:knowings_code, knowings_code)
-    end
-    attrs = @customer.request.attribute_changes.merge(_params)
-    if @customer.request.set_attributes(attrs, {}, @user)
+    result = @customer.update_attributes(knowings_params)
+    attrs = @customer.request.attribute_changes.merge(user_params)
+    if result && @customer.request.set_attributes(attrs, {}, @user)
       if @customer.request.status == ''
         flash[:success] = 'Modifié avec succès'
       else
@@ -147,7 +143,6 @@ private
 
   def user_params
     _params = params.require(:user).permit(:code,
-                                           :knowings_code,
                                            :company,
                                            :first_name,
                                            :last_name,
@@ -157,6 +152,10 @@ private
       _params.merge! params.require(:user).permit(:group_ids)
     end
     _params
+  end
+
+  def knowings_params
+    params.require(:user).permit(:knowings_code, :knowings_visibility)
   end
 
   def period_options_params
