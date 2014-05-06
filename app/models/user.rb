@@ -61,6 +61,8 @@ class User
 
   validates_uniqueness_of :code
 
+  field :knowings_code
+
   field :is_disabled,                    type: Boolean, default: false
   field :is_editable,                    type: Boolean, default: true
 

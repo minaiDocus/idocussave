@@ -43,7 +43,12 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update
-    attrs = @customer.request.attribute_changes.merge(user_params)
+    _params = user_params
+    if _params[:knowings_code]
+      knowings_code = _params.delete(:knowings_code)
+      @customer.update_attribute(:knowings_code, knowings_code)
+    end
+    attrs = @customer.request.attribute_changes.merge(_params)
     if @customer.request.set_attributes(attrs, {}, @user)
       if @customer.request.status == ''
         flash[:success] = 'Modifié avec succès'
@@ -142,6 +147,7 @@ private
 
   def user_params
     _params = params.require(:user).permit(:code,
+                                           :knowings_code,
                                            :company,
                                            :first_name,
                                            :last_name,

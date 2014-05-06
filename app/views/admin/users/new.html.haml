@@ -14,6 +14,7 @@
         = f.input :first_name, label: 'Prénom'
         = f.input :last_name, label: 'Nom'
         = f.input :code, label: 'Code'
+        = f.input :knowings_code, label: 'Code Knowings'
         = f.input :company, label: 'Société'
         = f.input :organization_id, lbale: t('mongoid.models.user.attributes.organization'), collection: Organization.asc(:name), label_method: :name, value_method: :id, include_blank: false
     .row-fluid

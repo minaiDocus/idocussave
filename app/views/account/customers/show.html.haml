@@ -40,6 +40,9 @@
                       %th= t('mongoid.models.user.attributes.code')
                       %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'code' }
                     %tr
+                      %th= t('mongoid.models.user.attributes.knowings_code')
+                      %td= @customer.knowings_code
+                    %tr
                       %th= t('mongoid.models.user.attributes.company')
                       %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'company' }
                     %tr
