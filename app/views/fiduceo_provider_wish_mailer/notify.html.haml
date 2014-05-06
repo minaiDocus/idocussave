@@ -1,17 +1,28 @@
 Bonjour #{@user.name},
 %br
 %br
+Vous avez demandé la création de nouveau(x) automates(s) de récupération.
+%br
+%br
 - if @accepted.any?
-  Les demandes suivantes ont été acceptés :
+  Les automates suivants ont été développés et sont déjà disponibles dans votre interface. Vous pouvez maintenant les configurer :
   %br
   %ul
     - @accepted.each do |provider_wish|
       %li= provider_wish.name
   %br
 - if @rejected.any?
-  Les demandes suivantes ont été rejetés :
+  Les automates suivants n’ont pas pu être développés :
   %ul
     - @rejected.each do |provider_wish|
+      %li
+        = provider_wish.name
+        = " (#{provider_wish.message})"
+  %br
+- if @processing.any?
+  Les automates suivants sont en cours d’analyse :
+  %ul
+    - @processing.each do |provider_wish|
       %li= provider_wish.name
   %br
 Cordialement,
