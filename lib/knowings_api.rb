@@ -1,5 +1,19 @@
 # -*- encoding : UTF-8 -*-
 module KnowingsApi
+  PRIVATE    = 0
+  RESTRICTED = 1
+  VISIBLE    = 2
+
+  def self.visibility(value)
+    if value == RESTRICTED
+      I18n.t('mongoid.models.user.attributes.knowings_visibility_options.restricted').downcase
+    elsif value == VISIBLE
+      I18n.t('mongoid.models.user.attributes.knowings_visibility_options.visible').downcase
+    else
+      I18n.t('mongoid.models.user.attributes.knowings_visibility_options.private').downcase
+    end
+  end
+
   class Client
     attr_accessor :username, :password, :uri, :http, :request, :response
 
@@ -8,6 +22,10 @@ module KnowingsApi
       @password = password
       @uri      = URI.parse(url)
       @http     = Net::HTTP.new(@uri.host, @uri.port)
+      if @uri.scheme == 'https'
+        @http.use_ssl     = true
+        @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
     end
 
     def verify
@@ -72,8 +90,9 @@ module KnowingsApi
                   xml.name @file_name
                 end
                 xml.file @file_name
+                xml.property KnowingsApi::visibility(options[:visibility]), name: 'pgec:etat', resolve: 'true'
                 xml.property 'Pièces', create: 'false', name: 'pgec:documentType', resolve: 'true'
-                xml.property options[:user_code], name: 'pgec:codeClient', transient: true
+                xml.property options[:user_code], name: 'pgec:codeClient', transient: 'true'
                 xml.property options[:user_company], create: 'true', name: 'pgec:clientTitle' if options[:user_company].present?
                 xml.property 'Pièces', create: 'true', name: 'pgec:poleName'
                 if options[:exercice]

@@ -61,6 +61,11 @@ class User
 
   validates_uniqueness_of :code
 
+  field :knowings_code
+  field :knowings_visibility,            type: Integer, default: 0
+
+  validates_inclusion_of :knowings_visibility, in: 0..2
+
   field :is_disabled,                    type: Boolean, default: false
   field :is_editable,                    type: Boolean, default: true
 

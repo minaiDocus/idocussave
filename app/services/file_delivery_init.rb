@@ -22,7 +22,7 @@ class FileDeliveryInit
     else
       owner = pack.owner
       pack.init_delivery_for(owner, options)
-      if owner.organization.try(:knowings).try(:is_configured?)
+      if owner.organization.try(:knowings).try(:ready?)
         pack.init_delivery_for(owner.organization, options.merge(type: RemoteFile::PIECES_ONLY))
       end
       owner.prescribers.each do |prescriber|
@@ -129,7 +129,8 @@ class FileDeliveryInit
           nature = 'Relevés'
         end
         options = {}
-        options[:user_code]       = user.code
+        options[:user_code]       = user.knowings_code.presence || user.code
+        options[:visibility]      = user.knowings_visibility
         options[:user_company]    = user.company
         if exercice
           options[:exercice]      = true
@@ -185,13 +186,7 @@ class FileDeliveryInit
           current_remote_files << get_remote_file(object,service_name,'.tiff')
         end
       elsif service_name == 'Knowings'
-        if self.compta_processable?
-          if self.preseizures.any?
-            current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
-          end
-        else
-          current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
-        end
+        current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
       else
         if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
           current_remote_files << get_remote_file(object,service_name,'.pdf')

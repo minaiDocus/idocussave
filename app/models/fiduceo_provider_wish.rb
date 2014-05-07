@@ -68,7 +68,8 @@ class FiduceoProviderWish
       accepted = user.fiduceo_provider_wishes.accepted.not_notified
       rejected = user.fiduceo_provider_wishes.rejected.not_notified
       if accepted.any? || rejected.any?
-        FiduceoProviderWishMailer.notify(user, accepted, rejected).deliver
+        processing = user.fiduceo_provider_wishes.processing
+        FiduceoProviderWishMailer.notify(user, accepted, rejected, processing).deliver
         accepted.update_all(notified_at: Time.now) if accepted.any?
         rejected.update_all(notified_at: Time.now) if rejected.any?
       end

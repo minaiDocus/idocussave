@@ -97,7 +97,7 @@ describe Knowings do
 
   describe 'sync' do
     before(:each) do
-      @remote_file = RemoteFile.new
+      @remote_file = RemoteFile.new(service_name: 'Knowings', temp_path: '/path/to/file.kzip')
       @remote_file.stub(local_name: 'file.zip')
       @remote_file.stub(sending!: true)
       @remote_file.stub(synced!: true)

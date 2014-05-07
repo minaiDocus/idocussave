@@ -2,9 +2,8 @@
   = f.input :username, required: @knowings.is_active
   = f.input :password, required: @knowings.is_active, as: :password
   = f.input :url,      required: @knowings.is_active
-  = f.input :is_active,                         as: :boolean
-  = f.input :is_third_party_included ,          as: :boolean
-  = f.input :is_pre_assignment_state_included , as: :boolean
+  = f.input :is_active,               as: :boolean
+  = f.input :is_third_party_included, as: :boolean
   .form-actions.margin0bottom
     = f.submit 'Valider', class: 'btn btn-primary'
     = link_to t('actions.cancel'), account_organization_path, class: 'btn'
