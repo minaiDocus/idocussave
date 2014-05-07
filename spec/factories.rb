@@ -88,7 +88,7 @@ FactoryGirl.define do
   factory Knowings do
     username 'test@example.com'
     password 'secret'
-    path '/root'
+    url 'http://knowings.fr'
     is_active true
   end
 end
