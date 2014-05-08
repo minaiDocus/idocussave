@@ -46,6 +46,8 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
     run "ln -nfs #{shared_path}/config/box.yml #{release_path}/config/box.yml"
     run "ln -nfs #{shared_path}/config/dematbox_service_api.yml #{release_path}/config/dematbox_service_api.yml"
+    run "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
+    run "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
     run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     run "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
@@ -53,7 +55,6 @@ namespace :shared do
     run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     run "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
     run "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
-    run "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
     run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     run "ln -s #{shared_path}/data #{release_path}/data"
     run "ln -s #{shared_path}/files #{release_path}/files"
@@ -116,6 +117,9 @@ namespace :shared do
     end
     unless remote_file_exist? "#{shared_path}/config/knowings.yml"
       run "cp #{release_path}/config/knowings.yml.example #{shared_path}/config/knowings.yml"
+    end
+    unless remote_file_exist? "#{shared_path}/config/emailed_document.yml"
+      run "cp #{release_path}/config/emailed_document.yml.example #{shared_path}/config/emailed_document.yml"
     end
   end
 end

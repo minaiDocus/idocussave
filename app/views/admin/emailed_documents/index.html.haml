@@ -1,0 +1,46 @@
+#emails
+  .row-fluid.marginbottom
+    .span12.margin1bottom
+      %h3 Liste des mails d'envoi de documents
+  .row-fluid
+    .span9
+      = render partial: 'list_options'
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :state,      t('mongoid.models.email.attributes.state')
+                %th= sortable :from,       t('mongoid.models.email.attributes.from')
+                %th= sortable :to,         t('mongoid.models.email.attributes.to')
+                %th= sortable :subject,    t('mongoid.models.email.attributes.subject')
+                %th= sortable :size,       t('mongoid.models.email.attributes.size') + ' (Mo)'
+                %th= t('mongoid.models.email.attributes.attachment_names_count')
+                %th Actions
+            %tbody
+              - @emails.each do |email|
+                %tr
+                  %td= l(email.created_at, format: '%d %b %Y %H:%M')
+                  %td= email_state email
+                  %td
+                    - if email.from_user
+                      = link_to(email.from_user.code, [:admin, email.from_user])
+                      \-
+                    = email.from
+                  %td
+                    - if email.to_user
+                      = link_to(email.to_user.code, [:admin, email.to_user])
+                      \-
+                    = email.to
+                  %td= email.subject
+                  %td= file_size email.size
+                  %td= email.attachment_names.count
+                  %td
+                    - if email.errors_list.any?
+                      = link_to content_tag(:i, '', class: 'icon-exclamation-sign'), show_errors_admin_emailed_document_path(email), title: 'Afficher les erreurs'
+                    - if email.original_content.path.present?
+                      = link_to content_tag(:i, '', class: 'icon-download'), admin_emailed_document_path(email), title: 'Télécharger le mail original'
+      = render partial: 'list_options'
+    .span3
+      = render partial: 'sidebar'

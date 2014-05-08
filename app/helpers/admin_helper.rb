@@ -148,4 +148,15 @@ module AdminHelper
       ''
     end
   end
+
+  def email_state(email)
+    klass = 'label'
+    klass += ' label-success'   if email.state == 'processed'
+    klass += ' label-important' if email.state.in? %w(error unprocessable)
+    content_tag 'span', Email.state_machine.states[email.state].human_name, class: klass
+  end
+
+  def file_size(size_in_octet)
+    "%0.3f" % ((size_in_octet * 1.0) / 1048576.0)
+  end
 end

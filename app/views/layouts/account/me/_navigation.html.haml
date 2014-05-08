@@ -1,18 +1,19 @@
 .well.sidebar-nav
   %ul.nav.nav-list.dlink
     - if controller_name.in? %w(retrievers provider_wishes)
-      %li= link_to 'Changer mon mot de passe',        account_profile_path(panel: 'change_password')
-      %li= link_to 'Gestion de mes adresses',         account_profile_path(panel: 'addresses_management')
+      %li= link_to 'Changer mon mot de passe',           account_profile_path(panel: 'change_password')
+      %li= link_to 'Gestion de mes adresses',            account_profile_path(panel: 'addresses_management')
       - if @user.is_prescriber || !@user.is_centralized
-        %li= link_to 'Mode de paiement',              account_profile_path(panel: 'payment_management')
-      %li= link_to 'Services de stockages externes',  account_profile_path(panel: 'efs_management')
-      %li= link_to 'Partages',                        account_profile_path(panel: 'sharing_management')
-      %li= link_to 'Abonnement',                      account_profile_path(panel: 'subscription_options')
+        %li= link_to 'Mode de paiement',                 account_profile_path(panel: 'payment_management')
+      %li= link_to 'Services de stockages externes',     account_profile_path(panel: 'efs_management')
+      %li= link_to 'Partages',                           account_profile_path(panel: 'sharing_management')
+      %li= link_to 'Notification par mail',              account_profile_path(panel: 'subscription_options')
       - if @user.is_dematbox_authorized
-        %li= link_to "iDocus'Box",                    account_profile_path(panel: 'idocus_box')
+        %li= link_to "iDocus'Box",                       account_profile_path(panel: 'idocus_box')
       - if @user.is_prescriber || !@user.is_centralized
-        %li= link_to 'Factures',                      account_profile_path(panel: 'invoices')
-      %li.active= link_to 'Automate de récupération', account_settings_fiduceo_retrievers_path
+        %li= link_to 'Factures',                         account_profile_path(panel: 'invoices')
+      %li= link_to "Adresse email d'envoi de documents", account_profile_path(panel: 'emailed_documents')
+      %li.active= link_to 'Automate de récupération',    account_settings_fiduceo_retrievers_path
     - else
       %li{ class: ('active' if @active_panel == 'change_password') }
         != link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
@@ -26,12 +27,14 @@
       %li{ class: ('active' if @active_panel == 'sharing_management') }
         != link_to 'Partages', '#sharing_management', class: 'do-show'
       %li{ class: ('active' if @active_panel == 'subscription_options') }
-        != link_to 'Abonnement', '#subscription_options', class: 'do-show'
+        != link_to 'Notification par mail', '#subscription_options', class: 'do-show'
       - if @user.is_dematbox_authorized
         %li{ class: ('active' if @active_panel == 'idocus_box') }
           != link_to "iDocus'Box", '#idocus_box', class: 'do-show'
       - if @user.is_prescriber || !@user.is_centralized
         %li{ class: ('active' if @active_panel == 'invoices') }
           != link_to 'Factures', '#invoices', class: 'do-show'
+      %li{ class: ('active' if @active_panel == 'emailed_documents') }
+        != link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
       - if @user.is_fiduceo_authorized
         %li= link_to 'Automate de récupération', account_settings_fiduceo_retrievers_path

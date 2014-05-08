@@ -180,6 +180,32 @@
                 %td= pack.pages_count
     .row-fluid
       .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Dernier mail reçus (#{@emails.count})
+        %table.table.table-striped.table-condensed.table-bordered
+          %thead
+            %th Date
+            %th= t('mongoid.models.email.attributes.state')
+            %th= t('mongoid.models.email.attributes.from')
+            %th= t('mongoid.models.email.attributes.to')
+            %th= t('mongoid.models.email.attributes.subject')
+          %tbody
+            - @emails.each do |email|
+              %tr
+                %td= l(email.created_at, format: '%e %b %H:%M')
+                %td= email_state email
+                %td
+                  - if email.from_user
+                    = link_to(email.from_user.code, [:admin, email.from_user])
+                  - else
+                    = email.from
+                %td
+                  - if email.to_user
+                    = link_to(email.to_user.code, [:admin, email.to_user])
+                  - else
+                    = email.to
+                %td= email.subject
+    .row-fluid
+      .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs
         %table.table.table-striped.table-condensed.table-bordered
           %thead

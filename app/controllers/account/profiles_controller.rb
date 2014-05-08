@@ -83,6 +83,10 @@ class Account::ProfilesController < Account::AccountController
 
 private
   def user_params
-    params.require(:user).permit(:current_password, :password, :password_confirmation, :is_reminder_email_active, :is_document_notifier_active)
+    params.require(:user).permit(:current_password,
+                                 :password, :password_confirmation,
+                                 :is_reminder_email_active,
+                                 :is_document_notifier_active,
+                                 :is_mail_receipt_activated)
   end
 end

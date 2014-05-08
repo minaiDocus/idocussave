@@ -63,33 +63,74 @@ describe PeriodService do
     end
   end
 
+  describe '#names' do
+    it "return ['201312', '201401']" do
+      periods = PeriodService.new period_duration:   1,
+                                  authd_prev_period: 1,
+                                  current_time:      @time
+      expect(periods.names).to eql(['201312', '201401'])
+    end
+
+    it "return ['201401', '201402', '201403', '201404']" do
+      periods = PeriodService.new period_duration:   1,
+                                  authd_prev_period: 3,
+                                  current_time:      Time.local(2014,4,30,0,0,0)
+      expect(periods.names).to eql(['201401', '201402', '201403', '201404'])
+    end
+
+    it "return ['2013T3', '2013T4', '2014T1']" do
+      periods = PeriodService.new period_duration:   3,
+                                  authd_prev_period: 2,
+                                  current_time:      @time
+      expect(periods.names).to eql(['2013T3', '2013T4', '2014T1'])
+    end
+
+    it "return ['2013T4', '2014T1', '2014T2']" do
+      periods = PeriodService.new period_duration:   3,
+                                  authd_prev_period: 2,
+                                  current_time:      Time.local(2014,4,30,0,0,0)
+      expect(periods.names).to eql(['2013T4', '2014T1', '2014T2'])
+    end
+  end
+
   describe '#include?' do
-    it 'return true' do
-      periods = PeriodService.new period_duration: 1,
-                                  authd_prev_period: 1,
-                                  current_time: @time
-      expect(periods.include?(Time.local(2014,1,1))).to be_true
+    describe 'with time instance as parameter' do
+      it 'return true' do
+        periods = PeriodService.new period_duration: 1,
+                                    authd_prev_period: 1,
+                                    current_time: @time
+        expect(periods.include?(Time.local(2014,1,1))).to be_true
+      end
+
+      it 'return false' do
+        periods = PeriodService.new period_duration: 1,
+                                    authd_prev_period: 1,
+                                    current_time: @time
+        expect(periods.include?(Time.local(2013,11,1))).to be_false
+      end
+
+      it 'return true' do
+        periods = PeriodService.new period_duration: 3,
+                                    authd_prev_period: 1,
+                                    current_time: @time
+        expect(periods.include?(Time.local(2013,10,1))).to be_true
+      end
+
+      it 'return false' do
+        periods = PeriodService.new period_duration: 3,
+                                    authd_prev_period: 1,
+                                    current_time: @time
+        expect(periods.include?(Time.local(2013,9,1))).to be_false
+      end
     end
 
-    it 'return false' do
-      periods = PeriodService.new period_duration: 1,
-                                  authd_prev_period: 1,
-                                  current_time: @time
-      expect(periods.include?(Time.local(2013,11,1))).to be_false
-    end
+    describe 'with string instance as parameter' do
+      subject(:period) { PeriodService.new period_duration: 1, authd_prev_period: 1, current_time: @time }
 
-    it 'return true' do
-      periods = PeriodService.new period_duration: 3,
-                                  authd_prev_period: 1,
-                                  current_time: @time
-      expect(periods.include?(Time.local(2013,10,1))).to be_true
-    end
-
-    it 'return false' do
-      periods = PeriodService.new period_duration: 3,
-                                  authd_prev_period: 1,
-                                  current_time: @time
-      expect(periods.include?(Time.local(2013,9,1))).to be_false
+      it { should_not include '201402' }
+      it { should include '201401' }
+      it { should include '201312' }
+      it { should_not include '201311' }
     end
   end
 

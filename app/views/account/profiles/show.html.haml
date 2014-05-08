@@ -260,6 +260,7 @@
               = hidden_field_tag :panel, 'subscription_options'
               = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
               = f.input :is_document_notifier_active, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouveaux documents sont disponibles", wrapper: :inline_checkbox
+              = f.input :is_mail_receipt_activated, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail", wrapper: :inline_checkbox
               .form-actions
                 = f.submit 'Valider', class: 'btn'
       
@@ -291,5 +292,19 @@
               %h3
             .modal-body
               %iframe{ :src => '' }
+
+      #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
+        .span12
+          .well
+            %h3.aligncenter Adresse email d'envoi de documents
+            %br
+            Ci-dessous votre adresse email personnalisée à laquelle vous pouvez envoyez vos documents pour traitement.
+            %hr
+            .aligncenter
+              %b{ style: 'font-size: 16px;' }
+                = "#{@user.email_code}@fw.idocus.com"
+              %br
+              %br
+              = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-primary', data: { method: :post }
 
 = render "help"

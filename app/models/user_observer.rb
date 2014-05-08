@@ -1,4 +1,8 @@
 class UserObserver < Mongoid::Observer
+  def before_create(user)
+    user.email_code = user.get_new_email_code
+  end
+
   def after_create(user)
     request = Request.new
     request.requestable = user

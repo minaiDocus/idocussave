@@ -77,9 +77,9 @@ class Scan::Period
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
 
-  def self.period_name(duration, offset=0)
-    time = Time.now
-    time -= duration.month * offset
+  def self.period_name(duration, offset=0, current_time=Time.now)
+    time = current_time
+    time -= (duration * offset).month
     if duration == 1
       time.strftime('%Y%m')
     elsif duration == 3

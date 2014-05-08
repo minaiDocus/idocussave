@@ -790,6 +790,18 @@ fr:
           start_date: Date de début
           end_date: Date de fin
           is_closed: Fermé ?
+      email:
+        zero: 0 email
+        one: 1 email
+        other: '%{count} emails'
+        name: Email
+        attributes:
+          state: Etat
+          from: Emetteur
+          to: Destinataire
+          subject: Objet
+          attachment_names_count: Nb de F.
+          size: Taille
     state_machines:
       fiduceo_retriever:
         states:
@@ -832,3 +844,9 @@ fr:
           verifying: En cours de vérification
           invalid: Echoué
           valid: Vérifié
+      email:
+        states:
+          created:       Créé
+          error:         En erreur
+          processed:     Traité
+          unprocessable: Intraitable

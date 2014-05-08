@@ -54,6 +54,7 @@ class TempDocument
   belongs_to :temp_pack
   belongs_to :document_delivery
   belongs_to :fiduceo_retriever
+  belongs_to :email
   has_mongoid_attached_file :content,     path: ":rails_root/files/:rails_env/:class/:id/:filename"
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/:raw_content/:filename"
 

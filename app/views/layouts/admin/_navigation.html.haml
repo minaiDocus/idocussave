@@ -32,6 +32,8 @@
       = link_to 'D\'box', admin_dematboxes_path
     %li{ class: ('active' if controller_name == 'provider_wishes') }
       = link_to 'Demandes F.', admin_fiduceo_provider_wishes_path
+    %li{ class: ('active' if controller_name == 'emailed_documents') }
+      = link_to 'S. Mail', admin_emailed_documents_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

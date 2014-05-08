@@ -89,36 +89,32 @@ describe Scan::Period do
   end
 
   describe ".period_name" do
-    before(:all) do
-      Timecop.freeze(Time.local(2013,1,1))
-    end
-
-    after(:all) do
-      Timecop.return
-    end
-
     it 'should return 201301' do
-      expect(Scan::Period.period_name 1, 0).to eq('201301')
+      expect(Scan::Period.period_name 1, 0, Time.local(2013,1,1)).to eq('201301')
     end
 
     it 'should return 201212' do
-      expect(Scan::Period.period_name 1, 1).to eq('201212')
+      expect(Scan::Period.period_name 1, 1, Time.local(2013,1,1)).to eq('201212')
     end
 
     it 'should return 201211' do
-      expect(Scan::Period.period_name 1, 2).to eq('201211')
+      expect(Scan::Period.period_name 1, 2, Time.local(2013,1,1)).to eq('201211')
     end
 
     it 'should return 2013T1' do
-      expect(Scan::Period.period_name 3, 0).to eq('2013T1')
+      expect(Scan::Period.period_name 3, 0, Time.local(2013,1,1)).to eq('2013T1')
     end
 
     it 'should return 2012T4' do
-      expect(Scan::Period.period_name 3, 1).to eq('2012T4')
+      expect(Scan::Period.period_name 3, 1, Time.local(2013,1,1)).to eq('2012T4')
     end
 
     it 'should return 2012T3' do
-      expect(Scan::Period.period_name 3, 2).to eq('2012T3')
+      expect(Scan::Period.period_name 3, 2, Time.local(2013,1,1)).to eq('2012T3')
+    end
+
+    it 'should return 201402' do
+      expect(Scan::Period.period_name 1, 2, Time.local(2014,4,1)).to eq('201402')
     end
   end
 end

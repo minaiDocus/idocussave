@@ -50,6 +50,8 @@ class Admin::AdminController < ApplicationController
     end
     @last_packs               = Pack.desc(:updated_at).limit(15).entries
 
+    @emails                   = Email.desc(:created_at).limit(10)
+
     @provider_wishes             = FiduceoProviderWish.desc(:created_at).limit(5).entries
     @document_retrievers         = FiduceoRetriever.providers.desc(:created_at).limit(5).entries
     @operation_retrievers        = FiduceoRetriever.banks.desc(:created_at).limit(5).entries

@@ -87,6 +87,11 @@ class User
   # Used in preassignment export
   field :is_computed_date_used, type: Boolean, default: false
 
+  field :email_code
+  field :is_mail_receipt_activated, type: Boolean, default: true
+
+  validates_uniqueness_of :email_code
+
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
   field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3
@@ -136,6 +141,8 @@ class User
   has_many :fiduceo_provider_wishes, dependent: :destroy
   has_many :bank_accounts,           dependent: :destroy
   has_many :exercices
+  has_many :sended_emails,   class_name: 'Email', inverse_of: :from_user, dependent: :destroy
+  has_many :received_emails, class_name: 'Email', inverse_of: :to_user,   dependent: :destroy
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true
@@ -313,7 +320,19 @@ class User
       false
     end
   end
-  
+
+  def get_new_email_code
+    new_email_code = rand(36**8).to_s(36)
+    while User.where(email_code: new_email_code).first
+      new_email_code = rand(36**8).to_s(36)
+    end
+    new_email_code
+  end
+
+  def update_email_code
+    update_attribute(:email_code, get_new_email_code)
+  end
+
 protected
 
   def set_inactive_at

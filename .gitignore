@@ -15,4 +15,5 @@ config/fiduceo.yml
 config/box.yml
 config/dematbox_service_api.yml
 config/knowings.yml
+config/emailed_document.yml
 Sporkfile.rb

@@ -13,8 +13,8 @@ class DocumentTools
       `convert #{file_path} 'pdf:#{output_file_path}'`
     end
 
-    def modifiable?(file_path)
-      if completed? file_path
+    def modifiable?(file_path, strict=true)
+      if completed? file_path, strict
         begin
           document = Poppler::Document.new(file_path)
           document.permissions.full?
@@ -26,14 +26,16 @@ class DocumentTools
       end
     end
 
-    def completed?(file_path)
+    def completed?(file_path, strict=true)
       is_ok = true
       begin
         Poppler::Document.new(file_path)
       rescue GLib::Error
         is_ok = false
       end
-      is_ok = false unless `pdftk #{file_path} dump_data; echo $?`.to_i == 0
+      if strict
+        is_ok = false unless `pdftk #{file_path} dump_data; echo $?`.to_i == 0
+      end
       # consumes too much cpu cycle
       # is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
       is_ok

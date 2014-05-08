@@ -177,6 +177,10 @@ Idocus::Application.routes.draw do
       resources :operations
       resources :balances
     end
+
+    resources :emailed_documents do
+      post 'regenerate_code', on: :collection
+    end
   end
 
   namespace :tunnel do
@@ -267,6 +271,9 @@ Idocus::Application.routes.draw do
       put 'start_process', on: :member
       put 'reject',        on: :member
       put 'accept',        on: :member
+    end
+    resources :emailed_documents do
+      get 'show_errors', on: :member
     end
   end
 

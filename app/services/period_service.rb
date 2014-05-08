@@ -29,8 +29,22 @@ class PeriodService
     end
   end
 
-  def include?(time)
-    start_at <= time && end_at >= time
+  def include?(param)
+    if param.class.in? [Time, ActiveSupport::TimeWithZone]
+      start_at <= param && end_at >= param
+    elsif param.class == String
+      names.include? param
+    else
+      nil
+    end
+  end
+
+  def names
+    time = @current_time.beginning_of_month   if @period_duration == 1
+    time = @current_time.beginning_of_quarter if @period_duration == 3
+    (@authd_prev_period + 1).times.map do |i|
+      Scan::Period.period_name(@period_duration, @authd_prev_period - i, time)
+    end
   end
 
   def prev_expires_at

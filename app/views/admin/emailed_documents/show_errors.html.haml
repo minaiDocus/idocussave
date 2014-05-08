@@ -1,0 +1,17 @@
+#email.errors_list
+  .row-fluid
+    .span12
+      %h3 Liste des erreurs
+      %br
+      %ul
+        - @email.errors_list.each do |error|
+          %li
+            - if error.class.in? [String, Symbol]
+              = error
+            - elsif error.is_a? Array
+              = error.first
+              %ul
+                - error[1..-1].each do |attachment_error|
+                  %li= attachment_error
+      %br
+      = link_to t('actions.return'), admin_emailed_documents_path, class: 'btn'
