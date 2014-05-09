@@ -165,7 +165,7 @@ class Ibiza
             report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
           else
             report.delivery_message = client.response.message
-            is_error_present = true
+            is_error_present = true if client.response.message.present?
           end
         end
       else
