@@ -34,93 +34,79 @@ after "deploy:finalize_update", "shared:config"
 before "deploy:create_symlink", "shared:create_symlink"
 after "deploy", "deploy:cleanup", "manager:start", "delayed_job:start"
 
-def remote_file_exist?(filepath)
-  'true' == capture("if [ -e #{filepath} ]; then echo 'true'; fi").strip
-end
-
 namespace :shared do
   desc "Create symlink"
   task :create_symlink do
-    run "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
-    run "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
-    run "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
-    run "ln -nfs #{shared_path}/config/box.yml #{release_path}/config/box.yml"
-    run "ln -nfs #{shared_path}/config/dematbox_service_api.yml #{release_path}/config/dematbox_service_api.yml"
-    run "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
-    run "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
-    run "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
-    run "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
-    run "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
-    run "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
-    run "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
-    run "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
-    run "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
-    run "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
-    run "ln -s #{shared_path}/data #{release_path}/data"
-    run "ln -s #{shared_path}/files #{release_path}/files"
+    command = []
+    command << "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
+    command << "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
+    command << "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
+    command << "ln -nfs #{shared_path}/config/box.yml #{release_path}/config/box.yml"
+    command << "ln -nfs #{shared_path}/config/dematbox_service_api.yml #{release_path}/config/dematbox_service_api.yml"
+    command << "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
+    command << "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
+    command << "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
+    command << "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
+    command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
+    command << "ln -s #{shared_path}/data #{release_path}/data"
+    command << "ln -s #{shared_path}/files #{release_path}/files"
+    run command.join('; ')
   end
 
   desc "Create necessary directories"
   task :mkdir do
-    run "mkdir -p #{shared_path}/config/initializers"
-    run "mkdir -p #{shared_path}/public/system/#{rails_env}"
-    run "mkdir -p #{release_path}/tmp/barcode"
-    run "mkdir -p #{shared_path}/data/compta/mapping"
-    run "mkdir -p #{shared_path}/files/#{rails_env}/kit"
-    run "mkdir -p #{shared_path}/files/#{rails_env}/archives/invoices"
-    run "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
+    command = []
+    command << "mkdir -p #{shared_path}/config/initializers"
+    command << "mkdir -p #{shared_path}/public/system/#{rails_env}"
+    command << "mkdir -p #{release_path}/tmp/barcode"
+    command << "mkdir -p #{shared_path}/data/compta/mapping"
+    command << "mkdir -p #{shared_path}/files/#{rails_env}/kit"
+    command << "mkdir -p #{shared_path}/files/#{rails_env}/archives/invoices"
+    command << "mkdir -p #{shared_path}/files/#{rails_env}/compositions"
+    run command.join('; ')
   end
 
   desc "Prepare config files"
   task :config do
-    if remote_file_exist? "#{shared_path}/config/initializers/notification.rb"
-      run "rm #{release_path}/config/initializers/notification.rb"
-    else
-      run "mv #{release_path}/config/initializers/notification.rb #{shared_path}/config/initializers"
+    command = []
+
+    files = [
+      'notification.rb',
+      'num.rb',
+      'compta.rb',
+      'site.rb',
+      'tire.rb',
+      'errbit.rb'
+    ]
+
+    files.each do |file|
+      command << "if [ -e #{shared_path}/config/initializers/#{file} ]"
+      command << "then rm #{release_path}/config/initializers/#{file}"
+      command << "else mv #{release_path}/config/initializers/#{file} #{shared_path}/config/initializers"
+      command << "fi"
     end
-    if remote_file_exist? "#{shared_path}/config/initializers/num.rb"
-      run "rm #{release_path}/config/initializers/num.rb"
-    else
-      run "mv #{release_path}/config/initializers/num.rb #{shared_path}/config/initializers"
+
+    files = [
+      'dematbox.yml',
+      'fiduceo.yml',
+      'box.yml',
+      'dematbox_service_api.yml',
+      'knowings.yml',
+      'emailed_document.yml'
+    ]
+
+    files.each do |file|
+      command << "if [ ! -e #{shared_path}/config/#{file} ]"
+      command << "then cp #{release_path}/config/#{file}.example #{shared_path}/config/#{file}"
+      command << "fi"
     end
-    if remote_file_exist? "#{shared_path}/config/initializers/compta.rb"
-      run "rm #{release_path}/config/initializers/compta.rb"
-    else
-      run "mv #{release_path}/config/initializers/compta.rb #{shared_path}/config/initializers"
-    end
-    if remote_file_exist? "#{shared_path}/config/initializers/site.rb"
-      run "rm #{release_path}/config/initializers/site.rb"
-    else
-      run "mv #{release_path}/config/initializers/site.rb #{shared_path}/config/initializers"
-    end
-    if remote_file_exist? "#{shared_path}/config/initializers/tire.rb"
-      run "rm #{release_path}/config/initializers/tire.rb"
-    else
-      run "mv #{release_path}/config/initializers/tire.rb #{shared_path}/config/initializers"
-    end
-    if remote_file_exist? "#{shared_path}/config/initializers/errbit.rb"
-      run "rm #{release_path}/config/initializers/errbit.rb"
-    else
-      run "mv #{release_path}/config/initializers/errbit.rb #{shared_path}/config/initializers"
-    end
-    unless remote_file_exist? "#{shared_path}/config/dematbox.yml"
-      run "cp #{release_path}/config/dematbox.yml.example #{shared_path}/config/dematbox.yml"
-    end
-    unless remote_file_exist? "#{shared_path}/config/fiduceo.yml"
-      run "cp #{release_path}/config/fiduceo.yml.example #{shared_path}/config/fiduceo.yml"
-    end
-    unless remote_file_exist? "#{shared_path}/config/box.yml"
-      run "cp #{release_path}/config/box.yml.example #{shared_path}/config/box.yml"
-    end
-    unless remote_file_exist? "#{shared_path}/config/dematbox_service_api.yml"
-      run "cp #{release_path}/config/dematbox_service_api.yml.example #{shared_path}/config/dematbox_service_api.yml"
-    end
-    unless remote_file_exist? "#{shared_path}/config/knowings.yml"
-      run "cp #{release_path}/config/knowings.yml.example #{shared_path}/config/knowings.yml"
-    end
-    unless remote_file_exist? "#{shared_path}/config/emailed_document.yml"
-      run "cp #{release_path}/config/emailed_document.yml.example #{shared_path}/config/emailed_document.yml"
-    end
+
+    run command.join('; ')
   end
 end
 
