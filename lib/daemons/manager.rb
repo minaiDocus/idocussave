@@ -19,9 +19,35 @@ end
 @program_name_prefix = '[idd]'
 $PROGRAM_NAME = "#{@program_name_prefix}manager"
 
+def go_sleep(duration, program_name, state_prefix='sleeping')
+  $continue = false
+  duration.times do |i|
+    remaining_time = duration - i
+    remaining_minutes = "%02d" % (remaining_time / 60)
+    remaining_seconds = "%02d" % (remaining_time % 60)
+    state = "#{state_prefix} #{remaining_minutes}:#{remaining_seconds}"
+    $PROGRAM_NAME = "#{@program_name_prefix}#{program_name}[#{state}]"
+    sleep(1)
+    break unless $running
+    break if $continue
+  end
+end
+
 def with_error_handler(program_name, &block)
+  tries = 0
   begin
     yield
+  rescue Net::POPAuthenticationError => e
+    if tries < 3
+      tries += 1
+      go_sleep(tries.minutes, program_name, 'retrying in')
+      retry
+    else
+      ErrorNotification::EMAILS.each do |email|
+        NotificationMailer.notify(email, "[iDocus][Email fetcher error] Net::POPAuthenticationError", e.message).deliver
+      end
+      $running = false
+    end
   rescue => e
     ::Airbrake.notify_or_ignore(
       :error_class   => e.class.name,
@@ -38,17 +64,7 @@ end
 def with_state(program_name, sleep_duration, &block)
   $PROGRAM_NAME = "#{@program_name_prefix}#{program_name}[running]"
   with_error_handler(program_name, &block)
-  $continue = false
-  sleep_duration.times do |i|
-    remaining_time = sleep_duration - i
-    remaining_minutes = "%02d" % (remaining_time / 60)
-    remaining_seconds = "%02d" % (remaining_time % 60)
-    state = "sleeping #{remaining_minutes}:#{remaining_seconds}"
-    $PROGRAM_NAME = "#{@program_name_prefix}#{program_name}[#{state}]"
-    sleep(1)
-    break unless $running
-    break if $continue
-  end
+  go_sleep(sleep_duration, program_name) if $running
 end
 
 pids = []
