@@ -99,14 +99,27 @@ update_selects_list = (show_provider)->
     $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').show()
     $('#fiduceo_retriever_journal_id').parents('.controls').parents('.control-group').hide()
 
-update_service_name = ->
+update_provider = ->
   unless $('#fiduceo_retriever_provider_id').is(':disabled') && $('#fiduceo_retriever_bank_id').is(':disabled')
     result = null
     result = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').tokenInput('get')[0]
     if result
       $('#fiduceo_retriever_service_name').val(result.name)
+      $('#fiduceo_retriever_name').val(result.name)
+      if $('#fiduceo_retriever_type').val() == 'provider'
+        url = $.grep(window.providers, (e) -> e.id == result.id)[0]['url']
+      else
+        url = $.grep(window.banks, (e) -> e.id == result.id)[0]['url']
+      if url != undefined && url != null
+        link = '<a href="'+url+'" target="_blank">'+url+'</a>'
+        help_block = '<p class="help-block"><br/><br/>'+link+'<p>'
+        $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').after(help_block)
     else
       $('#fiduceo_retriever_service_name').val('')
+      $('#fiduceo_retriever_name').val('')
+      $help_block = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').next('p')
+      if $help_block != undefined
+        $help_block.remove()
 
 jQuery ->
   if $('#fiduceo_retriever .form').length > 0
@@ -120,7 +133,7 @@ jQuery ->
     $('#fiduceo_retriever_type').on 'change', ->
       update_selects_list($(this).val() == 'provider')
       update_form()
-      update_service_name()
+      update_provider()
 
     update_form()
 
@@ -147,10 +160,10 @@ jQuery ->
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
           update_form()
-          update_service_name()
+          update_provider()
         onDelete: (item) ->
           update_form()
-          update_service_name()
+          update_provider()
 
     if $('#fiduceo_retriever_bank_id').is(':disabled')
       $('#fiduceo_retriever_bank_id').val($('#fiduceo_retriever_service_name').val())
@@ -168,10 +181,13 @@ jQuery ->
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
           update_form()
-          update_service_name()
+          update_provider()
         onDelete: (item) ->
           update_form()
-          update_service_name()
+          update_provider()
+
+  update_provider()
+
   if $('#select_documents, #select_bank_accounts').length > 0
     $('#master_checkbox').change ->
       if $(this).is(':checked')

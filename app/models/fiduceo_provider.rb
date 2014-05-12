@@ -24,6 +24,15 @@ class FiduceoProvider
             }.with_indifferent_access
             _bank['id']     = bank.provider_id
             _bank['inputs'] = bank.inputs['input']
+            if bank.provider_infos && bank.provider_infos['providerInfo']
+              if bank.provider_infos['providerInfo'].is_a? Array
+                _bank['url'] = bank.provider_infos['providerInfo'][0]['libelle']
+              elsif bank.provider_infos['providerInfo'].is_a? Hash
+                _bank['url'] = bank.provider_infos['providerInfo']['libelle']
+              else
+                _bank['url'] = nil
+              end
+            end
             _bank
           end
         end
@@ -72,8 +81,17 @@ class FiduceoProvider
               wait_for_user: provider.wait_for_user == 'true' ? true : false,
               wait_for_user_label: provider.wait_for_user_label == 'NONE' ? nil : provider.wait_for_user_label
             }.with_indifferent_access
-            _provider['id'] = provider.id
-            _provider['inputs'] = provider.inputs['input']
+            _provider['id']      = provider.id
+            _provider['inputs']  = provider.inputs['input']
+            if provider.providerInfos && provider.providerInfos['providerInfo']
+              if provider.providerInfos['providerInfo'].is_a? Array
+                _provider['url'] = provider.providerInfos['providerInfo'][0]['libelle']
+              elsif provider.providerInfos['providerInfo'].is_a? Hash
+                _provider['url'] = provider.providerInfos['providerInfo']['libelle']
+              else
+                _provider['url'] = nil
+              end
+            end
             _provider
           end
         else

@@ -2,11 +2,11 @@
 #banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
 
 = simple_form_for [:account, :settings, @fiduceo_retriever], html: { class: 'form form-horizontal' } do |f|
-  = f.input :name
   = f.input :type, collection: [['Documents', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
   = f.input :service_name, as: :hidden
   = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
   = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
+  = f.input :name
   = f.input :journal_id, collection: @user.account_book_types, include_blank: false
   = f.input :login
   = f.input :pass, required: true, as: :password
