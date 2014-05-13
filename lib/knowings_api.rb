@@ -103,7 +103,7 @@ module KnowingsApi
                   xml.property 'Permanent', name: 'pgec:folderType'
                 end
                 xml.property "#{options[:date].strftime('%Y-%m')}-01T00:00:00+0#{options[:date].dst? ? 2 : 1}:00", name: 'pgec:mois' if options[:date].present?
-                xml.property options[:domain], label: 'Domaine', resolve: 'true'
+                xml.property options[:domain], label: 'Domaine', resolve: 'true' if options[:domain].present?
                 xml.property options[:nature], label: 'Nature', resolve: 'true' if options[:nature].present?
                 xml.property options[:tiers], name: 'pgec:docTiers', resolve: 'true' if options[:tiers].present?
                 xml.property (options[:is_pre_assigned] ? 'Oui' : 'Non'), name: 'pgec:choix6', resolve: 'true', create: 'true' unless options[:is_pre_assigned].nil?

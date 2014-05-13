@@ -121,7 +121,7 @@ class FileDeliveryInit
           period = DocumentTools.to_period(self.name)
         end
         exercice = ExerciceService.find(user, period, false)
-        domain = user.account_book_types.where(name: journal).first.domain
+        domain = user.account_book_types.where(name: journal).first.try(:domain)
         nature = nil
         if domain == 'AC - Achats'
           nature = 'Autres'
