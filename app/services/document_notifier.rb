@@ -3,19 +3,18 @@ class DocumentNotifier
   class << self
     def notify_updated
       Pack.observers.disable :all do
-        new_documents.each do |owner, documents|
-          document_names = documents.map(&:name)
+        updated_packs.each do |owner, packs|
           if owner.is_document_notifier_active
-            PackMailer.new_document_available(owner, document_names).deliver
+            PackMailer.new_document_available(owner, packs).deliver
           end
           collaborators = owner.groups.map(&:collaborators).flatten.uniq
           collaborators.each do |collaborator|
             if collaborator.is_document_notifier_active
-              PackMailer.new_document_available(collaborator, document_names).deliver
+              PackMailer.new_document_available(collaborator, packs).deliver
             end
           end
-          documents.each do |document|
-            document.timeless.update_attribute(:is_update_notified, true)
+          packs.each do |pack|
+            pack.timeless.update_attribute(:is_update_notified, true)
           end
         end
       end
@@ -26,7 +25,7 @@ class DocumentNotifier
       ReminderEmail.deliver
     end
 
-    def new_documents
+    def updated_packs
       Pack.not_notified_update.group_by(&:owner)
     end
   end
