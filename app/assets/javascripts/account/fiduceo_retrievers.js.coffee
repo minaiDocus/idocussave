@@ -186,7 +186,7 @@ jQuery ->
           update_form()
           update_provider()
 
-  update_provider()
+    update_provider()
 
   if $('#select_documents, #select_bank_accounts').length > 0
     $('#master_checkbox').change ->
