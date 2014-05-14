@@ -22,7 +22,9 @@ class FiduceoRetrieverPresenter < BasePresenter
           content = last_event.presence || 'En attente de traitement ...'
           result = h.content_tag :span, content, class: 'label'
         else
-          result = h.content_tag :span, formatted_state, class: 'label'
+          label_type = 'success'   if fiduceo_retriever.scheduled?
+          label_type = 'important' if fiduceo_retriever.error?
+          result = h.content_tag :span, formatted_state, class: "label label-#{label_type}"
         end
         if fiduceo_retriever.error? && fiduceo_retriever.transactions.last.critical_error?
           result += h.content_tag :span, icon(icon: 'warning-sign', title: 'Veuillez contacter le support<support@idocus.com>'), class: 'label'
@@ -55,12 +57,11 @@ class FiduceoRetrieverPresenter < BasePresenter
 private
 
   def formatted_state
-    result = FiduceoRetriever.state_machine.states[fiduceo_retriever.state].human_name
     if fiduceo_retriever.error?
-      result << ': '
-      result << t('mongoid.state_machines.fiduceo_transaction.status.' + fiduceo_retriever.transactions.last.status.downcase)
+      t('mongoid.state_machines.fiduceo_transaction.status.' + fiduceo_retriever.transactions.last.status.downcase).capitalize
+    else
+      FiduceoRetriever.state_machine.states[fiduceo_retriever.state].human_name
     end
-    result
   end
 
   def last_event
