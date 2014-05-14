@@ -34,6 +34,8 @@ class FiduceoProvider
               end
             end
             _bank
+          end.sort do |bank1, bank2|
+            bank1[:name].downcase <=> bank2[:name].downcase
           end
         end
         register_to_cache_list cache_name
@@ -93,6 +95,8 @@ class FiduceoProvider
               end
             end
             _provider
+          end.sort do |provider1, provider2|
+            provider1[:name].downcase <=> provider2[:name].downcase
           end
         else
           []
