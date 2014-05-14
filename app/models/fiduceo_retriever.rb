@@ -21,6 +21,7 @@ class FiduceoRetriever
   field :state
   field :is_active,            type: Boolean, default: true
   field :is_selection_needed,  type: Boolean, default: true
+  field :is_auto,              type: Boolean, default: true
   field :wait_for_user,        type: Boolean, default: false
   field :wait_for_user_label
   field :pending_document_ids, type: Array,   default: []
@@ -41,8 +42,12 @@ class FiduceoRetriever
     state :error
 
     after_transition any => :scheduled do |retriever, transition|
-      if retriever.wait_for_user && retriever.service_name != 'Boursorama'
+      transaction = retriever.transactions.asc(:created_at).last
+      if transaction && transaction.wait_for_user_labels.any?
+        retriever.update_attribute(:is_auto, false) if retriever.is_auto
         retriever.ready
+      else
+        retriever.update_attribute(:is_auto, true) unless retriever.is_auto
       end
     end
 

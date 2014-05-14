@@ -13,6 +13,7 @@
       %th= sortable :type,         t('mongoid.models.fiduceo_retriever.attributes.type')
       %th= sortable :service_name, t('mongoid.models.fiduceo_retriever.attributes.service_name')
       %th= sortable :name,         t('mongoid.models.fiduceo_retriever.attributes.name')
+      %th Mode
       %th.retriever_state= t('mongoid.models.fiduceo_retriever.attributes.state')
       %th
   %tbody
@@ -22,6 +23,7 @@
           %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{fiduceo_retriever_presenter.type}")
           %td= fiduceo_retriever_presenter.service_name
           %td= fiduceo_retriever_presenter.name
+          %td= fiduceo_retriever_presenter.mode
           %td.retriever_state!= fiduceo_retriever_presenter.state
           %td
             = icon_link_to '#', { icon: 'info-sign' }, { rel: 'popover', data: { 'original-title' => 'Date de création/modification', content: "#{l(fiduceo_retriever.created_at)}<br>#{l(fiduceo_retriever.updated_at)}", placement: 'left' } }

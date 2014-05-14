@@ -731,6 +731,7 @@ fr:
             bank: Op. bancaires
           state: Etat
           is_active: Activer le récupérateur ?
+          is_auto: Automatique ?
       fiduceo_provider_wish:
         zero: 0 fournisseur
         one: 1 fournisseur

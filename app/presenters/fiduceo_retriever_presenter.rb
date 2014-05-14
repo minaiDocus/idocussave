@@ -3,6 +3,10 @@ class FiduceoRetrieverPresenter < BasePresenter
   presents :fiduceo_retriever
   delegate :name, :service_name, :type, to: :fiduceo_retriever
 
+  def mode
+    fiduceo_retriever.is_auto ? 'Automatique' : 'Manuel'
+  end
+
   def state
     if fiduceo_retriever.is_active
       if fiduceo_retriever.wait_selection?
@@ -22,7 +26,7 @@ class FiduceoRetrieverPresenter < BasePresenter
           content = last_event.presence || 'En attente de traitement ...'
           result = h.content_tag :span, content, class: 'label'
         else
-          label_type = 'success'   if fiduceo_retriever.scheduled?
+          label_type = 'success'   if fiduceo_retriever.scheduled? || fiduceo_retriever.ready?
           label_type = 'important' if fiduceo_retriever.error?
           result = h.content_tag :span, formatted_state, class: "label label-#{label_type}"
         end
