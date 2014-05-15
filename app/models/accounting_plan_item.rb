@@ -11,7 +11,6 @@ class AccountingPlanItem
 
   validates_presence_of :third_party_account
   validates_presence_of :third_party_name
-  validates_presence_of :conterpart_account
 
   default_scope asc: :third_party_name
 
