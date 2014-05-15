@@ -43,16 +43,6 @@ class FiduceoRetrieverService
 
     def destroy(retriever)
       client = Fiduceo::Client.new(retriever.user.fiduceo_id)
-      if retriever.bank?
-        results = client.bank_accounts
-        if client.response.code == 200
-          results[1].each do |bank_account|
-            if bank_account.retriever_id == retriever.fiduceo_id
-              client.bank_account(bank_account.id, :delete)
-            end
-          end
-        end
-      end
       client.retriever(retriever.fiduceo_id, :delete)
       retriever.destroy
     end
