@@ -62,7 +62,7 @@ class FiduceoRetriever
     end
 
     event :fetch do
-      transition [:scheduled, :wait_for_user_action] => :processing
+      transition [:ready, :scheduled, :wait_for_user_action] => :processing
     end
 
     event :wait_selection do

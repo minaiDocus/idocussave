@@ -3,7 +3,7 @@ class FiduceoDocumentFetcher
     def initiate_transactions(retrievers=nil)
       _retrievers = Array(retrievers).presence || FiduceoRetriever.active
       _retrievers.each do |retriever|
-        if (retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
+        if (retriever.ready? || retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
           retriever.schedule if retriever.error?
           create_transaction(retriever)
         end
