@@ -16,7 +16,7 @@ namespace :fiduceo do
     desc 'Initiate fiduceo transactions'
     task :initiate => [:environment] do
       period = ENV['PERIOD'].presence || 'daily'
-      retrievers = FiduceoRetriever.active.where(period: period)
+      retrievers = FiduceoRetriever.active.scheduled.where(period: period)
       FiduceoDocumentFetcher.initiate_transactions(retrievers)
     end
   end

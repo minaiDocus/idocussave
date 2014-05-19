@@ -34,6 +34,7 @@ class FiduceoRetriever
   scope :providers, where: { type: 'provider' }
   scope :banks,     where: { type: 'bank' }
   scope :active,    where: { is_active: true }
+  scope :scheduled, where: { state: 'scheduled' }
 
   state_machine initial: :scheduled do
     state :ready
