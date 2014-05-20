@@ -60,11 +60,11 @@ class FiduceoProviderWish
     def deliver_mails
       users = User.find FiduceoProviderWish.processed.not_notified.distinct(:user_id)
       users.each do |user|
-        delivery_mail(user)
+        deliver_mail(user)
       end
     end
 
-    def delivery_mail(user)
+    def deliver_mail(user)
       accepted = user.fiduceo_provider_wishes.accepted.not_notified
       rejected = user.fiduceo_provider_wishes.rejected.not_notified
       if accepted.any? || rejected.any?
