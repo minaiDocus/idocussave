@@ -30,11 +30,16 @@ class FiduceoRetrieverService
     def update(retriever, params)
       retriever.assign_attributes(params)
       if retriever.valid?
+        is_name_changed = retriever.name_changed?
         client = Fiduceo::Client.new retriever.user.fiduceo_id
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.save
           retriever.schedule if retriever.error? && params[:pass].present?
+          if is_name_changed
+            retriever.transactions.update_all(custom_service_name: retriever.name)
+            retriever.temp_documents.update_all(fiduceo_custom_service_name: retriever.name)
+          end
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
       end

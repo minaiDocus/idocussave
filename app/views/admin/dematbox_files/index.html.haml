@@ -12,7 +12,7 @@
             %th= t('mongoid.models.temp_document.attributes.content_file_name')
             %th= t('mongoid.models.temp_document.attributes.content_file_size')
             %th= t('mongoid.models.temp_document.attributes.dematbox_notified_at')
-            %th= t('mongoid.models.temp_document.attributes.state.name')
+            %th= t('mongoid.models.temp_document.attributes.state')
         %tbody
           - @dematbox_files.each do |file|
             %tr
@@ -22,7 +22,7 @@
               %td= file.content_file_name
               %td= file_size file.content_file_size
               %td= I18n.l(file.dematbox_notified_at) rescue nil
-              %td= t("mongoid.models.temp_document.attributes.state.values.#{file.state}")
+              %td= TempDocument.state_machine.states[file.state].human_name
       .pull-right
         = paginate @dematbox_files
     .span3

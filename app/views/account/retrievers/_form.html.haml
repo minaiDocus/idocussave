@@ -1,7 +1,7 @@
 #providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
 #banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
 
-= simple_form_for [:account, :settings, @fiduceo_retriever], html: { class: 'form form-horizontal' } do |f|
+= simple_form_for [:account, @fiduceo_retriever], html: { class: 'retriever_form form form-horizontal' } do |f|
   = f.input :type, collection: [['Documents', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
   = f.input :service_name, as: :hidden
   = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
@@ -24,5 +24,5 @@
     = f.input :sparam3, collection: [], include_blank: false
   = f.input :is_active, as: :boolean
   .form-actions
-    = f.submit t('actions.submit'), class: 'btn'
-    = link_to t('actions.cancel'), account_settings_fiduceo_retrievers_path, class: 'btn'
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_fiduceo_retrievers_path, class: 'btn'

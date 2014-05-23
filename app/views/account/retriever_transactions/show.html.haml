@@ -1,0 +1,15 @@
+.row-fluid
+  .span12
+    .box
+      %h3 #{@transaction.retriever.name} : transaction du #{l(@transaction.created_at)}
+    .box
+      %table.table-striped.table-condensed.table-bordered
+        %thead
+          %tr
+            %th Date
+            %th Statut
+        %tbody
+          - @transaction.events['transactionEvent'].each do |event|
+            %tr
+              %td= l(Time.at(event['timestamp'].to_i / 1000.0), format: "%d %B %Y %H:%M:%S.#{event['timestamp'].to_i % 1000}")
+              %td= event['status']

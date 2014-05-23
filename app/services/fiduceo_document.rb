@@ -21,6 +21,8 @@ class FiduceoDocument
         user_id:               @user.id,
         fiduceo_metadata:      format_metadata(document['metadatas']['metadata']),
         fiduceo_id:            document['id'],
+        service_name:          retriever.service_name,
+        custom_service_name:   retriever.name,
         is_content_file_valid: true,
         is_locked:             retriever.wait_selection?
       }
@@ -91,6 +93,8 @@ private
     metadata.each do |e|
       hsh[e['name'].downcase] = e['value']
     end
+    hsh['amount'] = hsh['amount'].to_f
+    hsh['date'] = Time.zone.parse(hsh['date']).to_time
     hsh
   end
 end

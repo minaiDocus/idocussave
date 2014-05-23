@@ -7,7 +7,7 @@ class FiduceoRetriever
 
   belongs_to :user
   belongs_to :journal,        class_name: 'AccountBookType',    inverse_of: 'fiduceo_retrievers'
-  has_many   :transactions,   class_name: 'FiduceoTransaction', inverse_of: 'retriever',          dependent: :destroy
+  has_many   :transactions,   class_name: 'FiduceoTransaction', inverse_of: 'retriever'
   has_many   :temp_documents
   has_many   :bank_accounts,                                    inverse_of: 'retriever',          dependent: :destroy
 

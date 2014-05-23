@@ -703,18 +703,7 @@ fr:
           dematbox_text: Texte
           dematbox_is_notified: Notifié ?
           dematbox_notified_at: Notifié le
-          state:
-            name: Etat
-            values:
-              created: Créé
-              unreadable: Corrompu
-              rejected: Rejeté
-              ocr_needed: Besoin de traitement OCR
-              bundle_needed: Requière un regroupement
-              bundling: En cours de regroupement
-              bundled: Regroupé
-              ready: Prêt
-              processed: Traité
+          state: Etat
           stated_at: Etat mise à jour le
           is_locked: Bloqué ?
       fiduceo_retriever:
@@ -851,3 +840,14 @@ fr:
           error:         En erreur
           processed:     Traité
           unprocessable: Intraitable
+      temp_document:
+        states:
+          created: Créé
+          unreadable: Corrompu
+          rejected: Rejeté
+          ocr_needed: Besoin de traitement OCR
+          bundle_needed: Requière un regroupement
+          bundling: En cours de regroupement
+          bundled: Regroupé
+          ready: Prêt
+          processed: Traité

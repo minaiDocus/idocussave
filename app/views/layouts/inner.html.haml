@@ -8,7 +8,7 @@
     = csrf_meta_tag
     != stylesheet_link_tag 'application'
     != stylesheet_link_tag 'account/profiles' if controller_name == 'profiles'
-    != stylesheet_link_tag 'account/fiduceo_retrievers' if controller_name == 'retrievers'
+    != stylesheet_link_tag 'account/retrievers' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)
     != stylesheet_link_tag 'account/charts' if controller_name.in? %w(operations balances)
 
   %body
@@ -54,7 +54,7 @@
     - if current_user.is_admin
       .container-fluid
         = render 'shared/as_user'
-    != yield
+    != content_for?(:content) ? yield(:content) : yield
 
     != render :partial => "/shared/google_analytics"
     :plain
@@ -65,9 +65,9 @@
       != javascript_include_tag 'application', 'inner', 'account/reporting'
     - elsif controller_name == 'profiles' && action_name == 'show'
       != javascript_include_tag 'application', 'inner', 'account/profile'
-    - elsif controller_name == 'retrievers'
-      != javascript_include_tag 'application', 'inner', 'account/fiduceo_retrievers'
+    - elsif controller_name.in? %w(retrievers retriever_transactions retrieved_banking_operations retrieved_documents)
+      != javascript_include_tag 'application', 'inner', 'account/retrievers'
     - elsif controller_name.in? %w(operations balances)
       != javascript_include_tag 'application', 'inner', 'aight.min', 'aight.d3.min', 'sizzle', 'd3', 'd3-tip', 'account/charts', "account/charts/#{controller_name}"
-    - else
+    - elsif controller_name == 'documents'
       != javascript_include_tag 'application', 'inner', 'account/documents'

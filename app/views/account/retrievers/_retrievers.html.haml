@@ -2,20 +2,18 @@
 = hidden_field_tag :sort, sort_column
 = hidden_field_tag :per_page, per_page
 = hidden_field_tag :page, page
-.row-fluid
-  .span6
-    = render partial: 'list_options'
-  .span6
-    = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger', data: { toggle: 'modal' }
+
+= render partial: 'list_options'
 %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
   %thead
     %tr
       %th= sortable :type,         t('mongoid.models.fiduceo_retriever.attributes.type')
       %th= sortable :service_name, t('mongoid.models.fiduceo_retriever.attributes.service_name')
       %th= sortable :name,         t('mongoid.models.fiduceo_retriever.attributes.name')
+      %th Journal
       %th Mode
       %th.retriever_state= t('mongoid.models.fiduceo_retriever.attributes.state')
-      %th
+      %th Actions
   %tbody
     - @fiduceo_retrievers.each do |fiduceo_retriever|
       - present fiduceo_retriever do |fiduceo_retriever_presenter|
@@ -23,11 +21,12 @@
           %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{fiduceo_retriever_presenter.type}")
           %td= fiduceo_retriever_presenter.service_name
           %td= fiduceo_retriever_presenter.name
+          %td= fiduceo_retriever_presenter.journal.try(:name) || '-'
           %td= fiduceo_retriever_presenter.mode
           %td.retriever_state!= fiduceo_retriever_presenter.state
           %td
             = icon_link_to '#', { icon: 'info-sign' }, { rel: 'popover', data: { 'original-title' => 'Date de création/modification', content: "#{l(fiduceo_retriever.created_at)}<br>#{l(fiduceo_retriever.updated_at)}", placement: 'left' } }
             = fiduceo_retriever_presenter.action_link
-            = link_to icon_edit, edit_account_settings_fiduceo_retriever_path(fiduceo_retriever), title: 'Editer', rel: 'tooltip'
-            = link_to icon_destroy, account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :delete, confirm: t('actions.confirm') }, title: 'Supprimer', rel: 'tooltip'
+            = link_to icon_edit, edit_account_fiduceo_retriever_path(fiduceo_retriever), title: 'Editer', rel: 'tooltip'
+            = link_to icon_destroy, account_fiduceo_retriever_path(fiduceo_retriever), data: { method: :delete, confirm: t('actions.confirm') }, title: 'Supprimer', rel: 'tooltip'
 = render partial: 'list_options'

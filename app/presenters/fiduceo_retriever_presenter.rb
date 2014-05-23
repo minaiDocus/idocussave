@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoRetrieverPresenter < BasePresenter
   presents :fiduceo_retriever
-  delegate :name, :service_name, :type, to: :fiduceo_retriever
+  delegate :name, :service_name, :journal, :type, to: :fiduceo_retriever
 
   def mode
     fiduceo_retriever.is_auto ? 'Automatique' : 'Manuel'
@@ -14,13 +14,13 @@ class FiduceoRetrieverPresenter < BasePresenter
           if fiduceo_retriever.pending_document_ids.any?
             h.content_tag :span, 'Preparation des documents', class: 'label'
           else
-            h.link_to 'Sélectionnez vos documents', h.select_documents_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+            h.link_to 'Sélectionnez vos documents', h.select_documents_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
           end
         else
-          h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
         end
       elsif fiduceo_retriever.wait_for_user_action?
-        h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_settings_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+        h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
       else
         if fiduceo_retriever.processing?
           content = last_event.presence || 'En attente de traitement ...'
@@ -47,9 +47,9 @@ class FiduceoRetrieverPresenter < BasePresenter
   def action_link
     if fiduceo_retriever.is_active
       if fiduceo_retriever.scheduled? && fiduceo_retriever.provider? or fiduceo_retriever.ready?
-        h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Lancer la récupération', rel: 'tooltip'
+        h.link_to icon(icon: 'download'), h.fetch_account_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Lancer la récupération', rel: 'tooltip'
       elsif fiduceo_retriever.error? && fiduceo_retriever.transactions.last.retryable?
-        h.link_to icon(icon: 'download'), h.fetch_account_settings_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Réessayer maintenant', rel: 'tooltip'
+        h.link_to icon(icon: 'download'), h.fetch_account_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: 'Réessayer maintenant', rel: 'tooltip'
       else
         ''
       end

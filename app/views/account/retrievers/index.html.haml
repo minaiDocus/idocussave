@@ -1,18 +1,19 @@
-#fiduceo_retrievers.container-fluid
-  .row-fluid
-    .span3
-      = render partial: 'layouts/account/me/navigation'
-    .span9
-      = render partial: 'navigation'
-      .alerts
-        = render partial: 'shared/messages'
+.row-fluid
+  .span12
+    .box
       .row-fluid
-        .span12
-          .well
-            = render partial: 'sidebar'
-      .row-fluid
-        .span12
-          .retrievers_list.well
+        .span6
+          %h3 Mes automates
+        .span6
+          = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
+          = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }
+    .filter.box{ class: ('hide' if @is_filter_empty) }
+      = form_tag account_fiduceo_retrievers_path, method: :get, class: 'retriever_seach form form-inline margin0bottom' do
+        = label_tag 'fiduceo_retriever_contains[name]', t('mongoid.models.fiduceo_retriever.attributes.name') + ' :'
+        = text_field_tag 'fiduceo_retriever_contains[name]', (params[:fiduceo_retriever_contains][:name] rescue '')
+        = submit_tag t('filters.action'), class: 'btn btn-primary'
+        = link_to icon(icon: 'remove'), account_fiduceo_retrievers_path, class: 'btn reset_filter', title: t('filters.reset')
+    .retrievers_list.box
 
 #retrievers_security_informations.modal.fade
   .modal-header

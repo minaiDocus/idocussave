@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::Settings::RetrieversController < Account::SettingsController
-  before_filter :verify_rights
+class Account::RetrieversController < Account::FiduceoController
   before_filter :load_fiduceo_user_id
   before_filter :load_fiduceo_retriever, except: %w(index list new create)
   before_filter :verify_selection, only: %w(select_documents update_documents select_bank_accounts create_bank_accounts)
@@ -9,6 +8,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
 
   def index
     @fiduceo_retrievers = search(fiduceo_retriever_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @is_filter_empty = fiduceo_retriever_contains.empty?
     render partial: 'retrievers' if params[:part].present?
   end
 
@@ -27,7 +27,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
     @fiduceo_retriever = FiduceoRetrieverService.create(@user, fiduceo_retriever_params)
     if @fiduceo_retriever.persisted?
       flash[:success] = 'Récupérateur paramétré.'
-      redirect_to account_settings_fiduceo_retrievers_path
+      redirect_to account_fiduceo_retrievers_path
     else
       render action: :new
     end
@@ -40,7 +40,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
     @fiduceo_retriever = FiduceoRetrieverService.update(@fiduceo_retriever, fiduceo_retriever_params)
     if @fiduceo_retriever.valid?
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_settings_fiduceo_retrievers_path
+      redirect_to account_fiduceo_retrievers_path
     else
       render action: :edit
     end
@@ -49,14 +49,14 @@ class Account::Settings::RetrieversController < Account::SettingsController
   def destroy
     FiduceoRetrieverService.destroy(@fiduceo_retriever)
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_settings_fiduceo_retrievers_path
+    redirect_to account_fiduceo_retrievers_path
   end
 
   def fetch
     @fiduceo_retriever.schedule if @fiduceo_retriever.error?
     FiduceoDocumentFetcher.initiate_transactions(@fiduceo_retriever)
     flash[:success] = 'Traitement en cours...'
-    redirect_to account_settings_fiduceo_retrievers_path
+    redirect_to account_fiduceo_retrievers_path
   end
 
   def select_documents
@@ -78,7 +78,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
 
     @fiduceo_retriever.schedule
     flash[:success] = 'Les documents sélectionnés seront intégrés.'
-    redirect_to account_settings_fiduceo_retrievers_path
+    redirect_to account_fiduceo_retrievers_path
   end
 
   def select_bank_accounts
@@ -113,7 +113,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
         NotificationMailer.delay(priority: 1).new_bank_accounts(@fiduceo_retriever, email)
       end
       flash[:success] = 'Les comptes bancaires sélectionnés ont été pris en compte.'
-      redirect_to account_settings_fiduceo_retrievers_path
+      redirect_to account_fiduceo_retrievers_path
     else
       flash[:error] = "Vous n'avez sélectionné aucun compte."
       render 'select_bank_accounts'
@@ -130,7 +130,7 @@ class Account::Settings::RetrieversController < Account::SettingsController
     if FiduceoDocumentFetcher.send_additionnal_information(transaction, params[:answers])
       @fiduceo_retriever.fetch
       flash[:info] = 'Poursuite de la transaction'
-      redirect_to account_settings_fiduceo_retrievers_path
+      redirect_to account_fiduceo_retrievers_path
     else
       flash[:error] = "Impossible d'enregistrer les modifications."
       render action: 'wait_for_user_action'
@@ -138,13 +138,6 @@ class Account::Settings::RetrieversController < Account::SettingsController
   end
 
 private
-
-  def verify_rights
-    unless @user.is_fiduceo_authorized
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_documents_path
-    end
-  end
 
   def sort_column
     params[:sort] || 'created_at'
@@ -195,7 +188,7 @@ private
   def verify_selection
     unless @fiduceo_retriever.wait_selection? && (@fiduceo_retriever.provider? && action_name.in?(%w(select_documents update_documents)) or @fiduceo_retriever.bank? && action_name.in?(%w(select_bank_accounts create_bank_accounts)))
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_settings_fiduceo_retrievers_path
+      redirect_to account_fiduceo_retrievers_path
     end
   end
 

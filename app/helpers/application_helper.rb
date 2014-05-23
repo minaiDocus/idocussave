@@ -184,4 +184,12 @@ module ApplicationHelper
       ''
     end
   end
+
+  def transaction_status_for_select(default=nil)
+    options = []
+    t('mongoid.state_machines.fiduceo_transaction.status').each do |key, value|
+      options << [value.capitalize, key]
+    end
+    options_for_select(options, default)
+  end
 end

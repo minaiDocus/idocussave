@@ -122,7 +122,7 @@ update_provider = ->
         $help_block.remove()
 
 jQuery ->
-  if $('#fiduceo_retriever .form').length > 0
+  if $('.retriever_form').length > 0
     window.providers = $('#providers').data('providers')
     window.selected_providers = $('#providers').data('selected_providers')
     window.banks = $('#banks').data('banks')
@@ -194,6 +194,7 @@ jQuery ->
         $('.checkbox').attr('checked', true);
       else
         $('.checkbox').attr('checked', false);
+
   if $('.retrievers_list').length > 0
     load_retrievers_list = (url) ->
       _url = ''
@@ -223,7 +224,8 @@ jQuery ->
           $('.popover').remove()
           $('.tooltip').remove()
           $('thead a, .list_options a').unbind 'click'
-          $('.retrievers_list').html(data)
+          if $('.retrievers_list').html() != data
+            $('.retrievers_list').html(data)
           $('[rel=popover]').popover()
           $('[rel=tooltip]').tooltip()
           $('thead a, .list_options a').bind 'click', (e) ->
@@ -250,3 +252,14 @@ jQuery ->
       load_retrievers_list()
 
     window.setInterval(load_retrievers_list, 5000)
+
+  if $('#retrievers .filter, #retriever_transactions .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
+    $('a.toggle_filter').click (e) ->
+      e.preventDefault();
+      if $('.filter').hasClass('hide')
+        $('.filter').removeClass('hide')
+        $(this).text('Cacher le filtre')
+      else
+        $('.filter').addClass('hide')
+        $(this).text('Afficher le filtre')
+    $('.datepicker').datepicker format: 'yyyy-mm-dd', language: 'fr'

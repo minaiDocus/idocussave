@@ -136,6 +136,7 @@ class User
   has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
   has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :user
+  has_many :temp_documents
   has_many :fiduceo_retrievers,      dependent: :destroy
   has_many :fiduceo_transactions,    dependent: :destroy
   has_many :fiduceo_provider_wishes, dependent: :destroy

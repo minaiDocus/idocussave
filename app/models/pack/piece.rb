@@ -17,10 +17,11 @@ class Pack::Piece
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 
-  belongs_to :pack,                                                 inverse_of: :pieces
-  has_one    :expense,      class_name: "Pack::Report::Expense",    inverse_of: :piece
-  has_many   :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :piece
-  has_many   :remote_files, as: :remotable, dependent: :destroy
+  belongs_to :pack,                                                  inverse_of: :pieces
+  has_one    :temp_document,                                         inverse_of: :piece
+  has_one    :expense,       class_name: "Pack::Report::Expense",    inverse_of: :piece
+  has_many   :preseizures,   class_name: 'Pack::Report::Preseizure', inverse_of: :piece
+  has_many   :remote_files,  as: :remotable, dependent: :destroy
 
   has_mongoid_attached_file :content,
                             path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",

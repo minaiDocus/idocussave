@@ -14,10 +14,13 @@ class FiduceoDocumentFetcher
       client = Fiduceo::Client.new retriever.user.fiduceo_id
       result = client.retriever(retriever.fiduceo_id, :post)
       if client.response.code == 200
-        transaction = FiduceoTransaction.new
-        transaction.user = retriever.user
-        transaction.retriever = retriever
-        transaction.fiduceo_id = result['id']
+        transaction                     = FiduceoTransaction.new
+        transaction.user                = retriever.user
+        transaction.retriever           = retriever
+        transaction.fiduceo_id          = result['id']
+        transaction.type                = retriever.type
+        transaction.service_name        = retriever.service_name
+        transaction.custom_service_name = retriever.name
         transaction.save
         retriever.fetch
         transaction

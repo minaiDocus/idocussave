@@ -1,5 +1,6 @@
 # -*- encoding : UTF-8 -*-
-class Account::Settings::ProviderWishesController < Account::SettingsController
+class Account::ProviderWishesController < Account::FiduceoController
+  layout 'layouts/account/retrievers'
   before_filter :verify_rights
   before_filter :load_fiduceo_user_id
 
@@ -15,7 +16,7 @@ class Account::Settings::ProviderWishesController < Account::SettingsController
     @fiduceo_provider_wish = @user.fiduceo_provider_wishes.build fiduceo_provider_wish_params
     if @fiduceo_provider_wish.save
       flash[:success] = 'Votre demande est prise en compte. Nous vous apporterons une réponse dans les prochains jours.'
-      redirect_to account_settings_fiduceo_provider_wishes_path
+      redirect_to account_fiduceo_provider_wishes_path
     else
       render action: 'new'
     end

@@ -53,6 +53,9 @@ class FiduceoTransaction
   field :wait_for_user_labels,   type: Array,   default: []
   field :retrieved_document_ids, type: Array,   default: []
   field :is_processed,           type: Boolean, default: false
+  field :type,                                  default: 'provider'
+  field :service_name
+  field :custom_service_name
 
   belongs_to :user
   belongs_to :retriever,      class_name: 'FiduceoRetriever', inverse_of: 'transactions'

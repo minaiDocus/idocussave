@@ -81,11 +81,15 @@ class TempPack
     temp_document.dematbox_service_id = options[:dematbox_service_id] if options[:dematbox_service_id]
     temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
 
-    temp_document.fiduceo_id          = options[:fiduceo_id]          if options[:fiduceo_id]
-    temp_document.fiduceo_metadata    = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
+    temp_document.fiduceo_id                  = options[:fiduceo_id]          if options[:fiduceo_id]
+    temp_document.fiduceo_metadata            = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
+    temp_document.fiduceo_service_name        = options[:service_name]        if options[:service_name]
+    temp_document.fiduceo_custom_service_name = options[:custom_service_name] if options[:custom_service_name]
 
     temp_document.save
     if options[:is_content_file_valid]
+      temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
+      temp_document.save
       if temp_document.fiduceo?
         temp_document.ready
       else

@@ -1,0 +1,23 @@
+- content_for :content do
+  #retrievers.container-fluid
+    .row-fluid
+      .span3
+        .box.sidebar-nav
+          %ul.nav.nav-list
+            %li.nav-header Automates
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name.in?(%w(index edit select_documents select_bank_accounts wait_for_user_action))) }= link_to 'Mes automates', account_fiduceo_retrievers_path
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'new') }= link_to 'Ajouter un automate', new_account_fiduceo_retriever_path
+            %li{ class: ('active' if controller_name == 'retrievers' && action_name == 'list') }= link_to 'Liste des automates disponibles', list_account_fiduceo_retrievers_path
+            %li{ class: ('active' if controller_name == 'provider_wishes' && action_name == 'new') }= link_to 'Demander un nouvel automate', new_account_fiduceo_provider_wish_path
+            %li{ class: ('active' if controller_name == 'provider_wishes' && action_name == 'index') }= link_to 'Suivi de mes demandes', account_fiduceo_provider_wishes_path
+            %li.divider
+            %li.nav-header Historique de récupération
+            %li{ class: ('active' if controller_name == 'retriever_transactions') }= link_to 'Transactions', account_retriever_transactions_path
+            %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }= link_to 'Opérations bancaires', account_retrieved_banking_operations_path
+            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }= link_to 'Documents', account_retrieved_documents_path
+      .span9
+        .alerts
+          = render partial: 'shared/messages'
+        = yield
+
+= render template: 'layouts/inner'

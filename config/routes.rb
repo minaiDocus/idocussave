@@ -159,18 +159,21 @@ Idocus::Application.routes.draw do
     resources :backups
     resource :dematbox
 
-    namespace :settings do
-      resources :retrievers, as: :fiduceo_retrievers do
-        get  'list',                 :on => :collection
-        post 'fetch',                :on => :member
-        get  'select_documents',     :on => :member
-        put  'update_documents',     :on => :member
-        get  'select_bank_accounts', :on => :member
-        post 'create_bank_accounts', :on => :member
-        get  'wait_for_user_action', :on => :member
-        put  'update_transaction',   :on => :member
-      end
-      resources :provider_wishes, as: :fiduceo_provider_wishes
+    resources :retrievers, as: :fiduceo_retrievers do
+      get  'list',                 :on => :collection
+      post 'fetch',                :on => :member
+      get  'select_documents',     :on => :member
+      put  'update_documents',     :on => :member
+      get  'select_bank_accounts', :on => :member
+      post 'create_bank_accounts', :on => :member
+      get  'wait_for_user_action', :on => :member
+      put  'update_transaction',   :on => :member
+    end
+    resources :provider_wishes, as: :fiduceo_provider_wishes
+    resources :retriever_transactions
+    resources :retrieved_banking_operations
+    resources :retrieved_documents do
+      get 'piece', on: :member
     end
 
     namespace :charts do

@@ -39,12 +39,13 @@ class DocumentProcessor
 
               ## Piece
               piece = Pack::Piece.new
-              piece.pack       = pack
-              piece.name       = piece_name
-              piece.content    = open(piece_file_path)
-              piece.origin     = temp_document.delivery_type
-              piece.is_a_cover = is_a_cover
-              piece.position   = piece_position
+              piece.pack          = pack
+              piece.name          = piece_name
+              piece.content       = open(piece_file_path)
+              piece.origin        = temp_document.delivery_type
+              piece.temp_document = temp_document
+              piece.is_a_cover    = is_a_cover
+              piece.position      = piece_position
               piece.save
 
               ## Dividers

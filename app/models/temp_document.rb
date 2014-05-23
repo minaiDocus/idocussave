@@ -34,8 +34,9 @@ class TempDocument
 
   field :fiduceo_id
   field :fiduceo_metadata, type: Hash
+  field :fiduceo_service_name
+  field :fiduceo_custom_service_name
 
-  field :user_id
   field :signature
 
   field :is_corruption_notified, type: Boolean
@@ -51,10 +52,12 @@ class TempDocument
   index :state
   index :is_an_original
 
+  belongs_to :user
   belongs_to :temp_pack
   belongs_to :document_delivery
   belongs_to :fiduceo_retriever
   belongs_to :email
+  belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
   has_mongoid_attached_file :content,     path: ":rails_root/files/:rails_env/:class/:id/:filename"
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/:raw_content/:filename"
 
@@ -120,8 +123,6 @@ class TempDocument
     end
 
     after_transition on: :ocr_needed do |temp_document, transition|
-      temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
-      temp_document.save
       TempDocument.send_to_ocr_processor(temp_document.id)
     end
 
