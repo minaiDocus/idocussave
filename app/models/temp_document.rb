@@ -76,7 +76,7 @@ class TempDocument
 
   scope :created,           where:  { state: 'created' }
   scope :unreadable,        where:  { state: 'unreadable' }
-  scope :rejected,          where:  { state: 'rejected' }
+  scope :wait_selection,    where:  { state: 'wait_selection' }
   scope :ocr_needed,        where:  { state: 'ocr_needed' }
   scope :bundle_needed,     where:  { state: 'bundle_needed', is_locked: false }
   scope :bundling,          where:  { state: 'bundling' }
@@ -89,7 +89,7 @@ class TempDocument
   state_machine :initial => :created do
     state :created
     state :unreadable
-    state :rejected
+    state :wait_selection
     state :ocr_needed
     state :bundle_needed
     state :bundling
@@ -130,8 +130,8 @@ class TempDocument
       transition :created => :unreadable
     end
 
-    event :reject do
-      transition :ready => :rejected
+    event :wait_selection do
+      transition :created => :wait_selection
     end
 
     event :ocr_needed do
@@ -151,7 +151,7 @@ class TempDocument
     end
 
     event :ready do
-      transition [:created, :unreadable, :ocr_needed] => :ready
+      transition [:created, :unreadable, :wait_selection, :ocr_needed] => :ready
     end
 
     event :processed do

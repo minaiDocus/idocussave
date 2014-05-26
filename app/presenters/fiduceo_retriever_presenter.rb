@@ -14,7 +14,7 @@ class FiduceoRetrieverPresenter < BasePresenter
           if fiduceo_retriever.pending_document_ids.any?
             h.content_tag :span, 'Preparation des documents', class: 'label'
           else
-            h.link_to 'Sélectionnez vos documents', h.select_documents_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+            h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
           end
         else
           h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'

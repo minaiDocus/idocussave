@@ -15,6 +15,9 @@
             %li{ class: ('active' if controller_name == 'retriever_transactions') }= link_to 'Transactions', account_retriever_transactions_path
             %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }= link_to 'Opérations bancaires', account_retrieved_banking_operations_path
             %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }= link_to 'Documents', account_retrieved_documents_path
+            %li.divider
+            %li.nav-header Autres
+            %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }= link_to 'Sélection de documents restant à récupérer', select_account_retrieved_documents_path
       .span9
         .alerts
           = render partial: 'shared/messages'

@@ -162,8 +162,6 @@ Idocus::Application.routes.draw do
     resources :retrievers, as: :fiduceo_retrievers do
       get  'list',                 :on => :collection
       post 'fetch',                :on => :member
-      get  'select_documents',     :on => :member
-      put  'update_documents',     :on => :member
       get  'select_bank_accounts', :on => :member
       post 'create_bank_accounts', :on => :member
       get  'wait_for_user_action', :on => :member
@@ -173,7 +171,9 @@ Idocus::Application.routes.draw do
     resources :retriever_transactions
     resources :retrieved_banking_operations
     resources :retrieved_documents do
-      get 'piece', on: :member
+      get 'piece',    on: :member
+      get 'select',   on: :collection
+      put 'validate', on: :collection
     end
 
     namespace :charts do

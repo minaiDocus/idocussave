@@ -2,7 +2,7 @@
 class Account::RetrieversController < Account::FiduceoController
   before_filter :load_fiduceo_user_id
   before_filter :load_fiduceo_retriever, except: %w(index list new create)
-  before_filter :verify_selection, only: %w(select_documents update_documents select_bank_accounts create_bank_accounts)
+  before_filter :verify_selection, only: %w(select_bank_accounts create_bank_accounts)
   before_filter :load_providers_and_banks, only: %w(list new create edit update)
   before_filter :load_bank_accounts, only: %w(select_bank_accounts create_bank_accounts)
 
@@ -56,28 +56,6 @@ class Account::RetrieversController < Account::FiduceoController
     @fiduceo_retriever.schedule if @fiduceo_retriever.error?
     FiduceoDocumentFetcher.initiate_transactions(@fiduceo_retriever)
     flash[:success] = 'Traitement en cours...'
-    redirect_to account_fiduceo_retrievers_path
-  end
-
-  def select_documents
-    @documents = @fiduceo_retriever.temp_documents.locked.asc(:created_at)
-  end
-
-  def update_documents
-    document_ids = params[:document_ids].presence || []
-    rejected_document_ids = document_ids.select { |_,v| v == '0' }.map { |k,_| k }
-    rejected_documents = @fiduceo_retriever.temp_documents.any_in(_id: rejected_document_ids)
-    rejected_documents.update_all(state: 'rejected')
-
-    document_ids = document_ids.map { |k,_| k }
-    documents = @fiduceo_retriever.temp_documents.any_in(_id: document_ids)
-    documents.update_all(is_locked: false)
-
-    temp_pack = documents.first.temp_pack
-    temp_pack.safely.inc(:document_not_processed_count, -rejected_documents.count)
-
-    @fiduceo_retriever.schedule
-    flash[:success] = 'Les documents sélectionnés seront intégrés.'
     redirect_to account_fiduceo_retrievers_path
   end
 
@@ -186,7 +164,7 @@ private
   end
 
   def verify_selection
-    unless @fiduceo_retriever.wait_selection? && (@fiduceo_retriever.provider? && action_name.in?(%w(select_documents update_documents)) or @fiduceo_retriever.bank? && action_name.in?(%w(select_bank_accounts create_bank_accounts)))
+    unless @fiduceo_retriever.wait_selection? && @fiduceo_retriever.bank? && action_name.in?(%w(select_bank_accounts create_bank_accounts))
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_fiduceo_retrievers_path
     end

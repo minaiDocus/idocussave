@@ -24,7 +24,7 @@ class FiduceoDocument
         service_name:          retriever.service_name,
         custom_service_name:   retriever.name,
         is_content_file_valid: true,
-        is_locked:             retriever.wait_selection?
+        wait_selection:        retriever.wait_selection?
       }
       @temp_document = pack.add file, options
       retriever.temp_documents << @temp_document
