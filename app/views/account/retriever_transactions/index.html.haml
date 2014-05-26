@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Transactions
+          %h3 Transactions (#{@transactions.count})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
