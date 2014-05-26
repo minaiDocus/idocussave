@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Documents
+          %h3 Documents (#{@documents.count})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
@@ -20,10 +20,15 @@
               %th
           %tbody
             %tr
-              - if params[:document_contains] && params[:document_contains][:transaction_id]
+              - if @transaction
                 %td
                   .label= l(@transaction.created_at)
-              %td= text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'input-medium'
+                  = hidden_field_tag 'document_contains[transaction_id]', @transaction.id
+              %td
+                - if @transaction
+                  .label= @transaction.custom_service_name
+                - else
+                  = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'input-medium'
               %td
                 .input-append.date.datepicker
                   = text_field_tag 'document_contains[date][$gte]', (params[:document_contains][:date]['$gte'] rescue ''), class: 'input-small'
