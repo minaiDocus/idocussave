@@ -71,6 +71,8 @@ private
 
   def format_operations(results)
     _operations = results.first.is_a?(Integer) ? results[1] : results
+    account_ids = _operations.map(&:account_id).uniq
+    bank_accounts = BankAccount.where(:fiduceo_id.in => account_ids).entries
     _operations.each do |operation|
       operation.date_op      = operation.date_op.try(:to_time)
       operation.date_val     = operation.date_val.try(:to_time)
@@ -78,7 +80,7 @@ private
       default_category_id    = operation.amount >= 0 ? 0 : -1
       operation.category_id  = operation.category_id.try(:to_i) || default_category_id
       operation.category     = FiduceoCategory.find(operation.category_id).try(:name)
-      operation.bank_account = BankAccount.where(fiduceo_id: operation.account_id).first
+      operation.bank_account = bank_accounts.select { |e| e.fiduceo_id == operation.account_id }.first
     end
     if @page.present?
       _operations = Kaminari.paginate_array(_operations, total_count: results[0]).page(@page).per(@per_page)
