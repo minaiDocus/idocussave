@@ -5,9 +5,10 @@ class DocumentProcessor
   class << self
     def process
       TempPack.not_processed.each do |temp_pack|
+        temp_documents = temp_pack.ready_documents.entries
         user_code = temp_pack.name.split[0]
         user = User.find_by_code user_code
-        if user
+        if user && temp_documents.any?
           pack = Pack.find_or_initialize temp_pack.name, user
 
           unless pack.persisted?
@@ -18,7 +19,6 @@ class DocumentProcessor
 
           current_piece_position = pack.pieces.count + 1
           current_page_position = pack.pages.count + 1
-          temp_documents = temp_pack.ready_documents.entries
           temp_documents.each do |temp_document|
             Dir.mktmpdir do |dir|
               ## Initialization
@@ -120,20 +120,18 @@ class DocumentProcessor
             temp_document.processed
           end
 
-          unless temp_documents.size == 0
-            pack.set_original_document_id
-            pack.set_content_url
-            pack.set_pages_count
-            pack.set_historic
-            pack.set_tags
-            pack.is_update_notified = false
-            pack.save
+          pack.set_original_document_id
+          pack.set_content_url
+          pack.set_pages_count
+          pack.set_historic
+          pack.set_tags
+          pack.is_update_notified = false
+          pack.save
 
-            piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
-            DocumentTools.archive(pack.archive_file_path, piece_files_path)
+          piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
+          DocumentTools.archive(pack.archive_file_path, piece_files_path)
 
-            FileDeliveryInit.prepare(pack)
-          end
+          FileDeliveryInit.prepare(pack)
         end
       end
     end
