@@ -1,11 +1,20 @@
-Bonjour,<br>
-<br>
-Nous vous informons que votre client #{@fiduceo_retriever.user.company} a configuré dans iDocus la récupération automatique des opérations bancaires pour son compte #{@fiduceo_retriever.service_name}.<br>
-<br>
-Vous pouvez maintenant personnaliser le nom et le numéro de compte du journal Banque correspondant.<br>
-<br>
-Cordialement.<br>
-<br>
-—<br>
-L’équipe iDocus<br>
+Bonjour #{@user.name},
+%br
+%br
+Nous vous informons que votre client #{@user.company} a configuré dans iDocus la récupération automatique des opérations bancaires pour le(s) compte(s) ci-dessous :
+%br
+%ul
+  - @bank_accounts.each do |bank_account|
+    %li= bank_account.bank_name
+%br
+Vous pouvez maintenant personnaliser le nom et le numéro de compte des journaux correspondant.
+%br
+%br
+Cordialement.
+%br
+%br
+—
+%br
+L’équipe iDocus
+%br
 support@idocus.com

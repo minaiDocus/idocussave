@@ -66,7 +66,6 @@ class TempPack
       temp_document ||= TempDocument.new
     end
 
-    temp_document.is_locked           = options[:is_locked] || false
     temp_document.temp_pack           = self
     temp_document.original_file_name  = options[:original_file_name]
     unless options[:delivery_type] == 'fiduceo' && temp_document.persisted?
@@ -91,7 +90,7 @@ class TempPack
       temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
       temp_document.save
       if temp_document.fiduceo?
-        temp_document.ready
+        options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
       else
         if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
           temp_document.ocr_needed

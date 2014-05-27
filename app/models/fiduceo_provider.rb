@@ -37,10 +37,12 @@ class FiduceoProvider
           end.sort do |bank1, bank2|
             bank1[:name].downcase <=> bank2[:name].downcase
           end
+          register_to_cache_list cache_name
+          Rails.cache.write(cache_name, results, :expires_in => 7.days, :compress => true)
+          results
+        else
+          raise Fiduceo::Errors::ServiceUnavailable.new('banks')
         end
-        register_to_cache_list cache_name
-        Rails.cache.write(cache_name, results, :expires_in => 7.days, :compress => true)
-        results
       end
     else
       []

@@ -61,7 +61,7 @@ Idocus::Application.routes.draw do
             put 'update_multiple', on: :collection
           end
         end
-        resources :bank_accounts
+        resources :bank_accounts, module: 'organization'
         resources :exercices
       end
       resources :journals do
@@ -162,10 +162,6 @@ Idocus::Application.routes.draw do
     resources :retrievers, as: :fiduceo_retrievers do
       get  'list',                 :on => :collection
       post 'fetch',                :on => :member
-      get  'select_documents',     :on => :member
-      put  'update_documents',     :on => :member
-      get  'select_bank_accounts', :on => :member
-      post 'create_bank_accounts', :on => :member
       get  'wait_for_user_action', :on => :member
       put  'update_transaction',   :on => :member
     end
@@ -173,7 +169,12 @@ Idocus::Application.routes.draw do
     resources :retriever_transactions
     resources :retrieved_banking_operations
     resources :retrieved_documents do
-      get 'piece', on: :member
+      get 'piece',    on: :member
+      get 'select',   on: :collection
+      put 'validate', on: :collection
+    end
+    resources :bank_accounts do
+      put 'update_multiple', on: :collection
     end
 
     namespace :charts do

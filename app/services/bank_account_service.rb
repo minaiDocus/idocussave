@@ -1,20 +1,28 @@
 # -*- encoding : UTF-8 -*-
 class BankAccountService
-  def initialize(user)
+  def initialize(user, retriever=nil)
     @user = user
+    @retriever = retriever
   end
 
   def bank_accounts
-    results = client.bank_accounts
+    if @retriever
+      results = client.retriever_bank_accounts(@retriever.fiduceo_id)
+    else
+      results = client.bank_accounts
+    end
     if client.response.code == 200 && results[1].any?
       results[1].map do |result|
-        retriever = FiduceoRetriever.where(fiduceo_id: result.retriever_id).first
         _bank_account = @user.bank_accounts.where(number: result.account_number).first
         unless _bank_account
-          _bank_account = BankAccount.new(user_id: @user.id)
-          _bank_account.bank_name = retriever.service_name
+          retriever = @retriever || FiduceoRetriever.where(fiduceo_id: result.retriever_id).first
+          _bank_account            = BankAccount.new
+          _bank_account.user       = @user
+          _bank_account.retriever  = retriever
+          _bank_account.name       = result.name
+          _bank_account.bank_name  = retriever.try(:service_name)
           _bank_account.fiduceo_id = result.id
-          _bank_account.number = result.account_number
+          _bank_account.number     = result.account_number
         end
         _bank_account
       end

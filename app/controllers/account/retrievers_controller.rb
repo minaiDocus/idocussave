@@ -2,9 +2,7 @@
 class Account::RetrieversController < Account::FiduceoController
   before_filter :load_fiduceo_user_id
   before_filter :load_fiduceo_retriever, except: %w(index list new create)
-  before_filter :verify_selection, only: %w(select_documents update_documents select_bank_accounts create_bank_accounts)
   before_filter :load_providers_and_banks, only: %w(list new create edit update)
-  before_filter :load_bank_accounts, only: %w(select_bank_accounts create_bank_accounts)
 
   def index
     @fiduceo_retrievers = search(fiduceo_retriever_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
@@ -57,67 +55,6 @@ class Account::RetrieversController < Account::FiduceoController
     FiduceoDocumentFetcher.initiate_transactions(@fiduceo_retriever)
     flash[:success] = 'Traitement en cours...'
     redirect_to account_fiduceo_retrievers_path
-  end
-
-  def select_documents
-    @documents = @fiduceo_retriever.temp_documents.locked.asc(:created_at)
-  end
-
-  def update_documents
-    document_ids = params[:document_ids].presence || []
-    rejected_document_ids = document_ids.select { |_,v| v == '0' }.map { |k,_| k }
-    rejected_documents = @fiduceo_retriever.temp_documents.any_in(_id: rejected_document_ids)
-    rejected_documents.update_all(state: 'rejected')
-
-    document_ids = document_ids.map { |k,_| k }
-    documents = @fiduceo_retriever.temp_documents.any_in(_id: document_ids)
-    documents.update_all(is_locked: false)
-
-    temp_pack = documents.first.temp_pack
-    temp_pack.safely.inc(:document_not_processed_count, -rejected_documents.count)
-
-    @fiduceo_retriever.schedule
-    flash[:success] = 'Les documents sélectionnés seront intégrés.'
-    redirect_to account_fiduceo_retrievers_path
-  end
-
-  def select_bank_accounts
-  end
-
-  def create_bank_accounts
-    valid_bank_account_ids = @bank_accounts.map(&:id)
-    bank_accounts = params[:bank_accounts].presence || []
-    selected_bank_account_ids = bank_accounts.select { |k,v| k.in?(valid_bank_account_ids) && v == '1' }.map { |k,_| k }
-    if selected_bank_account_ids.any?
-      @fiduceo_retriever.schedule
-      @bank_accounts.each do |bank_account|
-        if bank_account.id.in? selected_bank_account_ids
-          new_bank_account            = BankAccount.new
-          new_bank_account.user       = @user
-          new_bank_account.retriever  = @fiduceo_retriever
-          new_bank_account.fiduceo_id = bank_account.id
-          new_bank_account.bank_name  = @fiduceo_retriever.service_name
-          new_bank_account.name       = bank_account.name
-          new_bank_account.number     = bank_account.account_number
-          new_bank_account.save
-        end
-      end
-      emails = []
-      collaborators = @user.groups.map(&:collaborators).flatten
-      if collaborators.any?
-        emails = collaborators.map(&:email)
-      else
-        emails = [@user.organization.leader.email]
-      end
-      emails.each do |email|
-        NotificationMailer.delay(priority: 1).new_bank_accounts(@fiduceo_retriever, email)
-      end
-      flash[:success] = 'Les comptes bancaires sélectionnés ont été pris en compte.'
-      redirect_to account_fiduceo_retrievers_path
-    else
-      flash[:error] = "Vous n'avez sélectionné aucun compte."
-      render 'select_bank_accounts'
-    end
   end
 
   def wait_for_user_action
@@ -185,31 +122,9 @@ private
     @fiduceo_retriever = FiduceoRetriever.find params[:id]
   end
 
-  def verify_selection
-    unless @fiduceo_retriever.wait_selection? && (@fiduceo_retriever.provider? && action_name.in?(%w(select_documents update_documents)) or @fiduceo_retriever.bank? && action_name.in?(%w(select_bank_accounts create_bank_accounts)))
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_fiduceo_retrievers_path
-    end
-  end
-
   def load_providers_and_banks
     fiduceo_provider = FiduceoProvider.new(@fiduceo_user_id)
     @providers = fiduceo_provider.providers
     @banks = fiduceo_provider.banks
-  end
-
-  def load_bank_accounts
-    results = client.bank_accounts
-    if client.response.code == 200
-      @bank_accounts = results[1].select do |bank_account|
-        bank_account.retriever_id == @fiduceo_retriever.fiduceo_id
-      end
-    else
-      raise Fiduceo::Errors::ServiceUnavailable.new('bank_accounts')
-    end
-  end
-
-  def client
-    @client ||= Fiduceo::Client.new @user.fiduceo_id
   end
 end
