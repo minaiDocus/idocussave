@@ -188,8 +188,8 @@ module Fiduceo
       perform path, options
     end
 
-    def retriever_bankaccounts(id)
-      perform "retriever/#{id}/bankaccounts"
+    def retriever_bank_accounts(id)
+      perform "retriever/#{id}/bankaccounts", {}, is_deep: true
     end
 
     def put_provider_wish(params)

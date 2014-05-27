@@ -188,7 +188,7 @@ jQuery ->
 
     update_provider()
 
-  if $('#retrieved_documents.select, #select_bank_accounts').length > 0
+  if $('#retrieved_documents.select, #bank_accounts.select').length > 0
     $('#master_checkbox').change ->
       if $(this).is(':checked')
         $('.checkbox').attr('checked', true);

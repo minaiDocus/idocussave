@@ -17,6 +17,7 @@
             %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }= link_to 'Documents', account_retrieved_documents_path
             %li.divider
             %li.nav-header Autres
+            %li{ class: ('active' if controller_name == 'bank_accounts') }= link_to 'Paramétrage des automates bancaires', account_bank_accounts_path
             %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'select') }= link_to 'Sélection de documents restant à récupérer', select_account_retrieved_documents_path
       .span9
         .alerts

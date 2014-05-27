@@ -17,7 +17,7 @@ class FiduceoRetrieverPresenter < BasePresenter
             h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
           end
         else
-          h.link_to 'Sélectionnez vos comptes', h.select_bank_accounts_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
         end
       elsif fiduceo_retriever.wait_for_user_action?
         h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'

@@ -1,43 +1,61 @@
 # -*- encoding : UTF-8 -*-
-class Account::BankAccountsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
-  before_filter :load_bank_account, except: 'index'
+class Account::BankAccountsController < Account::FiduceoController
+  layout 'layouts/account/retrievers'
 
   def index
-    @bank_accounts = @customer.bank_accounts
-  end
-
-  def edit
-  end
-
-  def update
-    if @bank_account.update_attributes(bank_account_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_bank_accounts_path(@customer)
-    else
-      render 'edit'
+    if bank_account_contains && bank_account_contains[:retriever_id]
+      @retriever = @user.fiduceo_retrievers.find(bank_account_contains[:retriever_id])
+      @retriever.schedule if @retriever && @retriever.wait_selection?
     end
+    @bank_accounts = BankAccountService.new(@user, @retriever).bank_accounts
+    @is_filter_empty = bank_account_contains.empty?
+  end
+
+  def update_multiple
+    bank_accounts = BankAccountService.new(@user).bank_accounts
+    if params[:bank_accounts].is_a?(Hash) && params[:bank_accounts].any?
+      added_bank_accounts = []
+      params[:bank_accounts].each do |fiduceo_id, value|
+        bank_account = bank_accounts.select { |e| e.fiduceo_id == fiduceo_id }.first
+        if bank_account
+          is_selected = value == '1'
+          if !bank_account.persisted? && is_selected
+            bank_account.save
+            added_bank_accounts << bank_account
+          elsif bank_account.persisted? && !is_selected
+            bank_account.destroy
+          end
+        end
+      end
+      if added_bank_accounts.any?
+        collaborators = @user.groups.map(&:collaborators).flatten
+        emails = collaborators.any? ? collaborators.map(&:email) : [@user.organization.leader.email]
+        emails.each do |email|
+          NotificationMailer.delay(priority: 1).new_bank_accounts(email, @user, added_bank_accounts)
+        end
+      end
+      flash[:success] = 'Modifié avec succès.'
+    end
+    redirect_to account_bank_accounts_path(bank_account_contains: bank_account_contains)
   end
 
 private
 
-  def verify_rights
-    unless is_leader? || @user.can_manage_customers?
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+  def bank_account_contains
+    @contains ||= {}
+    if params[:bank_account_contains] && @contains.blank?
+      @contains = params[:bank_account_contains].delete_if do |_,value|
+        if value.blank? && !value.is_a?(Hash)
+          true
+        elsif value.is_a? Hash
+          value.delete_if { |k,v| v.blank? }
+          value.blank?
+        else
+          false
+        end
+      end
     end
+    @contains
   end
-
-  def load_customer
-    @customer = @user.customers.find params[:customer_id]
-  end
-
-  def load_bank_account
-    @bank_account = @customer.bank_accounts.find params[:id]
-  end
-
-  def bank_account_params
-    params.require(:bank_account).permit(:journal, :accounting_number)
-  end
+  helper_method :bank_account_contains
 end
