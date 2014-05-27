@@ -1,7 +1,11 @@
 .row-fluid
   .span12
     .box
-      %h3 #{@transaction.retriever.name} : transaction du #{l(@transaction.created_at)}
+      %h3
+        - if @transaction.retriever.nil?
+          %span.label supprimé
+        = @transaction.custom_service_name
+        \: transaction du #{l(@transaction.created_at)}
     .box
       %table.table-striped.table-condensed.table-bordered
         %thead
