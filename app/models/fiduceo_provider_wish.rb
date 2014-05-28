@@ -9,7 +9,7 @@ class FiduceoProviderWish
 
   field :state, default: 'pending'
   field :name
-  field :url
+  field :url,   default: 'http://www.example.com'
   field :login
   field :description
 
