@@ -90,10 +90,22 @@ private
         invoices = invoices.any_of({ :user_id.in => customers.map(&:_id) }, { :organization_id.in => organization_ids })
       end
     end
-    invoices = invoices.where(number:       /#{Regexp.quote(contains[:number])}/i) unless contains[:number].blank?
-    invoices = invoices.where(created_at:   contains[:created_at])                 unless contains[:created_at].blank?
-    invoices = invoices.where(requested_at: contains[:requested_at])               unless contains[:requested_at].blank?
-    invoices = invoices.where(received_at:  contains[:received_at])                unless contains[:received_at].blank?
+    invoices = invoices.where(number: /#{Regexp.quote(contains[:number])}/i) unless contains[:number].blank?
+    begin
+      invoices = invoices.where(created_at: contains[:created_at]) unless contains[:created_at].blank?
+    rescue Mongoid::Errors::InvalidTime
+      params[:invoice_contains].delete(:created_at)
+    end
+    begin
+      invoices = invoices.where(requested_at: contains[:requested_at]) unless contains[:requested_at].blank?
+    rescue Mongoid::Errors::InvalidTime
+      params[:invoice_contains].delete(:requested_at)
+    end
+    begin
+      invoices = invoices.where(received_at: contains[:received_at]) unless contains[:received_at].blank?
+    rescue Mongoid::Errors::InvalidTime
+      params[:invoice_contains].delete(:received_at)
+    end
     invoices
   end
 end
