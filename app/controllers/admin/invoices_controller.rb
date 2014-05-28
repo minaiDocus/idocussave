@@ -69,12 +69,12 @@ private
   helper_method :invoice_contains
 
   def search(contains)
-    invoices = Invoice.all
+    invoices = Invoice.all.includes(:organization, :user)
     if contains[:amount_in_cents_w_vat].present?
       comparison_operator = contains[:amount_in_cents_w_vat_comparison_operator]
       invoices = invoices.where("amount_in_cents_w_vat.#{comparison_operator}" => contains[:amount_in_cents_w_vat])
     end
-    if params[:user_contains] && params[:user_contains][:code]
+    if params[:user_contains] && params[:user_contains][:code].present?
       users = User.where(code: /#{params[:user_contains][:code]}/)
       if users.count == 1
         user = users.first
