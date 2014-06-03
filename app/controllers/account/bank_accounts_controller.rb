@@ -29,9 +29,9 @@ class Account::BankAccountsController < Account::FiduceoController
       end
       if added_bank_accounts.any?
         collaborators = @user.groups.map(&:collaborators).flatten
-        emails = collaborators.any? ? collaborators.map(&:email) : [@user.organization.leader.email]
-        emails.each do |email|
-          NotificationMailer.delay(priority: 1).new_bank_accounts(email, @user, added_bank_accounts)
+        collaborators = [@user.organization.leader.email] if collaborators.empty?
+        collaborators.each do |collaborator|
+          NotificationMailer.delay(priority: 1).new_bank_accounts(collaborator, @user, added_bank_accounts)
         end
       end
       flash[:success] = 'Modifié avec succès.'
