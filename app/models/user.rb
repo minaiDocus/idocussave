@@ -144,6 +144,7 @@ class User
   has_many :exercices
   has_many :sended_emails,   class_name: 'Email', inverse_of: :from_user, dependent: :destroy
   has_many :received_emails, class_name: 'Email', inverse_of: :to_user,   dependent: :destroy
+  has_many :operations
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage, autosave: true

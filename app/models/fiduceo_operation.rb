@@ -76,6 +76,7 @@ private
     _operations.each do |operation|
       operation.date_op      = operation.date_op.try(:to_time)
       operation.date_val     = operation.date_val.try(:to_time)
+      operation.date_transac = operation.date_transac.try(:to_time)
       operation.amount       = operation.amount.to_f
       default_category_id    = operation.amount >= 0 ? 0 : -1
       operation.category_id  = operation.category_id.try(:to_i) || default_category_id
