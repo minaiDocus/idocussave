@@ -85,7 +85,9 @@ class Ftp
       change_or_make_dir(remote_path)
     rescue => e
       is_ok = false
-      remote_file.not_synced!("[#{e.class}] #{e.message}")
+      remote_files.each do |remote_file|
+        remote_file.not_synced!("[#{e.class}] #{e.message}")
+      end
     end
     if is_ok
       remote_files.each_with_index do |remote_file,index|
