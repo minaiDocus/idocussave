@@ -29,10 +29,14 @@ module KnowingsApi
     end
 
     def verify
-      @request = Net::HTTP::Get.new(@uri.path)
-      @request.basic_auth @username, @password
-      @response = @http.request(@request)
-      @response.code.to_i == 200
+      begin
+        @request = Net::HTTP::Get.new(@uri.path)
+        @request.basic_auth @username, @password
+        @response = @http.request(@request)
+        @response.code.to_i == 200
+      rescue Errno::ETIMEDOUT
+        false
+      end
     end
 
     def put(filepath, remote_filepath)
