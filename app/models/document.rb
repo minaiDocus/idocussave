@@ -202,14 +202,7 @@ class Document
       end
       self.content_text = words.join(' ')
     end
-    self.content_text = '-[none]' unless self.content_text.present?
-
-    if uploaded? && self.content_text == '-[none]'
-      tess = Tesseract::Process.new(path, lang: :fra, convert_options: { input: ["-density 200 -colorspace Gray -depth 8 -alpha off"] } )
-      words = tess.to_s.split(/\n/).join(' ').split(' ').uniq.select { |e| e.size > 1 }
-      self.content_text = words.join(' ')
-      self.content_text = ' ' unless self.content_text.presence
-    end
+    self.content_text = ' ' unless self.content_text.present?
     save
   end
   handle_asynchronously :extract_content!, queue: 'documents content', priority: 10, :run_at => Proc.new { 5.minutes.from_now }
