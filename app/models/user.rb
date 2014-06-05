@@ -8,6 +8,8 @@ class User
   devise :database_authenticatable, :confirmable,
          :recoverable, :rememberable, :validatable, :trackable
 
+  AUTHENTICATION_TOKEN_LENGTH = 20
+
   ## Database authenticatable
   field :email
   field :encrypted_password, type: String, default: ""
@@ -40,7 +42,7 @@ class User
   # field :locked_at,       type: Time
 
   ## Token authenticatable
-  # field :authentication_token, type: String
+  field :authentication_token
 
   field :is_admin,                       type: Boolean, default: false
   field :balance_in_cents,               type: Float,   default: 0.0
@@ -212,6 +214,11 @@ class User
     User.where(code: code).first
   end
 
+  def self.find_by_token(token)
+    return nil unless token.is_a?(String) && token.size == AUTHENTICATION_TOKEN_LENGTH
+    User.where(authentication_token: token).first
+  end
+
   def is_subscribed_to_category(number)
     if self.subscriptions.where(category: number).first
       true
@@ -333,6 +340,17 @@ class User
 
   def update_email_code
     update_attribute(:email_code, get_new_email_code)
+  end
+
+  def get_new_authentication_token
+    begin
+      new_authentication_token = rand(36**AUTHENTICATION_TOKEN_LENGTH).to_s(36)
+    end while self.class.where(authentication_token: new_authentication_token).first
+    new_authentication_token
+  end
+
+  def update_authentication_token
+    update_attribute(:authentication_token, get_new_authentication_token)
   end
 
 protected

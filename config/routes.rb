@@ -187,6 +187,12 @@ Idocus::Application.routes.draw do
     end
   end
 
+  namespace :api, defaults: { format: 'json' } do
+    namespace :v1 do
+      resources :operations
+    end
+  end
+
   namespace :tunnel do
     resource :order do
       member do

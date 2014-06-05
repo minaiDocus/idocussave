@@ -17,6 +17,9 @@ class Operation
   field :type_id
   field :category_id,      type: Integer
   field :category
+  field :accessed_at,      type: Time
 
   validates_presence_of :date, :label, :amount
+
+  scope :not_accessed, where: { accessed_at: nil }
 end
