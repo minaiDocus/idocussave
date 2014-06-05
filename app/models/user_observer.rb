@@ -1,6 +1,6 @@
 class UserObserver < Mongoid::Observer
   def before_create(user)
-    user.email_code = user.get_new_email_code
+    user.email_code = user.get_new_email_code unless user.is_prescriber
   end
 
   def after_create(user)

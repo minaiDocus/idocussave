@@ -293,18 +293,19 @@
             .modal-body
               %iframe{ :src => '' }
 
-      #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
-        .span12
-          .well
-            %h3.aligncenter Adresse email d'envoi de documents
-            %br
-            Ci-dessous votre adresse email personnalisée à laquelle vous pouvez envoyez vos documents pour traitement.
-            %hr
-            .aligncenter
-              %b{ style: 'font-size: 16px;' }
-                = "#{@user.email_code}@fw.idocus.com"
+      - unless @user.is_prescriber
+        #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
+          .span12
+            .well
+              %h3.aligncenter Adresse email d'envoi de documents
               %br
-              %br
-              = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-primary', data: { method: :post }
+              Ci-dessous votre adresse email personnalisée à laquelle vous pouvez envoyez vos documents pour traitement.
+              %hr
+              .aligncenter
+                %b{ style: 'font-size: 16px;' }
+                  = "#{@user.email_code}@fw.idocus.com"
+                %br
+                %br
+                = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-primary', data: { method: :post }
 
 = render "help"

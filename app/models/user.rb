@@ -92,7 +92,7 @@ class User
   field :email_code
   field :is_mail_receipt_activated, type: Boolean, default: true
 
-  validates_uniqueness_of :email_code
+  validates_uniqueness_of :email_code, :unless => Proc.new { |u| u.is_prescriber }
 
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
