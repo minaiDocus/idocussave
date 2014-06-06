@@ -34,6 +34,7 @@ class FiduceoRetrieverService
         client = Fiduceo::Client.new retriever.user.fiduceo_id
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
+          retriever.journal = nil if retriever.bank?
           retriever.save
           retriever.schedule if retriever.error? && params[:pass].present?
           if is_name_changed
