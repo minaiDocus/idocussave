@@ -2,7 +2,7 @@
 class FiduceoOperationProcessor
   def initialize(user)
     @user = user
-    @ibiza = user.organization.ibiza
+    @ibiza = user.organization.try(:ibiza)
   end
 
   def process
