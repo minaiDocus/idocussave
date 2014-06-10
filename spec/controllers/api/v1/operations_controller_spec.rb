@@ -63,42 +63,6 @@ describe Api::V1::OperationsController do
       end
     end
 
-    context 'without access token' do
-      it 'should be unauthorized' do
-        get :index, format: 'json'
-        response.should_not be_successful
-        response.code.should eq('401')
-      end
-    end
-
-    context 'with params access token' do
-      it 'should be unauthorized' do
-        get :index, format: 'json', access_token: '12345'
-        response.should_not be_successful
-        response.code.should eq('401')
-      end
-
-      it 'should be authorized' do
-        get :index, format: 'json', access_token: @user.authentication_token
-        response.should be_successful
-      end
-    end
-
-    context 'with header access token' do
-      it 'should be unauthorized' do
-        request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials('12345')
-        get :index, format: 'json'
-        response.should_not be_successful
-        response.code.should eq('401')
-      end
-
-      it 'should be authorized' do
-        request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@user.authentication_token)
-        get :index, format: 'json'
-        response.should be_successful
-      end
-    end
-
     it 'should be unsuccessful' do
       Operation.stub(:where) { raise 'foo' }
       get :index, format: 'json', access_token: @user.authentication_token, not_accessed: 'true'
