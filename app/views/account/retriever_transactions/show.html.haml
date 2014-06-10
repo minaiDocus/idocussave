@@ -14,6 +14,7 @@
             %th Statut
         %tbody
           - @transaction.events['transactionEvent'].each do |event|
-            %tr
-              %td= l(Time.at(event['timestamp'].to_i / 1000.0), format: "%d %B %Y %H:%M:%S.#{event['timestamp'].to_i % 1000}")
-              %td= event['status']
+            - if event.is_a?(Hash)
+              %tr
+                %td= l(Time.at(event['timestamp'].to_i / 1000.0), format: "%d %B %Y %H:%M:%S.#{event['timestamp'].to_i % 1000}")
+                %td= event['status']
