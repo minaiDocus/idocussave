@@ -79,7 +79,7 @@ end
 group :test do
   gem 'mongoid-rspec'
   gem 'factory_girl_rails'
-  gem 'simplecov', :require => false
+  gem 'simplecov', '0.7.1', :require => false
   gem 'capybara'
   gem 'spork', '1.0.0rc3'
   gem 'guard-spork'
