@@ -58,12 +58,7 @@ class Admin::AdminController < ApplicationController
     @failed_document_retrievers  = FiduceoRetriever.providers.error.desc(:updated_at)
     @failed_operation_retrievers = FiduceoRetriever.banks.error.desc(:updated_at)
 
-    @awaiting_pre_assignments = Pack::Piece.collection.group(
-      keyf: "function(x) { name = x.name.split(' '); name.pop(); name = name.join(' '); return { name: name }; }",
-      cond: { is_awaiting_pre_assignment: true },
-      initial: { count: 0 },
-      reduce: "function(current, result) { return result.count++; }"
-    )
+    @awaiting_pre_assignments = PreAssignmentService.pending
     @reports_delivery         = Pack::Report.locked.asc(:updated_at)
     @failed_reports_delivery  = Pack::Report::Preseizure.collection.group(
       key: [:report_id, :delivery_message],

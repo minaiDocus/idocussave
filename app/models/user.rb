@@ -60,6 +60,7 @@ class User
   field :is_reminder_email_active,       type: Boolean, default: true
   field :is_document_notifier_active,    type: Boolean, default: true
   field :is_centralized,                 type: Boolean, default: true
+  field :is_operator,                    type: Boolean
 
   validates_uniqueness_of :code
 
@@ -160,6 +161,8 @@ class User
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
   scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
+  scope :operators,                   where: { is_operator: true }
+  scope :not_operators,               where: { :is_operator.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
   scope :centralized,                 where: { is_centralized: true }

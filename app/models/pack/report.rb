@@ -121,7 +121,7 @@ class Pack::Report
                     expense.position               = piece.position
                     expense.save
                     report.expenses << expense
-                    piece.update_attribute(:is_awaiting_pre_assignment, false)
+                    piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
 
                     observation         = Pack::Report::Observation.new
                     observation.expense = expense
@@ -191,7 +191,7 @@ class Pack::Report
                       preseizure.position        = piece.position
                       preseizure.is_locked       = true
                       preseizure.save
-                      piece.update_attribute(:is_awaiting_pre_assignment, false)
+                      piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
                       preseizures << preseizure
                       part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new

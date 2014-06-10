@@ -293,45 +293,45 @@
                 %td= retriever.name
                 %td= t('mongoid.state_machines.fiduceo_transaction.status.' + retriever.transactions.desc(:created_at).first.status.downcase)
   .span6
-    .row-fluid
-      .span6
-        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - En attente (#{@awaiting_pre_assignments.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
+    %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - En attente (#{@awaiting_pre_assignments.count})
+    %table.table.table-striped.table-condensed.table-bordered
+      %thead
+        %tr
+          %th Date
+          %th Nom
+          %th Nb de pièces
+          %th Commentaire
+      %tbody
+        - @awaiting_pre_assignments.each do |pre_assignment|
+          %tr
+            %td= l(pre_assignment.date, format: '%e %b %Y %H:%M')
+            %td= pre_assignment.pack_name
+            %td= pre_assignment.piece_counts
+            %td= pre_assignment.comment
+    %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison en cours (#{@reports_delivery.count})
+    %table.table.table-striped.table-condensed.table-bordered
+      %thead
+        %tr
+          %th Nom
+          %th Nb de pièces
+      %tbody
+        - @reports_delivery.each do |report|
+          %tr
+            %td= report.name
+            %td= report.preseizures.locked.count
+    #failed_reports_delivery
+      %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison échouées (#{@failed_reports_delivery.count})
+      %table.table.table-striped.table-condensed.table-bordered
+        %thead
+          %tr
+            %th.first Date
+            %th.second Nom
+            %th.third Nb
+            %th.last Message d'erreur
+        %tbody
+          - @failed_reports_delivery.each do |delivery|
             %tr
-              %th Nom
-              %th Nb de pièces
-          %tbody
-            - @awaiting_pre_assignments.each do |pre_assignment|
-              %tr
-                %td= pre_assignment['name']
-                %td= pre_assignment['count'].to_i
-      .span6
-        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison en cours (#{@reports_delivery.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %tr
-              %th Nom
-              %th Nb de pièces
-          %tbody
-            - @reports_delivery.each do |report|
-              %tr
-                %td= report.name
-                %td= report.preseizures.locked.count
-    #failed_reports_delivery.row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison échouées (#{@failed_reports_delivery.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %tr
-              %th.first Date
-              %th.second Nom
-              %th.third Nb
-              %th.last Message d'erreur
-          %tbody
-            - @failed_reports_delivery.each do |delivery|
-              %tr
-                %td.first= l(delivery['failed_at'], format: '%e %b %Y %H:%M')
-                %td.second= delivery['name']
-                %td.third= delivery['count']
-                %td.last= delivery['delivery_message']
+              %td.first= l(delivery['failed_at'], format: '%e %b %Y %H:%M')
+              %td.second= delivery['name']
+              %td.third= delivery['count']
+              %td.last= delivery['delivery_message']

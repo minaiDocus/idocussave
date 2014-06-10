@@ -14,6 +14,7 @@ class Pack::Piece
   field :position,                   type: Integer
   field :token
   field :is_awaiting_pre_assignment, type: Boolean, default: false
+  field :pre_assignment_comment
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 

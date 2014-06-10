@@ -51,4 +51,30 @@ describe 'API V1 Authorization' do
       response.code.to_i.should eq(200)
     end
   end
+
+  context 'with valid access_token' do
+    it 'visiting pre_assignments #index as customer should be unauthorized' do
+      get '/api/v1/pre_assignments', format: 'json', access_token: @user.authentication_token
+      response.should_not be_successful
+      response.code.to_i.should eq(401)
+    end
+
+    it 'visiting pre_assignments #index as operator should be authorized' do
+      operator = FactoryGirl.create :operator
+      operator.update_authentication_token
+
+      get '/api/v1/pre_assignments', format: 'json', access_token: operator.authentication_token
+      response.should be_successful
+      response.code.to_i.should eq(200)
+    end
+
+    it 'visiting pre_assignments #index as admin should be authorized' do
+      admin = FactoryGirl.create :admin
+      admin.update_authentication_token
+
+      get '/api/v1/pre_assignments', format: 'json', access_token: admin.authentication_token
+      response.should be_successful
+      response.code.to_i.should eq(200)
+    end
+  end
 end

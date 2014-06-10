@@ -2,7 +2,7 @@
 class ApiController < ApplicationController
   before_filter :authenticate_current_user
   before_filter :load_user_and_rights
-  around_filter :catch_error
+  before_filter :verify_rights
 
   def current_user
     @current_user
@@ -91,5 +91,11 @@ private
       return respond_with_not_found unless @user
     end
     @user ||= current_user
+  end
+
+  def verify_rights
+    if controller_name == 'pre_assignments' && !@user.is_operator && !@user.is_admin
+      respond_with_unauthorized
+    end
   end
 end

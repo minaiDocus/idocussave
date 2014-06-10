@@ -164,6 +164,7 @@ private
     else
       users = User.all
     end
+    users = users.not_operators
     users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
     users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)  unless contains[:last_name].blank?
     users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)      unless contains[:email].blank?
