@@ -106,9 +106,6 @@ class User
   attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
 
-  # FIXME use another way
-  before_save :set_timestamps_of_addresses
-
   embeds_many :addresses, as: :locatable
   embeds_one :organization_rights
 
@@ -169,8 +166,6 @@ class User
   scope :not_centralized,             where: { is_centralized: false }
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
   scope :editable,                    where: { is_editable: true }
-
-  before_save :format_name, :set_inactive_at
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -334,10 +329,9 @@ class User
   end
 
   def get_new_email_code
-    new_email_code = rand(36**8).to_s(36)
-    while User.where(email_code: new_email_code).first
+    begin
       new_email_code = rand(36**8).to_s(36)
-    end
+    end while self.class.where(email_code: new_email_code).first
     new_email_code
   end
 
@@ -355,8 +349,6 @@ class User
   def update_authentication_token
     update_attribute(:authentication_token, get_new_authentication_token)
   end
-
-protected
 
   def set_inactive_at
     if is_inactive? && self.inactive_at.presence.nil?
