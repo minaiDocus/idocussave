@@ -3,7 +3,6 @@ class Account::PaypalsController < Account::AccountController
   
   skip_before_filter :authenticate_user!, :only => [:notify]
   skip_before_filter :verify_authenticity_token
-  skip_before_filter :find_last_composition
 
   def notify
     wrap = PaypalWrapper.new(request)

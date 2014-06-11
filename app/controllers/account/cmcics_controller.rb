@@ -3,7 +3,6 @@ class Account::CmcicsController < Account::AccountController
   
   skip_before_filter :authenticate_user!, :only => [:callback]
   skip_before_filter :verify_authenticity_token, :only => [:callback]
-  skip_before_filter :find_last_composition
 
   def callback
     if PaiementCic.verify_hmac(params)

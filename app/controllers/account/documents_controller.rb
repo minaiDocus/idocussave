@@ -3,15 +3,10 @@ class Account::DocumentsController < Account::AccountController
   layout :current_layout
 
   skip_before_filter :login_user!, :only => %w(download piece)
-  before_filter :find_last_composition, :only => %w(index)
 
 protected
   def current_layout
     action_name == 'index' ? 'inner' : nil
-  end
-
-  def find_last_composition
-    @last_composition = @user.composition
   end
 
 public
@@ -31,6 +26,7 @@ public
     @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
     @packs_count = @packs.total
     
+    @last_composition = @user.composition
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     @period_service = PeriodService.new user: @user
   end
