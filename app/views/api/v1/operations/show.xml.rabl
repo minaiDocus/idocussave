@@ -13,3 +13,15 @@ end
 node :account_number do |operation|
   operation.bank_account.number
 end
+
+node :credit do |operation|
+  if operation.amount >= 0
+    operation.amount
+  end
+end
+
+node :debit do |operation|
+  if operation.amount < 0
+    operation.amount
+  end
+end
