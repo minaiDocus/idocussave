@@ -4,7 +4,6 @@ class Account::DematboxController < Account::AccountController
   before_filter :load_dematbox
 
   def create
-    @dematbox.set_new_number
     @dematbox.async_subscribe(params[:pairing_code])
     flash[:notice] = 'Configuration en cours...'
     redirect_to account_profile_path(panel: 'dematbox')
