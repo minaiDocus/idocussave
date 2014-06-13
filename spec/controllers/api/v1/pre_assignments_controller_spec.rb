@@ -15,14 +15,14 @@ describe Api::V1::PreAssignmentsController do
 
     Timecop.freeze(Time.local(2014,1,1,8,0,0))
 
-    @pack = Pack.create(name: 'TS0001 AC 201401 all', owner_id: @user.id)
-    @piece1 = Pack::Piece.create(name: 'TS0001 AC 201401 001', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
-    @piece2 = Pack::Piece.create(name: 'TS0001 AC 201401 002', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
+    @pack = Pack.create(name: 'TS%0001 AC 201401 all', owner_id: @user.id)
+    @piece1 = Pack::Piece.create(name: 'TS%0001 AC 201401 001', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
+    @piece2 = Pack::Piece.create(name: 'TS%0001 AC 201401 002', pack_id: @pack.id, origin: 'scan', is_awaiting_pre_assignment: true)
 
     Timecop.freeze(Time.local(2014,2,1,8,0,0))
 
-    @pack2 = Pack.create(name: 'TS0001 AC 201402 all', owner_id: @user.id)
-    @piece3 = Pack::Piece.create(name: 'TS0001 AC 201402 001', pack_id: @pack2.id, origin: 'scan', is_awaiting_pre_assignment: true)
+    @pack2 = Pack.create(name: 'TS%0001 AC 201402 all', owner_id: @user.id)
+    @piece3 = Pack::Piece.create(name: 'TS%0001 AC 201402 001', pack_id: @pack2.id, origin: 'scan', is_awaiting_pre_assignment: true)
 
     Timecop.return
   end
@@ -106,7 +106,7 @@ describe Api::V1::PreAssignmentsController do
         params = {
           format:       'json',
           access_token: @admin.authentication_token,
-          pack_name:    'TS0002 AC 201401',
+          pack_name:    'TS%0002 AC 201401',
           comment:      ''
         }
 
@@ -219,12 +219,12 @@ describe Api::V1::PreAssignmentsController do
 
         context 'as xml' do
           it 'with invalid pack_name should be not found' do
-            @pack3 = Pack.create(name: 'TS0001 BQ 201401 all', owner_id: @user.id)
+            @pack3 = Pack.create(name: 'TS%0001 BQ 201401 all', owner_id: @user.id)
 
             params = {
               format:       'xml',
               access_token: @admin.authentication_token,
-              pack_name:    'TS0001 BQ 201401',
+              pack_name:    'TS%0001 BQ 201401',
               comment:      'Test comment.'
             }
 
