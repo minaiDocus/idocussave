@@ -26,10 +26,29 @@ class ApiController < ApplicationController
     end
   end
 
-  def respond_with_invalid_request
+  def respond_with_invalid_request(e=nil)
+    title = 'Invalid Request'
+    title += " : #{e.class}" if e
     respond_to do |format|
-      format.xml  { render xml:  "<message>Invalid Request</message>", status: 400 }
-      format.json { render json: { message: "Invalid Request" },       status: 400 }
+      format.xml  {
+        if e
+          content = view_context.content_tag :message do
+            view_context.content_tag(:title, title) +
+            view_context.content_tag(:description, e.message)
+          end
+        else
+          content = view_context.content_tag :message, title
+        end
+        render xml: content, status: 400
+      }
+      format.json {
+        if e
+          content = { message: title, description: e.message }
+        else
+          content = { message: title }
+        end
+        render json: content, status: 400
+      }
     end
   end
 
