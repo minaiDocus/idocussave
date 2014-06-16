@@ -8,9 +8,10 @@ class NotificationMailer < ActionMailer::Base
     mail(:to => email, :subject => subject)
   end
 
-  def new_bank_accounts(email, user, bank_accounts)
-    @user = user
+  def new_bank_accounts(collaborator, user, bank_accounts)
+    @collaborator  = collaborator
+    @user          = user
     @bank_accounts = bank_accounts
-    mail(:to => email, :subject => "iDocus - compte bancaire paramètré par votre client #{@user.company}")
+    mail(:to => @collaborator.email, :subject => "iDocus - compte bancaire paramètré par votre client #{@user.company}")
   end
 end
