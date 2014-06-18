@@ -1,0 +1,21 @@
+- if collection.count > 0
+  - collection.each_with_index do |object, index|
+    %tr
+      - if index == 0
+        %td.process{ rowspan: collection.count }
+          %span.label{ class: (type.present? ? "label-#{type}" : nil) } #{name}
+          %span.badge{ class: (type.present? ? "badge-#{type}" : nil) } #{collection.count}
+      %td.date
+        - if object.date.today?
+          = l(object.date, format: '%H:%M')
+        - else
+          = l(object.date, format: '%d %b %Y %H:%M')
+      %td.name= object.name
+      %td.count= object.document_count
+      %td.message= object.message == false ? '-' : object.message
+- elsif type == :success
+  %tr
+    %td.process
+      %span.label{ class: (type.present? ? "label-#{type}" : nil) } #{name}
+    %td.aligncenter{ colspan: 4 }
+      %i Aucun

@@ -1,183 +1,144 @@
-.row-fluid
-  .span3
-    %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
-    %table.table.table-striped.table-condensed.table-bordered
-      %tbody
-        %tr
-          %th Total
-          %td= Document.count
-        %tr
-          %th Numérisés
-          %td= Document.scanned.count
-        %tr
-          %th Téléversés (OCR)
-          %td
-            = Document.uploaded.count
-            (#{TempDocument.ocr_layer_applied.sum(:pages_number).to_i})
-        %tr
-          %th Auto
-          %td= Document.fiduceo.count
-        %tr
-          %th Vignettes restantes
-          %td= Document.not_clean.not_mixed.count
-        %tr
-          %th Extractions restantes
-          %td= Document.not_extracted.not_mixed.count
-  .span3
-    %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
-    %table.table.table-striped.table-condensed.table-bordered
-      %thead
-        %tr
-          %th Service
-          %th Restant
-          %th Echoué
-      %tbody
-        %tr
-          %td Dropbox Extended
-          %td= RemoteFile.of_service('Dropbox Extended').not_processed.count
-          %td= RemoteFile.of_service('Dropbox Extended').not_retryable.count
-        %tr
-          %td Dropbox Basic
-          %td= RemoteFile.of_service('Dropbox').not_processed.count
-          %td= RemoteFile.of_service('Dropbox').not_retryable.count
-        %tr
-          %td Google Drive
-          %td= RemoteFile.of_service('Google Drive').not_processed.count
-          %td= RemoteFile.of_service('Google Drive').not_retryable.count
-        %tr
-          %td Box
-          %td= RemoteFile.of_service('Box').not_processed.count
-          %td= RemoteFile.of_service('Box').not_retryable.count
-        %tr
-          %td FTP
-          %td= RemoteFile.of_service('FTP').not_processed.count
-          %td= RemoteFile.of_service('FTP').not_retryable.count
-        %tr
-          %td Knowings
-          %td= RemoteFile.of_service('Knowings').not_processed.count
-          %td= RemoteFile.of_service('Knowings').not_retryable.count
-  .span3
-    %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
-    %table.table.table-striped.table-condensed.table-bordered
-      %tbody
-        %tr
-          %th Corrompus
-          %td= TempDocument.unreadable.count
-        %tr
-          %th Bloqués
-          %td= TempDocument.locked.count
-        %tr
-          %th En attente de sélection
-          %td= TempDocument.wait_selection.count
-        %tr
-          %th OCR
-          %td= TempDocument.ocr_needed.count
-        %tr
-          %th A regrouper
-          %td= TempDocument.bundle_needed.count
-        %tr
-          %th Prêt à être intégrés
-          %td= TempDocument.ready.count
-        %tr
-          %th Traités
-          %td= TempDocument.processed.count
-  .span3
-    %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
-    %table.table.table-striped.table-condensed.table-bordered
-      %tbody
-        %tr
-          %th Total
-          %td= FiduceoRetriever.count
-        %tr
-          %th Total clients
-          %td= FiduceoRetriever.all.distinct(:user_id).count
-        %tr
-          %th= FiduceoRetriever.state_machine.states['scheduled'].human_name
-          %td= FiduceoRetriever.scheduled.count
-        %tr
-          %th= FiduceoRetriever.state_machine.states['processing'].human_name
-          %td= FiduceoRetriever.processing.count
-        %tr
-          %th= FiduceoRetriever.state_machine.states['wait_selection'].human_name
-          %td= FiduceoRetriever.wait_selection.count
-        %tr
-          %th= FiduceoRetriever.state_machine.states['wait_for_user_action'].human_name
-          %td= FiduceoRetriever.wait_for_user_action.count
-        %tr
-          %th= FiduceoRetriever.state_machine.states['error'].human_name
-          %td= FiduceoRetriever.error.count
-.row-fluid
-  .span6
+#dashboard.row-fluid
+  .span7
+    .panel
+      .panel-header
+        %h3 Flux de traitement
+      %hr.margin0top
+      .panel-body
+        %table.table.table-striped.table-condensed
+          %thead
+            %tr
+              %th.process Traitement
+              %th.date Date
+              %th.name Lot
+              %th.count Nb.
+              %th.message Message
+          %tbody
+            = render partial: 'process', locals: { name: 'OCR', collection: @ocr_needed_temp_packs, type: :success }
+            = render partial: 'process', locals: { name: 'Regroupement', collection: @bundle_needed_temp_packs, type: nil }
+            = render partial: 'process', locals: { name: 'Regroupement', collection: @bundling_temp_packs, type: :success }
+            = render partial: 'process', locals: { name: 'Publication', collection: @processing_temp_packs, type: :success }
+            = render partial: 'process', locals: { name: 'Livraison', collection: @currently_being_delivered_packs, type: :success }
+            = render partial: 'process', locals: { name: 'Livraison', collection: @failed_packs_delivery, type: :important }
+            = render partial: 'process', locals: { name: 'Pré-affectation', collection: @blocked_pre_assignments, type: nil }
+            = render partial: 'process', locals: { name: 'Pré-affectation', collection: @awaiting_pre_assignments, type: :success }
+            = render partial: 'process', locals: { name: 'Livr. Pré-aff.', collection: @reports_delivery, type: :success }
+            = render partial: 'process', locals: { name: 'Livr. Pré-aff.', collection: @failed_reports_delivery, type: :important }
+  .span5
     .row-fluid
       .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } OCR - En attente (#{@ocr_needed_temp_packs.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %th Date
-            %th Nom
-            %th Nb pièces
-          %tbody
-            - @ocr_needed_temp_packs.each do |temp_pack|
-              %tr
-                %td= l(temp_pack['updated_at'])
-                %td= temp_pack['name']
-                %td= temp_pack['count']
-    .row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Regroupement - En attente (#{@bundle_needed_temp_packs.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %th Date
-            %th Nom
-            %th Nb fichiers
-          %tbody
-            - @bundle_needed_temp_packs.each do |temp_pack|
-              %tr
-                %td= l(temp_pack.temp_documents.bundle_needed.by_position.first.updated_at) rescue '-'
-                %td= temp_pack.name
-                %td= temp_pack.temp_documents.bundle_needed.count
-    .row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Regroupement - En cours (#{@bundling_temp_packs.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %th Date
-            %th Nom
-            %th Nb fichiers
-          %tbody
-            - @bundling_temp_packs.each do |temp_pack|
-              %tr
-                %td= l(temp_pack.temp_documents.bundling.by_position.first.updated_at) rescue '-'
-                %td= temp_pack.name
-                %td= temp_pack.temp_documents.bundling.count
-    .row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Documents - En cours de traitements (#{@processing_temp_packs.count})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %th Date
-            %th Nom
-            %th Nb pièces
-          %tbody
-            - @processing_temp_packs.each do |temp_pack|
-              %tr
-                %td= l(temp_pack['updated_at'])
-                %td= temp_pack['name']
-                %td= temp_pack['count']
-    .row-fluid
-      .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Documents - Dernier traités (#{@last_packs.size})
-        %table.table.table-striped.table-condensed.table-bordered
-          %thead
-            %th Date
-            %th Nom
-            %th Pages
-          %tbody
-            - @last_packs.each do |pack|
-              %tr
-                %td= l(pack.updated_at)
-                %td= pack.name
-                %td= pack.pages_count
+        .row-fluid
+          .span6
+            %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
+            %table.table.table-striped.table-condensed.table-bordered
+              %tbody
+                %tr
+                  %th Total
+                  %td= Document.count
+                %tr
+                  %th Numérisés
+                  %td= Document.scanned.count
+                %tr
+                  %th Téléversés (OCR)
+                  %td
+                    = Document.uploaded.count
+                    (#{TempDocument.ocr_layer_applied.sum(:pages_number).to_i})
+                %tr
+                  %th Num. Dematbox
+                  %td= Document.dematbox_scanned.count
+                %tr
+                  %th Auto
+                  %td= Document.fiduceo.count
+                %tr
+                  %th Vignettes restantes
+                  %td= Document.not_clean.not_mixed.count
+                %tr
+                  %th Extractions restantes
+                  %td= Document.not_extracted.not_mixed.count
+          .span6
+            %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
+            %table.table.table-striped.table-condensed.table-bordered
+              %thead
+                %tr
+                  %th Service
+                  %th Restant
+                  %th Echoué
+              %tbody
+                %tr
+                  %td Dropbox Ext.
+                  %td= RemoteFile.of_service('Dropbox Extended').not_processed.retryable.count
+                  %td= RemoteFile.of_service('Dropbox Extended').not_retryable.count
+                %tr
+                  %td Dropbox Basic
+                  %td= RemoteFile.of_service('Dropbox').not_processed.retryable.count
+                  %td= RemoteFile.of_service('Dropbox').not_retryable.count
+                %tr
+                  %td Google Drive
+                  %td= RemoteFile.of_service('Google Drive').not_processed.retryable.count
+                  %td= RemoteFile.of_service('Google Drive').not_retryable.count
+                %tr
+                  %td Box
+                  %td= RemoteFile.of_service('Box').not_processed.retryable.count
+                  %td= RemoteFile.of_service('Box').not_retryable.count
+                %tr
+                  %td FTP
+                  %td= RemoteFile.of_service('FTP').not_processed.retryable.count
+                  %td= RemoteFile.of_service('FTP').not_retryable.count
+                %tr
+                  %td Knowings
+                  %td= RemoteFile.of_service('Knowings').not_processed.retryable.count
+                  %td= RemoteFile.of_service('Knowings').not_retryable.count
+        .row-fluid
+          .span6
+            %h3.label{ style: 'padding:3px 5px 3px;' } Traitement des documents
+            %table.table.table-striped.table-condensed.table-bordered
+              %tbody
+                %tr
+                  %th Corrompus
+                  %td= TempDocument.unreadable.count
+                %tr
+                  %th Bloqués
+                  %td= TempDocument.locked.count
+                %tr
+                  %th En attente de sélection
+                  %td= TempDocument.wait_selection.count
+                %tr
+                  %th OCR
+                  %td= TempDocument.ocr_needed.count
+                %tr
+                  %th A regrouper
+                  %td= TempDocument.bundle_needed.count
+                %tr
+                  %th Prêt à être intégrés
+                  %td= TempDocument.ready.count
+                %tr
+                  %th Traités
+                  %td= TempDocument.processed.count
+          .span6
+            %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
+            %table.table.table-striped.table-condensed.table-bordered
+              %tbody
+                %tr
+                  %th Total
+                  %td= FiduceoRetriever.count
+                %tr
+                  %th Total clients
+                  %td= FiduceoRetriever.all.distinct(:user_id).count
+                %tr
+                  %th= FiduceoRetriever.state_machine.states['scheduled'].human_name
+                  %td= FiduceoRetriever.scheduled.count
+                %tr
+                  %th= FiduceoRetriever.state_machine.states['processing'].human_name
+                  %td= FiduceoRetriever.processing.count
+                %tr
+                  %th= FiduceoRetriever.state_machine.states['wait_selection'].human_name
+                  %td= FiduceoRetriever.wait_selection.count
+                %tr
+                  %th= FiduceoRetriever.state_machine.states['wait_for_user_action'].human_name
+                  %td= FiduceoRetriever.wait_for_user_action.count
+                %tr
+                  %th= FiduceoRetriever.state_machine.states['error'].human_name
+                  %td= FiduceoRetriever.error.count
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Dernier mail reçus (#{@emails.count})
@@ -222,7 +183,7 @@
                 %td= provider_wish_state(provider_wish)
     .row-fluid
       .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques - Documents - Nouveaux (#{@document_retrievers.size})
+        %h3.label{ style: 'padding:3px 5px 3px;' } Automates documentaires - Nouveaux (#{@document_retrievers.size})
         %table.table.table-striped.table-condensed.table-bordered
           %thead
             %th Date
@@ -240,7 +201,7 @@
                 %td= FiduceoRetriever.state_machine.states[retriever.state].human_name
     .row-fluid
       .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques - Op. bancaires - Nouveaux (#{@operation_retrievers.size})
+        %h3.label{ style: 'padding:3px 5px 3px;' } Automates bancaires - Nouveaux (#{@operation_retrievers.size})
         %table.table.table-striped.table-condensed.table-bordered
           %thead
             %th Date
@@ -258,7 +219,7 @@
                 %td= FiduceoRetriever.state_machine.states[retriever.state].human_name
     .row-fluid
       .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques - Documents - En erreurs (#{@failed_document_retrievers.size})
+        %h3.label{ style: 'padding:3px 5px 3px;' } Automates documentaires - En erreurs (#{@failed_document_retrievers.size})
         %table.table.table-striped.table-condensed.table-bordered
           %thead
             %th Date
@@ -276,7 +237,7 @@
                 %td= t('mongoid.state_machines.fiduceo_transaction.status.' + retriever.transactions.desc(:created_at).first.status.downcase)
     .row-fluid
       .span12
-        %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques - Op. bancaires - En erreurs (#{@failed_operation_retrievers.size})
+        %h3.label{ style: 'padding:3px 5px 3px;' } Automates bancaires - En erreurs (#{@failed_operation_retrievers.size})
         %table.table.table-striped.table-condensed.table-bordered
           %thead
             %th Date
@@ -292,46 +253,3 @@
                 %td= retriever.service_name
                 %td= retriever.name
                 %td= t('mongoid.state_machines.fiduceo_transaction.status.' + retriever.transactions.desc(:created_at).first.status.downcase)
-  .span6
-    %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - En attente (#{@awaiting_pre_assignments.count})
-    %table.table.table-striped.table-condensed.table-bordered
-      %thead
-        %tr
-          %th Date
-          %th Nom
-          %th Nb de pièces
-          %th Commentaire
-      %tbody
-        - @awaiting_pre_assignments.each do |pre_assignment|
-          %tr
-            %td= l(pre_assignment.date, format: '%e %b %Y %H:%M')
-            %td= pre_assignment.pack_name
-            %td= pre_assignment.piece_counts
-            %td= pre_assignment.comment
-    %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison en cours (#{@reports_delivery.count})
-    %table.table.table-striped.table-condensed.table-bordered
-      %thead
-        %tr
-          %th Nom
-          %th Nb de pièces
-      %tbody
-        - @reports_delivery.each do |report|
-          %tr
-            %td= report.name
-            %td= report.preseizures.locked.count
-    #failed_reports_delivery
-      %h3.label{ style: 'padding:3px 5px 3px;' } Pré-affectation - Livraison échouées (#{@failed_reports_delivery.count})
-      %table.table.table-striped.table-condensed.table-bordered
-        %thead
-          %tr
-            %th.first Date
-            %th.second Nom
-            %th.third Nb
-            %th.last Message d'erreur
-        %tbody
-          - @failed_reports_delivery.each do |delivery|
-            %tr
-              %td.first= l(delivery['failed_at'], format: '%e %b %Y %H:%M')
-              %td.second= delivery['name']
-              %td.third= delivery['count']
-              %td.last= delivery['delivery_message']

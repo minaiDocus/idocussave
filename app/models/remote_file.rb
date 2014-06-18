@@ -19,6 +19,10 @@ class RemoteFile
   field :error_message, type: String
   field :tried_count,   type: Integer, default: 0
 
+  index :state
+  index :service_name
+  index :tried_count
+
   validates_presence_of :state
   validates_presence_of :service_name
   validates_inclusion_of :service_name, in: ExternalFileStorage::SERVICES

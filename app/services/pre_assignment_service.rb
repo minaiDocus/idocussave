@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class PreAssignmentService
-  def self.pending
+  def self._pending
     keyf = %Q{
       function(x) {
         name = x.name.split(' ');
@@ -27,7 +27,11 @@ class PreAssignmentService
       cond:    { is_awaiting_pre_assignment: true },
       initial: { piece_counts: 0 },
       reduce:  reduce
-    ).map do |e|
+    )
+  end
+
+  def self.pending
+    _pending.map do |e|
       o = OpenStruct.new
       o.date = e['date'].to_time
       o.pack_name = e['pack_name']
