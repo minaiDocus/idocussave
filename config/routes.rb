@@ -280,6 +280,7 @@ Idocus::Application.routes.draw do
       post 'load_from_external', on: :collection
     end
     resources :dematbox_files
+    resources :retrievers, as: :fiduceo_retrievers
     resources :provider_wishes, as: :fiduceo_provider_wishes do
       put 'start_process', on: :member
       put 'reject',        on: :member

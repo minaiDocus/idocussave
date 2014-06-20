@@ -1,0 +1,51 @@
+.row-fluid
+  .span12.well.margin0bottom
+    %h3 Filtres
+
+    %br
+    = form_tag admin_fiduceo_retrievers_path, method: :get, class: 'form form-vertical margin0bottom' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+
+      = label_tag 'retriever_contains[user_code]', t('mongoid.models.user.name')
+      = text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue ''), class: 'span12'
+
+      = label_tag 'retriever_contains[state]', t('mongoid.models.fiduceo_retriever.attributes.state')
+      = select_tag 'retriever_contains[state]', options_for_select(FiduceoRetriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
+
+      = label_tag 'retriever_contains[type]', t('mongoid.models.fiduceo_retriever.attributes.type')
+      = select_tag 'retriever_contains[type]', options_for_select([['Document', :provider], ['Op. Bancaire', :bank]], (params[:retriever_contains][:type] rescue '')), include_blank: true
+
+      = label_tag 'retriever_contains[service_name]', t('mongoid.models.fiduceo_retriever.attributes.service_name')
+      = text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue ''), class: 'span12'
+
+      = label_tag 'retriever_contains[name]', t('mongoid.models.fiduceo_retriever.attributes.name')
+      = text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue ''), class: 'span12'
+
+      = label_tag 'retriever_contains[created_at][$gte]', 'Créé le'
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'retriever_contains[created_at][$gte]', (params[:retriever_contains][:created_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'retriever_contains[created_at][$lte]', (params[:retriever_contains][:created_at]['$lte'] rescue '')
+
+      = label_tag 'retriever_contains[updated_at][$gte]', 'Modifié le'
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'retriever_contains[updated_at][$gte]', (params[:retriever_contains][:updated_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'retriever_contains[updated_at][$lte]', (params[:retriever_contains][:updated_at]['$lte'] rescue '')
+
+      %br
+
+      = submit_tag t('filters.action'), name: nil, class: 'btn'
+      = link_to t('filters.reset'), admin_fiduceo_retrievers_path, class: 'btn'

@@ -1,0 +1,60 @@
+.row-fluid
+  .span12
+    = render 'layouts/admin/fiduceo/navigation'
+
+#retrievers
+  .row-fluid.marginbottom
+    .span12.margin1bottom
+      %h3 Automates de récupérations (#{@retrievers.count})
+  .row-fluid
+    .span9
+      .row-fluid
+        .span6
+          = render partial: 'list_options'
+        .span6.alignright.padding1top
+          = link_to admin_fiduceo_retrievers_path do
+            %span.badge Tous
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { created_at: { '$gte' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
+            %span.badge Récent
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'scheduled' }, per_page: params[:per_page]) do
+            %span.badge.badge-success Programmé
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
+            %span.badge.badge-success Prêt
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'processing' }, per_page: params[:per_page]) do
+            %span.badge En cours
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'wait_selection' }, per_page: params[:per_page]) do
+            %span.badge Sélection
+          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
+            %span.badge.badge-important Erreur
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at,   'Créé le'
+                %th= sortable :updated_at,   'Modifié le'
+                %th= sortable :user_id,      t('mongoid.models.user.name')
+                %th= sortable :type,         t('mongoid.models.fiduceo_retriever.attributes.type')
+                %th= sortable :service_name, t('mongoid.models.fiduceo_retriever.attributes.service_name')
+                %th= sortable :name,         t('mongoid.models.fiduceo_retriever.attributes.name')
+                %th Journal
+                %th Mode
+                %th= t('mongoid.models.fiduceo_retriever.attributes.state')
+                %th Action
+            %tbody
+              - @retrievers.each do |retriever|
+                - present retriever do |retriever_presenter|
+                  %tr
+                    %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+                    %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
+                    %td= link_to retriever.user.code, [:admin, retriever.user]
+                    %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
+                    %td= retriever_presenter.service_name
+                    %td= retriever_presenter.name
+                    %td= retriever_presenter.journal.try(:name) || '-'
+                    %td= retriever_presenter.mode
+                    %td!= retriever_presenter.state(:admin)
+                    %td= link_to icon(icon: 'eye-open'), account_fiduceo_retrievers_path(code: retriever.user.code)
+      = render partial: 'list_options'
+    .span3
+      = render partial: 'sidebar'

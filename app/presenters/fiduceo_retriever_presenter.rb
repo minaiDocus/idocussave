@@ -7,20 +7,32 @@ class FiduceoRetrieverPresenter < BasePresenter
     fiduceo_retriever.is_auto ? 'Automatique' : 'Manuel'
   end
 
-  def state
+  def state(scope=:account)
     if fiduceo_retriever.is_active
       if fiduceo_retriever.wait_selection?
         if fiduceo_retriever.provider?
           if fiduceo_retriever.pending_document_ids.any?
             h.content_tag :span, 'Preparation des documents', class: 'label'
           else
-            h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
+            if scope == :account
+              h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
+            elsif scope == :admin
+              h.content_tag :span, 'Sélection des documents', class: 'label'
+            end
           end
         else
-          h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
+          if scope == :account
+            h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
+          elsif scope == :admin
+            h.content_tag :span, 'Sélection des comptes', class: 'label'
+          end
         end
       elsif fiduceo_retriever.wait_for_user_action?
-        h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+        if scope == :account
+          h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
+        elsif scope == :admin
+          h.content_tag :span, "En attente de l'utilisateur", class: 'label'
+        end
       else
         if fiduceo_retriever.processing?
           content = last_event.presence || 'En attente de traitement ...'
