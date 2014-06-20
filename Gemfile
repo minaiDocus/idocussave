@@ -29,6 +29,7 @@ gem 'barby'
 gem 'chunky_png' # required by barby
 gem 'oauth'
 gem 'delayed_job_mongoid'
+gem 'delayed_job_web', git: 'git@github.com:Pikomu/delayed_job_web.git', branch: 'master'
 gem 'airbrake'
 gem 'nested_form'
 gem 'bootstrap-datepicker-rails'

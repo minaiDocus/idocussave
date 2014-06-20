@@ -292,6 +292,7 @@ Idocus::Application.routes.draw do
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
+  match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]
 
   get "/preview/(:id)", controller: :homepage, action: :preview
   
