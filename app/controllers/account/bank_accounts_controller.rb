@@ -29,7 +29,7 @@ class Account::BankAccountsController < Account::FiduceoController
       end
       if added_bank_accounts.any?
         collaborators = @user.groups.map(&:collaborators).flatten
-        collaborators = [@user.organization.leader.email] if collaborators.empty?
+        collaborators = [@user.organization.leader] if collaborators.empty?
         collaborators.each do |collaborator|
           NotificationMailer.delay(priority: 1).new_bank_accounts(collaborator, @user, added_bank_accounts)
         end
