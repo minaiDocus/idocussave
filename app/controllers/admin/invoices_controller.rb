@@ -15,6 +15,14 @@ class Admin::InvoicesController < Admin::AdminController
     end
   end
 
+  def debit_order
+    invoice_time = params[:invoice_date].presence.to_time rescue Time.now
+    debit_date   = params[:debit_date].presence.to_date rescue Date.today
+    csv          = DebitService.order(invoice_time, debit_date)
+    filename     = "order_#{invoice_time.strftime('%Y%m')}.csv"
+    send_data(csv, type: 'text/csv', filename: filename)
+  end
+
   def show
     file_path = @invoice.content.path params[:style]
     if File.exist?(file_path)

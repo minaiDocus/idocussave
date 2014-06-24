@@ -257,7 +257,8 @@ Idocus::Application.routes.draw do
       end
     end
     resources :invoices do
-      get 'archive', on: :collection
+      get  'archive',     on: :collection
+      post 'debit_order', on: :collection
     end
     resources :pages
     resources :cms_images
