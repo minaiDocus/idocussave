@@ -1,6 +1,6 @@
 .nav-collapse
   %ul{ :class=>'nav' }
-    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses retrievers provider_wishes)) && !(request.path =~ /customers/)) }
+    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
       != link_to 'Mon compte', account_profile_path
     - if current_user.is_prescriber || current_user.is_admin
       %li{ class: ((controller_name.in?(%w(organizations groups collaborators customers journals subscriptions organization_subscriptions pre_assignments)) || request.path =~ /customers/)  ? 'active' : '') }
