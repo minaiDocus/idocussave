@@ -21,5 +21,6 @@ class Operation
 
   validates_presence_of :date, :label, :amount
 
+  scope :fiduceo,      where: { fiduceo_id: { '$exists' => true } }
   scope :not_accessed, where: { accessed_at: nil }
 end

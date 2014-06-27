@@ -3,46 +3,49 @@ class Account::RetrievedBankingOperationsController < Account::FiduceoController
   layout 'layouts/account/retrievers'
 
   def index
-    @operations = FiduceoOperation.new(@user.fiduceo_id, banking_operation_contains).operations
+    @operations = search(banking_operation_contains).
+      order([sort_column,sort_direction]).
+      page(params[:page]).
+      per(params[:per_page])
+    @is_filter_empty = banking_operation_contains.blank?
   end
 
 private
 
+  def sort_column
+    params[:sort] || 'date'
+  end
+
+  def sort_direction
+    params[:direction] || 'desc'
+  end
+
   def banking_operation_contains
-    options = {
-      page:         params[:page] || 1,
-      per_page:     params[:per_page] || Kaminari.config.default_per_page
-    }
-    @is_filter_empty = true
-    if params[:banking_operation_contains]
-      if params[:banking_operation_contains][:label].present?
-        options.merge!({ search_label: params[:banking_operation_contains][:label]})
-        @is_filter_empty = false
-      end
-      if params[:banking_operation_contains][:date].present?
-        if params[:banking_operation_contains][:date][:from].present? || params[:banking_operation_contains][:date][:to].present?
-          params[:banking_operation_contains][:date][:from] = params[:banking_operation_contains][:date][:to]   unless params[:banking_operation_contains][:date][:from].present?
-          params[:banking_operation_contains][:date][:to]   = params[:banking_operation_contains][:date][:from] unless params[:banking_operation_contains][:date][:to].present?
-
-          from_date = Time.zone.parse(params[:banking_operation_contains][:date][:from])
-          to_date   = Time.zone.parse(params[:banking_operation_contains][:date][:to])
-
-          if from_date && to_date
-            to_date = from_date if from_date > to_date
-
-            params[:banking_operation_contains][:date][:from] = from_date.strftime('%Y-%m-%d')
-            params[:banking_operation_contains][:date][:to]   = to_date.strftime('%Y-%m-%d')
-
-            options.merge!({ from_date: from_date.strftime('%d/%m/%Y'), to_date: to_date.strftime('%d/%m/%Y') })
-            @is_filter_empty = false
-          else
-            params[:banking_operation_contains][:date][:from] = nil
-            params[:banking_operation_contains][:date][:to]   = nil
-          end
+    @contains ||= {}
+    if params[:banking_operation_contains] && @contains.blank?
+      @contains = params[:banking_operation_contains].delete_if do |_,value|
+        if value.blank? && !value.is_a?(Hash)
+          true
+        elsif value.is_a? Hash
+          value.delete_if { |k,v| v.blank? }
+          value.blank?
+        else
+          false
         end
       end
     end
-    options
+    @contains
   end
   helper_method :banking_operation_contains
+
+  def search(contains)
+    operations = @user.operations.fiduceo
+    operations = operations.where(label: /#{Regexp.quote(contains[:label])}/i) unless contains[:label].blank?
+    begin
+      operations = operations.where(date: contains[:date]) unless contains[:date].blank?
+    rescue Mongoid::Errors::InvalidTime
+      contains[:date] = nil
+    end
+    operations
+  end
 end
