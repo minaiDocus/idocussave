@@ -146,7 +146,11 @@ class Ibiza
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
         period = DocumentTools.to_period(report.name)
-        if(e = exercice(id, period))
+        begin
+          e = exercice(id, period)
+        rescue NoExercicesFound
+        end
+        if e
           client.request.clear
           data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
           client.company(id).entries!(data)
