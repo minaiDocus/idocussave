@@ -25,8 +25,16 @@ class BankAccount
   validates_length_of :journal, within: 2..6, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_format_of :journal, with: /\A[A-Za-z0-9]*\Z/, if: Proc.new { |bank_account| bank_account.persisted? }
 
-  scope :valid,   where: { :journal.nin => [nil, ''], :accounting_number.nin => [nil, ''] }
-  scope :invalid, where: { :journal.in => [nil, ''], :accounting_number.in => [nil, ''] }
+  scope :configured,     where: { :journal.nin => [nil, ''], :accounting_number.nin => [nil, ''] }
+  scope :not_configured, where: { :journal.in =>  [nil, ''], :accounting_number.in =>  [nil, ''] }
+
+  def configured?
+    journal.present? && accounting_number.present?
+  end
+
+  def not_configured?
+    !configured?
+  end
 
 private
 

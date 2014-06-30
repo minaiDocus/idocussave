@@ -3,9 +3,10 @@ class Pack::Report::Preseizure
   include Mongoid::Timestamps
   include ActiveModel::ForbiddenAttributesProtection
 
-  belongs_to :user, inverse_of: :preseizures
-  belongs_to :report, class_name: 'Pack::Report', inverse_of: :preseizures
-  belongs_to :piece,  class_name: 'Pack::Piece',  inverse_of: :preseizures
+  belongs_to :user,                                  inverse_of: :preseizures
+  belongs_to :report,    class_name: 'Pack::Report', inverse_of: :preseizures
+  belongs_to :piece,     class_name: 'Pack::Piece',  inverse_of: :preseizures
+  belongs_to :operation,                             inverse_of: :preseizure
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
   has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
 

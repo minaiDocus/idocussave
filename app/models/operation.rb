@@ -3,8 +3,14 @@ class Operation
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  belongs_to :organization
   belongs_to :user
   belongs_to :bank_account
+  belongs_to :pack
+  belongs_to :piece, class_name: 'Pack::Piece'
+  has_one :preseizure, class_name: 'Pack::Report::Preseizure'
+
+  index :fiduceo_id
 
   field :fiduceo_id
   field :date,             type: Date
@@ -18,9 +24,15 @@ class Operation
   field :category_id,      type: Integer
   field :category
   field :accessed_at,      type: Time
+  field :processed_at,     type: Time
+  field :is_locked,        type: Boolean
 
   validates_presence_of :date, :label, :amount
 
-  scope :fiduceo,      where: { fiduceo_id: { '$exists' => true } }
-  scope :not_accessed, where: { accessed_at: nil }
+  scope :fiduceo,       where: { fiduceo_id: { '$exists' => true } }
+  scope :not_accessed,  where: { accessed_at: nil }
+  scope :not_processed, where: { processed_at: { '$exists' => false } }
+  scope :processed,     where: { processed_at: { '$ne' => nil } }
+  scope :locked,        where: { is_locked: true }
+  scope :not_locked,    where: { :is_locked.in => [nil, false] }
 end

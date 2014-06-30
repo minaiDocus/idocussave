@@ -25,7 +25,8 @@ class Pack
   has_many :periodic_metadata, class_name: 'Scan::Document', inverse_of: :pack
   has_many :remote_files,                                                       dependent: :destroy
   has_many :dividers,          class_name: 'PackDivider',    inverse_of: :pack, dependent: :destroy
-  
+  has_many :operations
+
   field :name,                 type: String
   field :original_document_id, type: String
   field :content_url,          type: String
