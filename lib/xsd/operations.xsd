@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <element name="operations">
+    <complexType>
+      <sequence minOccurs="0" maxOccurs="unbounded">
+        <element name="customer">
+          <complexType>
+           <sequence minOccurs="0" maxOccurs="unbounded">
+              <element name="pack">
+                <complexType>
+                  <sequence minOccurs="0" maxOccurs="unbounded">
+                    <element name="piece">
+                      <complexType>
+                        <sequence minOccurs="0" maxOccurs="unbounded">
+                          <element name="operation">
+                            <complexType>
+                              <sequence>
+                                <element name="date" type="date"/>
+                                <element name="label" type="string"/>
+                                <element name="credit">
+                                  <simpleType>
+                                    <union>
+                                      <simpleType>
+                                        <restriction base="string">
+                                          <length value="0"/>
+                                        </restriction>
+                                      </simpleType>
+                                      <simpleType>
+                                        <restriction base="float">
+                                        </restriction>
+                                      </simpleType>
+                                    </union>
+                                  </simpleType>
+                                </element>
+                                <element name="debit">
+                                  <simpleType>
+                                    <union>
+                                      <simpleType>
+                                        <restriction base="string">
+                                          <length value="0"/>
+                                        </restriction>
+                                      </simpleType>
+                                      <simpleType>
+                                        <restriction base="float">
+                                        </restriction>
+                                      </simpleType>
+                                    </union>
+                                  </simpleType>
+                                </element>
+                              </sequence>
+                            </complexType>
+                          </element>
+                        </sequence>
+                        <attribute name="number" type="float"/>
+                      </complexType>
+                    </element>
+                  </sequence>
+                  <attribute name="name" type="string"/>
+                </complexType>
+              </element>
+            </sequence>
+            <attribute name="code" type="string"/>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+</schema>

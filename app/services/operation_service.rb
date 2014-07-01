@@ -40,6 +40,94 @@ class OperationService
     operation.category         = temp_operation.category
   end
 
+  # Import operations from an XML document
+  #
+  # ==== Options
+  #
+  # One of +:data+ or +:file_path+ must be provided, if both are provided then +:data+ will be selected
+  #
+  # * +:data+ - An XML string like "<operations>...</operations>"
+  # * +:file_path+ - A path to the XML file
+  #
+  # ==== Examples
+  #
+  #   OperationService.import_from_xml(data: "<operations>...</operations>")
+  #   OperationService.import_from_xml(file_path: "path/to/file.xml")
+  def self.import_from_xml(options={})
+    data = options.delete(:data)
+    unless data.present?
+      file_path = options.delete(:file_path)
+      if file_path.present? && File.exists?(file_path)
+        data = File.read(file_path)
+      end
+    end
+
+    if data.present?
+      schema = Nokogiri::XML::Schema(File.read(Rails.root.join('lib/xsd/operations.xsd')))
+      document = Nokogiri::XML(data)
+      errors = schema.validate(document).map(&:to_s)
+
+      if errors.empty?
+        operations = []
+        document.xpath('//customer').each do |customer_element|
+          user_code = customer_element.attributes['code'].value
+          user = User.find_by_code user_code
+          if user
+            customer_element.xpath('//pack').each do |pack_element|
+              name = pack_element.attributes['name'].value
+              pack_name = name.gsub('_', ' ')
+              pack_name += ' all' unless pack_name.match('/ all$/')
+              pack = user.packs.where(name: pack_name).first
+              if pack
+                pack_element.xpath('//piece').each do |piece_element|
+                  number = piece_element.attributes['number'].value
+                  piece = pack.pieces.where(position: number.to_i).first
+                  if piece
+                    if errors.empty?
+                      piece_element.xpath('//operation').each do |operation_element|
+                        operation = Operation.new
+                        operation.organization = user.organization
+                        operation.user         = user
+                        operation.pack         = pack
+                        operation.piece        = piece
+                        operation.date         = operation_element.xpath('//date').first.try(:content)
+                        operation.label        = operation_element.xpath('//label').first.try(:content)
+                        credit = operation_element.xpath('//credit').first.try(:content)
+                        debit = operation_element.xpath('//debit').first.try(:content)
+                        if credit.present?
+                          operation.amount = credit.to_f.abs
+                        elsif debit.present?
+                          operation.amount = -debit.to_f.abs
+                        end
+                        operations << operation
+                      end
+                    end
+                  else
+                    errors << "Piece: '#{number}' not found"
+                  end
+                end
+              else
+                errors << "Pack: '#{name}' not found"
+              end
+            end
+          else
+            errors << "User: '#{user_code}' not found"
+          end
+        end
+        if errors.empty?
+          operations.each(&:save)
+          operations
+        else
+          errors
+        end
+      else
+        errors
+      end
+    else
+      ["No data to process"]
+    end
+  end
+
   def self.process(banking_operations=nil)
     operations = banking_operations || Operation.not_processed.not_locked.asc(:date)
 
