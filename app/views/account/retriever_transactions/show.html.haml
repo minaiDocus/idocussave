@@ -13,7 +13,7 @@
             %th Date
             %th Statut
         %tbody
-          - @transaction.events['transactionEvent'].each do |event|
+          - @transaction.events['transactionEvent'].to_a.each do |event|
             - if event.is_a?(Hash)
               %tr
                 %td= l(Time.at(event['timestamp'].to_i / 1000.0), format: "%d %B %Y %H:%M:%S.#{event['timestamp'].to_i % 1000}")
