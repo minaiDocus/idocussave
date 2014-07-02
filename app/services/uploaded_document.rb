@@ -13,12 +13,15 @@ class UploadedDocument
     @prev_period_offset = prev_period_offset.to_i
 
     @errors = []
-    @errors << [:journal_unknown, journal: @journal] unless valid_journal?
-    @errors << [:invalid_period, period: period] unless valid_prev_period_offset?
+
+    @errors << [:journal_unknown, journal: @journal]           unless valid_journal?
+    @errors << [:invalid_period, period: period]               unless valid_prev_period_offset?
     @errors << [:invalid_file_extension, extension: extension] unless valid_extension?
-    @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
-    unless File.exists?(@file.path) && DocumentTools.modifiable?(processed_file.path)
-      @errors << [:file_is_corrupted_or_protected, nil]
+    if @errors.empty?
+      @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
+      unless File.exists?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+        @errors << [:file_is_corrupted_or_protected, nil]
+      end
     end
 
     if @errors.empty?
@@ -72,8 +75,8 @@ private
   end
 
   def clean_tmp
-    @temp_file.close
-    FileUtils.remove_entry @dir
+    @temp_file.close if @temp_file
+    FileUtils.remove_entry @dir if @dir
   end
 
   def extension
