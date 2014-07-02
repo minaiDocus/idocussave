@@ -6,11 +6,11 @@ class DocumentTools
     end
 
     def generate_tiff_file(file_path, temppath)
-      `gs -o #{temppath} -sDEVICE=tiff32nc -sCompression=lzw -r200 #{file_path}`
+      `gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}'`
     end
 
     def to_pdf(file_path, output_file_path)
-      `convert #{file_path} 'pdf:#{output_file_path}'`
+      `convert '#{file_path}' 'pdf:#{output_file_path}'`
     end
 
     def modifiable?(file_path, strict=true)
@@ -34,7 +34,7 @@ class DocumentTools
         is_ok = false
       end
       if strict
-        is_ok = false unless `pdftk #{file_path} dump_data; echo $?`.to_i == 0
+        is_ok = false unless `pdftk '#{file_path}' dump_data; echo $?`.to_i == 0
       end
       # consumes too much cpu cycle
       # is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
@@ -47,16 +47,20 @@ class DocumentTools
 
     def need_ocr?(file_path)
       tempfile = Tempfile.new('ocr_result')
-      `pdftotext -raw -nopgbrk -q #{file_path} #{tempfile.path}`
-      result = tempfile.readlines.join
-      tempfile.unlink
-      tempfile.close
-      result.blank?
+      is_ok = `pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}'; echo $?`.to_i == 0
+      if is_ok
+        text = tempfile.readlines.join
+        tempfile.unlink
+        tempfile.close
+        text.blank?
+      else
+        nil
+      end
     end
 
     def ocr(file_path)
       tempfile = Tempfile.new('ocr_result')
-      `abbyyocr9 -if #{file_path} -f PDF -pem ImageOnText -of #{tempfile.path}`
+      `abbyyocr9 -if '#{file_path}' -f PDF -pem ImageOnText -of '#{tempfile.path}'`
       tempfile
     end
 
@@ -128,7 +132,7 @@ class DocumentTools
 
     def archive(file_path, files_path)
       clean_files_path = files_path.map { |e| "'#{e}'" }.join(' ')
-      cmd = "zip -j #{file_path} #{clean_files_path}"
+      cmd = "zip -j '#{file_path}' #{clean_files_path}"
       system(cmd)
       file_path
     end
