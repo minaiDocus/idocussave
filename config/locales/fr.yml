@@ -297,7 +297,7 @@ fr:
         uploaded_document:
           attributes:
             file_size_is_too_big: 'taille %{size_in_mo} Mo trop gros (50 Mo max.)'
-            invalid_file_extension: 'extension %{extension} invalide (.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)'
+            invalid_file_extension: 'extension %{extension} invalide (%{valid_extensions})'
             journal_unknown: 'journal %{journal} inconnu'
             invalid_period: "période '%{period}' inconnu"
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe

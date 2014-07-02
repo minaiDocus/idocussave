@@ -2,7 +2,11 @@
 class UploadedDocument
   attr_reader :file, :original_file_name, :user, :code, :journal, :prev_period_offset, :errors, :temp_document
 
-  VALID_EXTENSION = %w(.pdf .bmp .jpeg .jpg .png .tiff .tif .gif)
+  VALID_EXTENSION = %w(.pdf .jpeg .jpg .gif .png .bmp .tiff .tif)
+
+  def self.valid_extensions
+    VALID_EXTENSION.join(' ')
+  end
 
   def initialize(file, original_file_name, user, journal, prev_period_offset)
     @file = file
@@ -14,9 +18,9 @@ class UploadedDocument
 
     @errors = []
 
-    @errors << [:journal_unknown, journal: @journal]           unless valid_journal?
-    @errors << [:invalid_period, period: period]               unless valid_prev_period_offset?
-    @errors << [:invalid_file_extension, extension: extension] unless valid_extension?
+    @errors << [:journal_unknown, journal: @journal] unless valid_journal?
+    @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
+    @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
     if @errors.empty?
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
       unless File.exists?(@file.path) && DocumentTools.modifiable?(processed_file.path)
