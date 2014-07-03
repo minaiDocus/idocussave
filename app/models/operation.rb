@@ -30,6 +30,7 @@ class Operation
   validates_presence_of :date, :label, :amount
 
   scope :fiduceo,       where: { fiduceo_id: { '$exists' => true } }
+  scope :other,         where: { fiduceo_id: { '$exists' => false } }
   scope :not_accessed,  where: { accessed_at: nil }
   scope :not_processed, where: { processed_at: { '$exists' => false } }
   scope :processed,     where: { processed_at: { '$ne' => nil } }

@@ -139,6 +139,34 @@
                 %tr
                   %th= FiduceoRetriever.state_machine.states['error'].human_name
                   %td= FiduceoRetriever.error.count
+        .row-fluid
+          .span12
+            %h3.label{ style: 'padding:3px 5px 3px;' } Opérations bancaires
+            .row-fluid
+              .span6
+                %table.table.table-striped.table-condensed.table-bordered
+                  %tbody
+                    %tr
+                      %th Total
+                      %td= Operation.count
+                    %tr
+                      %th Fiduceo
+                      %td= Operation.fiduceo.count
+                    %tr
+                      %th Import
+                      %td= Operation.other.count
+              .span6
+                %table.table.table-striped.table-condensed.table-bordered
+                  %tbody
+                    %tr
+                      %th Traités
+                      %td= Operation.processed.count
+                    %tr
+                      %th En attente
+                      %td= Operation.not_processed.not_locked.count
+                    %tr
+                      %th Bloqués
+                      %td= Operation.not_processed.locked.count
     .row-fluid
       .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Dernier mail reçus (#{@emails.count})
