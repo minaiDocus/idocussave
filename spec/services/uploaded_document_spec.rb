@@ -247,14 +247,16 @@ describe UploadedDocument do
 
       context 'when extension is invalid' do
         before(:each) do
-          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', 0)
+          file = File.open("#{Rails.root}/spec/support/files/hello.txt", "r")
+          @uploaded_document = UploadedDocument.new(file, 'hello.txt', @user, 'TS', 0)
+          file.close
         end
 
         subject { @uploaded_document }
 
         it { should be_invalid }
-        its(:errors) { should eq([[:invalid_file_extension, extension: '.docx']]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.docx')) }
+        its(:errors) { should eq([[:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]]) }
+        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions)) }
       end
 
       context 'when file is corrupted' do
@@ -299,17 +301,19 @@ describe UploadedDocument do
 
       context 'when multiple arguments are invalid' do
         before(:all) do
-          @uploaded_document = UploadedDocument.new(@file, 'upload.docx', @user, 'TS', 0)
+          file = File.open("#{Rails.root}/spec/support/files/hello.txt", "r")
+          @uploaded_document = UploadedDocument.new(file, 'hello.txt', @user, 'TS', 0)
+          file.close
         end
 
         subject { @uploaded_document }
 
         it { should be_invalid }
-        its(:errors) { should eq([[:journal_unknown, journal: 'TS'],[:invalid_file_extension, extension: '.docx']]) }
+        its(:errors) { should eq([[:journal_unknown, journal: 'TS'], [:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]]) }
         its(:full_error_messages) do
           message = []
           message << I18n.t('mongoid.errors.models.uploaded_document.attributes.journal_unknown', journal: 'TS')
-          message << I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.docx')
+          message << I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions)
           should eq(message.join(', '))
         end
       end

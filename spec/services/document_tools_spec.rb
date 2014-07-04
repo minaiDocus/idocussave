@@ -31,7 +31,19 @@ describe DocumentTools do
 
   it '.need_ocr? return false' do
     file_path = File.join([Rails.root, 'spec/support/files/with_text.pdf'])
-    expect(DocumentTools.need_ocr?(file_path)).to be_false
+    # be_false is either 'false' or 'nil', we want false only
+    expect(DocumentTools.need_ocr?(file_path)).to eq(false)
+  end
+
+  it '.need_ocr? with space in file_path return true' do
+    file_path = File.join([Rails.root, 'spec/support/files/without text.pdf'])
+    expect(DocumentTools.need_ocr?(file_path)).to be_true
+  end
+
+  it '.need_ocr? with space in file_path return false' do
+    file_path = File.join([Rails.root, 'spec/support/files/with text.pdf'])
+    # be_false is either 'false' or 'nil', we want false only
+    expect(DocumentTools.need_ocr?(file_path)).to eq(false)
   end
 
   it '.completed? return true' do
@@ -41,6 +53,16 @@ describe DocumentTools do
 
   it '.completed? return false' do
     file_path = File.join([Rails.root, 'spec/support/files/corrupted.pdf'])
+    expect(DocumentTools.completed?(file_path)).to be_false
+  end
+
+  it '.completed? with space in file_path return true' do
+    file_path = File.join([Rails.root, 'spec/support/files/completed file.pdf'])
+    expect(DocumentTools.completed?(file_path)).to be_true
+  end
+
+  it '.completed? with space in file_path return false' do
+    file_path = File.join([Rails.root, 'spec/support/files/corrupted file.pdf'])
     expect(DocumentTools.completed?(file_path)).to be_false
   end
 

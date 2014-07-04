@@ -5,14 +5,8 @@
   .modal-body
     %p{ :style => "text-align:right" }
       Formats de fichiers acceptés : 
-      %span{ :class => "label label-info", :style => "margin-right:5px;"} pdf
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } jpeg
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } jpg
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } gif
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } png
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } bmp
-      %span{ :class => "label label-info", :style => "margin-right:5px;" } tiff
-      %span{ :class => "label label-info" } tif
+      - UploadedDocument::VALID_EXTENSION.each do |extension|
+        %span{ class: 'label label-info', style: 'margin-right:5px;' }= extension[1..-1]
       %br
       %br
       %span.red
