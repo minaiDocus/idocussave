@@ -7,7 +7,13 @@ class OperationService
       bank_accounts = Array(object)
     end
     bank_accounts.each do |bank_account|
-      operations = FiduceoOperation.new(bank_account.user.fiduceo_id, account_id: bank_account.fiduceo_id).operations || []
+      options = { account_id: bank_account.fiduceo_id }
+      date = bank_account.operations.desc(:date).first.try(:date)
+      if date
+        options[:from_date] = (date - 5.days).strftime('%d/%m/%Y')
+        options[:to_date]   = Date.today.strftime('%d/%m/%Y')
+      end
+      operations = FiduceoOperation.new(bank_account.user.fiduceo_id, options).operations || []
       operations.each do |temp_operation|
         operation = Operation.where(fiduceo_id: temp_operation.id).first
         if update && operation
