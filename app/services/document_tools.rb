@@ -2,21 +2,30 @@
 class DocumentTools
   class << self
     def pages_number(file_path)
-      Poppler::Document.new(file_path).pages.count
+      document = nil
+      silence_stream(STDERR) do
+        document = Poppler::Document.new(file_path)
+      end
+      document.pages.count
     end
 
     def generate_tiff_file(file_path, temppath)
-      `gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}'`
+      `gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}' 2>&1`
+      $?.success?
     end
 
     def to_pdf(file_path, output_file_path)
-      `convert '#{file_path}' 'pdf:#{output_file_path}'`
+      `convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1`
+      $?.success?
     end
 
     def modifiable?(file_path, strict=true)
       if completed? file_path, strict
         begin
-          document = Poppler::Document.new(file_path)
+          document = nil
+          silence_stream(STDERR) do
+            document = Poppler::Document.new(file_path)
+          end
           document.permissions.full?
         rescue GLib::Error
           false
@@ -29,12 +38,15 @@ class DocumentTools
     def completed?(file_path, strict=true)
       is_ok = true
       begin
-        Poppler::Document.new(file_path)
+        silence_stream(STDERR) do
+          Poppler::Document.new(file_path)
+        end
       rescue GLib::Error
         is_ok = false
       end
       if strict
-        is_ok = false unless `pdftk '#{file_path}' dump_data; echo $?`.to_i == 0
+        `pdftk '#{file_path}' dump_data 2>&1`
+        is_ok = false unless $?.success?
       end
       # consumes too much cpu cycle
       # is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
@@ -47,8 +59,8 @@ class DocumentTools
 
     def need_ocr?(file_path)
       tempfile = Tempfile.new('ocr_result')
-      is_ok = `pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}'; echo $?`.to_i == 0
-      if is_ok
+      `pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}' 2>&1`
+      if $?.success?
         text = tempfile.readlines.join
         tempfile.unlink
         tempfile.close
@@ -132,8 +144,7 @@ class DocumentTools
 
     def archive(file_path, files_path)
       clean_files_path = files_path.map { |e| "'#{e}'" }.join(' ')
-      cmd = "zip -j '#{file_path}' #{clean_files_path}"
-      system(cmd)
+      `zip -j '#{file_path}' #{clean_files_path} 2>&1`
       file_path
     end
 
