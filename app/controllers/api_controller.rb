@@ -116,5 +116,8 @@ private
     if controller_name == 'pre_assignments' && !@user.is_operator && !@user.is_admin
       respond_with_unauthorized
     end
+    if controller_name == 'operations' && action_name == 'import' && !@user.is_operator && !@user.is_admin
+      respond_with_unauthorized
+    end
   end
 end

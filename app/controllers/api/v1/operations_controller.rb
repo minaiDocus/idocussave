@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Api::V1::OperationsController < ApiController
-  before_filter :load_bank_account
+  before_filter :load_bank_account, only: :index
 
   def index
     @operations = (@bank_account || user).operations.desc(:date)
@@ -11,6 +11,20 @@ class Api::V1::OperationsController < ApiController
     @operations = @operations.entries
     if params[:not_accessed] == '1' && @operations.size > 0
       Operation.where(:_id.in => @operations.map(&:id)).update_all(accessed_at: Time.now)
+    end
+  end
+
+  def import
+    respond_to do |format|
+      format.json {
+        render json: { message: 'Not supported yet.' }.to_json
+      }
+      format.xml {
+        file_path = params[:file].tempfile.path rescue nil
+        service = OperationImportService.new(file_path: file_path)
+        service.execute
+        render xml: present(service).message
+      }
     end
   end
 

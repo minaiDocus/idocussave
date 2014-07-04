@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<operations>
+  <customer code="TS%0001">
+    <pack name="TS%0001_BQ_201401">
+      <piece number="1">
+        <operation>
+          <date>2014-01-01</date>
+          <label>Prlv iDocus Janvier 2014</label>
+          <credit></credit>
+          <debit>29.0</debit>
+        </operation>
+      </piece>
+    </pack>
+  </customer>
+</operations>

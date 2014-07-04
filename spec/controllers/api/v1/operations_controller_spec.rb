@@ -63,6 +63,10 @@ describe Api::V1::OperationsController do
       end
     end
 
+    after(:all) do
+      DatabaseCleaner.clean
+    end
+
     it 'should be unsuccessful' do
       Operation.stub(:where) { raise 'foo' }
       get :index, format: 'json', access_token: @user.authentication_token, not_accessed: 'true'
@@ -333,6 +337,94 @@ describe Api::V1::OperationsController do
           operations = Nokogiri::XML(response.body).xpath('//operation')
           operations.size.should eq(0)
         end
+      end
+    end
+  end
+
+  describe 'Posting a file to import' do
+    before(:all) do
+      DatabaseCleaner.start
+
+      @admin    = FactoryGirl.create :admin, code: 'AD%0001'
+      @operator = FactoryGirl.create :user,  code: 'OP%0001', is_operator: true
+      @user     = FactoryGirl.create :user,  code: 'TS%0001'
+      @admin.update_authentication_token
+      @operator.update_authentication_token
+      @user.update_authentication_token
+
+      @pack = Pack.new
+      @pack.name  = "#{@user.code} BQ 201401 all"
+      @pack.owner = @user
+      @pack.users << @user
+      @pack.save
+
+      @piece = Pack::Piece.new
+      @piece.pack     = @pack
+      @piece.name     = "#{@user.code} BQ 201401 001"
+      @piece.position = 1
+      @piece.origin   = 'scan'
+      @piece.save
+
+      @empty_file = File.new(Rails.root.join('spec/support/files/empty_operations.xml'))
+      @file       = File.new(Rails.root.join('spec/support/files/operations.xml'))
+    end
+
+    after(:all) do
+      @empty_file.close
+      @file.close
+      DatabaseCleaner.clean
+    end
+
+    after(:each) do
+      Operation.delete_all
+    end
+
+    context 'as xml' do
+      it 'should unauthorize an user' do
+        temp_file = ActionDispatch::Http::UploadedFile.new(tempfile: @empty_file, filename: File.basename(@empty_file))
+        post :import, format: 'xml', access_token: @user.authentication_token, file: temp_file
+        response.should_not be_successful
+        response.code.to_i.should eq(401)
+        message = Nokogiri::XML(response.body).xpath('//message').first
+        message.content.should eq('Unauthorized')
+      end
+
+      it 'should authorize an operator' do
+        temp_file = ActionDispatch::Http::UploadedFile.new(tempfile: @empty_file, filename: File.basename(@empty_file))
+        post :import, format: 'xml', access_token: @operator.authentication_token, file: temp_file
+        response.should be_successful
+        error = Nokogiri::XML(response.body).xpath('//error').first
+        error.content.should eq('No data to process')
+        @user.operations.count.should eq(0)
+      end
+
+      it 'should authorize an admin' do
+        temp_file = ActionDispatch::Http::UploadedFile.new(tempfile: @empty_file, filename: File.basename(@empty_file))
+        post :import, format: 'xml', access_token: @admin.authentication_token, file: temp_file
+        response.should be_successful
+        error = Nokogiri::XML(response.body).xpath('//error').first
+        error.content.should eq('No data to process')
+        @user.operations.count.should eq(0)
+      end
+
+      it 'create one operation' do
+        temp_file = ActionDispatch::Http::UploadedFile.new(tempfile: @file, filename: File.basename(@file))
+        post :import, format: 'xml', access_token: @operator.authentication_token, file: temp_file
+        response.should be_successful
+        message = Nokogiri::XML(response.body).xpath('//message').first
+        message.content.should eq('1 operation(s) added.')
+        @user.operations.count.should eq(1)
+      end
+    end
+
+    context 'as json' do
+      it "return 'Not supported yet.'" do
+        temp_file = ActionDispatch::Http::UploadedFile.new(tempfile: @empty_file, filename: File.basename(@empty_file))
+        post :import, format: 'json', access_token: @operator.authentication_token, file: temp_file
+        response.should be_successful
+        data = JSON.parse(response.body)
+        data['message'].should eq('Not supported yet.')
+        @user.operations.count.should eq(0)
       end
     end
   end
