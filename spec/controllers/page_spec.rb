@@ -17,7 +17,8 @@ describe PagesController do
 		end
 		
 		it 'should raise Mongoid::Errors::DocumentNotFound' do
-      expect { get :show, id: 'about' }.to raise_error(Mongoid::Errors::DocumentNotFound)
+      get :show, id: 'about'
+      response.code.to_i.should eq(404)
     end
 	end
 end
