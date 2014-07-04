@@ -92,7 +92,7 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc.pdf', content: File.read('spec/support/files/2pages.pdf')
+        add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
       EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes+1 }
       emailed_document = EmailedDocument.new mail
@@ -107,11 +107,11 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc1.pdf', content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'doc2.pdf', content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'doc3.pdf', content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'doc4.pdf', content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'doc5.pdf', content: File.read('spec/support/files/2pages.pdf')
+        add_file filename: 'doc1.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'doc2.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'doc3.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'doc4.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'doc5.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
 
       EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes }
@@ -132,7 +132,7 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'corrupted.pdf', content: File.read('spec/support/files/corrupted.pdf')
+        add_file filename: 'corrupted.pdf', content: File.read(Rails.root.join('spec/support/files/corrupted.pdf'))
       end
 
       EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes }
@@ -148,7 +148,7 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc.pdf', content: File.read('spec/support/files/2pages.pdf')
+        add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
       emailed_document = EmailedDocument.new mail
 
@@ -183,8 +183,8 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc.pdf',       content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'corrupted.pdf', content: File.read('spec/support/files/corrupted.pdf')
+        add_file filename: 'doc.pdf',       content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'corrupted.pdf', content: File.read(Rails.root.join('spec/support/files/corrupted.pdf'))
       end
       emailed_document, email = EmailedDocument.receive(mail)
 
@@ -199,8 +199,8 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc.pdf',       content: File.read('spec/support/files/2pages.pdf')
-        add_file filename: 'protected.pdf', content: File.read('spec/support/files/protected.pdf')
+        add_file filename: 'doc.pdf',       content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'protected.pdf', content: File.read(Rails.root.join('spec/support/files/protected.pdf'))
       end
       emailed_document, email = EmailedDocument.receive(mail)
 
@@ -215,7 +215,7 @@ describe EmailedDocument do
         from     'customer@example.com'
         to       "#{code}@fw.idocus.com"
         subject  'TS'
-        add_file filename: 'doc1.pdf', content: File.read('spec/support/files/2pages.pdf')
+        add_file filename: 'doc1.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
       emailed_document, email = EmailedDocument.receive(mail)
 
@@ -226,7 +226,7 @@ describe EmailedDocument do
       expect(email.from).to eql('customer@example.com')
       expect(email.subject).to eql('TS')
       expect(email.attachment_names).to eql(['doc1.pdf'])
-      expect(email.size).to eql(File.size('spec/support/files/2pages.pdf'))
+      expect(email.size).to eql(File.size(Rails.root.join('spec/support/files/2pages.pdf')))
       expect(email.to_user).to eql(@user)
       expect(email.from_user).to be_nil
     end
