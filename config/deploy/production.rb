@@ -27,8 +27,6 @@ namespace :manager do
   desc "Stop manager"
   task :stop, :roles => :app do
     file_path = "#{current_path}/log/manager.rb.pid"
-    if remote_file_exist?(file_path)
-      run "cd #{current_path}; kill -TERM $(cat #{file_path})"
-    end
+    run "if [ -e #{file_path} ]; kill -TERM $(cat #{file_path}); fi"
   end
 end
