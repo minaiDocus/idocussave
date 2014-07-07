@@ -23,7 +23,7 @@ class Api::V1::OperationsController < ApiController
         file_path = params[:file].tempfile.path rescue nil
         service = OperationImportService.new(file_path: file_path)
         service.execute
-        render xml: present(service).message
+        render xml: OperationImportServicePresenter.new(service).message
       }
     end
   end

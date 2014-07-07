@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
 
   def present(object, klass=nil)
     klass ||= "#{object.class}Presenter".constantize
-    klass.new(object, (view_context rescue nil))
+    klass.new(object)
   end
 
 private
