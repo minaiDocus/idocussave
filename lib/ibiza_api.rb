@@ -38,25 +38,16 @@ module IbizaAPI
       results.empty? ? name : results.compact.join(separator)
     end
 
-    def self.to_import_xml(period_end_date, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
+    def self.to_import_xml(exercice, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.importEntryRequest {
-          xml.importDate period_end_date
+          xml.importDate exercice.end_date
           xml.wsImportEntry {
             preseizures.each do |preseizure|
               preseizure.accounts.each do |account|
                 xml.importEntry {
                   xml.journalRef preseizure.report.journal
-                  if preseizure.report.user.try(:is_computed_date_used)
-                    result = preseizure.date < preseizure.period_date || preseizure.date > preseizure.end_period_date rescue true
-                    if result
-                      xml.date preseizure.period_date.to_date
-                    else
-                      xml.date preseizure.date.to_date
-                    end
-                  else
-                    xml.date preseizure.date.to_date
-                  end
+                  xml.date computed_date(preseizure, exercice)
                   if preseizure.piece
                     xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
                     xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
@@ -77,6 +68,27 @@ module IbizaAPI
         }
       end
       builder.to_xml.gsub('&', '&amp;') # TODO use better regex
+    end
+
+    # TODO refactor me
+    def self.computed_date(preseizure, exercice)
+      date = preseizure.date.try(:to_date)
+
+      if preseizure.is_exercice_range_used
+        out_of_exercice_range = date < exercice.start_date || exercice.end_date < date rescue true
+      end
+
+      if preseizure.is_period_range_used
+        out_of_period_range = date < preseizure.period_start_date || preseizure.period_end_date < date rescue true
+      end
+
+      if preseizure.is_exercice_range_used && out_of_exercice_range
+        exercice.start_date
+      elsif preseizure.is_period_range_used && out_of_period_range
+        preseizure.period_start_date
+      else
+        date
+      end
     end
   end
 

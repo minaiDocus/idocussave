@@ -48,16 +48,38 @@ class Pack::Report::Preseizure
     asc(:position)
   end
 
+  # TODO remove me
   def period_date
     Time.local(year,month,1)
   end
 
+  # TODO remove me
   def end_period_date
     if quarterly?
       period_date + 3.months
     else
       period_date.end_of_month
     end
+  end
+
+  # TODO refactor me
+  def period_start_date
+    period_date.to_date
+  end
+
+  # TODO refactor me
+  def period_end_date
+    end_period_date.to_date
+  end
+
+  # TODO refactor me
+  def is_exercice_range_used
+    report.user.try(:is_exercice_computed_date_used)
+  end
+
+  # TODO refactor me
+  def is_period_range_used
+    report.user.try(:is_computed_date_used)
   end
 
   def piece_info

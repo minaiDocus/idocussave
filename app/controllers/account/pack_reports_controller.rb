@@ -15,9 +15,8 @@ class Account::PackReportsController < Account::OrganizationController
         ibiza = @organization.ibiza
         if ibiza && @report.user.ibiza_id
           date = DocumentTools.to_period(@report.name)
-          exercice = ibiza.exercice(@report.user.ibiza_id, date)
-          if exercice
-            data = IbizaAPI::Utils.to_import_xml(exercice['end'], @report.preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
+          if (exercice=ExerciceService.find(@report.user, date, false))
+            data = IbizaAPI::Utils.to_import_xml(exercice, @report.preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
           else
             raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
           end

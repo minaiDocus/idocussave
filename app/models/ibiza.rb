@@ -146,13 +146,9 @@ class Ibiza
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
         period = DocumentTools.to_period(report.name)
-        begin
-          e = exercice(id, period)
-        rescue NoExercicesFound
-        end
-        if e
+        if (exercice=ExerciceService.find(report.user, period, false))
           client.request.clear
-          data = IbizaAPI::Utils.to_import_xml(e['end'], preseizures, self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
+          data = IbizaAPI::Utils.to_import_xml(exercice, preseizures, self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
           client.company(id).entries!(data)
           if client.response.success?
             Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true)
@@ -194,13 +190,6 @@ class Ibiza
         raise NoExercicesFound, "for #{id}"
       end
     end
-  end
-
-  def exercice(id, period)
-    data = exercices(id)
-    data.select do |e|
-      e['state'].to_i.in?([0,1]) && e['start'].to_date <= period && e['end'].to_date >= period
-    end.first
   end
 
   class NoExercicesFound < RuntimeError; end

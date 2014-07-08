@@ -21,12 +21,12 @@ class ExerciceService
       results
     end
 
-    def find(user, period, all=true)
+    def find(user, period, include_closed=true)
       results = all(user)
       if results
-        results = results.reject(&:is_closed) unless all
+        results = results.reject(&:is_closed) unless include_closed
         results.select do |exercice|
-          exercice.start_date < period && exercice.end_date > period
+          exercice.start_date < period && period < exercice.end_date
         end.first
       else
         results
