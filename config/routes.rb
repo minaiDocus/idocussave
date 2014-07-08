@@ -296,7 +296,7 @@ Idocus::Application.routes.draw do
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
 
-  authenticated :user do
+  authenticated :user, -> user { user.is_admin } do
     match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]
   end
 
