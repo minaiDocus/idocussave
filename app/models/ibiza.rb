@@ -143,6 +143,7 @@ class Ibiza
       is_error_present = false
       data = nil
       ids = preseizures.map(&:id)
+      delivered_preseizure_ids = []
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
         period = DocumentTools.to_period(report.name)
@@ -156,6 +157,12 @@ class Ibiza
           else
             report.delivery_message = client.response.message
             is_error_present = true
+            preseizures.each do |preseizure|
+              client.request.clear
+              data = IbizaAPI::Utils.to_import_xml(exercice, [preseizure], self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
+              client.company(id).entries!(data)
+              delivered_preseizure_ids << preseizure.id
+            end
           end
           if report.preseizures.not_delivered.count == 0
             report.update_attribute(:is_delivered, true)
@@ -172,6 +179,9 @@ class Ibiza
         report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte Ibiza lié."
       end
       Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
+      if delivered_preseizure_ids.any?
+        Pack::Report::Preseizure.where(:_id.in => delivered_preseizure_ids).update_all(delivery_message: '')
+      end
       report.delivery_tried_at = Time.now
       report.is_locked = false
       report.save
