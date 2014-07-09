@@ -143,7 +143,7 @@ class Ibiza
       is_error_present = false
       data = nil
       ids = preseizures.map(&:id)
-      delivered_preseizure_ids = []
+      is_delivered_one_by_one = false
       report = preseizures.first.report
       if(id = report.user.ibiza_id)
         period = DocumentTools.to_period(report.name)
@@ -155,13 +155,19 @@ class Ibiza
             Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true)
             report.delivery_message = ''
           else
+            is_delivered_one_by_one = true
             report.delivery_message = client.response.message
             is_error_present = true
             preseizures.each do |preseizure|
               client.request.clear
               data = IbizaAPI::Utils.to_import_xml(exercice, [preseizure], self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
               client.company(id).entries!(data)
-              delivered_preseizure_ids << preseizure.id
+              if client.response.success?
+                preseizure.update_attributes(delivery_message: '', is_delivered: true)
+              else
+                preseizure.update_attribute(:delivery_message, client.response.message)
+              end
+              preseizure.update_attributes(is_locked: false, delivery_tried_at: Time.now)
             end
           end
           if report.preseizures.not_delivered.count == 0
@@ -178,9 +184,8 @@ class Ibiza
       else
         report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte Ibiza lié."
       end
-      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
-      if delivered_preseizure_ids.any?
-        Pack::Report::Preseizure.where(:_id.in => delivered_preseizure_ids).update_all(delivery_message: '')
+      unless is_delivered_one_by_one
+        Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
       end
       report.delivery_tried_at = Time.now
       report.is_locked = false

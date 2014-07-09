@@ -26,7 +26,7 @@ class ExerciceService
       if results
         results = results.reject(&:is_closed) unless include_closed
         results.select do |exercice|
-          exercice.start_date < period && period < exercice.end_date
+          exercice.start_date <= period && period <= exercice.end_date
         end.first
       else
         results
