@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:Pikomu/delayed_job_web.git
-  revision: 5c0aab056235a8ba7ccb3b8a00accf5fd6b028d1
+  revision: d2f58492d509c08f682d4586af8cd634b3c0b57d
   branch: master
   specs:
     delayed_job_web (1.2.9)
