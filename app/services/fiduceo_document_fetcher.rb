@@ -2,9 +2,9 @@
 class FiduceoDocumentFetcher
   class << self
     def initiate_transactions(retrievers=nil)
-      _retrievers = Array(retrievers).presence || FiduceoRetriever.active
+      _retrievers = Array(retrievers).presence || FiduceoRetriever.active.auto.daily.where(:state.in => %w(ready scheduled error))
       _retrievers.each do |retriever|
-        if (retriever.ready? || retriever.scheduled? || (retriever.error? && retriever.transactions.last.try(:retryable?))) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
+        if (retriever.ready? || retriever.scheduled? || retriever.error?) && retriever.is_active && FiduceoTransaction.where(retriever_id: retriever.id).not_processed.count == 0
           retriever.schedule if retriever.error?
           create_transaction(retriever)
         end
@@ -35,7 +35,7 @@ class FiduceoDocumentFetcher
         last_transaction = retriever.transactions.desc(:created_at).first
         previous_transaction = retriever.transactions.where(:updated_at.lt => last_transaction.created_at,
                                                             :updated_at.gte => (last_transaction.created_at - 6.minutes)).first
-        if previous_transaction.blank? && last_transaction.retryable?
+        if previous_transaction.blank?
           retriever.schedule
           initiate_transactions retriever
         end
