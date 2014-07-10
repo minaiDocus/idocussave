@@ -126,7 +126,7 @@ describe EmailedDocument do
       expect(emailed_document).to be_invalid
     end
 
-    it 'with corrupted file should have valid rights' do
+    it 'with corrupted file should be invalid' do
       code = @user.email_code
       mail = Mail.new do
         from     'customer@example.com'
@@ -135,11 +135,40 @@ describe EmailedDocument do
         add_file filename: 'corrupted.pdf', content: File.read(Rails.root.join('spec/support/files/corrupted.pdf'))
       end
 
-      EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes }
+      emailed_document = EmailedDocument.new mail
+      expect(emailed_document.attachments.first.valid_content?).to eq(false)
+      expect(emailed_document).to be_invalid
+    end
+
+    it 'with protected file should be invalid' do
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'protected.pdf', content: File.read(Rails.root.join('spec/support/files/protected.pdf'))
+      end
 
       emailed_document = EmailedDocument.new mail
-      expect(emailed_document).not_to be_valid_attachment_integrities
-      expect(emailed_document).to be_valid_attachment_rights
+      expect(emailed_document.attachments.first.valid_content?).to eq(false)
+      expect(emailed_document).to be_invalid
+    end
+
+    it 'with printable file should be valid' do
+      file_path = Rails.root.join('spec/support/files/printable.pdf').to_s
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'printable.pdf', content: File.read(file_path)
+      end
+
+      expect(DocumentTools.is_printable_only?(file_path)).to be_true
+      emailed_document = EmailedDocument.new mail
+      expect(emailed_document.attachments.first).to be_valid_content
+      expect(emailed_document).to be_valid
+      expect(DocumentTools.is_printable_only?(emailed_document.temp_documents.first.content.path)).to eq(false)
     end
 
     it 'should be valid' do
@@ -177,7 +206,7 @@ describe EmailedDocument do
       expect(email.state).to eql('unprocessable')
     end
 
-    it 'should create email with integrity error' do
+    it 'should create email with invalid content' do
       code = @user.email_code
       mail = Mail.new do
         from     'customer@example.com'
@@ -186,27 +215,11 @@ describe EmailedDocument do
         add_file filename: 'doc.pdf',       content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
         add_file filename: 'corrupted.pdf', content: File.read(Rails.root.join('spec/support/files/corrupted.pdf'))
       end
-      emailed_document, email = EmailedDocument.receive(mail)
+      emailed_document, email = EmailedDocument.receive(mail, false)
 
       expect(emailed_document).to be_invalid
       expect(email.state).to eql('unprocessable')
-      expect(email.errors_list).to eq([["corrupted.pdf", :integrity]])
-    end
-
-    it 'should create email with rights error' do
-      code = @user.email_code
-      mail = Mail.new do
-        from     'customer@example.com'
-        to       "#{code}@fw.idocus.com"
-        subject  'TS'
-        add_file filename: 'doc.pdf',       content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
-        add_file filename: 'protected.pdf', content: File.read(Rails.root.join('spec/support/files/protected.pdf'))
-      end
-      emailed_document, email = EmailedDocument.receive(mail)
-
-      expect(emailed_document).to be_invalid
-      expect(email.state).to eql('unprocessable')
-      expect(email.errors_list).to eq([["protected.pdf", :rights]])
+      expect(email.errors_list).to eq([["corrupted.pdf", :content]])
     end
 
     it 'should create email with state processed' do

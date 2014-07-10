@@ -74,7 +74,7 @@ class EmailedDocument
         end
       end
 
-      if  email.processed? || email.unprocessable?
+      if email.processed? || email.unprocessable?
         email
       else
         begin
@@ -191,24 +191,23 @@ class EmailedDocument
     end
   end
 
-  def valid_attachment_integrities?
-    @valid_attachment_integrities ||= attachments.inject(true) do |acc, attachment|
-      acc && attachment.completed?
+  def valid_attachment_contents?
+    @valid_attachment_contents ||= attachments.inject(true) do |acc, attachment|
+      acc && attachment.valid_content?
     end
   end
 
-  def valid_attachment_rights?
-    @valid_attachment_rights ||= attachments.inject(true) do |acc, attachment|
-      if attachment.completed?
-        acc && attachment.modifiable?
-      else
-        acc
-      end
-    end
+  def invalid_attachment_contents?
+    !valid_attachment_contents?
   end
 
+  # syntactic sugar ||= does not store false/nil value
   def valid?
-    @valid ||= user.present? && journal.present? && period.present? && valid_attachments?
+    if @valid.nil?
+      @valid = user.present? && journal.present? && period.present? && valid_attachments?
+    else
+      @valid
+    end
   end
 
   def invalid?
@@ -261,9 +260,8 @@ private
         unless attachment.valid?
           attachment_errors = []
           attachment_errors << attachment.name
-          attachment_errors << :size      unless attachment.valid_size?
-          attachment_errors << :integrity unless attachment.completed?
-          attachment_errors << :rights    if attachment.completed? && !attachment.modifiable?
+          attachment_errors << :size    unless attachment.valid_size?
+          attachment_errors << :content unless attachment.valid_content?
           _errors << attachment_errors
         end
       end
@@ -304,8 +302,7 @@ private
       @file_name = file_name
       @position  = position
       @file_path = get_file_path
-      completed?  # instantiate value
-      modifiable? # instantiate value
+      DocumentTools.remove_pdf_security(@file_path, @file_path) if is_printable_only?
     end
 
     def name
@@ -320,28 +317,31 @@ private
       size <= 5.megabytes
     end
 
-    def completed?
-      if @completed.nil?
-        @completed = DocumentTools.completed? @file_path, false
+    def valid_content?
+      printable?
+    end
+
+    # syntactic sugar ||= does not store false/nil value
+    def printable?
+      if @printable.nil?
+        @printable = DocumentTools.printable? @file_path
       else
-        @completed
+        @printable
       end
     end
 
-    def modifiable?
-      if completed?
-        if @modifiable.nil?
-          @modifiable = DocumentTools.modifiable? @file_path, false
-        else
-          @modifiable
-        end
+    # syntactic sugar ||= does not store false/nil value
+    def is_printable_only?
+      if @is_printable_only_set
+        @is_printable_only
       else
-        false
+        @is_printable_only_set = true
+        @is_printable_only = DocumentTools.is_printable_only? @file_path
       end
     end
 
     def valid?
-      valid_size? && completed? && modifiable?
+      valid_size? && valid_content?
     end
 
   private

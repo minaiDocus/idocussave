@@ -21,10 +21,8 @@ Raison(s) de l’échec :
     %li au moins une des pièces jointes a une taille supérieure à 5 Mo
   - unless @emailed_document.attachments.any?
     %li aucune pièce jointe n’est au format PDF
-  - unless @emailed_document.valid_attachment_integrities?
-    %li au moins une des pièces jointes PDF est corrompue
-  - unless @emailed_document.valid_attachment_rights?
-    %li au moins une des pièces jointes PDF est protégée
+  - unless @emailed_document.valid_attachment_contents?
+    %li au moins une des pièces jointes PDF est corrompue ou protégée ou non imprimable
 %br
 =================
 %br

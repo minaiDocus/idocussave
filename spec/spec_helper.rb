@@ -17,8 +17,7 @@ Spork.prefork do
 
   # Set webmock, that is used by vcr, to allow net connections BEFORE we require the environment file
   require 'webmock'
-  WebMock.disable_net_connect!(:allow_localhost => true) # or whatever method you want WebMock to allow connections
-  
+
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
   require 'capybara/rails'

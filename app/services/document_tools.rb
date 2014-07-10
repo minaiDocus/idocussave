@@ -57,6 +57,33 @@ class DocumentTools
       !completed? file_path
     end
 
+    def printable?(file_path)
+      begin
+        silence_stream(STDERR) do
+          document = Poppler::Document.new(file_path)
+          document.permissions.ok_to_print?
+        end
+      rescue GLib::Error
+        false
+      end
+    end
+
+    def is_printable_only?(file_path)
+      begin
+        silence_stream(STDERR) do
+          document = Poppler::Document.new(file_path)
+          document.permissions.ok_to_print? && !document.permissions.full?
+        end
+      rescue GLib::Error
+        nil
+      end
+    end
+
+    def remove_pdf_security(file_path, new_file_path)
+      `gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1`
+      $?.success?
+    end
+
     def need_ocr?(file_path)
       tempfile = Tempfile.new('ocr_result')
       `pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}' 2>&1`

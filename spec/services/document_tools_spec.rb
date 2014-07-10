@@ -81,6 +81,70 @@ describe DocumentTools do
     expect(DocumentTools.modifiable?(file_path)).to be_false
   end
 
+  describe '.printable?' do
+    context 'when corrupted file supplied' do
+      it 'return false' do
+        file_path = File.join([Rails.root, 'spec/support/files/corrupted.pdf'])
+        expect(DocumentTools.printable?(file_path)).to eq(false)
+      end
+    end
+
+    context 'when protected file supplied' do
+      it 'return false' do
+        file_path = File.join([Rails.root, 'spec/support/files/protected.pdf'])
+        expect(DocumentTools.printable?(file_path)).to eq(false)
+      end
+    end
+
+    context 'when printable file supplied' do
+      it 'return true' do
+        file_path = File.join([Rails.root, 'spec/support/files/printable.pdf'])
+        expect(DocumentTools.printable?(file_path)).to be_true
+      end
+    end
+  end
+
+  describe '.is_printable_only?' do
+    context 'when corrupted file supplied' do
+      it 'return nil' do
+        file_path = File.join([Rails.root, 'spec/support/files/corrupted.pdf'])
+        expect(DocumentTools.is_printable_only?(file_path)).to be_nil
+      end
+    end
+
+    context 'when protected file supplied' do
+      it 'return false' do
+        file_path = File.join([Rails.root, 'spec/support/files/protected.pdf'])
+        expect(DocumentTools.is_printable_only?(file_path)).to eq(false)
+      end
+    end
+
+    context 'when normal file supplied' do
+      it 'return false' do
+        file_path = File.join([Rails.root, 'spec/support/files/2pages.pdf'])
+        expect(DocumentTools.is_printable_only?(file_path)).to eq(false)
+      end
+    end
+
+    context 'when printable file supplied' do
+      it 'return true' do
+        file_path = File.join([Rails.root, 'spec/support/files/printable.pdf'])
+        expect(DocumentTools.is_printable_only?(file_path)).to be_true
+      end
+    end
+  end
+
+  describe '.remove_pdf_security' do
+    context 'when printable only file supplied' do
+      it 'remove restriction' do
+        file_path = File.join([Rails.root, 'spec/support/files/printable.pdf'])
+        new_file_path = Tempfile.new('opened.pdf').path
+        DocumentTools.remove_pdf_security(file_path, new_file_path)
+        expect(DocumentTools.is_printable_only?(new_file_path)).to eq(false)
+      end
+    end
+  end
+
   it '.name_with_position return "TS0001 TS 201301 004"' do
     expect(DocumentTools.name_with_position('TS0001 TS 201301', 4)).to eq('TS0001 TS 201301 004')
   end
