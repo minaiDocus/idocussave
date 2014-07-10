@@ -292,13 +292,13 @@ Idocus::Application.routes.draw do
     resources :emailed_documents do
       get 'show_errors', on: :member
     end
+
+    authenticated :user, -> user { user.is_admin } do
+      match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]
+    end
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
-
-  authenticated :user, -> user { user.is_admin } do
-    match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]
-  end
 
   get "/preview/(:id)", controller: :homepage, action: :preview
   
