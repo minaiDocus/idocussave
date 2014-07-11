@@ -4,7 +4,7 @@ namespace :fiduceo do
     desc 'Initiate fiduceo transactions'
     task :initiate => [:environment] do
       period = ENV['PERIOD'].presence || 'daily'
-      retrievers = FiduceoRetriever.active.scheduled.where(period: period)
+      retrievers = FiduceoRetriever.active.auto.where(period: period, :state.in => %w(ready scheduled error))
       FiduceoDocumentFetcher.initiate_transactions(retrievers)
     end
   end
