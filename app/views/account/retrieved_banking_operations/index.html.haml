@@ -11,9 +11,12 @@
         %table.table-condensed
           %thead
             %tr
-              %th= label_tag 'banking_operation_contains[date][$gte]', 'Date de début'
-              %th= label_tag 'banking_operation_contains[date][$lte]', 'Date de fin'
-              %th= label_tag 'banking_operation_contains[label]',      'Libellé'
+              %th= label_tag 'banking_operation_contains[date][$gte]',              'Date de début'
+              %th= label_tag 'banking_operation_contains[date][$lte]',              'Date de fin'
+              %th= label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'
+              %th= label_tag 'banking_operation_contains[bank_account][number]',    'Compte'
+              %th= label_tag 'banking_operation_contains[category]',                'Catégorie'
+              %th= label_tag 'banking_operation_contains[label]',                   'Libellé'
               %th
           %tbody
             %tr
@@ -27,7 +30,10 @@
                   = text_field_tag 'banking_operation_contains[date][$lte]', (params[:banking_operation_contains][:date]['$lte'] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
-              %td= text_field_tag 'banking_operation_contains[label]', (params[:banking_operation_contains][:label] rescue ''), class: 'input-medium'
+              %td= text_field_tag 'banking_operation_contains[bank_account][bank_name]', (params[:banking_operation_contains][:bank_account][:bank_name] rescue ''), class: 'input-small'
+              %td= text_field_tag 'banking_operation_contains[bank_account][number]',    (params[:banking_operation_contains][:bank_account][:number] rescue ''),    class: 'input-small'
+              %td= text_field_tag 'banking_operation_contains[category]', (params[:banking_operation_contains][:category] rescue ''), class: 'input-small'
+              %td= text_field_tag 'banking_operation_contains[label]',    (params[:banking_operation_contains][:label] rescue ''),    class: 'input-medium'
               %td
                 = submit_tag t('filters.action'), class: 'btn btn-primary'
                 = link_to icon(icon: 'remove'), account_retrieved_banking_operations_path, class: 'btn', title: t('filters.reset')

@@ -40,11 +40,20 @@ private
 
   def search(contains)
     operations = @user.operations.fiduceo
-    operations = operations.where(label: /#{Regexp.quote(contains[:label])}/i) unless contains[:label].blank?
+    operations = operations.where(category: /#{Regexp.quote(contains[:category])}/i) unless contains[:category].blank?
+    operations = operations.where(label:    /#{Regexp.quote(contains[:label])}/i)    unless contains[:label].blank?
     begin
       operations = operations.where(date: contains[:date]) unless contains[:date].blank?
     rescue Mongoid::Errors::InvalidTime
       contains[:date] = nil
+    end
+    if contains[:bank_account].present? && (contains[:bank_account][:bank_name].present? || contains[:bank_account][:number].present?)
+      bank_name = contains[:bank_account][:bank_name] rescue nil
+      number    = contains[:bank_account][:number]    rescue nil
+      bank_accounts = @user.bank_accounts
+      bank_accounts = bank_accounts.where(bank_name: /#{Regexp.quote(bank_name)}/i) if bank_name.present?
+      bank_accounts = bank_accounts.where(number:    /#{Regexp.quote(number)}/i)    if number.present?
+      operations = operations.where(:bank_account_id.in => bank_accounts.distinct(:_id))
     end
     operations
   end
