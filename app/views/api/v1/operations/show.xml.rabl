@@ -3,15 +3,15 @@ object @operation
 attributes :id, :date, :label, :amount
 
 node :journal do |operation|
-  operation.bank_account.journal
+  operation.bank_account.try(:journal)
 end
 
 node :bank_name do |operation|
-  operation.bank_account.bank_name
+  operation.bank_account.try(:bank_name)
 end
 
 node :account_number do |operation|
-  operation.bank_account.number
+  operation.bank_account.try(:number)
 end
 
 node :credit do |operation|
