@@ -1,4 +1,4 @@
-<td class='selectable request_type <%= @model.requestType() %>'>
+<td class='selection selectable'>
     <input type="radio" name="journal" />
 </td>
 <td class='is_default'>
@@ -37,11 +37,9 @@
         </ul>
     <% end %>
 </td>
-<td class='indicator'>
-    <% if(@model.get('request_type') != ''): %>
-        <i class='icon-exclamation-sign'></i>
-    <% end %>
-</td>
 <td class='edit'>
     <a href="journals/<%= @model.get('slug') %>/edit" class='edit hide'><i class="icon-edit"></i></a>
+</td>
+<td class='remove'>
+    <a href="journals/<%= @model.get('slug') %>" class='remove hide' data-confirm='Êtes-vous sûr ?' data-method='DELETE'><i class="icon-remove"></i></a>
 </td>

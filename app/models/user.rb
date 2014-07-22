@@ -70,7 +70,6 @@ class User
   validates_inclusion_of :knowings_visibility, in: 0..2
 
   field :is_disabled,                    type: Boolean, default: false
-  field :is_editable,                    type: Boolean, default: true
 
   field :stamp_name,                     type: String,  default: ':code :account_book :period :piece_num'
   field :is_stamp_background_filled,     type: Boolean, default: false
@@ -114,17 +113,13 @@ class User
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
-  has_one  :request,          as: :requestable,                              dependent: :destroy
-  has_many :requests,                                inverse_of: :requester, dependent: :destroy
-
   has_many :periods,            class_name: "Scan::Period",       inverse_of: :user
   has_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
-  
+
   has_many :own_packs, class_name: "Pack", inverse_of: :owner
   has_and_belongs_to_many :packs
 
-  has_and_belongs_to_many :account_book_types,  inverse_of: :clients
-  has_and_belongs_to_many :requested_account_book_types, class_name: 'AccountBookType', inverse_of: :requested_clients
+  has_and_belongs_to_many :account_book_types, inverse_of: :clients
 
   has_and_belongs_to_many :sharers, class_name: "User", inverse_of: :share_with
   has_and_belongs_to_many :share_with, class_name: "User", inverse_of: :sharers
@@ -155,7 +150,7 @@ class User
   has_one :dematbox
 
   belongs_to :scanning_provider, inverse_of: 'customers'
-  
+
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
   scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
@@ -166,7 +161,6 @@ class User
   scope :centralized,                 where: { is_centralized: true }
   scope :not_centralized,             where: { is_centralized: false }
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
-  scope :editable,                    where: { is_editable: true }
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -176,7 +170,7 @@ class User
   def active
     inactive_at == nil
   end
-  
+
   def name
     [self.first_name,self.last_name].join(' ') || self.email
   end
@@ -204,7 +198,7 @@ class User
   def self.find_by_email(param)
     User.where(email: param).first
   end
-  
+
   def self.find_by_emails(params)
     User.any_in(email: params).entries
   end
@@ -225,11 +219,11 @@ class User
       false
     end
   end
-  
+
   def is_active?
     !is_inactive?
   end
-  
+
   def is_inactive?
     self.is_inactive
   end
@@ -244,15 +238,15 @@ class User
       scan_subscription
     end
   end
-  
+
   def shipping_address
     self.addresses.for_shipping.first
   end
-  
+
   def billing_address
     self.addresses.for_billing.first
   end
-  
+
   def find_or_create_external_file_storage
     external_file_storage || ExternalFileStorage.create(user_id: self.id).reload
   end
@@ -267,11 +261,6 @@ class User
 
   def active_for_authentication?
     super && !self.is_disabled
-  end
-
-  def activate!
-    request.accept!
-    update_attribute(:is_disabled, false)
   end
 
   def set_random_password
@@ -302,18 +291,6 @@ class User
       end
     else
       nil
-    end
-  end
-
-  def requestable_on
-    [:email, :last_name, :first_name, :company, :code, :is_inactive, :is_centralized]
-  end
-
-  def request_status
-    if request.status.present?
-      request.status
-    else
-      find_or_create_scan_subscription.request_action
     end
   end
 

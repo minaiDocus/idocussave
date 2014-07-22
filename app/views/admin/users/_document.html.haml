@@ -10,13 +10,13 @@
     %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
   %tr
     %th= t('mongoid.models.user.attributes.authd_prev_period')
-    %td.value= render partial: 'text_field2', locals: { instance: @user, key: :authd_prev_period, name: 'user[authd_prev_period]' }
+    %td.value= render partial: 'text_field', locals: { value: @user.authd_prev_period, name: 'user[authd_prev_period]' }
   %tr
     %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
-    %td.value= render partial: 'text_field2', locals: { instance: @user, key: :auth_prev_period_until_day, name: 'user[auth_prev_period_until_day]' }
+    %td.value= render partial: 'text_field', locals: { value: @user.auth_prev_period_until_day, name: 'user[auth_prev_period_until_day]' }
   %tr
     %th= t('mongoid.models.user.attributes.auth_prev_period_until_month')
-    %td.value= render partial: 'text_field2', locals: { instance: @user, key: :auth_prev_period_until_month, name: 'user[auth_prev_period_until_month]' }
+    %td.value= render partial: 'text_field', locals: { value: @user.auth_prev_period_until_month, name: 'user[auth_prev_period_until_month]' }
 %table.table.table-striped.table-bordered.table-condensed
   %thead
     %tr

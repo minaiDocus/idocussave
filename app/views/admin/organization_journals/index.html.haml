@@ -1,7 +1,7 @@
 %table.table.table-striped.table-bordered.table-condensed
   %thead
     %tr
-      %th{ colspan: 5, class: (is_journals_update_requested?(@user) ? 'validation_required' : '') }
+      %th{ colspan: 5 }
         %h3.pull-left Type de journaux comptables
         = link_to icon_new, '#new_account_book_type', 'data-toggle' => :modal, class: 'btn btn-small pull-right'
     %tr
@@ -18,23 +18,5 @@
         %td= account_book_type.name
         %td= account_book_type.description
         %td
-          - if account_book_type.request.status == 'create'
-            - link = link_to icon(icon: 'ok'), accept_admin_organization_account_book_type_path(@organization,account_book_type), method: :put, data: { confirm: 'Etes vous sûr de vouloir valider ce journal ?' }, class: 'accept_account_book_type'
-            .pull-left
-              - if account_book_type.request.status != 'destroy'
-                .label.label-warning= link
-              - else
-                = link
-          - else
-            - link = link_to icon_edit, '#', class: 'edit_account_book_type'
-            .pull-left
-              - if account_book_type.request.status == 'update' && account_book_type.request.status != 'destroy'
-                .label.label-warning= link
-              - else
-                = link
-          - link = link_to icon_destroy, admin_organization_account_book_type_path(@organization,account_book_type), method: :delete, data: { confirm: 'Etes vous sûr de vouloir supprimer ce journal ?' }, class: 'destroy_account_book_type'
-          .pull-left
-            - if account_book_type.request.status == 'destroy'
-              .label.label-warning= link
-            - else
-              = link
+          .pull-left= link_to icon_edit, '#', class: 'edit_account_book_type'
+          .pull-left= link_to icon_destroy, admin_organization_account_book_type_path(@organization,account_book_type), method: :delete, data: { confirm: 'Etes vous sûr de vouloir supprimer ce journal ?' }, class: 'destroy_account_book_type'

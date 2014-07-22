@@ -191,17 +191,6 @@ fr:
   yes_value: Oui
   no_value: Non
 
-  request:
-    name: Action demandée
-    state: Action demandée à iDocus
-    nothing:
-    create: création
-    update: modification
-    destroy: suppression
-    adding: création
-    updating: modification
-    removing: suppression
-
   common:
     details: Détails
 
@@ -347,7 +336,6 @@ fr:
           is_admin: Est administrateur ?
           is_prescriber: Est prescripteur ?
           is_fake_prescriber: Est un faux prescripteur ?
-          is_editable: Est éditable ?
           is_access_by_token_active: Accès par jeton activé ?
           is_reminder_email_active: Rappel activé ?
           is_document_notifier_active: Notification des nouveaux documents activé ?
@@ -499,10 +487,6 @@ fr:
           entry_type_3: Vente
           clients: Clients
           force_assignment: Forcer les modifications pour le client
-        request:
-          confirm:
-            destroy: Etes vous sûr de vouloir demander à supprimer ce journal ?
-            cancel_destroy: Etes vous sûr de vouloir annuler la suppression ?
       reminder_email:
         zero: O email de rappel
         one: 1 email de rappel

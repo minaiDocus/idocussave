@@ -10,7 +10,7 @@
   = f.input :charge_account
   = f.input :vat_account
   = f.input :anomaly_account
-  - if @journal.persisted? && @journal.request.action != 'create' && @journal.is_expense_categories_editable
+  - if @journal.persisted? && @journal.is_expense_categories_editable
     .control-group
       %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
       .controls

@@ -3,21 +3,7 @@
     .span12
       .row-fluid
         .span12.box
-          .row-fluid
-            .span12
-              .pull-left
-                %h3= @customer.info
-              .pull-right
-                - if @customer.is_inactive != @customer.is_inactive_was
-                  - if @customer.is_inactive
-                    = "(Arrêt en attente de validation par iDocus)"
-                  - else
-                    = "(Rétablissement en attente de validation par iDocus)"
-                - if can_edit?
-                  - if @customer.is_active? && @customer.is_inactive == @customer.is_inactive_was
-                    = link_to "Arrêter l'abonnement", stop_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'abonnement de cet utilisateur à partir du début du mois prochain." }
-                  - else
-                    = link_to "Rétablir l'abonnement", restart_using_account_organization_customer_path(@customer), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'abonnement de cet utilisateur." }
+          %h3= @customer.info
 
       .row-fluid
         .span6
@@ -29,16 +15,16 @@
                   %tbody
                     %tr
                       %th= t('mongoid.models.user.attributes.email')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'email' }
+                      %td= @customer.email
                     %tr
                       %th= t('mongoid.models.user.attributes.first_name')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'first_name' }
+                      %td= @customer.first_name
                     %tr
                       %th= t('mongoid.models.user.attributes.last_name')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'last_name' }
+                      %td= @customer.last_name
                     %tr
                       %th= t('mongoid.models.user.attributes.code')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'code' }
+                      %td= @customer.code
                     %tr
                       %th= t('mongoid.models.user.attributes.knowings_code')
                       %td= @customer.knowings_code
@@ -47,15 +33,13 @@
                       %td= knowings_visibility @customer.knowings_visibility
                     %tr
                       %th= t('mongoid.models.user.attributes.company')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'company' }
+                      %td= @customer.company
                     %tr
                       %th= t('mongoid.models.user.attributes.is_centralized')
-                      %td= render partial: 'account/shared/cell', locals: { instance: @customer, key: 'is_centralized' }
-              - if @customer.is_editable
-                .row-fluid.margin1top
-                  .span12
-                    - if can_edit?
-                      = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
+                      %td= @customer.is_centralized ? t('yes_value') : t('no_value')
+              .row-fluid.margin1top
+                .span12
+                  = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
 
           .row-fluid
             .span12.box
@@ -79,17 +63,9 @@
                 Configuration actuelle
                 = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
               = render partial: 'options'
-
-              - if @subscription.request_action.present?
-                %h4.aligncenter.margin1top
-                  Configuration souhaitée
-                  = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
-                = render partial: 'requested_options'
-              - if @customer.is_editable
-                .row-fluid.margin1top
-                  .span12
-                    - if can_edit?
-                      = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
+              .row-fluid.margin1top
+                .span12
+                  = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
 
         .span6
           .row-fluid
@@ -119,11 +95,11 @@
                 %tbody
                   - @journals.each do |journal|
                     %tr{ id: journal.slug }
-                      %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'name' }
-                      %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'description' }
-                      %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'entry_type', is_translatable: true }
-                      %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'account_number' }
-                      %td= render partial: 'account/shared/cell', locals: { instance: journal, key: 'charge_account' }
+                      %td= journal.name
+                      %td= journal.description
+                      %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+                      %td= journal.account_number
+                      %td= journal.charge_account
               - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
                 .aligncenter.margin1top
                   = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@customer), class: 'btn'

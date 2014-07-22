@@ -8,9 +8,6 @@
 
       .pull-right
         = link_to 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
-        - if @user.request.status == 'create' || @user.is_disabled
-          = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger margin3left'
-          = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
 
   .row-fluid
     #information.span6

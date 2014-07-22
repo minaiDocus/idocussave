@@ -30,7 +30,6 @@ class Subscription
   has_many :invoices
 
   embeds_many :product_option_orders, as: :product_optionable
-  embeds_many :requested_product_option_orders, class_name: 'ProductOptionOrder', as: :product_optionable
 
   def self.by_start_date
     asc(:start_at)
@@ -59,11 +58,7 @@ class Subscription
   def products_total_price_in_cents_w_vat
     products_total_price_in_cents_wo_vat * tva_ratio
   end
-  
-  def requested_total_price
-    requested_product_option_orders.sum(:price_in_cents_wo_vat) || 0
-  end
-  
+
   def fetch_options(_product)
     id = _product[:id]
     product = Product.find id
@@ -91,10 +86,6 @@ class Subscription
   
   def product= _product 
     self.product_option_orders = fetch_options(_product)
-  end
-  
-  def requested_product= _product
-    self.requested_product_option_orders = fetch_options(_product)
   end
   
   def copy_product_option(product_option)

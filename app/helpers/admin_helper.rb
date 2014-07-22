@@ -34,14 +34,6 @@ module AdminHelper
   def get_documents(packs)
     Document.any_in(:pack_id => packs.distinct(:_id))
   end
-
-  def is_option_requested?(subscription, product, option, options)
-    if subscription.period_duration == product.period_duration
-      is_option_checked?(1, option, options)
-    else
-      false
-    end
-  end
   
   def is_option_checked?(index, option, options)
     if option.product_group.is_option_dependent
@@ -87,34 +79,6 @@ module AdminHelper
         [t('request.create'), 'create'],
         [t('request.update'), 'update'],
     ]
-  end
-
-  def is_journals_update_requested?(instance)
-    result = false
-    if instance.class == 'Organization'
-      instance.account_book_types.unscoped.each do |account_book_type|
-        result = true if account_book_type.is_update_requested?
-      end
-    elsif instance.class == 'User'
-      result = true if instance.account_book_types != instance.requested_account_book_types
-    end
-    result
-  end
-
-  def is_new_journals_requested?(journals, requested_journals)
-    result = false
-    requested_journals.each do |requested_journal|
-      result = true unless requested_journal.in?(journals)
-    end
-    result
-  end
-
-  def is_destroy_journals_requested?(journals, requested_journals)
-    result = false
-    journals.each do |journal|
-      result = true unless journal.in?(requested_journals)
-    end
-    result
   end
 
   def organization_link(user)

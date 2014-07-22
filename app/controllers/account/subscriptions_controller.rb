@@ -4,12 +4,12 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :verify_rights
 
   def edit
-    @options = @subscription.requested_product_option_orders.map { |option| option.to_a }
+    @options = @subscription.product_option_orders.map { |option| option.to_a }
   end
-  
+
   def update
     if @subscription.update_attributes(scan_subscription_params)
-      flash[:notice] = "En attente de validation de l'administrateur."
+      flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@customer)
     else
       render action: 'edit'
@@ -19,7 +19,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 private
 
   def scan_subscription_params
-    params.require(:scan_subscription).permit(:period_duration, :requested_product)
+    params.require(:scan_subscription).permit(:period_duration, :product)
   end
 
   def load_customer
@@ -35,7 +35,7 @@ private
   end
 
   def verify_rights
-    unless @customer.is_editable && (is_leader? || @user.can_manage_customers?)
+    unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end

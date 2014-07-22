@@ -9,7 +9,6 @@ describe EmailedDocument do
 
     @journal = AccountBookType.new name: 'TS', description: 'Test'
     @journal.clients << @user
-    @journal.requested_clients << @user
     @journal.save
   end
 

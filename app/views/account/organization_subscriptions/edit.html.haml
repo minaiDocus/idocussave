@@ -1,4 +1,4 @@
-.row-fluid
+#organization_subscriptions.edit.row-fluid
   .span12.pannel.margin1bottom
     .row-fluid
       .span12
@@ -9,7 +9,7 @@
       .span8
         = simple_form_for @subscription, :url => account_organization_default_subscription_path, html: { class: 'form form-horizontal scan_subscription margin0' } do |f|
           = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
-          = render partial: 'product', collection: @products
+          = render partial: 'account/subscriptions/product', collection: @products
           .form-actions
             = f.submit 'Valider', class: 'btn'
             = link_to 'Annuler', account_organization_default_subscription_path, class: 'btn'

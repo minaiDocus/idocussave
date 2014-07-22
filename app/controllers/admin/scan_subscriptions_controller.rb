@@ -16,10 +16,8 @@ class Admin::ScanSubscriptionsController < Admin::AdminController
   def edit
     if @user.is_active?
       @subscription = @user.find_or_create_scan_subscription
-      @subscription.force_assignment = 1 if @user.is_prescriber
       @products = Product.subscribable
       @options = @subscription.product_option_orders.map { |option| option.to_a }
-      @requested_options = @subscription.requested_product_option_orders.map { |option| option.to_a }
     else
       @subscription = nil
     end

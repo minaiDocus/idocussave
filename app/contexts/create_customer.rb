@@ -6,9 +6,7 @@ class CreateCustomer
     @customer.set_random_password
     @customer.skip_confirmation!
     if @customer.save
-      @customer.request.update_attributes(action: 'create', requester_id: requester.try(:id))
-      @customer.is_disabled = true
-      @customer.account_book_types = @customer.requested_account_book_types = organization.account_book_types.default
+      @customer.account_book_types = organization.account_book_types.default
       organization.members << @customer
       subscription = @customer.find_or_create_scan_subscription
       requester_subscription = requester.find_or_create_scan_subscription
@@ -39,7 +37,6 @@ class CreateCustomer
       self.unit_price_of_excess_paperclips = subscription.unit_price_of_excess_paperclips
       self.unit_price_of_excess_oversized = subscription.unit_price_of_excess_oversized
       self.copy_to_options! subscription.product_option_orders
-      self.copy_to_requested_options! subscription.product_option_orders
       self.save
     end
   end

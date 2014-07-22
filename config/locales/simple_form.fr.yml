@@ -90,7 +90,6 @@ fr:
         position: Position
         is_default: Par défaut ?
         clients: Clients
-        force_assignment: Forcer les modifications pour le client
       knowings:
         is_active: Activer la livraison ?
         username: Identifiant

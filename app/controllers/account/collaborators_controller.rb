@@ -2,7 +2,6 @@
 class Account::CollaboratorsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_collaborator, except: %w(index new create)
-  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
     @collaborators = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
@@ -25,7 +24,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     if @collaborator.save
       @organization.members << @collaborator
       WelcomeMailer.welcome_collaborator(@collaborator).deliver
-      flash[:notice] = 'Créé avec succès.'
+      flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else
       flash[:error] = 'Données invalide.'
@@ -37,37 +36,18 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def update
-    attrs = @collaborator.request.attribute_changes.merge(user_params)
-    if @collaborator.request.set_attributes(attrs, {}, @user)
-      flash[:notice] = "En attente de validation de l'administrateur."
+    if @collaborator.update_attributes(user_params)
+      flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_collaborator_path(@collaborator)
     else
       render action: 'edit'
     end
   end
 
-  def stop_using
-    if @collaborator.request.set_attributes({ is_inactive: true }, {}, @user)
-      flash[:notice] = 'Modifié avec succès'
-    else
-      flash[:notice] = "En attente de validation de l'administrateur."
-    end
-    redirect_to account_organization_collaborator_path(@collaborator)
-  end
-
-  def restart_using
-    if @collaborator.request.set_attributes({ is_inactive: false }, {}, @user)
-      flash[:notice] = 'Modifié avec succès'
-    else
-      flash[:notice] = "En attente de validation de l'administrateur."
-    end
-    redirect_to account_organization_collaborator_path(@collaborator)
-  end
-
 private
 
   def verify_rights
-    unless is_leader? || (@user.can_manage_collaborators? && !action_name.in?(%w(stop_using restart_using)))
+    unless is_leader? || @user.can_manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
@@ -76,17 +56,13 @@ private
   def load_collaborator
     @collaborator = @organization.collaborators.find params[:id]
   end
-  
+
   def user_params
     params.require(:user).permit(:code,
                                  :company,
                                  :first_name,
                                  :last_name,
                                  :email)
-  end
-
-  def apply_attribute_changes
-    @collaborator.request.apply_attribute_changes
   end
 
   def sort_column

@@ -6,7 +6,7 @@
     %link{ :rel => 'shortcut icon', :type => 'image/ico', :href => asset_path('favicon.ico') }
     = csrf_meta_tag
     != stylesheet_link_tag 'application', 'account/organizations'
-    - unless controller_name.in?(%w(subscriptions organization_subscriptions organization_addresses accounting_plans bank_accounts knowings))
+    - unless controller_name.in?(%w(organization_addresses accounting_plans bank_accounts knowings))
       != stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization

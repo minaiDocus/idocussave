@@ -7,14 +7,14 @@
       - if product_group.is_option_dependent
         - product_group.product_options.by_position.each_with_index do |option,index|
           .row-fluid
-            .span12{ class: (is_option_requested?(@subscription, product, option, @requested_options) ? 'requested' : '') }
+            .span12
               .pull-left
                 != radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
               != render partial: 'admin/scan_subscriptions/product_option', locals: { option: option }
       - else
         - product_group.product_options.by_position.each_with_index do |option,index|
           .row-fluid
-            .span12{ class: (is_option_requested?(@subscription, product, option, @requested_options) ? 'requested' : '') }
+            .span12
               .pull-left
                 != check_box_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
               != render partial: 'admin/scan_subscriptions/product_option', locals: { option: option }

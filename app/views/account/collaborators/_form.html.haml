@@ -1,10 +1,10 @@
-= simple_form_for @collaborator, url: collaborator_form_url(@collaborator), html: { class: 'form form-horizontal' } do |f|
+= simple_form_for @collaborator, url: collaborator_form_url(@collaborator), html: { class: 'form form-horizontal margin0bottom' } do |f|
   = f.input :code, label: 'Code'
   = f.input :company, label: 'Société'
   = f.input :first_name, label: 'Prénom'
   = f.input :last_name, label: 'Nom'
   = f.input :email, label: 'Email'
-  .form-actions
+  .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn'
     - if action_name.in?(%w(new create))
       = link_to t('actions.cancel'), account_organization_collaborators_path, class: 'btn'

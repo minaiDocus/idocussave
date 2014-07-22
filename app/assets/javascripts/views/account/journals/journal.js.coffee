@@ -5,8 +5,8 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
 
   events:
     'click td.selectable': 'showUsersList'
-    'mouseenter td': 'showEdit'
-    'mouseleave td': 'hideEdit'
+    'mouseenter td': 'showAction'
+    'mouseleave td': 'hideAction'
 
   initialize: (options) ->
     @model.on 'change', @render, this
@@ -35,8 +35,8 @@ class Idocus.Views.Account.Journals.Journal extends Backbone.View
     $selector.parents('tr').removeClass('current')
     this
 
-  showEdit: ->
-    @$el.find('a.edit').removeClass('hide')
+  showAction: ->
+    @$el.find('a.edit, a.remove').removeClass('hide')
 
-  hideEdit: ->
-    @$el.find('a.edit').addClass('hide')
+  hideAction: ->
+    @$el.find('a.edit, a.remove').addClass('hide')

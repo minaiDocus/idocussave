@@ -1,7 +1,5 @@
 <td class='action'>
-    <% if(!@isAssignmentLocked): %>
-        <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
-    <% end %>
+    <a class='action <%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
 </td>
 <td>
     <%= @model.get('name') %>
@@ -32,10 +30,5 @@
                 <li>Compte d'anomalie : <%= @model.get('anomaly_account') %></li>
             <% end %>
         </ul>
-    <% end %>
-</td>
-<td class='request_type'>
-    <% if @isWaiting: %>
-        <i class="icon-exclamation-sign"></i>
     <% end %>
 </td>

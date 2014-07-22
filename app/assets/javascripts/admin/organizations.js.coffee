@@ -186,10 +186,6 @@ edit_account_book_type = (id) ->
     type: 'GET',
     success: (data) ->
       $('#edit_account_book_type .content').html(data)
-      $('.assign_value').click ->
-        value = $(this).next('span').text()
-        $($(this).attr('href')).attr('value',value)
-        return false
       $('.account_book_type.form').submit ->
         update_account_book_type(id)
         return false

@@ -15,7 +15,6 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     'mouseenter #journals_list .sort td': 'showJSortDirection'
     'mouseleave #journals_list .sort td': 'hideJSortDirection'
     'click #show_details': 'toggleShowDetails'
-    'click #show_not_editable': 'toggleShowNotEditable'
 
   initialize: ->
     @jSortDirection = 'desc'
@@ -25,7 +24,6 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     @uSortColumn = 'code'
 
     @showDetails = true
-    @showNotEditable = true
 
     _.bindAll(this, "showUsersList")
     Idocus.vent.bind("showUsersList", @showUsersList)
@@ -150,9 +148,8 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     this
 
   addOneU: (item) ->
-    if item.get('is_editable') || @showNotEditable
-      view = new Idocus.Views.Account.Journals.User(model: item)
-      $('#users_list tbody').append(view.render().el)
+    view = new Idocus.Views.Account.Journals.User(model: item)
+    $('#users_list tbody').append(view.render().el)
     this
 
   selectItem: ->
@@ -204,27 +201,21 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     else
       collection = @uCollection
 
-    showNotEditable = @showNotEditable
     assignedCount = 0
     notAssignedCount = 0
     collection.forEach (user) ->
-      if user.get('is_editable') || showNotEditable
-        name = 'not_assigned'
-        isUp = true
-        isWaiting = false
-        isIncluded = user.get('account_book_type_ids').some (e, i, a) -> return e == id
-        isIncludedInRequested = user.get('requested_account_book_type_ids').some (e, i, a) -> return e == id
-        if isIncludedInRequested
-          name = 'assigned'
-          isUp = false
-          assignedCount += 1
-        else
-          notAssignedCount += 1
-        if isIncluded != isIncludedInRequested
-          isWaiting = true
+      name = 'not_assigned'
+      isUp = true
+      isIncluded = user.get('account_book_type_ids').some (e, i, a) -> return e == id
+      if isIncluded
+        name = 'assigned'
+        isUp = false
+        assignedCount += 1
+      else
+        notAssignedCount += 1
 
-        view = new Idocus.Views.Account.Journals.User2(model: user, isUp: isUp, type: name, isWaiting: isWaiting)
-        $('#'+name).append(view.render().el)
+      view = new Idocus.Views.Account.Journals.User2(model: user, isUp: isUp, type: name)
+      $('#'+name).append(view.render().el)
 
     $('h3.assigned').text("Journal #{@journal.get('name')} affecté aux clients suivants (#{assignedCount}) :")
     $('h3.not_assigned').text("Journal #{@journal.get('name')} non affecté aux clients suivants (#{notAssignedCount}) :")
@@ -232,27 +223,21 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   addUser: (model) ->
     @startJournalsLoading()
-    new_account_book_type_ids = _.union(model.get('requested_account_book_type_ids'), [@journal.get('id')])
-    model.set(requested_account_book_type_ids: new_account_book_type_ids)
-
-    new_client_ids = _.union(@journal.get('requested_client_ids'), [model.get('id')])
-    @journal.set(requested_client_ids: new_client_ids)
+    model.set(account_book_type_ids: _.union(model.get('account_book_type_ids'), [@journal.get('id')]))
+    @journal.set(client_ids: _.union(@journal.get('client_ids'), [model.get('id')]))
 
     @showUsersList(@journal)
-    @journal.update_requested_users()
+    @journal.update_clients()
 
     false
 
   removeUser: (model) ->
     @startJournalsLoading()
-    new_account_book_type_ids = _.without(model.get('requested_account_book_type_ids'), @journal.get('id'))
-    model.set(requested_account_book_type_ids: new_account_book_type_ids)
-
-    new_client_ids = _.without(@journal.get('requested_client_ids'), model.get('id'))
-    @journal.set(requested_client_ids: new_client_ids)
+    model.set(account_book_type_ids: _.without(model.get('account_book_type_ids'), @journal.get('id')))
+    @journal.set(client_ids: _.without(@journal.get('client_ids'), model.get('id')))
 
     @showUsersList(@journal)
-    @journal.update_requested_users()
+    @journal.update_clients()
 
     false
 
@@ -276,23 +261,18 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
     showDetails = @showDetails
     assignedCount = 0
     notAssignedCount = 0
-    isAssignmentLocked = !@user.get('is_editable')
     collection.forEach (journal) ->
       name = 'not_assigned'
       isUp = true
-      isWaiting = false
       isIncluded = journal.get('client_ids').some (e, i, a) -> return e == id
-      isIncludedInRequested = journal.get('requested_client_ids').some (e, i, a) -> return e == id
-      if isIncludedInRequested
+      if isIncluded
         name = 'assigned'
         isUp = false
         assignedCount += 1
       else
         notAssignedCount += 1
-      if isIncluded != isIncludedInRequested
-        isWaiting = true
 
-      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: isUp, type: name, showDetails: showDetails, isWaiting: isWaiting, isAssignmentLocked: isAssignmentLocked)
+      view = new Idocus.Views.Account.Journals.Journal2(model: journal, is_up: isUp, type: name, showDetails: showDetails)
       $('#'+name).append(view.render().el)
 
     $('h3.assigned').text("Client #{@user.get('code')} affecté aux journaux suivants (#{assignedCount}) :")
@@ -301,27 +281,21 @@ class Idocus.Views.Account.Journals.Index extends Backbone.View
 
   addJournal: (model) ->
     @startUsersLoading()
-    new_client_ids = _.union(model.get('requested_client_ids'), [@user.get('id')])
-    model.set(requested_client_ids: new_client_ids)
-
-    new_account_book_type_ids = _.union(@user.get('requested_account_book_type_ids'), [model.get('id')])
-    @user.set(requested_account_book_type_ids: new_account_book_type_ids)
+    model.set(client_ids: _.union(model.get('client_ids'), [@user.get('id')]))
+    @user.set(account_book_type_ids: _.union(@user.get('account_book_type_ids'), [model.get('id')]))
 
     @showJournalsList(@user)
-    model.update_requested_users()
+    model.update_clients()
 
     false
 
   removeJournal: (model) ->
     @startUsersLoading()
-    new_client_ids = _.without(model.get('requested_client_ids'), @user.get('id'))
-    model.set(requested_client_ids: new_client_ids)
-
-    new_account_book_type_ids = _.without(@user.get('requested_account_book_type_ids'), model.get('id'))
-    @user.set(requested_account_book_type_ids: new_account_book_type_ids)
+    model.set(client_ids: _.without(model.get('client_ids'), @user.get('id')))
+    @user.set(account_book_type_ids: _.without(@user.get('account_book_type_ids'), model.get('id')))
 
     @showJournalsList(@user)
-    model.update_requested_users()
+    model.update_clients()
 
     false
 

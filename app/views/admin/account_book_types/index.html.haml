@@ -1,37 +1,14 @@
-- if @user.is_prescriber
-  .label{ style: 'padding:3px 5px 3px' } Type de journaux comptable
-- else
-  .label{ class: (is_destroy_journals_requested?(@account_book_types,@requested_account_book_types) ? 'label-warning' : ''), style: 'padding:3px 5px 3px' } Type de journaux comptable
+.label{ style: 'padding:3px 5px 3px' } Type de journaux comptable
+- unless @user.is_prescriber
   %table.table.table-striped.table-bordered.table-condensed
     %thead
       %tr
         %th N°
         %th Nom
         %th Description
-        %th Action
     %tbody
       - @account_book_types.each do |account_book_type|
         %tr{ id: account_book_type.slug }
           %td= account_book_type.position
           %td= account_book_type.name
           %td= account_book_type.description
-          %td
-            - unless account_book_type.in?(@requested_account_book_types)
-              .pull-left.label.label-warning= link_to icon(icon: 'remove'), remove_admin_user_account_book_type_path(@user,account_book_type), method: :delete, data: { confirm: 'Etes vous sûr de vouloir retirer ce journal ?' }, class: 'remove_account_book_type', title: 'Retirer de cet utilisateur'
-  .label{ class: (is_new_journals_requested?(@account_book_types,@requested_account_book_types) ? 'label-warning' : ''), style: 'padding:3px 5px 3px' } Nouveau type de journaux comptable
-  %table.table.table-striped.table-bordered.table-condensed
-    %thead
-      %tr
-        %th N°
-        %th Nom
-        %th Description
-        %th Action
-    %tbody
-      - @requested_account_book_types.each do |account_book_type|
-        - unless account_book_type.in?(@account_book_types)
-          %tr{ id: account_book_type.slug }
-            %td= account_book_type.position
-            %td= account_book_type.name
-            %td= account_book_type.description
-            %td
-              .pull-left.label.label-warning= link_to icon(icon: 'plus'), add_admin_user_account_book_type_path(@user,account_book_type), method: :put, data: { confirm: 'Etes vous sûr de vouloir ajouter ce journal ?' }, class: 'add_account_book_type', title: 'Ajouter à cet utilisateur'

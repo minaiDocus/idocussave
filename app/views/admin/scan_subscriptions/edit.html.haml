@@ -48,9 +48,5 @@
             = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
 
         != render partial: "product", collection: @products
-
-        .row-fluid
-          .span12
-            = f.input :force_assignment, label: "Forcer les changements pour le #{@user.is_prescriber ? 'prescripteur' : 'client'}", as: :Boolean
       .modal-footer
         = f.submit 'Valider', class: 'btn'

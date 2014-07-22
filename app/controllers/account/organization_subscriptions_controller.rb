@@ -6,11 +6,11 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
   def edit
-    @options = @subscription.requested_product_option_orders.map { |option| option.to_a }
+    @options = @subscription.product_option_orders.map { |option| option.to_a }
   end
 
   def update
-    if @subscription.update_attributes(scan_subscription_params.merge({ force_assignment: 1 }))
+    if @subscription.update_attributes(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_default_subscription_path
     else

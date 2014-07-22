@@ -9,7 +9,7 @@
       = f.input :last_name,           label: t('mongoid.models.user.attributes.last_name')
       = f.input :email,               label: t('mongoid.models.user.attributes.email')
       = f.input :is_centralized,      label: t('mongoid.models.user.attributes.is_centralized'), as: :boolean
-    - if action_name.in?(%w(new create)) || @customer.request.action == 'create'
+    - if action_name.in?(%w(new create))
       .span6
         = f.input :group_ids, collection: groups(@user).map { |g| [g.name, g.id] }, as: :check_boxes, label: t('mongoid.models.group.name').pluralize
   .form-actions

@@ -44,8 +44,6 @@ Idocus::Application.routes.draw do
       end
       resources :customers do
         get 'search_by_code',        on: :collection
-        put 'stop_using',            on: :member
-        put 'restart_using',         on: :member
         put 'update_ibiza',          on: :member
         get 'edit_period_options',   on: :member
         put 'update_period_options', on: :member
@@ -65,8 +63,7 @@ Idocus::Application.routes.draw do
         resources :exercices
       end
       resources :journals do
-        post 'cancel_destroy',           :on => :member
-        put  'update_requested_users',   :on => :member
+        put  'update_clients', :on => :member
       end
       resources :subscriptions
       resource :default_subscription, controller: 'organization_subscriptions'
@@ -213,20 +210,14 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
-    resources :users do
-      get 'search_by_code', on: :collection
-      put 'accept', on: :member
-      put 'activate', on: :member
+    resources :users, except: :destroy do
+      get 'search_by_code',                    on: :collection
       post 'send_reset_password_instructions', on: :member
       resources :addresses do
-        get 'edit_multiple', on: :collection
+        get  'edit_multiple',   on: :collection
         post 'update_multiple', on: :collection
       end
-      resources :account_book_types do
-        put    'accept', on: :member
-        put    'add',    on: :member
-        delete 'remove', on: :member
-      end
+      resources :account_book_types, only: :index
       resource :scan_subscription
       resource :csv_outputter
     end
@@ -234,9 +225,7 @@ Idocus::Application.routes.draw do
       get  'select_propagation_options', on: :member
       post 'propagate',                  on: :member
       resources :groups
-      resources :journals, as: :account_book_types, controller: 'organization_journals' do
-        put 'accept', on: :member
-      end
+      resources :journals, as: :account_book_types, controller: 'organization_journals'
       resources :reminder_emails do
         get  'preview',         on: :member
         get  'deliver',         on: :member

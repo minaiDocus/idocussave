@@ -1,21 +1,7 @@
 #collaborator
   .row-fluid
     .span12.box
-      .row-fluid
-        .span12
-          .pull-left
-            %h3= @collaborator
-          .pull-right        
-            - if @collaborator.is_inactive != @collaborator.is_inactive_was
-              - if @collaborator.is_inactive
-                = "(Arrêt en attente de validation par iDocus)"
-              - else
-                = "(Rétablissement en attente de validation par iDocus)"
-            - if is_leader?
-              - if @collaborator.is_active? && @collaborator.is_inactive == @collaborator.is_inactive_was
-                = link_to "Arrêter l'abonnement", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
-              - else
-                = link_to "Rétablir l'abonnement", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
+      %h3= @collaborator
 
   .row-fluid
     .span12.box
@@ -28,24 +14,23 @@
                   .pull-left
                     %h3 Informations
                   .pull-right
-                    - if @collaborator.is_editable
-                      = icon_link_to edit_account_organization_collaborator_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
+                    = icon_link_to edit_account_organization_collaborator_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
             %tbody
               %tr
                 %th= t('mongoid.models.user.attributes.email')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'email' }
+                %td= @collaborator.email
               %tr
                 %th= t('mongoid.models.user.attributes.first_name')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'first_name' }
+                %td= @collaborator.first_name
               %tr
                 %th= t('mongoid.models.user.attributes.last_name')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'last_name' }
+                %td= @collaborator.last_name
               %tr
                 %th= t('mongoid.models.user.attributes.code')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'code' }
+                %td= @collaborator.code
               %tr
                 %th= t('mongoid.models.user.attributes.company')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'company' }
+                %td= @collaborator.company
 
         .span6
           %table.table.table-bordered.table-striped.margin0bottom

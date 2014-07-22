@@ -2,14 +2,13 @@
 class Admin::UsersController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :user_contains
 
-  before_filter :load_user, only: %w(show update accept activate destroy send_reset_password_instructions)
+  before_filter :load_user, only: %w(show update send_reset_password_instructions)
 
   def index
     @users = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
-    @user.request.apply_attribute_changes
   end
 
   def new
@@ -80,47 +79,12 @@ class Admin::UsersController < Admin::AdminController
     end
   end
 
-  def accept
-    if @user.request.accept!
-      flash[:notice] = 'Modifié avec succès.'
-    else
-      flash[:error] = "Impossible de modifier."
-    end
-    redirect_to admin_user_path(@user)
-  end
-
-  def activate
-    if @user.activate!
-      @user.reset_password_token = User.reset_password_token
-      @user.reset_password_sent_at = Time.now
-      @user.save
-      if @user.is_prescriber
-        WelcomeMailer.welcome_collaborator(@user).deliver
-      else
-        WelcomeMailer.welcome_customer(@user).deliver
-      end
-      flash[:notice] = 'Activé avec succès.'
-    else
-      flash[:error] = "Impossible d'activer."
-    end
-    redirect_to admin_user_path(@user)
-  end
-
-  def destroy
-    if (@user.request.status == 'create' || @user.is_disabled) && @user.destroy
-      flash[:notice] = 'Supprimé avec succès.'
-    else
-      flash[:error] = 'Impossible de supprimer.'
-    end
-    redirect_to admin_users_path
-  end
-
   def send_reset_password_instructions
     @user.send_reset_password_instructions
     flash[:notice] = 'Email envoyé avec succès.'
     redirect_to admin_user_path(@user)
   end
-  
+
 private
 
   def load_user
@@ -157,14 +121,7 @@ private
   end
 
   def search(contains)
-    if contains[:request_action].present?
-      user_ids = Request.where(requestable_type: 'User').any_of({ action: contains[:request_action] }, { relation_action: contains[:request_action] }).distinct(:requestable_id)
-      user_ids = user_ids + Scan::Subscription.where(request_action: contains[:request_action]).distinct(:user_id)
-      users = User.any_in(:_id => user_ids)
-    else
-      users = User.all
-    end
-    users = users.not_operators
+    users = User.not_operators
     users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
     users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)  unless contains[:last_name].blank?
     users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)      unless contains[:email].blank?

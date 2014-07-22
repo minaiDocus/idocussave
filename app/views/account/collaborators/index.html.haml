@@ -18,23 +18,12 @@
               %tr
                 %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
                 %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
-                %th
             %tbody
               - @collaborators.each do |collaborator|
                 %tr
                   %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
-                    %span.info
-                      = link_to collaborator.info, account_organization_collaborator_path(collaborator)
-                  %td.update_request_state
-                    - if !collaborator.is_inactive && collaborator.request_status.present?
-                      - case collaborator.request_status
-                        - when 'create'
-                          = icon(icon: 'plus', title: 'Ajouté')
-                        - when 'update'
-                          = icon(icon: 'pencil', title: 'Modifié')
-                        - when 'destroy'
-                          = icon(icon: 'minus', title: 'Supprimé')
+                    %span.info= link_to collaborator.info, account_organization_collaborator_path(collaborator)
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

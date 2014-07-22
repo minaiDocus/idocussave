@@ -1,8 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, only: %w(show edit update stop_using restart_using update_ibiza edit_period_options update_period_options)
+  before_filter :load_customer, only: %w(show edit update update_ibiza edit_period_options update_period_options)
   before_filter :verify_rights, except: 'index'
-  before_filter :apply_attribute_changes, only: %w(show edit)
 
   def index
     respond_to do |format|
@@ -22,7 +21,7 @@ class Account::CustomersController < Account::OrganizationController
   def show
     @subscription = @customer.find_or_create_scan_subscription
     @period = @subscription.periods.desc(:created_at).first
-    @journals = @customer.requested_account_book_types.asc(:name)
+    @journals = @customer.account_book_types.asc(:name)
   end
 
   def new
@@ -30,9 +29,9 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomer.new(@organization, @user, user_params.merge(knowings_params)).customer
+    @customer = CreateCustomer.new(@organization, @user, user_params).customer
     if @customer.persisted?
-      flash[:notice] = "En attente de validation de l'administrateur."
+      flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_path(@customer)
     else
       render action: 'new'
@@ -43,14 +42,8 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update
-    result = @customer.update_attributes(knowings_params)
-    attrs = @customer.request.attribute_changes.merge(user_params)
-    if result && @customer.request.set_attributes(attrs, {}, @user)
-      if @customer.request.status == ''
-        flash[:success] = 'Modifié avec succès'
-      else
-        flash[:notice] = "En attente de validation de l'administrateur."
-      end
+    if @customer.update_attributes(user_params)
+      flash[:success] = 'Modifié avec succès'
       redirect_to account_organization_customer_path(@customer)
     else
       render action: 'edit'
@@ -62,28 +55,6 @@ class Account::CustomersController < Account::OrganizationController
       flash[:success] = 'Modifié avec succès'
     else
       flash[:error] = 'Impossible de modifier'
-    end
-    redirect_to account_organization_customer_path(@customer)
-  end
-
-  def stop_using
-    if @customer.request.set_attributes({ is_inactive: true }, {}, @user)
-      if @customer.request.status == ''
-        flash[:success] = 'Modifié avec succès'
-      else
-        flash[:notice] = "En attente de validation de l'administrateur."
-      end
-    end
-    redirect_to account_organization_customer_path(@customer)
-  end
-
-  def restart_using
-    if @customer.request.set_attributes({ is_inactive: false }, {}, @user)
-      if @customer.request.status == ''
-        flash[:success] = 'Modifié avec succès'
-      else
-        flash[:notice] = "En attente de validation de l'administrateur."
-      end
     end
     redirect_to account_organization_customer_path(@customer)
   end
@@ -122,40 +93,25 @@ protected
     is_leader? || @user.can_manage_customers?
   end
 
-  def can_edit?
-    @customer ? (@customer.is_editable && can_manage?) : can_manage?
-  end
-  helper_method :can_edit?
-
-  def cannot_edit?
-    !can_edit?
-  end
-  helper_method :cannot_edit?
-
 private
 
   def verify_rights
-    unless action_name.in?(%w(show update_ibiza)) && can_manage? or !action_name.in?(%w(show update_ibiza)) && can_edit?
+    unless can_manage?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
   end
 
   def user_params
-    _params = params.require(:user).permit(:code,
-                                           :company,
-                                           :first_name,
-                                           :last_name,
-                                           :email,
-                                           :is_centralized)
-    if action_name == 'create' or @customer && @customer.request.action == 'create'
-      _params.merge! params.require(:user).permit(:group_ids)
-    end
-    _params
-  end
-
-  def knowings_params
-    params.require(:user).permit(:knowings_code, :knowings_visibility)
+    params.require(:user).permit(:code,
+                                 :company,
+                                 :first_name,
+                                 :last_name,
+                                 :email,
+                                 :is_centralized,
+                                 :group_ids,
+                                 :knowings_code,
+                                 :knowings_visibility)
   end
 
   def period_options_params
@@ -165,10 +121,6 @@ private
 
   def load_customer
     @customer = @user.customers.find params[:id]
-  end
-
-  def apply_attribute_changes
-    @customer.request.apply_attribute_changes
   end
 
   def sort_column

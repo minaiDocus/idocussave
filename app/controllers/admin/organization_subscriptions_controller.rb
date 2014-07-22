@@ -13,13 +13,12 @@ class Admin::OrganizationSubscriptionsController < Admin::AdminController
     @subscription = @organization.find_or_create_subscription
     @products = Product.subscribable
     @options = @subscription.product_option_orders.map { |option| option.to_a }
-    @requested_options = @subscription.requested_product_option_orders.map { |option| option.to_a }
   end
 
   def update
     @subscription = @organization.find_or_create_subscription
     respond_to do |format|
-      if @subscription.update_attributes(scan_subscription_params.merge({ force_assignment: 1 }))
+      if @subscription.update_attributes(scan_subscription_params)
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else

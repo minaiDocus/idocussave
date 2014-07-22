@@ -28,5 +28,4 @@ private
   def load_collaborator
     @collaborator = User.find params[:collaborator_id]
   end
-
 end

@@ -1,7 +1,7 @@
 ﻿.pannel.margin1top.margin1bottom{ class: "product period_duration_#{product.period_duration}" }
   .pull-left
-    = radio_button_tag "scan_subscription[requested_product][id]", product.id
-  = label_tag "scan_subscription_requested_product_id_#{product.id}", class: 'margin2left' do
+    = radio_button_tag "scan_subscription[product][id]", product.id
+  = label_tag "scan_subscription_product_id_#{product.id}", class: 'margin2left' do
     %h4= product.title
 
   - product.product_groups.where(:product_supergroup_ids.size => 0, :position.lt => 1000).by_position.entries.each do |product_group|

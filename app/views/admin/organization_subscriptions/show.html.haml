@@ -1,7 +1,7 @@
 ﻿%table.table.table-striped.table-bordered.table-condensed
   %thead
     %tr
-      %th{ colspan: 4, class: (@subscription.request_action.present? ? 'validation_required' : '') }
+      %th{ colspan: 4 }
         %h3.pull-left
           Abonnement en cours
           = @subscription.period_duration == 1 ? '(Mensuel)' : '(Trimestriel)'

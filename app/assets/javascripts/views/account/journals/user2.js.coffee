@@ -20,7 +20,7 @@ class Idocus.Views.Account.Journals.User2 extends Backbone.View
         direction = 'down'
     else
       direction = undefined
-    @$el.html(@template(model: @model, type: @type, direction: direction, isWaiting: @isWaiting))
+    @$el.html(@template(model: @model, type: @type, direction: direction))
     this
 
   addUser: ->
