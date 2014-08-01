@@ -1,9 +1,0 @@
-#organization
-  #group
-    = render_breadcrumbs
-    .row-fluid
-      .span12.well
-        %h3 Edition du groupe : #{link_to @group.name, admin_organization_group_path(@organization, @group)}
-        %br
-        %br
-        = render partial: 'form'

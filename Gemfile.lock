@@ -79,7 +79,6 @@ GEM
       debug_inspector (>= 0.0.1)
     bootstrap-datepicker-rails (0.6.16)
       railties (>= 3.0)
-    breadcrumbs_on_rails (2.3.0)
     bson (1.6.4)
     bson_ext (1.6.2)
       bson (~> 1.6.2)
@@ -482,7 +481,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap-datepicker-rails
-  breadcrumbs_on_rails
   bson_ext (= 1.6.2)
   capistrano
   capistrano_colors

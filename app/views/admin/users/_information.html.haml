@@ -1,6 +1,6 @@
 .label{ style: 'padding:3px 5px 3px' } Informations
 .row-fluid
-  .span7
+  .span4
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
       %tbody
         %tr
@@ -41,20 +41,19 @@
             - if @user.scanning_provider
               .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
               .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
-  .span5
+  .span8
     .row-fluid
       .span12
         %table.table.table-striped.table-bordered.table-condensed
           %tbody
-            %tr
-              %td.user_status{ colspan: 2 }
-                %div
-                  %b.title.pull-left
-                    = t('mongoid.models.user.attributes.is_inactive_since')
-                  .input-append.date.datepicker.pull-right
-                    = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
-                    %span.add-on
-                      %i.icon-th
+            %tr.user_status
+              %th
+                %span= t('mongoid.models.user.attributes.is_inactive_since')
+              %td
+                .input-prepend.date.datepicker
+                  %span.add-on
+                    %i.icon-th
+                  = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
             %tr
               %th= t('mongoid.models.user.attributes.is_admin')
               %td.value= check_box_tag 'user[is_admin]', 1, @user.is_admin
@@ -98,3 +97,16 @@
               %th= t('mongoid.models.user.attributes.is_exercice_computed_date_used')
               %td.value
                 = check_box_tag 'user[is_exercice_computed_date_used]', 1, @user.is_exercice_computed_date_used
+            %tr
+              %th= t('mongoid.models.user.attributes.is_access_by_token_active')
+              %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
+            %tr
+              %th= t('mongoid.models.user.attributes.is_dematbox_authorized')
+              %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
+            %tr
+              %th Stamp - Nom
+              %td
+                = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }
+            %tr
+              %th Stamp - Fond présent ?
+              %td= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled

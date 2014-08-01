@@ -69,11 +69,15 @@ private
       :vat_account,
       :anomaly_account,
       :instructions,
+      :position,
       :is_default,
       :client_ids
     )
     attributes[:client_ids] = [] if attributes[:client_ids] == 'empty'
-    if @journal && @journal.is_expense_categories_editable
+    if current_user.is_admin
+      attributes.merge!(params.require(:account_book_type).permit(:is_expense_categories_editable))
+    end
+    if (@journal && @journal.is_expense_categories_editable) || current_user.is_admin
       attributes.merge!(params.require(:account_book_type).permit(:expense_categories_attributes))
     end
     attributes

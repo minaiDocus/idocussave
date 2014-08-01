@@ -5,7 +5,7 @@
         .row-fluid
           .span12
             .pull-left
-              %h3 Nouvelle adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+              %h3 Nouvelle adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'addresses')}
     .row-fluid
       .span12.box
         = render partial: 'form'

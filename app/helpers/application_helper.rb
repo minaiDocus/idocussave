@@ -85,7 +85,7 @@ module ApplicationHelper
   def label_choice_tag(value)
     link_to(label_ok(value), '#', class: :ok) + link_to(label_not_ok(value), '#', class: :not_ok)
   end
-  
+
   def icon_globe
     content_tag :i, '', class: 'icon-globe'
   end
@@ -171,7 +171,7 @@ module ApplicationHelper
       [t('mongoid.models.user.attributes.knowings_visibility_options.restricted'), KnowingsApi::RESTRICTED],
       [t('mongoid.models.user.attributes.knowings_visibility_options.visible'),    KnowingsApi::VISIBLE]
     ]
-  end 
+  end
 
   def knowings_visibility(value)
     if value == KnowingsApi::PRIVATE
@@ -191,5 +191,41 @@ module ApplicationHelper
       options << [value.capitalize, key]
     end
     options_for_select(options, default)
+  end
+
+  def period_type(number)
+    if number == 1
+      'mensuel'
+    elsif number == 3
+      'trimestriel'
+    else
+      ''
+    end
+  end
+
+  def csv_outputter_options
+    [
+      [t('mongoid.models.csv_outputter.attributes.type'),:type],
+      [t('mongoid.models.csv_outputter.attributes.client_code'),:client_code],
+      [t('mongoid.models.csv_outputter.attributes.journal'),:journal],
+      [t('mongoid.models.csv_outputter.attributes.period'),:period],
+      [t('mongoid.models.csv_outputter.attributes.piece_number'),:piece_number],
+      [t('mongoid.models.csv_outputter.attributes.original_piece_number'),:original_piece_number],
+      [t('mongoid.models.csv_outputter.attributes.date'),:date],
+      [t('mongoid.models.csv_outputter.attributes.period_date'),:period_date],
+      [t('mongoid.models.csv_outputter.attributes.deadline_date'),:deadline_date],
+      [t('mongoid.models.csv_outputter.attributes.title'),:title],
+      [t('mongoid.models.csv_outputter.attributes.piece'),:piece],
+      [t('mongoid.models.csv_outputter.attributes.number'),:number],
+      [t('mongoid.models.csv_outputter.attributes.original_amount'),:original_amount],
+      [t('mongoid.models.csv_outputter.attributes.currency'),:currency],
+      [t('mongoid.models.csv_outputter.attributes.conversion_rate'),:conversion_rate],
+      [t('mongoid.models.csv_outputter.attributes.credit'),:credit],
+      [t('mongoid.models.csv_outputter.attributes.debit'),:debit],
+      [t('mongoid.models.csv_outputter.attributes.lettering'),:lettering],
+      [t('mongoid.models.csv_outputter.attributes.piece_url'),:piece_url],
+      [t('mongoid.models.csv_outputter.attributes.remark'),:remark],
+      [t('mongoid.models.csv_outputter.attributes.third_party'),:third_party]
+    ]
   end
 end

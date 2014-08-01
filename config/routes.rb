@@ -35,12 +35,30 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     resource :organization do
-      resource :knowings
+      resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
+        get  :select_propagation_options, on: :member
+        post :propagate,                  on: :member
+      end
+      resource :knowings, only: %w(new create edit update)
+      resources :reminder_emails, except: :index do
+        post 'deliver', on: :member
+      end
+      resource :file_sending_kit, only: %w(edit update) do
+        get  'select',          on: :member
+        post 'generate',        on: :member
+        get  'folders',         on: :member
+        get  'mails',           on: :member
+        get  'customer_labels', on: :member
+        get  'workshop_labels', on: :member
+      end
+      resource :csv_outputter, only: %w(edit update), controller: 'organization_csv_outputters' do
+        get  'select_propagation_options', on: :member
+        post 'propagate',                  on: :member
+      end
       resources :groups
       resources :collaborators do
-        resource :rights
-        put 'stop_using',     on: :member
-        put 'restart_using',  on: :member
+        resource :rights, only: %w(edit update)
+        resource :file_storage_authorizations, only: %w(edit update)
       end
       resources :customers do
         get 'search_by_code',        on: :collection
@@ -50,7 +68,7 @@ Idocus::Application.routes.draw do
         resources :addresses, controller: 'organization_addresses'
         resource :accounting_plan do
           member do
-            put :import
+            put    :import
             delete :destroy_providers
             delete :destroy_customers
           end
@@ -61,12 +79,15 @@ Idocus::Application.routes.draw do
         end
         resources :bank_accounts, module: 'organization'
         resources :exercices
+        resource :csv_outputter, only: %w(edit update)
+        resource :file_storage_authorizations, only: %w(edit update)
       end
       resources :journals do
-        put  'update_clients', :on => :member
+        put 'update_clients', on: :member
       end
       resources :subscriptions
-      resource :default_subscription, controller: 'organization_subscriptions'
+      resource :default_subscription, only: %w(show edit update)
+      resource :organization_subscription, only: %w(edit update)
       resource :ibiza, controller: 'ibiza' do
         get 'refresh_users_cache', on: :member
       end
@@ -81,17 +102,17 @@ Idocus::Application.routes.draw do
     end
 
     resources :documents do
-      get 'packs', :on => :collection
-      get 'archive', :on => :member
-      post 'sync_with_external_file_storage', :on => :collection
+      get  'packs',                           on: :collection
+      get  'archive',                         on: :member
+      post 'sync_with_external_file_storage', on: :collection
     end
 
     namespace :documents do
       resource :sharings do
-        post 'destroy_multiple', :on => :collection
+        post 'destroy_multiple', on: :collection
       end
       resource :tags do
-        post 'update_multiple', :on => :collection
+        post 'update_multiple', on: :collection
       end
       resource :upload
     end
@@ -104,30 +125,30 @@ Idocus::Application.routes.draw do
     end
 
     resource :profile do
-      post   'share_documents_with',   :on => :collection
-      delete 'unshare_documents_with', :on => :collection
+      post   'share_documents_with',   on: :collection
+      delete 'unshare_documents_with', on: :collection
     end
     resources :addresses
     resource :dropbox do
-      get 'authorize_url', :on => :member
-      get 'callback', :on => :member
+      get 'authorize_url', on: :member
+      get 'callback',      on: :member
     end
     resource :box do
-      get 'authorize_url', :on => :member
-      get 'callback', :on => :member
+      get 'authorize_url', on: :member
+      get 'callback',      on: :member
     end
     resource :google_doc do
-      get 'authorize_url', :on => :member
-      get 'callback', :on => :member
+      get 'authorize_url', on: :member
+      get 'callback',      on: :member
     end
     resource :external_file_storage do
-      post :use, :on => :member
-      post :update_path_settings, :on => :member
+      post :use,                  on: :member
+      post :update_path_settings, on: :member
     end
     resource :ftp do
-      post :configure, :on => :member
+      post :configure, on: :member
     end
-    resource :paypal, :only => [] do
+    resource :paypal, only: [] do
       member do
         post :success
         get :success
@@ -135,17 +156,17 @@ Idocus::Application.routes.draw do
         post :notify
       end
     end
-    resource :cmcic, :only => [] do
+    resource :cmcic, only: [] do
       member do
         post :callback
         get :success
         get :cancel
       end
-      end
+    end
     resource :payment do
-      post 'mode', :on => :member
-      get 'use_debit_mandate', :on => :member
-      get 'credit', :on => :member
+      post 'mode',             on: :member
+      get 'use_debit_mandate', on: :member
+      get 'credit',            on: :member
     end
     resource :debit_mandate do
       get 'return', :on => :member
@@ -157,10 +178,10 @@ Idocus::Application.routes.draw do
     resource :dematbox
 
     resources :retrievers, as: :fiduceo_retrievers do
-      get  'list',                 :on => :collection
-      post 'fetch',                :on => :member
-      get  'wait_for_user_action', :on => :member
-      put  'update_transaction',   :on => :member
+      get  'list',                 on: :collection
+      post 'fetch',                on: :member
+      get  'wait_for_user_action', on: :member
+      put  'update_transaction',   on: :member
     end
     resources :provider_wishes, as: :fiduceo_provider_wishes
     resources :retriever_transactions
@@ -198,55 +219,22 @@ Idocus::Application.routes.draw do
   namespace :tunnel do
     resource :order do
       member do
-        get :address_choice
+        get  :address_choice
         post :option_choice
-        get :summary
+        get  :summary
         post :pay
       end
     end
-
     resources :addresses
   end
 
   namespace :admin do
     root :to => "admin#index"
     resources :users, except: :destroy do
-      get 'search_by_code',                    on: :collection
+      get  'search_by_code',                   on: :collection
       post 'send_reset_password_instructions', on: :member
-      resources :addresses do
-        get  'edit_multiple',   on: :collection
-        post 'update_multiple', on: :collection
-      end
-      resources :account_book_types, only: :index
-      resource :scan_subscription
-      resource :csv_outputter
     end
-    resources :organizations do
-      get  'select_propagation_options', on: :member
-      post 'propagate',                  on: :member
-      resources :groups
-      resources :journals, as: :account_book_types, controller: 'organization_journals'
-      resources :reminder_emails do
-        get  'preview',         on: :member
-        get  'deliver',         on: :member
-        get  'edit_multiple',   on: :collection
-        post 'update_multiple', on: :collection
-      end
-      resource :file_sending_kit do
-        get  'select',          on: :member
-        post 'generate',        on: :member
-        get  'folders',         on: :member
-        get  'mails',           on: :member
-        get  'customer_labels', on: :member
-        get  'workshop_labels', on: :member
-      end
-      resource :ibiza, controller: 'ibiza'
-      resource :subscription, controller: 'organization_subscriptions'
-      resource :csv_outputter, controller: 'organization_csv_outputters' do
-        get 'select_propagation_options', on: :collection
-        post 'propagate', on: :collection
-      end
-    end
+    resources :organizations
     resources :invoices do
       get  'archive',     on: :collection
       post 'debit_order', on: :collection
@@ -258,7 +246,7 @@ Idocus::Application.routes.draw do
     resources :product_groups
     resource :dropbox do
       get 'authorize_url', on: :member
-      get 'callback', on: :member
+      get 'callback',      on: :member
     end
     namespace :log do
       resources :visits
@@ -290,6 +278,6 @@ Idocus::Application.routes.draw do
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
 
   get "/preview/(:id)", controller: :homepage, action: :preview
-  
+
   match '*a', :to => 'errors#routing'
 end

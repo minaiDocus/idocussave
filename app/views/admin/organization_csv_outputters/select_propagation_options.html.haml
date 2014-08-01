@@ -1,9 +1,0 @@
-= form_tag propagate_admin_organization_csv_outputter_path(@organization), method: :post, class: 'form form-horizontal margin0' do
-  .modal-body
-    %table.table.table-striped.table-condensed
-      - @customers.each do |customer|
-        %tr
-          %td= check_box_tag 'customers[]', customer.id, false, id: "customer_#{customer.id}"
-          %td= label_tag "customer_#{customer.id}", customer.info
-  .modal-footer
-    = submit_tag 'Propager', class: 'btn'

@@ -1,0 +1,8 @@
+#csv_outputters.edit
+  .row-fluid
+    .span12.box
+      %h3 Edition du format de sortie CSV du client: #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'csv_outputter')}
+
+  .row-fluid
+    .span12.box
+      = render partial: 'form'

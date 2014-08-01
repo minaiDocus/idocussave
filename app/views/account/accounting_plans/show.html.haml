@@ -1,7 +1,7 @@
 #accounting_plan
   .row-fluid
     .span12.box
-      %h3 Plan comptable de l'utilisateur : #{link_to @customer.code, account_organization_customer_path(@customer)}
+      %h3 Plan comptable de l'utilisateur : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'others')}
 
   .row-fluid
     .span6.box

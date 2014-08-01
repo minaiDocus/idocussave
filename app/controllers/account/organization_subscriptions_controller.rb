@@ -1,34 +1,55 @@
-# -*- encoding : UTF-8 -*-
+﻿# -*- encoding : UTF-8 -*-
 class Account::OrganizationSubscriptionsController < Account::OrganizationController
-  before_filter :load_subscription, :load_product
-
-  def show
-  end
+  before_filter :verify_rights
+  before_filter :load_organization
 
   def edit
-    @options = @subscription.product_option_orders.map { |option| option.to_a }
+    @subscription = @organization.find_or_create_subscription
+    @products     = Product.subscribable
+    @options      = @subscription.product_option_orders.entries
   end
 
   def update
+    @subscription = @organization.find_or_create_subscription
     if @subscription.update_attributes(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_default_subscription_path
+      redirect_to account_organization_path(tab: 'subscription')
     else
-      render action: :'edit'
+      render 'edit'
     end
   end
 
 private
 
+  def verify_rights
+    unless current_user.is_admin
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path
+    end
+  end
+
   def scan_subscription_params
-    params.require(:scan_subscription).permit(:period_duration, :product)
-  end
-
-  def load_subscription
-    @subscription = @user.find_or_create_scan_subscription
-  end
-
-  def load_product
-    @products = Product.subscribable
+    params.require(:scan_subscription).permit(
+      :max_sheets_authorized,
+      :unit_price_of_excess_sheet,
+      :max_upload_pages_authorized,
+      :quantity_of_a_lot_of_upload,
+      :price_of_a_lot_of_upload,
+      :max_dematbox_scan_pages_authorized,
+      :quantity_of_a_lot_of_dematbox_scan,
+      :price_of_a_lot_of_dematbox_scan,
+      :max_preseizure_pieces_authorized,
+      :unit_price_of_excess_preseizure,
+      :max_expense_pieces_authorized,
+      :unit_price_of_excess_expense,
+      :max_paperclips_authorized,
+      :unit_price_of_excess_paperclips,
+      :max_oversized_authorized,
+      :unit_price_of_excess_oversized,
+      :payment_type,
+      :end_in,
+      :period_duration,
+      :product,
+      :is_to_spreading)
   end
 end

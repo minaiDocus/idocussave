@@ -3,7 +3,7 @@
   = f.input :company, label: 'Société'
   = f.input :first_name, label: 'Prénom'
   = f.input :last_name, label: 'Nom'
-  = f.input :email, label: 'Email'
+  = f.input :email, label: 'Email', hint: "Correspond à l'identifiant de connexion de votre collaborateur"
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn'
     - if action_name.in?(%w(new create))

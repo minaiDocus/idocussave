@@ -1,0 +1,49 @@
+- if user.active
+  - external_file_storage = user.find_or_create_external_file_storage.reload
+  %table.table.table-striped.table-condensed
+    %thead
+      %tr
+        %th Service
+        %th Autorisé ?
+        %th Configuré ?
+        %th Utilisé ?
+        %th Format des fichiers à livrer
+        %th Chemin de livraison
+    %tbody
+      %tr
+        %th Dropbox Extended
+        %td= icon_tag user.is_dropbox_extended_authorized
+        %td
+          = icon_tag(DropboxExtended.get_session.authorized?)
+          = link_to "#{DropboxExtended.get_session.authorized? ? 're' : ''}configurer", authorize_url_admin_dropbox_path + "?user_id=#{user.id}", class: 'btn btn-mini'
+        %td
+        %td= file_type_to_deliver user.file_type_to_deliver
+        %td= user.dropbox_delivery_folder
+      %tr
+        %th Dropbox
+        %td= icon_tag external_file_storage.is_dropbox_basic_authorized?
+        %td= icon_tag external_file_storage.dropbox_basic.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
+        %td= file_type_to_deliver external_file_storage.dropbox_basic.file_type_to_deliver
+        %td= external_file_storage.dropbox_basic.path
+      %tr
+        %th Google Drive
+        %td= icon_tag external_file_storage.is_google_docs_authorized?
+        %td= icon_tag external_file_storage.google_doc.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_GOOGLE_DOCS)
+        %td= file_type_to_deliver external_file_storage.google_doc.file_type_to_deliver
+        %td= external_file_storage.google_doc.path
+      %tr
+        %th FTP
+        %td= icon_tag external_file_storage.is_ftp_authorized?
+        %td= icon_tag external_file_storage.ftp.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_FTP)
+        %td= file_type_to_deliver external_file_storage.ftp.file_type_to_deliver
+        %td= external_file_storage.ftp.path
+      %tr
+        %th Box
+        %td= icon_tag external_file_storage.is_box_authorized?
+        %td= icon_tag external_file_storage.box.is_configured?
+        %td= icon_tag external_file_storage.is_used?(ExternalFileStorage::F_BOX)
+        %td= file_type_to_deliver external_file_storage.box.file_type_to_deliver
+        %td= external_file_storage.box.path

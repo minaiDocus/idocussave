@@ -4,7 +4,7 @@ class Scan::Subscription < Subscription
 
   has_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   has_many :documents, class_name: "Scan::Document", inverse_of: :subscription
-  
+
   attr_accessor :is_to_spreading, :update_period, :options
 
   # quantité limite
@@ -76,7 +76,7 @@ class Scan::Subscription < Subscription
       period
     end
   end
-  
+
   def remove_not_reusable_options
     product_option_orders.each { |e| e.destroy if e.duration == 1 }
     save

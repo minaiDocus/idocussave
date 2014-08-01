@@ -1,16 +1,16 @@
-#accounting_plan
+#accounting_plan.edit
   .row-fluid
     .span12.box
-      %h3 Edition des #{link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer)} du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+      %h3 Edition des #{link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer)} du client : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'others')}
   .row-fluid
     .span12.box
-      = simple_nested_form_for @accounting_plan, url: update_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@customer), html: { class: 'form form-horizontal margin0bottom' }, wrapper: false do |f|
+      = simple_nested_form_for @accounting_plan, url: update_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
         = f.fields_for :vat_accounts do |vat_account|
           = vat_account.link_to_remove icon_destroy, class: 'btn btn-mini'
           = vat_account.input :code, label: t('mongoid.models.vat_account.attributes.code')
           = vat_account.input :nature, label: t('mongoid.models.vat_account.attributes.nature')
           = vat_account.input :account_number, label: t('mongoid.models.vat_account.attributes.account_number')
         = f.link_to_add 'Ajouter un compte de TVA', :vat_accounts, class: 'btn margin2bottom'
-        %br
-        = f.submit t('actions.submit'), class: 'btn'
-        = link_to t('actions.cancel'), account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'

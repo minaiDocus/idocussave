@@ -6,11 +6,29 @@
           %h3= @customer.info
 
       .row-fluid
-        .span6
-          .row-fluid
-            .span12.box
-              %h3.aligncenter Information
-              %table.table.table-bordered.table-striped.margin0bottom
+        .span12.box
+          %ul.nav.nav-tabs
+            %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
+              %a{ href: '#information', data: { toggle: 'tab' } } Information
+            %li{ class: ('active' if params[:tab] == 'addresses') }
+              %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
+            %li{ class: ('active' if params[:tab] == 'subscription') }
+              %a{ href: '#subscription', data: { toggle: 'tab' } } Abonnement
+            %li{ class: ('active' if params[:tab] == 'period_options') }
+              %a{ href: '#period_options', data: { toggle: 'tab' } } Options des périodes
+            %li{ class: ('active' if params[:tab] == 'journals') }
+              %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
+            %li{ class: ('active' if params[:tab] == 'others') }
+              %a{ href: '#others', data: { toggle: 'tab' } } Divers
+            - if current_user.is_admin
+              %li{ class: ('active' if params[:tab] == 'csv_outputter') }
+                %a{ href: '#csv_outputter', data: { toggle: 'tab' } } Format de sortie CSV
+              %li{ class: ('active' if params[:tab] == 'file_storages') }
+                %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
+
+          .tab-content
+            #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+              %table.table.table-striped.table-condensed
                 %thead
                   %tbody
                     %tr
@@ -37,40 +55,10 @@
                     %tr
                       %th= t('mongoid.models.user.attributes.is_centralized')
                       %td= @customer.is_centralized ? t('yes_value') : t('no_value')
-              .row-fluid.margin1top
+              .row-fluid
                 .span12
-                  = link_to t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn pull-right'
-
-          .row-fluid
-            .span12.box
-              %h3.aligncenter Abonnement
-              %hr
-              %h4.aligncenter.margin1bottom
-                Options des périodes
-              %table.table.table-striped.table-condensed.table-bordered
-                %tbody
-                  %tr
-                    %th= t('mongoid.models.user.attributes.authd_prev_period')
-                    %td= @customer.authd_prev_period
-                  %tr
-                    %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
-                    %td= @customer.auth_prev_period_until_day
-              .row-fluid.margin1top
-                .span12
-                  = link_to t('actions.edit'), edit_period_options_account_organization_customer_path(@customer), class: 'btn pull-right'
-              %hr
-              %h4.aligncenter.margin1bottom
-                Configuration actuelle
-                = @subscription.period_duration == 1 ? '(Périodicité mensuelle)' : '(Périodicité trimestrielle)'
-              = render partial: 'options'
-              .row-fluid.margin1top
-                .span12
-                  = link_to t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn pull-right'
-
-        .span6
-          .row-fluid
-            .span12.box
-              %h3.aligncenter Gestion des adresses
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn btn-primary pull-right'
+            #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
               .row-fluid.margin1bottom
                 .span6
                   = render partial: 'account/addresses/address', locals: { address: @customer.billing_address,  single: true, is_for_billing: true }
@@ -78,16 +66,37 @@
                   = render partial: 'account/addresses/address', locals: { address: @customer.shipping_address, single: true, is_for_billing: false }
               .row-fluid
                 .span12.aligncenter
-                  = link_to 'Configurer', account_organization_customer_addresses_path(@customer), class: 'btn'
-          .row-fluid
-            .span12.box
-              %h3.aligncenter Journaux comptable
-              %table.table.table-striped.table-bordered.table-condensed.margin1top.margin0bottom
+                  = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@customer), class: 'btn btn-primary'
+            #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
+              %h4= @subscription.period_duration == 1 ? 'Périodicité mensuelle' : 'Périodicité trimestrielle'
+              %br
+              = render partial: 'options'
+              .row-fluid.margin1top
+                .span12
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn btn-primary pull-right'
+            #period_options.tab-pane{ class: ('active' if params[:tab] == 'period_options') }
+              %table.table.table-striped.table-condensed
+                %tbody
+                  %tr
+                    %th= t('mongoid.models.user.attributes.authd_prev_period')
+                    %td= @customer.authd_prev_period
+                  %tr
+                    %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
+                    %td= @customer.auth_prev_period_until_day
+                  - if current_user.is_admin
+                    %tr
+                      %th= t('mongoid.models.user.attributes.auth_prev_period_until_month')
+                      %td= @customer.auth_prev_period_until_month
+              .row-fluid
+                .span12
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@customer), class: 'btn btn-primary pull-right'
+            #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
+              %table.table.table-striped.table-bordered.table-condensed.margin1top
                 %thead
                   %tr
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
-                    %th{ colspan: 3 } Traitement Pré-Saisie ou NDF
+                    %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
                   %tr
                     %th Type
                     %th N°
@@ -101,11 +110,9 @@
                       %td= journal.account_number
                       %td= journal.charge_account
               - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
-                .aligncenter.margin1top
-                  = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@customer), class: 'btn'
-          .row-fluid
-            .span12.box
-              %h3.aligncenter.margin1bottom Divers
+                .aligncenter
+                  = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@customer), class: 'btn btn-primary'
+            #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
               .row-fluid
                 .span12.aligncenter
                   - if @organization.ibiza.try(:is_configured?)
@@ -120,8 +127,16 @@
                         - users = []
                         - hint = 'Erreur'
                       = f.input :ibiza_id,   label: t('mongoid.models.user.attributes.ibiza_id'), collection: users, input_html: { class: 'margin0bottom' }, hint: hint
-                      = f.submit t('actions.submit'), class: 'btn'
+                      = f.submit t('actions.submit'), class: 'btn btn-primary'
                   - if @organization.ibiza.try(:token).blank?
                     = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
                     = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'
                     = link_to 'Exercices comptables', account_organization_customer_exercices_path(@customer), class: 'btn'
+            - if current_user.is_admin
+              #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }
+                .aligncenter
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@customer), class: 'btn btn-primary'
+              #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
+                = render partial: 'account/customers/file_storages', locals: { user: @customer }
+                .alignright
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@customer), class: 'btn btn-primary'

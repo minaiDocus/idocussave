@@ -1,6 +1,8 @@
 ﻿.pannel.margin1top.margin1bottom
   %h4= product_group.title + " " + product_group.description
-  - product_group.product_subgroups.where(:position.lt => 1000).by_position.each do |product_subgroup|
+  - product_subgroups = product_group.product_subgroups
+  - product_subgroups = product_subgroups.where(:position.lt => 1000) unless current_user.is_admin
+  - product_subgroups.by_position.each do |product_subgroup|
     = render partial: 'account/subscriptions/product_group', locals: { product_group: product_subgroup, product: product }
   - if product_group.product_options.any?
     %table.table.table-condensed.table-striped.margin1top.margin0bottom{ id: product_group.id, class: ("depend_on_#{product_group.product_require.id}" if product_group.product_require) }

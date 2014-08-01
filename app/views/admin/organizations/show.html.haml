@@ -4,11 +4,7 @@
       .pull-left
         %h2 Organisation #{'(test)' if @organization.is_test} : #{@organization.name}
       .pull-right
-        .pull-right.margin1left
-          = icon_link_to edit_admin_organization_path(@organization), { icon: 'edit' }, { class: 'btn' }
-        .btn-group.pull-right
-          = link_to 'CSV', '#edit_csv_outputter', data: { toggle: :modal }, class: 'btn btn-primary'
-          = link_to icon_globe, '#propagate_csv_outputter', data: { toggle: :modal }, class: 'btn btn-primary'
+        = icon_link_to edit_admin_organization_path(@organization), { icon: 'edit' }, { class: 'btn' }
       %br
   .row-fluid
     .span6
@@ -42,7 +38,6 @@
           %tr
             %th= t('mongoid.models.organization.attributes.centralized_customers_count')
             %td= @organization.customers.centralized.count
-    .span6
       %table.table.table-condensed.table-bordered.table-striped
         %thead
           %tr
@@ -52,71 +47,3 @@
           %tr
             %th= t('mongoid.models.organization.attributes.is_detail_authorized')
             %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
-      %table.table.table-condensed.table-bordered.table-striped
-        %thead
-          %tr
-            %th{ colspan: 2 }
-              %h3.pull-left Options des périodes
-              = link_to icon_globe, '#propagate_period_options', 'data-toggle' => 'modal', class: 'btn btn-small pull-right'
-        %tbody
-          %tr
-            %th= t('mongoid.models.organization.attributes.authd_prev_period')
-            %td= @organization.authd_prev_period
-          %tr
-            %th= t('mongoid.models.organization.attributes.auth_prev_period_until_day')
-            %td= @organization.auth_prev_period_until_day
-          %tr
-            %th= t('mongoid.models.organization.attributes.auth_prev_period_until_month')
-            %td= @organization.auth_prev_period_until_month
-      %table.table.table-condensed.table-bordered.table-striped
-        %thead
-          %tr
-            %th{ colspan: 2 }
-              %h3.pull-left Charte de nommage des fichiers
-        %tbody
-          %tr
-            %th= t('mongoid.models.organization.attributes.file_naming_policy')
-            %td= @organization.file_naming_policy
-          %tr
-            %th= t('mongoid.models.organization.attributes.is_file_naming_policy_active')
-            %td= @organization.is_file_naming_policy_active ? t('yes_value') : t('no_value')
-
-  .row-fluid
-    .span6
-      %table.table.table-condensed.table-bordered.table-striped
-        %thead
-          %tr
-            %th{ colspan: 5 }
-              .pull-left
-                %h3 Listes des groupes
-              .pull-right
-                = link_to t('actions.new'), new_admin_organization_group_path(@organization), class: 'btn btn-primary btn-small'
-          %tr
-            %th= t('mongoid.models.common.attributes.created_at')
-            %th= t('mongoid.models.organization.attributes.name')
-            %th= t('mongoid.models.organization.attributes.collaborators_count')
-            %th= t('mongoid.models.organization.attributes.customers_count')
-            %th.alignright= t('actions.name')
-        %tbody
-          - @organization.groups.asc(:name).each do |group|
-            %tr
-              %td= l(group.created_at)
-              %td= link_to group.name, admin_organization_group_path(@organization, group)
-              %td= group.collaborators.count
-              %td= group.customers.count
-              %td.alignright
-                = icon_link_to edit_admin_organization_group_path(@organization, group), { icon: 'edit' }, { class: 'btn btn-mini' }
-                = icon_link_to admin_organization_group_path(@organization, group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: 'Etês vous sûr ?' } }
-    .span6
-      .row-fluid
-        #scan_subscription.span12
-      .row-fluid
-        #reminder_emails.span12
-      .row-fluid
-        #file_sending_kit.span12
-      .row-fluid
-        #ibiza_options.span12
-      .row-fluid
-        #account_book_types.span12
-
-= render partial: 'modals'

@@ -1,4 +1,4 @@
-= simple_nested_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal account_book_type margin0' } do |f|
+= simple_nested_form_for @journal, url: journal_form_url(@journal), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :name
   = f.input :pseudonym
   = f.input :description
@@ -10,6 +10,8 @@
   = f.input :charge_account
   = f.input :vat_account
   = f.input :anomaly_account
+  - if current_user.is_admin
+    = f.input :is_expense_categories_editable, as: :boolean
   - if @journal.persisted? && @journal.is_expense_categories_editable
     .control-group
       %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
@@ -21,7 +23,8 @@
             = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
         = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
   = f.input :instructions, as: :text, input_html: { maxlength: 400 }
+  = f.input :position, as: :integer
   = f.input :is_default, as: :boolean
-  .form-actions
-    = f.submit t('actions.submit'), class: 'btn'
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), account_organization_journals_path, class: 'btn'

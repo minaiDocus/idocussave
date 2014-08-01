@@ -52,14 +52,12 @@ class Organization
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label
-  has_one    :csv_outputter, autosave: true
+  has_one    :csv_outputter
   has_one    :knowings
 
   embeds_many :addresses, as: :locatable
 
-  accepts_nested_attributes_for :addresses,       allow_destroy: true
-  accepts_nested_attributes_for :reminder_emails, allow_destroy: true
-  accepts_nested_attributes_for :csv_outputter,   allow_destroy: true
+  accepts_nested_attributes_for :addresses, allow_destroy: true
 
   scope :not_test, where: { is_test: false }
 

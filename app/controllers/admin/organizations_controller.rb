@@ -43,16 +43,6 @@ class Admin::OrganizationsController < Admin::AdminController
     redirect_to admin_organizations_path
   end
 
-  def select_propagation_options
-    @customers = @organization.customers.active.asc(:code)
-  end
-
-  def propagate
-    @organization.copy_to_users(params[:customers])
-    flash[:notice] = 'Options des périodes, propagés avec succès.'
-    redirect_to admin_organization_path(@organization)
-  end
-
 private
 
   def layout_by_action

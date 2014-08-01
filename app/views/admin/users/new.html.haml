@@ -6,8 +6,8 @@
       .span12
         %h2 Informations
         = f.input :email, label: 'Email'
-        = f.input :password, label: 'Mots de passe'
-        = f.input :password_confirmation, label: 'Comfirmer le mots de passe'
+        = f.input :password, label: 'Mot de passe'
+        = f.input :password_confirmation, label: 'Comfirmer le mot de passe'
         = f.input :is_admin, label: 'Est admin ?', as: 'boolean'
         = f.input :is_prescriber, label: 'Est prescripteur ?', as: 'boolean'
         = f.input :is_dropbox_extended_authorized, label: 'Autoriser Dropbox Ex. ?', as: 'boolean'
@@ -17,7 +17,7 @@
         = f.input :knowings_code
         = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
         = f.input :company, label: 'Société'
-        = f.input :organization_id, lbale: t('mongoid.models.user.attributes.organization'), collection: Organization.asc(:name), label_method: :name, value_method: :id, include_blank: false
+        = f.input :organization_id, label: t('mongoid.models.user.attributes.organization'), collection: Organization.asc(:name), label_method: :name, value_method: :id, include_blank: false
     .row-fluid
       .form-actions
         = f.submit t('actions.submit'), class: 'btn'

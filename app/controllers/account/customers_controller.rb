@@ -56,7 +56,7 @@ class Account::CustomersController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de modifier'
     end
-    redirect_to account_organization_customer_path(@customer)
+    redirect_to account_organization_customer_path(@customer, tab: 'others')
   end
 
   def edit_period_options
@@ -65,7 +65,7 @@ class Account::CustomersController < Account::OrganizationController
   def update_period_options
     if @customer.update_attributes(period_options_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@customer)
+      redirect_to account_organization_customer_path(@customer, tab: 'period_options')
     else
       render 'edit_period_options'
     end
@@ -108,15 +108,24 @@ private
                                  :first_name,
                                  :last_name,
                                  :email,
-                                 :is_centralized,
                                  :group_ids,
                                  :knowings_code,
                                  :knowings_visibility)
   end
 
   def period_options_params
-    params.require(:user).permit(:authd_prev_period,
-                                 :auth_prev_period_until_day)
+    if current_user.is_admin
+      params.require(:user).permit(
+        :authd_prev_period,
+        :auth_prev_period_until_day,
+        :auth_prev_period_until_month
+      )
+    else
+      params.require(:user).permit(
+        :authd_prev_period,
+        :auth_prev_period_until_day
+      )
+    end
   end
 
   def load_customer

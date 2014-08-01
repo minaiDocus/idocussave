@@ -1,41 +1,42 @@
-.box
-  .row-fluid
-    .span12
-      %h2 Edition
-      %br
-      = simple_nested_form_for @organization, url: account_organization_path, html: { class: 'form form-horizontal' } do |f|
-        %fieldset
-          %legend Informations
-          = f.input :name, label: t('mongoid.models.organization.attributes.name')
-          = f.input :description, as: :text, label: t('mongoid.models.organization.attributes.description')
-        %fieldset
-          %legend Adresses
-          .row-fluid.padding2top
-            = f.fields_for :addresses do |address|
-              .span6
-                = address.input :first_name,   label: t('mongoid.models.address.attributes.first_name')
-                = address.input :last_name,    label: t('mongoid.models.address.attributes.last_name')
-                = address.input :company,      label: t('mongoid.models.address.attributes.company')
-                = address.input :address_1,    label: t('mongoid.models.address.attributes.address_1')
-                = address.input :address_2,    label: t('mongoid.models.address.attributes.address_2')
-                = address.input :zip,          label: t('mongoid.models.address.attributes.zip')
-                = address.input :city,         label: t('mongoid.models.address.attributes.city')
-                = address.input :phone,        label: t('mongoid.models.address.attributes.phone')
-                = address.input :phone_mobile, label: t('mongoid.models.address.attributes.phone_mobile')
-                = address.input :is_for_billing, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la facturation ?'
-                = address.input :is_for_shipping, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la livraison ?'
-                .form-actions
-                  = address.link_to_remove 'Supprimer l\'adresse', class: 'btn'
-            = f.link_to_add 'Ajouter une adresse', :addresses, class: 'btn'
-        %hr
-        %fieldset
-          %legend Options des périodes
-          = f.input :authd_prev_period,          as: :integer, input_html: { min: 0 }
-          = f.input :auth_prev_period_until_day, as: :integer, input_html: { min: 0, max: 28 }, hint: '0 à 28'
-        %fieldset
-          %legend Charte de nommage des fichiers
-          = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
-          = f.input :is_file_naming_policy_active, as: 'boolean'
-        .form-actions
-          = f.submit 'Valider', class: 'btn'
-          = link_to 'Annuler', account_organization_path, class: 'btn'
+.row-fluid
+  .span12.box
+    %h3 Edition de l'organisation
+
+.row-fluid
+  .span12.box
+    = simple_nested_form_for @organization, url: account_organization_path, html: { class: 'form form-horizontal margin0' } do |f|
+      %fieldset
+        %legend Informations
+        = f.input :name, label: t('mongoid.models.organization.attributes.name')
+        = f.input :description, as: :text, label: t('mongoid.models.organization.attributes.description')
+      %fieldset
+        %legend Adresses
+        .row-fluid.padding2top
+          = f.fields_for :addresses do |address|
+            .span6
+              = address.input :first_name,   label: t('mongoid.models.address.attributes.first_name')
+              = address.input :last_name,    label: t('mongoid.models.address.attributes.last_name')
+              = address.input :company,      label: t('mongoid.models.address.attributes.company')
+              = address.input :address_1,    label: t('mongoid.models.address.attributes.address_1')
+              = address.input :address_2,    label: t('mongoid.models.address.attributes.address_2')
+              = address.input :zip,          label: t('mongoid.models.address.attributes.zip')
+              = address.input :city,         label: t('mongoid.models.address.attributes.city')
+              = address.input :phone,        label: t('mongoid.models.address.attributes.phone')
+              = address.input :phone_mobile, label: t('mongoid.models.address.attributes.phone_mobile')
+              = address.input :is_for_billing, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la facturation ?'
+              = address.input :is_for_shipping, as: 'boolean', wrapper: :inline_checkbox, label: 'Pour la livraison ?'
+              .form-actions
+                = address.link_to_remove 'Supprimer l\'adresse', class: 'btn'
+          = f.link_to_add 'Ajouter une adresse', :addresses, class: 'btn'
+      %hr
+      %fieldset
+        %legend Options des périodes
+        = f.input :authd_prev_period,          as: :integer, input_html: { min: 0 }
+        = f.input :auth_prev_period_until_day, as: :integer, input_html: { min: 0, max: 28 }, hint: '0 à 28'
+      %fieldset
+        %legend Charte de nommage des fichiers
+        = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
+        = f.input :is_file_naming_policy_active, as: 'boolean'
+      .form-actions.margin0bottom
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        = link_to t('actions.cancel'), account_organization_path, class: 'btn'

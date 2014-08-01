@@ -3,7 +3,7 @@
     %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
       != link_to 'Mon compte', account_profile_path
     - if current_user.is_prescriber || current_user.is_admin
-      %li{ class: ((controller_name.in?(%w(organizations groups collaborators customers journals subscriptions organization_subscriptions pre_assignments)) || request.path =~ /customers/)  ? 'active' : '') }
+      %li{ class: ((controller_name.in?(%w(organizations organization_period_options reminder_emails file_sending_kits organization_subscriptions organization_csv_outputters file_storage_authorizations groups collaborators customers journals subscriptions default_subscriptions pre_assignments)) || request.path =~ /customers/)  ? 'active' : '') }
         != link_to 'Mon organisation', account_organization_path
     %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
       != link_to 'Mes documents', account_documents_path

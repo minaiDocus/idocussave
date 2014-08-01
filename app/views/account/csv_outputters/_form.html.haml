@@ -1,0 +1,38 @@
+.row-fluid.margin2bottom
+  .span12
+    .pull-left
+      = link_to icon_new + ' Ajouter une entrée', '#', class: 'btn add_field'
+      = link_to icon_destroy + ' Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn remove_all_fields'
+    .pull-right.margin1top
+      %span.well.well-small.margin1right
+        %span.label.label-info %Y
+        \: Année
+      %span.well.well-small.margin1right
+        %span.label.label-info %m
+        \: Mois
+      %span.well.well-small.margin1right
+        %span.label.label-info %d
+        \: Jour
+      %span.well.well-small
+        %span.label.label-info %%
+        \: %
+
+- url = account_organization_csv_outputter_path
+- url = account_organization_customer_csv_outputter_path(@customer) if @customer.present?
+= simple_form_for @csv_outputter, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
+  .row-fluid.margin2bottom
+    .span12.fields
+      %ul.list
+        - @csv_outputter.to_a.each do |part|
+          = render partial: 'account/csv_outputters/field', locals: { part: part }
+  .row-fluid
+    .span12
+      = f.input :directive, as: :hidden
+      = f.input :comma_as_number_separator, as: :boolean
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    - cancel_url = account_organization_path(tab: 'csv_outputter')
+    - cancel_url = account_organization_customer_path(@customer, tab: 'csv_outputter') if @customer.present?
+    = link_to t('actions.cancel'), cancel_url, class: 'btn'
+
+.template.hide= render 'account/csv_outputters/field', locals: { selected: :date }

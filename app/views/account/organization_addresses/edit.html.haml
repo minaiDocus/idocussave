@@ -5,7 +5,7 @@
         .row-fluid
           .span12
             .pull-left
-              %h3 Edition d'adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+              %h3 Edition d'adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'addresses')}
             .pull-right
               = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@customer), class: 'btn btn-primary'
     .row-fluid

@@ -54,10 +54,21 @@ private
   end
 
   def group_params
-    if is_leader?
-      params.require(:group).permit(:name,
-                                    :description,
-                                    :member_tokens)
+    if current_user.is_admin
+      params.require(:group).permit(
+        :name,
+        :description,
+        :dropbox_delivery_folder,
+        :is_dropbox_authorized,
+        :file_type_to_delive,
+        :member_tokens
+      )
+    elsif is_leader?
+      params.require(:group).permit(
+        :name,
+        :description,
+        :member_tokens
+      )
     else
       params.require(:group).permit(:customer_tokens)
     end

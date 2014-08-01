@@ -50,6 +50,7 @@ fr:
         journal: Journal
         accounting_number: Numéro de compte comptable
       user:
+        is_dropbox_extended_authorized: Dropbox Extended autorisé ?
         knowings_code: Code Knowings
         knowings_visibility: Visibilité Knowings
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
@@ -102,3 +103,33 @@ fr:
         start_date: Date de début
         end_date: Date de fin
         is_closed: Fermé ?
+      reminder_email:
+        name: Nom
+        delivery_day: Jour de l'envoi
+        period: Période
+        object: Objet
+        content: Contenu
+      file_sending_kit:
+        title: Titre
+        instruction: Instruction(s)
+        position: Position
+        folders: Chemises
+        mails: Mails
+        customer_labels: Etiquettes clients
+        workshop_labels: Etiquettes ateliers
+        logo_path: Chemin
+        logo_height: Hauteur
+        logo_width: Largeur
+        left_logo_path: Chemin
+        left_logo_height: Hauteur
+        left_logo_width: Largeur
+        right_logo_path: Chemin
+        right_logo_height: Hauteur
+        right_logo_width: Largeur
+      csv_outputter:
+        comma_as_number_separator: Séparer les chiffres par une virgule
+      external_file_storage:
+        is_dropbox_basic_authorized: Dropbox Basic autorisé ?
+        is_google_docs_authorized: Google Drive autorisé ?
+        is_ftp_authorized: FTP autorisé ?
+        is_box_authorized: Box autorisé ?
