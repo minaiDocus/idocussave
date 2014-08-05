@@ -1,7 +1,6 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::OrganizationSubscriptionsController < Account::OrganizationController
   before_filter :verify_rights
-  before_filter :load_organization
 
   def edit
     @subscription = @organization.find_or_create_subscription
@@ -13,7 +12,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     @subscription = @organization.find_or_create_subscription
     if @subscription.update_attributes(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(tab: 'subscription')
+      redirect_to account_organization_path(@organization, tab: 'subscription')
     else
       render 'edit'
     end
@@ -22,9 +21,9 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 private
 
   def verify_rights
-    unless current_user.is_admin
+    unless @user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

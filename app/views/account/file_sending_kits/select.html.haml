@@ -4,7 +4,7 @@
 
 .row-fluid
   .span12.box
-    = form_tag generate_account_organization_file_sending_kit_path, class: 'form form-horizontal margin0' do
+    = form_tag generate_account_organization_file_sending_kit_path(@organization), class: 'form form-horizontal margin0' do
       %table.table.table-striped.table-condensed
         %tr
           %th Sélection
@@ -24,4 +24,4 @@
             = check_box_tag 'one_workshop_labels_page_per_customer', 1, false, type: 'checkbox', class: 'boolean'
       .form-actions.margin0bottom
         = submit_tag t('actions.submit'), class: 'btn btn-primary'
-        = link_to t('actions.cancel'), account_organization_path(tab: 'file_sending_kit'), class: 'btn'
+        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'file_sending_kit'), class: 'btn'

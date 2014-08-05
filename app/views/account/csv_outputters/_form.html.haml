@@ -17,8 +17,8 @@
         %span.label.label-info %%
         \: %
 
-- url = account_organization_csv_outputter_path
-- url = account_organization_customer_csv_outputter_path(@customer) if @customer.present?
+- url = account_organization_csv_outputter_path(@organization)
+- url = account_organization_customer_csv_outputter_path(@organization, @customer) if @customer.present?
 = simple_form_for @csv_outputter, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
   .row-fluid.margin2bottom
     .span12.fields
@@ -31,8 +31,8 @@
       = f.input :comma_as_number_separator, as: :boolean
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - cancel_url = account_organization_path(tab: 'csv_outputter')
-    - cancel_url = account_organization_customer_path(@customer, tab: 'csv_outputter') if @customer.present?
+    - cancel_url = account_organization_path(@organization, tab: 'csv_outputter')
+    - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_outputter') if @customer.present?
     = link_to t('actions.cancel'), cancel_url, class: 'btn'
 
 .template.hide= render 'account/csv_outputters/field', locals: { selected: :date }

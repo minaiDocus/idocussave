@@ -55,9 +55,6 @@
                     %i.icon-th
                   = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
             %tr
-              %th= t('mongoid.models.user.attributes.is_admin')
-              %td.value= check_box_tag 'user[is_admin]', 1, @user.is_admin
-            %tr
               %th= t('mongoid.models.user.attributes.is_prescriber')
               %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber
             %tr

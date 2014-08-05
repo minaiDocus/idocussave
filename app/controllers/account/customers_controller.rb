@@ -31,8 +31,9 @@ class Account::CustomersController < Account::OrganizationController
   def create
     @customer = CreateCustomer.new(@organization, @user, user_params).customer
     if @customer.persisted?
+      WelcomeMailer.welcome_customer(@customer).deliver
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_customer_path(@customer)
+      redirect_to account_organization_customer_path(@organization, @customer)
     else
       render action: 'new'
     end
@@ -44,7 +45,7 @@ class Account::CustomersController < Account::OrganizationController
   def update
     if @customer.update_attributes(user_params)
       flash[:success] = 'Modifié avec succès'
-      redirect_to account_organization_customer_path(@customer)
+      redirect_to account_organization_customer_path(@organization, @customer)
     else
       render action: 'edit'
     end
@@ -56,7 +57,7 @@ class Account::CustomersController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de modifier'
     end
-    redirect_to account_organization_customer_path(@customer, tab: 'others')
+    redirect_to account_organization_customer_path(@organization, @customer, tab: 'others')
   end
 
   def edit_period_options
@@ -65,7 +66,7 @@ class Account::CustomersController < Account::OrganizationController
   def update_period_options
     if @customer.update_attributes(period_options_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@customer, tab: 'period_options')
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'period_options')
     else
       render 'edit_period_options'
     end
@@ -75,7 +76,7 @@ class Account::CustomersController < Account::OrganizationController
     tags = []
     full_info = params[:full_info].present?
     if params[:q].present?
-      users = is_leader? ? @organization.members : @user.customers
+      users = is_leader? ? @organization.customers : @user.customers
       users = users.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
       users.each do |user|
         tags << { id: user.id, name: full_info ? user.info : user.code }
@@ -98,7 +99,7 @@ private
   def verify_rights
     unless can_manage?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
@@ -129,7 +130,7 @@ private
   end
 
   def load_customer
-    @customer = @user.customers.find params[:id]
+    @customer = customers.find params[:id]
   end
 
   def sort_column
@@ -161,7 +162,7 @@ private
   helper_method :user_contains
 
   def search(contains)
-    users = @user.customers
+    users = customers
     users = users.where(:first_name => /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
     users = users.where(:last_name => /#{Regexp.quote(contains[:last_name])}/i) unless contains[:last_name].blank?
     users = users.where(:email => /#{Regexp.quote(contains[:email])}/i) unless contains[:email].blank?

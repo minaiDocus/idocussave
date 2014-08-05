@@ -3,7 +3,7 @@
     %h3 Propager les options des périodes aux clients suivants :
 .row-fluid
   .span12.box
-    = form_tag propagate_account_organization_period_options_path, method: :post, class: 'form form-horizontal margin0bottom' do
+    = form_tag propagate_account_organization_period_options_path(@organization), method: :post, class: 'form form-horizontal margin0bottom' do
       %table.table.table-striped.table-condensed
         - @customers.each do |customer|
           %tr
@@ -11,4 +11,4 @@
             %td= label_tag "customer_#{customer.id}", customer.info
       .form-actions.margin0bottom
         = submit_tag 'Propager', class: 'btn btn-primary'
-        = link_to t('actions.cancel'), account_organization_path(tab: 'period_options'), class: 'btn'
+        = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'period_options'), class: 'btn'

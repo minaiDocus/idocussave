@@ -1,10 +1,10 @@
-= simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path : account_organization_group_path), html: { class: 'form form-horizontal margin0' } do |f|
-  - if is_leader? || current_user.is_admin
+= simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path(@organization) : account_organization_group_path(@organization)), html: { class: 'form form-horizontal margin0' } do |f|
+  - if is_leader?
     %fieldset
       %legend Informations
       = f.input :name, label: t('mongoid.models.group.attributes.name')
       = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
-    - if current_user.is_admin
+    - if @user.is_admin
       %fieldset
         %legend Dropbox Extended
         = f.input :dropbox_delivery_folder, label: t('mongoid.models.group.attributes.dropbox_delivery_folder'), input_html: { class: 'input-xxlarge' }
@@ -41,4 +41,4 @@
           = hidden_field_tag 'group[customer_tokens][]', ''
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
-    = link_to t('actions.cancel'), account_organization_groups_path, class: 'btn'
+    = link_to t('actions.cancel'), account_organization_groups_path(@organization), class: 'btn'

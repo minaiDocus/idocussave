@@ -1,5 +1,5 @@
 .row-fluid
-  - if current_user.is_admin
+  - if @user.is_admin
     .span5
       %h4.aligncenter Feuilles
       %br
@@ -38,7 +38,7 @@
       = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
       = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
   .span7
-    - if current_user.is_admin
+    - if @user.is_admin
       = f.input :payment_type, label: 'Mode de paiement', collection: [["prépayé",Subscription::PREPAYED],["prélèvement",Subscription::DEBIT]], include_blank: false
       = f.input :end_in, label: 'Durrée (mois)', as: :integer
     = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false

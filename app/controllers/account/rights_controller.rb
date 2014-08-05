@@ -9,7 +9,7 @@ class Account::RightsController < Account::OrganizationController
   def update
     @collaborator.update_attributes(collaborator_params)
     flash[:success] = 'Modifié avec succès.'
-    redirect_to account_organization_collaborator_path(@collaborator)
+    redirect_to account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization')
   end
 
 private
@@ -17,7 +17,7 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

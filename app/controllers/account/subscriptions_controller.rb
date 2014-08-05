@@ -10,7 +10,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   def update
     if @subscription.update_attributes(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@customer, tab: 'subscription')
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
     else
       render action: 'edit'
     end
@@ -19,7 +19,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 private
 
   def scan_subscription_params
-    if current_user.is_admin
+    if @user.is_admin
       params.require(:scan_subscription).permit(
         :max_sheets_authorized,
         :unit_price_of_excess_sheet,
@@ -47,7 +47,7 @@ private
   end
 
   def load_customer
-    @customer = @user.customers.find params[:id]
+    @customer = customers.find params[:id]
   end
 
   def load_subscription
@@ -61,7 +61,7 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 end

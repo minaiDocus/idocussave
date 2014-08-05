@@ -31,7 +31,7 @@ class Organization
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
-  validates_presence_of :name, :leader_id
+  validates_presence_of :name, :code
   validates_uniqueness_of :name
   validates_length_of :code, in: 1..4
 
@@ -60,8 +60,6 @@ class Organization
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
   scope :not_test, where: { is_test: false }
-
-  before_save :ensure_leader_is_member
 
   def collaborators
     members.where(is_prescriber: true)
@@ -146,10 +144,6 @@ class Organization
   end
 
 private
-
-  def ensure_leader_is_member
-    members << leader unless members.include?(leader)
-  end
 
   def file_naming_policy_elements
     if file_naming_policy.gsub(/(#{Organization.valid_file_naming_policy_elements.join('|')})/, '').present?

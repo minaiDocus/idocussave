@@ -17,9 +17,9 @@ node :total do
 end
 
 node :description_keys do
-  description_keys(@user.organization.ibiza)
+  description_keys(@organization.ibiza)
 end
 
 node :description_separator do
-  @user.organization.ibiza.try(:description_separator) || Ibiza.fields['description_separator'].options[:default]
+  @organization.ibiza.try(:description_separator) || Ibiza.fields['description_separator'].options[:default]
 end

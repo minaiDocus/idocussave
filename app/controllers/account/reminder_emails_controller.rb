@@ -16,7 +16,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
     @reminder_email.organization = @organization
     if @reminder_email.save
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_path(tab: 'reminder_emails')
+      redirect_to account_organization_path(@organization, tab: 'reminder_emails')
     else
       render 'new'
     end
@@ -28,7 +28,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
   def update
     if @reminder_email.update_attributes(reminder_email_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(tab: 'reminder_emails')
+      redirect_to account_organization_path(@organization, tab: 'reminder_emails')
     else
       render 'edit'
     end
@@ -37,7 +37,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
   def destroy
     @reminder_email.destroy
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_organization_path(tab: 'reminder_emails')
+    redirect_to account_organization_path(@organization, tab: 'reminder_emails')
   end
 
   def deliver
@@ -49,15 +49,15 @@ class Account::ReminderEmailsController < Account::OrganizationController
     else
       flash[:error] = 'Une erreur est survenu lors de la livraison.'
     end
-    redirect_to account_organization_path(tab: 'reminder_emails')
+    redirect_to account_organization_path(@organization, tab: 'reminder_emails')
   end
 
 private
 
   def verify_rights
-    unless current_user.is_admin
+    unless @user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

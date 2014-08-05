@@ -9,7 +9,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   def update
     if @file_sending_kit.update_attributes(file_sending_kit_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(tab: 'file_sending_kit')
+      redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
     else
       render 'edit'
     end
@@ -42,7 +42,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
       if without_shipping_address.count != 0
         flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
         without_shipping_address.each do |client|
-          flash[:error] << "</br><a href='#{admin_user_path(client)}' target='_blank'>#{client.info}</a>"
+          flash[:error] << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
         end
       end
       unless is_logo_present
@@ -52,7 +52,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
         flash[:error] << "Logo droite introuvable.</br>" unless File.file?(File.join([Rails.root,'public',@file_sending_kit.right_logo_path]))
       end
     end
-    redirect_to account_organization_path(tab: 'file_sending_kit')
+    redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
   end
 
   def folders
@@ -74,9 +74,9 @@ class Account::FileSendingKitsController < Account::OrganizationController
 private
 
   def verify_rights
-    unless current_user.is_admin
+    unless @user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

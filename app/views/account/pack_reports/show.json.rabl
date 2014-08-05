@@ -21,7 +21,7 @@ node :delivery_message do |report|
 end
 
 node :download_xml do |report|
-  current_user.is_admin
+  @user.is_admin
 end
 
 attributes :id, :is_delivered, :type, :is_locked

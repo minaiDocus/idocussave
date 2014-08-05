@@ -22,7 +22,7 @@ class Account::VatAccountsController < Account::OrganizationController
 
 private
   def load_customer
-    @customer = @user.customers.find params[:customer_id]
+    @customer = customers.find params[:customer_id]
   end
 
   def load_accounting_plan

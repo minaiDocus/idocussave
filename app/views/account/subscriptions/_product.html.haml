@@ -5,6 +5,6 @@
     %h4= product.title
 
   - product_groups = product.product_groups.where(:product_supergroup_ids.size => 0)
-  - product_groups = product_groups.where(:position.lt => 1000) unless current_user.is_admin
+  - product_groups = product_groups.where(:position.lt => 1000) unless @user.is_admin
   - product_groups.by_position.entries.each do |product_group|
     = render partial: 'account/subscriptions/product_group', locals: { product_group: product_group, product: product }

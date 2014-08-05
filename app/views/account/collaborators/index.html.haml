@@ -6,7 +6,7 @@
           .pull-left
             %h3 Liste des collaborateurs
           .pull-right
-            = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path, class: 'btn btn-primary'
+            = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 
   .row-fluid
     .span9.box
@@ -23,7 +23,7 @@
                 %tr
                   %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
-                    %span.info= link_to collaborator.info, account_organization_collaborator_path(collaborator)
+                    %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

@@ -34,7 +34,7 @@ Idocus::Application.routes.draw do
 
   namespace :account do
     root :to => "account/documents#index"
-    resource :organization do
+    resources :organizations, except: :destroy do
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member
         post :propagate,                  on: :member
@@ -234,7 +234,6 @@ Idocus::Application.routes.draw do
       get  'search_by_code',                   on: :collection
       post 'send_reset_password_instructions', on: :member
     end
-    resources :organizations
     resources :invoices do
       get  'archive',     on: :collection
       post 'debit_order', on: :collection

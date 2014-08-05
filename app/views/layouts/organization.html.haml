@@ -43,21 +43,21 @@
               %ul.nav.nav-list
                 %li.nav-header= @organization.name
                 %li{ class: (controller_name.in?(%w(organizations organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters)) ? 'active' : '') }
-                  = link_to 'Paramètres', account_organization_path
+                  = link_to 'Paramètres', account_organization_path(@organization)
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
-                  = link_to 'Groupes', account_organization_groups_path
+                  = link_to 'Groupes', account_organization_groups_path(@organization)
                 - if is_leader? || @user.can_manage_collaborators?
                   %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
-                    = link_to 'Collaborateurs', account_organization_collaborators_path
+                    = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
                 %li{ class: ((controller_name.in?(%w(customers organization_addresses subscriptions accounting_plans bank_accounts vat_accounts exercices)) || (controller_name == 'file_storage_authorizations' and params[:customer_id].present?)) ? 'active' : '') }
-                  = link_to 'Clients', account_organization_customers_path
+                  = link_to 'Clients', account_organization_customers_path(@organization)
                 - if is_leader? || @user.can_manage_journals?
                   %li{ class: (controller_name == 'journals' ? 'active' : '') }
-                    = link_to 'Journaux comptables', account_organization_journals_path
+                    = link_to 'Journaux comptables', account_organization_journals_path(@organization)
                 %li{ class: (controller_name == 'default_subscriptions' ? 'active' : '') }
-                  = link_to 'Abonnement par défaut', account_organization_default_subscription_path
+                  = link_to 'Abonnement par défaut', account_organization_default_subscription_path(@organization)
                 %li{ class: (controller_name == 'pre_assignments' ? 'active' : '') }
-                  = link_to 'Pré-affectations', account_organization_pre_assignments_path
+                  = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
           .span10
             != yield
       - else

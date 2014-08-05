@@ -578,8 +578,8 @@ fr:
           customers_count: Nombre de clients
           centralized_customers: Clients centralisés
           centralized_customers_count: Nombre de clients centralisés
-          is_detail_authorized: Autoriser les détails ?
-          is_test: Est une organization de test ?
+          is_detail_authorized: Autoriser les détails dans le reporting ?
+          is_test: Organisation de test ?
           status:
             admin: Administrateur
             collaborator: Collaborateur

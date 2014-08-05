@@ -12,10 +12,11 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def create
-    if (@journal = AccountBookType.create journal_params)
+    @journal = AccountBookType.new journal_params
+    if @journal.save
       @organization.account_book_types << @journal
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_journals_path
+      redirect_to account_organization_journals_path(@organization)
     else
       render action: 'new'
     end
@@ -28,7 +29,7 @@ class Account::JournalsController < Account::OrganizationController
     respond_to do |format|
       if @journal.update_attributes(journal_params)
         format.json{ render json: @journal.to_json, status: :ok }
-        format.html{ redirect_to account_organization_journals_path, flash: { success: 'Modifié avec succès.' } }
+        format.html{ redirect_to account_organization_journals_path(@organization), flash: { success: 'Modifié avec succès.' } }
       else
         format.json{ render json: {}, status: :unprocessable_entity }
         format.html{ render action: 'edit' }
@@ -42,7 +43,7 @@ class Account::JournalsController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de supprimer.'
     end
-    redirect_to account_organization_journals_path
+    redirect_to account_organization_journals_path(@organization)
   end
 
 private
@@ -50,7 +51,7 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_journals?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

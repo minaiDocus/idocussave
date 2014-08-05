@@ -1,4 +1,4 @@
-﻿= simple_form_for @customer, url: customer_form_url(@customer), html: { class: 'form form-horizontal margin0' } do |f|
+﻿= simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
   .row-fluid
     .span6
       = f.input :code,                label: t('mongoid.models.user.attributes.code')
@@ -14,6 +14,6 @@
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if params[:action].in?(%w(new create))
-      = link_to t('actions.cancel'), account_organization_customers_path, class: 'btn'
+      = link_to t('actions.cancel'), account_organization_customers_path(@organization), class: 'btn'
     - else
-      = link_to t('actions.cancel'), account_organization_customer_path(@customer.id), class: 'btn'
+      = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer), class: 'btn'

@@ -1,7 +1,7 @@
 #group
   .row-fluid
     .span12.box
-      %h3 Edition du groupe : #{link_to @group, account_organization_group_path(@group)}
+      %h3 Edition du groupe : #{link_to @group, account_organization_group_path(@organization, @group)}
   .row-fluid
     .span12.box
       = render partial: 'form'

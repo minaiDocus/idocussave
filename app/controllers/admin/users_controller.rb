@@ -30,29 +30,19 @@ class Admin::UsersController < Admin::AdminController
     @user.reset_password_token = User.reset_password_token
     @user.reset_password_sent_at = Time.now
     if @user.save
-      if @user.is_prescriber
-        WelcomeMailer.welcome_collaborator(@user).deliver
-      else
-        WelcomeMailer.welcome_customer(@user).deliver
-      end
-      flash[:notice] = "Crée avec succès."
+      flash[:notice] = 'Crée avec succès.'
       redirect_to admin_users_path
     else
-      flash[:error] = "Erreur lors de la création."
-      render :action => "new"
+      flash[:error] = 'Erreur lors de la création.'
+      render action: 'new'
     end
   end
 
   def update
     respond_to do |format|
-      if params[:user][:is_admin]
-        @user.is_admin = params[:user].delete(:is_admin)
-      end
-
       if params[:user][:is_prescriber]
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
-
       if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update_attributes(user_params))
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }

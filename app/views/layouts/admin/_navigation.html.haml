@@ -9,8 +9,6 @@
     %li{ class: ('active' if controller_name == 'admin') }
       = link_to 'Tableau de bord', admin_root_path
     %li= link_to 'D. Jobs', '/admin/delayed_job'
-    %li{ class: ('active' if controller_name.in?(%w(organizations groups))) }
-      = link_to 'Org.', admin_organizations_path
     %li{ class: ('active' if controller_name == 'reporting') }
       = link_to 'Rep.', '/admin/reporting'
     %li{ class: ('active' if controller_name == 'invoices') }

@@ -1,7 +1,7 @@
 ﻿.pannel.margin1top.margin1bottom
   %h4= product_group.title + " " + product_group.description
   - product_subgroups = product_group.product_subgroups
-  - product_subgroups = product_subgroups.where(:position.lt => 1000) unless current_user.is_admin
+  - product_subgroups = product_subgroups.where(:position.lt => 1000) unless @user.is_admin
   - product_subgroups.by_position.each do |product_subgroup|
     = render partial: 'account/subscriptions/product_group', locals: { product_group: product_subgroup, product: product }
   - if product_group.product_options.any?

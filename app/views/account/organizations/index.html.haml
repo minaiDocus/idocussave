@@ -1,0 +1,27 @@
+#organizations.container-fluid
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3 Liste des organisations
+      .pull-right
+        = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
+  .row-fluid
+    .span9.box
+      = render partial: 'list_options'
+      .row-fluid
+        .span12
+          %table.table.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :name, t('mongoid.models.organization.attributes.name')
+                %th= t('mongoid.models.organization.attributes.leader')
+            %tbody
+              - @organizations.each do |organization|
+                %tr
+                  %td= l(organization.created_at)
+                  %td= link_to organization.name, account_organization_path(organization)
+                  %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader)
+      = render partial: 'list_options'
+    .span3.box
+      = render partial: 'sidebar'

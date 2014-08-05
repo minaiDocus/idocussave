@@ -9,7 +9,7 @@ class Account::OrganizationCsvOutputtersController < Account::OrganizationContro
   def update
     if @csv_outputter.update_attributes(csv_outputter_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(tab: 'csv_outputter')
+      redirect_to account_organization_path(@organization, tab: 'csv_outputter')
     else
       render 'edit'
     end
@@ -21,20 +21,20 @@ class Account::OrganizationCsvOutputtersController < Account::OrganizationContro
 
   def propagate
     organization_customer_ids = @organization.customers.active.map(&:id).map(&:to_s)
-    customer_ids = params[:customer_ids].select do |customer_id|
+    customer_ids = (params[:customer_ids].presence || []).select do |customer_id|
       organization_customer_ids.include? customer_id
     end
     @csv_outputter.copy_to_users(customer_ids)
     flash[:success] = 'Propagé avec succès.'
-    redirect_to account_organization_path(tab: 'csv_outputter')
+    redirect_to account_organization_path(@organization, tab: 'csv_outputter')
   end
 
 private
 
   def verify_rights
-    unless current_user.is_admin
+    unless @user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

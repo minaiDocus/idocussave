@@ -1,16 +1,16 @@
 #customer
   .row-fluid
     .span12.box
-      %h3 Edition des options des périodes du client : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'period_options')}
+      %h3 Edition des options des périodes du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'period_options')}
   .rwo-fluid
     .span12.box
-      = simple_form_for @customer, url: update_period_options_account_organization_customer_path(@customer), html: { class: 'form form-horizontal margin0' } do |f|
+      = simple_form_for @customer, url: update_period_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
         .row-fluid
           .span6
             = f.input :authd_prev_period,            as: :integer, input_html: { min: 0 }
             = f.input :auth_prev_period_until_day,   as: :integer, input_html: { min: 0, max: 28 }, hint: '0 à 28'
-            - if current_user.is_admin
+            - if @user.is_admin
               = f.input :auth_prev_period_until_month, as: :integer, input_html: { min: 0, max: 2 }, hint: '0 = actuel, 1 = le mois suivant, 2 = dans 2 mois'
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@customer, tab: 'period_options'), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'period_options'), class: 'btn'

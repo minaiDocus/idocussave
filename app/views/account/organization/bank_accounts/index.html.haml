@@ -1,7 +1,7 @@
 #bank_accounts
   .row-fluid
     .span12.box
-      %h3 Comptes bancaires du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+      %h3 Comptes bancaires du client : #{link_to @customer, account_organization_customer_path(@organization, @customer)}
   .row-fluid
     .span12.box
       %table.table.table-striped.table-condensed.margin0bottom
@@ -19,4 +19,4 @@
             %td= bank_account.number
             %td= bank_account.journal
             %td= bank_account.accounting_number
-            %td= icon_link_to edit_account_organization_customer_bank_account_path(@customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
+            %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }

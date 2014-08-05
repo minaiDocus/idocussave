@@ -5,9 +5,9 @@
         .row-fluid
           .span12
             .pull-left
-              %h3 Edition d'adresse pour le client : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'addresses')}
+              %h3 Edition d'adresse pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'addresses')}
             .pull-right
-              = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@customer), class: 'btn btn-primary'
+              = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@organization, @customer), class: 'btn btn-primary'
     .row-fluid
       .span12.box
         = render partial: 'form'

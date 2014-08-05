@@ -15,7 +15,7 @@
           %tr
             %td= l(gray_label.created_at)
             %td= gray_label.name
-            %td= link_to gray_label.organization.name, admin_organization_path(gray_label.organization)
+            %td= link_to gray_label.organization.name, account_organization_path(gray_label.organization)
             %td= gray_label.is_active ? t('yes_value') : t('no_value')
             %td
               = link_to icon_show, admin_gray_label_path(gray_label)

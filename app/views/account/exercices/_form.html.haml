@@ -1,4 +1,4 @@
-= simple_form_for @exercice, url: exercice_form_url(@customer, @exercice), html: { class: 'form form-horizontal margin0' } do |f|
+= simple_form_for @exercice, url: exercice_form_url(@organization, @customer, @exercice), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :start_date, as: :date
   = f.input :end_date, as: :date
   = f.input :is_closed, as: :boolean

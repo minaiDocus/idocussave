@@ -20,7 +20,7 @@
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             %li{ class: ('active' if params[:tab] == 'others') }
               %a{ href: '#others', data: { toggle: 'tab' } } Divers
-            - if current_user.is_admin
+            - if @user.is_admin
               %li{ class: ('active' if params[:tab] == 'csv_outputter') }
                 %a{ href: '#csv_outputter', data: { toggle: 'tab' } } Format de sortie CSV
               %li{ class: ('active' if params[:tab] == 'file_storages') }
@@ -57,7 +57,7 @@
                       %td= @customer.is_centralized ? t('yes_value') : t('no_value')
               .row-fluid
                 .span12
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_path(@customer), class: 'btn btn-primary pull-right'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
               .row-fluid.margin1bottom
                 .span6
@@ -66,14 +66,14 @@
                   = render partial: 'account/addresses/address', locals: { address: @customer.shipping_address, single: true, is_for_billing: false }
               .row-fluid
                 .span12.aligncenter
-                  = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@customer), class: 'btn btn-primary'
+                  = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
             #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
               %h4= @subscription.period_duration == 1 ? 'Périodicité mensuelle' : 'Périodicité trimestrielle'
               %br
               = render partial: 'options'
               .row-fluid.margin1top
                 .span12
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_subscription_path(@customer), class: 'btn btn-primary pull-right'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #period_options.tab-pane{ class: ('active' if params[:tab] == 'period_options') }
               %table.table.table-striped.table-condensed
                 %tbody
@@ -83,13 +83,13 @@
                   %tr
                     %th= t('mongoid.models.user.attributes.auth_prev_period_until_day')
                     %td= @customer.auth_prev_period_until_day
-                  - if current_user.is_admin
+                  - if @user.is_admin
                     %tr
                       %th= t('mongoid.models.user.attributes.auth_prev_period_until_month')
                       %td= @customer.auth_prev_period_until_month
               .row-fluid
                 .span12
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@customer), class: 'btn btn-primary pull-right'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
               %table.table.table-striped.table-bordered.table-condensed.margin1top
                 %thead
@@ -111,15 +111,15 @@
                       %td= journal.charge_account
               - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
                 .aligncenter
-                  = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@customer), class: 'btn btn-primary'
+                  = link_to 'Comptes bancaires', account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn btn-primary'
             #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
               .row-fluid
                 .span12.aligncenter
                   - if @organization.ibiza.try(:is_configured?)
-                    = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@customer), html: { class: 'form margin0bottom' } do |f|
+                    = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@organization, @customer), html: { class: 'form margin0bottom' } do |f|
                       - users = @organization.ibiza.users
                       - if users.is_a?(Array)
-                        - hint = link_to('Rafraîchir la liste', refresh_users_cache_account_organization_ibiza_path(back: account_organization_customer_path(@customer)))
+                        - hint = link_to('Rafraîchir la liste', refresh_users_cache_account_organization_ibiza_path(@organization, back: account_organization_customer_path(@organization, @customer)))
                       - elsif users.nil?
                         - users = []
                         - hint = 'Mise à jour en cours, veuillez rafraîchir la page dans quelques secondes'
@@ -129,14 +129,14 @@
                       = f.input :ibiza_id,   label: t('mongoid.models.user.attributes.ibiza_id'), collection: users, input_html: { class: 'margin0bottom' }, hint: hint
                       = f.submit t('actions.submit'), class: 'btn btn-primary'
                   - if @organization.ibiza.try(:token).blank?
-                    = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@customer), class: 'btn'
-                    = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@customer), class: 'btn'
-                    = link_to 'Exercices comptables', account_organization_customer_exercices_path(@customer), class: 'btn'
-            - if current_user.is_admin
+                    = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
+                    = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
+                    = link_to 'Exercices comptables', account_organization_customer_exercices_path(@organization, @customer), class: 'btn'
+            - if @user.is_admin
               #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }
                 .aligncenter
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@customer), class: 'btn btn-primary'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@organization, @customer), class: 'btn btn-primary'
               #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
                 = render partial: 'account/customers/file_storages', locals: { user: @customer }
                 .alignright
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@customer), class: 'btn btn-primary'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'

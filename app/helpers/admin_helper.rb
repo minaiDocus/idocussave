@@ -45,7 +45,7 @@ module AdminHelper
 
   def organization_link(user)
     if user.organization
-      link_to user.organization.try(:name), admin_organization_path(user.organization)
+      link_to user.organization.try(:name), account_organization_path(user.organization)
     else
       nil
     end

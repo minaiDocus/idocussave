@@ -4,9 +4,9 @@
       .row-fluid
         .span12
           .pull-left
-            %h3 Exercices comptable de l'utilisateur : #{link_to @customer.info, account_organization_customer_path(@customer, tab: 'others')}
+            %h3 Exercices comptable de l'utilisateur : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
           .pull-right
-            = link_to icon_new + ' Nouveau', new_account_organization_customer_exercice_path(@customer), class: 'btn btn-primary'
+            = link_to icon_new + ' Nouveau', new_account_organization_customer_exercice_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box
@@ -22,5 +22,5 @@
             %td= l(exercice.end_date, format: :long)
             %td= exercice.is_closed ? t('yes_value') : t('no_value')
             %td
-              = icon_link_to edit_account_organization_customer_exercice_path(@customer, exercice), { icon: 'edit' }, { class: 'btn btn-mini' }
-              = icon_link_to account_organization_customer_exercice_path(@customer, exercice), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: t('actions.confirm') } }
+              = icon_link_to edit_account_organization_customer_exercice_path(@organization, @customer, exercice), { icon: 'edit' }, { class: 'btn btn-mini' }
+              = icon_link_to account_organization_customer_exercice_path(@organization, @customer, exercice), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: t('actions.confirm') } }

@@ -1,41 +1,41 @@
 module Account::OrganizationHelper
-  def collaborator_form_url(collaborator)
+  def collaborator_form_url(organization, collaborator)
     if action_name == 'new' || !collaborator.persisted?
-      account_organization_collaborators_url
+      account_organization_collaborators_url(organization)
     else
-      account_organization_collaborator_url(collaborator)
+      account_organization_collaborator_url(organization, collaborator)
     end
   end
 
-  def customer_form_url(customer)
+  def customer_form_url(organization, customer)
     if action_name == 'new' || !customer.persisted?
-      account_organization_customers_url
+      account_organization_customers_url(organization)
     else
-      account_organization_customer_url(customer)
+      account_organization_customer_url(organization, customer)
     end
   end
 
-  def customer_address_form_url(customer, address)
+  def customer_address_form_url(organization, customer, address)
     if action_name == 'new' || !address.persisted?
-      account_organization_customer_addresses_path(customer)
+      account_organization_customer_addresses_path(organization, customer)
     else
-      account_organization_customer_address_url(customer, address)
+      account_organization_customer_address_url(organization, customer, address)
     end
   end
 
-  def journal_form_url(journal)
+  def journal_form_url(organization, journal)
     if action_name == 'new' || !journal.persisted?
-      account_organization_journals_url
+      account_organization_journals_url(organization)
     else
-      account_organization_journal_url(journal)
+      account_organization_journal_url(organization, journal)
     end
   end
 
-  def exercice_form_url(customer, exercice)
+  def exercice_form_url(organization, customer, exercice)
     if action_name == 'new' || !exercice.persisted?
-      account_organization_customer_exercices_url(customer)
+      account_organization_customer_exercices_url(organization, customer)
     else
-      account_organization_customer_exercice_url(customer, exercice)
+      account_organization_customer_exercice_url(organization, customer, exercice)
     end
   end
 

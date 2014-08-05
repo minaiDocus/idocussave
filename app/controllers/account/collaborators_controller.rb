@@ -4,7 +4,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   before_filter :load_collaborator, except: %w(index new create)
 
   def index
-    @collaborators = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @collaborators = search(user_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -25,7 +25,7 @@ class Account::CollaboratorsController < Account::OrganizationController
       @organization.members << @collaborator
       WelcomeMailer.welcome_collaborator(@collaborator).deliver
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_collaborator_path(@collaborator)
+      redirect_to account_organization_collaborator_path(@organization, @collaborator)
     else
       flash[:error] = 'Données invalide.'
       render action: 'new'
@@ -38,7 +38,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   def update
     if @collaborator.update_attributes(user_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_collaborator_path(@collaborator)
+      redirect_to account_organization_collaborator_path(@organization, @collaborator)
     else
       render action: 'edit'
     end
@@ -49,7 +49,7 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

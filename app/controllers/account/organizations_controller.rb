@@ -1,6 +1,27 @@
 # -*- encoding : UTF-8 -*-
-class Account::OrganizationsController < Account::OrganizationController
-  before_filter :verify_rights, except: 'show'
+class Account::OrganizationsController < Account::AccountController
+  layout :layout_by_action
+
+  before_filter :load_organization, only: %w(show edit update)
+  before_filter :verify_rights
+
+  def index
+    @organizations = search(organization_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+  end
+
+  def new
+    @organization = Organization.new
+  end
+
+  def create
+    @organization = Organization.new organization_params
+    if @organization.save
+      flash[:success] = 'Créé avec succès.'
+      redirect_to account_organization_path(@organization)
+    else
+      render 'new'
+    end
+  end
 
   def show
     if @organization
@@ -18,7 +39,7 @@ class Account::OrganizationsController < Account::OrganizationController
     if @organization
       if @organization.update_attributes(organization_params)
         flash[:success] = 'Modifié avec succès.'
-        redirect_to account_organization_path
+        redirect_to account_organization_path(@organization)
       else
         render 'edit'
       end
@@ -27,20 +48,94 @@ class Account::OrganizationsController < Account::OrganizationController
 
 private
 
-  def organization_params
-    params.require(:organization).permit(:name,
-                                         :description,
-                                         :addresses_attributes,
-                                         :authd_prev_period,
-                                         :auth_prev_period_until_day,
-                                         :file_naming_policy,
-                                         :is_file_naming_policy_active)
+  def verify_rights
+    unless @user.is_admin
+      authorized = false
+      if action_name.in?(%w(show)) && @user.is_prescriber
+        authorized = true
+      elsif action_name.in?(%w(edit update)) && is_leader?
+        authorized = true
+      end
+      unless authorized
+        flash[:error] = t('authorization.unessessary_rights')
+        redirect_to account_documents_path
+      end
+    end
   end
 
-  def verify_rights
-    unless is_leader?
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+  def layout_by_action
+    if action_name.in?(%w(index new create))
+      'inner'
+    else
+      'organization'
     end
+  end
+
+  def organization_params
+    if @user.is_admin
+      params.require(:organization).permit(
+        :name,
+        :code,
+        :leader_id,
+        :addresses_attributes,
+        :file_naming_policy,
+        :is_file_naming_policy_active,
+        :is_detail_authorized,
+        :is_test
+      )
+    else
+      params.require(:organization).permit(
+        :name,
+        :addresses_attributes,
+        :authd_prev_period,
+        :auth_prev_period_until_day,
+        :file_naming_policy,
+        :is_file_naming_policy_active
+      )
+    end
+  end
+
+  def load_organization
+    @organization = Organization.find_by_slug params[:id]
+  end
+
+  def is_leader?
+    @user == @organization.leader || @user.is_admin
+  end
+  helper_method :is_leader?
+
+  def sort_column
+    params[:sort] || 'created_at'
+  end
+  helper_method :sort_column
+
+  def sort_direction
+    params[:direction] || 'desc'
+  end
+  helper_method :sort_direction
+
+  def organization_contains
+    @contains ||= {}
+    if params[:organization_contains] && @contains.blank?
+      @contains = params[:organization_contains].delete_if do |key,value|
+        if value.blank? && !value.is_a?(Hash)
+          true
+        elsif value.is_a? Hash
+          value.delete_if { |k,v| v.blank? }
+          value.blank?
+        else
+          false
+        end
+      end
+    end
+    @contains
+  end
+  helper_method :organization_contains
+
+  def search(contains)
+    organizations = Organization.all
+    organizations = organizations.where(name:        /#{Regexp.quote(contains[:name])}/i)        unless contains[:name].blank?
+    organizations = organizations.where(description: /#{Regexp.quote(contains[:description])}/i) unless contains[:description].blank?
+    organizations
   end
 end

@@ -18,7 +18,7 @@ private
   def verify_rights
     unless current_user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
@@ -40,11 +40,11 @@ private
 
   def load_url_path
     if @someone.is_prescriber
-      @put_url_path = account_organization_collaborator_file_storage_authorizations_path(@someone)
-      @url_path     = account_organization_collaborator_path(@someone, tab: 'file_storages')
+      @put_url_path = account_organization_collaborator_file_storage_authorizations_path(@organization, @someone)
+      @url_path     = account_organization_collaborator_path(@organization, @someone, tab: 'file_storages')
     else
-      @put_url_path = account_organization_customer_file_storage_authorizations_path(@someone)
-      @url_path     = account_organization_customer_path(@someone, tab: 'file_storages')
+      @put_url_path = account_organization_customer_file_storage_authorizations_path(@organization, @someone)
+      @url_path     = account_organization_customer_path(@organization, @someone, tab: 'file_storages')
     end
   end
 end

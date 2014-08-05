@@ -10,7 +10,7 @@ class Account::CsvOutputtersController < Account::OrganizationController
   def update
     if @csv_outputter.update_attributes(csv_outputter_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@customer, tab: 'csv_outputter')
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_outputter')
     else
       render 'edit'
     end
@@ -21,12 +21,12 @@ private
   def verify_rights
     unless current_user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
   def load_customer
-    @customer = @user.customers.find params[:customer_id]
+    @customer = customers.find params[:customer_id]
   end
 
   def load_csv_outputter
