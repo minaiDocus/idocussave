@@ -4,7 +4,7 @@
       %h3.aligncenter
         Paramètres par défaut des abonnements créé par le collaborateur :
         %br
-        #{ link_to @user, account_organization_collaborator_path(@organization, @user) }
+        #{ link_to @user, account_organization_collaborator_path(@user.organization, @user) }
 
   .row-fluid
     .span12.box
