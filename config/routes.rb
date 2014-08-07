@@ -82,6 +82,10 @@ Idocus::Application.routes.draw do
         resource :csv_outputter, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
       end
+      resource :dropbox_extended, only: [] do
+        get 'authorize_url', on: :member
+        get 'callback',      on: :member
+      end
       resources :journals do
         put 'update_clients', on: :member
       end
@@ -243,10 +247,6 @@ Idocus::Application.routes.draw do
     resources :products
     resources :product_options
     resources :product_groups
-    resource :dropbox do
-      get 'authorize_url', on: :member
-      get 'callback',      on: :member
-    end
     namespace :log do
       resources :visits
     end
