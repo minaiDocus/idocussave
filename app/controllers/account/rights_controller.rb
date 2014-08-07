@@ -26,6 +26,6 @@ private
   end
 
   def load_collaborator
-    @collaborator = @organization.collaborators.find params[:collaborator_id]
+    @collaborator = @organization.collaborators.find_by_slug params[:collaborator_id]
   end
 end

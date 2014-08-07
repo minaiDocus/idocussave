@@ -2,6 +2,7 @@
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Slug
   include ActiveModel::ForbiddenAttributesProtection
   # Include default devise modules. Others available are:
   # :registerable, :token_authenticatable, :lockable and :timeoutable
@@ -105,6 +106,10 @@ class User
 
   attr_accessor :client_ids
   attr_protected :is_admin, :is_prescriber
+
+  slug do |user|
+    user.code.gsub(/(#|%)/, ' ')
+  end
 
   embeds_many :addresses, as: :locatable
   embeds_one :organization_rights

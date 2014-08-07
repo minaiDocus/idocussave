@@ -9,4 +9,4 @@
     - if action_name.in?(%w(new create))
       = link_to t('actions.cancel'), account_organization_collaborators_path(@organization), class: 'btn'
     - else
-      = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator.id), class: 'btn'
+      = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator), class: 'btn'

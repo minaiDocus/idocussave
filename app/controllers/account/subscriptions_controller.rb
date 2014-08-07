@@ -47,7 +47,7 @@ private
   end
 
   def load_customer
-    @customer = customers.find params[:id]
+    @customer = customers.find_by_slug params[:id]
   end
 
   def load_subscription

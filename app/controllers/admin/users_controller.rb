@@ -78,7 +78,7 @@ class Admin::UsersController < Admin::AdminController
 private
 
   def load_user
-    @user = User.find params[:id]
+    @user = User.find_by_slug params[:id]
   end
 
   def user_params

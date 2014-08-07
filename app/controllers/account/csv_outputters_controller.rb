@@ -26,7 +26,7 @@ private
   end
 
   def load_customer
-    @customer = customers.find params[:customer_id]
+    @customer = customers.find_by_slug params[:customer_id]
   end
 
   def load_csv_outputter
