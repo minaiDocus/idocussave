@@ -35,7 +35,7 @@ private
   end
 
   def load_someone
-    @someone = User.find (params[:collaborator_id] || params[:customer_id])
+    @someone = @organization.members.find (params[:collaborator_id] || params[:customer_id])
   end
 
   def load_url_path
