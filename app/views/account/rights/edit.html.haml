@@ -1,7 +1,7 @@
 #collaborator_rights
   .row-fluid
     .span12.box
-      %h3 Edition des autorisations du collaborateur : #{ link_to @collaborator.info, account_organization_collaborator_path(@organization, @collaborator) }
+      %h3 Edition des autorisations du collaborateur : #{ link_to @collaborator.info, account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization') }
   .row-fluid
     .span12.box
       = simple_form_for @collaborator, url: account_organization_collaborator_rights_url(@organization, @collaborator), html: { class: 'form form-horizontal margin0' } do |f|
@@ -12,4 +12,4 @@
           = rf.input :is_journals_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.journals_management')
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator), class: 'btn'
+          = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization'), class: 'btn'
