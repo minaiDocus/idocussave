@@ -4,7 +4,7 @@ class Product
   include Mongoid::Timestamps
   include Mongoid::Slug
 
-  field :title
+  field :title,                   type: String,  default: ''
   field :category,                type: Integer, default: 1
   field :price_in_cents_wo_vat,   type: Integer, default: 0
   field :description,             type: String,  default: ''

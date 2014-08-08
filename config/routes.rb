@@ -244,9 +244,9 @@ Idocus::Application.routes.draw do
     end
     resources :pages
     resources :cms_images
-    resources :products
-    resources :product_options
-    resources :product_groups
+    resources :products, except: 'show'
+    resources :product_options, except: %w(index show)
+    resources :product_groups, except: %w(index show)
     namespace :log do
       resources :visits
     end

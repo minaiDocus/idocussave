@@ -1,11 +1,8 @@
-%td{ :style => "width:400px;" }
-  != "#{option.title} #{option.description}"
-%td.price.first{ :style => "width:auto;" }
-  #{format_price(option.price_in_cents_wo_vat)} € HT
-%td.first!= option.position
-%td.first!= option.quantity
-%td.first!= option.duration
-%td.first{ :style =>"width:auto;" }
-  != link_to icon_edit, edit_admin_product_option_path(option)
-  != link_to icon_destroy, admin_product_option_path(option), :method => :delete, data: { :confirm => "Êtes-vous sûr ?" }
-  
+%td{ style: 'width:400px;' } #{option.title} #{option.description}
+%td.price.right{ style: 'width:auto;' } #{format_price(option.price_in_cents_wo_vat)} € HT
+%td.right= option.position
+%td.right= option.quantity
+%td.right= option.duration
+%td.right{ style: 'width:auto;' }
+  = link_to icon_edit, edit_admin_product_option_path(option)
+  = link_to icon_destroy, admin_product_option_path(option), method: 'delete', data: { confirm: t('actions.confirm') }

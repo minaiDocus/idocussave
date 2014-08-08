@@ -140,3 +140,31 @@ fr:
         is_google_docs_authorized: Google Drive autorisé ?
         is_ftp_authorized: FTP autorisé ?
         is_box_authorized: Box autorisé ?
+      product:
+        title: Titre
+        position: Position
+        price_in_cents_wo_vat: Prix (en centimes)
+        period_duration: Type de période
+        is_a_subscription: Abonnement ?
+        require_billing_address: Adresse de facturation requise ?
+        description: Description
+        header_info: Informations d'entête de page
+        footer_info: Informations de pied de page
+      product_option:
+        name: Nom
+        title: Nom (public)
+        position: Position
+        require_addresses: Adresse requise ?
+        price_in_cents_wo_vat: Prix (en centimes)
+        description: Description
+        duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période) ?"
+        quantity: Quantité
+        product_group: Groupe
+      product_group:
+        name: Nom
+        title: Nom (public)
+        position: Position
+        is_option_dependent: Bouton radio ? (sinon case à cocher)
+        products: Sélectionner les produits
+        product_supergroups: Sélectionner les groupes parents
+        product_require_id: Sélectionner un groupe pour la dépendance

@@ -4,14 +4,14 @@ class ProductGroup
   include Mongoid::Timestamps
   include Mongoid::Slug
 
-  field :name,                type: String
-  field :title,               type: String
-  field :description,         type: String,  default: ""
+  field :name,                type: String,  default: ''
+  field :title,               type: String,  default: ''
+  field :description,         type: String,  default: ''
   field :position,            type: Integer, default: 1
   field :is_option_dependent, type: Boolean, default: false
-  
+
   validates_presence_of :name, :title
-  
+
   slug :name
 
   has_and_belongs_to_many :products
@@ -22,10 +22,10 @@ class ProductGroup
 
   has_and_belongs_to_many :product_subgroups,   class_name: 'ProductGroup', inverse_of: :product_supergroups
   has_and_belongs_to_many :product_supergroups, class_name: 'ProductGroup', inverse_of: :product_subgroups
-  
+
   class << self
     def by_position
-      asc([:position,:title])
+      asc([:position, :title])
     end
 
     def find_by_slug(txt)

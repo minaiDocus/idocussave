@@ -1,24 +1,15 @@
 .row-fluid
-  .span12.well
-    %h2 Informations
-    %br
-      = simple_form_for [:admin, @product], html: { class: 'form form-horizontal' } do |f|
-        = f.input :title, label: 'Titre'
-        = f.input :position, as: 'integer'
-        = f.input :price_in_cents_wo_vat, as: 'integer', label: 'Prix (en centimes)'
-        = f.input :period_duration, label: 'Type de période', collection: [["mensuel",1],["trimestriel",3],["annuel",12]], include_blank: false
-        = f.input :is_a_subscription, as: 'boolean', label: 'Abonnement ?'
-        = f.input :require_billing_address, as: 'boolean', label: 'Adresse de facturation requise ?'
-        .row-fluid
-          .span12
-            = f.input :description, as: 'text', input_html: {  :style =>"width:100%" }
-        .row-fluid
-          .span12
-            = f.input :header_info, as: 'text', label: "Informations d'entête de page :", input_html: { :style =>"width:100%" }
-        .row-fluid
-          .span12
-            = f.input :footer_info, as: 'text', label: 'Informations de pied de page :', input_html: {:style =>"width:100%"}
-        %br
-        .form-actions
-          = f.submit t('actions.submit'), class: 'btn'
-        
+  .span12.panel
+    = simple_form_for [:admin, @product], html: { class: 'form form-horizontal margin2top' } do |f|
+      = f.input :title
+      = f.input :position,                as: 'integer'
+      = f.input :price_in_cents_wo_vat,   as: 'integer'
+      = f.input :period_duration, collection: [["mensuel",1],["trimestriel",3],["annuel",12]], include_blank: false
+      = f.input :is_a_subscription,       as: 'boolean'
+      = f.input :require_billing_address, as: 'boolean'
+      = f.input :description,             as: 'text', input_html: {  style: 'width:100%' }
+      = f.input :header_info,             as: 'text', input_html: {  style: 'width:100%' }
+      = f.input :footer_info,             as: 'text', input_html: {  style: 'width:100%' }
+      .form-actions.margin0bottom
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        = link_to t('actions.cancel'), admin_products_path, class: 'btn'

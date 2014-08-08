@@ -73,10 +73,15 @@ table
     textarea
       width: auto
       height: 180px
-  table th, table td
-    text-align: left
-  table th.first, table td.first
-    text-align: right
+  table
+    th, td
+      text-align: left
+    th.right, td.right
+      text-align: right
+    .checkbox
+      input
+        float: none
+        margin-left: 0
 
 .user_status
   th
