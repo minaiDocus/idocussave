@@ -5,6 +5,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def index
     @journals = @organization.account_book_types.unscoped.asc(:name)
+    @customer_ids = customer_ids
   end
 
   def new
@@ -27,7 +28,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def update
     respond_to do |format|
-      if @journal.update_attributes(journal_params)
+      if UpdateJournalService.execute(customers, @journal, journal_params)
         format.json{ render json: @journal.to_json, status: :ok }
         format.html{ redirect_to account_organization_journals_path(@organization), flash: { success: 'Modifié avec succès.' } }
       else
