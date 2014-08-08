@@ -14,7 +14,7 @@ class Account::VatAccountsController < Account::OrganizationController
   def update_multiple
     if @accounting_plan.update_attributes(accounting_plan_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_accounting_plan_vat_accounts_path(@customer)
+      redirect_to account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)
     else
       render action: 'edit_multiple'
     end
@@ -32,7 +32,7 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

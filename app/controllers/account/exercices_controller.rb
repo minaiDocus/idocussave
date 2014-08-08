@@ -18,7 +18,7 @@ class Account::ExercicesController < Account::OrganizationController
     @exercice.user = @customer
     if @exercice.save
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_customer_exercices_path(@customer)
+      redirect_to account_organization_customer_exercices_path(@organization, @customer)
     else
       render action: 'new'
     end
@@ -30,7 +30,7 @@ class Account::ExercicesController < Account::OrganizationController
   def update
     if @exercice.update_attributes(exercice_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_exercices_path(@customer)
+      redirect_to account_organization_customer_exercices_path(@organization, @customer)
     else
       render 'edit'
     end
@@ -39,7 +39,7 @@ class Account::ExercicesController < Account::OrganizationController
   def destroy
     @exercice.destroy
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_organization_customer_exercices_path(@customer)
+    redirect_to account_organization_customer_exercices_path(@organization, @customer)
   end
 
 private
@@ -47,14 +47,14 @@ private
   def verify_rights
     unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
   def verify_access
     if @organization.ibiza.try(:token).present?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
