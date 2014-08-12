@@ -72,16 +72,16 @@ private
   def format_price price_in_cents
     format_price_00(price_in_cents).gsub(/,00/, "")
   end
-  
+
 protected
-  
+
   def redirect_to_https
     if request.env["HTTP_X_FORWARDED_PROTO"] != "https"
       url = request.url.gsub("http", "https")
       redirect_to(url)
     end
   end
-  
+
   def catch_error
     begin
       yield
@@ -104,14 +104,14 @@ protected
       redirect_to root_path
     end
   end
-  
+
   def log_visit
     unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?)
       unless current_user && current_user.is_admin
         visit            = ::Log::Visit.new
         visit.path       = request.path
         visit.user       = current_user.try(:id)
-        visit.ip_address = request.remote_ip 
+        visit.ip_address = request.remote_ip
         visit.save
       end
     end
