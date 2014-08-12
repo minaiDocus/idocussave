@@ -4,6 +4,8 @@ class Api::V1::OperationsController < ApiController
 
   def index
     @operations = (@bank_account || user).operations.desc(:date)
+    @operations = @operations.where(:date.gte => params[:start_date]) if params[:start_date]
+    @operations = @operations.where(:date.lte => params[:end_date])   if params[:end_date]
     if params[:page].present? || params[:per_page].present?
       @operations = @operations.page(params[:page]).per(params[:per_page])
     end

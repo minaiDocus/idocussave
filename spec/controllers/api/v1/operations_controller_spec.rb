@@ -339,6 +339,132 @@ describe Api::V1::OperationsController do
         end
       end
     end
+
+    context 'with start_date' do
+      context 'as json' do
+        it 'return 3 operations' do
+          params = {
+            format:       'json',
+            access_token: @user.authentication_token,
+            start_date:   '2014-01-15'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = JSON.parse response.body
+          @user.operations.count.should eq 5
+          operations.size.should eq 3
+
+          operations[0]['date'].should eq '2014-01-17'
+          operations[1]['date'].should eq '2014-01-16'
+          operations[2]['date'].should eq '2014-01-15'
+        end
+      end
+
+      context 'as xml' do
+        it 'return 3 operations' do
+          params = {
+            format:       'xml',
+            access_token: @user.authentication_token,
+            start_date:   '2014-01-15'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = Nokogiri::XML(response.body).xpath('//operation')
+          @user.operations.count.should eq 5
+          operations.size.should eq 3
+
+          operations[0].css('date').first.content.should eq '2014-01-17'
+          operations[1].css('date').first.content.should eq '2014-01-16'
+          operations[2].css('date').first.content.should eq '2014-01-15'
+        end
+      end
+    end
+
+    context 'with end_date' do
+      context 'as json' do
+        it 'return 2 operations' do
+          params = {
+            format:       'json',
+            access_token: @user.authentication_token,
+            end_date:     '2014-01-06'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = JSON.parse response.body
+          @user.operations.count.should eq 5
+          operations.size.should eq 2
+
+          operations[0]['date'].should eq '2014-01-06'
+          operations[1]['date'].should eq '2014-01-05'
+        end
+      end
+
+      context 'as xml' do
+        it 'return 2 operations' do
+          params = {
+            format:       'xml',
+            access_token: @user.authentication_token,
+            end_date:     '2014-01-06'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = Nokogiri::XML(response.body).xpath('//operation')
+          @user.operations.count.should eq 5
+          operations.size.should eq 2
+
+          operations[0].css('date').first.content.should eq '2014-01-06'
+          operations[1].css('date').first.content.should eq '2014-01-05'
+        end
+      end
+    end
+
+    context 'with start_date and end_date' do
+      context 'as json' do
+        it 'return 3 operations' do
+          params = {
+            format:       'json',
+            access_token: @user.authentication_token,
+            start_date:   '2014-01-06',
+            end_date:     '2014-01-16'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = JSON.parse response.body
+          @user.operations.count.should eq 5
+          operations.size.should eq 3
+
+          operations[0]['date'].should eq '2014-01-16'
+          operations[1]['date'].should eq '2014-01-15'
+          operations[2]['date'].should eq '2014-01-06'
+        end
+      end
+
+      context 'as xml' do
+        it 'return 3 operations' do
+          params = {
+            format:       'xml',
+            access_token: @user.authentication_token,
+            start_date:   '2014-01-06',
+            end_date:     '2014-01-16'
+          }
+
+          get :index, params
+          response.should be_successful
+          operations = Nokogiri::XML(response.body).xpath('//operation')
+          @user.operations.count.should eq 5
+          operations.size.should eq 3
+
+          operations[0].css('date').first.content.should eq '2014-01-16'
+          operations[1].css('date').first.content.should eq '2014-01-15'
+          operations[2].css('date').first.content.should eq '2014-01-06'
+        end
+      end
+    end
   end
 
   describe 'Posting a file to import' do
