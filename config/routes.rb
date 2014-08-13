@@ -77,7 +77,7 @@ Idocus::Application.routes.draw do
             put 'update_multiple', on: :collection
           end
         end
-        resources :bank_accounts, module: 'organization'
+        resources :bank_accounts, only: %w(edit update), module: 'organization'
         resources :exercices
         resource :csv_outputter, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)

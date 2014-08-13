@@ -2,11 +2,7 @@
 class Account::Organization::BankAccountsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_customer
-  before_filter :load_bank_account, except: 'index'
-
-  def index
-    @bank_accounts = @customer.bank_accounts
-  end
+  before_filter :load_bank_account
 
   def edit
   end
@@ -14,7 +10,7 @@ class Account::Organization::BankAccountsController < Account::OrganizationContr
   def update
     if @bank_account.update_attributes(bank_account_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_bank_accounts_path(@customer)
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
     else
       render 'edit'
     end
