@@ -38,20 +38,20 @@ class ApplicationController < ActionController::Base
   end
 
   def load_user(name=:@user)
-    value = nil
-    if current_user
-      if (params[:code].present? || session[:acts_as].present?) && current_user.try(:is_admin)
-        value = User.find_by_code(params[:code] || session[:acts_as]) || current_user
-        if value == current_user
-          session[:acts_as] = nil
-        else
-          session[:acts_as] = value.code
+    user = nil
+    if current_user && current_user.is_admin
+      if request.path.match /organizations/
+        if params[:collaborator_code].present? || session[:collaborator_code].present?
+          user = User.prescribers.where(code: params[:collaborator_code].presence || session[:collaborator_code].presence).first || current_user
+          session[:collaborator_code] = user == current_user ? nil : user.code
         end
-      else
-        value = current_user
+      elsif params[:user_code].present? || session[:user_code].present?
+        user = User.find_by_code(params[:user_code].presence || session[:user_code].presence) || current_user
+        session[:user_code] = user == current_user ? nil : user.code
       end
     end
-    instance_variable_set name, value
+    user ||= current_user
+    instance_variable_set name, user
   end
 
   def present(object, klass=nil)

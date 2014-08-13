@@ -110,7 +110,13 @@ module ApplicationHelper
   end
 
   def current_user_info
-    session[:acts_as].presence || "Moi-même"
+    if request.path.match(/organizations/) && session[:collaborator_code].present?
+      session[:collaborator_code]
+    elsif session[:user_code].present?
+      session[:user_code]
+    else
+      'Moi-même'
+    end
   end
 
   def logo_url
