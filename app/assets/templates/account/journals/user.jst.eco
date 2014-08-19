@@ -1,6 +1,0 @@
-<td class='selection selectable'>
-    <input type="radio" name="user" />
-</td>
-<td id='user_<%= @model.get('id') %>' class='selectable'>
-    <%= [@model.get('code'), @model.get('first_name') + ' ' + @model.get('last_name'), @model.get('company')].join(' - ') %>
-</td>

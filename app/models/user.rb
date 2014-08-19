@@ -124,11 +124,10 @@ class User
   has_many :own_packs, class_name: "Pack", inverse_of: :owner
   has_and_belongs_to_many :packs
 
-  has_and_belongs_to_many :account_book_types, inverse_of: :clients
-
   has_and_belongs_to_many :sharers, class_name: "User", inverse_of: :share_with
   has_and_belongs_to_many :share_with, class_name: "User", inverse_of: :sharers
 
+  has_many :account_book_types
   has_many :invoices
   has_many :credits
   has_many :subscriptions
@@ -151,6 +150,7 @@ class User
   has_one :external_file_storage, autosave: true
   has_one :csv_outputter, autosave: true
   has_one :accounting_plan
+  has_one :options, class_name: 'UserOptions', inverse_of: 'user'
 
   has_one :dematbox
 

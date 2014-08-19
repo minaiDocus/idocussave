@@ -1,0 +1,32 @@
+#journals.select
+  .row-fluid
+    .span12.box
+      %h3 Copier des journaux pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')}
+  .row-fluid
+    .span12.box
+      = form_tag copy_account_organization_customer_journals_path(@organization, @customer), method: 'POST', class: 'form form-horizontal margin0bottom' do
+        %table.table.table-striped.table-condensed.table-bordered.margin0
+          %thead
+            %tr
+              %th.check_box{ rowspan: 2, style: 'vertical-align:middle' }
+              %th.aligncenter{ rowspan: 2, style: 'vertical-align:middle' } Par defaut ?
+              %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
+              %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
+              %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+            %tr
+              %th Type
+              %th N°
+              %th Compte charge
+          %tbody
+            - @journals.each do |journal|
+              %tr
+                %td.check_box= check_box_tag 'journal_ids[]', journal.id, false, id: "journals_ids_#{journal.id}"
+                %td.aligncenter= label_tag "journals_ids_#{journal.id}", journal.is_default ? icon_ok : ''
+                %td= label_tag "journals_ids_#{journal.id}", journal.name
+                %td= label_tag "journals_ids_#{journal.id}", journal.description
+                %td= label_tag "journals_ids_#{journal.id}", t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+                %td= label_tag "journals_ids_#{journal.id}", journal.account_number || ''
+                %td= label_tag "journals_ids_#{journal.id}", journal.charge_account || ''
+        .form-actions.margin0bottom
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn'

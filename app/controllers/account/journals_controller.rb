@@ -1,11 +1,12 @@
 # -*- encoding : UTF-8 -*-
 class Account::JournalsController < Account::OrganizationController
+  before_filter :load_customer, except: %w(index)
   before_filter :verify_rights
   before_filter :load_journal, except: %w(index new create)
+  before_filter :verify_max_number, only: %w(new create select copy)
 
   def index
-    @journals = @organization.account_book_types.unscoped.asc(:name)
-    @customer_ids = customer_ids
+    @journals = source.account_book_types.desc(:is_default).asc(:name)
   end
 
   def new
@@ -15,9 +16,14 @@ class Account::JournalsController < Account::OrganizationController
   def create
     @journal = AccountBookType.new journal_params
     if @journal.save
-      @organization.account_book_types << @journal
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_journals_path(@organization)
+      if @customer
+        @customer.account_book_types << @journal
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      else
+        source.account_book_types << @journal
+        redirect_to account_organization_journals_path(@organization)
+      end
     else
       render action: 'new'
     end
@@ -27,30 +33,63 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def update
-    respond_to do |format|
-      if UpdateJournalService.execute(customers, @journal, journal_params)
-        format.json{ render json: @journal.to_json, status: :ok }
-        format.html{ redirect_to account_organization_journals_path(@organization), flash: { success: 'Modifié avec succès.' } }
+    if @journal.update_attributes(journal_params)
+      flash[:success] = 'Modifié avec succès.'
+      if @customer
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
-        format.json{ render json: {}, status: :unprocessable_entity }
-        format.html{ render action: 'edit' }
+        redirect_to account_organization_journals_path(@organization)
       end
+    else
+      render action: 'edit'
     end
   end
 
   def destroy
-    if @journal.destroy
-      flash[:success] = 'Supprimé avec succès.'
+    @journal.destroy
+    flash[:success] = 'Supprimé avec succès.'
+    if @customer
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
     else
-      flash[:error] = 'Impossible de supprimer.'
+      redirect_to account_organization_journals_path(@organization)
     end
-    redirect_to account_organization_journals_path(@organization)
+  end
+
+  def select
+    @journals = source.account_book_types.desc(:is_default).asc(:name)
+  end
+
+  def copy
+    valid_ids = @organization.account_book_types.map(&:id).map(&:to_s)
+    ids = params[:journal_ids].select do |journal_id|
+      journal_id.in? valid_ids
+    end
+    copied_ids = []
+    ids.each do |id|
+      unless is_max_number_reached?
+        journal = AccountBookType.find id
+        if !journal.compta_processable? || is_preassignment_authorized?
+          copied_ids << id
+          copy = journal.dup
+          copy.user         = @customer
+          copy.organization = nil
+          copy.is_default   = nil
+          copy.save
+        end
+      end
+    end
+    flash[:success] = "#{copied_ids.count}/#{ids.count} journal(s) copié(s) avec succès."
+    redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
   end
 
 private
 
   def verify_rights
-    unless is_leader? || @user.can_manage_journals?
+    is_ok = false
+    is_ok = true if is_leader?
+    is_ok = true if !@customer && @user.can_manage_journals?
+    is_ok = true if @customer && @user.organization_rights.is_customer_journals_management_authorized
+    unless is_ok
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
@@ -61,21 +100,22 @@ private
       :name,
       :pseudonym,
       :description,
-      :position,
-      :domain,
-      :entry_type,
-      :default_account_number,
-      :account_number,
-      :default_charge_account,
-      :charge_account,
-      :vat_account,
-      :anomaly_account,
       :instructions,
       :position,
-      :is_default,
-      :client_ids
+      :is_default
     )
-    attributes[:client_ids] = [] if attributes[:client_ids] == 'empty'
+    if is_preassignment_authorized?
+      attributes.merge!(params.require(:account_book_type).permit(
+        :domain,
+        :entry_type,
+        :default_account_number,
+        :account_number,
+        :default_charge_account,
+        :charge_account,
+        :vat_account,
+        :anomaly_account
+      ))
+    end
     if current_user.is_admin
       attributes.merge!(params.require(:account_book_type).permit(:is_expense_categories_editable))
     end
@@ -85,11 +125,35 @@ private
     attributes
   end
 
+  def source
+    (@organization.is_journals_management_centralized || @user.is_admin) ? @organization : @user
+  end
+
+  def load_customer
+    if params[:customer_id].present?
+      @customer = customers.find_by_slug params[:customer_id]
+      raise Mongoid::Errors::DocumentNotFound.new(User, params[:customer_id]) unless @customer
+    end
+  end
+
   def load_journal
-    begin
-      @journal = @organization.account_book_types.unscoped.find(params[:id])
-    rescue BSON::InvalidObjectId
-      @journal = @organization.account_book_types.unscoped.find_by_slug(params[:id])
+    @journal = (@customer || source).account_book_types.find_by_slug(params[:id])
+  end
+
+  def is_max_number_reached?
+    @customer.account_book_types.count >= @customer.options.max_number_of_journals
+  end
+  helper_method :is_max_number_reached?
+
+  def is_preassignment_authorized?
+    @customer.nil? || @customer.options.is_preassignment_authorized
+  end
+  helper_method :is_preassignment_authorized?
+
+  def verify_max_number
+    if @customer && is_max_number_reached?
+      flash[:error] = "Nombre maximum de journaux comptables atteint : #{@customer.account_book_types.count}/#{@customer.options.max_number_of_journals}."
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
     end
   end
 end

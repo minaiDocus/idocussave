@@ -1,6 +1,0 @@
-<td class='action'>
-    <a class='<%= @type %>'><i class="icon-arrow-<%= @direction %>"></i></a>
-</td>
-<td>
-    <%= [@model.get('code'), [@model.get('first_name'), @model.get('last_name')].join(' '), @model.get('company')].join(' - ') %>
-</td>

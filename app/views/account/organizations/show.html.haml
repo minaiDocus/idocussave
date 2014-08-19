@@ -44,6 +44,9 @@
                 %th= t('mongoid.models.organization.attributes.centralized_customers_count')
                 %td= link_to @organization.customers.centralized.count, account_organization_customers_path(@organization)
               %tr
+                %th= t('mongoid.models.organization.attributes.is_journals_management_centralized')
+                %td= @organization.is_journals_management_centralized ? t('yes_value') : t('no_value')
+              %tr
                 %th= t('mongoid.models.organization.attributes.is_detail_authorized')
                 %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
               %tr

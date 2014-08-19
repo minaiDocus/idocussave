@@ -88,13 +88,11 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
-protected
+private
 
   def can_manage?
     is_leader? || @user.can_manage_customers?
   end
-
-private
 
   def verify_rights
     unless can_manage?
@@ -180,4 +178,9 @@ private
     end
     users
   end
+
+  def is_max_number_of_journals_reached?
+    @customer.account_book_types.count >= @customer.options.max_number_of_journals
+  end
+  helper_method :is_max_number_of_journals_reached?
 end

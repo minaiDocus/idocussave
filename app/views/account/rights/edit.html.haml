@@ -6,10 +6,11 @@
     .span12.box
       = simple_form_for @collaborator, url: account_organization_collaborator_rights_url(@organization, @collaborator), html: { class: 'form form-horizontal margin0' } do |f|
         = f.simple_fields_for :organization_rights do |rf|
-          = rf.input :is_collaborators_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.collaborators_management')
-          = rf.input :is_customers_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.customers_management')
-          = rf.input :is_groups_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.groups_management')
-          = rf.input :is_journals_management_authorized, as: :boolean, label: t('mongoid.models.organization_rights.names.journals_management')
+          = rf.input :is_collaborators_management_authorized,     as: :boolean
+          = rf.input :is_customers_management_authorized,         as: :boolean
+          = rf.input :is_groups_management_authorized,            as: :boolean
+          = rf.input :is_journals_management_authorized,          as: :boolean
+          = rf.input :is_customer_journals_management_authorized, as: :boolean
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization'), class: 'btn'

@@ -12,7 +12,7 @@ class AccountBookType
   before_save :upcase_name
 
   belongs_to :organization
-  has_and_belongs_to_many :clients, class_name: 'User', inverse_of: :account_book_types
+  belongs_to :user
 
   has_many :fiduceo_retrievers, inverse_of: 'journal'
 
@@ -46,8 +46,8 @@ class AccountBookType
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
 
-  scope :default, where: { is_default: true }
   scope :compta_processable, where: { :entry_type.gt => 0 }
+  scope :default, where: { is_default: true }
 
   def info
     [self.name, self.description].join(' ')
@@ -71,7 +71,7 @@ class AccountBookType
     return 'VT'  if self.entry_type == 3
     return nil
   end
-  
+
   class << self
     def by_position
       asc([:position, :name])

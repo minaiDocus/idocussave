@@ -580,6 +580,7 @@ fr:
           centralized_customers_count: Nombre de clients centralisés
           is_detail_authorized: Autoriser les détails dans le reporting ?
           is_test: Organisation de test ?
+          is_journals_management_centralized: Gestion des journaux comptables centralisé ?
           status:
             admin: Administrateur
             collaborator: Collaborateur
@@ -616,11 +617,13 @@ fr:
           customers_management: Gestion des clients
           groups_management: Gestion des groupes
           journals_management: Gestion des journaux comptables
+          customer_journals_management: Gestion des journaux comptables des clients
         attributes:
           is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
           is_customers_management_authorized: Gestion des clients autorisé ?
           is_groups_management_authorized: Gestion des groupes autorisé ?
           is_journals_management_authorized: Gestion des journaux comptables autorisé ?
+          is_customer_journals_management_authorized: Gestion des journaux comptables des clients autorisé ?
       invoice:
         zero: 0 facture
         one: 1 facture

@@ -22,7 +22,13 @@ private
   end
 
   def collaborator_params
-    params.require(:user).permit(:organization_rights_attributes)
+    params.require(:user).permit(organization_rights_attributes: [
+      :is_groups_management_authorized,
+      :is_collaborators_management_authorized,
+      :is_customers_management_authorized,
+      :is_journals_management_authorized,
+      :is_customer_journals_management_authorized
+    ])
   end
 
   def load_collaborator

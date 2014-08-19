@@ -6,7 +6,9 @@ class CreateCustomer
     @customer.set_random_password
     @customer.skip_confirmation!
     if @customer.save
-      @customer.account_book_types = organization.account_book_types.default
+      UserOptions.create(user_id: @customer.id)
+      source = (organization.is_journals_management_centralized || requester.is_admin) ? organization : requester
+      @customer.account_book_types = source.account_book_types.default
       organization.members << @customer
       subscription = @customer.find_or_create_scan_subscription
       requester_subscription = requester.find_or_create_scan_subscription

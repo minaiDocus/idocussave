@@ -79,6 +79,10 @@ Idocus::Application.routes.draw do
         end
         resources :bank_accounts, only: %w(edit update), module: 'organization'
         resources :exercices
+        resources :journals, except: %w(index show) do
+          get  'select', on: :collection
+          post 'copy',   on: :collection
+        end
         resource :csv_outputter, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
       end
@@ -86,9 +90,7 @@ Idocus::Application.routes.draw do
         get 'authorize_url', on: :member
         get 'callback',      on: :member
       end
-      resources :journals do
-        put 'update_clients', on: :member
-      end
+      resources :journals, except: 'show'
       resources :subscriptions
       resource :default_subscription, only: %w(show edit update)
       resource :organization_subscription, only: %w(edit update)

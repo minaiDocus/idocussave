@@ -94,24 +94,48 @@
                 .span12
                   = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
-              %table.table.table-striped.table-bordered.table-condensed.margin1top
+              %table.table.table-striped.table-bordered.table-condensed
                 %thead
                   %tr
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
                     %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+                    - if @user.organization_rights.is_customer_journals_management_authorized
+                      %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
                     %th Type
                     %th N°
                     %th Compte charge
                 %tbody
                   - @journals.each do |journal|
-                    %tr{ id: journal.slug }
+                    %tr
                       %td= journal.name
                       %td= journal.description
                       %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
                       %td= journal.account_number
                       %td= journal.charge_account
+                      - if @user.organization_rights.is_customer_journals_management_authorized
+                        %td
+                          = link_to icon_edit, edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
+                          = link_to icon_destroy, account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+              .row-fluid
+                .span6
+                  Pré-affectation comptable :
+                  %span.label= @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
+                  %span.margin2left
+                  Total :
+                  %span.label= @customer.account_book_types.count
+                  %span.margin2left
+                  Total autorisé :
+                  %span.label= @customer.options.max_number_of_journals
+                .span6.alignright
+                  - if @user.organization_rights.is_customer_journals_management_authorized
+                    - if is_max_number_of_journals_reached?
+                      = link_to icon(icon: 'plus') + ' ' + t('actions.new'), '#', class: 'btn btn-primary', disabled: 'disabled'
+                      = link_to icon(icon: 'th-large') + ' Copier',            '#', class: 'btn btn-primary', disabled: 'disabled'
+                    - else
+                      = link_to icon(icon: 'plus') + ' ' + t('actions.new'), new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
+                      = link_to icon(icon: 'th-large') + ' Copier', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
               #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
                 %table.table.table-striped.table-condensed.margin0bottom

@@ -9,4 +9,28 @@
             = link_to icon_new + ' ' + t('actions.new'), new_account_organization_journal_path(@organization), class: 'btn btn-primary'
 
   .row-fluid
-    #assignment.span12.box
+    .span12.box
+      %table.table.table-striped.table-condensed.table-bordered.margin0
+        %thead
+          %tr
+            %th.aligncenter{ rowspan: 2, style: 'vertical-align:middle' } Par defaut ?
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
+            %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
+          %tr
+            %th Type
+            %th N°
+            %th Compte charge
+        %tbody
+          - @journals.each do |journal|
+            %tr
+              %td.aligncenter= journal.is_default ? icon_ok : nil
+              %td= journal.name
+              %td= journal.description
+              %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+              %td= journal.account_number
+              %td= journal.charge_account
+              %td
+                = link_to icon_edit, edit_account_organization_journal_path(@organization, journal), class: 'btn btn-mini'
+                = link_to icon_destroy, account_organization_journal_path(@organization, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'

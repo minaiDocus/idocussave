@@ -23,11 +23,19 @@ module Account::OrganizationHelper
     end
   end
 
-  def journal_form_url(organization, journal)
+  def journal_form_url(organization, customer, journal)
     if action_name == 'new' || !journal.persisted?
-      account_organization_journals_url(organization)
+      if customer
+        account_organization_customer_journals_url(organization, customer)
+      else
+        account_organization_journals_url(organization)
+      end
     else
-      account_organization_journal_url(organization, journal)
+      if customer
+        account_organization_customer_journal_url(organization, customer, journal)
+      else
+        account_organization_journal_url(organization, journal)
+      end
     end
   end
 

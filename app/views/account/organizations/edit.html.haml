@@ -8,13 +8,14 @@
       %fieldset
         %legend Information
         = f.input :name
-      - if @user.is_admin
         %fieldset
           %legend Options
           .row-fluid
             .span12
-              = f.input :is_detail_authorized, as: :boolean
-              = f.input :is_test,              as: :boolean
+              - if @user.is_admin
+                = f.input :is_detail_authorized, as: :boolean
+                = f.input :is_test,              as: :boolean
+              = f.input :is_journals_management_centralized, as: :boolean
       %fieldset
         %legend Adresses
         .row-fluid.padding2top

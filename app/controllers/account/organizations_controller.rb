@@ -81,7 +81,8 @@ private
         :file_naming_policy,
         :is_file_naming_policy_active,
         :is_detail_authorized,
-        :is_test
+        :is_test,
+        :is_journals_management_centralized
       )
     else
       params.require(:organization).permit(
@@ -90,7 +91,8 @@ private
         :authd_prev_period,
         :auth_prev_period_until_day,
         :file_naming_policy,
-        :is_file_naming_policy_active
+        :is_file_naming_policy_active,
+        :is_journals_management_centralized
       )
     end
   end
