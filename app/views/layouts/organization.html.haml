@@ -42,14 +42,14 @@
             .box.sidebar-nav
               %ul.nav.nav-list
                 %li.nav-header= @organization.name
-                %li{ class: (controller_name.in?(%w(organizations organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters)) ? 'active' : '') }
+                %li{ class: ((controller_name.in?(%w(organizations organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters)) && !request.path.match(/customers/)) ? 'active' : '') }
                   = link_to 'Paramètres', account_organization_path(@organization)
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
                   = link_to 'Groupes', account_organization_groups_path(@organization)
                 - if is_leader? || @user.can_manage_collaborators?
                   %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
                     = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
-                %li{ class: (request.path.match(/customers/) ? 'active' : '') }
+                %li{ class: ((request.path.match(/customers/) || controller_name.in?(%w(subscriptions))) ? 'active' : '') }
                   = link_to 'Clients', account_organization_customers_path(@organization)
                 - if is_leader? || @user.can_manage_journals?
                   %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }

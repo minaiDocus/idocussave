@@ -1,7 +1,10 @@
 #journal
   .row-fluid
     .span12.box
-      %h3 Edition du journal : #{@journal.name}
+      %h3
+        Edition du journal : #{@journal.name}
+        - if @customer
+          ( #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')} )
   .row-fluid
     .span12.box
       = render partial: 'form'

@@ -110,12 +110,10 @@ module ApplicationHelper
   end
 
   def current_user_info
-    if request.path.match(/organizations/) && session[:collaborator_code].present?
-      session[:collaborator_code]
-    elsif session[:user_code].present?
-      session[:user_code]
+    if request.path.match(/organizations/)
+      session[:collaborator_code].presence || 'Moi-même'
     else
-      'Moi-même'
+      session[:user_code].presence || 'Moi-même'
     end
   end
 
