@@ -22,6 +22,7 @@ class Account::CustomersController < Account::OrganizationController
     @subscription = @customer.find_or_create_scan_subscription
     @period = @subscription.periods.desc(:created_at).first
     @journals = @customer.account_book_types.asc(:name)
+    @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)
   end
 
   def new

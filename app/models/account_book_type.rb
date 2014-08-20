@@ -58,7 +58,7 @@ class AccountBookType
   end
 
   def compta_processable?
-    if entry_type > 0
+    if entry_type && entry_type > 0
       true
     else
       false

@@ -26,6 +26,7 @@ class FiduceoRetriever
   field :wait_for_user_label
   field :pending_document_ids, type: Array,   default: []
   field :period,                              default: 'daily'
+  field :journal_name
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)

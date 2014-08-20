@@ -19,6 +19,7 @@ class Account::JournalsController < Account::OrganizationController
       flash[:success] = 'Créé avec succès.'
       if @customer
         @customer.account_book_types << @journal
+        UpdateJournalRelationService.new(@journal).execute
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         source.account_book_types << @journal
@@ -36,6 +37,7 @@ class Account::JournalsController < Account::OrganizationController
     if @journal.update_attributes(journal_params)
       flash[:success] = 'Modifié avec succès.'
       if @customer
+        UpdateJournalRelationService.new(@journal).execute
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -49,6 +51,7 @@ class Account::JournalsController < Account::OrganizationController
     @journal.destroy
     flash[:success] = 'Supprimé avec succès.'
     if @customer
+      UpdateJournalRelationService.new(@journal).execute
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
     else
       redirect_to account_organization_journals_path(@organization)
@@ -75,6 +78,7 @@ class Account::JournalsController < Account::OrganizationController
           copy.organization = nil
           copy.is_default   = nil
           copy.save
+          UpdateJournalRelationService.new(copy).execute
         end
       end
     end

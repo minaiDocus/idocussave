@@ -20,6 +20,7 @@ class FiduceoRetrieverService
             retriever.wait_for_user = provider[:wait_for_user]
             retriever.wait_for_user_label = provider[:wait_for_user_label]
           end
+          retriever.journal_name = retriever.journal.try(:name)
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever
         end
@@ -35,6 +36,7 @@ class FiduceoRetrieverService
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
           retriever.journal = nil if retriever.bank?
+          retriever.journal_name = retriever.journal.try(:name)
           retriever.save
           retriever.schedule if retriever.error? && params[:pass].present?
           if is_name_changed

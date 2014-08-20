@@ -94,12 +94,18 @@
                 .span12
                   = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
+              - if @pending_journals.present?
+                .alert
+                  %strong Attention!
+                  Les journaux suivants sont assignés aux automates de récupération mais ne sont pas configurés :
+                  != @pending_journals.map { |j| content_tag(:strong, j) }.join(', ')
               %table.table.table-striped.table-bordered.table-condensed
                 %thead
                   %tr
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
                     %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+                    %th{ rowspan: 2, style: 'vertical-align:middle' } Automates
                     - if @user.organization_rights.is_customer_journals_management_authorized
                       %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
@@ -114,6 +120,7 @@
                       %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
                       %td= journal.account_number
                       %td= journal.charge_account
+                      %td= journal.fiduceo_retrievers.count
                       - if @user.organization_rights.is_customer_journals_management_authorized
                         %td
                           = link_to icon_edit, edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
