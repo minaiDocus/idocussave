@@ -17,6 +17,8 @@ class Subscription
   field :price_in_cents_wo_vat, type: Integer, default: 0
   field :tva_ratio,             type: Float,   default: 1.2
 
+  attr_accessor :requester
+
   validates_uniqueness_of :number
 
   scope :of_user,  lambda { |user| where(user_id: user.id) }
@@ -76,14 +78,25 @@ class Subscription
       end
       _group[1].each do |option_id|
         option = ProductOption.find option_id
-        option_order = copy_product_option(option)
-        option_order.price_in_cents_wo_vat = option_order.price_in_cents_wo_vat * required_option.quantity unless required_option.nil?
-        options << option_order
+        use_old = false
+        unless requester && requester.is_admin
+          group_options = group.product_options
+          selected_option = self.product_option_orders.select{ |so| group_options.select{ |go| so == go }.present? }.first
+          use_old = selected_option ? option.position < selected_option.position : false
+        end
+        if use_old
+          options << selected_option.dup
+        else
+          option_order = copy_product_option(option)
+          option_order.price_in_cents_wo_vat = option_order.price_in_cents_wo_vat * required_option.quantity unless required_option.nil?
+          options << option_order
+        end
       end
     end
     options
   end
 
+  # TODO extract into service object or form object
   def product=(_product)
     self.product_option_orders = fetch_options(_product)
   end

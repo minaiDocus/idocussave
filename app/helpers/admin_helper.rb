@@ -31,18 +31,6 @@ module AdminHelper
           join(',')
   end
 
-  def is_option_checked?(index, option, options)
-    if option.product_group.is_option_dependent
-      if options.any?
-        options.map{ |option| option[0] }.include?(option.first_attribute)
-      else
-        index == 0 ? true : false
-      end
-    else
-      option.to_a.in?(options)
-    end
-  end
-
   def organization_link(user)
     if user.organization
       link_to user.organization.try(:name), account_organization_path(user.organization)

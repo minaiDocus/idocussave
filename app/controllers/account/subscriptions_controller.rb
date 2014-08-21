@@ -9,6 +9,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 
   def update
     prev_options = @subscription.product_option_orders.map(&:dup)
+    @subscription.requester = @user
     if @subscription.update_attributes(scan_subscription_params)
       EvaluateSubscriptionService.execute(@subscription, @user, prev_options)
       flash[:success] = 'Modifié avec succès.'
