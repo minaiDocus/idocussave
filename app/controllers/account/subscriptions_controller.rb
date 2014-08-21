@@ -8,7 +8,9 @@ class Account::SubscriptionsController < Account::OrganizationController
   end
 
   def update
+    prev_options = @subscription.product_option_orders.map(&:dup)
     if @subscription.update_attributes(scan_subscription_params)
+      EvaluateSubscriptionService.execute(@subscription, @user, prev_options)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
     else

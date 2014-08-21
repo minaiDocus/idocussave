@@ -11,6 +11,7 @@ class ProductOptionOrder
   field :position,              type: Integer
   field :duration,              type: Integer
   field :quantity,              type: Integer
+  field :action_name
 
   embedded_in :product_optionable, polymorphic: true
 
@@ -33,6 +34,7 @@ class ProductOptionOrder
     #result = false unless self.position             == product_option_order.position
     result = false unless self.duration              == product_option_order.duration
     result = false unless self.quantity              == product_option_order.quantity
+    result = false unless self.action_name           == product_option_order.action_name
     result
   end
 

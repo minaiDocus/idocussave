@@ -1,0 +1,24 @@
+!!!
+%html
+  %body
+    %table
+      %tr
+        %th{ style: 'text-align:left' } Demandeur :
+        %td= @collaborator
+      %tr
+        %th{ style: 'text-align:left' } Client :
+        %td= @user
+      %tr
+        %th{ style: 'text-align:left' } Date de modification :
+        %td= l(@user.find_or_create_scan_subscription.updated_at)
+      %tr
+        %th{ style: 'text-align:left' } Lien :
+        %td
+          - link = account_organization_customer_url(@user.organization, @user, tab: 'subscription')
+          = link_to link, link
+      %tr
+        %th{ style: 'text-align:left' } Option(s) :
+        %td
+          %ul{ style: 'padding-left:14px' }
+            - @options.each do |option|
+              %li= option

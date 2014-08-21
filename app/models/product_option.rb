@@ -12,6 +12,7 @@ class ProductOption
   field :require_addresses,     type: Boolean, default: false
   field :duration,              type: Integer, default: 1
   field :quantity,              type: Integer, default: 1
+  field :action_name
 
   validates_presence_of :title, :name, :price_in_cents_wo_vat
 

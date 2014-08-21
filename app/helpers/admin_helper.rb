@@ -75,4 +75,10 @@ module AdminHelper
   def file_size(size_in_octet)
     "%0.3f" % ((size_in_octet * 1.0) / 1048576.0)
   end
+
+  def subscription_action_names_for_select
+    EvaluateSubscriptionService::ACTIONS.map do |action|
+      [t('subscription.actions.'+action.to_s), action]
+    end
+  end
 end

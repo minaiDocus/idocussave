@@ -46,8 +46,9 @@ class AccountBookType
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
 
-  scope :compta_processable, where: { :entry_type.gt => 0 }
-  scope :default, where: { is_default: true }
+  scope :compta_processable,     where: { :entry_type.gt => 0 }
+  scope :not_compta_processable, where: { entry_type: 0 }
+  scope :default,                where: { is_default: true }
 
   def info
     [self.name, self.description].join(' ')

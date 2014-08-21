@@ -167,6 +167,7 @@ fr:
         duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période) ?"
         quantity: Quantité
         product_group: Groupe
+        action_name: Action à executer
       product_group:
         name: Nom
         title: Nom (public)

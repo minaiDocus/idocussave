@@ -2,10 +2,17 @@
 class NotificationMailer < ActionMailer::Base
   helper :application
   default :from => "do-not-reply@idocus.com"
-  
+
   def notify(email,subject="",content="")
     @content = content
     mail(:to => email, :subject => subject)
+  end
+
+  def subscription_updated(email, collaborator, user, options)
+    @collaborator = collaborator
+    @user         = user
+    @options      = options
+    mail to: email, subject: "Modification de l'abonnement du client : #{user}"
   end
 
   def new_bank_accounts(collaborator, user, bank_accounts)

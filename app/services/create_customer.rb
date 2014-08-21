@@ -6,19 +6,26 @@ class CreateCustomer
     @customer.set_random_password
     @customer.skip_confirmation!
     if @customer.save
-      UserOptions.create(user_id: @customer.id)
-      source = (organization.is_journals_management_centralized || requester.is_admin) ? organization : requester
-      @customer.account_book_types = source.account_book_types.default
       organization.members << @customer
+      @customer.options = UserOptions.create(user_id: @customer.id)
+      AccountingPlan.create(user_id: @customer.id)
+
+      # Assign default subscription
       subscription = @customer.find_or_create_scan_subscription
       requester_subscription = requester.find_or_create_scan_subscription
       subscription.extend NewSubscription
       subscription.copy requester_subscription
-      AccountingPlan.create(user_id: @customer.id)
+      EvaluateSubscriptionService.execute(subscription, requester)
+
+      # Assign journals
+      source = (organization.is_journals_management_centralized || requester.is_admin) ? organization : requester
+      journals = source.account_book_types.default.asc(:name).limit(@customer.options.max_number_of_journals)
+      @customer.account_book_types = @customer.options.is_preassignment_authorized ? journals : journals.not_compta_processable
+
       @customer.authd_prev_period            = organization.authd_prev_period
       @customer.auth_prev_period_until_day   = organization.auth_prev_period_until_day
       @customer.auth_prev_period_until_month = organization.auth_prev_period_until_month
-      @customer.save && subscription.save
+      @customer.save
     end
   end
 
