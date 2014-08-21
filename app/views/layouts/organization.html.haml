@@ -49,7 +49,7 @@
                 - if is_leader? || @user.can_manage_collaborators?
                   %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
                     = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
-                %li{ class: ((request.path.match(/customers/) || controller_name.in?(%w(subscriptions))) ? 'active' : '') }
+                %li{ class: (request.path.match(/customers/) ? 'active' : '') }
                   = link_to 'Clients', account_organization_customers_path(@organization)
                 - if is_leader? || @user.can_manage_journals?
                   %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }

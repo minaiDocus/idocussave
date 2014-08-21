@@ -76,7 +76,7 @@
               = render partial: 'options'
               .row-fluid.margin1top
                 .span12
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #period_options.tab-pane{ class: ('active' if params[:tab] == 'period_options') }
               %table.table.table-striped.table-condensed
                 %tbody

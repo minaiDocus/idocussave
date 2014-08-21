@@ -85,13 +85,13 @@ Idocus::Application.routes.draw do
         end
         resource :csv_outputter, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
+        resource :subscription
       end
       resource :dropbox_extended, only: [] do
         get 'authorize_url', on: :member
         get 'callback',      on: :member
       end
       resources :journals, except: 'show'
-      resources :subscriptions
       resource :default_subscription, only: %w(show edit update)
       resource :organization_subscription, only: %w(edit update)
       resource :ibiza, controller: 'ibiza' do

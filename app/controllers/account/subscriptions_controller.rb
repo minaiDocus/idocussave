@@ -1,7 +1,7 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::SubscriptionsController < Account::OrganizationController
-  before_filter :load_customer, :load_subscription, :load_product
   before_filter :verify_rights
+  before_filter :load_customer, :load_subscription, :load_product
 
   def edit
     @options = @subscription.product_option_orders.map { |option| option.to_a }
@@ -49,7 +49,7 @@ private
   end
 
   def load_customer
-    @customer = customers.find_by_slug params[:id]
+    @customer = customers.find_by_slug params[:customer_id]
   end
 
   def load_subscription
