@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::DropboxesController < Account::OrganizationController
+class Account::DropboxExtendedController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_session
 
