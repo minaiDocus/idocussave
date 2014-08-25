@@ -50,6 +50,11 @@ fr:
         journal: Journal
         accounting_number: Numéro de compte comptable
       user:
+        code: Code
+        company: Société
+        first_name: Prénom
+        last_name: Nom
+        email: Email
         is_dropbox_extended_authorized: Dropbox Extended autorisé ?
         knowings_code: Code Knowings
         knowings_visibility: Visibilité Knowings

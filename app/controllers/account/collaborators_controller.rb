@@ -11,23 +11,22 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def new
-    @collaborator = User.new
+    @collaborator = User.new(code: "#{@organization.code}%")
   end
 
   def create
     @collaborator = User.new user_params
+    @collaborator.organization = @organization
     @collaborator.is_prescriber = true
     @collaborator.set_random_password
     @collaborator.skip_confirmation!
     @collaborator.reset_password_token = User.reset_password_token
     @collaborator.reset_password_sent_at = Time.now
     if @collaborator.save
-      @organization.members << @collaborator
       WelcomeMailer.welcome_collaborator(@collaborator).deliver
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@organization, @collaborator)
     else
-      flash[:error] = 'Données invalide.'
       render action: 'new'
     end
   end

@@ -211,8 +211,8 @@ fr:
   mongoid:
     errors:
       messages:
-        taken:
-          est déjà pris.
+        taken: est déjà pris.
+        invalid: n'est pas valide
         callbacks:
           'Calling %{method} on %{klass} resulted in a false return from a callback.'
         document_not_found:
@@ -283,13 +283,9 @@ fr:
               inclusion: n'est pas inclus(e) dans la liste
         user:
           attributes:
-            reset_password_token:
-              invalid: est invalide
               expired: jeton expiré
         scan/document:
           attributes:
-            name:
-              invalid: est invalide
             paperclips:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             oversized:

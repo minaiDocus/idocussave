@@ -26,7 +26,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def new
-    @customer = User.new
+    @customer = User.new(code: "#{@organization.code}%")
   end
 
   def create
@@ -103,14 +103,9 @@ private
   end
 
   def user_params
-    params.require(:user).permit(:code,
-                                 :company,
-                                 :first_name,
-                                 :last_name,
-                                 :email,
-                                 :group_ids,
-                                 :knowings_code,
-                                 :knowings_visibility)
+    attributes = [:company, :first_name, :last_name, :email, :group_ids, :knowings_code, :knowings_visibility]
+    attributes << :code if action_name == 'create'
+    params.require(:user).permit(*attributes)
   end
 
   def period_options_params

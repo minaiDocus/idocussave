@@ -63,7 +63,13 @@ class User
   field :is_centralized,                 type: Boolean, default: true
   field :is_operator,                    type: Boolean
 
+  validates_presence_of :code
+  validates_length_of :code, within: 3..11
+  validate :format_of_code, if: Proc.new { |u| u.code_changed? }
   validates_uniqueness_of :code
+
+  validates_presence_of :company
+  validates_length_of :email, :company, :first_name, :last_name, :knowings_code, within: 0..50
 
   field :knowings_code
   field :knowings_visibility,            type: Integer, default: 0
@@ -351,6 +357,14 @@ class User
       address.created_at ||= Time.now
       address.updated_at ||= Time.now
       address.save
+    end
+  end
+
+private
+
+  def format_of_code
+    if self.organization && !self.code.match(/^#{self.organization.code}%[A-Z0-9]{1,6}$/)
+      errors.add(:code, :invalid)
     end
   end
 end

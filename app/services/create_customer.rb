@@ -3,10 +3,10 @@ class CreateCustomer
 
   def initialize(organization, requester, params)
     @customer = User.new params
+    @customer.organization = organization
     @customer.set_random_password
     @customer.skip_confirmation!
     if @customer.save
-      organization.members << @customer
       @customer.options = UserOptions.create(user_id: @customer.id)
       AccountingPlan.create(user_id: @customer.id)
 
