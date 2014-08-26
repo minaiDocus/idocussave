@@ -181,3 +181,16 @@ fr:
         products: Sélectionner les produits
         product_supergroups: Sélectionner les groupes parents
         product_require_id: Sélectionner un groupe pour la dépendance
+      address:
+        first_name: Prénom
+        last_name: Nom
+        company: Société
+        address_1: Adresse
+        address_2: Adresse (suite)
+        city: Ville
+        zip: Code postal
+        state: Etat
+        phone: Tél fixe
+        phone_mobile: Tél mobile
+        is_for_billing: Pour la facturation ?
+        is_for_shipping: Pour le retour ?

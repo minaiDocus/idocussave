@@ -1,13 +1,13 @@
 = simple_form_for @address, url: customer_address_form_url(@organization, @customer, @address), html: { class: 'form form-horizontal margin0' } do |f|
-  = f.input :company,    label: t('mongoid.models.address.attributes.company')
-  = f.input :first_name, label: t('mongoid.models.address.attributes.first_name')
-  = f.input :last_name,  label: t('mongoid.models.address.attributes.last_name')
-  = f.input :address_1,  label: t('mongoid.models.address.attributes.address_1')
-  = f.input :address_2,  label: t('mongoid.models.address.attributes.address_2')
-  = f.input :city,       label: t('mongoid.models.address.attributes.city')
-  = f.input :zip,        label: t('mongoid.models.address.attributes.zip')
-  = f.input :is_for_billing, as: :boolean, label: 'Pour la facturation ?'
-  = f.input :is_for_shipping, as: :boolean, label: 'Pour le retour ?'
+  = f.input :company
+  = f.input :first_name, required: true
+  = f.input :last_name,  required: true
+  = f.input :address_1,  required: true
+  = f.input :address_2
+  = f.input :city
+  = f.input :zip
+  = f.input :is_for_billing,  as: :boolean
+  = f.input :is_for_shipping, as: :boolean
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize

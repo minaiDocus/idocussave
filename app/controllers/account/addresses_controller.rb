@@ -7,38 +7,38 @@ class Account::AddressesController < Account::AccountController
   def index
     @addresses = @user.addresses.all
   end
-  
+
   def new
     @address = Address.new
+    @address.first_name = @user.first_name
+    @address.last_name  = @user.last_name
   end
-  
+
   def create
-    @address = @user.addresses.new(params[:address])
+    @address = @user.addresses.new(address_params)
     if @address.save && @user.save
-      flash[:success] = "L'adresse a été créé avec succès"
+      flash[:success] = 'Créé avec succès.'
       redirect_to account_addresses_path
     else
-      flash[:error] = 'Impossible de créer cette adresse'
       render action: 'new'
     end
   end
-  
+
   def edit
   end
-  
+
   def update
-    if @address.update_attributes(params[:address]) && @user.save
-      flash[:success] = "L'adresse a été mis à jour avec succès"
+    if @address.update_attributes(address_params) && @user.save
+      flash[:success] = 'Modifié avec succès.'
       redirect_to account_addresses_path
     else
-      flash[:error] = 'Impossible de mettre à jour cette adresse'
       render action: 'edit'
     end
   end
-  
+
   def destroy
     if @address.destroy
-      flash[:success] = 'Supprimé avec succès'
+      flash[:success] = 'Supprimé avec succès.'
       redirect_to account_addresses_path
     end
   end
@@ -49,4 +49,21 @@ private
     @address = @user.addresses.find(params[:id])
   end
 
+  def address_params
+    params.require(:address).permit(
+      :first_name,
+      :last_name,
+      :company,
+      :address_1,
+      :address_2,
+      :city,
+      :zip,
+      :state,
+      :country,
+      :phone,
+      :phone_mobile,
+      :is_for_billing,
+      :is_for_shipping
+    )
+  end
 end

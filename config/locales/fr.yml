@@ -139,26 +139,11 @@ fr:
       models:
         user:
           attributes:
-            email:
-              blank: doit être renseigné
-              taken: a déjà été saisi
             password:
-              too_short: doit contenir 6 caractères au minimum.
-              too_long: doit contenir 20 caractères au maximum.
-              blank: doit être renseigné
-              confirmation: et la confirmation du mot de passe doivent être identiques.
-    attributes:
-      address:
-        first_name: Prénom
-        last_name: Nom
-        address_1: Addresse
-        city: Ville
-        zip: Code postale
-      order:
-        billing_address: Addressse de facturation
-        shipping_address: Addresse de retour
+              too_short: doit contenir 6 caractères au minimum
+              too_long: doit contenir 20 caractères au maximum
+              confirmation: et la confirmation du mot de passe doivent être identiques
 
-  order: Commande
   composition: Composition
 
   views:
@@ -363,14 +348,14 @@ fr:
           organization: Organisation
       address:
         zero: 0 adresses
-        one: 1 addresse
-        other: '%{count} addresses'
+        one: 1 adresse
+        other: '%{count} adresses'
         attributes:
           first_name: Prénom
           last_name: Nom
           company: Société
-          address_1: Addresse
-          address_2: Addresse (suite)
+          address_1: Adresse
+          address_2: Adresse (suite)
           city: Ville
           zip: Code postal
           state: Etat
@@ -378,8 +363,8 @@ fr:
           phone_mobile: Tél mobile
           billing: Facturation
           shipping: Retour
-          billing_address: Addressse de facturation
-          shipping_address: Addresse de retour
+          billing_address: Adresse de facturation
+          shipping_address: Adresse de retour
       page:
         zero: 0 pages
         one: 1 page

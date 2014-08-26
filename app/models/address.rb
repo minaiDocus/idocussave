@@ -14,7 +14,7 @@ class Address
   field :country
   field :phone
   field :phone_mobile
-  
+
   field :is_for_billing,  type: Boolean, default: false
   field :is_for_shipping, type: Boolean, default: false
 
@@ -25,6 +25,8 @@ class Address
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
   validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
 
+  validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50
+
   scope :for_billing,  where: { is_for_billing: true }
   scope :for_shipping, where: { is_for_shipping: true }
 
@@ -33,7 +35,7 @@ class Address
   def name
     [self.first_name, self.last_name].join(' ')
   end
-  
+
   def as_location
     self.attributes.delete_if { |key, value| key == '_id' }
   end

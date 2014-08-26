@@ -9,15 +9,16 @@ class Account::OrganizationAddressesController < Account::OrganizationController
 
   def new
     @address = Address.new
+    @address.first_name = @customer.first_name
+    @address.last_name  = @customer.last_name
   end
 
   def create
-    @address = @customer.addresses.new(params[:address])
+    @address = @customer.addresses.new(address_params)
     if @address.save && @customer.save
-      flash[:success] = "L'adresse a été créé avec succès"
+      flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else
-      flash[:error] = 'Impossible de créer cette adresse'
       render action: 'new'
     end
   end
@@ -26,18 +27,17 @@ class Account::OrganizationAddressesController < Account::OrganizationController
   end
 
   def update
-    if @address.update_attributes(params[:address]) && @customer.save
-      flash[:success] = "L'adresse a été mis à jour avec succès"
+    if @address.update_attributes(address_params) && @customer.save
+      flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else
-      flash[:error] = 'Impossible de mettre à jour cette adresse'
       render action: 'edit'
     end
   end
 
   def destroy
     if @address.destroy
-      flash[:success] = 'Supprimé avec succès'
+      flash[:success] = 'Supprimé avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     end
   end
@@ -50,5 +50,23 @@ private
 
   def load_address
     @address = @customer.addresses.find(params[:id])
+  end
+
+  def address_params
+    params.require(:address).permit(
+      :first_name,
+      :last_name,
+      :company,
+      :address_1,
+      :address_2,
+      :city,
+      :zip,
+      :state,
+      :country,
+      :phone,
+      :phone_mobile,
+      :is_for_billing,
+      :is_for_shipping
+    )
   end
 end
