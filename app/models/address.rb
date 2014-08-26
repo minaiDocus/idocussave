@@ -15,8 +15,9 @@ class Address
   field :phone
   field :phone_mobile
 
-  field :is_for_billing,  type: Boolean, default: false
-  field :is_for_shipping, type: Boolean, default: false
+  field :is_for_billing,      type: Boolean, default: false
+  field :is_for_shipping,     type: Boolean, default: false
+  field :is_for_kit_shipping, type: Boolean, default: false
 
   embedded_in :locatable, polymorphic: true
 
@@ -27,10 +28,11 @@ class Address
 
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50
 
-  scope :for_billing,  where: { is_for_billing: true }
-  scope :for_shipping, where: { is_for_shipping: true }
+  scope :for_billing,      where: { is_for_billing: true }
+  scope :for_shipping,     where: { is_for_shipping: true }
+  scope :for_kit_shipping, where: { is_for_kit_shipping: true }
 
-  before_save :set_billing_address, :set_shipping_address
+  before_save :set_billing_address, :set_shipping_address, :set_kit_shipping_address
 
   def name
     [self.first_name, self.last_name].join(' ')
@@ -68,6 +70,18 @@ class Address
       self.is_for_shipping = true
     else
       self.is_for_shipping = false
+    end
+    true
+  end
+
+  def set_kit_shipping_address
+    if self.is_for_kit_shipping.in? ["1", true]
+      locatable.addresses.each do |address|
+        address.is_for_kit_shipping = false
+      end
+      self.is_for_kit_shipping = true
+    else
+      self.is_for_kit_shipping = false
     end
     true
   end

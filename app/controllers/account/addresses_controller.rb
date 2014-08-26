@@ -63,7 +63,8 @@ private
       :phone,
       :phone_mobile,
       :is_for_billing,
-      :is_for_shipping
+      :is_for_shipping,
+      :is_for_kit_shipping
     )
   end
 end

@@ -3,11 +3,13 @@
     %tr
       %th{ colspan: 2 }
         - if single
-          = is_for_billing ? t('mongoid.models.address.attributes.billing') : t('mongoid.models.address.attributes.shipping')
+          = t('mongoid.models.address.attributes.billing') if type == 'billing'
+          = t('mongoid.models.address.attributes.shipping') if type == 'shipping'
+          = t('mongoid.models.address.attributes.kit_shipping') if type == 'kit_shipping'
         - else
-          - if address.is_for_billing || address.is_for_shipping
+          - if address.is_for_billing || address.is_for_shipping || address.is_for_kit_shipping
             .pull-left
-              = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil),(address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil)].reject(&:nil?).join(t('support.array.two_words_connector'))
+              = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil), (address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil), (address.is_for_kit_shipping ? t('mongoid.models.address.attributes.kit_shipping') : nil)].compact.to_sentence
           .pull-right
             = link_to icon_edit, edit_account_address_path(address), class: 'btn btn-mini'
             = link_to icon_destroy, account_address_path(address), :method => :delete, data: { :confirm => t('actions.confirm') }, class: 'btn btn-mini'

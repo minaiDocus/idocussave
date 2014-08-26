@@ -363,8 +363,10 @@ fr:
           phone_mobile: Tél mobile
           billing: Facturation
           shipping: Retour
+          kit_shipping: Livraison du kit
           billing_address: Adresse de facturation
           shipping_address: Adresse de retour
+          kit_shipping_address: Adresse de livraison du kit
       page:
         zero: 0 pages
         one: 1 page

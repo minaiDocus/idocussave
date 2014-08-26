@@ -250,12 +250,16 @@ class User
     end
   end
 
+  def billing_address
+    self.addresses.for_billing.first
+  end
+
   def shipping_address
     self.addresses.for_shipping.first
   end
 
-  def billing_address
-    self.addresses.for_billing.first
+  def kit_shipping_address
+    self.addresses.for_kit_shipping.first
   end
 
   def find_or_create_external_file_storage

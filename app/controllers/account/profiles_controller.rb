@@ -2,8 +2,6 @@
 class Account::ProfilesController < Account::AccountController
   def show
     @external_file_storage = @user.find_or_create_external_file_storage
-    @billing_address = @user.addresses.for_billing.first
-    @shipping_address = @user.addresses.for_shipping.first
     if @user.my_organization
       @invoices = @user.my_organization.invoices.desc(:created_at).page(params[:page])
     else
@@ -11,7 +9,7 @@ class Account::ProfilesController < Account::AccountController
     end
     @active_panel = params[:panel] || 'change_password'
   end
-  
+
   def update
     if params[:user][:current_password]
       if @user.valid_password?(params[:user][:current_password])

@@ -194,3 +194,4 @@ fr:
         phone_mobile: Tél mobile
         is_for_billing: Pour la facturation ?
         is_for_shipping: Pour le retour ?
+        is_for_kit_shipping: Pour le kit ?
