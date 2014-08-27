@@ -209,3 +209,9 @@
                 %td= link_to provider_wish.user.code, account_fiduceo_provider_wishes_path(code: provider_wish.user.code)
                 %td= provider_wish.name
                 %td= provider_wish_state(provider_wish)
+    .row-fluid
+      .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Clients décentralisés n'ayant pas d'adresse de facturation
+        .well
+          - @unbillable_customers.each do |customer|
+            = link_to customer.code, account_organization_customer_path(customer.organization, customer), class: 'label label-important'

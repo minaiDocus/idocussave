@@ -165,6 +165,7 @@ class User
   scope :prescribers,                 where: { is_prescriber: true }
   scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
   scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
+  scope :customers,                   where: { is_prescriber: false, :is_operator.in => [false, nil] }
   scope :operators,                   where: { is_operator: true }
   scope :not_operators,               where: { :is_operator.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }

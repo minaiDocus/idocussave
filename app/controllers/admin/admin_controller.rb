@@ -134,5 +134,10 @@ class Admin::AdminController < ApplicationController
 
     @emails          = Email.desc(:created_at).limit(10)
     @provider_wishes = FiduceoProviderWish.desc(:created_at).limit(5).entries
+
+    @unbillable_customers = User.customers.
+                              not_centralized.
+                              where('addresses.is_for_billing' => { '$nin' => [true] }).
+                              includes(:organization)
   end
 end
