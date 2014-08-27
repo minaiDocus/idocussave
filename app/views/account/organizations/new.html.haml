@@ -1,21 +1,22 @@
 #organizations.container-fluid
-  .row-fluid
-    .span12.box
-      %h3 Création d'une nouvelle organisation
+  .new
+    .row-fluid
+      .span12.box
+        %h3 Création d'une nouvelle organisation
 
-  .row-fluid
-    .span12.box
-      = simple_nested_form_for [:account, @organization], html: { class: 'form form-horizontal margin0' } do |f|
-        %fieldset
-          %legend Informations
-        = f.input :name
-        = f.input :code
-        %fieldset
-          %legend Options
-          .row-fluid
-            .span12
-              = f.input :is_detail_authorized, as: :boolean
-              = f.input :is_test,              as: :boolean
-        .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organizations_path, class: 'btn'
+    .row-fluid
+      .span12.box
+        = simple_nested_form_for [:account, @organization], html: { class: 'form form-horizontal margin0' } do |f|
+          %fieldset
+            %legend Informations
+          = f.input :name
+          = f.input :code
+          %fieldset
+            %legend Options
+            .row-fluid
+              .span12
+                = f.input :is_detail_authorized, as: :boolean
+                = f.input :is_test,              as: :boolean
+          .form-actions.margin0bottom
+            = f.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organizations_path, class: 'btn'
