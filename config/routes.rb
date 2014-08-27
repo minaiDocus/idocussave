@@ -65,7 +65,7 @@ Idocus::Application.routes.draw do
         put 'update_ibiza',          on: :member
         get 'edit_period_options',   on: :member
         put 'update_period_options', on: :member
-        resources :addresses, controller: 'organization_addresses'
+        resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan do
           member do
             put    :import
