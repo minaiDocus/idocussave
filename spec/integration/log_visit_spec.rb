@@ -8,11 +8,11 @@ describe 'Logging visit' do
   after(:each) do
     DatabaseCleaner.clean
   end
-  
+
   context 'as visitor' do
     it 'should log successfully homepage visit' do
       visit '/'
-      page.current_path.should eq('/')
+      page.current_path.should eq('/users/sign_in')
       log = Log::Visit.first
       log.user.should eq(nil)
       log.path.should eq('/')
@@ -34,7 +34,7 @@ describe 'Logging visit' do
 
   context 'as logged admin' do
     login_admin
-    
+
     it 'should not log visit' do
       visit '/account/documents'
       page.current_path.should eq('/account/documents')

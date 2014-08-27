@@ -367,19 +367,6 @@ fr:
           billing_address: Adresse de facturation
           shipping_address: Adresse de retour
           kit_shipping_address: Adresse de livraison du kit
-      page:
-        zero: 0 pages
-        one: 1 page
-        other: '%{count} pages'
-        name: Page
-        attributes:
-          title: Titre
-          position: Position
-          tag: Type du contenu
-          is_visible: Est visible
-          is_invisible: Est invisible
-          label: Libellé
-          is_footer: Afficher dans le footer
       cms_image:
         zero: 0 images
         one: 1 image

@@ -15,8 +15,6 @@
       = link_to 'Fac.', admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }
       = link_to 'Utili.', admin_users_path
-    %li{ class: ('active' if controller_name == 'pages') }
-      = link_to 'Pag.', admin_pages_path
     %li{ class: ('active' if controller_name == 'cms_images') }
       = link_to 'CMS Img.', admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }

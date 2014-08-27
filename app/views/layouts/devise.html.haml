@@ -17,11 +17,6 @@
             %span{ :class=>"icon-bar" }
           %a.logo{ href: site_url }
             %img{ src: logo_url, alt: 'logo' }
-          .nav-collapse
-            %ul{ :class=>"nav" }
-              - pages_type.each do |page|
-                %li
-                  = link_to page.tag, page_path(page)
     .container
       .row
         .span3
@@ -35,15 +30,9 @@
         .span9
           .well
             != yield
-          
+
     %footer
       .modal-footer.aligncenter
-        %p{ :class=>"green" }
-          - @page_in_footer = Page.in_footer.visible.by_position.all
-          - @page_in_footer.each_with_index do |page, index|
-            - if index != 0
-              %span.separator &#124;
-            != link_to page.title, "pages/#{page.slug}"
         %p{ :class=>"copyright" } &copy; iDocus 2014
 
     != render :partial => "/shared/google_analytics"

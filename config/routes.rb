@@ -1,11 +1,9 @@
 Idocus::Application.routes.draw do
-  root :to => "homepage#index"
+  root to: 'account/documents#index'
 
   wash_out :dematbox
 
   devise_for :users
-
-  resources :pages
 
   match '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download', via: :get
   match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
@@ -245,7 +243,6 @@ Idocus::Application.routes.draw do
       get  'archive',     on: :collection
       post 'debit_order', on: :collection
     end
-    resources :pages
     resources :cms_images
     resources :products, except: 'show'
     resources :product_options, except: %w(index show)
@@ -278,8 +275,6 @@ Idocus::Application.routes.draw do
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
-
-  get "/preview/(:id)", controller: :homepage, action: :preview
 
   match '*a', :to => 'errors#routing'
 end
