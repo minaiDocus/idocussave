@@ -35,6 +35,7 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     resources :organizations, except: :destroy do
+      resources :addresses, controller: 'organization_addresses'
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member
         post :propagate,                  on: :member

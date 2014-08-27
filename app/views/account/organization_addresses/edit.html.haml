@@ -1,0 +1,13 @@
+#addresses.row-fluid
+  .span12
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span12
+            .pull-left
+              %h3 Edition d'adresse
+            .pull-right
+              = link_to 'Nouvelle adresse', new_account_organization_address_path(@organization), class: 'btn btn-primary'
+    .row-fluid
+      .span12.box
+        = render partial: 'form'

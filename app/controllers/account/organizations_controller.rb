@@ -77,7 +77,6 @@ private
         :name,
         :code,
         :leader_id,
-        :addresses_attributes,
         :file_naming_policy,
         :is_file_naming_policy_active,
         :is_detail_authorized,
@@ -87,7 +86,6 @@ private
     else
       params.require(:organization).permit(
         :name,
-        :addresses_attributes,
         :authd_prev_period,
         :auth_prev_period_until_day,
         :file_naming_policy,

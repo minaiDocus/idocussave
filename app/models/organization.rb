@@ -58,8 +58,6 @@ class Organization
 
   embeds_many :addresses, as: :locatable
 
-  accepts_nested_attributes_for :addresses, allow_destroy: true
-
   scope :not_test, where: { is_test: false }
 
   def collaborators
@@ -142,6 +140,18 @@ class Organization
 
   def self.valid_file_naming_policy_elements
     %w(:customerCode :journal :period :position :thirdParty :date - _ \ )
+  end
+
+  def billing_address
+    self.addresses.for_billing.first
+  end
+
+  def shipping_address
+    self.addresses.for_shipping.first
+  end
+
+  def kit_shipping_address
+    self.addresses.for_kit_shipping.first
   end
 
 private
