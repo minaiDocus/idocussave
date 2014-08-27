@@ -1,6 +1,6 @@
 %h3 Filtres
 
-= form_tag admin_users_path, method: :get, html: { class: 'form form-vertical' } do
+= form_tag admin_users_path, method: :get, class: 'form form-vertical margin0bottom' do
   %br
   - item = params[:user_contains][:organization_id] rescue ''
   = label_tag 'user_contains[organization_id]', t('mongoid.models.organization.name')
@@ -17,5 +17,5 @@
   = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue '')
 
   %br
-  = submit_tag t('filters.action'), class: 'btn'
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
   = link_to t('filters.cancel'), admin_users_path, class: 'btn'

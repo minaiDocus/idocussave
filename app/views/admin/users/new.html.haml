@@ -1,16 +1,22 @@
-= render partial: 'navigation'
+#user.new
+  = render partial: 'navigation'
 
-.well
-  = simple_form_for [:admin, @user], html: { class: 'form form-horizontal margin0' } do |f|
-    = f.input :email, label: 'Email'
-    = f.input :password, label: 'Mot de passe'
-    = f.input :password_confirmation, label: 'Comfirmer le mot de passe'
-    = f.input :is_admin, label: 'Est admin ?', as: 'boolean'
-    = f.input :is_prescriber, label: 'Est prescripteur ?', as: 'boolean'
-    = f.input :first_name, label: 'Prénom'
-    = f.input :last_name, label: 'Nom'
-    = f.input :code, label: 'Code'
-    = f.input :company, label: 'Société'
-    .form-actions.margin0bottom
-      = f.submit t('actions.submit'), class: 'btn btn-primary'
-      = link_to t('actions.cancel'), admin_users_path, class: 'btn'
+  .row-fluid
+    .span12.panel
+      %h3 Nouvel utilisateur
+
+  .row-fluid
+    .span12.panel
+      = simple_form_for [:admin, @user], html: { class: 'form form-horizontal margin0 padding1top' } do |f|
+        = f.input :email, label: 'Email'
+        = f.input :password, label: 'Mot de passe'
+        = f.input :password_confirmation, label: 'Comfirmer le mot de passe'
+        = f.input :is_admin, label: 'Est admin ?', as: 'boolean'
+        = f.input :is_prescriber, label: 'Est prescripteur ?', as: 'boolean'
+        = f.input :first_name, label: 'Prénom'
+        = f.input :last_name, label: 'Nom'
+        = f.input :code, label: 'Code'
+        = f.input :company, label: 'Société'
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), admin_users_path, class: 'btn'

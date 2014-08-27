@@ -1,8 +1,12 @@
 #dematboxes
   = render 'navigation'
+
   .row-fluid
     .span3
-      %h3 Dematboxes
+      %h3.margin1bottom Dematboxes (#{@dematboxes.count})
+
+  .row-fluid
+    .span3
       %table.table.table-striped.table-bordered.table-condensed
         %thead
           %tr

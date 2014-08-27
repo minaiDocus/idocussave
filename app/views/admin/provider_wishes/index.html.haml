@@ -1,14 +1,15 @@
-.row-fluid
-  .span12
-    = render 'layouts/admin/fiduceo/navigation'
-
 #provider_wishes
+  .row-fluid
+    .span12
+      = render 'layouts/admin/fiduceo/navigation'
+
   .row-fluid.marginbottom
     .span12.margin1bottom
-      %h3 Liste des demandes de nouveaux fournisseurs
+      %h3 Liste des demandes de nouveaux fournisseurs (#{@provider_wishes.count})
+
   .row-fluid
     .span9
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @provider_wishes }
       .row-fluid
         .span12
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
@@ -43,6 +44,6 @@
                       = link_to icon_ok, accept_admin_fiduceo_provider_wish_path(provider_wish), method: 'PUT', class: 'btn btn-mini btn-success', data: { confirm: t('actions.confirm') }, title: 'Accepter'
                     - if provider_wish.pending? || provider_wish.processing?
                       = link_to icon_not_ok, edit_admin_fiduceo_provider_wish_path(provider_wish), class: 'btn btn-mini btn-danger', title: 'Rejeter'
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @provider_wishes }
     .span3
       = render partial: 'sidebar'

@@ -1,4 +1,4 @@
-= simple_nested_form_for [:admin, @scanning_provider], html: { class: 'form form-horizontal' } do |f|
+= simple_nested_form_for [:admin, @scanning_provider], html: { class: 'form form-horizontal padding1top margin0' } do |f|
   = f.input :name, label: t('mongoid.models.scanning_provider.attributes.name')
   = f.input :code, label: t('mongoid.models.scanning_provider.attributes.code')
   %fieldset
@@ -23,6 +23,6 @@
     = f.input :customer_tokens,                                                                                             |
       input_html: { data: { pre: @scanning_provider.customers.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } }, |
       label: t('mongoid.models.scanning_provider.attributes.customers')
-  .form-actions
-    = f.submit t('actions.submit'), class: 'btn'
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), admin_scanning_providers_path, class: 'btn'

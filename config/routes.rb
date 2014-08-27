@@ -237,11 +237,11 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
-    resources :users, except: :destroy do
+    resources :users, except: %w(edit destroy) do
       get  'search_by_code',                   on: :collection
       post 'send_reset_password_instructions', on: :member
     end
-    resources :invoices do
+    resources :invoices, only: %w(index show update) do
       get  'archive',     on: :collection
       post 'debit_order', on: :collection
     end
@@ -255,20 +255,20 @@ Idocus::Application.routes.draw do
     end
     resources :gray_labels
     resources :scanning_providers
-    resources :dematboxes do
+    resources :dematboxes, only: %w(index show destroy) do
       post 'subscribe', on: :member
     end
-    resources :dematbox_services do
+    resources :dematbox_services, only: %w(index destroy) do
       post 'load_from_external', on: :collection
     end
-    resources :dematbox_files
-    resources :retrievers, as: :fiduceo_retrievers
-    resources :provider_wishes, as: :fiduceo_provider_wishes do
+    resources :dematbox_files, only: :index
+    resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy)
+    resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index edit) do
       put 'start_process', on: :member
       put 'reject',        on: :member
       put 'accept',        on: :member
     end
-    resources :emailed_documents do
+    resources :emailed_documents, only: %w(index show) do
       get 'show_errors', on: :member
     end
 

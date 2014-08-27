@@ -2,9 +2,11 @@
   .row-fluid
     .span12.margin1bottom
       %h3 Liste des factures (#{@invoices.count})
+
   .row-fluid
     .span9
-      %table.table.table-bordered.table-condensed.table-striped
+      = render partial: 'shared/list_options', locals: { collection: @invoices }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
             %th= sortable :number, t('mongoid.models.invoice.attributes.number')
@@ -36,7 +38,7 @@
               %td.actions
                 = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
                 = icon_link_to admin_invoice_path(invoice), { icon: 'download' }, { target: '_blank' }
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @invoices }
     .span3
       = render partial: 'sidebar'
 
@@ -45,4 +47,4 @@
       %a.close{ data: { dismiss: :modal } } ×
       %h3
     .modal-body
-      %iframe{ :src => '' }
+      %iframe{ src: '' }

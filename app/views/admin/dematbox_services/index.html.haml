@@ -1,27 +1,30 @@
 #dematboxes
   = render 'admin/dematboxes/navigation'
+
   .row-fluid
     .span6
       .row-fluid
-        .span12
+        .span12.margin1bottom
           .pull-left
-            %h3 Services et Groupes
+            %h3 Services et Groupes (#{@dematbox_services.count})
           .pull-right
-            = link_to 'Mettre à jour', load_from_external_admin_dematbox_services_path, class: 'btn btn-mini', data: { method: :post }
-      %table.table.table-striped.table-bordered.table-condensed
-        %thead
-          %tr
-            %th Id
-            %th Type
-            %th Nom
-            %th Etat
-            %th Action
-        %tbody
-          - @dematbox_services.each do |dematbox_service|
-            %tr
-              %td= dematbox_service.pid
-              %td= dematbox_type dematbox_service.type
-              %td= dematbox_service.name
-              %td= dematbox_state dematbox_service.state
-              %td
-                = link_to icon_destroy, admin_dematbox_service_path(dematbox_service), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }
+            = link_to icon(icon: 'refresh') + ' Mettre à jour', load_from_external_admin_dematbox_services_path, class: 'btn btn-primary', data: { method: :post }
+      .row-fluid
+        .span12
+          %table.table.table-striped.table-bordered.table-condensed
+            %thead
+              %tr
+                %th Id
+                %th Type
+                %th Nom
+                %th Etat
+                %th Action
+            %tbody
+              - @dematbox_services.each do |dematbox_service|
+                %tr
+                  %td= dematbox_service.pid
+                  %td= dematbox_type dematbox_service.type
+                  %td= dematbox_service.name
+                  %td= dematbox_state dematbox_service.state
+                  %td
+                    = link_to icon_destroy, admin_dematbox_service_path(dematbox_service), title: 'Supprimer', data: { method: 'delete', confirm: t('actions.confirm') }
