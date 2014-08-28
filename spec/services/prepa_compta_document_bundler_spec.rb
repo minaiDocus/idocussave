@@ -44,11 +44,10 @@ describe PrepaCompta::DocumentBundler do
   describe '.prepare' do
     before(:all) do
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      journal = AccountBookType.create(name: 'TS', description: 'TEST', entry_type: 2)
-      journal.clients << @user
+      @user.account_book_types.create(name: 'TS', description: 'TEST', entry_type: 2)
       file_with_2_pages = File.open File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf'), 'r'
       Dir.mktmpdir do |dir|
-        temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'     
+        temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
         2.times do |i|
           file_name = "TS0001_TS_201301_%03d.pdf" % (i+1)
           file_path = File.join(dir, file_name)

@@ -26,8 +26,7 @@ describe UploadedDocument do
             Timecop.freeze(Time.local(2013,1,12))
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
           end
@@ -59,8 +58,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @scan_subscription = @user.find_or_create_scan_subscription
             @scan_subscription.update_attribute(:period_duration, 3)
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
           end
@@ -95,8 +93,7 @@ describe UploadedDocument do
           before(:all) do
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document
           end
@@ -108,7 +105,7 @@ describe UploadedDocument do
           it 'temp_pack.name should equal TS0001 TS 201212 all' do
             expect(@temp_document.temp_pack.name).to eq('TS0001 TS 201212 all')
           end
-          
+
           it { expect(@uploaded_document).to be_valid }
 
           describe 'temp_document' do
@@ -126,8 +123,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @scan_subscription = @user.find_or_create_scan_subscription
             @scan_subscription.update_attribute(:period_duration, 3)
-            journal = AccountBookType.create(name: 'TS', description: 'TEST')
-            journal.clients << @user
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document
           end
@@ -162,8 +158,7 @@ describe UploadedDocument do
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001')
         file = File.open("#{Rails.root}/spec/support/files/upload.tiff", "r")
-        journal = AccountBookType.create(name: 'TS', description: 'TEST')
-        journal.clients << @user
+        @user.account_book_types.create(name: 'TS', description: 'TEST')
         @uploaded_document = UploadedDocument.new(file, 'upload.tiff', @user, 'TS', 0)
         @temp_document = @uploaded_document.temp_document
       end
@@ -191,8 +186,7 @@ describe UploadedDocument do
       before(:all) do
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001', authd_prev_period: 0, auth_prev_period_until_day: 11)
-        @journal = AccountBookType.create(name: 'TS', description: 'TEST')
-        @journal.clients << @user
+        @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 
       after(:all) do
@@ -278,8 +272,7 @@ describe UploadedDocument do
       before(:all) do
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001')
-        @journal = AccountBookType.create(name: 'TS', description: 'TEST')
-        @journal.clients << @user
+        @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 
       after(:all) do

@@ -7,8 +7,7 @@ describe DocumentProcessor do
       Timecop.freeze(Time.local(2013,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      @journal = AccountBookType.create(name: 'TS', description: 'TEST')
-      @journal.clients << @user
+      @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
 
       @upload_file = File.open File.join(Rails.root, 'spec', 'support', 'files', 'upload.pdf'), 'r'
       @file_with_2_pages = File.open File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf'), 'r'
