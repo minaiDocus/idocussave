@@ -1,25 +1,31 @@
-Bonjour,
-%br
-%br
-Le #{I18n.l(@time, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to @url, @url} .
-%br
-%br
-%ul
-  - @packs.each do |pack|
-    - _pack = UpdatedPackPresenter.new(pack, @time)
-    %li
-      #{pack.name} : #{_pack.new_pages_count} nouvelle(s) page(s)
-      %ul
-        - if _pack.new_scanned_pages_count > 0
-          %li #{_pack.new_scanned_pages_count} page(s) (origine : numérisation effectuée par iDocus)
-        - if _pack.new_uploaded_pages_count > 0
-          %li #{_pack.new_uploaded_pages_count} page(s) (origine : transfert de mails ou téléversement dans la plateforme iDocus)
-        - if _pack.new_dematbox_scanned_pages_count > 0
-          %li #{_pack.new_dematbox_scanned_pages_count} page(s) (origine : numérisation par iDocus'Box)
-        - if _pack.new_auto_retrieved_pages_count > 0
-          %li #{_pack.new_auto_retrieved_pages_count} page(s) (origine : automates de récupération)
-%br
-%br
-Cordialement,
-%br
-L'équipe iDocus
+!!!
+%html
+  %head
+    %title Mise à jour des documents | iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Le #{I18n.l(@time, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to @url, @url} .
+    %br
+    %br
+    %ul
+      - @packs.each do |pack|
+        - _pack = UpdatedPackPresenter.new(pack, @time)
+        %li
+          #{pack.name} : #{_pack.new_pages_count} nouvelle(s) page(s)
+          %ul
+            - if _pack.new_scanned_pages_count > 0
+              %li #{_pack.new_scanned_pages_count} page(s) (origine : numérisation effectuée par iDocus)
+            - if _pack.new_uploaded_pages_count > 0
+              %li #{_pack.new_uploaded_pages_count} page(s) (origine : transfert de mails ou téléversement dans la plateforme iDocus)
+            - if _pack.new_dematbox_scanned_pages_count > 0
+              %li #{_pack.new_dematbox_scanned_pages_count} page(s) (origine : numérisation par iDocus'Box)
+            - if _pack.new_auto_retrieved_pages_count > 0
+              %li #{_pack.new_auto_retrieved_pages_count} page(s) (origine : automates de récupération)
+    %br
+    %br
+    Cordialement,
+    %br
+    L'équipe iDocus

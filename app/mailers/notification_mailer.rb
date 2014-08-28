@@ -1,24 +1,24 @@
 # -*- encoding : UTF-8 -*-
 class NotificationMailer < ActionMailer::Base
   helper :application
-  default :from => "do-not-reply@idocus.com"
+  default from: 'do-not-reply@idocus.com'
 
-  def notify(email,subject="",content="")
+  def notify(email, subject='', content='')
     @content = content
-    mail(:to => email, :subject => subject)
+    mail(to: email, subject: subject)
   end
 
   def subscription_updated(email, collaborator, user, options)
     @collaborator = collaborator
     @user         = user
     @options      = options
-    mail to: email, subject: "Modification de l'abonnement du client : #{user}"
+    mail(to: email, subject: "Modification de l'abonnement du client : #{user}")
   end
 
   def new_bank_accounts(collaborator, user, bank_accounts)
     @collaborator  = collaborator
     @user          = user
     @bank_accounts = bank_accounts
-    mail(:to => @collaborator.email, :subject => "iDocus - compte bancaire paramètré par votre client #{@user.company}")
+    mail(to: @collaborator.email, subject: "iDocus - compte bancaire paramétré par votre client #{@user.company}")
   end
 end

@@ -1,20 +1,26 @@
-Bonjour #{@collaborator.name},
-%br
-%br
-Nous vous informons que votre client #{@user.company} a configuré dans iDocus la récupération automatique des opérations bancaires pour le(s) compte(s) ci-dessous :
-%br
-%ul
-  - @bank_accounts.each do |bank_account|
-    %li= bank_account.bank_name
-%br
-Vous pouvez maintenant personnaliser le nom et le numéro de compte des journaux correspondant.
-%br
-%br
-Cordialement.
-%br
-%br
-—
-%br
-L’équipe iDocus
-%br
-support@idocus.com
+!!!
+%html
+  %head
+    %title Compte bancaire paramétré par votre client #{@user.company} | iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@collaborator.name},
+    %br
+    %br
+    Nous vous informons que votre client #{@user.company} a configuré dans iDocus la récupération automatique des opérations bancaires pour le(s) compte(s) ci-dessous :
+    %br
+    %ul
+      - @bank_accounts.each do |bank_account|
+        %li= bank_account.bank_name
+    %br
+    Vous pouvez maintenant personnaliser le nom et le numéro de compte des journaux correspondant.
+    %br
+    %br
+    Cordialement.
+    %br
+    %br
+    —
+    %br
+    L’équipe iDocus
+    %br
+    support@idocus.com

@@ -1,11 +1,17 @@
-Date : #{I18n.l(@report.updated_at)}
-%br
-Cabinet : #{@ibiza.organization.name}
-%br
-Client : #{@report.user.company} - #{@report.user.ibiza_id}
-%br
-Lot : #{@report.name}
-%br
-Message d'erreur :
-%br
-#{@report.delivery_message}
+!!!
+%html
+  %head
+    %title Erreur d'import | iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Date : #{I18n.l(@report.updated_at)}
+    %br
+    Cabinet : #{@ibiza.organization.name}
+    %br
+    Client : #{@report.user.company} - #{@report.user.ibiza_id}
+    %br
+    Lot : #{@report.name}
+    %br
+    Message d'erreur :
+    %br
+    #{@report.delivery_message}

@@ -2,39 +2,39 @@
 %html
   %head
     %title Création de compte iDocus
-    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }/
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour #{@collaborator.name},
-    %br/
-    %br/
+    %br
+    %br
     Vous bénéficiez d'un espace personnel sur la plateforme iDocus qui vous permet de consulter et gérer les informations concernant vos clients qui utilisent notre service (pièces comptables, reporting, abonnements…).
-    %br/
-    %br/
+    %br
+    %br
     Nous venons de vous créer un compte pour y accéder.
-    %br/
-    %br/
+    %br
+    %br
     Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @collaborator.reset_password_token), edit_user_password_url(reset_password_token: @collaborator.reset_password_token) }
-    %br/
+    %br
     Par mesure de sécurité, ce lien est actif pendant 7 jours.
-    %br/
+    %br
     Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
-    %br/
-    %br/
-    %br/
+    %br
+    %br
+    %br
     Votre identifiant est : #{@collaborator.email}
-    %br/
-    %br/
-    %br/
+    %br
+    %br
+    %br
     Nous vous souhaitons une bonne utilisation de notre service.
-    %br/
-    %br/
+    %br
+    %br
     Cordialement
-    %br/
-    %br/
+    %br
+    %br
     \---
-    %br/
-    %br/
+    %br
+    %br
     L’équipe iDocus
-    %br/
+    %br
     = link_to "support@idocus.com", "mailto:support@idocus.com"
-    %br/
+    %br

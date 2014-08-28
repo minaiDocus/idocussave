@@ -2,50 +2,50 @@
 %html
   %head
     %title Création de compte iDocus
-    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }/
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour #{@user.name},
-    %br/
-    %br/
-    Le cabinet 
+    %br
+    %br
+    Le cabinet
     %b #{@user.organization.name.capitalize}
     , vous propose désormais un service de numérisation de toutes les pièces nécessaires à la tenue de votre comptabilité.
-    %br/
-    %br/
+    %br
+    %br
     Cette prestation, assurée par iDocus, va vous permettre un accès rapide et pratique à vos documents qui seront disponibles dans votre espace personnel.
-    %br/
+    %br
     Nous venons de vous créer un compte pour y accéder.
-    %br/
-    %br/
+    %br
+    %br
     Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @user.reset_password_token), edit_user_password_url(reset_password_token: @user.reset_password_token) }
-    %br/
+    %br
     Par mesure de sécurité, ce lien est actif pendant 7 jours.
-    %br/
+    %br
     Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
-    %br/
-    %br/
-    Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères) 
-    %br/
+    %br
+    %br
+    Tous les mois, vous y retrouverez les fichiers issus de la numérisation de vos documents papiers (fichiers PDF avec reconnaissance de caractères)
+    %br
     Vous pourrez également paramétrer votre compte pour que les documents générés soient directement versés dans votre service de stockage habituel (Dropbox, Google Drive, Box, ftp…)
-    %br/
+    %br
     Vos documents qui sont déjà sous format électronique sont à intégrer dans iDocus grâce à la fonctionnalité « Téléverser » accessible dans votre espace personnel.
-    %br/
+    %br
     Le respect des consignes et des dates préconisées par votre cabinet ainsi que la bonne utilisation des chemises et enveloppes contenus dans votre kit d'envoi garantiront l’efficacité de cette organisation.
-    %br/
-    %br/
+    %br
+    %br
     Votre identifiant est : #{@user.email}
-    %br/
-    %br/
+    %br
+    %br
     Nous vous souhaitons une bonne utilisation de notre service.
-    %br/
-    %br/
+    %br
+    %br
     Cordialement
-    %br/
-    %br/
+    %br
+    %br
     \---
-    %br/
-    %br/
+    %br
+    %br
     L’équipe iDocus
-    %br/
+    %br
     = link_to "support@idocus.com", "mailto:support@idocus.com"
-    %br/
+    %br
