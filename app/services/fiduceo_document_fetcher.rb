@@ -47,7 +47,7 @@ class FiduceoDocumentFetcher
       FiduceoTransaction.not_processed.each do |transaction|
         update_transaction transaction
 
-        if transaction.success? && transaction.retriever.pending_document_ids.size > 0
+        if transaction.success? && transaction.retriever && transaction.retriever.pending_document_ids.size > 0
           fetch_documents transaction.retriever
         end
       end
