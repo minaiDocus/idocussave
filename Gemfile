@@ -43,7 +43,6 @@ gem 'strong_parameters'
 gem 'rabl'
 gem 'tire'
 gem 'typhoeus'
-gem 'depsio'
 gem 'dalli'
 gem 'nokogiri'
 gem 'capistrano', :require => false
