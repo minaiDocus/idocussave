@@ -78,7 +78,7 @@ function navigate(x,y,move){
         new_y = y;
         if(x > 0){
           new_x++;
-        }else if(x < 0){ 
+        }else if(x < 0){
           new_x--;
         }
         if(y > 0){
@@ -90,12 +90,12 @@ function navigate(x,y,move){
       }
     }else{
       return null;
-    }  
+    }
   }else{
     return null;
   }
 }
- 
+
 function render_data(period){
   if(period != null){
     var $period = $(period);
@@ -105,9 +105,9 @@ function render_data(period){
     var duration = parseInt($period.attr('duration'));
 
     var $periodModal = $("#periodModal");
-    
+
     $("#periodModal .modal-header .user h4").text($("#user_"+user_id).find('td:first').text());
-    
+
     if (duration == 1) {
       $("#periodModal .modal-header .period h3").text(mois[month - 1] + " " + year);
     } else if (duration == 3) {
@@ -121,7 +121,7 @@ function render_data(period){
         $("#periodModal .modal-header h3").html("4<sup>éme</sup> trimestre " + year);
       }
     }
-    
+
     $.ajax({
       url: "/account/periods/" + period_id,
       data: "",
@@ -151,7 +151,7 @@ function render_data(period){
             $(this).parents("tr").addClass("selected");
           }
         });
-        
+
         $(".do-popover").popover({placement: 'right'});
         initDoShowInvoice();
       }
@@ -171,9 +171,9 @@ function apply_filter(){
     $("#total").addClass("hide");
     $("#user_"+user_id).removeClass("hide");
   }
-  
+
   var class_tags = ""
-  
+
   var $account_book_filter = $("#account_book_filter");
   var $year_filter = $("#year_filter");
   var $month_filter = $("#month_filter");
@@ -186,7 +186,7 @@ function apply_filter(){
   if ($month_filter.val().length > 0) {
     class_tags += ".m_" + parseInt($month_filter.val());
   }
-  
+
   $(".period").removeClass("selected");
   if (class_tags.length > 0) {
     $results = $(".period:visible "+class_tags);
@@ -215,7 +215,7 @@ $(document).ready(function(){
   max_period_y = $('.user').length;
 
   initDoShowInvoice();
-  
+
   $("a.do-show").click(function(){
     var $period = $(this).find('.period');
     period_x = parseInt($period.attr('month'));
@@ -223,9 +223,9 @@ $(document).ready(function(){
     render_data($period);
     return false;
   });
-  
+
   $("span.badge").tooltip();
-  
+
   $("#reset_filter").click(function(){
     $("#user_filter").val("0");
     $("#account_book_filter").val("");
@@ -234,33 +234,33 @@ $(document).ready(function(){
     apply_filter();
     return false;
   });
-  
+
   $("#filter").submit(function(){
     apply_filter();
     return false;
   });
-  
+
   $("#value_filter").change(function(){
     var val = $(this).val();
     $(".value span").addClass("hide");
     $(".value .value_"+val).removeClass("hide");
   });
-  
+
   $('a.up').click(function(){
     render_data(go_up());
     return false;
   });
-  
+
   $('a.down').click(function(){
     render_data(go_down());
     return false;
   });
-  
+
   $('a.left').click(function(){
     render_data(go_left());
     return false;
   });
-  
+
   $('a.right').click(function(){
     render_data(go_right());
     return false;

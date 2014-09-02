@@ -6,16 +6,16 @@ class Composition
   field :name
   field :path
   field :document_ids
-  
+
   belongs_to :user
 
   def self.create_with_documents(options = {})
     name = options.delete(:name) || "Undefined"
-    
+
     if name == ""
       name = "Undefined".pdf
     end
-    
+
     document_ids = options.delete(:document_ids)
     user_id = options.delete(:user_id)
     user = User.find user_id

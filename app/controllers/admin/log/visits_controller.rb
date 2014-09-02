@@ -1,13 +1,13 @@
 class Admin::Log::VisitsController < Admin::AdminController
   helper_method :sort_column, :sort_direction, :visit_contains
-  
+
   def index
     @visits = search(visit_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
   end
-  
+
   def visit_contains
     contains = {}
     if params[:visit_contains]
@@ -24,11 +24,11 @@ class Admin::Log::VisitsController < Admin::AdminController
     end
     contains
   end
-  
+
   def sort_column
     params[:sort] || 'number'
   end
-  
+
   def sort_direction
     %w(asc desc).include?(params[:direction]) ? params[:direction] : 'desc'
   end

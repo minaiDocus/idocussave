@@ -4,7 +4,7 @@
     %h3 Téléverser des documents
   .modal-body
     %p{ :style => "text-align:right" }
-      Formats de fichiers acceptés : 
+      Formats de fichiers acceptés :
       - UploadedDocument::VALID_EXTENSION.each do |extension|
         %span{ class: 'label label-info', style: 'margin-right:5px;' }= extension[1..-1]
       %br
@@ -119,8 +119,7 @@
         </tr>
     {% } %}
     </script>
-    
-    
+
 .modal.fade{ :id=>"sharingDialog" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
@@ -137,7 +136,7 @@
       %p
         Pour partager ce(s) document(s) entrer l'identifiant du/des compte(s) concerné(s), séparer les identifiants des comptes avec des espaces.
         %br
-        Identifiant(s) : 
+        Identifiant(s) :
         != text_field_tag :names, nil, :id => "sharing_names"
       %p.sharing.names_alert
       %p.sharing.length_alert.margin1top
@@ -163,7 +162,7 @@
     .modal-footer
       %a{ :href=>"#", :class=>"modal-close btn" } Fermer
       %input#documentsTaggingButton.btn{ :type => "submit", :value => "Ok" }
-    
+
 .modal.fade{ :id=>"pagesTaggingDialog" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
@@ -182,7 +181,7 @@
     .modal-footer
       %a{ :href=>"#", :class=>"modal-close btn" } Fermer
       %input#pagesTaggingButton.btn{ :type => "submit", :value => "Ok" }
-    
+
 .modal.fade{ :id=>"selectionTaggingDialog" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×
@@ -201,7 +200,6 @@
     .modal-footer
       %a{ :href=>"#", :class=>"modal-close btn" } Fermer
       %input#selectionsTaggingButton.btn{ :type => "submit", :value => "Ok" }
-    
 
 .modal.fade{ :id=>"compositionDialog" }
   .modal-header

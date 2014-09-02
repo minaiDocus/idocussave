@@ -1,10 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::BackupsController < Account::AccountController
-
   def index
     @backups = current_user.backups
   end
-  
+
   def update
     @backup = Backup.find params[:id]
     if @backup.update_attributes params[:backup]
@@ -21,5 +20,4 @@ class Account::BackupsController < Account::AccountController
       end
     end
   end
-  
-  end
+end

@@ -2,7 +2,7 @@
 class Account::DropboxesController < Account::AccountController
   before_filter :dropbox_authorized?
   before_filter :load_dropbox
-  
+
 private
 
   def dropbox_authorized?
@@ -29,11 +29,10 @@ public
     redirect_to @dropbox.get_authorize_url callback_account_dropbox_url
     # render :text => @dropbox.get_authorize_url(callback_account_dropbox_url)
   end
-  
+
   def callback
     @dropbox.get_access_token
     flash[:notice] = "Votre compte Dropbox à été configuré avec succès."
     redirect_to account_profile_path
   end
-  
 end

@@ -3,7 +3,7 @@ if %w(test).include?(Rails.env)
   begin
     require 'rspec/core'
     require 'rspec/core/rake_task'
-  rescue MissingSourceFile 
+  rescue MissingSourceFile
     module Rspec
       module Core
         class RakeTask
@@ -47,13 +47,13 @@ if %w(test).include?(Rails.env)
         t.pattern = "./spec/#{sub}/**/*_spec.rb"
       end
     end
-    
+
     desc "Run all specs with rcov"
     RSpec::Core::RakeTask.new(:rcov => spec_prereq) do |t|
       t.rcov = true
       t.rcov_opts = ['--output "spec/coverage" --exclude "spec/*,gems/*,features/*" --rails']
     end
-    
+
     task :statsetup do
       require 'rails/code_statistics'
       ::STATS_DIRECTORIES << %w(Model\ specs spec/models) if File.exist?('spec/models')

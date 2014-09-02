@@ -4,7 +4,7 @@ class Invoice
   include Mongoid::Timestamps
   include Mongoid::Paperclip
   include Mongoid::Slug
-  
+
   field :number,                type: String
   field :vat_ratio,             type: Float,   default: 1.2
   field :amount_in_cents_w_vat, type: Integer
@@ -66,7 +66,7 @@ class Invoice
     previous_month = months[(self.created_at - 1.month).month]
     year = (self.created_at - 1.month).year
     month = (self.created_at - 1.month).month
-    
+
     @total = 0
     @data = []
 
@@ -219,30 +219,31 @@ class Invoice
       pdf.move_down 10
       pdf.stroke_color "000000"
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
-      
+
       # Other information
       pdf.move_down 13
       pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[self.created_at.month].downcase} #{self.created_at.year}"
-      
+
       pdf.move_down 7
       pdf.text "Le détail de la prestation est consultable dans votre compte sur www.idocus.com"
-      
+
       pdf.move_up 4
       pdf.text "Votre login d’accès au site : #{(user || organization.leader).email}"
     end
-    
+
     self.content = File.new "#{Rails.root}/tmp/#{self.number}.pdf"
     self.save
     #File.delete "#{Rails.root}/tmp/#{self.number}.pdf"
-    
+
   end
-  
+
   def format_price price_in_cents
     price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
     ("%0.2f" % price_in_euros).gsub(".", ",")
   end
 
 private
+
   def set_number
     unless self.number
       prefix = 1.month.ago.strftime('%Y%m')
@@ -250,5 +251,4 @@ private
       self.slug = self.number = prefix + ("%0.4d" % txt)
     end
   end
-
 end

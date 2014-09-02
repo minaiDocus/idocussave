@@ -2,9 +2,9 @@
 class Account::Documents::SharingsController < Account::AccountController
   def create
     users = User.find_by_emails(params[:email].split()) - [@user]
-    
+
     packs = Pack.find(params[:pack_ids].split()).select { |p| p['owner_id'] == @user.id }
-    
+
     packs.each do |pack|
       users.each do |user|
         unless user.packs.include?(pack)
@@ -13,12 +13,12 @@ class Account::Documents::SharingsController < Account::AccountController
         end
       end
     end
-    
+
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }
     end
   end
-  
+
   def destroy_multiple
     own_pack_ids = @user.own_packs.distinct(:_id).map(&:to_s)
     pack_ids = @user.packs.distinct(:_id).map(&:to_s)
@@ -33,7 +33,7 @@ class Account::Documents::SharingsController < Account::AccountController
       end
     end
     @user.save
-    
+
     respond_to do |format|
       format.json{ render :json => {}, :status => :ok }
     end

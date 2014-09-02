@@ -6,18 +6,18 @@ require 'prawn/measurement_extensions'
 
 module FileSendingKitGenerator
   TEMPDIR_PATH = "#{Rails.root}/files/#{Rails.env}/kit/"
-  
+
   def FileSendingKitGenerator.generate(clients_data,file_sending_kit, one_workshop_labels_page_per_customer=false)
     BarCode::init
-    
+
     clients = to_clients(clients_data)
-    
+
     KitGenerator::folder to_folders(clients_data), file_sending_kit
     KitGenerator::mail to_mails(clients), file_sending_kit
     KitGenerator::customer_labels to_labels(clients)
     KitGenerator::labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
   end
-  
+
 private
 
   def FileSendingKitGenerator.to_clients(clients_data)
@@ -40,7 +40,7 @@ private
     end
     folders_data
   end
-  
+
   def FileSendingKitGenerator.to_folder(client_data, period, account_book_type)
     part_number = 1
     user = client_data[:user]
@@ -78,7 +78,7 @@ private
   def FileSendingKitGenerator.to_mails(users)
     users.map { |user| to_mail(user) }
   end
-  
+
   def FileSendingKitGenerator.to_mail(user)
     mail = {}
     mail[:prescriber_company] = user.organization.leader.company
@@ -182,7 +182,7 @@ end
 module KitGenerator
   MOIS = [nil,"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
   TRIMESTRE = [nil,"1er Trimestre","2e Trimestre","3e Trimestre","4e Trimestre"]
-  
+
   def KitGenerator.folder(folders,file_sending_kit)
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/folders.pdf", :page_layout => :landscape, :page_size => "A3", :left_margin => 32, :right_margin => 7, :bottom_margin => 32, :top_margin => 7 do |pdf|
       folders.each_with_index do |folder,index|
@@ -193,11 +193,11 @@ module KitGenerator
       end
     end
   end
-  
+
   def KitGenerator.mail(mails,file_sending_kit)
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/mails.pdf", :left_margin => 70, :right_margin => 70 do |pdf|
       pdf.font "Helvetica"
-      
+
       mails.each_with_index do |mail,index|
         mail_bloc(pdf,mail,file_sending_kit)
         if !mails[index+1].nil?
@@ -206,7 +206,7 @@ module KitGenerator
       end
     end
   end
-  
+
   def KitGenerator.customer_labels(labels)
     Prawn::Document.generate "#{FileSendingKitGenerator::TEMPDIR_PATH}/customer_labels.pdf", :page_size => "A4", :margin => 0 do |pdf|
       pdf.font_size 11
@@ -248,12 +248,12 @@ module KitGenerator
       end
     end
   end
-  
+
 private
 
   def KitGenerator.folder_bloc(pdf, folder, file_sending_kit)
     pdf.font_size 16
-    
+
     # LEFT SIDE
     pdf.float do
       pdf.move_down 15
@@ -284,7 +284,7 @@ private
       end
 
       pdf.move_down 10
-      
+
       # BAR CODE
       pdf.bounding_box([0, pdf.cursor], :width => 531, :height => 84) do
         pdf.image folder[:barcode_path], :height => 56, :width => 282
@@ -309,7 +309,7 @@ private
       pdf.float do
         pdf.image File.join([Rails.root,"app/assets/images/application/kit_info.png"]), :width => 105.mm, :height => 74.mm, :vposition => :bottom
       end
-      
+
       # BAR CODE
       pdf.bounding_box([416, pdf.cursor], :width => 113, :height => 512) do
         pdf.move_down 409
@@ -330,31 +330,31 @@ private
                               "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
                               ]
                             ]
-    
+
     pdf.table(header_data, :width => 471, :column_widths => [157,157,157]) do
       style(row(0), :borders => [:top,:bottom], :border_color => "AFA6A6", :text_color => "AFA6A6")
       style(columns(0), :align => :left)
       style(columns(1), :align => :center)
       style(columns(2), :align => :right)
     end
-    
+
     pdf.move_down 15
     pdf.image "#{Rails.root}/public#{file_sending_kit.logo_path}", :width => file_sending_kit.logo_width, :height => file_sending_kit.logo_height, :position => :center
-    
+
     pdf.font_size 10
 
     pdf.move_down 12
     pdf.bounding_box([230, pdf.cursor], :width => 240) do
       pdf.text mail[:client_address].join("\n"), :align => :right
     end
-    
+
     pdf.move_down 15
 
     pdf.text "Votre code client : <b>#{mail[:client_code]}</b>", :align => :left, :style => :italic, :inline_format => true
 
     pdf.move_down 8
     pdf.text "Paris, le #{Time.now.day} #{MOIS[Time.now.month]} #{Time.now.year}", :align => :right
-    
+
     pdf.move_down 15
 
     pdf.text "Bonjour,"
@@ -393,7 +393,7 @@ private
     pdf.move_down 13
     pdf.text "L’équipe iDocus", :align => :center
   end
-  
+
   def KitGenerator.customer_label_bloc(pdf, label, y=0)
     pdf.bounding_box([y, pdf.cursor], :width => 297, :height => 111) do
       pdf.move_down 18
@@ -438,7 +438,7 @@ end
 
 module BarCode
   TEMPDIR_PATH = "#{Rails.root}/tmp/barcode"
-  
+
   def BarCode.init
     unless File.exist?(TEMPDIR_PATH)
       Dir.mkdir(TEMPDIR_PATH)
@@ -449,13 +449,12 @@ module BarCode
 
   def BarCode.generate_png(text, height = 50, margin = 5)
     tempfile_path = "#{TEMPDIR_PATH}/#{text.gsub(" ","_")}.png"
-  
+
     barcode = Barby::Code39.new(text)
     File.open(tempfile_path,"w") do |f|
       f.write barcode.to_png(:height => height, :margin => margin)
     end
-    
+
     tempfile_path
   end
-  
 end

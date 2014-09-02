@@ -19,16 +19,16 @@ class PaiementCic
 
   @@hmac_key = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" # clé extraite grâce à extract2HmacSha1.html fourni par le Crédit Mutuel
   cattr_accessor :hmac_key
-  
+
   @@target_url = "https://paiement.creditmutuel.fr/test/paiement.cgi" # "https://ssl.paiement.cic-banques.fr/paiement.cgi"
   cattr_accessor :target_url
-  
+
   @@tpe = "123456"
   cattr_accessor :tpe
-  
+
   @@societe = "masociete"
   cattr_accessor :societe
-  
+
   @@url_ok = ""
   cattr_accessor :url_ok
 
@@ -61,21 +61,21 @@ class PaiementCic
 
     hmac_key.valid_hmac?(mac_string, params['MAC'])
   end
-	
+
   # Check if the HMAC matches the HMAC of the data string
 	def valid_hmac?(mac_string, sent_mac)
 		computeHMACSHA1(mac_string) == sent_mac.downcase
 	end
-	
+
   # Return the HMAC for a data string
 	def computeHMACSHA1(data)
 		hmac_sha1(usable_key(self), data).downcase
 	end
-  
+
   def hmac_sha1(key, data)
 		length = 64
 
-		if (key.length > length) 
+		if (key.length > length)
 			key = [Digest::SHA1.hexdigest(key)].pack("H*")
 		end
 
@@ -101,9 +101,9 @@ class PaiementCic
 
 		if cca0 > 70 && cca0 < 97
 			hex_string_key += (cca0 - 23).chr + hex_final[1..2]
-		elsif hex_final[1..2] == "M" 
-			hex_string_key += hex_final[0..1] + "0" 
-		else 
+		elsif hex_final[1..2] == "M"
+			hex_string_key += hex_final[0..1] + "0"
+		else
 			hex_string_key += hex_final[0..2]
 		end
 

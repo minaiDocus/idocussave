@@ -102,15 +102,15 @@ module IbizaAPI
         @method = :get
         @body = ''
       end
-      
+
       def <<(path)
         @path << "/#{path}"
       end
-      
+
       def path?
         @path.length > 0
       end
-    
+
       def url
         "#{base}#{@path}"
       end

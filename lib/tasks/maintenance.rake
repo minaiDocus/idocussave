@@ -31,7 +31,7 @@ namespace :maintenance do
       end
     end
   end
-  
+
   namespace :invoice do
     desc 'Generate invoice'
     task :generate => [:environment] do
@@ -75,15 +75,15 @@ namespace :maintenance do
     desc 'Feed dictionary'
     task :feed, [:path] => :environment do |t,args|
       filename = File.expand_path(File.dirname(__FILE__)) + args[:path]
-      
+
       puts "fetching dictionary at #{filename}"
-      
+
       if File.exist?(filename)
         File.open(filename, 'r') do |file|
           while line = file.gets
             Dictionary.add Iconv.iconv('UTF-8', 'ISO-8859-1', line.chomp).join()
             print '.'
-          end  
+          end
         end
       end
     end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Admin::ProductsController do
   render_views
-  
+
   before(:each) do
     Product.destroy_all
     @product = FactoryGirl.create(:product, title: 'game')
@@ -10,17 +10,17 @@ describe Admin::ProductsController do
     user = FactoryGirl.create(:admin)
     sign_in user
   end
-  
+
   it "GET 'index'" do
     get 'index'
     assigns(:products).should eq([@product])
-  end 
-  
+  end
+
   it "GET 'new'" do
     get 'new'
     response.should be_success
-  end 
-  
+  end
+
   describe "POST 'create'" do
     it "should success" do
       post :create, product: FactoryGirl.attributes_for(:product)
@@ -32,7 +32,7 @@ describe Admin::ProductsController do
       response.should render_template("admin/products")
     end
   end
-  
+
   it "GET 'edit'" do
     get :edit, id: @product.to_param
     response.should be_success
@@ -51,7 +51,7 @@ describe Admin::ProductsController do
       @product.title.should eq('game')
     end
   end
-  
+
   it "POST 'destroy'" do
     delete :destroy, id: @product
     product = Product.where(title:'game').first

@@ -20,31 +20,31 @@
     var id = page.attr("id").split("_")[1];
     $("#composition_"+id).remove();
   }
-  
+
   // showing all pages of the document given by link
   function showPages(link) {
     var document_id = link.parents("li").attr("id").split("_")[2];
-    
+
     var filter = $("#filter").val();
     if (filter != "")
       filter = "?filter="+filter;
     var url = "/account/documents/"+document_id+filter;
-    
+
     $("#panel2").hide();
     $("#panel1").show();
     getPages(url,link.text());
   }
-  
+
   // show the preview of page given by link
   function showPage(link) {
     var url = link.attr("href");
 
     $("#panel1").hide();
     $("#panel2").show();
-    
+
     $(".actiongroup.group1").hide();
     $(".actiongroup.group2").show();
-    
+
     $("#pageslist .header h3.all").hide();
     $("#pageslist .header .single").show();
 
@@ -57,11 +57,11 @@
     $(".showPage").attr("id",id);
     $(".showPage").attr("src",url);
     $("#pageInformation").attr("data-content",tags);
-    
+
     $("#panel2 .header h3").text(name);
     $("#panel2 .header .actiongroup .page_number").text(page_number);
   }
-  
+
   // toggle page selection given by link
   function selectPage(link) {
     var li = link.parents("li.pages")
@@ -72,7 +72,7 @@
       removePage(li);
     }
   }
-  
+
   // remove the document from selection, given by link
   function removePageFromSelection(link) {
     var li = link.parents("li.pages");
@@ -80,7 +80,7 @@
     $("#document_"+id).removeClass("selected");
     li.remove();
   }
-  
+
   // synchronise the newly shown pages with selection
   function synchroniseSelected() {
     $("#selectionlist > .content > ul > li").each(function(index,li) {
@@ -88,7 +88,7 @@
       $("#pageslist #document_"+id).addClass("selected");
     });
   }
-  
+
   // synchronise the removed pages in selection with selected in pages
   function synchroniseRemovedSelection() {
     $("#selectionlist > .content > ul > li").each(function(index,li) {
@@ -96,7 +96,7 @@
       $("#pageslist #document_"+id).removeClass("selected");
     });
   }
-  
+
   // get packs of page given by link
   function showPacks(link) {
     var page = 1;
@@ -107,7 +107,7 @@
       page = result[0];
     getPacks(page);
   }
-  
+
   // fecth all pages of the documents
   function getPages(url,title) {
     $.ajax({
@@ -161,7 +161,7 @@
     $("#panel1 > .content > ul").html("");
 
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
-    
+
     $.ajax({
       url: encodeURI(Url),
       data: "",
@@ -177,12 +177,12 @@
         list.append(data);
         $("#panel2").hide();
         $("#panel1").show();
-        
+
         packs_count = $("input[name=packs_count]").val();
         $("#documentslist > .header > h3").text(packs_count + " document(s)");
-        
+
         $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
-        
+
         initEventOnClickOnLinkButton();
         initEventOnHoverOnInformation();
       },
@@ -192,7 +192,7 @@
       }
     });
   }
-  
+
   // submit tag
   function postTags(tags,document_ids) {
     var hsh = {"document_ids": document_ids, "tags": tags};
@@ -209,7 +209,7 @@
       }
     });
   }
-  
+
   // init all link action
   function initEventOnClickOnLinkButton() {
     $("a.do-show").unbind("click");
@@ -217,36 +217,36 @@
       showPages($(this));
       return false;
     });
-    
+
     $("a.do-selectPage").unbind("click");
     $("a.do-selectPage").bind("click",function() {
       selectPage($(this));
       return false;
     });
-    
+
     $("a.do-removePageFromSelection").unbind("click");
     $("a.do-removePageFromSelection").bind("click",function() {
       removePageFromSelection($(this));
       return false;
     });
-    
+
     $(".pagination a").unbind('click');
     $(".pagination a").bind('click',function() {
       if(!$(this).parents('li').hasClass('disabled') && !$(this).parents('li').hasClass('active'))
         showPacks($(this));
       return false;
     });
-    
+
     $("a.do-showPage").unbind('click');
     $("a.do-showPage").bind('click',function() {
       showPage($(this));
       return false;
     });
-    
+
     $("a.do-select").unbind("click");
     $("a.do-select").bind("click",function(){ $(this).parents("li").toggleClass("selected"); return false; });
   }
-  
+
   function initEventOnHoverOnInformation() {
     $('.do-tooltip, .information, .do-tooltip-top, .information-top').tooltip({placement: 'top', trigger: 'hover'});
     $('.do-tooltip-right, .information-right').tooltip({placement: 'left', trigger: 'hover'});
@@ -257,7 +257,7 @@
     $('.do-popover-bottom').popover({placement: 'bottom'});
     $('.do-popover-left').popover({placement: 'left'});
   }
-  
+
   // initialize once
   function initManager() {
     $("#filter").change(function(){
@@ -265,16 +265,16 @@
       $("#panel1 > .content > ul").html("");
       getPacks();
     });
-    
+
     $("#sharingButton").click(function() {
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected.scanned, #documentslist > .content > ul > li.selected.sharing"), function(li){ return li.id.split("_")[2] });
       var $names = $("#sharing_names");
-      
+
       if (pack_ids.length <= 0)
         $("#sharingDialog .sharing.length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un de vos document.</span></div>");
       if ($names.val().length <= 0)
         $("#sharingDialog .sharing.names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un utilisateur.</span></div>");
-      
+
       if (pack_ids.length > 0 && $names.val().length > 0) {
         $("#sharingDialog").modal("hide");
         var hsh = {"pack_ids": pack_ids, "email": $names.val()};
@@ -296,17 +296,17 @@
       }
       return false;
     });
-    
+
     $("#sharingDialog").on("hidden",function() {
       $("#sharingDialog .length_alert").html("");
       $("#sharingDialog .names_alert").html("");
       $("#sharing_names").val("");
     });
-    
+
     $("#sharing_names").change(function() {
       $("#sharingDialog .names_alert").html("");
     });
-    
+
     $("#unsharingButton").click(function(){
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected.shared"), function(li){ return li.id.split("_")[2] });
       if (pack_ids.length > 0) {
@@ -332,17 +332,17 @@
       }
       return false;
     });
-    
+
     $("#documentsTaggingButton").click(function(e) {
       e.preventDefault();
       var document_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[1] });
       var $documentsTags = $("#documentsTags");
-      
+
       if (document_ids.length <= 0)
         $("#documentsTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($documentsTags.val().length <= 0)
         $("#documentsTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
-        
+
       if (document_ids.length > 0 && $documentsTags.val().length > 0) {
         var tags = $documentsTags.val();
         $documentsTags.val("");
@@ -352,7 +352,7 @@
           var $link = $(li).children(".action").children(".do-popover");
           var $content = $($link.attr("data-content"));
           var oTags = $content.find('.tags').text();
-          
+
           for ( var i=0; i<aTags.length; ++i ) {
             if (aTags[i].match("-")) {
               pattern = "\\s" + aTags[i].replace("-","").replace("*",".*");
@@ -370,28 +370,28 @@
         $("#documentsTaggingDialog").modal('hide');
       }
     });
-    
+
     $("#documentsTaggingDialog").on("hidden",function() {
       $("#documentsTaggingDialog .length_alert").html("");
       $("#documentsTaggingDialog .names_alert").html("");
       $("#documentsTags").val("");
     });
-    
+
     $("#documentsTags").change(function() {
       $("#documentsTaggingDialog .names_alert").html("");
     });
-    
+
     $("#pagesTaggingButton").click(function(e) {
       e.preventDefault();
       var $documents = $("#panel1 > .content > ul > li.selected");
       var document_ids = $.map($documents, function(li){ return li.id.split("_")[1] });
       var $pagesTags = $("#pagesTags");
-      
+
       if (document_ids.length <= 0)
         $("#pagesTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($pagesTags.val().length <= 0)
         $("#pagesTaggingDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer au moins un tag.</span></div>");
-      
+
       if (document_ids.length > 0 && $pagesTags.val().length > 0) {
         postTags($pagesTags.val(),document_ids);
         var aTags = $pagesTags.val().split(' ');
@@ -415,23 +415,23 @@
         $("#pagesTaggingDialog").modal("hide");
       }
     });
-    
+
     $("#pagesTaggingDialog").on("hidden",function() {
       $("#pagesTaggingDialog .length_alert").html("");
       $("#pagesTaggingDialog .names_alert").html("");
       $("#pagesTags").val("");
     });
-    
+
     $("#pagesTags").change(function() {
       $("#pagesTaggingDialog .names_alert").html("");
     });
-    
+
     $("#selectionsTaggingButton").click(function(e){
       e.preventDefault();
       var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
       var $documents = $($.map(document_ids, function(id) { return '#document_' + id }).join(','));
       var $selectionsTags = $("#selectionsTags");
-      
+
       if (document_ids.length <= 0)
         $("#selectionTaggingDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($selectionsTags.val().length <= 0)
@@ -460,26 +460,26 @@
         $("#selectionTaggingDialog").modal("hide");
       }
     });
-    
+
     $("#selectionTaggingDialog").on("hidden",function() {
       $("#selectionTaggingDialog .length_alert").html("");
       $("#selectionTaggingDialog .names_alert").html("");
       $("#selectionsTags").val("");
     });
-    
+
     $("#selectionsTags").change(function() {
       $("#selectionTaggingDialog .names_alert").html("");
     });
-    
+
     $("#compositionButton").click(function() {
       var document_ids = $.map($("#selectionlist > .content > ul > li"), function(li){ return li.id.split("_")[1] });
       var $composition_name = $("#composition_name");
-      
+
       if (document_ids.length <= 0)
         $("#compositionDialog .length_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez sélectionner au moins un document.</span></div>");
       if ($composition_name.val().length <= 0)
         $("#compositionDialog .names_alert").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'> × </a><span>Veuillez indiquer le nom de la composition.</span></div>");
-      
+
       if (document_ids.length > 0 && $composition_name.val().length > 0) {
         var hsh = {"composition[document_ids]": document_ids, "composition[name]": $composition_name.val()};
         $.ajax({
@@ -488,10 +488,10 @@
           dataType: "json",
           type: "POST",
           beforeSend: function() {
-            
+
           },
           success: function(data){
-            
+
             baseurl = window.location.pathname.split('/')[0];
             window.open(baseurl+""+data);
           }
@@ -499,13 +499,13 @@
       }
       return false;
     });
-    
+
     $("#compositionDialog").on("hidden",function() {
       $("#compositionDialog .length_alert").html("");
       $("#compositionDialog .names_alert").html("");
       $("#composition_name").val("");
     });
-    
+
     $("#composition_name").change(function() {
       $("#compositionDialog .names_alert").html("");
     });
@@ -520,7 +520,7 @@
         $(".warn_selected_file").hide();
       }
     });
-  
+
     $("#deliverButton").click(function() {
       var pack_ids = $.map($("#documentslist > .content > ul > li.selected"), function(li){ return li.id.split("_")[2] });
       var view = $("select[name=document_owner_list]").val();
@@ -550,27 +550,27 @@
       });
     });
   }
-  
+
   $(document).ready(function() {
     initManager();
     initEventOnClickOnLinkButton();
     initEventOnHoverOnInformation();
-    
+
     $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
     $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
     $(window).resize(function() {
       $("#invoice-show").css("height",(document.body.scrollHeight-50)+"px");
       $("#invoice-show").css("width",(document.body.clientWidth-5)+"px");
     });
-    
+
     $(".view_for").change(function() {
       getPacks();
     });
-    
+
     $(".per_page").change(function() {
       getPacks();
     });
-    
+
     $("a.do-selectSinglePage").click(function(){
       var id = "#document_" + $(".showPage").attr("id");
       var li = $(id);
@@ -583,16 +583,16 @@
       li.removeClass("selected");
       removePage(li);
     });
-    
+
     $(".modal-close").click(function(){ $(".modal").modal("hide"); });
     $(".close").click(function(){ $(this).parents("li").remove(); });
-    
+
     // selection event handler
     $(".do-selectAll").click(function(){ $("#documentslist > .content > ul > li").addClass("selected"); });
     $(".do-unselectAll").click(function(){ $("#documentslist > .content > ul > li").removeClass("selected"); });
-    
+
     $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
-    
+
     $(".do-selectAllPages").click(function(){
       $("#panel1 > .content > ul > li").each(function(index,li){
         if (!$(li).hasClass("selected")) {
@@ -607,7 +607,7 @@
         removePage($(li));
       });
     });
-    
+
     $("a.do-nextPage").click(function(){
       var id = $(".showPage").attr("id");
       var li = $("#document_"+id);
@@ -622,17 +622,16 @@
       if (link.length > 0)
         showPage(link);
     });
-    
-    
+
     $(".backToPanel1").click(function(){
       $("#panel2").hide();
       $("#panel1").show();
-      
+
       $(".actiongroup.group1").show();
       $(".actiongroup.group2").hide();
       return false;
     });
-    
+
     $("a.removeAllSelection").click(function() {
       synchroniseRemovedSelection();
       $("#selectionlist .content ul").html("");
@@ -653,7 +652,7 @@
         }
       });
     });
-    
+
     $("#selectionlist .content ul").sortable({
       handle: '.handle'
     });
@@ -696,5 +695,5 @@
     }
 
   });
-  
+
 })(jQuery);

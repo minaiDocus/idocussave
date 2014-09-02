@@ -14,14 +14,14 @@
             %img{ src: logo_url, alt: 'logo' }
           - if current_user
             %p.navbar-text.pull-right
-              Connecté en tant que 
+              Connecté en tant que
               != link_to current_user.email, account_documents_path
               |
               != link_to "déconnexion", destroy_user_session_path
-        
+
     != yield
-  
+
     %footer.footer
       %p.copyright &copy; iDocus 2014
-    
+
     != render :partial => "/shared/google_analytics"

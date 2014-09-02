@@ -2,7 +2,7 @@
 class DebitMandate
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :user
 
   field :transactionId

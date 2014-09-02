@@ -8,7 +8,7 @@ describe 'Organization Management' do
   after(:each) do
     DatabaseCleaner.clean
   end
-  
+
   describe 'relation' do
     before(:each) do
       @collaborator = FactoryGirl.create(:prescriber)

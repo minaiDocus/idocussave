@@ -102,11 +102,11 @@ class Pack
   def original_document
     documents.mixed.first
   end
-  
+
   def sheets_info
     self.dividers.sheets
   end
-  
+
   def pieces_info
     self.dividers.pieces
   end
@@ -122,7 +122,7 @@ class Pack
   def cover_name
     cover_info.name.gsub('_',' ') rescue ''
   end
-  
+
   def historic
     _documents = self.pages.asc(:created_at).entries
     current_date = _documents.first.created_at

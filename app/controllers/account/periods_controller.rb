@@ -1,10 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::PeriodsController < Account::AccountController
   layout nil
-  
+
   before_filter :load_period, :verify_rights
-  
+
 private
+
   def load_period
     @period = ::Scan::Period.find params[:id]
   end
@@ -16,6 +17,7 @@ private
   end
 
 public
+
   def show
     respond_to do |format|
       format.html { redirect_to account_reporting_path }

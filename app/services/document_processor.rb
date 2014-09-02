@@ -34,7 +34,7 @@ class DocumentProcessor
                 is_stamp_background_filled: user.is_stamp_background_filled,
                 dir: dir
               }
-              
+
               pages_number = DocumentTools.pages_number piece_file_path
 
               ## Piece

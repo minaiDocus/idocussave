@@ -2,9 +2,9 @@
 class Box
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :external_file_storage
-  
+
   field :access_token
   field :refresh_token
   field :path,                 type: String,  default: ':code/:year:month/:account_book'

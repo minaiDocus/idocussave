@@ -1,5 +1,5 @@
 class Idocus.Routers.PreAssignmentsRouter extends Backbone.Router
-  
+
   routes:
     '': 'pack_reports'
     'page/:page': 'pack_reports'

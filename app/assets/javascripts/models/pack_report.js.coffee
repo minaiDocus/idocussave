@@ -1,5 +1,5 @@
 class Idocus.Models.PackReport extends Backbone.Model
-  
+
   urlRoot: 'pack_reports'
 
   deliver: ->

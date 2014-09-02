@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::CmcicsController < Account::AccountController
-  
+
   skip_before_filter :authenticate_user!, :only => [:callback]
   skip_before_filter :verify_authenticity_token, :only => [:callback]
 
@@ -53,5 +53,4 @@ class Account::CmcicsController < Account::AccountController
     flash[:alert] = "Crédit annulé."
     redirect_to account_profile_url
   end
-  
 end

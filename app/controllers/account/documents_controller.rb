@@ -25,12 +25,12 @@ public
     end
     @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
     @packs_count = @packs.total
-    
+
     @last_composition = @user.composition
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     @period_service = PeriodService.new user: @user
   end
-  
+
   def show
     id = BSON::ObjectId.from_string(params[:id])
     if @user.organization && @user.is_prescriber
@@ -87,7 +87,7 @@ public
       @packs_count = @packs.total rescue 0
     end
   end
-    
+
   def archive
     id = BSON::ObjectId.from_string(params[:id])
     if @user.organization && @user.is_prescriber
@@ -104,7 +104,7 @@ public
       render text: 'File unavalaible'
     end
   end
-  
+
   def sync_with_external_file_storage
     if current_user.is_admin
       if params[:pack_ids].present?

@@ -10,13 +10,13 @@
             Aucun traitement
         = label_tag :filter, "Filtre :", :class => "pull-left"
         = text_field_tag :filter, "", :id => :filter, :class => "filter pull-left"
-        
+
         = label_tag :document_owner_list, "Afficher les documents :", :class => "pull-left margin1left"
         = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"],["qui m'appartiennent","self"]]+linked_users_option(@user),["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
-          
+
         = label_tag :per_page, "par :", :class => "pull-left margin1left"
         = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
-        
+
         .pull-right
           /
             %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
@@ -49,7 +49,7 @@
             != render :partial => "/account/documents/pack", :collection => @packs
           .aligncenter
             != paginate @packs
-          
+
     .span9
       #pageslist.well
         #panel1
@@ -114,6 +114,6 @@
             %ul
               - @is_composition = true
               != render :partial => "/account/documents/document", :collection => @composition
-            
+
 != render :partial => "/account/documents/dialog_box"
 != render "help"

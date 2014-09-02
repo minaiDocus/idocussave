@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::FtpsController < Account::AccountController
   before_filter :load_ftp
-  
+
 private
   def load_ftp
     @user.external_file_storage.create if !@user.external_file_storage
@@ -11,7 +11,7 @@ private
     end
     @ftp = @user.external_file_storage.ftp
   end
-  
+
 public
   def configure
     @ftp.host = params[:ftp][:host]
@@ -29,5 +29,4 @@ public
       format.html{ redirect_to account_profile_path }
     end
   end
-  
 end

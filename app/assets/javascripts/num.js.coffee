@@ -2,7 +2,7 @@ year = -> $('#date_year').val()
 month = -> $('#date_month').val()
 day = -> $('#date_day').val()
 
-create_return_labels = ->  
+create_return_labels = ->
   $.ajax
     url: "/num/return_labels/#{year()}/#{month()}/#{day()}",
     data: $('#returnLabelsForm .form').serialize(),
@@ -11,7 +11,7 @@ create_return_labels = ->
     success: (data) ->
       $('#returnLabelsForm input[type=submit]').removeClass('disabled')
       $('#returnLabelsDialog iframe').attr('src', '/num/return_labels')
-  
+
 new_return_labels = ->
   $('#returnLabelsForm').html('')
   $('#returnLabelsDialog iframe').attr('src', '')

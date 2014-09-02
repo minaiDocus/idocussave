@@ -2,7 +2,7 @@
 class Scan::Period
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :user,                                           inverse_of: :periods
   belongs_to :organization,                                   inverse_of: :periods
   belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :periods
@@ -10,7 +10,7 @@ class Scan::Period
   has_many   :invoices,                                       inverse_of: :period
   embeds_many :product_option_orders, as: :product_optionable
   embeds_one  :delivery, class_name: "Scan::Delivery", inverse_of: :period
-  
+
   field :start_at,       type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
   field :end_at,         type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
   field :duration,       type: Integer, default: 1
@@ -18,7 +18,7 @@ class Scan::Period
 
   # quarterly only
   field :is_charged_several_times, type: Boolean, default: true
-  
+
   field :price_in_cents_wo_vat,                    type: Integer, default: 0
   field :products_price_in_cents_wo_vat,           type: Integer, default: 0
   field :recurrent_products_price_in_cents_wo_vat, type: Integer, default: 0
@@ -63,7 +63,7 @@ class Scan::Period
   field :excess_preseizure_pieces, type: Integer, default: 0
   field :expense_pieces,           type: Integer, default: 0
   field :excess_expense_pieces,    type: Integer, default: 0
-  
+
   scope :monthly,   where: { duration: 1 }
   scope :bimonthly, where: { duration: 2 }
   scope :quarterly, where: { duration: 3 }
@@ -71,9 +71,9 @@ class Scan::Period
 
   scope :centralized,     where: { is_centralized: true }
   scope :not_centralized, where: { is_centralized: false }
-  
+
   # validate :attributes_year_and_month_is_uniq
-  
+
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
 
@@ -87,11 +87,11 @@ class Scan::Period
       "#{time.year}T#{(time.month/3.0).ceil}"
     end
   end
-  
+
   def price_in_cents_w_vat
     self.price_in_cents_wo_vat * tva_ratio
   end
-  
+
   def products_price_in_cents_w_vat
     self.products_price_in_cents_wo_vat * tva_ratio
   end
@@ -103,15 +103,15 @@ class Scan::Period
   def recurrent_products_price_in_cents_w_vat
     recurrent_products_price_in_cents_wo_vat * tva_ratio
   end
-  
+
   def excesses_price_in_cents_w_vat
     self.excesses_price_in_cents_wo_vat * tva_ratio
   end
-  
+
   def total_vat
     price_in_cents_w_vat - self.price_in_cents_wo_vat
   end
-  
+
   def update_price
     self.recurrent_products_price_in_cents_wo_vat = recurrent_products_total_price_in_cents_wo_vat
     self.ponctual_products_price_in_cents_wo_vat = ponctual_products_total_price_in_cents_wo_vat
@@ -119,12 +119,12 @@ class Scan::Period
     self.products_price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
     self.price_in_cents_wo_vat = total_price_in_cents_wo_vat
   end
-  
+
   def update_price!
     update_price
     save
   end
-  
+
   def total_price_in_cents_wo_vat
     if user
       products_total_price_in_cents_wo_vat + price_in_cents_of_total_excess
@@ -132,7 +132,7 @@ class Scan::Period
       product_option_orders.select { |e| e.group_position >= 1000 }.sum(&:price_in_cents_wo_vat) || 0
     end
   end
-  
+
   def products_total_price_in_cents_wo_vat
     product_option_orders.sum(:price_in_cents_wo_vat) || 0
   end
@@ -144,14 +144,14 @@ class Scan::Period
   def ponctual_products_total_price_in_cents_wo_vat
     product_option_orders.where(duration: 1).sum(:price_in_cents_wo_vat) || 0
   end
-  
+
   def price_in_cents_of_total_excess
     price_in_cents_of_excess_uploaded_pages +
     price_in_cents_of_excess_scan +
     price_in_cents_of_excess_dematbox_scanned_pages +
     price_in_cents_of_excess_compta_pieces
   end
-  
+
   def price_in_cents_of_excess_sheets
     excess = excess_sheets
     if excess > 0
@@ -182,7 +182,7 @@ class Scan::Period
   def price_in_cents_of_excess_scan
     price_in_cents_of_excess_sheets + price_in_cents_of_excess_paperclips + price_in_cents_of_excess_oversized
   end
-  
+
   def price_in_cents_of_excess_uploaded_pages
     excess = excess_uploaded_pages
     if excess > 0
@@ -224,7 +224,7 @@ class Scan::Period
       0
     end
   end
-  
+
   def excess_sheets
     excess = scanned_sheets - max_sheets_authorized
     excess > 0 ? excess : 0
@@ -239,7 +239,7 @@ class Scan::Period
     excess = oversized - max_oversized_authorized
     excess > 0 ? excess : 0
   end
-  
+
   def excess_uploaded_pages
     excess = uploaded_pages - max_upload_pages_authorized
     excess > 0 ? excess : 0
@@ -283,7 +283,7 @@ class Scan::Period
     end
     nb
   end
-  
+
   def set_product_option_orders(product_options)
     self.product_option_orders = []
     product_options.each do |product_option|
@@ -296,7 +296,7 @@ class Scan::Period
       self.product_option_orders << new_product_option_order
     end
   end
-  
+
   def set_documents_name_tags
     tags = []
     self.documents.each do |document|
@@ -307,18 +307,18 @@ class Scan::Period
     end
     self.documents_name_tags = tags
   end
-  
+
   def check_delivery
     if self.scanned_sheets > 0
       self.delivery.state = "delivered"
     end
   end
-  
+
   def update_information!
     update_information
     save
   end
-  
+
   def update_information
     set_documents_name_tags
     self.pieces                   = self.documents.sum(:pieces)                  || 0
@@ -349,7 +349,7 @@ class Scan::Period
     end
     hash
   end
-  
+
   def documents_json(viewer)
     total = {}
     total[:pieces]                  = 0
@@ -365,7 +365,7 @@ class Scan::Period
     total[:fiduceo_pages]           = 0
     total[:paperclips]              = 0
     total[:oversized]               = 0
-    
+
     lists = []
     documents.each do |document|
       list = {}
@@ -410,7 +410,7 @@ class Scan::Period
       end
 
       lists << list
-      
+
       total[:pieces]                  += document.pieces
       total[:pages]                   += document.pages
       total[:scanned_pieces]          += document.scanned_pieces
@@ -425,7 +425,7 @@ class Scan::Period
       total[:paperclips]              += document.paperclips
       total[:oversized]               += document.oversized
     end
-    
+
     total[:pieces]                  = total[:pieces].to_s
     total[:pages]                   = total[:pages].to_s
     total[:scanned_pieces]          = total[:scanned_pieces].to_s
@@ -439,7 +439,7 @@ class Scan::Period
     total[:fiduceo_pages]           = total[:fiduceo_pages].to_s
     total[:paperclips]              = total[:paperclips].to_s
     total[:oversized]               = total[:oversized].to_s
-    
+
     {
       list: lists,
       total: total,
@@ -454,7 +454,7 @@ class Scan::Period
       delivery: delivery.state
     }
   end
-  
+
   def options_json
     lists = []
     product_option_orders.by_position.each do |option|
@@ -489,7 +489,7 @@ class Scan::Period
         invoices: _invoices
     }
   end
-  
+
   def format_price(price_in_cents)
     ("%0.2f" % (price_in_cents/100.0)).gsub(".",",")
   end
@@ -497,7 +497,7 @@ class Scan::Period
   def current
     desc(:created_at).first
   end
-  
+
 private
   def attributes_year_and_month_is_uniq
     period = subscription.periods.where(:start_at.gte => start_at, :end_at.lte => end_at, duration: duration).first
@@ -507,12 +507,12 @@ private
       true
     end
   end
-  
+
   def set_start_date
     month = duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
     self.start_at = Time.local start_at.year, month, 1
   end
-  
+
   def set_end_date
     self.end_at = start_at + duration.month - 1.second
   end

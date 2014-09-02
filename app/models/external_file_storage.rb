@@ -2,9 +2,9 @@
 class ExternalFileStorage
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   SERVICES = ["Dropbox", "Dropbox Extended", "Google Drive", "FTP", "Box", "Knowings"]
-  
+
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
   F_FTP         = 8
@@ -13,7 +13,7 @@ class ExternalFileStorage
   ALL_TYPES = 1
   PDF       = 2
   TIFF      = 3
-  
+
   belongs_to :user
   has_one :dropbox_basic, autosave: true
   has_one :google_doc,    autosave: true
@@ -28,15 +28,15 @@ class ExternalFileStorage
   field :authorized,   type: Integer, default: 30
 
   after_create :init_services
-  
+
   def authorize(flags)
     update_attributes(authorized: authorized | flags)
   end
-  
+
   def unauthorize(flags)
     update_attributes(authorized: authorized ^ ( authorized & flags))
   end
-  
+
   def is_dropbox_basic_authorized?
     authorized & F_DROPBOX > 0
   end
@@ -49,7 +49,7 @@ class ExternalFileStorage
     ok = value.to_i == 1
     self.authorized = ok ? self.authorized | F_DROPBOX : self.authorized ^ F_DROPBOX
   end
-  
+
   def is_google_docs_authorized?
     authorized & F_GOOGLE_DOCS > 0
   end
@@ -62,7 +62,7 @@ class ExternalFileStorage
     ok = value.to_i == 1
     self.authorized = ok ? self.authorized | F_GOOGLE_DOCS : self.authorized ^ F_GOOGLE_DOCS
   end
-  
+
   def is_ftp_authorized?
     authorized & F_FTP > 0
   end
@@ -75,24 +75,24 @@ class ExternalFileStorage
     ok = value.to_i == 1
     self.authorized = ok ? self.authorized | F_FTP : self.authorized ^ F_FTP
   end
-  
+
   def is_box_authorized?
     authorized & F_BOX > 0
   end
-  
+
   def is_box_authorized
     is_box_authorized?
   end
-  
+
   def is_box_authorized=(value)
     ok = value.to_i == 1
     self.authorized = ok ? self.authorized | F_BOX : self.authorized ^ F_BOX
   end
-  
+
   def is_authorized?(flag)
     authorized & flag > 0
   end
-  
+
   def services_authorized
     services  = []
     services << "Dropbox"          if authorized & F_DROPBOX > 0
@@ -102,7 +102,7 @@ class ExternalFileStorage
     services << "Box"              if authorized & F_BOX > 0
     services.join(", ")
   end
-  
+
   def services_authorized_count
     nb = 0
     nb += 1 if authorized & F_DROPBOX > 0
@@ -112,7 +112,7 @@ class ExternalFileStorage
     nb += 1 if authorized & F_BOX > 0
     nb
   end
-  
+
   def use(flags)
     trusted_flags = authorized & flags
     if trusted_flags == flags and services_used_count < 2
@@ -121,19 +121,19 @@ class ExternalFileStorage
       false
     end
   end
-  
+
   def unuse(flags)
     update_attributes(used: used ^ ( used & flags ))
   end
-  
+
   def is_used?(flag)
     used & flag > 0
   end
-  
+
   def services_used
     active_services_name.join(", ")
   end
-  
+
   def services_used_count
     nb = 0
     nb += 1 if used & F_DROPBOX > 0
