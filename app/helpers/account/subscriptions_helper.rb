@@ -17,8 +17,21 @@ module Account::SubscriptionsHelper
       false
     else
       group_options = group.product_options
-      selected_option = @subscription.product_option_orders.select{ |so| group_options.select{ |go| so == go }.present? }.first
+      selected_option = @subscription.product_option_orders.select{ |so| group_options.select{ |go| is_same_option?(go, so) }.present? }.first
       selected_option ? option.position < selected_option.position : false
     end
+  end
+
+  def is_same_option?(option1, option2)
+    result = true
+    result = false unless option1.name        == option2.name
+    result = false unless option1.title       == option2.title
+    result = false unless option1.group_title == option2.group_title
+    result = false unless option1.description == option2.description
+    result = false unless option1.duration    == option2.duration
+    result = false unless option1.quantity    == option2.quantity
+    result = false unless option1.action_name == option2.action_name
+    result = false unless option1.notify      == option2.notify
+    result
   end
 end
