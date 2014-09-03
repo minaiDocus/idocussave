@@ -184,7 +184,6 @@ fr:
 
   subscription:
     actions:
-      notify: Notifier par email
       authorize_dematbox: Autoriser Dematbox
       unauthorize_dematbox: Interdire Dematbox
       authorize_fiduceo: Autoriser Fiduceo

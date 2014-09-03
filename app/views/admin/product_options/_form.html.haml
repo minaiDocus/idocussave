@@ -12,6 +12,7 @@
           = f.input :quantity,              as: 'integer'
           = f.input :product_group, collection: ProductGroup.asc(:name).map { |e| [[e.products_title,e.name].join(' - '), e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
           = f.input :action_name, collection: subscription_action_names_for_select
+          = f.input :notify,                as: 'boolean'
         .span8
           = f.input :description, as: 'text', input_html: { style: 'width:100%' }
       .form-actions.margin0bottom

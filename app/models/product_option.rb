@@ -13,6 +13,7 @@ class ProductOption
   field :duration,              type: Integer, default: 1
   field :quantity,              type: Integer, default: 1
   field :action_name
+  field :notify,                type: Boolean, default: false
 
   validates_presence_of :title, :name, :price_in_cents_wo_vat
 
