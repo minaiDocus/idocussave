@@ -61,6 +61,7 @@ class OperationService
         if pack || bank_account.try(:configured?)
           pack_report = initialize_pack_report(user, pack || bank_account)
           counter = pack_report.preseizures.count
+          to_deliver_preseizures = []
 
           operations.each do |operation|
             counter += 1
@@ -116,9 +117,10 @@ class OperationService
             entry.save
 
             preseizures << preseizure
+            to_deliver_preseizures << preseizure
             operation.update_attribute(:processed_at, Time.now)
           end
-          deliver(user, preseizures)
+          deliver(user, to_deliver_preseizures)
         else
           operations.each do |operation|
             operation.update_attribute(:is_locked, true)
