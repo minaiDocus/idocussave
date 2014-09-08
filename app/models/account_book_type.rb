@@ -9,7 +9,7 @@ class AccountBookType
   TYPES_NAME = %w(AC VT NDF)
   DOMAINS = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais']
 
-  before_save :upcase_name
+  before_validation :upcase_name
 
   belongs_to :organization
   belongs_to :user
@@ -45,6 +45,7 @@ class AccountBookType
   validates_length_of    :instructions, maximum: 400
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
+  validate :format_of_name
 
   scope :compta_processable,     where: { :entry_type.gt => 0 }
   scope :not_compta_processable, where: { entry_type: 0 }
@@ -87,5 +88,9 @@ private
 
   def upcase_name
     self.name = self.name.upcase
+  end
+
+  def format_of_name
+    errors.add(:name, :invalid) unless self.name.match(/^[A-Z0-9]+$/)
   end
 end
