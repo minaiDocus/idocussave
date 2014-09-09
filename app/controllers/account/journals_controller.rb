@@ -77,6 +77,7 @@ class Account::JournalsController < Account::OrganizationController
           copy.user         = @customer
           copy.organization = nil
           copy.is_default   = nil
+          copy.slug         = nil
           copy.save
           UpdateJournalRelationService.new(copy).execute
         end
