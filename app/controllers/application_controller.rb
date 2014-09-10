@@ -108,11 +108,14 @@ protected
   def log_visit
     unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?)
       unless current_user && current_user.is_admin
-        visit            = ::Log::Visit.new
-        visit.path       = request.path
-        visit.user       = current_user.try(:id)
-        visit.ip_address = request.remote_ip
-        visit.save
+        event = Event.new
+        event.action      = 'visit'
+        event.target_name = request.path
+        event.target_type = 'page'
+        event.user        = current_user
+        event.path        = request.path
+        event.ip_address  = request.remote_ip
+        event.save
       end
     end
     yield

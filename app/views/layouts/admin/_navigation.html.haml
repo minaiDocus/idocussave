@@ -19,8 +19,8 @@
       = link_to 'CMS Img.', admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to 'Prod.', admin_products_path
-    %li{ class: ('active' if controller_name == 'visits') }
-      = link_to "Histo.", admin_log_visits_path
+    %li{ class: ('active' if controller_name == 'events') }
+      = link_to "Histo.", admin_events_path
     %li{ class: ('active' if controller_name == 'gray_labels') }
       = link_to 'Marque G.', admin_gray_labels_path
     %li{ class: ('active' if controller_name == 'scanning_providers') }

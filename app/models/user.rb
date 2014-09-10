@@ -139,7 +139,7 @@ class User
   has_many :subscriptions
   has_many :backups
   has_many :remote_files, dependent: :destroy
-  has_many :log_visits, class_name: 'Log::Visit', inverse_of: :user
+  has_many :events
   has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
   has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :user
   has_many :temp_documents

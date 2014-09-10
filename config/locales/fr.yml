@@ -448,8 +448,13 @@ fr:
         other: '%{count} journaux'
         name: Journal comptable
         attributes:
-          label: Libellé
+          created_at: Date de création
+          updated_at: Date de modification
+          name: Libellé
+          slug: Identifiant alt.
+          pseudonym: Alias
           description: Description
+          domain: Domaine
           default_account_number: Compte de tiers par défaut
           account_number: Compte de tiers d'attente
           default_charge_account: Compte de charge / produit par défaut
@@ -466,6 +471,7 @@ fr:
           entry_type_1: Notes de frais
           entry_type_2: Achat
           entry_type_3: Vente
+          user_id: Utilisateur
           clients: Clients
           force_assignment: Forcer les modifications pour le client
       reminder_email:
@@ -761,6 +767,29 @@ fr:
           subject: Objet
           attachment_names_count: Nb de F.
           size: Taille
+      event:
+        zero: 0 événement
+        one: 1 événement
+        other: '%{count} événements'
+        name: Evénement
+        attributes:
+          number: N°
+          user: Déclencheur
+          user_code: Code utilisateur
+          action: Action
+          target_id: Identifiant cible
+          target_type: Type de la cible
+          target_name: Cible
+          target_attributes: Attributs de la cible
+          path: Chemin
+          ip_address: Adresse IP
+        actions:
+          visit: Visite
+          create: Création
+          update: Modification
+          destroy: Suppression
+          add: Ajout
+          remove: Retrait
     state_machines:
       fiduceo_retriever:
         states:

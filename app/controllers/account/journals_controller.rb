@@ -20,6 +20,7 @@ class Account::JournalsController < Account::OrganizationController
       if @customer
         @customer.account_book_types << @journal
         UpdateJournalRelationService.new(@journal).execute
+        EventCreateService.new.add_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         source.account_book_types << @journal
@@ -34,10 +35,13 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def update
-    if @journal.update_attributes(journal_params)
+    @journal.assign_attributes(journal_params)
+    changes = @journal.changes.dup
+    if @journal.save
       flash[:success] = 'Modifié avec succès.'
       if @customer
         UpdateJournalRelationService.new(@journal).execute
+        EventCreateService.new.journal_update(@journal, @customer, changes, current_user, path: request.path, ip_address: request.remote_ip)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -52,6 +56,7 @@ class Account::JournalsController < Account::OrganizationController
     flash[:success] = 'Supprimé avec succès.'
     if @customer
       UpdateJournalRelationService.new(@journal).execute
+      EventCreateService.new.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
     else
       redirect_to account_organization_journals_path(@organization)
@@ -80,6 +85,7 @@ class Account::JournalsController < Account::OrganizationController
           copy.slug         = nil
           copy.save
           UpdateJournalRelationService.new(copy).execute
+          EventCreateService.new.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
         end
       end
     end

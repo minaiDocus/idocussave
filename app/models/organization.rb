@@ -50,6 +50,7 @@ class Organization
   has_many   :reminder_emails,    autosave: true
   has_many   :reports,            class_name: 'Pack::Report',       inverse_of: 'organization'
   has_many   :remote_files
+  has_many   :events
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label

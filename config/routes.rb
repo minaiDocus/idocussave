@@ -247,9 +247,7 @@ Idocus::Application.routes.draw do
     resources :products, except: 'show'
     resources :product_options, except: %w(index show)
     resources :product_groups, except: %w(index show)
-    namespace :log do
-      resources :visits
-    end
+    resources :events, only: %w(index show)
     resources :gray_labels
     resources :scanning_providers
     resources :dematboxes, only: %w(index show destroy) do
