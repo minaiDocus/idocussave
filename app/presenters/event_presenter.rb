@@ -16,6 +16,8 @@ class EventPresenter < BasePresenter
   def user_code
     if event.user
       h.link_to event.user.code, [:admin, event.user]
+    elsif event.user_code.present?
+      event.user_code
     elsif event.action == 'visit'
       'Visiteur'
     end
