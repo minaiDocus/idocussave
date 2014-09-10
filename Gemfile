@@ -47,6 +47,7 @@ gem 'nokogiri'
 gem 'capistrano', :require => false
 gem 'capistrano_colors', :require => false
 gem 'validate_url'
+gem 'ruby-progressbar', :require => false
 
 group :assets do
   gem 'twitter-bootstrap-rails'
