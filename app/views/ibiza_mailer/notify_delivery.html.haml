@@ -1,0 +1,22 @@
+!!!
+%html
+  %head
+    %title iDocus - Import d'écriture
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    %table
+      %tr
+        %th Date :
+        %td= I18n.l((@preseizure || @report).updated_at)
+      %tr
+        %th Cabinet :
+        %td= @ibiza.organization.name
+      %tr
+        %th Client :
+        %td= "#{@report.user.company} - #{@report.user.ibiza_id}"
+      %tr
+        %th Lot :
+        %td= @report.name
+      %tr
+        %th Message de retour :
+        %td= (@preseizure || @report).delivery_message
