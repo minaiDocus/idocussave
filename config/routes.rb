@@ -221,18 +221,6 @@ Idocus::Application.routes.draw do
     end
   end
 
-  namespace :tunnel do
-    resource :order do
-      member do
-        get  :address_choice
-        post :option_choice
-        get  :summary
-        post :pay
-      end
-    end
-    resources :addresses
-  end
-
   namespace :admin do
     root :to => "admin#index"
     resources :users, except: %w(edit destroy) do
