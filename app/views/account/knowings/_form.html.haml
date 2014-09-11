@@ -6,4 +6,4 @@
   = f.input :is_third_party_included, as: :boolean
   .form-actions.margin0bottom
     = f.submit 'Valider', class: 'btn btn-primary'
-    = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
+    = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'knowings'), class: 'btn'
