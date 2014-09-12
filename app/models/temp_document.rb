@@ -59,7 +59,7 @@ class TempDocument
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
   has_mongoid_attached_file :content,     path: ":rails_root/files/:rails_env/:class/:id/:filename"
-  has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/:raw_content/:filename"
+  has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
 
   scope :locked,            where: { is_locked: true }
   scope :not_locked,        where: { is_locked: false }
