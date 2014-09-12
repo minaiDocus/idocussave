@@ -28,6 +28,13 @@ class Ftp
       nil
     end
   end
+
+  def close_connection
+    if @ftp
+      @ftp.close
+      @ftp = nil
+    end
+  end
   
   def is_configured?
     is_configured
@@ -117,5 +124,6 @@ class Ftp
       end
     end
     client.chdir('/')
+    close_connection
   end
 end
