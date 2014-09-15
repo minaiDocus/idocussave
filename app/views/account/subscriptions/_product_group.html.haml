@@ -1,6 +1,8 @@
 ﻿.pannel.margin1top.margin1bottom
   %h4= product_group.title + " " + product_group.description
-  - product_group.product_subgroups.where(:position.lt => 1000).by_position.each do |product_subgroup|
+  - product_subgroups = product_group.product_subgroups
+  - product_subgroups = product_subgroups.where(:position.lt => 1000) unless @user.is_admin
+  - product_subgroups.by_position.each do |product_subgroup|
     = render partial: 'account/subscriptions/product_group', locals: { product_group: product_subgroup, product: product }
   - if product_group.product_options.any?
     %table.table.table-condensed.table-striped.margin1top.margin0bottom{ id: product_group.id, class: ("depend_on_#{product_group.product_require.id}" if product_group.product_require) }
@@ -8,10 +10,10 @@
         - if product_group.is_option_dependent
           - product_group.product_options.by_position.each_with_index do |option,index|
             %tr
-              %td.input= radio_button_tag "scan_subscription[requested_product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
+              %td.input= radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: 'option', disabled: (is_product_option_disabled?(option, product_group) ? 'disabled' : nil)
               = render partial: 'account/subscriptions/product_option', locals: { option: option }
         - else
           - product_group.product_options.by_position.each_with_index do |option,index|
             %tr
-              %td.input= check_box_tag "scan_subscription[requested_product][#{product.id}][#{product_group.id}][]", option.id, is_option_checked?(index, option, @options), id: option.id, class: "option"
+              %td.input= check_box_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: 'option'
               = render partial: 'account/subscriptions/product_option', locals: { option: option }

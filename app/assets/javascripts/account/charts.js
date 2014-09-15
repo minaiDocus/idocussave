@@ -250,12 +250,12 @@ function draw_horizontal_bar_graph(container, data) {
           'transform',
             function() {
               var result = 'translate(';
-              
+
               result += x(d.amount) + 5;
               result += ', ';
               result += y(d.name) + y.rangeBand()/2 + 3;
               result += ')';
-              
+
               return result;
             }
         )
@@ -395,25 +395,25 @@ function draw_line_graph(container, data) {
                     d3.select(this)
                       .attr(
                         'class',
-                        'circle circle-highlighted' 
+                        'circle circle-highlighted'
                      )
                       .attr('r', 7);
-                    
+
                       d.active = true;
-                      
+
                       showCircleDetail(d);
                   })
                   .on('mouseout', function(d) {
                     d3.select(this)
                       .attr(
                         'class',
-                        'circle' 
+                        'circle'
                      )
                       .attr('r', 6);
-                    
+
                     if (d.active) {
                       hideCircleDetails();
-                      
+
                       d.active = false;
                     }
                   })
@@ -447,31 +447,31 @@ function draw_line_graph(container, data) {
                         'transform',
                         function() {
                           var result = 'translate(';
-                          
+
                           result += x(data.date) - detailWidth / 2;
                           result += ', ';
                           result += y(data.amount) - detailHeight - detailMargin;
                           result += ')';
-                          
+
                           return result;
                         }
                      );
-    
+
     details.append('path')
             .attr('d', 'M2.99990186,0 C1.34310181,0 0,1.34216977 0,2.99898218 L0,47.6680579 C0,49.32435 1.34136094,50.6670401 3.00074875,50.6670401 L44.4095996,50.6670401 C48.9775098,54.3898926 44.4672607,50.6057129 49,54.46875 C53.4190918,50.6962891 49.0050244,54.4362793 53.501875,50.6670401 L94.9943116,50.6670401 C96.6543075,50.6670401 98,49.3248703 98,47.6680579 L98,2.99898218 C98,1.34269006 96.651936,0 95.0000981,0 L2.99990186,0 Z M2.99990186,0')
             .attr('width', detailWidth)
             .attr('height', detailHeight);
-    
+
     var text = details.append('text')
                       .attr('class', 'bubble-text');
-    
+
     text.append('tspan')
         .attr('class', 'bubble-label')
         .attr('x', detailWidth / 2)
         .attr('y', detailHeight / 3)
         .attr('text-anchor', 'middle')
         .text(dateFormat(data.date));
-    
+
     text.append('tspan')
         .attr('class', 'bubble-value')
         .attr('x', detailWidth / 2)

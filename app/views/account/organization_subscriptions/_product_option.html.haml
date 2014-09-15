@@ -1,7 +1,0 @@
-﻿%td
-  %label{ for: option.id }!= [option.title, option.description].join(' ')
-%td.price
-  %label{ for: option.id }= format_price_00(option.price_in_cents_wo_vat) + " € HT"
-%td.hide
-  .original_price= option.price_in_cents_wo_vat
-  .quantity= option.quantity

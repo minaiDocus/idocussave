@@ -5,8 +5,7 @@ class Account::PreseizuresController < Account::OrganizationController
 
   def index
     if params[:name].present?
-      report = @user.packs.where(:name => /#{params[:name].gsub('_',' ')}/).first.try(:report)
-      report = @user.organization.reports.where(:name => /#{params[:name].gsub('_',' ')}/).first unless report
+      report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(name: /#{params[:name].gsub('_',' ')}/).first
       if report
         @preseizures = report.preseizures.by_position.page(params[:page]).per(params[:per_page])
       else
@@ -56,9 +55,9 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    if @user.organization.ibiza && @user.organization.ibiza.is_configured? && !@preseizure.is_locked && !@preseizure.is_delivered
+    if @organization.ibiza && @organization.ibiza.is_configured? && !@preseizure.is_locked && !@preseizure.is_delivered
       @preseizure.update_attribute(:is_locked, true)
-      @user.organization.ibiza.
+      @organization.ibiza.
         delay(queue: 'ibiza export', priority: 2).
         export([@preseizure])
     end
@@ -71,7 +70,7 @@ private
 
   def load_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id]) unless @preseizure.report.user.in? @user.customers
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id]) unless @preseizure.report.user.in? customers
   end
 
   def preseizure_params

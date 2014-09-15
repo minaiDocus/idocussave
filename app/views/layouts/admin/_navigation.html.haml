@@ -9,22 +9,18 @@
     %li{ class: ('active' if controller_name == 'admin') }
       = link_to 'Tableau de bord', admin_root_path
     %li= link_to 'D. Jobs', '/admin/delayed_job'
-    %li{ class: ('active' if controller_name.in?(%w(organizations groups))) }
-      = link_to 'Org.', admin_organizations_path
     %li{ class: ('active' if controller_name == 'reporting') }
       = link_to 'Rep.', '/admin/reporting'
     %li{ class: ('active' if controller_name == 'invoices') }
       = link_to 'Fac.', admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }
       = link_to 'Utili.', admin_users_path
-    %li{ class: ('active' if controller_name == 'pages') }
-      = link_to 'Pag.', admin_pages_path
     %li{ class: ('active' if controller_name == 'cms_images') }
       = link_to 'CMS Img.', admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to 'Prod.', admin_products_path
-    %li{ class: ('active' if controller_name == 'visits') }
-      = link_to "Histo.", admin_log_visits_path
+    %li{ class: ('active' if controller_name == 'events') }
+      = link_to "Histo.", admin_events_path
     %li{ class: ('active' if controller_name == 'gray_labels') }
       = link_to 'Marque G.', admin_gray_labels_path
     %li{ class: ('active' if controller_name == 'scanning_providers') }

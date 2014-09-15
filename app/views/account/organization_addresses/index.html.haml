@@ -5,9 +5,10 @@
         .row-fluid
           .span12
             .pull-left
-              %h3 Liste des adresses du client : #{link_to @customer.info, account_organization_customer_path(@customer)}
+              %h3 Liste des adresses de l'organisation
             .pull-right
-              = link_to 'Nouvelle adresse', new_account_organization_customer_address_path(@customer), class: 'btn btn-primary'
+              = link_to t('actions.return'), account_organization_path(@organization, tab: 'addresses'), class: 'btn'
+              = link_to 'Nouvelle adresse', new_account_organization_address_path(@organization), class: 'btn btn-primary'
     .row-fluid
       .span12.box
         - grouped_addresses = @addresses.in_groups_of(3)

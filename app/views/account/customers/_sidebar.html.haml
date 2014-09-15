@@ -1,7 +1,7 @@
 .row-fluid
   %h3 Filtres
 
-  = form_tag account_organization_customers_path, method: :get, class: 'form form-vertical margin0bottom' do
+  = form_tag account_organization_customers_path(@organization), method: :get, class: 'form form-vertical margin0bottom' do
     %br
     = hidden_field_tag :direction, sort_direction
     = hidden_field_tag :sort, sort_column
@@ -29,5 +29,5 @@
       %i [Aucun groupe]
     %br
     %br
-    = submit_tag t('filters.action'), class: 'btn'
-    = link_to t('filters.reset'), account_organization_customers_path, class: 'btn'
+    = submit_tag t('filters.action'), class: 'btn btn-primary'
+    = link_to t('filters.reset'), account_organization_customers_path(@organization), class: 'btn'

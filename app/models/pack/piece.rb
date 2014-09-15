@@ -33,7 +33,7 @@ class Pack::Piece
   scope :uploaded,         where: { origin: 'upload' }
   scope :dematbox_scanned, where: { origin: 'dematbox_scan' }
   scope :fiduceo,          where: { origin: 'fiduceo' }
-  
+
   scope :covers,     where:  { is_a_cover: true }
   scope :not_covers, any_in: { is_a_cover: [false, nil] }
 

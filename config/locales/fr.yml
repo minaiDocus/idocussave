@@ -139,26 +139,11 @@ fr:
       models:
         user:
           attributes:
-            email:
-              blank: doit être renseigné
-              taken: a déjà été saisi
             password:
-              too_short: doit contenir 6 caractères au minimum.
-              too_long: doit contenir 20 caractères au maximum.
-              blank: doit être renseigné
-              confirmation: et la confirmation du mot de passe doivent être identiques.
-    attributes:
-      address:
-        first_name: Prénom
-        last_name: Nom
-        address_1: Addresse
-        city: Ville
-        zip: Code postale
-      order:
-        billing_address: Addressse de facturation
-        shipping_address: Addresse de retour
+              too_short: doit contenir 6 caractères au minimum
+              too_long: doit contenir 20 caractères au maximum
+              confirmation: et la confirmation du mot de passe doivent être identiques
 
-  order: Commande
   composition: Composition
 
   views:
@@ -191,28 +176,27 @@ fr:
   yes_value: Oui
   no_value: Non
 
-  request:
-    name: Action demandée
-    state: Action demandée à iDocus
-    nothing:
-    create: création
-    update: modification
-    destroy: suppression
-    adding: création
-    updating: modification
-    removing: suppression
-
   common:
     details: Détails
 
   authorization:
     unessessary_rights: Vous ne disposez pas des droits nécessaires pour effectuer cette action.
 
+  subscription:
+    actions:
+      authorize_dematbox: Autoriser Dematbox
+      unauthorize_dematbox: Interdire Dematbox
+      authorize_fiduceo: Autoriser Fiduceo
+      unauthorize_fiduceo: Interdire Fiduceo
+      authorize_preassignment: Autoriser la pré-affectation
+      unauthorize_preassignment: Interdire la pré-affectation
+      update_max_number_of_journals: Modifier le nombre max. de journaux
+
   mongoid:
     errors:
       messages:
-        taken:
-          est déjà pris.
+        taken: est déjà pris.
+        invalid: n'est pas valide
         callbacks:
           'Calling %{method} on %{klass} resulted in a false return from a callback.'
         document_not_found:
@@ -283,13 +267,9 @@ fr:
               inclusion: n'est pas inclus(e) dans la liste
         user:
           attributes:
-            reset_password_token:
-              invalid: est invalide
               expired: jeton expiré
         scan/document:
           attributes:
-            name:
-              invalid: est invalide
             paperclips:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
             oversized:
@@ -347,7 +327,6 @@ fr:
           is_admin: Est administrateur ?
           is_prescriber: Est prescripteur ?
           is_fake_prescriber: Est un faux prescripteur ?
-          is_editable: Est éditable ?
           is_access_by_token_active: Accès par jeton activé ?
           is_reminder_email_active: Rappel activé ?
           is_document_notifier_active: Notification des nouveaux documents activé ?
@@ -365,16 +344,17 @@ fr:
           authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
           auth_prev_period_until_day: Jour de clôture de la période précédente
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
+          organization: Organisation
       address:
         zero: 0 adresses
-        one: 1 addresse
-        other: '%{count} addresses'
+        one: 1 adresse
+        other: '%{count} adresses'
         attributes:
           first_name: Prénom
           last_name: Nom
           company: Société
-          address_1: Addresse
-          address_2: Addresse (suite)
+          address_1: Adresse
+          address_2: Adresse (suite)
           city: Ville
           zip: Code postal
           state: Etat
@@ -382,21 +362,10 @@ fr:
           phone_mobile: Tél mobile
           billing: Facturation
           shipping: Retour
-          billing_address: Addressse de facturation
-          shipping_address: Addresse de retour
-      page:
-        zero: 0 pages
-        one: 1 page
-        other: '%{count} pages'
-        name: Page
-        attributes:
-          title: Titre
-          position: Position
-          tag: Type du contenu
-          is_visible: Est visible
-          is_invisible: Est invisible
-          label: Libellé
-          is_footer: Afficher dans le footer
+          kit_shipping: Livraison du kit
+          billing_address: Adresse de facturation
+          shipping_address: Adresse de retour
+          kit_shipping_address: Adresse de livraison du kit
       cms_image:
         zero: 0 images
         one: 1 image
@@ -479,8 +448,13 @@ fr:
         other: '%{count} journaux'
         name: Journal comptable
         attributes:
-          label: Libellé
+          created_at: Date de création
+          updated_at: Date de modification
+          name: Libellé
+          slug: Identifiant alt.
+          pseudonym: Alias
           description: Description
+          domain: Domaine
           default_account_number: Compte de tiers par défaut
           account_number: Compte de tiers d'attente
           default_charge_account: Compte de charge / produit par défaut
@@ -497,12 +471,9 @@ fr:
           entry_type_1: Notes de frais
           entry_type_2: Achat
           entry_type_3: Vente
+          user_id: Utilisateur
           clients: Clients
           force_assignment: Forcer les modifications pour le client
-        request:
-          confirm:
-            destroy: Etes vous sûr de vouloir demander à supprimer ce journal ?
-            cancel_destroy: Etes vous sûr de vouloir annuler la suppression ?
       reminder_email:
         zero: O email de rappel
         one: 1 email de rappel
@@ -593,8 +564,9 @@ fr:
           customers_count: Nombre de clients
           centralized_customers: Clients centralisés
           centralized_customers_count: Nombre de clients centralisés
-          is_detail_authorized: Autoriser les détails ?
-          is_test: Est une organization de test ?
+          is_detail_authorized: Autoriser les détails dans le reporting ?
+          is_test: Organisation de test ?
+          is_journals_management_centralized: Gestion des journaux comptables centralisé ?
           status:
             admin: Administrateur
             collaborator: Collaborateur
@@ -631,11 +603,13 @@ fr:
           customers_management: Gestion des clients
           groups_management: Gestion des groupes
           journals_management: Gestion des journaux comptables
+          customer_journals_management: Gestion des journaux comptables des clients
         attributes:
           is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
           is_customers_management_authorized: Gestion des clients autorisé ?
           is_groups_management_authorized: Gestion des groupes autorisé ?
           is_journals_management_authorized: Gestion des journaux comptables autorisé ?
+          is_customer_journals_management_authorized: Gestion des journaux comptables des clients autorisé ?
       invoice:
         zero: 0 facture
         one: 1 facture
@@ -793,6 +767,29 @@ fr:
           subject: Objet
           attachment_names_count: Nb de F.
           size: Taille
+      event:
+        zero: 0 événement
+        one: 1 événement
+        other: '%{count} événements'
+        name: Evénement
+        attributes:
+          number: N°
+          user: Déclencheur
+          user_code: Code utilisateur
+          action: Action
+          target_id: Identifiant cible
+          target_type: Type de la cible
+          target_name: Cible
+          target_attributes: Attributs de la cible
+          path: Chemin
+          ip_address: Adresse IP
+        actions:
+          visit: Visite
+          create: Création
+          update: Modification
+          destroy: Suppression
+          add: Ajout
+          remove: Retrait
     state_machines:
       fiduceo_retriever:
         states:

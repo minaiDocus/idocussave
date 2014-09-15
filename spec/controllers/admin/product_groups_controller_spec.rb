@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Admin::ProductGroupsController do
   render_views
-  
+
   before(:each) do
     ProductGroup.destroy_all
     @product_group =  FactoryGirl.create(:product_group, name: 'game')
@@ -10,12 +10,12 @@ describe Admin::ProductGroupsController do
     user = FactoryGirl.create(:admin)
     sign_in user
   end
-   
+
   it "GET 'new'" do
     get 'new'
     response.should be_success
-  end 
-  
+  end
+
   describe "POST 'create'" do
     it "should success" do
       post :create, product_group: FactoryGirl.attributes_for(:product_group)
@@ -27,19 +27,19 @@ describe Admin::ProductGroupsController do
       response.should render_template("admin/product_groups")
     end
   end
-  
+
   it "PUT a group" do
     put :update, id: @product_group, product_group: FactoryGirl.attributes_for(:product_group, name: 'premium')
     @product_group.reload
     @product_group.name.should eq ('premium')
   end
-  
+
   it "does not change @group's attributes" do
     put :update, id: @product_group, product_group: FactoryGirl.attributes_for(:product_group, name: nil)
     @product_group.reload
     @product_group.name.should eq('game')
   end
-  
+
   it "DELETE a group" do
     delete :destroy, id: @product_group
     group = ProductGroup.where(name: 'game').first

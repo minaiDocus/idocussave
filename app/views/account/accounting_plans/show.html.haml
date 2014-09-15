@@ -1,7 +1,7 @@
 #accounting_plan
   .row-fluid
     .span12.box
-      %h3 Plan comptable de l'utilisateur : #{link_to @customer.code, account_organization_customer_path(@customer)}
+      %h3 Plan comptable de l'utilisateur : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
 
   .row-fluid
     .span6.box
@@ -9,10 +9,10 @@
         .span3
           %h3 Fournisseurs
         .span3.aligncenter.margin1bottom
-          = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@customer), class: 'btn', title: 'editer'
-          = link_to icon_destroy, destroy_providers_account_organization_customer_accounting_plan_path(@customer), class: 'btn', title: 'supprimer tous les fournisseurs', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
+          = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
+          = link_to icon_destroy, destroy_providers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les fournisseurs', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
         .span6.alignright.margin1bottom
-          = form_tag import_account_organization_customer_accounting_plan_path(@customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
+          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
             = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
             = submit_tag 'Importer', class: 'btn btn-primary'
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -34,10 +34,10 @@
         .span3
           %h3 Clients
         .span3.aligncenter.margin1bottom
-          = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@customer), class: 'btn', title: 'editer'
-          = link_to icon_destroy, destroy_customers_account_organization_customer_accounting_plan_path(@customer), class: 'btn', title: 'supprimer tous les clients', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
+          = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
+          = link_to icon_destroy, destroy_customers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les clients', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
         .span6.alignright.margin1bottom
-          = form_tag import_account_organization_customer_accounting_plan_path(@customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
+          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
             = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
             = submit_tag 'Importer', class: 'btn btn-primary'
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom

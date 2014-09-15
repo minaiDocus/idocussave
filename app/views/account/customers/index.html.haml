@@ -7,7 +7,7 @@
             %h3 Liste des clients
           .pull-right
             - if is_leader? || @user.can_manage_customers?
-              = link_to t('actions.new'), new_account_organization_customer_path, class: 'btn btn-primary'
+              = link_to icon_new + ' ' + t('actions.new'), new_account_organization_customer_path(@organization), class: 'btn btn-primary'
   .row-fluid
     .span9.box
       = render partial: 'list_options'
@@ -19,19 +19,14 @@
                 %th
                 %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
                 %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
-                %th
             %tbody
               - @customers.each do |customer|
                 %tr
-                  %td.active_state
-                    - if customer.is_inactive
-                      = icon(icon: 'remove')
-                    - elsif !(customer.is_editable && (is_leader? || @user.can_manage_customers?))
-                      = icon(icon: 'lock')
+                  %td.active_state= icon(icon: 'remove') if customer.is_inactive
                   %td.date= customer.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
                     %span.info
-                      = link_to customer.info, account_organization_customer_path(customer)
+                      = link_to customer, account_organization_customer_path(@organization, customer)
                     - unless params[:with_details] == "false"
                       %ul.subscription_info
                         - period = @periods.select { |e| e.user == customer }.first
@@ -41,15 +36,6 @@
                               = option.group_title
                               \:
                               = option.title
-                  %td.update_request_state
-                    - if !customer.is_inactive
-                      - case customer.request_status
-                        - when 'create'
-                          = icon(icon: 'plus', title: 'Ajouté')
-                        - when 'update'
-                          = icon(icon: 'pencil', title: 'Modifié')
-                        - when 'destroy'
-                          = icon(icon: 'minus', title: 'Supprimé')
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

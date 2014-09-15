@@ -7,9 +7,7 @@ describe EmailedDocument do
 
     @user = FactoryGirl.create(:user, code: 'TS0001')
 
-    @journal = AccountBookType.new name: 'TS', description: 'Test'
-    @journal.clients << @user
-    @journal.requested_clients << @user
+    @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
     @journal.save
   end
 

@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class EmailedDocumentMailer < ActionMailer::Base
   helper :application
-  default :from => "do-not-reply@idocus.com"
+  default from: 'do-not-reply@idocus.com'
 
   def notify_success(email, emailed_document)
     @emailed_document = emailed_document

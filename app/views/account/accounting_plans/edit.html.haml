@@ -1,11 +1,11 @@
 #accounting_plan
   .row-fluid
     .span12.box
-      %h3 Edition du #{link_to 'plan comptable', account_organization_customer_accounting_plan_path(@customer)} de l'utilisateur : #{link_to @customer.code, account_organization_customer_path(@customer)}
-  
+      %h3 Edition du #{link_to 'plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer)} de l'utilisateur : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+
   .row-fluid
     .span12.box
-      = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@customer), html: { class: 'form form-horizontal margin0bottom' }, wrapper: false do |f|
+      = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
         .row-fluid.margin2bottom
           .span6
             %h3 Fournisseurs
@@ -26,5 +26,6 @@
               = customer.input :code, label: t('mongoid.models.accounting_plan_item.attributes.code')
             = f.link_to_add 'Ajouter un client', :customers, class: 'btn'
 
-        = f.submit t('actions.submit'), class: 'btn'
-        = link_to t('actions.cancel'), account_organization_customer_accounting_plan_path(@customer), class: 'btn'
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'

@@ -7,7 +7,7 @@ class Admin::DematboxFilesController < Admin::AdminController
   end
 
 private
-  
+
   def sort_column
     params[:sort] || 'created_at'
   end

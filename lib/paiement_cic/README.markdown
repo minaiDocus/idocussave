@@ -70,7 +70,7 @@ script/plugin install git://github.com/novelys/paiementcic.git
           end
 
           order_transaction.update_attribute :success, true
-      
+
           receipt = "0"
         else
           order.transaction_declined!

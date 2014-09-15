@@ -1,8 +1,10 @@
 #dematbox
   = render 'admin/dematboxes/navigation'
+
   .row-fluid
     .span12
       %h3 Liste des services pour la dematbox de #{link_to @dematbox.user.code, [:admin, @dematbox.user]}
+
   .row-fluid.margin2top
     .span4
       %table.table.table-striped.table-bordered.table-condensed

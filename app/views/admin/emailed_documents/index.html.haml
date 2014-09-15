@@ -1,10 +1,13 @@
 #emails
+  = render 'navigation'
+
   .row-fluid.marginbottom
     .span12.margin1bottom
-      %h3 Liste des mails d'envoi de documents
+      %h3 Liste des mails d'envoi de documents (#{@emails.count})
+
   .row-fluid
     .span9
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @emails }
       .row-fluid
         .span12
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
@@ -41,6 +44,6 @@
                       = link_to content_tag(:i, '', class: 'icon-exclamation-sign'), show_errors_admin_emailed_document_path(email), title: 'Afficher les erreurs'
                     - if email.original_content.path.present?
                       = link_to content_tag(:i, '', class: 'icon-download'), admin_emailed_document_path(email), title: 'Télécharger le mail original'
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @emails }
     .span3
       = render partial: 'sidebar'

@@ -1,46 +1,52 @@
-Bonjour #{@user.name},
-%br
-%br
-Suite à votre envoi par mail, la plateforme iDocus a rencontré une difficulté technique et n'a pas sû récupérer vos documents suivants :
-%br
-%ul
-  - @attachment_names.each do |name|
-    %li= name
-%br
-%br
-Nous nous efforçons de résoudre ce problème au plus vite afin d’intégrer vos documents.
-%br
-%br
-=================
-%br
-%br
-Rappel des règles d’utilisation pour envoyer par mail des pièces dans iDocus
-%br
-%br
-Format de l’objet du mail : [libellé court] [période]
-%br
-exemple :
-%i #{@journals.first.name} #{@period_service.names.first}
-%br
-%br
-La plateforme iDocus intégrera les pièces jointes (uniquement au format pdf) de votre mail.
-%br
-%br
-La somme des tailles des pièces jointes de votre mail ne doit pas dépasser 20 Mo.
-%br
-%br
-Vos journaux comptables accessibles :
-%br
-%ul
-  - @journals.each do |journal|
-    %li= "#{journal.name} (#{journal.description.sub(/^\s*\(/,'').sub(/\)\s*$/,'')})"
-%br
-Vos périodes actuellement accessibles :
-%br
-%ul
-  - @period_service.names.each do |name|
-    %li= name
-%br
-Cordialement,
-%br
-L’équipe iDocus
+!!!
+%html
+  %head
+    %title Envoi par mail : erreur | iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@user.name},
+    %br
+    %br
+    Suite à votre envoi par mail, la plateforme iDocus a rencontré une difficulté technique et n'a pas sû récupérer vos documents suivants :
+    %br
+    %ul
+      - @attachment_names.each do |name|
+        %li= name
+    %br
+    %br
+    Nous nous efforçons de résoudre ce problème au plus vite afin d’intégrer vos documents.
+    %br
+    %br
+    =================
+    %br
+    %br
+    Rappel des règles d’utilisation pour envoyer par mail des pièces dans iDocus
+    %br
+    %br
+    Format de l’objet du mail : [libellé court] [période]
+    %br
+    exemple :
+    %i #{@journals.first.name} #{@period_service.names.first}
+    %br
+    %br
+    La plateforme iDocus intégrera les pièces jointes (uniquement au format pdf) de votre mail.
+    %br
+    %br
+    La somme des tailles des pièces jointes de votre mail ne doit pas dépasser 20 Mo.
+    %br
+    %br
+    Vos journaux comptables accessibles :
+    %br
+    %ul
+      - @journals.each do |journal|
+        %li= "#{journal.name} (#{journal.description.sub(/^\s*\(/,'').sub(/\)\s*$/,'')})"
+    %br
+    Vos périodes actuellement accessibles :
+    %br
+    %ul
+      - @period_service.names.each do |name|
+        %li= name
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus

@@ -22,6 +22,7 @@ class Admin::DematboxesController < Admin::AdminController
   end
 
 private
+
   def load_dematbox
     @dematbox = Dematbox.find params[:id]
   end

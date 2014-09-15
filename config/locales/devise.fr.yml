@@ -6,31 +6,6 @@ fr:
       not_locked: "n'était pas vérrouillé"
 
   mongoid:
-    errors:
-      models:
-        address:
-          attributes:
-            first_name:
-              blank: 'Le champ prénom est vide.'
-            last_name:
-              blank: 'Le champ nom est vide.'
-            address_1:
-              blank: 'Le champ adresse est vide.'
-            address_2:
-              blank: 'Le champ adresse (suite) est vide.'
-            city:
-              blank: 'Le champ cité est vide.'
-            zip:
-              blank: 'Le champ code postal est vide.'
-        user:
-          attributes:
-            email:
-              blank: 'est vide'
-            password:
-              too_short: "trop court"
-              too_long: "trop long"
-              confirmation: "de confirmation invalide"
-              blank: 'est vide'
     attributes:
       user:
         email: "E-mail"

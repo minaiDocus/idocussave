@@ -9,7 +9,7 @@ describe Scan::Document do
   after(:each) do
     DatabaseCleaner.clean
   end
-  
+
   before(:each) do
     @period = Scan::Period.create!(:start_at => Time.now, :end_in => 1)
     @document_name = "TS0001 XX #{Time.now.strftime('%Y%m')} all"
@@ -27,11 +27,11 @@ describe Scan::Document do
     document = Scan::Document.new(:name => @document_name)
     document.period = @period
     document.save
-    
+
     document2 = Scan::Document.new(:name => "TS0001 XX #{(Time.now - 1.month).strftime('%Y%m')} all")
     document2.period = @period
     document2.save
-    
+
     result = Scan::Document.find_by_name(@document_name)
     result.should eq(document)
     result.should_not eq(document2)
@@ -49,14 +49,14 @@ describe Scan::Document do
       document2.should eq(document1)
     end
   end
-  
+
   it "should verify 'uniqueness_of_name' validation" do
     document = Scan::Document.find_or_create_by_name(@document_name, @period)
     document2 = Scan::Document.create(:name => @document_name, :period_id => @period.id)
     document.should be_persisted
     document2.should_not be_persisted
   end
-  
+
   it "should hook update process for period after saved" do
     document = Scan::Document.new(:name => @document_name, :period_id => @period.id)
     document.pieces = 20
@@ -71,7 +71,7 @@ describe Scan::Document do
     document.paperclips = 2
     document.oversized = 2
     document.save
-    
+
     document2 = Scan::Document.new(:name => @document_name2, :period_id => @period.id)
     document2.pieces = 17
     document2.pages = 39
@@ -85,7 +85,7 @@ describe Scan::Document do
     document2.paperclips = 2
     document2.oversized = 2
     document2.save
-    
+
     @period.reload
     @period.documents_name_tags.should eq(["b_XX y_#{Time.now.year} m_#{Time.now.month}","b_ZZ y_#{Time.now.year} m_#{Time.now.month}"])
     @period.pieces.should eq(37)

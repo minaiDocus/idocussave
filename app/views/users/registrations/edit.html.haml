@@ -6,10 +6,10 @@
     %p
       = f.text_field :email
     %p
-      = f.submit 'Update email' 
+      = f.submit 'Update email'
 
-- form_for @user, :url => account_path do |f| 
-  - field_set_tag 'Update my password' do 
+- form_for @user, :url => account_path do |f|
+  - field_set_tag 'Update my password' do
     = error_message_on @user, :password
     = error_message_on @user, :password_confirmation
     %table
@@ -22,21 +22,21 @@
           %label new password confirmation
         %td= f.password_field :password_confirmation
       %tr
-        %td= f.submit 'Update password' 
+        %td= f.submit 'Update password'
 
 
-- form_for @user, :url => account_path, :html => {:multipart => true} do |f| 
-  = error_messages_for :user 
+- form_for @user, :url => account_path, :html => {:multipart => true} do |f|
+  = error_messages_for :user
   = field_set_tag 'Profile data' do
     %table
       %tr
-        %td= f.label :login 
-        %td= f.text_field :login 
+        %td= f.label :login
+        %td= f.text_field :login
       %tr
-        %td= f.label :first_name 
-        %td= f.text_field :first_name 
+        %td= f.label :first_name
+        %td= f.text_field :first_name
       %tr
-        %td= f.label :last_name 
+        %td= f.label :last_name
         %td= f.text_field :last_name
       %tr
         %td= f.submit 'Update profile'
@@ -67,7 +67,7 @@
         %td= f.label :birth_date
         %td= f.text_field :birth_date
       %tr
-        %td= f.label :github_profile 
+        %td= f.label :github_profile
         %td= f.text_field :github_profile
       %tr
         %td= f.submit 'Update'
@@ -77,7 +77,7 @@
 :javascript
   var login = $('#user_login').attr('value');
   var email = $('#user_email').attr('value');
-  
+
   $('#user_login').change(function() {
     if(confirm("Changing your login can be harmful. Don't do it without a good reason.")) {
       login = $(this).attr('value');

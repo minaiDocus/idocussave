@@ -1,71 +1,60 @@
 #collaborator
   .row-fluid
     .span12.box
-      .row-fluid
-        .span12
-          .pull-left
-            %h3= @collaborator
-          .pull-right        
-            - if @collaborator.is_inactive != @collaborator.is_inactive_was
-              - if @collaborator.is_inactive
-                = "(Arrêt en attente de validation par iDocus)"
-              - else
-                = "(Rétablissement en attente de validation par iDocus)"
-            - if is_leader?
-              - if @collaborator.is_active? && @collaborator.is_inactive == @collaborator.is_inactive_was
-                = link_to "Arrêter l'abonnement", stop_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez arrêter l'utilisation de cet utilisateur." }
-              - else
-                = link_to "Rétablir l'abonnement", restart_using_account_organization_collaborator_path(@collaborator), class: 'btn btn-danger', method: :put, data: { confirm: "Vous allez rétablir l'utilisation de cet utilisateur." }
+      %h3= @collaborator
 
   .row-fluid
     .span12.box
-      .row-fluid
-        .span6
-          %table.table.table-bordered.table-striped.margin0bottom
-            %thead
-              %tr
-                %td{ colspan: 2 }
-                  .pull-left
-                    %h3 Informations
-                  .pull-right
-                    - if @collaborator.is_editable
-                      = icon_link_to edit_account_organization_collaborator_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
-            %tbody
-              %tr
-                %th= t('mongoid.models.user.attributes.email')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'email' }
-              %tr
-                %th= t('mongoid.models.user.attributes.first_name')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'first_name' }
-              %tr
-                %th= t('mongoid.models.user.attributes.last_name')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'last_name' }
-              %tr
-                %th= t('mongoid.models.user.attributes.code')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'code' }
-              %tr
-                %th= t('mongoid.models.user.attributes.company')
-                %td= render partial: 'account/shared/cell', locals: { instance: @collaborator, key: 'company' }
+      %ul.nav.nav-tabs
+        %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
+          %a{ href: '#information', data: { toggle: 'tab' } } Information
+        %li{ class: ('active' if params[:tab] == 'authorization') }
+          %a{ href: '#authorization', data: { toggle: 'tab' } } Autorisation
+        - if @user.is_admin
+          %li{ class: ('active' if params[:tab] == 'file_storages') }
+            %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
-        .span6
-          %table.table.table-bordered.table-striped.margin0bottom
-            %thead
-              %tr
-                %td{ colspan: 2 }
-                  .pull-left
-                    %h3 Autorisations
-                  .pull-right
-                    = icon_link_to edit_account_organization_collaborator_rights_path(@collaborator), { icon: 'edit' } , { class: 'btn' }
-            %tbody
-              %tr
-                %th= t('mongoid.models.organization_rights.names.collaborators_management')
-                %td= @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization_rights.names.customers_management')
-                %td= @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization_rights.names.groups_management')
-                %td= @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
-              %tr
-                %th= t('mongoid.models.organization_rights.names.journals_management')
-                %td= @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')
+      .tab-content
+        #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+          %table.table.table-striped.table-condensed
+            %tr
+              %th= t('mongoid.models.user.attributes.email')
+              %td= @collaborator.email
+            %tr
+              %th= t('mongoid.models.user.attributes.first_name')
+              %td= @collaborator.first_name
+            %tr
+              %th= t('mongoid.models.user.attributes.last_name')
+              %td= @collaborator.last_name
+            %tr
+              %th= t('mongoid.models.user.attributes.code')
+              %td= @collaborator.code
+            %tr
+              %th= t('mongoid.models.user.attributes.company')
+              %td= @collaborator.company
+          .alignright
+            = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @collaborator), class: 'btn btn-primary'
+        #authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
+          %table.table.table-striped.table-condensed
+            %tr
+              %th= t('mongoid.models.organization_rights.names.collaborators_management')
+              %td= @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
+            %tr
+              %th= t('mongoid.models.organization_rights.names.customers_management')
+              %td= @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
+            %tr
+              %th= t('mongoid.models.organization_rights.names.groups_management')
+              %td= @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
+            %tr
+              %th= t('mongoid.models.organization_rights.names.journals_management')
+              %td= @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')
+            %tr
+              %th= t('mongoid.models.organization_rights.names.customer_journals_management')
+              %td= @collaborator.find_or_create_organization_rights.is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
+          .alignright
+            = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @collaborator), class: 'btn btn-primary'
+        - if @user.is_admin
+          #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
+            = render partial: 'account/customers/file_storages', locals: { user: @collaborator }
+            .alignright
+              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_file_storage_authorizations_path(@organization, @collaborator), class: 'btn btn-primary'

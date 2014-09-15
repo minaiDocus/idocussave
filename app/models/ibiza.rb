@@ -78,7 +78,7 @@ class Ibiza
             f.write body
           end
         else
-          `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`  
+          `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
         end
       else
         `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`

@@ -1,9 +1,6 @@
-.label{ class: (@user.request.action != '' ? 'label-warning' : ''), style: 'padding:3px 5px 3px' }
-  Informations
-  - if @user.request.action != ''
-    = link_to 'Appliquer les changements', accept_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-mini btn-danger'
+.label{ style: 'padding:3px 5px 3px' } Informations
 .row-fluid
-  .span7
+  .span4
     %table.table.table-striped.table-bordered.table-condensed.bestinplace
       %tbody
         %tr
@@ -11,25 +8,25 @@
           %td= l(@user.created_at)
         %tr
           %th.first= t('mongoid.attributes.user.email')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :email, name: 'user[email]' }
+          %td= render partial: 'text_field', locals: { value: @user.email, name: 'user[email]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.last_name')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :last_name, name: 'user[last_name]' }
+          %td= render partial: 'text_field', locals: { value: @user.last_name, name: 'user[last_name]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.first_name')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :first_name, name: 'user[first_name]' }
+          %td= render partial: 'text_field', locals: { value: @user.first_name, name: 'user[first_name]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.company')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :company, name: 'user[company]' }
+          %td= render partial: 'text_field', locals: { value: @user.company, name: 'user[company]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.code')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :code, name: 'user[code]' }
+          %td= render partial: 'text_field', locals: { value: @user.code, name: 'user[code]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.knowings_code')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :knowings_code, name: 'user[knowings_code]' }
+          %td= render partial: 'text_field', locals: { value: @user.knowings_code, name: 'user[knowings_code]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.knowings_visibility')
-          %td= render partial: 'text_field2', locals: { instance: @user, key: :knowings_visibility, name: 'user[knowings_visibility]' }
+          %td= render partial: 'text_field', locals: { value: @user.knowings_visibility, name: 'user[knowings_visibility]' }
         %tr
           %th.first= t('mongoid.models.user.attributes.short.balance_in_cents')
           %td.value= format_price_00(@user.balance_in_cents) + ' €'
@@ -44,39 +41,25 @@
             - if @user.scanning_provider
               .pull-left= link_to @user.scanning_provider, [:admin, @user.scanning_provider]
               .pull-right= link_to icon_edit, [:edit, :admin, @user.scanning_provider], target: '_blank'
-  .span5
+  .span8
     .row-fluid
       .span12
         %table.table.table-striped.table-bordered.table-condensed
           %tbody
-            %tr
-              %td.user_status{ colspan: 2 }
-                - if @user.is_inactive != @user.is_inactive_was
-                  %div.alignright.padding1right
-                    %span.label.label-warning
-                      - if @user.is_inactive
-                        Arrêt demandé
-                      - else
-                        Rétablissement demandé
-                %div
-                  %b.title.pull-left
-                    = t('mongoid.models.user.attributes.is_inactive_since')
-                  .input-append.date.datepicker.pull-right
-                    = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
-                    %span.add-on
-                      %i.icon-th
-            %tr
-              %th= t('mongoid.models.user.attributes.is_admin')
-              %td.value= check_box_tag 'user[is_admin]', 1, @user.is_admin
+            %tr.user_status
+              %th
+                %span= t('mongoid.models.user.attributes.is_inactive_since')
+              %td
+                .input-prepend.date.datepicker
+                  %span.add-on
+                    %i.icon-th
+                  = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
             %tr
               %th= t('mongoid.models.user.attributes.is_prescriber')
               %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber
             %tr
               %th= t('mongoid.models.user.attributes.is_fake_prescriber')
               %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
-            %tr
-              %th= t('mongoid.models.user.attributes.is_editable')
-              %td.value= check_box_tag 'user[is_editable]', 1, @user.is_editable
             %tr
               %th= t('mongoid.models.user.attributes.use_debit_mandate')
               %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate
@@ -111,3 +94,16 @@
               %th= t('mongoid.models.user.attributes.is_exercice_computed_date_used')
               %td.value
                 = check_box_tag 'user[is_exercice_computed_date_used]', 1, @user.is_exercice_computed_date_used
+            %tr
+              %th= t('mongoid.models.user.attributes.is_access_by_token_active')
+              %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
+            %tr
+              %th= t('mongoid.models.user.attributes.is_dematbox_authorized')
+              %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
+            %tr
+              %th Stamp - Nom
+              %td
+                = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }
+            %tr
+              %th Stamp - Fond présent ?
+              %td= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled

@@ -4,8 +4,8 @@ class Scan::Subscription < Subscription
 
   has_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   has_many :documents, class_name: "Scan::Document", inverse_of: :subscription
-  
-  attr_accessor :is_to_spreading, :update_period, :options, :force_assignment
+
+  attr_accessor :is_to_spreading, :update_period, :options
 
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
@@ -25,24 +25,19 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_expense,    type: Integer, default: 12  # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
-  # Requête
-  field :request_action, type: String, default: ''
-
-  scope :update_requested, where: { request_action: 'update' }
 
   before_create :set_category, :create_period
-  before_save :check_propagation, :sync_assignment
+  before_save :check_propagation
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
-  before_save :set_request_action
-  
+
   def set_category
   	self.category = 1
   end
-  
+
   def code
   	self.user.try(:code)
   end
-  
+
   def code=(vcode)
   	self.user = User.where(code: vcode).first
   end
@@ -50,13 +45,13 @@ class Scan::Subscription < Subscription
   def find_period(time)
     periods.where(:start_at.lte => time, :end_at.gte => time).first
   end
-  
+
   def _find_period(time)
     periods.select do |period|
       period.start_at < time and period.end_at > time
     end.first
   end
-  
+
   def find_or_create_period(time)
     period = find_period(time)
     if period
@@ -81,14 +76,13 @@ class Scan::Subscription < Subscription
       period
     end
   end
-  
+
   def remove_not_reusable_options
     product_option_orders.each { |e| e.destroy if e.duration == 1 }
-    requested_product_option_orders.each { |e| e.destroy if e.duration == 1 }
     save
     product_option_orders
   end
-  
+
   def copy!(scan_subscription)
     self.end_in = scan_subscription.end_in
     self.payment_type = scan_subscription.payment_type
@@ -97,21 +91,20 @@ class Scan::Subscription < Subscription
       self[key] = scan_subscription[key]
     end
     self.copy_to_options! scan_subscription.product_option_orders
-    self.copy_to_requested_options! scan_subscription.product_option_orders
 
     self.save
   end
-  
+
   def propagate_changes_for(clients)
     clients.each do |client|
       client.find_or_create_scan_subscription.copy! self
     end
   end
-  
+
   def propagate_changes
    propagate_changes_for organization.customers.active
   end
-  
+
   def check_propagation
     if is_to_spreading.try(:to_i) == 1 and organization
       propagate_changes
@@ -175,32 +168,6 @@ class Scan::Subscription < Subscription
     products_price_in_cents_wo_vat * self.tva_ratio
   end
 
-  def sync_assignment
-    if force_assignment.try(:to_i) == 1
-      copy_to_requested_options! self.product_option_orders
-    end
-  end
-
-  def is_update_requested?
-    if self.organization && self.user.nil?
-      false
-    else
-      is_requested = false
-      period = current_period
-      period.product_option_orders.user_editable.each do |option|
-        unless option.in?(requested_product_option_orders)
-          is_requested = true
-        end
-      end
-      requested_product_option_orders.user_editable.each do |option|
-        unless option.in?(period.product_option_orders)
-          is_requested = true
-        end
-      end
-      is_requested
-    end
-  end
-
   def copy_to_options!(options)
     self.product_option_orders = []
     new_options = copy_options(options)
@@ -208,23 +175,6 @@ class Scan::Subscription < Subscription
       self.product_option_orders << new_option
     end
     new_options
-  end
-
-  def copy_to_requested_options!(options)
-    self.requested_product_option_orders = []
-    new_options = copy_options(options)
-    new_options.each do |new_option|
-      self.requested_product_option_orders << new_option
-    end
-    new_options
-  end
-
-  def set_request_action
-    if is_update_requested?
-      self.request_action = 'update'
-    else
-      self.request_action = ''
-    end
   end
 
   def copyable_keys

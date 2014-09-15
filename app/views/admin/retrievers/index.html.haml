@@ -1,16 +1,17 @@
-.row-fluid
-  .span12
-    = render 'layouts/admin/fiduceo/navigation'
-
 #retrievers
+  .row-fluid
+    .span12
+      = render 'layouts/admin/fiduceo/navigation'
+
   .row-fluid.marginbottom
     .span12.margin1bottom
       %h3 Automates de récupérations (#{@retrievers.count})
+
   .row-fluid
     .span9
       .row-fluid
         .span6
-          = render partial: 'list_options'
+          = render partial: 'shared/list_options', locals: { collection: @retrievers }
         .span6.alignright.padding1top
           = link_to admin_fiduceo_retrievers_path do
             %span.badge Tous
@@ -55,6 +56,6 @@
                     %td= retriever_presenter.mode
                     %td!= retriever_presenter.state(:admin)
                     %td= link_to icon(icon: 'eye-open'), account_fiduceo_retrievers_path(code: retriever.user.code)
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @retrievers }
     .span3
       = render partial: 'sidebar'

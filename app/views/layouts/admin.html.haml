@@ -11,11 +11,11 @@
         <script src="/javascripts/html5.js" type="text/javascript"></script>
       <![endif]-->
     != javascript_include_tag 'admin'
-    != javascript_include_tag 'admin/user', 'admin/csv_outputter' if params[:controller] == 'admin/users'
-    != javascript_include_tag 'admin/organizations' if controller_name == 'organizations'
+    != javascript_include_tag 'admin/user' if params[:controller] == 'admin/users'
     != javascript_include_tag 'admin/invoices' if controller_name == 'invoices'
     != javascript_include_tag 'admin/scanning_providers' if controller_name == 'scanning_providers'
     != javascript_include_tag 'admin/reporting' if controller_name == 'reporting'
+    != javascript_include_tag 'admin/events' if controller_name == 'events'
   %body
     .navbar.navbar-fixed-top
       .navbar-inner

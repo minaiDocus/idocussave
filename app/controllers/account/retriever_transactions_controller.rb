@@ -12,7 +12,7 @@ class Account::RetrieverTransactionsController < Account::FiduceoController
   end
 
 private
-  
+
   def sort_column
     params[:sort] || 'created_at'
   end

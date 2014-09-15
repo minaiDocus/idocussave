@@ -4,7 +4,7 @@ class DropboxBasic
   include Mongoid::Timestamps
 
   belongs_to :external_file_storage
-  
+
   field :session,              type: String,  default: ''
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
@@ -21,7 +21,7 @@ class DropboxBasic
     end
     @current_session
   end
-  
+
   def get_access_token
     if self.session.present?
       current_session = DropboxSession.deserialize(self.session)
@@ -31,7 +31,7 @@ class DropboxBasic
       false
     end
   end
-  
+
   def get_authorize_url(callback='')
     if callback.empty?
       new_session.get_authorize_url
@@ -39,7 +39,7 @@ class DropboxBasic
       new_session.get_authorize_url(callback)
     end
   end
-  
+
   def is_configured?
     new_session.authorized?
   end

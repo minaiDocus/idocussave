@@ -1,7 +1,7 @@
-= simple_form_for @exercice, url: exercice_form_url(@customer, @exercice), html: { class: 'form form-horizontal' } do |f|
+= simple_form_for @exercice, url: exercice_form_url(@organization, @customer, @exercice), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :start_date, as: :date
   = f.input :end_date, as: :date
   = f.input :is_closed, as: :boolean
-  .form-actions
-    = f.submit t('actions.submit'), class: 'btn'
-    = link_to t('actions.cancel'), account_organization_customer_exercices_path(@customer), class: 'btn'
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_organization_customer_exercices_path(@organization, @customer), class: 'btn'

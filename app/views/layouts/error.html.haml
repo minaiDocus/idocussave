@@ -1,0 +1,35 @@
+!!!
+%html
+  %head
+    %title Idocus | Archivage numérique
+    %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
+    = stylesheet_link_tag 'application'
+  %body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          %a{ class: 'btn btn-navbar', 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+            %span{ class: 'icon-bar' }
+            %span{ class: 'icon-bar' }
+            %span{ class: 'icon-bar' }
+          %a.logo{ href: site_url }
+            %img{ src: logo_url, alt: 'logo' }
+          - if current_user
+            %p{ class: 'navbar-text pull-right' }
+              %span{ style: 'color:#999;'} Connecté en tant que
+              = link_to current_user.email, account_documents_path
+              |
+              = link_to 'déconnexion', destroy_user_session_path
+          - else
+            %p{ class: 'navbar-text pull-right' }
+              = link_to 'Connexion', new_user_session_path
+
+    != yield
+
+    %footer
+      .modal-footer.aligncenter
+        %p{ class: 'copyright' } &copy; iDocus 2014
+
+    = render :partial => "/shared/google_analytics"
+    = javascript_include_tag 'application'

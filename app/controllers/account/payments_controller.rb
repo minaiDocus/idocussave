@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
   skip_before_filter :verify_authenticity_token, :only => [:mode]
-  
+
   layout nil, :only => [:credit]
-  
+
   helper :paiement_cic
-  
+
 public
   def mode
     response = 0
@@ -26,7 +26,7 @@ public
         response = 3
       end
     end
-    
+
     respond_to do |format|
       format.json{ render :json => response.to_json, :status => :ok }
       format.html{ redirect_to account_profile_path }
@@ -39,7 +39,7 @@ public
     end
     redirect_to account_profile_path(panel: "payment_management")
   end
-  
+
   def credit
     if params[:amount]
       amount = params[:amount].to_f * 100

@@ -73,23 +73,32 @@ table
     textarea
       width: auto
       height: 180px
-  table th, table td
-    text-align: left
-  table th.first, table td.first
-    text-align: right
-
-#subscription .requested
-  border: 1px solid orange
+  table
+    th, td
+      text-align: left
+    th.right, td.right
+      text-align: right
+    .checkbox
+      input
+        float: none
+        margin-left: 0
 
 .user_status
-  .title
-    position: relative
-    top: 10px 
+  th
+    span
+      position: relative
+      top: 5px
+  .date
+    margin: 0
+    padding: 0
   .select-date
     width: 66px !important
     height: 26px !important
-    margin-right: -3px !important
-    padding-left: 4px !important
+    margin:
+      top: 0
+      bottom: 0
+      right: 0
+      left: -3px !important
 
 #external_file_storage
   th, td
@@ -136,14 +145,13 @@ h3 a
   vertical-align: middle !important
   text-align: center !important
 
-#retrievers, #provider_wishes
-  .pagination
-    height: 22px
-    margin: 0
-    margin-top: 10px
+.pagination
+  height: 22px
+  margin: 0
+  margin-top: 10px
+  padding: 0 7px
+  a
     padding: 0 7px
-    a
-      padding: 0 7px
-      line-height: 20px
+    line-height: 20px
 
 @import "admin/*"

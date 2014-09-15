@@ -2,9 +2,9 @@
 class GoogleDoc
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :external_file_storage
-  
+
   field :token,                type: String,  default: ''
   field :secret,               type: String,  default: ''
   field :is_configured,        type: Boolean, default: false
@@ -40,7 +40,7 @@ class GoogleDoc
   def is_configured?
     is_configured
   end
-  
+
   def reset_session
     update_attributes(token: '', secret: '', is_configured: false)
   end

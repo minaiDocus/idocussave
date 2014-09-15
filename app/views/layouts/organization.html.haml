@@ -6,8 +6,12 @@
     %link{ :rel => 'shortcut icon', :type => 'image/ico', :href => asset_path('favicon.ico') }
     = csrf_meta_tag
     != stylesheet_link_tag 'application', 'account/organizations'
-    - unless controller_name.in?(%w(subscriptions organization_subscriptions organization_addresses accounting_plans bank_accounts knowings))
-      != stylesheet_link_tag "account/#{controller_name}"
+    - if controller_name.in?(%w(subscriptions default_subscriptions organization_subscriptions))
+      = stylesheet_link_tag 'account/subscriptions'
+    - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
+      = stylesheet_link_tag 'account/csv_outputters'
+    - elsif !controller_name.in?(%w(organization_addresses accounting_plans bank_accounts knowings))
+      = stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization
     .navbar.navbar-fixed-top
@@ -38,22 +42,22 @@
             .box.sidebar-nav
               %ul.nav.nav-list
                 %li.nav-header= @organization.name
-                %li{ class: (controller_name == 'organizations' ? 'active' : '') }
-                  = link_to 'Paramètres', account_organization_path
+                %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters)) && !request.path.match(/customers/)) ? 'active' : '') }
+                  = link_to 'Paramètres', account_organization_path(@organization)
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
-                  = link_to 'Groupes', account_organization_groups_path
+                  = link_to 'Groupes', account_organization_groups_path(@organization)
                 - if is_leader? || @user.can_manage_collaborators?
-                  %li{ class: (controller_name.in?(%w(collaborators rights)) ? 'active' : '') }
-                    = link_to 'Collaborateurs', account_organization_collaborators_path
-                %li{ class: (controller_name.in?(%w(customers organization_addresses subscriptions accounting_plans bank_accounts vat_accounts exercices)) ? 'active' : '') }
-                  = link_to 'Clients', account_organization_customers_path
+                  %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
+                    = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
+                %li{ class: (request.path.match(/customers/) ? 'active' : '') }
+                  = link_to 'Clients', account_organization_customers_path(@organization)
                 - if is_leader? || @user.can_manage_journals?
-                  %li{ class: (controller_name == 'journals' ? 'active' : '') }
-                    = link_to 'Journaux comptables', account_organization_journals_path
-                %li{ class: (controller_name == 'organization_subscriptions' ? 'active' : '') }
-                  = link_to 'Abonnement par défaut', account_organization_default_subscription_path
+                  %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
+                    = link_to 'Journaux comptables', account_organization_journals_path(@organization)
+                %li{ class: (controller_name == 'default_subscriptions' ? 'active' : '') }
+                  = link_to 'Abonnement par défaut', account_organization_default_subscription_path(@organization)
                 %li{ class: (controller_name == 'pre_assignments' ? 'active' : '') }
-                  = link_to 'Pré-affectations', account_organization_pre_assignments_path
+                  = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
           .span10
             != yield
       - else
@@ -66,14 +70,16 @@
             %br
             #{link_to 'Retour', account_root_path}
 
-    != render :partial => "/shared/google_analytics"
+    = render partial: '/shared/google_analytics'
     :plain
       <!--[if lt IE 9]>
         <script src="/javascripts/html5.js" type="text/javascript"></script>
       <![endif]-->
 
-    != javascript_include_tag 'application', 'inner'
-    - if controller_name == 'journals'
-      != javascript_include_tag 'account/journals' if action_name == 'index'
-    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses accounting_plans bank_accounts knowings))
-      != javascript_include_tag "account/#{controller_name}"
+    = javascript_include_tag 'application', 'inner'
+    - if controller_name.in?(%w(subscriptions default_subscriptions organization_subscriptions))
+      = javascript_include_tag 'account/subscriptions'
+    - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
+      = javascript_include_tag 'account/csv_outputters'
+    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses journals accounting_plans bank_accounts knowings))
+      = javascript_include_tag "account/#{controller_name}"

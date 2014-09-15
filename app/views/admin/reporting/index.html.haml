@@ -19,7 +19,7 @@
           - @total = 12.times.map { |e| [0,0,0] }
           - @organizations.each do |organization|
             %tr
-              %td.organization= link_to organization.name, [:admin, organization]
+              %td.organization= link_to organization.name, [:account, organization]
               - user_ids = organization.customers.distinct(:_id)
               - 12.times.each do |i|
                 %td
@@ -76,7 +76,7 @@
                     %b= @total[i][2]
                 - else
                   \-
-  
+
   #showInvoice.modal.hide.fade
     .modal-header
       %a.close{ data: { dismiss: :modal } } ×

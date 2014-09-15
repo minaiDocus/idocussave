@@ -1,14 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::UsersController < Account::AccountController
-
-public
-
   def edit
     @user = current_user
   end
 
   def update
-    @user = current_user   
+    @user = current_user
     if @user.valid_password?(params[:user][:current_password])
       if @user.update_attributes(user_params)
         flash[:notice] = "Votre mot de passe a été mis à jour avec succès"

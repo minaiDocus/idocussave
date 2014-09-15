@@ -1,13 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class Account::ExternalFileStoragesController < Account::AccountController
   before_filter :load_external_file_storage
-  
+
 private
   def load_external_file_storage
     @user.external_file_storage.create if !@user.external_file_storage
     @external_file_storage = @user.external_file_storage
   end
-  
+
 public
   def use
     service = params[:service].to_i
@@ -22,7 +22,7 @@ public
       format.html{ redirect_to account_profile_path }
     end
   end
-  
+
   def update
     result = ""
     if params[:dropbox_basic]
@@ -48,5 +48,4 @@ public
       format.html{ redirect_to account_profile_path(panel: 'efs_management') }
     end
   end
-  
 end

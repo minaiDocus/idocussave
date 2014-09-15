@@ -70,7 +70,5 @@
             <=
           = text_field_tag 'provider_wish_contains[processing_at][$lte]', (params[:provider_wish_contains][:processing_at]['$lte'] rescue '')
 
-      %br
-
-      = submit_tag t('filters.action'), name: nil, class: 'btn'
+      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
       = link_to t('filters.reset'), admin_fiduceo_provider_wishes_path, class: 'btn'

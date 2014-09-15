@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DropboxExtended
   PATH = "#{Rails.root}/data/"
-  
+
   class << self
     def file_type_to_deliver
       ExternalFileStorage::PDF
@@ -20,13 +20,13 @@ class DropboxExtended
       save_session session
       session
     end
-    
+
     def save_session(session)
       File.open "#{PATH}dropbox-session.txt","w" do |file|
         file.puts session.serialize
       end
     end
-    
+
     def get_authorize_url(callback='')
       session = get_session
       if callback.empty?
@@ -35,7 +35,7 @@ class DropboxExtended
         session.get_authorize_url callback
       end
     end
-    
+
     def get_access_token
       session = get_session
       session.get_access_token
@@ -45,7 +45,7 @@ class DropboxExtended
     def reset_session
       File.delete("#{PATH}dropbox-session.txt")
     end
-    
+
     def client
       @client ||= DropboxClient.new(get_session, DropboxExtended::ACCESS_TYPE)
     end

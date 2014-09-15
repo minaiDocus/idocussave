@@ -9,21 +9,17 @@ class AccountBookType
   TYPES_NAME = %w(AC VT NDF)
   DOMAINS = ['', 'AC - Achats', 'VT - Ventes', 'BQ - Banque', 'OD - Opérations diverses', 'NF - Notes de frais']
 
-  before_save :upcase_name, :sync_assignment
+  before_validation :upcase_name
 
-  attr_accessor :force_assignment, :is_relation_updated, :removed_clients
-  
   belongs_to :organization
-  has_and_belongs_to_many :clients,           class_name: 'User', inverse_of: :account_book_types
-  has_and_belongs_to_many :requested_clients, class_name: 'User', inverse_of: :requested_account_book_types
+  belongs_to :user
 
-  has_one :request, as: :requestable, dependent: :destroy
   has_many :fiduceo_retrievers, inverse_of: 'journal'
 
   embeds_many :expense_categories, cascade_callbacks: true
-  
+
   accepts_nested_attributes_for :expense_categories, allow_destroy: true
-  
+
   field :name,                           type: String
   field :pseudonym
   field :description,                    type: String,  default: ""
@@ -39,7 +35,7 @@ class AccountBookType
   field :is_default,                     type: Boolean, default: false
   field :is_expense_categories_editable, type: Boolean, default: false
   field :instructions,                   type: String
-  
+
   slug :name
 
   validates_presence_of  :name
@@ -49,13 +45,11 @@ class AccountBookType
   validates_length_of    :instructions, maximum: 400
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
+  validate :format_of_name
 
-  scope :default, where: { is_default: true }
-  scope :compta_processable, where: { :entry_type.gt => 0 }
-
-  def self.active
-    select { |e| e.request.status != 'create' }
-  end
+  scope :compta_processable,     where: { :entry_type.gt => 0 }
+  scope :not_compta_processable, where: { entry_type: 0 }
+  scope :default,                where: { is_default: true }
 
   def info
     [self.name, self.description].join(' ')
@@ -66,7 +60,7 @@ class AccountBookType
   end
 
   def compta_processable?
-    if entry_type > 0
+    if entry_type && entry_type > 0
       true
     else
       false
@@ -80,18 +74,6 @@ class AccountBookType
     return nil
   end
 
-  def clients_count
-    requested_clients.count
-  end
-
-  def clients_count_was
-    clients.count
-  end
-
-  def clients_count_changed?
-    clients.count == requested_clients.count ? false : true
-  end
-  
   class << self
     def by_position
       asc([:position, :name])
@@ -102,54 +84,13 @@ class AccountBookType
     end
   end
 
-  def requestable_on
-    [
-      :name,
-      :pseudonym,
-      :description,
-      :position,
-      :domain,
-      :entry_type,
-      :default_account_number,
-      :account_number,
-      :default_charge_account,
-      :charge_account,
-      :vat_account,
-      :anomaly_account,
-      :instructions,
-      :is_default
-    ]
-  end
-
-  def update_request_status!(temp_clients=(clients + requested_clients).uniq)
-    request.update_relation_action_status!
-    temp_clients.each do |client|
-      client.request.update_relation_action_status!
-    end
-  end
-
 private
-
-  def sync_assignment
-    if self.force_assignment.try(:to_i) == 1
-      client_ids = self['client_ids']
-      requested_client_ids = self['requested_client_ids']
-      added_client_ids = client_ids.reject { |id| id.in? requested_client_ids }
-      added_client_ids.each do |id|
-        user = User.find id
-        requested_clients << user
-      end
-      removed_client_ids = requested_client_ids.reject { |id| id.in? client_ids }
-      removed_client_ids.each do |id|
-        user = requested_clients.select { |c| c.id == id }.first
-        requested_clients.delete(user)
-      end
-      request.update_attribute(:attribute_changes, {})
-      request.update_relation_action_status!
-    end
-  end
 
   def upcase_name
     self.name = self.name.upcase
+  end
+
+  def format_of_name
+    errors.add(:name, :invalid) unless self.name.match(/^[A-Z0-9]+$/)
   end
 end

@@ -11,7 +11,7 @@ Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
-  
+
   # This file is copied to spec/ when you run 'rails generate rspec:install'
   ENV["RAILS_ENV"] ||= 'test'
 
@@ -30,7 +30,7 @@ Spork.prefork do
   counter = -1
   RSpec.configure do |config|
     config.pattern = "**/*_spec.rb"
-    
+
     # == Mock Framework
     #
     # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -39,7 +39,7 @@ Spork.prefork do
     # config.mock_with :flexmock
     # config.mock_with :rr
     config.mock_with :rspec
-    
+
     # If you're not using ActiveRecord, or you'd prefer not to run each of your
     # examples within a transaction, comment the following line or assign false
     # instead of true.
@@ -51,13 +51,13 @@ Spork.prefork do
       options = example.metadata.slice(:record, :match_requests_on).except(:example_group)
       VCR.use_cassette(name, options) { example.call }
     end
-    
+
     config.before(:suite) do
       DatabaseCleaner.orm = "mongoid"
       DatabaseCleaner.strategy = :truncation
       DatabaseCleaner.clean_with(:truncation)
     end
-    
+
     config.before(:all) do
       DatabaseCleaner.start
     end
@@ -65,7 +65,7 @@ Spork.prefork do
     config.after(:all) do
       DatabaseCleaner.clean
     end
-    
+
     config.after(:each) do
       counter += 1
       if counter > 9

@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class IbizaMailer < ActionMailer::Base
   helper :application
-  default :from => "do-not-reply@idocus.com"
-  
+  default from: 'do-not-reply@idocus.com'
+
   def notify_delivery(ibiza, object, xml_data=nil)
     @ibiza  = ibiza
     if object.class == Pack::Report

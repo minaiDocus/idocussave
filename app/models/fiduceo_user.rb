@@ -36,7 +36,7 @@ class FiduceoUser
   end
 
 private
-  
+
   def client
     @client ||= Fiduceo::Client.new(@user.fiduceo_id)
   end

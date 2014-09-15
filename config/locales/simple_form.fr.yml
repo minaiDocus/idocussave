@@ -50,17 +50,37 @@ fr:
         journal: Journal
         accounting_number: Numéro de compte comptable
       user:
+        code: Code
+        company: Société
+        first_name: Prénom
+        last_name: Nom
+        email: Email
+        is_dropbox_extended_authorized: Dropbox Extended autorisé ?
         knowings_code: Code Knowings
         knowings_visibility: Visibilité Knowings
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
         auth_prev_period_until_day: Jour de clôture de la période précédente
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
       organization:
+        name: Nom
+        description: Description
+        code: Code
+        leader: Administrateur de l'organisation
+        leader_id: Administrateur de l'organisation
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
         auth_prev_period_until_day: Jour de clôture de la période précédente
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
         file_naming_policy: Charte de nommage des fichiers
         is_file_naming_policy_active: Activer la charte
+        is_detail_authorized: Autoriser les détails dans le reporting ?
+        is_test: Organisation de test ?
+        is_journals_management_centralized: Gestion des journaux comptables centralisé ?
+      organization_rights:
+        is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
+        is_customers_management_authorized: Gestion des clients autorisé ?
+        is_groups_management_authorized: Gestion des groupes autorisé ?
+        is_journals_management_authorized: Gestion des journaux comptables autorisé ?
+        is_customer_journals_management_authorized: Gestion des journaux comptables des clients autorisé ?
       vat_account:
         code: Code TVA
         nature: Nature
@@ -90,7 +110,6 @@ fr:
         position: Position
         is_default: Par défaut ?
         clients: Clients
-        force_assignment: Forcer les modifications pour le client
       knowings:
         is_active: Activer la livraison ?
         username: Identifiant
@@ -103,3 +122,77 @@ fr:
         start_date: Date de début
         end_date: Date de fin
         is_closed: Fermé ?
+      reminder_email:
+        name: Nom
+        delivery_day: Jour de l'envoi
+        period: Période
+        object: Objet
+        content: Contenu
+      file_sending_kit:
+        title: Titre
+        instruction: Instruction(s)
+        position: Position
+        folders: Chemises
+        mails: Mails
+        customer_labels: Etiquettes clients
+        workshop_labels: Etiquettes ateliers
+        logo_path: Chemin
+        logo_height: Hauteur
+        logo_width: Largeur
+        left_logo_path: Chemin
+        left_logo_height: Hauteur
+        left_logo_width: Largeur
+        right_logo_path: Chemin
+        right_logo_height: Hauteur
+        right_logo_width: Largeur
+      csv_outputter:
+        comma_as_number_separator: Séparer les chiffres par une virgule
+      external_file_storage:
+        is_dropbox_basic_authorized: Dropbox Basic autorisé ?
+        is_google_docs_authorized: Google Drive autorisé ?
+        is_ftp_authorized: FTP autorisé ?
+        is_box_authorized: Box autorisé ?
+      product:
+        title: Titre
+        position: Position
+        price_in_cents_wo_vat: Prix (en centimes)
+        period_duration: Type de période
+        is_a_subscription: Abonnement ?
+        require_billing_address: Adresse de facturation requise ?
+        description: Description
+        header_info: Informations d'entête de page
+        footer_info: Informations de pied de page
+      product_option:
+        name: Nom
+        title: Nom (public)
+        position: Position
+        require_addresses: Adresse requise ?
+        price_in_cents_wo_vat: Prix (en centimes)
+        description: Description
+        duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période) ?"
+        quantity: Quantité
+        product_group: Groupe
+        action_name: Action à executer
+        notify: Notifier par email
+      product_group:
+        name: Nom
+        title: Nom (public)
+        position: Position
+        is_option_dependent: Bouton radio ? (sinon case à cocher)
+        products: Sélectionner les produits
+        product_supergroups: Sélectionner les groupes parents
+        product_require_id: Sélectionner un groupe pour la dépendance
+      address:
+        first_name: Prénom
+        last_name: Nom
+        company: Société
+        address_1: Adresse
+        address_2: Adresse (suite)
+        city: Ville
+        zip: Code postal
+        state: Etat
+        phone: Tél fixe
+        phone_mobile: Tél mobile
+        is_for_billing: Pour la facturation ?
+        is_for_shipping: Pour le retour ?
+        is_for_kit_shipping: Pour le kit ?

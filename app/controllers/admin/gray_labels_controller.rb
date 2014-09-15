@@ -41,7 +41,7 @@ class Admin::GrayLabelsController < Admin::AdminController
     redirect_to admin_gray_labels_path
   end
 
-  private
+private
 
   def load_gray_label
     @gray_label = GrayLabel.find_by_slug params[:id]

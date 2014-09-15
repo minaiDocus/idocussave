@@ -14,53 +14,53 @@
         %span Les champs marquées d'un * sont obligatoires.
         %br/
         %br/
-  
+
         %h4 Informations d'identification
-  
+
         %label{:for => "transactionId"} Transaction ID:
         %input#transactionId{:name => "transactionId", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "clientType1"} Type de client*:
         %input#clientType1{:name => "clientType", :type => "radio", :value => "individual"}/
         Particulier
         %input#clientType2{:name => "clientType", :type => "radio", :value => "corporate"}/
         Entreprise
-  
+
         %label{:for => "firstName"} Prénom*:
         %input#firstName{:maxlength => "32", :name => "firstName", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "lastName"} Nom*:
         %input#lastName{:maxlength => "32", :name => "lastName", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "clientReference"} Identifiant du client*:
         %input#clientReference{:name => "clientReference", :size => "20", :type => "text"}/
         %br/
         %br/
 
-  
+
         %h4 Adresse de facturation
-  
+
         %label{:for => "line1Inv"} Adresse *:
         %input#line1Inv{:maxlength => "70", :name => "line1Inv", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "cityInv"} Ville*:
         %input#cityInv{:maxlength => "35", :name => "cityInv", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "postalCodeInv"} Code postal*:
         %input#postalCodeInv{:maxlength => "5", :name => "postalCodeInv", :size => "20", :type => "text"}/
         %br/
         %br/
-  
+
         %label{:for => "countryInv"} Pays*:
         %select#countryInv{:name => "countryInv", :size => "1"}
           %option{:value => "DE"} Allemagne
@@ -103,11 +103,11 @@
           %option{:value => "AX"} Îles Åland
         %br/
         %br/
-  
+
         %h4 Transaction :
         %input{:name => "requestType", :type => "hidden", :value => "mandate"}/
         %br/
         %br/
-        
+
         .buttonsrow.margin2top
           %input{:type => :submit, :value=> "valider", :class => "button whitebtn w100 floattoright"}

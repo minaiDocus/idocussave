@@ -1,44 +1,6 @@
 # -*- encoding : UTF-8 -*-
 namespace :maintenance do
   namespace :notification do
-    desc 'Send update request notification'
-    task :update_request => [:environment] do
-      user_ids = Request.active.where(requestable_type: 'User').asc([:action, :relation_action]).distinct(:requestable_id)
-      user_ids = user_ids + Scan::Subscription.update_requested.distinct(:user_id)
-      users = User.any_in(_id: user_ids).active.asc(:code)
-
-      journal_ids = Request.active.where(requestable_type: 'AccountBookType').asc([:action, :relation_action]).distinct(:requestable_id)
-      journals = AccountBookType.any_in(_id: journal_ids).asc([:name, :organization_id])
-
-      puts "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] #{users.count + journals.count} update request(s) found."
-      if users.count > 0 || journals.count > 0
-        subject = 'Validation requise'
-        content = ""
-        content << "Bonjour,<br/><br/>"
-        content << "Des requ&ecirc;tes de modification sont en attente de validation, pour le(s) client(s) suivant :<br/>"
-        users.each do |user|
-          url = File.join([SITE_INNER_URL, 'admin/users', user.id.to_s])
-          tag = "<a href='#{url}'>#{user.info}</a>"
-          content << tag + " - " + I18n.t("request.#{user.request_status}")
-          content << "<br/>"
-        end
-        content << "<br/>" if users.count > 0 && journals.count > 0
-        content << "Des requ&ecirc;tes de modification sont en attente de validation, pour le(s) journau(x) suivant :<br/>"
-        journals.each do |journal|
-          url = File.join([SITE_INNER_URL, 'admin/organizations', journal.organization.slug])
-          tag = "<a href='#{url}'>#{journal.organization.name}</a>"
-          content << tag + " - " + journal.info + " - " + I18n.t("request.#{journal.request.status}")
-          content << "<br/>"
-        end
-        content << "<br/>Cordialement, l'&eacute;quipe iDocus"
-        EventNotification::EMAILS.each do |email|
-          print "[#{Time.now.strftime("%Y/%m/%d %H:%M")}] Sending email to <#{email}>..."
-          NotificationMailer.notify(email,subject,content).deliver
-          print "done.\n"
-        end
-      end
-    end
-
     desc 'Notify updated documents'
     task :document_updated => [:environment] do
       DocumentNotifier.notify_updated
@@ -69,7 +31,7 @@ namespace :maintenance do
       end
     end
   end
-  
+
   namespace :invoice do
     desc 'Generate invoice'
     task :generate => [:environment] do
@@ -113,15 +75,15 @@ namespace :maintenance do
     desc 'Feed dictionary'
     task :feed, [:path] => :environment do |t,args|
       filename = File.expand_path(File.dirname(__FILE__)) + args[:path]
-      
+
       puts "fetching dictionary at #{filename}"
-      
+
       if File.exist?(filename)
         File.open(filename, 'r') do |file|
           while line = file.gets
             Dictionary.add Iconv.iconv('UTF-8', 'ISO-8859-1', line.chomp).join()
             print '.'
-          end  
+          end
         end
       end
     end

@@ -1,0 +1,86 @@
+#events
+  .row-fluid
+    .span12.panel
+      %h3 Liste des événements
+  .row-fluid
+    .span12
+      .filter.panel.margin1top
+        = form_tag admin_events_path, method: :get, class: 'form form-vertical margin0bottom' do
+          = hidden_field_tag :direction, sort_direction
+          = hidden_field_tag :sort,      sort_column
+          = hidden_field_tag :per_page,  per_page
+
+          %table.table.table-condensed.margin0bottom
+            %thead
+              %tr
+                %th Total
+                %th.field.number_field= label_tag 'event_contains[number]', t('mongoid.models.event.attributes.number')
+                %th.field.date_field= label_tag 'event_contains[created_at][$gte]', 'Date de début'
+                %th.field.date_field= label_tag 'event_contains[created_at][$lte]', 'Date de fin'
+                %th.field.text_field= label_tag 'user_contains[code]', t('mongoid.models.event.attributes.user')
+                %th.field.action_field= label_tag 'event_contains[action]', t('mongoid.models.event.attributes.action')
+                %th.field.target_type_field= label_tag 'event_contains[target_type]', t('mongoid.models.event.attributes.target_type')
+                %th.field.text_field= label_tag 'event_contains[target_name]', t('mongoid.models.event.attributes.target_name')
+                %th
+            %tbody
+              %tr
+                %td
+                  - if @events.count != Event.count
+                    %b= @events.count
+                    sur
+                    = Event.count
+                  - else
+                    %b= Event.count
+                %td.field.number_field= number_field_tag 'event_contains[number]', (params[:event_contains][:number] rescue '')
+                %td.field.date_field
+                  .input-prepend.date.datepicker
+                    %span.add-on
+                      = icon(icon: 'th')
+                    = text_field_tag 'event_contains[created_at][$gte]', (params[:event_contains][:created_at]['$gte'] rescue '')
+                %td.field.date_field
+                  .input-prepend.date.datepicker
+                    %span.add-on
+                      = icon(icon: 'th')
+                    = text_field_tag 'event_contains[created_at][$lte]', (params[:event_contains][:created_at]['$lte'] rescue '')
+                %td.field.text_field= text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue '')
+                %td.field.action_field
+                  = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true
+                %td.field.target_type_field
+                  = select_tag 'event_contains[target_type]', event_target_type_options_for_select, include_blank: true
+                %td.field.text_field= text_field_tag 'event_contains[target_name]', (params[:event_contains][:target_name] rescue '')
+                %td
+                  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+                  = link_to t('filters.reset'), admin_events_path, class: 'btn'
+
+  .row-fluid
+    .span12
+      = render partial: 'shared/list_options', locals: { collection: @events }
+  .row-fluid
+    .span8
+      %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
+        %thead
+          %tr
+            %th.number=      sortable :number,      t('mongoid.models.event.attributes.number')
+            %th.date=        sortable :created_at,  'Date'
+            %th=             sortable :user_id,     t('mongoid.models.event.attributes.user')
+            %th=             sortable :action,      t('mongoid.models.event.attributes.action')
+            %th=             sortable :target_type, t('mongoid.models.event.attributes.target_type')
+            %th.target_name= sortable :target_name, t('mongoid.models.event.attributes.target_name')
+        %tbody
+          - @events.each do |event|
+            - event_presenter = EventPresenter.new(event, self)
+            %tr{ data: { id: event_presenter.id.to_s } }
+              %td.do-show.number=      event_presenter.number
+              %td.do-show.date=        event_presenter.created_at
+              %td=                     event_presenter.user_code
+              %td.do-show=             event_presenter.action
+              %td.do-show=             event_presenter.target_type
+              %td.do-show.target_name= event_presenter.target_name
+    .span4.show.margin1top.margin0bottom
+      .panel
+        %h4 Détails
+        %p.margin0bottom
+          Cliquer sur une ligne du tableau pour en afficher les détails ici.
+  .row-fluid
+    .span12
+      = render partial: 'shared/list_options', locals: { collection: @events }

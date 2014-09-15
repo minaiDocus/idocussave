@@ -24,7 +24,7 @@ module Idocus
   class Application < Rails::Application
 
     # load all files in lib directory
-    
+
     # development files
     Dir.glob("#{Rails.root}/lib/*.{rb}").each { |file| require file }
     Dir.glob("#{Rails.root}/lib/patches/*.{rb}").each { |file| require file }
@@ -67,7 +67,7 @@ module Idocus
       g.test_framework :rspec, :fixture => true, :views => false
       g.fixture_replacement :factory_girl, :dir => "spec/factories"
     end
-    
+
     config.middleware.use Rack::RawUpload
 
     # Enable the asset pipeline
@@ -77,7 +77,6 @@ module Idocus
     config.assets.version = '1.0'
 
     config.mongoid.observers = :user_observer,
-                               :account_book_type_observer,
                                :pack_observer,
                                :fiduceo_retriever_observer,
                                :fiduceo_provider_wish_observer

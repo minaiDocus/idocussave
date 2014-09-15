@@ -2,9 +2,9 @@
 class ReminderEmail
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :organization
-  
+
   field :name,               type: String
   field :subject,            type: String
   field :content,            type: String
@@ -13,10 +13,11 @@ class ReminderEmail
   field :delivered_at,       type: Time
   field :delivered_user_ids, type: Array,   default: []
   field :processed_user_ids, type: Array,   default: []
-  
+
   validates_presence_of :name, :subject, :content, :organization_id
   validates_inclusion_of :period, in: [1,3]
-  
+  validates_inclusion_of :delivery_day, in: 0..31
+
   def deliver
     clients = organization.customers.active - processed_users
     clients = clients.select do |client|
@@ -47,22 +48,22 @@ class ReminderEmail
       clients
     end
   end
-  
+
   def init
     self.delivered_user_ids = []
     self.processed_user_ids = []
     self.delivered_at = nil
     save
   end
-  
+
   def processed_users
     User.any_in(_id: processed_user_ids)
   end
-  
+
   def delivered_users
     User.any_in(_id: delivered_user_ids)
   end
-  
+
   def deliver_if_its_time
     if is_time_to_deliver?
       init if self.delivered_at.present? && end_of_period < Time.now
@@ -85,7 +86,7 @@ class ReminderEmail
       nil
     end
   end
-  
+
   def self.deliver
     self.all.entries.each do |reminder_email|
       reminder_email.deliver_if_its_time

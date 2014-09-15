@@ -16,13 +16,14 @@ init_prices = (input) ->
       $(e).find('.price label').text(price)
 
 jQuery ->
-  toggle_products()
-
-  $('#scan_subscription_period_duration').change ->
+  if $("#subscriptions.edit, #default_subscriptions.edit, #organization_subscriptions.edit").length > 0
     toggle_products()
 
-  $('td.input input:checked').each (index, element) ->
-    init_prices(element)
+    $('#scan_subscription_period_duration').change ->
+      toggle_products()
 
-  $('td.input input').change ->
-    init_prices(this)
+    $('td.input input:checked').each (index, element) ->
+      init_prices(element)
+
+    $('td.input input').change ->
+      init_prices(this)

@@ -1,11 +1,14 @@
 #scanning_provider
+  = render partial: 'navigation'
+
   .row-fluid
     .span12.panel
       .pull-left
         %h2 Atelier : #{@scanning_provider}
       .pull-right
-        = icon_link_to edit_admin_scanning_provider_path(@scanning_provider), { icon: 'edit' }, { class: 'btn' }
-      %br
+        = link_to t('actions.return'), admin_scanning_providers_path, class: 'btn'
+        = link_to icon_edit + ' ' + t('actions.edit'), edit_admin_scanning_provider_path(@scanning_provider), { class: 'btn btn-primary' }
+
   .row-fluid
     .span4
       %table.table.table-condensed.table-bordered.table-striped

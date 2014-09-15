@@ -4,7 +4,7 @@ class Account::GroupsController < Account::OrganizationController
   before_filter :load_group, except: %w(index new create)
 
   def index
-    @groups = search(group_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @groups = search(group_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -18,7 +18,7 @@ class Account::GroupsController < Account::OrganizationController
     @group = @organization.groups.new safe_group_params
     if @group.save
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_groups_path
+      redirect_to account_organization_groups_path(@organization)
     else
       render 'new'
     end
@@ -30,7 +30,7 @@ class Account::GroupsController < Account::OrganizationController
   def update
     if @group.update_attributes(safe_group_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_groups_path
+      redirect_to account_organization_groups_path(@organization)
     else
       render 'edit'
     end
@@ -39,7 +39,7 @@ class Account::GroupsController < Account::OrganizationController
   def destroy
     @group.destroy
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_organization_groups_path
+    redirect_to account_organization_groups_path(@organization)
   end
 
 private
@@ -48,16 +48,27 @@ private
     unless is_leader?
       if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && @user.cannot_manage_groups?)
         flash[:error] = t('authorization.unessessary_rights')
-        redirect_to account_organization_path
+        redirect_to account_organization_path(@organization)
       end
     end
   end
 
   def group_params
-    if is_leader?
-      params.require(:group).permit(:name,
-                                    :description,
-                                    :member_tokens)
+    if @user.is_admin
+      params.require(:group).permit(
+        :name,
+        :description,
+        :dropbox_delivery_folder,
+        :is_dropbox_authorized,
+        :file_type_to_delive,
+        :member_tokens
+      )
+    elsif is_leader?
+      params.require(:group).permit(
+        :name,
+        :description,
+        :member_tokens
+      )
     else
       params.require(:group).permit(:customer_tokens)
     end

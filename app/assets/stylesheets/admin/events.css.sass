@@ -1,0 +1,56 @@
+#events
+  .filter
+    .table
+      tbody
+        tr:hover
+          td, th
+            background-color: transparent
+    .field
+      padding:
+        left: 2px
+        right: 2px
+      input
+        margin: 0
+        width: auto
+      select
+        width: auto
+    .number_field
+      width: 80px
+      input
+        width: 72px
+    .text_field
+      width: 120px
+    .action_field
+      width: 103px
+    .target_type_field
+      width: 139px
+    .date_field
+      width: 104px
+      input
+        width: 65px
+      .datepicker
+        margin: 0
+        padding: 0
+      .add-on
+        position: relative
+        left: 3px
+        padding: 4px
+        i
+          margin:
+            top: 2px
+            left: 2px
+  th.number, td.number
+    width: 40px
+    text-align: right
+  th.target_name, td.target_name
+    min-width: 275px
+  td.do-show
+    cursor: pointer
+  .table-striped
+    tbody
+      tr.highlight
+        td
+          background-color: #E1E1E1
+  .show
+    i.gray
+      color: #AAAAAA

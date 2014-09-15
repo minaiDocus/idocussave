@@ -2,7 +2,7 @@
 class Subscription
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   PREPAYED = 1
   DEBIT    = 2
 
@@ -16,21 +16,22 @@ class Subscription
   field :payment_type,          type: Integer, default: PREPAYED
   field :price_in_cents_wo_vat, type: Integer, default: 0
   field :tva_ratio,             type: Float,   default: 1.2
-  
+
+  attr_accessor :requester
+
   validates_uniqueness_of :number
-  
+
   scope :of_user,  lambda { |user| where(user_id: user.id) }
   scope :for_year, lambda { |year| where(:start_at.lte => Time.local(year,12,31,23,59,59), :end_at.gte => Time.local(year,1,1,0,0,0)) }
-  
+
   before_create :set_number
   before_save :update_price, :set_start_date, :set_end_date
-  
+
   belongs_to :user
   belongs_to :organization
   has_many :invoices
 
   embeds_many :product_option_orders, as: :product_optionable
-  embeds_many :requested_product_option_orders, class_name: 'ProductOptionOrder', as: :product_optionable
 
   def self.by_start_date
     asc(:start_at)
@@ -39,40 +40,36 @@ class Subscription
   def price_in_cents_w_vat
     price_in_cents_wo_vat * tva_ratio
   end
-  
+
   def total_vat
     price_in_cents_w_vat - price_in_cents_wo_vat
   end
-  
+
   def update_price
     self.price_in_cents_wo_vat = products_total_price_in_cents_wo_vat
   end
-  
+
   def update_price!
     update_attributes(price_in_cents_wo_vat: products_total_price_in_cents_wo_vat)
   end
-  
+
   def products_total_price_in_cents_wo_vat
     product_option_orders.sum(:price_in_cents_wo_vat) || 0
   end
-  
+
   def products_total_price_in_cents_w_vat
     products_total_price_in_cents_wo_vat * tva_ratio
   end
-  
-  def requested_total_price
-    requested_product_option_orders.sum(:price_in_cents_wo_vat) || 0
-  end
-  
+
   def fetch_options(_product)
     id = _product[:id]
     product = Product.find id
     _groups = _product[id]
-    
+
     options = []
     option_ids = []
     _groups.each { |key, value| option_ids += value }
-    
+
     _groups.each do |_group|
       group = ProductGroup.find(_group[0])
       required_option = nil
@@ -81,22 +78,29 @@ class Subscription
       end
       _group[1].each do |option_id|
         option = ProductOption.find option_id
-        option_order = copy_product_option(option)
-        option_order.price_in_cents_wo_vat = option_order.price_in_cents_wo_vat * required_option.quantity unless required_option.nil?
-        options << option_order
+        use_old = false
+        unless requester && requester.is_admin
+          group_options = group.product_options
+          selected_option = self.product_option_orders.select{ |so| group_options.select{ |go| so == go }.present? }.first
+          use_old = selected_option ? option.position < selected_option.position : false
+        end
+        if use_old
+          options << selected_option.dup
+        else
+          option_order = copy_product_option(option)
+          option_order.price_in_cents_wo_vat = option_order.price_in_cents_wo_vat * required_option.quantity unless required_option.nil?
+          options << option_order
+        end
       end
     end
     options
   end
-  
-  def product= _product 
+
+  # TODO extract into service object or form object
+  def product=(_product)
     self.product_option_orders = fetch_options(_product)
   end
-  
-  def requested_product= _product
-    self.requested_product_option_orders = fetch_options(_product)
-  end
-  
+
   def copy_product_option(product_option)
     product_option_order = ProductOptionOrder.new
     product_option_order.fields.keys.each do |k|
@@ -110,17 +114,17 @@ class Subscription
   def self.current
     desc(:created_at).first
   end
-  
+
 protected
   def set_number
     self.number = DbaSequence.next(:subscription)
   end
-  
+
   def set_start_date
     month = period_duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
     self.start_at = Time.local start_at.year, month, 1
   end
-  
+
   def set_end_date
     self.end_at = start_at + end_in.month - 1.seconds
   end

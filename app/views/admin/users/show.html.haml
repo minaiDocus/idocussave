@@ -2,64 +2,15 @@
   = render partial: 'navigation'
 
   .row-fluid
-    .span12.well{ style: 'padding:5px 10px;' }
+    .span12.panel
       .pull-left
         %h2= @user.info + (@user.inactive_at ? ' (Inactif)' : '')
 
       .pull-right
-        = link_to 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
-        - if @user.request.status == 'create' || @user.is_disabled
-          = link_to 'Activer', activate_admin_user_path(@user), method: :put, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger margin3left'
-          = link_to 'Supprimer', admin_user_path(@user), method: :delete, data: { confirm: t('actions.confirm') }, class: 'btn btn-danger'
-
+        = link_to icon(icon: 'refresh') + ' ' + 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
   .row-fluid
-    #information.span6
+    #information.span12
       = render partial: 'information'
-    #addresses.span6
-
-  .row-fluid
-    .span5
-      .row-fluid
-        .span12
-          .label{ style: 'padding:3px 5px 3px' }
-            Autorisation de l'organisation
-          - if @user.organization && @user.organization.collaborators.include?(@user)
-            %table.table.table-striped.table-bordered.table-condensed
-              %tbody
-                %tr
-                  %th= t('mongoid.models.organization_rights.attributes.is_collaborators_management_authorized')
-                  %td.value
-                    = check_box_tag 'user[organization_rights][is_collaborators_management_authorized]', 1, @user.find_or_create_organization_rights.is_collaborators_management_authorized
-                %tr
-                  %th= t('mongoid.models.organization_rights.attributes.is_customers_management_authorized')
-                  %td.value
-                    = check_box_tag 'user[organization_rights][is_customers_management_authorized]', 1, @user.find_or_create_organization_rights.is_customers_management_authorized
-                %tr
-                  %th= t('mongoid.models.organization_rights.attributes.is_groups_management_authorized')
-                  %td.value
-                    = check_box_tag 'user[organization_rights][is_groups_management_authorized]', 1, @user.find_or_create_organization_rights.is_groups_management_authorized
-                %tr
-                  %th= t('mongoid.models.organization_rights.attributes.is_journals_management_authorized')
-                  %td.value
-                    = check_box_tag 'user[organization_rights][is_journals_management_authorized]', 1, @user.find_or_create_organization_rights.is_journals_management_authorized
-      .row-fluid
-        .span12
-          = render partial: 'stamp_personalisation'
-    .span7
-      .row-fluid
-        #external_file_storage.span12
-          = render partial: 'external_file_storage'
-      .row-fluid
-        .span8
-          .row-fluid
-            .span12
-              = render partial: 'document'
-          .row-fluid
-            #scan_subscription.span12
-        .span4
-          #account_book_types.span12
-
-= render partial: 'modal'
 
 :javascript
   var user_id = "#{params[:id]}"

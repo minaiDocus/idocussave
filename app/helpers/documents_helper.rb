@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 module DocumentsHelper
-  
   def linked_users_option(user)
     if user.is_prescriber && user.organization
       user_ids = user.packs.distinct(:owner_id)
@@ -29,7 +28,7 @@ module DocumentsHelper
       [name,u.id]
     end
   end
-  
+
   def account_book_types_option
     @user.account_book_types.by_position.map do |u|
       description = u.description.blank? ? "" : " " + u.description
@@ -46,7 +45,7 @@ module DocumentsHelper
       end
     end
   end
-  
+
   def filter_list_of_users(users, year)
     active_users(users,year).
     sort_by { |u| [u.code,u.company,u.name,u.email] }.
@@ -78,7 +77,7 @@ module DocumentsHelper
       periods.compact.size != 0
     end
   end
-  
+
   def price_of_period_by_time(periods, time, is_customer=true)
     period = periods.select { |period| period.start_at <= time and period.end_at >= time }.first
     if is_customer
@@ -102,10 +101,10 @@ module DocumentsHelper
       end
     end
   end
-  
+
   def thead(columns)
     content_tag :thead do
-      content_tag :tr do 
+      content_tag :tr do
         columns.each_with_index do |c,index|
           if index < 2
             concat(content_tag(:th, c))
@@ -132,14 +131,14 @@ module DocumentsHelper
       end
     end
   end
-  
+
   def custom_table_for(columns,items)
     content_tag :table, class: 'table table-condensed table-striped' do
       thead(columns) + tbody(items)
     end
   end
-  
-  def tinformations(pack, content_width)   
+
+  def tinformations(pack, content_width)
     content_tag :table, class: 'table table-condensed' do
       content_tag :tbody do
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Nom du document"),       width: content_width) + content_tag(:td, "#{pack.name}.pdf")
@@ -150,10 +149,10 @@ module DocumentsHelper
       end
     end
   end
-  
+
   def html_pack_info(pack)
     columns = ['N°', 'Date', 'Télév.', 'Num.', "iDocus'Box", "Auto."]
-    
+
     contents = ""
     contents += content_tag :h4, "Informations"
     contents += content_tag :div, tinformations(pack, 120)

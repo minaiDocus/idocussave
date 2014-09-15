@@ -1,16 +1,19 @@
 .nav-collapse
   %ul{ :class=>'nav' }
     %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
-      != link_to 'Mon compte', account_profile_path
-    - if current_user.is_prescriber || current_user.is_admin
-      %li{ class: ((controller_name.in?(%w(organizations groups collaborators customers journals subscriptions organization_subscriptions pre_assignments)) || request.path =~ /customers/)  ? 'active' : '') }
-        != link_to 'Mon organisation', account_organization_path
+      = link_to 'Mon compte', account_profile_path
+    - if @user.is_admin
+      %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
+        = link_to 'Organisations', account_organizations_path
+    - if @user.is_prescriber || @user.is_admin
+      %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
+        = link_to 'Mon organisation', account_organization_path(@user.organization)
     %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
-      != link_to 'Mes documents', account_documents_path
+      = link_to 'Mes documents', account_documents_path
     %li{ :class=>('active' if controller_name == 'reporting') }
-      != link_to 'Mon reporting', account_reporting_path
+      = link_to 'Mon reporting', account_reporting_path
     - if @user.is_fiduceo_authorized
       %li{ :class=>('active' if controller_name.in? %w(operations balances)) }
-        != link_to 'Mes graphiques', account_charts_operations_path
+        = link_to 'Mes graphiques', account_charts_operations_path
       %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
-        != link_to 'Mes automates', account_fiduceo_retrievers_path
+        = link_to 'Mes automates', account_fiduceo_retrievers_path

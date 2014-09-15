@@ -7,10 +7,10 @@ describe Product do
     ProductOption.destroy_all
 
     @product = FactoryGirl.create(:product, title: 'Game console')
-    
+
     @group1 = ProductGroup.create(position: 1, title: 'Pad', name: 'pad')
     @group2 = ProductGroup.create(position: 2, title: 'Game', name: 'game')
-    
+
     @option1 = FactoryGirl.create(:product_option, title: '1 pad', name: '1 pad')
     @option2 = FactoryGirl.create(:product_option, title: '2 pads', name: '2 pads')
     @option3 = FactoryGirl.create(:product_option, title: '3 games', name: '3 games')
@@ -19,16 +19,16 @@ describe Product do
     @group1.product_options << @option1
     @group1.product_options << @option2
     @group1.save
-    
+
     @group2.product_options << @option3
     @group2.product_options << @option4
     @group2.save
-    
+
     @product.product_groups << @group1
     @product.product_groups << @group2
     @product.save
   end
-  
+
   context "Groups" do
     it "count should equal 2" do
       @product.product_groups.count.should eq(2)
@@ -56,7 +56,7 @@ describe Product do
       end
     end
   end
-  
+
   it "title should equal 'Game console'" do
     @option1.product_group.products.first.title.should eq(@product.title)
   end

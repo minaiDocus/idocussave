@@ -16,7 +16,7 @@ class Account::ReportingController < Account::AccountController
                              .where(:start_at.gte => Time.local(@year,1,1,0,0,0),
                                     :end_at.lte   => Time.local(@year,12,31,23,59,59))
                              .entries
-    
+
     respond_to do |format|
       format.html
       format.xls do
@@ -24,20 +24,20 @@ class Account::ReportingController < Account::AccountController
       end
     end
   end
-  
+
 private
 
   def render_to_xls subscriptions, year
     periods = []
     subscriptions.each{ |subscription| periods += subscription.periods.select{ |period| period.start_at.year == year } }
     periods = periods.sort { |a,b| a.start_at.month <=> b.start_at.month }
-  
+
     book = Spreadsheet::Workbook.new
-    
+
     # Document
     sheet1 = book.create_worksheet :name => "Production"
     sheet1.row(0).concat ["Mois", "Année", "Code client", "Société", "Nom du document", "Piéces total", "Piéces numérisées", "Piéces versées", "Piéces iDocus'Box", "Piéces automatique", "Feuilles numérisées", "Pages total", "Pages numérisées", "Pages versées", "Pages iDocus'Box", "Pages automatique", "Attache" ,"Hors format"]
-    
+
     nb = 1
     periods.each do |period|
       period.documents.each do |document|
@@ -65,11 +65,11 @@ private
         nb += 1
       end
     end
-    
+
     # Invoice
     sheet2 = book.create_worksheet :name => "Facturation"
     sheet2.row(0).concat ["Mois", "Année", "Code client", "Nom du client", "Paramètre", "Valeur", "Prix HT"]
-    
+
     nb = 1
     periods.each do |period|
       period.product_option_orders.each do |option|
@@ -97,7 +97,7 @@ private
       sheet2.row(nb).replace(data)
       nb += 1
     end
-    
+
     io = StringIO.new('')
     book.write(io)
     io.string

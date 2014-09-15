@@ -4,7 +4,7 @@ class Product
   include Mongoid::Timestamps
   include Mongoid::Slug
 
-  field :title
+  field :title,                   type: String,  default: ''
   field :category,                type: Integer, default: 1
   field :price_in_cents_wo_vat,   type: Integer, default: 0
   field :description,             type: String,  default: ''
@@ -21,7 +21,7 @@ class Product
 
   has_and_belongs_to_many :product_groups
   has_many :product_options
-  
+
   scope :subscribable,   where: { is_a_subscription: true }
   scope :unsubscribable, where: { is_a_subscription: false }
 
@@ -29,7 +29,7 @@ class Product
     def by_price_ascending
       asc(:price_in_cents_wo_vat)
     end
-    
+
     def by_position
       asc(:position)
     end

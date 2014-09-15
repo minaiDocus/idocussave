@@ -38,20 +38,20 @@ class ApplicationController < ActionController::Base
   end
 
   def load_user(name=:@user)
-    value = nil
-    if current_user
-      if (params[:code].present? || session[:acts_as].present?) && current_user.try(:is_admin)
-        value = User.find_by_code(params[:code] || session[:acts_as]) || current_user
-        if value == current_user
-          session[:acts_as] = nil
-        else
-          session[:acts_as] = value.code
+    user = nil
+    if current_user && current_user.is_admin
+      if request.path.match /organizations/
+        if params[:collaborator_code].present? || session[:collaborator_code].present?
+          user = User.prescribers.where(code: params[:collaborator_code].presence || session[:collaborator_code].presence).first || current_user
+          session[:collaborator_code] = user == current_user ? nil : user.code
         end
-      else
-        value = current_user
+      elsif params[:user_code].present? || session[:user_code].present?
+        user = User.find_by_code(params[:user_code].presence || session[:user_code].presence) || current_user
+        session[:user_code] = user == current_user ? nil : user.code
       end
     end
-    instance_variable_set name, value
+    user ||= current_user
+    instance_variable_set name, user
   end
 
   def present(object, klass=nil)
@@ -72,16 +72,16 @@ private
   def format_price price_in_cents
     format_price_00(price_in_cents).gsub(/,00/, "")
   end
-  
+
 protected
-  
+
   def redirect_to_https
     if request.env["HTTP_X_FORWARDED_PROTO"] != "https"
       url = request.url.gsub("http", "https")
       redirect_to(url)
     end
   end
-  
+
   def catch_error
     begin
       yield
@@ -104,15 +104,18 @@ protected
       redirect_to root_path
     end
   end
-  
+
   def log_visit
     unless request.path.match('(dematbox|system|assets|num)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?)
       unless current_user && current_user.is_admin
-        visit            = ::Log::Visit.new
-        visit.path       = request.path
-        visit.user       = current_user.try(:id)
-        visit.ip_address = request.remote_ip 
-        visit.save
+        event = Event.new
+        event.action      = 'visit'
+        event.target_name = request.path
+        event.target_type = 'page'
+        event.user        = current_user
+        event.path        = request.path
+        event.ip_address  = request.remote_ip
+        event.save
       end
     end
     yield

@@ -1,14 +1,14 @@
-.row-fluid
-  .span12.well
-    .group
-      %span.title
-        #{product.position} - #{product.title}
-        
-      %span.action
-        .pull-right
-          = link_to icon_edit, edit_admin_product_path(product)
-          = link_to icon_destroy, admin_product_path(product), :method => :delete, data: { :confirm => "Êtes-vous sûr ?" }
-      
+.group.panel
+  .row-fluid
+    .span6
+      %h4.title= "#{product.position} - #{product.title}"
+    .span6
+      .pull-right
+        = link_to icon_edit, edit_admin_product_path(product)
+        = link_to icon_destroy, admin_product_path(product), method: 'delete', data: { confirm: t('actions.confirm') }
+
+  .row-fluid
+    .span12
       - product.product_groups.where(:product_supergroup_ids.size => 0).by_position.entries.each do |product_group|
-        %ul
-          != render :partial => "product_group", :locals => { :product_group => product_group, :product => product }
+        %ul.margin0left
+          = render partial: 'product_group', locals: { product_group: product_group, product: product }

@@ -4,19 +4,19 @@ require "net/ftp"
 class Ftp
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :external_file_storage
-  
+
   field :host,                 type: String,  default: 'ftp://ftp.example.com'
   field :login,                type: String,  default: 'login'
   field :password,             type: String,  default: 'password'
   field :path,                 type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   field :is_configured,        type: Boolean, default: false
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
-  
+
   scope :configured,     where: { is_configured: true }
   scope :not_configured, where: { is_configured: false }
-  
+
   validates_format_of :host, with: URI::regexp("ftp")
   validates :login,    length: { minimum: 2, maximum: 40 }
   validates :password, length: { minimum: 2, maximum: 40 }
@@ -35,17 +35,17 @@ class Ftp
       @ftp = nil
     end
   end
-  
+
   def is_configured?
     is_configured
   end
-  
+
   def reset_info
     self.host = 'ftp://ftp.example.com'
     self.login = 'login'
     self.password = 'password'
   end
-  
+
   def verify!
     require "net/ftp"
     begin
@@ -58,7 +58,7 @@ class Ftp
     save
     self.is_configured
   end
-  
+
   def change_or_make_dir(pathname)
     folders = pathname.split("/").reject { |e| e.empty? }
     folders.each do |folder|
@@ -66,7 +66,7 @@ class Ftp
       client.chdir(folder)
     end
   end
-  
+
   def is_updated(remote_file_name, file_path)
     result = client.list.select { |entry| entry.match(/#{remote_file_name}/) }.first
     if result
@@ -80,7 +80,7 @@ class Ftp
       false
     end
   end
-  
+
   def is_not_updated(remote_file_name, file_path)
     !is_updated(remote_file_name, file_path)
   end

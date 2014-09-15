@@ -2,15 +2,15 @@
 class NeobeApi
   # TODO reimplement savon model
   # include Savon::Model
-  
+
   # endpoint "https://api.neobe.com:443/soap_srv.php?key=#{NEOBE_KEY}"
   # namespace "urn:ApiWsdl"
-  
+
   METHOD_LIST = [
                               "get_list_account()",
                               "get_all_space()",
                               "get_all_used_space()",
-                              
+
                               "add_account(space, recipient, password, expiration, unlocker, local, dd)",
                               "delete_account(account_number)",
                               "delete_id_machine(account_number)",
@@ -44,19 +44,19 @@ class NeobeApi
                               "set_dd(account_number, flag)",
                               "set_local(account_number, flag)",
                               "set_multi(account_number, flag)",
-                              "set_unlocker(account_number, flag)",                              
+                              "set_unlocker(account_number, flag)",
                             ]
-                            
+
   STATE =   [
                     ["Active","AC"],
                     ["Disabled","DE"],
                     ["Deleting scheduled","EP"]
                   ]
-  
+
   class << self
-  
+
   private
-  
+
     def valid_account_number account_number
       unless account_number.to_i.to_s.length == 5
         false
@@ -64,7 +64,7 @@ class NeobeApi
         account_number.to_s
       end
     end
-    
+
     # requête générique
     def request service, options=[]
       if service.is_a? String
@@ -97,25 +97,25 @@ class NeobeApi
         end
       end
     end
-  
+
   public
-    
+
     # méthode global
-    
+
     def get_list_account
       request(:get_list_account).to_array(:get_list_account_api_response, :return).first[:item]
     end
-    
+
     def get_all_space
       request(:get_all_space).to_array(:get_all_space_api_response, :return).first
     end
-    
+
     def get_all_used_space
       request(:get_all_used_space).to_array(:get_all_used_space_api_response, :return).first rescue "Error"
     end
-    
+
     ### getteur ###
-    
+
     def get_login account_number
       if account_number = valid_account_number(account_number)
         options = [{ :name => "account", :type => "int", :value => account_number }]
@@ -125,7 +125,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_password account_number
       if account_number = valid_account_number(account_number)
         options = [{ :name => "account", :type => "int", :value => account_number }]
@@ -135,7 +135,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_comment account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -146,7 +146,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_etat account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -157,7 +157,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_last_saving account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -168,7 +168,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_space account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -179,7 +179,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_used_space account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -190,7 +190,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_delay_of_last_activity account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -201,7 +201,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_exp account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -212,7 +212,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_exp_f account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -223,7 +223,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_id_machine account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -234,7 +234,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_nb_files account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -245,7 +245,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_nb_files_max account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -256,7 +256,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def get_pack account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -267,7 +267,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def is_dd account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -279,7 +279,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def is_local account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -290,7 +290,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def is_multi account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -301,22 +301,22 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def is_unlocker account_number
       response = {}
       if account_number = valid_account_number(account_number)
         options = [{ :name => "account", :type => "int", :value => account_number }]
         res = request(:is_unlocker, options).to_array(:is_unlocker_api_response)[0][:return]
-        res == "error" ? { :success => false, :value => ""} : { :success => true, :value => res}        
+        res == "error" ? { :success => false, :value => ""} : { :success => true, :value => res}
       else
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     ### setter ###
-    
+
     # méthode spécifique
-    
+
     def add_account space, recipient, password, expiration, unlocker=false, local=true, dd=false
       response = {}
       if space.is_a?(Integer) && recipient.is_a?(String) && !recipient.blank? && password.is_a?(String) && !password.blank? && expiration.match(/20\d{2}-(0\d|1[012])-([012]\d|3[01])/)
@@ -325,7 +325,7 @@ class NeobeApi
         local = local.is_a?(Boolean) ? local.to_s : "true"
         dd = dd.is_a?(Boolean) ? dd.to_s : "false"
         options = []
-        
+
         options << { :name => "space", :type => "int", :value => space }
         options << { :name => "recipient", :type => "string", :value => recipient }
         options << { :name => "password", :type => "string", :value => password }
@@ -333,7 +333,7 @@ class NeobeApi
         options << { :name => "unlocker", :type => "boolean", :value => unlocker }
         options << { :name => "local", :type => "boolean", :value => local }
         options << { :name => "dd", :type => "boolean", :value => dd }
-        
+
         begin
           res = request(:add_account, options)
           response[:success] = true
@@ -350,7 +350,7 @@ class NeobeApi
         response
       end
     end
-    
+
     def delete_account account_number
       response = {}
       if account_number = valid_account_number(account_number)
@@ -371,7 +371,7 @@ class NeobeApi
         response
       end
     end
-    
+
     def delete_id_machine account_number
       response = {}
       options = [{ :name => "account", :type => "int", :value => account_number }]
@@ -386,7 +386,7 @@ class NeobeApi
         response
     end
     end
-    
+
     def clean_account account_number
       response = {}
       options = [{ :name => "account", :type => "int", :value => account_number }]
@@ -401,7 +401,7 @@ class NeobeApi
         response
       end
     end
-    
+
     def set_password account_number, password
       response = {}
       if((account_number = valid_account_number(account_number)) && password.to_s.length >= 4)
@@ -417,7 +417,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_comment account_number, comment
       response = {}
       if((account_number = valid_account_number(account_number)) && !comment.blank?)
@@ -433,7 +433,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_space account_number, space
       response = {}
       if((account_number = valid_account_number(account_number)) && space.to_i > 0 )
@@ -449,7 +449,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_etat account_number, etat
       response = {}
       if((account_number = valid_account_number(account_number)) && ((etat == "AC") || (etat == "DE") || (etat == "EP")))
@@ -465,7 +465,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_date account_number, date
       response = {}
       if((account_number = valid_account_number(account_number)) && date.match(/20\d{2}-(0\d|1[012])-([012]\d|3[01])/))
@@ -481,7 +481,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_date_f account_number, date
       response = {}
       if((account_number = valid_account_number(account_number)) && date.match(/20\d{2}-(0\d|1[012])-([012]\d|3[01])/))
@@ -497,7 +497,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_pack account_number, pack
       response = {}
       if((account_number = valid_account_number(account_number)) && !pack.blank?)
@@ -513,7 +513,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_dd account_number, flag
       response = {}
       if((account_number = valid_account_number(account_number)) && (flag.to_s == "false" || flag.to_s == "true"))
@@ -529,7 +529,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_local account_number, flag
       response = {}
       if((account_number = valid_account_number(account_number)) && (flag.to_s == "false" || flag.to_s == "true"))
@@ -545,7 +545,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_multi account_number, flag
       response = {}
       if((account_number = valid_account_number(account_number)) && (flag.to_s == "false" || flag.to_s == "true"))
@@ -561,7 +561,7 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
+
     def set_unlocker account_number, flag
       response = {}
       if((account_number = valid_account_number(account_number)) && (flag.to_s == "false" || flag.to_s == "true"))
@@ -577,7 +577,5 @@ class NeobeApi
         { :success => false, :value => "Invalid parameter"}
       end
     end
-    
   end
-  
 end

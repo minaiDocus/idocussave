@@ -1,0 +1,9 @@
+= simple_form_for [:account, @organization, @reminder_email], html: { class: 'form form-horizontal margin0' } do |f|
+  = f.input :name
+  = f.input :delivery_day, as: :integer, required: true
+  = f.input :period, collection: [[t('mongoid.models.reminder_email.attributes.period_options.monthly'), 1], [t('mongoid.models.reminder_email.attributes.period_options.quarterly'), 3]], include_blank: false, required: true
+  = f.input :subject, input_html: { class: 'input-xxlarge' }
+  = f.input :content, as: :text
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'reminder_emails'), class: 'btn'

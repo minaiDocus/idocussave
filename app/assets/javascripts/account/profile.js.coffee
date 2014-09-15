@@ -32,7 +32,7 @@ jQuery ->
           $("#pp").attr('checked', true)
         else
           $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-error'><a class='close' data-dismiss='alert'> × </a><span> Une erreur est survenue, veuillez réessayer s'il vous plaît.</span></div></div>")
-  
+
   # external file storage management
   $(".use_service").change ->
     service = $(this).attr("id").split("_")[1]

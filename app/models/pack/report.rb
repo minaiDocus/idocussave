@@ -32,7 +32,7 @@ class Pack::Report
     # TODO implement me
     generate_csv_files(user)
   end
-  
+
   def generate_csv_files(user=self.user)
     outputter = self.user.csv_outputter!
     filespath = []

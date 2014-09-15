@@ -1,0 +1,16 @@
+#csv_outputters.select_propagation_options
+  .row-fluid
+    .span12.box
+      %h3 Sélection des options de propagation du format de sortie CSV
+
+  .row-fluid
+    .span12.box
+      = form_tag propagate_account_organization_csv_outputter_path(@organization), method: :post, class: 'form form-horizontal margin0' do
+        %table.table.table-striped.table-condensed
+          - @customers.each do |customer|
+            %tr
+              %td= check_box_tag 'customer_ids[]', customer.id, false, id: "customer_#{customer.id}"
+              %td= label_tag "customer_#{customer.id}", customer.info
+        .form-actions.margin0bottom
+          = submit_tag 'Propager', class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'csv_outputter'), class: 'btn'

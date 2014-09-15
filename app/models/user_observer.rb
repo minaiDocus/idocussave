@@ -5,13 +5,6 @@ class UserObserver < Mongoid::Observer
     end
   end
 
-  def after_create(user)
-    request = Request.new
-    request.requestable = user
-    request.no_sync = true
-    request.save
-  end
-
   def before_save(user)
     # FIXME use another way
     user.set_timestamps_of_addresses
@@ -19,14 +12,7 @@ class UserObserver < Mongoid::Observer
     user.set_inactive_at
   end
 
-  def after_save(user)
-    if user.persisted?
-      user.reload
-      user.request.sync_with_requestable!
-    end
-  end
-
   def before_destroy(user)
-    FiduceoUser.new(user, false).destroy rescue nil
+    FiduceoUser.new(user, false).destroy if user.fiduceo_id.present?
   end
 end

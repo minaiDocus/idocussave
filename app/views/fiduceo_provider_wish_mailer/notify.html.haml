@@ -1,30 +1,36 @@
-Bonjour #{@user.name},
-%br
-%br
-Vous avez demandé la création de nouveau(x) automates(s) de récupération.
-%br
-%br
-- if @accepted.any?
-  Les automates suivants ont été développés et sont déjà disponibles dans votre interface. Vous pouvez maintenant les configurer :
-  %br
-  %ul
-    - @accepted.each do |provider_wish|
-      %li= provider_wish.name
-  %br
-- if @rejected.any?
-  Les automates suivants n’ont pas pu être développés :
-  %ul
-    - @rejected.each do |provider_wish|
-      %li
-        = provider_wish.name
-        = " (#{provider_wish.message})"
-  %br
-- if @processing.any?
-  Les automates suivants sont en cours d’analyse :
-  %ul
-    - @processing.each do |provider_wish|
-      %li= provider_wish.name
-  %br
-Cordialement,
-%br
-L'équipe iDocus.
+!!!
+%html
+  %head
+    %title Traitement de vos demandes de nouveaux automates de récupération | iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@user.name},
+    %br
+    %br
+    Vous avez demandé la création de nouveau(x) automates(s) de récupération.
+    %br
+    %br
+    - if @accepted.any?
+      Les automates suivants ont été développés et sont déjà disponibles dans votre interface. Vous pouvez maintenant les configurer :
+      %br
+      %ul
+        - @accepted.each do |provider_wish|
+          %li= provider_wish.name
+      %br
+    - if @rejected.any?
+      Les automates suivants n’ont pas pu être développés :
+      %ul
+        - @rejected.each do |provider_wish|
+          %li
+            = provider_wish.name
+            = " (#{provider_wish.message})"
+      %br
+    - if @processing.any?
+      Les automates suivants sont en cours d’analyse :
+      %ul
+        - @processing.each do |provider_wish|
+          %li= provider_wish.name
+      %br
+    Cordialement,
+    %br
+    L'équipe iDocus.

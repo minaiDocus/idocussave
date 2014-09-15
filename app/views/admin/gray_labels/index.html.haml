@@ -1,27 +1,32 @@
-= render partial: 'navigation'
+#gray_labels
+  = render partial: 'navigation'
 
-.row-fluid
-  .span9.well
-    %table.table.table-bordered.table-striped
-      %thead
-        %tr
-          %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), gray_label_contains
-          %th= sortable :name, t('mongoid.models.gray_label.attributes.name'), gray_label_contains
-          %th= t('mongoid.models.gray_label.attributes.user')
-          %th= sortable :is_active, t('mongoid.models.gray_label.attributes.is_active'), gray_label_contains
-          %th= t('actions.name')
-      %tbody
-        - @gray_labels.each do |gray_label|
+  .row-fluid.margin1bottom
+    .span12
+      %h3 Liste des marques grises (#{@gray_labels.count})
+
+  .row-fluid
+    .span9
+      = render partial: 'shared/list_options', locals: { collection: @gray_labels }
+      %table.table.table-bordered.table-striped.table-condensed.margin1top.margin0bottom
+        %thead
           %tr
-            %td= l(gray_label.created_at)
-            %td= gray_label.name
-            %td= link_to gray_label.organization.name, admin_organization_path(gray_label.organization)
-            %td= gray_label.is_active ? t('yes_value') : t('no_value')
-            %td
-              = link_to icon_show, admin_gray_label_path(gray_label)
-              = link_to icon_edit, edit_admin_gray_label_path(gray_label)
-              = link_to icon_destroy, admin_gray_label_path(gray_label), data: { confirm: t('actions.confirm') }, method: 'delete'
-    .pull-right
-      != paginate @gray_labels
-  .span3.well
-    = render partial: 'sidebar'
+            %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), gray_label_contains
+            %th= sortable :name, t('mongoid.models.gray_label.attributes.name'), gray_label_contains
+            %th= t('mongoid.models.gray_label.attributes.user')
+            %th= sortable :is_active, t('mongoid.models.gray_label.attributes.is_active'), gray_label_contains
+            %th= t('actions.name')
+        %tbody
+          - @gray_labels.each do |gray_label|
+            %tr
+              %td= l(gray_label.created_at)
+              %td= link_to gray_label.name, admin_gray_label_path(gray_label)
+              %td= link_to gray_label.organization.name, account_organization_path(gray_label.organization)
+              %td= gray_label.is_active ? t('yes_value') : t('no_value')
+              %td
+                = link_to icon_show, admin_gray_label_path(gray_label)
+                = link_to icon_edit, edit_admin_gray_label_path(gray_label)
+                = link_to icon_destroy, admin_gray_label_path(gray_label), data: { confirm: t('actions.confirm') }, method: 'delete'
+      = render partial: 'shared/list_options', locals: { collection: @gray_labels }
+    .span3.well
+      = render partial: 'sidebar'

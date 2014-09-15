@@ -10,9 +10,10 @@ class Organization
   field :description,  type: String
   field :code,         type: String
   # Authorization
-  field :is_detail_authorized,              type: Boolean, default: false
-  field :is_period_duration_editable,       type: Boolean, default: true
-  field :is_default_subscription_editable,  type: Boolean, default: true
+  field :is_detail_authorized,               type: Boolean, default: false
+  field :is_period_duration_editable,        type: Boolean, default: true
+  field :is_default_subscription_editable,   type: Boolean, default: true
+  field :is_journals_management_centralized, type: Boolean, default: true
   # Misc
   field :is_test, type: Boolean, default: false
 
@@ -31,7 +32,7 @@ class Organization
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
-  validates_presence_of :name, :leader_id
+  validates_presence_of :name, :code
   validates_uniqueness_of :name
   validates_length_of :code, in: 1..4
 
@@ -49,21 +50,16 @@ class Organization
   has_many   :reminder_emails,    autosave: true
   has_many   :reports,            class_name: 'Pack::Report',       inverse_of: 'organization'
   has_many   :remote_files
+  has_many   :events
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label
-  has_one    :csv_outputter, autosave: true
+  has_one    :csv_outputter
   has_one    :knowings
 
   embeds_many :addresses, as: :locatable
 
-  accepts_nested_attributes_for :addresses,       allow_destroy: true
-  accepts_nested_attributes_for :reminder_emails, allow_destroy: true
-  accepts_nested_attributes_for :csv_outputter,   allow_destroy: true
-
   scope :not_test, where: { is_test: false }
-
-  before_save :ensure_leader_is_member
 
   def collaborators
     members.where(is_prescriber: true)
@@ -147,11 +143,19 @@ class Organization
     %w(:customerCode :journal :period :position :thirdParty :date - _ \ )
   end
 
-private
-
-  def ensure_leader_is_member
-    members << leader unless members.include?(leader)
+  def billing_address
+    self.addresses.for_billing.first
   end
+
+  def shipping_address
+    self.addresses.for_shipping.first
+  end
+
+  def kit_shipping_address
+    self.addresses.for_kit_shipping.first
+  end
+
+private
 
   def file_naming_policy_elements
     if file_naming_policy.gsub(/(#{Organization.valid_file_naming_policy_elements.join('|')})/, '').present?
