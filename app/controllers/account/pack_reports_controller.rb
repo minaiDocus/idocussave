@@ -58,7 +58,7 @@ class Account::PackReportsController < Account::OrganizationController
 private
 
   def load_report
-    @report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(_id: params[:id])
+    @report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(_id: params[:id]).first
     raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id]) unless @report
     @report
   end
