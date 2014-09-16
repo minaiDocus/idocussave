@@ -4,6 +4,6 @@ class UserOptions
 
   belongs_to :user
 
-  field :max_number_of_journals,      type: Integer, default: 5 # infinite
+  field :max_number_of_journals,      type: Integer, default: 5
   field :is_preassignment_authorized, type: Boolean, default: false
 end
