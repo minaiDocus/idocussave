@@ -108,7 +108,7 @@
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
                     %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Automates
-                    - if @user.organization_rights.is_customer_journals_management_authorized
+                    - if @user.rights.is_customer_journals_management_authorized
                       %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
                     %th Type
@@ -123,7 +123,7 @@
                       %td= journal.account_number
                       %td= journal.charge_account
                       %td= journal.fiduceo_retrievers.count
-                      - if @user.organization_rights.is_customer_journals_management_authorized
+                      - if @user.rights.is_customer_journals_management_authorized
                         %td
                           = link_to icon_edit, edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
                           = link_to icon_destroy, account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
@@ -138,7 +138,7 @@
                   Total autorisé :
                   %span.label= @customer.options.max_number_of_journals
                 .span6.alignright
-                  - if @user.organization_rights.is_customer_journals_management_authorized
+                  - if @user.rights.is_customer_journals_management_authorized
                     - if is_max_number_of_journals_reached?
                       = link_to icon(icon: 'plus') + ' ' + t('actions.new'), '#', class: 'btn btn-primary', disabled: 'disabled'
                       = link_to icon(icon: 'th-large') + ' Copier',            '#', class: 'btn btn-primary', disabled: 'disabled'
