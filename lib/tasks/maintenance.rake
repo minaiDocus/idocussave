@@ -92,14 +92,11 @@ namespace :maintenance do
   namespace :prepacompta do
     desc 'Update accounting plan'
     task :update_accounting_plan => [:environment] do
-      users = []
-      Organization.not_test.each do |organization|
-        organization.account_book_types.compta_processable.each do |journal|
-          users += journal.clients
-        end
-      end
-      users.uniq!
-      AccountingPlan.update_files_for(users.map(&:code))
+      organization_ids = Organization.not_test.map(&:id)
+      user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
+      users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active
+
+      AccountingPlan.update_files_for(users.map(&:code).sort)
     end
   end
 end
