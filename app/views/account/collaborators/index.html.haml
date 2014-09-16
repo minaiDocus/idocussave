@@ -18,12 +18,14 @@
               %tr
                 %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
                 %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
+                %th Action
             %tbody
               - @collaborators.each do |collaborator|
                 %tr
                   %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
                     %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
+                  %td= link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

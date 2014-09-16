@@ -43,6 +43,15 @@ class Account::CollaboratorsController < Account::OrganizationController
     end
   end
 
+  def destroy
+    if DestroyCollaboratorService.new(@collaborator).execute
+      flash[:success] = 'Supprimé avec succès.'
+    else
+      flash[:error] = 'Impossible de supprimer.'
+    end
+    redirect_to account_organization_collaborators_path(@organization)
+  end
+
 private
 
   def verify_rights
