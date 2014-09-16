@@ -21,7 +21,7 @@
                 %tr
                   %td= l(organization.created_at)
                   %td= link_to organization.name, account_organization_path(organization)
-                  %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader)
+                  %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'
