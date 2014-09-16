@@ -2,13 +2,13 @@
 class Account::OrganizationController < Account::AccountController
   layout 'organization'
 
-  before_filter :verify_rights
+  before_filter :verify_role
   before_filter :load_organization
 
 protected
 
-  def verify_rights
-    unless @user.is_prescriber || @user.is_admin
+  def verify_role
+    unless @user.is_prescriber
       redirect_to account_documents_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end

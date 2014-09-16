@@ -5,7 +5,7 @@
     - if @user.is_admin
       %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
         = link_to 'Organisations', account_organizations_path
-    - if @user.is_prescriber || @user.is_admin
+    - if @user.is_prescriber
       %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
         = link_to 'Mon organisation', account_organization_path(@user.organization)
     %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
