@@ -69,7 +69,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def copy
     valid_ids = @organization.account_book_types.map(&:id).map(&:to_s)
-    ids = params[:journal_ids].select do |journal_id|
+    ids = (params[:journal_ids].presence || []).select do |journal_id|
       journal_id.in? valid_ids
     end
     copied_ids = []
@@ -89,7 +89,15 @@ class Account::JournalsController < Account::OrganizationController
         end
       end
     end
-    flash[:success] = "#{copied_ids.count}/#{ids.count} journal(s) copié(s) avec succès."
+    if ids.count == 0
+      flash[:error] = 'Aucun journal sélectionné.'
+    elsif copied_ids.count == 0
+      flash[:error] = 'Aucun journal copié.'
+    elsif ids.count == copied_ids.count
+      flash[:success] = "#{copied_ids.count} journal(s) copié(s)."
+    else
+      flash[:notice] = "#{copied_ids.count}/#{ids.count} journal(s) copié(s)."
+    end
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
   end
 
