@@ -102,8 +102,8 @@
               %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
             %tr
               %th Stamp - Nom
-              %td
+              %td.value
                 = render partial: 'text_field', locals: { name: 'user[stamp_name]', value: @user.stamp_name }
             %tr
               %th Stamp - Fond présent ?
-              %td= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled
+              %td.value= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled

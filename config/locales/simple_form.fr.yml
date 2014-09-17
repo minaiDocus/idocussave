@@ -55,6 +55,10 @@ fr:
         first_name: Prénom
         last_name: Nom
         email: Email
+        password: Mot de passe
+        password_confirmation: Comfirmer le mot de passe
+        is_admin: Est admin ?
+        is_prescriber: Est prescripteur ?
         is_dropbox_extended_authorized: Dropbox Extended autorisé ?
         knowings_code: Code Knowings
         knowings_visibility: Visibilité Knowings
