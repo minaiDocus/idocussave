@@ -205,7 +205,7 @@ module DocumentsHelper
   end
 
   def file_upload_params
-    if @user.is_prescriber
+    if @user.organization && @user.is_prescriber
       result = {}
       @user.customers.active.each do |customer|
         period_service = PeriodService.new user: customer

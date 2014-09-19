@@ -12,7 +12,7 @@ protected
 public
   def index
     options = {}
-    if @user.is_prescriber
+    if @user.organization && @user.is_prescriber
       owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
       options = { owner_ids: owner_ids }
     else
@@ -53,7 +53,7 @@ public
     else
       options = {}
       owner_ids = []
-      if @user.is_prescriber
+      if @user.organization && @user.is_prescriber
         if params[:view].present? && params[:view] != 'all'
           if params[:view] == 'self'
             @other_user = @user

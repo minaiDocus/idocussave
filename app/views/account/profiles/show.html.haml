@@ -295,7 +295,7 @@
             .modal-body
               %iframe{ :src => '' }
 
-      - unless @user.is_prescriber
+      - unless @user.is_admin || @user.is_prescriber
         #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
           .span12
             .well
