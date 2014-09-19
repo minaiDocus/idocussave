@@ -92,6 +92,7 @@ namespace :shared do
     end
 
     files = [
+      'mongoid.yml',
       'dematbox.yml',
       'fiduceo.yml',
       'box.yml',

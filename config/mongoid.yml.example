@@ -1,0 +1,26 @@
+defaults: &defaults
+  host: localhost
+  port: 27017
+  identity_map_enabled: true
+
+development:
+  <<: *defaults
+  database: idocus_development
+
+test:
+  <<: *defaults
+  database: idocus_test
+
+staging:
+  host: <%= ENV['MONGOID_STAGING_HOST'] %>
+  port: <%= ENV['MONGOID_STAGING_PORT'] %>
+  username: <%= ENV['MONGOID_STAGING_USERNAME'] %>
+  password: <%= ENV['MONGOID_STAGING_PASSWORD'] %>
+  database: <%= ENV['MONGOID_STAGING_DATABASE'] %>
+
+production:
+  host: <%= ENV['MONGOID_HOST'] %>
+  port: <%= ENV['MONGOID_PORT'] %>
+  username: <%= ENV['MONGOID_USERNAME'] %>
+  password: <%= ENV['MONGOID_PASSWORD'] %>
+  database: <%= ENV['MONGOID_DATABASE'] %>
