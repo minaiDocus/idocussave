@@ -20,8 +20,8 @@ private
   end
 
   def load_users
-    organization_ids = Organization.not_test.distinct(:_id)
-    user_ids = AccountBookType.compta_processable.any_in(organization_id: organization_ids).distinct(:client_ids).flatten
-    @users = User.any_in(_id: user_ids)
+    organization_ids = Organization.not_test.map(&:id)
+    user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
+    @users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active
   end
 end
