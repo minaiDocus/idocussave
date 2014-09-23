@@ -14,7 +14,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   def update
     if @accounting_plan.update_attributes(accounting_plan_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_accounting_plan_path(@customer)
+      redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     else
       render action: 'edit'
     end
@@ -37,21 +37,21 @@ class Account::AccountingPlansController < Account::OrganizationController
     else
       flash[:error] = 'Aucun fichier choisi.'
     end
-    redirect_to account_organization_customer_accounting_plan_path(@customer)
+    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
 
   def destroy_providers
     @accounting_plan.providers.clear
     @accounting_plan.save
     flash[:success] = 'Fournisseurs supprimé avec succès.'
-    redirect_to account_organization_customer_accounting_plan_path(@customer)
+    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
 
   def destroy_customers
     @accounting_plan.customers.clear
     @accounting_plan.save
     flash[:success] = 'Clients supprimé avec succès.'
-    redirect_to account_organization_customer_accounting_plan_path(@customer)
+    redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
   end
 
 private

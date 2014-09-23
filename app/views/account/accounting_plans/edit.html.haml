@@ -5,7 +5,7 @@
 
   .row-fluid
     .span12.box
-      = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
+      = simple_nested_form_for @accounting_plan, url: account_organization_customer_accounting_plan_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|
         .row-fluid.margin2bottom
           .span6
             %h3 Fournisseurs
