@@ -106,8 +106,8 @@ private
   def verify_rights
     is_ok = false
     is_ok = true if is_leader?
-    is_ok = true if !@customer && @user.can_manage_journals?
-    is_ok = true if @customer && @user.rights.is_customer_journals_management_authorized
+    is_ok = true if !is_ok && !@customer && @user.can_manage_journals?
+    is_ok = true if !is_ok && @customer && @user.rights.is_customer_journals_management_authorized
     unless is_ok
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
