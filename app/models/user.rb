@@ -64,7 +64,7 @@ class User
   field :is_operator,                    type: Boolean
 
   validates_presence_of :code
-  validates_length_of :code, within: 3..11
+  validates_length_of :code, within: 3..15
   validate :format_of_code, if: Proc.new { |u| u.code_changed? }
   validates_uniqueness_of :code
 
