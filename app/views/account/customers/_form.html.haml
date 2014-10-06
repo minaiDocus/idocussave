@@ -10,7 +10,7 @@
       = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
     - if action_name.in?(%w(new create))
       .span6
-        - group_collection = groups(@user).map { |g| [g.name, g.id] }
+        - group_collection = groups.map { |g| [g.name, g.id] }
         - if group_collection.any?
           = f.input :group_ids, collection: group_collection, as: :check_boxes, label: t('mongoid.models.group.name').pluralize
   .form-actions.margin0bottom

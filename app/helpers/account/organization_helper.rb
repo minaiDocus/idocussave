@@ -47,12 +47,8 @@ module Account::OrganizationHelper
     end
   end
 
-  def groups(user)
-    if user.organization.leader == user
-      user.organization.groups
-    else
-      user.groups
-    end
+  def groups
+    is_leader? ? @organization.groups : @user.groups
   end
 
   def description_keys(ibiza)
