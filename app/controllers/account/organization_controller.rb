@@ -16,6 +16,7 @@ protected
   def load_organization
     if @user.is_admin
       @organization = Organization.find_by_slug params[:organization_id]
+      raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:organization_id]) unless @organization
     elsif @user.organization && params[:organization_id] == @user.organization.slug
       @organization = @user.organization
     else

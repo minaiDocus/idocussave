@@ -24,25 +24,21 @@ class Account::OrganizationsController < Account::AccountController
   end
 
   def show
-    if @organization
-      @members = @organization.customers.page(params[:page]).per(params[:per])
-      @periods = ::Scan::Period.where(:user_id.in => @organization.customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
-      @subscription         = @organization.find_or_create_subscription
-      @subscription_options = @subscription.product_option_orders.where(:group_position.gte => 1000).by_position
-    end
+    @members = @organization.customers.page(params[:page]).per(params[:per])
+    @periods = ::Scan::Period.where(:user_id.in => @organization.customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
+    @subscription         = @organization.find_or_create_subscription
+    @subscription_options = @subscription.product_option_orders.where(:group_position.gte => 1000).by_position
   end
 
   def edit
   end
 
   def update
-    if @organization
-      if @organization.update_attributes(organization_params)
-        flash[:success] = 'Modifié avec succès.'
-        redirect_to account_organization_path(@organization)
-      else
-        render 'edit'
-      end
+    if @organization.update_attributes(organization_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_path(@organization)
+    else
+      render 'edit'
     end
   end
 
@@ -51,7 +47,9 @@ private
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if action_name.in?(%w(show)) && @user.is_prescriber
+      if current_user.is_admin && action_name == 'index'
+        authorized = true
+      elsif action_name.in?(%w(show)) && @user.is_prescriber
         authorized = true
       elsif action_name.in?(%w(edit update)) && is_leader?
         authorized = true
@@ -96,7 +94,14 @@ private
   end
 
   def load_organization
-    @organization = Organization.find_by_slug params[:id]
+    if @user.is_admin
+      @organization = Organization.find_by_slug params[:id]
+      raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:id]) unless @organization
+    elsif @user.organization && params[:id] == @user.organization.slug
+      @organization = @user.organization
+    else
+      redirect_to account_documents_path, flash: { error: t('authorization.unessessary_rights') }
+    end
   end
 
   def is_leader?

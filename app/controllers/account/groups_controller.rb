@@ -92,6 +92,7 @@ private
 
   def load_group
     @group = @organization.groups.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Group, params[:id]) unless @group
   end
 
   def sort_column

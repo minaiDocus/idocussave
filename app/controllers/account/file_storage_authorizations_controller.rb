@@ -35,7 +35,9 @@ private
   end
 
   def load_someone
-    @someone = @organization.members.find_by_slug (params[:collaborator_id] || params[:customer_id])
+    id = params[:collaborator_id] || params[:customer_id]
+    @someone = @organization.members.find_by_slug id
+    raise Mongoid::Errors::DocumentNotFound.new(User, id) unless @someone
   end
 
   def load_url_path

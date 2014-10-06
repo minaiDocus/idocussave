@@ -125,6 +125,7 @@ private
 
   def load_customer
     @customer = customers.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @customer
   end
 
   def sort_column

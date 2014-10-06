@@ -157,6 +157,7 @@ private
 
   def load_journal
     @journal = (@customer || source).account_book_types.find_by_slug(params[:id])
+    raise Mongoid::Errors::DocumentNotFound.new(AccountBookType, params[:id]) unless @journal
   end
 
   def is_max_number_reached?

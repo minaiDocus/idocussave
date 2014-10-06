@@ -63,6 +63,7 @@ private
 
   def load_collaborator
     @collaborator = @organization.collaborators.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @collaborator
   end
 
   def user_params

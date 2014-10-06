@@ -27,6 +27,7 @@ private
 
   def load_customer
     @customer = customers.find_by_slug params[:customer_id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, params[:customer_id]) unless @customer
   end
 
   def load_csv_outputter
