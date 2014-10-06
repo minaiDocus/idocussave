@@ -137,7 +137,7 @@ class Admin::AdminController < ApplicationController
 
     @unbillable_organizations = Organization.not_test.
                                   where('addresses.is_for_billing' => { '$nin' => [true] }).
-                                  select { |o| o.customers.centralized.count > 0 }
+                                  select { |o| o.customers.active.centralized.count > 0 }
     @unbillable_customers = User.customers.
                               not_centralized.
                               where('addresses.is_for_billing' => { '$nin' => [true] }).
