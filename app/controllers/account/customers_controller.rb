@@ -30,7 +30,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomer.new(@organization, @user, user_params).customer
+    @customer = CreateCustomer.new(@organization, @user, user_params, current_user, request).customer
     if @customer.persisted?
       WelcomeMailer.welcome_customer(@customer).deliver
       flash[:success] = 'Créé avec succès.'

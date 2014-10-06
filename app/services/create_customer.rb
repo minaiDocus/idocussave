@@ -1,7 +1,7 @@
 class CreateCustomer
   attr_reader :customer
 
-  def initialize(organization, requester, params)
+  def initialize(organization, requester, params, current_user, request)
     @customer = User.new params
     @customer.organization = organization
     @customer.set_random_password
@@ -20,7 +20,18 @@ class CreateCustomer
       # Assign journals
       source = (organization.is_journals_management_centralized || requester.is_admin) ? organization : requester
       journals = source.account_book_types.default.asc(:name).limit(@customer.options.max_number_of_journals)
-      @customer.account_book_types = @customer.options.is_preassignment_authorized ? journals : journals.not_compta_processable
+      journals = @customer.options.is_preassignment_authorized ? journals : journals.not_compta_processable
+      journals.each do |journal|
+        unless @customer.account_book_types.count >= @customer.options.max_number_of_journals
+          copy = journal.dup
+          copy.user         = @customer
+          copy.organization = nil
+          copy.is_default   = nil
+          copy.slug         = nil
+          copy.save
+          EventCreateService.new.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+        end
+      end
 
       @customer.authd_prev_period            = organization.authd_prev_period
       @customer.auth_prev_period_until_day   = organization.auth_prev_period_until_day
