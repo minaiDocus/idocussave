@@ -211,6 +211,12 @@
                 %td= provider_wish_state(provider_wish)
     .row-fluid
       .span12
+        %h3.label{ style: 'padding:3px 5px 3px;' } Organisations centralisées n'ayant pas d'adresse de facturation
+        .well
+          - @unbillable_organizations.each do |organization|
+            = link_to organization, account_organization_path(organization, tab: 'addresses'), class: 'label label-important'
+    .row-fluid
+      .span12
         %h3.label{ style: 'padding:3px 5px 3px;' } Clients décentralisés n'ayant pas d'adresse de facturation
         .well
           - @unbillable_customers.each do |customer|
