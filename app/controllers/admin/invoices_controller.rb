@@ -24,13 +24,13 @@ class Admin::InvoicesController < Admin::AdminController
   end
 
   def show
-    file_path = @invoice.content.path params[:style]
+    file_path = @invoice.content.path(params[:style]) || ''
     if File.exist?(file_path)
       filename = File.basename file_path
       type = @invoice.content_content_type || 'application/pdf'
       send_file(file_path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      render nothing: true, status: 404
+      raise Mongoid::Errors::DocumentNotFound.new(Invoice, params[:id])
     end
   end
 
@@ -46,6 +46,7 @@ private
 
   def load_invoice
     @invoice = Invoice.find_by_number params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Invoice, params[:id]) unless @invoice
   end
 
   def sort_column
