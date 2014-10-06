@@ -90,10 +90,10 @@ protected
            AbstractController::ActionNotFound,
            BSON::InvalidObjectId,
            Mongoid::Errors::DocumentNotFound
-      render '/404', status: 404, layout: 'pages'
+      render '/404', status: 404
     rescue => e
       Airbrake.notify(e, airbrake_request_data)
-      render '/500', status: 500, layout: 'pages'
+      render '/500', status: 500
     end
   end
 

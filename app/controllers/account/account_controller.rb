@@ -16,13 +16,13 @@ protected
            BSON::InvalidObjectId,
            Mongoid::Errors::DocumentNotFound,
            ActionController::RoutingError
-      render "/404.html.haml", :status => 404, :layout => "inner"
+      render '/404', status: 404, layout: 'inner'
     rescue Fiduceo::Errors::ServiceUnavailable => e
       Airbrake.notify(e, airbrake_request_data)
-      render "/503.html.haml", :status => 503, :layout => "inner"
+      render '/503', status: 503, layout: 'inner'
     rescue => e
       Airbrake.notify(e, airbrake_request_data)
-      render "/500.html.haml", :status => 500, :layout => "inner"
+      render '/500', status: 500, layout: 'inner'
     end
   end
 
