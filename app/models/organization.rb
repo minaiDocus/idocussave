@@ -69,10 +69,6 @@ class Organization
     members.where(is_prescriber: false)
   end
 
-  def decentralized_customers
-    customers.not_in(_id: centralized_customers.map(&:_id))
-  end
-
   def member_tokens=(ids)
     user_ids = ids.split(',')
     if (members.size > 0 && user_ids.size > 0) || (members.size == 0 && user_ids.size == 0)
