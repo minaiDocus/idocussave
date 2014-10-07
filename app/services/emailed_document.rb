@@ -103,9 +103,9 @@ class EmailedDocument
           email.error unless email.error?
           if email.to_user && !email.is_error_notified
             attachment_names = mail.attachments.map do |attachment|
-              attachment.content_disposition.split(/;\s*/).last.split('=').last.downcase || nil
-            end.compact.select do |name|
-              File.extname(name) == '.pdf'
+              attachment.filename
+            end.select do |filename|
+              File.extname(filename) == '.pdf'
             end
             EmailedDocumentMailer.notify_error(mail.from.first, email.to_user, attachment_names).deliver
             email.update_attribute(:is_error_notified, true)
@@ -244,8 +244,7 @@ private
   def get_attachments
     basename = (user.present? && journal.present? && period.present?) ? file_name : nil
     @mail.attachments.select do |attachment|
-      name = attachment.content_disposition.split(/;\s*/).last.split('=').last.downcase || ''
-      File.extname(name) == '.pdf'
+      File.extname(attachment.filename) == '.pdf'
     end.each_with_index.map { |a, i| Attachment.new(a, dir, basename, i+1) }
   end
 

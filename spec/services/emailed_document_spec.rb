@@ -241,5 +241,27 @@ describe EmailedDocument do
       expect(email.to_user).to eql(@user)
       expect(email.from_user).to be_nil
     end
+
+    it 'should create email with state processed' do
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'doc with space in name.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+      end
+      emailed_document, email = EmailedDocument.receive(mail)
+
+      expect(emailed_document).to be_valid
+      expect(email).to be_valid
+      expect(email.state).to eql('processed')
+      expect(email.to).to eql("#{code}@fw.idocus.com")
+      expect(email.from).to eql('customer@example.com')
+      expect(email.subject).to eql('TS')
+      expect(email.attachment_names).to eql(['doc with space in name.pdf'])
+      expect(email.size).to eql(File.size(Rails.root.join('spec/support/files/2pages.pdf')))
+      expect(email.to_user).to eql(@user)
+      expect(email.from_user).to be_nil
+    end
   end
 end
