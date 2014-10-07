@@ -76,7 +76,7 @@ private
 protected
 
   def redirect_to_https
-    if request.env["HTTP_X_FORWARDED_PROTO"] != "https"
+    if request.env["HTTP_X_FORWARDED_PROTO"] != "https" && !request.path.match(/^\/dematbox\//)
       url = request.url.gsub("http", "https")
       redirect_to(url)
     end
