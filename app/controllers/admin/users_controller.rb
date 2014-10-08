@@ -112,12 +112,14 @@ private
 
   def search(contains)
     users = User.not_operators
-    users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i) unless contains[:first_name].blank?
-    users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)  unless contains[:last_name].blank?
-    users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)      unless contains[:email].blank?
-    users = users.where(company:         /#{Regexp.quote(contains[:company])}/i)    unless contains[:company].blank?
-    users = users.where(code:            /#{Regexp.quote(contains[:code])}/i)       unless contains[:code].blank?
-    users = users.where(organization_id: contains[:organization_id])                unless contains[:organization_id].blank?
+    users = users.where(is_admin:        (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
+    users = users.where(is_prescriber:   (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
+    users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i)        if contains[:first_name].present?
+    users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)         if contains[:last_name].present?
+    users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)             if contains[:email].present?
+    users = users.where(company:         /#{Regexp.quote(contains[:company])}/i)           if contains[:company].present?
+    users = users.where(code:            /#{Regexp.quote(contains[:code])}/i)              if contains[:code].present?
+    users = users.where(organization_id: contains[:organization_id])                       if contains[:organization_id].present?
     users
   end
 end
