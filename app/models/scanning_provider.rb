@@ -5,8 +5,9 @@ class ScanningProvider
 
   attr_reader :customer_tokens
 
-  field :name, type: String
-  field :code, type: String
+  field :name,       type: String
+  field :code,       type: String
+  field :is_default, type: Boolean, default: false
 
   slug :name
 
@@ -18,6 +19,8 @@ class ScanningProvider
   embeds_many :addresses, as: :locatable
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
+
+  scope :default, where: { is_default: true }
 
   def to_s
     self.name

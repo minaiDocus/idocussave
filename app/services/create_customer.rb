@@ -33,6 +33,12 @@ class CreateCustomer
         end
       end
 
+      scanning_provider = ScanningProvider.default.asc(:created_at).first
+      if scanning_provider
+        scanning_provider.customers << @customer
+        scanning_provider.save
+      end
+
       @customer.authd_prev_period            = organization.authd_prev_period
       @customer.auth_prev_period_until_day   = organization.auth_prev_period_until_day
       @customer.auth_prev_period_until_month = organization.auth_prev_period_until_month

@@ -1,6 +1,7 @@
 = simple_nested_form_for [:admin, @scanning_provider], html: { class: 'form form-horizontal padding1top margin0' } do |f|
   = f.input :name, label: t('mongoid.models.scanning_provider.attributes.name')
   = f.input :code, label: t('mongoid.models.scanning_provider.attributes.code')
+  = f.input :is_default, as: :boolean, label: t('mongoid.models.scanning_provider.attributes.is_default')
   %fieldset
     %legend Adresses
     .row-fluid

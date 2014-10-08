@@ -23,6 +23,9 @@
           %tr
             %th= t('mongoid.models.scanning_provider.attributes.name')
             %td= @scanning_provider
+          %tr
+            %th= t('mongoid.models.scanning_provider.attributes.is_default')
+            %td= @scanning_provider.is_default ? t('yes_value') : t('no_value')
       %table.table.table-condensed.table-bordered.table-striped
         %thead
           %tr

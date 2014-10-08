@@ -639,6 +639,7 @@ fr:
           code: Code
           customers: Clients
           customers_count: Nombre de clients
+          is_default: Par défaut ?
       accounting_plan:
         zero: 0 plan de compte
         one: 1 plan de compte
