@@ -4,14 +4,15 @@
   = form_tag admin_dematbox_files_path, method: :get, class: 'form form-vertical margin2top margin0bottom' do
     = hidden_field_tag :per_page, per_page
     = label_tag 'dematbox_file_contains[created_at][$lt]', t('mongoid.models.common.attributes.created_at')
-    .input-append.date.datepicker
-      = text_field_tag 'dematbox_file_contains[created_at][$gte]', (params['dematbox_file_contains']['created_at']['$gte'] rescue ''), class: 'span4'
-      %span.add-on
-        %i.icon-th
-    .input-append.date.datepicker
-      = text_field_tag 'dematbox_file_contains[created_at][$lte]', (params['dematbox_file_contains']['created_at']['$lte'] rescue ''), class: 'span4'
-      %span.add-on
-        %i.icon-th
+    .filter_date
+      .input-prepend.date.datepicker
+        %span.add-on
+          %i.icon-th
+        = text_field_tag 'dematbox_file_contains[created_at][$gte]', (params['dematbox_file_contains']['created_at']['$gte'] rescue ''), class: 'span4'
+      .input-prepend.date.datepicker
+        %span.add-on
+          %i.icon-th
+        = text_field_tag 'dematbox_file_contains[created_at][$lte]', (params['dematbox_file_contains']['created_at']['$lte'] rescue ''), class: 'span4'
     = label_tag 'dematbox_file_contains[dematbox_doc_id]', t('mongoid.models.temp_document.attributes.dematbox_doc_id')
     = text_field_tag 'dematbox_file_contains[dematbox_doc_id]', (params[:dematbox_file_contains][:dematbox_doc_id] rescue '')
     = label_tag 'dematbox_file_contains[delivered_by]', t('mongoid.models.temp_document.attributes.delivered_by')
@@ -20,6 +21,7 @@
     = text_field_tag 'dematbox_file_contains[content_file_name]', (params[:dematbox_file_contains][:content_file_name] rescue '')
     = label_tag 'dematbox_file_contains[dematbox_is_notified]', t('mongoid.models.temp_document.attributes.dematbox_is_notified')
     = select_tag 'dematbox_file_contains[dematbox_is_notified]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:dematbox_file_contains][:dematbox_is_notified] ? 1 : 0 rescue '')), include_blank: true
+    %br
     %br
     = submit_tag t('filters.action'), class: 'btn btn-primary'
     = link_to t('filters.cancel'), admin_dematbox_files_path, class: 'btn'

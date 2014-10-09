@@ -44,6 +44,7 @@
           %span.add-on
             <=
           = text_field_tag 'invoice_contains[received_at][$lte]', (params[:invoice_contains][:received_at]['$lte'] rescue '')
+      %br
       = submit_tag t('filters.action'), class: 'btn btn-primary'
       = link_to t('filters.reset'), admin_invoices_path, class: 'btn'
 

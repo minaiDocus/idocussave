@@ -5,5 +5,6 @@
   = text_field_tag 'gray_label_contains[name]', (params[:gray_label_contains][:name] rescue '')
 
   %br
+  %br
   = submit_tag t('filters.action'), class: 'btn btn-primary'
   = link_to t('filters.cancel'), admin_gray_labels_path, class: 'btn'

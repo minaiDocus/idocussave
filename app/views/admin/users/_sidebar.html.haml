@@ -21,5 +21,6 @@
   = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue '')
 
   %br
+  %br
   = submit_tag t('filters.action'), class: 'btn btn-primary'
   = link_to t('filters.cancel'), admin_users_path, class: 'btn'
