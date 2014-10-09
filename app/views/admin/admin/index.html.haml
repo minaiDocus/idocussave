@@ -206,7 +206,7 @@
             - @provider_wishes.each do |provider_wish|
               %tr
                 %td= l(provider_wish.created_at, format: '%e %b %H:%M')
-                %td= link_to provider_wish.user.code, account_fiduceo_provider_wishes_path(code: provider_wish.user.code)
+                %td= link_to provider_wish.user.code, account_fiduceo_provider_wishes_path(user_code: provider_wish.user.code)
                 %td= provider_wish.name
                 %td= provider_wish_state(provider_wish)
     .row-fluid
