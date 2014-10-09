@@ -8,7 +8,6 @@ class TempPack
   field :document_not_processed_count, type: Integer, default: 0
   field :document_bundling_count,      type: Integer, default: 0
   field :document_bundle_needed_count, type: Integer, default: 0
-  field :is_bundle_needed,             type: Boolean, default: false
 
   validates_presence_of :name
   validates_uniqueness_of :name
@@ -32,19 +31,24 @@ class TempPack
     end
 
     def find_or_create_by_name(name)
-      if (temp_pack = find_by_name(name))
-        temp_pack
-      else
-        is_bundle_needed = false
-        user_code, journal_name = name.split[0..1]
-        user = User.find_by_code user_code
-        if user
-          journal = user.account_book_types.where(name: journal_name).first
-          is_bundle_needed = journal.compta_processable? if journal
-        end
-        TempPack.create(name: name, is_bundle_needed: is_bundle_needed)
-      end
+      find_by_name(name) || TempPack.create(name: name)
     end
+  end
+
+  def user
+    @user ||= User.find_by_code name.split[0]
+  end
+
+  def journal
+    user.account_book_types.where(name: name.split[1]).first if user
+  end
+
+  def period
+    name.split[2]
+  end
+
+  def is_bundle_needed
+    journal.try(:compta_processable?) || false
   end
 
   def basename
