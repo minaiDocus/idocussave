@@ -23,6 +23,7 @@
         - @rejected.each do |provider_wish|
           %li
             = provider_wish.name
+            \:
             = " (#{provider_wish.message})"
       %br
     - if @processing.any?
