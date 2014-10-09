@@ -20,8 +20,6 @@
                 %th= sortable :user_id,       t('mongoid.models.user.name')
                 %th= sortable :state,         t('mongoid.models.fiduceo_provider_wish.attributes.state')
                 %th= sortable :name,          t('mongoid.models.fiduceo_provider_wish.attributes.name')
-                %th= sortable :url,           t('mongoid.models.fiduceo_provider_wish.attributes.url')
-                %th= sortable :login,         t('mongoid.models.fiduceo_provider_wish.attributes.login')
                 %th= sortable :notified_at,   t('mongoid.models.fiduceo_provider_wish.attributes.notified_at')
                 %th= sortable :processing_at, t('mongoid.models.fiduceo_provider_wish.attributes.processing_at')
                 %th Actions
@@ -32,9 +30,7 @@
                   %td= l(provider_wish.updated_at, format: '%d %b %Y %H:%M')
                   %td= link_to provider_wish.user.code, [:admin, provider_wish.user]
                   %td= provider_wish_state(provider_wish)
-                  %td= provider_wish.name
-                  %td= provider_wish.url
-                  %td= provider_wish.login
+                  %td= link_to provider_wish.name, admin_fiduceo_provider_wish_path(provider_wish)
                   %td= l(provider_wish.notified_at, format: '%d %b %Y %H:%M') rescue nil
                   %td= l(provider_wish.processing_at, format: '%d %b %Y %H:%M') rescue nil
                   %td

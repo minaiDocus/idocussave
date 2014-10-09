@@ -1,0 +1,66 @@
+#fiduceo_provider_wish
+  .row-fluid
+    .span12
+      = render 'layouts/admin/fiduceo/navigation'
+
+  .row-fluid
+    .span12.panel
+      .pull-left
+        %h2 Demande de nouveau fournisseur par le client : #{@provider_wish.user}
+      .pull-right
+        - if @provider_wish.pending?
+          = link_to icon_ok + ' Démarrer le traitement', start_process_admin_fiduceo_provider_wish_path(@provider_wish), method: 'PUT', class: 'btn', data: { confirm: t('actions.confirm') }
+        - if @provider_wish.processing?
+          = link_to icon_ok + ' Accepter', accept_admin_fiduceo_provider_wish_path(@provider_wish), method: 'PUT', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
+        - if @provider_wish.pending? || @provider_wish.processing?
+          = link_to icon_not_ok + ' Rejeter', edit_admin_fiduceo_provider_wish_path(@provider_wish), class: 'btn btn-danger'
+        = link_to t('actions.return'), admin_fiduceo_provider_wishes_path, class: 'btn'
+
+  .row-fluid
+    .span12
+      %table.table.table-striped.table-condensed.table-bordered
+        %tr
+          %th= t('mongoid.models.common.attributes.created_at')
+          %td= l @provider_wish.created_at
+        %tr
+          %th= t('mongoid.models.common.attributes.updated_at')
+          %td= l @provider_wish.updated_at
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.processing_at')
+          %td
+            - if @provider_wish.processing_at
+              = l @provider_wish.processing_at
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.notified_at')
+          %td
+            - if @provider_wish.notified_at
+              = l @provider_wish.notified_at
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.state')
+          %td= provider_wish_state @provider_wish
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.message')
+          %td
+            - if @provider_wish.message.presence
+              = @provider_wish.message
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.user.name')
+          %td= link_to @provider_wish.user, [:admin, @provider_wish.user]
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.name')
+          %td= @provider_wish.name
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.url')
+          %td= @provider_wish.url
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.login')
+          %td= @provider_wish.login
+        %tr
+          %th= t('mongoid.models.fiduceo_provider_wish.attributes.description')
+          %td= @provider_wish.description

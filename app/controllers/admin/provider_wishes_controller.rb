@@ -6,6 +6,9 @@ class Admin::ProviderWishesController < Admin::AdminController
     @provider_wishes = search(provider_wish_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
   end
 
+  def show
+  end
+
   def edit
   end
 

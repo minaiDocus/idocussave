@@ -246,7 +246,7 @@ Idocus::Application.routes.draw do
     end
     resources :dematbox_files, only: :index
     resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy)
-    resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index edit) do
+    resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index show edit) do
       put 'start_process', on: :member
       put 'reject',        on: :member
       put 'accept',        on: :member
