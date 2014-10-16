@@ -128,7 +128,7 @@ class EmailedDocument
     @mail = mail
     save_attachments if valid?
     errors # instanciate errors
-    FileUtils.remove_entry dir
+    attachments.each(&:clean_dir)
   end
 
   def file_name
@@ -157,10 +157,6 @@ class EmailedDocument
 
   def pack_name
     DocumentTools.pack_name file_name
-  end
-
-  def dir
-    @dir ||= Dir.mktmpdir
   end
 
   def attachments
@@ -245,7 +241,7 @@ private
     basename = (user.present? && journal.present? && period.present?) ? file_name : nil
     @mail.attachments.select do |attachment|
       File.extname(attachment.filename) == '.pdf'
-    end.each_with_index.map { |a, i| Attachment.new(a, dir, basename, i+1) }
+    end.map { |a| Attachment.new(a, basename) }
   end
 
   def get_errors
@@ -295,11 +291,9 @@ private
   class Attachment
     attr_accessor :file_path, :file_name
 
-    def initialize(original, dir, file_name, position)
+    def initialize(original, file_name)
       @original  = original
-      @dir       = dir
       @file_name = file_name
-      @position  = position
       @file_path = get_file_path
       DocumentTools.remove_pdf_security(@file_path, @file_path) if is_printable_only?
     end
@@ -343,18 +337,18 @@ private
       valid_size? && valid_content?
     end
 
-  private
-
-    def get_file_name
-      if @file_name
-        @file_name.sub(/\.pdf/, ("_%0#{DocumentProcessor::POSITION_SIZE}d.pdf" % @position))
-      else
-        name
-      end
+    def dir
+      @dir ||= Dir.mktmpdir
     end
 
+    def clean_dir
+      FileUtils.remove_entry @dir if @dir
+    end
+
+  private
+
     def get_file_path
-      f = File.new(File.join(@dir, get_file_name), 'w')
+      f = File.new(File.join(dir, @file_name), 'w')
       f.write @original.body.decoded.force_encoding('UTF-8')
       f.close
       f.path

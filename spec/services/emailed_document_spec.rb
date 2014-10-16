@@ -185,8 +185,36 @@ describe EmailedDocument do
       expect(emailed_document).to be_valid
       expect(emailed_document.temp_documents.count).to eq(1)
       document = emailed_document.temp_documents.first
-      expect(document.content_file_name).to eq("TS0001_TS_201401_001.pdf")
+      expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
       expect(File.exist?(document.content.path)).to be_true
+    end
+
+    it 'with 2 attachments should be valid' do
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        add_file filename: 'doc2.pdf', content: File.read(Rails.root.join('spec/support/files/5pages.pdf'))
+      end
+      emailed_document = EmailedDocument.new mail
+
+      expect(emailed_document.user).to be_present
+      expect(emailed_document.journal).to be_present
+      expect(emailed_document.valid_attachments?).to be_true
+      expect(emailed_document).to be_valid
+      expect(emailed_document.temp_documents.count).to eq(2)
+
+      document = emailed_document.temp_documents[0]
+      expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
+      expect(File.exist?(document.content.path)).to be_true
+
+      document2 = emailed_document.temp_documents[1]
+      expect(document2.content_file_name).to eq("TS0001_TS_201401.pdf")
+      expect(File.exist?(document2.content.path)).to be_true
+
+      expect(document.content_file_size).not_to eq document2.content_file_size
     end
   end
 
