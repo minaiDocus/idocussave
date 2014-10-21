@@ -120,6 +120,14 @@ private
     users = users.where(company:         /#{Regexp.quote(contains[:company])}/i)           if contains[:company].present?
     users = users.where(code:            /#{Regexp.quote(contains[:code])}/i)              if contains[:code].present?
     users = users.where(organization_id: contains[:organization_id])                       if contains[:organization_id].present?
+    if contains[:is_organization_admin].present?
+      user_ids = Organization.all.distinct(:leader_id)
+      if contains[:is_organization_admin] == '1'
+        users = users.where(:_id.in => user_ids)
+      else
+        users = users.where(:_id.nin => user_ids)
+      end
+    end
     users
   end
 end

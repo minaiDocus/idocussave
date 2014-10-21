@@ -7,6 +7,8 @@
   = select_tag 'user_contains[organization_id]', options_from_collection_for_select(Organization.asc(:name), :id, :name, selected: item), include_blank: true
   = label_tag 'user_contains[is_admin]', t('mongoid.models.user.attributes.is_admin')
   = select_tag 'user_contains[is_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_admin] rescue '')), include_blank: true
+  = label_tag 'user_contains[is_organization_admin]', t('mongoid.models.user.attributes.is_organization_admin')
+  = select_tag 'user_contains[is_organization_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_organization_admin] rescue '')), include_blank: true
   = label_tag 'user_contains[is_prescriber]', t('mongoid.models.user.attributes.is_prescriber')
   = select_tag 'user_contains[is_prescriber]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_prescriber] rescue '')), include_blank: true
   = label_tag 'user_contains[company]', t('mongoid.models.user.attributes.company')

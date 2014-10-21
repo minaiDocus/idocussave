@@ -325,6 +325,7 @@ fr:
           is_inactive: Est inactif ?
           is_inactive_since: Est inactif depuis le
           is_admin: Est administrateur ?
+          is_organization_admin: Est administrateur de l'organisation ?
           is_prescriber: Est collaborateur ?
           is_fake_prescriber: Est collaborateur de test ?
           is_access_by_token_active: Accès par jeton activé ?
