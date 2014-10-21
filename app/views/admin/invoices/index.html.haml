@@ -11,7 +11,8 @@
           %tr
             %th= sortable :number, t('mongoid.models.invoice.attributes.number')
             %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-            %th= sortable :organization_id, t('mongoid.models.user.attributes.code')
+            %th= sortable :organization_id, t('mongoid.models.organization.name')
+            %th= sortable :user_id, t('mongoid.models.user.name')
             %th.price= sortable :amount_in_cents_w_vat, t('mongoid.models.invoice.attributes.amount_w_vat')
             %th= sortable :requested_at, t('mongoid.models.invoice.attributes.requested_at')
             %th= sortable :received_at, t('mongoid.models.invoice.attributes.received_at')
@@ -20,8 +21,13 @@
           - @invoices.each do |invoice|
             %tr{ id: "invoice_#{invoice.number}" }
               %td= invoice.number
-              %td= l(invoice.created_at)
-              %td= owner_invoice_link(invoice)
+              %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
+              %td
+                - if invoice.organization
+                  = link_to invoice.organization.name, account_organization_path(invoice.organization)
+              %td
+                - unless invoice.organization
+                  = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
               %td.price
                 - if invoice.amount_in_cents_w_vat
                   = format_price_00(invoice.amount_in_cents_w_vat) + ' €'

@@ -84,7 +84,7 @@ private
       invoices = invoices.where("amount_in_cents_w_vat.#{comparison_operator}" => contains[:amount_in_cents_w_vat])
     end
     if params[:user_contains] && params[:user_contains][:code].present?
-      users = User.where(code: /#{params[:user_contains][:code]}/)
+      users = User.where(code: /#{Regexp.quote(params[:user_contains][:code])}/i)
       if users.count == 1
         user = users.first
         if user.my_organization
@@ -98,6 +98,10 @@ private
         customers = users.select { |e| e.my_organization.nil? }
         invoices = invoices.any_of({ :user_id.in => customers.map(&:_id) }, { :organization_id.in => organization_ids })
       end
+    end
+    if params[:organization_contains] && params[:organization_contains][:name].present?
+      organizations = Organization.where(name: /#{Regexp.quote(params[:organization_contains][:name])}/i)
+      invoices = invoices.where(:organization_id.in => organizations.map(&:id))
     end
     invoices = invoices.where(number: /#{Regexp.quote(contains[:number])}/i) unless contains[:number].blank?
     begin

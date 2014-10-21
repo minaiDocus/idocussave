@@ -12,7 +12,9 @@
       = label_tag 'invoice_contains[amount_in_cents_w_vat]', t('mongoid.models.invoice.attributes.amount_in_cents_w_vat')
       = select_tag 'invoice_contains[amount_in_cents_w_vat_comparison_operator]', options_for_select([['=', 'eq'], ['>', 'gte'], ['<', 'lte']], (params[:invoice_contains][:amount_in_cents_w_vat_comparison_operator] rescue '')), class: 'span3', style: 'float:left;margin-right:6px;'
       = text_field_tag 'invoice_contains[amount_in_cents_w_vat]', (params[:invoice_contains][:amount_in_cents_w_vat] rescue ''), class: 'span9'
-      = label_tag 'user_contains[code]', t('mongoid.models.user.attributes.code')
+      = label_tag 'organization_contains[name]', t('mongoid.models.organization.name')
+      = text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'span12'
+      = label_tag 'user_contains[code]', t('mongoid.models.user.name')
       = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'span12'
       = label_tag 'invoice_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
       .filter_date
