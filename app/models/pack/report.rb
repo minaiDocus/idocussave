@@ -10,6 +10,7 @@ class Pack::Report
   has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :destroy
   has_many   :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :destroy
   has_many   :remote_files, as: :remotable, dependent: :destroy
+  has_many   :pre_assignment_deliveries
 
   field :name
   field :type # NDF / AC / CB / VT / FLUX
@@ -169,7 +170,6 @@ class Pack::Report
                   report.name = pack.name.sub(/ all$/, '')
                   report.user = pack.owner
                   report.pack = pack
-                  report.is_locked = true
                   report.organization = pack.owner.organization
                   report.document = pack.periodic_metadata.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
                   report.document ||= pack.periodic_metadata.desc(:created_at).first
@@ -189,7 +189,6 @@ class Pack::Report
                       preseizure.deadline_date   = part.css('echeance').first.try(:content).try(:to_date)
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = piece.position
-                      preseizure.is_locked       = true
                       preseizure.save
                       piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
                       preseizures << preseizure
@@ -223,18 +222,7 @@ class Pack::Report
                   end
                   report.save
                   report.document.period.update_information!
-                  if preseizures.any?
-                    report.is_delivered = false
-                    report.delivery_tried_at = nil
-                    report.delivery_message = ''
-                    report.save
-                    if report.organization && report.organization.ibiza && report.organization.ibiza.is_configured? && report.organization.ibiza.is_auto_deliver
-                      report.organization.ibiza.export(preseizures)
-                    end
-                    ids = preseizures.map(&:id)
-                    Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false)
-                  end
-                  report.update_attribute(:is_locked, false)
+                  CreatePreAssignmentDeliveryService.new(preseizures, true).execute
                   FileDeliveryInit.prepare(report)
                   FileDeliveryInit.prepare(pack)
                 end

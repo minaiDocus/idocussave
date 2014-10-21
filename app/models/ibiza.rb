@@ -138,64 +138,6 @@ class Ibiza
     end
   end
 
-  def export(preseizures)
-    if preseizures.any?
-      data = nil
-      ids = preseizures.map(&:id)
-      is_delivered_one_by_one = false
-      report = preseizures.first.report
-      if(id = report.user.ibiza_id)
-        period = DocumentTools.to_period(report.name)
-        if (exercice=ExerciceService.find(report.user, period, false))
-          client.request.clear
-          data = IbizaAPI::Utils.to_import_xml(exercice, preseizures, self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
-          client.company(id).entries!(data)
-          if client.response.success?
-            Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_delivered: true)
-            report.delivery_message = ''
-          else
-            IbizaMailer.notify_delivery(self, report, data).deliver if IbizaAPI::Config::NOTIFY_ON_DELIVERY == :error
-            is_delivered_one_by_one = true
-            report.delivery_message = client.response.message
-            preseizures.each do |preseizure|
-              client.request.clear
-              data2 = IbizaAPI::Utils.to_import_xml(exercice, [preseizure], self.description, self.description_separator, self.piece_name_format, self.piece_name_format_sep)
-              client.company(id).entries!(data2)
-              if client.response.success?
-                preseizure.update_attributes(delivery_message: '', is_delivered: true)
-              else
-                preseizure.update_attribute(:delivery_message, client.response.message)
-                IbizaMailer.notify_delivery(self, preseizure, data2).deliver if IbizaAPI::Config::NOTIFY_ON_DELIVERY == :error
-              end
-              IbizaMailer.notify_delivery(self, preseizure, data2).deliver if IbizaAPI::Config::NOTIFY_ON_DELIVERY == :yes
-              preseizure.update_attributes(is_locked: false, delivery_tried_at: Time.now)
-            end
-          end
-          IbizaMailer.notify_delivery(self, report, data).deliver if IbizaAPI::Config::NOTIFY_ON_DELIVERY == :yes
-          if report.preseizures.not_delivered.count == 0
-            report.update_attribute(:is_delivered, true)
-          end
-        else
-          if client.response.success?
-            report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
-          else
-            report.delivery_message = client.response.message
-            IbizaMailer.notify_delivery(self, report, data).deliver if IbizaAPI::Config::NOTIFY_ON_DELIVERY == :error
-          end
-        end
-      else
-        report.delivery_message = "L'utilisateur #{report.user.code} n'a pas de compte Ibiza lié."
-      end
-      unless is_delivered_one_by_one
-        Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
-      end
-      report.delivery_tried_at = Time.now
-      report.is_locked = false
-      report.save
-      report.delivery_message
-    end
-  end
-
   def exercices(id)
     Rails.cache.fetch "ibiza_#{id}_exercices", expires_in: 1.hour do
       client.request.clear

@@ -31,6 +31,8 @@
       = link_to 'Fiduceo', admin_fiduceo_retrievers_path
     %li{ class: ('active' if controller_name == 'emailed_documents') }
       = link_to 'S. Mail', admin_emailed_documents_path
+    %li{ class: ('active' if controller_name == 'pre_assignment_deliveries') }
+      = link_to 'Livr. Ibiza', admin_pre_assignment_deliveries_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

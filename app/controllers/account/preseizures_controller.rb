@@ -55,12 +55,7 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def deliver
-    if @organization.ibiza && @organization.ibiza.is_configured? && !@preseizure.is_locked && !@preseizure.is_delivered
-      @preseizure.update_attribute(:is_locked, true)
-      @organization.ibiza.
-        delay(queue: 'ibiza export', priority: 2).
-        export([@preseizure])
-    end
+    CreatePreAssignmentDeliveryService.new(@preseizure).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end

@@ -60,6 +60,13 @@ module AdminHelper
     content_tag 'span', Email.state_machine.states[email.state].human_name, class: klass
   end
 
+  def pre_assignment_delivery_state(delivery)
+    klass = 'label'
+    klass += ' label-success'   if delivery.state == 'sent'
+    klass += ' label-important' if delivery.state == 'error'
+    content_tag 'span', PreAssignmentDelivery.state_machine.states[delivery.state].human_name, class: klass
+  end
+
   def file_size(size_in_octet)
     "%0.3f" % ((size_in_octet * 1.0) / 1048576.0)
   end

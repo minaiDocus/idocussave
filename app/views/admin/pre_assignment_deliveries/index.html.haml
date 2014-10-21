@@ -1,0 +1,37 @@
+#pre_assignment_deliveries
+  = render 'navigation'
+
+  .row-fluid
+    .span12
+      %h3 Liste des livraisons de pré-affectation vers Ibiza (#{@pre_assignment_deliveries.count})
+
+  .row-fluid
+    .span9
+      = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :number,     t('mongoid.models.pre_assignment_delivery.attributes.number')
+                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :updated_at, t('mongoid.models.common.attributes.updated_at')
+                %th= sortable :pack_name,  t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+                %th= sortable :total_item, t('mongoid.models.pre_assignment_delivery.attributes.total_item')
+                %th= sortable :is_auto,    t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
+                %th= sortable :state,      t('mongoid.models.pre_assignment_delivery.attributes.state')
+                %th Action
+            %tbody
+              - @pre_assignment_deliveries.each do |delivery|
+                %tr
+                  %td= delivery.number
+                  %td= l(delivery.created_at, format: '%d %b %Y %H:%M')
+                  %td= l(delivery.updated_at, format: '%d %b %Y %H:%M')
+                  %td= delivery.pack_name
+                  %td= delivery.total_item
+                  %td= delivery.is_auto ? t('yes_value') : t('no_value')
+                  %td= pre_assignment_delivery_state delivery
+                  %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery), title: 'Afficher les détails'
+      = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
+    .span3
+      = render partial: 'sidebar'

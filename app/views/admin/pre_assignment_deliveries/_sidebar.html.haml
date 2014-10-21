@@ -1,0 +1,50 @@
+.row-fluid
+  .span12.well.margin0bottom
+    %h3 Filtres
+
+    %br
+    = form_tag admin_pre_assignment_deliveries_path, method: :get, class: 'form form-vertical margin0bottom' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+
+      = label_tag 'pre_assignment_delivery_contains[number]', t('mongoid.models.pre_assignment_delivery.attributes.number')
+      = number_field_tag 'pre_assignment_delivery_contains[number]', (params[:pre_assignment_delivery_contains][:number] rescue ''), class: 'span12'
+
+      = label_tag 'pre_assignment_delivery_contains[pack_name]', t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+      = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'span12'
+
+      = label_tag 'pre_assignment_delivery_contains[total_item]', t('mongoid.models.pre_assignment_delivery.attributes.total_item')
+      = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), class: 'span12'
+
+      = label_tag 'pre_assignment_delivery_contains[is_auto]', t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
+      = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true
+
+      = label_tag 'pre_assignment_delivery_contains[state]', t('mongoid.models.pre_assignment_delivery.attributes.state')
+      = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true
+
+      = label_tag 'pre_assignment_delivery_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'pre_assignment_delivery_contains[created_at][$gte]', (params[:pre_assignment_delivery_contains][:created_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'pre_assignment_delivery_contains[created_at][$lte]', (params[:pre_assignment_delivery_contains][:created_at]['$lte'] rescue '')
+
+      = label_tag 'pre_assignment_delivery_contains[updated_at][$gte]', t('mongoid.models.common.attributes.updated_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'pre_assignment_delivery_contains[updated_at][$gte]', (params[:pre_assignment_delivery_contains][:updated_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'pre_assignment_delivery_contains[updated_at][$lte]', (params[:pre_assignment_delivery_contains][:updated_at]['$lte'] rescue '')
+
+      %br
+      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+      = link_to t('filters.reset'), admin_pre_assignment_deliveries_path, class: 'btn'

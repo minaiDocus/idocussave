@@ -791,6 +791,21 @@ fr:
           destroy: Suppression
           add: Ajout
           remove: Retrait
+      pre_assignment_delivery:
+        zero: 0 livraison
+        one: 1 livraison
+        other: '%{count} livraisons'
+        name: Livraison de pré-affectation vers Ibiza
+        attributes:
+          pack_name: Nom du lot
+          number: N°
+          state: Etat
+          is_auto: Automatique ?
+          total_item: Nombre d'élément
+          ibiza_id: Identifiant Ibiza
+          exercise: Exercice
+          xml_data: Donnée XML
+          error_message: Message d'erreur
     state_machines:
       fiduceo_retriever:
         states:
@@ -850,3 +865,11 @@ fr:
           bundled: Regroupé
           ready: Prêt
           processed: Traité
+      pre_assignment_delivery:
+        states:
+          pending: En attente de traitement
+          building_xml: Construction du XML
+          xml_built: XML construit
+          sending: Envoi en cours
+          sent: Envoyé
+          error: Erreur

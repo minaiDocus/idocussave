@@ -254,6 +254,7 @@ Idocus::Application.routes.draw do
     resources :emailed_documents, only: %w(index show) do
       get 'show_errors', on: :member
     end
+    resources :pre_assignment_deliveries, only: %w(index show)
 
     authenticated :user, -> user { user.is_admin } do
       match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]

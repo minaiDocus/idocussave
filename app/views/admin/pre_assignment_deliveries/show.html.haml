@@ -1,0 +1,48 @@
+#pre_assignment_delivery.show
+  = render 'navigation'
+
+  .row-fluid
+    .span12.panel
+      .pull-left.margin1bottom
+        %h3 Détail de la livraison n°#{@delivery.number}
+      .pull-right
+        = link_to t('actions.return'), admin_pre_assignment_deliveries_path, class: 'btn'
+      %br
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th= t('mongoid.models.common.attributes.created_at')
+          %td= l(@delivery.created_at, format: '%d %b %Y %H:%M')
+        %tr
+          %th= t('mongoid.models.common.attributes.updated_at')
+          %td= l(@delivery.updated_at, format: '%d %b %Y %H:%M')
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+          %td= @delivery.pack_name
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.total_item')
+          %td= @delivery.total_item
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
+          %td= @delivery.is_auto ? t('yes_value') : t('no_value')
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.ibiza_id')
+          %td= @delivery.ibiza_id
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.exercise')
+          %td
+            - if @delivery.exercise.present?
+              = l(@delivery.exercise['start_date'], format: '%d %B %Y')
+              au
+              = l(@delivery.exercise['end_date'], format: '%d %B %Y')
+              \-
+              = @delivery.exercise['is_closed'] ? 'Fermé' : 'Ouvert'
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.error_message')
+          %td= @delivery.error_message
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.state')
+          %td= pre_assignment_delivery_state @delivery
+        %tr
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.xml_data')
+          %td
+            %textarea{ rows: 50 }= @delivery.xml_data

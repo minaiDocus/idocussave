@@ -41,15 +41,8 @@ class Account::PackReportsController < Account::OrganizationController
   end
 
   def deliver
-    if @organization.ibiza && @organization.ibiza.is_configured? && !@report.is_locked
-      @report.update_attribute(:is_locked, true)
-      preseizures = @report.preseizures.by_position.not_locked.not_delivered.entries
-      ids = preseizures.map(&:id)
-      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
-      @organization.ibiza.
-        delay(queue: 'ibiza export', priority: 2).
-        export(preseizures)
-    end
+    preseizures = @report.preseizures.by_position.not_locked.not_delivered.entries
+    CreatePreAssignmentDeliveryService.new(preseizures).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end

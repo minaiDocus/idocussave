@@ -120,7 +120,9 @@ class OperationService
             to_deliver_preseizures << preseizure
             operation.update_attribute(:processed_at, Time.now)
           end
-          deliver(user, to_deliver_preseizures)
+          to_deliver_preseizures.group_by(&:report).each do |_, pres|
+            CreatePreAssignmentDeliveryService.new(pres, true).execute
+          end
         else
           operations.each do |operation|
             operation.update_attribute(:is_locked, true)
@@ -130,25 +132,6 @@ class OperationService
 
       preseizures
     end
-  end
-
-  def self.deliver(user, preseizures)
-    ibiza = user.organization.try(:ibiza)
-    reports = []
-    preseizures.group_by do |preseizure|
-      preseizure.report
-    end.each do |report, preseizures|
-      reports << report
-      report.is_delivered = false
-      report.delivery_tried_at = nil
-      report.delivery_message = ''
-      report.save
-      if ibiza && ibiza.is_configured? && ibiza.is_auto_deliver
-        ibiza.export(preseizures)
-      end
-    end
-    Pack::Report::Preseizure.where(:_id.in => preseizures.map(&:id)).update_all(is_locked: false)
-    Pack::Report.where(:_id.in => reports.map(&:id)).update_all(is_locked: false)
   end
 
   def self.current_period_name
