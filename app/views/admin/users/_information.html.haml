@@ -69,19 +69,10 @@
             %tr
               %th= t('mongoid.models.user.attributes.is_document_notifier_active')
               %td.value= check_box_tag 'user[is_document_notifier_active]', 1, @user.is_document_notifier_active
-            - if @user.is_centralized_changed?
-              %tr
-                %th
-                  .label.label-warning= t('mongoid.models.user.attributes.is_centralized')
-                %td.value
-                  = icon(icon: 'pencil')
-                  = @user.is_centralized ? t('yes_value') : t('no_value')
-                  = check_box_tag 'user[is_centralized]', 1, @user.is_centralized_was
-            - else
-              %tr
-                %th= t('mongoid.models.user.attributes.is_centralized')
-                %td.value
-                  = check_box_tag 'user[is_centralized]', 1, @user.is_centralized
+            %tr
+              %th= t('mongoid.models.user.attributes.is_centralized')
+              %td.value
+                = check_box_tag 'user[is_centralized]', 1, @user.is_centralized
             %tr
               %th= t('mongoid.models.user.attributes.is_fiduceo_authorized')
               %td.value
