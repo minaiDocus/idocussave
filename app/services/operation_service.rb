@@ -75,7 +75,6 @@ class OperationService
             preseizure.position    = counter
             preseizure.observation = operation.label
             preseizure.category_id = operation.category_id
-            preseizure.is_locked   = true
             preseizure.save
 
             ### 1 ###
@@ -157,7 +156,6 @@ class OperationService
       pack_report.name         = name
       pack_report.save
     end
-    pack_report.update_attribute(:is_locked, true)
     pack_report
   end
 
