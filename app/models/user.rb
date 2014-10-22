@@ -156,7 +156,7 @@ class User
   has_one :external_file_storage, autosave: true
   has_one :csv_outputter, autosave: true
   has_one :accounting_plan
-  has_one :options, class_name: 'UserOptions', inverse_of: 'user'
+  has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
 
   has_one :dematbox
 
@@ -178,6 +178,7 @@ class User
   accepts_nested_attributes_for :addresses,             allow_destroy: true
   accepts_nested_attributes_for :csv_outputter
   accepts_nested_attributes_for :organization_rights
+  accepts_nested_attributes_for :options
 
   def active
     inactive_at == nil

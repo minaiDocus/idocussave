@@ -8,6 +8,8 @@
       = f.input :email, hint: "Correspond à l'identifiant de connexion de votre client"
       = f.input :knowings_code
       = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
+      = f.simple_fields_for :options do |o|
+        = o.input :is_taxable, as: :boolean
     - if action_name.in?(%w(new create))
       .span6
         - group_collection = groups.map { |g| [g.name, g.id] }

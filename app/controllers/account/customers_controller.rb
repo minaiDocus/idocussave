@@ -103,7 +103,16 @@ private
   end
 
   def user_params
-    attributes = [:company, :first_name, :last_name, :email, :group_ids, :knowings_code, :knowings_visibility]
+    attributes = [
+      :company,
+      :first_name,
+      :last_name,
+      :email,
+      :group_ids,
+      :knowings_code,
+      :knowings_visibility,
+      { options_attributes: [:is_taxable] }
+    ]
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)
   end

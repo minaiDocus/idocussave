@@ -346,6 +346,12 @@ fr:
           auth_prev_period_until_day: Jour de clôture de la période précédente
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
           organization: Organisation
+      user_options:
+        zero: 0 option
+        one: 1 option
+        other: '%{count} options'
+        attributes:
+          is_taxable: Est assujetti à TVA ?
       address:
         zero: 0 adresses
         one: 1 adresse

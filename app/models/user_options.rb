@@ -6,4 +6,5 @@ class UserOptions
 
   field :max_number_of_journals,      type: Integer, default: 5
   field :is_preassignment_authorized, type: Boolean, default: false
+  field :is_taxable,                  type: Boolean, default: true
 end
