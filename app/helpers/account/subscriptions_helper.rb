@@ -13,7 +13,7 @@ module Account::SubscriptionsHelper
   end
 
   def is_product_option_disabled?(option, group)
-    if @user.is_admin
+    if @user.is_admin || controller_name == 'default_subscriptions'
       false
     else
       group_options = group.product_options

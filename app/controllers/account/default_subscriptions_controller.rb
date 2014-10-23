@@ -10,6 +10,7 @@ class Account::DefaultSubscriptionsController < Account::OrganizationController
   end
 
   def update
+    @subscription.permit_all_options = true
     if @subscription.update_attributes(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_default_subscription_path(@organization)
