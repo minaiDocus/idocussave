@@ -1,0 +1,55 @@
+#notification_settings
+  .row-fluid
+    .span12.panel
+      %h3 Paramétrage des notifications
+
+  .row-fluid.margin2top
+    .span12
+      .pull-left.margin1bottom
+        %h4 Erreur au niveau de la plateforme
+      .pull-right.margin1bottom
+        = link_to icon_edit + 'Editer', edit_error_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th Description
+          %td
+            Lorsque les erreurs suivantes se produisent sur la plateforme :
+            %ul
+              %li Impossible de récupérer la numérisation
+              %li Le(s) document(s) numérisé(s) est/sont corrompu(s)
+              %li Automate non disponible
+              %li Impossible d'accéder à la boîte mail de récupération des documents
+        %tr
+          %th Adresse mail à notifier (#{Settings.notify_errors_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.notify_errors_to)
+
+  .row-fluid.margin1top
+    .span12
+      .pull-left.margin1bottom
+        %h4 Abonnement
+      .pull-right.margin1bottom
+        = link_to icon_edit + 'Editer', edit_subscription_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th Description
+          %td Lorsqu'une option de produit, ayant "#{t('simple_form.labels.product_option.notify')}" d'activé, est sélectionné
+        %tr
+          %th Adresse mail à notifier (#{Settings.notify_subscription_changes_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.notify_subscription_changes_to)
+
+  .row-fluid.margin1top
+    .span12
+      .pull-left.margin1bottom
+        %h4 Livraison de pré-affectation vers Ibiza
+      .pull-right.margin1bottom
+        = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th Description
+          %td Lorsqu'une livraison de pré-affectation vers Ibiza est effectué
+        %tr
+          %th Adresse mail à notifier (#{Settings.notify_ibiza_deliveries_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.notify_ibiza_deliveries_to)
+        %tr
+          %th Type
+          %td= ibiza_notification_type

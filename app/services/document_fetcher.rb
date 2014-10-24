@@ -48,8 +48,9 @@ class DocumentFetcher
           content = "Livraison : #{dir}\n"
           content = "Total : #{corrupted_documents.count}\n"
           content << "Fichier(s) : #{corrupted_documents.map(&:original_file_name).join(', ')}"
-          ErrorNotification::EMAILS.each do |email|
-            NotificationMailer.notify(email, subject, content)
+          addresses = Array(Settings.notify_errors_to)
+          if addresses.size > 0
+            NotificationMailer.notify(addresses, subject, content)
           end
           corrupted_documents.each(&:corruption_notified)
         end
@@ -60,8 +61,9 @@ class DocumentFetcher
       false
     rescue Net::FTPConnectionError, Net::FTPError, Net::FTPPermError, Net::FTPProtoError, Net::FTPReplyError, Net::FTPTempError, SocketError, Errno::ECONNREFUSED => e
       content = "#{e.class}<br /><br />#{e.message}"
-      ErrorNotification::EMAILS.each do |email|
-        NotificationMailer.notify(email, "[iDocus] Erreur lors de la récupération des documents", content).deliver
+      addresses = Array(Settings.notify_errors_to)
+      if addresses.size > 0
+        NotificationMailer.notify(addresses, "[iDocus] Erreur lors de la récupération des documents", content).deliver
       end
       false
     end

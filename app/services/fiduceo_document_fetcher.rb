@@ -103,8 +103,9 @@ class FiduceoDocumentFetcher
             content << "Récupérateur : #{transaction.retriever.name} - (#{transaction.retriever.service_name})<br>"
             content << "Transaction : #{transaction.status} - #{transaction.id}<br>"
             content << "<br><br>#{transaction.events.inspect}"
-            ErrorNotification::EMAILS.each do |email|
-              NotificationMailer.notify(email, "[iDocus] Erreur transaction fiduceo - #{transaction.status}", content).deliver
+            addresses = Array(Settings.notify_errors_to)
+            if addresses.size > 0
+              NotificationMailer.notify(addresses, "[iDocus] Erreur transaction fiduceo - #{transaction.status}", content).deliver
             end
           end
         end

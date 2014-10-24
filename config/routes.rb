@@ -255,6 +255,14 @@ Idocus::Application.routes.draw do
       get 'show_errors', on: :member
     end
     resources :pre_assignment_deliveries, only: %w(index show)
+    resources :notification_settings, only: %w(index) do
+      get  'edit_error',          on: :collection
+      post 'update_error',        on: :collection
+      get  'edit_subscription',   on: :collection
+      post 'update_subscription', on: :collection
+      get  'edit_ibiza',          on: :collection
+      post 'update_ibiza',        on: :collection
+    end
 
     authenticated :user, -> user { user.is_admin } do
       match '/delayed_job' => DelayedJobWeb, anchor: false, via: [:get, :post]

@@ -1,0 +1,20 @@
+#notification_settings.edit_ibiza
+  .row-fluid
+    .span12.panel
+      %h3 Edition du paramétrage des notifications pour la livraison de pré-affectation vers Ibiza
+
+  .row-fluid
+    .span12.panel
+      = form_tag update_ibiza_admin_notification_settings_path, class: 'form form-horizontal margin0 padding1top' do |f|
+        .control-group
+          = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
+          .controls
+            = text_field_tag 'notification[to]', Settings.notify_ibiza_deliveries_to.join(', ')
+            %span.help-block Séparer les valeurs par une virgule. La deuxième et les suivantes seront en copie.
+        .control-group
+          = label_tag 'notification[type]', 'Type', class: 'control-label'
+          .controls
+            = select_tag 'notification[type]', options_for_select([['Désactivé', 'no'], ['Erreur uniquement', 'error'], ['Tous', 'yes']], Settings.notify_on_ibiza_delivery)
+        .form-actions.margin0bottom
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), admin_notification_settings_path, class: 'btn'

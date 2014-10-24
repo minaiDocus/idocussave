@@ -3,16 +3,20 @@ class NotificationMailer < ActionMailer::Base
   helper :application
   default from: 'do-not-reply@idocus.com'
 
-  def notify(email, subject='', content='')
+  def notify(addresses, subject='', content='')
     @content = content
-    mail(to: email, subject: subject)
+    to = addresses.first
+    cc = addresses[1..-1] || []
+    mail(to: to, cc: cc, subject: subject)
   end
 
-  def subscription_updated(email, collaborator, user, options)
+  def subscription_updated(addresses, collaborator, user, options)
     @collaborator = collaborator
     @user         = user
     @options      = options
-    mail(to: email, subject: "Modification de l'abonnement du client : #{user}")
+    to = addresses.first
+    cc = addresses[1..-1] || []
+    mail(to: to, cc: cc, subject: "Modification de l'abonnement du client : #{user}")
   end
 
   def new_bank_accounts(collaborator, user, bank_accounts)

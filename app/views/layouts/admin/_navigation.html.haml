@@ -7,7 +7,7 @@
   %ul.nav
     %li{ style: 'font-size:16px;padding:10px 10px 0;' } Admin
     %li{ class: ('active' if controller_name == 'admin') }
-      = link_to 'Tableau de bord', admin_root_path
+      = link_to 'T. de bord', admin_root_path
     %li= link_to 'D. Jobs', '/admin/delayed_job'
     %li{ class: ('active' if controller_name == 'reporting') }
       = link_to 'Rep.', '/admin/reporting'
@@ -16,23 +16,25 @@
     %li{ class: ('active' if controller_name == 'users') }
       = link_to 'Utili.', admin_users_path
     %li{ class: ('active' if controller_name == 'cms_images') }
-      = link_to 'CMS Img.', admin_cms_images_path
+      = link_to 'Img.', admin_cms_images_path
     %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
       = link_to 'Prod.', admin_products_path
     %li{ class: ('active' if controller_name == 'events') }
       = link_to "Histo.", admin_events_path
     %li{ class: ('active' if controller_name == 'gray_labels') }
-      = link_to 'Marque G.', admin_gray_labels_path
+      = link_to 'M. Grise', admin_gray_labels_path
     %li{ class: ('active' if controller_name == 'scanning_providers') }
       = link_to 'Atel.', admin_scanning_providers_path
     %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
       = link_to 'D\'box', admin_dematboxes_path
     %li{ class: ('active' if controller_name.in?(%w(retrievers provider_wishes))) }
-      = link_to 'Fiduceo', admin_fiduceo_retrievers_path
+      = link_to 'Fidu.', admin_fiduceo_retrievers_path
     %li{ class: ('active' if controller_name == 'emailed_documents') }
       = link_to 'S. Mail', admin_emailed_documents_path
     %li{ class: ('active' if controller_name == 'pre_assignment_deliveries') }
-      = link_to 'Livr. Ibiza', admin_pre_assignment_deliveries_path
+      = link_to 'Livr. Ib.', admin_pre_assignment_deliveries_path
+    %li{ class: ('active' if controller_name == 'notification_settings') }
+      = link_to 'P. Notif.', admin_notification_settings_path
 
 %p.navbar-text.pull-right
   = t('devise.sessions.message.welcome')

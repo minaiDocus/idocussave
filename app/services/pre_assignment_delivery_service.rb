@@ -89,11 +89,11 @@ class PreAssignmentDeliveryService
   end
 
   def notify?
-    IbizaAPI::Config::NOTIFY_ON_DELIVERY == :yes
+    Settings.notify_on_ibiza_delivery == 'yes' && addresses.size > 0
   end
 
   def notify_error?
-    IbizaAPI::Config::NOTIFY_ON_DELIVERY == :error
+    Settings.notify_on_ibiza_delivery == 'error' && addresses.size > 0
   end
 
 private
@@ -104,7 +104,11 @@ private
 
   def notify
     if notify? || (notify_error? && @delivery.error?)
-      IbizaMailer.notify_delivery(@ibiza, object_to_notify, @delivery.xml_data).deliver
+      IbizaMailer.notify_delivery(addresses, @ibiza, object_to_notify, @delivery.xml_data).deliver
     end
+  end
+
+  def addresses
+    Array(Settings.notify_ibiza_deliveries_to)
   end
 end

@@ -43,8 +43,9 @@ def with_error_handler(program_name, &block)
       go_sleep(tries.minutes, program_name, 'retrying in')
       retry
     else
-      ErrorNotification::EMAILS.each do |email|
-        NotificationMailer.notify(email, "[iDocus][Email fetcher error] Net::POPAuthenticationError", e.message).deliver
+      addresses = Array(Settings.notify_errors_to)
+      if addresses.size > 0
+        NotificationMailer.notify(addresses, "[iDocus][Email fetcher error] Net::POPAuthenticationError", e.message).deliver
       end
       $running = false
     end

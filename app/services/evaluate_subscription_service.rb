@@ -50,9 +50,15 @@ class EvaluateSubscriptionService
 private
 
   def notify(options_to_notify)
-    EventNotification::EMAILS.each do |email|
-      NotificationMailer.delay(priority: 1).subscription_updated(email, @collaborator, @user, options_to_notify)
+    if addresses.size > 0
+      NotificationMailer.
+        delay(priority: 1).
+        subscription_updated(addresses, @collaborator, @user, options_to_notify)
     end
+  end
+
+  def addresses
+    Array(Settings.notify_subscription_changes_to)
   end
 
   def authorize_dematbox

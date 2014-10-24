@@ -46,7 +46,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
     command << "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
     command << "ln -nfs #{shared_path}/config/ibiza.yml #{release_path}/config/ibiza.yml"
-    command << "ln -nfs #{shared_path}/config/initializers/notification.rb #{release_path}/config/initializers/notification.rb"
     command << "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
     command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
@@ -77,7 +76,6 @@ namespace :shared do
     command = []
 
     files = [
-      'notification.rb',
       'num.rb',
       'compta.rb',
       'site.rb',
