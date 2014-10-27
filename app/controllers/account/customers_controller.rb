@@ -27,6 +27,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def new
     @customer = User.new(code: "#{@organization.code}%")
+    @customer.options = UserOptions.new
   end
 
   def create

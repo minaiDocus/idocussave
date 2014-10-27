@@ -8,7 +8,6 @@ class CreateCustomer
     @customer.is_group_required = !(requester.my_organization || requester.is_admin)
     @customer.skip_confirmation!
     if @customer.save
-      @customer.options = UserOptions.create(user_id: @customer.id)
       AccountingPlan.create(user_id: @customer.id)
 
       # Assign default subscription
