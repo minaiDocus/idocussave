@@ -5,6 +5,7 @@ class CreateCustomer
     @customer = User.new params
     @customer.organization = organization
     @customer.set_random_password
+    @customer.is_group_required = !(requester.my_organization || requester.is_admin)
     @customer.skip_confirmation!
     if @customer.save
       @customer.options = UserOptions.create(user_id: @customer.id)

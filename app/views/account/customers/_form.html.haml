@@ -1,7 +1,9 @@
 ﻿= simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
   .row-fluid
-    .span6
+    .span12
       = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", input_html: { disabled: ('disabled' if action_name == 'edit') }
+      - group_collection = groups.map { |g| [g.name, g.id] }
+      = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: t('mongoid.models.group.name').pluralize
       = f.input :company
       = f.input :first_name
       = f.input :last_name
@@ -10,11 +12,6 @@
       = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
       = f.simple_fields_for :options do |o|
         = o.input :is_taxable, as: :boolean
-    - if action_name.in?(%w(new create))
-      .span6
-        - group_collection = groups.map { |g| [g.name, g.id] }
-        - if group_collection.any?
-          = f.input :group_ids, collection: group_collection, as: :check_boxes, label: t('mongoid.models.group.name').pluralize
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if params[:action].in?(%w(new create))

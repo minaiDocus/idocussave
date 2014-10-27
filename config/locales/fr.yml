@@ -267,7 +267,9 @@ fr:
               inclusion: n'est pas inclus(e) dans la liste
         user:
           attributes:
-              expired: jeton expiré
+            expired: jeton expiré
+            group_ids:
+              empty: Sélectionner au moins un groupe
         scan/document:
           attributes:
             paperclips:

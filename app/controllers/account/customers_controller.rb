@@ -44,6 +44,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update
+    @customer.is_group_required = !is_leader?
     if @customer.update_attributes(user_params)
       flash[:success] = 'Modifié avec succès'
       redirect_to account_organization_customer_path(@organization, @customer)

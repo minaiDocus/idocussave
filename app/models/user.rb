@@ -71,6 +71,8 @@ class User
   validates_presence_of :company
   validates_length_of :email, :company, :first_name, :last_name, :knowings_code, within: 0..50
 
+  validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
+
   field :knowings_code
   field :knowings_visibility,            type: Integer, default: 0
 
@@ -111,6 +113,7 @@ class User
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
   attr_accessor :client_ids
+  attr_accessor :is_group_required
   attr_protected :is_admin, :is_prescriber
 
   slug do |user|
@@ -373,5 +376,9 @@ private
     if self.organization && !self.code.match(/^#{self.organization.code}%[A-Z0-9]{1,13}$/)
       errors.add(:code, :invalid)
     end
+  end
+
+  def presence_of_group
+    errors.add(:group_ids, :empty) if groups.count == 0
   end
 end
