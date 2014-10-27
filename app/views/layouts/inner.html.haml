@@ -22,34 +22,11 @@
           %a.logo{ href: root_path }
             %img{ src: logo_url, alt: 'logo' }
           = render partial: 'layouts/navigation'
-          - if current_user
-            %p{ :class=>"navbar-text pull-right" }
-              Bienvenue
-              != link_to current_user.email, account_documents_path
-              |
-              != link_to "déconnexion", destroy_user_session_path
-          - else
-            %p{ :class=>"navbar-text pull-right" }
-              %a{ "data-toggle"=>"modal", :href=>"#connexion" } Connexion
-              %span{ :class=>"divider-vertical" }
-              %a{ :href=>"users/sign_up" } Créer un compte
-            .modal{:id=>"connexion"}
-              .modal-header
-                %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-                %h3 Connexion
-              - form_for User.new, :as => :user, :url => session_path(:user), :html => {:method => :post} do |f|
-                .modal-body
-                  %fieldset
-                    %label{ :for => "email" } Email
-                    != f.text_field :email, :id=>"email"
-                    %label{ :for => "password" } Mot de passe
-                    != f.password_field :password, :id=>"password"
-                    != f.check_box :remember_me, :class=>"pull-left", :id=>"remember_me"
-                    %label{ :for => "remember_me", :class=>"pull-left", :title => "Session de 2 jours" } Se souvenir
-                .modal-footer
-                  != f.submit :class => "btn btn-primary", :value => "OK"
-                  %a{ :href=>"users/password/new", :class=>"btn" } Aide
-                  %a{ :href=>"#", :class=>"modal-close btn" } Close
+          %p{ :class=>"navbar-text pull-right" }
+            Bienvenue
+            != link_to current_user.email, account_documents_path
+            |
+            != link_to "déconnexion", destroy_user_session_path
 
     - if current_user.is_admin && controller_name != 'organizations'
       .container-fluid
