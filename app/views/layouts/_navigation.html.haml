@@ -13,7 +13,5 @@
     %li{ :class=>('active' if controller_name == 'reporting') }
       = link_to 'Mon reporting', account_reporting_path
     - if @user.is_fiduceo_authorized
-      %li{ :class=>('active' if controller_name.in? %w(operations balances)) }
-        = link_to 'Mes graphiques', account_charts_operations_path
       %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
         = link_to 'Mes automates', account_fiduceo_retrievers_path

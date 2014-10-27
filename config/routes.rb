@@ -200,10 +200,10 @@ Idocus::Application.routes.draw do
       put 'update_multiple', on: :collection
     end
 
-    namespace :charts do
-      resources :operations
-      resources :balances
-    end
+    # namespace :charts do
+    #   resources :operations
+    #   resources :balances
+    # end
 
     resources :emailed_documents do
       post 'regenerate_code', on: :collection
