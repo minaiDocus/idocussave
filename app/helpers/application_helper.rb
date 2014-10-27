@@ -121,10 +121,6 @@ module ApplicationHelper
     @gray_label ? @gray_label.logo_url : asset_path('logo/tiny_logo.png')
   end
 
-  def site_url
-    @gray_label ? @gray_label.site_url : SITE_DEFAULT_URL
-  end
-
   def sortable(column, title=nil, contains={})
     title ||= column.titleize
     direction = 'asc'
