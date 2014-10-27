@@ -1,7 +1,7 @@
 ﻿= simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
   .row-fluid
     .span12
-      = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", input_html: { disabled: ('disabled' if action_name == 'edit') }
+      = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
       - group_collection = groups.map { |g| [g.name, g.id] }
       = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: t('mongoid.models.group.name').pluralize
       = f.input :company
