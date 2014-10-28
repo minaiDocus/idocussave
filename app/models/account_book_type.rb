@@ -47,9 +47,14 @@ class AccountBookType
   validates :description, length: { in: 2..50 }
   validate :format_of_name
 
-  scope :compta_processable,     where: { :entry_type.gt => 0 }
-  scope :not_compta_processable, where: { entry_type: 0 }
-  scope :default,                where: { is_default: true }
+  validate :pre_assignment_attributes,    if: Proc.new { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :vat_account,     if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
+  validates_presence_of :anomaly_account, if: Proc.new { |j| j.is_pre_assignment_processable? }
+
+  scope :compta_processable,         where: { :entry_type.gt => 0 }
+  scope :not_compta_processable,     where: { entry_type: 0 }
+  scope :pre_assignment_processable, where: { :entry_type.gt => 1 }
+  scope :default,                    where: { is_default: true }
 
   def info
     [self.name, self.description].join(' ')
@@ -60,11 +65,11 @@ class AccountBookType
   end
 
   def compta_processable?
-    if entry_type && entry_type > 0
-      true
-    else
-      false
-    end
+    entry_type > 0
+  end
+
+  def is_pre_assignment_processable?
+    entry_type > 1
   end
 
   def compta_type
@@ -92,5 +97,17 @@ private
 
   def format_of_name
     errors.add(:name, :invalid) unless self.name.match(/^[A-Z0-9]+$/)
+  end
+
+  def pre_assignment_attributes
+    errors.add(:account_number, :blank) if account_number.blank? && default_account_number.blank? && default_charge_account.blank?
+    errors.add(:charge_account, :blank) if charge_account.blank? && default_account_number.blank? && default_charge_account.blank?
+    errors.add(:default_account_number, :blank) if default_account_number.blank? && account_number.blank? && charge_account.blank?
+    errors.add(:default_charge_account, :blank) if default_charge_account.blank? && account_number.blank? && charge_account.blank?
+
+    errors.add(:account_number, :invalid) if account_number.present? && (default_account_number.present? || default_charge_account.present?)
+    errors.add(:charge_account, :invalid) if charge_account.present? && (default_account_number.present? || default_charge_account.present?)
+    errors.add(:default_account_number, :invalid) if default_account_number.present? && (account_number.present? || charge_account.present?)
+    errors.add(:default_charge_account, :invalid) if default_charge_account.present? && (account_number.present? || charge_account.present?)
   end
 end

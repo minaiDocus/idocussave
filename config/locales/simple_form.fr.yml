@@ -101,12 +101,12 @@ fr:
         entry_type_1: Notes de frais
         entry_type_2: Achat
         entry_type_3: Vente
-        default_account_number: Compte de tiers par défaut
-        account_number: Compte de tiers d'attente
-        default_charge_account: Compte de charge / produit par défaut
-        charge_account: Compte de charge / produit d'attente
+        default_account_number: Compte de tiers
+        account_number: Compte de tiers
+        default_charge_account: Compte de charge / produit
+        charge_account: Compte de charge / produit
         vat_account: Compte TVA
-        anomaly_account: Compte d'anomalie
+        anomaly_account: "Compte d'anomalie (si aucune information claire, n’est pas une facture, …)"
         is_expense_categories_editable: Catégories de dépenses editable ?
         expense_categories: Catégories de dépenses
         expense_category:
