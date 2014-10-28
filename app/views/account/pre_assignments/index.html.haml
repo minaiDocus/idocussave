@@ -30,11 +30,15 @@
       .modal-body
         .row-fluid
           .span6
-            %h4.margin1bottom Connexion à la production comptable
+            %h4.margin1bottom Connexion à iBiza pour le transfert des écritures
             .control-group.string.optional
               %label.string.optional.control-label= t('mongoid.models.ibiza.attributes.state').capitalize
               .controls
                 %span{ class: "label #{ibiza_state_label(@ibiza)}", style: 'position:relative;top:6px;' } #{ibiza_state(@ibiza)}
+                %p.help-block
+                  - if !@ibiza || @ibiza.state.in?(%w(none invalid))
+                    = link_to 'cliquer ici', "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}"
+                    et remplir les champs demandés
             = f.input :token, as: :string, label: t('mongoid.models.ibiza.attributes.token').capitalize, input_html: { class: 'span12' }
             = f.input :is_auto_deliver, as: :boolean, label: t('mongoid.models.ibiza.attributes.is_auto_deliver')
             %h4.margin1bottom Format de nom de la pièce
@@ -54,7 +58,7 @@
                   %td
                     %label.checkbox
                       = check_box_tag "ibiza[piece_name_format][code_wp][is_used]", 1, (@ibiza.piece_name_format['code_wp']['is_used'] rescue false)
-                      Code sans code cabinet
+                      Code dossier sans code cabinet
                   %td= number_field_tag "ibiza[piece_name_format][code_wp][position]", (@ibiza.piece_name_format['code_wp']['position'] rescue 1)
                 %tr
                   %td
@@ -66,7 +70,7 @@
                   %td
                     %label.checkbox
                       = check_box_tag "ibiza[piece_name_format][period][is_used]", 1, (@ibiza.piece_name_format['period']['is_used'] rescue false)
-                      Période
+                      Période traitement
                   %td= number_field_tag "ibiza[piece_name_format][period][position]", (@ibiza.piece_name_format['period']['position'] rescue 1)
                 %tr
                   %td
@@ -111,7 +115,7 @@
                   %td
                     %label.checkbox
                       = check_box_tag "ibiza[description][conversion_rate][is_used]", 1, (@ibiza.description['conversion_rate']['is_used'] rescue false)
-                      Taux de convertion
+                      Taux de conversion
                   %td= number_field_tag "ibiza[description][conversion_rate][position]", (@ibiza.description['conversion_rate']['position'] rescue 1)
                 %tr
                   %td
