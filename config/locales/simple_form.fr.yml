@@ -92,8 +92,8 @@ fr:
         nature: Nature
         account_number: Numéro de compte
       account_book_type:
-        name: Libellé
-        pseudonym: Alias
+        name: Code journal
+        pseudonym: 'Alias : code journal logiciel comptable'
         description: Description
         domain: Domaine
         entry_type: Type de saisie
