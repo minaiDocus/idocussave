@@ -11,6 +11,7 @@ describe UploadedDocumentPresenter do
       @time = Time.now
 
       @temp_document = double('temp_document')
+      @temp_document.stub(:state) { 'ready' }
       @temp_document.stub(:created_at) { @time }
       @temp_document.stub(:original_file_name) { 'upload.pdf' }
       @temp_document.stub(:content_file_name) { 'TS0001_TS_201301_001.pdf' }
@@ -21,6 +22,22 @@ describe UploadedDocumentPresenter do
       @uploaded_document.stub(:temp_document) { @temp_document }
       presenter = UploadedDocumentPresenter.new(@uploaded_document)
       expect(presenter.to_json).to eq([{created_at: I18n.l(@time), name: 'upload.pdf', new_name: 'TS0001_TS_201301_001.pdf' }].to_json)
+    end
+
+    it "return hash of newly created document with pre assignment notice" do
+      @temp_document.stub(:state) { 'bundle_needed' }
+      @uploaded_document.stub(:valid?) { true }
+      @uploaded_document.stub(:temp_document) { @temp_document }
+      presenter = UploadedDocumentPresenter.new(@uploaded_document)
+      result = [
+        {
+          created_at: I18n.l(@time),
+          name:       'upload.pdf',
+          new_name:   'TS0001_TS_201301_001.pdf',
+          message:    'vos documents sont en-cours de traitement, ils seront visibles dans quelques heures dans votre espace'
+        }
+      ]
+      expect(presenter.to_json).to eq(result.to_json)
     end
 
     it "return hash error message" do

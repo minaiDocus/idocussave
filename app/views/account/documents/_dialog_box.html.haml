@@ -107,14 +107,14 @@
     {% for (var i=0, files=o.files, l=files.length, file=files[0]; i<l; file=files[++i]) { %}
         <tr class="template-download fade">
             {% if (file.error) { %}
-                <td></td>
+                <td style="width:110px;"></td>
                 <td class="name">{%=file.name%}</td>
-                <td class="error" colspan="2"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
+                <td class="error" colspan="3"><span class="label label-important">Erreur</span> {%=fileUploadErrors[file.error] || file.error%}</td>
             {% } else { %}
-                <td class="created_at">{%=file.created_at%}</td>
+                <td class="created_at" style="width:110px;">{%=file.created_at%}</td>
                 <td class="name">{%=file.name%}</td>
                 <td class="new_name">{%=file.new_name%}</td>
-                <td colspan="2"></td>
+                <td class="message" colspan="2">{%=file.message%}</td>
             {% } %}
         </tr>
     {% } %}
