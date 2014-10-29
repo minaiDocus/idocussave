@@ -122,6 +122,13 @@ class OperationService
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
             CreatePreAssignmentDeliveryService.new(pres, true).execute
           end
+          # For manual delivery
+          if pack_report.preseizures.not_delivered.not_locked.count > 0
+            pack_report.delivery_tried_at = nil
+            pack_report.delivery_message  = ''
+            pack_report.is_delivered      = false
+            pack_report.save
+          end
         else
           operations.each do |operation|
             operation.update_attribute(:is_locked, true)
