@@ -4,16 +4,15 @@ update_form = ->
   else
     $('.pre-assignment-attributes').hide()
 
-disable_default_account_fields = ->
-  if $("#account_book_type_account_number").val().length > 0 || $("#account_book_type_charge_account").val().length > 0
+update_fields = ->
+  if ($("#account_book_type_account_number").val().length > 0 || $("#account_book_type_charge_account").val().length > 0) && $("#account_book_type_default_account_number").val().length == 0 && $("#account_book_type_default_charge_account").val().length == 0
     $("#account_book_type_default_account_number").attr('disabled', 'disabled')
     $("#account_book_type_default_charge_account").attr('disabled', 'disabled')
   else
     $("#account_book_type_default_account_number").removeAttr('disabled')
     $("#account_book_type_default_charge_account").removeAttr('disabled')
 
-disable_account_fields = ->
-  if $("#account_book_type_default_account_number").val().length > 0 || $("#account_book_type_default_charge_account").val().length > 0
+  if ($("#account_book_type_default_account_number").val().length > 0 || $("#account_book_type_default_charge_account").val().length > 0) && $("#account_book_type_account_number").val().length == 0 && $("#account_book_type_charge_account").val().length == 0
     $("#account_book_type_account_number").attr('disabled', 'disabled')
     $("#account_book_type_charge_account").attr('disabled', 'disabled')
   else
@@ -26,10 +25,6 @@ jQuery ->
     $("#account_book_type_entry_type").change ->
       update_form()
 
-    disable_default_account_fields()
-    $("#account_book_type_account_number, #account_book_type_charge_account").change ->
-      disable_default_account_fields()
-
-    disable_account_fields()
-    $("#account_book_type_default_account_number, #account_book_type_default_charge_account").change ->
-      disable_account_fields()
+    update_fields()
+    $("#account_book_type_account_number, #account_book_type_charge_account, #account_book_type_default_account_number, #account_book_type_default_charge_account").change ->
+      update_fields()
