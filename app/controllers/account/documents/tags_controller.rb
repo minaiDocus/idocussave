@@ -14,7 +14,7 @@ class Account::Documents::TagsController < Account::AccountController
     end
     params[:document_ids].each do |document_id|
       document = Document.find(document_id)
-      if document && document.pack.owner == @user
+      if document && (document.pack.owner == @user || (@user.is_prescriber && @user.customers.include?(document.pack.owner)) || @user.is_admin)
         sub.each do |s|
           tags = document.tags
           document.tags.each do |tag|
