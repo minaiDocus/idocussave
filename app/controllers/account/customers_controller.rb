@@ -31,9 +31,8 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomer.new(@organization, @user, user_params, current_user, request).customer
+    @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
     if @customer.persisted?
-      WelcomeMailer.welcome_customer(@customer).deliver
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer)
     else
@@ -46,7 +45,7 @@ class Account::CustomersController < Account::OrganizationController
 
   def update
     @customer.is_group_required = !is_leader?
-    if @customer.update_attributes(user_params)
+    if UpdateCustomerService.new(@customer, user_params).execute
       flash[:success] = 'Modifié avec succès'
       redirect_to account_organization_customer_path(@organization, @customer)
     else

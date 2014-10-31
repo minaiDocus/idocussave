@@ -35,7 +35,15 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def update
-    if @collaborator.update_attributes(user_params)
+    @collaborator.assign_attributes(user_params)
+    is_email_changed = @collaborator.email_changed?
+    if @collaborator.save
+      if is_email_changed
+        @collaborator.reset_password_token = User.reset_password_token
+        @collaborator.reset_password_sent_at = Time.now
+        @collaborator.save
+        WelcomeMailer.welcome_collaborator(@collaborator).deliver
+      end
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_collaborator_path(@organization, @collaborator)
     else
