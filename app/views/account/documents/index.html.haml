@@ -34,9 +34,8 @@
             - if current_user.is_admin
               %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
                 %i.icon-share-alt
-            - if current_user.is_admin || !current_user.is_prescriber
-              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
-                %i.icon-tag
+            %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
+              %i.icon-tag
             %a.do-tooltip{ "data-toggle"=>"modal", :href=>"#sharingDialog", :title => "Partage" }
               %i.icon-share
             |
@@ -57,10 +56,9 @@
             %h3.pull-left
               Pages
             .actiongroup.pull-right
-              - if current_user.is_admin || !current_user.is_prescriber
-                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
-                  %i.icon-tag
-                |
+              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
+                %i.icon-tag
+              |
               %a.do-selectAllPages.do-tooltip{:href => "#", :title => "Tous"}
                 %i.icon-ok
               %a.do-unselectAllPages.do-tooltip{:href => "#", :title => "Aucun"}
@@ -102,9 +100,8 @@
             %h3.pull-left
               Sélections
             .actiongroup.pull-right
-              - if current_user.is_admin || !current_user.is_prescriber
-                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
-                  %i.icon-tag
+              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
+                %i.icon-tag
               %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
                 %i.icon-remove
               |
