@@ -39,7 +39,7 @@ namespace :maintenance do
       puts "Task beginning at #{Time.now}"
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        if organization.customers.active.centralized.count > 0 && organization.addresses.select{ |a| a.is_for_shipping }.count > 0
+        if organization.customers.active.centralized.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
           invoice = Invoice.new
           invoice.organization = organization
           invoice.user = organization.leader
