@@ -311,10 +311,11 @@
               %ul
                 %li
                   Format de l’objet du mail : [libellé court du journal comptable] [période]
-                  %br
-                  exemple :
-                  %b
-                    %i #{@user.account_book_types.first.name} #{period_service.names.first}
+                  - if @user.account_book_types.first && period_service.names.first
+                    %br
+                    exemple :
+                    %b
+                      %i #{@user.account_book_types.first.name} #{period_service.names.first}
                 %li La somme des tailles des pièces jointes de votre mail ne doit pas dépasser 20 Mo.
               Vos journaux comptables accessibles :
               %ul
