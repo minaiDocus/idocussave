@@ -4,7 +4,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :load_customer, :load_subscription, :load_product
 
   def edit
-    @options = @subscription.product_option_orders.map { |option| option.to_a }
+    @options = @subscription.product_option_orders.map(&:to_a)
   end
 
   def update

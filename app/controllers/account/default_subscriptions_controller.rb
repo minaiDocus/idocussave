@@ -6,7 +6,7 @@ class Account::DefaultSubscriptionsController < Account::OrganizationController
   end
 
   def edit
-    @options = @subscription.product_option_orders.map { |option| option.to_a }
+    @options = @subscription.product_option_orders.map(&:to_a)
   end
 
   def update

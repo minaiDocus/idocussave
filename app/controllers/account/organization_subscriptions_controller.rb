@@ -5,7 +5,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   def edit
     @subscription = @organization.find_or_create_subscription
     @products     = Product.subscribable
-    @options      = @subscription.product_option_orders.entries
+    @options      = @subscription.product_option_orders.map(&:to_a)
   end
 
   def update
