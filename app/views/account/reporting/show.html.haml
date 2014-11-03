@@ -4,7 +4,7 @@
   .row
     .span12
       .actionbar.well
-        .row
+        .row-fluid
           .span2
             %table
               %tr{ :style => "text-align:left;" }
@@ -14,7 +14,7 @@
                 - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
                   - options += [["Dépassement (€ HT)",9],["Montant facture (€ HT)",8]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
-          .span8
+          .span9
             %form#filter.margin0bottom
               %table
                 %tr{ :style => "text-align:left;" }
@@ -33,10 +33,10 @@
                   %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td
+                    = submit_tag 'Valider', :class => "btn btn-primary margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;position:relative;top:-4px;"
                     %a#reset_filter.btn.margin0bottom{ :style => "height:21px;font-size:11px;padding:0 8px 0;position:relative;top:-4px;" }
                       %span{ :style => "position:relative;top:2px;" }
-                        reset
-                    != submit_tag "valider", :class => "btn margin0bottom", :style => "height:23px;font-size:11px;padding:2px 10px 4px;position:relative;top:-4px;"
+                        Réinitialiser
                   %td#filter_results.padding1left{ :style => "color:green;" }
           .span1{ :style => "line-height:24px;text-align:right;float:right;" }
             .line1
