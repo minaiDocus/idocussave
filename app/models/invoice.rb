@@ -137,8 +137,8 @@ class Invoice
       pdf.default_leading 4
       header_data = [
         [
-          "IDOCUS / GREVALIS\n6, rue de Saint Petersbourg\n75008 Paris.",
-          "Sarl au capital de 10.000 €\nRCS PARIS B520076852\nTVA FR21520076852",
+          "IDOCUS\n3, rue Copernic\n75116 Paris.",
+          "SAS au capital de 10 000 €\nRCS PARIS: 804 067 726\nTVA FR21520076852",
           "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
         ]
       ]
@@ -225,7 +225,7 @@ class Invoice
       pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[self.created_at.month].downcase} #{self.created_at.year}"
 
       pdf.move_down 7
-      pdf.text "Le détail de la prestation est consultable dans votre compte sur www.idocus.com"
+      pdf.text "Le détail de la prestation est consultable dans votre espace client sur www.idocus.com, dans la rubrique \"mon reporting\" en filtrant sur \"montant HT\""
 
       pdf.move_up 4
       pdf.text "Votre login d’accès au site : #{(user || organization.leader).email}"
