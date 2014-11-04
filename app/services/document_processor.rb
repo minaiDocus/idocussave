@@ -18,7 +18,7 @@ class DocumentProcessor
           end
 
           current_piece_position = pack.pieces.by_position.last.position + 1 rescue 1
-          current_page_position = pack.pages.by_position.last.position + 1 rescue 1
+          current_page_position = pack.pages.by_position.last.position + 2 rescue 1
           temp_documents.each do |temp_document|
             Dir.mktmpdir do |dir|
               ## Initialization
