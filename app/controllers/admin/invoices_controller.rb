@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Admin::InvoicesController < Admin::AdminController
-  before_filter :load_invoice, except: %w(index archive)
+  before_filter :load_invoice, only: %w(show update)
 
   def index
     @invoices = search(invoice_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
