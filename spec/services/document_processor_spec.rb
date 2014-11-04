@@ -1211,5 +1211,288 @@ describe DocumentProcessor do
         end
       end
     end
+
+    context 'with 2 processing each with 1 cover' do
+      before(:all) do
+        Dir.mktmpdir do |dir|
+          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+
+          2.times do |i|
+            file_name = "TS0001_TS_201301_00#{i}.pdf"
+            file_path = File.join(dir, file_name)
+            FileUtils.cp @file_with_2_pages, file_path
+            temp_document = TempDocument.new
+
+            temp_document.temp_pack          = temp_pack
+            temp_document.original_file_name = file_name
+            temp_document.content            = open(file_path)
+            temp_document.position           = temp_pack.next_document_position
+
+            temp_document.delivered_by       = 'petersbourg'
+            temp_document.delivery_type      = 'scan'
+
+            temp_document.save
+            temp_document.ready
+          end
+
+          DocumentProcessor.process
+
+          2.times do |i|
+            file_name = "TS0001_TS_201301_00#{i}.pdf"
+            file_path = File.join(dir, file_name)
+            FileUtils.cp @file_with_2_pages, file_path
+            temp_document = TempDocument.new
+
+            temp_document.temp_pack          = temp_pack
+            temp_document.original_file_name = file_name
+            temp_document.content            = open(file_path)
+            temp_document.position           = temp_pack.next_document_position
+
+            temp_document.delivered_by       = 'petersbourg'
+            temp_document.delivery_type      = 'scan'
+
+            temp_document.save
+            temp_document.ready
+          end
+
+          DocumentProcessor.process
+        end
+
+        @user.reload
+        @pack = @user.packs.first
+        @temp_pack = TempPack.where(name: @pack.name).first
+      end
+
+      after(:all) do
+        TempPack.destroy_all
+        Pack.destroy_all
+      end
+
+      describe 'temp_pack' do
+        subject { @temp_pack }
+
+        its(:document_not_processed_count) { should eq(0) }
+
+        describe 'temp_documents' do
+          subject { @temp_pack.temp_documents }
+
+          its(:count) { should eq(4) }
+        end
+      end
+
+      describe 'pack' do
+        subject { @pack }
+
+        it { should be_persisted }
+        its(:name) { should eq('TS0001 TS 201301 all') }
+
+        describe 'global document' do
+          subject { @pack.original_document }
+
+          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
+          its(:uploaded?) { should == false }
+          its(:is_a_cover) { should == false }
+          its(:position) { should eq(nil) }
+
+          it 'should have 6 pages' do
+            expect(DocumentTools.pages_number(subject.content.path)).to eq(6)
+          end
+        end
+
+        describe 'dividers' do
+          subject { @pack.dividers }
+
+          its(:count) { should eq(6) }
+
+          describe 'pieces' do
+            before(:all) do
+              @pieces = @pack.dividers.pieces.by_position
+            end
+
+            subject { @pieces }
+
+            its(:count) { should eq(3) }
+
+            describe 'n°1' do
+              subject { @pieces[0] }
+
+              its(:name) { should eq 'TS0001_TS_201301_000' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == true }
+              its(:position) { should eq(0) }
+            end
+
+            describe 'n°2' do
+              subject { @pieces[1] }
+
+              its(:name) { should eq 'TS0001_TS_201301_001' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(1) }
+            end
+
+            describe 'n°3' do
+              subject { @pieces[2] }
+
+              its(:name) { should eq 'TS0001_TS_201301_002' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(2) }
+            end
+          end
+
+          describe 'sheets' do
+            before(:all) do
+              @sheets = @pack.dividers.sheets.by_position
+            end
+
+            subject { @sheets }
+
+            its(:count) { should eq(3) }
+
+            describe 'n°1' do
+              subject { @sheets[0] }
+
+              its(:name) { should eq 'TS0001_TS_201301_000' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == true }
+              its(:position) { should eq(0) }
+            end
+
+            describe 'n°2' do
+              subject { @sheets[1] }
+
+              its(:name) { should eq 'TS0001_TS_201301_001' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(1) }
+            end
+
+            describe 'n°3' do
+              subject { @sheets[2] }
+
+              its(:name) { should eq 'TS0001_TS_201301_002' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('scan') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(2) }
+            end
+          end
+        end
+
+        describe 'pages' do
+          subject { @pack.pages }
+
+          its(:count) { should eq(6) }
+
+          describe 'n°1' do
+            subject { @pack.pages.by_position[0] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_001.pdf') }
+            its(:position) { should eq(-2) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == true }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+          end
+
+          describe 'n°2' do
+            subject { @pack.pages.by_position[1] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_002.pdf') }
+            its(:position) { should eq(-1) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == true }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+          end
+
+          describe 'n°3' do
+            subject { @pack.pages.by_position[2] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
+            its(:position) { should eq(0) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+          end
+
+          describe 'n°4' do
+            subject { @pack.pages.by_position[3] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
+            its(:position) { should eq(1) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+          end
+
+          describe 'n°5' do
+            subject { @pack.pages.by_position[4] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_page_003.pdf') }
+            its(:position) { should eq(2) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '3']) }
+          end
+
+          describe 'n°6' do
+            subject { @pack.pages.by_position[5] }
+
+            its(:content_file_name) { should eq('TS0001_TS_201301_page_004.pdf') }
+            its(:position) { should eq(3) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '201301', '4']) }
+          end
+        end
+
+        describe 'pieces' do
+          subject { @pack.pieces }
+
+          its(:count) { should eq(3) }
+
+          describe 'n°1' do
+            subject { @pack.pieces.by_position[0] }
+
+            its(:name) { should eq('TS0001 TS 201301 000') }
+            its(:content_file_name) { should eq('TS0001_TS_201301_000.pdf') }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == true }
+            its(:position) { should eq(0) }
+          end
+
+          describe 'n°2' do
+            subject { @pack.pieces.by_position[1] }
+
+            its(:name) { should eq('TS0001 TS 201301 001') }
+            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:position) { should eq(1) }
+          end
+
+          describe 'n°3' do
+            subject { @pack.pieces.by_position[2] }
+
+            its(:name) { should eq('TS0001 TS 201301 002') }
+            its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
+            its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:position) { should eq(2) }
+          end
+        end
+      end
+    end
   end
 end
