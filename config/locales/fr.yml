@@ -732,8 +732,9 @@ fr:
           bank_name: Banque
           name: Nom
           number: Numéro de compte
-          journal: Journal
+          journal: Journal comptable de l’outil comptable
           accounting_number: Numéro de compte comptable
+          temporary_account: Compte d’attente
       vat_account:
         zero: 0 compte de TVA
         one: 1 compta de TVA

@@ -10,7 +10,7 @@
       = stylesheet_link_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = stylesheet_link_tag 'account/csv_outputters'
-    - elsif !controller_name.in?(%w(organization_addresses accounting_plans bank_accounts knowings))
+    - elsif !controller_name.in?(%w(organization_addresses accounting_plans knowings))
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization

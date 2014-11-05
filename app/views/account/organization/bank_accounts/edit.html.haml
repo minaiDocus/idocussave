@@ -8,6 +8,7 @@
         = f.input :number,            disabled: true
         = f.input :journal,           required: true
         = f.input :accounting_number, required: true
+        = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'btn'

@@ -100,7 +100,7 @@ class OperationService
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = account_number(user, operation.label)
+            account.number     = account_number(user, operation.label, bank_account.try(:temporary_account).presence)
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new
@@ -166,7 +166,7 @@ class OperationService
     pack_report
   end
 
-  def self.account_number(user, label)
+  def self.account_number(user, label, temporary_account='471000')
     number = nil
     if user.organization.ibiza.try(:is_configured?)
       # Ibiza accounting plan
@@ -184,7 +184,7 @@ class OperationService
         number = provider.third_party_account if provider
       end
     end
-    number = '471000' unless number.present?
+    number = temporary_account unless number.present?
     number
   end
 

@@ -47,8 +47,9 @@ fr:
         custom_connection_info: Information de connexion supplémentaire
       bank_account:
         number: Numéro de compte
-        journal: Journal
+        journal: Journal comptable de l’outil comptable
         accounting_number: Numéro de compte comptable
+        temporary_account: Compte d’attente
       user:
         code: Code
         company: Société
