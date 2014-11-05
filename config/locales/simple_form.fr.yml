@@ -93,10 +93,10 @@ fr:
         account_number: Numéro de compte
       account_book_type:
         name: Code journal
-        pseudonym: 'Alias : code journal logiciel comptable'
+        pseudonym: Code journal logiciel comptable
         description: Description
-        domain: Domaine
-        entry_type: Type de saisie
+        domain: Domaine (Knowings)
+        entry_type: Type de saisie (Pré-affectation)
         entry_type_0: Aucun
         entry_type_1: Notes de frais
         entry_type_2: Achat
@@ -106,7 +106,7 @@ fr:
         default_charge_account: Compte de charge / produit
         charge_account: Compte de charge / produit
         vat_account: Compte TVA
-        anomaly_account: "Compte d'anomalie (si aucune information claire, n’est pas une facture, …)"
+        anomaly_account: "Compte d'anomalie"
         is_expense_categories_editable: Catégories de dépenses editable ?
         expense_categories: Catégories de dépenses
         expense_category:

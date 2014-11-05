@@ -1,7 +1,7 @@
 - disabled = is_preassignment_authorized? ? nil : 'disabled'
 = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :name
-  = f.input :pseudonym
+  = f.input :pseudonym, hint: 'si différent de "Code journal" ci-dessus'
   = f.input :description
   = f.input :domain, collection: journal_domain_for_select, select: @journal['domain'], include_blank: false, input_html: { disabled: disabled }
   = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0],[t('simple_form.labels.account_book_type.entry_type_1'),1],[t('simple_form.labels.account_book_type.entry_type_2'),2],[t('simple_form.labels.account_book_type.entry_type_3'),3]], selected: @journal['entry_type'], allow_blank: false, input_html: { disabled: disabled }
@@ -21,7 +21,7 @@
         = f.input :default_charge_account, input_html: { disabled: disabled }, required: true, wrapper_html: { class: 'last' }
     - if @journal.try(:user).try(:options).try(:is_taxable) || !@customer
       = f.input :vat_account, input_html: { disabled: disabled }, required: @customer.present?
-    = f.input :anomaly_account, input_html: { disabled: disabled }, required: true
+    = f.input :anomaly_account, input_html: { disabled: disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
     - # Disabled for now
     - if false && @user.is_admin
       = f.input :is_expense_categories_editable, as: :boolean

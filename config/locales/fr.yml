@@ -459,11 +459,11 @@ fr:
         attributes:
           created_at: Date de création
           updated_at: Date de modification
-          name: Libellé
+          name: Code journal
           slug: Identifiant alt.
-          pseudonym: Alias
+          pseudonym: Code journal logiciel comptable
           description: Description
-          domain: Domaine
+          domain: Domaine (Knowings)
           default_account_number: Compte de tiers par défaut
           account_number: Compte de tiers d'attente
           default_charge_account: Compte de charge / produit par défaut
