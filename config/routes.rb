@@ -113,9 +113,6 @@ Idocus::Application.routes.draw do
     end
 
     namespace :documents do
-      resource :sharings do
-        post 'destroy_multiple', on: :collection
-      end
       resource :tags do
         post 'update_multiple', on: :collection
       end
@@ -129,10 +126,7 @@ Idocus::Application.routes.draw do
       resources :preseizures
     end
 
-    resource :profile do
-      post   'share_documents_with',   on: :collection
-      delete 'unshare_documents_with', on: :collection
-    end
+    resource :profile
     resources :addresses
     resource :dropbox do
       get 'authorize_url', on: :member

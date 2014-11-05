@@ -2,30 +2,9 @@
 module DocumentsHelper
   def linked_users_option(user)
     if user.is_prescriber && user.organization
-      user_ids = user.packs.distinct(:owner_id)
+      user.customers.asc(:code).map { |u| [u, u.id] }
     else
-      user_ids = Pack.any_in(:user_ids => [user.id]).not_in(:owner_id => [user.id]).distinct(:owner_id)
-    end
-    users = User.any_in(:_id => user_ids)
-
-    users = users.sort do |a,b|
-      if a.code && b.code && a.code != b.code
-        a.code <=> b.code
-      elsif a.company && b.company && a.company != b.company
-        a.company <=> b.company
-      elsif a.first_name && b.first_name && a.last_name && b.last_name && (a.first_name + " " + a.last_name) != (b.first_name + " " + b.last_name)
-        (a.first_name + " " + a.last_name) <=> (b.first_name + " " + b.last_name)
-      else
-        a.email <=> b.email
-      end
-    end
-
-    users.collect do |u|
-      name = ""
-      name +=  u.code + " - " if !u.code.blank?
-      name +=  u.company + " - " if !u.company.blank?
-      name += u.email
-      [name,u.id]
+      []
     end
   end
 
@@ -170,14 +149,6 @@ module DocumentsHelper
       3
     else
       4
-    end
-  end
-
-  def document_class(pack, user)
-    if pack['owner_id'] == @user.id
-      pack['user_ids'].size > 1 ? 'sharing' : 'scanned'
-    else
-      'shared'
     end
   end
 

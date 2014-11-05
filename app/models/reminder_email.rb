@@ -30,7 +30,7 @@ class ReminderEmail
           name = "#{client.code} #{now.year}#{now.month} all"
           period = client.periods.last
           if period
-            packs_delivered = client.own_packs.where(name: name, :created_at.gt => period.start_at).scan_delivered.count
+            packs_delivered = client.packs.where(name: name, :created_at.gt => period.start_at).scan_delivered.count
           else
             packs_delivered = 0
           end

@@ -9,8 +9,6 @@
         != link_to 'Mode de paiement', '#payment_management', class: 'do-show'
     %li{ class: ('active' if @active_panel == 'efs_management') }
       != link_to 'Services de stockages externes', '#efs_management', class: 'do-show'
-    %li{ class: ('active' if @active_panel == 'sharing_management') }
-      != link_to 'Partages', '#sharing_management', class: 'do-show'
     %li{ class: ('active' if @active_panel == 'subscription_options') }
       != link_to 'Notification par mail', '#subscription_options', class: 'do-show'
     - if @user.is_dematbox_authorized

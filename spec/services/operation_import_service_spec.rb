@@ -9,13 +9,11 @@ describe OperationImportService do
 
     @pack = Pack.new
     @pack.owner = @user
-    @pack.users << @user
     @pack.name = "#{@user.code} AC 201401 all"
     @pack.save
 
     @pack2 = Pack.new
     @pack2.owner = @user
-    @pack2.users << @user
     @pack2.name = "#{@user.code} BQ 201401 all"
     @pack2.save
 

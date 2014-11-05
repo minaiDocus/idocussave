@@ -15,8 +15,7 @@ class Pack
   # TODO fix this
   PeriodicMetadata = Scan::Document
 
-  belongs_to :owner, class_name: "User", inverse_of: :own_packs
-  has_and_belongs_to_many :users
+  belongs_to :owner, class_name: "User", inverse_of: :packs
   belongs_to :organization
 
   has_many :documents,                                                          dependent: :destroy
@@ -161,7 +160,7 @@ class Pack
     end
 
     def find_or_initialize(name, user)
-      find_by_name(name) || Pack.new(name: name, owner_id: user.id)
+      find_by_name(name) || Pack.new(name: name, owner_id: user.id, organization_id: user.organization.try(:id))
     end
 
     def info_path(pack_name, receiver=nil)

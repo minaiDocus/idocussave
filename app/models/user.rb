@@ -126,41 +126,34 @@ class User
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
-  has_many :periods,            class_name: "Scan::Period",       inverse_of: :user
-  has_many :scan_subscriptions, class_name: "Scan::Subscription", inverse_of: :user
-
-  has_many :own_packs, class_name: "Pack", inverse_of: :owner
-  has_and_belongs_to_many :packs
-
-  has_and_belongs_to_many :sharers, class_name: "User", inverse_of: :share_with
-  has_and_belongs_to_many :share_with, class_name: "User", inverse_of: :sharers
-
+  has_many :periods,            class_name: "Scan::Period",             inverse_of: :user
+  has_many :scan_subscriptions, class_name: "Scan::Subscription",       inverse_of: :user
+  has_many :packs,              class_name: "Pack",                     inverse_of: :owner
   has_many :account_book_types
   has_many :invoices
   has_many :credits
   has_many :subscriptions
   has_many :backups
-  has_many :remote_files, dependent: :destroy
+  has_many :remote_files,                                                                       dependent: :destroy
   has_many :events
-  has_many :pack_reports, class_name: 'Pack::Report', inverse_of: :user
-  has_many :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :user
+  has_many :pack_reports,       class_name: 'Pack::Report',             inverse_of: :user
+  has_many :preseizures,        class_name: 'Pack::Report::Preseizure', inverse_of: :user
   has_many :temp_documents
-  has_many :fiduceo_retrievers,      dependent: :destroy
-  has_many :fiduceo_transactions,    dependent: :destroy
-  has_many :fiduceo_provider_wishes, dependent: :destroy
-  has_many :bank_accounts,           dependent: :destroy
+  has_many :fiduceo_retrievers,                                                                 dependent: :destroy
+  has_many :fiduceo_transactions,                                                               dependent: :destroy
+  has_many :fiduceo_provider_wishes,                                                            dependent: :destroy
+  has_many :bank_accounts,                                                                      dependent: :destroy
   has_many :exercices
-  has_many :sended_emails,   class_name: 'Email', inverse_of: :from_user, dependent: :destroy
-  has_many :received_emails, class_name: 'Email', inverse_of: :to_user,   dependent: :destroy
+  has_many :sended_emails,      class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy
+  has_many :received_emails,    class_name: 'Email',                    inverse_of: :to_user,   dependent: :destroy
   has_many :operations
   has_many :pre_assignment_deliveries
   has_one :composition
   has_one :debit_mandate
-  has_one :external_file_storage, autosave: true
-  has_one :csv_outputter, autosave: true
+  has_one :external_file_storage,                                                               autosave: true
+  has_one :csv_outputter,                                                                       autosave: true
   has_one :accounting_plan
-  has_one :options, class_name: 'UserOptions', inverse_of: 'user', autosave: true
-
+  has_one :options,             class_name: 'UserOptions',              inverse_of: 'user',     autosave: true
   has_one :dematbox
 
   belongs_to :scanning_provider, inverse_of: 'customers'

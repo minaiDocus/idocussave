@@ -37,48 +37,6 @@ class Account::ProfilesController < Account::AccountController
     end
   end
 
-  def share_documents_with
-    other = User.where(email: params[:email]).first
-    if other
-      if other != @user
-        if !other.in?(@user.share_with)
-          if !other.in?(@user.prescribers)
-            @user.share_with << other
-            if @user.save && other.save
-              flash[:notice] = "Vous avez paramétré le partage automatique de vos documents avec #{other.email}."
-            else
-              flash[:error] = "Impossible de partager vos documents."
-            end
-          else
-            flash[:error] = "Utilisateur non valide : #{other.email}"
-          end
-        else
-          flash[:error] = "Vos documents sont déjà partagés avec #{other.email}."
-        end
-      else
-        flash[:error] = "Vos ne pouvez pas vous partager à vous-même."
-      end
-    else
-      flash[:error] = "Utilisateur non trouvé : #{params[:email]}"
-    end
-    redirect_to account_profile_path(panel: 'sharing_management')
-  end
-
-  def unshare_documents_with
-    other = User.where(email: params[:email]).first
-    if other && !other.in?(@user.prescribers) && other.in?(@user.share_with)
-      @user.share_with -= [other]
-      if @user.save && other.save
-        flash[:notice] = "Vous avez supprimé le partage automatique de vos documents avec #{other.email}."
-      else
-        flash[:error] = "Impossible de supprimer le partage automatique de vos documents avec #{other.email}."
-      end
-    else
-      flash[:error] = "Utilisateur non valide : #{params[:email]}"
-    end
-    redirect_to account_profile_path(panel: 'sharing_management')
-  end
-
 private
   def user_params
     params.require(:user).permit(:current_password,

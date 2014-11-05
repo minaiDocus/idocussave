@@ -14,14 +14,9 @@ public
     options = {}
     if @user.organization && @user.is_prescriber
       owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
-      options = { owner_ids: owner_ids }
+      options[:owner_ids] = owner_ids
     else
-      pack_ids = @user.packs.distinct(:_id).map(&:to_s)
-      if pack_ids.any?
-        options = { ids: pack_ids }
-      else
-        options = { owner_id: @user.id }
-      end
+      options[:owner_id] = @user.id
     end
     @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
     @packs_count = @packs.total
@@ -32,14 +27,8 @@ public
   end
 
   def show
-    id = BSON::ObjectId.from_string(params[:id])
-    if @user.organization && @user.is_prescriber
-      pack_ids = @user.packs.distinct(:_id)
-    else
-      pack_ids = @user.pack_ids
-    end
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
-    @pack = Pack.find(params[:id])
+    @pack = @user.packs.find(params[:id])
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
     @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan', 'fiduceo'], per_page: 10000)
   end
 
@@ -51,52 +40,30 @@ public
       @packs_count = @packs.count
       @packs = @packs.page(params[:page]).per(params[:per_page])
     else
-      options = {}
-      owner_ids = []
       if @user.organization && @user.is_prescriber
+        owner_ids = []
         if params[:view].present? && params[:view] != 'all'
-          if params[:view] == 'self'
-            @other_user = @user
-          else
-            @other_user = @user.customers.find(params[:view])
-          end
+          @other_user = @user.customers.find(params[:view])
           owner_ids = [@other_user.id.to_s] if @other_user
         else
           owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
         end
         @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page], per_page: params[:per_page])
       else
-        if params[:view].present? && params[:view] != 'all'
-          if params[:view] == 'self'
-            @other_user = @user
-          else
-            @other_user = User.find(params[:view])
-          end
-          owner_id = @other_user.id.to_s
-          pack_ids = @user.packs.distinct(:_id).map(&:to_s)
-          @packs = Pack.search(params[:filter], ids: pack_ids, owner_id: owner_id, page: params[:page], per_page: params[:per_page])
-        else
-          pack_ids = @user.packs.distinct(:_id).map(&:to_s)
-          if pack_ids.any?
-            @packs = Pack.search(params[:filter], ids: pack_ids, page: params[:page], per_page: params[:per_page])
-          else
-            @packs = []
-          end
-        end
+        @packs = Pack.search(params[:filter], owner_id: @user.id.to_s, page: params[:page], per_page: params[:per_page])
       end
       @packs_count = @packs.total rescue 0
     end
   end
 
   def archive
-    id = BSON::ObjectId.from_string(params[:id])
-    if @user.organization && @user.is_prescriber
-      pack_ids = @user.packs.distinct(:_id)
-    else
-      pack_ids = @user.pack_ids
-    end
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless id.in?(pack_ids)
     pack = Pack.find(params[:id])
+    if @user.organization && @user.is_prescriber
+      pack = pack.owner.in?(@user.customers) ? pack : nil
+    else
+      pack = pack.owner == @user ? pack : nil
+    end
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless pack
 
     if File.exist? pack.archive_file_path
       send_file(pack.archive_file_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
@@ -108,7 +75,7 @@ public
   def sync_with_external_file_storage
     if current_user.is_admin
       if params[:pack_ids].present?
-        @packs = Pack.any_in(user_ids: [@user.id], _id: params[:pack_ids])
+        @packs = Pack.find(params[:pack_ids])
       else
         @packs = @user.packs
       end
@@ -129,7 +96,15 @@ public
   def download
     document = Document.find params[:id]
     filepath = document.content.path(params[:style])
-    if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(document.pack.id)) || (current_user && current_user.is_admin) || params[:token] == document.get_token)
+    users = []
+    if @user
+      if @user.organization && @user.is_prescriber
+        users = @user.customers
+      else
+        users = [@user]
+      end
+    end
+    if File.exist?(filepath) && (document.pack.owner.in?(users) || current_user.try(:is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
       if File.extname(filepath) == '.png'
         mime_type = 'image/png'
@@ -146,7 +121,15 @@ public
     begin
       piece = Pack::Piece.find params[:id]
       filepath = piece.content.path
-      if File.exist?(filepath) && ((@user && @user.packs.distinct(:_id).include?(piece.pack.id)) || (current_user && current_user.is_admin) || params[:token] == piece.get_token)
+      users = []
+      if @user
+        if @user.organization && @user.is_prescriber
+          users = @user.customers
+        else
+          users = [@user]
+        end
+      end
+      if File.exist?(filepath) && (piece.pack.owner.in?(users) || current_user.try(:is_admin) || params[:token] == piece.get_token)
         filename = File.basename(filepath)
         type = piece.content_content_type || 'application/pdf'
         send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')

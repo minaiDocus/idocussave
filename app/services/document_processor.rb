@@ -10,13 +10,6 @@ class DocumentProcessor
         user = User.find_by_code user_code
         if user && temp_documents.any?
           pack = Pack.find_or_initialize temp_pack.name, user
-
-          unless pack.persisted?
-            pack.organization = user.organization
-            pack.owner = user
-            pack.users << user
-          end
-
           current_piece_position = pack.pieces.by_position.last.position + 1 rescue 1
           current_page_position = pack.pages.by_position.last.position + 2 rescue 1
           temp_documents.each do |temp_document|

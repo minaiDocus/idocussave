@@ -11,10 +11,10 @@ class OrganizationManagement
     def packs
       Pack.any_of({
                     organization_id: _organization.id,
-                    :user_ids.in => customer_ids
+                    :owner_id.in => customer_ids
                   },
                   {
-                    :user_ids.in => [self.id]
+                    owner_id: self.id
                   })
     end
 

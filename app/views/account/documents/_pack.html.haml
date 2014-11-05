@@ -1,4 +1,4 @@
-%li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => document_class(pack, @user) }
+%li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => (pack.owner == @user ? 'own' : 'shared') }
   %span.action
     %a.do-popover{ "data-content" => html_pack_info(pack), :href => "#" }
       %i.icon-info-sign

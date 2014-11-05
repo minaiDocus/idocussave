@@ -120,30 +120,6 @@
     {% } %}
     </script>
 
-.modal.fade{ :id=>"sharingDialog" }
-  .modal-header
-    %a{ :class=>"close", "data-dismiss"=>"modal" } ×
-    %h3 Gestion des partages
-  %form
-    .modal-body
-      %h3 Départager
-      %p
-        Pour refuser le partage, d'un autre utilisateur, de ce(s) document(s), cliquer sur le lien suivant : 
-        = link_to "Départager", "#", :id => "unsharingButton"
-      %p.unsharing.length_alert.margin1top
-      %br
-      %h3 Partager
-      %p
-        Pour partager ce(s) document(s) entrer l'identifiant du/des compte(s) concerné(s), séparer les identifiants des comptes avec des espaces.
-        %br
-        Identifiant(s) :
-        != text_field_tag :names, nil, :id => "sharing_names"
-      %p.sharing.names_alert
-      %p.sharing.length_alert.margin1top
-    .modal-footer
-      %a{ :href=>"#", :class=>"modal-close btn" } Fermer
-      %input#sharingButton.btn{ :type => "submit", :value => "Ok" }
-
 .modal.fade{ :id=>"documentsTaggingDialog" }
   .modal-header
     %a{ :class=>"close", "data-dismiss"=>"modal" } ×

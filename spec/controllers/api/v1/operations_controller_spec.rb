@@ -481,7 +481,6 @@ describe Api::V1::OperationsController do
       @pack = Pack.new
       @pack.name  = "#{@user.code} BQ 201401 all"
       @pack.owner = @user
-      @pack.users << @user
       @pack.save
 
       @piece = Pack::Piece.new

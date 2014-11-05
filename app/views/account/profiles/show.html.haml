@@ -209,22 +209,6 @@
             .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
               != submit_tag "Valider", :class => "btn"
               %a.btn{ href: '#', data: { dismiss: 'modal' } } Fermer
-      #sharing_management.row-fluid.pan{ class: (@active_panel == 'sharing_management' ? 'active' : '')}
-        .span12
-          .well
-            %h3.aligncenter Partages
-            %br
-            Liste des utilisateurs iDocus avec qui vous souhaitez partager systématiquement tous vos nouveaux documents.
-            %br
-            %br
-            %table.table.table-condensed
-              - @user.share_with.each do |user|
-                %tr
-                  %td{ style: 'width:15px;' }= link_to icon_destroy, unshare_documents_with_account_profile_path(email: user.email), method: :delete, data: { confirm: "Voulez-vous vraiment supprimer le partage automatique de vos documents avec #{user.email} ?" }
-                  %td= user.email
-            = form_tag share_documents_with_account_profile_path, class: "form form-horizontal" do
-              = text_field_tag :email, "", style: 'margin-bottom:0;width:400px;'
-              = submit_tag "Ajouter", class: 'btn'
 
       - if @user.is_dematbox_authorized
         #idocus_box.row-fluid.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }
