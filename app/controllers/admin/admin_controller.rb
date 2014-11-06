@@ -45,7 +45,7 @@ class Admin::AdminController < ApplicationController
       object.date           = temp_pack.temp_documents.bundle_needed.by_position.first.updated_at
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundle_needed.count
-      object.message        = false
+      object.message        = temp_pack.temp_documents.bundle_needed.distinct('delivery_type').join(', ')
       object
     end
 
@@ -54,24 +54,17 @@ class Admin::AdminController < ApplicationController
       object.date           = temp_pack.temp_documents.bundling.by_position.first.updated_at
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundling.count
-      object.message        = false
+      object.message        = temp_pack.temp_documents.bundling.distinct('delivery_type').join(', ')
       object
     end
 
-    @processing_temp_packs = TempDocument.collection.group(
-      key: [:temp_pack_id],
-      cond: { state: 'ready', is_locked: false },
-      initial: { updated_at: 0, count: 0 },
-      reduce: "function(current, result) { result.count++; result.updated_at = current.updated_at; return result; }"
-    ).map do |temp_pack|
+    @processing_temp_packs = TempPack.desc(:updated_at).not_processed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack['updated_at'].try(:localtime)
-      object.name           = TempPack.find(temp_pack['temp_pack_id']).name.sub(/ all$/,'')
-      object.document_count = temp_pack['count'].to_i
-      object.message        = false
+      object.date           = temp_pack.temp_documents.not_processed.by_position.first.updated_at
+      object.name           = temp_pack.name.sub(/ all$/,'')
+      object.document_count = temp_pack.temp_documents.not_processed.count
+      object.message        = temp_pack.temp_documents.not_processed.distinct('delivery_type').join(', ')
       object
-    end.sort! do |a,b|
-      b.date <=> a.date
     end
 
     pack_ids = RemoteFile.not_processed.retryable.distinct(:pack_id)
