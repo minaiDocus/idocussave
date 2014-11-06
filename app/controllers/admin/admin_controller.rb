@@ -80,7 +80,7 @@ class Admin::AdminController < ApplicationController
       object.date           = pack.updated_at
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.retryable.count
-      object.message        = false
+      object.message        = pack.remote_files.not_processed.retryable.distinct(:service_name).join(', ')
       object
     end
 
@@ -90,7 +90,7 @@ class Admin::AdminController < ApplicationController
       object.date           = pack.updated_at
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.not_retryable.count
-      object.message        = false
+      object.message        = pack.remote_files.not_processed.not_retryable.distinct(:service_name).join(', ')
       object
     end
 

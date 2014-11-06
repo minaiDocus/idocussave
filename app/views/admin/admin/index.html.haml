@@ -12,7 +12,7 @@
               %th.date Date
               %th.name Lot
               %th.count Nb.
-              %th.message Message
+              %th.message Message / Service
           %tbody
             = render partial: 'process', locals: { name: 'OCR', collection: @ocr_needed_temp_packs, type: :success }
             = render partial: 'process', locals: { name: 'Regroupement', collection: @bundle_needed_temp_packs, type: nil }
