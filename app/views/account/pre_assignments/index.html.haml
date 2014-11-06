@@ -80,7 +80,7 @@
                   %td= number_field_tag "ibiza[piece_name_format][number][position]", (@ibiza.piece_name_format['number']['position'] rescue 1)
             = f.input :piece_name_format_sep, label: t('mongoid.models.ibiza.attributes.piece_name_format_sep'), input_html: { class: 'span3' }
           .span6
-            %h4.margin1bottom Champ description
+            %h4.margin1bottom Format de la description
             %table.table.table-condensed.margin0bottom.field_formatter
               %thead
                 %tr
@@ -135,6 +135,12 @@
                       = check_box_tag "ibiza[description][piece_name][is_used]", 1, (@ibiza.description['piece_name']['is_used'] rescue false)
                       Nom de pièce (iDocus)
                   %td= number_field_tag "ibiza[description][piece_name][position]", (@ibiza.description['piece_name']['position'] rescue 1)
+                %tr
+                  %td
+                    %label.checkbox
+                      = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
+                      Référence pièce
+                  %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
             = f.input :description_separator, label: t('mongoid.models.ibiza.attributes.description_separator'), input_html: { class: 'span3' }
       .modal-footer
         %a.btn{ data: { dismiss: "modal" } } Fermer

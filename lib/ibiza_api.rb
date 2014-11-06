@@ -8,6 +8,8 @@ module IbizaAPI
           preseizure.report.journal
         elsif k == 'piece_name' && preseizure.piece
           preseizure.piece.name
+        elsif k == 'piece_number'
+          preseizure.piece_number
         elsif k == 'date' && preseizure[k]
           preseizure.date.in_time_zone('Paris').to_date.to_s
         else
