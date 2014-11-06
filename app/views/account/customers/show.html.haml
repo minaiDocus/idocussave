@@ -35,6 +35,9 @@
                 %thead
                   %tbody
                     %tr
+                      %th= t('mongoid.models.common.attributes.created_at')
+                      %td= l(@customer.created_at)
+                    %tr
                       %th= t('mongoid.models.user.attributes.email')
                       %td= @customer.email
                     %tr
