@@ -15,15 +15,14 @@ class Account::JournalsController < Account::OrganizationController
 
   def create
     @journal = AccountBookType.new journal_params
+    (@customer || source).account_book_types << @journal
     if @journal.save
       flash[:success] = 'Créé avec succès.'
       if @customer
-        @customer.account_book_types << @journal
         UpdateJournalRelationService.new(@journal).execute
         EventCreateService.new.add_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
-        source.account_book_types << @journal
         redirect_to account_organization_journals_path(@organization)
       end
     else
@@ -77,15 +76,16 @@ class Account::JournalsController < Account::OrganizationController
       unless is_max_number_reached?
         journal = AccountBookType.find id
         if !journal.compta_processable? || is_preassignment_authorized?
-          copied_ids << id
           copy = journal.dup
           copy.user         = @customer
           copy.organization = nil
           copy.is_default   = nil
           copy.slug         = nil
-          copy.save
-          UpdateJournalRelationService.new(copy).execute
-          EventCreateService.new.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+          if copy.save
+            copied_ids << id
+            UpdateJournalRelationService.new(copy).execute
+            EventCreateService.new.add_journal(copy, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+          end
         end
       end
     end

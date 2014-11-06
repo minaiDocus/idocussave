@@ -19,7 +19,7 @@
         %br
         = f.input :default_account_number, input_html: { disabled: disabled }, required: true
         = f.input :default_charge_account, input_html: { disabled: disabled }, required: true, wrapper_html: { class: 'last' }
-    - if @journal.try(:user).try(:options).try(:is_taxable) || !@customer
+    - if !@customer || @customer.options.is_taxable
       = f.input :vat_account, input_html: { disabled: disabled }, required: @customer.present?
     = f.input :anomaly_account, input_html: { disabled: disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
     - # Disabled for now
