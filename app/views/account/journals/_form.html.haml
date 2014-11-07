@@ -20,7 +20,8 @@
         = f.input :default_account_number, input_html: { disabled: disabled }, required: true
         = f.input :default_charge_account, input_html: { disabled: disabled }, required: true, wrapper_html: { class: 'last' }
     - if !@customer || @customer.options.is_taxable
-      = f.input :vat_account, input_html: { disabled: disabled }, required: @customer.present?
+      - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
+      = f.input :vat_account, input_html: { disabled: disabled }, required: @customer.present?, hint: hint
     = f.input :anomaly_account, input_html: { disabled: disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
     - # Disabled for now
     - if false && @user.is_admin
