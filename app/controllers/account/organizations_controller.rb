@@ -7,6 +7,13 @@ class Account::OrganizationsController < Account::AccountController
 
   def index
     @organizations = search(organization_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @unbillable_organizations = Organization.not_test.
+                                  where('addresses.is_for_billing' => { '$nin' => [true] }).
+                                  select { |o| o.customers.active.centralized.count > 0 }
+    @unbillable_customers = User.customers.
+                              not_centralized.
+                              where('addresses.is_for_billing' => { '$nin' => [true] }).
+                              includes(:organization)
   end
 
   def new
