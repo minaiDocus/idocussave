@@ -14,12 +14,14 @@
             %thead
               %tr
                 %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test')
                 %th= sortable :name, t('mongoid.models.organization.attributes.name')
                 %th= t('mongoid.models.organization.attributes.leader')
             %tbody
               - @organizations.each do |organization|
                 %tr
                   %td= l(organization.created_at)
+                  %td= organization.is_test ? icon_ok : ''
                   %td= link_to organization.name, account_organization_path(organization)
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
       = render partial: 'list_options'
