@@ -1,7 +1,7 @@
 - document_class = @is_composition ? "composition" : "alone"
 
 %li{ :id => "document_#{document.id}", :class => "#{document_class} pages" }
-  - unless document.dirty
+  - unless document.dirty || !File.exist?(document.content.path(:thumb))
     - link_to_large = document.content.url(:large)
     - link_to_thumb = document.content.url(:thumb)
   - else
