@@ -100,7 +100,7 @@ module DocumentsHelper
       items.each_with_index do |(k,v),index|
         concat(content_tag(:tr){
           concat content_tag :td, "#{index + 1}"
-          concat content_tag :td, "#{l(k['date'])}"
+          concat content_tag :td, "#{l(k['date'].localtime)}"
           concat content_tag :td, "#{k['uploaded']}", style: 'text-align:right'
           concat content_tag :td, "#{k['scanned']}", style: 'text-align:right'
           concat content_tag :td, "#{k['dematbox_scanned']}", style: 'text-align:right'
