@@ -189,18 +189,13 @@ class Document
     else
       path = self.content.path
     end
-    words = []
     `pdftotext -raw -nopgbrk -q #{path}`
     dirname = File.dirname(path)
     filename = File.basename(path, '.pdf') + '.txt'
     filepath = File.join(dirname, filename)
     if File.exist?(filepath)
       text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
-      text.split().each do |dirty_word|
-        word = dirty_word.scan(/[[:alpha:]|@|_|-]+/).join().downcase
-        words << word if word.present?
-      end
-      self.content_text = words.join(' ')
+      self.content_text = text
     end
     self.content_text = ' ' unless self.content_text.present?
     save
