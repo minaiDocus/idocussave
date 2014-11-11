@@ -44,7 +44,15 @@ class FiduceoDocumentFetcher
 
     def fetch
       prepare_retryable_retrievers
-      FiduceoTransaction.not_processed.each do |transaction|
+      transactions = FiduceoTransaction.any_of(
+        {
+          :status.in => FiduceoTransaction::NOT_FINISHED_STATUSES
+        },
+        {
+          :retriever_id.in => FiduceoRetriever.not_processed.map(&:id)
+        }
+      )
+      transactions.each do |transaction|
         update_transaction transaction
 
         if transaction.success? && transaction.retriever && transaction.retriever.pending_document_ids.size > 0

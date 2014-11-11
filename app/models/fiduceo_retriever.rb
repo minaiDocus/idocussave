@@ -93,6 +93,7 @@ class FiduceoRetriever
   scope :wait_selection,       where: { state: 'wait_selection' }
   scope :wait_for_user_action, where: { state: 'wait_for_user_action' }
   scope :error,                where: { state: 'error' }
+  scope :not_processed,        where: { :state.in => %w(processing wait_for_user_action) }
 
   def provider?
     type == 'provider'
