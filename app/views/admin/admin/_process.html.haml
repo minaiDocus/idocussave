@@ -6,10 +6,13 @@
           %span.label{ class: (type.present? ? "label-#{type}" : nil) } #{name}
           %span.badge{ class: (type.present? ? "badge-#{type}" : nil) } #{collection.count}
       %td.date
-        - if object.date.today?
-          = l(object.date, format: '%H:%M')
+        - if object.date
+          - if object.date.today?
+            = l(object.date, format: '%H:%M')
+          - else
+            = l(object.date, format: '%d %b %Y %H:%M')
         - else
-          = l(object.date, format: '%d %b %Y %H:%M')
+          \-
       %td.name= object.name
       %td.count= object.document_count
       %td.message= object.message == false ? '-' : object.message

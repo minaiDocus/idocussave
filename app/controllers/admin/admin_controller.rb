@@ -42,7 +42,7 @@ class Admin::AdminController < ApplicationController
 
     @bundle_needed_temp_packs = TempPack.desc(:updated_at).bundle_needed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundle_needed.by_position.first.updated_at
+      object.date           = temp_pack.temp_documents.bundle_needed.by_position.first.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundle_needed.count
       object.message        = temp_pack.temp_documents.bundle_needed.distinct('delivery_type').join(', ')
@@ -51,7 +51,7 @@ class Admin::AdminController < ApplicationController
 
     @bundling_temp_packs = TempPack.desc(:updated_at).bundling.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundling.by_position.first.updated_at
+      object.date           = temp_pack.temp_documents.bundling.by_position.first.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundling.count
       object.message        = temp_pack.temp_documents.bundling.distinct('delivery_type').join(', ')
@@ -60,7 +60,7 @@ class Admin::AdminController < ApplicationController
 
     @processing_temp_packs = TempPack.desc(:updated_at).not_processed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.not_processed.by_position.first.updated_at
+      object.date           = temp_pack.temp_documents.not_processed.by_position.first.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.not_processed.count
       object.message        = temp_pack.temp_documents.not_processed.distinct('delivery_type').join(', ')
