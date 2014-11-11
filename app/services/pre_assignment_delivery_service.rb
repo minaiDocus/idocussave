@@ -50,6 +50,15 @@ class PreAssignmentDeliveryService
       @report.save
       @delivery.save
       @delivery.error
+
+      time = Time.now
+      @report.update_attributes(delivery_tried_at: time, is_locked: false)
+      Pack::Report::Preseizure.where(:_id.in => @preseizures.map(&:id)).update_all(
+        delivery_tried_at: time,
+        is_locked: false,
+        delivery_message: @report.delivery_message
+      )
+
       false
     end
   end
