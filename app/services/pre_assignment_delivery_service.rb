@@ -91,7 +91,7 @@ class PreAssignmentDeliveryService
 
     @report.update_attributes(is_delivered: true) if @report.preseizures.not_delivered.count == 0
     @report.update_attributes(delivery_tried_at: Time.now, is_locked: false)
-    Pack::Report::Preseizure.where(:_id.in => preseizure_ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: report.delivery_message)
+    Pack::Report::Preseizure.where(:_id.in => preseizure_ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: @report.delivery_message)
 
     notify
     @delivery.sent?
