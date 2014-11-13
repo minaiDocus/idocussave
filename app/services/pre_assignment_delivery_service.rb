@@ -19,7 +19,9 @@ class PreAssignmentDeliveryService
   end
 
   def execute
-    send if build_xml
+    result = send if build_xml
+    notify
+    result
   end
 
   def period
@@ -52,12 +54,15 @@ class PreAssignmentDeliveryService
       @delivery.error
 
       time = Time.now
-      @report.update_attributes(delivery_tried_at: time, is_locked: false)
-      Pack::Report::Preseizure.where(:_id.in => @preseizures.map(&:id)).update_all(
-        delivery_tried_at: time,
-        is_locked: false,
-        delivery_message: @report.delivery_message
-      )
+      @preseizures.each do |preseizure|
+        preseizure.delivery_tried_at = time
+        preseizure.delivery_message  = @report.delivery_message
+        preseizure.is_locked         = false
+        preseizure.save
+      end
+      @report.delivery_tried_at = time
+      @report.is_locked         = false
+      @report.save
 
       false
     end
@@ -69,31 +74,50 @@ class PreAssignmentDeliveryService
 
   def send
     @delivery.sending
-    preseizure_ids = @preseizures.map(&:id)
-    id = @user.ibiza_id
-    client.request.clear
 
-    client.company(id).entries!(@delivery.xml_data)
+    client.request.clear
+    client.company(@user.ibiza_id).entries!(@delivery.xml_data)
+
     if client.response.success?
-      Pack::Report::Preseizure.where(:_id.in => preseizure_ids).update_all(is_delivered: true)
-      @report.delivery_message = ''
       @delivery.sent
+
+      time = Time.now
+      @preseizures.each do |preseizure|
+        preseizure.is_delivered      = true
+        preseizure.delivery_tried_at = time
+        preseizure.delivery_message  = ''
+        preseizure.is_locked         = false
+        preseizure.save
+      end
+      @report.is_delivered      = @report.preseizures.not_delivered.count == 0
+      @report.delivery_tried_at = time
+      @report.delivery_message  = ''
+      @report.is_locked         = false
+      @report.save
     else
-      @delivery.error_message = @report.delivery_message = client.response.message
+      @delivery.update_attribute(:error_message, client.response.message)
+      @delivery.error
+
+      time = Time.now
+      @preseizures.each do |preseizure|
+        preseizure.delivery_tried_at = time
+        preseizure.delivery_message  = client.response.message
+        preseizure.is_locked         = false
+        preseizure.save
+      end
+      @report.delivery_tried_at = time
+      @report.delivery_message  = client.response.message
+      @report.is_locked         = false
+      @report.save
+
       if @preseizures.size > 1
         @preseizures.each do |preseizure|
-          delivery = CreatePreAssignmentDeliveryService.new(preseizure, false, true).execute
+          delivery = CreatePreAssignmentDeliveryService.new(preseizure, false).execute
           delivery.update_attribute(:is_auto, @delivery.is_auto)
         end
       end
-      @delivery.error
     end
 
-    @report.update_attributes(is_delivered: true) if @report.preseizures.not_delivered.count == 0
-    @report.update_attributes(delivery_tried_at: Time.now, is_locked: false)
-    Pack::Report::Preseizure.where(:_id.in => preseizure_ids).update_all(is_locked: false, delivery_tried_at: Time.now, delivery_message: @report.delivery_message)
-
-    notify
     @delivery.sent?
   end
 

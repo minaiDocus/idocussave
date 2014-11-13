@@ -2,24 +2,23 @@
 class CreatePreAssignmentDeliveryService
   attr_reader :delivery
 
-  def initialize(preseizures, is_auto=false, force=false)
+  def initialize(preseizures, is_auto=false)
     @preseizures = Array(preseizures)
     @report      = @preseizures.first.try(:report)
     @is_auto     = is_auto
-    @force       = force
   end
 
   def valid?
     @report.try(:organization).try(:ibiza).try(:is_configured?) &&
       (!@is_auto || @report.organization.ibiza.is_auto_deliver) &&
       @report.user.try(:ibiza_id).present? &&
-      (!@preseizures.select(&:is_locked).first || @force)
+      !@preseizures.select(&:is_locked).first
   end
 
   def execute
     if valid?
       ids = @preseizures.map(&:id)
-      Pack::Report::Preseizure.where(:_id.in => ids).update_all(delivery_tried_at: nil, delivery_message: '', is_locked: true)
+      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
 
       @delivery = PreAssignmentDelivery.new
       @delivery.report       = @report
@@ -33,12 +32,7 @@ class CreatePreAssignmentDeliveryService
       @delivery.save
       # Relation N-N buggé
       @delivery.reload
-      if @report.preseizures.not_locked.count == 0
-        @report.delivery_tried_at = nil
-        @report.delivery_message  = ''
-        @report.is_locked         = true
-        @report.save
-      end
+      @report.update_attribute(:is_locked, (@report.preseizures.not_locked.count == 0))
       @delivery if @delivery.persisted?
     else
       false

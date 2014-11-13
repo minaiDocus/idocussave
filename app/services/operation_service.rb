@@ -124,10 +124,7 @@ class OperationService
           end
           # For manual delivery
           if pack_report.preseizures.not_delivered.not_locked.count > 0
-            pack_report.delivery_tried_at = nil
-            pack_report.delivery_message  = ''
-            pack_report.is_delivered      = false
-            pack_report.save
+            pack_report.update_attribute(:is_delivered, false)
           end
         else
           operations.each do |operation|

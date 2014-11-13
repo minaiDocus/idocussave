@@ -225,10 +225,7 @@ class Pack::Report
                   CreatePreAssignmentDeliveryService.new(preseizures, true).execute
                   # For manual delivery
                   if report.preseizures.not_delivered.not_locked.count > 0
-                    report.delivery_tried_at = nil
-                    report.delivery_message  = ''
-                    report.is_delivered      = false
-                    report.save
+                    report.update_attribute(:is_delivered, false)
                   end
                   FileDeliveryInit.prepare(report)
                   FileDeliveryInit.prepare(pack)
