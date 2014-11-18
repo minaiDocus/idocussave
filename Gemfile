@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.20'
+gem 'rails', '3.2.21'
 
 gem 'rake', '10.1.0'
 gem 'bson_ext', '1.6.2'
