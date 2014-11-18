@@ -79,7 +79,8 @@ module Idocus
     config.mongoid.observers = :user_observer,
                                :pack_observer,
                                :fiduceo_retriever_observer,
-                               :fiduceo_provider_wish_observer
+                               :fiduceo_provider_wish_observer,
+                               :account_book_type_observer
 
     config.wash_out.parser = :nokogiri
     config.wash_out.camelize_wsdl = true
