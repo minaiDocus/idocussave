@@ -70,43 +70,43 @@ class TempPack
       temp_document ||= TempDocument.new
     end
 
-    temp_document.temp_pack           = self
-    temp_document.original_file_name  = options[:original_file_name]
-    unless options[:delivery_type] == 'fiduceo' && temp_document.persisted?
-      temp_document.content           = file
-    end
-    temp_document.position            = next_document_position        unless temp_document.position
+    if options[:delivery_type] != 'fiduceo' || !temp_document.persisted?
+      temp_document.temp_pack           = self
+      temp_document.original_file_name  = options[:original_file_name]
+      temp_document.content             = file
+      temp_document.position            = next_document_position unless temp_document.position
 
-    temp_document.delivered_by        = options[:delivered_by]
-    temp_document.delivery_type       = options[:delivery_type]
+      temp_document.delivered_by        = options[:delivered_by]
+      temp_document.delivery_type       = options[:delivery_type]
 
-    temp_document.dematbox_box_id     = options[:dematbox_box_id]     if options[:dematbox_box_id]
-    temp_document.dematbox_service_id = options[:dematbox_service_id] if options[:dematbox_service_id]
-    temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
+      temp_document.dematbox_box_id     = options[:dematbox_box_id]     if options[:dematbox_box_id]
+      temp_document.dematbox_service_id = options[:dematbox_service_id] if options[:dematbox_service_id]
+      temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
 
-    temp_document.fiduceo_id                  = options[:fiduceo_id]          if options[:fiduceo_id]
-    temp_document.fiduceo_metadata            = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
-    temp_document.fiduceo_service_name        = options[:service_name]        if options[:service_name]
-    temp_document.fiduceo_custom_service_name = options[:custom_service_name] if options[:custom_service_name]
+      temp_document.fiduceo_id                  = options[:fiduceo_id]          if options[:fiduceo_id]
+      temp_document.fiduceo_metadata            = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
+      temp_document.fiduceo_service_name        = options[:service_name]        if options[:service_name]
+      temp_document.fiduceo_custom_service_name = options[:custom_service_name] if options[:custom_service_name]
 
-    temp_document.save
-    if options[:is_content_file_valid]
-      temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
       temp_document.save
-      if temp_document.fiduceo?
-        options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
-      else
-        if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
-          temp_document.ocr_needed
+      if options[:is_content_file_valid]
+        temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
+        temp_document.save
+        if temp_document.fiduceo?
+          options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
         else
-          is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+          if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
+            temp_document.ocr_needed
+          else
+            is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+          end
         end
+      else
+        temp_document.unreadable
       end
-    else
-      temp_document.unreadable
+      set_updated_at
+      save
     end
-    set_updated_at
-    save
     temp_document
   end
 
