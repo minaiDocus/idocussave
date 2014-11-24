@@ -10,6 +10,7 @@
     = stylesheet_link_tag 'account/retrievers' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents bank_accounts)
     = stylesheet_link_tag 'account/charts' if controller_name.in? %w(operations balances)
     = stylesheet_link_tag 'account/organizations' if controller_name == 'organizations'
+    = stylesheet_link_tag 'account/suspended' if controller_name == 'suspended'
 
   %body
     .navbar.navbar-fixed-top

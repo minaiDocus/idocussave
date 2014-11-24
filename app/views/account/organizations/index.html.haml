@@ -1,4 +1,6 @@
 #organizations.container-fluid
+  .alerts
+    = render partial: 'shared/messages'
   .row-fluid
     .span12.box
       .pull-left
@@ -14,16 +16,24 @@
             %thead
               %tr
                 %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test')
+                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test') + " (#{Organization.test.count})"
+                %th= sortable :is_suspended, t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
                 %th= sortable :name, t('mongoid.models.organization.attributes.name')
                 %th= t('mongoid.models.organization.attributes.leader')
+                %th Action
             %tbody
               - @organizations.each do |organization|
                 %tr
                   %td= l(organization.created_at)
                   %td= organization.is_test ? icon_ok : ''
+                  %td= organization.is_suspended ? icon_ok : ''
                   %td= link_to organization.name, account_organization_path(organization)
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
+                  %td
+                    - if organization.is_suspended
+                      = link_to 'Activer', unsuspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
+                    - else
+                      = link_to 'Suspendre', suspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
       = render partial: 'list_options'
     .span3
       = render partial: 'sidebar'

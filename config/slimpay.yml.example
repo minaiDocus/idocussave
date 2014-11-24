@@ -1,0 +1,17 @@
+defaults: &defaults
+  scim_home: '/var/www/slimpay_tpe/'
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  scim_home: '/home/grevalis/www/module/slimpay_tpe'
+
+staging:
+  scim_home: '/home/grevalis/www/module/slimpay_tpe'
+
+production:
+  scim_home: '/home/grevalis/www/module/slimpay_tpe'

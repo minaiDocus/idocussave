@@ -2,7 +2,8 @@
 class Account::OrganizationsController < Account::AccountController
   layout :layout_by_action
 
-  before_filter :load_organization, only: %w(show edit update)
+  before_filter :verify_suspension, only: %w(show edit update)
+  before_filter :load_organization, except: %w(index new create)
   before_filter :verify_rights
 
   def index
@@ -49,12 +50,24 @@ class Account::OrganizationsController < Account::AccountController
     end
   end
 
+  def suspend
+    @organization.update_attribute(:is_suspended, true)
+    flash[:success] = 'Suspendu avec succès.'
+    redirect_to account_organizations_path
+  end
+
+  def unsuspend
+    @organization.update_attribute(:is_suspended, false)
+    flash[:success] = 'Activé avec succès.'
+    redirect_to account_organizations_path
+  end
+
 private
 
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if current_user.is_admin && action_name == 'index'
+      if current_user.is_admin && action_name.in?(%w(index new create suspend unsuspend))
         authorized = true
       elsif action_name.in?(%w(show)) && @user.is_prescriber
         authorized = true

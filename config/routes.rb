@@ -33,6 +33,8 @@ Idocus::Application.routes.draw do
   namespace :account do
     root :to => "account/documents#index"
     resources :organizations, except: :destroy do
+      put :suspend,   on: :member
+      put :unsuspend, on: :member
       resources :addresses, controller: 'organization_addresses'
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member
@@ -163,9 +165,10 @@ Idocus::Application.routes.draw do
       end
     end
     resource :payment do
-      post 'mode',             on: :member
-      get 'use_debit_mandate', on: :member
-      get 'credit',            on: :member
+      post 'mode',                 on: :member
+      post 'debit_mandate_notify', on: :member
+      get  'use_debit_mandate',    on: :member
+      get  'credit',               on: :member
     end
     resource :debit_mandate do
       get 'return', :on => :member
@@ -202,6 +205,8 @@ Idocus::Application.routes.draw do
     resources :emailed_documents do
       post 'regenerate_code', on: :collection
     end
+
+    resource :suspended, only: :show
   end
 
   namespace :api, defaults: { format: 'json' } do

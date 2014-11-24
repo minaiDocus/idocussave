@@ -1,17 +1,19 @@
 .nav-collapse
   %ul{ :class=>'nav' }
+    - path = @user.try(:organization).try(:is_suspended) ? account_profile_path(panel: 'payment_management') : account_profile_path
     %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
-      = link_to 'Mon compte', account_profile_path
-    - if @user.is_admin
-      %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
-        = link_to 'Organisations', account_organizations_path
-    - if @user.organization && @user.is_prescriber
-      %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
-        = link_to 'Mon organisation', account_organization_path(@user.organization)
-    %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
-      = link_to 'Mes documents', account_documents_path
-    %li{ :class=>('active' if controller_name == 'reporting') }
-      = link_to 'Mon reporting', account_reporting_path
-    - if @user.is_fiduceo_authorized
-      %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
-        = link_to 'Mes automates', account_fiduceo_retrievers_path
+      = link_to 'Mon compte', path
+    - unless @user.try(:organization).try(:is_suspended)
+      - if @user.is_admin
+        %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
+          = link_to 'Organisations', account_organizations_path
+      - if @user.organization && @user.is_prescriber
+        %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
+          = link_to 'Mon organisation', account_organization_path(@user.organization)
+      %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
+        = link_to 'Mes documents', account_documents_path
+      %li{ :class=>('active' if controller_name == 'reporting') }
+        = link_to 'Mon reporting', account_reporting_path
+      - if @user.is_fiduceo_authorized
+        %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
+          = link_to 'Mes automates', account_fiduceo_retrievers_path

@@ -1,6 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
   skip_before_filter :verify_authenticity_token, :only => [:mode]
+  skip_before_filter :login_user!,        only: :debit_mandate_notify
+  skip_before_filter :load_user_and_role, only: :debit_mandate_notify
+  skip_before_filter :verify_suspension,  only: :debit_mandate_notify
 
   layout nil, :only => [:credit]
 
@@ -34,10 +37,29 @@ public
   end
 
   def use_debit_mandate
-    if @user.debit_mandate && @user.debit_mandate.transactionStatus == "success"
+    if !@user.use_debit_mandate && @user.debit_mandate && @user.debit_mandate.transactionStatus == 'success'
       @user.update_attribute(:use_debit_mandate, true)
     end
-    redirect_to account_profile_path(panel: "payment_management")
+    redirect_to account_profile_path(panel: 'payment_management')
+  end
+
+  def debit_mandate_notify
+    attributes = DebitMandateResponseService.new(params[:blob]).execute
+    if attributes.present?
+      user = User.find_by_email attributes['email']
+      if user
+        user.debit_mandate ||= DebitMandate.new
+        user.debit_mandate.assign_attributes(attributes)
+        user.debit_mandate.save
+        if user.debit_mandate.transactionStatus == 'success'
+          user.update_attribute(:use_debit_mandate, true)
+          user.organization.update_attribute(:is_suspended, false) if user.try(:organization).try(:is_suspended)
+        end
+      end
+      render text: 'OK'
+    else
+      render text: 'Erreur'
+    end
   end
 
   def credit

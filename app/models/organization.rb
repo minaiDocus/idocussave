@@ -15,7 +15,8 @@ class Organization
   field :is_default_subscription_editable,   type: Boolean, default: true
   field :is_journals_management_centralized, type: Boolean, default: true
   # Misc
-  field :is_test, type: Boolean, default: false
+  field :is_test,      type: Boolean, default: false
+  field :is_suspended, type: Boolean, default: false
 
   field :file_naming_policy,           type: String,  default: ':customerCode_:journal_:period_:position'
   field :is_file_naming_policy_active, type: Boolean, default: false
@@ -60,7 +61,10 @@ class Organization
 
   embeds_many :addresses, as: :locatable
 
-  scope :not_test, where: { is_test: false }
+  scope :test,        where: { is_test: true }
+  scope :not_test,    where: { is_test: false }
+  scope :suspended,   where: { is_suspended: true }
+  scope :unsuspended, where: { is_suspended: false }
 
   def collaborators
     members.where(is_prescriber: true)

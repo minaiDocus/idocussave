@@ -137,4 +137,14 @@ protected
       end
     end
   end
+
+  def verify_suspension
+    if controller_name == 'suspended'
+      redirect_to account_root_path unless @user.try(:organization).try(:is_suspended)
+    elsif @user.try(:organization).try(:is_suspended)
+      unless ((controller_name == 'profiles' && action_name == 'show') || controller_name == 'payments') && @user.organization.leader == @user
+        redirect_to account_suspended_path
+      end
+    end
+  end
 end

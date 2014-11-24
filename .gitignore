@@ -17,4 +17,5 @@ config/dematbox_service_api.yml
 config/knowings.yml
 config/emailed_document.yml
 config/ibiza.yml
+config/slimpay.yml
 Sporkfile.rb

@@ -574,7 +574,8 @@ fr:
           centralized_customers: Clients centralisés
           centralized_customers_count: Nombre de clients centralisés
           is_detail_authorized: Autoriser les détails dans le reporting ?
-          is_test: Organisation de test ?
+          is_test: Mode test ?
+          is_suspended: Est suspendu ?
           is_journals_management_centralized: Gestion des journaux comptables centralisé ?
           status:
             admin: Administrateur
