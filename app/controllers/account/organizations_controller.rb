@@ -8,13 +8,10 @@ class Account::OrganizationsController < Account::AccountController
 
   def index
     @organizations = search(organization_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
-    @unbillable_organizations = Organization.not_test.
-                                  where('addresses.is_for_billing' => { '$nin' => [true] }).
-                                  select { |o| o.customers.active.centralized.count > 0 }
-    @unbillable_customers = User.customers.
-                              not_centralized.
-                              where('addresses.is_for_billing' => { '$nin' => [true] }).
-                              includes(:organization)
+    @without_address_count = Organization.where('addresses.is_for_billing' => { '$nin' => [true] }).count
+    user_ids   = DebitMandate.configured.distinct(:user_id)
+    leader_ids = Organization.all.distinct(:leader_id)
+    @debit_mandate_not_configured_count = Organization.where(:leader_id.in => (leader_ids - user_ids)).count
   end
 
   def new
@@ -158,9 +155,25 @@ private
   helper_method :organization_contains
 
   def search(contains)
-    organizations = Organization.all
-    organizations = organizations.where(name:        /#{Regexp.quote(contains[:name])}/i)        unless contains[:name].blank?
-    organizations = organizations.where(description: /#{Regexp.quote(contains[:description])}/i) unless contains[:description].blank?
+    organizations = Organization.all.includes(:leader)
+    organizations = organizations.where(created_at:   contains[:created_at])                      unless contains[:created_at].blank?
+    organizations = organizations.where(is_test:      (contains[:is_test] == '1'))                unless contains[:is_test].blank?
+    organizations = organizations.where(is_suspended: (contains[:is_suspended] == '1'))           unless contains[:is_suspended].blank?
+    if contains[:is_without_address].present?
+      if contains[:is_without_address] == '1'
+        organizations = organizations.where('addresses.is_for_billing' => { '$nin' => [true] })
+      else
+        organizations = organizations.where('addresses.is_for_billing' => true)
+      end
+    end
+    if contains[:is_debit_mandate_not_configured].present?
+      user_ids      = DebitMandate.configured.distinct(:user_id)
+      leader_ids    = Organization.all.distinct(:leader_id)
+      ids           = contains[:is_debit_mandate_not_configured] == '1' ? (leader_ids - user_ids) : user_ids
+      organizations = organizations.where(:leader_id.in => ids)
+    end
+    organizations = organizations.where(name:         /#{Regexp.quote(contains[:name])}/i)        unless contains[:name].blank?
+    organizations = organizations.where(description:  /#{Regexp.quote(contains[:description])}/i) unless contains[:description].blank?
     organizations
   end
 end

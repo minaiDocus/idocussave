@@ -7,8 +7,48 @@
         %h3 Liste des organisations (#{@organizations.count})
       .pull-right
         = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
+
   .row-fluid
-    .span9.box
+    .span12.box
+      .row-fluid
+        .span1
+          %h4.padding2top Filtres :
+        .span11.filter
+          = form_tag account_organizations_path, method: :get, class: 'form margin0bottom' do
+            %table.table-condensed
+              %thead
+                %tr
+                  %th= label_tag 'organization_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+                  %th= label_tag 'organization_contains[created_at][$lte]', t('mongoid.models.common.attributes.created_at')
+                  %th= label_tag 'organization_contains[is_test]', t('mongoid.models.organization.attributes.is_test') + " (#{Organization.test.count})"
+                  %th= label_tag 'organization_contains[is_suspended]', t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
+                  %th= label_tag 'organization_contains[is_without_address]', "Sans adresse ? (#{@without_address_count})"
+                  %th= label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ? (#{@debit_mandate_not_configured_count})"
+                  %th= label_tag 'organization_contains[name]', t('mongoid.models.organization.attributes.name')
+                  %th
+              %tbody
+                %tr
+                  %td
+                    .input-append.date.datepicker
+                      = text_field_tag 'organization_contains[created_at][$gte]', (params[:organization_contains][:created_at]['$gte'] rescue ''), class: 'input-small', placeholder: 'Début'
+                      %span.add-on
+                        %i.icon-th
+                  %td
+                    .input-append.date.datepicker
+                      = text_field_tag 'organization_contains[created_at][$lte]', (params[:organization_contains][:created_at]['$lte'] rescue ''), class: 'input-small', placeholder: 'Fin'
+                      %span.add-on
+                        %i.icon-th
+                  %td= select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue nil)), include_blank: true
+                  %td= select_tag 'organization_contains[is_suspended]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_suspended] rescue nil)), include_blank: true
+                  %td= select_tag 'organization_contains[is_without_address]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_without_address] rescue nil)), include_blank: true
+                  %td= select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true
+                  %td= text_field_tag 'organization_contains[name]', (params[:organization_contains][:name] rescue ''), class: 'input-small'
+                  %td
+                    = submit_tag t('filters.action'), class: 'btn btn-primary'
+                    = link_to icon(icon: 'remove'), account_organizations_path, class: 'btn', title: t('filters.reset')
+
+  .row-fluid
+    .span12.box
       = render partial: 'list_options'
       .row-fluid
         .span12
@@ -16,8 +56,10 @@
             %thead
               %tr
                 %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test') + " (#{Organization.test.count})"
-                %th= sortable :is_suspended, t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
+                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test')
+                %th= sortable :is_suspended, t('mongoid.models.organization.attributes.is_suspended')
+                %th Sans adresse ?
+                %th Prélèvement non configuré ?
                 %th= sortable :name, t('mongoid.models.organization.attributes.name')
                 %th= t('mongoid.models.organization.attributes.leader')
                 %th Action
@@ -27,6 +69,8 @@
                   %td= l(organization.created_at)
                   %td= organization.is_test ? icon_ok : ''
                   %td= organization.is_suspended ? icon_ok : ''
+                  %td= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? icon_ok : ''
+                  %td= organization.leader.try(:debit_mandate).try(:is_configured?) ? '' : icon_ok
                   %td= link_to organization.name, account_organization_path(organization)
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
                   %td
@@ -35,5 +79,3 @@
                     - else
                       = link_to 'Suspendre', suspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
       = render partial: 'list_options'
-    .span3
-      = render partial: 'sidebar'
