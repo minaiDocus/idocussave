@@ -1,8 +1,9 @@
 .nav-collapse
   %ul{ :class=>'nav' }
-    - path = @user.try(:organization).try(:is_suspended) ? account_profile_path(panel: 'payment_management') : account_profile_path
-    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
-      = link_to 'Mon compte', path
+    - if !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
+      - path = @user.try(:organization).try(:is_suspended) ? account_profile_path(panel: 'payment_management') : account_profile_path
+      %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
+        = link_to 'Mon compte', path
     - unless @user.try(:organization).try(:is_suspended)
       - if @user.is_admin
         %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
