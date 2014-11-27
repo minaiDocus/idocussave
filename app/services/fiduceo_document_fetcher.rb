@@ -43,7 +43,7 @@ class FiduceoDocumentFetcher
     end
 
     def fetch
-      prepare_retryable_retrievers
+      # prepare_retryable_retrievers
       transactions = FiduceoTransaction.not_processed.entries
       transactions += FiduceoRetriever.not_processed.map do |retriever|
         retriever.transactions.desc(:created_at).first
