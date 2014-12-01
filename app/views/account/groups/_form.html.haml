@@ -18,15 +18,17 @@
             %label
               %b= t('mongoid.models.group.attributes.collaborators')
             %br
+            - members = @group.collaborators.entries
             - @organization.collaborators.asc(:code).each do |collaborator|
-              = check_box_tag 'group[member_tokens][]', collaborator.id, @group.collaborators.include?(collaborator), id: "group_member_tokens_#{collaborator.id}"
+              = check_box_tag 'group[member_tokens][]', collaborator.id, members.include?(collaborator), id: "group_member_tokens_#{collaborator.id}"
               %label{ for: "group_member_tokens_#{collaborator.id}" }= collaborator.info
           .span6
             %label
               %b= t('mongoid.models.group.attributes.customers')
             %br
+            - members = @group.customers.entries
             - @organization.customers.asc(:code).each do |customer|
-              = check_box_tag 'group[member_tokens][]', customer.id, @group.customers.include?(customer), id: "group_member_tokens_#{customer.id}"
+              = check_box_tag 'group[member_tokens][]', customer.id, members.include?(customer), id: "group_member_tokens_#{customer.id}"
               %label{ for: "group_member_tokens_#{customer.id}" }= customer.info
           = hidden_field_tag 'group[member_tokens][]', ''
   - else
@@ -35,8 +37,9 @@
       .control-group
         %label.control-label= t('mongoid.models.group.attributes.customers')
         .controls
+          - members = @group.customers.entries
           - @user.customers.asc(:code).each do |customer|
-            = check_box_tag 'group[customer_tokens][]', customer.id, @group.customers.include?(customer), id: "group_customer_tokens_#{customer.id}"
+            = check_box_tag 'group[customer_tokens][]', customer.id, members.include?(customer), id: "group_customer_tokens_#{customer.id}"
             %label{ for: "group_customer_tokens_#{customer.id}" }= customer.info
           = hidden_field_tag 'group[customer_tokens][]', ''
   .form-actions.margin0bottom
