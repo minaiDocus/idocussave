@@ -1,11 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class Account::ProfilesController < Account::AccountController
   def show
-    @external_file_storage = @user.find_or_create_external_file_storage
-    if @user.my_organization
-      @invoices = @user.my_organization.invoices.desc(:created_at).page(params[:page])
-    else
-      @invoices = @user.invoices.desc(:created_at).page(params[:page])
+    if @user.active?
+      @external_file_storage = @user.find_or_create_external_file_storage
+      if @user.my_organization
+        @invoices = @user.my_organization.invoices.desc(:created_at).page(params[:page])
+      else
+        @invoices = @user.invoices.desc(:created_at).page(params[:page])
+      end
     end
     @active_panel = params[:panel] || 'change_password'
   end
@@ -21,7 +23,7 @@ class Account::ProfilesController < Account::AccountController
       else
         flash[:alert] = "Votre ancien mot de passe n'a pas été saisi correctement"
       end
-    else
+    elsif @user.active?
       params[:user].reject!{ |key,value| key == 'password' || key == 'password_confirmation' }
       if @user.update_attributes(user_params)
         flash[:success] = "Modifié avec succès."

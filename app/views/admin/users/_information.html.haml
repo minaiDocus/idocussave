@@ -7,6 +7,9 @@
           %th.first= t('mongoid.models.common.attributes.created_at')
           %td= l(@user.created_at)
         %tr
+          %th.first= t('mongoid.models.user.attributes.inactive_at')
+          %td= l(@user.inactive_at) rescue nil
+        %tr
           %th.first= t('mongoid.attributes.user.email')
           %td= render partial: 'text_field', locals: { value: @user.email, name: 'user[email]' }
         %tr
@@ -46,14 +49,6 @@
       .span12
         %table.table.table-striped.table-bordered.table-condensed
           %tbody
-            %tr.user_status
-              %th
-                %span= t('mongoid.models.user.attributes.is_inactive_since')
-              %td
-                .input-prepend.date.datepicker
-                  %span.add-on
-                    %i.icon-th
-                  = text_field_tag 'user[inactive_at]', @user.inactive_at.try(:strftime, "%Y-%m-%d"), class: 'select-date'
             %tr
               %th= t('mongoid.models.user.attributes.is_prescriber')
               %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber

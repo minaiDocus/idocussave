@@ -3,11 +3,14 @@
 
   .row-fluid
     .span12.panel
-      .pull-left
-        %h2= @user.info + (@user.inactive_at ? ' (Inactif)' : '')
+      .row-fluid
+        .span6
+          - if @user.inactive?
+            %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
+          %h2= @user.info
 
-      .pull-right
-        = link_to icon(icon: 'refresh') + ' ' + 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
+        .span6.alignright
+          = link_to icon(icon: 'refresh') + ' ' + 'Réinitialiser le mot de passe', send_reset_password_instructions_admin_user_path(@user), method: :post, data: { confirm: t('actions.confirm') }, class: 'btn btn-primary', title: 'Envoie un email'
   .row-fluid
     #information.span12
       = render partial: 'information'

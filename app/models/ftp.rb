@@ -40,6 +40,12 @@ class Ftp
     is_configured
   end
 
+  def reset_session
+    reset_info
+    is_configured = false
+    save
+  end
+
   def reset_info
     self.host = 'ftp://ftp.example.com'
     self.login = 'login'

@@ -2,6 +2,7 @@
 class Account::FileStorageAuthorizationsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_someone
+  before_filter :verify_if_someone_is_active
   before_filter :load_url_path
 
   def edit
@@ -38,6 +39,13 @@ private
     id = params[:collaborator_id] || params[:customer_id]
     @someone = @organization.members.find_by_slug id
     raise Mongoid::Errors::DocumentNotFound.new(User, id) unless @someone
+  end
+
+  def verify_if_someone_is_active
+    if @someone.inactive?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path(@organization)
+    end
   end
 
   def load_url_path

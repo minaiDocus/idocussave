@@ -2,6 +2,7 @@
 class Account::JournalsController < Account::OrganizationController
   before_filter :load_customer, except: %w(index)
   before_filter :verify_rights
+  before_filter :verify_if_customer_is_active
   before_filter :load_journal, only: %w(edit update destroy)
   before_filter :verify_max_number, only: %w(new create select copy)
 
@@ -109,6 +110,13 @@ private
     is_ok = true if !is_ok && !@customer && @user.can_manage_journals?
     is_ok = true if !is_ok && @customer && @user.rights.is_customer_journals_management_authorized
     unless is_ok
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path(@organization)
+    end
+  end
+
+  def verify_if_customer_is_active
+    if @customer && @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

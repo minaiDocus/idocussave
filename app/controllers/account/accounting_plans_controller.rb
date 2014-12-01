@@ -2,6 +2,7 @@
 class Account::AccountingPlansController < Account::OrganizationController
   before_filter :verify_access
   before_filter :load_customer
+  before_filter :verify_if_customer_is_active
   before_filter :load_accounting_plan
   before_filter :verify_rights
 
@@ -66,6 +67,13 @@ private
   def load_customer
     @customer = customers.find_by_slug params[:customer_id]
     raise Mongoid::Errors::DocumentNotFound.new(User, params[:customer_id]) unless @customer
+  end
+
+  def verify_if_customer_is_active
+    if @customer.inactive?
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path(@organization)
+    end
   end
 
   def load_accounting_plan

@@ -18,7 +18,7 @@ module DocumentsHelper
   def active_users(users, year)
     users.select do |u|
       if u.created_at.year <= year
-        u.active ? true : u.inactive_at.year >= year
+        u.active? ? true : u.inactive_at.year >= year
       else
         false
       end

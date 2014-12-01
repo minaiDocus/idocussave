@@ -1,4 +1,4 @@
-.container-fluid.padding12bottom
+.container-fluid{ class: (@user.active? ? 'padding12bottom' : '') }
   .alerts
     = render partial: 'shared/messages'
 
@@ -17,29 +17,31 @@
         = label_tag :per_page, "par :", :class => "pull-left margin1left"
         = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
 
-        .pull-right
-          - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
-          - # |
-          %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
-            %span.icon.icon-plus
-            Ajouter des documents
+        - if @user.active?
+          .pull-right
+            - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
+            - # |
+            %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
+              %span.icon.icon-plus
+              Ajouter des documents
   .row-fluid
     .span3
       #documentslist.well.qtip-target
         .header
           %h3.pull-left
             #{@packs_count} document(s)
-          .actiongroup.pull-right
-            - if current_user.is_admin
-              %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
-                %i.icon-share-alt
-            %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
-              %i.icon-tag
-            |
-            %a.do-selectAll.do-tooltip{:href => "#", :title => "Tous"}
-              %i.icon-ok
-            %a.do-unselectAll.do-tooltip{:href => "#", :title => "Aucun"}
-              %i.icon-ban-circle
+          - if @user.active?
+            .actiongroup.pull-right
+              - if current_user.is_admin
+                %a.do-tooltip.delivery{ "data-toggle"=>"modal", :href => "#shareDialog", :title => "Envoyer vers mon stockage externe" }
+                  %i.icon-share-alt
+              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#documentsTaggingDialog", :title => "Tagger" }
+                %i.icon-tag
+              |
+              %a.do-selectAll.do-tooltip{:href => "#", :title => "Tous"}
+                %i.icon-ok
+              %a.do-unselectAll.do-tooltip{:href => "#", :title => "Aucun"}
+                %i.icon-ban-circle
         .content
           %ul.margin3top.margin0left
             != render :partial => "/account/documents/pack", :collection => @packs
@@ -52,14 +54,15 @@
           .header.span12.margin0left
             %h3.pull-left
               Pages
-            .actiongroup.pull-right
-              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
-                %i.icon-tag
-              |
-              %a.do-selectAllPages.do-tooltip{:href => "#", :title => "Tous"}
-                %i.icon-ok
-              %a.do-unselectAllPages.do-tooltip{:href => "#", :title => "Aucun"}
-                %i.icon-ban-circle
+            - if @user.active?
+              .actiongroup.pull-right
+                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#pagesTaggingDialog", :title => "Tagger" }
+                  %i.icon-tag
+                |
+                %a.do-selectAllPages.do-tooltip{:href => "#", :title => "Tous"}
+                  %i.icon-ok
+                %a.do-unselectAllPages.do-tooltip{:href => "#", :title => "Aucun"}
+                  %i.icon-ban-circle
           .content.pages
             %ul.margin0
         #panel2{ :style => "display: none" }
@@ -78,36 +81,39 @@
               %a#pageInformation.do-popover-left{"data-content" => "", :href => "#", :style => "margin-right:5px;"}
                 %span.label.label-info
                   tags
-              |
-              %a.do-selectSinglePage.do-tooltip{:href => "#", :title => "Sélectionner"}
-                %i.icon-ok
-              %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
-                %i.icon-ban-circle
+              - if @user.active?
+                |
+                %a.do-selectSinglePage.do-tooltip{:href => "#", :title => "Sélectionner"}
+                  %i.icon-ok
+                %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
+                  %i.icon-ban-circle
               |
               %a{:href => "#", :class=>"backToPanel1"}
                 Vue par vignette
           .content
             %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
 
-  .selection-fixed-bottom
-    .row-fluid
-      .span12
-        #selectionlist.well
-          .header
-            %h3.pull-left
-              Sélections
-            .actiongroup.pull-right
-              %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
-                %i.icon-tag
-              %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
-                %i.icon-remove
-              |
-              %a{ "data-toggle"=>"modal", :href => "#compositionDialog" }
-                Composer
-          .content.pages.margin3top
-            %ul
-              - @is_composition = true
-              != render :partial => "/account/documents/document", :collection => @composition
+  - if @user.active?
+    .selection-fixed-bottom
+      .row-fluid
+        .span12
+          #selectionlist.well
+            .header
+              %h3.pull-left
+                Sélections
+              .actiongroup.pull-right
+                %a.do-tooltip{ "data-toggle"=>"modal", :href => "#selectionTaggingDialog", :title => "Tagger" }
+                  %i.icon-tag
+                %a.do-tooltip.removeAllSelection{ :href => "#", :title => "Tout retirer" }
+                  %i.icon-remove
+                |
+                %a{ "data-toggle"=>"modal", :href => "#compositionDialog" }
+                  Composer
+            .content.pages.margin3top
+              %ul
+                - @is_composition = true
+                != render :partial => "/account/documents/document", :collection => @composition
 
-!= render :partial => "/account/documents/dialog_box"
-!= render "help"
+- if @user.active?
+  = render :partial => "/account/documents/dialog_box"
+= render "help"

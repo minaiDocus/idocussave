@@ -114,6 +114,7 @@ private
     users = User.not_operators
     users = users.where(is_admin:        (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
     users = users.where(is_prescriber:   (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
+    users = contains[:is_inactive] == '1' ? users.closed : users.active                    if contains[:is_inactive].present?
     users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i)        if contains[:first_name].present?
     users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)         if contains[:last_name].present?
     users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)             if contains[:email].present?

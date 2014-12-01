@@ -3,6 +3,7 @@ class Account::AccountController < ApplicationController
   before_filter :login_user!
   before_filter :load_user_and_role
   before_filter :verify_suspension
+  before_filter :verify_if_active
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
 
   layout "inner"
@@ -52,6 +53,15 @@ protected
 
   def fiduceo_client
     @fiduceo_client ||= Fiduceo::Client.new @user.fiduceo_id, cache: true
+  end
+
+private
+
+  def verify_if_active
+    if @user.inactive? && !controller_name.in?(%w(profiles documents))
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_documents_path
+    end
   end
 
 public

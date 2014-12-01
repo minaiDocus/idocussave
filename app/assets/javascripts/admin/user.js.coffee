@@ -56,19 +56,3 @@ jQuery ->
     prompt.addClass('hide')
     original.removeClass('hide')
     return false
-
-  $('.select-date').change ->
-    data = {}
-    value = $(this).val()
-    format = /\d{4}-\d{1,2}-\d{1,2}/
-    if value == "" || value.match(format)
-      if value == ""
-        data = { _method: 'PUT', user: { is_inactive: 0 } }
-      else
-        data = { _method: 'PUT', user: { is_inactive: 1, inactive_at: value } }
-
-      $.ajax
-        url: '/admin/users/' + user_id,
-        data: data,
-        datatype: 'json',
-        type: 'POST'

@@ -1,0 +1,12 @@
+#customer.account_close_confirm
+  .row-fluid
+    .span12.box
+      %h3= link_to @customer, account_organization_customer_path(@organization, @customer)
+
+  .row-fluid
+    .span12.box.aligncenter
+      .warning.margin1top.margin2bottom
+        Cette action est irréversible, voulez-vous réellement clôturer le dossier "#{@customer.info}" ?
+      = form_tag close_account_account_organization_customer_path(@organization, @customer), method: :put, class: 'form form-horizontal'  do
+        = submit_tag 'Clôturer le dossier', class: 'btn btn-danger', confirm: t('actions.confirm')
+        = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer), class: 'btn'

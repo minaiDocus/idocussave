@@ -323,9 +323,8 @@ fr:
           first_name: Prénom
           last_name: Nom
           email: Email
-          inactive_at: Est inactif depuis le
-          is_inactive: Est inactif ?
-          is_inactive_since: Est inactif depuis le
+          inactive_at: Dossier clôturé au
+          is_inactive: Dossier clôturé ?
           is_admin: Est administrateur ?
           is_organization_admin: Est administrateur de l'organisation ?
           is_prescriber: Est collaborateur ?

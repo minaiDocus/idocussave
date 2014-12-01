@@ -11,6 +11,7 @@
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
+            %th
             %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { user_contains: user_contains }
             %th= sortable :updated_at, t('mongoid.models.common.attributes.updated_at'), { user_contains: user_contains }
             %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier'), { user_contains: user_contains }
@@ -18,6 +19,7 @@
         %tbody
           - @users.each do |user|
             %tr
+              %td= user.inactive? ? icon_not_ok : nil
               %td= l(user.created_at)
               %td= l(user.updated_at)
               %td= user.info

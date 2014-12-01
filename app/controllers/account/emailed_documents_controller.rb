@@ -14,7 +14,7 @@ class Account::EmailedDocumentsController < Account::AccountController
 private
 
   def verify_rights
-    if @user.is_prescriber
+    if @user.is_prescriber || @user.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
     end

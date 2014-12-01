@@ -84,7 +84,6 @@ class User
   field :is_stamp_background_filled,     type: Boolean, default: false
 
   field :is_access_by_token_active,      type: Boolean, default: true
-  field :is_inactive,                    type: Boolean, default: false
 
   field :is_dematbox_authorized,         type: Boolean, default: false
 
@@ -150,7 +149,7 @@ class User
   has_many :pre_assignment_deliveries
   has_one :composition
   has_one :debit_mandate
-  has_one :external_file_storage,                                                               autosave: true
+  has_one :external_file_storage,                                               autosave: true, dependent: :destroy
   has_one :csv_outputter,                                                                       autosave: true
   has_one :accounting_plan
   has_one :options,             class_name: 'UserOptions',              inverse_of: 'user',     autosave: true
@@ -166,6 +165,7 @@ class User
   scope :not_operators,               where: { :is_operator.in => [false, nil] }
   scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
   scope :active,                      where: { inactive_at: nil }
+  scope :closed,                      where: { :inactive_at.nin => [nil] }
   scope :centralized,                 where: { is_centralized: true }
   scope :not_centralized,             where: { is_centralized: false }
   scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
@@ -175,10 +175,6 @@ class User
   accepts_nested_attributes_for :csv_outputter
   accepts_nested_attributes_for :organization_rights
   accepts_nested_attributes_for :options
-
-  def active
-    inactive_at == nil
-  end
 
   def name
     [self.first_name,self.last_name].join(' ') || self.email
@@ -229,12 +225,12 @@ class User
     end
   end
 
-  def is_active?
-    !is_inactive?
+  def active?
+    !inactive?
   end
 
-  def is_inactive?
-    self.is_inactive
+  def inactive?
+    self.inactive_at.present?
   end
 
   def find_or_create_scan_subscription
@@ -341,14 +337,6 @@ class User
     update_attribute(:authentication_token, get_new_authentication_token)
   end
 
-  def set_inactive_at
-    if is_inactive? && self.inactive_at.presence.nil?
-      self.inactive_at = Time.now
-    elsif is_active?
-      self.inactive_at = nil
-    end
-  end
-
   def format_name
     self.first_name = self.first_name.split.map(&:capitalize).join(" ") rescue ""
     self.last_name = self.last_name.upcase rescue ""
@@ -360,6 +348,10 @@ class User
       address.updated_at ||= Time.now
       address.save
     end
+  end
+
+  def active_for_authentication?
+    super && (active? || (inactive_at + 18.months) > Time.now)
   end
 
 private

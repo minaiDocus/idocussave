@@ -15,10 +15,10 @@ class ExternalFileStorage
   TIFF      = 3
 
   belongs_to :user
-  has_one :dropbox_basic, autosave: true
-  has_one :google_doc,    autosave: true
-  has_one :ftp,           autosave: true
-  has_one :box,           autosave: true
+  has_one :dropbox_basic, autosave: true, dependent: :destroy
+  has_one :google_doc,    autosave: true, dependent: :destroy
+  has_one :ftp,           autosave: true, dependent: :destroy
+  has_one :box,           autosave: true, dependent: :destroy
 
   accepts_nested_attributes_for :dropbox_basic, :google_doc, :ftp, :box
 

@@ -66,6 +66,8 @@ Idocus::Application.routes.draw do
         put 'update_ibiza',          on: :member
         get 'edit_period_options',   on: :member
         put 'update_period_options', on: :member
+        get 'account_close_confirm', on: :member
+        put 'close_account',         on: :member
         resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan do
           member do

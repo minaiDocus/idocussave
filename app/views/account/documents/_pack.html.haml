@@ -2,8 +2,9 @@
   %span.action
     %a.do-popover{ "data-content" => html_pack_info(pack), :href => "#" }
       %i.icon-info-sign
-    %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
-      %i.icon-ok
+    - if @user.active?
+      %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }
+        %i.icon-ok
     %a.do-tooltip{ :href => pack.content_url, :class => "download", :title => "Télécharger", :target => "_blank" }
       %i.icon-download-alt
     %a.do-tooltip{ :href => archive_account_document_path(pack.id), :title => "Télécharger une archive zip", :class => "download" }

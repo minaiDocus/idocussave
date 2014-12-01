@@ -27,6 +27,8 @@
         %label{ for: "group_ids_#{group.id}" }= group
     - else
       %i [Aucun groupe]
+    = label_tag 'user_contains[is_inactive]', t('mongoid.models.user.attributes.is_inactive')
+    = select_tag 'user_contains[is_inactive]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_inactive] rescue '')), include_blank: true
     %br
     %br
     = submit_tag t('filters.action'), class: 'btn btn-primary'

@@ -1,7 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, only: %w(show edit update update_ibiza edit_period_options update_period_options)
+  before_filter :load_customer, except: %w(index new create search_by_code)
   before_filter :verify_rights, except: 'index'
+  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options account_close_confirm close_account)
 
   def index
     respond_to do |format|
@@ -74,6 +75,15 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+  def account_close_confirm
+  end
+
+  def close_account
+    StopSubscriptionService.new(@customer).execute
+    flash[:success] = 'Dossier clôturé avec succès.'
+    redirect_to account_organization_customer_path(@organization, @customer)
+  end
+
   def search_by_code
     tags = []
     full_info = params[:full_info].present?
@@ -97,7 +107,17 @@ private
   end
 
   def verify_rights
-    unless can_manage?
+    authorized = true
+    authorized = false unless can_manage?
+    authorized = false if action_name.in?(%w(account_close_confirm close_account)) && !@user.is_admin
+    unless authorized
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_organization_path(@organization)
+    end
+  end
+
+  def verify_if_customer_is_active
+    if @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
@@ -183,6 +203,7 @@ private
       params[:group_ids].delete_if { |e| !e.to_s.in? ids }
       users = users.any_in(group_ids: params[:group_ids])
     end
+    users = contains[:is_inactive] == '1' ? users.closed : users.active if contains[:is_inactive].present?
     users
   end
 

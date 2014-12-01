@@ -9,7 +9,6 @@ class UserObserver < Mongoid::Observer
     # FIXME use another way
     user.set_timestamps_of_addresses
     user.format_name
-    user.set_inactive_at
   end
 
   def before_destroy(user)
