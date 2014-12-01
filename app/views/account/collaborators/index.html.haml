@@ -4,7 +4,7 @@
       .row-fuild
         .span12
           .pull-left
-            %h3 Liste des collaborateurs
+            %h3 Liste des collaborateurs (#{@collaborators.count})
           .pull-right
             = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 

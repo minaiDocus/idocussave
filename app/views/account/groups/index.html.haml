@@ -2,7 +2,7 @@
   .row-fluid.margin1bottom
     .span12.box
       .pull-left
-        %h3 Liste des groupes
+        %h3 Liste des groupes (#{@groups.count})
       .pull-right
         - if is_leader?
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
