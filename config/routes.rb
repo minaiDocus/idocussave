@@ -178,7 +178,6 @@ Idocus::Application.routes.draw do
     resources :compositions do
       delete 'reset', :on => :collection
     end
-    resources :backups
     resource :dematbox
 
     resources :retrievers, as: :fiduceo_retrievers do

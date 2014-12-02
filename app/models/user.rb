@@ -132,7 +132,6 @@ class User
   has_many :invoices
   has_many :credits
   has_many :subscriptions
-  has_many :backups
   has_many :remote_files,                                                                       dependent: :destroy
   has_many :events
   has_many :pack_reports,       class_name: 'Pack::Report',             inverse_of: :user
