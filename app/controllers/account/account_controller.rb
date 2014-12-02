@@ -58,7 +58,7 @@ protected
 private
 
   def verify_if_active
-    if @user.inactive? && !controller_name.in?(%w(profiles documents))
+    if @user && @user.inactive? && !controller_name.in?(%w(profiles documents))
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
     end
