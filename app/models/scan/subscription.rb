@@ -120,7 +120,7 @@ class Scan::Subscription < Subscription
   end
 
   def update_current_period
-    if (self.user && self.user.try(:active)) || self.organization
+    if (self.user && self.user.active?) || self.organization
       if self.organization
         options = self.product_option_orders.where(:group_position.gte => 1000)
       else
