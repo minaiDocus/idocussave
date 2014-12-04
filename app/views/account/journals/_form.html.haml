@@ -1,7 +1,10 @@
 - is_disabled = !is_preassignment_authorized?
 = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :name
-  = f.input :pseudonym, collection: journal_pseudonym_for_select, disabled: !@organization.ibiza.try(:is_configured?), hint: 'si différent de "Code journal" ci-dessus'
+  - if @customer && @organization.ibiza.try(:is_configured?)
+    = f.input :pseudonym, collection: journal_pseudonym_for_select, hint: 'si différent de "Code journal" ci-dessus'
+  - else
+    = f.input :pseudonym, hint: 'si différent de "Code journal" ci-dessus'
   = f.input :description
   = f.input :domain, collection: journal_domain_for_select, include_blank: false
   = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
