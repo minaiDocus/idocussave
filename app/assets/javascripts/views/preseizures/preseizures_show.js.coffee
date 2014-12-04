@@ -58,7 +58,7 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
       content += "</td></tr>"
       content += "<tr><td colspan=\"2\"><b>Message d'erreur d'envoi dans Ibiza :</b><br>"
       if @model.get('delivery_message') != null
-        content += @model.get('delivery_message')
+        content += @model.get('delivery_message').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       content += "</td></tr>"
     content += "</table>"
     content
