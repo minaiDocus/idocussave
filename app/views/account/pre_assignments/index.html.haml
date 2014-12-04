@@ -5,9 +5,10 @@
         .span12
           .pull-left
             %h3 Pré-affectations
-          - if is_leader?
-            .pull-right
-              = icon_link_to "#settings", { icon: 'cog' }, class: 'btn settings', data: { toggle: 'modal' }, title: 'Paramètres'
+          .pull-right
+            = link_to 'Livraisons en erreurs', account_organization_pre_assignment_delivery_errors_path(@organization), class: 'btn btn-primary'
+            - if is_leader?
+              = icon_link_to "#settings", { icon: 'cog' }, class: 'btn settings margin2left', data: { toggle: 'modal' }, title: 'Paramètres'
   .row-fluid
     #pack_reports.span3.box
       %h4.aligncenter Lots

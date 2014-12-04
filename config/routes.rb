@@ -101,6 +101,7 @@ Idocus::Application.routes.draw do
         get 'refresh_users_cache', on: :member
       end
       resources :pre_assignments
+      resources :pre_assignment_delivery_errors, only: :index
       resources :pack_reports do
         post 'deliver', on: :member
       end

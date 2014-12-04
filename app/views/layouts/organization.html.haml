@@ -55,7 +55,7 @@
                   = link_to 'Journaux comptables', account_organization_journals_path(@organization)
               %li{ class: (controller_name == 'default_subscriptions' ? 'active' : '') }
                 = link_to 'Abonnement par défaut', account_organization_default_subscription_path(@organization)
-              %li{ class: (controller_name == 'pre_assignments' ? 'active' : '') }
+              %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors)) ? 'active' : '') }
                 = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
         .span10
           != yield
@@ -71,5 +71,5 @@
       = javascript_include_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = javascript_include_tag 'account/csv_outputters'
-    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings))
+    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors))
       = javascript_include_tag "account/#{controller_name}"

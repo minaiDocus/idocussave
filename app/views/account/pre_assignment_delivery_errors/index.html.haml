@@ -1,0 +1,30 @@
+#pre_assignment_delivery_errors
+  .row-fluid
+    .span12.box
+      .pull-left
+        %h3 Liste des livraisons de pré-affectation en erreurs (#{@errors.count})
+      .pull-right
+        = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
+  .row-fluid
+    .span12.box
+      %table.table.table-striped.table-condensed.margin0bottom
+        %thead
+          %tr
+            %th.date Date
+            %th.name Lot
+            %th.count Nb.
+            %th.message Erreur
+        %tbody
+          - @errors.each_with_index do |object, index|
+            %tr
+              %td.date
+                - if object.date
+                  - if object.date.today?
+                    = l(object.date, format: '%H:%M')
+                  - else
+                    = l(object.date, format: '%d %b %Y %H:%M')
+                - else
+                  \-
+              %td.name= object.name
+              %td.count= object.document_count
+              %td.message= object.message == false ? '-' : object.message
