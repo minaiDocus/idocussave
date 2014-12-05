@@ -17,6 +17,8 @@ class TempPack
   index :document_bundling_count
   index :document_bundle_needed_count
 
+  belongs_to :organization
+  belongs_to :user
   belongs_to :document_delivery
   has_many :temp_documents, dependent: :destroy
 
@@ -31,12 +33,17 @@ class TempPack
     end
 
     def find_or_create_by_name(name)
-      find_by_name(name) || TempPack.create(name: name)
+      if (temp_pack=find_by_name(name))
+        temp_pack
+      else
+        temp_pack = TempPack.new
+        temp_pack.name = name
+        temp_pack.user = User.find_by_code name.split[0]
+        temp_pack.organization = temp_pack.user.try(:organization)
+        temp_pack.save
+        temp_pack
+      end
     end
-  end
-
-  def user
-    @user ||= User.find_by_code name.split[0]
   end
 
   def journal
@@ -72,6 +79,8 @@ class TempPack
 
     if options[:delivery_type] != 'fiduceo' || !temp_document.persisted?
       temp_document.temp_pack           = self
+      temp_document.user                = user
+      temp_document.organization        = organization
       temp_document.original_file_name  = options[:original_file_name]
       temp_document.content             = file
       temp_document.position            = next_document_position unless temp_document.position

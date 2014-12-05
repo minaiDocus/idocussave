@@ -53,6 +53,8 @@ class Organization
   has_many   :remote_files
   has_many   :events
   has_many   :pre_assignment_deliveries
+  has_many   :temp_packs
+  has_many   :temp_documents
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label

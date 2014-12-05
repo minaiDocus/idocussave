@@ -52,6 +52,7 @@ class TempDocument
   index :state
   index :is_an_original
 
+  belongs_to :organization
   belongs_to :user
   belongs_to :temp_pack
   belongs_to :document_delivery
