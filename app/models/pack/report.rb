@@ -112,6 +112,8 @@ class Pack::Report
                     expense                        = Pack::Report::Expense.new
                     expense.report                 = report
                     expense.piece                  = piece
+                    expense.user                   = report.user
+                    expense.organization           = report.organization
                     expense.amount_in_cents_wo_vat = to_float(part.css('ht').first.try(:content))
                     expense.amount_in_cents_w_vat  = to_float(part.css('ttc').first.try(:content))
                     expense.vat                    = to_float(part.css('tva').first.try(:content))
@@ -180,6 +182,8 @@ class Pack::Report
                       preseizure                 = Pack::Report::Preseizure.new
                       preseizure.report          = report
                       preseizure.piece           = piece
+                      preseizure.user            = report.user
+                      preseizure.organization    = report.organization
                       preseizure.piece_number    = part.css('numero_piece').first.try(:content)
                       preseizure.amount          = to_float(part.css('montant_origine').first.try(:content))
                       preseizure.currency        = part.css('devise').first.try(:content)

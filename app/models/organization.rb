@@ -49,7 +49,9 @@ class Organization
   has_many   :invoices
   has_many   :account_book_types
   has_many   :reminder_emails,    autosave: true
-  has_many   :reports,            class_name: 'Pack::Report',       inverse_of: 'organization'
+  has_many   :reports,            class_name: 'Pack::Report'
+  has_many   :preseizures,        class_name: 'Pack::Report::Preseizure'
+  has_many   :expenses,           class_name: 'Pack::Report::Expense'
   has_many   :remote_files
   has_many   :events
   has_many   :pre_assignment_deliveries

@@ -11,6 +11,8 @@
     %li= link_to 'D. Jobs', '/admin/delayed_job'
     %li{ class: ('active' if controller_name == 'reporting') }
       = link_to 'Rep.', '/admin/reporting'
+    %li{ class: ('active' if controller_name == 'process_reporting') }
+      = link_to 'Rep. T.', '/admin/process_reporting'
     %li{ class: ('active' if controller_name == 'invoices') }
       = link_to 'Fac.', admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }

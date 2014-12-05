@@ -1,0 +1,47 @@
+#process_reporting
+  .row-fluid.margin1bottom
+    .span12
+      %h3 Reporting des traitements de #{l(@time, format: '%B %Y')}
+  .row-fluid
+    .span12
+      %table.table.table-condensed.table-striped.table-bordered
+        %thead
+          %tr
+            %th.date
+              = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
+              \-
+              = l(@time, format: '%b %Y').capitalize
+              \-
+              = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
+            %th Feuilles numérisées
+            %th Pièces regroupées
+            %th Pré-affectées
+            %th Envois de Kits
+        %tbody
+          - total = [0,0,0,0]
+          - @organizations.each do |organization|
+            - customers = organization.customers.entries
+            %tr
+              %td.organization= link_to organization.name, [:account, organization]
+              - sum = sum_of_scanned_sheets(customers, @time)
+              - total[0] += sum
+              %td= sum
+              - sum = sum_of_bundled_pieces(organization, @time)
+              - total[1] += sum
+              %td= sum
+              - sum = sum_of_pre_assignments(organization, @time)
+              - total[2] += sum
+              %td= sum
+              - sum = sum_of_kits(customers, @time)
+              - total[3] += sum
+              %td= sum
+          %tr
+            %td.total{ rowspan: 4 } Total
+            %td
+              %b= total[0]
+            %td
+              %b= total[1]
+            %td
+              %b= total[2]
+            %td
+              %b= total[3]

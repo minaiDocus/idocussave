@@ -66,14 +66,15 @@ class OperationService
           operations.each do |operation|
             counter += 1
             preseizure = Pack::Report::Preseizure.new
-            preseizure.user        = user
-            preseizure.report      = pack_report
-            preseizure.operation   = operation
-            preseizure.type        = 'FLUX'
-            preseizure.name        = pack_report.name
-            preseizure.date        = operation.date
-            preseizure.position    = counter
-            preseizure.observation = operation.label
+            preseizure.organization = user.organization
+            preseizure.user         = user
+            preseizure.report       = pack_report
+            preseizure.operation    = operation
+            preseizure.type         = 'FLUX'
+            preseizure.name         = pack_report.name
+            preseizure.date         = operation.date
+            preseizure.position     = counter
+            preseizure.observation  = operation.label
             preseizure.category_id = operation.category_id
             preseizure.save
 

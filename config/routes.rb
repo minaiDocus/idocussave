@@ -271,6 +271,7 @@ Idocus::Application.routes.draw do
   end
 
   match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
+  match '/admin/process_reporting(/:year)(/:month)', controller: 'Admin::ProcessReporting', action: :index
 
   match '*a', :to => 'errors#routing'
 end
