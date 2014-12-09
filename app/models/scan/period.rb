@@ -271,7 +271,7 @@ class Scan::Period
   def get_preseizure_pieces
     nb = 0
     documents.each do |document|
-      nb += document.report.try(:preseizures).try(:count) || 0
+      nb += document.report.preseizures.where(:piece_id.nin => [nil]).count if document.report
     end
     nb
   end
