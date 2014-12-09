@@ -17,14 +17,13 @@ class EvaluateSubscriptionService
     @subscription           = subscription
     @collaborator           = collaborator
     @user                   = @subscription.user
-    @is_notification_active = !collaborator.is_admin
     @prev_options           = prev_options
   end
 
   def execute
     options_to_notify = []
     @subscription.product_option_orders.each do |product_option|
-      if @is_notification_active && product_option.notify && !@prev_options.include?(product_option)
+      if product_option.notify && !@prev_options.include?(product_option)
         options_to_notify << "#{product_option.group_title} : #{product_option.title}"
       end
       case product_option.action_name
