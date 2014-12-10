@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class PackMailer < ActionMailer::Base
-  default from: 'do-not-reply@idocus.com'
+  default from: 'notification@idocus.com'
 
   def new_document_available(user, packs, time=(Time.now - 12.hours))
     @user  = user

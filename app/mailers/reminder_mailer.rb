@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ReminderMailer < ActionMailer::Base
   helper :application
-  default from: 'do-not-reply@idocus.com'
+  default from: 'notification@idocus.com'
 
   def remind mail, user
     @content = mail.content
