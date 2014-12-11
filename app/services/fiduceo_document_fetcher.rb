@@ -81,7 +81,7 @@ class FiduceoDocumentFetcher
       if retriever
         if transaction.wait_for_user_action? && retriever.processing?
           retriever.wait_for_user_action
-        elsif transaction.success? && retriever.processing?
+        elsif transaction.success? && (retriever.processing? || retriever.wait_for_user_action?)
           if retriever.is_selection_needed
             if retriever.provider?
               if transaction.retrieved_document_ids.count > 0
