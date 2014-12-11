@@ -26,11 +26,9 @@ class ReminderEmail
     if clients.any?
       clients.each do |client|
         if client.is_reminder_email_active
-          now = Time.now
-          name = "#{client.code} #{now.year}#{now.month} all"
-          period = client.periods.last
+          period = client.periods.desc(:start_at).first
           if period
-            packs_delivered = client.packs.where(name: name, :created_at.gt => period.start_at).scan_delivered.count
+            packs_delivered = client.packs.where(:created_at.gt => period.start_at).scan_delivered.count
           else
             packs_delivered = 0
           end
