@@ -164,7 +164,11 @@ module IbizaAPI
           if hash.last['data']
             @data_type = hash.last['data'].keys.last
             @data = hash.last['data'][@data_type]
-            @data = [@data] if @data.is_a? Hash
+            if @data.is_a? Hash
+              @data = [@data]
+            elsif !@data.is_a? Array
+              @data = []
+            end
           end
         else
           @result = @datetime = @message = @data_type = @data = nil
