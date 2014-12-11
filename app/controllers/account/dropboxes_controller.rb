@@ -31,8 +31,12 @@ public
   end
 
   def callback
-    @dropbox.get_access_token
-    flash[:notice] = "Votre compte Dropbox à été configuré avec succès."
-    redirect_to account_profile_path
+    if params[:not_approved] == 'true'
+      flash[:notice] = 'Configuration de Dropbox annulée.'
+    else
+      @dropbox.get_access_token
+      flash[:notice] = 'Votre compte Dropbox a été configuré avec succès.'
+    end
+    redirect_to account_profile_path(panel: 'efs_management')
   end
 end
