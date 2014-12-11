@@ -25,7 +25,7 @@ public
 
   def callback
     @google_doc.get_access_token(params[:oauth_verifier])
-    flash[:notice] = "Votre compte Google Drive à été configuré avec succès."
+    flash[:notice] = "Votre compte Google Drive a été configuré avec succès."
     redirect_to account_profile_path
   end
 end

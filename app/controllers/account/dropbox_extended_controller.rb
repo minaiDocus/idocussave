@@ -11,7 +11,7 @@ class Account::DropboxExtendedController < Account::OrganizationController
   def callback
     @session.get_access_token
     DropboxExtended.save_session(@session)
-    flash[:notice] = 'Le compte Dropbox-Extended à été configuré avec succès.'
+    flash[:notice] = 'Le compte Dropbox-Extended a été configuré avec succès.'
     user = User.find_by_slug params[:user]
     if user
       if user.is_prescriber
