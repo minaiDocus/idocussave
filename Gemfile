@@ -24,6 +24,7 @@ gem 'rack-raw-upload'
 gem 'savon'
 gem 'wash_out', git: 'git@github.com:Pikomu/wash_out.git', branch: 'removing_model_integration'
 gem 'prawn', '1.0.0.rc1'
+gem 'prawn-qrcode'
 gem 'to_xls'
 gem 'barby'
 gem 'chunky_png' # required by barby
