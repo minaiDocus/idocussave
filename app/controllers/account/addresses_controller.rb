@@ -2,6 +2,7 @@
 class Account::AddressesController < Account::AccountController
   layout 'inner'
 
+  before_filter :verify_access
   before_filter :load_address, only: %w(edit update destroy)
 
   def index
@@ -44,6 +45,12 @@ class Account::AddressesController < Account::AccountController
   end
 
 private
+
+  def verify_access
+    if @user.is_prescriber
+      redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
+    end
+  end
 
   def load_address
     @address = @user.addresses.find(params[:id])
