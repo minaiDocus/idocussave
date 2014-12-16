@@ -28,7 +28,7 @@ class Account::Documents::TagsController < Account::AccountController
     end
     respond_to do |format|
       format.json { render :json => {}, :status => :ok }
-      format.html { redirect_to account_documents_path }
+      format.html { redirect_to root_path }
     end
   end
 end

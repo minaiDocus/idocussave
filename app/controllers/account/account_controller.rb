@@ -47,7 +47,7 @@ protected
       @bank_account_id = params[:bank_account_id] if params[:bank_account_id].in? ids
       @bank_account_id = ids.first unless @bank_account_id
     else
-      redirect_to account_documents_path, flash: { error: "Vous n'avez pas de compte bancaire configuré." }
+      redirect_to root_path, flash: { error: "Vous n'avez pas de compte bancaire configuré." }
     end
   end
 
@@ -67,6 +67,26 @@ private
 public
 
   def index
+    @last_packs = @user.packs.desc(:updated_at).limit(5)
+    if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
+      customers = @user.is_admin ? @user.organization.customers : @user.customers
+      @errors = Pack::Report::Preseizure.collection.group(
+        key: [:report_id, :delivery_message],
+        cond: { user_id: { '$in' => customers.map(&:id) }, delivery_message: { '$ne' => '', '$exists' => true } },
+        initial: { failed_at: 0, count: 0 },
+        reduce: "function(current, result) { result.count++; result.failed_at = current.delivery_tried_at; return result; }"
+      ).map do |delivery|
+        object = OpenStruct.new
+        object.date           = delivery['failed_at'].try(:localtime)
+        object.name           = Pack::Report.find(delivery['report_id']).name
+        object.document_count = delivery['count'].to_i
+        object.message        = delivery['delivery_message']
+        object
+      end.sort! do |a,b|
+        b.date <=> a.date
+      end
+      @errors = @errors[0..4]
+    end
   end
 
 end

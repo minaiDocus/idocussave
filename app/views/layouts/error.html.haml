@@ -18,7 +18,7 @@
           - if current_user
             %p{ class: 'navbar-text pull-right' }
               %span{ style: 'color:#999;'} Connecté en tant que
-              = link_to current_user.email, account_documents_path
+              = link_to current_user.email, root_path
               |
               = link_to 'déconnexion', destroy_user_session_path
           - else

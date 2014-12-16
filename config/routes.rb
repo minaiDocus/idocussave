@@ -1,5 +1,5 @@
 Idocus::Application.routes.draw do
-  root to: 'account/documents#index'
+  root to: 'account/account#index'
 
   wash_out :dematbox
 
@@ -31,7 +31,7 @@ Idocus::Application.routes.draw do
   match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
 
   namespace :account do
-    root :to => "account/documents#index"
+    root to: 'account/account#index'
     resources :organizations, except: :destroy do
       put :suspend,   on: :member
       put :unsuspend, on: :member

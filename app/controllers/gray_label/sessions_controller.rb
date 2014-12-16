@@ -5,7 +5,7 @@ class GrayLabel::SessionsController < ApplicationController
     if @gray_label && @gray_label.is_active
       session[:gray_label_slug] = @gray_label.slug
     end
-    redirect_to account_documents_path
+    redirect_to root_path
   end
 
   def destroy

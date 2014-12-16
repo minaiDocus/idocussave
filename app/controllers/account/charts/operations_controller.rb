@@ -47,7 +47,7 @@ private
   def verify_rights
     unless @user.is_fiduceo_authorized
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_documents_path
+      redirect_to root_path
     end
   end
 end

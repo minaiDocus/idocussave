@@ -25,7 +25,7 @@
           = render partial: 'layouts/navigation'
           %p{ :class=>"navbar-text pull-right" }
             Bienvenue
-            != link_to current_user.email, account_documents_path
+            != link_to current_user.email, root_path
             |
             != link_to "déconnexion", destroy_user_session_path
 
@@ -40,6 +40,7 @@
         <script src="/javascripts/html5.js" type="text/javascript"></script>
       <![endif]-->
     = javascript_include_tag 'application', 'inner'
+    = javascript_include_tag 'welcome' if controller_name == 'account'
     - if controller_name == 'reporting' && action_name == 'show'
       = javascript_include_tag 'account/reporting'
     - elsif controller_name == 'profiles' && action_name == 'show'

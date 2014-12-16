@@ -26,7 +26,7 @@
           = render partial: 'layouts/navigation'
           %p.navbar-text.pull-right
             Bienvenue
-            != link_to current_user.email, account_documents_path
+            != link_to current_user.email, root_path
             |
             != link_to 'déconnexion', destroy_user_session_path
 

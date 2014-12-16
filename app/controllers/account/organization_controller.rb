@@ -9,7 +9,7 @@ protected
 
   def verify_role
     unless @user.is_prescriber
-      redirect_to account_documents_path, flash: { error: t('authorization.unessessary_rights') }
+      redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end
 
@@ -20,7 +20,7 @@ protected
     elsif @user.organization && params[:organization_id] == @user.organization.slug
       @organization = @user.organization
     else
-      redirect_to account_documents_path, flash: { error: t('authorization.unessessary_rights') }
+      redirect_to root_path, flash: { error: t('authorization.unessessary_rights') }
     end
   end
 
