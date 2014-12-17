@@ -24,7 +24,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
     @file_sending_kit.organization.customers.active.asc(:code).each do |client|
       value = params[:users]["#{client.id}"][:is_checked] rescue nil
       if value == 'true'
-        without_shipping_address << client unless client.addresses.for_shipping.first
+        without_shipping_address << client unless client.addresses.for_kit_shipping.first
         clients_data << { :user => client, :start_month => params[:users]["#{client.id}"][:start_month].to_i, :offset_month => params[:users]["#{client.id}"][:offset_month].to_i }
       end
     end

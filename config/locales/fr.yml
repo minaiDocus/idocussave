@@ -514,7 +514,7 @@ fr:
           position: Position
           folders: Chemises
           mails: Mails
-          customer_labels: Etiquettes clients
+          customer_labels: Etiquettes d'envois du kit
           workshop_labels: Etiquettes ateliers
           logo:
             path: Chemin

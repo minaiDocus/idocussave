@@ -10,7 +10,7 @@ class FileSendingKitGenerator
 
       KitGenerator.folder to_folders(clients_data), file_sending_kit
       KitGenerator.mail to_mails(clients), file_sending_kit
-      KitGenerator.customer_labels to_labels(clients)
+      KitGenerator.customer_labels to_labels(clients, true)
       KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
     end
 
@@ -82,12 +82,16 @@ class FileSendingKitGenerator
       mail
     end
 
-    def to_labels(users)
-      users.map { |user| to_label(user) }
+    def to_labels(users, kit_shipping=false)
+      users.map { |user| to_label(user, kit_shipping) }
     end
 
-    def to_label(user)
-      address = user.addresses.for_shipping.first
+    def to_label(user, kit_shipping=false)
+      if kit_shipping
+        address = user.addresses.for_kit_shipping.first
+      else
+        address = user.addresses.for_shipping.first
+      end
       [
         user.company,
         user.name,
