@@ -2,6 +2,8 @@
 
 = form_tag admin_users_path, method: :get, class: 'form form-vertical margin0bottom' do
   %br
+  = hidden_field_tag :direction, sort_direction
+  = hidden_field_tag :sort, sort_column
   - item = params[:user_contains][:organization_id] rescue ''
   = label_tag 'user_contains[organization_id]', t('mongoid.models.organization.name')
   = select_tag 'user_contains[organization_id]', options_from_collection_for_select(Organization.asc(:name), :id, :name, selected: item), include_blank: true
