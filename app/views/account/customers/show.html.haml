@@ -29,9 +29,12 @@
                 %a{ href: '#ibiza', data: { toggle: 'tab' } } Ibiza
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
-            - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
-              %li{ class: ('active' if params[:tab] == 'bank_accounts') }
-                %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Comptes bancaires
+            - if @customer.active? && @customer.is_fiduceo_authorized
+              %li{ class: ('active' if params[:tab] == 'retrievers') }
+                %a{ href: '#retrievers', data: { toggle: 'tab' } } Automates
+              - if @customer.fiduceo_retrievers.banks.count > 0
+                %li{ class: ('active' if params[:tab] == 'bank_accounts') }
+                  %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Comptes bancaires
             - if @organization.ibiza.try(:token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
@@ -184,24 +187,49 @@
                     - elsif @customer.active?
                       = link_to icon(icon: 'plus') + ' ' + t('actions.new'), new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
                       = link_to icon(icon: 'th-large') + ' Copier', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
-            - if @customer.is_fiduceo_authorized && @customer.fiduceo_retrievers.banks.count > 0
-              #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
-                %table.table.table-striped.table-condensed.margin0bottom
-                  %tr
-                    %th= t('mongoid.models.bank_account.attributes.bank_name')
-                    %th= t('mongoid.models.bank_account.attributes.name')
-                    %th= t('mongoid.models.bank_account.attributes.number')
-                    %th= t('mongoid.models.bank_account.attributes.journal')
-                    %th= t('mongoid.models.bank_account.attributes.accounting_number')
-                    %th Action
-                  - @customer.bank_accounts.each do |bank_account|
+            - if @customer.active? && @customer.is_fiduceo_authorized
+              #retrievers.tab-pane{ class: ('active' if params[:tab] == 'retrievers') }
+                %table.table.table-condensed.table-striped.margin0bottom
+                  %thead
                     %tr
-                      %td= bank_account.bank_name
-                      %td= bank_account.name
-                      %td= bank_account.number
-                      %td= bank_account.journal
-                      %td= bank_account.accounting_number
-                      %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
+                      %th= t('mongoid.models.common.attributes.created_at')
+                      %th= t('mongoid.models.common.attributes.updated_at')
+                      %th= t('mongoid.models.fiduceo_retriever.attributes.type')
+                      %th= t('mongoid.models.fiduceo_retriever.attributes.service_name')
+                      %th= t('mongoid.models.fiduceo_retriever.attributes.name')
+                      %th Journal
+                      %th Mode
+                      %th.retriever_state= t('mongoid.models.fiduceo_retriever.attributes.state')
+                  %tbody
+                    - @customer.fiduceo_retrievers.asc(:created_at).each do |retriever|
+                      - present retriever do |retriever_presenter|
+                        %tr
+                          %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+                          %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
+                          %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
+                          %td= retriever_presenter.service_name
+                          %td= retriever_presenter.name
+                          %td= retriever_presenter.journal.try(:name) || '-'
+                          %td= retriever_presenter.mode
+                          %td.retriever_state!= retriever_presenter.state
+              - if @customer.fiduceo_retrievers.banks.count > 0
+                #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
+                  %table.table.table-striped.table-condensed.margin0bottom
+                    %tr
+                      %th= t('mongoid.models.bank_account.attributes.bank_name')
+                      %th= t('mongoid.models.bank_account.attributes.name')
+                      %th= t('mongoid.models.bank_account.attributes.number')
+                      %th= t('mongoid.models.bank_account.attributes.journal')
+                      %th= t('mongoid.models.bank_account.attributes.accounting_number')
+                      %th Action
+                    - @customer.bank_accounts.each do |bank_account|
+                      %tr
+                        %td= bank_account.bank_name
+                        %td= bank_account.name
+                        %td= bank_account.number
+                        %td= bank_account.journal
+                        %td= bank_account.accounting_number
+                        %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
             - if @organization.ibiza.try(:token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid
