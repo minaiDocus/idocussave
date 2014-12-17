@@ -5,7 +5,16 @@ class Admin::UsersController < Admin::AdminController
   before_filter :load_user, only: %w(show update send_reset_password_instructions)
 
   def index
-    @users = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @users = search(user_contains).order([sort_column,sort_direction])
+    respond_to do |format|
+      format.html do
+        @users = @users.page(params[:page]).per(params[:per_page])
+      end
+      format.csv do
+        csv = UsersToCsvService.new(@users).execute
+        send_data(csv, type: 'text/csv', filename: 'users.csv')
+      end
+    end
   end
 
   def show

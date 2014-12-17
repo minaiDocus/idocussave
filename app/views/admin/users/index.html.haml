@@ -3,7 +3,10 @@
 
   .row-fluid.margin1bottom
     .span12
-      %h3 Liste des utilisateurs (#{@users.count})
+      .pull-left
+        %h3 Liste des utilisateurs (#{@users.count})
+      .pull-right
+        = link_to 'Export CSV', admin_users_path(format: 'csv', direction: sort_direction, sort: sort_column, user_contains: user_contains), class: 'btn btn-primary'
 
   .row-fluid
     .span9
