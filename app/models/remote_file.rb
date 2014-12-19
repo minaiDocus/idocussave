@@ -40,8 +40,8 @@ class RemoteFile
   scope :processed,     any_in: { state: [:synced,:cancelled] }
   scope :not_processed, not_in: { state: [:synced,:cancelled] }
 
-  scope :retryable,     where: { :tried_count.lt => 10 }
-  scope :not_retryable, where: { :tried_count.gte => 10 }
+  scope :retryable,     where: { :tried_count.lt => 2 }
+  scope :not_retryable, where: { :tried_count.gte => 2 }
 
   def self.cancel_all
     update_all state:         'cancelled',
