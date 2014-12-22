@@ -160,7 +160,9 @@ module IbizaAPI
           response = hash.last['response']
           @result = response['result']
           @datetime = response['datetime'].to_time
-          @message = response['message'].gsub('&lt;','<').gsub('&gt;','>') if response['message'].present?
+          if response['message'].present? && response['message'].is_a?(String)
+            @message = response['message'].gsub('&lt;','<').gsub('&gt;','>')
+          end
           if hash.last['data']
             @data_type = hash.last['data'].keys.last
             @data = hash.last['data'][@data_type]
