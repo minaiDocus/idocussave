@@ -64,11 +64,11 @@ class FiduceoRetriever
     end
 
     event :schedule do
-      transition [:ready, :processing, :wait_selection, :error] => :scheduled
+      transition [:ready, :processing, :wait_selection, :wait_for_user_action, :error] => :scheduled
     end
 
     event :ready do
-      transition [:scheduled, :processing, :wait_selection, :error] => :ready
+      transition [:scheduled, :processing, :wait_selection, :wait_for_user_action, :error] => :ready
     end
 
     event :fetch do
