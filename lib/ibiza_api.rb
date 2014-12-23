@@ -1,3 +1,4 @@
+# -*- encoding : UTF-8 -*-
 module IbizaAPI
   class Utils
     def self.description(preseizure, fields, separator)
@@ -160,8 +161,12 @@ module IbizaAPI
           response = hash.last['response']
           @result = response['result']
           @datetime = response['datetime'].to_time
-          if response['message'].present? && response['message'].is_a?(String)
-            @message = response['message'].gsub('&lt;','<').gsub('&gt;','>')
+          if response['message'].present? && response['message'] != { 'i:nil' => 'true' }
+            if @result == 'Error'
+              @message = "Erreur n°#{response['message']['error']['number']} - #{response['message']['error']['description']}"
+            else
+              @message = response['message']
+            end
           end
           if hash.last['data']
             @data_type = hash.last['data'].keys.last
