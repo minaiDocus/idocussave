@@ -42,9 +42,6 @@ class FiduceoRetrieverPresenter < BasePresenter
           label_type = 'important' if fiduceo_retriever.error?
           result = h.content_tag :span, formatted_state, class: "label label-#{label_type}"
         end
-        if fiduceo_retriever.error? && fiduceo_retriever.transactions.last.critical_error?
-          result += h.content_tag :span, icon(icon: 'warning-sign', title: 'Veuillez contacter le support<support@idocus.com>'), class: 'label'
-        end
         result
       end
     else
