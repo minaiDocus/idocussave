@@ -51,7 +51,7 @@
                   %td= l(pack.updated_at)
                   %td= pack.name.sub(' all', '')
           .pull-right
-            = link_to 'Tout les documents', account_documents_path
+            = link_to 'Tous les documents', account_documents_path
 
       - if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
         .row-fluid.margin1top
