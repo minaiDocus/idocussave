@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
-  skip_before_filter :verify_authenticity_token, :only => [:mode]
+  skip_before_filter :verify_authenticity_token, only: [:mode, :debit_mandate_notify]
   skip_before_filter :login_user!,        only: :debit_mandate_notify
   skip_before_filter :load_user_and_role, only: :debit_mandate_notify
   skip_before_filter :verify_suspension,  only: :debit_mandate_notify
