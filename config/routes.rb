@@ -33,8 +33,10 @@ Idocus::Application.routes.draw do
   namespace :account do
     root to: 'account/account#index'
     resources :organizations, except: :destroy do
-      put :suspend,   on: :member
-      put :unsuspend, on: :member
+      get :edit_options,   on: :collection
+      put :update_options, on: :collection
+      put :suspend,        on: :member
+      put :unsuspend,      on: :member
       resources :addresses, controller: 'organization_addresses'
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member

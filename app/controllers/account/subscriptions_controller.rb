@@ -13,6 +13,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   def update
     prev_options = @subscription.product_option_orders.map(&:dup)
     @subscription.requester = @user
+    @subscription.permit_all_options = true unless Settings.is_subscription_lower_options_disabled
     if @subscription.update_attributes(scan_subscription_params)
       EvaluateSubscriptionService.execute(@subscription, @user, prev_options)
       flash[:success] = 'Modifié avec succès.'

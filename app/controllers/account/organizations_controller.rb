@@ -3,7 +3,7 @@ class Account::OrganizationsController < Account::AccountController
   layout :layout_by_action
 
   before_filter :verify_suspension, only: %w(show edit update)
-  before_filter :load_organization, except: %w(index new create)
+  before_filter :load_organization, except: %w(index edit_options update_options new create)
   before_filter :verify_rights
 
   def index
@@ -12,6 +12,15 @@ class Account::OrganizationsController < Account::AccountController
     user_ids   = DebitMandate.configured.distinct(:user_id)
     leader_ids = Organization.all.distinct(:leader_id)
     @debit_mandate_not_configured_count = Organization.where(:leader_id.in => (leader_ids - user_ids)).count
+  end
+
+  def edit_options
+  end
+
+  def update_options
+    Settings.is_subscription_lower_options_disabled = params[:settings][:is_subscription_lower_options_disabled] == '1'
+    flash[:success] = 'Modifié avec succès.'
+    redirect_to account_organizations_path
   end
 
   def new
@@ -64,7 +73,7 @@ private
   def verify_rights
     unless @user.is_admin
       authorized = false
-      if current_user.is_admin && action_name.in?(%w(index new create suspend unsuspend))
+      if current_user.is_admin && action_name.in?(%w(index edit_options update_options new create suspend unsuspend))
         authorized = true
       elsif action_name.in?(%w(show)) && @user.is_prescriber
         authorized = true
@@ -79,7 +88,7 @@ private
   end
 
   def layout_by_action
-    if action_name.in?(%w(index new create))
+    if action_name.in?(%w(index edit_options update_options new create))
       'inner'
     else
       'organization'

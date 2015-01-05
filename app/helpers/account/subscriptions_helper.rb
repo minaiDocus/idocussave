@@ -16,9 +16,13 @@ module Account::SubscriptionsHelper
     if @user.is_admin || controller_name == 'default_subscriptions'
       false
     else
-      group_options = group.product_options
-      selected_option = @subscription.product_option_orders.select{ |so| group_options.select{ |go| is_same_option?(go, so) }.present? }.first
-      selected_option ? option.position < selected_option.position : false
+      if Settings.is_subscription_lower_options_disabled
+        group_options = group.product_options
+        selected_option = @subscription.product_option_orders.select{ |so| group_options.select{ |go| is_same_option?(go, so) }.present? }.first
+        selected_option ? option.position < selected_option.position : false
+      else
+        false
+      end
     end
   end
 

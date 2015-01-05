@@ -6,6 +6,7 @@
       .pull-left
         %h3 Liste des organisations (#{@organizations.count})
       .pull-right
+        = link_to icon_edit + ' ' + 'Options globales', edit_options_account_organizations_path, class: 'btn btn-primary'
         = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
 
   .row-fluid
