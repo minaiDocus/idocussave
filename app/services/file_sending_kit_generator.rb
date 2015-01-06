@@ -93,8 +93,8 @@ class FileSendingKitGenerator
         address = user.addresses.for_shipping.first
       end
       [
-        user.company,
-        user.name,
+        address.company,
+        [address.last_name, address.first_name].join(' '),
         address.address_1,
         address.address_2,
         "#{address.zip} #{address.city}"
