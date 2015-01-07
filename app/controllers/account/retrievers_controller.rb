@@ -69,6 +69,7 @@ class Account::RetrieversController < Account::FiduceoController
       flash[:info] = 'Poursuite de la transaction'
       redirect_to account_fiduceo_retrievers_path
     else
+      @questions = transaction.wait_for_user_labels
       flash[:error] = "Impossible d'enregistrer les modifications."
       render action: 'wait_for_user_action'
     end
