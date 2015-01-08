@@ -221,9 +221,26 @@ class KitGenerator
       pdf.bounding_box [y, pdf.cursor], width: 297, height: 111 do
         pdf.move_down 18
         pdf.bounding_box [15, pdf.cursor], width: 297 do
-          label.each do |field|
-            pdf.text field, inline_format: true
-            pdf.move_down 2
+          label.each_with_index do |field, index|
+            if index == 0
+              width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.chop.split('x').map(&:to_i)
+              w = width - ((width*20) / 100)
+              pdf.float do
+                pdf.bounding_box [0, pdf.cursor], width: w do
+                  pdf.image "#{BarCode::TEMPDIR_PATH}/#{field}.png", height: height, width: w
+                end
+              end
+              pdf.bounding_box [w + 5, pdf.cursor], width: 297-w, height: height do
+                pdf.font_size 8
+                pdf.move_down 8
+                pdf.text field, inline_format: true
+              end
+              pdf.move_down 4
+            else
+              pdf.font_size 9
+              pdf.text field, inline_format: true
+              pdf.move_down 2
+            end
           end
         end
       end

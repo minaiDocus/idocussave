@@ -8,6 +8,10 @@ class FileSendingKitGenerator
 
       clients = to_clients(clients_data)
 
+      clients.each do |client|
+        BarCode.generate_png(client.code, 20, 0)
+      end
+
       KitGenerator.folder to_folders(clients_data), file_sending_kit
       KitGenerator.mail to_mails(clients), file_sending_kit
       KitGenerator.customer_labels to_labels(clients, true)
@@ -93,6 +97,7 @@ class FileSendingKitGenerator
         address = user.addresses.for_shipping.first
       end
       [
+        user.code,
         address.company,
         [address.last_name, address.first_name].join(' '),
         address.address_1,
@@ -116,7 +121,6 @@ class FileSendingKitGenerator
     def to_workshop_label(client_data, one_workshop_labels_page_per_customer=false)
       data = []
       user = client_data[:user]
-      BarCode.generate_png(user.code, 20, 0)
       address = user.scanning_provider.addresses.first
       stringified_address = stringify_address(address)
       if one_workshop_labels_page_per_customer
