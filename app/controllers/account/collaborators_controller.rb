@@ -22,6 +22,7 @@ class Account::CollaboratorsController < Account::OrganizationController
     @collaborator.skip_confirmation!
     @collaborator.reset_password_token = User.reset_password_token
     @collaborator.reset_password_sent_at = Time.now
+    @collaborator.is_group_required = !(@user.my_organization || @user.is_admin)
     if @collaborator.save
       WelcomeMailer.welcome_collaborator(@collaborator).deliver
       flash[:success] = 'Créé avec succès.'
@@ -76,6 +77,7 @@ private
 
   def user_params
     params.require(:user).permit(:code,
+                                 :group_ids,
                                  :company,
                                  :first_name,
                                  :last_name,

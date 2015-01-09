@@ -1,5 +1,6 @@
 = simple_form_for @collaborator, url: collaborator_form_url(@organization, @collaborator), html: { class: 'form form-horizontal margin0bottom' } do |f|
   = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%"
+  = f.input :group_ids, collection: groups, as: :check_boxes, required: !is_leader?, label: t('mongoid.models.group.name').pluralize
   = f.input :company
   = f.input :first_name
   = f.input :last_name
