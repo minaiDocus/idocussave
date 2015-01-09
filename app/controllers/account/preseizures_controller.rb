@@ -48,9 +48,13 @@ class Account::PreseizuresController < Account::OrganizationController
   end
 
   def update
-    @preseizure.update_attributes(preseizure_params)
     respond_to do |format|
-      format.json { render json: { status: :ok } }
+      begin
+        @preseizure.update_attributes(preseizure_params)
+        format.json { render json: { status: :ok } }
+      rescue Mongoid::Errors::InvalidTime
+        format.json { render json: { status: :unprocessable_entity } }
+      end
     end
   end
 
