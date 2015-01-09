@@ -238,10 +238,13 @@ private
   end
 
   def get_attachments
-    basename = (user.present? && journal.present? && period.present?) ? file_name : nil
-    @mail.attachments.select do |attachment|
-      File.extname(attachment.filename) == '.pdf'
-    end.map { |a| Attachment.new(a, basename) }
+    if user.present? && journal.present? && period.present?
+      @mail.attachments.select do |attachment|
+        File.extname(attachment.filename) == '.pdf'
+      end.map { |a| Attachment.new(a, file_name) }
+    else
+      []
+    end
   end
 
   def get_errors
