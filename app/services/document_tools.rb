@@ -141,16 +141,20 @@ class DocumentTools
       Prawn::Document.generate file_path, page_size: sizes.first, top_margin: 10 do
         sizes.each_with_index do |size, index|
           start_new_page(size: size) if index != 0
-          if is_stamp_background_filled
-            bounding_box([0, bounds.height], :width => bounds.width) do
-              table([[name]], position: :center) do
-                style(row(0), border_color: 'FF0000', text_color: 'FFFFFF', background_color: 'FF0000')
-                style(columns(0), background_color: 'FF0000', border_color: 'FF0000', align: :center)
+          begin
+            if is_stamp_background_filled
+              bounding_box([0, bounds.height], :width => bounds.width) do
+                table([[name]], position: :center) do
+                  style(row(0), border_color: 'FF0000', text_color: 'FFFFFF', background_color: 'FF0000')
+                  style(columns(0), background_color: 'FF0000', border_color: 'FF0000', align: :center)
+                end
               end
+            else
+              fill_color 'FF0000'
+              text name, size: 10, :align => :center
             end
-          else
-            fill_color 'FF0000'
-            text name, size: 10, :align => :center
+          rescue Prawn::Errors::CannotFit
+            puts "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
           end
         end
       end
