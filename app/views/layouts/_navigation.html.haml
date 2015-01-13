@@ -22,3 +22,4 @@
         - if @user.is_fiduceo_authorized
           %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
             = link_to 'Mes automates', account_fiduceo_retrievers_path
+      %li= link_to 'Support client', 'javascript:ZDiscussions.showDiscussionsFBW();'
