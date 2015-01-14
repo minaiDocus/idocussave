@@ -99,7 +99,7 @@ Idocus::Application.routes.draw do
       resources :journals, except: 'show'
       resource :default_subscription, only: %w(show edit update)
       resource :organization_subscription, only: %w(edit update)
-      resource :ibiza, controller: 'ibiza' do
+      resource :ibiza, controller: 'ibiza', only: %w(create edit update) do
         get 'refresh_users_cache', on: :member
       end
       resources :pre_assignments

@@ -10,6 +10,8 @@
       = stylesheet_link_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = stylesheet_link_tag 'account/csv_outputters'
+    - elsif controller_name.in?(%w(organizations ibiza))
+      = stylesheet_link_tag 'account/ibiza'
     - elsif !controller_name.in?(%w(organization_addresses accounting_plans knowings))
       = stylesheet_link_tag "account/#{controller_name}"
 
@@ -41,7 +43,7 @@
           .box.sidebar-nav
             %ul.nav.nav-list
               %li.nav-header= @organization.name
-              %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters)) && !request.path.match(/customers/)) ? 'active' : '') }
+              %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters knowings ibiza)) && !request.path.match(/customers/)) ? 'active' : '') }
                 = link_to 'Paramètres', account_organization_path(@organization)
               %li{ class: (controller_name == 'groups' ? 'active' : '') }
                 = link_to 'Groupes', account_organization_groups_path(@organization)
@@ -71,5 +73,5 @@
       = javascript_include_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = javascript_include_tag 'account/csv_outputters'
-    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors))
+    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors ibiza))
       = javascript_include_tag "account/#{controller_name}"

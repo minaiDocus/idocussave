@@ -1,7 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :ibiza_params, except: :refresh_users_cache
+  before_filter :verify_rights, except: :refresh_users_cache
 
   def create
     @ibiza = Ibiza.new
@@ -11,7 +10,11 @@ class Account::IbizaController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de créer.'
     end
-    redirect_to account_organization_pre_assignments_path
+    redirect_to account_organization_path(@organization, tab: 'ibiza')
+  end
+
+  def edit
+    @ibiza = @organization.ibiza
   end
 
   def update
@@ -20,7 +23,7 @@ class Account::IbizaController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de modifier.'
     end
-    redirect_to account_organization_pre_assignments_path
+    redirect_to account_organization_path(@organization, tab: 'ibiza')
   end
 
   def refresh_users_cache

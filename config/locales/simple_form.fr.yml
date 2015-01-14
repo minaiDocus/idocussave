@@ -203,3 +203,11 @@ fr:
         is_for_billing: Pour la facturation ?
         is_for_shipping: Pour le retour ?
         is_for_kit_shipping: Pour le kit ?
+      ibiza:
+        is_auto_deliver: Livraison automatique ?
+        token: Jeton
+        state: Etat
+        description: Description
+        description_separator: Séparateur du champ description
+        piece_name_format: Format de nom de la pièce
+        piece_name_format_sep: Séparateur du format de nom de la pièce

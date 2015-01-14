@@ -10,6 +10,8 @@
           %a{ href: '#period_options', data: { toggle: 'tab' } } Options des périodes
         %li{ class: ('active' if params[:tab] == 'knowings') }
           %a{ href: '#knowings', data: { toggle: 'tab' } } Knowings
+        %li{ class: ('active' if params[:tab] == 'ibiza') }
+          %a{ href: '#ibiza', data: { toggle: 'tab' } } Ibiza
         - if @user.is_admin
           %li{ class: ('active' if params[:tab] == 'reminder_emails') }
             %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
@@ -118,6 +120,118 @@
             - else
               .aligncenter
                 = link_to 'Configurer', new_account_organization_knowings_path(@organization), class: 'btn btn-primary'
+        #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
+          %table.table.table-condensed.table-striped
+            %tbody
+              %tr
+                %th= t('mongoid.models.ibiza.attributes.state')
+                %td
+                  %span{ class: "label #{ibiza_state_label(@organization.ibiza)}" }= ibiza_state(@organization.ibiza)
+              %tr
+                %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
+                %td= @organization.ibiza.is_auto_deliver ? t('yes_value') : t('no_value')
+          %h4.margin2top.margin1bottom Format de nom de la pièce
+          %table.table.table-condensed.table-striped
+            %thead
+              %tr
+                %th.name Valeur
+                %th.is_used Utilisé ?
+                %th.position Position
+            %tbody
+              %tr
+                %td.name Code complet
+                %td.is_used
+                  - value = @organization.ibiza.piece_name_format['code']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.piece_name_format['code']['position'] rescue 1
+              %tr
+                %td.name Code dossier sans code cabinet
+                %td.is_used
+                  - value = @organization.ibiza.piece_name_format['code_wp']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.piece_name_format['code_wp']['position'] rescue 1
+              %tr
+                %td.name Journal
+                %td.is_used
+                  - value = @organization.ibiza.piece_name_format['journal']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.piece_name_format['journal']['position'] rescue 1
+              %tr
+                %td.name Période de traitement
+                %td.is_used
+                  - value = @organization.ibiza.piece_name_format['period']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.piece_name_format['period']['position'] rescue 1
+              %tr
+                %td.name Numéro
+                %td.is_used
+                  - value = @organization.ibiza.piece_name_format['number']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.piece_name_format['number']['position'] rescue 1
+          %h4.margin2top.margin1bottom Format de la description
+          %table.table.table-condensed.table-striped
+            %thead
+              %tr
+                %th.name Valeur
+                %th.is_used Utilisé ?
+                %th.position Position
+            %tbody
+              %tr
+                %td.name Date réelle
+                %td.is_used
+                  - value = @organization.ibiza.description['date']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['date']['position'] rescue 1
+              %tr
+                %td.name Tiers
+                %td.is_used
+                  - value = @organization.ibiza.description['third_party']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
+              %tr
+                %td.name Montant d'origine
+                %td.is_used
+                  - value = @organization.ibiza.description['amount']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['amount']['position'] rescue 1
+              %tr
+                %td.name Devise
+                %td.is_used
+                  - value = @organization.ibiza.description['currency']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['currency']['position'] rescue 1
+              %tr
+                %td.name Taux de conversion
+                %td.is_used
+                  - value = @organization.ibiza.description['conversion_rate']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['conversion_rate']['position'] rescue 1
+              %tr
+                %td.name Remarque
+                %td.is_used
+                  - value = @organization.ibiza.description['observation']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['observation']['position'] rescue 1
+              %tr
+                %td.name Journal
+                %td.is_used
+                  - value = @organization.ibiza.description['journal']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['journal']['position'] rescue 1
+              %tr
+                %td.name Nom de pièce (iDocus)
+                %td.is_used
+                  - value = @organization.ibiza.description['piece_name']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
+              %tr
+                %td.name Référence pièce
+                %td.is_used
+                  - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
+                  = value ? t('yes_value') : t('no_value')
+                %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
+          - if is_leader?
+            .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
 
         - if @user.is_admin
           #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
