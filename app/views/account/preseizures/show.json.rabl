@@ -44,8 +44,4 @@ node :delivery_tried_at do |preseizure|
   I18n.l(preseizure.delivery_tried_at) if preseizure.delivery_tried_at
 end
 
-node :download_xml do |preseizure|
-  @user.is_admin
-end
-
 attributes :id, :position, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked, :delivery_message

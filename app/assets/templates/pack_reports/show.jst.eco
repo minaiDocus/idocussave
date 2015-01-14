@@ -6,13 +6,6 @@
       </a>
     <% end %>
   </div>
-  <% if(@model.get('download_xml') == true): %>
-    <div class="option pull-left">
-      <a class="tip download_xml" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.xml" %>" title="Télécharger le fichier .xml">
-        <i class="icon-download-alt"></i>
-      </a>
-    </div>
-  <% end %>
 <% end %>
 <div class="option pull-left">
   <a class="details" href="" data-toggle="popover" data-placement="top" data-content="<%= @details %>" title="" data-original-title="<%= @model.get('name') %>">
@@ -20,7 +13,7 @@
   </a>
 </div>
 <div class="option pull-left">
-  <a class="tip download-csv" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}.csv" %>" title="Télécharger le fichier .csv">
+  <a class="tip export" target="_blank" href="<%= "#{@model.urlRoot}/#{@model.get('id')}/select_to_download" %>" title="Exporter">
     <i class="icon-download"></i>
   </a>
 </div>

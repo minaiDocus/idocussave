@@ -102,12 +102,14 @@ Idocus::Application.routes.draw do
       resource :ibiza, controller: 'ibiza', only: %w(create edit update) do
         get 'refresh_users_cache', on: :member
       end
-      resources :pre_assignments
+      resources :pre_assignments, only: :index
       resources :pre_assignment_delivery_errors, only: :index
-      resources :pack_reports do
-        post 'deliver', on: :member
+      resources :pack_reports, only: :index do
+        post 'deliver',            on: :member
+        get  'select_to_download', on: :member
+        post 'download',           on: :member
       end
-      resources :preseizures do
+      resources :preseizures, only: %w(index update) do
         post 'deliver', on: :member
       end
       resources :preseizure_accounts

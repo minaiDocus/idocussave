@@ -16,37 +16,6 @@ class Account::PreseizuresController < Account::OrganizationController
     end
   end
 
-  def show
-    if params[:format] == 'xml'
-      if current_user.is_admin
-        report = @preseizure.report
-        position = "%0#{DocumentProcessor::POSITION_SIZE}d" % @preseizure.position
-        file_name = "#{report.name.sub(' ','_')}_#{position}.xml"
-        ibiza = @organization.ibiza
-        if ibiza && report.user.ibiza_id
-          date = DocumentTools.to_period(report.name)
-          if (exercice=ExerciceService.find(report.user, date, false))
-            data = IbizaAPI::Utils.to_import_xml(exercice, [@preseizure], ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
-          else
-            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
-          end
-        else
-          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
-        end
-      else
-        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, file_name)
-      end
-    end
-    respond_to do |format|
-      format.html do
-        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id])
-      end
-      format.xml do
-        send_data(data, type: 'application/xml', filename: file_name)
-      end
-    end
-  end
-
   def update
     respond_to do |format|
       begin

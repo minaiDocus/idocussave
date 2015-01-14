@@ -8,43 +8,50 @@ class Account::PackReportsController < Account::OrganizationController
     @pack_reports = @pack_reports.desc(:updated_at).limit(20).page(params[:page]).per(params[:per_page])
   end
 
-  def show
-    if params[:format] == 'xml'
-      if current_user.is_admin
-        file_name = "#{@report.name.gsub(' ','_')}.xml"
-        ibiza = @organization.ibiza
-        if ibiza && @report.user.ibiza_id
-          date = DocumentTools.to_period(@report.name)
-          if (exercice=ExerciceService.find(@report.user, date, false))
-            data = IbizaAPI::Utils.to_import_xml(exercice, @report.preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
-          else
-            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
-          end
-        else
-          raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
-        end
-      else
-        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
-      end
-    end
-    respond_to do |format|
-      format.html do
-        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id])
-      end
-      format.csv do
-        send_data(@report.to_csv(@report.user.csv_outputter!), type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
-      end
-      format.xml do
-        send_data(data, type: 'application/xml', filename: file_name)
-      end
-    end
-  end
-
   def deliver
     preseizures = @report.preseizures.by_position.not_locked.not_delivered.entries
     CreatePreAssignmentDeliveryService.new(preseizures).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
+    end
+  end
+
+  def select_to_download
+  end
+
+  def download
+    preseizures = @report.preseizures.where(:_id.in => params[:download].try(:[], :preseizure_ids) || []).by_position
+    case params[:download].try(:[], :format)
+    when 'csv'
+      if preseizures.any?
+        send_data(@report.to_csv(@report.user.csv_outputter!, preseizures), type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
+      else
+        render action: 'select_to_download'
+      end
+    when 'xml'
+      if current_user.is_admin
+        if preseizures.any?
+          file_name = "#{@report.name.gsub(' ','_')}.xml"
+          ibiza = @organization.ibiza
+          if ibiza && @report.user.ibiza_id
+            date = DocumentTools.to_period(@report.name)
+            if (exercice=ExerciceService.find(@report.user, date, false))
+              data = IbizaAPI::Utils.to_import_xml(exercice, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
+              send_data(data, type: 'application/xml', filename: file_name)
+            else
+              raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+            end
+          else
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+          end
+        else
+          render action: 'select_to_download'
+        end
+      else
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+      end
+    else
+      render action: 'select_to_download'
     end
   end
 
