@@ -50,6 +50,13 @@ class Account::PackReportsController < Account::OrganizationController
       else
         raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
       end
+    when 'zip'
+      if @organization.is_quadratus_used
+        file_path = QuadratusZipService.new(preseizures).execute
+        send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
+      else
+        render action: 'select_to_download'
+      end
     else
       render action: 'select_to_download'
     end

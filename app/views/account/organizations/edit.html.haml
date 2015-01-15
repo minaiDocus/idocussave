@@ -6,14 +6,21 @@
   .row-fluid
     .span12.box
       = simple_form_for [:account, @organization], html: { class: 'form form-horizontal margin0' } do |f|
-        = f.input :name
-        - if @user.is_admin
-          = f.input :leader_id, collection: @organization.collaborators, label_method: :info
-          = f.input :is_detail_authorized, as: :boolean
-          = f.input :is_test,              as: :boolean
-        = f.input :is_journals_management_centralized, as: :boolean
-        = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
-        = f.input :is_file_naming_policy_active, as: 'boolean'
+        = hidden_field_tag :part, params[:part]
+        - if params[:part] != 'other_software'
+          = f.input :name
+          - if @user.is_admin
+            = f.input :leader_id, collection: @organization.collaborators, label_method: :info
+            = f.input :is_detail_authorized, as: :boolean
+            = f.input :is_test,              as: :boolean
+          = f.input :is_journals_management_centralized, as: :boolean
+          = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
+          = f.input :is_file_naming_policy_active, as: 'boolean'
+        - else
+          = f.input :is_quadratus_used, as: 'boolean'
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
+          - if params[:part] != 'other_software'
+            = link_to t('actions.cancel'), account_organization_path(@organization), class: 'btn'
+          - else
+            = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'other_software'), class: 'btn'

@@ -82,6 +82,7 @@ fr:
         is_detail_authorized: Autoriser les détails dans le reporting ?
         is_test: Organisation de test ?
         is_journals_management_centralized: Gestion des journaux comptables centralisé ?
+        is_quadratus_used: Activer les options de Quadratus ?
       organization_rights:
         is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
         is_customers_management_authorized: Gestion des clients autorisé ?

@@ -50,7 +50,11 @@ class Account::OrganizationsController < Account::AccountController
   def update
     if @organization.update_attributes(organization_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(@organization)
+      if params[:part] != 'other_software'
+        redirect_to account_organization_path(@organization)
+      else
+        redirect_to account_organization_path(@organization, tab: 'other_software')
+      end
     else
       render 'edit'
     end
@@ -105,7 +109,8 @@ private
         :is_file_naming_policy_active,
         :is_detail_authorized,
         :is_test,
-        :is_journals_management_centralized
+        :is_journals_management_centralized,
+        :is_quadratus_used
       )
     else
       params.require(:organization).permit(
@@ -114,7 +119,8 @@ private
         :auth_prev_period_until_day,
         :file_naming_policy,
         :is_file_naming_policy_active,
-        :is_journals_management_centralized
+        :is_journals_management_centralized,
+        :is_quadratus_used
       )
     end
   end

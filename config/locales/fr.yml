@@ -576,6 +576,7 @@ fr:
           is_test: Mode test ?
           is_suspended: Est suspendu ?
           is_journals_management_centralized: Gestion des journaux comptables centralisé ?
+          is_quadratus_used: Activer les options de Quadratus ?
           status:
             admin: Administrateur
             collaborator: Collaborateur

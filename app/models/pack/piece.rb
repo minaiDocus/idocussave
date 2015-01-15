@@ -5,6 +5,7 @@ class Pack::Piece
   include Mongoid::Paperclip
 
   field :name
+  field :number,                     type: Integer
   field :content_file_name
   field :content_content_type
   field :content_file_size,          type: Integer
@@ -16,7 +17,12 @@ class Pack::Piece
   field :is_awaiting_pre_assignment, type: Boolean, default: false
   field :pre_assignment_comment
 
+  index :number, unique: true
+
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
+
+  before_validation :set_number
+  before_create     :send_to_compta
 
   belongs_to :pack,                                                  inverse_of: :pieces
   has_one    :temp_document,                                         inverse_of: :piece
@@ -38,8 +44,6 @@ class Pack::Piece
   scope :not_covers, any_in: { is_a_cover: [false, nil] }
 
   scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
-
-  before_create :send_to_compta
 
   def self.by_position
     asc(:position)
@@ -101,5 +105,11 @@ class Pack::Piece
       self.is_awaiting_pre_assignment = true
       self.save if persisted?
     end
+  end
+
+private
+
+  def set_number
+    self.number = DbaSequence.next('Piece') unless self.number
   end
 end
