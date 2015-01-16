@@ -87,7 +87,12 @@ class FileSendingKitGenerator
     end
 
     def to_labels(users, kit_shipping=false)
-      users.map { |user| to_label(user, kit_shipping) }
+      labels = []
+      users.each do |user|
+        label = to_label(user, kit_shipping)
+        2.times { labels << label }
+      end
+      labels
     end
 
     def to_label(user, kit_shipping=false)
