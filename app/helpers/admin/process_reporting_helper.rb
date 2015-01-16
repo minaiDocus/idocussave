@@ -10,11 +10,18 @@ module Admin::ProcessReportingHelper
     periods.entries.sum(&:scanned_sheets).to_i
   end
 
-  def sum_of_bundled_pieces(organization, time)
-    organization.temp_documents.bundled.where(
+  def sum_of_bundled(organization, time)
+    total = organization.temp_documents.bundled.where(
       :created_at.gte => time,
-      :created_at.lte => time.end_of_month
+      :created_at.lte => time.end_of_month,
+      delivery_type: 'scan'
     ).count
+    total += organization.temp_documents.bundled.where(
+      :created_at.gte => time,
+      :created_at.lte => time.end_of_month,
+      :delivery_type.in => ['upload', 'dematbox_scan']
+    ).sum(:pages_number).to_i || 0
+    total
   end
 
   def sum_of_pre_assignments(organization, time)
@@ -56,5 +63,21 @@ module Admin::ProcessReportingHelper
     end.size
 
     customer_ids.size - previous_count
+  end
+
+  def sum_of_paperclips(customers, time)
+    Scan::Period.where(
+      :user_id.in     => customers.map(&:id),
+      :created_at.gte => time,
+      :created_at.lte => time.end_of_month
+    ).sum(:paperclips).to_i || 0
+  end
+
+  def sum_of_oversized(customers, time)
+    Scan::Period.where(
+      :user_id.in     => customers.map(&:id),
+      :created_at.gte => time,
+      :created_at.lte => time.end_of_month
+    ).sum(:oversized).to_i || 0
   end
 end

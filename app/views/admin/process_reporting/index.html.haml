@@ -14,11 +14,13 @@
               \-
               = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
             %th Feuilles numérisées
-            %th Pièces regroupées
+            %th Regroupées
             %th Pré-affectées
             %th Envois de Kits
+            %th Attaches
+            %th Hors format
         %tbody
-          - total = [0,0,0,0]
+          - total = [0,0,0,0,0,0]
           - @organizations.each do |organization|
             - customers = organization.customers.entries
             %tr
@@ -26,7 +28,7 @@
               - sum = sum_of_scanned_sheets(customers, @time)
               - total[0] += sum
               %td= sum
-              - sum = sum_of_bundled_pieces(organization, @time)
+              - sum = sum_of_bundled(organization, @time)
               - total[1] += sum
               %td= sum
               - sum = sum_of_pre_assignments(organization, @time)
@@ -35,8 +37,14 @@
               - sum = sum_of_kits(customers, @time)
               - total[3] += sum
               %td= sum
+              - sum = sum_of_paperclips(customers, @time)
+              - total[4] += sum
+              %td= sum
+              - sum = sum_of_oversized(customers, @time)
+              - total[5] += sum
+              %td= sum
           %tr
-            %td.total{ rowspan: 4 } Total
+            %td.total Total
             %td
               %b= total[0]
             %td
@@ -45,3 +53,7 @@
               %b= total[2]
             %td
               %b= total[3]
+            %td
+              %b= total[4]
+            %td
+              %b= total[5]
