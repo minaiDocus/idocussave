@@ -78,7 +78,7 @@
             != form_for @document, url: "/num" do |f|
               %td.date -
               %td
-                != f.text_field :name
+                != f.text_field :name, autofocus: true
                 %br
                 %span.errors!= @document.errors.messages[:name].try(:first)
               %td.paperclips
