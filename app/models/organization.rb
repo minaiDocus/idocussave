@@ -59,6 +59,7 @@ class Organization
   has_many   :pre_assignment_deliveries
   has_many   :temp_packs
   has_many   :temp_documents
+  has_many   :paper_processes
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label

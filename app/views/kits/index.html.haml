@@ -1,0 +1,103 @@
+#kits.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
+  .row-fluid
+    .span12
+      .margin2bottom
+        %table.table.table-bordered.navigation
+          %tr
+            %td.first.date
+              = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
+              = select_month @current_time.to_date, use_month_numbers: true
+              = hidden_field_tag :date_day, @current_time.day
+            - time = Time.now.beginning_of_month
+            - while time.month == Time.now.end_of_month.month
+              - if time.day == @current_time.day
+                %td{ class: 'current' }
+                  - if @grouped_paper_processes[time.day].present?
+                    = link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                  - else
+                    = time.day
+              - else
+                - if @grouped_paper_processes[time.day].present?
+                  %td{ class: 'present' }= link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                - else
+                  %td
+                    - if time.to_date == Time.now.to_date
+                      = link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                    - else
+                      = time.day
+              - time = time + 1.day
+  .alerts
+    = render partial: 'shared/messages'
+  - if session[:new_paper_process] && @current_time.to_date == Date.today
+    .row-fluid
+      .span12
+        .alert.alert-danger.already_exist
+          %b Ces valeurs concernent le kit "#{session[:new_paper_process].tracking_number} - #{session[:new_paper_process].customer_code}" déjà saisie dans la plateforme iDocus :
+          %br
+          %table.table.table-bordered.table-condensed
+            %thead
+              %tr
+                %th
+                %th Nombre de journaux
+                %th Nombre de périodes
+                %th
+            %tbody
+              %tr
+                %td.first
+                  Valeurs actuelles
+                  = link_to "(#{session[:old_paper_process].created_at.strftime("%d/%m/%Y")})", "/kits/#{session[:old_paper_process].created_at.strftime("%Y/%m/%d")}"
+                %td= session[:old_paper_process].journals_count
+                %td= session[:old_paper_process].periods_count
+                %td= link_to 'Annuler', cancel_kits_path, class: 'btn'
+              %tr
+                %td.first Nouvelles valeurs
+                %td= journals_count = session[:new_paper_process].journals_count
+                %td= periods_count  = session[:new_paper_process].periods_count
+                %td
+                  = form_tag overwrite_kit_path(session[:old_paper_process].id), method: 'put', class: 'margin0bottom' do
+                    = hidden_field_tag 'paper_process[journals_count]', journals_count
+                    = hidden_field_tag 'paper_process[periods_count]', periods_count
+                    = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
+  .row-fluid
+    .span12
+      %table.table.table-bordered.condensed
+        %tr
+          %th.date Heure
+          %th.tracking_number N° de suivi
+          %th.customer_code   Code client
+          %th.journals_count  Nombre de journaux
+          %th.periods_count   Nombre de périodes
+          %th.action Action
+        - if @current_time.to_date == Date.today
+          %tr.form
+            = form_for @paper_process, url: kits_path do |f|
+              %td.date -
+              %td.tracking_number
+                != f.text_field :tracking_number, autofocus: true, maxlength: 13
+                - if (error = @paper_process.errors.messages[:tracking_number].try(:first))
+                  %br
+                  %span.errors= error
+              %td.customer_code
+                != f.text_field :customer_code, autofocus: true, maxlength: 15
+                - if (error = @paper_process.errors.messages[:customer_code].try(:first))
+                  %br
+                  %span.errors= error
+              %td.journals_count
+                != f.number_field :journals_count, min: 1
+                - if (error = @paper_process.errors.messages[:journals_count].try(:first))
+                  %br
+                  .errors.alignleft= error
+              %td.periods_count
+                != f.number_field :periods_count, min: 1
+                - if (error = @paper_process.errors.messages[:periods_count].try(:first))
+                  %br
+                  .errors.alignleft= error
+              %td.action= submit_tag 'Valider', class: 'btn btn-primary'
+        - (@grouped_paper_processes[Time.now.day] || []).each do |paper_process|
+          %tr
+            %td.date=            l(paper_process.created_at, format: '%H:%M')
+            %td.tracking_number= paper_process.tracking_number
+            %td.customer_code=   paper_process.customer_code
+            %td.journals_count=  paper_process.journals_count
+            %td.periods_count=   paper_process.periods_count
+            %td.action

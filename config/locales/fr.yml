@@ -299,6 +299,12 @@ fr:
               taken: existe déjà
             end_date:
               taken: existe déjà
+        paper_process:
+          attributes:
+            journals_count:
+              greater_than: 'doit être supérieur à %{count}'
+            periods_count:
+              greater_than: 'doit être supérieur à %{count}'
     models:
       common:
         attributes:
@@ -817,6 +823,17 @@ fr:
           exercise: Exercice
           xml_data: Donnée XML
           error_message: Message d'erreur
+      paper_process:
+        zero: 0 traitement papier
+        one: 1 traitement papier
+        other: '%{count} traitements papiers'
+        name: Traitement papier
+        attributes:
+          type: Type
+          tracking_number: N° de suivi
+          customer_code: Code client
+          journals_count: Nombre de journaux
+          periods_count: Nombre de périodes
     state_machines:
       fiduceo_retriever:
         states:

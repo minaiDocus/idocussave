@@ -1,0 +1,38 @@
+!!!
+%html
+  %head
+    %title Idocus | Traitements papiers
+    %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
+    = javascript_include_tag 'application', 'paper_process', 'kits', 'scans'
+    = stylesheet_link_tag    'application', 'paper_process', 'kits', 'scans'
+  %body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container-fluid
+          %a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          %a.logo{ href: root_path }
+            %img{ src: logo_url, alt: 'logo' }
+          .nav-collapse
+            %ul{ class: 'nav' }
+              %li{ class: ('active' if controller_name == 'kits') }
+                = link_to 'Kit', kits_path
+              %li{ class: ('active' if controller_name == 'receipts') }
+                = link_to 'Réception', '#'
+              %li{ class: ('active' if controller_name == 'scans') }
+                = link_to 'Numérisation', scans_path
+              %li{ class: ('active' if controller_name == 'returns') }
+                = link_to 'Retour', '#'
+          - if current_user
+            %p.navbar-text.pull-right
+              Connecté en tant que
+              = link_to current_user.email, root_path
+              |
+              = link_to 'déconnexion', destroy_user_session_path
+    .container-fluid= yield
+    %footer.footer
+      %p.copyright.aligncenter &copy; iDocus 2015
+    = render partial: '/shared/google_analytics'

@@ -13,19 +13,24 @@ Idocus::Application.routes.draw do
 
   resources :compta
 
-  get  'num',                   controller: 'num', action: 'index'
-  get  'num/:year/:month/:day', controller: 'num', action: 'index',    constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
-  post 'num',                   controller: 'num', action: 'create'
-  put  'num',                   controller: 'num', action: 'create'
-  get  'num/cancel',            controller: 'num', action: 'cancel'
-  put  'num/:id/add',           controller: 'num', action: 'add'
-  put  'num/:id/overwrite',     controller: 'num', action: 'overwrite'
+  resources :kits, only: %w(index create) do
+    put 'overwrite', on: :member
+    get 'cancel',    on: :collection
+  end
+  get 'kits/:year/:month/:day', controller: 'kits', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
-  scope '/num' do
+  resources :scans, only: %w(index create) do
+    put :add,       on: :member
+    put :overwrite, on: :member
+    get :cancel,    on: :collection
+  end
+  get 'scans/:year/:month/:day', controller: 'scans', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
+
+  scope '/scans' do
     resource :return_labels
   end
-  get  '/num/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
-  post '/num/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
+  get  '/scans/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
+  post '/scans/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
 
   match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
   match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
