@@ -88,6 +88,7 @@ private
 
   def load_user
     @user = User.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @user
   end
 
   def user_params
