@@ -1,4 +1,4 @@
-#kits.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
+#receipts.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
   .row-fluid
     .span12
       .margin2bottom
@@ -13,16 +13,16 @@
               - if time.day == @current_time.day
                 %td{ class: 'current' }
                   - if @grouped_paper_processes[time.day].present?
-                    = link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                    = link_to time.day, "/receipts/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                   - else
                     = time.day
               - else
                 - if @grouped_paper_processes[time.day].present?
-                  %td{ class: 'present' }= link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                  %td{ class: 'present' }= link_to time.day, "/receipts/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                 - else
                   %td
                     - if time.to_date == Time.now.to_date
-                      = link_to time.day, "/kits/#{@current_time.year}/#{@current_time.month}/#{time.day}"
+                      = link_to time.day, "/receipts/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                     - else
                       = time.day
               - time = time + 1.day
@@ -35,12 +35,9 @@
           %th.date            Heure
           %th.tracking_number N° de suivi
           %th.customer_code   Code client
-          %th.journals_count  Nombre de journaux
-          %th.periods_count   Nombre de périodes
-          %th.action Action
         - if @current_time.to_date == Date.today
           %tr.form
-            = form_for @paper_process, url: kits_path do |f|
+            = form_for @paper_process, url: receipts_path do |f|
               %td.date -
               %td.tracking_number
                 != f.text_field :tracking_number, autofocus: true, maxlength: 13
@@ -52,22 +49,8 @@
                 - if (error = @paper_process.errors.messages[:customer_code].try(:first))
                   %br
                   %span.errors= error
-              %td.journals_count
-                != f.number_field :journals_count, min: 1
-                - if (error = @paper_process.errors.messages[:journals_count].try(:first))
-                  %br
-                  .errors.alignleft= error
-              %td.periods_count
-                != f.number_field :periods_count, min: 1
-                - if (error = @paper_process.errors.messages[:periods_count].try(:first))
-                  %br
-                  .errors.alignleft= error
-              %td.action= submit_tag 'Valider', class: 'btn btn-primary'
         - (@grouped_paper_processes[Time.now.day] || []).each do |paper_process|
           %tr
             %td.date=            l(paper_process.created_at, format: '%H:%M')
             %td.tracking_number= paper_process.tracking_number
             %td.customer_code=   paper_process.customer_code
-            %td.journals_count=  paper_process.journals_count
-            %td.periods_count=   paper_process.periods_count
-            %td.action

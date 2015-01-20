@@ -4,8 +4,8 @@
     %title Idocus | Traitements papiers
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
     %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
-    = javascript_include_tag 'application', 'paper_process', 'kits', 'scans'
-    = stylesheet_link_tag    'application', 'paper_process', 'kits', 'scans'
+    = javascript_include_tag 'application', 'paper_process'
+    = stylesheet_link_tag    'application', 'paper_process'
   %body
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -21,11 +21,11 @@
               %li{ class: ('active' if controller_name == 'kits') }
                 = link_to 'Kit', kits_path
               %li{ class: ('active' if controller_name == 'receipts') }
-                = link_to 'Réception', '#'
+                = link_to 'Réception', receipts_path
               %li{ class: ('active' if controller_name == 'scans') }
                 = link_to 'Numérisation', scans_path
               %li{ class: ('active' if controller_name == 'returns') }
-                = link_to 'Retour', '#'
+                = link_to 'Retour', returns_path
           - if current_user
             %p.navbar-text.pull-right
               Connecté en tant que

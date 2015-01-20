@@ -13,11 +13,11 @@ Idocus::Application.routes.draw do
 
   resources :compta
 
-  resources :kits, only: %w(index create) do
-    put 'overwrite', on: :member
-    get 'cancel',    on: :collection
-  end
+  resources :kits, only: %w(index create)
   get 'kits/:year/:month/:day', controller: 'kits', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
+
+  resources :receipts, only: %w(index create)
+  get 'receipts/:year/:month/:day', controller: 'receipts', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
   resources :scans, only: %w(index create) do
     put :add,       on: :member
@@ -26,11 +26,14 @@ Idocus::Application.routes.draw do
   end
   get 'scans/:year/:month/:day', controller: 'scans', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
-  scope '/scans' do
+  resources :returns, only: %w(index create)
+  get 'returns/:year/:month/:day', controller: 'returns', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
+
+  scope '/returns' do
     resource :return_labels
   end
-  get  '/scans/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
-  post '/scans/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
+  get  '/returns/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
+  post '/returns/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
 
   match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
   match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get

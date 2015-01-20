@@ -1,0 +1,49 @@
+# -*- encoding : UTF-8 -*-
+class ReturnsController < PaperProcessesController
+  def index
+    @grouped_paper_processes = PaperProcess.returns.where(
+      :created_at.gte => @current_time.beginning_of_month,
+      :created_at.lte => @current_time.end_of_month
+    ).desc(:created_at).group_by { |e| e.created_at.day }
+    @paper_process = session[:return_paper_process]
+    @paper_process ||= PaperProcess.new
+  end
+
+  def create
+    _params = paper_process_params
+    @paper_process = PaperProcess.where(
+      type: 'return',
+      tracking_number: _params[:tracking_number]
+    ).first
+    @paper_process ||= PaperProcess.new(type: 'return')
+    @paper_process.assign_attributes(_params)
+    if @paper_process.persisted? && @paper_process.valid?
+      session[:return_paper_process] = nil
+      @paper_process.save
+      flash[:success] = 'Modifié avec succès.'
+    elsif @paper_process.save
+      session[:return_paper_process] = nil
+      @paper_process.user            = User.find_by_code @paper_process.customer_code
+      @paper_process.organization    = @paper_process.user.try(:organization)
+      @paper_process.save
+      flash[:success] = 'Créé avec succès.'
+    else
+      session[:return_paper_process] = @paper_process
+      flash[:error] = 'Donnée(s) invalide(s).'
+    end
+    redirect_to returns_path
+  end
+
+protected
+
+  def is_return_labels_authorized?
+    (@user && @user[3]) or current_user
+  end
+  helper_method :is_return_labels_authorized?
+
+private
+
+  def paper_process_params
+    params.require(:paper_process).permit(:tracking_number, :customer_code, :letter_type)
+  end
+end

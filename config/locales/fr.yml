@@ -301,6 +301,10 @@ fr:
               taken: existe déjà
         paper_process:
           attributes:
+            tracking_number:
+              takin: existe déjà
+            customer_code:
+              takin: existe déjà
             journals_count:
               greater_than: 'doit être supérieur à %{count}'
             periods_count:
@@ -834,6 +838,7 @@ fr:
           customer_code: Code client
           journals_count: Nombre de journaux
           periods_count: Nombre de périodes
+          letter_type: Type de LS
     state_machines:
       fiduceo_retriever:
         states:

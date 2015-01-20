@@ -1,9 +1,6 @@
 #scans
-  .row
-    - if is_return_labels_authorized?
-      .span1.margin2bottom
-        %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
-    .margin2bottom{ class: (is_return_labels_authorized? ? 'span11' : 'span12') }
+  .row-fluid
+    .margin2bottom
       %table.table.table-bordered.navigation
         %tr
           %td.first.date
@@ -63,13 +60,13 @@
 
       %table.table.table-bordered.condensed
         %tr
-          %th.date Heure
-          %th.name Nom
+          %th.date       Heure
+          %th.name       Nom
           %th.paperclips Nombre d'attaches
-          %th.oversized Nombre de hors format
+          %th.oversized  Nombre de hors format
           - if current_user
             %th.scanned_by Numérisé par
-          %th.actions Actions
+          %th.actions    Actions
         - if @current_time.to_date == Date.today
           %tr.form
             = form_for @document, url: scans_path do |f|
@@ -94,18 +91,10 @@
               %td.actions= submit_tag 'Valider', class: 'btn btn-primary'
         - @documents.each do |document|
           %tr
-            %td.date= document.scanned_at.strftime('%H:%M')
-            %td.name= document.name
-            %td.paperclips= document.paperclips
-            %td.oversized= document.oversized
+            %td.date=         l(document.scanned_at, format: '%H:%M')
+            %td.name=         document.name
+            %td.paperclips=   document.paperclips
+            %td.oversized=    document.oversized
             - if current_user
               %td.scanned_by= document.scanned_by
             %td.actions
-  - if (@user && @user[3]) or current_user
-    #returnLabelsDialog.modal.hide.fade
-      .modal-header
-        %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
-        %h3 Génération des étiquettes de retour
-      .modal-body
-        #returnLabelsForm
-        %iframe{ src: '', id: 'returnLabelsShow' }

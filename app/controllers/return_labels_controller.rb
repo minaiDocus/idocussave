@@ -26,7 +26,7 @@ class ReturnLabelsController < ApplicationController
       @return_labels = ReturnLabels.new(params[:return_labels].merge({time: @current_time}))
       @return_labels.render_pdf
     end
-    redirect_to '/scans/return_labels'
+    redirect_to '/returns/return_labels'
   end
 
 private

@@ -1,47 +1,42 @@
 # -*- encoding : UTF-8 -*-
-class KitsController < PaperProcessesController
+class ReceiptsController < PaperProcessesController
   def index
-    @grouped_paper_processes = PaperProcess.kits.where(
+    @grouped_paper_processes = PaperProcess.receipts.where(
       :created_at.gte => @current_time.beginning_of_month,
       :created_at.lte => @current_time.end_of_month
     ).desc(:created_at).group_by { |e| e.created_at.day }
-    @paper_process = session[:kit_paper_process]
-    @paper_process ||= PaperProcess.new journals_count: 1, periods_count: 1
+    @paper_process = session[:receipt_paper_process]
+    @paper_process ||= PaperProcess.new
   end
 
   def create
     _params = paper_process_params
     @paper_process = PaperProcess.where(
-      type: 'kit',
+      type: 'receipt',
       tracking_number: _params[:tracking_number]
     ).first
-    @paper_process ||= PaperProcess.new(type: 'kit')
+    @paper_process ||= PaperProcess.new(type: 'receipt')
     @paper_process.assign_attributes(_params)
     if @paper_process.persisted? && @paper_process.valid?
-      session[:kit_paper_process] = nil
+      session[:receipt_paper_process] = nil
       @paper_process.save
       flash[:success] = 'Modifié avec succès.'
     elsif @paper_process.save
-      session[:kit_paper_process] = nil
-      @paper_process.user         = User.find_by_code @paper_process.customer_code
-      @paper_process.organization = @paper_process.user.try(:organization)
+      session[:receipt_paper_process] = nil
+      @paper_process.user             = User.find_by_code @paper_process.customer_code
+      @paper_process.organization     = @paper_process.user.try(:organization)
       @paper_process.save
       flash[:success] = 'Créé avec succès.'
     else
-      session[:kit_paper_process] = @paper_process
+      session[:receipt_paper_process] = @paper_process
       flash[:error] = 'Donnée(s) invalide(s).'
     end
-    redirect_to kits_path
+    redirect_to receipts_path
   end
 
 private
 
   def paper_process_params
-    params.require(:paper_process).permit(
-      :tracking_number,
-      :customer_code,
-      :journals_count,
-      :periods_count
-    )
+    params.require(:paper_process).permit(:tracking_number, :customer_code)
   end
 end

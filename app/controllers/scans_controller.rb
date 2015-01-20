@@ -73,11 +73,6 @@ class ScansController < PaperProcessesController
     redirect_to scans_path
   end
 
-  def is_return_labels_authorized?
-    (@user && @user[3]) or current_user
-  end
-  helper_method :is_return_labels_authorized?
-
 private
 
   def load_scanned_by
