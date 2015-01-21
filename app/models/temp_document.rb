@@ -71,7 +71,6 @@ class TempDocument
   scope :fiduceo,           where: { delivery_type: 'fiduceo' }
 
   scope :originals,         where: { is_an_original: true }
-  scope :bundled,           where: { is_an_original: false }
 
   scope :ocr_layer_applied, where: { is_ocr_layer_applied: true }
 
