@@ -1,13 +1,13 @@
 # -*- encoding : UTF-8 -*-
 module Admin::ProcessReportingHelper
-  def sum_of_scanned_sheets(customers, time)
-    periods = Scan::Period.where(
-      :user_id.in   => customers.map(&:id),
-      :start_at.lte => time,
-      :end_at.gte   => time
-    )
-    periods = periods.where(duration: 1) if time.month % 3 != 0
-    periods.entries.sum(&:scanned_sheets).to_i
+  def sum_of_scanned_sheets(organization, time)
+    organization.temp_documents.scan.where(
+      :created_at.gte => time,
+      :created_at.lte => time.end_of_month
+    ).any_of(
+      { state: 'processed', is_an_original: true },
+      { state: 'bundled' }
+    ).size
   end
 
   def sum_of_bundled(organization, time)
@@ -80,19 +80,23 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_paperclips(customers, time)
-    Scan::Period.where(
+    periods = Scan::Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
-    ).sum(:paperclips).to_i || 0
+    )
+    periods = periods.where(duration: 1) if time.month % 3 != 0
+    periods.sum(:paperclips).to_i
   end
 
   def sum_of_oversized(customers, time)
-    Scan::Period.where(
+    periods = Scan::Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
-    ).sum(:oversized).to_i || 0
+    )
+    periods = periods.where(duration: 1) if time.month % 3 != 0
+    periods.sum(:oversized).to_i
   end
 
   def sum_of_returns_500(organization, time)

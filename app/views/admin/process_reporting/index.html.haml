@@ -43,7 +43,7 @@
               - sum = sum_of_receipts(organization, @time)
               - total[2] += sum
               %td= sum
-              - sum = sum_of_scanned_sheets(customers, @time)
+              - sum = sum_of_scanned_sheets(organization, @time)
               - total[3] += sum
               %td= sum
               - sum = sum_of_oversized(customers, @time)
