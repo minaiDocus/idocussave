@@ -7,41 +7,65 @@
       %table.table.table-condensed.table-striped.table-bordered
         %thead
           %tr
-            %th.date
+            %th.date{ rowspan: 2 }
               = link_to l((@time - 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time - 1.month), format: '%Y/%m')}"
               \-
               = l(@time, format: '%b %Y').capitalize
               \-
               = link_to l((@time + 1.month), format: '%b %Y').capitalize, "/admin/process_reporting/#{l((@time + 1.month), format: '%Y/%m')}"
-            %th Feuilles numérisées
-            %th Regroupées
-            %th Pré-affectées
-            %th Envois de Kits
+            %th{ colspan: 2 } Kits
+            %th{ rowspan: 2 } Réception plis
+            %th{ colspan: 3 } Numérisation
+            %th{ rowspan: 2 } Regroupement
+            %th{ rowspan: 2 } Pré-aff
+            %th{ colspan: 3 } Retours plis
+          %tr
+            %th Demandes
+            %th Envois
+            %th Feuilles
+            %th Hors-formats
             %th Attaches
-            %th Hors format
+            %th LS500
+            %th LS1000
+            %th LS3000
         %tbody
-          - total = [0,0,0,0,0,0]
+          - total = [0,0,0,0,0,0,0,0,0,0,0]
           - @organizations.each do |organization|
             - customers = organization.customers.entries
             %tr
               %td.organization= link_to organization.name, [:account, organization]
-              - sum = sum_of_scanned_sheets(customers, @time)
+              - sum = sum_of_requested_kits(customers, @time)
               - total[0] += sum
               %td= sum
-              - sum = sum_of_bundled(organization, @time)
+              - sum = sum_of_sent_kits(organization, @time)
               - total[1] += sum
               %td= sum
-              - sum = sum_of_pre_assignments(organization, @time)
+              - sum = sum_of_receipts(organization, @time)
               - total[2] += sum
               %td= sum
-              - sum = sum_of_kits(customers, @time)
+              - sum = sum_of_scanned_sheets(customers, @time)
               - total[3] += sum
               %td= sum
-              - sum = sum_of_paperclips(customers, @time)
+              - sum = sum_of_oversized(customers, @time)
               - total[4] += sum
               %td= sum
-              - sum = sum_of_oversized(customers, @time)
+              - sum = sum_of_paperclips(customers, @time)
               - total[5] += sum
+              %td= sum
+              - sum = sum_of_bundled(organization, @time)
+              - total[6] += sum
+              %td= sum
+              - sum = sum_of_pre_assignments(organization, @time)
+              - total[7] += sum
+              %td= sum
+              - sum = sum_of_returns_500(organization, @time)
+              - total[8] += sum
+              %td= sum
+              - sum = sum_of_returns_1000(organization, @time)
+              - total[9] += sum
+              %td= sum
+              - sum = sum_of_returns_3000(organization, @time)
+              - total[10] += sum
               %td= sum
           %tr
             %td.total Total
@@ -57,3 +81,13 @@
               %b= total[4]
             %td
               %b= total[5]
+            %td
+              %b= total[6]
+            %td
+              %b= total[7]
+            %td
+              %b= total[8]
+            %td
+              %b= total[9]
+            %td
+              %b= total[10]

@@ -38,7 +38,7 @@ module Admin::ProcessReportingHelper
     total
   end
 
-  def sum_of_kits(customers, time)
+  def sum_of_requested_kits(customers, time)
     customer_ids = Scan::Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
@@ -65,6 +65,20 @@ module Admin::ProcessReportingHelper
     customer_ids.size - previous_count
   end
 
+  def sum_of_sent_kits(organization, time)
+    organization.paper_processes.kits.where(
+      :created_at.gte  => time,
+      :created_at.lte  => time.end_of_month
+    ).size
+  end
+
+  def sum_of_receipts(organization, time)
+    organization.paper_processes.receipts.where(
+      :created_at.gte  => time,
+      :created_at.lte  => time.end_of_month
+    ).size
+  end
+
   def sum_of_paperclips(customers, time)
     Scan::Period.where(
       :user_id.in     => customers.map(&:id),
@@ -79,5 +93,26 @@ module Admin::ProcessReportingHelper
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
     ).sum(:oversized).to_i || 0
+  end
+
+  def sum_of_returns_500(organization, time)
+    organization.paper_processes.returns.l500.where(
+      :created_at.gte  => time,
+      :created_at.lte  => time.end_of_month
+    ).size
+  end
+
+  def sum_of_returns_1000(organization, time)
+    organization.paper_processes.returns.l1000.where(
+      :created_at.gte  => time,
+      :created_at.lte  => time.end_of_month
+    ).size
+  end
+
+  def sum_of_returns_3000(organization, time)
+    organization.paper_processes.returns.l3000.where(
+      :created_at.gte  => time,
+      :created_at.lte  => time.end_of_month
+    ).size
   end
 end

@@ -28,6 +28,10 @@ class PaperProcess
   scope :receipts, where: { type: 'receipt' }
   scope :returns,  where: { type: 'return' }
 
+  scope :l500,  where: { letter_type: 500 }
+  scope :l1000, where: { letter_type: 1000 }
+  scope :l3000, where: { letter_type: 3000 }
+
 private
 
   def customer_exist
