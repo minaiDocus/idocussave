@@ -86,6 +86,8 @@ class PrepaCompta
 
           temp_document                     = TempDocument.new
           temp_document.temp_pack           = temp_pack
+          temp_document.user                = temp_pack.user
+          temp_document.organization        = temp_pack.organization
           temp_document.is_an_original      = false
           temp_document.is_a_cover          = original_temp_document.is_a_cover?
           temp_document.content             = open(file_path)
