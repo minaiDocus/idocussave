@@ -137,7 +137,7 @@ private
 
   def notify
     if notify? || (notify_error? && @delivery.error?)
-      IbizaMailer.notify_delivery(addresses, @ibiza, object_to_notify, @delivery.xml_data).deliver
+      IbizaMailer.notify_delivery(@delivery, addresses, @ibiza, object_to_notify).deliver
     end
   end
 

@@ -18,5 +18,14 @@
         %th Lot :
         %td= @report.name
       %tr
+        %th Numéro de livraison :
+        %td= link_to @delivery.number, admin_pre_assignment_delivery_url(@delivery)
+      %tr
+        %th Mode :
+        %td= @delivery.is_auto ? 'Automatique' : 'Manuel'
+      %tr
+        %th Etat :
+        %td= PreAssignmentDelivery.state_machine.states[@delivery.state].human_name
+      %tr
         %th Message de retour :
         %td= (@preseizure || @report).delivery_message
