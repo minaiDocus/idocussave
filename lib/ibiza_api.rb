@@ -162,7 +162,7 @@ module IbizaAPI
           @result = response['result']
           @datetime = response['datetime'].to_time
           if response['message'].present? && response['message'] != { 'i:nil' => 'true' }
-            if @result == 'Error'
+            if @result == 'Error' && response['message']['error'].try(:[], 'number') && response['message']['error'].try(:[], 'description')
               @message = "Erreur n°#{response['message']['error']['number']} - #{response['message']['error']['description']}"
             else
               @message = response['message']
