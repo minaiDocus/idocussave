@@ -28,14 +28,8 @@
           %th= t('mongoid.models.pre_assignment_delivery.attributes.ibiza_id')
           %td= @delivery.ibiza_id
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.exercise')
-          %td
-            - if @delivery.exercise.present?
-              = l(@delivery.exercise['start_date'], format: '%d %B %Y')
-              au
-              = l(@delivery.exercise['end_date'], format: '%d %B %Y')
-              \-
-              = @delivery.exercise['is_closed'] ? 'Fermé' : 'Ouvert'
+          %th= t('mongoid.models.pre_assignment_delivery.attributes.grouped_date')
+          %td= l(@delivery.grouped_date, format: '%B %Y') rescue nil
         %tr
           %th= t('mongoid.models.pre_assignment_delivery.attributes.error_message')
           %td= @delivery.error_message

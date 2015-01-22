@@ -24,23 +24,14 @@ class PreAssignmentDeliveryService
     result
   end
 
-  def period
-    DocumentTools.to_period(@report.name)
-  end
-
   def exercise
-    @exercise ||= ExerciceService.find(@user, period, false)
+    @exercise ||= ExerciceService.find(@user, @delivery.grouped_date, false)
   end
 
   def build_xml
     @delivery.building_xml
     if exercise
       @delivery.xml_data = IbizaAPI::Utils.to_import_xml(exercise, @preseizures, @ibiza.description, @ibiza.description_separator, @ibiza.piece_name_format, @ibiza.piece_name_format_sep)
-      @delivery.exercise = {
-        start_date: exercise.start_date.to_time,
-        end_date:   exercise.end_date.to_time,
-        is_closed:  exercise.is_closed
-      }
       @delivery.save
       @delivery.xml_built
     else
@@ -112,7 +103,7 @@ class PreAssignmentDeliveryService
 
       if @preseizures.size > 1
         @preseizures.each do |preseizure|
-          delivery = CreatePreAssignmentDeliveryService.new(preseizure, false).execute
+          delivery = CreatePreAssignmentDeliveryService.new(preseizure, false).execute.first
           delivery.update_attribute(:is_auto, @delivery.is_auto)
         end
       end

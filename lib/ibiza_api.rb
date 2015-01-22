@@ -41,16 +41,16 @@ module IbizaAPI
       results.empty? ? name : results.compact.join(separator)
     end
 
-    def self.to_import_xml(exercice, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
+    def self.to_import_xml(exercise, preseizures, fields = {}, separator = ' - ', piece_name_format = {}, piece_name_format_sep = ' ')
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.importEntryRequest {
-          xml.importDate exercice.end_date
+          xml.importDate exercise.end_date
           xml.wsImportEntry {
             preseizures.each do |preseizure|
               preseizure.accounts.each do |account|
                 xml.importEntry {
                   xml.journalRef preseizure.report.journal
-                  xml.date computed_date(preseizure, exercice)
+                  xml.date computed_date(preseizure)
                   if preseizure.piece
                     xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
                     xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
@@ -74,20 +74,14 @@ module IbizaAPI
     end
 
     # TODO refactor me
-    def self.computed_date(preseizure, exercice)
+    def self.computed_date(preseizure)
       date = preseizure.date.try(:to_date)
-
-      if preseizure.is_exercice_range_used
-        out_of_exercice_range = date < exercice.start_date || exercice.end_date < date rescue true
-      end
 
       if preseizure.is_period_range_used
         out_of_period_range = date < preseizure.period_start_date || preseizure.period_end_date < date rescue true
       end
 
-      if preseizure.is_exercice_range_used && out_of_exercice_range
-        exercice.start_date
-      elsif preseizure.is_period_range_used && out_of_period_range
+      if preseizure.is_period_range_used && out_of_period_range
         preseizure.period_start_date
       else
         date

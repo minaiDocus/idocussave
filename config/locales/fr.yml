@@ -345,8 +345,7 @@ fr:
           is_centralized: Est centralisé ?
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
-          is_computed_date_used: Recalculer la date (XML) ?
-          is_exercice_computed_date_used: Recalculer la date d'exercice (XML) ?
+          is_computed_date_used: Recalculer la date (période) ?
           use_debit_mandate: Utilise le prélévement ?
           balance_in_cents: Solde du compte prépayé
           prescriber: Prescripteur
@@ -824,7 +823,7 @@ fr:
           is_auto: Automatique ?
           total_item: Nombre d'élément
           ibiza_id: Identifiant Ibiza
-          exercise: Exercice
+          grouped_date: Date groupé
           xml_data: Donnée XML
           error_message: Message d'erreur
       paper_process:

@@ -75,11 +75,6 @@ class Pack::Report::Preseizure
   end
 
   # TODO refactor me
-  def is_exercice_range_used
-    report.user.try(:is_exercice_computed_date_used)
-  end
-
-  # TODO refactor me
   def is_period_range_used
     report.user.try(:is_computed_date_used)
   end

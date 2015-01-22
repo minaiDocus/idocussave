@@ -12,10 +12,10 @@ class PreAssignmentDelivery
   field :pack_name
   field :number
   field :state
-  field :is_auto,    type: Boolean
-  field :total_item, type: Integer
+  field :is_auto,      type: Boolean
+  field :total_item,   type: Integer
   field :ibiza_id
-  field :exercise,   type: Hash
+  field :grouped_date, type: Date
   field :xml_data
   field :error_message
 
