@@ -185,6 +185,14 @@ module ApplicationHelper
     end
   end
 
+  def pre_assignment_date_computed_options
+    [
+      ["Valeur de l'organisation", -1],
+      [t('no_value'),               0],
+      [t('yes_value'),              1]
+    ]
+  end
+
   def transaction_status_for_select(default=nil)
     options = []
     t('mongoid.state_machines.fiduceo_transaction.status').each do |key, value|

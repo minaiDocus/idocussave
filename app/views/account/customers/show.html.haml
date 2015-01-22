@@ -80,6 +80,9 @@
                     %tr
                       %th= t('mongoid.models.user_options.attributes.is_taxable')
                       %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
+                      %td= @customer.options.pre_assignment_date_computed? ? t('yes_value') : t('no_value')
               - if @customer.active?
                 .row-fluid
                   .span12

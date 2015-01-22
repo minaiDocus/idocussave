@@ -83,10 +83,6 @@
             %td.value
               = check_box_tag 'user[is_fiduceo_authorized]', 1, @user.is_fiduceo_authorized
           %tr
-            %th= t('mongoid.models.user.attributes.is_computed_date_used')
-            %td.value
-              = check_box_tag 'user[is_computed_date_used]', 1, @user.is_computed_date_used
-          %tr
             %th= t('mongoid.models.user.attributes.is_access_by_token_active')
             %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
           %tr

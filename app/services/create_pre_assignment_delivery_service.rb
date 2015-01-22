@@ -22,7 +22,7 @@ class CreatePreAssignmentDeliveryService
       Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
 
       grouped_preseizures = []
-      if @report.user.try(:is_computed_date_used)
+      if @report.user.options.pre_assignment_date_computed?
         grouped_preseizures = [@preseizures]
       else
         grouped_preseizures = @preseizures.group_by do |preseizure|

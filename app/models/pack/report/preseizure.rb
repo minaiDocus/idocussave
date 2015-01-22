@@ -76,7 +76,7 @@ class Pack::Report::Preseizure
 
   # TODO refactor me
   def is_period_range_used
-    report.user.try(:is_computed_date_used)
+    report.user.options.pre_assignment_date_computed?
   end
 
   def piece_info

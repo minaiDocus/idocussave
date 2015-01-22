@@ -15,13 +15,13 @@ class Organization
   field :is_default_subscription_editable,   type: Boolean, default: true
   field :is_journals_management_centralized, type: Boolean, default: true
   # Misc
-  field :is_test,      type: Boolean, default: false
-  field :is_suspended, type: Boolean, default: false
+  field :is_test,                         type: Boolean, default: false
+  field :is_suspended,                    type: Boolean, default: false
+  field :is_quadratus_used,               type: Boolean, default: false
+  field :is_pre_assignment_date_computed, type: Boolean, default: false
 
   field :file_naming_policy,           type: String,  default: ':customerCode_:journal_:period_:position'
   field :is_file_naming_policy_active, type: Boolean, default: false
-
-  field :is_quadratus_used, type: Boolean, default: false
 
   validates_length_of :file_naming_policy, maximum: 80
   validates_presence_of :file_naming_policy

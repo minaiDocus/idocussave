@@ -16,6 +16,7 @@
           = f.input :is_journals_management_centralized, as: :boolean
           = f.input :file_naming_policy, hint: "peuvent être utilisés : #{Organization.valid_file_naming_policy_elements.to_sentence}"
           = f.input :is_file_naming_policy_active, as: 'boolean'
+          = f.input :is_pre_assignment_date_computed, as: 'boolean'
         - else
           = f.input :is_quadratus_used, as: 'boolean'
         .form-actions.margin0bottom

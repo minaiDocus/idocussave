@@ -94,9 +94,6 @@ class User
   field :is_fiduceo_authorized, type: Boolean, default: false
   field :fiduceo_id
 
-  # Used in preassignment export
-  field :is_computed_date_used, type: Boolean, default: false
-
   field :email_code
   field :is_mail_receipt_activated, type: Boolean, default: true
 

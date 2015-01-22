@@ -110,7 +110,8 @@ private
         :is_detail_authorized,
         :is_test,
         :is_journals_management_centralized,
-        :is_quadratus_used
+        :is_quadratus_used,
+        :is_pre_assignment_date_computed
       )
     else
       params.require(:organization).permit(
@@ -120,7 +121,8 @@ private
         :file_naming_policy,
         :is_file_naming_policy_active,
         :is_journals_management_centralized,
-        :is_quadratus_used
+        :is_quadratus_used,
+        :is_pre_assignment_date_computed
       )
     end
   end

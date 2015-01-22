@@ -132,7 +132,7 @@ private
       :group_ids,
       :knowings_code,
       :knowings_visibility,
-      { options_attributes: [:is_taxable] }
+      { options_attributes: [:is_taxable, :is_pre_assignment_date_computed] }
     ]
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)

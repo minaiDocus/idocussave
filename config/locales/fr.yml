@@ -345,7 +345,6 @@ fr:
           is_centralized: Est centralisé ?
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
-          is_computed_date_used: Recalculer la date (période) ?
           use_debit_mandate: Utilise le prélévement ?
           balance_in_cents: Solde du compte prépayé
           prescriber: Prescripteur
@@ -362,6 +361,7 @@ fr:
         other: '%{count} options'
         attributes:
           is_taxable: Est assujetti à TVA ?
+          is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
       address:
         zero: 0 adresses
         one: 1 adresse
@@ -586,6 +586,7 @@ fr:
           is_suspended: Est suspendu ?
           is_journals_management_centralized: Gestion des journaux comptables centralisé ?
           is_quadratus_used: Activer les options de Quadratus ?
+          is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
           status:
             admin: Administrateur
             collaborator: Collaborateur

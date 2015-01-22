@@ -68,6 +68,7 @@ fr:
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
       options:
         is_taxable: Est assujetti à TVA ?
+        is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
       organization:
         name: Nom
         description: Description
@@ -83,6 +84,7 @@ fr:
         is_test: Organisation de test ?
         is_journals_management_centralized: Gestion des journaux comptables centralisé ?
         is_quadratus_used: Activer les options de Quadratus ?
+        is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
       organization_rights:
         is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
         is_customers_management_authorized: Gestion des clients autorisé ?
