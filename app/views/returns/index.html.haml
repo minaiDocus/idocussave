@@ -57,7 +57,7 @@
                 - if (error = @paper_process.errors.messages[:letter_type].try(:first))
                   %br
                   %span.errors= error
-        - (@grouped_paper_processes[Time.now.day] || []).each do |paper_process|
+        - @grouped_paper_processes[@current_time.day].to_a.each do |paper_process|
           %tr
             %td.date=            l(paper_process.created_at, format: '%H:%M')
             %td.tracking_number= paper_process.tracking_number
