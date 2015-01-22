@@ -26,7 +26,7 @@
                 - if invoice.organization
                   = link_to invoice.organization.name, account_organization_path(invoice.organization)
               %td
-                - unless invoice.organization
+                - if invoice.user && !invoice.organization
                   = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
               %td.price
                 - if invoice.amount_in_cents_w_vat
