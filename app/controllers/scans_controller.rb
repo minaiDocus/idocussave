@@ -4,7 +4,14 @@ class ScansController < PaperProcessesController
   before_filter :load_resource, only: :index
 
   def index
-    @document = session[:document] || Scan::Document.new
+    respond_to do |format|
+      format.html do
+        @document = session[:document] || Scan::Document.new
+      end
+      format.csv do
+        send_data(@all_documents.asc(:scanned_at).to_csv, type: 'text/csv', filename: "scans_#{@current_time.strftime('%Y_%m')}.csv")
+      end
+    end
   end
 
   def create

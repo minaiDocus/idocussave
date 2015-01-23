@@ -1,12 +1,20 @@
 # -*- encoding : UTF-8 -*-
 class KitsController < PaperProcessesController
   def index
-    @grouped_paper_processes = PaperProcess.kits.where(
+    paper_processes = PaperProcess.kits.where(
       :created_at.gte => @current_time.beginning_of_month,
       :created_at.lte => @current_time.end_of_month
-    ).desc(:created_at).group_by { |e| e.created_at.day }
-    @paper_process = session[:kit_paper_process]
-    @paper_process ||= PaperProcess.new journals_count: 1, periods_count: 1
+    )
+    respond_to do |format|
+      format.html do
+        @grouped_paper_processes = paper_processes.desc(:created_at).group_by { |e| e.created_at.day }
+        @paper_process = session[:kit_paper_process]
+        @paper_process ||= PaperProcess.new journals_count: 1, periods_count: 1
+      end
+      format.csv do
+        send_data(paper_processes.asc(:created_at).to_csv, type: 'text/csv', filename: "kits_#{@current_time.strftime('%Y_%m')}.csv")
+      end
+    end
   end
 
   def create

@@ -62,6 +62,18 @@ class Scan::Document
     end
   end
 
+  def self.to_csv
+    criteria.map do |document|
+      [
+        I18n.l(document.scanned_at),
+        document.name,
+        document.paperclips,
+        document.oversized,
+        document.scanned_by
+      ].join(';')
+    end.join("\n")
+  end
+
 private
 
   def uniqueness_of_name

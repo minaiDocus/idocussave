@@ -3,7 +3,9 @@
     - if is_return_labels_authorized?
       .span1
         %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
-    %div{ class: (is_return_labels_authorized? ? 'span11' : 'span12') }
+    .span1
+      = link_to 'Export CSV', returns_path(format: 'csv'), class: 'btn'
+    %div{ class: (is_return_labels_authorized? ? 'span10' : 'span11') }
       %table.table.table-bordered.navigation
         %tr
           %td.first.date

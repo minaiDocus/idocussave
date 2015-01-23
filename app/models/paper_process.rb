@@ -32,6 +32,18 @@ class PaperProcess
   scope :l1000, where: { letter_type: 1000 }
   scope :l3000, where: { letter_type: 3000 }
 
+  def self.to_csv
+    criteria.map do |paper_process|
+      [
+        I18n.l(paper_process.created_at),
+        paper_process.tracking_number,
+        paper_process.customer_code,
+        paper_process.journals_count,
+        paper_process.periods_count
+      ].join(';')
+    end.join("\n")
+  end
+
 private
 
   def customer_exist
