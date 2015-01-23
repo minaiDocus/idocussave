@@ -21,9 +21,10 @@ class CreatePreAssignmentDeliveryService
       ids = @preseizures.map(&:id)
       Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
 
-      grouped_preseizures = []
+      grouped_preseizures = {}
       if @report.user.options.pre_assignment_date_computed?
-        grouped_preseizures = [@preseizures]
+        date = DocumentTools.to_period(@report.name)
+        grouped_preseizures = { date => @preseizures }
       else
         grouped_preseizures = @preseizures.group_by do |preseizure|
           preseizure.date.beginning_of_month.to_date
