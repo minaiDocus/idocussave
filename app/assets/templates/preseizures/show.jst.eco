@@ -30,6 +30,6 @@
     </td>
   </tr>
 </table>
-<a class="selectable" href="#<%= @packName %>/<%= @model.get('position') %>">
+<a class="selectable" href="#<%= @view %>/<%= @packName %>/<%= @model.get('position') %>">
   <%= @model.description() %>
 </a>

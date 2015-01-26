@@ -4,6 +4,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
   paginator: JST['paginator']
 
   initialize: (options) ->
+    @view = options.view || 'all'
     @packName = options.packName
     @page = options.page || 1
 
@@ -12,7 +13,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
 
     @collection = new Idocus.Collections.Preseizures()
     @collection.on 'reset', @render, this
-    @collection.fetch(data: { name: @packName, page: @page })
+    @collection.fetch(data: { name: @packName, page: @page, view: @view })
     this
 
   render: ->
@@ -27,12 +28,13 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
     this
 
   addOne: (item) ->
-    view = new Idocus.Views.PreseizuresShow(model: item, packName: @packName)
+    view = new Idocus.Views.PreseizuresShow(model: item, view: @view, packName: @packName)
     @$el.children('ul').append(view.render().el)
     this
 
   paginate: ->
-    @$el.append(@paginator(collection: @collection, prefix: @packName + '/'))
+    prefix = "#{@view}/#{@packName}/"
+    @$el.append(@paginator(collection: @collection, prefix: prefix))
     this
 
   selectPreseizure: (view) ->

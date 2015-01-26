@@ -1,10 +1,20 @@
+<% if(window.is_ibiza_configured): %>
+  <div class='aligncenter'>
+    <span style='position:relative;top:-4px;'>Afficher :</span>
+    <select name='view' id='view_filter'>
+      <option value='all'>Tous</option>
+      <option value='delivered'>Livrés</option>
+      <option value='not_delivered'>Non livrés</option>
+    </select>
+  </div>
+<% end %>
 <div class="search input-prepend input-append">
   <span class="add-on left">
     <i class="icon-search"></i>
   </span>
   <input class="span8" id="pack_reports_search" name="pack_reports_search" type="text" placeholder="Nom">
   <span class="add-on right">
-    <a href="#"><i class="icon-remove"></i></a>
+    <a class='remove_search'><i class="icon-remove"></i></a>
   </span>
 </div>
 <ul class="nav nav-list"></ul>

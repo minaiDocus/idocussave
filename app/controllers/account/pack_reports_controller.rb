@@ -5,6 +5,11 @@ class Account::PackReportsController < Account::OrganizationController
   def index
     @pack_reports = Pack::Report.preseizures.any_in(user_id: customer_ids)
     @pack_reports = @pack_reports.where(name: /#{Regexp.quote(params[:name])}/) if params[:name].present?
+    if params[:view] == 'delivered'
+      @pack_reports = @pack_reports.where(is_delivered: true)
+    elsif params[:view] == 'not_delivered'
+      @pack_reports = @pack_reports.where(is_delivered: false)
+    end
     @pack_reports = @pack_reports.desc(:updated_at).limit(20).page(params[:page]).per(params[:per_page])
   end
 

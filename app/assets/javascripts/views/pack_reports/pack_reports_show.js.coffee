@@ -13,8 +13,12 @@ class Idocus.Views.PackReportsShow extends Backbone.View
     'click a.selectable':   'select'
     'click a.deliver':      'deliver'
 
+  initialize: (options) ->
+    @view = options.view || 'all'
+    this
+
   render: ->
-    @$el.html(@template(model: @model, details: @details()))
+    @$el.html(@template(view: @view, model: @model, details: @details()))
     this
 
   select: ->

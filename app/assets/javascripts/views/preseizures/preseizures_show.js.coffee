@@ -15,12 +15,13 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     'click a.deliver':      'deliver'
 
   initialize: (options) ->
+    @view = options.view || 'all'
     @packName = options.packName
     @model.on 'change', @render, this
     this
 
   render: ->
-    @$el.html(@template(model: @model, packName: @packName, details: @details()))
+    @$el.html(@template(model: @model, view: @view, packName: @packName, details: @details()))
     this
 
   select: ->

@@ -17,4 +17,4 @@
     <i class="icon-download"></i>
   </a>
 </div>
-<a class="selectable" href="#<%= @model.get('name').replace(/\s/g, '_') %>"><%= @model.get('name') %></a>
+<a class="selectable" href="#<%= @view %>/<%= @model.get('name').replace(/\s/g, '_') %>"><%= @model.get('name') %></a>
