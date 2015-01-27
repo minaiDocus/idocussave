@@ -21,8 +21,8 @@ class FileDeliveryInit
       end
     else
       owner = pack.owner
-      pack.init_delivery_for(owner, options)
-      if owner.organization.try(:knowings).try(:ready?)
+      pack.init_delivery_for(owner, options) if options[:type] != RemoteFile::REPORT
+      if options[:type] != RemoteFile::REPORT && owner.organization.try(:knowings).try(:ready?)
         pack.init_delivery_for(owner.organization, options.merge(type: RemoteFile::PIECES_ONLY))
       end
       owner.prescribers.each do |prescriber|
@@ -81,7 +81,7 @@ class FileDeliveryInit
           end
         end
         # report
-        if type.in?([RemoteFile::ALL, RemoteFile::REPORT]) && report
+        if type == RemoteFile::REPORT && report
           report.extend FileDeliveryInit::RemoteReport
           temp_remote_files = report.get_remote_files(object,service_name)
           if force
