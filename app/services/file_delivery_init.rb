@@ -186,7 +186,9 @@ class FileDeliveryInit
           current_remote_files << get_remote_file(object,service_name,'.tiff')
         end
       elsif service_name == 'Knowings'
-        current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
+        if preseizures.any? || !is_awaiting_pre_assignment
+          current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
+        end
       else
         if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
           current_remote_files << get_remote_file(object,service_name,'.pdf')
