@@ -18,6 +18,9 @@
         %th Lot :
         %td= @report.name
       %tr
+        %th Total :
+        %td= @delivery.preseizures.count
+      %tr
         %th Numéro de livraison :
         %td= link_to @delivery.number, admin_pre_assignment_delivery_url(@delivery)
       %tr
