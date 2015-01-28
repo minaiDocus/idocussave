@@ -39,7 +39,8 @@ class PaperProcess
         paper_process.tracking_number,
         paper_process.customer_code,
         paper_process.journals_count,
-        paper_process.periods_count
+        paper_process.periods_count,
+        paper_process.letter_type
       ].join(';')
     end.join("\n")
   end
