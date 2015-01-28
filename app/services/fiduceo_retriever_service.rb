@@ -52,7 +52,9 @@ class FiduceoRetrieverService
     def destroy(retriever)
       client = Fiduceo::Client.new(retriever.user.fiduceo_id)
       client.retriever(retriever.fiduceo_id, :delete)
-      retriever.destroy
+      if client.response.code == 200
+        retriever.destroy
+      end
     end
 
     def format_params(retriever)

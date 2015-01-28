@@ -45,8 +45,11 @@ class Account::RetrieversController < Account::FiduceoController
   end
 
   def destroy
-    FiduceoRetrieverService.destroy(@fiduceo_retriever)
-    flash[:success] = 'Supprimé avec succès.'
+    if FiduceoRetrieverService.destroy(@fiduceo_retriever)
+      flash[:success] = 'Supprimé avec succès.'
+    else
+      flash[:error] = 'Impossible de supprimer.'
+    end
     redirect_to account_fiduceo_retrievers_path
   end
 
