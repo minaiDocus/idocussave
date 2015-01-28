@@ -18,8 +18,7 @@ class StopSubscriptionService
     @user.options.max_number_of_journals      = 0
     @user.options.is_preassignment_authorized = false
     @user.options.save
-    @user.fiduceo_retrievers.each { |r| FiduceoRetrieverService.destroy(r) }
-    FiduceoUser.new(@user).destroy if @user.fiduceo_id
+    RemoveFiduceoService.new(@user.id).delay.execute
     @user.dematbox.try(:unsubscribe)
     @user.external_file_storage.try(:destroy)
     if @user.composition.present? && File.exists?("#{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
