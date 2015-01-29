@@ -5,11 +5,11 @@ Idocus::Application.routes.draw do
 
   devise_for :users
 
-  match '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download', via: :get
-  match '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece', via: :get
-  match '/account/invoices/:id/download/:style', controller: 'account/invoices', action: 'download', via: :get
-  match '/account/compositions/download', controller: 'account/compositions', action: 'download', via: :get
-  match '/account' => redirect('/account/documents')
+  get '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download'
+  get '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece'
+  get '/account/invoices/:id/download/:style', controller: 'account/invoices', action: 'download'
+  get '/account/compositions/download', controller: 'account/compositions', action: 'download'
+  get '/account' => redirect('/account/documents')
 
   resources :compta
 
@@ -35,8 +35,8 @@ Idocus::Application.routes.draw do
   get  '/returns/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
   post '/returns/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
 
-  match 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create',  via: :get
-  match 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy', via: :get
+  get 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create'
+  get 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy'
 
   namespace :account do
     root to: 'account/account#index'
@@ -282,8 +282,8 @@ Idocus::Application.routes.draw do
     end
   end
 
-  match '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
-  match '/admin/process_reporting(/:year)(/:month)', controller: 'Admin::ProcessReporting', action: :index
+  get '/admin/reporting(/:year)', controller: 'Admin::Reporting', action: :index
+  get '/admin/process_reporting(/:year)(/:month)', controller: 'Admin::ProcessReporting', action: :index
 
-  match '*a', :to => 'errors#routing'
+  match '*a', :to => 'errors#routing', via: :all
 end
