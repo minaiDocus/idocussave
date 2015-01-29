@@ -38,6 +38,11 @@
           %br
           %table.table.table-bordered.table-condensed
             %tr
+              %th
+              %th Nombre d'attaches
+              %th Nombre de hors format
+              %th
+            %tr
               %td.first
                 Valeurs actuelles
                 = link_to "(#{session[:old_document].scanned_at.strftime("%d/%m/%Y")})", "/scans/#{session[:old_document].scanned_at.strftime("%Y/%m/%d")}"
@@ -66,9 +71,9 @@
       %table.table.table-bordered.condensed
         %tr
           %th.date       Heure
-          %th.name       Nom
           %th.paperclips Nombre d'attaches
           %th.oversized  Nombre de hors format
+          %th.name       Nom
           - if current_user
             %th.scanned_by Numérisé par
           %th.actions    Actions
@@ -76,11 +81,6 @@
           %tr.form
             = form_for @document, url: scans_path do |f|
               %td.date -
-              %td.name
-                != f.text_field :name, autofocus: true
-                - if (error = @document.errors.messages[:name].try(:first))
-                  %br
-                  %span.errors= error
               %td.paperclips
                 != f.number_field :paperclips, class: 'span2'
                 - if (error = @document.errors.messages[:paperclips].try(:first))
@@ -91,15 +91,20 @@
                 - if (error = @document.errors.messages[:oversized].try(:first))
                   %br
                   %span.errors.alignleft= error
+              %td.name
+                != f.text_field :name, autofocus: true
+                - if (error = @document.errors.messages[:name].try(:first))
+                  %br
+                  %span.errors= error
               - if current_user
                 %td.scanned_by
               %td.actions= submit_tag 'Valider', class: 'btn btn-primary'
         - @documents.each do |document|
           %tr
             %td.date=         l(document.scanned_at, format: '%H:%M')
-            %td.name=         document.name
             %td.paperclips=   document.paperclips
             %td.oversized=    document.oversized
+            %td.name=         document.name
             - if current_user
               %td.scanned_by= document.scanned_by
             %td.actions
