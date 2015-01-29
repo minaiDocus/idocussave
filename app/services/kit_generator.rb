@@ -219,10 +219,10 @@ class KitGenerator
 
     def customer_label_bloc(pdf, label, y=0)
       pdf.bounding_box [y, pdf.cursor], width: 297, height: 111 do
-        pdf.move_down 18
+        pdf.move_down 10
         pdf.bounding_box [15, pdf.cursor], width: 297 do
           label.each_with_index do |field, index|
-            if index == 0
+            if index == 1
               width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.chop.split('x').map(&:to_i)
               w = width - ((width*20) / 100)
               pdf.float do

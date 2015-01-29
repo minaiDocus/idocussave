@@ -14,7 +14,7 @@ class FileSendingKitGenerator
 
       KitGenerator.folder to_folders(clients_data), file_sending_kit
       KitGenerator.mail to_mails(clients), file_sending_kit
-      KitGenerator.customer_labels to_labels(clients, true)
+      KitGenerator.customer_labels to_labels(clients_data, true)
       KitGenerator.labels to_workshop_labels(clients_data, one_workshop_labels_page_per_customer)
     end
 
@@ -82,26 +82,45 @@ class FileSendingKitGenerator
       mail[:client_email] = user.email
       mail[:client_password] = 'v46hps32'
       mail[:client_code] = user.code
-      mail[:client_address] = to_label(user)
+      mail[:client_address] = address(user)
       mail
     end
 
-    def to_labels(users, kit_shipping=false)
+    def address(user)
+      address = user.addresses.for_shipping.first
+      [
+        address.company,
+        [address.last_name, address.first_name].join(' '),
+        address.address_1,
+        address.address_2,
+        "#{address.zip} #{address.city}"
+      ].
+      reject { |e| e.nil? or e.empty? }
+    end
+
+    def to_labels(clients_data, kit_shipping=false)
       labels = []
-      users.each do |user|
-        label = to_label(user, kit_shipping)
+      clients_data.each do |client_data|
+        label = to_label(client_data, kit_shipping)
         2.times { labels << label }
       end
       labels
     end
 
-    def to_label(user, kit_shipping=false)
+    def to_label(client_data, kit_shipping=false)
+      user = client_data[:user]
       if kit_shipping
         address = user.addresses.for_kit_shipping.first
       else
         address = user.addresses.for_shipping.first
       end
+      journals_count = user.account_book_types.count
+      journals_count = 5 if journals_count < 5
+      period_duration = user.scan_subscriptions.last.period_duration
+      periods_count = (client_data[:offset_month] + client_data[:start_month].abs) / period_duration
+      info = "J%02dP%02d" % [journals_count, periods_count]
       [
+        info,
         user.code,
         address.company,
         [address.last_name, address.first_name].join(' '),
