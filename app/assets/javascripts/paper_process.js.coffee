@@ -28,6 +28,14 @@ new_return_labels = ->
           $(this).addClass('disabled')
           create_return_labels()
 
+isKitFormValid = (customer_codes) ->
+  good = true
+  good = false if $('#paper_process_tracking_number').val().length < 13
+  good = false if $.inArray($('#paper_process_customer_code').val(), customer_codes) == -1
+  good = false if parseInt($('#paper_process_journals_count').val()) <= 0
+  good = false if parseInt($('#paper_process_periods_count').val()) <= 0
+  good
+
 jQuery ->
   base = 'kits'     if $('#kits').length > 0
   base = 'receipts' if $('#receipts').length > 0
@@ -50,6 +58,12 @@ jQuery ->
           $('#new_paper_process').submit()
         else if $('#returns').length > 0
           $('#paper_process_letter_type').focus()
+
+    if $('#kits').length > 0
+      $(window).keydown (event) ->
+        if (event.keyCode == 13) && (isKitFormValid(customer_codes) == false)
+          event.preventDefault()
+          false
 
   $('#paper_process_letter_type').keyup ->
     val = $(this).val()
