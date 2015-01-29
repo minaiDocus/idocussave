@@ -14,7 +14,7 @@ set :application, "idocus"
 
 set :keep_releases, 5
 
-set :repository, "git@github.com:ftachot/idocus.git"
+set :repository, "git@github.com:dbarbarossa/idocusave.git"
 set :local_repository, "~/git/repositories/idocus.git"
 set :scm, "git"
 set :branch, "master"
