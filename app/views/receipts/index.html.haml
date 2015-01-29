@@ -5,7 +5,7 @@
     .span11
       .margin2bottom
         %table.table.table-bordered.navigation
-          %tr
+          %tr.date_list
             %td.first.date
               = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
               = select_month @current_time.to_date, use_month_numbers: true
@@ -27,6 +27,14 @@
                       = link_to time.day, "/receipts/#{@current_time.year}/#{@current_time.month}/#{time.day}"
                     - else
                       = time.day
+              - time = time + 1.day
+          %tr
+            %td
+            - time = Time.now.beginning_of_month
+            - while time.month == Time.now.end_of_month.month
+              %td
+                - if @grouped_paper_processes[time.day].present?
+                  = @grouped_paper_processes[time.day].size
               - time = time + 1.day
   .alerts
     = render partial: 'shared/messages'
