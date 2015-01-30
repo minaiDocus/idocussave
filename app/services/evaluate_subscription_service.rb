@@ -74,7 +74,7 @@ private
 
   def unauthorize_fiduceo
     @user.update_attribute(:is_fiduceo_authorized, false)
-    RemoveFiduceoService.new(@user.id).delay.execute
+    RemoveFiduceoService.new(@user.id.to_s).delay.execute
   end
 
   def authorize_preassignment
