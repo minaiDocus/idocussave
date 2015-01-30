@@ -29,11 +29,11 @@ Idocus::Application.routes.draw do
   resources :returns, only: %w(index create)
   get 'returns/:year/:month/:day', controller: 'returns', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
-  scope '/returns' do
+  scope '/scans' do
     resource :return_labels
   end
-  get  '/returns/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
-  post '/returns/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
+  get  '/scans/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
+  post '/scans/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
 
   get 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create'
   get 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy'

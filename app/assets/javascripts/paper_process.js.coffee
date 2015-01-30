@@ -4,19 +4,19 @@ day   = -> $('#date_day').val()
 
 create_return_labels = ->
   $.ajax
-    url: "/returns/return_labels/#{year()}/#{month()}/#{day()}",
+    url: "/scans/return_labels/#{year()}/#{month()}/#{day()}",
     data: $('#returnLabelsForm .form').serialize(),
     datatype: 'json',
     type: 'POST',
     success: (data) ->
       $('#returnLabelsForm input[type=submit]').removeClass('disabled')
-      $('#returnLabelsDialog iframe').attr('src', '/returns/return_labels')
+      $('#returnLabelsDialog iframe').attr('src', '/scans/return_labels')
 
 new_return_labels = ->
   $('#returnLabelsForm').html('')
   $('#returnLabelsDialog iframe').attr('src', '')
   $.ajax
-    url: "/returns/return_labels/new/#{year()}/#{month()}/#{day()}",
+    url: "/scans/return_labels/new/#{year()}/#{month()}/#{day()}",
     data: {},
     datatype: 'json',
     type: 'GET',

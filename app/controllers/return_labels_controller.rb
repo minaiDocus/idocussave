@@ -14,7 +14,7 @@ class ReturnLabelsController < ApplicationController
   end
 
   def new
-    @scanned_by = @user.try(:[], 2) || '.*'
+    @scanned_by = @user.try(:[], 2) || nil
     @return_labels = ReturnLabels.new(scanned_by: @scanned_by, time: @current_time)
     @customers = @return_labels.users.sort_by do |e|
       (e.is_return_label_generated_today? ? '1_' : '0_') + e.code

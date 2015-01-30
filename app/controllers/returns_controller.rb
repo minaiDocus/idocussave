@@ -42,13 +42,6 @@ class ReturnsController < PaperProcessesController
     redirect_to returns_path
   end
 
-protected
-
-  def is_return_labels_authorized?
-    (@user && @user[3]) or current_user
-  end
-  helper_method :is_return_labels_authorized?
-
 private
 
   def paper_process_params

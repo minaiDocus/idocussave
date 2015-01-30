@@ -1,11 +1,8 @@
 #returns.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
   .row-fluid
-    - if is_return_labels_authorized?
-      .span1
-        %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
     .span1
       = link_to 'Export CSV', returns_path(format: 'csv'), class: 'btn'
-    %div{ class: (is_return_labels_authorized? ? 'span10' : 'span11') }
+    .span11
       %table.table.table-bordered.navigation
         %tr.date_list
           %td.first.date
@@ -73,12 +70,3 @@
             %td.tracking_number= paper_process.tracking_number
             %td.customer_code=   paper_process.customer_code
             %td.letter_type=     paper_process.letter_type
-
-- if (@user && @user[3]) or current_user
-  #returnLabelsDialog.modal.hide.fade
-    .modal-header
-      %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;
-      %h3 Génération des étiquettes de retour
-    .modal-body
-      #returnLabelsForm
-      %iframe{ src: '', id: 'returnLabelsShow' }
