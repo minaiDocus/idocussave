@@ -1,0 +1,27 @@
+#retriever_transaction
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span10
+          %h3
+            #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')}
+            \ -
+            - if @transaction.retriever.nil?
+              %span.label supprimé
+            = @transaction.custom_service_name
+            \: transaction du #{l(@transaction.created_at)}
+        .span2.alignright
+          = link_to t('actions.return'), account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn'
+  .row-fluid
+    .span12.box
+      %table.table-striped.table-condensed.table-bordered
+        %thead
+          %tr
+            %th Date
+            %th Statut
+        %tbody
+          - @transaction.events['transactionEvent'].to_a.each do |event|
+            - if event.is_a?(Hash)
+              %tr
+                %td= l(Time.at(event['timestamp'].to_i / 1000.0), format: "%d %B %Y %H:%M:%S.#{event['timestamp'].to_i % 1000}")
+                %td= event['status']

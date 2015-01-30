@@ -1,0 +1,34 @@
+#retrieved_documents
+  .row-fluid
+    .span12.box
+      %h3 Liste des documents du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')} (#{@documents.count})
+  .row-fluid
+    .span9.box
+      = render partial: 'shared/list_options', locals: { collection: @documents }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th= sortable :created_at, 'Date de la récupération'
+            %th= sortable :retriever_id, 'Service'
+            %th= sortable 'fiduceo_metadata.date', 'Date'
+            %th= sortable 'fiduceo_metadata.libelle', 'Nom original'
+            %th Nom iDocus
+            %th.pages= sortable :pages_number, 'Nb. pages'
+            %th.amount= sortable 'fiduceo_metadata.amount', 'Montant'
+        %tbody
+          - @documents.each do |document|
+            %tr
+              %td= l(document.created_at)
+              %td
+                - if document.fiduceo_retriever.nil?
+                  %span.label supprimé
+                = document.fiduceo_custom_service_name
+              %td= l(document.fiduceo_metadata['date'], format: '%d %b %Y')
+              %td= link_to document.fiduceo_metadata['libelle'] + '.pdf', account_organization_customer_retrieved_document_path(@organization, @customer, document)
+              %td
+                = link_to document.piece.content_file_name, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
+              %td.pages= document.pages_number
+              %td.amount= document.fiduceo_metadata['amount'].to_s + ' €'
+      = render partial: 'shared/list_options', locals: { collection: @documents }
+    .span3.box
+      = render 'sidebar'

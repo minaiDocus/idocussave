@@ -192,7 +192,10 @@
                       = link_to icon(icon: 'th-large') + ' Copier', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.active? && @customer.is_fiduceo_authorized
               #retrievers.tab-pane{ class: ('active' if params[:tab] == 'retrievers') }
-                %table.table.table-condensed.table-striped.margin0bottom
+                = link_to 'Liste des transactions', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
+                = link_to 'Liste des opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
+                = link_to 'Liste des documents', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
+                %table.table.table-condensed.table-striped.margin2top.margin0bottom
                   %thead
                     %tr
                       %th= t('mongoid.models.common.attributes.created_at')

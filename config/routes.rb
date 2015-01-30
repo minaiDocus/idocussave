@@ -99,6 +99,13 @@ Idocus::Application.routes.draw do
         resource :csv_outputter, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
+        with_options module: 'organization' do |r|
+          r.resources :retriever_transactions, only: %w(index show)
+          r.resources :retrieved_banking_operations, only: :index
+          r.resources :retrieved_documents, only: %w(index show) do
+            get 'piece', on: :member
+          end
+        end
       end
       resource :dropbox_extended, only: [] do
         get 'authorize_url', on: :member

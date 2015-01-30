@@ -1,0 +1,28 @@
+= form_tag account_organization_customer_retrieved_banking_operations_path(@organization, @customer), method: :get, class: 'form form-horizontal filter margin0bottom' do
+  = label_tag 'banking_operation_contains[date][$gte]', 'Date de début'
+  .input-prepend.date.datepicker
+    %span.add-on
+      %i.icon-th
+    = text_field_tag 'banking_operation_contains[date][$gte]', (params[:banking_operation_contains][:date]['$gte'] rescue '')
+
+  = label_tag 'banking_operation_contains[date][$lte]', 'Date de fin'
+  .input-prepend.date.datepicker
+    %span.add-on
+      %i.icon-th
+    = text_field_tag 'banking_operation_contains[date][$lte]', (params[:banking_operation_contains][:date]['$lte'] rescue '')
+
+  = label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'
+  = text_field_tag 'banking_operation_contains[bank_account][bank_name]', (params[:banking_operation_contains][:bank_account][:bank_name] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[bank_account][number]', 'Compte'
+  = text_field_tag 'banking_operation_contains[bank_account][number]', (params[:banking_operation_contains][:bank_account][:number] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[category]', 'Catégorie'
+  = text_field_tag 'banking_operation_contains[category]', (params[:banking_operation_contains][:category] rescue ''), class: 'span12'
+
+  = label_tag 'banking_operation_contains[label]', 'Libellé'
+  = text_field_tag 'banking_operation_contains[label]', (params[:banking_operation_contains][:label] rescue ''), class: 'span12'
+
+  .margin2top
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
+  = link_to t('filters.reset'), account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn'

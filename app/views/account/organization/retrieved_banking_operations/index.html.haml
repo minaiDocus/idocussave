@@ -1,0 +1,30 @@
+#retrieved_banking_operations
+  .row-fluid
+    .span12.box
+      %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')} (#{@operations.count})
+  .row-fluid
+    .span9.box
+      = render partial: 'shared/list_options', locals: { collection: @operations }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th.date Date Op
+            %th.date Date Val
+            %th Service
+            %th Compte
+            %th Catégorie
+            %th Libellé
+            %th.amount Montant
+        %tbody
+          - @operations.each do |operation|
+            %tr
+              %td.date= l(operation.date, format: '%d %b %Y')
+              %td.date= l(operation.value_date, format: '%d %b %Y')
+              %td= operation.bank_account.bank_name if operation.bank_account
+              %td= operation.bank_account.number    if operation.bank_account
+              %td= operation.category
+              %td= operation.label
+              %td.amount= format_price_00(operation.amount * 100) + ' €'
+      = render partial: 'shared/list_options', locals: { collection: @operations }
+    .span3.box
+      = render 'sidebar'

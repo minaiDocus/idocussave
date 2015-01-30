@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::BankAccountsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_customer
+class Account::Organization::BankAccountsController < Account::Organization::FiduceoController
   before_filter :load_bank_account
 
   def edit
@@ -17,17 +15,6 @@ class Account::Organization::BankAccountsController < Account::OrganizationContr
   end
 
 private
-
-  def verify_rights
-    unless is_leader? || @user.can_manage_customers?
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
-    end
-  end
-
-  def load_customer
-    @customer = customers.find_by_slug params[:customer_id]
-  end
 
   def load_bank_account
     @bank_account = @customer.bank_accounts.find params[:id]
