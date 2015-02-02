@@ -10,9 +10,11 @@ class RemoveFiduceoService
   end
 
   def execute
-    @user.temp_documents.wait_selection.destroy_all
-    @user.fiduceo_retrievers.each { |r| FiduceoRetrieverService.destroy(r) }
-    notify unless @user.fiduceo_retrievers.count == 0 && FiduceoUser.new(@user).destroy
+    if @user.fiduceo_id.present?
+      @user.temp_documents.wait_selection.destroy_all
+      @user.fiduceo_retrievers.each { |r| FiduceoRetrieverService.destroy(r) }
+      notify unless @user.fiduceo_retrievers.count == 0 && FiduceoUser.new(@user).destroy
+    end
   end
 
 private
