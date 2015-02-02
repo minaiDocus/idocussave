@@ -44,7 +44,7 @@
                 %span{ :style => "position:relative;top:3px;" }
                   Légende
             .line2
-              != link_to image_tag("application/icon-xls.png", :alt => "Export xls", :style => "position:relative;top:-2px;") + " Export xls", account_reporting_path({:format => :xls})
+              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export xls', account_reporting_path(format: :xls, year: @year)
 
   - annual_summary = []
   - 12.times do
