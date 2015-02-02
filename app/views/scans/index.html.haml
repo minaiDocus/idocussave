@@ -4,7 +4,7 @@
       .span1
         %button.btn.btn-primary{ type: 'button', data: { toggle: 'modal', target: '#returnLabelsDialog' } } Etiquettes de retour
     .span1
-      = link_to 'Export CSV', scans_path(format: 'csv'), class: 'btn'
+      = link_to 'Export CSV', scans_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
     %div{ class: (is_return_labels_authorized? ? 'span10' : 'span11') }
       .margin2bottom
         %table.table.table-bordered.navigation
