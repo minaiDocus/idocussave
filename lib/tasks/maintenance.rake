@@ -37,9 +37,12 @@ namespace :maintenance do
     task :generate => [:environment] do
       puts '##########################################################################################'
       puts "Task beginning at #{Time.now}"
+      time = Time.now - 1.month
+      time = Time.local(time.year, time.month)
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        if organization.customers.active.centralized.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
+        periods = Scan::Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time)
+        if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
           invoice = Invoice.new
           invoice.organization = organization
           invoice.user = organization.leader
@@ -48,17 +51,24 @@ namespace :maintenance do
           print "-> Centralized invoice : #{invoice.number}..."
           invoice.create_pdf
           print "done\n"
-          organization.customers.active.centralized.asc(:code).each do |customer|
+          periods.map(&:user).sort do |a, b|
+            a.code <=> b.code
+          end.each do |customer|
             puts "\t#{customer.info}"
           end
         end
-        if organization.customers.active.not_centralized.count > 0
+        periods = Scan::Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time)
+        if periods.count > 0
           puts "-> Not centralized invoices :"
-          organization.customers.active.not_centralized.asc(:code).each do |customer|
+          periods.map do |period|
+            [period.user, period]
+          end.sort do |a, b|
+            a.first.code <=> b.first.code
+          end.each do |customer, period|
             if customer.addresses.select{ |a| a.is_for_shipping }.count > 0
               invoice = Invoice.new
               invoice.user = customer
-              invoice.period = customer.periods.desc(:end_at).first
+              invoice.period = period
               invoice.save
               print "\t#{invoice.number} : #{customer.info}..."
               invoice.create_pdf
