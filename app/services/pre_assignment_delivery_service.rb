@@ -38,7 +38,7 @@ class PreAssignmentDeliveryService
       if client.response.success?
         @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
       else
-        @delivery.error_message = @report.delivery_message = client.response.message
+        @delivery.error_message = @report.delivery_message = client.response.message.to_s
       end
       @report.save
       @delivery.save
@@ -86,18 +86,18 @@ class PreAssignmentDeliveryService
       @report.is_locked         = false
       @report.save
     else
-      @delivery.update_attribute(:error_message, client.response.message)
+      @delivery.update_attribute(:error_message, client.response.message.to_s)
       @delivery.error
 
       time = Time.now
       @preseizures.each do |preseizure|
         preseizure.delivery_tried_at = time
-        preseizure.delivery_message  = client.response.message
+        preseizure.delivery_message  = client.response.message.to_s
         preseizure.is_locked         = false
         preseizure.save
       end
       @report.delivery_tried_at = time
-      @report.delivery_message  = client.response.message
+      @report.delivery_message  = client.response.message.to_s
       @report.is_locked         = false
       @report.save
 
