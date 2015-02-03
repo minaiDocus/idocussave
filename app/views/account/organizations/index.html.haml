@@ -50,7 +50,7 @@
 
   .row-fluid
     .span12.box
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @organizations }
       .row-fluid
         .span12
           %table.table.table-condensed.table-striped.margin1top.margin0bottom
@@ -79,4 +79,4 @@
                       = link_to 'Activer', unsuspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
                     - else
                       = link_to 'Suspendre', suspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @organizations }

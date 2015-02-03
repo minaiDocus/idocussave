@@ -8,7 +8,7 @@
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
   .row-fluid
     .span9.box
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @groups }
       .row-fluid
         .span12
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
@@ -35,6 +35,6 @@
                       - else
                         - confirm = 'Etês vous sûr ?'
                       = icon_link_to account_organization_group_path(@organization, group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: confirm } }
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @groups }
     .span3.box
       = render partial: 'sidebar'

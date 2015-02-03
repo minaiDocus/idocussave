@@ -36,7 +36,7 @@
                 = submit_tag t('filters.action'), class: 'btn btn-primary'
                 = link_to icon(icon: 'remove'), account_retriever_transactions_path, class: 'btn', title: t('filters.reset')
     .box
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @transactions }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
@@ -60,4 +60,4 @@
                   = link_to transaction.retrieved_document_ids.count, account_retrieved_documents_path(document_contains: { transaction_id: transaction.id })
                 - else
                   \-
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @transactions }

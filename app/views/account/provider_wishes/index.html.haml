@@ -3,7 +3,7 @@
     .box
       %h3 Mes demandes
     .box
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @provider_wishes }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
@@ -22,4 +22,4 @@
               %td= provider_wish.name
               %td= provider_wish.url
               %td= provider_wish.login
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @provider_wishes }

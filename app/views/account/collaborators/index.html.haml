@@ -10,7 +10,7 @@
 
   .row-fluid
     .span9.box
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @collaborators }
       .row-fluid
         .span12
           %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
@@ -26,6 +26,6 @@
                   %td.user_info
                     %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
                   %td= link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
-      = render partial: 'list_options'
+      = render partial: 'shared/list_options', locals: { collection: @collaborators }
     .span3.box
       = render partial: 'sidebar'
