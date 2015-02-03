@@ -117,7 +117,7 @@ class FileSendingKitGenerator
       journals_count = user.account_book_types.count
       journals_count = 5 if journals_count < 5
       period_duration = user.scan_subscriptions.last.period_duration
-      periods_count = (client_data[:offset_month] + client_data[:start_month].abs) / period_duration
+      periods_count = client_data[:offset_month] / period_duration
       info = "J%02dP%02d" % [journals_count, periods_count]
       [
         info,
