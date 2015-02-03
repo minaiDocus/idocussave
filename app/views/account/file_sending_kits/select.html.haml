@@ -9,8 +9,8 @@
         %tr
           %th Sélection
           %th Nom
-          %th Début
-          %th Durée
+          %th Début (Mois)
+          %th Durée (Mois)
         - @organization.customers.active.asc(:code).each do |client|
           %tr
             %td= check_box_tag "users[#{client.id}][is_checked]", "true", false
