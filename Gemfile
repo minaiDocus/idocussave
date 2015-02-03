@@ -68,7 +68,6 @@ gem 'jquery-rails'
 group :development, :test do
   gem 'thin'
   gem 'debugger'
-  gem 'letter_opener'
   gem 'rspec-rails'
   gem 'quiet_assets'
   gem 'better_errors', '1.1.0'
