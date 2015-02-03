@@ -78,7 +78,7 @@ end
 
 group :test do
   gem 'factory_girl_rails'
-  gem 'simplecov', '0.7.1', :require => false
+  gem 'simplecov', :require => false
   gem 'capybara'
   gem 'spork', '1.0.0rc4'
   gem 'guard-spork'
