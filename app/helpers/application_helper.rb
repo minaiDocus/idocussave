@@ -192,6 +192,7 @@ module ApplicationHelper
       [t('yes_value'),              1]
     ]
   end
+  alias_method :auto_deliver_options, :pre_assignment_date_computed_options
 
   def transaction_status_for_select(default=nil)
     options = []

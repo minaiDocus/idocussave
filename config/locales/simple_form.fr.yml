@@ -69,6 +69,7 @@ fr:
       options:
         is_taxable: Est assujetti à TVA ?
         is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
+        is_auto_deliver: Livraison automatique ?
       organization:
         name: Nom
         description: Description

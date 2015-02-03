@@ -8,14 +8,24 @@ class UserOptions
   field :is_preassignment_authorized,     type: Boolean, default: false
   field :is_taxable,                      type: Boolean, default: true
   field :is_pre_assignment_date_computed, type: Integer, default: -1
+  field :is_auto_deliver,                 type: Integer, default: -1
 
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
+  validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
 
   def pre_assignment_date_computed?
     if is_pre_assignment_date_computed == -1
       user.organization.try(:is_pre_assignment_date_computed)
     else
       is_pre_assignment_date_computed == 1
+    end
+  end
+
+  def auto_deliver?
+    if is_auto_deliver == -1
+      user.organization.try(:ibiza).try(:is_auto_deliver)
+    else
+      is_auto_deliver == 1
     end
   end
 end

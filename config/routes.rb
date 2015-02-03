@@ -73,6 +73,7 @@ Idocus::Application.routes.draw do
       end
       resources :customers do
         get 'search_by_code',        on: :collection
+        get 'edit_ibiza',            on: :member
         put 'update_ibiza',          on: :member
         get 'edit_period_options',   on: :member
         put 'update_period_options', on: :member

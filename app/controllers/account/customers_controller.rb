@@ -54,13 +54,16 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+  def edit_ibiza
+  end
+
   def update_ibiza
-    if @customer.update_attribute(:ibiza_id, params[:user][:ibiza_id])
+    if @customer.update_attributes(ibiza_params)
       flash[:success] = 'Modifié avec succès'
     else
       flash[:error] = 'Impossible de modifier'
     end
-    redirect_to account_organization_customer_path(@organization, @customer, tab: 'others')
+    redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza')
   end
 
   def edit_period_options
@@ -136,6 +139,10 @@ private
     ]
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)
+  end
+
+  def ibiza_params
+    params.require(:user).permit(:ibiza_id, options_attributes: [:is_auto_deliver])
   end
 
   def period_options_params

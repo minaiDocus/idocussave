@@ -11,7 +11,7 @@ class CreatePreAssignmentDeliveryService
 
   def valid?
     @report.try(:organization).try(:ibiza).try(:is_configured?) &&
-      (!@is_auto || @report.organization.ibiza.is_auto_deliver) &&
+      (!@is_auto || @report.user.options.auto_deliver?) &&
       @report.user.try(:ibiza_id).present? &&
       !@preseizures.select(&:is_locked).first
   end
