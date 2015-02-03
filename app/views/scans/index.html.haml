@@ -13,8 +13,9 @@
               = select_year @current_time.to_date, start_year: 2011, end_year: Time.now.year
               = select_month @current_time.to_date, use_month_numbers: true
               = hidden_field_tag :date_day, @current_time.day
-            - time = Time.now.beginning_of_month
-            - while time.month == Time.now.end_of_month.month
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
               - if time.day == @current_time.day
                 %td{ class: 'current' }
                   - if @groups[time.day].present?
@@ -33,8 +34,9 @@
               - time = time + 1.day
           %tr
             %td
-            - time = Time.now.beginning_of_month
-            - while time.month == Time.now.end_of_month.month
+            - time = @current_time.beginning_of_month
+            - month = @current_time.end_of_month.month
+            - while time.month == month
               %td
                 - if @groups[time.day].present?
                   = @groups[time.day].size
