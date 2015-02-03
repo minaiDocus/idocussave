@@ -451,7 +451,7 @@ GEM
     unicode_utils (1.0.0)
     validate_url (0.2.0)
       activemodel (>= 3.0.0)
-    vcr (2.8.0)
+    vcr (2.9.3)
     warden (1.2.1)
       rack (>= 1.0)
     wasabi (3.1.0)
