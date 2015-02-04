@@ -1,7 +1,9 @@
 #reporting
   .row-fluid.margin1bottom
-    .span12
+    .span6
       %h3 Reporting de l'année #{@year}
+    .span6.alignright
+      = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls"
   .row-fluid
     .span12
       %table.table.table-striped.table-bordered
@@ -19,7 +21,9 @@
           - @total = 12.times.map { |e| [0,0,0] }
           - @organizations.each do |organization|
             %tr
-              %td.organization= link_to organization.name, [:account, organization]
+              %td.organization
+                = link_to organization.name, [:account, organization]
+                = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS'
               - user_ids = organization.customers.distinct(:_id)
               - 12.times.each do |i|
                 %td
