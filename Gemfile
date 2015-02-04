@@ -13,7 +13,7 @@ gem 'haml-rails'
 gem 'devise'
 gem 'devise-encryptable'
 gem 'simple_form'
-gem 'kaminari', '0.14.1'
+gem 'kaminari'
 gem 'mongoid_slug', :require => 'mongoid/slug'
 gem 'state_machine'
 gem 'transitions', :require => %w(transitions active_record/transitions)
