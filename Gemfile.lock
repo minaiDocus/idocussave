@@ -388,7 +388,7 @@ GEM
       nokogiri (>= 1.4.0)
       nori (~> 2.1.0)
       wasabi (~> 3.1.0)
-    simple_form (2.0.2)
+    simple_form (2.1.2)
       actionpack (~> 3.0)
       activemodel (~> 3.0)
     simplecov (0.9.1)
@@ -527,7 +527,7 @@ DEPENDENCIES
   ruby-progressbar
   sass-rails (~> 3.2.3)
   savon
-  simple_form
+  simple_form (= 2.1.2)
   simplecov
   spork (= 1.0.0rc4)
   state_machine
