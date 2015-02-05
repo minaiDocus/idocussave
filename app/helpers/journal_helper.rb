@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 module JournalHelper
-  def journal_pseudonym_for_select
+  def ibiza_journals_for_select
     Rails.cache.fetch [:ibiza, :user, @user.ibiza_id, :journals], expires_in: 5.minutes do
       service = IbizaJournalsService.new(@customer)
       service.execute

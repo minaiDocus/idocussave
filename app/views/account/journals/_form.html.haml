@@ -2,7 +2,7 @@
 = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :name
   - if @customer && @organization.ibiza.try(:is_configured?)
-    = f.input :pseudonym, collection: journal_pseudonym_for_select, hint: 'si différent de "Code journal" ci-dessus'
+    = f.input :pseudonym, collection: ibiza_journals_for_select, hint: 'si différent de "Code journal" ci-dessus'
   - else
     = f.input :pseudonym, hint: 'si différent de "Code journal" ci-dessus'
   = f.input :description
