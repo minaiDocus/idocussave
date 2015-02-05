@@ -56,6 +56,7 @@ namespace :maintenance do
           end.each do |customer|
             puts "\t#{customer.info}"
           end
+          InvoiceMailer.delay(priority: 1).notify(invoice)
         end
         periods = Scan::Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time)
         if periods.count > 0
@@ -73,6 +74,7 @@ namespace :maintenance do
               print "\t#{invoice.number} : #{customer.info}..."
               invoice.create_pdf
               print "done\n"
+              InvoiceMailer.delay(priority: 1).notify(invoice)
             end
           end
         end
