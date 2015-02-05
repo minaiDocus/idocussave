@@ -60,12 +60,13 @@ module KnowingsApi
   class File
     EXTENSION = '.kzip'
 
-    attr_accessor :filepath, :file_name, :data
+    attr_accessor :filepath, :file_name, :pole_name, :data
 
-    def initialize(filepath, data)
+    def initialize(filepath, options)
       @filepath  = filepath
       @file_name = ::File.basename filepath
-      @data      = data
+      @pole_name = options[:pole_name].presence || 'Pièces'
+      @data      = options[:data]
     end
 
     def create
@@ -98,7 +99,7 @@ module KnowingsApi
                 xml.property 'Pièces', create: 'false', name: 'pgec:documentType', resolve: 'true'
                 xml.property options[:user_code], name: 'pgec:codeClient', transient: 'true'
                 xml.property options[:user_company], create: 'true', name: 'pgec:clientTitle' if options[:user_company].present?
-                xml.property 'Pièces', create: 'true', name: 'pgec:poleName'
+                xml.property @pole_name, create: 'true', name: 'pgec:poleName'
                 if options[:exercice]
                   xml.property 'Exercice', name: 'pgec:folderType'
                   xml.property "#{options[:start_time].strftime('%Y-%m-%d')}T00:00:00+0#{options[:start_time].dst? ? 2 : 1}:00", name: 'pgec:from'

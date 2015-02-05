@@ -116,6 +116,9 @@
                   %th= t('mongoid.models.knowings.attributes.url')
                   %td= @organization.knowings.url
                 %tr
+                  %th= t('mongoid.models.knowings.attributes.pole_name')
+                  %td= @organization.knowings.pole_name
+                %tr
                   %th= t('mongoid.models.knowings.attributes.is_third_party_included')
                   %td= @organization.knowings.is_third_party_included ? t('yes_value') : t('no_value')
           - if is_leader?

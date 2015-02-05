@@ -11,13 +11,15 @@ class Knowings
   field :url,       type: String
   field :is_active, type: Boolean, default: true
   field :state,     type: String,  default: 'not_performed'
+  field :pole_name, type: String,  default: 'Pièces'
 
   field :is_third_party_included,          type: Boolean, default: false
   field :is_pre_assignment_state_included, type: Boolean, default: false
 
-  validates_presence_of :username, :if => :active?
-  validates_presence_of :password, :if => :active?
-  validates_presence_of :url,      :if => :active?
+  validates_presence_of :username,  :if => :active?
+  validates_presence_of :password,  :if => :active?
+  validates_presence_of :url,       :if => :active?
+  validates_presence_of :pole_name, :if => :active?
 
   validates_url :url, :allow_blank => true, :message => I18n.t('activemodel.errors.messages.invalid')
 

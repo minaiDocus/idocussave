@@ -767,6 +767,7 @@ fr:
           password: Mot de passe
           url: URL
           state: Etat
+          pole_name: Nom du Pôle
           is_third_party_included: Tiers inclus ?
           is_pre_assignment_state_included: Etat de la pré-affectation inclus ?
       exercice:

@@ -150,7 +150,8 @@ class FileDeliveryInit
     end
 
     def get_kzip_file
-      KnowingsApi::File.create(self.content.path, kzip_options)
+      pole_name = pack.owner.try(:organization).try(:knowings).try(:pole_name)
+      KnowingsApi::File.create(self.content.path, pole_name: pole_name, data: kzip_options)
     end
 
     def get_remote_file(object, service_name, extension='.pdf')

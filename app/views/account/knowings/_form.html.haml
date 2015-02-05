@@ -1,7 +1,8 @@
 = simple_form_for @knowings, url: account_organization_knowings_path(@organization), html: { class: 'form form-horizontal margin0bottom' } do |f|
-  = f.input :username, required: @knowings.is_active
-  = f.input :password, required: @knowings.is_active, as: :password
-  = f.input :url,      required: @knowings.is_active
+  = f.input :username,  required: @knowings.is_active
+  = f.input :password,  required: @knowings.is_active, as: :password
+  = f.input :url,       required: @knowings.is_active
+  = f.input :pole_name, required: @knowings.is_active
   = f.input :is_active,               as: :boolean
   = f.input :is_third_party_included, as: :boolean
   .form-actions.margin0bottom

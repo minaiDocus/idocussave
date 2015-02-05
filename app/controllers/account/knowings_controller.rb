@@ -58,7 +58,7 @@ private
   end
 
   def knowings_params
-    _params = params.require(:knowings).permit(:username, :password, :url, :is_active, :is_third_party_included, :is_pre_assignment_state_included)
+    _params = params.require(:knowings).permit(:username, :password, :url, :pole_name, :is_active, :is_third_party_included, :is_pre_assignment_state_included)
     _params.delete(:password) if _params[:password].blank?
     _params
   end
