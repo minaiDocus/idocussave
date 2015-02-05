@@ -58,7 +58,8 @@
             %tr
               %td.first
                 Valeurs actuelles
-                = link_to "(#{session[:old_document].scanned_at.strftime("%d/%m/%Y")})", "/scans/#{session[:old_document].scanned_at.strftime("%Y/%m/%d")}"
+                - if session[:old_document].scanned_at.present?
+                  = link_to "(#{session[:old_document].scanned_at.strftime("%d/%m/%Y")})", "/scans/#{session[:old_document].scanned_at.strftime("%Y/%m/%d")}"
               %td= session[:old_document].paperclips
               %td= session[:old_document].oversized
               %td= link_to 'Annuler', cancel_scans_path, class: 'btn'
