@@ -4,7 +4,7 @@ class Account::PackReportsController < Account::OrganizationController
 
   def index
     @pack_reports = Pack::Report.preseizures.any_in(user_id: customer_ids)
-    @pack_reports = @pack_reports.where(name: /#{Regexp.quote(params[:name])}/) if params[:name].present?
+    @pack_reports = @pack_reports.where(name: /#{Regexp.quote(CGI.unescape(params[:name]))}/) if params[:name].present?
     if params[:view] == 'delivered'
       @pack_reports = @pack_reports.where(is_delivered: true)
     elsif params[:view] == 'not_delivered'
