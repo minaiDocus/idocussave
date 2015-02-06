@@ -1,7 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class PeriodsToXlsService
-  def initialize(periods)
+  def initialize(periods, with_organization_info=false)
     @periods = periods
+    @with_organization_info = with_organization_info
   end
 
   def execute
@@ -9,7 +10,10 @@ class PeriodsToXlsService
 
     # Document
     sheet1 = book.create_worksheet name: 'Production'
-    sheet1.row(0).concat [
+
+    headers = []
+    headers << 'Organisation' if @with_organization_info
+    headers += [
       'Mois',
       'Année',
       'Code client',
@@ -29,16 +33,37 @@ class PeriodsToXlsService
       'Attache',
       'Hors format'
     ]
+    sheet1.row(0).concat headers
 
     nb = 1
 
     documents = Scan::Document.where(:period_id.in => @periods.map(&:id)).asc([:created_at, :name]).entries
     documents = documents.sort do |a, b|
-      "#{a.period.start_at.year}#{a.period.start_at.month}_#{a.period.user.code}_#{a.name}" <=> "#{b.period.start_at.year}#{b.period.start_at.month}_#{b.period.user.code}_#{b.name}"
+      _a = []
+      _a << a.period.user.try(:organization).try(:name) if @with_organization_info
+      _a += [
+        a.period.start_at.strftime('%Y%m'),
+        a.period.user.code,
+        a.name
+      ]
+      _a = _a.join('_')
+
+      _b = []
+      _b << b.period.user.try(:organization).try(:name) if @with_organization_info
+      _b += [
+        b.period.start_at.strftime('%Y%m'),
+        b.period.user.code,
+        b.name
+      ]
+      _b = _b.join('_')
+
+      _a <=> _b
     end
 
     documents.each do |document|
-      data = [
+      data = []
+      data << document.period.user.try(:organization).try(:name) if @with_organization_info
+      data += [
         document.period.start_at.month,
         document.period.start_at.year,
         document.period.user.code,
@@ -64,7 +89,10 @@ class PeriodsToXlsService
 
     # Invoice
     sheet2 = book.create_worksheet name: 'Facturation'
-    sheet2.row(0).concat [
+
+    headers = []
+    headers << 'Organisation' if @with_organization_info
+    headers += [
       'Mois',
       'Année',
       'Code client',
@@ -73,20 +101,39 @@ class PeriodsToXlsService
       'Valeur',
       'Prix HT'
     ]
+    sheet2.row(0).concat headers
 
     nb = 1
 
     periods = @periods.sort do |a, b|
-      "#{a.start_at.year}#{a.start_at.month}_#{a.user.code}" <=> "#{b.start_at.year}#{b.start_at.month}_#{b.user.code}"
+      _a = []
+      _a << (a.user.try(:organization).try(:name) || a.organization.try(:name)) if @with_organization_info
+      _a += [a.start_at.strftime('%Y%m'), a.user.try(:code)]
+      _a = _a.join('_')
+
+      _b = []
+      _b << (b.user.try(:organization).try(:name) || b.organization.try(:name)) if @with_organization_info
+      _b += [b.start_at.strftime('%Y%m'), b.user.try(:code)]
+      _b = _b.join('_')
+
+      _a <=> _b
     end
 
     periods.each do |period|
       period.product_option_orders.each do |option|
-        data = [
+        data = []
+        if @with_organization_info
+          if period.user
+            data << period.user.try(:organization).try(:name)
+          else
+            data << period.organization.try(:name)
+          end
+        end
+        data += [
           period.start_at.month,
           period.start_at.year,
-          period.user.code,
-          period.user.name,
+          period.user.try(:code),
+          period.user.try(:name),
           option.group_title,
           option.title,
           format_price(option.price_in_cents_wo_vat)
@@ -94,17 +141,27 @@ class PeriodsToXlsService
         sheet2.row(nb).replace(data)
         nb += 1
       end
-      data = [
-        period.start_at.month,
-        period.start_at.year,
-        period.user.code,
-        period.user.name,
-        'Dépassement',
-        '',
-        format_price(period.price_in_cents_of_total_excess)
-      ]
-      sheet2.row(nb).replace(data)
-      nb += 1
+      if period.user
+        data = []
+        if @with_organization_info
+          if period.user
+            data << period.user.try(:organization).try(:name)
+          else
+            data << period.organization.try(:name)
+          end
+        end
+        data += [
+          period.start_at.month,
+          period.start_at.year,
+          period.user.code,
+          period.user.name,
+          'Dépassement',
+          '',
+          format_price(period.price_in_cents_of_total_excess)
+        ]
+        sheet2.row(nb).replace(data)
+        nb += 1
+      end
     end
 
     io = StringIO.new('')
