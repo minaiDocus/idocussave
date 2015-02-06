@@ -175,7 +175,7 @@ class User
   accepts_nested_attributes_for :options
 
   def name
-    [self.first_name,self.last_name].join(' ') || self.email
+    [first_name.presence, last_name.presence].compact.join(' ')
   end
 
   def username
