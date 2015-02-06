@@ -58,7 +58,7 @@ module IbizaAPI
                   end
                   xml.accountNumber account.number
                   xml.accountName preseizure.third_party
-                  xml.term preseizure.deadline_date.to_date if preseizure.deadline_date.present?
+                  xml.term computed_deadline_date(preseizure) if preseizure.deadline_date.present?
                   xml.description description(preseizure, fields, separator)
                   if account.entries.first.type == Pack::Report::Preseizure::Entry::DEBIT
                     xml.debit account.entries.first.amount
@@ -86,6 +86,16 @@ module IbizaAPI
         preseizure.period_start_date
       else
         date
+      end
+    end
+
+    def self.computed_deadline_date(preseizure)
+      if preseizure.deadline_date.present?
+        date = computed_date(preseizure)
+        result = preseizure.deadline_date < date ? date : preseizure.deadline_date
+        result.to_date
+      else
+        nil
       end
     end
   end
