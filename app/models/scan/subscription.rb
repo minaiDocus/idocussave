@@ -26,13 +26,9 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
 
-  before_create :set_category, :create_period
+  before_create :create_period
   before_save :check_propagation
   before_save :update_current_period, if: Proc.new { |e| e.persisted? }
-
-  def set_category
-  	self.category = 1
-  end
 
   def code
   	self.user.try(:code)
@@ -84,8 +80,6 @@ class Scan::Subscription < Subscription
   end
 
   def copy!(scan_subscription)
-    self.end_in = scan_subscription.end_in
-    self.payment_type = scan_subscription.payment_type
     self.period_duration = scan_subscription.period_duration
     copyable_keys.each do |key|
       self[key] = scan_subscription[key]

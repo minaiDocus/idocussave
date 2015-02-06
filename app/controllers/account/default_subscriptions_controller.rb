@@ -40,8 +40,6 @@ private
         :unit_price_of_excess_paperclips,
         :max_oversized_authorized,
         :unit_price_of_excess_oversized,
-        :payment_type,
-        :end_in,
         :period_duration,
         :product)
     else

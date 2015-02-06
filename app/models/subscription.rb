@@ -3,39 +3,22 @@ class Subscription
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  PREPAYED = 1
-  DEBIT    = 2
+  belongs_to  :user
+  belongs_to  :organization
+  has_many    :invoices
+  embeds_many :product_option_orders, as: :product_optionable
 
-  field :category,              type: Integer, default: 1
-  field :start_at,              type: Time,    default: Time.now
-  field :end_at,                type: Time,    default: Time.now + 12.month
-  field :end_in,                type: Integer, default: 12 # month
-  field :period_duration,       type: Integer, default: 1
-  field :current_progress,      type: Integer, default: 1
   field :number,                type: Integer
-  field :payment_type,          type: Integer, default: PREPAYED
+  field :period_duration,       type: Integer, default: 1
   field :price_in_cents_wo_vat, type: Integer, default: 0
   field :tva_ratio,             type: Float,   default: 1.2
 
-  attr_accessor :requester, :permit_all_options
-
   validates_uniqueness_of :number
 
-  scope :of_user,  lambda { |user| where(user_id: user.id) }
-  scope :for_year, lambda { |year| where(:start_at.lte => Time.local(year,12,31,23,59,59), :end_at.gte => Time.local(year,1,1,0,0,0)) }
+  attr_accessor :requester, :permit_all_options
 
   before_create :set_number
-  before_save :update_price, :set_start_date, :set_end_date
-
-  belongs_to :user
-  belongs_to :organization
-  has_many :invoices
-
-  embeds_many :product_option_orders, as: :product_optionable
-
-  def self.by_start_date
-    asc(:start_at)
-  end
+  before_save :update_price
 
   def price_in_cents_w_vat
     price_in_cents_wo_vat * tva_ratio
@@ -115,17 +98,9 @@ class Subscription
     desc(:created_at).first
   end
 
-protected
+private
+
   def set_number
-    self.number = DbaSequence.next(:subscription)
-  end
-
-  def set_start_date
-    month = period_duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
-    self.start_at = Time.local start_at.year, month, 1
-  end
-
-  def set_end_date
-    self.end_at = start_at + end_in.month - 1.seconds
+    self.number ||= DbaSequence.next(:subscription)
   end
 end

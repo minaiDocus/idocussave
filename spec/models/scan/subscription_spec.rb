@@ -14,7 +14,6 @@ describe Scan::Subscription do
 
     @scan_subscription = Scan::Subscription.new
     @scan_subscription.user = @user
-    @scan_subscription.start_at = @start_at
     @scan_subscription.product_option_orders = [@poo,@poo2]
     @scan_subscription.save
   end
@@ -26,9 +25,7 @@ describe Scan::Subscription do
 
   it "check default entry" do
     @scan_subscription.should be_persisted
-    @scan_subscription.category.should eq(1)
     @scan_subscription.period_duration.should eq(1)
-    @scan_subscription.current_progress.should eq(1)
     @scan_subscription.max_sheets_authorized.should eq(100)
     @scan_subscription.max_upload_pages_authorized.should eq(200)
     @scan_subscription.quantity_of_a_lot_of_upload.should eq(1)
@@ -45,15 +42,7 @@ describe Scan::Subscription do
     @scan_subscription.unit_price_of_excess_expense.should eq(12)
     @scan_subscription.unit_price_of_excess_paperclips.should eq(20)
     @scan_subscription.unit_price_of_excess_oversized.should eq(100)
-    @scan_subscription.start_at.should eq(@start_at.beginning_of_month)
-    @scan_subscription.end_at.should eq(@start_at.beginning_of_month + 12.month - 1.second)
     @scan_subscription.code.should eq("TS0001")
-  end
-
-  it "should set category to 1" do
-    scan_subscription = Scan::Subscription.new
-    scan_subscription.set_category
-    scan_subscription.category.should eq(1)
   end
 
   it "should verify ponctual options not reused" do
@@ -93,8 +82,6 @@ describe Scan::Subscription do
     scan_subscription.user = @user
     scan_subscription.copy! @scan_subscription
 
-    scan_subscription.end_in.should eq(@scan_subscription.end_in)
-    scan_subscription.payment_type.should eq(@scan_subscription.payment_type)
     scan_subscription.period_duration.should eq(@scan_subscription.period_duration)
     scan_subscription.max_sheets_authorized.should eq(@scan_subscription.max_sheets_authorized)
     scan_subscription.max_upload_pages_authorized.should eq(@scan_subscription.max_upload_pages_authorized)

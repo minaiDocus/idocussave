@@ -38,8 +38,5 @@
       = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
       = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
   .span7
-    - if @user.is_admin
-      = f.input :payment_type, label: 'Mode de paiement', collection: [["prépayé",Subscription::PREPAYED],["prélèvement",Subscription::DEBIT]], include_blank: false
-      = f.input :end_in, label: 'Durrée (mois)', as: :integer
     = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
     = render partial: 'account/subscriptions/product', collection: @products

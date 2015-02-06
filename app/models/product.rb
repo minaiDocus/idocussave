@@ -5,7 +5,6 @@ class Product
   include Mongoid::Slug
 
   field :title,                   type: String,  default: ''
-  field :category,                type: Integer, default: 1
   field :price_in_cents_wo_vat,   type: Integer, default: 0
   field :description,             type: String,  default: ''
   field :period_duration,         type: Integer, default: 1

@@ -11,7 +11,7 @@ describe Scan::Document do
   end
 
   before(:each) do
-    @period = Scan::Period.create!(:start_at => Time.now, :end_in => 1)
+    @period = Scan::Period.create!(:start_at => Time.now)
     @document_name = "TS0001 XX #{Time.now.strftime('%Y%m')} all"
     @document_name2 = "TS0001 ZZ #{Time.now.strftime('%Y%m')} all"
   end
