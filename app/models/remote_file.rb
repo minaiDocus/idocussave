@@ -73,11 +73,7 @@ class RemoteFile
 
   def synced!
     if temp_path.present? && File.exists?(temp_path)
-      if extension == KnowingsApi::File::EXTENSION
-        dir = File.dirname(temp_path)
-        FileUtils.remove_entry File.join(dir, 'meta.xml')
-      end
-      FileUtils.remove_entry temp_path
+      FileUtils.remove_entry File.dirname(temp_path)
     end
     self.state = "synced"
     self.tried_count = 0
