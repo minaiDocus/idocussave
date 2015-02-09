@@ -12,8 +12,8 @@ gem 'daemons'
 gem 'haml-rails'
 gem 'devise'
 gem 'devise-encryptable'
-gem 'simple_form'
-gem 'kaminari', '0.14.1'
+gem 'simple_form', '2.1.2'
+gem 'kaminari'
 gem 'mongoid_slug', :require => 'mongoid/slug'
 gem 'state_machine'
 gem 'transitions', :require => %w(transitions active_record/transitions)
@@ -77,11 +77,10 @@ group :development, :test do
 end
 
 group :test do
-  gem 'mongoid-rspec'
   gem 'factory_girl_rails'
-  gem 'simplecov', '0.7.1', :require => false
+  gem 'simplecov', :require => false
   gem 'capybara'
-  gem 'spork', '1.0.0rc3'
+  gem 'spork', '1.0.0rc4'
   gem 'guard-spork'
   gem 'guard-rspec'
   gem 'database_cleaner'
