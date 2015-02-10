@@ -23,7 +23,6 @@ class Admin::ProductsController < Admin::AdminController
   end
 
   def edit
-    @product = Product.find_by_slug params[:id]
   end
 
   def update
@@ -45,5 +44,6 @@ private
 
   def load_product
     @product = Product.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Product, params[:id]) unless @product
   end
 end

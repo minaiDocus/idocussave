@@ -17,7 +17,6 @@ class Admin::ProductOptionsController < Admin::AdminController
   end
 
   def edit
-    @product_option = ProductOption.find_by_slug params[:id]
   end
 
   def update
@@ -39,5 +38,6 @@ private
 
   def load_product_option
     @product_option = ProductOption.find_by_slug params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(ProductOption, params[:id]) unless @product_option
   end
 end
