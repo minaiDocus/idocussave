@@ -20,6 +20,9 @@ class FiduceoRetrieverService
             retriever.wait_for_user = provider[:wait_for_user]
             retriever.wait_for_user_label = provider[:wait_for_user_label]
           end
+          if retriever.service_name.match(/bnp/i)
+            retriever.frequency = 'mon-fri'
+          end
           retriever.journal_name = retriever.journal.try(:name)
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever

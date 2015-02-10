@@ -25,19 +25,19 @@ class FiduceoRetriever
   field :wait_for_user,        type: Boolean, default: false
   field :wait_for_user_label
   field :pending_document_ids, type: Array,   default: []
-  field :period,                              default: 'daily'
+  field :frequency,                           default: 'day'
   field :journal_name
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
-  validates_inclusion_of :period, in: %w(daily weekly biweekly monthly bimonthly trimonthly sixmonthly yearly)
+  validate :inclusion_of_frequency
 
   scope :providers, where: { type: 'provider' }
   scope :banks,     where: { type: 'bank' }
   scope :active,    where: { is_active: true }
   scope :auto,      where: { is_auto: true }
   scope :manual,    where: { is_auto: false }
-  scope :daily,     where: { period: 'daily' }
+  scope :every_day, where: { frequency: 'day' }
 
   state_machine initial: :scheduled do
     state :ready
@@ -101,5 +101,13 @@ class FiduceoRetriever
 
   def bank?
     type == 'bank'
+  end
+
+private
+
+  def inclusion_of_frequency
+    unless (frequency.split('-') - %w(day mon tue wed thu fri sat sun)).empty?
+      errors.add(:frequency, :inclusion)
+    end
   end
 end
