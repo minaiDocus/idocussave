@@ -81,7 +81,14 @@ class Subscription
 
   # TODO extract into service object or form object
   def product=(_product)
-    self.product_option_orders = fetch_options(_product)
+    if requester.try(:is_admin)
+      self.product_option_orders = fetch_options(_product)
+    else
+      extra_options = self.product_option_orders.select do |option|
+        option.group_position >= 1000
+      end.map(&:dup)
+      self.product_option_orders = fetch_options(_product) + extra_options
+    end
   end
 
   def copy_product_option(product_option)

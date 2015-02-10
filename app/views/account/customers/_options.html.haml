@@ -5,7 +5,7 @@
     %th.price Prix HT
     %th.price Prix TTC
   %tbody
-    - @subscription.product_option_orders.user_editable.by_position.each do |option|
+    - @subscription.product_option_orders.by_position.each do |option|
       %tr
         %td= option.group_title
         %td= option.title
