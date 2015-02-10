@@ -89,6 +89,14 @@ class AccountBookType
     end
   end
 
+  def is_open_for_modification?
+    if created_at
+      created_at + 24.hours > Time.now
+    else
+      true
+    end
+  end
+
 private
 
   def upcase_name

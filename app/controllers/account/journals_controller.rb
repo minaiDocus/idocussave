@@ -52,14 +52,19 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def destroy
-    @journal.destroy
-    flash[:success] = 'Supprimé avec succès.'
-    if @customer
-      UpdateJournalRelationService.new(@journal).execute
-      EventCreateService.new.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+    if @user.is_admin || Settings.is_journals_modification_authorized || !@customer || @journal.is_open_for_modification?
+      @journal.destroy
+      flash[:success] = 'Supprimé avec succès.'
+      if @customer
+        UpdateJournalRelationService.new(@journal).execute
+        EventCreateService.new.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
+      else
+        redirect_to account_organization_journals_path(@organization)
+      end
     else
-      redirect_to account_organization_journals_path(@organization)
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to root_path
     end
   end
 
@@ -123,14 +128,15 @@ private
   end
 
   def journal_params
-    attributes = params.require(:account_book_type).permit(
-      :name,
+    attrs = [
       :pseudonym,
       :description,
       :instructions,
       :position,
       :is_default
-    )
+    ]
+    attrs << :name if @user.is_admin || Settings.is_journals_modification_authorized || !@customer || !@journal || @journal.is_open_for_modification?
+    attributes = params.require(:account_book_type).permit(*attrs)
     if is_preassignment_authorized?
       attributes.merge!(params.require(:account_book_type).permit(
         :domain,

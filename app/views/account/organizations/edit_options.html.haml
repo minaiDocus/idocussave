@@ -14,6 +14,12 @@
               .controls
                 = hidden_field_tag 'settings[is_subscription_lower_options_disabled]', 0
                 = check_box_tag 'settings[is_subscription_lower_options_disabled]', 1, Settings.is_subscription_lower_options_disabled
+            %legend Journaux comptables
+            .control-group
+              = label_tag 'settings[is_journals_modification_authorized]', 'Autoriser la modification et la suppression ?', class: 'control-label'
+              .controls
+                = hidden_field_tag 'settings[is_journals_modification_authorized]', 0
+                = check_box_tag 'settings[is_journals_modification_authorized]', 1, Settings.is_journals_modification_authorized
           .form-actions.margin0bottom
             = submit_tag t('actions.submit'), class: 'btn btn-primary'
             = link_to t('actions.cancel'), account_organizations_path, class: 'btn'

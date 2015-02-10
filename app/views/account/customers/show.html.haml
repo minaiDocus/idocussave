@@ -153,6 +153,10 @@
                   %strong Attention!
                   Les journaux suivants sont assignés aux automates de récupération mais ne sont pas configurés :
                   != @pending_journals.map { |j| content_tag(:strong, j) }.join(', ')
+              - unless @user.is_admin || Settings.is_journals_modification_authorized || !@user.rights.is_customer_journals_management_authorized
+                %p
+                  En cas de nécessité (suppression du journal), merci de contacter le
+                  = link_to 'support.', 'javascript:ZDiscussions.showDiscussionsFBW();'
               %table.table.table-striped.table-bordered.table-condensed
                 %thead
                   %tr
@@ -178,7 +182,10 @@
                       - if (is_leader? || @user.rights.is_customer_journals_management_authorized) && @customer.active?
                         %td
                           = link_to icon_edit, edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
-                          = link_to icon_destroy, account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+                          - if @user.is_admin || Settings.is_journals_modification_authorized || journal.is_open_for_modification?
+                            = link_to icon_destroy, account_organization_customer_journal_path(@organization, @customer, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+                            - unless @user.is_admin || Settings.is_journals_modification_authorized
+                              %i (pour #{distance_of_time_in_words_to_now(journal.created_at + 24.hours)})
               .row-fluid
                 .span6
                   Pré-affectation comptable :

@@ -19,6 +19,7 @@ class Account::OrganizationsController < Account::AccountController
 
   def update_options
     Settings.is_subscription_lower_options_disabled = params[:settings][:is_subscription_lower_options_disabled] == '1'
+    Settings.is_journals_modification_authorized    = params[:settings][:is_journals_modification_authorized]    == '1'
     flash[:success] = 'Modifié avec succès.'
     redirect_to account_organizations_path
   end
