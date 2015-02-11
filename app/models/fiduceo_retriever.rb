@@ -15,29 +15,31 @@ class FiduceoRetriever
   field :provider_id
   field :bank_id
   field :service_name
-  field :type,                                default: 'provider'
+  field :type,                                        default: 'provider'
   field :name
   field :login
   field :state
-  field :is_active,            type: Boolean, default: true
-  field :is_selection_needed,  type: Boolean, default: true
-  field :is_auto,              type: Boolean, default: true
-  field :wait_for_user,        type: Boolean, default: false
+  field :is_active,                    type: Boolean, default: true
+  field :is_selection_needed,          type: Boolean, default: true
+  field :is_auto,                      type: Boolean, default: true
+  field :is_password_renewal_notified, type: Boolean, default: false
+  field :wait_for_user,                type: Boolean, default: false
   field :wait_for_user_label
-  field :pending_document_ids, type: Array,   default: []
-  field :frequency,                           default: 'day'
+  field :pending_document_ids,         type: Array,   default: []
+  field :frequency,                                   default: 'day'
   field :journal_name
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
   validate :inclusion_of_frequency
 
-  scope :providers, where: { type: 'provider' }
-  scope :banks,     where: { type: 'bank' }
-  scope :active,    where: { is_active: true }
-  scope :auto,      where: { is_auto: true }
-  scope :manual,    where: { is_auto: false }
-  scope :every_day, where: { frequency: 'day' }
+  scope :providers,                     where: { type: 'provider' }
+  scope :banks,                         where: { type: 'bank' }
+  scope :active,                        where: { is_active: true }
+  scope :auto,                          where: { is_auto: true }
+  scope :manual,                        where: { is_auto: false }
+  scope :every_day,                     where: { frequency: 'day' }
+  scope :password_renewal_not_notified, where: { is_password_renewal_notified: false }
 
   state_machine initial: :scheduled do
     state :ready

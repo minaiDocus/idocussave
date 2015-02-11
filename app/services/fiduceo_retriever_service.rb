@@ -41,7 +41,10 @@ class FiduceoRetrieverService
           retriever.journal = nil if retriever.bank?
           retriever.journal_name = retriever.journal.try(:name)
           retriever.save
-          retriever.schedule if retriever.error? && params[:pass].present?
+          if retriever.error? && params[:pass].present?
+            retriever.schedule
+            retriever.update_attribute(:is_password_renewal_notified, false)
+          end
           if is_name_changed
             retriever.transactions.update_all(custom_service_name: retriever.name)
             retriever.temp_documents.update_all(fiduceo_custom_service_name: retriever.name)
