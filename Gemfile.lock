@@ -404,7 +404,7 @@ GEM
     spork (1.0.0rc4)
     spreadsheet (0.7.2)
       ruby-ole (>= 1.0)
-    sprockets (2.2.2)
+    sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
