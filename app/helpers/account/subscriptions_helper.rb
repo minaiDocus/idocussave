@@ -38,4 +38,12 @@ module Account::SubscriptionsHelper
     result = false unless option1.notify      == option2.notify
     result
   end
+
+  def retrievers_option_warning_class(customer, option)
+    if customer && customer.fiduceo_id.present? && option.action_name == 'unauthorize_fiduceo' && customer.fiduceo_retrievers.size > 0
+      ' warn_for_deletion_of_retrievers'
+    else
+      ''
+    end
+  end
 end
