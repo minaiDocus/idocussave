@@ -122,8 +122,12 @@
                   %th Total
                   %td= FiduceoRetriever.count
                 %tr
-                  %th Total clients
-                  %td= FiduceoRetriever.all.distinct(:user_id).count
+                  %th Total client ( Actif )
+                  %td
+                    = User.where(:fiduceo_id.nin => [nil]).count
+                    (
+                    = FiduceoRetriever.all.distinct(:user_id).count
+                    )
                 %tr
                   %th= FiduceoRetriever.state_machine.states['scheduled'].human_name
                   %td= FiduceoRetriever.scheduled.count
