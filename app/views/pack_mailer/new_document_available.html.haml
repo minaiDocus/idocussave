@@ -1,10 +1,10 @@
 !!!
 %html
   %head
-    %title Mise à jour des documents | iDocus
+    %title [iDocus] Mise à jour des documents
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
-    Bonjour,
+    Bonjour #{@user.name},
     %br
     %br
     Le #{I18n.l(@time, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to @url, @url} .
@@ -29,3 +29,5 @@
     Cordialement,
     %br
     L'équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

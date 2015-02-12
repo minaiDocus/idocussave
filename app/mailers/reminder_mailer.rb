@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class ReminderMailer < ActionMailer::Base
-  helper :application
   default from: 'notification@idocus.com'
 
   def remind mail, user

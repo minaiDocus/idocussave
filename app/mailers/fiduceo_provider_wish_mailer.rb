@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoProviderWishMailer < ActionMailer::Base
-  helper :application
   default from: 'notification@idocus.com'
 
   def notify(user, accepted, rejected, processing)
@@ -8,6 +7,6 @@ class FiduceoProviderWishMailer < ActionMailer::Base
     @accepted   = accepted
     @rejected   = rejected
     @processing = processing
-    mail(to: @user.email, subject: 'Traitement de vos demandes de nouveaux automates de récupération')
+    mail(to: @user.email, subject: '[iDocus] Traitement de vos demandes de nouveaux automates de récupération')
   end
 end

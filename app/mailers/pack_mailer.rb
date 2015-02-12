@@ -7,6 +7,6 @@ class PackMailer < ActionMailer::Base
     @url   = SITE_INNER_URL + '/account/documents'
     @packs = packs
     @time  = time
-    mail(to: user.email, subject: 'Mise à jour des documents')
+    mail(to: user.email, subject: '[iDocus] Mise à jour des documents')
   end
 end

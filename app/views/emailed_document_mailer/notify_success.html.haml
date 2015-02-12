@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %title Envoi par mail : succès | iDocus
+    %title [iDocus] Envoi par mail : succès
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour #{@emailed_document.user.name},
@@ -46,3 +46,5 @@
     Cordialement,
     %br
     L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

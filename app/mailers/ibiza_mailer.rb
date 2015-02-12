@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class IbizaMailer < ActionMailer::Base
-  helper :application
   default from: 'notification@idocus.com'
 
   def notify_delivery(delivery, addresses, ibiza, object)
@@ -15,6 +14,6 @@ class IbizaMailer < ActionMailer::Base
     attachments['entries.xml'] = @delivery.xml_data if @delivery.xml_data.present?
     to = addresses.first
     cc = addresses[1..-1] || []
-    mail(to: to, cc: cc, subject: "iDocus - Import d'écriture")
+    mail(to: to, cc: cc, subject: "[iDocus] Import d'écriture")
   end
 end

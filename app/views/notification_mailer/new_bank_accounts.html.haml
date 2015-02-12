@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    %title Compte bancaire paramétré par votre client #{@user.company} | iDocus
+    %title [iDocus] Compte bancaire paramétré par votre client #{@user.company}
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour #{@collaborator.name},
@@ -16,11 +16,8 @@
     Vous pouvez maintenant personnaliser le nom et le numéro de compte des journaux correspondant.
     %br
     %br
-    Cordialement.
-    %br
-    %br
-    —
+    Cordialement,
     %br
     L’équipe iDocus
     %br
-    support@idocus.com
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'
