@@ -124,6 +124,7 @@ class User
   has_many :periods,            class_name: "Scan::Period",             inverse_of: :user
   has_many :scan_subscriptions, class_name: "Scan::Subscription",       inverse_of: :user
   has_many :packs,              class_name: "Pack",                     inverse_of: :owner
+  has_many :pack_pieces
   has_many :account_book_types
   has_many :invoices
   has_many :credits

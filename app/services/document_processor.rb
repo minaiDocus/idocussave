@@ -33,6 +33,8 @@ class DocumentProcessor
 
                 ## Piece
                 piece = Pack::Piece.new
+                piece.organization  = user.organization
+                piece.user          = user
                 piece.pack          = pack
                 piece.name          = piece_name
                 piece.content       = open(piece_file_path)

@@ -24,6 +24,8 @@ class Pack::Piece
   before_validation :set_number
   before_create     :send_to_compta
 
+  belongs_to :organization
+  belongs_to :user
   belongs_to :pack,                                                  inverse_of: :pieces
   has_one    :temp_document,                                         inverse_of: :piece
   has_one    :expense,       class_name: "Pack::Report::Expense",    inverse_of: :piece
