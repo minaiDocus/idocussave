@@ -7,48 +7,120 @@
       %h2 Bienvenue sur votre espace client iDocus !
 
   .row-fluid
+    .span6
+      .box
+        .row-fluid
+          .span12
+            - if @user.is_prescriber
+              Pour toute demande de support, merci d’écrire à
+              = link_to 'support@idocus.com', 'mailto:support@idocus.com'
+              %br
+              %i
+                Ce support est soumis à conditions. Voir les
+                = link_to 'Conditions Générales d’Utilisations', 'cgu.pdf'
+              - if @user.organization && (@user.organization.addresses.select { |a| a.is_for_billing }.count == 0 || !@user.organization.leader.try(:debit_mandate).try(:is_configured?))
+                %br
+                %br
+                Merci de renseigner vos données de facturation :
+                %ul
+                  - if @user.organization.addresses.select { |a| a.is_for_billing }.count == 0
+                    %li= link_to 'Adresse de facturation', account_organization_path(@user.organization, tab: 'addresses')
+                  - if !@user.organization.leader.try(:debit_mandate).try(:is_configured?)
+                    %li= link_to 'Mode de paiement', account_profile_path(panel: 'payment_management')
+                %span.red Votre compte pourra être suspendu si ces informations n’étaient pas complétées.
+              .ie-message.margin1top
+                Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
+            - else
+              Pour toute demande de support, merci d’écrire à
+              = link_to 'support@idocus.com', 'mailto:support@idocus.com'
+              %br
+              %i
+                Ce support est soumis à conditions. Merci de vous rapprocher de votre cabinet d’expertise-comptable pour en connaître le détail.
+              .ie-message.margin1top
+                Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
+      .box.paper_process
+        .row-fluid
+          .span12
+            %h4 Derniers kits envoyés
+            %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+              %thead
+                %tr
+                  %th.date Date
+                  - if @user.is_prescriber
+                    %th Code client
+                  %th N° de suivi
+              %tbody
+                %br
+                - @last_kits.each do |kit|
+                  %tr
+                    %td.date= l kit.updated_at, format: '%d %B %Y'
+                    - if @user.is_prescriber
+                      %td= link_to kit.user.code, account_organization_customer_path(kit.user.organization, kit.user)
+                    %td= kit.tracking_number
+        .row-fluid.margin2top
+          .span12
+            %h4 Dernières enveloppes reçues
+            %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+              %thead
+                %tr
+                  %th.date Date
+                  - if @user.is_prescriber
+                    %th Code client
+                  %th N° de suivi
+              %tbody
+                %br
+                - @last_receipts.each do |receipt|
+                  %tr
+                    %td.date= l receipt.updated_at, format: '%d %B %Y'
+                    - if @user.is_prescriber
+                      %td= link_to receipt.user.code, account_organization_customer_path(receipt.user.organization, receipt.user)
+                    %td= receipt.tracking_number
+        .row-fluid.margin2top
+          .span12
+            %h4 Derniers documents numérisés
+            %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+              %thead
+                %tr
+                  %th.date Date
+                  %th Nom
+              %tbody
+                %br
+                - @last_scanned.each do |document|
+                  %tr
+                    %td.date= l document.scanned_at, format: '%d %B %Y'
+                    %td= document.name.sub(' all', '')
+        .row-fluid.margin2top
+          .span12
+            %h4 Dernières enveloppes retournées
+            %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+              %thead
+                %tr
+                  %th.date Date
+                  - if @user.is_prescriber
+                    %th Code client
+                  %th N° de suivi
+              %tbody
+                %br
+                - @last_returns.each do |ret|
+                  %tr
+                    %td.date= l ret.updated_at, format: '%d %B %Y'
+                    - if @user.is_prescriber
+                      %td= link_to ret.user.code, account_organization_customer_path(ret.user.organization, ret.user)
+                    %td= ret.tracking_number
     .span6.box
-      - if @user.is_prescriber
-        Pour toute demande de support, merci d’écrire à
-        = link_to 'support@idocus.com', 'mailto:support@idocus.com'
-        %br
-        %i
-          Ce support est soumis à conditions. Voir les
-          = link_to 'Conditions Générales d’Utilisations', 'cgu.pdf'
-        - if @user.organization && (@user.organization.addresses.select { |a| a.is_for_billing }.count == 0 || !@user.organization.leader.try(:debit_mandate).try(:is_configured?))
-          %br
-          %br
-          Merci de renseigner vos données de facturation :
-          %ul
-            - if @user.organization.addresses.select { |a| a.is_for_billing }.count == 0
-              %li= link_to 'Adresse de facturation', account_organization_path(@user.organization, tab: 'addresses')
-            - if !@user.organization.leader.try(:debit_mandate).try(:is_configured?)
-              %li= link_to 'Mode de paiement', account_profile_path(panel: 'payment_management')
-          %span.red Votre compte pourra être suspendu si ces informations n’étaient pas complétées.
-        .ie-message.margin1top
-          Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
-      - else
-        Pour toute demande de support, merci d’écrire à
-        = link_to 'support@idocus.com', 'mailto:support@idocus.com'
-        %br
-        %i
-          Ce support est soumis à conditions. Merci de vous rapprocher de votre cabinet d’expertise-comptable pour en connaître le détail.
-        .ie-message.margin1top
-          Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
-    .span6.box
-      .row-fluid
+      .row-fluid.margin1top
         .span12
-          %h4 Derniers documents
+          %h4 Derniers documents traités
           %table.table.table-striped.table-condensed.table-bordered.margin0bottom
             %thead
               %tr
-                %th Date
+                %th.date Date
                 %th Lot
             %tbody
               %br
               - @last_packs.each do |pack|
                 %tr
-                  %td= l(pack.updated_at)
+                  %td.date= l(pack.updated_at)
                   %td= pack.name.sub(' all', '')
           .pull-right
             = link_to 'Tous les documents', account_documents_path
@@ -72,7 +144,7 @@
                         - if object.date.today?
                           = l(object.date, format: '%H:%M')
                         - else
-                          = l(object.date, format: '%d %b %Y %H:%M')
+                          = l(object.date, format: '%d %B %Y %H:%M')
                       - else
                         \-
                     %td.name= object.name
