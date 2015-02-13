@@ -3,6 +3,8 @@ class Scan::Document
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  belongs_to :organization,                                   inverse_of: :period_documents
+  belongs_to :user,                                           inverse_of: :period_documents
   belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :documents
   belongs_to :period,       class_name: "Scan::Period",       inverse_of: :documents
   belongs_to :pack,                                           inverse_of: :periodic_metadata
@@ -55,8 +57,10 @@ class Scan::Document
       document
     else
       document = Scan::Document.new
-      document.name = name
-      document.period = period
+      document.name         = name
+      document.period       = period
+      document.user         = period.user
+      document.organization = period.organization
       document.save
       document
     end

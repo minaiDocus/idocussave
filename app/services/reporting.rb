@@ -51,9 +51,11 @@ class Reporting
         p_metadata
       else
         p_metadata = Pack::PeriodicMetadata.new
-        p_metadata.name = pack.name
-        p_metadata.period = period
-        p_metadata.pack = pack
+        p_metadata.name         = pack.name
+        p_metadata.period       = period
+        p_metadata.user         = pack.owner
+        p_metadata.organization = pack.organization
+        p_metadata.pack         = pack
         p_metadata.save
         p_metadata
       end

@@ -47,6 +47,7 @@ class Organization
   has_many   :subscriptions
   has_many   :scan_subscriptions, class_name: 'Scan::Subscription', inverse_of: 'organization'
   has_many   :periods,            class_name: 'Scan::Period',       inverse_of: 'organization'
+  has_many   :period_documents,   class_name: 'Scan::Document',     inverse_of: 'organization'
   has_many   :packs
   has_many   :pack_pieces
   has_many   :invoices

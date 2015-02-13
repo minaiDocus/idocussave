@@ -122,6 +122,7 @@ class User
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
   has_many :periods,            class_name: "Scan::Period",             inverse_of: :user
+  has_many :period_documents,   class_name: "Scan::Document",           inverse_of: :user
   has_many :scan_subscriptions, class_name: "Scan::Subscription",       inverse_of: :user
   has_many :packs,              class_name: "Pack",                     inverse_of: :owner
   has_many :pack_pieces

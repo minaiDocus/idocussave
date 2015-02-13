@@ -34,8 +34,10 @@ class ScansController < PaperProcessesController
         session[:new_document][:paperclips] = params[:scan_document][:paperclips].to_i
         session[:new_document][:oversized] = params[:scan_document][:oversized].to_i
       else
-        @document.scanned_at = Time.now
-        @document.scanned_by = @scanned_by
+        @document.user         = User.where(code: @document.name.split[0]).first
+        @document.organization = @document.user.try(:organization)
+        @document.scanned_at   = Time.now
+        @document.scanned_by   = @scanned_by
         if @document.save
           flash[:success] = 'Créé avec succès.'
           flash[:error] = nil
