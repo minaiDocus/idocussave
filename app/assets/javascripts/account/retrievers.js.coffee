@@ -262,4 +262,3 @@ jQuery ->
       else
         $('.filter').addClass('hide')
         $(this).text('Afficher le filtre')
-    $('.datepicker').datepicker format: 'yyyy-mm-dd', language: 'fr'

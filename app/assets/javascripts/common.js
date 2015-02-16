@@ -27,4 +27,6 @@ jQuery(function () {
     months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
     monthsShort: ["Jan", "Feb", "Mar", "Avr", "Mai", "Jui", "Jul", "Aoû", "Sep", "Oct", "Nov", "Dec"]
   };
+
+  $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr' });
 });

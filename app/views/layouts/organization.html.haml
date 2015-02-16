@@ -76,7 +76,5 @@
       = javascript_include_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = javascript_include_tag 'account/csv_outputters'
-    - elsif controller_name.in?(%w(retriever_transactions retrieved_banking_operations retrieved_documents))
-      = javascript_include_tag 'account/organization/retrievers'
     - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors ibiza))
       = javascript_include_tag "account/#{controller_name}"
