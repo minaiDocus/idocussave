@@ -1,14 +1,15 @@
-:plain
-  <script type="text/javascript" charset="utf-8">
-  var hostURL = "//css.zohostatic.com/discussions/v61";
-  document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript">
-  var zdFBWSettings = {};
-  zdFBWSettings.alignment = "hidden";
+- if Rails.env != 'development'
+  :plain
+    <script type="text/javascript" charset="utf-8">
+    var hostURL = "//css.zohostatic.com/discussions/v61";
+    document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    var zdFBWSettings = {};
+    zdFBWSettings.alignment = "hidden";
 
-  zdFBWSettings.fbURL = "https://discussions.zoho.com/supportidocus/fbw?fbwId=237595000000003020";
-  zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
-  zdFBWSettings.display = "popout";
-  var zdFBW = new ZDiscussions.loadZDFeedbackTab;
-  </script>
+    zdFBWSettings.fbURL = "https://discussions.zoho.com/supportidocus/fbw?fbwId=237595000000003020";
+    zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
+    zdFBWSettings.display = "popout";
+    var zdFBW = new ZDiscussions.loadZDFeedbackTab;
+    </script>
