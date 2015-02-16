@@ -58,7 +58,7 @@ class FiduceoRetrieverService
     def destroy(retriever)
       client = Fiduceo::Client.new(retriever.user.fiduceo_id)
       client.retriever(retriever.fiduceo_id, :delete)
-      if client.response.code == 200
+      if client.response.code.in?([200, 204])
         retriever.destroy
       end
     end
