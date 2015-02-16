@@ -228,6 +228,8 @@ Idocus::Application.routes.draw do
       post 'regenerate_code', on: :collection
     end
 
+    resources :paper_processes, only: :index
+
     resource :suspended, only: :show
   end
 

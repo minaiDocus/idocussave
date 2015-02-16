@@ -1,0 +1,30 @@
+#paper_processes.container-fluid
+  .row-fluid
+    .span12.box
+      %h3 Traitements papiers (#{@paper_processes.count})
+  .row-fluid
+    .span9.box
+      = render 'shared/list_options', collection: @paper_processes
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th= sortable :updated_at,      'Date'
+            %th= sortable :type,            'Type'
+            - if @user.is_prescriber && @user.organization
+              %th= sortable :customer_code, 'Code client'
+            %th= sortable :tracking_number, 'N° de suivie'
+        %tbody
+          - @paper_processes.each do |paper_process|
+            %tr
+              %td= l paper_process.updated_at, format: '%d %B %Y'
+              %td= paper_process_type paper_process.type
+              - if @user.is_prescriber && @user.organization
+                %td
+                  - if paper_process.user && paper_process.user.organization
+                    = link_to paper_process.customer_code, account_organization_customer_path(paper_process.user.organization, paper_process.user)
+                  - else
+                    = paper_process.customer_code
+              %td= paper_process.tracking_number
+      = render 'shared/list_options', collection: @paper_processes
+    .span3.box
+      = render 'sidebar'

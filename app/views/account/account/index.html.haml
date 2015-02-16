@@ -57,7 +57,8 @@
                     - if @user.is_prescriber
                       %td= link_to kit.user.code, account_organization_customer_path(kit.user.organization, kit.user)
                     %td= kit.tracking_number
-        .row-fluid.margin2top
+            .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
+        .row-fluid.margin1top
           .span12
             %h4 Dernières enveloppes reçues
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -75,7 +76,8 @@
                     - if @user.is_prescriber
                       %td= link_to receipt.user.code, account_organization_customer_path(receipt.user.organization, receipt.user)
                     %td= receipt.tracking_number
-        .row-fluid.margin2top
+            .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
+        .row-fluid.margin1top
           .span12
             %h4 Derniers documents numérisés
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -107,6 +109,7 @@
                     - if @user.is_prescriber
                       %td= link_to ret.user.code, account_organization_customer_path(ret.user.organization, ret.user)
                     %td= ret.tracking_number
+            .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })
     .span6.box
       .row-fluid.margin1top
         .span12
