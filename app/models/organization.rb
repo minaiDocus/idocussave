@@ -49,7 +49,7 @@ class Organization
   has_many   :periods,            class_name: 'Scan::Period',       inverse_of: 'organization'
   has_many   :period_documents,   class_name: 'Scan::Document',     inverse_of: 'organization'
   has_many   :packs
-  has_many   :pack_pieces
+  has_many   :pack_pieces,        class_name: 'Pack::Piece',        inverse_of: 'organization'
   has_many   :invoices
   has_many   :account_book_types
   has_many   :reminder_emails,    autosave: true
