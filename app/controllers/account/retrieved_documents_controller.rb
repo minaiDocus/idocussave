@@ -91,8 +91,7 @@ private
     documents = @user.temp_documents.fiduceo.includes(:fiduceo_retriever)
     documents = documents.where('fiduceo_metadata.libelle' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
     if contains[:service_name]
-      retriever_ids = @user.fiduceo_retrievers.where(name: /#{Regexp.quote(contains[:service_name])}/i).distinct(:_id)
-      documents = documents.where(:fiduceo_retriever_id.in => retriever_ids)
+      documents = documents.where(fiduceo_service_name: /#{Regexp.quote(contains[:service_name])}/i)
     elsif contains[:retriever_id]
       @retriever = @user.fiduceo_retrievers.find(contains[:retriever_id])
       documents = documents.where(:fiduceo_retriever_id => @retriever.id)
