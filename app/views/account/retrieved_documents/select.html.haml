@@ -45,7 +45,7 @@
         = hidden_field_tag 'document_contains[date][$gte]',   (params[:document_contains][:date]['$gte'] rescue '')
         = hidden_field_tag 'document_contains[date][$lte]',   (params[:document_contains][:date]['$lte'] rescue '')
         = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
-        = render partial: 'list_options'
+        = render 'shared/list_options', collection: @documents
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
           %thead
             %tr
@@ -69,6 +69,6 @@
                 %td= link_to document.fiduceo_metadata['libelle'] + '.pdf', account_retrieved_document_path(document)
                 %td.pages= document.pages_number
                 %td.amount= document.fiduceo_metadata['amount'].to_s + ' €'
-        = render partial: 'list_options'
+        = render 'shared/list_options', collection: @documents
         .form-actions
           = submit_tag 'Intégrer les documents sélectionnés', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
