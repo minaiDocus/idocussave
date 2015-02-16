@@ -60,10 +60,10 @@ class Admin::AdminController < ApplicationController
 
     @processing_temp_packs = TempPack.desc(:updated_at).not_processed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.not_processed.by_position.first.try(:updated_at)
+      object.date           = temp_pack.temp_documents.ready.by_position.first.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
-      object.document_count = temp_pack.temp_documents.not_processed.count
-      object.message        = temp_pack.temp_documents.not_processed.distinct('delivery_type').join(', ')
+      object.document_count = temp_pack.temp_documents.ready.count
+      object.message        = temp_pack.temp_documents.ready.distinct('delivery_type').join(', ')
       object
     end
 
