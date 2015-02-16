@@ -1,7 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrievedDocumentsController < Account::FiduceoController
   layout 'layouts/account/retrievers'
-  before_filter :load_retriever_ids
   before_filter :load_document, only: %w(show piece)
 
   def index
@@ -51,12 +50,8 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
 
 private
 
-  def load_retriever_ids
-    @retriever_ids = @user.fiduceo_retrievers.distinct(:_id)
-  end
-
   def load_document
-    @document = TempDocument.fiduceo.where(:fiduceo_retriever_id.in => @retriever_ids).find(params[:id])
+    @document = @user.temp_documents.fiduceo.find(params[:id])
   end
 
   def sort_column
