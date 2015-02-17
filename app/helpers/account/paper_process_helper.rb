@@ -19,6 +19,6 @@ module Account::PaperProcessHelper
   end
 
   def link_to_paper_tracking(paper_process)
-    link_to paper_process.tracking_number, "http://www.csuivi.courrier.laposte.fr/suivi/index?id=#{paper_process.tracking_number}"
+    link_to paper_process.tracking_number, "http://www.csuivi.courrier.laposte.fr/suivi/index?id=#{paper_process.tracking_number}", target: '_blank'
   end
 end
