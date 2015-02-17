@@ -27,7 +27,8 @@
                     = link_to paper_process.customer_code, account_organization_customer_path(paper_process.user.organization, paper_process.user)
                   - else
                     = paper_process.customer_code
-              %td= paper_process.tracking_number
+              %td
+                = link_to_paper_tracking(paper_process) if paper_process.tracking_number.present?
       = render 'shared/list_options', collection: @paper_processes
     .span3.box
       = render 'sidebar'
