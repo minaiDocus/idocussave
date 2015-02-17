@@ -57,7 +57,7 @@ module IbizaAPI
                     xml.voucherRef preseizure.piece_number
                   end
                   xml.accountNumber account.number
-                  xml.accountName preseizure.third_party
+                  xml.accountName account.number
                   xml.term computed_deadline_date(preseizure) if preseizure.deadline_date.present?
                   xml.description description(preseizure, fields, separator)
                   if account.entries.first.type == Pack::Report::Preseizure::Entry::DEBIT
