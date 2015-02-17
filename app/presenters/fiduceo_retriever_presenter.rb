@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoRetrieverPresenter < BasePresenter
   presents :fiduceo_retriever
-  delegate :name, :service_name, :journal, :type, to: :fiduceo_retriever
+  delegate :name, :service_name, :journal, :type, :transaction_status, to: :fiduceo_retriever
 
   def mode
     fiduceo_retriever.is_auto ? 'Automatique' : 'Manuel'

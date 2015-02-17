@@ -716,6 +716,7 @@ fr:
             provider: Documents
             bank: Op. bancaires
           state: Etat
+          transaction_status: Statut
           is_active: Activer le récupérateur ?
           is_auto: Automatique ?
       fiduceo_provider_wish:

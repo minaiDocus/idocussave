@@ -79,6 +79,7 @@ class FiduceoDocumentFetcher
     def update_retriever_by_transaction(transaction)
       retriever = transaction.retriever.try(:reload)
       if retriever
+        retriever.timeless.update_attribute(:transaction_status, transaction.status)
         if transaction.wait_for_user_action? && retriever.processing?
           retriever.wait_for_user_action
         elsif transaction.success? && (retriever.processing? || retriever.wait_for_user_action?)

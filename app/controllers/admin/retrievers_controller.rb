@@ -50,13 +50,14 @@ private
       user_ids = User.where(code: /#{Regexp.quote(params[:retriever_contains][:user_code])}/i).distinct(:_id)
     end
     retrievers = FiduceoRetriever.all
-    retrievers = retrievers.where(created_at:   contains[:created_at])                       if contains[:created_at].present?
-    retrievers = retrievers.where(updated_at:   contains[:updated_at])                       if contains[:updated_at].present?
-    retrievers = retrievers.any_in(user_id:     user_ids)                                    if user_ids.any?
-    retrievers = retrievers.where(state:        contains[:state])                            if contains[:state].present?
-    retrievers = retrievers.where(type:         contains[:type])                             if contains[:type].present?
-    retrievers = retrievers.where(service_name: /#{Regexp.quote(contains[:service_name])}/i) if contains[:service_name].present?
-    retrievers = retrievers.where(name:         /#{Regexp.quote(contains[:name])}/i)         if contains[:name].present?
+    retrievers = retrievers.where(created_at:         contains[:created_at])                             if contains[:created_at].present?
+    retrievers = retrievers.where(updated_at:         contains[:updated_at])                             if contains[:updated_at].present?
+    retrievers = retrievers.any_in(user_id:           user_ids)                                          if user_ids.any?
+    retrievers = retrievers.where(type:               contains[:type])                                   if contains[:type].present?
+    retrievers = retrievers.where(service_name:       /#{Regexp.quote(contains[:service_name])}/i)       if contains[:service_name].present?
+    retrievers = retrievers.where(name:               /#{Regexp.quote(contains[:name])}/i)               if contains[:name].present?
+    retrievers = retrievers.where(state:              contains[:state])                                  if contains[:state].present?
+    retrievers = retrievers.where(transaction_status: /#{Regexp.quote(contains[:transaction_status])}/i) if contains[:transaction_status].present?
     retrievers
   end
 end

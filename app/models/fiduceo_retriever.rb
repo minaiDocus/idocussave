@@ -28,6 +28,7 @@ class FiduceoRetriever
   field :pending_document_ids,         type: Array,   default: []
   field :frequency,                                   default: 'day'
   field :journal_name
+  field :transaction_status
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
