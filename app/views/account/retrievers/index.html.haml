@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Mes automates
+          %h3 Mes automates (#{@fiduceo_retrievers.size})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
           = link_to 'Informations de sécurité', '#retrievers_security_informations', class: 'pull-right btn btn-danger margin1right', data: { toggle: 'modal' }

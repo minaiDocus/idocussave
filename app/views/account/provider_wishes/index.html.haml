@@ -1,7 +1,7 @@
 .row-fluid
   .span12
     .box
-      %h3 Mes demandes
+      %h3 Mes demandes (#{@provider_wishes.size})
     .box
       = render partial: 'shared/list_options', locals: { collection: @provider_wishes }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
