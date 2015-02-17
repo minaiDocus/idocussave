@@ -1,7 +1,10 @@
 #paper_processes.container-fluid
   .row-fluid
     .span12.box
-      %h3 Traitements papiers (#{@paper_processes.count})
+      .pull-left
+        %h3 Traitements papiers (#{@paper_processes.count})
+      .pull-right
+        = link_to 'Numérisations', account_scans_path, class: 'btn'
   .row-fluid
     .span9.box
       = render 'shared/list_options', collection: @paper_processes

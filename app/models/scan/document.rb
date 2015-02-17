@@ -36,6 +36,7 @@ class Scan::Document
 
   scope :for_time, lambda { |start_time,end_time| where(:created_at.gte => start_time, :created_at.lte => end_time) }
   scope :shared, where: { is_shared: true }
+  scope :scanned, where: { :scanned_at.nin => [nil] }
 
   after_save :update_period
 

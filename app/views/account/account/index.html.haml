@@ -91,7 +91,8 @@
                   %tr
                     %td.date= l document.scanned_at, format: '%d %B %Y'
                     %td= document.name.sub(' all', '')
-        .row-fluid.margin2top
+            .pull-right= link_to 'Tous les documents numérisés', account_scans_path
+        .row-fluid.margin1top
           .span12
             %h4 Dernières enveloppes retournées
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
