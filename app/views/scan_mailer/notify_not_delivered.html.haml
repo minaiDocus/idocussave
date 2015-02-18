@@ -1,0 +1,18 @@
+!!!
+%html
+  %head
+    %title [iDocus] #{@pack_names.size} document(s) scanné(s) mais non livré(s)
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Ci-dessous, #{@pack_names.size} document(s) scanné(s) mais non livré(s) :
+    %ul
+      - @pack_names.each do |pack_name|
+        %li= pack_name
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

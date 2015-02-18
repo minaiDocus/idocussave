@@ -10,6 +10,11 @@ namespace :maintenance do
     task :document_pending => [:environment] do
       DocumentNotifier.notify_pending
     end
+
+    desc 'Notify scans not delivered'
+    task :scans_not_delivered => [:environment] do
+      ScanService.notify_not_delivered
+    end
   end
 
   namespace :reporting do

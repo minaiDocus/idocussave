@@ -30,4 +30,13 @@ class Admin::NotificationSettingsController < Admin::AdminController
     flash[:notice] = 'Modifié avec succès.'
     redirect_to admin_notification_settings_path
   end
+
+  def edit_scans
+  end
+
+  def update_scans
+    Settings.notify_scans_not_delivered_to = params[:notification][:to].split(',').map(&:strip)
+    flash[:notice] = 'Modifié avec succès.'
+    redirect_to admin_notification_settings_path
+  end
 end
