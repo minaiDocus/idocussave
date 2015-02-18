@@ -14,7 +14,11 @@
           - @scans.each do |scan|
             %tr
               %td= l scan.scanned_at, format: '%d %B %Y'
-              %td= scan.name
+              %td
+                - if scan.pack
+                  = link_to scan.name, account_documents_path(pack_name: scan.name)
+                - else
+                  scan.name
       = render 'shared/list_options', collection: @scans
     .span3.box
       = render 'sidebar'

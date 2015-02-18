@@ -113,6 +113,8 @@
               %ul
                 - @is_composition = true
                 != render :partial => "/account/documents/document", :collection => @composition
+- if @pack
+  #pack{ data: { name: @pack.name.sub(' all', ''), id: @pack.id } }
 
 - if @user.active?
   = render :partial => "/account/documents/dialog_box"

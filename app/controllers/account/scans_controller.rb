@@ -40,6 +40,7 @@ private
     else
       scans = @user.period_documents.scanned
     end
+    scans = scans.includes(:pack)
     scans = scans.where(scanned_at: contains[:scanned_at])                if contains[:scanned_at]
     scans = scans.where(name:       /#{Regexp.quote(contains[:name])}/i) if contains[:name]
     scans

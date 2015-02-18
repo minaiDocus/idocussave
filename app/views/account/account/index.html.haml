@@ -92,7 +92,11 @@
                 - @last_scanned.each do |document|
                   %tr
                     %td.date= l document.scanned_at, format: '%d %B %Y'
-                    %td= document.name.sub(' all', '')
+                    %td
+                      - if document.pack
+                        = link_to document.name, account_documents_path(pack_name: document.name)
+                      - else
+                        document.name
             .pull-right= link_to 'Tous les documents numérisés', account_scans_path
         .row-fluid.margin1top
           .span12
