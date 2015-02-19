@@ -16,7 +16,7 @@
               %td= l scan.scanned_at, format: '%d %B %Y'
               %td
                 - if scan.pack
-                  = link_to scan.name, account_documents_path(pack_name: scan.name)
+                  = link_to scan.name, account_documents_path(pack_name: scan.name), target: '_blank'
                 - else
                   scan.name
       = render 'shared/list_options', collection: @scans

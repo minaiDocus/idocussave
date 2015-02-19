@@ -94,9 +94,9 @@
                     %td.date= l document.scanned_at, format: '%d %B %Y'
                     %td
                       - if document.pack
-                        = link_to document.name, account_documents_path(pack_name: document.name)
+                        = link_to document.name, account_documents_path(pack_name: document.name), target: '_blank'
                       - else
-                        document.name
+                        = document.name
             .pull-right= link_to 'Tous les documents numérisés', account_scans_path
         .row-fluid.margin1top
           .span12

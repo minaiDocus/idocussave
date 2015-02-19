@@ -25,7 +25,7 @@ public
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
     @period_service = PeriodService.new user: @user
     if params[:pack_name].present?
-      owner_ids = [options[:owner_id]].presence || options[:owner_ids]
+      owner_ids = [options[:owner_id]].compact.presence || options[:owner_ids]
       @pack = Pack.where(:owner_id.in => owner_ids, name: params[:pack_name]).first
     end
   end

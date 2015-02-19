@@ -12,7 +12,7 @@
             %th= sortable :type,            'Type'
             - if @user.is_prescriber && @user.organization
               %th= sortable :customer_code, 'Code client'
-            %th= sortable :tracking_number, 'N° de suivie'
+            %th= sortable :tracking_number, 'N° de suivi'
         %tbody
           - @paper_processes.each do |paper_process|
             %tr
