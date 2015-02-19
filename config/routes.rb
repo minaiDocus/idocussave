@@ -229,7 +229,6 @@ Idocus::Application.routes.draw do
     end
 
     resources :paper_processes, only: :index
-    resources :scans, only: :index
 
     resource :suspended, only: :show
   end

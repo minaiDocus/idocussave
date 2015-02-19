@@ -97,7 +97,7 @@
                         = link_to document.name, account_documents_path(pack_name: document.name), target: '_blank'
                       - else
                         = document.name
-            .pull-right= link_to 'Tous les documents numérisés', account_scans_path
+            .pull-right= link_to 'Tous les documents numérisés', account_paper_processes_path(paper_process_contains: { type: 'scan' })
         .row-fluid.margin1top
           .span12
             %h4 Dernières enveloppes retournées

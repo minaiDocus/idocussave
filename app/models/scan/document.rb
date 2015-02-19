@@ -3,12 +3,13 @@ class Scan::Document
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :organization,                                   inverse_of: :period_documents
-  belongs_to :user,                                           inverse_of: :period_documents
-  belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :documents
-  belongs_to :period,       class_name: "Scan::Period",       inverse_of: :documents
-  belongs_to :pack,                                           inverse_of: :periodic_metadata
-  has_one    :report,       class_name: 'Pack::Report',       inverse_of: :document,       dependent: :delete
+  belongs_to :organization,                                    inverse_of: :period_documents
+  belongs_to :user,                                            inverse_of: :period_documents
+  belongs_to :subscription,  class_name: "Scan::Subscription", inverse_of: :documents
+  belongs_to :period,        class_name: "Scan::Period",       inverse_of: :documents
+  belongs_to :pack,                                            inverse_of: :periodic_metadata
+  has_one    :report,        class_name: 'Pack::Report',       inverse_of: :document,        dependent: :delete
+  has_one    :paper_process, class_name: 'PaperProcess',       inverse_of: :period_document, dependent: :delete
 
   field :name,                    type: String,  default: ''
   field :pieces,                  type: Integer, default: 0

@@ -5,6 +5,8 @@ module Account::PaperProcessHelper
       'Kit'
     elsif type == 'receipt'
       'Réception'
+    elsif type == 'scan'
+      'Numérisation'
     elsif type == 'return'
       'Retour'
     end
@@ -14,6 +16,7 @@ module Account::PaperProcessHelper
     [
       ['Kit', 'kit'],
       ['Réception', 'receipt'],
+      ['Numérisation', 'scan'],
       ['Retour', 'return']
     ]
   end

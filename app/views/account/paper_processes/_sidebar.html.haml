@@ -29,5 +29,8 @@
     = label_tag 'paper_process_contains[tracking_number]', t('mongoid.models.paper_process.attributes.tracking_number')
     = text_field_tag 'paper_process_contains[tracking_number]', (params[:paper_process_contains][:tracking_number] rescue ''), class: 'span12'
 
+    = label_tag 'paper_process_contains[pack_name]', t('mongoid.models.paper_process.attributes.pack_name')
+    = text_field_tag 'paper_process_contains[pack_name]', (params[:paper_process_contains][:pack_name] rescue ''), class: 'span12'
+
     = submit_tag t('filters.action'), class: 'btn btn-primary'
     = link_to t('filters.reset'), account_paper_processes_path, class: 'btn'

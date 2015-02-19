@@ -44,6 +44,7 @@ private
     paper_processes = paper_processes.where(type:            Regexp.quote(contains[:type]))                  if contains[:type]
     paper_processes = paper_processes.where(customer_code:   /#{Regexp.quote(contains[:customer_code])}/i)   if contains[:customer_code]
     paper_processes = paper_processes.where(tracking_number: /#{Regexp.quote(contains[:tracking_number])}/i) if contains[:tracking_number]
+    paper_processes = paper_processes.where(pack_name:       /#{Regexp.quote(contains[:pack_name])}/i)       if contains[:pack_name]
     paper_processes
   end
 end

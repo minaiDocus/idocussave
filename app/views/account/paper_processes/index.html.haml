@@ -1,7 +1,7 @@
 #paper_processes.container-fluid
   .row-fluid
     .span12.box
-      %h3 Traitements papiers (#{@paper_processes.count})
+      %h3 Suivi (#{@paper_processes.count})
   .row-fluid
     .span9.box
       = render 'shared/list_options', collection: @paper_processes
@@ -13,6 +13,7 @@
             - if @user.is_prescriber && @user.organization
               %th= sortable :customer_code, 'Code client'
             %th= sortable :tracking_number, 'N° de suivi'
+            %th= sortable :pack_name,       'Nom du lot'
         %tbody
           - @paper_processes.each do |paper_process|
             %tr
@@ -26,6 +27,11 @@
                     = paper_process.customer_code
               %td
                 = link_to_paper_tracking(paper_process) if paper_process.tracking_number.present?
+              %td
+                - if paper_process.period_document && paper_process.period_document.pack
+                  = link_to paper_process.pack_name, account_documents_path(pack_name: paper_process.pack_name), target: '_blank'
+                - else
+                  = paper_process.pack_name
       = render 'shared/list_options', collection: @paper_processes
     .span3.box
       = render 'sidebar'

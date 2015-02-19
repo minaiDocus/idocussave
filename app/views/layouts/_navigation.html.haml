@@ -23,9 +23,7 @@
           %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
             = link_to 'Mes automates', account_fiduceo_retrievers_path
         %li{ class: ('active' if controller_name == 'paper_processes') }
-          = link_to 'Traitements papiers', account_paper_processes_path
-        %li{ class: ('active' if controller_name == 'scans') }
-          = link_to 'Numérisations', account_scans_path
+          = link_to 'Suivi', account_paper_processes_path
       %li.dropdown
         %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
           Aide
