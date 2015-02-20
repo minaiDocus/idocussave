@@ -33,6 +33,13 @@ class OperationService
     end
   end
 
+  def self.update_bank_account(bank_account)
+    options = { account_id: bank_account.fiduceo_id }
+    operation_ids = FiduceoOperation.new(bank_account.user.fiduceo_id, options).operations.map(&:id) || []
+    bank_account.user.operations.where(:fiduceo_id.in => operation_ids).
+      update_all(bank_account_id: bank_account.id, is_locked: !bank_account.configured?)
+  end
+
   def self.assign_attributes(operation, temp_operation)
     operation.date             = temp_operation.date_op
     operation.value_date       = temp_operation.date_val

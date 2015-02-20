@@ -7,7 +7,7 @@ class BankAccount
 
   belongs_to :user
   belongs_to :retriever, class_name: 'FiduceoRetriever', inverse_of: 'bank_accounts'
-  has_many :operations
+  has_many :operations, dependent: :nullify
 
   before_save :upcase_journal
 
