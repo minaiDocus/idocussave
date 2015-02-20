@@ -35,8 +35,6 @@
         = render 'shared/as_user'
     != content_for?(:content) ? yield(:content) : yield
 
-    = render partial: '/shared/google_analytics'
-    = render partial: '/shared/zoho_discussions'
     :plain
       <!--[if lt IE 9]>
         <script src="/javascripts/html5.js" type="text/javascript"></script>
@@ -55,3 +53,5 @@
       = javascript_include_tag 'account/documents'
     - elsif controller_name == 'organizations'
       = javascript_include_tag 'account/organizations'
+    = render '/shared/google_analytics'
+    = render '/shared/zoho_discussions'
