@@ -83,6 +83,10 @@ class FiduceoTransaction
     status.in? ERROR_STATUSES
   end
 
+  def acceptable?
+    status.in? ['COMPLETED_WITH_MISSING_DOCS', 'COMPLETED_WITH_ERRORS']
+  end
+
   def critical_error?
     error? && status.in?(%w(RETRIEVER_ERROR BROKER_UNAVAILABLE))
   end

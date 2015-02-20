@@ -51,7 +51,7 @@ class FiduceoDocumentFetcher
       transactions.uniq.each do |transaction|
         update_transaction transaction
 
-        if transaction.success? && transaction.retriever && transaction.retriever.pending_document_ids.size > 0
+        if (transaction.success? || transaction.acceptable?) && transaction.retriever && transaction.retriever.pending_document_ids.size > 0
           fetch_documents transaction.retriever
         end
       end
@@ -82,20 +82,21 @@ class FiduceoDocumentFetcher
         retriever.timeless.update_attribute(:transaction_status, transaction.status)
         if transaction.wait_for_user_action? && retriever.processing?
           retriever.wait_for_user_action
-        elsif transaction.success? && (retriever.processing? || retriever.wait_for_user_action?)
+        elsif (transaction.success? || transaction.acceptable?) && (retriever.processing? || retriever.wait_for_user_action?)
           if retriever.is_selection_needed
             if retriever.provider?
               if transaction.retrieved_document_ids.count > 0
                 retriever.wait_selection
+                retriever.update_attribute(:is_selection_needed, false)
               else
-                retriever.schedule
+                transaction.acceptable? ? retriever.error : retriever.schedule
               end
             else
               retriever.wait_selection
+              retriever.update_attribute(:is_selection_needed, false)
             end
-            retriever.update_attribute(:is_selection_needed, false)
           else
-            retriever.schedule
+            transaction.acceptable? ? retriever.error : retriever.schedule
           end
           if transaction.retrieved_document_ids.any?
             retriever.safely.update_attribute(:pending_document_ids, retriever.pending_document_ids + transaction.retrieved_document_ids)
