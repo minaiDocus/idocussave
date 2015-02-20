@@ -22,5 +22,12 @@
         - if @user.is_fiduceo_authorized
           %li{ :class=>('active' if controller_name.in? %w(retrievers provider_wishes retriever_transactions retrieved_banking_operations retrieved_documents)) }
             = link_to 'Mes automates', account_fiduceo_retrievers_path
-      %li= link_to 'Support client', 'javascript:ZDiscussions.showDiscussionsFBW();'
-      %li= link_to "Mode d'emploi", "https://docs.idocus.com/mode_emploi.pdf", target: '_blank'
+        %li{ class: ('active' if controller_name == 'paper_processes') }
+          = link_to 'Suivi', account_paper_processes_path
+      %li.dropdown
+        %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+          Aide
+          %b.caret
+        %ul.dropdown-menu
+          %li= link_to 'Support client', 'javascript:ZDiscussions.showDiscussionsFBW();'
+          %li= link_to "Mode d'emploi", "https://docs.idocus.com/mode_emploi.pdf", target: '_blank'

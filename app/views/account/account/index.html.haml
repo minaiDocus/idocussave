@@ -56,8 +56,10 @@
                     %td.date= l kit.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to kit.user.code, account_organization_customer_path(kit.user.organization, kit.user)
-                    %td= kit.tracking_number
-        .row-fluid.margin2top
+                    %td
+                      = link_to_paper_tracking(kit) if kit.tracking_number.present?
+            .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
+        .row-fluid.margin1top
           .span12
             %h4 Dernières enveloppes reçues
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -74,8 +76,10 @@
                     %td.date= l receipt.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to receipt.user.code, account_organization_customer_path(receipt.user.organization, receipt.user)
-                    %td= receipt.tracking_number
-        .row-fluid.margin2top
+                    %td
+                      = link_to_paper_tracking(receipt) if receipt.tracking_number.present?
+            .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
+        .row-fluid.margin1top
           .span12
             %h4 Derniers documents numérisés
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -88,8 +92,13 @@
                 - @last_scanned.each do |document|
                   %tr
                     %td.date= l document.scanned_at, format: '%d %B %Y'
-                    %td= document.name.sub(' all', '')
-        .row-fluid.margin2top
+                    %td
+                      - if document.pack
+                        = link_to document.name, account_documents_path(pack_name: document.name), target: '_blank'
+                      - else
+                        = document.name
+            .pull-right= link_to 'Tous les documents numérisés', account_paper_processes_path(paper_process_contains: { type: 'scan' })
+        .row-fluid.margin1top
           .span12
             %h4 Dernières enveloppes retournées
             %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -106,7 +115,9 @@
                     %td.date= l ret.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to ret.user.code, account_organization_customer_path(ret.user.organization, ret.user)
-                    %td= ret.tracking_number
+                    %td
+                      = link_to_paper_tracking(ret) if ret.tracking_number.present?
+            .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })
     .span6.box
       .row-fluid.margin1top
         .span12

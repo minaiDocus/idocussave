@@ -627,6 +627,12 @@
       });
     }
 
+    if($('#pack').length > 0) {
+      var url = '/account/documents/' + $('#pack').data('id');
+      $("#panel2").hide();
+      $("#panel1").show();
+      getPages(url, $('#pack').data('name'));
+    }
   });
 
 })(jQuery);

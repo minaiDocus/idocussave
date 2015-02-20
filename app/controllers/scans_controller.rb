@@ -39,6 +39,14 @@ class ScansController < PaperProcessesController
         @document.scanned_at   = Time.now
         @document.scanned_by   = @scanned_by
         if @document.save
+          @paper_process = PaperProcess.new
+          @paper_process.organization    = @document.user.try(:organization)
+          @paper_process.user            = @document.user
+          @paper_process.period_document = @document
+          @paper_process.type            = 'scan'
+          @paper_process.customer_code   = @document.user.try(:code)
+          @paper_process.pack_name       = @document.name
+          @paper_process.save
           flash[:success] = 'Créé avec succès.'
           flash[:error] = nil
           session[:document] = nil

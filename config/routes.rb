@@ -228,6 +228,8 @@ Idocus::Application.routes.draw do
       post 'regenerate_code', on: :collection
     end
 
+    resources :paper_processes, only: :index
+
     resource :suspended, only: :show
   end
 
@@ -283,6 +285,8 @@ Idocus::Application.routes.draw do
       post 'update_subscription', on: :collection
       get  'edit_ibiza',          on: :collection
       post 'update_ibiza',        on: :collection
+      get  'edit_scans',          on: :collection
+      post 'update_scans',        on: :collection
     end
 
     authenticated :user, -> user { user.is_admin } do

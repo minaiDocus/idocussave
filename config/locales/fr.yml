@@ -842,6 +842,7 @@ fr:
           journals_count: Nombre de journaux
           periods_count: Nombre de périodes
           letter_type: Type de LS
+          pack_name: Nom du lot
     state_machines:
       fiduceo_retriever:
         states:

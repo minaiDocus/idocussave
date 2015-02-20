@@ -1,0 +1,36 @@
+.row-fluid
+  %h3 Filtres
+
+  = form_tag account_paper_processes_path, method: :get, class: 'form form-vertical margin0bottom' do
+    %br
+    = hidden_field_tag :direction, sort_direction
+    = hidden_field_tag :sort, sort_column
+    = hidden_field_tag :per_page, per_page
+
+    = label_tag 'paper_process_contains[updated_at][$gte]', 'Date de début'
+    .input-prepend.date.datepicker
+      %span.add-on
+        %i.icon-th
+      = text_field_tag 'paper_process_contains[updated_at][$gte]', (params[:paper_process_contains][:updated_at]['$gte'] rescue '')
+
+    = label_tag 'paper_process_contains[updated_at][$lte]', 'Date de fin'
+    .input-prepend.date.datepicker
+      %span.add-on
+        %i.icon-th
+      = text_field_tag 'paper_process_contains[updated_at][$lte]', (params[:paper_process_contains][:updated_at]['$lte'] rescue '')
+
+    = label_tag 'paper_process_contains[type]', t('mongoid.models.paper_process.attributes.type')
+    = select_tag 'paper_process_contains[type]', options_for_select(paper_process_type_options, (params[:paper_process_contains][:type] rescue '')), include_blank: true
+
+    - if @user.is_prescriber && @user.organization
+      = label_tag 'paper_process_contains[customer_code]', t('mongoid.models.paper_process.attributes.customer_code')
+      = text_field_tag 'paper_process_contains[customer_code]', (params[:paper_process_contains][:customer_code] rescue ''), class: 'span12'
+
+    = label_tag 'paper_process_contains[tracking_number]', t('mongoid.models.paper_process.attributes.tracking_number')
+    = text_field_tag 'paper_process_contains[tracking_number]', (params[:paper_process_contains][:tracking_number] rescue ''), class: 'span12'
+
+    = label_tag 'paper_process_contains[pack_name]', t('mongoid.models.paper_process.attributes.pack_name')
+    = text_field_tag 'paper_process_contains[pack_name]', (params[:paper_process_contains][:pack_name] rescue ''), class: 'span12'
+
+    = submit_tag t('filters.action'), class: 'btn btn-primary'
+    = link_to t('filters.reset'), account_paper_processes_path, class: 'btn'
