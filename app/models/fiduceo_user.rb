@@ -24,7 +24,7 @@ class FiduceoUser
 
   def destroy
     raise "no fiduceo user attached to user #{@user.code}" unless @user.fiduceo_id
-    if client.user(:delete) == 200
+    if client.user(:delete).in?([200, 204])
       @attributes = {}
       @client = nil
       @user.fiduceo_id = nil
