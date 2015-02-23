@@ -70,7 +70,7 @@ class Admin::AdminController < ApplicationController
     pack_ids = RemoteFile.not_processed.retryable.distinct(:pack_id)
     @currently_being_delivered_packs = Pack.where(:_id.in => pack_ids).desc(:updated_at).map do |pack|
       object = OpenStruct.new
-      object.date           = pack.updated_at
+      object.date           = pack.remote_files.not_processed.retryable.asc(:created_at).first.try(:created_at)
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.retryable.count
       object.message        = pack.remote_files.not_processed.retryable.distinct(:service_name).join(', ')
@@ -80,7 +80,7 @@ class Admin::AdminController < ApplicationController
     pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id)
     @failed_packs_delivery = Pack.where(:_id.in => pack_ids).desc(:updated_at).map do |pack|
       object = OpenStruct.new
-      object.date           = pack.updated_at
+      object.date           = pack.remote_files.not_processed.not_retryable.asc(:created_at).first.try(:created_at)
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.not_retryable.count
       object.message        = pack.remote_files.not_processed.not_retryable.distinct(:service_name).join(', ')
