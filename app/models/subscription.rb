@@ -47,7 +47,7 @@ class Subscription
   def fetch_options(_product)
     id = _product[:id]
     product = Product.find id
-    _groups = _product[id]
+    _groups = _product[id] || []
 
     options = []
     option_ids = []
