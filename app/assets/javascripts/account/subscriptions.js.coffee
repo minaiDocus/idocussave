@@ -16,7 +16,7 @@ init_prices = (input) ->
       $(e).find('.price label').text(price)
 
 jQuery ->
-  if $("#subscriptions.edit, #default_subscriptions.edit, #organization_subscriptions.edit").length > 0
+  if $("#subscriptions.edit, #organization_subscriptions.edit").length > 0
     toggle_products()
 
     $('#scan_subscription_period_duration').change ->

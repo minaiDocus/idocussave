@@ -12,7 +12,6 @@ class Organization
   # Authorization
   field :is_detail_authorized,               type: Boolean, default: false
   field :is_period_duration_editable,        type: Boolean, default: true
-  field :is_default_subscription_editable,   type: Boolean, default: true
   field :is_journals_management_centralized, type: Boolean, default: true
   # Misc
   field :is_test,                         type: Boolean, default: false
