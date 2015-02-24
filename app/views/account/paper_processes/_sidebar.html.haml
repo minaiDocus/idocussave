@@ -26,6 +26,9 @@
       = label_tag 'paper_process_contains[customer_code]', t('mongoid.models.paper_process.attributes.customer_code')
       = text_field_tag 'paper_process_contains[customer_code]', (params[:paper_process_contains][:customer_code] rescue ''), class: 'span12'
 
+      = label_tag 'paper_process_contains[customer_company]', t('mongoid.models.user.attributes.company')
+      = text_field_tag 'paper_process_contains[customer_company]', (params[:paper_process_contains][:customer_company] rescue ''), class: 'span12'
+
     = label_tag 'paper_process_contains[tracking_number]', t('mongoid.models.paper_process.attributes.tracking_number')
     = text_field_tag 'paper_process_contains[tracking_number]', (params[:paper_process_contains][:tracking_number] rescue ''), class: 'span12'
 

@@ -43,6 +43,10 @@ private
     paper_processes = paper_processes.where(updated_at:      contains[:updated_at])                          if contains[:updated_at]
     paper_processes = paper_processes.where(type:            Regexp.quote(contains[:type]))                  if contains[:type]
     paper_processes = paper_processes.where(customer_code:   /#{Regexp.quote(contains[:customer_code])}/i)   if contains[:customer_code]
+    if contains[:customer_company].present?
+      user_ids = @user.customers.where(company: /#{Regexp.quote(contains[:customer_company])}/i).distinct(:_id)
+      paper_processes = paper_processes.where(:user_id.in => user_ids)
+    end
     paper_processes = paper_processes.where(tracking_number: /#{Regexp.quote(contains[:tracking_number])}/i) if contains[:tracking_number]
     paper_processes = paper_processes.where(pack_name:       /#{Regexp.quote(contains[:pack_name])}/i)       if contains[:pack_name]
     paper_processes

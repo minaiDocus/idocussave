@@ -12,6 +12,7 @@
             %th= sortable :type,            'Type'
             - if @user.is_prescriber && @user.organization
               %th= sortable :customer_code, 'Code client'
+              %th Société
             %th= sortable :tracking_number, 'N° de suivi'
             %th= sortable :pack_name,       'Nom du lot'
         %tbody
@@ -25,6 +26,7 @@
                     = link_to paper_process.customer_code, account_organization_customer_path(paper_process.user.organization, paper_process.user)
                   - else
                     = paper_process.customer_code
+                %td= paper_process.user.try(:company)
               %td
                 = link_to_paper_tracking(paper_process) if paper_process.tracking_number.present?
               %td

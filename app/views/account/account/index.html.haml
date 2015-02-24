@@ -48,6 +48,7 @@
                   %th.date Date
                   - if @user.is_prescriber
                     %th Code client
+                    %th Société
                   %th N° de suivi
               %tbody
                 %br
@@ -56,6 +57,7 @@
                     %td.date= l kit.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to kit.user.code, account_organization_customer_path(kit.user.organization, kit.user)
+                      %td= kit.user.company
                     %td
                       = link_to_paper_tracking(kit) if kit.tracking_number.present?
             .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
@@ -68,6 +70,7 @@
                   %th.date Date
                   - if @user.is_prescriber
                     %th Code client
+                    %th Société
                   %th N° de suivi
               %tbody
                 %br
@@ -76,6 +79,7 @@
                     %td.date= l receipt.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to receipt.user.code, account_organization_customer_path(receipt.user.organization, receipt.user)
+                      %td= receipt.user.company
                     %td
                       = link_to_paper_tracking(receipt) if receipt.tracking_number.present?
             .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
@@ -107,6 +111,7 @@
                   %th.date Date
                   - if @user.is_prescriber
                     %th Code client
+                    %th Société
                   %th N° de suivi
               %tbody
                 %br
@@ -115,6 +120,7 @@
                     %td.date= l ret.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
                       %td= link_to ret.user.code, account_organization_customer_path(ret.user.organization, ret.user)
+                      %td= ret.user.company
                     %td
                       = link_to_paper_tracking(ret) if ret.tracking_number.present?
             .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })
