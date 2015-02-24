@@ -57,8 +57,6 @@
               - if is_leader? || @user.can_manage_journals?
                 %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
                   = link_to 'Journaux comptables', account_organization_journals_path(@organization)
-              %li{ class: (controller_name == 'default_subscriptions' ? 'active' : '') }
-                = link_to 'Abonnement par défaut', account_organization_default_subscription_path(@organization)
               %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports)) ? 'active' : '') }
                 = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
         .span10

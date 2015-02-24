@@ -14,6 +14,7 @@ class ProductOption
   field :quantity,              type: Integer, default: 1
   field :action_name
   field :notify,                type: Boolean, default: false
+  field :is_default,            type: Boolean, default: false
 
   validates_presence_of :title, :name, :price_in_cents_wo_vat
 
@@ -21,6 +22,8 @@ class ProductOption
 
   belongs_to :product
   belongs_to :product_group
+
+  scope :default, where: { is_default: true }
 
 public
 

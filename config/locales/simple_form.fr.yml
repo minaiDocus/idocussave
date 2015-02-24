@@ -185,6 +185,7 @@ fr:
         product_group: Groupe
         action_name: Action à executer
         notify: Notifier par email
+        is_default: Par défaut ?
       product_group:
         name: Nom
         title: Nom (public)

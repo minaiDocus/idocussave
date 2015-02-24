@@ -3,6 +3,7 @@
 %td.right= option.position
 %td.right= option.quantity
 %td.right= option.duration
+%td.right= option.is_default ? t('yes_value') : t('no_value')
 %td.right{ style: 'width:auto;' }
   = link_to icon_edit, edit_admin_product_option_path(option)
   = link_to icon_destroy, admin_product_option_path(option), method: 'delete', data: { confirm: t('actions.confirm') }

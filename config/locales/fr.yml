@@ -409,6 +409,7 @@ fr:
           title: Nom (public)
           position: Position
           price_in_cents_wo_vat: Prix
+          is_default: Par défaut ?
           description: Description
           groups: Groupes
       product_group:
