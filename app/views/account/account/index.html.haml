@@ -56,8 +56,12 @@
                   %tr
                     %td.date= l kit.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
-                      %td= link_to kit.user.code, account_organization_customer_path(kit.user.organization, kit.user)
-                      %td= kit.user.company
+                      %td
+                        - if kit.user && kit.user.organization
+                          = link_to kit.customer_code, account_organization_customer_path(kit.user.organization, kit.user)
+                        - else
+                          = kit.customer_code
+                      %td= kit.user.try(:company)
                     %td
                       = link_to_paper_tracking(kit) if kit.tracking_number.present?
             .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
@@ -78,8 +82,12 @@
                   %tr
                     %td.date= l receipt.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
-                      %td= link_to receipt.user.code, account_organization_customer_path(receipt.user.organization, receipt.user)
-                      %td= receipt.user.company
+                      %td
+                        - if receipt.user && receipt.user.organization
+                          = link_to receipt.customer_code, account_organization_customer_path(receipt.user.organization, receipt.user)
+                        - else
+                          = receipt.customer_code
+                      %td= receipt.user.try(:company)
                     %td
                       = link_to_paper_tracking(receipt) if receipt.tracking_number.present?
             .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
@@ -119,8 +127,12 @@
                   %tr
                     %td.date= l ret.updated_at, format: '%d %B %Y'
                     - if @user.is_prescriber
-                      %td= link_to ret.user.code, account_organization_customer_path(ret.user.organization, ret.user)
-                      %td= ret.user.company
+                      %td
+                        - if ret.user && ret.user.organization
+                          = link_to ret.customer_code, account_organization_customer_path(ret.user.organization, ret.user)
+                        - else
+                          = ret.customer_code
+                      %td= ret.user.try(:company)
                     %td
                       = link_to_paper_tracking(ret) if ret.tracking_number.present?
             .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })
