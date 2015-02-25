@@ -46,8 +46,6 @@ class User
   field :authentication_token
 
   field :is_admin,                       type: Boolean, default: false
-  field :balance_in_cents,               type: Float,   default: 0.0
-  field :use_debit_mandate,              type: Boolean, default: false
   field :code,                           type: String
   field :first_name,                     type: String
   field :last_name,                      type: String
@@ -128,7 +126,6 @@ class User
   has_many :pack_pieces,        class_name: "Pack::Piece",              inverse_of: :user
   has_many :account_book_types
   has_many :invoices
-  has_many :credits
   has_many :subscriptions
   has_many :remote_files,                                                                       dependent: :destroy
   has_many :events

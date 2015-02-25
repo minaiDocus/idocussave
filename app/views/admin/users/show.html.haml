@@ -43,9 +43,6 @@
             %th.first= t('mongoid.models.user.attributes.knowings_visibility')
             %td= render partial: 'text_field', locals: { value: @user.knowings_visibility, name: 'user[knowings_visibility]' }
           %tr
-            %th.first= t('mongoid.models.user.attributes.short.balance_in_cents')
-            %td.value= format_price_00(@user.balance_in_cents) + ' €'
-          %tr
             %th.first= t('mongoid.models.organization.name')
             %td
               = organization_link(@user)
@@ -65,9 +62,6 @@
           %tr
             %th= t('mongoid.models.user.attributes.is_fake_prescriber')
             %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
-          %tr
-            %th= t('mongoid.models.user.attributes.use_debit_mandate')
-            %td.value= check_box_tag 'user[use_debit_mandate]', 1, @user.use_debit_mandate
           %tr
             %th= t('mongoid.models.user.attributes.is_reminder_email_active')
             %td.value= check_box_tag 'user[is_reminder_email_active]', 1, @user.is_reminder_email_active

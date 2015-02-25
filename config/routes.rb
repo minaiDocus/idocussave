@@ -171,26 +171,9 @@ Idocus::Application.routes.draw do
     resource :ftp do
       post :configure, on: :member
     end
-    resource :paypal, only: [] do
-      member do
-        post :success
-        get :success
-        get :cancel
-        post :notify
-      end
-    end
-    resource :cmcic, only: [] do
-      member do
-        post :callback
-        get :success
-        get :cancel
-      end
-    end
     resource :payment do
-      post 'mode',                 on: :member
       post 'debit_mandate_notify', on: :member
       get  'use_debit_mandate',    on: :member
-      get  'credit',               on: :member
     end
     resource :debit_mandate do
       get 'return', :on => :member

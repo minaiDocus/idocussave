@@ -55,51 +55,26 @@
       - if @user.active?
         - if @user.is_prescriber || !@user.is_centralized
           #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
-            .span12.gray.well.paymentslist_container
-              %h3.aligncenter Mode de paiement
-              %br/
-              .row-fluid
-                /
-                  .span6
-                    .paymentslist
-                      .header
-                        !=radio_button_tag( "use_debit_mandate", "false", ( @user.use_debit_mandate ? false : true ), :id => :pp )
-                        %span
-                          %a{ :href => "#" }
-                            %label{ :for => "pp" } compte prépayé
-                      %form{ :method => :get, :action => credit_account_payment_path }
-                        .content
-                          %span
-                            %label{ :for => "amount" } Somme à créditer (€):
-                            %input#amount{ :name => "amount", :type => "text", :value => "0.00" }/
-                            %br/
-                            Payer avec :
-                        .footer
-                          %input#amount.btn.btn-white.margin1right{ :name => "paypal", :type => "submit", :value => "Paypal" }/
-                          %input#amount.btn.btn-white.margin1right{ :name => "cmcic", :type => "submit", :value => "CM-CIC" }/
-                .span6
-                  .paymentslist
-                    .header
-                      !=radio_button_tag( "use_debit_mandate", "true", ( @user.use_debit_mandate ? true : false ), :id => :prlv )
-                      %span
-                        %a{ :href => "#" }
-                          %label{ :for => "prlv" } prélèvement
-                    .content
-                      %span
-                        Etat :
-                        - if @user.debit_mandate
-                          - if @user.debit_mandate.transactionStatus == "success"
-                            ok
-                          - else
-                            information non valide
+            .span12.well
+              %h3.aligncenter Prélèvement
+              %table.table.table-condensed.margin2top
+                %tbody
+                  %tr
+                    %th Etat :
+                    %td
+                      - if @user.debit_mandate
+                        - if @user.debit_mandate.transactionStatus == 'success'
+                          %span.label.label-success OK
                         - else
-                          non configuré
-                      %span
-                        Banque : #{@user.debit_mandate.bic rescue ""}
-                    .footer.padding1bottom
-                      %form{ :method => :get, :action => "https://prlv.idocus.com/form.php" }
-                        %input.btn.btn-white.margin1right{ :name => :email, :type => "hidden", :value => @user.email }/
-                        %input.btn.btn-white.margin1right{ :name => "", :type => "submit", :value => "Configurer" }/
+                          %span.label.label-important Information non valide
+                      - else
+                        %span.label Non configuré
+                  %tr
+                    %th Banque :
+                    %td= @user.debit_mandate.try(:bic)
+              %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
+                %input{ name: :email, type: 'hidden', value: @user.email }
+                %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
 
         - unless @user.try(:organization).try(:is_suspended)
           #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
