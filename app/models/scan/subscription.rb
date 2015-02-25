@@ -10,17 +10,17 @@ class Scan::Subscription < Subscription
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
   field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
-  field :quantity_of_a_lot_of_upload,        type: Integer, default: 1   # téléversés
+  field :quantity_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :max_dematbox_scan_pages_authorized, type: Integer, default: 200 # iDocus'Box
-  field :quantity_of_a_lot_of_dematbox_scan, type: Integer, default: 1   # iDocus'Box
+  field :quantity_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
   field :max_preseizure_pieces_authorized,   type: Integer, default: 100 # presaisies
   field :max_expense_pieces_authorized,      type: Integer, default: 100 # notes de frais
   field :max_paperclips_authorized,          type: Integer, default: 0   # attaches
   field :max_oversized_authorized,           type: Integer, default: 0   # hors format
   # prix excès
   field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
-  field :price_of_a_lot_of_upload,        type: Integer, default: 6   # téléversés
-  field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 6   # iDocus'Box
+  field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
+  field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
   field :unit_price_of_excess_preseizure, type: Integer, default: 12  # presaisies
   field :unit_price_of_excess_expense,    type: Integer, default: 12  # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches

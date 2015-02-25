@@ -40,8 +40,8 @@ class Scan::Period
   field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
   field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
-  field :unit_price_of_excess_preseizure, type: Integer, default: 0   # presaisies
-  field :unit_price_of_excess_expense,    type: Integer, default: 0   # notes de frais
+  field :unit_price_of_excess_preseizure, type: Integer, default: 12  # presaisies
+  field :unit_price_of_excess_expense,    type: Integer, default: 12  # notes de frais
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
 
