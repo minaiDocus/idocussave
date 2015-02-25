@@ -9,7 +9,6 @@ class ProductOption
   field :description,           type: String,  default: ''
   field :price_in_cents_wo_vat, type: Float,   default: 0.0
   field :position,              type: Integer, default: 1
-  field :require_addresses,     type: Boolean, default: false
   field :duration,              type: Integer, default: 1
   field :quantity,              type: Integer, default: 1
   field :action_name

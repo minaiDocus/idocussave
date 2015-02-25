@@ -3,9 +3,9 @@ class Admin::ProductsController < Admin::AdminController
   before_filter :load_product, only: %w(edit update destroy)
 
   def index
-    @products = Product.by_position.by_price_ascending.all
-    @product_options = ProductOption.by_group.by_position.all
-    @product_groups = ProductGroup.by_position.all
+    @products        = Product.by_position
+    @product_options = ProductOption.by_group.by_position
+    @product_groups  = ProductGroup.by_position
   end
 
   def new

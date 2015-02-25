@@ -1,21 +1,17 @@
 .row-fluid
   .span12.panel
     = simple_form_for [:admin, @product_option], html: { class: 'form form-horizontal margin2top' } do |f|
-      .row-fluid
-        .span4
-          = f.input :name
-          = f.input :title
-          = f.input :position,              as: 'integer'
-          = f.input :require_addresses,     as: 'boolean'
-          = f.input :price_in_cents_wo_vat, as: 'integer'
-          = f.input :duration,              as: 'integer'
-          = f.input :quantity,              as: 'integer'
-          = f.input :product_group, collection: ProductGroup.asc(:name).map { |e| [[e.products_title,e.name].join(' - '), e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
-          = f.input :action_name, collection: subscription_action_names_for_select
-          = f.input :notify,                as: 'boolean'
-          = f.input :is_default,            as: 'boolean'
-        .span8
-          = f.input :description, as: 'text', input_html: { style: 'width:100%' }
+      = f.input :name
+      = f.input :title
+      = f.input :description
+      = f.input :position,              as: :integer
+      = f.input :price_in_cents_wo_vat, as: :integer
+      = f.input :duration,              as: :integer
+      = f.input :quantity,              as: :integer
+      = f.input :product_group, collection: ProductGroup.asc(:name).map { |e| [[e.products_title,e.name].join(' - '), e.id] }, selected: [@product_option.product_group.try(:id)], include_blank: false
+      = f.input :action_name, collection: subscription_action_names_for_select
+      = f.input :notify,                as: :boolean
+      = f.input :is_default,            as: :boolean
       .form-actions.margin0bottom
         = f.submit t('actions.submit'), class: 'btn btn-primary'
         = link_to t('actions.cancel'), admin_products_path, class: 'btn'

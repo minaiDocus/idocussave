@@ -3,7 +3,7 @@
     %fieldset{ id: product_group.id, style: 'padding:7px;' }
       .row-fluid
         .span6
-          %h4= "#{product_group.position} - #{product_group.title} #{product_group.description}"
+          %h4= "#{product_group.position} - #{product_group.title}"
         .span6
           .pull-right
             = link_to icon_edit, edit_admin_product_group_path(product_group)

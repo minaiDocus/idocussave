@@ -68,7 +68,7 @@ private
   end
 
   def load_product
-    @products = Product.subscribable
+    @products = Product.by_position
   end
 
   def verify_rights

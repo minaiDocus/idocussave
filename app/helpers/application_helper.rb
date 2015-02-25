@@ -202,13 +202,13 @@ module ApplicationHelper
     options_for_select(options, default)
   end
 
-  def period_type(number)
-    if number == 1
-      'mensuel'
-    elsif number == 3
-      'trimestriel'
-    else
-      ''
+  def period_type(duration)
+    if duration == 1
+      'Mensuel'
+    elsif duration == 3
+      'Trimestriel'
+    elsif duration == 12
+      'Annuel'
     end
   end
 

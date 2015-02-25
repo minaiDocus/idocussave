@@ -397,7 +397,7 @@ fr:
         attributes:
           title: Titre
           position: Position
-          price_in_cents_wo_vat: Prix
+          period_duration: Type de période
       product_option:
         zero: 0 options
         one: 1 option
@@ -407,10 +407,15 @@ fr:
         attributes:
           name: Nom
           title: Nom (public)
-          position: Position
-          price_in_cents_wo_vat: Prix
-          is_default: Par défaut ?
           description: Description
+          position: Position
+          price_in_cents_wo_vat: Prix (en centimes)
+          duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
+          quantity: Quantité
+          action_name: Action à executer
+          notify: Notifier par email
+          is_default: Par défaut ?
+          product_group: Groupe
           groups: Groupes
       product_group:
         zero: 0 groupes
@@ -421,8 +426,7 @@ fr:
           name: Nom
           title: Nom (public)
           position: Position
-          price_in_cents_wo_vat: Prix
-          description: Description
+          is_option_dependent: Bouton radio ? (sinon case à cocher)
       csv_outputter:
         zero: 0 csv formateur
         one: 1 csv formateur

@@ -4,7 +4,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
   def edit
     @subscription = @organization.find_or_create_subscription
-    @products     = Product.subscribable
+    @products     = Product.by_position
     @options      = @subscription.product_option_orders.map(&:to_a)
   end
 

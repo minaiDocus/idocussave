@@ -30,9 +30,6 @@ class ProductOptionOrder
     result = false unless self.group_title           == product_option_order.group_title
     result = false unless self.description           == product_option_order.description
     result = false unless self.price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat
-    # Not pertinent in subscription comparison
-    #result = false unless self.group_position       == product_option_order.group_position
-    #result = false unless self.position             == product_option_order.position
     result = false unless self.duration              == product_option_order.duration
     result = false unless self.quantity              == product_option_order.quantity
     result = false unless self.action_name           == product_option_order.action_name

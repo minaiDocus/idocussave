@@ -9,14 +9,6 @@ describe Product do
     @product3 = FactoryGirl.create(:product, title: 'Product 3')
   end
 
-  describe '.by_price_ascending' do
-    subject(:products) { Product.by_price_ascending}
-
-    it { subject[0].should eq(@product1) }
-    it { subject[1].should eq(@product2) }
-    it { subject[2].should eq(@product3) }
-  end
-
   describe ".by_position" do
     subject (:products) { Product.by_position }
 
@@ -29,10 +21,5 @@ describe Product do
     subject(:product) { Product.find_by_slug('product-1') }
 
     it { subject.should eq(@product1) }
-  end
-
-  it "#price_in_cents_w_vat" do
-    @product1.price_in_cents_wo_vat = 1000
-    @product1.price_in_cents_w_vat.should eq(1200)
   end
 end

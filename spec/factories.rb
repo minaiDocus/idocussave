@@ -25,7 +25,6 @@ FactoryGirl.define do
   end
 
   factory Product do
-    sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
     sequence(:position) { |n| n }
   end
 

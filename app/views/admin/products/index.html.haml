@@ -16,17 +16,17 @@
               %tr
                 %th.right= t('mongoid.models.product.attributes.position')
                 %th.right= t('mongoid.models.product.attributes.title')
-                %th.right= t('mongoid.models.product.attributes.price_in_cents_wo_vat')
+                %th.right= t('mongoid.models.product.attributes.period_duration')
                 %th.right= t('actions.name')
             %tbody
               - @products.each do |product|
                 %tr
                   %td.right= product.position
                   %td.right= product.title
-                  %td.right.price= format_price_00(product.price_in_cents_wo_vat) + ' €'
+                  %td.right= period_type product.period_duration
                   %td.right
                     = link_to icon_edit, edit_admin_product_path(product)
-                    = link_to icon_destroy, admin_product_path(product), data: { confirm: 'Voulez vous vraiment suprimer ce produit ?' }, method: 'delete'
+                    = link_to icon_destroy, admin_product_path(product), data: { confirm: t('actions.confirm') }, method: 'delete'
 
       .row-fluid
         .span12.panel
@@ -52,7 +52,7 @@
                   %td.right= product_option.product_group.try(:name)
                   %td.right
                     = link_to icon_edit, edit_admin_product_option_path(product_option)
-                    = link_to icon_destroy, admin_product_option_path(product_option), data: { confirm: 'Voulez vous vraiment suprimer cette option ?' }, method: 'delete'
+                    = link_to icon_destroy, admin_product_option_path(product_option), data: { confirm: t('actions.confirm') }, method: 'delete'
 
       .row-fluid
         .span12.panel
@@ -76,4 +76,4 @@
                   %td.right= product_group.product_options.count
                   %td.right
                     = link_to icon_edit, edit_admin_product_group_path(product_group)
-                    = link_to icon_destroy, admin_product_group_path(product_group), data: { confirm: 'Voulez vous vraiment suprimer ce groupe ?' }, method: 'delete'
+                    = link_to icon_destroy, admin_product_group_path(product_group), data: { confirm: t('actions.confirm') }, method: 'delete'

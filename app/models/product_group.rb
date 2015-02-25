@@ -6,7 +6,6 @@ class ProductGroup
 
   field :name,                type: String,  default: ''
   field :title,               type: String,  default: ''
-  field :description,         type: String,  default: ''
   field :position,            type: Integer, default: 1
   field :is_option_dependent, type: Boolean, default: false
 
