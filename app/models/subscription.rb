@@ -44,10 +44,8 @@ class Subscription
     products_total_price_in_cents_wo_vat * tva_ratio
   end
 
-  def fetch_options(_product)
-    id = _product[:id]
-    product = Product.find id
-    _groups = _product[id] || []
+  def fetch_options(data)
+    _groups = data[data[:id]] || []
 
     options = []
     option_ids = []
@@ -80,14 +78,17 @@ class Subscription
   end
 
   # TODO extract into service object or form object
-  def product=(_product)
+  def product=(data)
     if requester.try(:is_admin)
-      self.product_option_orders = fetch_options(_product)
+      self.product_option_orders = fetch_options(data)
     else
-      extra_options = self.product_option_orders.select do |option|
-        option.group_position >= 1000
-      end.map(&:dup)
-      self.product_option_orders = fetch_options(_product) + extra_options
+      product = Product.where(_id: data[:id]).first
+      if product && (permit_all_options || product.period_duration == period_duration)
+        extra_options = self.product_option_orders.select do |option|
+          option.group_position >= 1000
+        end.map(&:dup)
+        self.product_option_orders = fetch_options(data) + extra_options
+      end
     end
   end
 

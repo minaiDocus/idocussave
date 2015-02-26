@@ -1,10 +1,11 @@
 class CreateCustomerService
-  def initialize(organization, requester, params, current_user, request)
-    @organization = organization
-    @requester    = requester
-    @params       = params
-    @current_user = current_user
-    @request      = request
+  def initialize(organization, requester, params, subscription_params, current_user, request)
+    @organization        = organization
+    @requester           = requester
+    @params              = params
+    @subscription_params = subscription_params
+    @current_user        = current_user
+    @request             = request
   end
 
   def execute
@@ -20,7 +21,13 @@ class CreateCustomerService
 
       # Assign default subscription
       subscription = @customer.find_or_create_scan_subscription
-      subscription.product_option_orders = DefaultSubscriptionOptionsService.new.execute
+      case @subscription_params['type']
+      when '1'
+        subscription.period_duration = 1
+      when '3'
+        subscription.period_duration = 3
+      end
+      subscription.product_option_orders = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
       subscription.save
       EvaluateSubscriptionService.execute(subscription, @requester)
 

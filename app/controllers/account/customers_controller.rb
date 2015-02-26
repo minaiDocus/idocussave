@@ -32,7 +32,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
+    @customer = CreateCustomerService.new(@organization, @user, user_params, subscription_params, current_user, request).execute
     if @customer.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer)
@@ -139,6 +139,10 @@ private
     ]
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)
+  end
+
+  def subscription_params
+    params.require(:subscription).permit(:type)
   end
 
   def ibiza_params

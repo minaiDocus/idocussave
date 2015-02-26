@@ -38,5 +38,8 @@
       = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
       = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
   .span7
-    = f.input :period_duration, label: "Type d'abonnement", collection: [["mensuel",1],["trimestriel",3]], include_blank: false
+    - if Settings.is_subscription_lower_options_disabled
+      = f.hidden_field :period_duration
+    - else
+      = f.input :period_duration, label: "Type d'abonnement", collection: [['Mensuel', 1],['Trimestriel', 3]], include_blank: false
     = render partial: 'account/subscriptions/product', collection: @products

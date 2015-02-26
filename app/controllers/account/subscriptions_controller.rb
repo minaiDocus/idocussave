@@ -26,8 +26,10 @@ class Account::SubscriptionsController < Account::OrganizationController
 private
 
   def scan_subscription_params
+    attributes = [:product]
+    attributes << :period_duration unless Settings.is_subscription_lower_options_disabled
     if @user.is_admin
-      params.require(:scan_subscription).permit(
+      attributes += [
         :max_sheets_authorized,
         :unit_price_of_excess_sheet,
         :max_upload_pages_authorized,
@@ -43,11 +45,11 @@ private
         :max_paperclips_authorized,
         :unit_price_of_excess_paperclips,
         :max_oversized_authorized,
-        :unit_price_of_excess_oversized,
-        :period_duration,
-        :product)
+        :unit_price_of_excess_oversized
+      ]
+      params.require(:scan_subscription).permit(*attributes)
     else
-      params.require(:scan_subscription).permit(:period_duration, :product)
+      params.require(:scan_subscription).permit(*attributes)
     end
   end
 

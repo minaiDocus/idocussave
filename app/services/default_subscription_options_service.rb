@@ -1,10 +1,11 @@
 class DefaultSubscriptionOptionsService
-  def initialize
+  def initialize(period_duration=1)
+    @period_duration = period_duration
     @options = []
   end
 
   def execute
-    product = Product.where(period_duration: 1).asc(:created_at).first
+    product = Product.where(period_duration: @period_duration).asc(:created_at).first
     groups = product.product_groups.where(:product_supergroup_ids.size => 0).by_position
     groups.each do |group|
       walk_into_group(group)
