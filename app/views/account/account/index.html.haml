@@ -17,7 +17,7 @@
               %br
               %i
                 Ce support est soumis à conditions. Voir les
-                = link_to 'Conditions Générales d’Utilisations', 'cgu.pdf'
+                = link_to 'Conditions Générales d’Utilisations', 'https://docs.idocus.com/CGU.pdf'
               - if @user.organization && (@user.organization.addresses.select { |a| a.is_for_billing }.count == 0 || !@user.organization.leader.try(:debit_mandate).try(:is_configured?))
                 %br
                 %br
