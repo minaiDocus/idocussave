@@ -72,8 +72,6 @@ class Scan::Period
   scope :centralized,     where: { is_centralized: true }
   scope :not_centralized, where: { is_centralized: false }
 
-  # validate :attributes_year_and_month_is_uniq
-
   before_create :add_one_delivery!
   before_save :set_start_date, :set_end_date, :update_information
 
@@ -284,19 +282,6 @@ class Scan::Period
     nb
   end
 
-  def set_product_option_orders(product_options)
-    self.product_option_orders = []
-    product_options.each do |product_option|
-      new_product_option_order = ProductOptionOrder.new
-      new_product_option_order.fields.keys.each do |k|
-        setter =  (k+"=").to_sym
-        value = product_option.send(k)
-        new_product_option_order.send(setter, value)
-      end
-      self.product_option_orders << new_product_option_order
-    end
-  end
-
   def set_documents_name_tags
     tags = []
     self.documents.each do |document|
@@ -499,15 +484,6 @@ class Scan::Period
   end
 
 private
-  def attributes_year_and_month_is_uniq
-    period = subscription.periods.where(:start_at.gte => start_at, :end_at.lte => end_at, duration: duration).first
-    if period and period != self
-      errors.add(:month, "Period, with start_at '#{start_at}' and end_at '#{end_at}', already exist for this customer.")
-    else
-      true
-    end
-  end
-
   def set_start_date
     month = duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
     self.start_at = Time.local start_at.year, month, 1

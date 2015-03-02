@@ -314,6 +314,11 @@
                 %th Choix
                 %th.price Prix HT
                 %th.price Prix TTC
+              %tr
+                %td Clients
+                %td= @organization.customers.active_at(Time.now).count
+                %td.price= format_price_00(@total - @subscription.products_price_in_cents_wo_vat) + ' €'
+                %td.price= format_price_00((@total * @subscription.tva_ratio) - @subscription.products_price_in_cents_w_vat) + ' €'
               - @subscription_options.each do |option|
                 %tr
                   %td= option.group_title
@@ -323,13 +328,13 @@
               %tr
                 %td
                 %th Total
-                %td.price= format_price_00(@subscription.total) + ' €'
-                %td.price= format_price_00(@subscription.total * @subscription.tva_ratio) + ' €'
+                %td.price= format_price_00(@total) + ' €'
+                %td.price= format_price_00(@total * @subscription.tva_ratio) + ' €'
               %tr
                 %td
                 %th VAT (#{@subscription.tva_ratio})
                 %td
-                %td.price= format_price_00((@subscription.total * @subscription.tva_ratio) - @subscription.total) + ' €'
+                %td.price= format_price_00((@total * @subscription.tva_ratio) - @subscription.total) + ' €'
             .alignright
               = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
           #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }

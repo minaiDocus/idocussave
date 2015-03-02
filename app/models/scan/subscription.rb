@@ -5,8 +5,6 @@ class Scan::Subscription < Subscription
   has_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   has_many :documents, class_name: "Scan::Document", inverse_of: :subscription
 
-  attr_accessor :is_to_spreading, :update_period, :options
-
   # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
   field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
@@ -26,110 +24,36 @@ class Scan::Subscription < Subscription
   field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
 
-  before_create :create_period
-  before_save :check_propagation
-  before_save :update_current_period, if: Proc.new { |e| e.persisted? }
-
-  def code
-  	self.user.try(:code)
-  end
-
-  def code=(vcode)
-  	self.user = User.where(code: vcode).first
+  def current_period
+    find_or_create_period(Time.now)
   end
 
   def find_period(time)
     periods.where(:start_at.lte => time, :end_at.gte => time).first
   end
 
-  def _find_period(time)
-    periods.select do |period|
-      period.start_at < time and period.end_at > time
-    end.first
+  def create_period(time)
+    period = Scan::Period.new(start_at: time, duration: period_duration)
+    period.subscription = self
+    if organization
+      period.organization = organization
+    else
+      period.user = user
+      period.is_centralized = user.is_centralized
+    end
+    period.save
+    UpdatePeriodService.new(period).execute
+    period
   end
 
   def find_or_create_period(time)
-    period = find_period(time)
-    if period
-      period
-    else
-      period = Scan::Period.new(start_at: time, duration: period_duration)
-      period.subscription = self
-      if organization
-        period.organization = self.organization
-      else
-        period.user = self.user
-        period.is_centralized = self.user.is_centralized
-      end
-      period.set_product_option_orders self.product_option_orders
-
-      period.duration = self.period_duration
-      copyable_keys.each do |key|
-        period[key] = self[key]
-      end
-
-      period.save
-      period
-    end
+    find_period(time) || create_period(time)
   end
 
   def remove_not_reusable_options
-    product_option_orders.each { |e| e.destroy if e.duration == 1 }
+    self.options = self.options.select { |option| option.duration == 0 }
     save
-    product_option_orders
-  end
-
-  def copy!(scan_subscription)
-    self.period_duration = scan_subscription.period_duration
-    copyable_keys.each do |key|
-      self[key] = scan_subscription[key]
-    end
-    self.copy_to_options! scan_subscription.product_option_orders
-
-    self.save
-  end
-
-  def propagate_changes_for(clients)
-    clients.each do |client|
-      client.find_or_create_scan_subscription.copy! self
-    end
-  end
-
-  def propagate_changes
-   propagate_changes_for organization.customers.active
-  end
-
-  def check_propagation
-    if is_to_spreading.try(:to_i) == 1 and organization
-      propagate_changes
-    end
-  end
-
-  def create_period
-    find_or_create_period(Time.now)
-  end
-
-  def current_period
-    find_or_create_period(Time.now)
-  end
-
-  def update_current_period
-    if (self.user && self.user.active?) || self.organization
-      if self.organization
-        options = self.product_option_orders.where(:group_position.gte => 1000)
-      else
-        options = self.product_option_orders
-      end
-      period = current_period
-      period.set_product_option_orders(options)
-
-      period.duration = self.period_duration
-      copyable_keys.each do |key|
-        period[key] = self[key]
-      end
-
-      period.save
-    end
+    self.options
   end
 
   def total
@@ -139,13 +63,13 @@ class Scan::Subscription < Subscription
       periods = Scan::Period.any_in(subscription_id: subscription_ids).
            where(:start_at.lt => Time.now, :end_at.gt => Time.now)
       result = PeriodService.total_price_in_cents_wo_vat(Time.now, periods)
-      acs = nil
+      ops = nil
       if(p = find_period(Time.now))
-        acs = p
+        ops = p.product_option_orders
       else
-        acs = self
+        ops = self.options
       end
-      acs.product_option_orders.where(:group_position.gte => 1000).each do |option|
+      ops.where(:group_position.gte => 1000).each do |option|
         result += option.price_in_cents_wo_vat
       end
     else
@@ -155,20 +79,11 @@ class Scan::Subscription < Subscription
   end
 
   def products_price_in_cents_wo_vat
-    product_option_orders.user_editable.sum(:price_in_cents_wo_vat) || 0
+    current_period.product_option_orders.sum(:price_in_cents_wo_vat) || 0
   end
 
   def products_price_in_cents_w_vat
-    products_price_in_cents_wo_vat * self.tva_ratio
-  end
-
-  def copy_to_options!(options)
-    self.product_option_orders = []
-    new_options = copy_options(options)
-    new_options.each do |new_option|
-      self.product_option_orders << new_option
-    end
-    new_options
+    products_price_in_cents_wo_vat * tva_ratio
   end
 
   def copyable_keys
@@ -190,21 +105,5 @@ class Scan::Subscription < Subscription
       :unit_price_of_excess_oversized,
       :price_of_a_lot_of_dematbox_scan
     ]
-  end
-
-protected
-
-  def copy_options(options)
-    new_options = []
-    options.each do |option|
-      product_option_order = ProductOptionOrder.new
-      product_option_order.fields.keys.each do |k|
-        setter =  (k+"=").to_sym
-        value = option.send(k)
-        product_option_order.send(setter, value)
-      end
-      new_options << product_option_order
-    end
-    new_options
   end
 end

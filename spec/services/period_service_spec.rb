@@ -7,6 +7,7 @@ describe PeriodService do
     @user = FactoryGirl.create(:user, code: 'TS0001')
     @scan_subscription = @user.find_or_create_scan_subscription
     @scan_subscription.update_attribute(:period_duration, 3)
+    UpdatePeriodService.new(@scan_subscription.current_period).execute
   end
 
   describe '.new' do

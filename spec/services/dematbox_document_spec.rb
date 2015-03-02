@@ -81,6 +81,7 @@ describe DematboxDocument do
           before(:all) do
             scan_subscription = @user.find_or_create_scan_subscription
             scan_subscription.update_attribute(:period_duration, 3)
+            UpdatePeriodService.new(scan_subscription.current_period).execute
             @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             scan_subscription.periods.destroy_all
           end
@@ -130,6 +131,7 @@ describe DematboxDocument do
             Timecop.freeze(Time.local(2013,1,11))
             scan_subscription = @user.find_or_create_scan_subscription
             scan_subscription.update_attribute(:period_duration, 3)
+            UpdatePeriodService.new(scan_subscription.current_period).execute
             @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             scan_subscription.periods.destroy_all
           end

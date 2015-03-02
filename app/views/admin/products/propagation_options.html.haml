@@ -1,0 +1,13 @@
+#products.propagation_options
+  = render partial: 'navigation'
+
+  .row-fluid
+    .span12.panel
+      %h3 Propager les modifications
+      = form_tag propagate_admin_products_path, class: 'form form-horizontal margin2top' do
+        .control-group
+          = label_tag 'propagation_options[scope]', 'Etendu', class: 'control-label'
+          .controls
+            = select_tag 'propagation_options[scope]', options_for_select(['Tous'] + @organization_names), include_blank: false
+        .form-actions
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'

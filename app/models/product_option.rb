@@ -15,12 +15,13 @@ class ProductOption
   field :notify,                type: Boolean, default: false
   field :is_default,            type: Boolean, default: false
 
-  validates_presence_of :title, :name, :price_in_cents_wo_vat
+  validates_presence_of :name, :title, :price_in_cents_wo_vat
 
   slug :title
 
   belongs_to :product
   belongs_to :product_group
+  has_and_belongs_to_many :subscribers, class_name: 'Scan::Subscription', inverse_of: :options
 
   scope :default, where: { is_default: true }
 
@@ -38,14 +39,6 @@ public
     def find_by_slug(txt)
       self.first conditions: { slug: txt }
     end
-  end
-
-  def first_attribute
-    self.name
-  end
-
-  def to_a
-    [first_attribute, self.price_in_cents_wo_vat]
   end
 
   def price_in_cents_w_vat

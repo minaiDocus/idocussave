@@ -40,6 +40,34 @@ class Admin::ProductsController < Admin::AdminController
     redirect_to admin_products_path
   end
 
+  def propagation_options
+    @organization_names = Organization.all.asc(:name).map do |o|
+      [o.name, o.id]
+    end
+  end
+
+  def propagate
+    if params[:propagation_options][:scope] == 'all'
+      User.customers.active.asc(:code).each do |customer|
+        subscription = customer.find_or_create_scan_subscription
+        UpdateSubscriptionService.new(subscription, {}, current_user).execute
+      end
+      flash[:notice] = 'Propagé avec succès.'
+    else
+      organization = Organization.find(params[:propagation_options][:scope])
+      if organization
+        organization.customers.active.asc(:code).each do |customer|
+          subscription = customer.find_or_create_scan_subscription
+          UpdateSubscriptionService.new(subscription, {}, current_user).execute
+        end
+        flash[:notice] = 'Propagé avec succès.'
+      else
+        flash[:error] = "L'organisation n'est pas valide."
+      end
+    end
+    redirect_to admin_products_path
+  end
+
 private
 
   def load_product

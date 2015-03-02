@@ -405,7 +405,7 @@ fr:
           title: Nom (public)
           description: Description
           position: Position
-          price_in_cents_wo_vat: Prix (en centimes)
+          price_in_cents_wo_vat: Prix
           duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
           quantity: Quantité
           action_name: Action à executer

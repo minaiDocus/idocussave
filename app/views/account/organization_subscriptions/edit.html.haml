@@ -7,10 +7,6 @@
     .span12.box
       = simple_form_for @subscription, url: account_organization_organization_subscription_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
         = render partial: 'account/subscriptions/form', locals: { f: f }
-
-        .row-fluid
-          .span12
-            = f.input :is_to_spreading, label: 'Propager les changements pour tout les clients ?', as: :boolean
         .form-actions.margin0bottom
           = f.submit 'Valider', class: 'btn btn-primary'
           = link_to 'Annuler', account_organization_path(@organization, tab: 'subscription'), class: 'btn'

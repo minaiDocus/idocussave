@@ -58,6 +58,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @scan_subscription = @user.find_or_create_scan_subscription
             @scan_subscription.update_attribute(:period_duration, 3)
+            UpdatePeriodService.new(@scan_subscription.current_period).execute
             @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
             @temp_document = @uploaded_document.temp_document
@@ -123,6 +124,7 @@ describe UploadedDocument do
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @scan_subscription = @user.find_or_create_scan_subscription
             @scan_subscription.update_attribute(:period_duration, 3)
+            UpdatePeriodService.new(@scan_subscription.current_period).execute
             @user.account_book_types.create(name: 'TS', description: 'TEST')
             @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
             @temp_document = @uploaded_document.temp_document

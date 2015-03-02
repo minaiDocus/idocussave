@@ -19,29 +19,6 @@ private
     group.product_subgroups.by_position.each do |subgroup|
       walk_into_group(subgroup)
     end
-    group.product_options.default.by_position.each do |option|
-      option_order = order_option(option)
-      quantity = required_option(group).try(:quantity) || 1
-      option_order.price_in_cents_wo_vat *= quantity
-      @options << option_order
-    end
-  end
-
-  def required_option(group)
-    if group.product_require
-      group.product_require.product_options.default.asc(:quantity).first
-    else
-      nil
-    end
-  end
-
-  def order_option(option)
-    order = ProductOptionOrder.new
-    order.fields.keys.each do |k|
-      setter =  (k+"=").to_sym
-      value = option.send(k)
-      order.send(setter, value)
-    end
-    order
+    @options += group.product_options.default.by_position
   end
 end

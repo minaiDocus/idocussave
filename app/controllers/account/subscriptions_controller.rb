@@ -5,17 +5,14 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :verify_if_customer_is_active
   before_filter :load_subscription
   before_filter :load_product
+  before_filter :load_options
 
   def edit
-    @options = @subscription.product_option_orders.map(&:to_a)
   end
 
   def update
-    prev_options = @subscription.product_option_orders.map(&:dup)
-    @subscription.requester = @user
-    @subscription.permit_all_options = true unless Settings.is_subscription_lower_options_disabled
-    if @subscription.update_attributes(scan_subscription_params)
-      EvaluateSubscriptionService.execute(@subscription, @user, prev_options)
+    subscription_form = SubscriptionForm.new(@subscription, @user)
+    if subscription_form.submit(scan_subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
     else
@@ -78,5 +75,9 @@ private
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
+  end
+
+  def load_options
+    @options = @subscription.options.entries
   end
 end

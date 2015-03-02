@@ -9,21 +9,21 @@ class EvaluateSubscriptionService
     :update_max_number_of_journals
   ]
 
-  def self.execute(subscription, collaborator, prev_options=[])
-    self.new(subscription, collaborator, prev_options).execute
+  def self.execute(subscription, collaborator)
+    self.new(subscription, collaborator).execute
   end
 
-  def initialize(subscription, collaborator, prev_options=[])
-    @subscription           = subscription
-    @collaborator           = collaborator
-    @user                   = @subscription.user
-    @prev_options           = prev_options
+  def initialize(subscription, collaborator)
+    @subscription        = subscription
+    @collaborator        = collaborator
+    @user                = @subscription.user
+    @previous_option_ids = @subscription.previous_option_ids
   end
 
   def execute
     options_to_notify = []
-    @subscription.product_option_orders.each do |product_option|
-      if product_option.notify && !@prev_options.include?(product_option)
+    @subscription.options.each do |product_option|
+      if product_option.notify && !@previous_option_ids.include?(product_option.id)
         options_to_notify << "#{product_option.group_title} : #{product_option.title}"
       end
       case product_option.action_name
@@ -74,7 +74,7 @@ private
 
   def unauthorize_fiduceo
     @user.update_attribute(:is_fiduceo_authorized, false)
-    RemoveFiduceoService.new(@user.id.to_s).delay.execute
+    RemoveFiduceoService.new(@user.id.to_s).delay.execute if @user.fiduceo_id.present?
   end
 
   def authorize_preassignment

@@ -42,7 +42,8 @@ class Account::OrganizationsController < Account::AccountController
     @members = @organization.customers.page(params[:page]).per(params[:per])
     @periods = ::Scan::Period.where(:user_id.in => @organization.customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
     @subscription         = @organization.find_or_create_subscription
-    @subscription_options = @subscription.product_option_orders.where(:group_position.gte => 1000).by_position
+    @subscription_options = @subscription.options.by_position
+    @total                = @subscription.total
   end
 
   def edit

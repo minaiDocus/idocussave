@@ -237,7 +237,10 @@ Idocus::Application.routes.draw do
       post 'debit_order', on: :collection
     end
     resources :cms_images
-    resources :products, except: 'show'
+    resources :products, except: 'show' do
+      get  'propagation_options', on: :collection
+      post 'propagate',           on: :collection
+    end
     resources :product_options, except: %w(index show)
     resources :product_groups, except: %w(index show)
     resources :events, only: %w(index show)

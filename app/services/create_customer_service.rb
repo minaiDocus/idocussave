@@ -27,9 +27,9 @@ class CreateCustomerService
       when '3'
         subscription.period_duration = 3
       end
-      subscription.product_option_orders = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
       subscription.save
-      EvaluateSubscriptionService.execute(subscription, @requester)
+      options = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
+      UpdateSubscriptionService.new(subscription, { options: options }, @requester)
 
       # Assign journals
       source = (@organization.is_journals_management_centralized || @requester.is_admin) ? @organization : @requester

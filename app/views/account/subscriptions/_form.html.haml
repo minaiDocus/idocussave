@@ -1,5 +1,5 @@
 .row-fluid
-  - if @user.is_admin
+  - if @user.is_admin && !@subscription.organization
     .span5
       %h4.aligncenter Feuilles
       %br
@@ -38,7 +38,7 @@
       = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
       = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
   .span7
-    - if Settings.is_subscription_lower_options_disabled
+    - if Settings.is_subscription_lower_options_disabled || @subscription.organization
       = f.hidden_field :period_duration
     - else
       = f.input :period_duration, label: "Type d'abonnement", collection: [['Mensuel', 1],['Trimestriel', 3]], include_blank: false
