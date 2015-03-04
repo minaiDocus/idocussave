@@ -185,11 +185,8 @@ fr:
   subscription:
     actions:
       authorize_dematbox: Autoriser Dematbox
-      unauthorize_dematbox: Interdire Dematbox
       authorize_fiduceo: Autoriser Fiduceo
-      unauthorize_fiduceo: Interdire Fiduceo
       authorize_preassignment: Autoriser la pré-affectation
-      unauthorize_preassignment: Interdire la pré-affectation
       update_max_number_of_journals: Modifier le nombre max. de journaux
 
   mongoid:

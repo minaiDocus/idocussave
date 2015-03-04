@@ -29,9 +29,10 @@ jQuery ->
       init_prices(this)
 
   if $('#subscriptions.edit').length > 0
-    $('.warn_for_deletion_of_retrievers').click (e) ->
-      is_ok = window.confirm("Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?")
-      if is_ok
-        true
-      else
-        e.preventDefault()
+    $('.warn_for_deletion_of_retrievers').change (e) ->
+      if $(e.target).attr('type') == 'radio'
+        is_ok = window.confirm("Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?")
+        $('.authorize_retrievers').attr('checked', 'checked') unless is_ok
+      else if $(e.target).attr('checked') != 'checked'
+        is_ok = window.confirm("Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?")
+        $(e.target).attr('checked', 'checked') unless is_ok

@@ -1,11 +1,8 @@
 class EvaluateSubscriptionService
   ACTIONS = [
     :authorize_dematbox,
-    :unauthorize_dematbox,
     :authorize_fiduceo,
-    :unauthorize_fiduceo,
     :authorize_preassignment,
-    :unauthorize_preassignment,
     :update_max_number_of_journals
   ]
 
@@ -21,6 +18,10 @@ class EvaluateSubscriptionService
   end
 
   def execute
+    is_dematbox_authorized      = false
+    is_fiduceo_authorized       = false
+    is_preassignment_authorized = false
+
     options_to_notify = []
     @subscription.options.each do |product_option|
       if product_option.notify && !@previous_option_ids.include?(product_option.id)
@@ -28,21 +29,19 @@ class EvaluateSubscriptionService
       end
       case product_option.action_name
       when 'authorize_dematbox'
-        authorize_dematbox
-      when 'unauthorize_dematbox'
-        unauthorize_dematbox
+        is_dematbox_authorized = true
       when 'authorize_fiduceo'
-        authorize_fiduceo
-      when 'unauthorize_fiduceo'
-        unauthorize_fiduceo
+        is_fiduceo_authorized = true
       when 'authorize_preassignment'
-        authorize_preassignment
-      when 'unauthorize_preassignment'
-        unauthorize_preassignment
+        is_preassignment_authorized = true
       when 'update_max_number_of_journals'
         update_max_number_of_journals(product_option)
       end
     end
+
+    is_dematbox_authorized      ? authorize_dematbox      : unauthorize_dematbox
+    is_fiduceo_authorized       ? authorize_fiduceo       : unauthorize_fiduceo
+    is_preassignment_authorized ? authorize_preassignment : unauthorize_preassignment
     notify(options_to_notify) if options_to_notify.present?
   end
 
@@ -61,31 +60,35 @@ private
   end
 
   def authorize_dematbox
-    @user.update_attribute(:is_dematbox_authorized, true)
+    @user.update_attribute(:is_dematbox_authorized, true) unless @user.is_dematbox_authorized
   end
 
   def unauthorize_dematbox
-    @user.update_attribute(:is_dematbox_authorized, false)
+    @user.update_attribute(:is_dematbox_authorized, false) if @user.is_dematbox_authorized
   end
 
   def authorize_fiduceo
-    @user.update_attribute(:is_fiduceo_authorized, true)
+    @user.update_attribute(:is_fiduceo_authorized, true) unless @user.is_fiduceo_authorized
   end
 
   def unauthorize_fiduceo
-    @user.update_attribute(:is_fiduceo_authorized, false)
-    RemoveFiduceoService.new(@user.id.to_s).delay.execute if @user.fiduceo_id.present?
+    if @user.is_fiduceo_authorized
+      @user.update_attribute(:is_fiduceo_authorized, false)
+      RemoveFiduceoService.new(@user.id.to_s).delay.execute if @user.fiduceo_id.present?
+    end
   end
 
   def authorize_preassignment
-    @user.options.update_attribute(:is_preassignment_authorized, true)
+    @user.options.update_attribute(:is_preassignment_authorized, true) unless @user.options.is_preassignment_authorized
   end
 
   def unauthorize_preassignment
-    @user.options.update_attribute(:is_preassignment_authorized, false)
+    @user.options.update_attribute(:is_preassignment_authorized, false) if @user.options.is_preassignment_authorized
   end
 
   def update_max_number_of_journals(product_option)
-    @user.options.update_attribute(:max_number_of_journals, product_option.quantity)
+    unless @user.options.max_number_of_journals == product_option.quantity
+      @user.options.update_attribute(:max_number_of_journals, product_option.quantity)
+    end
   end
 end
