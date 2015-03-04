@@ -17,8 +17,12 @@ module Account::SubscriptionsHelper
       false
     else
       if Settings.is_subscription_lower_options_disabled
-        selected_option = options.select { |option| option.product_group == group }.first
-        selected_option ? option.position < selected_option.position : false
+        if group.is_option_dependent
+          selected_option = options.select { |option| option.product_group == group }.first
+          selected_option ? option.position < selected_option.position : false
+        else
+          option.in? options
+        end
       else
         false
       end

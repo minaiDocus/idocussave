@@ -40,7 +40,7 @@ class SubscriptionForm
           group_metadata[1].each do |option_id|
             option = group.product_options.where(_id: option_id).first
             if option
-              if @requester.try(:is_admin) || permit_all_options
+              if @requester.try(:is_admin) || permit_all_options || !group.is_option_dependent
                 options << option
               else
                 selected_option = @subscription.options.where(product_group_id: group_metadata[0]).first
@@ -53,6 +53,13 @@ class SubscriptionForm
             end
           end
         end
+      end
+
+      unless @requester.try(:is_admin) || permit_all_options
+        options += @subscription.options.select do |option|
+          !option.product_group.is_option_dependent
+        end
+        options.uniq!
       end
 
       unless @requester.try(:is_admin)
