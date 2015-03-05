@@ -408,6 +408,7 @@ fr:
           action_name: Action à executer
           notify: Notifier par email
           is_default: Par défaut ?
+          subscribers: Abonnés
           product_group: Groupe
           groups: Groupes
       product_group:
