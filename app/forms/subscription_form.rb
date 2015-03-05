@@ -39,7 +39,7 @@ class SubscriptionForm
         if group && (group.position < 1000 || @requester.try(:is_admin))
           group_metadata[1].each do |option_id|
             option = group.product_options.where(_id: option_id).first
-            if option
+            if option && option.title != 'Non'
               if @requester.try(:is_admin) || permit_all_options || !group.is_option_dependent
                 options << option
               else
