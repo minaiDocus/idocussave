@@ -82,7 +82,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def close_account
-    StopSubscriptionService.new(@customer).execute
+    StopSubscriptionService.new(@customer, params[:close_now]).execute
     flash[:success] = 'Dossier clôturé avec succès.'
     redirect_to account_organization_customer_path(@organization, @customer)
   end

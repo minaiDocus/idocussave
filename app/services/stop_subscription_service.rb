@@ -1,13 +1,19 @@
 # -*- encoding : UTF-8 -*-
 class StopSubscriptionService
-  def initialize(user)
+  def initialize(user, close_now=false)
     @user = user
+    @close_now = close_now == '1' ? true : false
   end
 
   def execute
     period = @user.periods.desc(:start_at).first
     if period
-      @user.inactive_at = period.start_at + period.duration.month
+      if @close_now
+        @user.inactive_at = Time.now
+        period.destroy
+      else
+        @user.inactive_at = period.start_at + period.duration.month
+      end
     else
       @user.inactive_at = Time.now
     end

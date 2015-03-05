@@ -4,13 +4,14 @@
       .row-fluid
         .span12.box
           .row-fluid
-            .span8
+            .span6
               - if @customer.inactive?
                 %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
               %h3= @customer.info
-            .span4.alignright
+            .span6.alignright
               - if @customer.active? && @user.is_admin
                 = link_to icon_not_ok + ' Clôturer le dossier', account_close_confirm_account_organization_customer_path(@organization, @customer), class: 'btn btn-danger'
+                = link_to icon_not_ok + ' Clôturer le dossier maintenant !', account_close_confirm_account_organization_customer_path(@organization, @customer, close_now: 1), class: 'btn btn-danger'
 
       .row-fluid
         .span12.box
