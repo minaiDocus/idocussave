@@ -11,7 +11,7 @@ class ProductOption
   field :position,              type: Integer, default: 1
   field :duration,              type: Integer, default: 1
   field :quantity,              type: Integer, default: 1
-  field :action_name
+  field :action_names,          type: Array,   default: []
   field :notify,                type: Boolean, default: false
   field :is_default,            type: Boolean, default: false
 

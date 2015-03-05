@@ -11,7 +11,7 @@ class ProductOptionOrder
   field :position,              type: Integer
   field :duration,              type: Integer
   field :quantity,              type: Integer
-  field :action_name
+  field :action_names,          type: Array
   field :notify
 
   embedded_in :product_optionable, polymorphic: true
@@ -32,7 +32,7 @@ class ProductOptionOrder
     result = false unless self.price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat
     result = false unless self.duration              == product_option_order.duration
     result = false unless self.quantity              == product_option_order.quantity
-    result = false unless self.action_name           == product_option_order.action_name
+    result = false unless self.action_names          == product_option_order.action_names
     result = false unless self.notify                == product_option_order.notify
     result
   end

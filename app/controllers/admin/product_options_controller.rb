@@ -7,7 +7,7 @@ class Admin::ProductOptionsController < Admin::AdminController
   end
 
   def create
-    @product_option = ProductOption.new params[:product_option]
+    @product_option = ProductOption.new product_option_params
     if @product_option.save
       flash[:notice] = 'Créé avec succès.'
       redirect_to admin_products_path
@@ -20,7 +20,7 @@ class Admin::ProductOptionsController < Admin::AdminController
   end
 
   def update
-    if @product_option.update_attributes params[:product_option]
+    if @product_option.update_attributes product_option_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_products_path
     else
@@ -39,5 +39,12 @@ private
   def load_product_option
     @product_option = ProductOption.find_by_slug params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(ProductOption, params[:id]) unless @product_option
+  end
+
+  def product_option_params
+    if params[:product_option][:action_names].present?
+      params[:product_option][:action_names] = params[:product_option][:action_names].map(&:presence).compact
+    end
+    params[:product_option]
   end
 end

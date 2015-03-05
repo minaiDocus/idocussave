@@ -27,15 +27,17 @@ class EvaluateSubscriptionService
       if product_option.notify && !@previous_option_ids.include?(product_option.id)
         options_to_notify << "#{product_option.group_title} : #{product_option.title}"
       end
-      case product_option.action_name
-      when 'authorize_dematbox'
-        is_dematbox_authorized = true
-      when 'authorize_fiduceo'
-        is_fiduceo_authorized = true
-      when 'authorize_preassignment'
-        is_preassignment_authorized = true
-      when 'update_max_number_of_journals'
-        update_max_number_of_journals(product_option)
+      Array(product_option.action_names).each do |action_name|
+        case action_name
+        when 'authorize_dematbox'
+          is_dematbox_authorized = true
+        when 'authorize_fiduceo'
+          is_fiduceo_authorized = true
+        when 'authorize_preassignment'
+          is_preassignment_authorized = true
+        when 'update_max_number_of_journals'
+          update_max_number_of_journals(product_option)
+        end
       end
     end
 
