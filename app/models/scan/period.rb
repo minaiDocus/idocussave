@@ -26,24 +26,21 @@ class Scan::Period
   field :excesses_price_in_cents_wo_vat,           type: Integer, default: 0
   field :tva_ratio,                                type: Float,   default: 1.2
 
-  # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
   field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
-  field :quantity_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :max_dematbox_scan_pages_authorized, type: Integer, default: 200 # iDocus'Box
-  field :quantity_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
   field :max_preseizure_pieces_authorized,   type: Integer, default: 100 # presaisies
   field :max_expense_pieces_authorized,      type: Integer, default: 100 # notes de frais
   field :max_paperclips_authorized,          type: Integer, default: 0   # attaches
   field :max_oversized_authorized,           type: Integer, default: 0   # hors format
-  # prix excès
-  field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
-  field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
-  field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
-  field :unit_price_of_excess_preseizure, type: Integer, default: 12  # presaisies
-  field :unit_price_of_excess_expense,    type: Integer, default: 12  # notes de frais
-  field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
-  field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
+
+  field :unit_price_of_excess_sheet,         type: Integer, default: 12  # numérisés
+  field :unit_price_of_excess_upload,        type: Integer, default: 6 # téléversés
+  field :unit_price_of_excess_dematbox_scan, type: Integer, default: 6 # iDocus'Box
+  field :unit_price_of_excess_preseizure,    type: Integer, default: 12  # presaisies
+  field :unit_price_of_excess_expense,       type: Integer, default: 12  # notes de frais
+  field :unit_price_of_excess_paperclips,    type: Integer, default: 20  # attaches
+  field :unit_price_of_excess_oversized,     type: Integer, default: 100 # hors format
 
   field :documents_name_tags,      type: Array,   default: []
   field :pieces,                   type: Integer, default: 0
@@ -184,8 +181,7 @@ class Scan::Period
   def price_in_cents_of_excess_uploaded_pages
     excess = excess_uploaded_pages
     if excess > 0
-      (excess / quantity_of_a_lot_of_upload) * price_of_a_lot_of_upload +
-      (excess % quantity_of_a_lot_of_upload > 0 ? price_of_a_lot_of_upload : 0)
+      excess * unit_price_of_excess_upload
     else
       0
     end
@@ -194,8 +190,7 @@ class Scan::Period
   def price_in_cents_of_excess_dematbox_scanned_pages
     excess = excess_dematbox_scanned_pages
     if excess > 0
-      (excess / quantity_of_a_lot_of_dematbox_scan) * price_of_a_lot_of_dematbox_scan +
-      (excess % quantity_of_a_lot_of_dematbox_scan > 0 ? price_of_a_lot_of_dematbox_scan : 0)
+      excess * unit_price_of_excess_dematbox_scan
     else
       0
     end

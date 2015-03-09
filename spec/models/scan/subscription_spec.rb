@@ -29,20 +29,18 @@ describe Scan::Subscription do
     @scan_subscription.period_duration.should eq(1)
     @scan_subscription.max_sheets_authorized.should eq(100)
     @scan_subscription.max_upload_pages_authorized.should eq(200)
-    @scan_subscription.quantity_of_a_lot_of_upload.should eq(200)
     @scan_subscription.max_dematbox_scan_pages_authorized.should eq(200)
-    @scan_subscription.quantity_of_a_lot_of_dematbox_scan.should eq(200)
     @scan_subscription.max_preseizure_pieces_authorized.should eq(100)
     @scan_subscription.max_expense_pieces_authorized.should eq(100)
     @scan_subscription.max_paperclips_authorized.should eq(0)
     @scan_subscription.max_oversized_authorized.should eq(0)
     @scan_subscription.unit_price_of_excess_sheet.should eq(12)
-    @scan_subscription.price_of_a_lot_of_upload.should eq(200)
-    @scan_subscription.price_of_a_lot_of_dematbox_scan.should eq(200)
     @scan_subscription.unit_price_of_excess_preseizure.should eq(12)
     @scan_subscription.unit_price_of_excess_expense.should eq(12)
     @scan_subscription.unit_price_of_excess_paperclips.should eq(20)
     @scan_subscription.unit_price_of_excess_oversized.should eq(100)
+    @scan_subscription.unit_price_of_excess_upload.should eq(6)
+    @scan_subscription.unit_price_of_excess_dematbox_scan.should eq(6)
   end
 
   it "should verify ponctual options not reused" do

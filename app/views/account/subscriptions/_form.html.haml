@@ -9,14 +9,12 @@
       %h4.aligncenter Pages téléversées
       %br
       = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
-      = f.input :quantity_of_a_lot_of_upload, label: 'Nombre de pages comprises dans un lot', as: :integer
-      = f.input :price_of_a_lot_of_upload, label: 'Prix d\'un lot excessif (centime)', as: :integer
+      = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
       %hr
       %h4.aligncenter Pages iDocus'Box
       %br
       = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
-      = f.input :quantity_of_a_lot_of_dematbox_scan, label: 'Nombre de pages comprises dans un lot', as: :integer
-      = f.input :price_of_a_lot_of_dematbox_scan, label: 'Prix d\'un lot excessif (centime)', as: :integer
+      = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
       %hr
       %h4.aligncenter Pièces presaisies
       %br

@@ -32,24 +32,6 @@ private
   end
 
   def scan_subscription_params
-    params.require(:scan_subscription).permit(
-      :max_sheets_authorized,
-      :unit_price_of_excess_sheet,
-      :max_upload_pages_authorized,
-      :quantity_of_a_lot_of_upload,
-      :price_of_a_lot_of_upload,
-      :max_dematbox_scan_pages_authorized,
-      :quantity_of_a_lot_of_dematbox_scan,
-      :price_of_a_lot_of_dematbox_scan,
-      :max_preseizure_pieces_authorized,
-      :unit_price_of_excess_preseizure,
-      :max_expense_pieces_authorized,
-      :unit_price_of_excess_expense,
-      :max_paperclips_authorized,
-      :unit_price_of_excess_paperclips,
-      :max_oversized_authorized,
-      :unit_price_of_excess_oversized,
-      :period_duration,
-      :product)
+    params.require(:scan_subscription).permit(:period_duration, :product)
   end
 end

@@ -5,24 +5,21 @@ class Scan::Subscription < Subscription
   has_many :periods,   class_name: "Scan::Period",   inverse_of: :subscription
   has_many :documents, class_name: "Scan::Document", inverse_of: :subscription
 
-  # quantité limite
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
   field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
-  field :quantity_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
   field :max_dematbox_scan_pages_authorized, type: Integer, default: 200 # iDocus'Box
-  field :quantity_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
   field :max_preseizure_pieces_authorized,   type: Integer, default: 100 # presaisies
   field :max_expense_pieces_authorized,      type: Integer, default: 100 # notes de frais
   field :max_paperclips_authorized,          type: Integer, default: 0   # attaches
   field :max_oversized_authorized,           type: Integer, default: 0   # hors format
-  # prix excès
-  field :unit_price_of_excess_sheet,      type: Integer, default: 12  # numérisés
-  field :price_of_a_lot_of_upload,        type: Integer, default: 200 # téléversés
-  field :price_of_a_lot_of_dematbox_scan, type: Integer, default: 200 # iDocus'Box
-  field :unit_price_of_excess_preseizure, type: Integer, default: 12  # presaisies
-  field :unit_price_of_excess_expense,    type: Integer, default: 12  # notes de frais
-  field :unit_price_of_excess_paperclips, type: Integer, default: 20  # attaches
-  field :unit_price_of_excess_oversized,  type: Integer, default: 100 # hors format
+
+  field :unit_price_of_excess_sheet,         type: Integer, default: 12  # numérisés
+  field :unit_price_of_excess_upload,        type: Integer, default: 6 # téléversés
+  field :unit_price_of_excess_dematbox_scan, type: Integer, default: 6 # iDocus'Box
+  field :unit_price_of_excess_preseizure,    type: Integer, default: 12  # presaisies
+  field :unit_price_of_excess_expense,       type: Integer, default: 12  # notes de frais
+  field :unit_price_of_excess_paperclips,    type: Integer, default: 20  # attaches
+  field :unit_price_of_excess_oversized,     type: Integer, default: 100 # hors format
 
   def current_period
     find_or_create_period(Time.now)
@@ -90,20 +87,18 @@ class Scan::Subscription < Subscription
     [
       :max_sheets_authorized,
       :max_upload_pages_authorized,
-      :quantity_of_a_lot_of_upload,
       :max_preseizure_pieces_authorized,
       :max_expense_pieces_authorized,
       :max_paperclips_authorized,
       :max_oversized_authorized,
       :max_dematbox_scan_pages_authorized,
-      :quantity_of_a_lot_of_dematbox_scan,
       :unit_price_of_excess_sheet,
-      :price_of_a_lot_of_upload,
+      :unit_price_of_excess_upload,
       :unit_price_of_excess_preseizure,
       :unit_price_of_excess_expense,
       :unit_price_of_excess_paperclips,
       :unit_price_of_excess_oversized,
-      :price_of_a_lot_of_dematbox_scan
+      :unit_price_of_excess_dematbox_scan
     ]
   end
 end
