@@ -176,7 +176,7 @@ fr:
         duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
         quantity: Quantité
         product_group: Groupe
-        action_name: Action à executer
+        action_names: Action(s) à exécuter
         notify: Notifier par email
         is_default: Par défaut ?
       product_group:

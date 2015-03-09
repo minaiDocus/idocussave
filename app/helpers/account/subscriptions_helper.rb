@@ -32,12 +32,12 @@ module Account::SubscriptionsHelper
   def retrievers_option_warning_class(customer, option)
     if customer && customer.fiduceo_id.present?
       if option.product_group.is_option_dependent
-        if option.action_name == 'authorize_fiduceo'
+        if option.action_names.include? 'authorize_fiduceo'
           ' authorize_retrievers'
-        elsif option.product_group.product_options.map(&:action_name).include?('authorize_fiduceo')
+        elsif option.product_group.product_options.map(&:action_names).flatten.include?('authorize_fiduceo')
           ' warn_for_deletion_of_retrievers' if customer.fiduceo_retrievers.size > 0
         end
-      elsif option.action_name == 'authorize_fiduceo'
+      elsif option.action_names.include? 'authorize_fiduceo'
         ' warn_for_deletion_of_retrievers' if customer.fiduceo_retrievers.size > 0
       end
     end
