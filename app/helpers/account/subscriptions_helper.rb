@@ -2,10 +2,12 @@
 module Account::SubscriptionsHelper
   def is_product_option_checked?(index, option, options)
     if option.product_group.is_option_dependent
-      if options.any?
-        option.in? options
+      if options.include? option
+        true
+      elsif options.map(&:product_group).include?(option.product_group)
+        false
       else
-        index == 0 ? true : false
+        index == 0
       end
     else
       option.in? options
