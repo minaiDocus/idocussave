@@ -69,7 +69,7 @@
 
     = javascript_include_tag 'application', 'inner'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
-      = javascript_include_tag 'account/subscriptions'
+      = javascript_include_tag 'account/subscriptions', 'account/organization_subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = javascript_include_tag 'account/csv_outputters'
     - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors ibiza))

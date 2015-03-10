@@ -113,7 +113,10 @@ Idocus::Application.routes.draw do
         get 'callback',      on: :member
       end
       resources :journals, except: 'show'
-      resource :organization_subscription, only: %w(edit update)
+      resource :organization_subscription, only: %w(edit update) do
+        get 'select_options',    on: :collection
+        put 'propagate_options', on: :collection
+      end
       resource :ibiza, controller: 'ibiza', only: %w(create edit update) do
         get 'refresh_users_cache', on: :member
       end

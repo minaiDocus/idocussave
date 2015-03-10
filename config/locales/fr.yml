@@ -166,6 +166,7 @@ fr:
     update: Mettre à jour
     submit: Valider
     confirm: Êtes-vous sûr ?
+    propagate: Propager
 
   filters:
     name: Filtre
