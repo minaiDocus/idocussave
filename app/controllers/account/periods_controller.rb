@@ -7,7 +7,7 @@ class Account::PeriodsController < Account::AccountController
 private
 
   def load_period
-    @period = ::Scan::Period.find params[:id]
+    @period = Period.find params[:id]
   end
 
   def verify_rights

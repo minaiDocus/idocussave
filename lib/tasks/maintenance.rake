@@ -21,16 +21,16 @@ namespace :maintenance do
     desc 'Init current period'
     task :init => [:environment] do
       Organization.all.each do |organization|
-        organization.scan_subscriptions.current.remove_not_reusable_options
+        RemoveNotReusableOptionsService.new(organization.subscription).execute
         organization.customers.active.each do |customer|
           begin
-            subscription = customer.scan_subscriptions.current
+            subscription = customer.subscription
             if subscription.period_duration == 1 || Time.now.month == Time.now.beginning_of_quarter.month
-              subscription.remove_not_reusable_options
+              RemoveNotReusableOptionsService.new(subscription).execute
             end
             subscription.find_or_create_period Time.now
           rescue
-            puts "Can't generate period for user #{customer.info}, probably lack of scan_subscription entry."
+            puts "Can't generate period for user #{customer.info}, probably lack of subscription entry."
           end
         end
       end
@@ -46,7 +46,7 @@ namespace :maintenance do
       time = Time.local(time.year, time.month)
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        periods = Scan::Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time)
+        periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time)
         if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
           invoice = Invoice.new
           invoice.organization = organization
@@ -63,7 +63,7 @@ namespace :maintenance do
           end
           InvoiceMailer.delay(priority: 1).notify(invoice)
         end
-        periods = Scan::Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time)
+        periods = Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time)
         if periods.count > 0
           puts "-> Not centralized invoices :"
           periods.map do |period|

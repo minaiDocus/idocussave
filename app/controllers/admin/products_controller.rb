@@ -49,7 +49,7 @@ class Admin::ProductsController < Admin::AdminController
   def propagate
     if params[:propagation_options][:scope] == 'all'
       User.customers.active.asc(:code).each do |customer|
-        subscription = customer.find_or_create_scan_subscription
+        subscription = customer.find_or_create_subscription
         UpdateSubscriptionService.new(subscription, {}, current_user).execute
       end
       flash[:notice] = 'Propagé avec succès.'
@@ -57,7 +57,7 @@ class Admin::ProductsController < Admin::AdminController
       organization = Organization.find(params[:propagation_options][:scope])
       if organization
         organization.customers.active.asc(:code).each do |customer|
-          subscription = customer.find_or_create_scan_subscription
+          subscription = customer.find_or_create_subscription
           UpdateSubscriptionService.new(subscription, {}, current_user).execute
         end
         flash[:notice] = 'Propagé avec succès.'

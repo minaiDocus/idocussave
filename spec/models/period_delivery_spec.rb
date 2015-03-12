@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe Scan::Delivery do
+describe PeriodDelivery do
   before(:each) do
-    @period = Scan::Period.create!(start_at: Time.now)
+    @period = Period.create!(start_at: Time.now)
   end
 
   it "should pass from wait to received" do

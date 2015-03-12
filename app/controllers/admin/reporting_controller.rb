@@ -22,7 +22,7 @@ class Admin::ReportingController < Admin::AdminController
           filename = "reporting_iDocus_#{@year}.xls"
           with_organization_info = true
         end
-        periods = ::Scan::Period.any_of(
+        periods = Period.any_of(
             { :user_id.in         => customer_ids },
             { :organization_id.in => organization_ids }
           ).where(

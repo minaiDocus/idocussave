@@ -13,10 +13,10 @@
         - if product_group.is_option_dependent
           - product_group.product_options.by_position.each_with_index do |option,index|
             %tr
-              %td.input= radio_button_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: "option#{retrievers_option_warning_class(@customer, option)}", disabled: (is_product_option_disabled?(option, product_group, @options) ? 'disabled' : nil)
+              %td.input= radio_button_tag "subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: "option#{retrievers_option_warning_class(@customer, option)}", disabled: (is_product_option_disabled?(option, product_group, @options) ? 'disabled' : nil)
               = render partial: 'account/subscriptions/product_option', locals: { option: option }
         - else
           - product_group.product_options.by_position.each_with_index do |option,index|
             %tr
-              %td.input= check_box_tag "scan_subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: "option#{retrievers_option_warning_class(@customer, option)}", disabled: (is_product_option_disabled?(option, product_group, @options) ? 'disabled' : nil)
+              %td.input= check_box_tag "subscription[product][#{product.id}][#{product_group.id}][]", option.id, is_product_option_checked?(index, option, @options), id: option.id, class: "option#{retrievers_option_warning_class(@customer, option)}", disabled: (is_product_option_disabled?(option, product_group, @options) ? 'disabled' : nil)
               = render partial: 'account/subscriptions/product_option', locals: { option: option }

@@ -59,7 +59,7 @@ private
   end
 
   def period
-    @period ||= Scan::Period.period_name period_service.period_duration, 0
+    @period ||= Period.period_name period_service.period_duration, 0
   end
 
   def file

@@ -5,7 +5,7 @@ class DestroyCollaboratorService
   end
 
   def execute
-    @collaborator.scan_subscriptions.destroy_all
+    @collaborator.subscription.destroy
     @collaborator.periods.destroy_all
     @collaborator.debit_mandate.try(:destroy)
     if @collaborator.composition.present? && File.exists?("#{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")

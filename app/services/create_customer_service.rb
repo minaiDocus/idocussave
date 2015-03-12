@@ -20,7 +20,7 @@ class CreateCustomerService
       AccountingPlan.create(user_id: @customer.id)
 
       # Assign default subscription
-      subscription = @customer.find_or_create_scan_subscription
+      subscription = @customer.find_or_create_subscription
       case @subscription_params['type']
       when '1'
         subscription.period_duration = 1

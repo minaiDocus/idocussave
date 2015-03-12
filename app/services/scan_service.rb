@@ -2,7 +2,7 @@
 class ScanService
   class << self
     def not_delivered
-      Scan::Document.scanned.where(:scanned_at.gte => 30.days.ago).select do |scan|
+      PeriodDocument.scanned.where(:scanned_at.gte => 30.days.ago).select do |scan|
         result = false
         temp_pack = TempPack.where(name: scan.name).first
         if temp_pack

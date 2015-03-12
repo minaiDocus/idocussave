@@ -16,7 +16,7 @@ class ReturnLabels
   end
 
   def users
-    documents = Scan::Document.where(
+    documents = PeriodDocument.where(
       :scanned_at.gt => current_time.beginning_of_day,
       :scanned_at.lt => current_time.end_of_day
     )

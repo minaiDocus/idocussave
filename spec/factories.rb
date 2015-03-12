@@ -48,7 +48,7 @@ FactoryGirl.define do
     end
   end
 
-  factory Scan::Document do
+  factory PeriodDocument do
     sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
   end
 

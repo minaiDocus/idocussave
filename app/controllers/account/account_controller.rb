@@ -74,7 +74,7 @@ public
     end
     @last_kits     = PaperProcess.where(:user_id.in => users.map(&:id)).kits.desc(:updated_at).limit(5)
     @last_receipts = PaperProcess.where(:user_id.in => users.map(&:id)).receipts.desc(:updated_at).limit(5)
-    @last_scanned  = Scan::Document.where(:user_id.in => users.map(&:id), :scanned_at.nin => [nil]).desc(:scanned_at).limit(5)
+    @last_scanned  = PeriodDocument.where(:user_id.in => users.map(&:id), :scanned_at.nin => [nil]).desc(:scanned_at).limit(5)
     @last_returns  = PaperProcess.where(:user_id.in => users.map(&:id)).returns.desc(:updated_at).limit(5)
     @last_packs    = @user.packs.desc(:updated_at).limit(5)
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)

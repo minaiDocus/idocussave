@@ -12,7 +12,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 
   def update
     subscription_form = SubscriptionForm.new(@subscription, @user)
-    if subscription_form.submit(scan_subscription_params)
+    if subscription_form.submit(subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
     else
@@ -22,7 +22,7 @@ class Account::SubscriptionsController < Account::OrganizationController
 
 private
 
-  def scan_subscription_params
+  def subscription_params
     attributes = [:product]
     attributes << :period_duration unless Settings.is_subscription_lower_options_disabled
     if @user.is_admin
@@ -42,9 +42,9 @@ private
         :max_oversized_authorized,
         :unit_price_of_excess_oversized
       ]
-      params.require(:scan_subscription).permit(*attributes)
+      params.require(:subscription).permit(*attributes)
     else
-      params.require(:scan_subscription).permit(*attributes)
+      params.require(:subscription).permit(*attributes)
     end
   end
 
@@ -61,7 +61,7 @@ private
   end
 
   def load_subscription
-    @subscription = @customer.find_or_create_scan_subscription
+    @subscription = @customer.find_or_create_subscription
   end
 
   def load_product

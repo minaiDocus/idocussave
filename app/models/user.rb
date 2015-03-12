@@ -119,14 +119,12 @@ class User
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
-  has_many :periods,            class_name: "Scan::Period",             inverse_of: :user
-  has_many :period_documents,   class_name: "Scan::Document",           inverse_of: :user
-  has_many :scan_subscriptions, class_name: "Scan::Subscription",       inverse_of: :user
+  has_many :periods
+  has_many :period_documents
   has_many :packs,              class_name: "Pack",                     inverse_of: :owner
   has_many :pack_pieces,        class_name: "Pack::Piece",              inverse_of: :user
   has_many :account_book_types
   has_many :invoices
-  has_many :subscriptions
   has_many :remote_files,                                                                       dependent: :destroy
   has_many :events
   has_many :pack_reports,       class_name: 'Pack::Report',             inverse_of: :user
@@ -144,6 +142,7 @@ class User
   has_many :operations
   has_many :pre_assignment_deliveries
   has_many :paper_processes
+  has_one :subscription
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage,                                               autosave: true, dependent: :destroy
@@ -230,15 +229,8 @@ class User
     self.inactive_at.present?
   end
 
-  def find_or_create_scan_subscription
-    if scan_subscriptions.any?
-      scan_subscriptions.current
-    else
-      scan_subscription = Scan::Subscription.new
-      scan_subscription.user = self
-      scan_subscription.save
-      scan_subscription
-    end
+  def find_or_create_subscription
+    subscription || Subscription.create(user_id: self.id)
   end
 
   def billing_address

@@ -21,7 +21,7 @@ class ReminderEmail
   def deliver
     clients = organization.customers.active - processed_users
     clients = clients.select do |client|
-      client.scan_subscriptions.current.period_duration == self.period rescue false
+      client.subscription.period_duration == self.period rescue false
     end
     if clients.any?
       clients.each do |client|

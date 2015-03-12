@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Scan::Delivery
+class PeriodDelivery
   include Mongoid::Document
   include Mongoid::Timestamps
   include ActiveRecord::Transitions
@@ -7,7 +7,7 @@ class Scan::Delivery
   # FIXME do that with the builtin i18n rails module
   STATES = [['rien', 'nothing'], ['attendus', 'wait'], ['réceptionnés', 'received'], ['traités', 'delivered']]
 
-  embedded_in :period, class_name: "Scan::Period", inverse_of: :delivery
+  embedded_in :period, inverse_of: :delivery
 
   field :state, default: 'wait'
 

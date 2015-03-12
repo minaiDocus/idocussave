@@ -43,7 +43,7 @@ class PeriodService
     time = @current_time.beginning_of_month   if @period_duration == 1
     time = @current_time.beginning_of_quarter if @period_duration == 3
     (@authd_prev_period + 1).times.map do |i|
-      Scan::Period.period_name(@period_duration, @authd_prev_period - i, time)
+      Period.period_name(@period_duration, @authd_prev_period - i, time)
     end
   end
 

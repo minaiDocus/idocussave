@@ -5,7 +5,7 @@ class PaperProcess
 
   belongs_to :organization
   belongs_to :user
-  belongs_to :period_document, class_name: 'Scan::Document', inverse_of: :paper_process
+  belongs_to :period_document
 
   field :type
   field :tracking_number

@@ -37,7 +37,7 @@ class PeriodsToXlsService
 
     nb = 1
 
-    documents = Scan::Document.where(:period_id.in => @periods.map(&:id)).asc([:created_at, :name]).entries
+    documents = PeriodDocument.where(:period_id.in => @periods.map(&:id)).asc([:created_at, :name]).entries
     documents = documents.sort do |a, b|
       _a = []
       _a << a.period.user.try(:organization).try(:name) if @with_organization_info

@@ -1,9 +1,9 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe Scan::Period do
+describe Period do
   it "create one period" do
-    period = Scan::Period.new
+    period = Period.new
     period.should be_valid
     period.save
     period.should be_persisted
@@ -11,31 +11,31 @@ describe Scan::Period do
 
   context 'when duration is 1' do
     it '#start_at should equal 2013-02-01 00:00:00' do
-      period = Scan::Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
+      period = Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
       expect(period.start_at).to eq(Time.local(2013, 2, 1))
     end
 
     it '#end_at should equal 2013-02-30 23:59:59' do
-      period = Scan::Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
+      period = Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
       expect(period.end_at).to eq(Time.local(2013, 2, 28, 23, 59, 59))
     end
   end
 
   context 'when duration is 3' do
     it '#start_at should equal 2013-04-01 00:00:00' do
-      period = Scan::Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
+      period = Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
       expect(period.start_at).to eq(Time.local(2013, 4, 1))
     end
 
     it '#end_at should equal 2013-06-30 23:59:59' do
-      period = Scan::Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
+      period = Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
       expect(period.end_at).to eq(Time.local(2013, 6, 30, 23, 59, 59))
     end
   end
 
   describe "should return right values" do
     subject(:period) {
-      period = Scan::Period.new
+      period = Period.new
 
       period.max_sheets_authorized = 5
       period.unit_price_of_excess_sheet = 12
@@ -88,31 +88,31 @@ describe Scan::Period do
 
   describe ".period_name" do
     it 'should return 201301' do
-      expect(Scan::Period.period_name 1, 0, Time.local(2013,1,1)).to eq('201301')
+      expect(Period.period_name 1, 0, Time.local(2013,1,1)).to eq('201301')
     end
 
     it 'should return 201212' do
-      expect(Scan::Period.period_name 1, 1, Time.local(2013,1,1)).to eq('201212')
+      expect(Period.period_name 1, 1, Time.local(2013,1,1)).to eq('201212')
     end
 
     it 'should return 201211' do
-      expect(Scan::Period.period_name 1, 2, Time.local(2013,1,1)).to eq('201211')
+      expect(Period.period_name 1, 2, Time.local(2013,1,1)).to eq('201211')
     end
 
     it 'should return 2013T1' do
-      expect(Scan::Period.period_name 3, 0, Time.local(2013,1,1)).to eq('2013T1')
+      expect(Period.period_name 3, 0, Time.local(2013,1,1)).to eq('2013T1')
     end
 
     it 'should return 2012T4' do
-      expect(Scan::Period.period_name 3, 1, Time.local(2013,1,1)).to eq('2012T4')
+      expect(Period.period_name 3, 1, Time.local(2013,1,1)).to eq('2012T4')
     end
 
     it 'should return 2012T3' do
-      expect(Scan::Period.period_name 3, 2, Time.local(2013,1,1)).to eq('2012T3')
+      expect(Period.period_name 3, 2, Time.local(2013,1,1)).to eq('2012T3')
     end
 
     it 'should return 201402' do
-      expect(Scan::Period.period_name 1, 2, Time.local(2014,4,1)).to eq('201402')
+      expect(Period.period_name 1, 2, Time.local(2014,4,1)).to eq('201402')
     end
   end
 end

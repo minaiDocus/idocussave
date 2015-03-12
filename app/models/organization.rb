@@ -43,10 +43,8 @@ class Organization
   belongs_to :leader,             class_name: 'User',               inverse_of: 'my_organization'
   has_many   :members,            class_name: 'User',               inverse_of: 'organization'
   has_many   :groups
-  has_many   :subscriptions
-  has_many   :scan_subscriptions, class_name: 'Scan::Subscription', inverse_of: 'organization'
-  has_many   :periods,            class_name: 'Scan::Period',       inverse_of: 'organization'
-  has_many   :period_documents,   class_name: 'Scan::Document',     inverse_of: 'organization'
+  has_many   :periods
+  has_many   :period_documents
   has_many   :packs
   has_many   :pack_pieces,        class_name: 'Pack::Piece',        inverse_of: 'organization'
   has_many   :invoices
@@ -61,6 +59,7 @@ class Organization
   has_many   :temp_packs
   has_many   :temp_documents
   has_many   :paper_processes
+  has_one    :subscription
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label
@@ -111,21 +110,10 @@ class Organization
   def find_or_create_file_sending_kit
     file_sending_kit || FileSendingKit.create(organization_id: self.id)
   end
-  alias :foc_file_sending_kit :find_or_create_file_sending_kit
 
   def find_or_create_subscription
-    if subscriptions.any?
-      subscriptions.current
-    else
-      subscription = Scan::Subscription.new
-      subscription.organization = self
-      subscription.save
-      subscription
-    end
+    subscription || Subscription.create(organization_id: self.id)
   end
-  alias :foc_subscription :find_or_create_subscription
-  alias :find_or_create_scan_subscription :find_or_create_subscription
-  alias :foc_scan_subscription :find_or_create_subscription
 
   def find_or_create_csv_outputter
     csv_outputter || create_csv_outputter

@@ -39,7 +39,7 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_requested_kits(customers, time)
-    customer_ids = Scan::Period.where(
+    customer_ids = Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
@@ -51,7 +51,7 @@ module Admin::ProcessReportingHelper
     end.map(&:user_id).uniq
 
     previous_month = time - 1.month
-    previous_count = Scan::Period.where(
+    previous_count = Period.where(
       :user_id.in     => customer_ids,
       :created_at.gte => previous_month,
       :created_at.lte => previous_month.end_of_month
@@ -80,7 +80,7 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_paperclips(customers, time)
-    periods = Scan::Period.where(
+    periods = Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
@@ -90,7 +90,7 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_oversized(customers, time)
-    periods = Scan::Period.where(
+    periods = Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time,
       :created_at.lte => time.end_of_month

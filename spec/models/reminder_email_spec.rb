@@ -24,8 +24,8 @@ describe ReminderEmail do
       @organization.members << @user2
       @organization.members << @user3
 
-      @user2.find_or_create_scan_subscription
-      @user3.find_or_create_scan_subscription
+      @user2.find_or_create_subscription
+      @user3.find_or_create_subscription
 
       @reminder_email = ReminderEmail.new(name: 'test_email1', subject: 'sujet 1', content: 'contenu1', organization_id: @organization.id)
       @reminder_email.save

@@ -48,9 +48,9 @@
             = check_box_tag 'master_checkbox', 0, false, class: 'pull-left', style: 'top:0px'
             %label.margin2left{ for: 'master_checkbox' } Tous/Aucun
             - @organization.customers.active.asc(:code).each do |customer|
-              = check_box_tag 'scan_subscription[customer_ids][]', customer.id, false, id: "scan_subscription_customer_id_#{customer.id}", class: 'checkbox pull-left', style: 'top:0px'
-              %label.margin2left{ for: "scan_subscription_customer_id_#{customer.id}" }= customer.info
-            = hidden_field_tag 'scan_subscription[customer_ids][]', ''
+              = check_box_tag 'subscription[customer_ids][]', customer.id, false, id: "subscription_customer_id_#{customer.id}", class: 'checkbox pull-left', style: 'top:0px'
+              %label.margin2left{ for: "subscription_customer_id_#{customer.id}" }= customer.info
+            = hidden_field_tag 'subscription[customer_ids][]', ''
         .form-actions.margin0bottom
           = f.submit t('actions.propagate'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'subscription'), class: 'btn'

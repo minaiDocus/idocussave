@@ -12,16 +12,13 @@ class Pack
   EXTENSION_PATTERN = '\.(pdf|PDF)'
   FILENAME_PATTERN = /^#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}$/
 
-  # TODO fix this
-  PeriodicMetadata = Scan::Document
-
   belongs_to :owner, class_name: "User", inverse_of: :packs
   belongs_to :organization
 
   has_many :documents,                                                          dependent: :destroy
   has_many :pieces,            class_name: 'Pack::Piece',    inverse_of: :pack, dependent: :destroy, autosave: true
   has_one  :report,            class_name: 'Pack::Report',   inverse_of: :pack
-  has_many :periodic_metadata, class_name: 'Scan::Document', inverse_of: :pack
+  has_many :period_documents
   has_many :remote_files,                                                       dependent: :destroy
   has_many :dividers,          class_name: 'PackDivider',    inverse_of: :pack, dependent: :destroy
   has_many :operations

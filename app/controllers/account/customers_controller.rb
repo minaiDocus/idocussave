@@ -8,7 +8,7 @@ class Account::CustomersController < Account::OrganizationController
     respond_to do |format|
       format.html do
         @customers = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
-        @periods = ::Scan::Period.where(:user_id.in => @customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
+        @periods = Period.where(:user_id.in => @customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
         @groups = is_leader? ? @organization.groups : @user.groups
         @groups = @groups.asc(:name).entries
       end
@@ -20,7 +20,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def show
-    @subscription = @customer.find_or_create_scan_subscription
+    @subscription = @customer.find_or_create_subscription
     @period = @subscription.periods.desc(:created_at).first
     @journals = @customer.account_book_types.asc(:name)
     @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)

@@ -10,7 +10,7 @@ class Account::ReportingController < Account::AccountController
     else
       @users = [@user]
     end
-    @periods = ::Scan::Period.where(
+    @periods = Period.where(
       :user_id.in   => @users.map(&:id),
       :start_at.gte => Time.local(@year),
       :end_at.lte   => Time.local(@year).end_of_year

@@ -230,7 +230,7 @@ private
       if name.present?
         period_service.include?(name) ? name : nil
       else
-        Scan::Period.period_name(period_service.period_duration)
+        Period.period_name(period_service.period_duration)
       end
     else
       nil

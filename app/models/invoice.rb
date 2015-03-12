@@ -34,7 +34,7 @@ class Invoice
   belongs_to :user
   belongs_to :organization
   belongs_to :subscription
-  belongs_to :period, class_name: 'Scan::Period'
+  belongs_to :period
 
   class << self
     def find_by_number(number)
@@ -72,8 +72,7 @@ class Invoice
 
     time = self.created_at - 1.month
     if organization
-      scan_subscription = organization.scan_subscriptions.current
-      periods = Scan::Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
+      periods = Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
         where(:start_at.lte => time, :end_at.gte => time)
 
       @total = PeriodService.total_price_in_cents_wo_vat(time, periods)
@@ -82,7 +81,7 @@ class Invoice
           ["Nombre de clients actifs : #{periods.count}",""]
       ]
 
-      options = scan_subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
+      options = organization.subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
           first.product_option_orders.
           where(:group_position.gte => 1000).
           by_position rescue []
@@ -92,8 +91,7 @@ class Invoice
       end
       @address = organization.addresses.for_billing.first
     else
-      scan_subscription = user.scan_subscriptions.last
-      period = scan_subscription.find_or_create_period(time)
+      period = user.subscription.find_or_create_period(time)
       options = period.product_option_orders
       if period.duration == 1 || !period.is_charged_several_times
         options.each do |option|

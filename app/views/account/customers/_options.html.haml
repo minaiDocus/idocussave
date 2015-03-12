@@ -12,9 +12,9 @@
           %td= option.group_title
           %td= option.title
           %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
-          %td.price= format_price_00(option.price_in_cents_wo_vat * @subscription.tva_ratio) + ' €'
+          %td.price= format_price_00(option.price_in_cents_wo_vat * period.tva_ratio) + ' €'
     %tr
       %td
       %th Total
-      %td.price= format_price_00(@subscription.products_price_in_cents_wo_vat) + ' €' rescue '0,00 €'
-      %td.price= format_price_00(@subscription.products_price_in_cents_w_vat) + ' €' rescue '0,00 €'
+      %td.price= format_price_00(period.products_price_in_cents_wo_vat) + ' €' rescue '0,00 €'
+      %td.price= format_price_00(period.products_price_in_cents_w_vat) + ' €' rescue '0,00 €'

@@ -8,7 +8,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
   def update
     subscription_form = SubscriptionForm.new(@subscription, @user)
-    if subscription_form.submit(scan_subscription_params)
+    if subscription_form.submit(subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'subscription')
     else
@@ -20,18 +20,16 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
   def propagate_options
-    _params = scan_subscription_options_params
+    _params = subscription_options_params
     if @subscription.update_attributes(_params)
-      customer_ids = params[:scan_subscription][:customer_ids] - [''] rescue []
+      customer_ids = params[:subscription][:customer_ids] - [''] rescue []
       customers = @organization.customers.where(:_id.in => customer_ids)
       if customer_ids.size == customers.size
-        scan_subscriptions = customers.map do |customer|
-          customer.find_or_create_scan_subscription
-        end
-        Scan::Subscription.where(:_id.in => scan_subscriptions.map(&:id)).update_all(_params)
-        periods = scan_subscriptions.map(&:current_period)
-        Scan::Period.where(:_id.in => periods.map(&:id)).update_all(_params)
-        Scan::Period.without_callback :save, :before, :update_information do
+        subscriptions = customers.map(&:find_or_create_subscription)
+        Subscription.where(:_id.in => subscriptions.map(&:id)).update_all(_params)
+        periods = subscriptions.map(&:current_period)
+        Period.where(:_id.in => periods.map(&:id)).update_all(_params)
+        Period.without_callback :save, :before, :update_information do
           periods.map(&:update_price!)
         end
         flash[:success] = 'Propagé avec succès.'
@@ -59,12 +57,12 @@ private
     @options      = @subscription.options.entries
   end
 
-  def scan_subscription_params
-    params.require(:scan_subscription).permit(:period_duration, :product)
+  def subscription_params
+    params.require(:subscription).permit(:period_duration, :product)
   end
 
-  def scan_subscription_options_params
-    _params = params.require(:scan_subscription).permit(
+  def subscription_options_params
+    _params = params.require(:subscription).permit(
       :max_sheets_authorized,
       :max_upload_pages_authorized,
       :max_dematbox_scan_pages_authorized,

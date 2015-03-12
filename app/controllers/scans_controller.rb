@@ -6,7 +6,7 @@ class ScansController < PaperProcessesController
   def index
     respond_to do |format|
       format.html do
-        @document = session[:document] || Scan::Document.new
+        @document = session[:document] || PeriodDocument.new
       end
       format.csv do
         send_data(@all_documents.asc(:scanned_at).to_csv, type: 'text/csv', filename: "scans_#{@current_time.strftime('%Y_%m')}.csv")
@@ -15,24 +15,24 @@ class ScansController < PaperProcessesController
   end
 
   def create
-    if params[:scan_document] && params[:scan_document][:name] && params[:scan_document][:paperclips] && params[:scan_document][:oversized]
-      params[:scan_document][:name].gsub!('_',' ')
-      params[:scan_document][:name].strip!
-      if params[:scan_document][:name].present? && !params[:scan_document][:name].match(/ all$/)
-        params[:scan_document][:name] << ' all'
+    if params[:period_document] && params[:period_document][:name] && params[:period_document][:paperclips] && params[:period_document][:oversized]
+      params[:period_document][:name].gsub!('_',' ')
+      params[:period_document][:name].strip!
+      if params[:period_document][:name].present? && !params[:period_document][:name].match(/ all$/)
+        params[:period_document][:name] << ' all'
       end
-      @document = Scan::Document.where(name: params[:scan_document][:name]).desc(:created_at).first
+      @document = PeriodDocument.where(name: params[:period_document][:name]).desc(:created_at).first
       if (@document.nil?) || (@document && @document.period && @document.period.end_at < Time.now)
-        @document = Scan::Document.new
+        @document = PeriodDocument.new
       end
-      @document.assign_attributes(params[:scan_document])
+      @document.assign_attributes(params[:period_document])
       if @document.persisted? && @document.valid?
         session[:document] = nil
         session[:old_document] = @document.reload
         session[:new_document] = {}
-        session[:new_document][:name] = params[:scan_document][:name]
-        session[:new_document][:paperclips] = params[:scan_document][:paperclips].to_i
-        session[:new_document][:oversized] = params[:scan_document][:oversized].to_i
+        session[:new_document][:name] = params[:period_document][:name]
+        session[:new_document][:paperclips] = params[:period_document][:paperclips].to_i
+        session[:new_document][:oversized] = params[:period_document][:oversized].to_i
       else
         @document.user         = User.where(code: @document.name.split[0]).first
         @document.organization = @document.user.try(:organization)
@@ -61,7 +61,7 @@ class ScansController < PaperProcessesController
   end
 
   def add
-    document = Scan::Document.find params[:id]
+    document = PeriodDocument.find params[:id]
     document.paperclips += params[:paperclips].to_i
     document.oversized += params[:oversized].to_i
     document.updated_at = Time.now
@@ -74,7 +74,7 @@ class ScansController < PaperProcessesController
   end
 
   def overwrite
-    document = Scan::Document.find params[:id]
+    document = PeriodDocument.find params[:id]
     document.paperclips = params[:paperclips].to_i
     document.oversized = params[:oversized].to_i
     document.scanned_at = Time.now
@@ -104,13 +104,13 @@ private
   end
 
   def load_resource
-    @all_documents = Scan::Document.where(
+    @all_documents = PeriodDocument.where(
       :scanned_at.gte => @current_time.beginning_of_month,
       :scanned_at.lte => @current_time.end_of_month
     )
     @all_documents = @all_documents.where(scanned_by: /#{@scanned_by}/) if @scanned_by.present?
     @groups = @all_documents.group_by { |e| e.scanned_at.day }
-    @documents = Scan::Document.where(
+    @documents = PeriodDocument.where(
       :scanned_at.gte => @current_time.beginning_of_day,
       :scanned_at.lte => @current_time.end_of_day
     ).desc(:scanned_at)

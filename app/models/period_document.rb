@@ -1,15 +1,14 @@
 # -*- encoding : UTF-8 -*-
-class Scan::Document
+class PeriodDocument
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :organization,                                    inverse_of: :period_documents
-  belongs_to :user,                                            inverse_of: :period_documents
-  belongs_to :subscription,  class_name: "Scan::Subscription", inverse_of: :documents
-  belongs_to :period,        class_name: "Scan::Period",       inverse_of: :documents
-  belongs_to :pack,                                            inverse_of: :periodic_metadata
-  has_one    :report,        class_name: 'Pack::Report',       inverse_of: :document,        dependent: :delete
-  has_one    :paper_process, class_name: 'PaperProcess',       inverse_of: :period_document, dependent: :delete
+  belongs_to :organization
+  belongs_to :user
+  belongs_to :period,                                    inverse_of: :documents
+  belongs_to :pack
+  has_one    :report,        class_name: 'Pack::Report', inverse_of: :document, dependent: :delete
+  has_one    :paper_process, class_name: 'PaperProcess',                        dependent: :delete
 
   field :name,                    type: String,  default: ''
   field :pieces,                  type: Integer, default: 0
@@ -41,43 +40,45 @@ class Scan::Document
 
   after_save :update_period
 
-  def self.by_created_at
-    desc(:created_at).asc(:name)
-  end
+  class << self
+    def by_created_at
+      desc(:created_at).asc(:name)
+    end
 
-  def update_period
-    self.period.reload.save if self.period
-  end
+    def find_by_name(name)
+      where(name: name).first
+    end
 
-  def self.find_by_name(name)
-    where(name: name).first
-  end
+    def find_or_create_by_name(name, period)
+      document = period.documents.find_by_name name
+      if document
+        document
+      else
+        document = PeriodDocument.new
+        document.name         = name
+        document.period       = period
+        document.user         = period.user
+        document.organization = period.organization
+        document.save
+        document
+      end
+    end
 
-  def self.find_or_create_by_name(name, period)
-    document = period.documents.find_by_name name
-    if document
-      document
-    else
-      document = Scan::Document.new
-      document.name         = name
-      document.period       = period
-      document.user         = period.user
-      document.organization = period.organization
-      document.save
-      document
+    def to_csv
+      criteria.map do |document|
+        [
+          I18n.l(document.scanned_at),
+          document.name,
+          document.paperclips,
+          document.oversized,
+          document.scanned_by
+        ].join(';')
+      end.join("\n")
     end
   end
 
-  def self.to_csv
-    criteria.map do |document|
-      [
-        I18n.l(document.scanned_at),
-        document.name,
-        document.paperclips,
-        document.oversized,
-        document.scanned_by
-      ].join(';')
-    end.join("\n")
+  def update_period
+    self.period.reload.update_information! if self.period
   end
 
 private

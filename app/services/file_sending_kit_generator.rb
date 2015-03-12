@@ -29,7 +29,7 @@ class FileSendingKitGenerator
         current_time += client_data[:start_month].month
         end_time = current_time + client_data[:offset_month].month
         while current_time < end_time
-          client_data[:period_duration] = client_data[:user].scan_subscriptions.last.period_duration
+          client_data[:period_duration] = client_data[:user].subscription.period_duration
           client_data[:user].account_book_types.asc(:name).each do |account_book_type|
             folders_data << to_folder(client_data, current_time, account_book_type)
           end
@@ -116,7 +116,7 @@ class FileSendingKitGenerator
       end
       journals_count = user.account_book_types.count
       journals_count = 5 if journals_count < 5
-      period_duration = user.scan_subscriptions.last.period_duration
+      period_duration = user.subscription.period_duration
       periods_count = client_data[:offset_month] / period_duration
       info = "J%02dP%02d" % [journals_count, periods_count]
       [
@@ -155,7 +155,7 @@ class FileSendingKitGenerator
         current_time = Time.now.beginning_of_month
         current_time += client_data[:start_month].month
         end_time = current_time + client_data[:offset_month].month
-        period_duration = user.scan_subscriptions.last.period_duration
+        period_duration = user.subscription.period_duration
         while current_time < end_time
           data << [user.code] + stringified_address
           current_time += period_duration.month

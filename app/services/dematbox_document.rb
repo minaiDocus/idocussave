@@ -138,7 +138,7 @@ private
         prev_period_offset = 1
       end
     end
-    @period ||= Scan::Period.period_name period_service.period_duration, prev_period_offset
+    @period ||= Period.period_name period_service.period_duration, prev_period_offset
   end
 
   def content_file_valid?

@@ -6,7 +6,7 @@ class Pack::Report
   belongs_to :organization,                                        inverse_of: :report
   belongs_to :user,                                                inverse_of: :pack_reports
   belongs_to :pack,                                                inverse_of: :report
-  belongs_to :document,    class_name: 'Scan::Document',           inverse_of: :report
+  belongs_to :document,    class_name: 'PeriodDocument',           inverse_of: :report
   has_many   :expenses,    class_name: "Pack::Report::Expense",    inverse_of: :report, dependent: :destroy
   has_many   :preseizures, class_name: 'Pack::Report::Preseizure', inverse_of: :report, dependent: :destroy
   has_many   :remote_files, as: :remotable, dependent: :destroy
@@ -102,8 +102,8 @@ class Pack::Report
                 report.user = pack.owner
                 report.pack = pack
                 report.organization = pack.owner.organization
-                report.document = pack.periodic_metadata.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
-                report.document ||= pack.periodic_metadata.desc(:created_at).first
+                report.document = pack.period_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
+                report.document ||= pack.period_documents.desc(:created_at).first
                 lot.css('piece').each do |part|
                   part_name = part['number'].gsub('_',' ')
                   piece = pack.pieces.where(name: part_name).first
@@ -173,8 +173,8 @@ class Pack::Report
                   report.user = pack.owner
                   report.pack = pack
                   report.organization = pack.owner.organization
-                  report.document = pack.periodic_metadata.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
-                  report.document ||= pack.periodic_metadata.desc(:created_at).first
+                  report.document = pack.period_documents.for_time(Time.now.beginning_of_month,Time.now.end_of_month).first
+                  report.document ||= pack.period_documents.desc(:created_at).first
                   lot.css('piece').each do |part|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first

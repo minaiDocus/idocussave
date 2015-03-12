@@ -1,5 +1,5 @@
 toggle_products = ->
-  period_duration = $('#scan_subscription_period_duration').attr('value')
+  period_duration = $('#subscription_period_duration').attr('value')
   $('.product').hide()
   $('.product.period_duration_'+period_duration).show()
   $('.product').find('input:first').removeAttr('checked')
@@ -19,7 +19,7 @@ jQuery ->
   if $("#subscriptions.edit, #organization_subscriptions.edit").length > 0
     toggle_products()
 
-    $('#scan_subscription_period_duration').change ->
+    $('#subscription_period_duration').change ->
       toggle_products()
 
     $('td.input input:checked').each (index, element) ->

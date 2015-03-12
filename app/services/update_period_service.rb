@@ -7,7 +7,7 @@ class UpdatePeriodService
 
   def execute
     @period.duration = @subscription.period_duration
-    @subscription.copyable_keys.each do |key|
+    copyable_keys.each do |key|
       @period[key] = @subscription[key]
     end
     @period.product_option_orders = product_option_orders
@@ -47,5 +47,24 @@ private
     quantity = required_option(option.product_group).try(:quantity) || 1
     order.price_in_cents_wo_vat *= quantity
     order
+  end
+
+  def copyable_keys
+    [
+      :max_sheets_authorized,
+      :max_upload_pages_authorized,
+      :max_preseizure_pieces_authorized,
+      :max_expense_pieces_authorized,
+      :max_paperclips_authorized,
+      :max_oversized_authorized,
+      :max_dematbox_scan_pages_authorized,
+      :unit_price_of_excess_sheet,
+      :unit_price_of_excess_upload,
+      :unit_price_of_excess_preseizure,
+      :unit_price_of_excess_expense,
+      :unit_price_of_excess_paperclips,
+      :unit_price_of_excess_oversized,
+      :unit_price_of_excess_dematbox_scan
+    ]
   end
 end

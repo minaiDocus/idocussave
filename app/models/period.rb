@@ -1,15 +1,15 @@
 # -*- encoding : UTF-8 -*-
-class Scan::Period
+class Period
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :user,                                           inverse_of: :periods
-  belongs_to :organization,                                   inverse_of: :periods
-  belongs_to :subscription, class_name: "Scan::Subscription", inverse_of: :periods
-  has_many   :documents,    class_name: "Scan::Document",     inverse_of: :period
-  has_many   :invoices,                                       inverse_of: :period
+  belongs_to :user
+  belongs_to :organization
+  belongs_to :subscription
+  has_many :documents, class_name: 'PeriodDocument'
+  has_many :invoices
   embeds_many :product_option_orders, as: :product_optionable
-  embeds_one  :delivery, class_name: "Scan::Delivery", inverse_of: :period
+  embeds_one  :delivery, class_name: 'PeriodDelivery'
 
   field :start_at,       type: Time,    default: Time.local(Time.now.year,Time.now.month,1,0,0,0)
   field :end_at,         type: Time,    default: Time.local(Time.now.year + 1,Time.now.month,1,0,0,0)
@@ -479,6 +479,7 @@ class Scan::Period
   end
 
 private
+
   def set_start_date
     month = duration == 3 ? start_at.beginning_of_quarter.month : start_at.month
     self.start_at = Time.local start_at.year, month, 1
@@ -489,6 +490,6 @@ private
   end
 
   def add_one_delivery!
-    self.delivery = Scan::Delivery.new
+    self.delivery = PeriodDelivery.new
   end
 end
