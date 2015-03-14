@@ -50,16 +50,5 @@ describe PreAssignmentService do
       pre_assignment.piece_counts.should eq(1)
       pre_assignment.comment.should be_nil
     end
-
-    it 'return the first comment' do
-      @piece1.update_attribute(:pre_assignment_comment, 'A')
-      @piece2.update_attribute(:pre_assignment_comment, 'B')
-
-      expect(@piece1).to be_persisted
-      expect(@piece2).to be_persisted
-
-      pre_assignment = PreAssignmentService.pending.first
-      pre_assignment.comment.should eq('A')
-    end
   end
 end
