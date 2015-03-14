@@ -11,7 +11,7 @@ class UpdatePeriodService
       @period[key] = @subscription[key]
     end
     @period.product_option_orders = product_option_orders
-    @period.save
+    UpdatePeriodPriceService.new(@period).execute if @period.save
   end
 
   def options

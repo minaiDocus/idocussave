@@ -5,11 +5,11 @@ class Reporting
       remaining_dividers = pack.dividers.size
       time = pack.created_at
       while remaining_dividers > 0
-        period = pack.owner.find_or_create_subscription.find_or_create_period(time)
+        period = pack.owner.subscription.find_or_create_period(time)
         is_monthly = period.duration == 1
         current_dividers = pack.dividers.of_period(time, is_monthly)
         if current_dividers.any?
-          period_document = find_or_create_period_document(pack, period.start_at, period.end_at, period)
+          period_document = find_or_create_period_document(pack, period)
           if period_document
             current_pages = pack.pages.of_period(time, is_monthly)
             period_document.pieces                  = current_dividers.pieces.count
@@ -24,6 +24,8 @@ class Reporting
             period_document.fiduceo_pieces          = current_dividers.fiduceo.pieces.count
             period_document.fiduceo_pages           = current_pages.fiduceo.count
             period_document.save
+            UpdatePeriodDataService.new(period_document.period).execute
+            UpdatePeriodPriceService.new(period_document.period).execute
           end
           if period_document.pages - period_document.uploaded_pages > 0
             period.delivery.update_attributes(state: 'delivered')
@@ -40,8 +42,8 @@ class Reporting
       period_document
     end
 
-    def find_or_create_period_document(pack, start_time, end_time, period)
-      period_document = find_period_document(pack, start_time, end_time)
+    def find_or_create_period_document(pack, period)
+      period_document = find_period_document(pack, period.start_at, period.end_at)
       if period_document
         unless period_document.period && period_document.pack
           period_document.period = period

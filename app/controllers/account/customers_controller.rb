@@ -20,7 +20,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def show
-    @subscription = @customer.find_or_create_subscription
+    @subscription = @customer.subscription
     @period = @subscription.periods.desc(:created_at).first
     @journals = @customer.account_book_types.asc(:name)
     @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)

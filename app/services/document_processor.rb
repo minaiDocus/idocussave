@@ -124,6 +124,7 @@ class DocumentProcessor
           pack.set_tags
           pack.is_update_notified = false
           pack.save
+          Reporting.update(pack)
 
           piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
           DocumentTools.archive(pack.archive_file_path, piece_files_path)

@@ -25,12 +25,17 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
       customer_ids = params[:subscription][:customer_ids] - [''] rescue []
       customers = @organization.customers.where(:_id.in => customer_ids)
       if customer_ids.size == customers.size
-        subscriptions = customers.map(&:find_or_create_subscription)
-        Subscription.where(:_id.in => subscriptions.map(&:id)).update_all(_params)
-        periods = subscriptions.map(&:current_period)
-        Period.where(:_id.in => periods.map(&:id)).update_all(_params)
-        Period.without_callback :save, :before, :update_information do
-          periods.map(&:update_price!)
+        subscriptions = Subscription.where(:user_id.in => customers.map(&:id))
+        subscription_ids = subscriptions.distinct(:_id)
+        subscriptions.update_all(_params)
+        periods = Period.where(
+          :subscription_id.in => subscription_ids,
+          :start_at.lte => Time.now,
+          :end_at.gte => Time.now
+        )
+        periods.each do |period|
+          period.update_attributes(_params)
+          UpdatePeriodPriceService.new(period).execute
         end
         flash[:success] = 'Propagé avec succès.'
         redirect_to account_organization_path(@organization, tab: 'subscription')

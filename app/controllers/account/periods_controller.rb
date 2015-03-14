@@ -21,7 +21,7 @@ public
   def show
     respond_to do |format|
       format.html { redirect_to account_reporting_path }
-      format.json { render :json => @period.render_json(current_user), :status => :ok }
+      format.json { render :json => PeriodPresenter.new(@period, current_user).render_json, :status => :ok }
     end
   end
 end

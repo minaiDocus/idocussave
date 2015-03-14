@@ -61,7 +61,7 @@ private
   end
 
   def load_subscription
-    @subscription = @customer.find_or_create_subscription
+    @subscription = @customer.subscription
   end
 
   def load_product

@@ -38,8 +38,6 @@ class PeriodDocument
   scope :shared, where: { is_shared: true }
   scope :scanned, where: { :scanned_at.nin => [nil] }
 
-  after_save :update_period
-
   class << self
     def by_created_at
       desc(:created_at).asc(:name)
@@ -75,10 +73,6 @@ class PeriodDocument
         ].join(';')
       end.join("\n")
     end
-  end
-
-  def update_period
-    self.period.reload.update_information! if self.period
   end
 
 private

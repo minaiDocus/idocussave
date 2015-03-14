@@ -61,12 +61,8 @@ describe Period do
       period.dematbox_scanned_pages = 20
       period.uploaded_pieces = 10
       period.uploaded_pages = 30
-
-      period.excess_preseizure_pieces = 5
-      period.excess_expense_pieces = 5
-
-      period.stub(:get_preseizure_pieces){ 10 }
-      period.stub(:get_expense_pieces){ 10 }
+      period.preseizure_pieces = 10
+      period.expense_pieces = 10
 
       period
     }
@@ -74,16 +70,14 @@ describe Period do
     it { subject.excess_sheets.should eq(5) }
     it { subject.excess_uploaded_pages.should eq(15) }
     it { subject.excess_dematbox_scanned_pages.should eq(5) }
-    it { subject.get_excess_preseizure_pieces.should eq(5) }
-    it { subject.get_excess_expense_pieces.should eq(5) }
+    it { subject.excess_preseizure_pieces.should eq(5) }
+    it { subject.excess_expense_pieces.should eq(5) }
 
     it { subject.price_in_cents_of_excess_sheets.should eq(60) }
     it { subject.price_in_cents_of_excess_uploaded_pages.should eq(90) }
     it { subject.price_in_cents_of_excess_dematbox_scanned_pages.should eq(30) }
     it { subject.price_in_cents_of_excess_preseizures.should eq(60) }
     it { subject.price_in_cents_of_excess_expenses.should eq(60) }
-
-    it { subject.price_in_cents_of_total_excess.should eq(300) }
   end
 
   describe ".period_name" do

@@ -157,7 +157,7 @@ class PeriodsToXlsService
           period.user.name,
           'Dépassement',
           '',
-          format_price(period.price_in_cents_of_total_excess)
+          format_price(period.excesses_price_in_cents_wo_vat)
         ]
         sheet2.row(nb).replace(data)
         nb += 1

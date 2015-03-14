@@ -13,7 +13,7 @@
         %td= @user
       %tr
         %th{ style: 'text-align:left' } Date de modification :
-        %td= l(@user.find_or_create_subscription.updated_at)
+        %td= l(@user.subscription.updated_at)
       %tr
         %th{ style: 'text-align:left' } Lien :
         %td
