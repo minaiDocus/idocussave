@@ -96,14 +96,19 @@ class Pack::Report
               name = lot['name'].gsub('_',' ') + ' all'
               pack = Pack.find_by_name(name)
               if pack
-                report = pack.report || Pack::Report.new
-                report.type = "NDF"
-                report.name = pack.name.sub(/ all$/, '')
-                report.user = pack.owner
-                report.pack = pack
-                report.organization = pack.owner.organization
-                report.document = Reporting.find_or_create_period_document(pack, pack.period)
-                report.save
+                period = pack.owner.subscription.find_or_create_period(Time.now)
+                document = Reporting.find_or_create_period_document(pack, period)
+                report = document.report
+                unless report
+                  report = Pack::Report.new
+                  report.organization = pack.owner.organization
+                  report.user         = pack.owner
+                  report.pack         = pack
+                  report.document     = document
+                  report.type         = 'NDF'
+                  report.name         = pack.name.sub(/ all$/, '')
+                  report.save
+                end
                 lot.css('piece').each do |part|
                   part_name = part['number'].gsub('_',' ')
                   piece = pack.pieces.where(name: part_name).first
@@ -123,7 +128,6 @@ class Pack::Report
                     expense.obs_type               = obs['type'].to_i
                     expense.position               = piece.position
                     expense.save
-                    report.expenses << expense
                     piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
 
                     observation         = Pack::Report::Observation.new
@@ -143,8 +147,8 @@ class Pack::Report
                     end
                   end
                 end
-                UpdatePeriodDataService.new(pack.period).execute
-                UpdatePeriodPriceService.new(pack.period).execute
+                UpdatePeriodDataService.new(period).execute
+                UpdatePeriodPriceService.new(period).execute
               end
             end
           end
@@ -167,14 +171,19 @@ class Pack::Report
                 name = lot['name'].gsub('_',' ') + ' all'
                 pack = Pack.find_by_name(name)
                 if pack
-                  report = pack.report || Pack::Report.new
-                  report.type = e
-                  report.name = pack.name.sub(/ all$/, '')
-                  report.user = pack.owner
-                  report.pack = pack
-                  report.organization = pack.owner.organization
-                  report.document = Reporting.find_or_create_period_document(pack, pack.period)
-                  report.save
+                  period = pack.owner.subscription.find_or_create_period(Time.now)
+                  document = Reporting.find_or_create_period_document(pack, period)
+                  report = document.report
+                  unless report
+                    report = Pack::Report.new
+                    report.organization = pack.owner.organization
+                    report.user         = pack.owner
+                    report.pack         = pack
+                    report.document     = document
+                    report.type         = e
+                    report.name         = pack.name.sub(/ all$/, '')
+                    report.save
+                  end
                   lot.css('piece').each do |part|
                     part_name = part['number'].gsub('_',' ')
                     piece = pack.pieces.where(name: part_name).first
@@ -224,8 +233,8 @@ class Pack::Report
                       end
                     end
                   end
-                  UpdatePeriodDataService.new(pack.period).execute
-                  UpdatePeriodPriceService.new(pack.period).execute
+                  UpdatePeriodDataService.new(period).execute
+                  UpdatePeriodPriceService.new(period).execute
                   CreatePreAssignmentDeliveryService.new(preseizures, true).execute
                   # For manual delivery
                   if report.preseizures.not_delivered.not_locked.count > 0
