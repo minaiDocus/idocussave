@@ -127,19 +127,15 @@
                               #{period.compta_pieces}
                             %span{ :class => "hide excess_compta_pieces value_13" }
                               #{period.excess_compta_pieces}
+                            - period_billing = PeriodBillingService.new(period)
                             - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
                               %span{ :class => "hide price value_8" }
-                                - if period.duration == 1 || !period.is_charged_several_times
-                                  #{format_price_00(period.price_in_cents_wo_vat)} €
+                                - if period.duration == 1
+                                  #{format_price_00(period_billing.amount_in_cents_wo_vat(1))} €
                                 - elsif period.duration == 3
                                   - period.duration.times do |i|
                                     %div{ class: "period_#{i+1}" }
-                                      - if i == 0
-                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat+period.ponctual_products_price_in_cents_wo_vat)} €
-                                      - elsif i == 1
-                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat)} €
-                                      - elsif i == 2
-                                        #{format_price_00(period.recurrent_products_price_in_cents_wo_vat+period.excesses_price_in_cents_wo_vat)} €
+                                      #{format_price_00(period_billing.amount_in_cents_wo_vat(i+1))} €
                               %span{ :class => "hide excess_price value_9" }
                                 #{format_price_00 period.excesses_price_in_cents_wo_vat} €
 
@@ -159,14 +155,8 @@
                             - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
                             - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
                             - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
-                            - if period.duration == 1 || !period.is_charged_several_times
-                              - annual_summary[period.end_at.month - 1][:price_in_cents] += period.price_in_cents_wo_vat
-                            - else
-                              - price = period.recurrent_products_price_in_cents_wo_vat
-                              - period.duration.times do |i|
-                                - annual_summary[period.start_at.month + i - 1][:price_in_cents] += price
-                              - annual_summary[period.start_at.month - 1][:price_in_cents] += period.ponctual_products_price_in_cents_wo_vat
-                              - annual_summary[period.end_at.month - 1][:price_in_cents] += period.excesses_price_in_cents_wo_vat
+                            - period.duration.times do |i|
+                              - annual_summary[period.start_at.month + i - 1][:price_in_cents] += period_billing.amount_in_cents_wo_vat(i+1)
                             - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.excesses_price_in_cents_wo_vat
                   - else
                     %td.align-middle.block

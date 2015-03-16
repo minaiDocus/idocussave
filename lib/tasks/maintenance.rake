@@ -29,6 +29,12 @@ namespace :maintenance do
               RemoveNotReusableOptionsService.new(subscription).execute
             end
             subscription.find_or_create_period Time.now
+            if subscription.period_duration == 3
+              time = 1.month.ago
+              period = subscription.find_period time
+              order = PeriodBillingService.order_of time
+              PeriodBillingService.new(period).save(order) if period
+            end
           rescue
             puts "Can't generate period for user #{customer.info}, probably lack of subscription entry."
           end

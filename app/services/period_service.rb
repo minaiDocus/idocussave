@@ -56,37 +56,4 @@ class PeriodService
       (beginning_of_month + day).end_of_day
     end
   end
-
-  class << self
-    def total_price_in_cents_wo_vat(time, periods)
-      monthly_periods = periods.select{ |period| period.duration == 1 }
-      quarterly_periods = periods.select do |period|
-        period.duration == 3 && (time.month == time.end_of_quarter.month || period.is_charged_several_times)
-      end
-
-      total = monthly_periods.sum(&:price_in_cents_wo_vat)
-      quarterly_periods.each do |period|
-        if period.is_charged_several_times
-          total += period.recurrent_products_price_in_cents_wo_vat
-          if time.month == time.beginning_of_quarter.month
-            total += period.ponctual_products_price_in_cents_wo_vat
-          end
-          if time.month == time.end_of_quarter.month
-            total += period.excesses_price_in_cents_wo_vat
-          end
-        else
-          total += period.price_in_cents_wo_vat
-        end
-      end
-      total
-    end
-
-    def vat_ratio(time)
-      if time < Time.local(2014,1,1)
-        1.196
-      else
-        1.2
-      end
-    end
-  end
 end

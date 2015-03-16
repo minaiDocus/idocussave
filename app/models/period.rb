@@ -9,15 +9,13 @@ class Period
   has_many :documents, class_name: 'PeriodDocument'
   has_many :invoices
   embeds_many :product_option_orders, as: :product_optionable
+  embeds_many :billings, class_name: 'PeriodBilling'
   embeds_one  :delivery, class_name: 'PeriodDelivery'
 
   field :start_at,       type: Time,    default: Proc.new { Time.now.beginning_of_month }
   field :end_at,         type: Time,    default: Proc.new { Time.now.end_of_month }
   field :duration,       type: Integer, default: 1
   field :is_centralized, type: Boolean, default: true
-
-  # quarterly only
-  field :is_charged_several_times, type: Boolean, default: true
 
   field :price_in_cents_wo_vat,                    type: Integer, default: 0
   field :products_price_in_cents_wo_vat,           type: Integer, default: 0

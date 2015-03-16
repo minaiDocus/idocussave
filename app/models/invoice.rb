@@ -75,7 +75,7 @@ class Invoice
       periods = Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
         where(:start_at.lte => time, :end_at.gte => time)
 
-      @total = PeriodService.total_price_in_cents_wo_vat(time, periods)
+      @total = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), periods)
       @data = [
           ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
           ["Nombre de clients actifs : #{periods.count}",""]
@@ -93,7 +93,7 @@ class Invoice
     else
       period = user.subscription.find_or_create_period(time)
       options = period.product_option_orders
-      if period.duration == 1 || !period.is_charged_several_times
+      if period.duration == 1
         options.each do |option|
           if option.position != -1
             @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
@@ -101,8 +101,8 @@ class Invoice
         end
         @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         @total += period.price_in_cents_wo_vat
-      elsif period.duration == 3 && period.is_charged_several_times
-        @total = PeriodService.total_price_in_cents_wo_vat(time, [period])
+      elsif period.duration == 3
+        @total = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), [period])
         options.each do |option|
           if option.position != -1 && option.duration != 1
             price = option.price_in_cents_wo_vat / 3

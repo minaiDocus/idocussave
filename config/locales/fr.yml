@@ -843,6 +843,9 @@ fr:
           periods_count: Nombre de périodes
           letter_type: Type de LS
           pack_name: Nom du lot
+      period_billing:
+        order: Ordre
+        amount_in_cents_wo_vat: Montant en centime (HT)
     state_machines:
       fiduceo_retriever:
         states:

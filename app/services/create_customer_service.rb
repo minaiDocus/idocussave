@@ -30,6 +30,7 @@ class CreateCustomerService
       subscription.save
       options = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
       UpdateSubscriptionService.new(subscription, { options: options }, @requester).execute
+      PeriodBillingService.new(subscription.current_period).fill_past_with_0
 
       # Assign journals
       source = (@organization.is_journals_management_centralized || @requester.is_admin) ? @organization : @requester
