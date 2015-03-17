@@ -108,7 +108,7 @@
                     %td= retriever_presenter.name
                     %td= retriever_presenter.journal.try(:name) || '-'
                     %td= retriever_presenter.mode
-                    %td!= retriever_presenter.state(:admin)
+                    %td!= retriever_presenter.state(:observer)
                     %td= retriever_presenter.transaction_status
                     %td= link_to icon(icon: 'eye-open'), account_fiduceo_retrievers_path(user_code: retriever.user.code)
       = render partial: 'shared/list_options', locals: { collection: @retrievers }

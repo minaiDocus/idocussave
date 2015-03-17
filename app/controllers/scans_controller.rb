@@ -39,14 +39,7 @@ class ScansController < PaperProcessesController
         @document.scanned_at   = Time.now
         @document.scanned_by   = @scanned_by
         if @document.save
-          @paper_process = PaperProcess.new
-          @paper_process.organization    = @document.user.try(:organization)
-          @paper_process.user            = @document.user
-          @paper_process.period_document = @document
-          @paper_process.type            = 'scan'
-          @paper_process.customer_code   = @document.user.try(:code)
-          @paper_process.pack_name       = @document.name
-          @paper_process.save
+          create_paper_process(@document)
           flash[:success] = 'Créé avec succès.'
           flash[:error] = nil
           session[:document] = nil
@@ -68,6 +61,7 @@ class ScansController < PaperProcessesController
     document.scanned_at = Time.now
     document.scanned_by = @scanned_by
     document.save
+    create_paper_process(document)
     flash[:success] = 'Modifié avec succès.'
     reset_waiting_document
     redirect_to scans_path
@@ -80,6 +74,7 @@ class ScansController < PaperProcessesController
     document.scanned_at = Time.now
     document.scanned_by = @scanned_by
     document.save
+    create_paper_process(document)
     reset_waiting_document
     flash[:success] = 'Remplacé avec succès.'
     redirect_to scans_path
@@ -121,5 +116,18 @@ private
     session[:old_document] = nil
     session[:new_document] = nil
     session[:document]     = nil
+  end
+
+  def create_paper_process(document)
+    unless document.paper_process
+      paper_process = PaperProcess.new
+      paper_process.organization    = document.user.try(:organization)
+      paper_process.user            = document.user
+      paper_process.period_document = document
+      paper_process.type            = 'scan'
+      paper_process.customer_code   = document.user.try(:code)
+      paper_process.pack_name       = document.name
+      paper_process.save
+    end
   end
 end

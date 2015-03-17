@@ -16,21 +16,21 @@ class FiduceoRetrieverPresenter < BasePresenter
           else
             if scope == :account
               h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
-            elsif scope == :admin
+            elsif scope == :observer
               h.content_tag :span, 'Sélection des documents', class: 'label'
             end
           end
         else
           if scope == :account
             h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
-          elsif scope == :admin
+          elsif scope == :observer
             h.content_tag :span, 'Sélection des comptes', class: 'label'
           end
         end
       elsif fiduceo_retriever.wait_for_user_action?
         if scope == :account
           h.link_to "En attente de l'utilisateur", h.wait_for_user_action_account_fiduceo_retriever_path(fiduceo_retriever), class: 'btn btn-mini'
-        elsif scope == :admin
+        elsif scope == :observer
           h.content_tag :span, "En attente de l'utilisateur", class: 'label'
         end
       else

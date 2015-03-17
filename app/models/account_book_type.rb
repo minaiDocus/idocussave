@@ -46,6 +46,7 @@ class AccountBookType
   validates :name,        length: { in: 2..10 }
   validates :description, length: { in: 2..50 }
   validate :format_of_name
+  validate :uniqueness_of_name
 
   validate :pre_assignment_attributes,    if: Proc.new { |j| j.is_pre_assignment_processable? }
   validates_presence_of :vat_account,     if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
@@ -117,5 +118,14 @@ private
     errors.add(:charge_account, :invalid) if charge_account.present? && (default_account_number.present? || default_charge_account.present?)
     errors.add(:default_account_number, :invalid) if default_account_number.present? && (account_number.present? || charge_account.present?)
     errors.add(:default_charge_account, :invalid) if default_charge_account.present? && (account_number.present? || charge_account.present?)
+  end
+
+  def uniqueness_of_name
+    if user
+      journal = user.account_book_types.where(name: name).first
+      if journal && journal != self
+        errors.add(:name, :taken)
+      end
+    end
   end
 end
