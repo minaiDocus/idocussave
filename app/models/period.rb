@@ -57,8 +57,9 @@ class Period
   field :preseizure_pieces,        type: Integer, default: 0
   field :expense_pieces,           type: Integer, default: 0
 
+  validates_inclusion_of :duration, in: [1, 3, 12]
+
   scope :monthly,   where: { duration: 1 }
-  scope :bimonthly, where: { duration: 2 }
   scope :quarterly, where: { duration: 3 }
   scope :annual,    where: { duration: 12 }
 
@@ -76,7 +77,17 @@ class Period
     elsif duration == 3
       time = time.beginning_of_quarter
       "#{time.year}T#{(time.month/3.0).ceil}"
+    elsif duration == 12
+      time.year.to_s
     end
+  end
+
+  def amount_in_cents_wo_vat
+    price_in_cents_wo_vat
+  end
+
+  def excesses_amount_in_cents_wo_vat
+    excesses_price_in_cents_wo_vat
   end
 
   def price_in_cents_w_vat
@@ -230,6 +241,9 @@ private
     elsif duration == 3
       self.start_at = start_at.beginning_of_quarter
       self.end_at   = start_at.end_of_quarter
+    elsif duration == 12
+      self.start_at = start_at.beginning_of_year
+      self.end_at   = start_at.end_of_year
     end
   end
 

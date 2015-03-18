@@ -35,7 +35,12 @@ private
   end
 
   def recurrent_price
-    (recurrent_options.sum(&:price_in_cents_wo_vat) / @period.duration).round
+    amount = recurrent_options.sum(&:price_in_cents_wo_vat)
+    if @period.duration == 3
+      (amount / 3).round
+    else
+      amount
+    end
   end
 
   def ponctual_price

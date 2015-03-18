@@ -33,7 +33,7 @@ describe Period do
     end
   end
 
-  describe "should return right values" do
+  describe "returns right values" do
     subject(:period) {
       period = Period.new
 
@@ -81,32 +81,44 @@ describe Period do
   end
 
   describe ".period_name" do
-    it 'should return 201301' do
+    it 'returns 201301' do
       expect(Period.period_name 1, 0, Time.local(2013,1,1)).to eq('201301')
     end
 
-    it 'should return 201212' do
+    it 'returns 201212' do
       expect(Period.period_name 1, 1, Time.local(2013,1,1)).to eq('201212')
     end
 
-    it 'should return 201211' do
+    it 'returns 201211' do
       expect(Period.period_name 1, 2, Time.local(2013,1,1)).to eq('201211')
     end
 
-    it 'should return 2013T1' do
+    it 'returns 2013T1' do
       expect(Period.period_name 3, 0, Time.local(2013,1,1)).to eq('2013T1')
     end
 
-    it 'should return 2012T4' do
+    it 'returns 2012T4' do
       expect(Period.period_name 3, 1, Time.local(2013,1,1)).to eq('2012T4')
     end
 
-    it 'should return 2012T3' do
+    it 'returns 2012T3' do
       expect(Period.period_name 3, 2, Time.local(2013,1,1)).to eq('2012T3')
     end
 
-    it 'should return 201402' do
+    it 'returns 201402' do
       expect(Period.period_name 1, 2, Time.local(2014,4,1)).to eq('201402')
+    end
+
+    it 'returns 2015' do
+      expect(Period.period_name 12, 0, Time.local(2015,1)).to eq('2015')
+    end
+
+    it 'returns 2014' do
+      expect(Period.period_name 12, 1, Time.local(2015,1)).to eq('2014')
+    end
+
+    it 'returns 2013' do
+      expect(Period.period_name 12, 2, Time.local(2015,1)).to eq('2013')
     end
   end
 end

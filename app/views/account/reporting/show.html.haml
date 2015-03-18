@@ -73,6 +73,7 @@
                   #{[user.code,user.company].join(" - ")}
                 - periods.each_with_index do |period,index|
                   - if period
+                    - period_billing = PeriodBillingService.new(period)
                     - period.duration.times do |i|
                       - annual_summary[period.start_at.month + i - 1][:active_user] += 1
                     %td.align-middle.block{ :colspan => period.duration }
@@ -96,68 +97,82 @@
                             %span{ :class => tags }
                           .value
                             %span{ :class => "hide pieces value_1" }
-                              #{period.scanned_pieces}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_pieces, i+1)
                             %span{ :class => "sheets value_0" }
-                              #{period.scanned_sheets}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_sheets, i+1)
                             %span{ :class => "hide pages value_2" }
-                              #{period.scanned_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:scanned_pages, i+1)
                             %span{ :class => "hide uploaded_pieces value_4" }
-                              #{period.uploaded_pieces}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:uploaded_pieces, i+1)
                             %span{ :class => "hide uploaded_pages value_5" }
-                              #{period.uploaded_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:uploaded_pages, i+1)
                             %span{ :class => "hide dematbox_scanned_pieces value_14" }
-                              #{period.dematbox_scanned_pieces}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:dematbox_scanned_pieces, i+1)
                             %span{ :class => "hide dematbox_scanned_pages value_15" }
-                              #{period.dematbox_scanned_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:dematbox_scanned_pages, i+1)
                             %span{ :class => "hide fiduceo_pieces value_17" }
-                              #{period.fiduceo_pieces}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:fiduceo_pieces, i+1)
                             %span{ :class => "hide fiduceo_pages value_18" }
-                              #{period.fiduceo_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:fiduceo_pages, i+1)
                             %span{ :class => "hide paperclips value_6" }
-                              #{period.paperclips}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:paperclips, i+1)
                             %span{ :class => "hide oversized value_7" }
-                              #{period.oversized}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:oversized, i+1)
                             %span{ :class => "hide excess_sheets value_10" }
-                              #{period.excess_sheets}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_sheets, i+1)
                             %span{ :class => "hide excess_uploaded_pages value_11" }
-                              #{period.excess_uploaded_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_uploaded_pages, i+1)
                             %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
-                              #{period.excess_dematbox_scanned_pages}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_dematbox_scanned_pages, i+1)
                             %span{ :class => "hide compta_pieces value_12" }
-                              #{period.compta_pieces}
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:compta_pieces, i+1)
                             %span{ :class => "hide excess_compta_pieces value_13" }
-                              #{period.excess_compta_pieces}
-                            - period_billing = PeriodBillingService.new(period)
+                              - period.duration.times do |i|
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:excess_compta_pieces, i+1)
                             - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
                               %span{ :class => "hide price value_8" }
-                                - if period.duration == 1
-                                  #{format_price_00(period_billing.amount_in_cents_wo_vat(1))} €
-                                - elsif period.duration == 3
-                                  - period.duration.times do |i|
-                                    %div{ class: "period_#{i+1}" }
-                                      #{format_price_00(period_billing.amount_in_cents_wo_vat(i+1))} €
+                                - period.duration.times do |i|
+                                  %div{ class: "period_#{i+1}" }
+                                    #{format_price_00(period_billing.amount_in_cents_wo_vat(i+1))} €
                               %span{ :class => "hide excess_price value_9" }
-                                #{format_price_00 period.excesses_price_in_cents_wo_vat} €
+                                - period.duration.times do |i|
+                                  %div{ class: "period_#{i+1}" }
+                                    #{format_price_00(period_billing.data(:excesses_amount_in_cents_wo_vat, i+1))} €
 
-                            - annual_summary[period.end_at.month - 1][:pieces] += period.scanned_pieces
-                            - annual_summary[period.end_at.month - 1][:sheets] += period.scanned_sheets
-                            - annual_summary[period.end_at.month - 1][:pages] += period.scanned_pages
-                            - annual_summary[period.end_at.month - 1][:excess_sheets] += period.excess_sheets
-                            - annual_summary[period.end_at.month - 1][:uploaded_pieces] += period.uploaded_pieces
-                            - annual_summary[period.end_at.month - 1][:uploaded_pages] += period.uploaded_pages
-                            - annual_summary[period.end_at.month - 1][:excess_uploaded_pages] += period.excess_uploaded_pages
-                            - annual_summary[period.end_at.month - 1][:dematbox_scanned_pieces] += period.dematbox_scanned_pieces
-                            - annual_summary[period.end_at.month - 1][:dematbox_scanned_pages] += period.dematbox_scanned_pages
-                            - annual_summary[period.end_at.month - 1][:excess_dematbox_scanned_pages] += period.excess_dematbox_scanned_pages
-                            - annual_summary[period.end_at.month - 1][:fiduceo_pieces] += period.fiduceo_pieces
-                            - annual_summary[period.end_at.month - 1][:fiduceo_pages] += period.fiduceo_pages
-                            - annual_summary[period.end_at.month - 1][:compta_pieces] += period.compta_pieces
-                            - annual_summary[period.end_at.month - 1][:excess_compta_pieces] += period.excess_compta_pieces
-                            - annual_summary[period.end_at.month - 1][:paperclips] += period.paperclips
-                            - annual_summary[period.end_at.month - 1][:oversized] += period.oversized
                             - period.duration.times do |i|
+                              - annual_summary[period.start_at.month + i - 1][:pieces] += period_billing.data(:scanned_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:sheets] += period_billing.data(:scanned_sheets, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:pages] += period_billing.data(:scanned_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:excess_sheets] += period_billing.data(:excess_sheets, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:uploaded_pieces] += period_billing.data(:uploaded_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:uploaded_pages] += period_billing.data(:uploaded_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:excess_uploaded_pages] += period_billing.data(:excess_uploaded_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:dematbox_scanned_pieces] += period_billing.data(:dematbox_scanned_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:dematbox_scanned_pages] += period_billing.data(:dematbox_scanned_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:excess_dematbox_scanned_pages] += period_billing.data(:excess_dematbox_scanned_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:fiduceo_pieces] += period_billing.data(:fiduceo_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:fiduceo_pages] += period_billing.data(:fiduceo_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:compta_pieces] += period_billing.data(:compta_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:excess_compta_pieces] += period_billing.data(:excess_compta_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:paperclips] += period_billing.data(:paperclips, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:oversized] += period_billing.data(:oversized, i+1)
                               - annual_summary[period.start_at.month + i - 1][:price_in_cents] += period_billing.amount_in_cents_wo_vat(i+1)
-                            - annual_summary[period.end_at.month - 1][:price_in_cents_of_excess] += period.excesses_price_in_cents_wo_vat
+                              - annual_summary[period.start_at.month + i - 1][:price_in_cents_of_excess] += period_billing.data(:excesses_amount_in_cents_wo_vat, i+1)
                   - else
                     %td.align-middle.block
                       \-

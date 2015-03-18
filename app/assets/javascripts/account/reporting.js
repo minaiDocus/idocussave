@@ -120,6 +120,8 @@ function render_data(period){
       } else if (month == 10) {
         $("#periodModal .modal-header h3").html("4<sup>éme</sup> trimestre " + year);
       }
+    } else if (duration == 12) {
+      $("#periodModal .modal-header h3").text(year);
     }
 
     $.ajax({

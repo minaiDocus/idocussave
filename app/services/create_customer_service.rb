@@ -21,13 +21,10 @@ class CreateCustomerService
 
       # Assign default subscription
       subscription = Subscription.create(user_id: @customer.id)
-      case @subscription_params['type']
-      when '1'
-        subscription.period_duration = 1
-      when '3'
-        subscription.period_duration = 3
+      period_duration = @subscription_params['type'].to_i rescue nil
+      if period_duration.in? [1, 3, 12]
+        subscription.update_attribute(:period_duration, period_duration)
       end
-      subscription.save
       options = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
       UpdateSubscriptionService.new(subscription, { options: options }, @requester).execute
       PeriodBillingService.new(subscription.current_period).fill_past_with_0

@@ -45,9 +45,10 @@ class FileSendingKitGenerator
       folder = {}
       folder[:code] = user.code
       folder[:company] = user.company.upcase
-      if client_data[:period_duration] == 1
+      case client_data[:period_duration]
+      when 1
         folder[:period] = I18n.l(period, format: '%B %Y').upcase
-      elsif client_data[:period_duration] == 3
+      when 3
         duration = period.month
         if duration < 4
           part_number = 1
@@ -59,13 +60,18 @@ class FileSendingKitGenerator
           part_number = 4
         end
         folder[:period] = "#{KitGenerator::TRIMESTRE[part_number]} #{period.year}"
+      when 12
+        folder[:period] = period.year.to_s
       end
       folder[:account_book_type] = "#{account_book_type.name} #{account_book_type.description.upcase}"
       folder[:instructions] = account_book_type.instructions || ''
-      if client_data[:period_duration] == 1
+      case client_data[:period_duration]
+      when 1
         folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}#{"%0.2d" % period.month}"
-      elsif client_data[:period_duration] == 3
+      when 3
         folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}T#{part_number}"
+      when 12
+        folder[:file_code] = "#{user.code} #{account_book_type.name} #{period.year}"
       end
       folder[:left_logo] = client_data[:left_logo]
       folder[:right_logo] = client_data[:right_logo]
@@ -118,6 +124,7 @@ class FileSendingKitGenerator
       journals_count = 5 if journals_count < 5
       period_duration = user.subscription.period_duration
       periods_count = client_data[:offset_month] / period_duration
+      periods_count = 1 if periods_count == 0
       info = "J%02dP%02d" % [journals_count, periods_count]
       [
         info,

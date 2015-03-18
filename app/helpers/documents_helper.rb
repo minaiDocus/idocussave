@@ -166,13 +166,14 @@ module DocumentsHelper
   end
 
   def period_option_label(period_duration, time)
-    if period_duration == 1
-      month = time.strftime('%m')
-    elsif period_duration == 3
-      month = "T#{quarterly_of_month(time.month)}"
+    case period_duration
+    when 1
+      time.strftime('%m %Y')
+    when 3
+      "T#{quarterly_of_month(time.month)} #{time.year}"
+    when 12
+      time.year.to_s
     end
-    year = time.year
-    "#{month} #{year}"
   end
 
   def file_upload_params

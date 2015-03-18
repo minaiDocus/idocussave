@@ -40,6 +40,10 @@ class ScansController < PaperProcessesController
         @document.scanned_by   = @scanned_by
         if @document.save
           create_paper_process(@document)
+          if @document.period
+            UpdatePeriodDataService.new(@document.period).execute
+            UpdatePeriodPriceService.new(@document.period).execute
+          end
           flash[:success] = 'Créé avec succès.'
           flash[:error] = nil
           session[:document] = nil
@@ -62,6 +66,10 @@ class ScansController < PaperProcessesController
     document.scanned_by = @scanned_by
     document.save
     create_paper_process(document)
+    if document.period
+      UpdatePeriodDataService.new(document.period).execute
+      UpdatePeriodPriceService.new(document.period).execute
+    end
     flash[:success] = 'Modifié avec succès.'
     reset_waiting_document
     redirect_to scans_path
@@ -75,6 +83,10 @@ class ScansController < PaperProcessesController
     document.scanned_by = @scanned_by
     document.save
     create_paper_process(document)
+    if document.period
+      UpdatePeriodDataService.new(document.period).execute
+      UpdatePeriodPriceService.new(document.period).execute
+    end
     reset_waiting_document
     flash[:success] = 'Remplacé avec succès.'
     redirect_to scans_path

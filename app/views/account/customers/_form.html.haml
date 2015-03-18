@@ -6,7 +6,7 @@
         .control-group
           = label_tag 'subscription[type]', "Type d'abonnement", class: 'control-label'
           .controls
-            = select_tag 'subscription[type]', options_for_select([['Mensuel', 1], ['Trimestriel', 3]])
+            = select_tag 'subscription[type]', options_for_select([['Mensuel', 1], ['Trimestriel', 3], ['Annuel', 12]])
       - group_collection = groups.map { |g| [g.name, g.id] }
       = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: t('mongoid.models.group.name').pluralize
       = f.input :company

@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe DocumentProcessor do
-  describe '.process' do
+  describe '.process for monthly' do
     before(:all) do
       Timecop.freeze(Time.local(2013,1,1))
 
@@ -18,6 +18,7 @@ describe DocumentProcessor do
     after(:all) do
       @upload_file.close
       @file_with_2_pages.close
+      DatabaseCleaner.clean
       Timecop.return
     end
 
@@ -1489,6 +1490,177 @@ describe DocumentProcessor do
             its(:name) { should eq('TS0001 TS 201301 002') }
             its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
             its(:uploaded?) { should == false }
+            its(:is_a_cover) { should == false }
+            its(:position) { should eq(2) }
+          end
+        end
+      end
+    end
+  end
+
+  describe '.process for yearly' do
+    before(:all) do
+      Timecop.freeze(Time.local(2015,1,1))
+
+      @user = FactoryGirl.create(:user, code: 'TS0001')
+      @subscription = Subscription.create(user_id: @user.id, period_duration: 12)
+      UpdatePeriodService.new(@subscription.current_period).execute
+      @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
+
+      @upload_file = File.open File.join(Rails.root, 'spec', 'support', 'files', 'upload.pdf'), 'r'
+      @file_with_2_pages = File.open File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf'), 'r'
+    end
+
+    after(:all) do
+      @upload_file.close
+      @file_with_2_pages.close
+      DatabaseCleaner.clean
+      Timecop.return
+    end
+
+    context 'with 2 uploaded files' do
+      before(:all) do
+        UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', 0
+        UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
+
+        DocumentProcessor.process
+        @user.reload
+        @pack = @user.packs.first
+        @temp_pack = TempPack.where(name: @pack.name).first
+      end
+
+      after(:all) do
+        TempPack.destroy_all
+        Pack.destroy_all
+      end
+
+      describe 'temp_pack' do
+        subject { @temp_pack }
+
+        its(:document_not_processed_count) { should eq(0) }
+
+        describe 'temp_documents' do
+          subject { @temp_pack.temp_documents }
+
+          its(:count) { should eq(2) }
+        end
+      end
+
+      describe 'pack' do
+        subject { @pack }
+
+        it { should be_persisted }
+        its(:name) { should eq('TS0001 TS 2015 all') }
+
+        describe 'global document' do
+          subject { @pack.original_document }
+
+          its(:content_file_name) { should eq('TS0001_TS_2015_all.pdf') }
+          its(:uploaded?) { should == false }
+          its(:is_a_cover) { should == false }
+          its(:position) { should eq(nil) }
+
+          it 'should have 3 pages' do
+            expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
+          end
+        end
+
+        describe 'dividers' do
+          subject { @pack.dividers }
+
+          its(:count) { should eq(2) }
+
+          describe 'pieces' do
+            before(:all) do
+              @pieces = @pack.dividers.pieces.by_position
+            end
+
+            subject { @pieces }
+
+            its(:count) { should eq(2) }
+
+            describe 'n°1' do
+              subject { @pieces[0] }
+
+              its(:name) { should eq 'TS0001_TS_2015_001' }
+              its(:pages_number) { should eq(1) }
+              its(:origin) { should eq('upload') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(1) }
+            end
+
+            describe 'n°2' do
+              subject { @pieces[1] }
+
+              its(:name) { should eq 'TS0001_TS_2015_002' }
+              its(:pages_number) { should eq(2) }
+              its(:origin) { should eq('upload') }
+              its(:is_a_cover) { should == false }
+              its(:position) { should eq(2) }
+            end
+          end
+        end
+
+        describe 'pages' do
+          subject { @pack.pages }
+
+          its(:count) { should eq(3) }
+
+          describe 'n°1' do
+            subject { @pack.pages.by_position[0] }
+
+            its(:content_file_name) { should eq('TS0001_TS_2015_page_001.pdf') }
+            its(:position) { should eq(0) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == true }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '2015', '1']) }
+          end
+
+          describe 'n°2' do
+            subject { @pack.pages.by_position[1] }
+
+            its(:content_file_name) { should eq('TS0001_TS_2015_page_002.pdf') }
+            its(:position) { should eq(1) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == true }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '2015', '2']) }
+          end
+
+          describe 'n°3' do
+            subject { @pack.pages.by_position[2] }
+
+            its(:content_file_name) { should eq('TS0001_TS_2015_page_003.pdf') }
+            its(:position) { should eq(2) }
+            its(:mixed?) { should == false }
+            its(:uploaded?) { should == true }
+            its(:is_a_cover) { should == false }
+            its(:tags) { should eq(['ts0001', 'ts', '2015', '3']) }
+          end
+        end
+
+        describe 'pieces' do
+          subject { @pack.pieces }
+
+          its(:count) { should eq(2) }
+
+          describe 'n°1' do
+            subject { @pack.pieces.by_position[0] }
+
+            its(:name) { should eq('TS0001 TS 2015 001') }
+            its(:content_file_name) { should eq('TS0001_TS_2015_001.pdf') }
+            its(:uploaded?) { should == true }
+            its(:is_a_cover) { should == false }
+            its(:position) { should eq(1) }
+          end
+
+          describe 'n°2' do
+            subject { @pack.pieces.by_position[1] }
+
+            its(:name) { should eq('TS0001 TS 2015 002') }
+            its(:content_file_name) { should eq('TS0001_TS_2015_002.pdf') }
+            its(:uploaded?) { should == true }
             its(:is_a_cover) { should == false }
             its(:position) { should eq(2) }
           end

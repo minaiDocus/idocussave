@@ -29,9 +29,9 @@
                 %td
                   - time = Time.local(@year, i+1, 15)
                   - centralized_periods, not_centralized_periods = periods_at(time, organization, user_ids)
-                  - price_in_cents_wo_vat = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), centralized_periods)
+                  - price_in_cents_wo_vat = PeriodBillingService.amount_in_cents_wo_vat(time.month, centralized_periods)
                   - price_in_cents_w_vat = price_in_cents_wo_vat * PeriodBillingService.vat_ratio(time)
-                  - not_centralized_price_in_cents_wo_vat = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), not_centralized_periods)
+                  - not_centralized_price_in_cents_wo_vat = PeriodBillingService.amount_in_cents_wo_vat(time.month, not_centralized_periods)
                   - not_centralized_price_in_cents_w_vat = not_centralized_price_in_cents_wo_vat * PeriodBillingService.vat_ratio(time)
 
                   - if price_in_cents_wo_vat > 0 || not_centralized_price_in_cents_wo_vat > 0

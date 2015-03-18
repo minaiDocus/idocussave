@@ -5,7 +5,7 @@
     %th.price Prix HT
     %th.price Prix TTC
   %tbody
-    - period = @subscription.periods.desc(:start_at).first
+    - period = @subscription.current_period
     - if period
       - period.product_option_orders.by_position.each do |option|
         %tr

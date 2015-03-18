@@ -3,13 +3,8 @@ require 'spec_helper'
 
 describe Subscription do
   before(:all) do
-    Timecop.freeze(2015,1,1)
     @user = FactoryGirl.create(:user)
     @subscription = Subscription.create(user_id: @user.id)
-  end
-
-  after(:all) do
-    Timecop.return
   end
 
   it 'is persisted' do
@@ -36,28 +31,74 @@ describe Subscription do
   end
 
   describe '#find_period' do
-    before(:all) do
-      @period = Period.new
-      @period.start_at     = Time.now
-      @period.duration     = @subscription.period_duration
-      @period.subscription = @subscription
-      @period.save
+    context 'monthly' do
+      before(:all) do
+        @period = Period.new
+        @period.start_at     = Time.local(2015,1,1)
+        @period.duration     = 1
+        @period.subscription = @subscription
+        @period.save
+      end
+
+      after(:all) do
+        Period.destroy_all
+      end
+
+      it 'returns nothing for 2014-12' do
+        period = @subscription.find_period(Time.local(2014,12))
+
+        expect(period).to be_nil
+      end
+
+      it 'returns nothing for 2015-02' do
+        period = @subscription.find_period(Time.local(2015,2))
+
+        expect(period).to be_nil
+      end
+
+      it 'returns period for 2015-01' do
+        period = @subscription.find_period(Time.local(2015,1))
+
+        expect(period).to eq @period
+      end
     end
 
-    after(:all) do
-      Period.destroy_all
-    end
+    context 'annually' do
+      before(:all) do
+        @period = Period.new
+        @period.start_at     = Time.local(2015,1,1)
+        @period.duration     = 12
+        @period.subscription = @subscription
+        @period.save
+      end
 
-    it 'returns period for 2015-01' do
-      period = @subscription.find_period(Time.now)
+      after(:all) do
+        Period.destroy_all
+      end
 
-      expect(period).to eq @period
-    end
+      it 'returns nothing for 2014-12' do
+        period = @subscription.find_period(Time.local(2014,12))
 
-    it 'returns nothing for 2014-12' do
-      period = @subscription.find_period(1.month.ago)
+        expect(period).to be_nil
+      end
 
-      expect(period).to be_nil
+      it 'returns nothing for 2016-01' do
+        period = @subscription.find_period(Time.local(2016,1))
+
+        expect(period).to be_nil
+      end
+
+      it 'returns period for 2015-01' do
+        period = @subscription.find_period(Time.local(2015,1))
+
+        expect(period).to eq @period
+      end
+
+      it 'returns period for 2015-12' do
+        period = @subscription.find_period(Time.local(2015,12))
+
+        expect(period).to eq @period
+      end
     end
   end
 
@@ -69,7 +110,7 @@ describe Subscription do
     it 'returns a period' do
       expect(@subscription.periods).to be_empty
 
-      period = @subscription.create_period(Time.now)
+      period = @subscription.create_period(Time.local(2015,1))
 
       expect(period).to be_persisted
       expect(period.start_at).to eq(Time.local(2015,1,1))

@@ -34,6 +34,8 @@ class Subscription
   field :unit_price_of_excess_paperclips,    type: Integer, default: 20  # attaches
   field :unit_price_of_excess_oversized,     type: Integer, default: 100 # hors format
 
+  validates_inclusion_of :period_duration, in: [1, 3, 12]
+
   def current_period
     find_or_create_period(Time.now)
   end

@@ -75,7 +75,7 @@ class Invoice
       periods = Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
         where(:start_at.lte => time, :end_at.gte => time)
 
-      @total = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), periods)
+      @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
       @data = [
           ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
           ["Nombre de clients actifs : #{periods.count}",""]
@@ -102,7 +102,7 @@ class Invoice
         @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
         @total += period.price_in_cents_wo_vat
       elsif period.duration == 3
-        @total = PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(time), [period])
+        @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, [period])
         options.each do |option|
           if option.position != -1 && option.duration != 1
             price = option.price_in_cents_wo_vat / 3

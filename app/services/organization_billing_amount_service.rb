@@ -6,7 +6,7 @@ class OrganizationBillingAmountService
   end
 
   def execute
-    PeriodBillingService.amount_in_cents_wo_vat(PeriodBillingService.order_of(@time), customer_periods) +
+    PeriodBillingService.amount_in_cents_wo_vat(@time.month, customer_periods) +
       options.sum(&:price_in_cents_wo_vat)
   end
 

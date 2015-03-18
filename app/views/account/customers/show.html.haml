@@ -102,7 +102,14 @@
                     = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.active?
               #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
-                %h4= @subscription.period_duration == 1 ? 'Périodicité mensuelle' : 'Périodicité trimestrielle'
+                %h4
+                  Périodicité
+                  - if @subscription.period_duration == 1
+                    mensuelle
+                  - elsif @subscription.period_duration == 3
+                    trimestrielle
+                  - elsif @subscription.period_duration == 12
+                    annuel
                 %br
                 = render partial: 'options'
                 .row-fluid.margin1top

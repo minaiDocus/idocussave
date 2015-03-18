@@ -22,10 +22,13 @@ class PeriodService
   end
 
   def end_at
-    if @period_duration == 1
+    case @period_duration
+    when 1
       @current_time.end_of_month
-    elsif @period_duration == 3
+    when 3
       @current_time.end_of_quarter
+    when 12
+      @current_time.end_of_year
     end
   end
 
@@ -40,8 +43,14 @@ class PeriodService
   end
 
   def names
-    time = @current_time.beginning_of_month   if @period_duration == 1
-    time = @current_time.beginning_of_quarter if @period_duration == 3
+    case @period_duration
+    when 1
+      time = @current_time.beginning_of_month
+    when 3
+      time = @current_time.beginning_of_quarter
+    when 12
+      time = @current_time.beginning_of_year
+    end
     (@authd_prev_period + 1).times.map do |i|
       Period.period_name(@period_duration, @authd_prev_period - i, time)
     end

@@ -21,9 +21,16 @@ describe UploadedDocument do
 
     context 'when arguments are valid' do
       context 'when current period' do
+        before(:all) do
+          Timecop.freeze(Time.local(2013,1,12))
+        end
+
+        after(:all) do
+          Timecop.return
+        end
+
         context 'when periodicity is monthly' do
           before(:all) do
-            Timecop.freeze(Time.local(2013,1,12))
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @user.account_book_types.create(name: 'TS', description: 'TEST')
@@ -33,7 +40,6 @@ describe UploadedDocument do
 
           after(:all) do
             DatabaseCleaner.clean
-            Timecop.freeze(Time.local(2013,1,10))
           end
 
           it { expect(@uploaded_document).to be_valid }
@@ -53,7 +59,6 @@ describe UploadedDocument do
 
         context 'when periodicity is quarterly' do
           before(:all) do
-            Timecop.freeze(Time.local(2013,1,12))
             DatabaseCleaner.start
             @user = FactoryGirl.create(:user, code: 'TS0001')
             @subscription = @user.find_or_create_subscription
@@ -66,7 +71,6 @@ describe UploadedDocument do
 
           after(:all) do
             DatabaseCleaner.clean
-            Timecop.freeze(Time.local(2013,1,10))
           end
 
           it 'temp_pack.name should equal TS0001 TS 2013T1 all' do
@@ -87,9 +91,52 @@ describe UploadedDocument do
             its(:content_file_name)  { should eq('TS0001_TS_2013T1.pdf') }
           end
         end
+
+        context 'when periodicity is yearly' do
+          before(:all) do
+            DatabaseCleaner.start
+            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @subscription = @user.find_or_create_subscription
+            @subscription.update_attribute(:period_duration, 12)
+            UpdatePeriodService.new(@subscription.current_period).execute
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
+            @temp_document = @uploaded_document.temp_document
+          end
+
+          after(:all) do
+            DatabaseCleaner.clean
+          end
+
+          it 'temp_pack.name should equal TS0001 TS 2013 all' do
+            expect(@temp_document.temp_pack.name).to eq('TS0001 TS 2013 all')
+          end
+
+          it { expect(@uploaded_document).to be_valid }
+
+          describe 'temp_document' do
+            subject { @temp_document }
+
+            it { should be_valid }
+            it { should be_persisted }
+            its(:position)   { should eq(1) }
+            its(:delivered_by)       { should eq('TS0001') }
+            its(:delivery_type)      { should eq('upload') }
+            its(:original_file_name) { should eq('upload.pdf') }
+            its(:content_file_name)  { should eq('TS0001_TS_2013.pdf') }
+          end
+        end
       end
 
       context 'when previous period is accepted' do
+        before(:all) do
+          Timecop.freeze(Time.local(2013,1,10))
+        end
+
+        after(:all) do
+          Timecop.return
+        end
+
         context 'when periodicity is monthly' do
           before(:all) do
             DatabaseCleaner.start
@@ -152,11 +199,47 @@ describe UploadedDocument do
             its(:content_file_name)  { should eq('TS0001_TS_2012T4.pdf') }
           end
         end
+
+        context 'when periodicity is yearly' do
+          before(:all) do
+            DatabaseCleaner.start
+            @user = FactoryGirl.create(:user, code: 'TS0001')
+            @subscription = @user.find_or_create_subscription
+            @subscription.update_attribute(:period_duration, 12)
+            UpdatePeriodService.new(@subscription.current_period).execute
+            @user.account_book_types.create(name: 'TS', description: 'TEST')
+            @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 1)
+            @temp_document = @uploaded_document.temp_document
+          end
+
+          after(:all) do
+            DatabaseCleaner.clean
+          end
+
+          it 'temp_pack.name should equal TS0001 TS 2012 all' do
+            expect(@temp_document.temp_pack.name).to eq('TS0001 TS 2012 all')
+          end
+
+          it { expect(@uploaded_document).to be_valid }
+
+          describe 'temp_document' do
+            subject { @temp_document }
+
+            it { should be_valid }
+            it { should be_persisted }
+            its(:position)   { should eq(1) }
+            its(:delivered_by)       { should eq('TS0001') }
+            its(:delivery_type)      { should eq('upload') }
+            its(:original_file_name) { should eq('upload.pdf') }
+            its(:content_file_name)  { should eq('TS0001_TS_2012.pdf') }
+          end
+        end
       end
     end
 
     context 'when extension is .tiff' do
       before(:all) do
+        Timecop.freeze(Time.local(2013,1,10))
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001')
         file = File.open("#{Rails.root}/spec/support/files/upload.tiff", "r")
@@ -166,6 +249,7 @@ describe UploadedDocument do
       end
 
       after(:all) do
+        Timecop.return
         DatabaseCleaner.clean
       end
 
@@ -186,12 +270,14 @@ describe UploadedDocument do
 
     describe 'when argument is not valid' do
       before(:all) do
+        Timecop.freeze(Time.local(2013,1,10))
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001', authd_prev_period: 0, auth_prev_period_until_day: 11)
         @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 
       after(:all) do
+        Timecop.return
         DatabaseCleaner.clean
       end
 
@@ -272,12 +358,14 @@ describe UploadedDocument do
 
     describe 'when journal and other arguments is not valid' do
       before(:all) do
+        Timecop.freeze(Time.local(2013,1,10))
         DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS0001')
         @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       end
 
       after(:all) do
+        Timecop.return
         DatabaseCleaner.clean
       end
 

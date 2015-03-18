@@ -2,25 +2,26 @@
 require 'spec_helper'
 
 describe EmailedDocument do
-  before(:all) do
-    Timecop.freeze(Time.local(2014,1,1))
+  describe '.new for monthly' do
+    before(:all) do
+      Timecop.freeze(Time.local(2014,1,1))
 
-    @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user = FactoryGirl.create(:user, code: 'TS0001')
 
-    @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
-    @journal.save
-  end
+      @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
+      @journal.save
+    end
 
-  after(:all) do
-    Timecop.return
-  end
+    after(:all) do
+      Timecop.return
+      DatabaseCleaner.clean
+    end
 
-  after(:each) do
-    Email.destroy_all
-    TempPack.destroy_all
-  end
+    after(:each) do
+      Email.destroy_all
+      TempPack.destroy_all
+    end
 
-  describe '.new' do
     it 'with fake code should be invalid' do
       mail = Mail.new do
         from    'customer@example.com'
@@ -218,7 +219,68 @@ describe EmailedDocument do
     end
   end
 
+  describe '.new for yearly' do
+    before(:all) do
+      Timecop.freeze(Time.local(2014,1,1))
+
+      @user = FactoryGirl.create(:user, code: 'TS0001')
+      subscription = Subscription.create(user_id: @user.id, period_duration: 12)
+      UpdatePeriodService.new(subscription.current_period).execute
+      @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
+      @journal.save
+    end
+
+    after(:all) do
+      Timecop.return
+      DatabaseCleaner.clean
+    end
+
+    after(:each) do
+      Email.destroy_all
+      TempPack.destroy_all
+    end
+
+    it 'should be valid' do
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+      end
+      emailed_document = EmailedDocument.new mail
+
+      expect(emailed_document.user).to be_present
+      expect(emailed_document.journal).to be_present
+      expect(emailed_document.valid_attachments?).to be_true
+      expect(emailed_document).to be_valid
+      expect(emailed_document.temp_documents.count).to eq(1)
+      document = emailed_document.temp_documents.first
+      expect(document.content_file_name).to eq("TS0001_TS_2014.pdf")
+      expect(File.exist?(document.content.path)).to be_true
+    end
+  end
+
   describe '.receive' do
+    before(:all) do
+      Timecop.freeze(Time.local(2014,1,1))
+
+      @user = FactoryGirl.create(:user, code: 'TS0001')
+
+      @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
+      @journal.save
+    end
+
+    after(:all) do
+      Timecop.return
+      DatabaseCleaner.clean
+    end
+
+    after(:each) do
+      Email.destroy_all
+      TempPack.destroy_all
+    end
+
     it 'should create email with state unprocessable' do
       code = @user.email_code
       mail = Mail.new do
