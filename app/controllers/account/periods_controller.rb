@@ -11,7 +11,7 @@ private
   end
 
   def verify_rights
-    if @period.user != current_user and !current_user.in?(@period.subscription.user.try(:prescribers) || []) and !current_user.is_admin
+    if @period.user != current_user and !current_user.in?(@period.user.try(:prescribers) || []) and !current_user.is_admin
       redirect_to root_path
     end
   end
