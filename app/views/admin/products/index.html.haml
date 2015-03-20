@@ -5,7 +5,11 @@
     .span12
       .row-fluid
         .span12.panel
-          %h2 Preview
+          .row-fluid
+            .span6
+              %h2 Preview
+            .span6.alignright
+              = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + 'Export XLS', admin_products_path(format: 'xls')
           = render partial: 'product', collection: @products
 
       .row-fluid

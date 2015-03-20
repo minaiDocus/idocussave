@@ -3,9 +3,17 @@ class Admin::ProductsController < Admin::AdminController
   before_filter :load_product, only: %w(edit update destroy)
 
   def index
-    @products        = Product.by_position
-    @product_options = ProductOption.by_group.by_position
-    @product_groups  = ProductGroup.by_position
+    respond_to do |format|
+      format.html do
+        @products        = Product.by_position
+        @product_options = ProductOption.by_group.by_position
+        @product_groups  = ProductGroup.by_position
+      end
+      format.xls do
+        data = SubscriptionStatsService.new.to_xls
+        send_data data, type: 'application/vnd.ms-excel', filename: 'subscription_stats.xls'
+      end
+    end
   end
 
   def new
