@@ -20,7 +20,6 @@ describe UpdatePeriodPriceService do
     end
 
     context 'for monthly' do
-
       it 'set values' do
         period = Period.new
         period.user = @user
@@ -44,6 +43,33 @@ describe UpdatePeriodPriceService do
         expect(period.products_price_in_cents_wo_vat).to eq 3000
         expect(period.excesses_price_in_cents_wo_vat).to eq 150
         expect(period.price_in_cents_wo_vat).to eq 3150
+      end
+    end
+
+    context 'for quarterly' do
+      it 'set values' do
+        period = Period.new
+        period.user = @user
+        period.duration = 3
+        period.save
+        option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 900,  duration: 0, group_position: 1)
+        option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 1500, duration: 1, group_position: 2)
+        period.product_option_orders << option1
+        period.product_option_orders << option2
+        period.scanned_sheets = 101 # excesses : 1, price : 12 cents
+        period.uploaded_pages = 202 # excesses : 2, price : 12 cents
+        period.dematbox_scanned_pages = 203 # excesses : 3, price : 18 cents
+        period.preseizure_pieces = 104 # excesses : 4, price : 48 cents
+        period.expense_pieces = 105 # excesses : 5, price : 60 cents
+        period.save
+
+        UpdatePeriodPriceService.new(period).execute
+
+        expect(period.recurrent_products_price_in_cents_wo_vat).to eq 300
+        expect(period.ponctual_products_price_in_cents_wo_vat).to eq 1500
+        expect(period.products_price_in_cents_wo_vat).to eq 2400
+        expect(period.excesses_price_in_cents_wo_vat).to eq 150
+        expect(period.price_in_cents_wo_vat).to eq 2550
       end
     end
 

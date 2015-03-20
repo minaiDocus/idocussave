@@ -48,7 +48,7 @@ private
   end
 
   def options_price
-    @period.recurrent_products_price_in_cents_wo_vat + @period.ponctual_products_price_in_cents_wo_vat
+    recurrent_options.sum(&:price_in_cents_wo_vat) + @period.ponctual_products_price_in_cents_wo_vat
   end
 
   def excesses_price
