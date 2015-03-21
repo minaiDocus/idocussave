@@ -70,6 +70,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def select
     @journals = source.account_book_types.desc(:is_default).asc(:name)
+    @journals = @journals.not_compta_processable unless @customer.options.is_preassignment_authorized
   end
 
   def copy
