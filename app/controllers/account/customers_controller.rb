@@ -2,7 +2,7 @@
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, except: %w(index new create search_by_code)
   before_filter :verify_rights, except: 'index'
-  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options account_close_confirm close_account)
+  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options)
 
   def index
     respond_to do |format|

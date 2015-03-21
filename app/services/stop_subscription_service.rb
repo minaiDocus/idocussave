@@ -6,10 +6,10 @@ class StopSubscriptionService
   end
 
   def execute
-    period = @user.periods.desc(:start_at).first
+    period = @user.subscription.find_period(Time.now)
     if period
       if @close_now
-        @user.inactive_at = Time.now
+        @user.inactive_at = period.start_at
         period.destroy
       else
         @user.inactive_at = period.start_at + period.duration.month
