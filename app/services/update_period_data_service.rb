@@ -44,7 +44,14 @@ private
     tags = []
     @period.documents.each do |document|
       name = document.name.split
-      tags << "b_#{name[1]} y_#{name[2][0..3]} m_#{name[2][4..5].to_i}"
+      case @period.duration
+      when 1
+        tags << "b_#{name[1]} y_#{name[2][0..3]} m_#{name[2][4..5].to_i}"
+      when 3
+        tags << "b_#{name[1]} y_#{name[2][0..3]} t_#{name[2][5]}"
+      when 12
+        tags << "b_#{name[1]} y_#{name[2][0..3]}"
+      end
     end
     @period.documents_name_tags = tags
   end

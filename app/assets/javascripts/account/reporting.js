@@ -137,17 +137,26 @@ function render_data(period){
         var account_book_filter = $("#account_book_filter").val();
         var year_filter = parseInt($("#year_filter").val());
         var month_filter = parseInt($("#month_filter").val());
+        var quarter_filter = parseInt($("#quarter_filter").val());
         $("#periodModal .name").each(function(index){
           var is_ok = true;
           var name = $(this).text().trim().split(" ");
           var account_book_value = name[1];
           var year_value = parseInt(name[2].substr(0,4));
-          var month_value = parseInt(name[2].substr(4,2));
+          var month_value = undefined;
+          var quarter_value = undefined;
+          if(name[2][4] == 'T') {
+            var quarter_value = parseInt(name[2].substr(5,1));
+          } else if (name[2][4] != undefined) {
+            var month_value = parseInt(name[2].substr(4,2));
+          }
           if(account_book_filter.length > 0 && account_book_filter != account_book_value)
             is_ok = false;
           if(year_filter && year_filter != year_value)
             is_ok = false;
           if(month_filter && month_filter != month_value)
+            is_ok = false;
+          if(quarter_filter && quarter_filter != quarter_value)
             is_ok = false;
           if(is_ok && (account_book_filter.length > 0 || year_filter || month_filter)){
             $(this).parents("tr").addClass("selected");
@@ -179,6 +188,7 @@ function apply_filter(){
   var $account_book_filter = $("#account_book_filter");
   var $year_filter = $("#year_filter");
   var $month_filter = $("#month_filter");
+  var $quarter_filter = $("#quarter_filter");
   if ($account_book_filter.val().length > 0) {
     class_tags += ".b_" + $account_book_filter.val();
   }
@@ -187,6 +197,9 @@ function apply_filter(){
   }
   if ($month_filter.val().length > 0) {
     class_tags += ".m_" + parseInt($month_filter.val());
+  }
+  if ($quarter_filter.val().length > 0) {
+    class_tags += ".t_" + parseInt($quarter_filter.val());
   }
 
   $(".period").removeClass("selected");
@@ -233,6 +246,7 @@ $(document).ready(function(){
     $("#account_book_filter").val("");
     $("#year_filter").val("");
     $("#month_filter").val("");
+    $("#quarter_filter").val("");
     apply_filter();
     return false;
   });

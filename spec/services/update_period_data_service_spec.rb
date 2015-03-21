@@ -89,4 +89,39 @@ describe UpdatePeriodDataService do
     expect(period.documents_name_tags).to eq(["b_J1 y_2015 m_1", "b_J2 y_2015 m_1"])
     expect(period.delivery).to be_delivered
   end
+
+  describe '#documents_name_tags' do
+    context 'for monthly' do
+      it "returns ['b_J1 y_2015 m_1']" do
+        period = Period.create(duration: 1)
+        period.documents.create(name: 'TS%0001 J1 201501 all')
+
+        UpdatePeriodDataService.new(period).execute
+
+        expect(period.documents_name_tags).to eq(['b_J1 y_2015 m_1'])
+      end
+    end
+
+    context 'for quarterly' do
+      it "returns ['b_J1 y_2015 t_1']" do
+        period = Period.create(duration: 3)
+        period.documents.create(name: 'TS%0001 J1 2015T1 all')
+
+        UpdatePeriodDataService.new(period).execute
+
+        expect(period.documents_name_tags).to eq(['b_J1 y_2015 t_1'])
+      end
+    end
+
+    context 'for yearly' do
+      it "returns ['b_J1 y_2015']" do
+        period = Period.create(duration: 12)
+        period.documents.create(name: 'TS%0001 J1 2015T1 all')
+
+        UpdatePeriodDataService.new(period).execute
+
+        expect(period.documents_name_tags).to eq(['b_J1 y_2015'])
+      end
+    end
+  end
 end
