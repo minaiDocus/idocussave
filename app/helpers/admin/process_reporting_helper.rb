@@ -85,8 +85,9 @@ module Admin::ProcessReportingHelper
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
     )
-    periods = periods.where(duration: 1) if time.month % 3 != 0
-    periods.sum(:paperclips).to_i
+    periods.map do |period|
+      PeriodBillingService.new(period).data(:paperclips, time.month)
+    end.sum
   end
 
   def sum_of_oversized(customers, time)
@@ -95,8 +96,9 @@ module Admin::ProcessReportingHelper
       :created_at.gte => time,
       :created_at.lte => time.end_of_month
     )
-    periods = periods.where(duration: 1) if time.month % 3 != 0
-    periods.sum(:oversized).to_i
+    periods.map do |period|
+      PeriodBillingService.new(period).data(:oversized, time.month)
+    end.sum
   end
 
   def sum_of_returns_500(organization, time)
