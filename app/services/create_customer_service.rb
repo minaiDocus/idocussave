@@ -51,6 +51,12 @@ class CreateCustomerService
         scanning_provider.save
       end
 
+      csv_outputter = CsvOutputter.new
+      csv_outputter.user                      = @customer
+      csv_outputter.comma_as_number_separator = @organization.csv_outputter!.comma_as_number_separator
+      csv_outputter.directive                 = @organization.csv_outputter!.directive
+      csv_outputter.save
+
       @customer.authd_prev_period            = @organization.authd_prev_period
       @customer.auth_prev_period_until_day   = @organization.auth_prev_period_until_day
       @customer.auth_prev_period_until_month = @organization.auth_prev_period_until_month
