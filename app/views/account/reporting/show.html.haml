@@ -75,7 +75,8 @@
                   - if period
                     - period_billing = PeriodBillingService.new(period)
                     - period.duration.times do |i|
-                      - annual_summary[period.start_at.month + i - 1][:active_user] += 1
+                      - if period_billing.amount_in_cents_wo_vat(i + 1) != 0
+                        - annual_summary[period.start_at.month + i - 1][:active_user] += 1
                     %td.align-middle.block{ :colspan => period.duration }
                       %a.do-show{ href: "#" }
                         - pos = []
