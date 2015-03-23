@@ -108,15 +108,15 @@ class Organization
   end
 
   def find_or_create_file_sending_kit
-    file_sending_kit || FileSendingKit.create(organization_id: self.id)
+    self.file_sending_kit ||= FileSendingKit.create(organization_id: self.id)
   end
 
   def find_or_create_subscription
-    subscription || Subscription.create(organization_id: self.id)
+    self.subscription ||= Subscription.create(organization_id: self.id)
   end
 
   def find_or_create_csv_outputter
-    csv_outputter || create_csv_outputter
+    self.csv_outputter ||= create_csv_outputter
   end
   alias :csv_outputter! :find_or_create_csv_outputter
 

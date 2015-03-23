@@ -230,7 +230,7 @@ class User
   end
 
   def find_or_create_subscription
-    subscription || Subscription.create(user_id: self.id)
+    self.subscription ||= Subscription.create(user_id: self.id)
   end
 
   def billing_address
@@ -246,7 +246,7 @@ class User
   end
 
   def find_or_create_external_file_storage
-    external_file_storage || ExternalFileStorage.create(user_id: self.id).reload
+    self.external_file_storage ||= ExternalFileStorage.create(user_id: self.id).reload
   end
 
   def find_or_create_efs
@@ -254,7 +254,7 @@ class User
   end
 
   def csv_outputter!
-    csv_outputter || CsvOutputter.create(user_id: self.id)
+    self.csv_outputter ||= CsvOutputter.create(user_id: self.id)
   end
 
   def active_for_authentication?
