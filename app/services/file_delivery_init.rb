@@ -81,7 +81,8 @@ class FileDeliveryInit
           end
         end
         # report
-        if type == RemoteFile::REPORT && report
+        if type == RemoteFile::REPORT && reports.any?
+          report = reports.desc(:created_at).first
           report.extend FileDeliveryInit::RemoteReport
           temp_remote_files = report.get_remote_files(object,service_name)
           if force
