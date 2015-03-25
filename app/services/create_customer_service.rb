@@ -26,24 +26,10 @@ class CreateCustomerService
         subscription.update_attribute(:period_duration, period_duration)
       end
       options = DefaultSubscriptionOptionsService.new(subscription.period_duration).execute
-      UpdateSubscriptionService.new(subscription, { options: options }, @requester).execute
+      UpdateSubscriptionService.new(subscription, { options: options }, @requester, @request).execute
       PeriodBillingService.new(subscription.current_period).fill_past_with_0
 
-      # Assign journals
-      source = (@organization.is_journals_management_centralized || @requester.is_admin) ? @organization : @requester
-      journals = source.account_book_types.default.asc(:name).limit(@customer.options.max_number_of_journals)
-      journals = @customer.options.is_preassignment_authorized ? journals : journals.not_compta_processable
-      journals.each do |journal|
-        unless @customer.account_book_types.count >= @customer.options.max_number_of_journals
-          copy = journal.dup
-          copy.user         = @customer
-          copy.organization = nil
-          copy.is_default   = nil
-          copy.slug         = nil
-          copy.save
-          EventCreateService.new.add_journal(copy, @customer, @current_user, path: @request.path, ip_address: @request.remote_ip)
-        end
-      end
+      AssignDefaultJournalsService.new(@customer, @requester, @request).execute
 
       scanning_provider = ScanningProvider.default.asc(:created_at).first
       if scanning_provider

@@ -6,13 +6,14 @@ class EvaluateSubscriptionService
     :update_max_number_of_journals
   ]
 
-  def self.execute(subscription, collaborator)
-    self.new(subscription, collaborator).execute
+  def self.execute(subscription, collaborator, request=nil)
+    self.new(subscription, collaborator, request).execute
   end
 
-  def initialize(subscription, collaborator)
+  def initialize(subscription, collaborator, request=nil)
     @subscription        = subscription
     @collaborator        = collaborator
+    @request             = request
     @user                = @subscription.user
     @previous_option_ids = @subscription.previous_option_ids
   end
@@ -81,11 +82,15 @@ private
   end
 
   def authorize_preassignment
-    @user.options.update_attribute(:is_preassignment_authorized, true) unless @user.options.is_preassignment_authorized
+    unless @user.options.is_preassignment_authorized
+      @user.options.update_attribute(:is_preassignment_authorized, true)
+      AssignDefaultJournalsService.new(@user, @collaborator, @request).execute
+    end
   end
 
   def unauthorize_preassignment
     @user.options.update_attribute(:is_preassignment_authorized, false) if @user.options.is_preassignment_authorized
+    # TODO remove journals where compta process are active
   end
 
   def update_max_number_of_journals(product_option)

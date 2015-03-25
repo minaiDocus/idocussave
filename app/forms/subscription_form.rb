@@ -1,8 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class SubscriptionForm
-  def initialize(subscription, requester=nil)
+  def initialize(subscription, requester=nil, request=nil)
     @subscription = subscription
     @requester    = requester
+    @request      = request
   end
 
   def submit(params)
@@ -12,7 +13,7 @@ class SubscriptionForm
       _params = params.dup.tap { |p| p.delete('product') }
       _params[:options] = get_options
       if _params[:options].any? || @subscription.organization
-        UpdateSubscriptionService.new(@subscription, _params, @requester).execute
+        UpdateSubscriptionService.new(@subscription, _params, @requester, @request).execute
       else
         false
       end

@@ -68,6 +68,13 @@ FactoryGirl.define do
   factory AccountBookType do
     sequence(:name) { |n| "J#{n}" }
     description '(description)'
+    factory :journal_with_preassignment do
+      entry_type 2
+      vat_account '123'
+      anomaly_account '123'
+      account_number '123'
+      charge_account '123'
+    end
   end
 
   factory Knowings do

@@ -7,7 +7,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
   def update
-    subscription_form = SubscriptionForm.new(@subscription, @user)
+    subscription_form = SubscriptionForm.new(@subscription, @user, request)
     if subscription_form.submit(subscription_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'subscription')
