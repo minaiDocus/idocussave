@@ -16,9 +16,9 @@ module IbizaAPI
         else
           preseizure[k].presence
         end
-      end
+      end.compact
       if results.empty?
-        preseizure.third_party
+        preseizure.third_party.presence || preseizure.operation_label
       else
         results.compact.join(separator)
       end

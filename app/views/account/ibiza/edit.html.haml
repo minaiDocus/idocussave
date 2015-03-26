@@ -71,6 +71,12 @@
               %tr
                 %td
                   %label.checkbox
+                    = check_box_tag "ibiza[description][operation_label][is_used]", 1, (@ibiza.description['operation_label']['is_used'] rescue false)
+                    %span.text Libellé de l'opération
+                %td= number_field_tag "ibiza[description][operation_label][position]", (@ibiza.description['operation_label']['position'] rescue 1)
+              %tr
+                %td
+                  %label.checkbox
                     = check_box_tag "ibiza[description][amount][is_used]", 1, (@ibiza.description['amount']['is_used'] rescue false)
                     %span.text Montant d'origine
                 %td= number_field_tag "ibiza[description][amount][position]", (@ibiza.description['amount']['position'] rescue 1)

@@ -9,6 +9,8 @@ class Idocus.Models.Preseizure extends Backbone.Model
       type: "Text", title: "Echéance"
     third_party:
       type: "Text", title: "Tiers"
+    operation_label:
+      type: "Text", title: "Libellé de l'opération"
     piece_number:
       type: "Text", title: "Numéro de pièce"
     amount:
@@ -31,7 +33,12 @@ class Idocus.Models.Preseizure extends Backbone.Model
     results = _.compact(results)
     text = results.join(@get('description_separator'))
     if text == ""
-      "-"
+      if @get('third_party') != null
+        @get('third_party')
+      else if @get('operation_label') != null
+        @get('operation_label')
+      else
+        '-'
     else
       text
 

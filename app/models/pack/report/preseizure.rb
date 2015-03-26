@@ -16,6 +16,7 @@ class Pack::Report::Preseizure
   field :type
   field :date,            type: Time
   field :deadline_date,   type: Time
+  field :operation_label
   field :observation,     type: String
   field :position,        type: Integer
   field :piece_number,    type: String

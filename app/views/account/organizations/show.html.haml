@@ -198,6 +198,12 @@
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
                 %tr
+                  %td.name Libellé de l'opération
+                  %td.is_used
+                    - value = @organization.ibiza.description['operation_label']['is_used'] rescue false
+                    = value ? t('yes_value') : t('no_value')
+                  %td.position= @organization.ibiza.description['operation_label']['position'] rescue 1
+                %tr
                   %td.name Montant d'origine
                   %td.is_used
                     - value = @organization.ibiza.description['amount']['is_used'] rescue false

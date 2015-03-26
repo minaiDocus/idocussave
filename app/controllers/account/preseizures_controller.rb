@@ -51,6 +51,7 @@ private
     params.require(:preseizure).permit(:position,
                                        :date,
                                        :third_party,
+                                       :operation_label,
                                        :piece_number,
                                        :amount,
                                        :currency,
