@@ -29,10 +29,20 @@ jQuery ->
       init_prices(this)
 
   if $('#subscriptions.edit').length > 0
+    deletion_of_retrievers_warning = "Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?"
     $('.warn_for_deletion_of_retrievers').change (e) ->
       if $(e.target).attr('type') == 'radio'
-        is_ok = window.confirm("Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?")
+        is_ok = window.confirm(deletion_of_retrievers_warning)
         $('.authorize_retrievers').attr('checked', 'checked') unless is_ok
       else if $(e.target).attr('checked') != 'checked'
-        is_ok = window.confirm("Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?")
+        is_ok = window.confirm(deletion_of_retrievers_warning)
+        $(e.target).attr('checked', 'checked') unless is_ok
+
+    deletion_of_preassignment_warning = "Attention ! Ceci supprimera la configuration de pré-affectation des journaux comptables sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?"
+    $('.warn_for_deletion_of_preassignment').change (e) ->
+      if $(e.target).attr('type') == 'radio'
+        is_ok = window.confirm(deletion_of_preassignment_warning)
+        $('.authorize_preassignment').attr('checked', 'checked') unless is_ok
+      else if $(e.target).attr('checked') != 'checked'
+        is_ok = window.confirm(deletion_of_preassignment_warning)
         $(e.target).attr('checked', 'checked') unless is_ok

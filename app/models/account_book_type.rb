@@ -98,6 +98,22 @@ class AccountBookType
     end
   end
 
+  def reset_compta_attributes
+    self.entry_type                     = 0
+    self.account_number                 = nil   if account_number.present?
+    self.default_account_number         = nil   if default_account_number.present?
+    self.charge_account                 = nil   if charge_account.present?
+    self.default_charge_account         = nil   if default_charge_account.present?
+    self.vat_account                    = nil   if vat_account.present?
+    self.anomaly_account                = nil   if anomaly_account.present?
+    self.is_expense_categories_editable = false if is_expense_categories_editable.present?
+  end
+
+  def reset_compta_attributes!
+    reset_compta_attributes
+    save
+  end
+
 private
 
   def upcase_name

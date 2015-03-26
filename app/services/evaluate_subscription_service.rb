@@ -89,8 +89,18 @@ private
   end
 
   def unauthorize_preassignment
-    @user.options.update_attribute(:is_preassignment_authorized, false) if @user.options.is_preassignment_authorized
-    # TODO remove journals where compta process are active
+    if @user.options.is_preassignment_authorized
+      @user.options.update_attribute(:is_preassignment_authorized, false)
+      @user.account_book_types.pre_assignment_processable.each do |journal|
+        journal.reset_compta_attributes
+        changes = journal.changes
+        if journal.save
+          params = [journal, @user, changes, @collaborator]
+          params << { path: @request.path, ip_address: @request.remote_ip } if @request
+          EventCreateService.new.journal_update(*params)
+        end
+      end
+    end
   end
 
   def update_max_number_of_journals(product_option)
