@@ -7,7 +7,7 @@
       = simple_form_for (@ibiza || Ibiza.new), url: account_organization_ibiza_path(@organization), html: { class: 'form form-horizontal margin0bottom' } do |f|
         %fieldset
           %legend Connexion à iBiza pour le transfert des écritures
-          = f.input :token, hint: link_to('Obtenir un jeton', "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}")
+          = f.input :token, hint: link_to('Obtenir un jeton', "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
           = f.input :is_auto_deliver, as: :boolean
         %fieldset
           %legend Format de nom de la pièce
