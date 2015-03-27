@@ -56,11 +56,11 @@ class GoogleDoc
       end
       if collection
         begin
-          basename = File.basename(remote_file.name, '.*')
+          basename = File.basename remote_file.local_path
           remote_filepath = File.join(remote_path, remote_file.name)
           remote_file.sending!(remote_filepath)
           print "\t[#{'%0.3d' % (index+1)}] #{remote_filepath} sending..."
-          collection.upload_from_file(remote_file.local_path, basename, { content_type: type_of(remote_file.name) })
+          collection.upload_from_file(remote_file.local_path, basename, { content_type: type_of(basename) })
           remote_file.synced!
           print "done\n"
         rescue => e
@@ -84,6 +84,8 @@ class GoogleDoc
         'application/pdf'
       when '.csv'
         'text/csv'
+      when '.tiff'
+        'image/tiff'
       else
         'application/pdf'
     end
