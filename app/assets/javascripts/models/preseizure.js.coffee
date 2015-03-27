@@ -10,7 +10,7 @@ class Idocus.Models.Preseizure extends Backbone.Model
     third_party:
       type: "Text", title: "Tiers"
     operation_label:
-      type: "Text", title: "Libellé de l'opération"
+      type: "TextArea", title: "Libellé de l'opération"
     piece_number:
       type: "Text", title: "Numéro de pièce"
     amount:
