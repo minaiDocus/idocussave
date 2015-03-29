@@ -1,9 +1,4 @@
-GoogleDrive::CONSUMER_KEY    = "www.idocus.com"
-GoogleDrive::CONSUMER_SECRET = "CNouMLgvcDVEuCVbOHzjhBiF"
-GoogleDrive::SCOPE_URL       = "https://docs.google.com/feeds/"
-GoogleDrive::SETTINGS        = {
-                                site:               "https://www.google.com",
-                                request_token_path: "/accounts/OAuthGetRequestToken",
-                                authorize_path:     "/accounts/OAuthAuthorizeToken",
-                                access_token_path:  "/accounts/OAuthGetAccessToken",
-                               }
+config_file = File.join(Rails.root, 'config', 'google_drive.yml')
+raise 'Google Drive configuration file config/google_drive.yml is missing.' unless File.exists?(config_file)
+
+GoogleDrive.config = YAML::load_file(config_file)[Rails.env]

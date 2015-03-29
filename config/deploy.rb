@@ -47,6 +47,7 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
     command << "ln -nfs #{shared_path}/config/ibiza.yml #{release_path}/config/ibiza.yml"
     command << "ln -nfs #{shared_path}/config/slimpay.yml #{release_path}/config/slimpay.yml"
+    command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
     command << "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
     command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
@@ -100,7 +101,8 @@ namespace :shared do
       'knowings.yml',
       'emailed_document.yml',
       'ibiza.yml',
-      'slimpay.yml'
+      'slimpay.yml',
+      'google_drive.yml'
     ]
 
     files.each do |file|

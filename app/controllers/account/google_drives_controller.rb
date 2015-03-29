@@ -1,0 +1,50 @@
+# -*- encoding : UTF-8 -*-
+class Account::GoogleDrivesController < Account::AccountController
+  before_filter :verify_authorization
+  before_filter :load_google_doc
+
+private
+
+  def verify_authorization
+    unless @user.find_or_create_efs.is_google_docs_authorized?
+      flash[:error] = "Vous n'êtes pas autorisé à utiliser Google Drive."
+      redirect_to account_profile_path
+    end
+  end
+
+  def load_google_doc
+    @google_doc = @user.find_or_create_efs.google_doc
+  end
+
+public
+
+  def authorize_url
+    session[:google_drive_state] = params[:authenticity_token][0..29]
+    redirect_to GoogleDrive::Client.new.authorize_url(callback_account_google_drive_url, session[:google_drive_state])
+  end
+
+  def callback
+    if params[:code].present?
+      if params[:state] == session[:google_drive_state]
+        begin
+          client = GoogleDrive::Client.new
+          client.authorize(params[:code], callback_account_google_drive_url)
+          @google_doc.token = client.access_token.token
+          @google_doc.refresh_token = client.access_token.refresh_token
+          @google_doc.token_expires_at = Time.at client.access_token.expires_at
+          @google_doc.is_configured = true
+          @google_doc.save
+          flash[:success] = 'Votre compte Google Drive a été configuré avec succès.'
+        rescue OAuth2::Error
+          flash[:error] = 'Impossible de configurer votre compte Google Drive.'
+        end
+      else
+        flash[:error] = 'Accès refusé.'
+      end
+      session[:google_drive_state] = nil
+    elsif params[:error] == 'access_denied'
+      flash[:error] = "Vous avez refusé l'accès à votre compte Google Drive."
+    end
+    redirect_to account_profile_path
+  end
+end

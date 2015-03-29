@@ -115,10 +115,10 @@
                       .span12
                         - if @external_file_storage.google_doc.is_configured?
                           Votre compte iDocus est connecté à votre compte Google Drive.
-                          != link_to "Paramètres", authorize_url_account_google_doc_path
+                          = link_to "Paramètres", authorize_url_account_google_drive_path, method: :post
                         - else
                           Pour connecter iDocus à votre compte Google Drive, cliquez
-                          != link_to "ici", authorize_url_account_google_doc_path
+                          = link_to "ici", authorize_url_account_google_drive_path, method: :post
                         #{"."}
                         = render partial: 'storage_form', locals: { instance: @external_file_storage.google_doc }
 

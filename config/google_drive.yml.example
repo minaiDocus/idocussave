@@ -1,0 +1,24 @@
+defaults: &defaults
+  client_id: ''
+  client_secret: ''
+  scope: 'https://docs.google.com/feeds/ https://docs.googleusercontent.com/'
+  access_type: 'offline'
+  approval_prompt: 'force'
+  include_granted_scopes: false
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  client_id: ''
+  client_secret: ''

@@ -163,9 +163,9 @@ Idocus::Application.routes.draw do
       get 'authorize_url', on: :member
       get 'callback',      on: :member
     end
-    resource :google_doc do
-      get 'authorize_url', on: :member
-      get 'callback',      on: :member
+    resource :google_drive do
+      post 'authorize_url', on: :member
+      get  'callback',      on: :member
     end
     resource :external_file_storage do
       post :use,                  on: :member

@@ -214,4 +214,22 @@ describe DocumentTools do
   it '.to_period returns Date(2013-03-01)' do
     expect(DocumentTools.to_period('TS0001 TS 201303 all')).to eq(Date.new(2013, 3, 1))
   end
+
+  describe '.mimetype' do
+    it 'returns application/pdf' do
+      expect(DocumentTools.mimetype('TS0001_Ts_201501_001.pdf')).to eq 'application/pdf'
+    end
+
+    it 'returns text/csv' do
+      expect(DocumentTools.mimetype('TS0001_Ts_201501_001.csv')).to eq 'text/csv'
+    end
+
+    it 'returns image/tiff' do
+      expect(DocumentTools.mimetype('TS0001_Ts_201501_001.tiff')).to eq 'image/tiff'
+    end
+
+    it 'returns nil' do
+      expect(DocumentTools.mimetype('TS0001_Ts_201501_001.png')).to be_nil
+    end
+  end
 end

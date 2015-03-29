@@ -197,5 +197,19 @@ class DocumentTools
       end
       Date.new(year, month, 1)
     end
+
+    def mimetype(filename)
+      extension = File.extname(filename)
+      case extension
+      when '.pdf'
+        'application/pdf'
+      when '.csv'
+        'text/csv'
+      when '.tiff'
+        'image/tiff'
+      else
+        nil
+      end
+    end
   end
 end
