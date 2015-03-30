@@ -24,7 +24,7 @@ private
 
   def subscription_params
     attributes = [:product]
-    attributes << :period_duration unless Settings.is_subscription_lower_options_disabled
+    attributes << :period_duration if @organization.is_subscription_lower_options_enabled
     if @user.is_admin
       attributes += [
         :max_sheets_authorized,

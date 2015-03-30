@@ -18,7 +18,7 @@ module Account::SubscriptionsHelper
     if @user.is_admin
       false
     else
-      if Settings.is_subscription_lower_options_disabled
+      if @user.organization.try(:is_subscription_lower_options_disabled)
         if group.is_option_dependent
           selected_option = options.select { |option| option.product_group == group }.first
           selected_option ? option.position < selected_option.position : false

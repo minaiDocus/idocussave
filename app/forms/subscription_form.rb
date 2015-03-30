@@ -23,7 +23,7 @@ class SubscriptionForm
   end
 
   def permit_all_options
-    !Settings.is_subscription_lower_options_disabled
+    @subscription.user.try(:organization).try(:is_subscription_lower_options_enabled)
   end
 
   def product

@@ -18,8 +18,10 @@ class Account::OrganizationsController < Account::AccountController
   end
 
   def update_options
-    Settings.is_subscription_lower_options_disabled = params[:settings][:is_subscription_lower_options_disabled] == '1'
-    Settings.is_journals_modification_authorized    = params[:settings][:is_journals_modification_authorized]    == '1'
+    organization_ids = params[:subscription_options][:organization_ids].compact
+    Organization.where(:_id.in => organization_ids).update_all(is_subscription_lower_options_enabled: true)
+    Organization.where(:_id.nin => organization_ids).update_all(is_subscription_lower_options_enabled: false)
+    Settings.is_journals_modification_authorized = params[:settings][:is_journals_modification_authorized] == '1'
     flash[:success] = 'Modifié avec succès.'
     redirect_to account_organizations_path
   end
