@@ -21,7 +21,7 @@ class Account::BankAccountsController < Account::FiduceoController
           is_selected = value == '1'
           if !bank_account.persisted? && is_selected
             bank_account.save
-            OperationService.delay(priority: 1).update_bank_account(bank_account)
+            OperationService.update_bank_account(bank_account)
             added_bank_accounts << bank_account
           elsif bank_account.persisted? && !is_selected
             bank_account.destroy
