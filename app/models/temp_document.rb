@@ -10,6 +10,7 @@ class TempDocument
   field :content_content_type
   field :content_file_size,    type: Integer
   field :content_updated_at,   type: Time
+  field :is_thumb_generated,   type: Boolean, default: false
 
   field :raw_content_file_name
   field :raw_content_content_type
@@ -59,8 +60,14 @@ class TempDocument
   belongs_to :fiduceo_retriever
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
-  has_mongoid_attached_file :content,     path: ":rails_root/files/:rails_env/:class/:id/:filename"
+  has_mongoid_attached_file :content,     styles: {
+                                            thumb: ["46x67>", :png],
+                                          },
+                                          path: ":rails_root/files/:rails_env/:class/:id/:filename",
+                                          url: "/account/documents/:id/download/:style"
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
+
+  after_create :generate_thumbs!
 
   scope :locked,            where: { is_locked: true }
   scope :not_locked,        where: { is_locked: false }
@@ -81,6 +88,7 @@ class TempDocument
   scope :bundle_needed,     where:  { state: 'bundle_needed', is_locked: false }
   scope :bundling,          where:  { state: 'bundling' }
   scope :bundled,           where:  { state: 'bundled' }
+  scope :not_published,     not_in: { state: %w(processed bundled wait_selection unreadable) }
   scope :ready,             where:  { state: 'ready', is_locked: false }
   scope :processed,         any_in: { state: %w(processed bundled) }
   scope :not_processed,     not_in: { state: %w(processed) }
@@ -244,4 +252,12 @@ class TempDocument
     self.corruption_notified_at = Time.now
     save
   end
+
+  def generate_thumbs!
+    self.is_thumb_generated = false # set to false before reprocess to pass `before_content_post_process`
+    self.content.reprocess!
+    save
+  end
+  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 1, :run_at => Proc.new { 5.minutes.from_now }
+
 end

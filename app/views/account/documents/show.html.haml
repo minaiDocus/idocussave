@@ -1,1 +1,9 @@
-!= render :partial => "/account/documents/document", :collection => @documents
+%h4.pull-left
+%ul.margin0{ style: "clear:both;", :id => "pages"}
+	!= render :partial => "/account/documents/document", :collection => @documents
+
+%br
+%hr{ style: "clear:both;"}
+%h4.pull-left
+%ul.margin0{ style: "clear:both;", :id => "pieces" }
+	!= render :partial => "/account/documents/temp_document", :collection => @temp_documents

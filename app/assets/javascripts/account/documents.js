@@ -31,6 +31,7 @@
     var url = "/account/documents/"+document_id+filter;
 
     $("#panel2").hide();
+    $("#panel3").hide();
     $("#panel1").show();
     getPages(url,link.text());
   }
@@ -39,9 +40,13 @@
   function showPage(link) {
     var url = link.attr("href");
 
+    if (link.parents("ul").attr("id") == "pieces")
+      var panel = "#panel3"
+    else
+      var panel = "#panel2"
     $("#panel1").hide();
-    $("#panel2").show();
-
+    $(panel).show();
+    
     $(".actiongroup.group1").hide();
     $(".actiongroup.group2").show();
 
@@ -58,8 +63,8 @@
     $(".showPage").attr("src",url);
     $("#pageInformation").attr("data-content",tags);
 
-    $("#panel2 .header h3").text(name);
-    $("#panel2 .header .actiongroup .page_number").text(page_number);
+    $(panel + " .header h3").text(name);
+    $(panel + " .header .actiongroup .page_number").text(page_number);
   }
 
   // toggle page selection given by link
@@ -121,20 +126,28 @@
       },
       success: function(data){
         logAfterAction();
-        $("#panel1 > .content > ul").html("");
-        $("#panel1 > .content > ul").append(data);
+        $("#panel1 > .content").html("");
+        $("#panel1 > .content").append(data);
         initEventOnClickOnLinkButton();
         initEventOnHoverOnInformation();
         synchroniseSelected();
         $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
-        var page_number = $("#panel1 > .content > ul > li").length;
-        var pagesTitle = $("#panel1 .header h3");
-        var sTitle = "";
+
+        var viewTitle = $("#panel1 .header h3");
+        var vTitle = "";
         if (title)
-          sTitle = title + " - " + page_number + " page(s)";
+          vTitle = title;
         else
-          sTitle = "Résultat : " + page_number + " page(s)";
-        pagesTitle.text(sTitle);
+          vTitle = "Résultat : ";
+
+        var page_number = $("#panel1 > .content > ul:first-of-type > li").length;
+        var pagesTitle = $("#panel1 > .content > h4:first-of-type");
+        var piece_number = $("#panel1 > .content > ul:last-of-type > li").length;
+        var piecesTitle = $("#panel1 > .content > h4:last-of-type");
+
+        viewTitle.text(vTitle);
+        pagesTitle.text(page_number + " page(s)");
+        piecesTitle.text(piece_number + " piece(s) en cour de traitement");
       },
       error: function(data){
         logAfterAction();
@@ -176,6 +189,7 @@
         list.children("*").remove();
         list.append(data);
         $("#panel2").hide();
+        $("#panel3").hide();
         $("#panel1").show();
 
         packs_count = $("input[name=packs_count]").val();
@@ -527,7 +541,7 @@
     $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
 
     $(".do-selectAllPages").click(function(){
-      $("#panel1 > .content > ul > li").each(function(index,li){
+      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
         if (!$(li).hasClass("selected")) {
           $(li).addClass("selected");
           addPage($(li));
@@ -535,8 +549,8 @@
       });
     });
     $(".do-unselectAllPages").click(function(){
-      $("#panel1 > .content > ul > li").removeClass("selected");
-      $("#panel1 > .content > ul > li").each(function(index,li){
+      $("#panel1 > .content > ul:first-of-type > li").removeClass("selected");
+      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
         removePage($(li));
       });
     });
@@ -558,6 +572,7 @@
 
     $(".backToPanel1").click(function(){
       $("#panel2").hide();
+      $("#panel3").hide();
       $("#panel1").show();
 
       $(".actiongroup.group1").show();
@@ -630,6 +645,7 @@
     if($('#pack').length > 0) {
       var url = '/account/documents/' + $('#pack').data('id');
       $("#panel2").hide();
+      $("#panel3").hide();
       $("#panel1").show();
       getPages(url, $('#pack').data('name'));
     }

@@ -123,6 +123,7 @@ class DocumentProcessor
           pack.set_historic
           pack.set_tags
           pack.is_update_notified = false
+          pack.is_fully_processed = true
           pack.save
           Reporting.update(pack)
 

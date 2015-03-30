@@ -34,6 +34,10 @@ public
     @pack = @user.packs.find(params[:id])
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
     @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan', 'fiduceo'], per_page: 10000)
+    unless @pack.is_fully_processed
+      @temp_pack = TempPack.find_by_name(@pack.name)
+      @temp_documents = @temp_pack.temp_documents.not_published
+    end
   end
 
   def packs
@@ -98,7 +102,13 @@ public
   end
 
   def download
-    document = Document.find params[:id]
+    begin
+      document = Document.find params[:id]
+      owner = document.pack.owner
+    rescue
+      document = TempDocument.find params[:id]
+      owner = document.temp_pack.user
+    end
     filepath = document.content.path(params[:style])
     users = []
     if @user
@@ -108,7 +118,7 @@ public
         users = [@user]
       end
     end
-    if File.exist?(filepath) && (document.pack.owner.in?(users) || current_user.try(:is_admin) || params[:token] == document.get_token)
+    if File.exist?(filepath) && (owner.in?(users) || current_user.try(:is_admin) || params[:token] == document.get_token)
       filename = File.basename(filepath)
       if File.extname(filepath) == '.png'
         mime_type = 'image/png'
