@@ -56,7 +56,7 @@ def with_error_handler(program_name, &block)
       :backtrace     => e.backtrace,
       :controller    => program_name,
       :action        => 'unknown',
-      :cgi_data      => ENV
+      :cgi_data      => ENV.to_hash
     )
     raise
   end
