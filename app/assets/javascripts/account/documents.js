@@ -46,7 +46,7 @@
       var panel = "#panel2"
     $("#panel1").hide();
     $(panel).show();
-    
+
     $(".actiongroup.group1").hide();
     $(".actiongroup.group2").show();
 
@@ -122,7 +122,7 @@
       type: "GET",
       beforeSend: function() {
         logBeforeAction("Traitement en cours");
-        $("#panel1 > .content > ul").html("");
+        $("#panel1 > .content").html("");
       },
       success: function(data){
         logAfterAction();
@@ -140,14 +140,14 @@
         else
           vTitle = "Résultat : ";
 
-        var page_number = $("#panel1 > .content > ul:first-of-type > li").length;
+        var pageCount = $("#panel1 > .content > ul:first-of-type > li").length;
         var pagesTitle = $("#panel1 > .content > h4:first-of-type");
-        var piece_number = $("#panel1 > .content > ul:last-of-type > li").length;
+        var pieceCount = $("#panel1 > .content > ul:last-of-type > li").length;
         var piecesTitle = $("#panel1 > .content > h4:last-of-type");
 
         viewTitle.text(vTitle);
-        pagesTitle.text(page_number + " page(s)");
-        piecesTitle.text(piece_number + " piece(s) en cour de traitement");
+        pagesTitle.text(pageCount + " page(s)");
+        piecesTitle.text(pieceCount + " piece(s) en cour de traitement");
       },
       error: function(data){
         logAfterAction();
@@ -171,7 +171,7 @@
       $('a.delivery').show();
     }
     $("#panel1 .header h3").text('Pages');
-    $("#panel1 > .content > ul").html("");
+    $("#panel1 > .content").html("");
 
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
 

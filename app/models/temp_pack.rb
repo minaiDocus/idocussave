@@ -34,7 +34,8 @@ class TempPack
 
     def find_or_create_by_name(name)
       if (temp_pack=find_by_name(name))
-        pack = Pack.find_by_name(name)
+        user = User.find_by_code name.split[0]
+        pack = Pack.find_or_initialize(name, user)
         pack.is_fully_processed = false
         pack.save
         temp_pack

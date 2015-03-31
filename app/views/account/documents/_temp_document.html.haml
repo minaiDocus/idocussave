@@ -1,25 +1,19 @@
-- document_class = @is_composition ? "composition" : "alone"
+- document_class =  "alone"
 
 %li{ :id => "document_#{temp_document.id}", :class => "#{document_class} pages" }
   - unless !File.exist?(temp_document.content.path(:thumb))
     - link_to_thumb = temp_document.content.url(:thumb)
   - else
     - link_to_thumb = 'application/processing.png'
-    
-  - link_to_large = temp_document.content.url(:large)
 
   - page_number = temp_document.position
   - pieces_name = temp_document.temp_pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ') rescue ""
 
   %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }
   %input{ :type => :hidden, :name => :page_number, :value => "#{page_number}" }
-  - if !@is_composition
-    = link_to "", link_to_large, :class => "zoom do-showPage", :title => "Visualiser la page"
-  - if @is_composition
-    .handle{ :title => "Déplacer" }
+  = link_to "", temp_document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
   .pagethumb
     .thumb
       != image_tag link_to_thumb
   .foot
     %span
-    

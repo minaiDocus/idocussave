@@ -67,6 +67,14 @@ class TempDocument
                                           url: "/account/documents/:id/download/:style"
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
 
+  before_content_post_process do |image|
+    if image.is_thumb_generated # halts processing
+      false
+    else
+      true
+    end
+  end
+
   after_create :generate_thumbs!
 
   scope :locked,            where: { is_locked: true }
@@ -258,6 +266,6 @@ class TempDocument
     self.content.reprocess!
     save
   end
-  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 1, :run_at => Proc.new { 5.minutes.from_now }
+  handle_asynchronously :generate_thumbs!, queue: 'temp_documents thumbs', priority: 1, :run_at => Proc.new { 5.minutes.from_now }
 
 end

@@ -164,7 +164,7 @@
                 %th Nombre de piece(s)
             %tbody.btn-group
               %br
-              - @last_tpacks.each do |temp_pack|
+              - @last_temp_packs.each do |temp_pack|
                 %tr
                   %td.date= l(temp_pack.updated_at)
                   %td= temp_pack.basename

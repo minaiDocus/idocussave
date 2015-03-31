@@ -123,7 +123,9 @@ class DocumentProcessor
           pack.set_historic
           pack.set_tags
           pack.is_update_notified = false
-          pack.is_fully_processed = true
+          unless TempPack.find_by_name(pack.name).not_processed
+            pack.is_fully_processed = true
+          end
           pack.save
           Reporting.update(pack)
 
