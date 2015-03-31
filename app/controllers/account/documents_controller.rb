@@ -34,7 +34,7 @@ public
     @pack = @user.packs.find(params[:id])
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
     @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan', 'fiduceo'], per_page: 10000)
-    unless @pack.is_fully_processed || params[:filter]
+    unless @pack.is_fully_processed || params[:filter].presence
       @temp_pack = TempPack.find_by_name(@pack.name)
       @temp_documents = @temp_pack.temp_documents.not_published
     end

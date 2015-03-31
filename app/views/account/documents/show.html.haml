@@ -1,10 +1,9 @@
 %h4.pull-left
-%ul.margin0{ style: "clear:both;", :id => "pages"}
+%ul.margin0.margin2bottom{ style: "clear:both;", :id => "pages" }
 	= render :partial => "/account/documents/document", :collection => @documents
 
--if @temp_documents
-	%br
-	%hr{ style: "clear:both;"}
+- if @temp_documents
+	%hr{ style: "clear:both;" }
 	%h4.pull-left
 	%ul.margin0{ style: "clear:both;", :id => "pieces" }
 		= render :partial => "/account/documents/temp_document", :collection => @temp_documents

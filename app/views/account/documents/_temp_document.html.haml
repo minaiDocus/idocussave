@@ -1,17 +1,15 @@
-- document_class =  "alone"
-
-%li{ :id => "document_#{temp_document.id}", :class => "#{document_class} pages" }
+%li{ :id => "document_#{temp_document.id}", :class => "alone pieces" }
   - unless !File.exist?(temp_document.content.path(:thumb))
     - link_to_thumb = temp_document.content.url(:thumb)
   - else
     - link_to_thumb = 'application/processing.png'
 
-  - page_number = temp_document.position
-  - pieces_name = temp_document.temp_pack.divisions.pieces.where(:start.lte => page_number, :end.gte => page_number).first.name.gsub('_',' ') rescue ""
+  - pieces_number = temp_document.position
+  - pieces_name = temp_document.content_file_name
 
   %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }
-  %input{ :type => :hidden, :name => :page_number, :value => "#{page_number}" }
-  = link_to "", temp_document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
+  %input{ :type => :hidden, :name => :page_number, :value => "#{pieces_number}" }
+  = link_to "", temp_document.content.url, :class => "zoom do-showPage", :title => "Visualiser la piece"
   .pagethumb
     .thumb
       != image_tag link_to_thumb

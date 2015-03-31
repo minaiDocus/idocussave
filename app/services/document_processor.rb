@@ -123,7 +123,8 @@ class DocumentProcessor
           pack.set_historic
           pack.set_tags
           pack.is_update_notified = false
-          unless TempPack.find_by_name(pack.name).not_processed
+          temp_pack.reload
+          unless temp_pack.document_bundling_count <= 0 || temp_pack.document_bundle_needed_count <= 0
             pack.is_fully_processed = true
           end
           pack.save

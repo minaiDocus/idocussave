@@ -140,14 +140,14 @@
         else
           vTitle = "Résultat : ";
 
-        var pageCount = $("#panel1 > .content > ul:first-of-type > li").length;
+        var pagesCount = $("#panel1 > .content > ul:first-of-type > li").length;
         var pagesTitle = $("#panel1 > .content > h4:first-of-type");
-        var pieceCount = $("#panel1 > .content > ul:last-of-type > li").length;
+        var piecesCount = $("#panel1 > .content > ul:last-of-type > li").length;
         var piecesTitle = $("#panel1 > .content > h4:last-of-type");
 
         viewTitle.text(vTitle);
-        pagesTitle.text(pageCount + " page(s)");
-        piecesTitle.text(pieceCount + " piece(s) en cour de traitement");
+        pagesTitle.text(pagesCount + " page(s)");
+        piecesTitle.text(piecesCount + " piece(s) en cour de traitement");
       },
       error: function(data){
         logAfterAction();
