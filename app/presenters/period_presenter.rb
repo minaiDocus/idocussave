@@ -14,7 +14,7 @@ class PeriodPresenter
 
   def can_display_options?
     @viewer.is_admin ||
-    (@viewer.is_prescriber && @viewer.customers.include?(@user)) ||
+    (@viewer.is_prescriber && @viewer.customers.include?(@owner)) ||
     (@viewer.organization.try(:is_detail_authorized) && @viewer == @owner)
   end
 
