@@ -4,11 +4,8 @@
   - else
     - link_to_thumb = 'application/processing.png'
 
-  - pieces_number = temp_document.position
-  - pieces_name = temp_document.content_file_name
-
-  %input{ :type => :hidden, :name => :name, :value => "#{pieces_name}" }
-  %input{ :type => :hidden, :name => :page_number, :value => "#{pieces_number}" }
+  %input{ :type => :hidden, :name => :name, :value => "#{temp_document.content_file_name}" }
+  %input{ :type => :hidden, :name => :page_number, :value => "#{temp_document.position}" }
   = link_to "", temp_document.content.url, :class => "zoom do-showPage", :title => "Visualiser la piece"
   .pagethumb
     .thumb
