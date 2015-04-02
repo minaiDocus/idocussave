@@ -124,7 +124,7 @@ class DocumentProcessor
           pack.set_tags
           pack.is_update_notified = false
           temp_pack.reload
-          unless temp_pack.document_bundling_count == 0 && temp_pack.document_bundle_needed_count == 0
+          if temp_pack.document_bundling_count == 0 && temp_pack.document_bundle_needed_count == 0
             pack.is_fully_processed = true
           end
           pack.save

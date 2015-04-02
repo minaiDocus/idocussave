@@ -140,10 +140,10 @@
         else
           vTitle = "Résultat : ";
 
-        var pagesCount = $("#panel1 > .content > ul:first-of-type > li").length;
-        var pagesTitle = $("#panel1 > .content > h4:first-of-type");
-        var piecesCount = $("#panel1 > .content > ul:last-of-type > li").length;
-        var piecesTitle = $("#panel1 > .content > h4:last-of-type");
+        var pagesTitle = $("#show_pages h4");
+        var pagesCount = $("#show_pages > ul > li").length;
+        var piecesTitle = $("#show_pieces h4");
+        var piecesCount = $("#show_pieces >ul > li").length;
 
         viewTitle.text(vTitle);
         pagesTitle.text(pagesCount + " page(s)");
