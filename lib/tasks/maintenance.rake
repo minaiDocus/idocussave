@@ -49,6 +49,13 @@ namespace :maintenance do
       puts "Task beginning at #{Time.now}"
       time = Time.now - 1.month
       time = Time.local(time.year, time.month)
+      puts 'Updating all periods'
+      Period.where(:start_at.lte => time, :end_at.gte => time).each do |period|
+        UpdatePeriodDataService.new(period).execute
+        UpdatePeriodPriceService.new(period).execute
+        print '.'
+      end
+      puts ''
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
         periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time)
