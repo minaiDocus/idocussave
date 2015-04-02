@@ -2,7 +2,7 @@
 class FiduceoDocumentFetcher
   class << self
     def initiate_transactions(retrievers=nil)
-      _retrievers = Array(retrievers).presence || FiduceoRetriever.active.auto.daily.where(:state.in => %w(scheduled error))
+      _retrievers = Array(retrievers).presence || FiduceoRetriever.active.auto.every_day.where(:state.in => %w(scheduled error))
       _retrievers.each do |retriever|
         if (retriever.ready? || retriever.scheduled? || retriever.error?) && retriever.is_active && retriever.transactions.not_processed.count == 0
           retriever.schedule if retriever.error?
