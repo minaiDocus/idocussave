@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class IbizaMailer < ActionMailer::Base
-  default from: 'notification@idocus.com'
+  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
 
   def notify_delivery(delivery, addresses, ibiza, object)
     @delivery = delivery

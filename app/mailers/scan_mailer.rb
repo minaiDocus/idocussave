@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class ScanMailer < ActionMailer::Base
-  default from: 'notification@idocus.com'
+  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
 
   def notify_not_delivered(emails, pack_names)
     @pack_names = pack_names

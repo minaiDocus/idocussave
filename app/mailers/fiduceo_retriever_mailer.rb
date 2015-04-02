@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoRetrieverMailer < ActionMailer::Base
-  default from: 'notification@idocus.com'
+  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
 
   def notify_password_renewal(user)
     @user = user

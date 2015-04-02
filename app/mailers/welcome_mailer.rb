@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class WelcomeMailer < ActionMailer::Base
-  default from: 'notification@idocus.com'
+  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
 
   def welcome_customer(user)
     @user = user
