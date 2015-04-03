@@ -35,56 +35,47 @@ class PeriodsToXlsService
     ]
     sheet1.row(0).concat headers
 
-    nb = 1
-
     documents = PeriodDocument.where(:period_id.in => @periods.map(&:id)).asc([:created_at, :name]).entries
-    documents = documents.sort do |a, b|
-      _a = []
-      _a << a.period.user.try(:organization).try(:name) if @with_organization_info
-      _a += [
-        a.period.start_at.strftime('%Y%m'),
-        a.period.user.code,
-        a.name
-      ]
-      _a = _a.join('_')
 
-      _b = []
-      _b << b.period.user.try(:organization).try(:name) if @with_organization_info
-      _b += [
-        b.period.start_at.strftime('%Y%m'),
-        b.period.user.code,
-        b.name
-      ]
-      _b = _b.join('_')
-
-      _a <=> _b
-    end
+    list = []
 
     documents.each do |document|
-      data = []
-      data << document.period.user.try(:organization).try(:name) if @with_organization_info
-      data += [
-        document.period.start_at.month,
-        document.period.start_at.year,
-        document.period.user.code,
-        document.period.user.company,
-        document.name,
-        document.pieces,
-        document.scanned_pieces,
-        document.uploaded_pieces,
-        document.dematbox_scanned_pieces,
-        document.fiduceo_pieces,
-        document.scanned_sheets,
-        document.pages,
-        document.scanned_pages,
-        document.uploaded_pages,
-        document.dematbox_scanned_pages,
-        document.fiduceo_pages,
-        document.paperclips,
-        document.oversized
-      ]
-      sheet1.row(nb).replace(data)
-      nb += 1
+      data_service = PeriodBillingService.new(document.period)
+      document.period.duration.times do |index|
+        month = document.period.start_at.month + index
+        data = []
+        data << document.period.user.try(:organization).try(:name) if @with_organization_info
+        data += [
+          month,
+          document.period.start_at.year,
+          document.period.user.code,
+          document.period.user.company,
+          document.name,
+          data_service.data(:pieces, month),
+          data_service.data(:scanned_pieces, month),
+          data_service.data(:uploaded_pieces, month),
+          data_service.data(:dematbox_scanned_pieces, month),
+          data_service.data(:fiduceo_pieces, month),
+          data_service.data(:scanned_sheets, month),
+          data_service.data(:pages, month),
+          data_service.data(:scanned_pages, month),
+          data_service.data(:uploaded_pages, month),
+          data_service.data(:dematbox_scanned_pages, month),
+          data_service.data(:fiduceo_pages, month),
+          data_service.data(:paperclips, month),
+          data_service.data(:oversized, month)
+        ]
+        list << data
+      end
+    end
+
+    range = @with_organization_info ? 0..5 : 0..4
+    list = list.sort do |a, b|
+      a[range].join('_') <=> b[range].join('_')
+    end
+
+    list.each_with_index do |data, index|
+      sheet1.row(index+1).replace(data)
     end
 
     # Invoice
@@ -103,65 +94,66 @@ class PeriodsToXlsService
     ]
     sheet2.row(0).concat headers
 
-    nb = 1
+    list = []
 
-    periods = @periods.sort do |a, b|
-      _a = []
-      _a << (a.user.try(:organization).try(:name) || a.organization.try(:name)) if @with_organization_info
-      _a += [a.start_at.strftime('%Y%m'), a.user.try(:code)]
-      _a = _a.join('_')
-
-      _b = []
-      _b << (b.user.try(:organization).try(:name) || b.organization.try(:name)) if @with_organization_info
-      _b += [b.start_at.strftime('%Y%m'), b.user.try(:code)]
-      _b = _b.join('_')
-
-      _a <=> _b
+    @periods.each do |period|
+      billing = PeriodBillingService.new(period)
+      period.duration.times do |index|
+        month = period.start_at.month + index
+        excesses_amount_in_cents_wo_vat = billing.data(:excesses_amount_in_cents_wo_vat, month)
+        products_amount_in_cents_wo_vat = billing.amount_in_cents_wo_vat(month) - excesses_amount_in_cents_wo_vat
+        period.product_option_orders.each do |option|
+          data = []
+          if @with_organization_info
+            if period.user
+              data << period.user.try(:organization).try(:name)
+            else
+              data << period.organization.try(:name)
+            end
+          end
+          price = (option.price_in_cents_wo_vat * products_amount_in_cents_wo_vat)
+          price /= period.products_price_in_cents_wo_vat
+          data += [
+            month,
+            period.start_at.year,
+            period.user.try(:code),
+            period.user.try(:name),
+            option.group_title,
+            option.title,
+            format_price(price)
+          ]
+          list << data
+        end
+        if period.user && excesses_amount_in_cents_wo_vat > 0
+          data = []
+          if @with_organization_info
+            if period.user
+              data << period.user.try(:organization).try(:name)
+            else
+              data << period.organization.try(:name)
+            end
+          end
+          data += [
+            month,
+            period.start_at.year,
+            period.user.code,
+            period.user.name,
+            'Dépassement',
+            '',
+            format_price(excesses_amount_in_cents_wo_vat)
+          ]
+          list << data
+        end
+      end
     end
 
-    periods.each do |period|
-      period.product_option_orders.each do |option|
-        data = []
-        if @with_organization_info
-          if period.user
-            data << period.user.try(:organization).try(:name)
-          else
-            data << period.organization.try(:name)
-          end
-        end
-        data += [
-          period.start_at.month,
-          period.start_at.year,
-          period.user.try(:code),
-          period.user.try(:name),
-          option.group_title,
-          option.title,
-          format_price(option.price_in_cents_wo_vat)
-        ]
-        sheet2.row(nb).replace(data)
-        nb += 1
-      end
-      if period.user
-        data = []
-        if @with_organization_info
-          if period.user
-            data << period.user.try(:organization).try(:name)
-          else
-            data << period.organization.try(:name)
-          end
-        end
-        data += [
-          period.start_at.month,
-          period.start_at.year,
-          period.user.code,
-          period.user.name,
-          'Dépassement',
-          '',
-          format_price(period.excesses_price_in_cents_wo_vat)
-        ]
-        sheet2.row(nb).replace(data)
-        nb += 1
-      end
+    range = @with_organization_info ? 0..3 : 0..2
+    list = list.sort do |a, b|
+      a[range].join('_') <=> b[range].join('_')
+    end
+
+    list.each_with_index do |data, index|
+      sheet2.row(index+1).replace(data)
     end
 
     io = StringIO.new('')
