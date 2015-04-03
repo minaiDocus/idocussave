@@ -10,6 +10,12 @@ update_form = ->
   $('#fiduceo_retriever_param1').val('')
   $('#fiduceo_retriever_param2').val('')
   $('#fiduceo_retriever_param3').val('')
+  $("label[for='fiduceo_retriever_sparam1']").html('')
+  $('#fiduceo_retriever_sparam1').html('')
+  $("label[for='fiduceo_retriever_sparam2']").html('')
+  $('#fiduceo_retriever_sparam2').html('')
+  $("label[for='fiduceo_retriever_sparam3']").html('')
+  $('#fiduceo_retriever_sparam3').html('')
   if window.fiduceo_retriever_id != ""
     if $('#fiduceo_retriever_type').val() == 'provider'
       retriever = window.providers.filter(same_id)[0]
@@ -35,6 +41,7 @@ update_form = ->
         $("label[for='fiduceo_retriever_sparam1']").html(label)
         $('#fiduceo_retriever_sparam1').html(content)
         $('.sparam1').show()
+        $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
       else
         $("label[for='fiduceo_retriever_param1']").html(label)
         $('.param1').show()
@@ -50,6 +57,7 @@ update_form = ->
         $("label[for='fiduceo_retriever_sparam2']").html(label)
         $('#fiduceo_retriever_sparam2').html(content)
         $('.sparam2').show()
+        $('#fiduceo_retriever_param2').val($('#fiduceo_retriever_sparam2').val())
       else
         $("label[for='fiduceo_retriever_param2']").html(label)
         $('.param2').show()
@@ -65,6 +73,7 @@ update_form = ->
         $("label[for='fiduceo_retriever_sparam3']").html(label)
         $('#fiduceo_retriever_sparam3').html(content)
         $('.sparam3').show()
+        $('#fiduceo_retriever_param3').val($('#fiduceo_retriever_sparam3').val())
       else
         $("label[for='fiduceo_retriever_param3']").html(label)
         $('.param3').show()
