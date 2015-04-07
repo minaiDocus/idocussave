@@ -47,6 +47,7 @@ class Pack
     indexes :id, as: 'stringified_id'
     indexes :owner_id
     indexes :created_at, type: 'date'
+    indexes :updated_at, type: 'date'
     indexes :name
     indexes :tags
     indexes :content_text, as: 'content_text'
@@ -58,7 +59,7 @@ class Pack
       filter :terms, id:       params[:ids]       if params[:ids].present?
       filter :term,  owner_id: params[:owner_id]  if params[:owner_id].present?
       filter :terms, owner_id: params[:owner_ids] if params[:owner_ids].present?
-      sort { by :created_at, 'desc' }
+      sort { by :updated_at, 'desc' }
       query { string(query) } if query.present?
     end
   end
