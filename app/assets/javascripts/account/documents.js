@@ -152,7 +152,7 @@
 
         viewTitle.text(vTitle);
         pagesTitle.text(pagesCount + " page(s)");
-        piecesTitle.text(piecesCount + " piece(s) en cour de traitement");
+        piecesTitle.text(piecesCount + " piece(s) en cours de traitement");
       },
       error: function(data){
         logAfterAction();
