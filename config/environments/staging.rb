@@ -24,7 +24,6 @@ Idocus::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
-  # Use a different cache store in production
   config.cache_store = :dalli_store, { namespace: "iDocus_staging" }
 
   # Disable Rails's static asset server
@@ -60,6 +59,7 @@ Idocus::Application.configure do
   config.assets.compress = true
 
   # Don't fallback to assets pipeline
+  # config.assets.compile = false
   config.assets.compile = true
 
   # Generate digests for assets URLs
