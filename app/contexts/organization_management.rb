@@ -18,6 +18,10 @@ class OrganizationManagement
                   })
     end
 
+    def temp_packs
+      TempPack.where(:user_id.in => customer_ids)
+    end
+
     def rights
       @rights ||= find_or_create_organization_rights
     end

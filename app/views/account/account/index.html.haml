@@ -161,14 +161,14 @@
               %tr
                 %th Date
                 %th Lot
-                %th Nombre de piece
+                %th Nombre de page
             %tbody.btn-group
               %br
               - @last_temp_packs.each do |temp_pack|
                 %tr
                   %td.date= l(temp_pack.updated_at)
                   %td= temp_pack.basename
-                  %td= temp_pack.temp_documents.not_published.count
+                  %td= temp_pack.temp_documents.not_published.sum(:pages_number).to_i
           .pull-right
             = link_to 'Tous les documents', account_documents_path
 
