@@ -60,22 +60,16 @@ class TempDocument
   belongs_to :fiduceo_retriever
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
-  has_mongoid_attached_file :content,     styles: {
-                                            thumb: ["46x67>", :png],
-                                          },
+  has_mongoid_attached_file :content,     styles: { thumb: ["46x67>", :png] },
                                           path: ":rails_root/files/:rails_env/:class/:id/:filename",
                                           url: "/account/documents/:id/download/:style"
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
 
   before_content_post_process do |image|
-    if image.is_thumb_generated # halts processing
-      false
-    else
-      true
-    end
+    image.is_thumb_generated # halts processing
   end
 
-  after_create :generate_thumbs!
+  after_create :generate_thumbs
 
   scope :locked,            where: { is_locked: true }
   scope :not_locked,        where: { is_locked: false }
@@ -261,11 +255,10 @@ class TempDocument
     save
   end
 
-  def generate_thumbs!
-    self.is_thumb_generated = false # set to false before reprocess to pass `before_content_post_process`
+  def generate_thumbs
+    self.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
     self.content.reprocess!
     save
   end
-  handle_asynchronously :generate_thumbs!, queue: 'temp_documents thumbs', priority: 1, :run_at => Proc.new { 5.minutes.from_now }
-
+  handle_asynchronously :generate_thumbs, queue: 'temp_documents thumbs', priority: 1, run_at: Proc.new { 5.minutes.from_now }
 end
