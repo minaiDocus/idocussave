@@ -31,6 +31,7 @@
     var url = "/account/documents/"+document_id+filter;
 
     $("#panel2").hide();
+    $("#panel3").hide();
     $("#panel1").show();
     getPages(url,link.text());
   }
@@ -39,8 +40,12 @@
   function showPage(link) {
     var url = link.attr("href");
 
+    if (link.parents("ul").attr("id") == "pieces")
+      var panel = "#panel3"
+    else
+      var panel = "#panel2"
     $("#panel1").hide();
-    $("#panel2").show();
+    $(panel).show();
 
     $(".actiongroup.group1").hide();
     $(".actiongroup.group2").show();
@@ -52,14 +57,19 @@
     var id = li.attr("id").split("_")[1];
     var tags = li.children("input[name=tags]").val();
     var name = li.children("input[name=name]").val();
-    var page_number = li.children("input[name=page_number]").val();
+    if (panel == "#panel2")
+      var page_number = li.children("input[name=page_number]").val();
+    else {
+      var page_number = $("#show_pages >ul > li").length;
+      page_number += (li.prevAll().length + 1);
+    }
 
     $(".showPage").attr("id",id);
     $(".showPage").attr("src",url);
     $("#pageInformation").attr("data-content",tags);
 
-    $("#panel2 .header h3").text(name);
-    $("#panel2 .header .actiongroup .page_number").text(page_number);
+    $(panel + " .header h3").text(name);
+    $(panel + " .header .actiongroup .page_number").text(page_number);
   }
 
   // toggle page selection given by link
@@ -117,24 +127,32 @@
       type: "GET",
       beforeSend: function() {
         logBeforeAction("Traitement en cours");
-        $("#panel1 > .content > ul").html("");
+        $("#panel1 > .content").html("");
       },
       success: function(data){
         logAfterAction();
-        $("#panel1 > .content > ul").html("");
-        $("#panel1 > .content > ul").append(data);
+        $("#panel1 > .content").html("");
+        $("#panel1 > .content").append(data);
         initEventOnClickOnLinkButton();
         initEventOnHoverOnInformation();
         synchroniseSelected();
         $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
-        var page_number = $("#panel1 > .content > ul > li").length;
-        var pagesTitle = $("#panel1 .header h3");
-        var sTitle = "";
+
+        var viewTitle = $("#panel1 .header h3");
+        var vTitle = "";
         if (title)
-          sTitle = title + " - " + page_number + " page(s)";
+          vTitle = title;
         else
-          sTitle = "Résultat : " + page_number + " page(s)";
-        pagesTitle.text(sTitle);
+          vTitle = "Résultat : ";
+
+        var pagesTitle = $("#show_pages h4");
+        var pagesCount = $("#show_pages > ul > li").length;
+        var piecesTitle = $("#show_pieces h4");
+        var piecesCount = $("#show_pieces >ul > li").length;
+
+        viewTitle.text(vTitle);
+        pagesTitle.text(pagesCount + " page(s)");
+        piecesTitle.text(piecesCount + " piece(s) en cours de traitement");
       },
       error: function(data){
         logAfterAction();
@@ -158,7 +176,7 @@
       $('a.delivery').show();
     }
     $("#panel1 .header h3").text('Pages');
-    $("#panel1 > .content > ul").html("");
+    $("#panel1 > .content").html("");
 
     var Url = "/account/documents/packs?page="+page+";view="+view+";per_page="+per_page+filter;
 
@@ -176,6 +194,7 @@
         list.children("*").remove();
         list.append(data);
         $("#panel2").hide();
+        $("#panel3").hide();
         $("#panel1").show();
 
         packs_count = $("input[name=packs_count]").val();
@@ -527,7 +546,7 @@
     $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
 
     $(".do-selectAllPages").click(function(){
-      $("#panel1 > .content > ul > li").each(function(index,li){
+      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
         if (!$(li).hasClass("selected")) {
           $(li).addClass("selected");
           addPage($(li));
@@ -535,8 +554,8 @@
       });
     });
     $(".do-unselectAllPages").click(function(){
-      $("#panel1 > .content > ul > li").removeClass("selected");
-      $("#panel1 > .content > ul > li").each(function(index,li){
+      $("#panel1 > .content > ul:first-of-type > li").removeClass("selected");
+      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
         removePage($(li));
       });
     });
@@ -558,6 +577,7 @@
 
     $(".backToPanel1").click(function(){
       $("#panel2").hide();
+      $("#panel3").hide();
       $("#panel1").show();
 
       $(".actiongroup.group1").show();
@@ -630,6 +650,7 @@
     if($('#pack').length > 0) {
       var url = '/account/documents/' + $('#pack').data('id');
       $("#panel2").hide();
+      $("#panel3").hide();
       $("#panel1").show();
       getPages(url, $('#pack').data('name'));
     }

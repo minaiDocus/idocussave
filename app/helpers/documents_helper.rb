@@ -124,7 +124,10 @@ module DocumentsHelper
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de mise en ligne"), width: content_width) + content_tag(:td, "#{l(pack.created_at)}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Date de modification"),  width: content_width) + content_tag(:td, "#{l(pack.updated_at)}")
         concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages"),       width: content_width) + content_tag(:td, "#{pack.pages_count}")
-        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "),                width: content_width) + content_tag(:td, "#{pack.tags.join(' ')}", class: 'tags')
+        unless pack.is_fully_processed
+          concat content_tag :tr, content_tag(:td, content_tag(:b, "Nombre de pages en cours de traitement"), width: content_width) + content_tag(:td, "#{TempPack.find_by_name(pack.name).temp_documents.not_published.sum(:pages_number).to_i}")
+        end
+        concat content_tag :tr, content_tag(:td, content_tag(:b, "Tags: "), width: content_width) + content_tag(:td, "#{pack.tags.join(' ')}", class: 'tags')
       end
     end
   end

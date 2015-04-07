@@ -31,6 +31,7 @@ class Pack
   field :pages_count,          type: Integer, default: 0
   field :scanned_pages_count,  type: Integer, default: 0
   field :is_update_notified,   type: Boolean, default: false
+  field :is_fully_processed,   type: Boolean, default: true
 
   index :pages_count
   index :scanned_pages_count
