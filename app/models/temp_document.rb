@@ -69,7 +69,7 @@ class TempDocument
     image.is_thumb_generated # halts processing
   end
 
-  after_create :generate_thumbs
+  after_create :generate_thumbs, unless: Proc.new { Rails.env.test? }
 
   scope :locked,            where: { is_locked: true }
   scope :not_locked,        where: { is_locked: false }
