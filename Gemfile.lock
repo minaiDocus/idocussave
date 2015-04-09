@@ -210,9 +210,6 @@ GEM
       multi_json (~> 1.0)
     guard-rspec (1.2.0)
       guard (>= 1.1)
-    guard-spork (1.1.0)
-      guard (>= 1.1)
-      spork (>= 0.8.4)
     gyoku (1.0.0)
       builder (>= 2.1.2)
     haml (3.1.6)
@@ -426,9 +423,11 @@ GEM
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     slop (3.4.5)
-    spork (1.0.0rc4)
     spreadsheet (0.7.2)
       ruby-ole (>= 1.0)
+    spring (1.3.4)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -522,7 +521,6 @@ DEPENDENCIES
   google_drive
   guard-livereload
   guard-rspec
-  guard-spork
   haml-rails
   hpricot
   jquery-rails
@@ -553,7 +551,8 @@ DEPENDENCIES
   savon
   simple_form (= 2.1.2)
   simplecov
-  spork (= 1.0.0rc4)
+  spring
+  spring-commands-rspec
   state_machine
   strong_parameters
   therubyracer

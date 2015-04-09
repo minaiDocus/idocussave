@@ -73,14 +73,14 @@ group :development, :test do
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'guard-livereload'
+  gem 'spring'
+  gem 'spring-commands-rspec'
 end
 
 group :test do
   gem 'factory_girl_rails'
   gem 'simplecov', :require => false
   gem 'capybara'
-  gem 'spork', '1.0.0rc4'
-  gem 'guard-spork'
   gem 'guard-rspec'
   gem 'database_cleaner'
   gem 'timecop'
