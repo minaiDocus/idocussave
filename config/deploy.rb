@@ -1,6 +1,9 @@
 # notify deploy to airbrake
 require 'airbrake/capistrano'
 
+# automatically run bundle install
+require 'bundler/capistrano'
+
 default_run_options[:pty] = true
 #ssh_options[:forward_agent] = true
 
