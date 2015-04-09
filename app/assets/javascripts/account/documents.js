@@ -59,10 +59,8 @@
     var name = li.children("input[name=name]").val();
     if (panel == "#panel2")
       var page_number = li.children("input[name=page_number]").val();
-    else {
-      var page_number = $("#show_pages >ul > li").length;
-      page_number += (li.prevAll().length + 1);
-    }
+    else
+      var page_number = (li.prevAll().length + 1);
 
     $(".showPage").attr("id",id);
     $(".showPage").attr("src",url);
