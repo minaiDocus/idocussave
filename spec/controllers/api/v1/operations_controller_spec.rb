@@ -69,6 +69,7 @@ describe Api::V1::OperationsController do
 
     it 'should be unsuccessful' do
       allow(Operation).to receive(:where) { raise 'foo' }
+      allow(Airbrake).to receive(:notify) { true }
       get :index, format: 'json', access_token: @user.authentication_token, not_accessed: 'true'
       expect(response).not_to be_successful
       expect(response.code).to eq('500')
