@@ -12,14 +12,14 @@ describe ProductGroup do
   describe ".by_position" do
     subject(:product_groups) { ProductGroup.by_position }
 
-    it { subject[0].should eq(@product_group3) }
-    it { subject[1].should eq(@product_group2) }
-    it { subject[2].should eq(@product_group1) }
+    it { expect(subject[0]).to eq(@product_group3) }
+    it { expect(subject[1]).to eq(@product_group2) }
+    it { expect(subject[2]).to eq(@product_group1) }
   end
 
   describe ".find_by_slug" do
     subject(:product_group) { ProductGroup.find_by_slug('groupe2') }
 
-    it { subject.should eq(@product_group2) }
+    it { expect(subject).to eq(@product_group2) }
   end
 end

@@ -31,33 +31,33 @@ describe Product do
 
   context "Groups" do
     it "count should equal 2" do
-      @product.product_groups.count.should eq(2)
+      expect(@product.product_groups.count).to eq(2)
     end
 
     describe "first group options" do
       subject(:options_title) { @group1.product_options.distinct(:title) }
 
-      it { subject.should include(@option1.title) }
-      it { subject.should include(@option2.title) }
+      it { expect(subject).to include(@option1.title) }
+      it { expect(subject).to include(@option2.title) }
     end
 
     describe "last group options" do
       subject(:options_title) { @group2.product_options.distinct(:title) }
 
-      it { subject.should include(@option3.title) }
-      it { subject.should include(@option4.title) }
+      it { expect(subject).to include(@option3.title) }
+      it { expect(subject).to include(@option4.title) }
     end
 
     context "Options" do
       it "count should equal 4" do
         total = 0
         @product.product_groups.each { |g| total += g.product_options.count }
-        total.should eq(4)
+        expect(total).to eq(4)
       end
     end
   end
 
   it "title should equal 'Game console'" do
-    @option1.product_group.products.first.title.should eq(@product.title)
+    expect(@option1.product_group.products.first.title).to eq(@product.title)
   end
 end

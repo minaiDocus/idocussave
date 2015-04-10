@@ -5,11 +5,11 @@ describe 'Account Profile' do
 
   it 'should visit successfully' do
     visit '/account/profile'
-    current_path.should eq(account_profile_path)
+    expect(current_path).to eq(account_profile_path)
   end
 
   it 'should have content \'Changer mon mot de passe\'' do
     visit '/account/profile'
-    page.should have_content('Changer mon mot de passe')
+    expect(page).to have_content('Changer mon mot de passe')
   end
 end

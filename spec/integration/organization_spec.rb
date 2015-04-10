@@ -25,35 +25,35 @@ describe 'Organization Management' do
 
     describe 'As an organization' do
       it 'should have collaborator' do
-        @organization.collaborators.should include(@collaborator)
-        @organization.collaborators.count.should eq(1)
-        @organization.customers.should include(@customer)
-        @organization.customers.count.should eq(1)
+        expect(@organization.collaborators).to include(@collaborator)
+        expect(@organization.collaborators.count).to eq(1)
+        expect(@organization.customers).to include(@customer)
+        expect(@organization.customers.count).to eq(1)
       end
     end
 
     describe 'As a group' do
       it 'should have collaborator' do
-        @group.collaborators.should include(@collaborator)
-        @group.collaborators.count.should eq(1)
-        @group.customers.should include(@customer)
-        @group.customers.count.should eq(1)
+        expect(@group.collaborators).to include(@collaborator)
+        expect(@group.collaborators.count).to eq(1)
+        expect(@group.customers).to include(@customer)
+        expect(@group.customers.count).to eq(1)
       end
     end
 
     describe 'As a collaborator' do
       it 'should be part of an organization and a group' do
-        @collaborator.organization.should eq(@organization)
-        @collaborator.groups.should include(@group)
-        @collaborator.groups.count.should eq(1)
+        expect(@collaborator.organization).to eq(@organization)
+        expect(@collaborator.groups).to include(@group)
+        expect(@collaborator.groups.count).to eq(1)
       end
     end
 
     describe 'As a customer' do
       it 'should be part of an organization and a group' do
-        @customer.organization.should eq(@organization)
-        @customer.groups.should include(@group)
-        @customer.groups.count.should eq(1)
+        expect(@customer.organization).to eq(@organization)
+        expect(@customer.groups).to include(@group)
+        expect(@customer.groups.count).to eq(1)
       end
     end
   end

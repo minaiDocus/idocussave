@@ -13,36 +13,36 @@ describe Admin::ProductGroupsController do
 
   it "GET 'new'" do
     get 'new'
-    response.should be_success
+    expect(response).to be_success
   end
 
   describe "POST 'create'" do
     it "should success" do
       post :create, product_group: FactoryGirl.attributes_for(:product_group)
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should fail" do
       post :create, product_group: FactoryGirl.attributes_for(:product_group)
-      response.should render_template("admin/product_groups")
+      expect(response).to render_template("admin/product_groups")
     end
   end
 
   it "PUT a group" do
     put :update, id: @product_group, product_group: FactoryGirl.attributes_for(:product_group, name: 'premium')
     @product_group.reload
-    @product_group.name.should eq ('premium')
+    expect(@product_group.name).to eq ('premium')
   end
 
   it "does not change @group's attributes" do
     put :update, id: @product_group, product_group: FactoryGirl.attributes_for(:product_group, name: nil)
     @product_group.reload
-    @product_group.name.should eq('game')
+    expect(@product_group.name).to eq('game')
   end
 
   it "DELETE a group" do
     delete :destroy, id: @product_group
     group = ProductGroup.where(name: 'game').first
-    group.should_not be_present
+    expect(group).not_to be_present
   end
 end

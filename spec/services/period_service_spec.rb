@@ -11,15 +11,14 @@ describe PeriodService do
       @user = FactoryGirl.create(:user, code: 'TS0001')
       @subscription = Subscription.create(user_id: @user.id, period_duration: 3)
       UpdatePeriodService.new(@subscription.current_period).execute
+      @period_service = PeriodService.new user: @user, current_time: @time
     end
 
-    subject { PeriodService.new user: @user, current_time: @time }
-
-    its(:period_duration)              { should eq(3) }
-    its(:authd_prev_period)            { should eq(1) }
-    its(:auth_prev_period_until_day)   { should eq(11.days) }
-    its(:auth_prev_period_until_month) { should eq(0.month) }
-    its(:current_time)                 { should eq(@time) }
+    it { expect(@period_service.period_duration).to              eq 3 }
+    it { expect(@period_service.authd_prev_period).to            eq 1 }
+    it { expect(@period_service.auth_prev_period_until_day).to   eq 11.days }
+    it { expect(@period_service.auth_prev_period_until_month).to eq 0.month }
+    it { expect(@period_service.current_time).to                 eq @time }
   end
 
   describe '#start_at' do
@@ -129,42 +128,42 @@ describe PeriodService do
         periods = PeriodService.new period_duration: 1,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2014,1,1))).to be_true
+        expect(periods.include?(Time.local(2014,1,1))).to be true
       end
 
       it 'returns false' do
         periods = PeriodService.new period_duration: 1,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2013,11,1))).to be_false
+        expect(periods.include?(Time.local(2013,11,1))).to be false
       end
 
       it 'returns true' do
         periods = PeriodService.new period_duration: 3,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2013,10,1))).to be_true
+        expect(periods.include?(Time.local(2013,10,1))).to be true
       end
 
       it 'returns false' do
         periods = PeriodService.new period_duration: 3,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2013,9,1))).to be_false
+        expect(periods.include?(Time.local(2013,9,1))).to be false
       end
 
       it 'returns true' do
         periods = PeriodService.new period_duration: 12,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2013,1,1))).to be_true
+        expect(periods.include?(Time.local(2013,1,1))).to be true
       end
 
       it 'returns false' do
         periods = PeriodService.new period_duration: 12,
                                     authd_prev_period: 1,
                                     current_time: @time
-        expect(periods.include?(Time.local(2012,12,31))).to be_false
+        expect(periods.include?(Time.local(2012,12,31))).to be false
       end
     end
 
@@ -172,23 +171,23 @@ describe PeriodService do
       context 'for monthly' do
         subject(:period) { PeriodService.new period_duration: 1, authd_prev_period: 1, current_time: @time }
 
-        it { should_not include '201402' }
-        it { should include '201401' }
-        it { should include '201312' }
-        it { should_not include '201311' }
+        it { is_expected.not_to include '201402' }
+        it { is_expected.to include '201401' }
+        it { is_expected.to include '201312' }
+        it { is_expected.not_to include '201311' }
       end
 
       context 'for yearly' do
         subject(:period) { PeriodService.new period_duration: 12, authd_prev_period: 1, current_time: @time }
 
-        it { should_not include '201401' }
-        it { should_not include '2014T1' }
-        it { should_not include '2012' }
-        it { should include '2013' }
-        it { should include '2014' }
-        it { should_not include '2015' }
-        it { should_not include '201501' }
-        it { should_not include '2015T1' }
+        it { is_expected.not_to include '201401' }
+        it { is_expected.not_to include '2014T1' }
+        it { is_expected.not_to include '2012' }
+        it { is_expected.to include '2013' }
+        it { is_expected.to include '2014' }
+        it { is_expected.not_to include '2015' }
+        it { is_expected.not_to include '201501' }
+        it { is_expected.not_to include '2015T1' }
       end
     end
   end

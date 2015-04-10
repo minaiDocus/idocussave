@@ -36,19 +36,19 @@ describe PreAssignmentService do
     it 'return 2 entries' do
       pre_assignments = PreAssignmentService.pending
 
-      pre_assignments.size.should eq(2)
+      expect(pre_assignments.size).to eq(2)
 
       pre_assignment = pre_assignments.first
-      pre_assignment.date.should eq(@piece1.created_at)
-      pre_assignment.pack_name.should eq('TS%0001 AC 201401')
-      pre_assignment.piece_counts.should eq(2)
-      pre_assignment.comment.should be_nil
+      expect(pre_assignment.date).to eq(@piece1.created_at)
+      expect(pre_assignment.pack_name).to eq('TS%0001 AC 201401')
+      expect(pre_assignment.piece_counts).to eq(2)
+      expect(pre_assignment.comment).to be_nil
 
       pre_assignment = pre_assignments.last
-      pre_assignment.date.should eq(@piece3.created_at)
-      pre_assignment.pack_name.should eq('TS%0001 AC 201402')
-      pre_assignment.piece_counts.should eq(1)
-      pre_assignment.comment.should be_nil
+      expect(pre_assignment.date).to eq(@piece3.created_at)
+      expect(pre_assignment.pack_name).to eq('TS%0001 AC 201402')
+      expect(pre_assignment.piece_counts).to eq(1)
+      expect(pre_assignment.comment).to be_nil
     end
   end
 end

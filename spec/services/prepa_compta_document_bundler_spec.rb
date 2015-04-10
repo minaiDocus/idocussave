@@ -12,30 +12,30 @@ describe PrepaCompta::DocumentBundler do
 
   describe '.current_folder_name' do
     it 'return 2013-01-01' do
-      Dir.stub('glob') { [] }
+      allow(Dir).to receive('glob') { [] }
       expect(PrepaCompta::DocumentBundler.current_folder_name).to eq('2013-01-01')
     end
 
     it 'return 2013-01-01_2' do
-      Dir.stub('glob') { ['2013-01-01'] }
+      allow(Dir).to receive('glob') { ['2013-01-01'] }
       expect(PrepaCompta::DocumentBundler.current_folder_name).to eq('2013-01-01_2')
     end
 
     it 'return 2013-01-01_3' do
-      Dir.stub('glob') { ['2013-01-01', '2013-01-01_2'] }
+      allow(Dir).to receive('glob') { ['2013-01-01', '2013-01-01_2'] }
       expect(PrepaCompta::DocumentBundler.current_folder_name).to eq('2013-01-01_3')
     end
 
     context 'with unordered list' do
       it 'return 2013-01-01_3' do
-        Dir.stub('glob') { ['2013-01-01_2', '2013-01-01'] }
+        allow(Dir).to receive('glob') { ['2013-01-01_2', '2013-01-01'] }
         expect(PrepaCompta::DocumentBundler.current_folder_name).to eq('2013-01-01_3')
       end
     end
 
     context 'with only last folder' do
       it 'return 2013-01-01_3' do
-        Dir.stub('glob') { ['2013-01-01_2'] }
+        allow(Dir).to receive('glob') { ['2013-01-01_2'] }
         expect(PrepaCompta::DocumentBundler.current_folder_name).to eq('2013-01-01_3')
       end
     end
@@ -76,22 +76,22 @@ describe PrepaCompta::DocumentBundler do
     end
 
     it 'should create files/test/prepacompta/2013-01-01/regroupments folder' do
-      expect(File.exist?(File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01', 'regroupments'))).to be_true
+      expect(File.exist?(File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01', 'regroupments'))).to be true
     end
 
     it 'should create file info.csv in files/test/prepacompta/2013-01-01/regroupments' do
       path = File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01', 'regroupments', 'info.csv')
-      expect(File.exist?(path)).to be_true
+      expect(File.exist?(path)).to be true
     end
 
     it 'should create file TS0001_TS_201301_001.pdf in files/test/prepacompta/2013-01-01/regroupments/scan' do
       path = File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01', 'regroupments', 'scan', 'TS0001_TS_201301_001.pdf')
-      expect(File.exist?(path)).to be_true
+      expect(File.exist?(path)).to be true
     end
 
     it 'should create file TS0001_TS_201301_002.pdf in files/test/prepacompta/2013-01-01/regroupments/scan' do
       path = File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01', 'regroupments', 'scan', 'TS0001_TS_201301_002.pdf')
-      expect(File.exist?(path)).to be_true
+      expect(File.exist?(path)).to be true
     end
   end
 end

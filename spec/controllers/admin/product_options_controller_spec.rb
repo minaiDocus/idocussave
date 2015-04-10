@@ -11,43 +11,43 @@ describe Admin::ProductOptionsController do
 
   it "GET 'new'" do
     get 'new'
-    response.should be_success
+    expect(response).to be_success
   end
 
   describe "POST 'create'" do
     it "should success" do
       post :create, product_option: FactoryGirl.attributes_for(:product_option)
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should fail" do
       post :create, product_option: FactoryGirl.attributes_for(:product_option)
-      response.should render_template("admin/product_options")
+      expect(response).to render_template("admin/product_options")
     end
   end
 
   it "GET 'edit'" do
     get :edit, id: @product_option.to_param
-    response.should be_success
+    expect(response).to be_success
   end
 
   describe "POST 'update'" do
     it "should be success" do
       put :update, id: @product_option, product_option: FactoryGirl.attributes_for(:product_option, title: 'pad')
       @product_option.reload
-      @product_option.title.should eq ('pad')
+      expect(@product_option.title).to eq ('pad')
     end
 
     it "should fail" do
       put :update, id: @product_option, product_option: FactoryGirl.attributes_for(:product_option, title: nil)
       @product_option.reload
-      @product_option.title.should eq('game')
+      expect(@product_option.title).to eq('game')
     end
   end
 
   it "POST 'destroy'" do
     delete :destroy, id: @product_option
     option = ProductOption.where(name: 'game').first
-    option.should_not be_present
+    expect(option).not_to be_present
   end
 end

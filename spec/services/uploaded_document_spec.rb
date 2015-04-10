@@ -47,13 +47,13 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_201301.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.position).to           eq 1 }
+            it { expect(subject.delivered_by).to       eq 'TS0001' }
+            it { expect(subject.delivery_type).to      eq 'upload' }
+            it { expect(subject.original_file_name).to eq 'upload.pdf' }
+            it { expect(subject.content_file_name).to  eq 'TS0001_TS_201301.pdf' }
           end
         end
 
@@ -82,13 +82,13 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_2013T1.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.position).to           eq 1 }
+            it { expect(subject.delivered_by).to       eq 'TS0001' }
+            it { expect(subject.delivery_type).to      eq 'upload' }
+            it { expect(subject.original_file_name).to eq 'upload.pdf' }
+            it { expect(subject.content_file_name).to  eq 'TS0001_TS_2013T1.pdf' }
           end
         end
 
@@ -117,13 +117,13 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_2013.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.position).to           eq 1 }
+            it { expect(subject.delivered_by).to       eq 'TS0001' }
+            it { expect(subject.delivery_type).to      eq 'upload' }
+            it { expect(subject.original_file_name).to eq 'upload.pdf' }
+            it { expect(subject.content_file_name).to  eq 'TS0001_TS_2013.pdf' }
           end
         end
       end
@@ -159,9 +159,9 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:content_file_name)  { should eq('TS0001_TS_201212.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.content_file_name).to eq 'TS0001_TS_201212.pdf' }
           end
         end
 
@@ -190,13 +190,13 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_2012T4.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.position).to           eq 1 }
+            it { expect(subject.delivered_by).to       eq 'TS0001' }
+            it { expect(subject.delivery_type).to      eq 'upload' }
+            it { expect(subject.original_file_name).to eq 'upload.pdf' }
+            it { expect(subject.content_file_name).to  eq 'TS0001_TS_2012T4.pdf' }
           end
         end
 
@@ -225,13 +225,13 @@ describe UploadedDocument do
           describe 'temp_document' do
             subject { @temp_document }
 
-            it { should be_valid }
-            it { should be_persisted }
-            its(:position)   { should eq(1) }
-            its(:delivered_by)       { should eq('TS0001') }
-            its(:delivery_type)      { should eq('upload') }
-            its(:original_file_name) { should eq('upload.pdf') }
-            its(:content_file_name)  { should eq('TS0001_TS_2012.pdf') }
+            it { is_expected.to be_valid }
+            it { is_expected.to be_persisted }
+            it { expect(subject.position).to           eq 1 }
+            it { expect(subject.delivered_by).to       eq 'TS0001' }
+            it { expect(subject.delivery_type).to      eq 'upload' }
+            it { expect(subject.original_file_name).to eq 'upload.pdf' }
+            it { expect(subject.content_file_name).to  eq 'TS0001_TS_2012.pdf' }
           end
         end
       end
@@ -258,13 +258,13 @@ describe UploadedDocument do
       describe 'temp_document' do
         subject { @temp_document }
 
-        it { should be_valid }
-        it { should be_persisted }
-        its(:position)   { should eq(1) }
-        its(:delivered_by)       { should eq('TS0001') }
-        its(:delivery_type)      { should eq('upload') }
-        its(:original_file_name) { should eq('upload.tiff') }
-        its(:content_file_name)  { should eq('TS0001_TS_201301.pdf') }
+        it { is_expected.to be_valid }
+        it { is_expected.to be_persisted }
+        it { expect(subject.position).to           eq 1 }
+        it { expect(subject.delivered_by).to       eq 'TS0001' }
+        it { expect(subject.delivery_type).to      eq 'upload' }
+        it { expect(subject.original_file_name).to eq 'upload.tiff' }
+        it { expect(subject.content_file_name).to  eq 'TS0001_TS_201301.pdf' }
       end
     end
 
@@ -288,9 +288,9 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:invalid_period, period: '201212']]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212')) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:invalid_period, period: '201212']] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212') }
       end
 
       context 'when period 201212 are expired' do
@@ -309,22 +309,22 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:invalid_period, period: '201212']]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212')) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:invalid_period, period: '201212']] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212') }
       end
 
       context 'when file size are too big' do
         before(:each) do
-          @file.stub(:size).and_return(52428801)
+          allow(@file).to receive(:size).and_return(52428801)
           @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:file_size_is_too_big, size_in_mo: '50.00']]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.file_size_is_too_big', size_in_mo: '50.00')) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:file_size_is_too_big, size_in_mo: '50.00']] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.file_size_is_too_big', size_in_mo: '50.00') }
       end
 
       context 'when extension is invalid' do
@@ -336,9 +336,9 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions)) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions) }
       end
 
       context 'when file is corrupted' do
@@ -350,9 +350,9 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:file_is_corrupted_or_protected, nil]]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.file_is_corrupted_or_protected', nil)) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:file_is_corrupted_or_protected, nil]] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.file_is_corrupted_or_protected', nil) }
       end
     end
 
@@ -377,9 +377,9 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:journal_unknown, journal: 'TS']]) }
-        its(:full_error_messages) { should eq(I18n.t('mongoid.errors.models.uploaded_document.attributes.journal_unknown', journal: 'TS')) }
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:journal_unknown, journal: 'TS']] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.journal_unknown', journal: 'TS') }
       end
 
       context 'when multiple arguments are invalid' do
@@ -391,13 +391,15 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
-        it { should be_invalid }
-        its(:errors) { should eq([[:journal_unknown, journal: 'TS'], [:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]]) }
-        its(:full_error_messages) do
-          message = []
-          message << I18n.t('mongoid.errors.models.uploaded_document.attributes.journal_unknown', journal: 'TS')
-          message << I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions)
-          should eq(message.join(', '))
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:journal_unknown, journal: 'TS'], [:invalid_file_extension, extension: '.txt', valid_extensions: UploadedDocument.valid_extensions]] }
+        describe '#full_error_messages' do
+          it do
+            message = []
+            message << I18n.t('mongoid.errors.models.uploaded_document.attributes.journal_unknown', journal: 'TS')
+            message << I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_file_extension', extension: '.txt', valid_extensions: UploadedDocument.valid_extensions)
+            expect(subject.full_error_messages).to eq(message.join(', '))
+          end
         end
       end
     end

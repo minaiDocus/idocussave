@@ -81,7 +81,7 @@ describe EmailedDocument do
       end
       emailed_document = EmailedDocument.new mail
 
-      expect(emailed_document.valid_attachments?).to be_false
+      expect(emailed_document.valid_attachments?).to be false
       expect(emailed_document).to be_invalid
     end
 
@@ -93,10 +93,10 @@ describe EmailedDocument do
         subject  'TS'
         add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
-      EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes+1 }
+      allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 5.megabytes+1 }
       emailed_document = EmailedDocument.new mail
 
-      expect(emailed_document.valid_attachments?).to be_false
+      expect(emailed_document.valid_attachments?).to be false
       expect(emailed_document).to be_invalid
     end
 
@@ -113,7 +113,7 @@ describe EmailedDocument do
         add_file filename: 'doc5.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
 
-      EmailedDocument::Attachment.any_instance.stub(:size) { 5.megabytes }
+      allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 5.megabytes }
 
       emailed_document = EmailedDocument.new mail
       expect(emailed_document.attachments[0]).to be_valid
@@ -121,7 +121,7 @@ describe EmailedDocument do
       expect(emailed_document.attachments[2]).to be_valid
       expect(emailed_document.attachments[3]).to be_valid
       expect(emailed_document.attachments[4]).to be_valid
-      expect(emailed_document.valid_attachments?).to be_false
+      expect(emailed_document.valid_attachments?).to be false
       expect(emailed_document).to be_invalid
     end
 
@@ -163,7 +163,7 @@ describe EmailedDocument do
         add_file filename: 'printable.pdf', content: File.read(file_path)
       end
 
-      expect(DocumentTools.is_printable_only?(file_path)).to be_true
+      expect(DocumentTools.is_printable_only?(file_path)).to be true
       emailed_document = EmailedDocument.new mail
       expect(emailed_document.attachments.first).to be_valid_content
       expect(emailed_document).to be_valid
@@ -182,12 +182,12 @@ describe EmailedDocument do
 
       expect(emailed_document.user).to be_present
       expect(emailed_document.journal).to be_present
-      expect(emailed_document.valid_attachments?).to be_true
+      expect(emailed_document.valid_attachments?).to be true
       expect(emailed_document).to be_valid
       expect(emailed_document.temp_documents.count).to eq(1)
       document = emailed_document.temp_documents.first
       expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
-      expect(File.exist?(document.content.path)).to be_true
+      expect(File.exist?(document.content.path)).to be true
     end
 
     it 'with 2 attachments should be valid' do
@@ -203,17 +203,17 @@ describe EmailedDocument do
 
       expect(emailed_document.user).to be_present
       expect(emailed_document.journal).to be_present
-      expect(emailed_document.valid_attachments?).to be_true
+      expect(emailed_document.valid_attachments?).to be true
       expect(emailed_document).to be_valid
       expect(emailed_document.temp_documents.count).to eq(2)
 
       document = emailed_document.temp_documents[0]
       expect(document.content_file_name).to eq("TS0001_TS_201401.pdf")
-      expect(File.exist?(document.content.path)).to be_true
+      expect(File.exist?(document.content.path)).to be true
 
       document2 = emailed_document.temp_documents[1]
       expect(document2.content_file_name).to eq("TS0001_TS_201401.pdf")
-      expect(File.exist?(document2.content.path)).to be_true
+      expect(File.exist?(document2.content.path)).to be true
 
       expect(document.content_file_size).not_to eq document2.content_file_size
     end
@@ -252,12 +252,12 @@ describe EmailedDocument do
 
       expect(emailed_document.user).to be_present
       expect(emailed_document.journal).to be_present
-      expect(emailed_document.valid_attachments?).to be_true
+      expect(emailed_document.valid_attachments?).to be true
       expect(emailed_document).to be_valid
       expect(emailed_document.temp_documents.count).to eq(1)
       document = emailed_document.temp_documents.first
       expect(document.content_file_name).to eq("TS0001_TS_2014.pdf")
-      expect(File.exist?(document.content.path)).to be_true
+      expect(File.exist?(document.content.path)).to be true
     end
   end
 

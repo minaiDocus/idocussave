@@ -11,20 +11,20 @@ describe User do
     end
 
     it ".create" do
-      @user.should be_persisted
+      expect(@user).to be_persisted
     end
 
     it "#name" do
-      @user.name.should eq('User1 TEST')
+      expect(@user.name).to eq('User1 TEST')
     end
 
     it "#info" do
-      @user.info.should eq('TS0001 - TeSt - User1 TEST')
+      expect(@user.info).to eq('TS0001 - TeSt - User1 TEST')
     end
 
     it "#format_name" do
-      @user.first_name.should eq('User1')
-      @user.last_name.should eq('TEST')
+      expect(@user.first_name).to eq('User1')
+      expect(@user.last_name).to eq('TEST')
     end
   end
 
@@ -37,19 +37,19 @@ describe User do
     end
 
     it 'should find fake prescribers' do
-      User.fake_prescribers.entries.should eq([@fake_prescriber])
+      expect(User.fake_prescribers.entries).to eq([@fake_prescriber])
     end
 
     it 'should not find true prescribers' do
-      User.fake_prescribers.entries.should_not include([@prescriber])
+      expect(User.fake_prescribers.entries).not_to include([@prescriber])
     end
 
     it 'should find not fake prescribers' do
-      User.not_fake_prescribers.entries.should eq([@prescriber])
+      expect(User.not_fake_prescribers.entries).to eq([@prescriber])
     end
 
     it 'should not find not fake prescribers' do
-      User.not_fake_prescribers.entries.should_not include([@fake_prescriber])
+      expect(User.not_fake_prescribers.entries).not_to include([@fake_prescriber])
     end
   end
 end

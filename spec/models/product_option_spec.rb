@@ -25,41 +25,41 @@ describe ProductOption do
   describe ".by_position" do
     subject(:options) { ProductOption.by_position.map { |option| option.title } }
 
-    it { subject[0].should eq(@option2.title) }
-    it { subject[1].should eq(@option1.title) }
-    it { subject[2].should eq(@option3.title) }
+    it { expect(subject[0]).to eq(@option2.title) }
+    it { expect(subject[1]).to eq(@option1.title) }
+    it { expect(subject[2]).to eq(@option3.title) }
   end
 
   describe ".find_by_slug" do
     subject(:product_option) { ProductOption.find_by_slug('option3').title }
 
-    it { subject.should eq(@option3.title) }
+    it { expect(subject).to eq(@option3.title) }
   end
 
   describe ".by_group" do
     subject(:options) { ProductOption.by_group.map { |option| option.product_group.title } }
 
-    it { subject[0].should eq(@group1.title) }
-    it { subject[1].should eq(@group1.title) }
-    it { subject[2].should eq(@group2.title) }
-    it { subject[3].should eq(@group2.title) }
+    it { expect(subject[0]).to eq(@group1.title) }
+    it { expect(subject[1]).to eq(@group1.title) }
+    it { expect(subject[2]).to eq(@group2.title) }
+    it { expect(subject[3]).to eq(@group2.title) }
   end
 
   describe "#price_in_cents_w_vat should equal 360" do
     subject(:option) { @option1.price_in_cents_w_vat }
 
-    it { subject.should eq(360) }
+    it { expect(subject).to eq(360) }
   end
 
   describe "#group title should equal 'groupe1' " do
     subject(:option) { @option1.group_title }
 
-    it { subject.should eq('groupe1') }
+    it { expect(subject).to eq('groupe1') }
   end
 
   describe "#group_position" do
     subject(:option) { @option1.group_position }
 
-    it { subject.should eq(2) }
+    it { expect(subject).to eq(2) }
   end
 end

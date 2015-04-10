@@ -41,7 +41,7 @@ describe TempDocument do
       temp_document.content = open file_path
       temp_document.save
     end
-    expect(temp_document.is_a_cover?).to be_true
+    expect(temp_document.is_a_cover?).to be true
   end
 
   it '#is_a_cover return true' do
@@ -55,7 +55,7 @@ describe TempDocument do
       temp_document.content = open file_path
       temp_document.save
     end
-    expect(temp_document.is_a_cover?).to be_true
+    expect(temp_document.is_a_cover?).to be true
   end
 
   it '#is_a_cover return true' do
@@ -69,7 +69,7 @@ describe TempDocument do
       temp_document.content = open file_path
       temp_document.save
     end
-    expect(temp_document.is_a_cover?).to be_false
+    expect(temp_document.is_a_cover?).to be false
   end
 
   it '#is_a_cover return true' do
@@ -83,6 +83,6 @@ describe TempDocument do
       temp_document.content = open file_path
       temp_document.save
     end
-    expect(temp_document.is_a_cover?).to be_false
+    expect(temp_document.is_a_cover?).to be false
   end
 end

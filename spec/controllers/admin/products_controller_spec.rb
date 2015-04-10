@@ -13,48 +13,48 @@ describe Admin::ProductsController do
 
   it "GET 'index'" do
     get 'index'
-    assigns(:products).should eq([@product])
+    expect(assigns(:products)).to eq([@product])
   end
 
   it "GET 'new'" do
     get 'new'
-    response.should be_success
+    expect(response).to be_success
   end
 
   describe "POST 'create'" do
     it "should success" do
       post :create, product: FactoryGirl.attributes_for(:product)
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should fail" do
       post :create, product: FactoryGirl.attributes_for(:product)
-      response.should render_template("admin/products")
+      expect(response).to render_template("admin/products")
     end
   end
 
   it "GET 'edit'" do
     get :edit, id: @product.to_param
-    response.should be_success
+    expect(response).to be_success
   end
 
   describe "POST 'update'" do
     it "should be success" do
       put :update, id: @product, product: FactoryGirl.attributes_for(:product, title: 'pad')
       @product.reload
-      @product.title.should eq ('pad')
+      expect(@product.title).to eq ('pad')
     end
 
     it "should fail" do
       put :update, id: @product, product: FactoryGirl.attributes_for(:product, title: nil)
       @product.reload
-      @product.title.should eq('game')
+      expect(@product.title).to eq('game')
     end
   end
 
   it "POST 'destroy'" do
     delete :destroy, id: @product
     product = Product.where(title:'game').first
-    product.should_not be_present
+    expect(product).not_to be_present
   end
 end

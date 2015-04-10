@@ -33,23 +33,23 @@ describe ReminderEmail do
 
     it "#deliver" do
       @reminder_email.deliver
-      @reminder_email.delivered_user_ids.should_not be_empty
-      @reminder_email.processed_user_ids.should_not be_empty
-      @reminder_email.delivered_at.day.should eq(Time.now.day)
+      expect(@reminder_email.delivered_user_ids).not_to be_empty
+      expect(@reminder_email.processed_user_ids).not_to be_empty
+      expect(@reminder_email.delivered_at.day).to eq(Time.now.day)
     end
 
     it "#deliver_if_its_time : now" do
       @reminder_email.delivery_day = Time.now.day
       @reminder_email.deliver_if_its_time
-      @reminder_email.processed_user_ids.should_not be_empty
-      @reminder_email.delivered_user_ids.should_not be_empty
+      expect(@reminder_email.processed_user_ids).not_to be_empty
+      expect(@reminder_email.delivered_user_ids).not_to be_empty
     end
 
     it "#deliver_if_its_time : now + 1 " do
       @reminder_email.delivery_day = Time.now.day + 1
       @reminder_email.deliver_if_its_time
-      @reminder_email.processed_user_ids.should be_empty
-      @reminder_email.delivered_user_ids.should be_empty
+      expect(@reminder_email.processed_user_ids).to be_empty
+      expect(@reminder_email.delivered_user_ids).to be_empty
     end
   end
 end

@@ -43,45 +43,45 @@ describe Api::V1::PreAssignmentsController do
     context 'as json' do
       it 'should have 2 packs' do
         get :index, format: 'json', access_token: @admin.authentication_token
-        response.should be_successful
-        response.code.should eq('200')
+        expect(response).to be_successful
+        expect(response.code).to eq('200')
         packs = JSON.parse(response.body)
 
-        packs.size.should eq(2)
+        expect(packs.size).to eq(2)
 
         pack = packs.first
-        pack['date'].should eq('2014-01-01 08:00:00')
-        pack['pack_name'].should eq(@pack.name.sub(' all', ''))
-        pack['piece_counts'].should eq(2)
-        pack['comment'].should be_nil
+        expect(pack['date']).to eq('2014-01-01 08:00:00')
+        expect(pack['pack_name']).to eq(@pack.name.sub(' all', ''))
+        expect(pack['piece_counts']).to eq(2)
+        expect(pack['comment']).to be_nil
 
         pack2 = packs.last
-        pack2['date'].should eq('2014-02-01 08:00:00')
-        pack2['pack_name'].should eq(@pack2.name.sub(' all', ''))
-        pack2['piece_counts'].should eq(1)
-        pack2['comment'].should eq('A test comment.')
+        expect(pack2['date']).to eq('2014-02-01 08:00:00')
+        expect(pack2['pack_name']).to eq(@pack2.name.sub(' all', ''))
+        expect(pack2['piece_counts']).to eq(1)
+        expect(pack2['comment']).to eq('A test comment.')
       end
     end
 
     context 'as xml' do
       it 'should have 2 packs' do
         get :index, format: 'xml', access_token: @admin.authentication_token
-        response.should be_successful
-        response.code.should eq('200')
+        expect(response).to be_successful
+        expect(response.code).to eq('200')
         packs = Nokogiri::XML(response.body).xpath('//pre_assignment')
-        packs.size.should eq(2)
+        expect(packs.size).to eq(2)
 
         pack = packs.first
-        pack.xpath('date').text.should eq('2014-01-01 08:00:00')
-        pack.xpath('pack_name').text.should eq(@pack.name.sub(' all', ''))
-        pack.xpath('piece_counts').text.to_i.should eq(2)
-        pack.xpath('comment').text.should be_blank
+        expect(pack.xpath('date').text).to eq('2014-01-01 08:00:00')
+        expect(pack.xpath('pack_name').text).to eq(@pack.name.sub(' all', ''))
+        expect(pack.xpath('piece_counts').text.to_i).to eq(2)
+        expect(pack.xpath('comment').text).to be_blank
 
         pack2 = packs.last
-        pack2.xpath('date').text.should eq('2014-02-01 08:00:00')
-        pack2.xpath('pack_name').text.should eq(@pack2.name.sub(' all', ''))
-        pack2.xpath('piece_counts').text.to_i.should eq(1)
-        pack2.xpath('comment').text.should eq('A test comment.')
+        expect(pack2.xpath('date').text).to eq('2014-02-01 08:00:00')
+        expect(pack2.xpath('pack_name').text).to eq(@pack2.name.sub(' all', ''))
+        expect(pack2.xpath('piece_counts').text.to_i).to eq(1)
+        expect(pack2.xpath('comment').text).to eq('A test comment.')
       end
     end
   end
@@ -90,16 +90,16 @@ describe Api::V1::PreAssignmentsController do
     context 'without params' do
       it 'should be invalid' do
         post :update_comment, format: 'json', access_token: @admin.authentication_token
-        response.should_not be_successful
-        response.code.should eq('400')
+        expect(response).not_to be_successful
+        expect(response.code).to eq('400')
       end
     end
 
     context 'with params' do
       it 'should be invalid' do
         post :update_comment, format: 'json', access_token: @admin.authentication_token, pack_name: @pack.name.sub(' all', '')
-        response.should_not be_successful
-        response.code.should eq('400')
+        expect(response).not_to be_successful
+        expect(response.code).to eq('400')
       end
 
       context 'with invalid byte sequence in UTF-8' do
@@ -108,10 +108,10 @@ describe Api::V1::PreAssignmentsController do
             pack_name = 'TS%AAA%20AC%20201401'
             page.driver.post "/api/v1/pre_assignments/update_comment.json?access_token=#{@admin.authentication_token}&pack_name=#{pack_name}&comment="
 
-            page.status_code.should eq(400)
+            expect(page.status_code).to eq(400)
             result = JSON.parse(page.body)
-            result['message'].should eq('Invalid Request : ArgumentError')
-            result['description'].should eq('invalid byte sequence in UTF-8')
+            expect(result['message']).to eq('Invalid Request : ArgumentError')
+            expect(result['description']).to eq('invalid byte sequence in UTF-8')
           end
         end
 
@@ -120,10 +120,10 @@ describe Api::V1::PreAssignmentsController do
             pack_name = 'TS%AAA%20AC%20201401'
             page.driver.post "/api/v1/pre_assignments/update_comment.xml?access_token=#{@admin.authentication_token}&pack_name=#{pack_name}&comment="
 
-            page.status_code.should eq(400)
+            expect(page.status_code).to eq(400)
             doc = Nokogiri::XML(page.body)
-            doc.xpath('//title').first.text.should eq('Invalid Request : ArgumentError')
-            doc.xpath('//description').first.text.should eq('invalid byte sequence in UTF-8')
+            expect(doc.xpath('//title').first.text).to eq('Invalid Request : ArgumentError')
+            expect(doc.xpath('//description').first.text).to eq('invalid byte sequence in UTF-8')
           end
         end
       end
@@ -137,8 +137,8 @@ describe Api::V1::PreAssignmentsController do
         }
 
         post :update_comment, params
-        response.should_not be_successful
-        response.code.should eq('404')
+        expect(response).not_to be_successful
+        expect(response.code).to eq('404')
       end
 
       context 'with nil comment' do
@@ -151,8 +151,8 @@ describe Api::V1::PreAssignmentsController do
           }
 
           post :update_comment, params
-          response.should_not be_successful
-          response.code.should eq('400')
+          expect(response).not_to be_successful
+          expect(response.code).to eq('400')
         end
       end
 
@@ -172,16 +172,16 @@ describe Api::V1::PreAssignmentsController do
             }
 
             post :update_comment, params
-            response.should be_successful
-            response.code.should eq('200')
+            expect(response).to be_successful
+            expect(response.code).to eq('200')
             result = JSON.parse(response.body)
-            result['message'].should eq('Updated successfully.')
+            expect(result['message']).to eq('Updated successfully.')
 
             @piece1.reload
-            @piece1.pre_assignment_comment.should eq('')
+            expect(@piece1.pre_assignment_comment).to eq('')
 
             @piece2.reload
-            @piece2.pre_assignment_comment.should eq('')
+            expect(@piece2.pre_assignment_comment).to eq('')
           end
         end
 
@@ -195,16 +195,16 @@ describe Api::V1::PreAssignmentsController do
             }
 
             post :update_comment, params
-            response.should be_successful
-            response.code.should eq('200')
+            expect(response).to be_successful
+            expect(response.code).to eq('200')
             message = Nokogiri::XML(response.body).xpath('//message').first
-            message.text.should eq('Updated successfully.')
+            expect(message.text).to eq('Updated successfully.')
 
             @piece1.reload
-            @piece1.pre_assignment_comment.should eq('')
+            expect(@piece1.pre_assignment_comment).to eq('')
 
             @piece2.reload
-            @piece2.pre_assignment_comment.should eq('')
+            expect(@piece2.pre_assignment_comment).to eq('')
           end
         end
       end
@@ -230,16 +230,16 @@ describe Api::V1::PreAssignmentsController do
             }
 
             post :update_comment, params
-            response.should be_successful
-            response.code.should eq('200')
+            expect(response).to be_successful
+            expect(response.code).to eq('200')
             result = JSON.parse(response.body)
-            result['message'].should eq('Updated successfully.')
+            expect(result['message']).to eq('Updated successfully.')
 
             @piece1.reload
-            @piece1.pre_assignment_comment.should eq('Unprocessable entity.')
+            expect(@piece1.pre_assignment_comment).to eq('Unprocessable entity.')
 
             @piece2.reload
-            @piece2.pre_assignment_comment.should eq('Unprocessable entity.')
+            expect(@piece2.pre_assignment_comment).to eq('Unprocessable entity.')
           end
         end
 
@@ -255,8 +255,8 @@ describe Api::V1::PreAssignmentsController do
             }
 
             post :update_comment, params
-            response.should_not be_successful
-            response.code.should eq('404')
+            expect(response).not_to be_successful
+            expect(response.code).to eq('404')
           end
 
           it 'should be successful' do
@@ -268,16 +268,16 @@ describe Api::V1::PreAssignmentsController do
             }
 
             post :update_comment, params
-            response.should be_successful
-            response.code.should eq('200')
+            expect(response).to be_successful
+            expect(response.code).to eq('200')
             message = Nokogiri::XML(response.body).xpath('//message').first
-            message.text.should eq('Updated successfully.')
+            expect(message.text).to eq('Updated successfully.')
 
             @piece1.reload
-            @piece1.pre_assignment_comment.should eq('Unprocessable entity.')
+            expect(@piece1.pre_assignment_comment).to eq('Unprocessable entity.')
 
             @piece2.reload
-            @piece2.pre_assignment_comment.should eq('Unprocessable entity.')
+            expect(@piece2.pre_assignment_comment).to eq('Unprocessable entity.')
           end
         end
       end

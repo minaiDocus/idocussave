@@ -49,13 +49,13 @@ describe DematboxDocument do
 
         subject { @dematbox_document }
 
-        it { should be_valid }
+        it { is_expected.to be_valid }
 
         describe 'temp_document' do
           subject { @dematbox_document.temp_document }
 
-          it { should be_persisted }
-          its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+          it { is_expected.to be_persisted }
+          it { expect(subject.content_file_name).to eq('TS0001_TS_201301.pdf') }
         end
       end
 
@@ -67,13 +67,13 @@ describe DematboxDocument do
 
           subject { @dematbox_document }
 
-          it { should be_valid }
+          it { is_expected.to be_valid }
 
           describe 'temp_document' do
             subject { @dematbox_document.temp_document }
 
-            it { should be_persisted }
-            its(:content_file_name) { should eq('TS0001_TS_201212.pdf') }
+            it { is_expected.to be_persisted }
+            it { expect(subject.content_file_name).to eq('TS0001_TS_201212.pdf') }
           end
         end
 
@@ -88,13 +88,13 @@ describe DematboxDocument do
 
           subject { @dematbox_document }
 
-          it { should be_valid }
+          it { is_expected.to be_valid }
 
           describe 'temp_document' do
             subject { @dematbox_document.temp_document }
 
-            it { should be_persisted }
-            its(:content_file_name) { should eq('TS0001_TS_2012T4.pdf') }
+            it { is_expected.to be_persisted }
+            it { expect(subject.content_file_name).to eq('TS0001_TS_2012T4.pdf') }
           end
         end
       end
@@ -114,13 +114,13 @@ describe DematboxDocument do
 
           subject { @dematbox_document }
 
-          it { should be_valid }
+          it { is_expected.to be_valid }
 
           describe 'temp_document' do
             subject { @dematbox_document.temp_document }
 
-            it { should be_persisted }
-            its(:content_file_name) { should eq('TS0001_TS_201301.pdf') }
+            it { is_expected.to be_persisted }
+            it { expect(subject.content_file_name).to eq('TS0001_TS_201301.pdf') }
           end
         end
 
@@ -142,13 +142,13 @@ describe DematboxDocument do
 
           subject { @dematbox_document }
 
-          it { should be_valid }
+          it { is_expected.to be_valid }
 
           describe 'temp_document' do
             subject { @dematbox_document.temp_document }
 
-            it { should be_persisted }
-            its(:content_file_name) { should eq('TS0001_TS_2013T1.pdf') }
+            it { is_expected.to be_persisted }
+            it { expect(subject.content_file_name).to eq('TS0001_TS_2013T1.pdf') }
           end
         end
       end
@@ -161,7 +161,7 @@ describe DematboxDocument do
 
         subject { @dematbox_document }
 
-        it { should be_invalid }
+        it { is_expected.to be_invalid }
       end
 
       context 'when service_id is not valid' do
@@ -172,7 +172,7 @@ describe DematboxDocument do
 
         subject { @dematbox_document }
 
-        it { should be_invalid }
+        it { is_expected.to be_invalid }
       end
 
       context 'when content is not valid' do
@@ -182,7 +182,7 @@ describe DematboxDocument do
 
         subject { @dematbox_document }
 
-        it { should be_invalid }
+        it { is_expected.to be_invalid }
       end
     end
 

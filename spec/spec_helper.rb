@@ -2,7 +2,7 @@
 require 'rubygems'
 
 # Name the report with pid of spring fork for merging purpose
-SimpleCov.command_name "##{$$}"
+SimpleCov.command_name "##{$$}" if defined?(SimpleCov)
 
 ENV["RAILS_ENV"] ||= 'test'
 
@@ -45,7 +45,8 @@ RSpec.configure do |config|
   # instead of true.
   # config.use_transactional_fixtures = false
 
-  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.infer_spec_type_from_file_location!
+
   config.around(:each, :vcr) do |example|
     name = example.metadata[:full_description].split(/\s+/, 2).join("/").underscore.gsub(/[^\w\/]+/, "_")
     options = example.metadata.slice(:record, :match_requests_on).except(:example_group)

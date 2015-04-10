@@ -4,9 +4,9 @@ require 'spec_helper'
 describe Period do
   it "create one period" do
     period = Period.new
-    period.should be_valid
+    expect(period).to be_valid
     period.save
-    period.should be_persisted
+    expect(period).to be_persisted
   end
 
   context 'when duration is 1' do
@@ -67,17 +67,17 @@ describe Period do
       period
     }
 
-    it { subject.excess_sheets.should eq(5) }
-    it { subject.excess_uploaded_pages.should eq(15) }
-    it { subject.excess_dematbox_scanned_pages.should eq(5) }
-    it { subject.excess_preseizure_pieces.should eq(5) }
-    it { subject.excess_expense_pieces.should eq(5) }
+    it { expect(subject.excess_sheets).to eq(5) }
+    it { expect(subject.excess_uploaded_pages).to eq(15) }
+    it { expect(subject.excess_dematbox_scanned_pages).to eq(5) }
+    it { expect(subject.excess_preseizure_pieces).to eq(5) }
+    it { expect(subject.excess_expense_pieces).to eq(5) }
 
-    it { subject.price_in_cents_of_excess_sheets.should eq(60) }
-    it { subject.price_in_cents_of_excess_uploaded_pages.should eq(90) }
-    it { subject.price_in_cents_of_excess_dematbox_scanned_pages.should eq(30) }
-    it { subject.price_in_cents_of_excess_preseizures.should eq(60) }
-    it { subject.price_in_cents_of_excess_expenses.should eq(60) }
+    it { expect(subject.price_in_cents_of_excess_sheets).to eq(60) }
+    it { expect(subject.price_in_cents_of_excess_uploaded_pages).to eq(90) }
+    it { expect(subject.price_in_cents_of_excess_dematbox_scanned_pages).to eq(30) }
+    it { expect(subject.price_in_cents_of_excess_preseizures).to eq(60) }
+    it { expect(subject.price_in_cents_of_excess_expenses).to eq(60) }
   end
 
   describe ".period_name" do

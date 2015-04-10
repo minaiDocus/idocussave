@@ -41,28 +41,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 3 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
@@ -72,7 +97,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -81,26 +109,67 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(1) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(1) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
         end
@@ -108,65 +177,178 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(3) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(3) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_003.pdf') }
-            its(:position) { should eq(2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '3']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_003.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '3']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pieces.by_position[1] }
 
-            its(:name) { should eq('TS0001 TS 201301 002') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(2) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 002') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_002.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
           end
         end
       end
@@ -210,28 +392,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 4 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
@@ -241,7 +448,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(4) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(4) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -250,26 +460,67 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
           end
 
@@ -280,26 +531,67 @@ describe DocumentProcessor do
 
             subject { @sheets }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @sheets[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @sheets[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
           end
         end
@@ -307,76 +599,212 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(4) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(4) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_001.pdf') }
-            its(:position) { should eq(-2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_002.pdf') }
-            its(:position) { should eq(-1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°4' do
             subject { @pack.pages.by_position[3] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 201301 000') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_000.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:position) { should eq(0) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 000') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_000.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pieces.by_position[1] }
 
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
         end
       end
@@ -418,28 +846,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(1) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(1) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 2 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
@@ -449,7 +902,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(1) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(1) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -458,16 +914,38 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(1) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(1) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('dematbox_scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('dematbox_scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
           end
         end
@@ -475,44 +953,115 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(1) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(1) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
         end
       end
@@ -593,29 +1142,58 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(6) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(6) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
-        its(:pages_count) { should eq(11) }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
+
+        describe '#pages_count' do
+          subject { super().pages_count }
+          it { is_expected.to eq(11) }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 11 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(11)
@@ -625,7 +1203,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(8) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(8) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -634,66 +1215,183 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(6) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(6) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(1) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(1) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°3' do
               subject { @pieces[2] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
 
             describe 'n°4' do
               subject { @pieces[3] }
 
-              its(:name) { should eq 'TS0001_TS_201301_003' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('dematbox_scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(3) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_003' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('dematbox_scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(3) }
+              end
             end
 
             describe 'n°5' do
               subject { @pieces[4] }
 
-              its(:name) { should eq 'TS0001_TS_201301_004' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('dematbox_scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(4) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_004' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('dematbox_scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(4) }
+              end
             end
 
             describe 'n°6' do
               subject { @pieces[5] }
 
-              its(:name) { should eq 'TS0001_TS_201301_005' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(5) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_005' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(5) }
+              end
             end
           end
 
@@ -704,26 +1402,67 @@ describe DocumentProcessor do
 
             subject { @sheets }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @sheets[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @sheets[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
           end
         end
@@ -731,134 +1470,393 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(11) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(11) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_001.pdf') }
-            its(:position) { should eq(-2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_002.pdf') }
-            its(:position) { should eq(-1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°4' do
             subject { @pack.pages.by_position[3] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°5' do
             subject { @pack.pages.by_position[4] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_003.pdf') }
-            its(:position) { should eq(2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '3']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_003.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '3']) }
+            end
           end
 
           describe 'n°6' do
             subject { @pack.pages.by_position[5] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_004.pdf') }
-            its(:position) { should eq(3) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '4']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_004.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(3) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '4']) }
+            end
           end
 
           describe 'n°7' do
             subject { @pack.pages.by_position[6] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_005.pdf') }
-            its(:position) { should eq(4) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '5']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_005.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(4) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '5']) }
+            end
           end
 
           describe 'n°8' do
             subject { @pack.pages.by_position[7] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_006.pdf') }
-            its(:position) { should eq(5) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '6']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_006.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(5) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '6']) }
+            end
           end
 
           describe 'n°9' do
             subject { @pack.pages.by_position[8] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_007.pdf') }
-            its(:position) { should eq(6) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '7']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_007.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(6) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '7']) }
+            end
           end
 
           describe 'n°10' do
             subject { @pack.pages.by_position[9] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_008.pdf') }
-            its(:position) { should eq(7) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '8']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_008.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(7) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '8']) }
+            end
           end
 
           describe 'n°11' do
             subject { @pack.pages.by_position[10] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_009.pdf') }
-            its(:position) { should eq(8) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '9']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_009.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(8) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '9']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(6) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(6) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
@@ -866,11 +1864,31 @@ describe DocumentProcessor do
             it 'pages number should eq 2' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
             end
-            its(:name) { should eq('TS0001 TS 201301 000') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_000.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:position) { should eq(0) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 000') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_000.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
           end
 
           describe 'n°2' do
@@ -879,11 +1897,31 @@ describe DocumentProcessor do
             it 'pages number should eq 1' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(1)
             end
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
 
           describe 'n°3' do
@@ -892,11 +1930,31 @@ describe DocumentProcessor do
             it 'pages number should eq 2' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
             end
-            its(:name) { should eq('TS0001 TS 201301 002') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(2) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 002') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_002.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
           end
 
           describe 'n°4' do
@@ -905,11 +1963,31 @@ describe DocumentProcessor do
             it 'pages number should eq 2' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
             end
-            its(:name) { should eq('TS0001 TS 201301 003') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_003.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(3) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 003') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_003.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(3) }
+            end
           end
 
           describe 'n°5' do
@@ -918,11 +1996,31 @@ describe DocumentProcessor do
             it 'pages number should eq 2' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
             end
-            its(:name) { should eq('TS0001 TS 201301 004') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_004.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(4) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 004') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_004.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(4) }
+            end
           end
 
           describe 'n°6' do
@@ -931,11 +2029,31 @@ describe DocumentProcessor do
             it 'pages number should eq 2' do
               expect(DocumentTools.pages_number(subject.content.path)).to eq(2)
             end
-            its(:name) { should eq('TS0001 TS 201301 005') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_005.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(5) }
+
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 005') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_005.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(5) }
+            end
           end
         end
       end
@@ -979,7 +2097,7 @@ describe DocumentProcessor do
       end
 
       it 'should create file to preassign successfully' do
-        expect(File.exists?(@path)).to be_true
+        expect(File.exists?(@path)).to be true
       end
     end
 
@@ -1042,28 +2160,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 4 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(4)
@@ -1073,7 +2216,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(4) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(4) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -1082,26 +2228,67 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
 
@@ -1112,26 +2299,67 @@ describe DocumentProcessor do
 
             subject { @sheets }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @sheets[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°2' do
               subject { @sheets[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
         end
@@ -1139,76 +2367,212 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(4) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(4) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_003.pdf') }
-            its(:position) { should eq(2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '3']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_003.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '3']) }
+            end
           end
 
           describe 'n°4' do
             subject { @pack.pages.by_position[3] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_004.pdf') }
-            its(:position) { should eq(3) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '4']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_004.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(3) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '4']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pieces.by_position[1] }
 
-            its(:name) { should eq('TS0001 TS 201301 002') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(2) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 002') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_002.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
           end
         end
       end
@@ -1273,28 +2637,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(4) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(4) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 201301 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 201301 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_201301_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_201301_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 6 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(6)
@@ -1304,7 +2693,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(6) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(6) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -1313,36 +2705,96 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(3) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(3) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°3' do
               subject { @pieces[2] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
 
@@ -1353,36 +2805,96 @@ describe DocumentProcessor do
 
             subject { @sheets }
 
-            its(:count) { should eq(3) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(3) }
+            end
 
             describe 'n°1' do
               subject { @sheets[0] }
 
-              its(:name) { should eq 'TS0001_TS_201301_000' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == true }
-              its(:position) { should eq(0) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_000' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(true) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(0) }
+              end
             end
 
             describe 'n°2' do
               subject { @sheets[1] }
 
-              its(:name) { should eq 'TS0001_TS_201301_001' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°3' do
               subject { @sheets[2] }
 
-              its(:name) { should eq 'TS0001_TS_201301_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('scan') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_201301_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('scan') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
         end
@@ -1390,108 +2902,309 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(6) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(6) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_001.pdf') }
-            its(:position) { should eq(-2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_cover_page_002.pdf') }
-            its(:position) { should eq(-1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_cover_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(-1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '1']) }
+            end
           end
 
           describe 'n°4' do
             subject { @pack.pages.by_position[3] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '2']) }
+            end
           end
 
           describe 'n°5' do
             subject { @pack.pages.by_position[4] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_003.pdf') }
-            its(:position) { should eq(2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '3']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_003.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '3']) }
+            end
           end
 
           describe 'n°6' do
             subject { @pack.pages.by_position[5] }
 
-            its(:content_file_name) { should eq('TS0001_TS_201301_page_004.pdf') }
-            its(:position) { should eq(3) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '201301', '4']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_page_004.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(3) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '201301', '4']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(3) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(3) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 201301 000') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_000.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == true }
-            its(:position) { should eq(0) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 000') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_000.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pieces.by_position[1] }
 
-            its(:name) { should eq('TS0001 TS 201301 001') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_001.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pieces.by_position[2] }
 
-            its(:name) { should eq('TS0001 TS 201301 002') }
-            its(:content_file_name) { should eq('TS0001_TS_201301_002.pdf') }
-            its(:uploaded?) { should == false }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(2) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 201301 002') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_201301_002.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
           end
         end
       end
@@ -1537,28 +3250,53 @@ describe DocumentProcessor do
       describe 'temp_pack' do
         subject { @temp_pack }
 
-        its(:document_not_processed_count) { should eq(0) }
+        describe '#document_not_processed_count' do
+          subject { super().document_not_processed_count }
+          it { is_expected.to eq(0) }
+        end
 
         describe 'temp_documents' do
           subject { @temp_pack.temp_documents }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
         end
       end
 
       describe 'pack' do
         subject { @pack }
 
-        it { should be_persisted }
-        its(:name) { should eq('TS0001 TS 2015 all') }
+        it { is_expected.to be_persisted }
+
+        describe '#name' do
+          subject { super().name }
+          it { is_expected.to eq('TS0001 TS 2015 all') }
+        end
 
         describe 'global document' do
           subject { @pack.original_document }
 
-          its(:content_file_name) { should eq('TS0001_TS_2015_all.pdf') }
-          its(:uploaded?) { should == false }
-          its(:is_a_cover) { should == false }
-          its(:position) { should eq(nil) }
+          describe '#content_file_name' do
+            subject { super().content_file_name }
+            it { is_expected.to eq('TS0001_TS_2015_all.pdf') }
+          end
+
+          describe '#uploaded?' do
+            subject { super().uploaded? }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#is_a_cover' do
+            subject { super().is_a_cover }
+            it { is_expected.to eq(false) }
+          end
+
+          describe '#position' do
+            subject { super().position }
+            it { is_expected.to eq(nil) }
+          end
 
           it 'should have 3 pages' do
             expect(DocumentTools.pages_number(subject.content.path)).to eq(3)
@@ -1568,7 +3306,10 @@ describe DocumentProcessor do
         describe 'dividers' do
           subject { @pack.dividers }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'pieces' do
             before(:all) do
@@ -1577,26 +3318,67 @@ describe DocumentProcessor do
 
             subject { @pieces }
 
-            its(:count) { should eq(2) }
+            describe '#count' do
+              subject { super().count }
+              it { is_expected.to eq(2) }
+            end
 
             describe 'n°1' do
               subject { @pieces[0] }
 
-              its(:name) { should eq 'TS0001_TS_2015_001' }
-              its(:pages_number) { should eq(1) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(1) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_2015_001' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(1) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(1) }
+              end
             end
 
             describe 'n°2' do
               subject { @pieces[1] }
 
-              its(:name) { should eq 'TS0001_TS_2015_002' }
-              its(:pages_number) { should eq(2) }
-              its(:origin) { should eq('upload') }
-              its(:is_a_cover) { should == false }
-              its(:position) { should eq(2) }
+              describe '#name' do
+                subject { super().name }
+                it { is_expected.to eq 'TS0001_TS_2015_002' }
+              end
+
+              describe '#pages_number' do
+                subject { super().pages_number }
+                it { is_expected.to eq(2) }
+              end
+
+              describe '#origin' do
+                subject { super().origin }
+                it { is_expected.to eq('upload') }
+              end
+
+              describe '#is_a_cover' do
+                subject { super().is_a_cover }
+                it { is_expected.to eq(false) }
+              end
+
+              describe '#position' do
+                subject { super().position }
+                it { is_expected.to eq(2) }
+              end
             end
           end
         end
@@ -1604,65 +3386,178 @@ describe DocumentProcessor do
         describe 'pages' do
           subject { @pack.pages }
 
-          its(:count) { should eq(3) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(3) }
+          end
 
           describe 'n°1' do
             subject { @pack.pages.by_position[0] }
 
-            its(:content_file_name) { should eq('TS0001_TS_2015_page_001.pdf') }
-            its(:position) { should eq(0) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '2015', '1']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_2015_page_001.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(0) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '2015', '1']) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pages.by_position[1] }
 
-            its(:content_file_name) { should eq('TS0001_TS_2015_page_002.pdf') }
-            its(:position) { should eq(1) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '2015', '2']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_2015_page_002.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '2015', '2']) }
+            end
           end
 
           describe 'n°3' do
             subject { @pack.pages.by_position[2] }
 
-            its(:content_file_name) { should eq('TS0001_TS_2015_page_003.pdf') }
-            its(:position) { should eq(2) }
-            its(:mixed?) { should == false }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:tags) { should eq(['ts0001', 'ts', '2015', '3']) }
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_2015_page_003.pdf') }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
+
+            describe '#mixed?' do
+              subject { super().mixed? }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#tags' do
+              subject { super().tags }
+              it { is_expected.to eq(['ts0001', 'ts', '2015', '3']) }
+            end
           end
         end
 
         describe 'pieces' do
           subject { @pack.pieces }
 
-          its(:count) { should eq(2) }
+          describe '#count' do
+            subject { super().count }
+            it { is_expected.to eq(2) }
+          end
 
           describe 'n°1' do
             subject { @pack.pieces.by_position[0] }
 
-            its(:name) { should eq('TS0001 TS 2015 001') }
-            its(:content_file_name) { should eq('TS0001_TS_2015_001.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(1) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 2015 001') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_2015_001.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(1) }
+            end
           end
 
           describe 'n°2' do
             subject { @pack.pieces.by_position[1] }
 
-            its(:name) { should eq('TS0001 TS 2015 002') }
-            its(:content_file_name) { should eq('TS0001_TS_2015_002.pdf') }
-            its(:uploaded?) { should == true }
-            its(:is_a_cover) { should == false }
-            its(:position) { should eq(2) }
+            describe '#name' do
+              subject { super().name }
+              it { is_expected.to eq('TS0001 TS 2015 002') }
+            end
+
+            describe '#content_file_name' do
+              subject { super().content_file_name }
+              it { is_expected.to eq('TS0001_TS_2015_002.pdf') }
+            end
+
+            describe '#uploaded?' do
+              subject { super().uploaded? }
+              it { is_expected.to eq(true) }
+            end
+
+            describe '#is_a_cover' do
+              subject { super().is_a_cover }
+              it { is_expected.to eq(false) }
+            end
+
+            describe '#position' do
+              subject { super().position }
+              it { is_expected.to eq(2) }
+            end
           end
         end
       end

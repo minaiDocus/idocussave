@@ -12,7 +12,7 @@ describe 'Create event on visit' do
   context 'as visitor' do
     it 'create page visit event on /users/sign_in' do
       visit '/'
-      page.current_path.should eq('/users/sign_in')
+      expect(page.current_path).to eq('/users/sign_in')
       event = Event.first
       expect(event.user).to be_nil
       expect(event.path).to eq('/')
@@ -24,7 +24,7 @@ describe 'Create event on visit' do
 
     it 'create page visit event on /account/documents' do
       visit '/account/documents'
-      page.current_path.should eq('/account/documents')
+      expect(page.current_path).to eq('/account/documents')
       user = User.first
       event = Event.first
       expect(event.user).to eq(user)
@@ -37,7 +37,7 @@ describe 'Create event on visit' do
 
     it 'does not create page visit event on /account/documents' do
       visit '/account/documents'
-      page.current_path.should eq('/account/documents')
+      expect(page.current_path).to eq('/account/documents')
       event = Event.first
       expect(event).to be_nil
     end
