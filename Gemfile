@@ -75,6 +75,7 @@ group :development, :test do
   gem 'guard-livereload', :require => false
   gem 'spring'
   gem 'spring-commands-rspec'
+  gem 'libnotify'
 end
 
 group :test do
