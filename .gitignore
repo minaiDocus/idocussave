@@ -1,4 +1,5 @@
 .idea/
+.envrc
 ./doc/
 log/
 tmp/

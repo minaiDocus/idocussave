@@ -1,4 +1,4 @@
-guard 'rspec', cmd: 'spring rspec' do
+guard 'rspec', cmd: 'bin/rspec' do
   watch('spec/spec_helper.rb')                       { "spec" }
   watch('app/controllers/application_controller.rb') { "spec/controllers" }
   watch(%r{^spec/.+_spec\.rb$})
