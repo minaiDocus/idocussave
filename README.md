@@ -3,17 +3,17 @@
 ## Information Générale
 Site web qui homogénise le stockage et la gestion des documents provenant de différentes sources pour en effectuer la comptabilité
 
-Site vitrine : https://www.idocus.com
-Documents : https://docs.idocus.com
-Application :
+* Site vitrine : https://www.idocus.com
+* Documents : https://docs.idocus.com
+* Application :
   - Production : https://my.idocus.com
   - Administration : https://my.idocus.com/admin
   - Administration du coffre : https://backoffice-coffre.idocus.com/coffre/
   - Traquer de bug : https://errbit.idocus.com
-Slimpay : https://prlv.idocus.com
+* Slimpay : https://prlv.idocus.com
 
 ## Traitement
-- ROC (Reconnaissance optique de charactère)
+- ROC (Reconnaissance optique de caractère)
 - Regroupement
 - Pré-afféctation
 
@@ -26,7 +26,8 @@ Slimpay : https://prlv.idocus.com
 - Pdftk 2.02
 - Poppler
 - Elasticsearch 0.20.2
-**Liste non exhaustive**
+
+*Liste non exhaustive*
 
 ## Services externes :
 - Fiduceo
@@ -41,7 +42,7 @@ Slimpay : https://prlv.idocus.com
 - Ftp
 
 ## Installation
-**A venir**
+*A venir*
 
 ## Développement
 
