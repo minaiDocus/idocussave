@@ -53,7 +53,7 @@ describe Api::V1::PreAssignmentsController do
         expect(pack['date']).to eq('2014-01-01 08:00:00')
         expect(pack['pack_name']).to eq(@pack.name.sub(' all', ''))
         expect(pack['piece_counts']).to eq(2)
-        expect(pack['comment']).to be_nil
+        expect(pack['comment']).to be_empty
 
         pack2 = packs.last
         expect(pack2['date']).to eq('2014-02-01 08:00:00')
