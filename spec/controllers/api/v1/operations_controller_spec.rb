@@ -67,14 +67,6 @@ describe Api::V1::OperationsController do
       DatabaseCleaner.clean
     end
 
-    it 'should be unsuccessful' do
-      allow(Operation).to receive(:where) { raise 'foo' }
-      allow(Airbrake).to receive(:notify) { true }
-      get :index, format: 'json', access_token: @user.authentication_token, not_accessed: 'true'
-      expect(response).not_to be_successful
-      expect(response.code).to eq('500')
-    end
-
     it 'should be successful' do
       get :index, format: 'json', access_token: @user.authentication_token
       expect(response).to be_successful
