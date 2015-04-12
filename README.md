@@ -13,7 +13,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 * Slimpay : https://prlv.idocus.com
 
 ## Traitement
-- ROC (Reconnaissance optique de caractère)
+- ROC (Reconnaissance Optique de Caractère)
 - Regroupement
 - Pré-afféctation
 
@@ -30,16 +30,14 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 *Liste non exhaustive*
 
 ## Services externes :
-- Fiduceo
-- Ibiza
-
-- Knowings
-- Quadratus
-
-- Dropbox
-- Google Drive
-- Box
-- Ftp
+* Fiduceo
+* Ibiza
+* Knowings
+* Quadratus
+* Dropbox
+* Google Drive
+* Box
+* Ftp
 
 ## Installation
 *A venir*
@@ -50,10 +48,10 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 Pré-production : https://staging.idocus.com
 
 ### Visualise les mails avec Mailcatcher
-1. gem install mailcatcher
-2. mailcatcher
+1. `gem install mailcatcher`
+2. `mailcatcher`
 3. Go to http://localhost:1080/
-4. Send mail through smtp://localhost:1025
+4. Envoyer les mails via smtp://localhost:1025
 
 ### Tests
 Lance les tests :
