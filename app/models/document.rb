@@ -181,7 +181,7 @@ class Document
     self.content.reprocess!
     save
   end
-  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 1, :run_at => Proc.new { 5.minutes.from_now }
+  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 9, :run_at => Proc.new { 5.minutes.from_now }
 
   def extract_content!
     if self.content.queued_for_write[:original]

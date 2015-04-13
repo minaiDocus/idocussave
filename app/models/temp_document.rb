@@ -260,5 +260,5 @@ class TempDocument
     self.content.reprocess!
     save
   end
-  handle_asynchronously :generate_thumbs, queue: 'temp_documents thumbs', priority: 1, run_at: Proc.new { 5.minutes.from_now }
+  handle_asynchronously :generate_thumbs, queue: 'temp_documents thumbs', priority: 9, run_at: Proc.new { 5.minutes.from_now }
 end
