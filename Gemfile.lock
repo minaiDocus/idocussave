@@ -469,7 +469,7 @@ GEM
       rack (~> 1.0)
     thor (0.19.1)
     tilt (1.4.1)
-    timecop (0.7.1)
+    timecop (0.7.3)
     timers (4.0.1)
       hitimes
     tire (0.5.7)
