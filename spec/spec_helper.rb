@@ -58,6 +58,13 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)
 
+    begin
+      DatabaseCleaner.start
+      FactoryGirl.lint
+    ensure
+      DatabaseCleaner.clean
+    end
+
     suppress_warnings do
       FactoryGirl.reload
       Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| load f}

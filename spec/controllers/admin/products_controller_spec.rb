@@ -23,12 +23,13 @@ describe Admin::ProductsController do
 
   describe "POST 'create'" do
     it "should success" do
-      post :create, product: FactoryGirl.attributes_for(:product)
-      expect(response).to be_success
+      post :create, product: { title: 'product', position: 1 }
+      product = Product.where(title: 'product').first
+      expect(product).not_to be_nil
     end
 
     it "should fail" do
-      post :create, product: FactoryGirl.attributes_for(:product)
+      post :create, product: {}
       expect(response).to render_template("admin/products")
     end
   end

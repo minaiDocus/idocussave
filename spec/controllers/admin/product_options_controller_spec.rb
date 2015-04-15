@@ -16,12 +16,13 @@ describe Admin::ProductOptionsController do
 
   describe "POST 'create'" do
     it "should success" do
-      post :create, product_option: FactoryGirl.attributes_for(:product_option)
-      expect(response).to be_success
+      post :create, product_option: { name: 'option', title: 'option', position: 1, price_in_cents_wo_vat: 100 }
+      option = ProductOption.where(name: 'option').first
+      expect(option).not_to be_nil
     end
 
     it "should fail" do
-      post :create, product_option: FactoryGirl.attributes_for(:product_option)
+      post :create, product_option: {}
       expect(response).to render_template("admin/product_options")
     end
   end

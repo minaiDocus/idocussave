@@ -19,7 +19,7 @@ class FileSendingKit
   field :right_logo_height,  type: Integer, default: 0
   field :right_logo_width,   type: Integer, default: 0
 
-  validates_presence_of :organization_id, :title, :logo_path, :left_logo_path, :right_logo_path
+  validates_presence_of :title, :logo_path, :left_logo_path, :right_logo_path
 
   belongs_to :organization
 

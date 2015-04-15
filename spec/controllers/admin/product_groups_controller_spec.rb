@@ -18,12 +18,13 @@ describe Admin::ProductGroupsController do
 
   describe "POST 'create'" do
     it "should success" do
-      post :create, product_group: FactoryGirl.attributes_for(:product_group)
-      expect(response).to be_success
+      post :create, product_group: { name: 'group', title: 'group', position: 1 }
+      group = ProductGroup.where(name: 'group').first
+      expect(group).not_to be_nil
     end
 
     it "should fail" do
-      post :create, product_group: FactoryGirl.attributes_for(:product_group)
+      post :create, product_group: {}
       expect(response).to render_template("admin/product_groups")
     end
   end
