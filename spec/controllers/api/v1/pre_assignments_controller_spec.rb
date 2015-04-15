@@ -5,8 +5,6 @@ describe Api::V1::PreAssignmentsController do
   render_views
 
   before(:all) do
-    DatabaseCleaner.start
-
     @admin = FactoryGirl.create :admin, code: 'AD%0001'
     @user  = FactoryGirl.create :user,  code: 'TS%0001'
 

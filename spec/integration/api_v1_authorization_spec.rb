@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe 'API V1 Authorization' do
   before(:all) do
-    DatabaseCleaner.start
-
     @user = FactoryGirl.create :user, code: 'TS%0001'
     @user.update_authentication_token
   end

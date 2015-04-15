@@ -4,10 +4,6 @@ require 'spec_helper'
 describe Api::V1::OperationsController do
   render_views
 
-  before(:all) do
-    DatabaseCleaner.start
-  end
-
   after(:all) do
     DatabaseCleaner.clean
   end
@@ -462,8 +458,6 @@ describe Api::V1::OperationsController do
 
   describe 'Posting a file to import' do
     before(:all) do
-      DatabaseCleaner.start
-
       @admin    = FactoryGirl.create :admin, code: 'AD%0001'
       @operator = FactoryGirl.create :user,  code: 'OP%0001', is_operator: true
       @user     = FactoryGirl.create :user,  code: 'TS%0001'

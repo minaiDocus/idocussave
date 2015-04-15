@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Organization do
   before(:all) do
-    DatabaseCleaner.start
     @user = FactoryGirl.create :prescriber
     @organization = Organization.new
     @organization.leader = @user

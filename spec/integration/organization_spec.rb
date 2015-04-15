@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe 'Organization Management' do
-  before(:each) do
-    DatabaseCleaner.start
-  end
-
   after(:each) do
     DatabaseCleaner.clean
   end

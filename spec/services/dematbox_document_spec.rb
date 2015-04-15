@@ -5,7 +5,6 @@ describe DematboxDocument do
   describe '.new' do
     before(:all) do
       Timecop.freeze(Time.local(2013,1,1))
-      DatabaseCleaner.start
 
       File.open("#{Rails.root}/spec/support/files/completed.pdf", "r") do |f|
         @content64 = Base64::encode64(f.readlines.join)

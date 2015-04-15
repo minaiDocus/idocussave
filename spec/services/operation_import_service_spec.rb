@@ -3,8 +3,6 @@ require 'spec_helper'
 
 describe OperationImportService do
   before(:all) do
-    DatabaseCleaner.start
-
     @user = FactoryGirl.create :user, code: 'TS0001'
 
     @pack = Pack.new

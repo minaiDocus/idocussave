@@ -4,8 +4,6 @@ require 'spec_helper'
 describe PreAssignmentService do
   describe '.pending' do
     before(:all) do
-      DatabaseCleaner.start
-
       @user  = FactoryGirl.create :user,  code: 'TS%0001'
 
       Timecop.freeze(Time.local(2014,1,1,8,0,0))
