@@ -97,11 +97,17 @@ class Pack::Report::Preseizure
   end
 
   def month
-    if quarterly?
+    if annually?
+      1
+    elsif quarterly?
       (smonth[1].to_i * 3) - 2
     else
       smonth.to_i
     end
+  end
+
+  def annually?
+    piece_info[2].size == 4
   end
 
   def quarterly?
