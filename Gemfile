@@ -16,7 +16,6 @@ gem 'simple_form', '2.1.2'
 gem 'kaminari'
 gem 'mongoid_slug', :require => 'mongoid/slug'
 gem 'state_machine'
-gem 'transitions', :require => %w(transitions active_record/transitions)
 gem 'hpricot'
 gem 'net-sftp'
 gem 'rack-raw-upload'

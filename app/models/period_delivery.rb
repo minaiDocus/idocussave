@@ -2,7 +2,6 @@
 class PeriodDelivery
   include Mongoid::Document
   include Mongoid::Timestamps
-  include ActiveRecord::Transitions
 
   # FIXME do that with the builtin i18n rails module
   STATES = [['rien', 'nothing'], ['attendus', 'wait'], ['réceptionnés', 'received'], ['traités', 'delivered']]
@@ -11,23 +10,22 @@ class PeriodDelivery
 
   field :state, default: 'wait'
 
-  state_machine do
+  state_machine :initial => :wait do
     state :nothing
     state :wait
     state :received
     state :delivered
 
     event :wait do
-      transitions to: :wait,      from: [:nothing, :delivered]
+      transition [:nothing, :delivered] => :wait
     end
 
     event :received do
-      transitions to: :received,  from: [:nothing, :wait]
+      transition [:nothing, :wait] => :received
     end
 
     event :delivered do
-      transitions to: :delivered, from: [:nothing, :wait, :received]
+      transition [:nothing, :wait, :received] => :delivered
     end
-
   end
 end

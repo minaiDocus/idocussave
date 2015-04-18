@@ -482,7 +482,6 @@ GEM
       rest-client (~> 1.6)
     to_xls (1.5.1)
       spreadsheet
-    transitions (0.0.9)
     treetop (1.4.14)
       polyglot
       polyglot (>= 0.3.1)
@@ -585,7 +584,6 @@ DEPENDENCIES
   timecop
   tire
   to_xls
-  transitions
   twitter-bootstrap-rails
   typhoeus
   uglifier (>= 1.0.3)
