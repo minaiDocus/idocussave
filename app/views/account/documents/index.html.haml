@@ -29,7 +29,7 @@
       #documentslist.well.qtip-target
         .header
           %h3.pull-left
-            #{@packs_count} document(s)
+            #{@response.results.total} document(s)
           - if @user.active?
             .actiongroup.pull-right
               - if current_user.is_admin
@@ -44,9 +44,9 @@
                 %i.icon-ban-circle
         .content
           %ul.margin3top.margin0left
-            != render :partial => "/account/documents/pack", :collection => @packs
+            = render :partial => "/account/documents/pack", :collection => @packs
           .aligncenter
-            != paginate @packs
+            = paginate @response
 
     .span9
       #pageslist.well

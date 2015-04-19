@@ -1,8 +1,12 @@
 ﻿%ul.margin3top.margin0left
   - if params[:view] == 'current_delivery'
     %li.margin1bottom Fichier(s) restant(s) : #{@remaining_files}
-  != render :partial => "pack", :collection => @packs
+  = render partial: 'pack', collection: @packs
 
 .aligncenter
-  != paginate @packs rescue nil
-  %input{ :type => :hidden, :name => :packs_count, :value => "#{@packs_count}" }
+  - if params[:view] == 'current_delivery'
+    = paginate @packs
+    %input{ type: :hidden, name: :packs_count, value: @packs.count }
+  - else
+    = paginate @response
+    %input{ type: :hidden, name: :packs_count, value: @response.results.total.to_s }

@@ -55,7 +55,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
     command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
-    command << "ln -nfs #{shared_path}/config/initializers/tire.rb #{release_path}/config/initializers/tire.rb"
     command << "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
     command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     command << "ln -s #{shared_path}/data #{release_path}/data"
@@ -84,7 +83,6 @@ namespace :shared do
       'num.rb',
       'compta.rb',
       'site.rb',
-      'tire.rb',
       'errbit.rb'
     ]
 

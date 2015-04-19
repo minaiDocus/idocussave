@@ -20,6 +20,9 @@ if defined?(Bundler)
   Bundler.require(:default, :assets, Rails.env)
 end
 
+# Used by elasticsearch-transport
+require 'typhoeus/adapters/faraday'
+
 module Idocus
   class Application < Rails::Application
 
