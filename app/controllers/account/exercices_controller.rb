@@ -14,12 +14,18 @@ class Account::ExercicesController < Account::OrganizationController
   end
 
   def create
-    @exercice = Exercice.new exercice_params
-    @exercice.user = @customer
-    if @exercice.save
-      flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_customer_exercices_path(@organization, @customer)
-    else
+    begin
+      @exercice = Exercice.new exercice_params
+      @exercice.user = @customer
+      if @exercice.save
+        flash[:success] = 'Créé avec succès.'
+        redirect_to account_organization_customer_exercices_path(@organization, @customer)
+      else
+        render action: 'new'
+      end
+    rescue Mongoid::MultiParameterAttributes::Errors::MultiparameterAssignmentErrors
+      flash[:error] = 'Date invalide.'
+      @exercice = Exercice.new
       render action: 'new'
     end
   end
@@ -28,10 +34,15 @@ class Account::ExercicesController < Account::OrganizationController
   end
 
   def update
-    if @exercice.update_attributes(exercice_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_exercices_path(@organization, @customer)
-    else
+    begin
+      if @exercice.update_attributes(exercice_params)
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_exercices_path(@organization, @customer)
+      else
+        render 'edit'
+      end
+    rescue Mongoid::MultiParameterAttributes::Errors::MultiparameterAssignmentErrors
+      flash[:error] = 'Date invalide.'
       render 'edit'
     end
   end
