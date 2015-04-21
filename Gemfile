@@ -39,7 +39,6 @@ gem 'unicode_utils'
 gem 'axlsx', '1.3.4'
 gem 'strong_parameters'
 gem 'rabl'
-gem 'tire'
 gem 'typhoeus'
 gem 'dalli'
 gem 'nokogiri'
@@ -47,6 +46,8 @@ gem 'capistrano', :require => false
 gem 'capistrano_colors', :require => false
 gem 'validate_url'
 gem 'ruby-progressbar', :require => false
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
 
 group :assets do
   gem 'twitter-bootstrap-rails'

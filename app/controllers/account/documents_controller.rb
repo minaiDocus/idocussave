@@ -18,8 +18,9 @@ public
     else
       options[:owner_id] = @user.id
     end
-    @packs = Pack.search(params[:filter], { page: params[:page] || 1, per_page: params[:per_page] || 20 }.merge(options))
-    @packs_count = @packs.total
+    options.merge!({ page: params[:page], per_page: params[:per_page], sort: true })
+    @response = Pack.search(params[:filter], options)
+    @packs = @response.records.records.desc(:updated_at)
 
     @last_composition = @user.composition
     @composition = Document.any_in(:_id => @last_composition.document_ids) if @last_composition
@@ -33,7 +34,12 @@ public
   def show
     @pack = @user.packs.find(params[:id])
     raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
-    @documents = Document.search(params[:filter], pack_id: params[:id], origin: ['scan', 'upload', 'dematbox_scan', 'fiduceo'], per_page: 10000)
+    @response = Document.search(params[:filter],
+      pack_id:  params[:id],
+      per_page: 10000,
+      sort:     true
+    )
+    @documents = @response.records.records.where(:origin.nin => ['mixed']).asc(:position)
     unless @pack.is_fully_processed || params[:filter].presence
       @temp_pack = TempPack.find_by_name(@pack.name)
       @temp_documents = @temp_pack.temp_documents.not_published
@@ -45,9 +51,10 @@ public
       pack_ids = @user.remote_files.not_processed.distinct(:pack_id)
       @packs = @user.packs.any_in(_id: pack_ids)
       @remaining_files = @user.remote_files.not_processed.count
-      @packs_count = @packs.count
-      @packs = @packs.page(params[:page]).per(params[:per_page])
+      @packs = @packs.desc(:updated_at).page(params[:page]).per(params[:per_page])
     else
+      options = { page: params[:page].to_i, per_page: params[:per_page].to_i }
+      options.merge!({ sort: true }) unless params[:filter].present?
       if @user.organization && @user.is_prescriber
         owner_ids = []
         if params[:view].present? && params[:view] != 'all'
@@ -56,11 +63,13 @@ public
         else
           owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
         end
-        @packs = Pack.search(params[:filter], owner_ids: owner_ids, page: params[:page], per_page: params[:per_page])
+        options.merge!({ owner_ids: owner_ids })
       else
-        @packs = Pack.search(params[:filter], owner_id: @user.id.to_s, page: params[:page], per_page: params[:per_page])
+        options.merge!({ owner_id: @user.id.to_s })
       end
-      @packs_count = @packs.total rescue 0
+      @response = Pack.search(params[:filter], options)
+      @packs = @response.records.records
+      @packs = @packs.desc(:updated_at) unless params[:filter].present?
     end
   end
 

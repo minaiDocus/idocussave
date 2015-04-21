@@ -2,8 +2,8 @@
 class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
-  include Tire::Model::Search
-  include Tire::Model::Callbacks
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
   CODE_PATTERN = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
   JOURNAL_PATTERN = '[a-zA-Z0-9]+'
@@ -43,29 +43,66 @@ class Pack
   scope :scan_delivered,      where: { :scanned_pages_count.gt => 0 }
   scope :not_notified_update, where: { is_update_notified: false }
 
-  mapping do
-    indexes :id, as: 'stringified_id'
+  index_name "idocus_#{Rails.env}_packs"
+
+  mapping dynamic: 'false' do
+    indexes :id
     indexes :owner_id
     indexes :created_at, type: 'date'
     indexes :updated_at, type: 'date'
     indexes :name
     indexes :tags
-    indexes :content_text, as: 'content_text'
+    indexes :content_text
   end
 
-  def self.search(query, params = {})
-    tire.search(page: params[:page], per_page: params[:per_page], load: true) do
-      filter :term,  id:       params[:id]        if params[:id].present?
-      filter :terms, id:       params[:ids]       if params[:ids].present?
-      filter :term,  owner_id: params[:owner_id]  if params[:owner_id].present?
-      filter :terms, owner_id: params[:owner_ids] if params[:owner_ids].present?
-      sort { by :updated_at, 'desc' }
-      query { string(query) } if query.present?
+  def as_indexed_json(options={})
+    {
+      id:           id.to_s,
+      owner_id:     owner.id.to_s,
+      created_at:   created_at,
+      updated_at:   updated_at,
+      name:         name,
+      tags:         tags,
+      content_text: content_text
+    }
+  end
+
+  class << self
+    def search(text, options={})
+      page = options[:page] || 1
+      per_page = options[:per_page] || self.default_per_page
+
+      query = {}
+      filter = {}
+      filter[:id]    = options[:id]                      if options[:id].present?
+      filter[:ids]   = { values: options[:ids] }         if options[:ids].present?
+      filter[:term]  = { owner_id: options[:owner_id] }  if options[:owner_id].present?
+      filter[:terms] = { owner_id: options[:owner_ids] } if options[:owner_ids].present?
+      if filter.present? && text.present?
+        query[:multi_match] = { query: text, fields: [:name, :tags, :content_text] }
+      end
+
+      sort = ['_score']
+      sort = [{ updated_at: :desc }] if options[:sort] == true
+
+      query_or_payload = nil
+      if filter.present?
+        query_or_payload = { sort: sort, filter: filter }
+        query_or_payload.merge!({ query: query }) if query.present?
+      elsif text.present?
+        query_or_payload = text
+      else
+        raise 'query_or_payload must not be nil'
+      end
+
+      search = Elasticsearch::Model::Searching::SearchRequest.new(self, query_or_payload)
+      response = Elasticsearch::Model::Response::Response.new(self, search)
+      response.page(page).limit(per_page)
     end
-  end
 
-  def stringified_id
-    self.id.to_s
+    def client
+      __elasticsearch__.client
+    end
   end
 
   def content_text

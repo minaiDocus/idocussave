@@ -3,8 +3,8 @@ class Document
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Paperclip
-  include Tire::Model::Search
-  include Tire::Model::Callbacks
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
   field :content_file_name
   field :content_content_type
@@ -71,40 +71,74 @@ class Document
     where(created_at: { '$gte' => start_at, '$lte' => end_at })
   }
 
-  mapping do
-    indexes :id, as: 'stringified_id'
+  index_name "idocus_#{Rails.env}_documents"
+
+  mapping dynamic: 'false' do
+    indexes :id
     indexes :pack_id
     indexes :created_at, type: 'date'
     indexes :tags
-    indexes :content_file_name
-    indexes :content_content_type
     indexes :content_text
     indexes :origin
     indexes :is_a_cover, type: 'boolean'
     indexes :position, type: 'integer'
   end
 
-  def self.search(query, params = {})
-    tire.search(page: params[:page], per_page: params[:per_page], load: true) do
-      filter :term,  id:         params[:id]            if params[:id].present?
-      filter :term,  pack_id:    params[:pack_id]       if params[:pack_id].present?
-      filter :terms, origin:     Array(params[:origin]) if params[:origin].present?
-      filter :term,  is_a_cover: params[:is_a_cover]    if params[:is_a_cover].present?
-      sort { by :position, 'asc' }
-      query { string(query) } if query.present?
-    end
+  def as_indexed_json(options={})
+    {
+      id:           id.to_s,
+      pack_id:      pack.id.to_s,
+      created_at:   created_at,
+      tags:         tags,
+      content_text: content_text,
+      origin:       origin,
+      is_a_cover:   is_a_cover,
+      position:     position
+    }
   end
 
-  def stringified_id
-    self.id.to_s
+  class << self
+    def search(text, options={})
+      page = options[:page] || 1
+      per_page = options[:per_page] || self.default_per_page
+
+      query = {}
+      filter = {}
+      filter[:id]    = options[:id]                    if options[:id].present?
+      filter[:ids]   = { values: options[:ids] }       if options[:ids].present?
+      filter[:term]  = { pack_id: options[:pack_id] }  if options[:pack_id].present?
+      filter[:terms] = { pack_id: options[:pack_ids] } if options[:pack_ids].present?
+      if filter.present? && text.present?
+        query[:multi_match] = { query: text, fields: [:tags, :content_text] }
+      end
+
+      sort = ['_score']
+      sort = [{ position: :asc }] if options[:sort] == true
+
+      query_or_payload = nil
+      if filter.present?
+        query_or_payload = { sort: sort, filter: filter }
+        query_or_payload.merge!({ query: query }) if query.present?
+      elsif text.present?
+        query_or_payload = text
+      else
+        raise 'query_or_payload must not be nil'
+      end
+
+      search = Elasticsearch::Model::Searching::SearchRequest.new(self, query_or_payload)
+      response = Elasticsearch::Model::Response::Response.new(self, search)
+      response.page(page).limit(per_page)
+    end
+
+    def client
+      __elasticsearch__.client
+    end
   end
 
   def update_pack!
     if (self.content_text_changed? || (self.mixed? && self.tags_changed?)) && pack && pack.persisted?
-      Pack.observers.disable :all do
-        pack.set_tags
-        pack.timeless.save
-      end
+      pack.set_tags
+      pack.timeless.save
     end
   end
 
