@@ -1,4 +1,6 @@
 # -*- encoding : UTF-8 -*-
+require 'elasticsearch/rails/tasks/import'
+
 namespace :maintenance do
   namespace :notification do
     desc 'Notify updated documents'
