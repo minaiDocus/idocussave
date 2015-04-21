@@ -27,6 +27,6 @@ namespace :manager do
   desc "Stop manager"
   task :stop, :roles => :app do
     file_path = "#{current_path}/log/manager.rb.pid"
-    run "if [ -e #{file_path} ]; kill -TERM $(cat #{file_path}); fi"
+    run "if [ -e #{file_path} ]; then kill -TERM $(cat #{file_path}); fi"
   end
 end
