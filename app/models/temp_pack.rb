@@ -35,22 +35,24 @@ class TempPack
 
     def find_or_create_by_name(name)
       if (temp_pack=find_by_name(name))
-        user = User.find_by_code name.split[0]
-        pack = Pack.find_or_initialize(name, user)
-        pack.is_fully_processed = false
-        pack.save
+        temp_pack.update_pack_state
         temp_pack
       else
         temp_pack = TempPack.new
         temp_pack.name = name
         temp_pack.user = User.find_by_code name.split[0]
         temp_pack.organization = temp_pack.user.try(:organization)
-        pack = Pack.find_or_initialize(temp_pack.name, temp_pack.user)
-        pack.is_fully_processed = false
-        pack.save
         temp_pack.save
+        temp_pack.update_pack_state
         temp_pack
       end
+    end
+  end
+
+  def update_pack_state
+    if journal && journal.compta_processable?
+      pack = Pack.find_or_initialize(name, user)
+      pack.timeless.update_attribute(:is_fully_processed, false) if pack.is_fully_processed
     end
   end
 
