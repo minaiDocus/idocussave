@@ -4,7 +4,6 @@ class Document
   include Mongoid::Timestamps
   include Mongoid::Paperclip
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
   field :content_file_name
   field :content_content_type
@@ -45,7 +44,15 @@ class Document
 
   before_create :init_tags
   after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.mixed? || Rails.env.test? }
-  after_save :update_pack!
+
+  after_create { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'index') }
+  after_update do |document|
+    keys = document.__elasticsearch__.instance_variable_get(:@__changed_attributes).keys
+    if keys.include?('content_text') || keys.include?('tags')
+      IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
+    end
+  end
+  after_destroy { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'delete') }
 
   scope :mixed,            where:  { origin: 'mixed' }
   scope :not_mixed,        not_in: { origin: ['mixed'] }
@@ -132,13 +139,6 @@ class Document
 
     def client
       __elasticsearch__.client
-    end
-  end
-
-  def update_pack!
-    if (self.content_text_changed? || (self.mixed? && self.tags_changed?)) && pack && pack.persisted?
-      pack.set_tags
-      pack.timeless.save
     end
   end
 

@@ -128,6 +128,9 @@ class DocumentProcessor
             pack.is_fully_processed = true
           end
           pack.save
+          IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index', 15.minutes.from_now)
+          IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index', 1.hour.from_now)
+          IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index', 6.hours.from_now)
           Reporting.update(pack)
 
           piece_files_path = pack.pieces.by_position.map { |e| e.content.path }

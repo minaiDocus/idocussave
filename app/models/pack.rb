@@ -3,7 +3,6 @@ class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
   CODE_PATTERN = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
   JOURNAL_PATTERN = '[a-zA-Z0-9]+'
@@ -42,6 +41,15 @@ class Pack
 
   scope :scan_delivered,      where: { :scanned_pages_count.gt => 0 }
   scope :not_notified_update, where: { is_update_notified: false }
+
+  after_create { |pack| IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index') }
+  after_update do |pack|
+    keys = pack.__elasticsearch__.instance_variable_get(:@__changed_attributes).keys
+    if keys.include?('updated_at') || keys.include?('tags')
+      IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index')
+    end
+  end
+  after_destroy { |pack| IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'delete') }
 
   index_name "idocus_#{Rails.env}_packs"
 

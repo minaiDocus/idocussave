@@ -24,6 +24,10 @@ class Account::Documents::TagsController < Account::AccountController
         end
         document.tags = document.tags + add if add.any?
         document.save
+        if document.mixed?
+          document.pack.set_tags
+          document.pack.timeless.save
+        end
       end
     end
     respond_to do |format|
