@@ -20,5 +20,29 @@ module Elasticsearch
         end
       end
     end
+
+    module Proxy
+      def self.included(base)
+        base.class_eval do
+          def self.__elasticsearch__ &block
+            @__elasticsearch__ ||= ClassMethodsProxy.new(self)
+            @__elasticsearch__.instance_eval(&block) if block_given?
+            @__elasticsearch__
+          end
+
+          def __elasticsearch__ &block
+            @__elasticsearch__ ||= InstanceMethodsProxy.new(self)
+            @__elasticsearch__.instance_eval(&block) if block_given?
+            @__elasticsearch__
+          end
+
+          before_save do |i|
+            # Correct the access to method 'last' from 'value'
+            i.__elasticsearch__.instance_variable_set(:@__changed_attributes,
+                                                      Hash[ i.changes.map { |key, value| [key, value.try(:last)] } ])
+          end if respond_to?(:before_save) && instance_methods.include?(:changed_attributes)
+        end
+      end
+    end
   end
 end
