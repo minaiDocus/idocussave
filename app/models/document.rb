@@ -43,15 +43,24 @@ class Document
   end
 
   before_create :init_tags
-  after_create :generate_thumbs!, :extract_content!, unless: Proc.new { |d| d.mixed? || Rails.env.test? }
 
-  after_create { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'index') }
+  after_create do |document|
+    IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
+    unless document.mixed? || Rails.env.test?
+      Document.delay(queue: "Document - generate thumbs", priority: 9, run_at: 5.minutes.from_now).
+        generate_thumbs(document.id.to_s)
+      Document.delay(queue: "Document - extract content", priority: 10, run_at: 5.minutes.from_now).
+        extract_content(document.id.to_s)
+    end
+  end
+
   after_update do |document|
     keys = document.__elasticsearch__.instance_variable_get(:@__changed_attributes).keys
     if keys.include?('content_text') || keys.include?('tags')
       IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
     end
   end
+
   after_destroy { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'delete') }
 
   scope :mixed,            where:  { origin: 'mixed' }
@@ -140,6 +149,32 @@ class Document
     def client
       __elasticsearch__.client
     end
+
+    def generate_thumbs(id)
+      document = Document.find id
+      document.dirty = false # set to false before reprocess to pass `before_content_post_process`
+      document.content.reprocess!
+      document.save
+    end
+
+    def extract_content(id)
+      document = Document.find id
+      if document.content.queued_for_write[:original]
+        path = document.content.queued_for_write[:original].path
+      else
+        path = document.content.path
+      end
+      `pdftotext -raw -nopgbrk -q #{path}`
+      dirname = File.dirname(path)
+      filename = File.basename(path, '.pdf') + '.txt'
+      filepath = File.join(dirname, filename)
+      if File.exist?(filepath)
+        text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
+        document.content_text = text
+      end
+      document.content_text = ' ' unless document.content_text.present?
+      document.save
+    end
   end
 
   def get_token
@@ -209,30 +244,4 @@ class Document
       asc(:position)
     end
   end
-
-  def generate_thumbs!
-    self.dirty = false # set to false before reprocess to pass `before_content_post_process`
-    self.content.reprocess!
-    save
-  end
-  handle_asynchronously :generate_thumbs!, queue: 'documents thumbs', priority: 9, :run_at => Proc.new { 5.minutes.from_now }
-
-  def extract_content!
-    if self.content.queued_for_write[:original]
-      path = self.content.queued_for_write[:original].path
-    else
-      path = self.content.path
-    end
-    `pdftotext -raw -nopgbrk -q #{path}`
-    dirname = File.dirname(path)
-    filename = File.basename(path, '.pdf') + '.txt'
-    filepath = File.join(dirname, filename)
-    if File.exist?(filepath)
-      text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
-      self.content_text = text
-    end
-    self.content_text = ' ' unless self.content_text.present?
-    save
-  end
-  handle_asynchronously :extract_content!, queue: 'documents content', priority: 10, :run_at => Proc.new { 5.minutes.from_now }
 end

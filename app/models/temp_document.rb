@@ -69,7 +69,12 @@ class TempDocument
     image.is_thumb_generated # halts processing
   end
 
-  after_create :generate_thumbs, unless: Proc.new { Rails.env.test? }
+  after_create do |temp_document|
+    unless Rails.env.test?
+      TempDocument.delay(queue: 'TempDocument - generate thumbs', priority: 9, run_at: 5.minutes.from_now).
+        generate_thumbs(temp_document.id.to_s)
+    end
+  end
 
   scope :locked,            where: { is_locked: true }
   scope :not_locked,        where: { is_locked: false }
@@ -204,6 +209,13 @@ class TempDocument
       temp_document.update_attribute(:dematbox_doc_id, doc_id)
     end
     handle_asynchronously :send_to_ocr_processor, priority: 0
+
+    def generate_thumbs(id)
+      temp_document = TempDocument.find id
+      temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
+      temp_document.content.reprocess!
+      temp_document.save
+    end
   end
 
   def name_with_position
@@ -254,11 +266,4 @@ class TempDocument
     self.corruption_notified_at = Time.now
     save
   end
-
-  def generate_thumbs
-    self.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
-    self.content.reprocess!
-    save
-  end
-  handle_asynchronously :generate_thumbs, queue: 'temp_documents thumbs', priority: 9, run_at: Proc.new { 5.minutes.from_now }
 end
