@@ -18,7 +18,6 @@ set :application, "idocus"
 set :keep_releases, 5
 
 set :repository, "git@github.com:dbarbarossa/idocusave.git"
-set :local_repository, "~/git/repositories/idocus.git"
 set :scm, "git"
 set :branch, "master"
 set :deploy_via, :remote_cache
@@ -130,7 +129,6 @@ end
 namespace :git do
   desc "Push code to local and origin"
   task :push, :roles => :app do
-    %x(git push local master)
     %x(git push origin master)
   end
 end
