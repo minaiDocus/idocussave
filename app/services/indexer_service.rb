@@ -6,14 +6,12 @@ class IndexerService
     end
 
     def perform(klass, id, operation)
-      document = klass.constantize.find id
-      if document
-        case operation.to_s
-        when 'index'
-          document.__elasticsearch__.index_document
-        when 'delete'
-          document.__elasticsearch__.delete_document
-        end
+      source = klass.constantize
+      case operation.to_s
+      when 'index'
+        source.find(id).__elasticsearch__.index_document
+      when 'delete'
+        source.__elasticsearch__.client.delete index: source.index_name, type: klass.downcase, id: id
       end
     end
   end
