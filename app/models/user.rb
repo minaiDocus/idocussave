@@ -105,7 +105,6 @@ class User
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
   attr_accessor :is_group_required
-  attr_protected :is_admin, :is_prescriber
 
   slug do |user|
     user.code.gsub(/(#|%)/, ' ')

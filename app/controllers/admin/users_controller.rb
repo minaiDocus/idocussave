@@ -25,15 +25,7 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def create
-    params[:user][:first_name] = params[:user][:first_name].upcase if params[:user][:first_name]
-    params[:user][:last_name] = params[:user][:last_name].split.collect{|n| n.capitalize}.join(' ') if params[:user][:last_name]
-
-    is_admin = params[:user][:is_admin].presence ? params[:user].delete(:is_admin) : false
-    is_prescriber = params[:user][:is_prescriber].presence ? params[:user].delete(:is_prescriber) : false
-
     @user = User.new user_params
-    @user.is_admin = is_admin
-    @user.is_prescriber = is_prescriber
     AccountingPlan.create(user_id: @user.id)
     @user.skip_confirmation!
     @user.reset_password_token = User.reset_password_token
