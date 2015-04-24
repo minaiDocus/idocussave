@@ -42,7 +42,7 @@ gem 'rabl'
 gem 'typhoeus'
 gem 'dalli'
 gem 'nokogiri'
-gem 'capistrano', :require => false
+gem 'capistrano', '~> 2.15', :require => false
 gem 'capistrano_colors', :require => false
 gem 'validate_url'
 gem 'ruby-progressbar', :require => false
