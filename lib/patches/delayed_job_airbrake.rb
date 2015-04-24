@@ -12,7 +12,7 @@ module Delayed
             :parameters    => {
               :job_id => job.id.to_s
             },
-            :cgi_data      => ENV
+            :cgi_data      => ENV.to_hash
           )
           super if defined?(super)
         end
