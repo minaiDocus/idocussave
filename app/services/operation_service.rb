@@ -177,14 +177,14 @@ class OperationService
       # Ibiza accounting plan
       doc = parsed_accounting_plan(user)
       if doc
-        result = doc.css('name').select { |name| label.match /#{name.content}/ }.first
-        number = result.parent.css('associate').content if result
+        result = doc.css('name').select { |name| label.match /#{Regexp.quote(name.content)}/i }.first
+        number = result.parent.css('associate').text if result
       end
     else
       # DB Accounting Plan
       if user.accounting_plan
         provider = user.accounting_plan.providers.select do |provider|
-          label.match /#{provider.third_party_name}/i
+          label.match /#{Regexp.quote(provider.third_party_name)}/i
         end.first
         number = provider.third_party_account if provider
       end
