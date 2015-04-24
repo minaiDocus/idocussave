@@ -2,7 +2,6 @@ class Organization
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Slug
-  include ActiveModel::ForbiddenAttributesProtection
 
   attr_reader :member_tokens
 

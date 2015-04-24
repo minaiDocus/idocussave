@@ -3,7 +3,6 @@ class AccountBookType
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Slug
-  include ActiveModel::ForbiddenAttributesProtection
 
   ENTRY_TYPE = %w(no expense buying selling)
   TYPES_NAME = %w(AC VT NDF)

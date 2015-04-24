@@ -2,7 +2,6 @@
 class Subscription
   include Mongoid::Document
   include Mongoid::Timestamps
-  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :user
   # OR

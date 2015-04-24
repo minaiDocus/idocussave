@@ -1,7 +1,6 @@
 class Pack::Report::Preseizure
   include Mongoid::Document
   include Mongoid::Timestamps
-  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :organization,                          inverse_of: :preseizures
   belongs_to :user,                                  inverse_of: :preseizures

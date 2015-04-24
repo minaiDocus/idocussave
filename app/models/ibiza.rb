@@ -2,7 +2,6 @@
 class Ibiza
   include Mongoid::Document
   include Mongoid::Timestamps
-  include ActiveModel::ForbiddenAttributesProtection
 
   belongs_to :organization
 
