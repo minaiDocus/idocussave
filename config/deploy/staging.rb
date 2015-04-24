@@ -1,11 +1,11 @@
 set :deploy_to, "/home/grevalis/www/idocus/staging"
-set :branch, "develop"
+set :branch, $1 if `git branch` =~ /\* (\S+)\s/m
 set :rails_env, "staging"
 set :rack_env, "staging"
 
 namespace :git do
   desc "Push code to local and origin"
   task :push, :roles => :app do
-    %x(git push origin develop)
+    %x(git push origin #{branch})
   end
 end
