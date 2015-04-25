@@ -413,7 +413,7 @@ GEM
       rspec-mocks (~> 3.2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
-    ruby-box (1.13.0)
+    ruby-box (1.15.0)
       addressable
       json
       multipart-post
