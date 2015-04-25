@@ -22,11 +22,6 @@ describe Admin::ProductGroupsController do
       group = ProductGroup.where(name: 'group').first
       expect(group).not_to be_nil
     end
-
-    it "should fail" do
-      post :create, product_group: {}
-      expect(response).to render_template("admin/product_groups")
-    end
   end
 
   it "PUT a group" do

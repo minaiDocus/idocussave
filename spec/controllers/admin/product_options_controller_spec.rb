@@ -20,11 +20,6 @@ describe Admin::ProductOptionsController do
       option = ProductOption.where(name: 'option').first
       expect(option).not_to be_nil
     end
-
-    it "should fail" do
-      post :create, product_option: {}
-      expect(response).to render_template("admin/product_options")
-    end
   end
 
   it "GET 'edit'" do

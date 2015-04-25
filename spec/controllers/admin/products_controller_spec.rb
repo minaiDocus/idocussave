@@ -27,11 +27,6 @@ describe Admin::ProductsController do
       product = Product.where(title: 'product').first
       expect(product).not_to be_nil
     end
-
-    it "should fail" do
-      post :create, product: {}
-      expect(response).to render_template("admin/products")
-    end
   end
 
   it "GET 'edit'" do
