@@ -11,7 +11,7 @@ class Admin::ScanningProvidersController < Admin::AdminController
   end
 
   def create
-    @scanning_provider = ScanningProvider.new params[:scanning_provider]
+    @scanning_provider = ScanningProvider.new scanning_provider_params
     if @scanning_provider.save
       flash[:notice] = 'Créé avec succès.'
       redirect_to admin_scanning_provider_path(@scanning_provider)
@@ -24,7 +24,7 @@ class Admin::ScanningProvidersController < Admin::AdminController
   end
 
   def update
-    if @scanning_provider.update_attributes(params[:scanning_provider])
+    if @scanning_provider.update_attributes scanning_provider_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_scanning_provider_path(@scanning_provider)
     else
@@ -44,5 +44,16 @@ private
     @scanning_provider = ScanningProvider.find_by_slug params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(ScanningProvider, params[:id]) unless @scanning_provider
     @scanning_provider
+  end
+
+  def scanning_provider_params
+    params.require(:scanning_provider).permit(
+      :name,
+      :code,
+      :is_default,
+      :customer_tokens
+    ).tap do |whitelist|
+      whitelist[:addresses_attributes] = params[:scanning_provider][:addresses_attributes].permit!
+    end
   end
 end

@@ -21,7 +21,7 @@ class Admin::ProductsController < Admin::AdminController
   end
 
   def create
-    @product = Product.new params[:product]
+    @product = Product.new product_params
     if @product.save
       flash[:notice] = 'Créé avec succès.'
       redirect_to admin_products_path
@@ -34,7 +34,7 @@ class Admin::ProductsController < Admin::AdminController
   end
 
   def update
-    if @product.update_attributes params[:product]
+    if @product.update_attributes product_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_products_path
     else
@@ -79,5 +79,9 @@ private
   def load_product
     @product = Product.find_by_slug params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(Product, params[:id]) unless @product
+  end
+
+  def product_params
+    params.require(:product).permit(:title, :period_duration, :position)
   end
 end

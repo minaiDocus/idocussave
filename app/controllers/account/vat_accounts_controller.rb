@@ -46,6 +46,6 @@ private
   end
 
   def accounting_plan_params
-    params.require(:accounting_plan).permit(:vat_accounts_attributes)
+    { vat_accounts_attributes: params[:accounting_plan][:vat_accounts_attributes].permit! }
   end
 end

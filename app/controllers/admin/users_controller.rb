@@ -84,7 +84,21 @@ private
   end
 
   def user_params
-    params.require(:user).permit!
+    params.require(:user).permit(
+      :email,
+      :first_name,
+      :last_name,
+      :company,
+      :knowings_code,
+      :knowings_visibility,
+      :is_fake_prescriber,
+      :is_reminder_email_active,
+      :is_document_notifier_active,
+      :is_centralized,
+      :is_access_by_token_active,
+      :stamp_name,
+      :is_stamp_background_filled
+    )
   end
 
   def sort_column

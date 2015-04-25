@@ -7,7 +7,7 @@ class Admin::ProductGroupsController < Admin::AdminController
   end
 
   def create
-    @product_group = ProductGroup.new params[:product_group]
+    @product_group = ProductGroup.new product_group_params
     if @product_group.save
       flash[:notice] = 'Créé avec succès.'
       redirect_to admin_products_path
@@ -20,7 +20,7 @@ class Admin::ProductGroupsController < Admin::AdminController
   end
 
   def update
-    if @product_group.update_attributes params[:product_group]
+    if @product_group.update_attributes product_group_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_products_path
     else
@@ -39,5 +39,17 @@ private
   def load_group
     @product_group = ProductGroup.find_by_slug params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(ProductGroup, params[:id]) unless @product_group
+  end
+
+  def product_group_params
+    params.require(:product_group).permit(
+      :name,
+      :title,
+      :position,
+      :is_option_dependent,
+      { product_ids: [] },
+      { product_supergroup_ids: [] },
+      :product_require_id
+    )
   end
 end

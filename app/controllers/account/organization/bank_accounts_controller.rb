@@ -22,6 +22,6 @@ private
   end
 
   def bank_account_params
-    params.require(:bank_account).permit(:journal, :accounting_number)
+    params.require(:bank_account).permit(:journal, :accounting_number, :temporary_account)
   end
 end

@@ -63,7 +63,10 @@ private
   end
 
   def subscription_params
-    params.require(:subscription).permit(:period_duration, :product)
+    {
+      period_duration: params[:subscription][:period_duration],
+      product:         params[:subscription][:product]
+    }.with_indifferent_access
   end
 
   def subscription_options_params

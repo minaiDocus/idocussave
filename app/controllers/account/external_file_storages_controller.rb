@@ -27,16 +27,16 @@ public
     result = ""
     if params[:dropbox_basic]
       @external_file_storage.dropbox_basic.create if !@external_file_storage.dropbox_basic
-      result = @external_file_storage.dropbox_basic.update_attributes(params[:dropbox_basic])
+      result = @external_file_storage.dropbox_basic.update_attributes dropbox_basic_params
     elsif params[:google_doc]
       @external_file_storage.google_doc.create if !@external_file_storage.google_doc
-      result = @external_file_storage.google_doc.update_attributes(params[:google_doc])
+      result = @external_file_storage.google_doc.update_attributes google_doc_params
     elsif params[:ftp]
       @external_file_storage.ftp.create if !@external_file_storage.ftp
-      result = @external_file_storage.ftp.update_attributes(params[:ftp])
+      result = @external_file_storage.ftp.update_attributes ftp_params
     elsif params[:box]
       @external_file_storage.box.create if !@external_file_storage.box
-      result = @external_file_storage.box.update_attributes(params[:box])
+      result = @external_file_storage.box.update_attributes box_params
     end
     if result == true
       flash[:notice] = "Modifié avec succés."
@@ -47,5 +47,21 @@ public
       format.json{ render :json => result.to_json, :status => :ok }
       format.html{ redirect_to account_profile_path(panel: 'efs_management') }
     end
+  end
+
+  def dropbox_basic_params
+    params.require(:dropbox_basic).permit(:path, :file_type_to_deliver)
+  end
+
+  def google_doc_params
+    params.require(:google_doc).permit(:path, :file_type_to_deliver)
+  end
+
+  def ftp_params
+    params.require(:ftp).permit(:path, :file_type_to_deliver)
+  end
+
+  def box_params
+    params.require(:box).permit(:path, :file_type_to_deliver)
   end
 end

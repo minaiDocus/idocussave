@@ -35,7 +35,7 @@ class Admin::InvoicesController < Admin::AdminController
   end
 
   def update
-    @invoice.update_attributes(params[:invoice])
+    @invoice.update_attributes invoice_params
     respond_to do |format|
       format.html { redirect_to admin_invoices_path }
       format.json { render json: {}, status: :ok }
@@ -47,6 +47,10 @@ private
   def load_invoice
     @invoice = Invoice.find_by_number params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(Invoice, params[:id]) unless @invoice
+  end
+
+  def invoice_params
+    params.require(:invoice).permit(:requested_at, :received_at)
   end
 
   def sort_column

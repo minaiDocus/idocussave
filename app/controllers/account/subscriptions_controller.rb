@@ -23,7 +23,8 @@ class Account::SubscriptionsController < Account::OrganizationController
 private
 
   def subscription_params
-    attributes = [:product]
+    results = []
+    attributes = []
     attributes << :period_duration if @organization.is_subscription_lower_options_enabled
     if @user.is_admin
       attributes += [
@@ -42,10 +43,12 @@ private
         :max_oversized_authorized,
         :unit_price_of_excess_oversized
       ]
-      params.require(:subscription).permit(*attributes)
+      results = params.require(:subscription).permit(*attributes)
     else
-      params.require(:subscription).permit(*attributes)
+      results = params.require(:subscription).permit(*attributes)
     end
+    results[:product] = params[:subscription][:product]
+    results
   end
 
   def load_customer

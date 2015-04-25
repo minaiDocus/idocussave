@@ -60,14 +60,14 @@ private
         :description,
         :dropbox_delivery_folder,
         :is_dropbox_authorized,
-        :file_type_to_delive,
-        :member_tokens
+        :file_type_to_deliver,
+        { member_tokens: [] }
       )
     elsif is_leader?
       params.require(:group).permit(
         :name,
         :description,
-        :member_tokens
+        { member_tokens: [] }
       )
     else
       params.require(:group).permit(:customer_tokens)

@@ -88,6 +88,13 @@ private
   end
 
   def accounting_plan_params
-    params.require(:accounting_plan).permit(:providers_attributes, :customers_attributes)
+    attributes = {}
+    if params[:accounting_plan][:providers_attributes].present?
+      attributes[:providers_attributes] = params[:accounting_plan][:providers_attributes].permit!
+    end
+    if params[:accounting_plan][:customers_attributes].present?
+      attributes[:customers_attributes] = params[:accounting_plan][:customers_attributes].permit!
+    end
+    attributes
   end
 end

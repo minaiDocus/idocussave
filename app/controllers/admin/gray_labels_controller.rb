@@ -14,7 +14,7 @@ class Admin::GrayLabelsController < Admin::AdminController
   end
 
   def create
-    @gray_label = GrayLabel.new params[:gray_label]
+    @gray_label = GrayLabel.new gray_label_params
     if @gray_label.save
       flash[:notice] = 'Créé avec succès.'
       redirect_to admin_gray_label_path(@gray_label)
@@ -27,7 +27,7 @@ class Admin::GrayLabelsController < Admin::AdminController
   end
 
   def update
-    if @gray_label.update_attributes(params[:gray_label])
+    if @gray_label.update_attributes gray_label_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_gray_label_path(@gray_label)
     else
@@ -45,6 +45,17 @@ private
 
   def load_gray_label
     @gray_label = GrayLabel.find_by_slug params[:id]
+  end
+
+  def gray_label_params
+    params.require(:gray_label).permit(
+      :name,
+      :site_url,
+      :logo_url,
+      :back_url,
+      :is_active,
+      :organization_id
+    )
   end
 
   def sort_column

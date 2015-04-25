@@ -35,7 +35,7 @@
             %td= render partial: 'text_field', locals: { value: @user.company, name: 'user[company]' }
           %tr
             %th.first= t('mongoid.models.user.attributes.code')
-            %td= render partial: 'text_field', locals: { value: @user.code, name: 'user[code]' }
+            %td= @user.code
           %tr
             %th.first= t('mongoid.models.user.attributes.knowings_code')
             %td= render partial: 'text_field', locals: { value: @user.knowings_code, name: 'user[knowings_code]' }
@@ -58,7 +58,7 @@
         %tbody
           %tr
             %th= t('mongoid.models.user.attributes.is_prescriber')
-            %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber
+            %td.value= check_box_tag 'user[is_prescriber]', 1, @user.is_prescriber, disabled: true
           %tr
             %th= t('mongoid.models.user.attributes.is_fake_prescriber')
             %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
@@ -75,13 +75,13 @@
           %tr
             %th= t('mongoid.models.user.attributes.is_fiduceo_authorized')
             %td.value
-              = check_box_tag 'user[is_fiduceo_authorized]', 1, @user.is_fiduceo_authorized
+              = check_box_tag 'user[is_fiduceo_authorized]', 1, @user.is_fiduceo_authorized, disabled: true
           %tr
             %th= t('mongoid.models.user.attributes.is_access_by_token_active')
             %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active
           %tr
             %th= t('mongoid.models.user.attributes.is_dematbox_authorized')
-            %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized
+            %td.value= check_box_tag 'user[is_dematbox_authorized]', 1, @user.is_dematbox_authorized, disabled: true
           %tr
             %th Stamp - Nom
             %td.value

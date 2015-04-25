@@ -45,6 +45,18 @@ private
     if params[:product_option][:action_names].present?
       params[:product_option][:action_names] = params[:product_option][:action_names].map(&:presence).compact
     end
-    params[:product_option]
+    params.require(:product_option).permit(
+      :name,
+      :title,
+      :description,
+      :price_in_cents_wo_vat,
+      :position,
+      :duration,
+      :quantity,
+      :product_group,
+      { action_names: [] },
+      :notify,
+      :is_default
+    )
   end
 end

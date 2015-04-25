@@ -46,6 +46,9 @@ private
   end
 
   def ibiza_params
-    params.require(:ibiza).permit(:token, :is_auto_deliver, :description, :description_separator, :piece_name_format, :piece_name_format_sep)
+    params.require(:ibiza).permit(:token, :is_auto_deliver, :description_separator, :piece_name_format_sep).tap do |whitelist|
+      whitelist[:description]       = params[:ibiza][:description].permit!
+      whitelist[:piece_name_format] = params[:ibiza][:piece_name_format].permit!
+    end
   end
 end

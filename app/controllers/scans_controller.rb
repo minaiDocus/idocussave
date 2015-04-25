@@ -25,7 +25,7 @@ class ScansController < PaperProcessesController
       if (@document.nil?) || (@document && @document.period && @document.period.end_at < Time.now)
         @document = PeriodDocument.new
       end
-      @document.assign_attributes(params[:period_document])
+      @document.assign_attributes(period_document_params)
       if @document.persisted? && @document.valid?
         session[:document] = nil
         session[:old_document] = @document.reload
@@ -141,5 +141,9 @@ private
       paper_process.pack_name       = document.name
       paper_process.save
     end
+  end
+
+  def period_document_params
+    params.require(:period_document).permit(:name, :paperclips, :oversized)
   end
 end

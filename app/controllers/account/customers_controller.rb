@@ -132,7 +132,7 @@ private
       :first_name,
       :last_name,
       :email,
-      :group_ids,
+      { group_ids: [] },
       :knowings_code,
       :knowings_visibility,
       { options_attributes: [:is_taxable, :is_pre_assignment_date_computed] }
