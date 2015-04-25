@@ -14,7 +14,7 @@
       = stylesheet_link_tag 'account/ibiza'
     - elsif controller_name.in?(%w(retriever_transactions retrieved_banking_operations retrieved_documents))
       = stylesheet_link_tag 'account/organization/retrievers'
-    - elsif !controller_name.in?(%w(organization_addresses accounting_plans knowings))
+    - elsif !controller_name.in?(%w(organization_addresses accounting_plans vat_accounts exercices knowings))
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization
@@ -72,7 +72,7 @@
       = javascript_include_tag 'account/subscriptions', 'account/organization_subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
       = javascript_include_tag 'account/csv_outputters'
-    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans bank_accounts knowings pre_assignment_delivery_errors ibiza))
+    - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans vat_accounts exercices bank_accounts knowings pre_assignment_delivery_errors ibiza))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
     = render '/shared/zoho_discussions'
