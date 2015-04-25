@@ -44,7 +44,6 @@ gem 'nokogiri'
 gem 'capistrano', '~> 2.15', :require => false
 gem 'capistrano_colors', :require => false
 gem 'validate_url'
-gem 'ruby-progressbar', :require => false
 gem 'ansi', :require => false
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'

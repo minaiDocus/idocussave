@@ -419,7 +419,6 @@ GEM
       multipart-post
       oauth2
     ruby-ole (1.2.11.3)
-    ruby-progressbar (1.5.1)
     ruby-rc4 (0.1.5)
     rubyzip (0.9.9)
     safe_yaml (1.0.4)
@@ -577,7 +576,6 @@ DEPENDENCIES
   rake (= 10.1.0)
   rspec-rails
   ruby-box
-  ruby-progressbar
   sass-rails (~> 3.2.3)
   savon
   simple_form (= 2.1.2)
