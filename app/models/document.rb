@@ -103,7 +103,7 @@ class Document
   def as_indexed_json(options={})
     {
       id:           id.to_s,
-      pack_id:      pack.id.to_s,
+      pack_id:      pack_id.to_s,
       created_at:   created_at,
       tags:         tags,
       content_text: content_text,
