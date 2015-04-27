@@ -9,10 +9,12 @@ class DocumentProcessor
         user_code = temp_pack.name.split[0]
         user = User.find_by_code user_code
         if user && temp_documents.any?
+          logger.info "[#{Time.now}] #{temp_pack.name} - #{temp_documents.size}"
           pack = Pack.find_or_initialize temp_pack.name, user
           current_piece_position = pack.pieces.by_position.last.position + 1 rescue 1
           current_page_position = pack.pages.by_position.last.position + 2 rescue 1
           temp_documents.each do |temp_document|
+            logger.info "[#{Time.now}]   #{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}"
             if !temp_document.is_a_cover? || !pack.has_cover?
               Dir.mktmpdir do |dir|
                 ## Initialization
@@ -139,6 +141,10 @@ class DocumentProcessor
           FileDeliveryInit.prepare(pack)
         end
       end
+    end
+
+    def logger
+      @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_document_processor.log")
     end
   end
 end
