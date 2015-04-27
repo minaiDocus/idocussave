@@ -126,7 +126,7 @@ GEM
       safe_yaml (~> 1.0.0)
     d3_rails (3.3.11)
       railties (>= 3.1.0)
-    daemons (1.1.9)
+    daemons (1.2.2)
     dalli (2.6.4)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
