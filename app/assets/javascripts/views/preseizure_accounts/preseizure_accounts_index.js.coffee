@@ -3,12 +3,12 @@ class Idocus.Views.PreseizureAccountsIndex extends Backbone.View
   template: JST['preseizure_accounts/index']
 
   initialize: (options) ->
-    @packName = options.packName
-    @position = options.position
+    @packName      = options.packName
+    @preseizure_id = options.preseizure_id
 
     @collection = new Idocus.Collections.PreseizureAccounts()
     @collection.on 'reset', @render, this
-    @collection.fetch(data: { name: @packName, position: @position })
+    @collection.fetch(data: { name: @packName, preseizure_id: @preseizure_id })
     this
 
   render: ->

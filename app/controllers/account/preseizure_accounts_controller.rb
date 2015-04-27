@@ -6,12 +6,7 @@ class Account::PreseizureAccountsController < Account::OrganizationController
     if params[:name].present?
       report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(name: /#{params[:name].gsub('_',' ')}/).first
       if report
-        if params[:position].presence && params[:position].match(/\d+/)
-          position = params[:position].to_i
-        else
-          position = 1
-        end
-        preseizure = report.preseizures.where(position: position).first
+        preseizure = report.preseizures.find params[:preseizure_id]
         @preseizure_accounts = preseizure.accounts.by_position.includes(:entries).to_a
       else
         @preseizure_accounts = []

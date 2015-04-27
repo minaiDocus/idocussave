@@ -9,7 +9,7 @@ class Idocus.Routers.PreAssignmentsRouter extends Backbone.Router
     ':view/search/:query/page/:page': 'search_pack_reports'
     ':view/:packName': 'preseizures'
     ':view/:packName/page/:page': 'preseizures'
-    ':view/:packName/:position': 'preseizure_accounts'
+    ':view/:packName/:preseizure_id': 'preseizure_accounts'
 
   pack_reports: (view, page) ->
     @view = view || 'all'
@@ -43,10 +43,10 @@ class Idocus.Routers.PreAssignmentsRouter extends Backbone.Router
       @preseizuresIndex = new Idocus.Views.PreseizuresIndex (el: $('#preseizures .content'), view: @view, packName: packName, page: page)
       @preseizuresIndex.render()
 
-  preseizure_accounts: (view, packName, position) ->
+  preseizure_accounts: (view, packName, preseizure_id) ->
     @view = view || 'all'
     if @index == undefined
       Backbone.history.navigate("#{@view}", true)
     else
-      @preseizureAccountsIndex = new Idocus.Views.PreseizureAccountsIndex (el: $('#preseizure_accounts .content'), view: @view, packName: packName, position: position)
+      @preseizureAccountsIndex = new Idocus.Views.PreseizureAccountsIndex (el: $('#preseizure_accounts .content'), view: @view, packName: packName, preseizure_id: preseizure_id)
       @preseizureAccountsIndex.render()
