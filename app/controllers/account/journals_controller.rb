@@ -154,9 +154,11 @@ private
       attributes.merge!(params.require(:account_book_type).permit(:is_expense_categories_editable))
     end
     if (@journal && @journal.is_expense_categories_editable) || current_user.is_admin
-      attributes.merge!({
-        expense_categories_attributes: params[:account_book_type][:expense_categories_attributes].permit!
-      })
+      if params[:account_book_type][:expense_categories_attributes].present?
+        attributes.merge!({
+          expense_categories_attributes: params[:account_book_type][:expense_categories_attributes].permit!
+        })
+      end
     end
     attributes
   end
