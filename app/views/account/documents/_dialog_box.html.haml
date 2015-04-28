@@ -137,7 +137,7 @@
       %p.length_alert
     .modal-footer
       %a{ :class=>"modal-close btn" } Fermer
-      %input#documentsTaggingButton.btn{ :type => "submit", :value => "Ok" }
+      %input#documentsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"pagesTaggingDialog" }
   .modal-header
@@ -156,7 +156,7 @@
       %p.length_alert
     .modal-footer
       %a{ :class=>"modal-close btn" } Fermer
-      %input#pagesTaggingButton.btn{ :type => "submit", :value => "Ok" }
+      %input#pagesTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"selectionTaggingDialog" }
   .modal-header
@@ -175,7 +175,7 @@
       %p.length_alert
     .modal-footer
       %a{ :class=>"modal-close btn" } Fermer
-      %input#selectionsTaggingButton.btn{ :type => "submit", :value => "Ok" }
+      %input#selectionsTaggingButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"compositionDialog" }
   .modal-header
@@ -191,7 +191,7 @@
       %p.length_alert
     .modal-footer
       %a{ :class=>"modal-close btn" } Fermer
-      %input#compositionButton.btn{ :type => "submit", :value => "Ok" }
+      %input#compositionButton.btn.btn-primary{ :type => "submit", :value => "Ok" }
 
 .modal.fade{ :id=>"shareDialog" }
   .modal-header
@@ -219,5 +219,5 @@
       != radio_button_tag :delivery_type, FileDeliveryInit::RemoteFile::PIECES_ONLY, false, :class => "pull-left", :style => "margin-right: 5px;"
       != label_tag "delivery_type_#{FileDeliveryInit::RemoteFile::PIECES_ONLY}", "Pièces séparées seulement"
     .modal-footer
-      %a#deliverButton.btn{ :href => "#" }
+      %a#deliverButton.btn.btn-primary{ :href => "#" }
         Valider
