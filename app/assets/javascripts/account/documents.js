@@ -521,13 +521,15 @@
       getPacks();
     });
 
-    $("a.do-selectSinglePage").click(function(){
+    $("a.do-selectSinglePage").click(function(e){
+      e.preventDefault();
       var id = "#document_" + $(".showPage").attr("id");
       var li = $(id);
       li.addClass("selected");
       addPage(li);
     });
-    $("a.do-unselectSinglePage").click(function(){
+    $("a.do-unselectSinglePage").click(function(e){
+      e.preventDefault();
       var id = "#document_" + $(".showPage").attr("id");
       var li = $(id);
       li.removeClass("selected");
@@ -538,12 +540,13 @@
     $(".close").click(function(){ $(this).parents("li").remove(); });
 
     // selection event handler
-    $(".do-selectAll").click(function(){ $("#documentslist > .content > ul > li").addClass("selected"); });
-    $(".do-unselectAll").click(function(){ $("#documentslist > .content > ul > li").removeClass("selected"); });
+    $(".do-selectAll").click(function(e){ e.preventDefault(); $("#documentslist > .content > ul > li").addClass("selected"); });
+    $(".do-unselectAll").click(function(e){ e.preventDefault(); $("#documentslist > .content > ul > li").removeClass("selected"); });
 
     $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
 
-    $(".do-selectAllPages").click(function(){
+    $(".do-selectAllPages").click(function(e){
+      e.preventDefault();
       $("#show_pages li.pages").each(function(index,li){
         if (!$(li).hasClass("selected")) {
           $(li).addClass("selected");
@@ -551,21 +554,24 @@
         }
       });
     });
-    $(".do-unselectAllPages").click(function(){
+    $(".do-unselectAllPages").click(function(e){
+      e.preventDefault();
       $("#show_pages li.pages").removeClass("selected");
       $("#show_pages li.pages").each(function(index,li){
         removePage($(li));
       });
     });
 
-    $("a.do-nextPage").click(function(){
+    $("a.do-nextPage").click(function(e){
+      e.preventDefault();
       var id = $(".showPage").attr("id");
       var li = $("#document_"+id);
       var link = li.next().children(".do-showPage");
       if (link.length > 0)
         showPage(link);
     });
-    $("a.do-prevPage").click(function(){
+    $("a.do-prevPage").click(function(e){
+      e.preventDefault();
       var id = $(".showPage").attr("id");
       var li = $("#document_"+id);
       var link = li.prev().children(".do-showPage")
@@ -583,7 +589,8 @@
       return false;
     });
 
-    $("a.removeAllSelection").click(function() {
+    $("a.removeAllSelection").click(function(e) {
+      e.preventDefault();
       synchroniseRemovedSelection();
       $("#selectionlist .content ul").html("");
       $.ajax({
