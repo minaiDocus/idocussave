@@ -278,8 +278,8 @@
   // initialize once
   function initManager() {
     $("#filter").change(function(){
-      $("#panel1 .header h3").text("");
-      $("#panel1 > .content > ul").html("");
+      $("#panel1 .header h4").text("");
+      $("#panel1 .content ul").html("");
       getPacks();
     });
 
@@ -333,7 +333,7 @@
 
     $("#pagesTaggingButton").click(function(e) {
       e.preventDefault();
-      var $documents = $("#panel1 > .content > ul > li.selected");
+      var $documents = $("#show_pages li.selected");
       var document_ids = $.map($documents, function(li){ return li.id.split("_")[1] });
       var $pagesTags = $("#pagesTags");
 
@@ -544,7 +544,7 @@
     $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
 
     $(".do-selectAllPages").click(function(){
-      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
+      $("#show_pages li.pages").each(function(index,li){
         if (!$(li).hasClass("selected")) {
           $(li).addClass("selected");
           addPage($(li));
@@ -552,8 +552,8 @@
       });
     });
     $(".do-unselectAllPages").click(function(){
-      $("#panel1 > .content > ul:first-of-type > li").removeClass("selected");
-      $("#panel1 > .content > ul:first-of-type > li").each(function(index,li){
+      $("#show_pages li.pages").removeClass("selected");
+      $("#show_pages li.pages").each(function(index,li){
         removePage($(li));
       });
     });
