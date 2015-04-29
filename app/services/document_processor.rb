@@ -25,6 +25,7 @@ class DocumentProcessor
                 piece_file_name = DocumentTools.file_name(piece_name)
                 piece_file_path = File.join(dir, piece_file_name)
 
+                logger.info "[#{Time.now}]     #{File.exists?(temp_document.content.path)} - #{piece_file_path}"
                 DocumentTools.create_stamped_file temp_document.content.path, piece_file_path, user.stamp_name, piece_name, {
                   origin: temp_document.delivery_type,
                   is_stamp_background_filled: user.is_stamp_background_filled,
