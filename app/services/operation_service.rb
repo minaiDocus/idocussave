@@ -175,7 +175,7 @@ class OperationService
     number = nil
     if user.organization.ibiza.try(:is_configured?)
       # Ibiza accounting plan
-      doc = parsed_accounting_plan(user)
+      doc = parsed_accounting_plan(user.code)
       if doc
         result = doc.css('name').select { |name| label.match /#{Regexp.quote(name.content)}/i }.first
         number = result.parent.css('associate').text if result
