@@ -53,7 +53,7 @@ public
       @remaining_files = @user.remote_files.not_processed.count
       @packs = @packs.desc(:updated_at).page(params[:page]).per(params[:per_page])
     else
-      options = { page: params[:page].to_i, per_page: params[:per_page].to_i }
+      options = { page: params[:page], per_page: params[:per_page] }
       options.merge!({ sort: true }) unless params[:filter].present?
       if @user.organization && @user.is_prescriber
         owner_ids = []

@@ -77,8 +77,8 @@ class Pack
 
   class << self
     def search(text, options={})
-      page = options[:page] || 1
-      per_page = options[:per_page] || self.default_per_page
+      page = options[:page].present? ? options[:page].to_i : 1
+      per_page = options[:per_page].present? ? options[:per_page].to_i : self.default_per_page
 
       query = {}
       filter = {}
