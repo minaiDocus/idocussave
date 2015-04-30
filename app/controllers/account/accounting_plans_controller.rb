@@ -89,11 +89,13 @@ private
 
   def accounting_plan_params
     attributes = {}
-    if params[:accounting_plan][:providers_attributes].present?
-      attributes[:providers_attributes] = params[:accounting_plan][:providers_attributes].permit!
-    end
-    if params[:accounting_plan][:customers_attributes].present?
-      attributes[:customers_attributes] = params[:accounting_plan][:customers_attributes].permit!
+    if params[:accounting_plan]
+      if params[:accounting_plan][:providers_attributes].present?
+        attributes[:providers_attributes] = params[:accounting_plan][:providers_attributes].permit!
+      end
+      if params[:accounting_plan][:customers_attributes].present?
+        attributes[:customers_attributes] = params[:accounting_plan][:customers_attributes].permit!
+      end
     end
     attributes
   end
