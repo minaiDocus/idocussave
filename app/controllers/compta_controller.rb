@@ -22,6 +22,6 @@ private
   def load_users
     organization_ids = Organization.not_test.map(&:id)
     user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
-    @users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active
+    @users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active.includes(:options)
   end
 end
