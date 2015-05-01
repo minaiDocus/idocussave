@@ -112,7 +112,7 @@ class PeriodsToXlsService
             end
           end
           price = (option.price_in_cents_wo_vat * products_amount_in_cents_wo_vat)
-          price /= period.products_price_in_cents_wo_vat
+          price /= period.products_price_in_cents_wo_vat if price != 0.0
           data += [
             month,
             period.start_at.year,
