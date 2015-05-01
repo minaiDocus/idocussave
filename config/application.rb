@@ -87,5 +87,7 @@ module Idocus
     config.wash_out.parser = :nokogiri
     config.wash_out.camelize_wsdl = true
     config.wash_out.namespace = 'http://service.operator.dematbox.sagemcom.com/'
+
+    Paperclip.options[:log] = false
   end
 end
