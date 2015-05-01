@@ -31,6 +31,14 @@ class PeriodBilling
   validates_inclusion_of :order, in: 1..12
   validate :uniqueness_of_order
 
+  def pieces
+    scanned_pieces + uploaded_pieces + dematbox_scanned_pieces + fiduceo_pieces
+  end
+
+  def pages
+    scanned_pages + uploaded_pages + dematbox_scanned_pages + fiduceo_pages
+  end
+
   def compta_pieces
     preseizure_pieces + expense_pieces
   end
