@@ -8,9 +8,6 @@ require "action_mailer/railtie"
 require "active_resource/railtie"
 #require "rails/test_unit/railtie"
 
-#require "lib/raw_upload"
-require 'rack/raw_upload'
-
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
 if defined?(Bundler)
@@ -70,8 +67,6 @@ module Idocus
       g.test_framework :rspec, :fixture => true, :views => false
       g.fixture_replacement :factory_girl, :dir => "spec/factories"
     end
-
-    config.middleware.use Rack::RawUpload
 
     # Enable the asset pipeline
     config.assets.enabled = true
