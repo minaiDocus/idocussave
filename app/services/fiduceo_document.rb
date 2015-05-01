@@ -71,10 +71,10 @@ private
       else
         @dir = Dir.mktmpdir
         file_path = File.join(@dir, file_name)
-        @file = File.open(file_path, 'w')
-        @file.write decoded_data
-        @file.close
-        @file
+        File.open file_path, 'w' do |f|
+          f.write decoded_data
+        end
+        @file = File.open(file_path)
       end
     end
   end

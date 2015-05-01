@@ -36,6 +36,7 @@ class Pack::Piece
   has_mongoid_attached_file :content,
                             path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
                             url: "/account/documents/pieces/:id/download"
+  do_not_validate_attachment_file_type :content
 
   scope :scanned,          where: { origin: 'scan' }
   scope :uploaded,         where: { origin: 'upload' }

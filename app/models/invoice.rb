@@ -21,6 +21,7 @@ class Invoice
     },
     path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
     url: "/account/invoices/:id/download/:style"
+  do_not_validate_attachment_file_type :content
 
   validates_presence_of :number
   validates_uniqueness_of :number

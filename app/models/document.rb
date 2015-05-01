@@ -33,6 +33,7 @@ class Document
                             },
                             path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
                             url: "/account/documents/:id/download/:style"
+  do_not_validate_attachment_file_type :content
 
   before_content_post_process do |image|
     if image.dirty # halts processing

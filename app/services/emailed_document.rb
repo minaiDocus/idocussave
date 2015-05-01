@@ -66,10 +66,12 @@ class EmailedDocument
         email.to_user               = User.where(email_code: mail.to.first.split('@')[0]).first
 
         Dir.mktmpdir do |dir|
-          file = File.new "#{dir}/#{email.id}.eml", 'w'
-          file.write mail.to_s
-          file.close
-          email.original_content = file
+          file_path = "#{dir}/#{email.id}.eml"
+          File.open file_path, 'w' do |f|
+            f.write mail.to_s
+          end
+          email.original_content_content_type = 'text/html'
+          email.original_content = File.open(file_path)
           email.save
         end
       end

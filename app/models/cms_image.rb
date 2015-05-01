@@ -16,6 +16,7 @@ class CmsImage
     },
     path: ":rails_root/public:url",
     url: "/system/:rails_env/:class/:attachment/:id/:style/:filename"
+  do_not_validate_attachment_file_type :content
 
   def self.find_by_name(name)
     any_of({ original_file_name: name }, { content_file_name: name }).first

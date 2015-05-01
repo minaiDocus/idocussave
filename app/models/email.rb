@@ -29,6 +29,7 @@ class Email
   has_mongoid_attached_file :original_content,
                             path: ":rails_root/files/:rails_env/:class/:attachment/:filename",
                             url: "/admin/emailed_documents/:id"
+  do_not_validate_attachment_file_type :original_content
 
   scope :created,       where: { state: 'created' }
   scope :error,         where: { state: 'error' }

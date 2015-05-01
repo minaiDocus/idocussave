@@ -63,7 +63,9 @@ class TempDocument
   has_mongoid_attached_file :content,     styles: { thumb: ["46x67>", :png] },
                                           path: ":rails_root/files/:rails_env/:class/:id/:filename",
                                           url: "/account/documents/:id/download/:style"
+  do_not_validate_attachment_file_type :content
   has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
+  do_not_validate_attachment_file_type :raw_content
 
   before_content_post_process do |image|
     image.is_thumb_generated # halts processing
