@@ -2,12 +2,12 @@
 require 'spec_helper'
 
 describe DocumentTools do
-  it '.page_number returns 2' do
+  it '.pages_number returns 2' do
     file_path = File.join([Rails.root, 'spec/support/files/2pages.pdf'])
     expect(DocumentTools.pages_number(file_path)).to eq(2)
   end
 
-  it '.page_number returns 5' do
+  it '.pages_number returns 5' do
     file_path = File.join([Rails.root, 'spec/support/files/5pages.pdf'])
     expect(DocumentTools.pages_number(file_path)).to eq(5)
   end
