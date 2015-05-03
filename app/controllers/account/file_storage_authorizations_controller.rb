@@ -37,8 +37,8 @@ private
 
   def load_someone
     id = params[:collaborator_id] || params[:customer_id]
-    @someone = @organization.members.find_by_slug id
-    raise Mongoid::Errors::DocumentNotFound.new(User, id) unless @someone
+    @someone = @organization.members.find_by_slug! id
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: id) unless @someone
   end
 
   def verify_if_someone_is_active

@@ -37,8 +37,8 @@ class Admin::ProductOptionsController < Admin::AdminController
 private
 
   def load_product_option
-    @product_option = ProductOption.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(ProductOption, params[:id]) unless @product_option
+    @product_option = ProductOption.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(ProductOption, slug: params[:id]) unless @product_option
   end
 
   def product_option_params

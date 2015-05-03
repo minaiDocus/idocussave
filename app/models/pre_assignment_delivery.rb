@@ -17,28 +17,29 @@ class PreAssignmentDelivery
   field :grouped_date, type: Date
   field :xml_data
   field :error_message
+  field :_slugs,       type: Array, default: []
 
   validates_presence_of :pack_name, :number, :state
   validates_uniqueness_of :number
 
-  index :number, unique: true
-  index :state
-  index :is_auto
-  index :total_item
+  index({ number: 1 }, { unique: true })
+  index({ state: 1 })
+  index({ is_auto: 1 })
+  index({ total_item: 1 })
 
   before_validation :set_number
 
-  scope :by_number, desc: :number
+  scope :by_number, desc(:number)
 
-  scope :auto,   where: { is_auto: true }
-  scope :manual, where: { is_auto: false }
+  scope :auto,   where(is_auto: true)
+  scope :manual, where(is_auto: false)
 
-  scope :pending,      where: { state: 'pending' }
-  scope :building_xml, where: { state: 'building_xml' }
-  scope :xml_built,    where: { state: 'xml_built' }
-  scope :sending,      where: { state: 'sending' }
-  scope :sent,         where: { state: 'sent' }
-  scope :error,        where: { state: 'error' }
+  scope :pending,      where(state: 'pending')
+  scope :building_xml, where(state: 'building_xml')
+  scope :xml_built,    where(state: 'xml_built')
+  scope :sending,      where(state: 'sending')
+  scope :sent,         where(state: 'sent')
+  scope :error,        where(state: 'error')
 
   state_machine :initial => :pending do
     state :pending

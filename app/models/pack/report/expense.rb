@@ -18,13 +18,13 @@ class Pack::Report::Expense
   field :obs_type,               type: Integer
   field :position,               type: Integer
 
-  default_scope asc: :position
+  default_scope asc(:position)
 
-  scope :perso, where: { origin: /^perso$/i }
-  scope :pro,   where: { origin: /^pro$/i }
+  scope :perso, where(origin: /^perso$/i)
+  scope :pro,   where(origin: /^pro$/i)
 
-  scope :abnormal, where:  { obs_type: 0 }
-  scope :normal,   not_in: { obs_type: [0] }
+  scope :abnormal, where(obs_type: 0)
+  scope :normal,   not_in(obs_type: [0])
 
   def to_row(is_access_url=true)
     [

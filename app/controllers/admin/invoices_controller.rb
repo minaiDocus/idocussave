@@ -3,7 +3,7 @@ class Admin::InvoicesController < Admin::AdminController
   before_filter :load_invoice, only: %w(show update)
 
   def index
-    @invoices = search(invoice_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @invoices = search(invoice_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def archive
@@ -30,7 +30,7 @@ class Admin::InvoicesController < Admin::AdminController
       type = @invoice.content_content_type || 'application/pdf'
       send_file(file_path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
-      raise Mongoid::Errors::DocumentNotFound.new(Invoice, params[:id])
+      raise Mongoid::Errors::DocumentNotFound.new(Invoice, nil, params[:id])
     end
   end
 
@@ -46,7 +46,7 @@ private
 
   def load_invoice
     @invoice = Invoice.find_by_number params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Invoice, params[:id]) unless @invoice
+    raise Mongoid::Errors::DocumentNotFound.new(Invoice, number: params[:id]) unless @invoice
   end
 
   def invoice_params

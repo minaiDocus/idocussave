@@ -100,32 +100,6 @@ describe Api::V1::PreAssignmentsController do
         expect(response.code).to eq('400')
       end
 
-      context 'with invalid byte sequence in UTF-8' do
-        context 'as json' do
-          it 'should be invalid' do
-            pack_name = 'TS%AAA%20AC%20201401'
-            page.driver.post "/api/v1/pre_assignments/update_comment.json?access_token=#{@admin.authentication_token}&pack_name=#{pack_name}&comment="
-
-            expect(page.status_code).to eq(400)
-            result = JSON.parse(page.body)
-            expect(result['message']).to eq('Invalid Request : ArgumentError')
-            expect(result['description']).to eq('invalid byte sequence in UTF-8')
-          end
-        end
-
-        context 'as xml' do
-          it 'should be invalid' do
-            pack_name = 'TS%AAA%20AC%20201401'
-            page.driver.post "/api/v1/pre_assignments/update_comment.xml?access_token=#{@admin.authentication_token}&pack_name=#{pack_name}&comment="
-
-            expect(page.status_code).to eq(400)
-            doc = Nokogiri::XML(page.body)
-            expect(doc.xpath('//title').first.text).to eq('Invalid Request : ArgumentError')
-            expect(doc.xpath('//description').first.text).to eq('invalid byte sequence in UTF-8')
-          end
-        end
-      end
-
       it 'should be not found' do
         params = {
           format:       'json',

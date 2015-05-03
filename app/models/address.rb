@@ -28,9 +28,9 @@ class Address
 
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50
 
-  scope :for_billing,      where: { is_for_billing: true }
-  scope :for_shipping,     where: { is_for_shipping: true }
-  scope :for_kit_shipping, where: { is_for_kit_shipping: true }
+  scope :for_billing,      where(is_for_billing: true)
+  scope :for_shipping,     where(is_for_shipping: true)
+  scope :for_kit_shipping, where(is_for_kit_shipping: true)
 
   before_save :set_billing_address, :set_shipping_address, :set_kit_shipping_address
 

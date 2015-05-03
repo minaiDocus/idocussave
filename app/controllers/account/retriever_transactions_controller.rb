@@ -3,7 +3,7 @@ class Account::RetrieverTransactionsController < Account::FiduceoController
   layout 'layouts/account/retrievers'
 
   def index
-    @transactions = search(transaction_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @transactions = search(transaction_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = transaction_contains.empty?
   end
 

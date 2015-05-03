@@ -22,7 +22,7 @@ private
     new_journal.user         = nil
     new_journal.organization = nil
     new_journal.is_default   = nil
-    new_journal.slug         = nil
+    new_journal._slugs       = []
     @user.account_book_types << new_journal
     new_journal.save
     new_journal

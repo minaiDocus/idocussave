@@ -60,8 +60,8 @@ class FiduceoTransaction
   belongs_to :user
   belongs_to :retriever,      class_name: 'FiduceoRetriever', inverse_of: 'transactions'
 
-  scope :processed,     where: { :status.in => FINISHED_STATUSES }
-  scope :not_processed, where: { :status.in => NOT_FINISHED_STATUSES }
+  scope :processed,     where(:status.in => FINISHED_STATUSES)
+  scope :not_processed, where(:status.in => NOT_FINISHED_STATUSES)
 
   def processing?
     status.in? NOT_FINISHED_STATUSES

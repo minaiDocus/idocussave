@@ -107,7 +107,7 @@ class User
   attr_accessor :is_group_required
 
   slug do |user|
-    user.code.gsub(/(#|%)/, ' ')
+    user.code.gsub(/(#|%)/, ' ').to_url
   end
 
   embeds_many :addresses, as: :locatable
@@ -151,18 +151,18 @@ class User
 
   belongs_to :scanning_provider, inverse_of: 'customers'
 
-  scope :prescribers,                 where: { is_prescriber: true }
-  scope :fake_prescribers,            where: { is_prescriber: true, is_fake_prescriber: true }
-  scope :not_fake_prescribers,        where: { is_prescriber: true, :is_fake_prescriber.in => [false, nil] }
-  scope :customers,                   where: { is_prescriber: false, :is_operator.in => [false, nil] }
-  scope :operators,                   where: { is_operator: true }
-  scope :not_operators,               where: { :is_operator.in => [false, nil] }
-  scope :dropbox_extended_authorized, where: { is_dropbox_extended_authorized: true }
-  scope :active,                      where: { inactive_at: nil }
-  scope :closed,                      where: { :inactive_at.nin => [nil] }
-  scope :centralized,                 where: { is_centralized: true }
-  scope :not_centralized,             where: { is_centralized: false }
-  scope :active_at,                   lambda { |time| any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
+  scope :prescribers,                 where(is_prescriber: true)
+  scope :fake_prescribers,            where(is_prescriber: true, is_fake_prescriber: true)
+  scope :not_fake_prescribers,        where(is_prescriber: true, :is_fake_prescriber.in => [false, nil])
+  scope :customers,                   where(is_prescriber: false, :is_operator.in => [false, nil])
+  scope :operators,                   where(is_operator: true)
+  scope :not_operators,               where(:is_operator.in => [false, nil])
+  scope :dropbox_extended_authorized, where(is_dropbox_extended_authorized: true)
+  scope :active,                      where(inactive_at: nil)
+  scope :closed,                      where(:inactive_at.nin => [nil])
+  scope :centralized,                 where(is_centralized: true)
+  scope :not_centralized,             where(is_centralized: false)
+  scope :active_at,                   -> time { any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
@@ -270,9 +270,15 @@ class User
   end
 
   def prescribers
-    if !self.is_prescriber
-      leader_id = organization.try(:leader_id)
-      User.any_of({ :group_ids.in => self['group_ids'] }, { _id: leader_id }).prescribers.asc(:code)
+    if !is_prescriber
+      user_ids = []
+      user_ids << organization.leader.id if organization.try(:leader)
+      user_ids += User.where(:group_ids.in => group_ids, is_prescriber: true).distinct(:_id) if group_ids.present?
+      if user_ids.any?
+        User.where(:_id.in => user_ids).asc(:code)
+      else
+        []
+      end
     else
       []
     end

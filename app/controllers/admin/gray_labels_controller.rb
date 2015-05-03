@@ -3,7 +3,7 @@ class Admin::GrayLabelsController < Admin::AdminController
   before_filter :load_gray_label, except: %w(index new create)
 
   def index
-    @gray_labels = GrayLabel.where(gray_label_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @gray_labels = GrayLabel.where(gray_label_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -44,7 +44,7 @@ class Admin::GrayLabelsController < Admin::AdminController
 private
 
   def load_gray_label
-    @gray_label = GrayLabel.find_by_slug params[:id]
+    @gray_label = GrayLabel.find_by_slug! params[:id]
   end
 
   def gray_label_params

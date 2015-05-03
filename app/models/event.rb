@@ -16,7 +16,7 @@ class Event
   field :path
   field :ip_address
 
-  index :number
+  index({ number: 1 })
 
   validates_presence_of :number
   validates_uniqueness_of :number

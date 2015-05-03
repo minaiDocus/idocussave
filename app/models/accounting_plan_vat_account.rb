@@ -12,7 +12,7 @@ class AccountingPlanVatAccount
   validates_presence_of :nature
   validates_presence_of :account_number
 
-  default_scope asc: :code
+  default_scope asc(:code)
 
   def self.find_by_code(code)
     where(code: code).first

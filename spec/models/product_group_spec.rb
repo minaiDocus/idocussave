@@ -17,8 +17,8 @@ describe ProductGroup do
     it { expect(subject[2]).to eq(@product_group1) }
   end
 
-  describe ".find_by_slug" do
-    subject(:product_group) { ProductGroup.find_by_slug('groupe2') }
+  describe ".find_by_slug!" do
+    subject(:product_group) { ProductGroup.find_by_slug!('groupe2') }
 
     it { expect(subject).to eq(@product_group2) }
   end

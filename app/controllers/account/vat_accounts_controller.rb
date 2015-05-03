@@ -23,8 +23,8 @@ class Account::VatAccountsController < Account::OrganizationController
 
 private
   def load_customer
-    @customer = customers.find_by_slug params[:customer_id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:customer_id]) unless @customer
+    @customer = customers.find_by_slug! params[:customer_id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
   end
 
   def verify_if_customer_is_active

@@ -30,8 +30,8 @@ describe ProductOption do
     it { expect(subject[2]).to eq(@option3.title) }
   end
 
-  describe ".find_by_slug" do
-    subject(:product_option) { ProductOption.find_by_slug('option3').title }
+  describe ".find_by_slug!" do
+    subject(:product_option) { ProductOption.find_by_slug!('option3').title }
 
     it { expect(subject).to eq(@option3.title) }
   end

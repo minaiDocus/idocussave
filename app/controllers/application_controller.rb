@@ -88,7 +88,6 @@ protected
     rescue ActionController::UnknownController,
            ActionController::RoutingError,
            AbstractController::ActionNotFound,
-           BSON::InvalidObjectId,
            Mongoid::Errors::DocumentNotFound
       respond_to do |format|
         format.html { render '/404', status: 404 }
@@ -138,7 +137,7 @@ protected
         end
         @gray_label
       else
-        @gray_label = GrayLabel.find_by_slug session[:gray_label_slug]
+        @gray_label = GrayLabel.find_by_slug! session[:gray_label_slug] rescue Mongoid::Errors::DocumentNotFound
         @gray_label = nil unless @gray_label && @gray_label.is_active
       end
     end

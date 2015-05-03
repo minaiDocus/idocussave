@@ -198,14 +198,14 @@ describe Api::V1::OperationsController do
     end
 
     context 'with bank_account_id' do
-      it 'should be invalid' do
+      it 'should be not found' do
         get :index, format: 'json', access_token: @user.authentication_token, bank_account_id: '12345'
         expect(response).not_to be_successful
-        expect(response.code).to eq('400')
+        expect(response.code).to eq('404')
       end
 
       it 'should be not found' do
-        get :index, format: 'json', access_token: @user.authentication_token, bank_account_id: BSON::ObjectId.new
+        get :index, format: 'json', access_token: @user.authentication_token, bank_account_id: Moped::BSON::ObjectId.new
         expect(response).not_to be_successful
         expect(response.code).to eq('404')
       end

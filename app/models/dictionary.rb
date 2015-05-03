@@ -8,7 +8,7 @@ class Dictionary
   validates_presence_of :word
   validates_uniqueness_of :word
 
-  index :word, unique: true
+  index({ word: 1 }, { unique: true })
 
   class << self
     def find_one(word)

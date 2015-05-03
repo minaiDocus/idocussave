@@ -44,7 +44,7 @@ private
 
   def load_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, params[:id]) unless @preseizure.report.user.in? customers
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure, nil, params[:id]) unless @preseizure.report.user.in? customers
   end
 
   def preseizure_params

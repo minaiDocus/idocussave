@@ -3,7 +3,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
   before_filter :load_document, except: :index
 
   def index
-    @documents = search(document_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @documents = search(document_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -11,7 +11,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
       file_name = @document.fiduceo_metadata['libelle'] + '.pdf'
       send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
-      raise Mongoid::Errors::DocumentNotFound.new(TempDocument, params[:id])
+      raise Mongoid::Errors::DocumentNotFound.new(TempDocument, nil, params[:id])
     end
   end
 
@@ -19,7 +19,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
     if @document.piece && File.exist?(@document.piece.content.path)
       send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      raise Mongoid::Errors::DocumentNotFound.new(TempDocument, params[:id])
+      raise Mongoid::Errors::DocumentNotFound.new(TempDocument, nil, params[:id])
     end
   end
 

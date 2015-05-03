@@ -16,28 +16,30 @@ class Admin::AdminController < ApplicationController
   end
 
   def load_organization
-    @organization = Organization.find_by_slug params[:organization_id]
-    raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:organization_id]) unless @organization
+    @organization = Organization.find_by_slug! params[:organization_id]
+    raise Mongoid::Errors::DocumentNotFound.new(Organization, slug: params[:organization_id]) unless @organization
     @organization
   end
 
   public
 
   def index
-    @ocr_needed_temp_packs = TempDocument.collection.group(
-      key: [:temp_pack_id],
-      cond: { state: 'ocr_needed' },
-      initial: { updated_at: 0, count: 0 },
-      reduce: "function(current, result) { result.count++; result.updated_at = current.updated_at; return result; }"
-    ).map do |temp_pack|
+    @ocr_needed_temp_packs = TempDocument.collection.aggregate(
+      { '$match' => { 'state' => 'ocr_needed' } },
+      { '$group' => {
+          '_id'        => '$temp_pack_id',
+          'count'      => { '$sum' => 1 },
+          'updated_at' => { '$max' => '$updated_at' }
+        }
+      },
+      { '$sort' => { 'updated_at' => -1 } }
+    ).map do |data|
       object = OpenStruct.new
-      object.date           = temp_pack['updated_at'].try(:localtime)
-      object.name           = TempPack.find(temp_pack['temp_pack_id']).name.sub(/ all$/,'')
-      object.document_count = temp_pack['count'].to_i
+      object.date           = data['updated_at'].try(:localtime)
+      object.name           = TempPack.find(data['_id']).name.sub(/ all$/,'')
+      object.document_count = data['count'].to_i
       object.message        = false
       object
-    end.sort! do |a,b|
-      b.date <=> a.date
     end
 
     @bundle_needed_temp_packs = TempPack.desc(:updated_at).bundle_needed.map do |temp_pack|
@@ -87,18 +89,10 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    pending_pre_assignments   = PreAssignmentService._pending.map do |pre_assignment|
-      object = OpenStruct.new
-      object.date           = pre_assignment['date'].to_time.localtime
-      object.name           = pre_assignment['pack_name']
-      object.document_count = pre_assignment['piece_counts'].to_i
-      object.message        = pre_assignment['comment'].present? ? pre_assignment['comment'] : false
-      object
-    end.sort! do |a,b|
-      b.date <=> a.date
-    end
+    pending_pre_assignments   = PreAssignmentService.pending
     @blocked_pre_assignments  = pending_pre_assignments.select { |e| e.message.present? }
-    @awaiting_pre_assignments = pending_pre_assignments.select { |e| e.message.blank? }
+    @awaiting_pre_assignments = pending_pre_assignments.select { |e| e.message.blank? }.
+      each { |e| e.message = false }
 
     @reports_delivery = Pack::Report.locked.desc(:updated_at).map do |report|
       object = OpenStruct.new
@@ -109,21 +103,7 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    @failed_reports_delivery = Pack::Report::Preseizure.collection.group(
-      key: [:report_id, :delivery_message],
-      cond: { delivery_message: { '$ne' => '', '$exists' => true } },
-      initial: { failed_at: 0, count: 0 },
-      reduce: "function(current, result) { result.count++; result.failed_at = current.delivery_tried_at; return result; }"
-    ).map do |delivery|
-      object = OpenStruct.new
-      object.date           = delivery['failed_at'].try(:localtime)
-      object.name           = Pack::Report.find(delivery['report_id']).name
-      object.document_count = delivery['count'].to_i
-      object.message        = delivery['delivery_message']
-      object
-    end.sort! do |a,b|
-      b.date <=> a.date
-    end
+    @failed_reports_delivery = Pack::Report.failed_delivery
 
     @emails          = Email.desc(:created_at).limit(10)
     @provider_wishes = FiduceoProviderWish.desc(:created_at).limit(5).entries

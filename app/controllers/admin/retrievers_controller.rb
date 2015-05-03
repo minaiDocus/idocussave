@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::RetrieversController < Admin::AdminController
   def index
-    @retrievers = search(retriever_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @retrievers = search(retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def edit

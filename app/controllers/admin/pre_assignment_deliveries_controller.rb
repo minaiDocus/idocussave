@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::PreAssignmentDeliveriesController < Admin::AdminController
   def index
-    @pre_assignment_deliveries = search(pre_assignment_delivery_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @pre_assignment_deliveries = search(pre_assignment_delivery_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show

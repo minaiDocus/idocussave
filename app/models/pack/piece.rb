@@ -17,7 +17,7 @@ class Pack::Piece
   field :is_awaiting_pre_assignment, type: Boolean, default: false
   field :pre_assignment_comment
 
-  index :number, unique: true
+  index({ number: 1 }, { unique: true })
 
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 
@@ -31,22 +31,22 @@ class Pack::Piece
   has_one    :expense,       class_name: "Pack::Report::Expense",    inverse_of: :piece
   has_many   :preseizures,   class_name: 'Pack::Report::Preseizure', inverse_of: :piece
   has_many   :remote_files,  as: :remotable, dependent: :destroy
-  has_many   :operations,                                            inverse_of: :piece
+  has_many   :operations,    class_name: 'Operation',                inverse_of: :piece
 
   has_mongoid_attached_file :content,
                             path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
                             url: "/account/documents/pieces/:id/download"
   do_not_validate_attachment_file_type :content
 
-  scope :scanned,          where: { origin: 'scan' }
-  scope :uploaded,         where: { origin: 'upload' }
-  scope :dematbox_scanned, where: { origin: 'dematbox_scan' }
-  scope :fiduceo,          where: { origin: 'fiduceo' }
+  scope :scanned,          where(origin: 'scan')
+  scope :uploaded,         where(origin: 'upload')
+  scope :dematbox_scanned, where(origin: 'dematbox_scan')
+  scope :fiduceo,          where(origin: 'fiduceo')
 
-  scope :covers,     where:  { is_a_cover: true }
-  scope :not_covers, any_in: { is_a_cover: [false, nil] }
+  scope :covers,     where(is_a_cover: true)
+  scope :not_covers, any_in(is_a_cover: [false, nil])
 
-  scope :of_month, lambda { |time| where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
+  scope :of_month, -> time { where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 
   def self.by_position
     asc(:position)

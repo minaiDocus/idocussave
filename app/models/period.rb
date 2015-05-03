@@ -59,12 +59,12 @@ class Period
 
   validates_inclusion_of :duration, in: [1, 3, 12]
 
-  scope :monthly,   where: { duration: 1 }
-  scope :quarterly, where: { duration: 3 }
-  scope :annual,    where: { duration: 12 }
+  scope :monthly,   where(duration: 1)
+  scope :quarterly, where(duration: 3)
+  scope :annual,    where(duration: 12)
 
-  scope :centralized,     where: { is_centralized: true }
-  scope :not_centralized, where: { is_centralized: false }
+  scope :centralized,     where(is_centralized: true)
+  scope :not_centralized, where(is_centralized: false)
 
   before_create :add_one_delivery
   before_save :set_start_at_and_end_at

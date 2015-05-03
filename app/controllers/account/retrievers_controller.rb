@@ -5,7 +5,7 @@ class Account::RetrieversController < Account::FiduceoController
   before_filter :load_providers_and_banks, only: %w(list new create edit update)
 
   def index
-    @fiduceo_retrievers = search(fiduceo_retriever_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @fiduceo_retrievers = search(fiduceo_retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = fiduceo_retriever_contains.empty?
     render partial: 'retrievers' if params[:part].present?
   end

@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::EventsController < Admin::AdminController
   def index
-    @events = search(event_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @events = search(event_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show

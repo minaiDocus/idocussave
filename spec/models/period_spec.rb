@@ -17,7 +17,7 @@ describe Period do
 
     it '#end_at should equal 2013-02-30 23:59:59' do
       period = Period.create(duration: 1, start_at: Time.local(2013, 2, 15))
-      expect(period.end_at).to eq(Time.local(2013, 2, 28, 23, 59, 59))
+      expect(period.end_at).to eq(Time.local(2013, 2).end_of_month)
     end
   end
 
@@ -29,7 +29,7 @@ describe Period do
 
     it '#end_at should equal 2013-06-30 23:59:59' do
       period = Period.create(duration: 3, start_at: Time.local(2013, 5, 15))
-      expect(period.end_at).to eq(Time.local(2013, 6, 30, 23, 59, 59))
+      expect(period.end_at).to eq(Time.local(2013, 6).end_of_month)
     end
   end
 

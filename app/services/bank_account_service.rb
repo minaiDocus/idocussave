@@ -35,7 +35,7 @@ class BankAccountService
     bank_account = bank_accounts.select do |bank_account|
       bank_account.number == account_number
     end.first
-    raise Mongoid::Errors::DocumentNotFound.new(::BankAccount, account_number) unless bank_account
+    raise Mongoid::Errors::DocumentNotFound.new(::BankAccount, account_number: account_number) unless bank_account
     bank_account
   end
 

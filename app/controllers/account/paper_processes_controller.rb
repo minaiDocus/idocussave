@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaperProcessesController < Account::AccountController
   def index
-    @paper_processes = search(paper_process_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @paper_processes = search(paper_process_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
 private

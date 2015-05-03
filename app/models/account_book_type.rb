@@ -34,6 +34,7 @@ class AccountBookType
   field :is_default,                     type: Boolean, default: false
   field :is_expense_categories_editable, type: Boolean, default: false
   field :instructions,                   type: String
+  field :_slugs,                         type: Array,   default: []
 
   slug :name
 
@@ -51,10 +52,10 @@ class AccountBookType
   validates_presence_of :vat_account,     if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
   validates_presence_of :anomaly_account, if: Proc.new { |j| j.is_pre_assignment_processable? }
 
-  scope :compta_processable,         where: { :entry_type.gt => 0 }
-  scope :not_compta_processable,     where: { entry_type: 0 }
-  scope :pre_assignment_processable, where: { :entry_type.gt => 1 }
-  scope :default,                    where: { is_default: true }
+  scope :compta_processable,         where(:entry_type.gt => 0)
+  scope :not_compta_processable,     where(entry_type: 0)
+  scope :pre_assignment_processable, where(:entry_type.gt => 1)
+  scope :default,                    where(is_default: true)
 
   def info
     [self.name, self.description].join(' ')
@@ -82,10 +83,6 @@ class AccountBookType
   class << self
     def by_position
       asc([:position, :name])
-    end
-
-    def find_by_slug(txt)
-      where(slug: txt).first
     end
   end
 

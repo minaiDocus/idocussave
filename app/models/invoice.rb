@@ -14,6 +14,7 @@ class Invoice
   field :content_content_type
   field :content_file_size,     type: Integer
   field :content_updated_at,    type: Time
+  field :_slugs,                type: Array, default: []
 
   has_mongoid_attached_file :content,
     styles: {
@@ -26,7 +27,7 @@ class Invoice
   validates_presence_of :number
   validates_uniqueness_of :number
 
-  index :number, unique: true
+  index({ number: 1 }, { unique: true })
 
   slug :number
 
@@ -39,7 +40,7 @@ class Invoice
 
   class << self
     def find_by_number(number)
-      self.first conditions: { number: number }
+      find_by(number: number)
     end
 
     def archive(time=Time.now)
@@ -247,7 +248,7 @@ private
     unless self.number
       prefix = 1.month.ago.strftime('%Y%m')
       txt = DbaSequence.next('invoice_' + prefix)
-      self.slug = self.number = prefix + ("%0.4d" % txt)
+      self.number = prefix + ("%0.4d" % txt)
     end
   end
 end

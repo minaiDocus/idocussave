@@ -2,7 +2,7 @@
 class Admin::EmailedDocumentsController < Admin::AdminController
 
   def index
-    @emails = search(emailed_document_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @emails = search(emailed_document_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show

@@ -5,7 +5,7 @@ class Admin::UsersController < Admin::AdminController
   before_filter :load_user, only: %w(show update send_reset_password_instructions)
 
   def index
-    @users = search(user_contains).order([sort_column,sort_direction])
+    @users = search(user_contains).order_by(sort_column => sort_direction)
     respond_to do |format|
       format.html do
         @users = @users.page(params[:page]).per(params[:per_page])
@@ -79,8 +79,8 @@ class Admin::UsersController < Admin::AdminController
 private
 
   def load_user
-    @user = User.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @user
+    @user = User.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:id]) unless @user
   end
 
   def user_params

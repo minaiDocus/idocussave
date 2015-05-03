@@ -8,6 +8,7 @@ class GrayLabel
   field :logo_url,  type: String
   field :back_url,  type: String
   field :is_active, type: Boolean, default: true
+  field :_slugs,    type: Array,   default: []
 
   validates_presence_of :name, :organization_id, :site_url, :logo_url
   validates_uniqueness_of :name

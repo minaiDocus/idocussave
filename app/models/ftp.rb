@@ -14,8 +14,8 @@ class Ftp
   field :is_configured,        type: Boolean, default: false
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
-  scope :configured,     where: { is_configured: true }
-  scope :not_configured, where: { is_configured: false }
+  scope :configured,     where(is_configured: true)
+  scope :not_configured, where(is_configured: false)
 
   validates_format_of :host, with: URI::regexp("ftp")
   validates :login,    length: { minimum: 2, maximum: 40 }

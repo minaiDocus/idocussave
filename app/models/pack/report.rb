@@ -19,11 +19,11 @@ class Pack::Report
   field :delivery_message
   field :is_locked,         type: Boolean, default: false
 
-  scope :preseizures, not_in: { type: ['NDF'] }
-  scope :expenses, where: { type: 'NDF' }
+  scope :preseizures, not_in(type: ['NDF'])
+  scope :expenses,    where(type: 'NDF')
 
-  scope :locked,     where: { is_locked: true }
-  scope :not_locked, where: { is_locked: false }
+  scope :locked,     where(is_locked: true)
+  scope :not_locked, where(is_locked: false)
 
   def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
@@ -66,6 +66,28 @@ class Pack::Report
   end
 
   class << self
+    def failed_delivery(user_ids=[], limit=0)
+      match = { '$match' => { 'delivery_message' => { '$ne' => '', '$exists' => true } } }
+      match['$match']['user_id'] = { '$in' => user_ids } if user_ids.present?
+      group = { '$group' => {
+          '_id'       => { 'report_id' => '$report_id', 'delivery_message' => '$delivery_message' },
+          'count'     => { '$sum' => 1 },
+          'failed_at' => { '$max' => '$delivery_tried_at' }
+        }
+      }
+      sort = { '$sort' => { 'failed_at' => -1 } }
+      params = [match, group, sort]
+      params << { '$limit' => limit } if limit > 0
+      Pack::Report::Preseizure.collection.aggregate(*params).map do |delivery|
+        object = OpenStruct.new
+        object.date           = delivery['failed_at'].try(:localtime)
+        object.document_count = delivery['count'].to_i
+        object.name           = Pack::Report.find(delivery['_id']['report_id']).name
+        object.message        = delivery['_id']['delivery_message']
+        object
+      end
+    end
+
     # fetch Compta info
     def fetch(time=Time.now)
       not_processed_dirs.each do |dir|

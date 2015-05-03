@@ -12,7 +12,7 @@ class AccountingPlanItem
   validates_presence_of :third_party_account
   validates_presence_of :third_party_name
 
-  default_scope asc: :third_party_name
+  default_scope asc(:third_party_name)
 
   def self.find_by_name(name)
     where(third_party_name: name).first

@@ -19,29 +19,29 @@ class RemoteFile
   field :error_message, type: String
   field :tried_count,   type: Integer, default: 0
 
-  index :state
-  index :service_name
-  index :tried_count
+  index({ state: 1 })
+  index({ service_name: 1 })
+  index({ tried_count: 1 })
 
   validates_presence_of :state
   validates_presence_of :service_name
   validates_inclusion_of :service_name, in: ExternalFileStorage::SERVICES
 
-  scope :of, lambda { |object,service_name| any_of({ user_id: object.id }, { group_id: object.id }, { organization_id: object.id }).where(service_name: service_name) }
-  scope :of_service, lambda { |service_name| where(service_name: service_name) }
-  scope :with_extension, lambda { |extension| where(extension: extension) }
+  scope :of, -> object, service_name { any_of({ user_id: object.id }, { group_id: object.id }, { organization_id: object.id }).where(service_name: service_name) }
+  scope :of_service, -> service_name { where(service_name: service_name) }
+  scope :with_extension, -> extension { where(extension: extension) }
 
-  scope :waiting,    where: { state: :waiting }
-  scope :cancelled,  where: { state: :cancelled }
-  scope :sending,    where: { state: :sending }
-  scope :synced,     where: { state: :synced }
-  scope :not_synced, where: { state: :not_synced }
+  scope :waiting,    where(state: :waiting)
+  scope :cancelled,  where(state: :cancelled)
+  scope :sending,    where(state: :sending)
+  scope :synced,     where(state: :synced)
+  scope :not_synced, where(state: :not_synced)
 
-  scope :processed,     any_in: { state: [:synced,:cancelled] }
-  scope :not_processed, not_in: { state: [:synced,:cancelled] }
+  scope :processed,     any_in(state: [:synced,:cancelled])
+  scope :not_processed, not_in(state: [:synced,:cancelled])
 
-  scope :retryable,     where: { :tried_count.lt => 2 }
-  scope :not_retryable, where: { :tried_count.gte => 2 }
+  scope :retryable,     where(:tried_count.lt => 2)
+  scope :not_retryable, where(:tried_count.gte => 2)
 
   def self.cancel_all
     update_all state:         'cancelled',

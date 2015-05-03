@@ -18,7 +18,7 @@ class SubscriptionStatsService
 private
 
   def top_groups(product)
-    product.product_groups.by_position.where(:product_supergroup_ids.size => 0)
+    product.product_groups.by_position.where(:product_supergroup_ids.with_size => 0)
   end
 
   def options

@@ -4,7 +4,7 @@ class Account::RetrievedBankingOperationsController < Account::FiduceoController
 
   def index
     @operations = search(banking_operation_contains).
-      order([sort_column,sort_direction]).
+      order_by(sort_column => sort_direction).
       page(params[:page]).
       per(params[:per_page])
     @is_filter_empty = banking_operation_contains.blank?

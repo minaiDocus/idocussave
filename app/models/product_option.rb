@@ -14,6 +14,7 @@ class ProductOption
   field :action_names,          type: Array,   default: []
   field :notify,                type: Boolean, default: false
   field :is_default,            type: Boolean, default: false
+  field :_slugs,                type: Array,   default: []
 
   validates_presence_of :name, :title, :price_in_cents_wo_vat
 
@@ -23,7 +24,7 @@ class ProductOption
   belongs_to :product_group
   has_and_belongs_to_many :subscribers, class_name: 'Subscription', inverse_of: :options
 
-  scope :default, where: { is_default: true }
+  scope :default, where(is_default: true)
 
 public
 
@@ -34,10 +35,6 @@ public
 
     def by_group
     	asc(:product_group_id)
-    end
-
-    def find_by_slug(txt)
-      self.first conditions: { slug: txt }
     end
   end
 

@@ -8,6 +8,8 @@ class Organization
   field :name,         type: String
   field :description,  type: String
   field :code,         type: String
+  field :_slugs,       type: Array, default: []
+
   # Authorization
   field :is_detail_authorized,                  type: Boolean, default: false
   field :is_period_duration_editable,           type: Boolean, default: true
@@ -68,10 +70,10 @@ class Organization
 
   embeds_many :addresses, as: :locatable
 
-  scope :test,        where: { is_test: true }
-  scope :not_test,    where: { is_test: false }
-  scope :suspended,   where: { is_suspended: true }
-  scope :unsuspended, where: { is_suspended: false }
+  scope :test,        where(is_test: true)
+  scope :not_test,    where(is_test: false)
+  scope :suspended,   where(is_suspended: true)
+  scope :unsuspended, where(is_suspended: false)
 
   def collaborators
     members.where(is_prescriber: true)

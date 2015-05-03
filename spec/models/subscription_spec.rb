@@ -103,6 +103,10 @@ describe Subscription do
   end
 
   describe '#create_period' do
+    before(:all) do
+      @subscription.periods = []
+    end
+
     after(:all) do
       Period.destroy_all
     end

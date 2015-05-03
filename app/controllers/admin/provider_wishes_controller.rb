@@ -3,7 +3,7 @@ class Admin::ProviderWishesController < Admin::AdminController
   before_filter :load_provider_wish, except: :index
 
   def index
-    @provider_wishes = search(provider_wish_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @provider_wishes = search(provider_wish_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show

@@ -7,6 +7,7 @@ class Product
   field :title,           type: String,  default: ''
   field :period_duration, type: Integer, default: 1
   field :position,        type: Integer, default: 1
+  field :_slugs,          type: Array,   default: []
 
   validates_presence_of :title
 
@@ -18,10 +19,6 @@ class Product
   class << self
     def by_position
       asc(:position)
-    end
-
-    def find_by_slug(txt)
-      self.first conditions: { slug: txt }
     end
   end
 end

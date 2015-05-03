@@ -17,8 +17,8 @@ describe Product do
     it { expect(subject[2]).to eq(@product3) }
   end
 
-  describe ".find_by_slug" do
-    subject(:product) { Product.find_by_slug('product-1') }
+  describe ".find_by_slug!" do
+    subject(:product) { Product.find_by_slug!('product-1') }
 
     it { expect(subject).to eq(@product1) }
   end

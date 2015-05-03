@@ -20,6 +20,6 @@ class GrayLabel::SessionsController < ApplicationController
   private
 
   def load_session
-    @gray_label = GrayLabel.find_by_slug params[:slug]
+    @gray_label = GrayLabel.find_by_slug! params[:slug]
   end
 end

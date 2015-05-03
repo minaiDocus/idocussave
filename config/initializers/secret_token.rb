@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Idocus::Application.config.secret_token = '989c2cc881bd0ec1cd56fe4d485af4e9c91a86dae6c38046f861493149caf69901c086e3b3b1430c43a9ae129f2582f4fa6ae8cf7718e827068db79098dd4592'
+Idocus::Application.config.secret_token = 'd5ea3a29aa3b3b0baeba13f283eb41d5c0d5c0a039dd3aab409ddf3321b67718aa4a9a0e29300b3575a98ad0be64ede104fecdfd3fdc6a4f62a37759db39d741'

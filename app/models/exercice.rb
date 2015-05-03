@@ -13,8 +13,8 @@ class Exercice
   validates_presence_of :start_date, :end_date
   validate :uniqueness_of_date
 
-  scope :opened, where: { is_closed: false }
-  scope :closed, where: { is_closed: true }
+  scope :opened, where(is_closed: false)
+  scope :closed, where(is_closed: true)
 
 private
 

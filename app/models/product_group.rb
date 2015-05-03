@@ -8,6 +8,7 @@ class ProductGroup
   field :title,               type: String,  default: ''
   field :position,            type: Integer, default: 1
   field :is_option_dependent, type: Boolean, default: false
+  field :_slugs,              type: Array,   default: []
 
   validates_presence_of :name, :title
 
@@ -25,10 +26,6 @@ class ProductGroup
   class << self
     def by_position
       asc([:position, :title])
-    end
-
-    def find_by_slug(txt)
-      self.first conditions: { slug: txt }
     end
   end
 

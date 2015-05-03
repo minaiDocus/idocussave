@@ -1,45 +1,29 @@
 # -*- encoding : UTF-8 -*-
 class PreAssignmentService
-  def self._pending
-    keyf = %Q{
-      function(x) {
-        name = x.name.split(' ');
-        name.pop();
-        name = name.join(' ');
-        return { pack_name: name };
-      }
-    }
+  class << self
+    def _pending(options={sort:-1})
+      Pack::Piece.collection.aggregate(
+        { '$match' => { 'is_awaiting_pre_assignment' => true } },
+        { '$group' => {
+            '_id' => { 'pack_id' => '$pack_id', 'comment' => '$pre_assignment_comment' },
+            'first_piece_name' => { '$first' => '$name' },
+            'piece_counts' => { '$sum' => 1 },
+            'date' => { '$min' => '$created_at' }
+          }
+        },
+        { '$sort' => { 'date' => options[:sort] } }
+      )
+    end
 
-    reduce = %Q{
-      function(current, result) {
-        if(result.date == undefined) {
-          result.date = current.created_at;
-        }
-        if(result.comment == undefined) {
-          result.comment = current.pre_assignment_comment;
-        }
-        return result.piece_counts++;
-      }
-    }
-
-    Pack::Piece.collection.group(
-      keyf:    keyf,
-      cond:    { is_awaiting_pre_assignment: true },
-      initial: { piece_counts: 0 },
-      reduce:  reduce
-    )
-  end
-
-  def self.pending
-    _pending.map do |e|
-      o = OpenStruct.new
-      o.date = e['date'].to_time
-      o.pack_name = e['pack_name']
-      o.piece_counts = e['piece_counts'].to_i
-      o.comment = e['comment']
-      o
-    end.sort do |a, b|
-      a.date <=> b.date
+    def pending(options={sort:-1})
+      _pending(options).map do |e|
+        o = OpenStruct.new
+        o.date           = e['date'].try(:localtime)
+        o.name           = e['first_piece_name'].sub(/\s\d+$/, '')
+        o.document_count = e['piece_counts'].to_i
+        o.message        = e['_id']['comment']
+        o
+      end
     end
   end
 end

@@ -12,21 +12,21 @@ class TempPack
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  index :name, unique: true
-  index :document_not_processed_count
-  index :document_bundling_count
-  index :document_bundle_needed_count
+  index({ name: 1 }, { unique: true })
+  index({ document_not_processed_count: 1 })
+  index({ document_bundling_count: 1 })
+  index({ document_bundle_needed_count: 1 })
 
   belongs_to :organization
   belongs_to :user
   belongs_to :document_delivery
   has_many :temp_documents, dependent: :destroy
 
-  scope :not_published, lambda { any_of({ :document_not_processed_count.gt => 0 }, { :document_bundling_count.gt => 0 }, { :document_bundle_needed_count.gt => 0 }) }
-  scope :not_processed, where: { :document_not_processed_count.gt => 0 }
-  scope :bundling,      where: { :document_bundling_count.gt => 0 }
-  scope :bundle_needed, where: { :document_bundle_needed_count.gt => 0 }
-  scope :not_recently_updated, lambda { where(:updated_at.lt => 5.minutes.ago) }
+  scope :not_published, -> { any_of({ :document_not_processed_count.gt => 0 }, { :document_bundling_count.gt => 0 }, { :document_bundle_needed_count.gt => 0 }) }
+  scope :not_processed, where(:document_not_processed_count.gt => 0)
+  scope :bundling,      where(:document_bundling_count.gt => 0)
+  scope :bundle_needed, where(:document_bundle_needed_count.gt => 0)
+  scope :not_recently_updated, -> { where(:updated_at.lt => 5.minutes.ago) }
 
   class << self
     def find_by_name(name)
@@ -160,7 +160,7 @@ class TempPack
   end
 
   def next_document_position
-    safely.inc(:position_counter, 1)
+    with(safe: true).inc(:position_counter, 1)
   end
 
 private

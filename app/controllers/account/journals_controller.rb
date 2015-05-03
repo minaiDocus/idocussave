@@ -87,7 +87,7 @@ class Account::JournalsController < Account::OrganizationController
           copy.user         = @customer
           copy.organization = nil
           copy.is_default   = nil
-          copy.slug         = nil
+          copy._slugs       = []
           if copy.save
             copied_ids << id
             UpdateJournalRelationService.new(copy).execute
@@ -169,14 +169,14 @@ private
 
   def load_customer
     if params[:customer_id].present?
-      @customer = customers.find_by_slug params[:customer_id]
-      raise Mongoid::Errors::DocumentNotFound.new(User, params[:customer_id]) unless @customer
+      @customer = customers.find_by_slug! params[:customer_id]
+      raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
     end
   end
 
   def load_journal
-    @journal = (@customer || source).account_book_types.find_by_slug(params[:id])
-    raise Mongoid::Errors::DocumentNotFound.new(AccountBookType, params[:id]) unless @journal
+    @journal = (@customer || source).account_book_types.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(AccountBookType, slug: params[:id]) unless @journal
   end
 
   def is_max_number_reached?

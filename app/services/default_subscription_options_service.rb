@@ -6,7 +6,7 @@ class DefaultSubscriptionOptionsService
 
   def execute
     product = Product.where(period_duration: @period_duration).asc(:created_at).first
-    groups = product.product_groups.where(:product_supergroup_ids.size => 0).by_position
+    groups = product.product_groups.where(:product_supergroup_ids.with_size => 0).by_position
     groups.each do |group|
       walk_into_group(group)
     end

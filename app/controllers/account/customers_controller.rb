@@ -7,14 +7,14 @@ class Account::CustomersController < Account::OrganizationController
   def index
     respond_to do |format|
       format.html do
-        @customers = search(user_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+        @customers = search(user_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
         @periods = Period.where(:user_id.in => @customers.map(&:_id), :start_at.lt => Time.now, :end_at.gt => Time.now).entries
         @groups = is_leader? ? @organization.groups : @user.groups
         @groups = @groups.asc(:name).entries
       end
 
       format.json do
-        @customers = search(user_contains).order([sort_column,sort_direction]).active
+        @customers = search(user_contains).order_by(sort_column => sort_direction).active
       end
     end
   end
@@ -165,8 +165,8 @@ private
   end
 
   def load_customer
-    @customer = customers.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @customer
+    @customer = customers.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:id]) unless @customer
   end
 
   def sort_column

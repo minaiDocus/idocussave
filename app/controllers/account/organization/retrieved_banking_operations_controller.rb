@@ -2,7 +2,7 @@
 class Account::Organization::RetrievedBankingOperationsController < Account::Organization::FiduceoController
   def index
     @operations = search(banking_operation_contains).
-      order([sort_column,sort_direction]).
+      order_by(sort_column => sort_direction).
       page(params[:page]).
       per(params[:per_page])
   end

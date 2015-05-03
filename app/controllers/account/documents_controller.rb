@@ -33,7 +33,7 @@ public
 
   def show
     @pack = @user.packs.find(params[:id])
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless @pack
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, nil, params[:id]) unless @pack
     @response = Document.search(params[:filter],
       pack_id:  params[:id],
       per_page: 10000,
@@ -80,7 +80,7 @@ public
     else
       pack = pack.owner == @user ? pack : nil
     end
-    raise Mongoid::Errors::DocumentNotFound.new(Pack, params[:id]) unless pack
+    raise Mongoid::Errors::DocumentNotFound.new(Pack, nil, params[:id]) unless pack
 
     if File.exist? pack.archive_file_path
       send_file(pack.archive_file_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
@@ -96,7 +96,7 @@ public
       else
         @packs = @user.packs
       end
-      @packs = @packs.order_by([:created_at, :desc])
+      @packs = @packs.desc(:created_at)
       type = params[:type].to_i || FileDeliveryInit::RemoteFile::ALL
 
       @packs.each do |pack|

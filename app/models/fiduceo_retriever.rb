@@ -34,13 +34,13 @@ class FiduceoRetriever
   validates_inclusion_of :type, in: %w(provider bank)
   validate :inclusion_of_frequency
 
-  scope :providers,                     where: { type: 'provider' }
-  scope :banks,                         where: { type: 'bank' }
-  scope :active,                        where: { is_active: true }
-  scope :auto,                          where: { is_auto: true }
-  scope :manual,                        where: { is_auto: false }
-  scope :every_day,                     where: { frequency: 'day' }
-  scope :password_renewal_not_notified, where: { is_password_renewal_notified: false }
+  scope :providers,                     where(type: 'provider')
+  scope :banks,                         where(type: 'bank')
+  scope :active,                        where(is_active: true)
+  scope :auto,                          where(is_auto: true)
+  scope :manual,                        where(is_auto: false)
+  scope :every_day,                     where(frequency: 'day')
+  scope :password_renewal_not_notified, where(is_password_renewal_notified: false)
 
   state_machine initial: :scheduled do
     state :ready
@@ -91,12 +91,12 @@ class FiduceoRetriever
     end
   end
 
-  scope :scheduled,            where: { state: 'scheduled', is_active: true }
-  scope :processing,           where: { state: 'processing' }
-  scope :wait_selection,       where: { state: 'wait_selection' }
-  scope :wait_for_user_action, where: { state: 'wait_for_user_action' }
-  scope :error,                where: { state: 'error' }
-  scope :not_processed,        where: { :state.in => %w(processing wait_for_user_action) }
+  scope :scheduled,            where(state: 'scheduled', is_active: true)
+  scope :processing,           where(state: 'processing')
+  scope :wait_selection,       where(state: 'wait_selection')
+  scope :wait_for_user_action, where(state: 'wait_for_user_action')
+  scope :error,                where(state: 'error')
+  scope :not_processed,        where(:state.in => %w(processing wait_for_user_action))
 
   def provider?
     type == 'provider'

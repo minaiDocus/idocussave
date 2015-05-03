@@ -7,6 +7,7 @@ class Group
 
   field :name,        type: String
   field :description, type: String
+  field :_slugs,      type: Array, default: []
 
   # Dropbox Extended
   field :dropbox_delivery_folder, type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
@@ -63,7 +64,7 @@ private
 
   def uniqueness_of_name
     if(group = self.organization.groups.where(name: self.name).first)
-      errors.add(:name, :already_taken, group) if group != self
+      errors.add(:name, :taken) if group != self
     end
   end
 end

@@ -4,7 +4,7 @@ class Account::CollaboratorsController < Account::OrganizationController
   before_filter :load_collaborator, except: %w(index new create)
 
   def index
-    @collaborators = search(user_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @collaborators = search(user_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -71,8 +71,8 @@ private
   end
 
   def load_collaborator
-    @collaborator = @organization.collaborators.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @collaborator
+    @collaborator = @organization.collaborators.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:id]) unless @collaborator
   end
 
   def user_params

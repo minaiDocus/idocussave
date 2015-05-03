@@ -44,16 +44,16 @@ class Account::PackReportsController < Account::OrganizationController
               data = IbizaAPI::Utils.to_import_xml(exercice, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
               send_data(data, type: 'application/xml', filename: file_name)
             else
-              raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+              raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name: file_name)
             end
           else
-            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+            raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name: file_name)
           end
         else
           render action: 'select_to_download'
         end
       else
-        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name)
+        raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name: file_name)
       end
     when 'zip'
       if @organization.is_quadratus_used
@@ -71,7 +71,7 @@ private
 
   def load_report
     @report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(_id: params[:id]).first
-    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, params[:id]) unless @report
+    raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, nil, params[:id]) unless @report
     @report
   end
 end

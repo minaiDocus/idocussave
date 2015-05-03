@@ -41,8 +41,8 @@ class Admin::ScanningProvidersController < Admin::AdminController
 private
 
   def load_scanning_provider
-    @scanning_provider = ScanningProvider.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(ScanningProvider, params[:id]) unless @scanning_provider
+    @scanning_provider = ScanningProvider.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(ScanningProvider, slug: params[:id]) unless @scanning_provider
     @scanning_provider
   end
 

@@ -37,8 +37,8 @@ class Admin::ProductGroupsController < Admin::AdminController
 private
 
   def load_group
-    @product_group = ProductGroup.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(ProductGroup, params[:id]) unless @product_group
+    @product_group = ProductGroup.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(ProductGroup, slug: params[:id]) unless @product_group
   end
 
   def product_group_params

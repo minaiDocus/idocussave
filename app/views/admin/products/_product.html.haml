@@ -9,6 +9,6 @@
 
   .row-fluid
     .span12
-      - product.product_groups.where(:product_supergroup_ids.size => 0).by_position.entries.each do |product_group|
+      - product.product_groups.where(:product_supergroup_ids.with_size => 0).by_position.entries.each do |product_group|
         %ul.margin0left
           = render partial: 'product_group', locals: { product_group: product_group, product: product }

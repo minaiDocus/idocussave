@@ -8,10 +8,10 @@ class DbaSequence
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  index :name, unique: true
+  index({ name: 1 }, { unique: true })
 
   def self.next(name)
-    self.where(name: name).first.safely.inc(:counter, 1)
+    self.where(name: name).first.with(safe: true).inc(:counter, 1)
   rescue
     sequence = self.create(name: name)
     sequence.counter

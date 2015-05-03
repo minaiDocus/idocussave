@@ -7,7 +7,7 @@ class Account::OrganizationsController < Account::AccountController
   before_filter :verify_rights
 
   def index
-    @organizations = search(organization_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @organizations = search(organization_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @without_address_count = Organization.where('addresses.is_for_billing' => { '$nin' => [true] }).count
     user_ids   = DebitMandate.configured.distinct(:user_id)
     leader_ids = Organization.all.distinct(:leader_id)
@@ -133,8 +133,8 @@ private
 
   def load_organization
     if @user.is_admin
-      @organization = Organization.find_by_slug params[:id]
-      raise Mongoid::Errors::DocumentNotFound.new(Organization, params[:id]) unless @organization
+      @organization = Organization.find_by_slug! params[:id]
+      raise Mongoid::Errors::DocumentNotFound.new(Organization, slug: params[:id]) unless @organization
     elsif @user.organization && params[:id] == @user.organization.slug
       @organization = @user.organization
     else

@@ -34,9 +34,9 @@ class PeriodDocument
   validates :paperclips, :numericality => { :greater_than_or_equal_to => 0 }
   validates :oversized,  :numericality => { :greater_than_or_equal_to => 0 }
 
-  scope :for_time, lambda { |start_time,end_time| where(:created_at.gte => start_time, :created_at.lte => end_time) }
-  scope :shared, where: { is_shared: true }
-  scope :scanned, where: { :scanned_at.nin => [nil] }
+  scope :for_time, -> start_time, end_time { where(:created_at.gte => start_time, :created_at.lte => end_time) }
+  scope :shared, where(is_shared: true)
+  scope :scanned, where(:scanned_at.nin => [nil])
 
   class << self
     def by_created_at

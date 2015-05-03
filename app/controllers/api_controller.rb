@@ -81,8 +81,6 @@ private
   def catch_error
     begin
       yield
-    rescue BSON::InvalidObjectId
-      respond_with_invalid_request
     rescue ActionController::UnknownController,
            ActionController::RoutingError,
            AbstractController::ActionNotFound,

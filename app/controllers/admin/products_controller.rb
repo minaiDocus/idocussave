@@ -77,8 +77,8 @@ class Admin::ProductsController < Admin::AdminController
 private
 
   def load_product
-    @product = Product.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Product, params[:id]) unless @product
+    @product = Product.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Product, slug: params[:id]) unless @product
   end
 
   def product_params

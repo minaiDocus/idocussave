@@ -6,8 +6,8 @@ class Account::Organization::FiduceoController < Account::OrganizationController
 private
 
   def load_customer
-    @customer = customers.find_by_slug params[:customer_id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @customer
+    @customer = customers.find_by_slug! params[:customer_id]
+    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:id]) unless @customer
   end
 
   def verify_rights

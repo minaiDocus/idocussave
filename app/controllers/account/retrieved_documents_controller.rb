@@ -4,7 +4,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
   before_filter :load_document, only: %w(show piece)
 
   def index
-    @documents = search(document_contains).order([sort_column,sort_direction]).page(params[:page]).per(params[:per_page])
+    @documents = search(document_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = document_contains.empty?
   end
 
@@ -26,7 +26,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
   end
 
   def select
-    @documents = search(document_contains).order([sort_column,sort_direction]).wait_selection.page(params[:page]).per(params[:per_page])
+    @documents = search(document_contains).order_by(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
     @retriever.schedule if @retriever && @retriever.wait_selection?
     @is_filter_empty = document_contains.empty?
   end

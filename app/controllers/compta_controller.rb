@@ -8,7 +8,7 @@ class ComptaController < ApplicationController
 
   def show
     @user = @users.find_by_code params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, params[:id]) unless @user
+    raise Mongoid::Errors::DocumentNotFound.new(User, code: params[:id]) unless @user
   end
 
 private

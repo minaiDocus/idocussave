@@ -4,7 +4,7 @@ class Account::GroupsController < Account::OrganizationController
   before_filter :load_group, except: %w(index new create)
 
   def index
-    @groups = search(group_contains).order([sort_column, sort_direction]).page(params[:page]).per(params[:per_page])
+    @groups = search(group_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show
@@ -91,8 +91,8 @@ private
   end
 
   def load_group
-    @group = @organization.groups.find_by_slug params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Group, params[:id]) unless @group
+    @group = @organization.groups.find_by_slug! params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Group, slug: params[:id]) unless @group
   end
 
   def sort_column
