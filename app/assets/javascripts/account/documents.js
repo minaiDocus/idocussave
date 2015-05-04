@@ -62,8 +62,8 @@
     else
       var page_number = (li.prevAll().length + 1);
 
-    $(".showPage").attr("id",id);
-    $(".showPage").attr("src",url);
+    $(panel + " .showPage").attr("id",id);
+    $(panel + " .showPage").attr("src",url);
     $("#pageInformation").attr("data-content",tags);
 
     $(panel + " .header h3").text(name);
