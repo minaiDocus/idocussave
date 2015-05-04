@@ -24,7 +24,9 @@ class Account::FileSendingKitsController < Account::OrganizationController
     @file_sending_kit.organization.customers.active.asc(:code).each do |client|
       value = params[:users]["#{client.id}"][:is_checked] rescue nil
       if value == 'true'
-        without_shipping_address << client unless client.addresses.for_kit_shipping.first
+        unless client.addresses.for_kit_shipping.first && client.addresses.for_shipping.first
+          without_shipping_address << client
+        end
         clients_data << { :user => client, :start_month => params[:users]["#{client.id}"][:start_month].to_i, :offset_month => params[:users]["#{client.id}"][:offset_month].to_i }
       end
     end
@@ -40,7 +42,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
     else
       flash[:error] = ''
       if without_shipping_address.count != 0
-        flash[:error] = "Le(s) client(s) suivant(s) n'ont(a) pas d'adresse de livraison :"
+        flash[:error] = "Les clients suivants n'ont pas d'adresse de livraison et/ou du kit :"
         without_shipping_address.each do |client|
           flash[:error] << "</br><a href='#{account_organization_customer_path(@organization, client)}' target='_blank'>#{client.info}</a>"
         end
