@@ -252,7 +252,7 @@
                           %td.actions
                             = link_to icon_show, invoice.content.url, class: 'do-showInvoice', title: "#{invoice.number}.pdf"
                             = icon_link_to invoice.content.url, { icon: 'download' }, { target: '_blank' }
-                  = paginate @invoices
+                  = paginate @invoices, params: { panel: 'invoices' }
               #showInvoice.modal.hide.fade
                 .modal-header
                   %a.close{ data: { dismiss: :modal } } ×
