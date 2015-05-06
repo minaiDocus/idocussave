@@ -1,4 +1,4 @@
-window.is_ibiza_configured = $('#pre_assignments').data().is_ibiza_configured
+window.is_ibiza_configured = $('#pre_assignments').data().isIbizaConfigured
 $('a.settings').tooltip()
 
 Idocus.vent = _.extend({}, Backbone.Events);

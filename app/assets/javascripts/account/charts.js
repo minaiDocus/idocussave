@@ -487,9 +487,9 @@ function chart_alert(type, message) {
 
 function load_chart(type) {
   $chart = $('#chart')
-  bank_account_id = $chart.data('bank_account_id');
-  start_date = $chart.data('start_date');
-  end_date = $chart.data('end_date');
+  bank_account_id = $chart.data('bankAccountId');
+  start_date = $chart.data('startDate');
+  end_date = $chart.data('endDate');
 
   $.ajax({
     url: type + '.json?bank_account_id='+bank_account_id+'&start_date='+start_date+'&end_date='+end_date,

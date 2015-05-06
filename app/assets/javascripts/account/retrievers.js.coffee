@@ -133,9 +133,9 @@ update_provider = ->
 jQuery ->
   if $('.retriever_form').length > 0
     window.providers = $('#providers').data('providers')
-    window.selected_providers = $('#providers').data('selected_providers')
+    window.selected_providers = $('#providers').data('selectedProviders')
     window.banks = $('#banks').data('banks')
-    window.selected_banks = $('#banks').data('selected_banks')
+    window.selected_banks = $('#banks').data('selectedBanks')
 
     update_selects_list($('#fiduceo_retriever_type').val() == 'provider')
 
