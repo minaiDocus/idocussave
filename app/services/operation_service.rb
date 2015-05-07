@@ -178,7 +178,7 @@ class OperationService
       doc = parsed_accounting_plan(user.code)
       if doc
         result = doc.css('name').select { |name| label.match /#{Regexp.quote(name.content)}/i }.first
-        number = result.parent.css('associate').text if result
+        number = result.parent.css('number').text if result
       end
     else
       # DB Accounting Plan
