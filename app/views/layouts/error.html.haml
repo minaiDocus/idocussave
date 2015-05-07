@@ -20,7 +20,7 @@
               %span{ style: 'color:#999;'} Connecté en tant que
               = link_to current_user.email, root_path
               |
-              = link_to 'déconnexion', destroy_user_session_path
+              = link_to 'déconnexion', destroy_user_session_path, method: :delete
           - else
             %p{ class: 'navbar-text pull-right' }
               = link_to 'Connexion', new_user_session_path

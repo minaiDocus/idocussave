@@ -42,4 +42,4 @@
   = t('devise.sessions.message.welcome')
   = link_to current_user.email, root_path
   |
-  = link_to t('devise.sessions.action.sing_out').downcase, destroy_user_session_path
+  = link_to 'déconnexion', destroy_user_session_path, method: :delete

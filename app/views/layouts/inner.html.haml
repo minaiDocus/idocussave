@@ -27,9 +27,9 @@
             = render partial: 'layouts/navigation'
             %p{ :class=>"navbar-text pull-right" }
               Bienvenue
-              != link_to current_user.email, root_path
+              = link_to current_user.email, root_path
               |
-              != link_to "déconnexion", destroy_user_session_path
+              = link_to 'déconnexion', destroy_user_session_path, method: :delete
 
     - if current_user.try(:is_admin) && controller_name != 'organizations'
       .container-fluid

@@ -19,12 +19,12 @@ class Account::CollaboratorsController < Account::OrganizationController
     @collaborator.organization = @organization
     @collaborator.is_prescriber = true
     @collaborator.set_random_password
-    @collaborator.skip_confirmation!
-    @collaborator.reset_password_token = User.reset_password_token
+    encrypted_token, token = Devise.token_generator.generate(User, :reset_password_token)
+    @collaborator.reset_password_token = token
     @collaborator.reset_password_sent_at = Time.now
     @collaborator.is_group_required = !(@user.my_organization || @user.is_admin)
     if @collaborator.save
-      WelcomeMailer.welcome_collaborator(@collaborator).deliver
+      WelcomeMailer.welcome_collaborator(@collaborator, encrypted_token).deliver
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_collaborator_path(@organization, @collaborator)
     else

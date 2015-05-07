@@ -27,9 +27,6 @@ class Admin::UsersController < Admin::AdminController
   def create
     @user = User.new user_params
     AccountingPlan.create(user_id: @user.id)
-    @user.skip_confirmation!
-    @user.reset_password_token = User.reset_password_token
-    @user.reset_password_sent_at = Time.now
     if @user.save
       flash[:notice] = 'Crée avec succès.'
       redirect_to admin_users_path
@@ -86,6 +83,11 @@ private
   def user_params
     params.require(:user).permit(
       :email,
+      :password,
+      :password_confirmation,
+      :code,
+      :is_admin,
+      :is_prescriber,
       :first_name,
       :last_name,
       :company,

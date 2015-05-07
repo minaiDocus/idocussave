@@ -1,0 +1,22 @@
+!!!
+%html
+  %head
+    %title [iDocus] Déverrouillage de votre compte
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@resource.first_name} #{@resource.last_name},
+    %br
+    %br
+    Votre compte a été verrouillé, pour 1 heure, à cause d'un nombre excessif de tentatives de connexion échouées.
+    %br
+    %br
+    Si vous voulez le débloquer tout de suite, veuillez cliquer sur ce lien :
+    %br
+    = link_to unlock_url(@resource, unlock_token: @token), unlock_url(@resource, unlock_token: @token)
+    %br
+    %br
+    Cordialement,
+    %br
+    L'équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

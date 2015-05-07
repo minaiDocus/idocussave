@@ -31,7 +31,7 @@
               Connecté en tant que
               = link_to current_user.email, root_path
               |
-              = link_to 'déconnexion', destroy_user_session_path
+              = link_to 'déconnexion', destroy_user_session_path, method: :delete
     .container-fluid= yield
     %footer.footer
       %p.copyright.aligncenter &copy; iDocus 2015

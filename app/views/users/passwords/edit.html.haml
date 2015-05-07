@@ -1,25 +1,12 @@
 %h2 Modifier votre mot de passe
 
-%p
-  Utilisez le formulaire ci-dessous, pour modifier votre mot de passe.
+%hr
 
-= form_for resource, :url => password_path(resource_name), :html => { :method => :put, :class => "form-horizontal" } do |f|
-  != render :partial => '/shared/error_messages', :locals => {:object => resource}
+%p Utilisez le formulaire ci-dessous, pour modifier votre mot de passe.
 
+= simple_form_for resource, url: password_path(resource_name), method: :put, html: { class: 'form form-horizontal' } do |f|
   = f.hidden_field :reset_password_token
-
-  .control-group
-    != f.label :password, "Nouveau mot de passe", :class => "control-label"
-    .controls
-      != f.password_field :password
-
-  .control-group
-    != f.label :password_confirmation, "Confirmation du nouveau mot de passe", :class => "control-label"
-    .controls
-      != f.password_field :password_confirmation
-
-  .form-actions
-    != f.submit "VALIDER", :class => "btn pull-left"
-    %a.btn.margin1left{ :href => "/" }
-      %span
-        RETOUR
+  = f.input :password, label: 'Nouveau mot de passe :'
+  = f.input :password_confirmation, label: 'Confirmation du nouveau mot de passe :'
+  .form-actions.padding0bottom
+    = f.submit 'Valider', class: 'btn btn-primary pull-left'

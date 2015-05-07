@@ -13,8 +13,8 @@ class CreateCustomerService
     @customer.organization = @organization
     @customer.set_random_password
     @customer.is_group_required = !(@requester.my_organization || @requester.is_admin)
-    @customer.skip_confirmation!
-    @customer.reset_password_token = User.reset_password_token
+    encrypted_token, token = Devise.token_generator.generate(User, :reset_password_token)
+    @customer.reset_password_token = token
     @customer.reset_password_sent_at = Time.now
     if @customer.save
       AccountingPlan.create(user_id: @customer.id)
@@ -48,7 +48,7 @@ class CreateCustomerService
       @customer.auth_prev_period_until_month = @organization.auth_prev_period_until_month
       @customer.save
 
-      WelcomeMailer.welcome_customer(@customer).deliver
+      WelcomeMailer.welcome_customer(@customer, encrypted_token).deliver
     end
     @customer
   end

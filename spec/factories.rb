@@ -8,7 +8,6 @@ FactoryGirl.define do
     company 'TeSt'
     sequence(:code) { |n| "TS#{'%04d' % n}" }
     sequence(:email_code) { |n| "%08d" % n }
-    confirmed_at Time.now
     factory :admin do
       is_admin true
     end
