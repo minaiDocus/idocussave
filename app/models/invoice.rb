@@ -75,7 +75,7 @@ class Invoice
     time = self.created_at - 1.month
     if organization
       periods = Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
-        where(:start_at.lte => time, :end_at.gte => time)
+        where(:start_at.lte => time.dup, :end_at.gte => time.dup)
 
       @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
       @data = [

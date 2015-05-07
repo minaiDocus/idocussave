@@ -52,7 +52,7 @@ namespace :maintenance do
       time = Time.now - 1.month
       time = Time.local(time.year, time.month)
       puts 'Updating all periods'
-      Period.where(:start_at.lte => time, :end_at.gte => time).each do |period|
+      Period.where(:start_at.lte => time.dup, :end_at.gte => time.dup).each do |period|
         UpdatePeriodDataService.new(period).execute
         UpdatePeriodPriceService.new(period).execute
         print '.'
@@ -60,7 +60,7 @@ namespace :maintenance do
       puts ''
       Organization.not_test.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time)
+        periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time.dup)
         if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
           invoice = Invoice.new
           invoice.organization = organization
@@ -77,7 +77,7 @@ namespace :maintenance do
           end
           InvoiceMailer.delay(priority: 1).notify(invoice)
         end
-        periods = Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time)
+        periods = Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time.dup)
         if periods.count > 0
           puts "-> Not centralized invoices :"
           periods.map do |period|

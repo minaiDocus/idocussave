@@ -12,7 +12,7 @@ module Admin::ReportingHelper
     periods = Period.any_of(
       { :user_id.in => user_ids },
       { organization_id: organization.id }
-    ).where(:start_at.lte => time, :end_at.gte => time).entries
+    ).where(:start_at.lte => time.dup, :end_at.gte => time.dup).entries
     [
       periods.select { |e| e.is_centralized },
       periods.select { |e| !e.is_centralized }

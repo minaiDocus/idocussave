@@ -40,11 +40,11 @@ class Subscription
   end
 
   def find_period(time)
-    periods.where(:start_at.lte => time, :end_at.gte => time).first
+    periods.where(:start_at.lte => time.dup, :end_at.gte => time.dup).first
   end
 
   def create_period(time)
-    period = Period.new(start_at: time, duration: period_duration)
+    period = Period.new(start_at: time.dup, duration: period_duration)
     period.subscription = self
     if organization
       period.organization = organization

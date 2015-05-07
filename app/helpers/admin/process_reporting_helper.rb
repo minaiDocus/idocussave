@@ -2,7 +2,7 @@
 module Admin::ProcessReportingHelper
   def sum_of_scanned_sheets(organization, time)
     organization.temp_documents.scan.where(
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month
     ).any_of(
       { state: 'processed', is_an_original: true },
@@ -12,12 +12,12 @@ module Admin::ProcessReportingHelper
 
   def sum_of_bundled(organization, time)
     total = organization.temp_documents.bundled.where(
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month,
       delivery_type: 'scan'
     ).count
     total += organization.temp_documents.bundled.where(
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month,
       :delivery_type.in => ['upload', 'dematbox_scan']
     ).sum(:pages_number).to_i || 0
@@ -27,11 +27,11 @@ module Admin::ProcessReportingHelper
   def sum_of_pre_assignments(organization, time)
     total = 0
     total += organization.expenses.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).count
     total += organization.preseizures.where(
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month,
       :piece_id.nin   => [nil]
     ).count
@@ -41,7 +41,7 @@ module Admin::ProcessReportingHelper
   def sum_of_requested_kits(customers, time)
     customer_ids = Period.where(
       :user_id.in     => customers.map(&:id),
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month
     ).select do |period|
       options = period.product_option_orders.select do |option|
@@ -67,14 +67,14 @@ module Admin::ProcessReportingHelper
 
   def sum_of_sent_kits(organization, time)
     organization.paper_processes.kits.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).size
   end
 
   def sum_of_receipts(organization, time)
     organization.paper_processes.receipts.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).size
   end
@@ -82,7 +82,7 @@ module Admin::ProcessReportingHelper
   def sum_of_paperclips(customers, time)
     periods = Period.where(
       :user_id.in     => customers.map(&:id),
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month
     )
     periods.map do |period|
@@ -93,7 +93,7 @@ module Admin::ProcessReportingHelper
   def sum_of_oversized(customers, time)
     periods = Period.where(
       :user_id.in     => customers.map(&:id),
-      :created_at.gte => time,
+      :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month
     )
     periods.map do |period|
@@ -103,21 +103,21 @@ module Admin::ProcessReportingHelper
 
   def sum_of_returns_500(organization, time)
     organization.paper_processes.returns.l500.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).size
   end
 
   def sum_of_returns_1000(organization, time)
     organization.paper_processes.returns.l1000.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).size
   end
 
   def sum_of_returns_3000(organization, time)
     organization.paper_processes.returns.l3000.where(
-      :created_at.gte  => time,
+      :created_at.gte  => time.dup,
       :created_at.lte  => time.end_of_month
     ).size
   end
