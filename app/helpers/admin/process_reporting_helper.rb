@@ -27,8 +27,8 @@ module Admin::ProcessReportingHelper
   def sum_of_pre_assignments(organization, time)
     total = 0
     total += organization.expenses.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).count
     total += organization.preseizures.where(
       :created_at.gte => time.dup,
@@ -67,15 +67,15 @@ module Admin::ProcessReportingHelper
 
   def sum_of_sent_kits(organization, time)
     organization.paper_processes.kits.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).size
   end
 
   def sum_of_receipts(organization, time)
     organization.paper_processes.receipts.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).size
   end
 
@@ -103,22 +103,22 @@ module Admin::ProcessReportingHelper
 
   def sum_of_returns_500(organization, time)
     organization.paper_processes.returns.l500.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).size
   end
 
   def sum_of_returns_1000(organization, time)
     organization.paper_processes.returns.l1000.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).size
   end
 
   def sum_of_returns_3000(organization, time)
     organization.paper_processes.returns.l3000.where(
-      :created_at.gte  => time.dup,
-      :created_at.lte  => time.end_of_month
+      :created_at.gte => time.dup,
+      :created_at.lte => time.end_of_month
     ).size
   end
 end
