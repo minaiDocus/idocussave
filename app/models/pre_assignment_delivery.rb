@@ -2,7 +2,6 @@
 class PreAssignmentDelivery
   include Mongoid::Document
   include Mongoid::Timestamps
-  include Mongoid::Slug
 
   belongs_to :organization
   belongs_to :report, class_name: 'Pack::Report'
