@@ -44,7 +44,7 @@ describe PrepaCompta::DocumentBundler do
   describe '.prepare' do
     before(:all) do
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      @user.account_book_types.create(name: 'TS', description: 'TEST', entry_type: 2)
+      FactoryGirl.create(:journal_with_preassignment, user_id: @user.id, name: 'TS', description: 'TEST')
       file_with_2_pages = File.open File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf'), 'r'
       Dir.mktmpdir do |dir|
         temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
@@ -72,7 +72,7 @@ describe PrepaCompta::DocumentBundler do
 
     after(:all) do
       path = File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01')
-      # FileUtils.remove_entry(path)
+      FileUtils.remove_entry(path)
     end
 
     it 'should create files/test/prepacompta/2013-01-01/regroupments folder' do
