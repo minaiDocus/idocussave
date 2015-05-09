@@ -39,13 +39,14 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_requested_kits(customers, time)
+    pattern = /env.*papier.*numérisation/i
     customer_ids = Period.where(
       :user_id.in     => customers.map(&:id),
       :created_at.gte => time.dup,
       :created_at.lte => time.end_of_month
     ).select do |period|
       options = period.product_option_orders.select do |option|
-        option.group_title == 'Envoi papier à iDocus pour numérisation' && option.title == 'Oui'
+        option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
       end
       options.size > 0
     end.map(&:user_id).uniq
@@ -57,7 +58,7 @@ module Admin::ProcessReportingHelper
       :created_at.lte => previous_month.end_of_month
     ).select do |period|
       options = period.product_option_orders.select do |option|
-        option.group_title == 'Envoi papier à iDocus pour numérisation' && option.title == 'Oui'
+        option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
       end
       options.size > 0
     end.size
