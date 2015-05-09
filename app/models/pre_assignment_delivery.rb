@@ -27,8 +27,6 @@ class PreAssignmentDelivery
   index :is_auto
   index :total_item
 
-  slug :number
-
   before_validation :set_number
 
   scope :by_number, desc: :number

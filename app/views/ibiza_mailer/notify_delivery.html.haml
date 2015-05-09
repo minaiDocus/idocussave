@@ -22,7 +22,7 @@
         %td= @delivery.preseizures.count
       %tr
         %th Numéro de livraison :
-        %td= link_to @delivery.number, admin_pre_assignment_delivery_url(@delivery)
+        %td= link_to @delivery.number, admin_pre_assignment_delivery_url(@delivery.number)
       %tr
         %th Mode :
         %td= @delivery.is_auto ? 'Automatique' : 'Manuel'

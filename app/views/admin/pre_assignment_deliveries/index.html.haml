@@ -31,7 +31,7 @@
                   %td= delivery.total_item
                   %td= delivery.is_auto ? t('yes_value') : t('no_value')
                   %td= pre_assignment_delivery_state delivery
-                  %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery), title: 'Afficher les détails'
+                  %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery.number), title: 'Afficher les détails'
       = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
     .span3
       = render partial: 'sidebar'
