@@ -562,17 +562,34 @@
       });
     });
 
-    $("a.do-nextPage").click(function(e){
+    $("#panel2 a.do-nextPage").click(function(e){
       e.preventDefault();
-      var id = $(".showPage").attr("id");
+      var id = $("#panel2 .showPage").attr("id");
       var li = $("#document_"+id);
       var link = li.next().children(".do-showPage");
       if (link.length > 0)
         showPage(link);
     });
-    $("a.do-prevPage").click(function(e){
+    $("#panel2 a.do-prevPage").click(function(e){
       e.preventDefault();
-      var id = $(".showPage").attr("id");
+      var id = $("#panel2 .showPage").attr("id");
+      var li = $("#document_"+id);
+      var link = li.prev().children(".do-showPage")
+      if (link.length > 0)
+        showPage(link);
+    });
+
+    $("#panel3 a.do-nextPage").click(function(e){
+      e.preventDefault();
+      var id = $("#panel3 .showPage").attr("id");
+      var li = $("#document_"+id);
+      var link = li.next().children(".do-showPage");
+      if (link.length > 0)
+        showPage(link);
+    });
+    $("#panel3 a.do-prevPage").click(function(e){
+      e.preventDefault();
+      var id = $("#panel3 .showPage").attr("id");
       var li = $("#document_"+id);
       var link = li.prev().children(".do-showPage")
       if (link.length > 0)
