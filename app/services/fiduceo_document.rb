@@ -3,8 +3,10 @@ class FiduceoDocument
   attr_reader :temp_document
 
   def initialize(retriever, document)
+    @retriever = retriever
     @user = retriever.user
     @journal = retriever.journal
+    @document = document
     @fileb64 = document['binaryData']
 
     label = document['metadatas']['metadata'].select { |e| e['name'] == 'LIBELLE' }.first['value']
@@ -19,12 +21,12 @@ class FiduceoDocument
         delivery_type:         'fiduceo',
         signature:             document['documentHash'],
         user_id:               @user.id,
-        fiduceo_metadata:      format_metadata(document['metadatas']['metadata']),
+        fiduceo_metadata:      metadata,
         fiduceo_id:            document['id'],
         service_name:          retriever.service_name,
         custom_service_name:   retriever.name,
         is_content_file_valid: true,
-        wait_selection:        retriever.wait_selection?
+        wait_selection:        wait_selection?
       }
       @temp_document = pack.add file, options
       retriever.temp_documents << @temp_document
@@ -88,13 +90,27 @@ private
       force_encoding('UTF-8')
   end
 
-  def format_metadata(metadata)
+  def metadata
+    @metadata ||= format_metadata(@document['metadatas']['metadata'])
+  end
+
+  def format_metadata(data)
     hsh = {}
-    metadata.each do |e|
+    data.each do |e|
       hsh[e['name'].downcase] = e['value']
     end
     hsh['amount'] = hsh['amount'].to_f
     hsh['date'] = Time.zone.parse(hsh['date']).to_time
     hsh
+  end
+
+  def wait_selection?
+    if @retriever.wait_selection?
+      true
+    elsif metadata['date'].present? && metadata['date'].is_a?(Time)
+      metadata['date'] < 2.months.ago
+    else
+      false
+    end
   end
 end
