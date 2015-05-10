@@ -64,23 +64,24 @@ class Ibiza
 
   def update_files_for(users)
     users.each do |user|
+      error_file_path = "#{Rails.root}/data/compta/mapping/#{user.code}.error"
       if user.ibiza_id
         client.request.clear
         client.company(user.ibiza_id).accounts?
         if client.response.success?
           body = client.response.body
           body.force_encoding('UTF-8')
-          if File.exist?("#{Rails.root}/data/compta/mapping/#{user.code}.error")
-            `rm #{Rails.root}/data/compta/mapping/#{user.code}.error`
+          if File.exist?(error_file_path)
+            FileUtils.rm error_file_path
           end
           File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
             f.write body
           end
         else
-          `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
+          FileUtils.touch error_file_path
         end
       else
-        `touch #{Rails.root}/data/compta/mapping/#{user.code}.error`
+        FileUtils.touch error_file_path
       end
     end
     true

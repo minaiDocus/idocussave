@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Pdftk
+  include POSIX::Spawn
+
   EXE_NAME = "pdftk"
   @@config = {}
   cattr_accessor :config

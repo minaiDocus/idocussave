@@ -1,6 +1,14 @@
 # -*- encoding : UTF-8 -*-
 class DocumentTools
   class << self
+    def system(command)
+      success = nil
+      silence_stream(STDOUT) do
+        success = POSIX::Spawn::system(command)
+      end
+      success
+    end
+
     def pages_number(file_path)
       document = nil
       silence_stream(STDERR) do
@@ -10,13 +18,11 @@ class DocumentTools
     end
 
     def generate_tiff_file(file_path, temppath)
-      `gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}' 2>&1`
-      $?.success?
+      system "gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}' 2>&1"
     end
 
     def to_pdf(file_path, output_file_path)
-      `convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1`
-      $?.success?
+      system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
     end
 
     def modifiable?(file_path, strict=true)
@@ -45,11 +51,11 @@ class DocumentTools
         is_ok = false
       end
       if strict
-        `pdftk '#{file_path}' dump_data 2>&1`
-        is_ok = false unless $?.success?
+        success = system "pdftk '#{file_path}' dump_data 2>&1"
+        is_ok = false unless success
       end
       # consumes too much cpu cycle
-      # is_ok = false unless `identify #{file_path}; echo $?`.to_i == 0
+      # is_ok = false unless system("identify #{file_path}")
       is_ok
     end
 
@@ -80,14 +86,13 @@ class DocumentTools
     end
 
     def remove_pdf_security(file_path, new_file_path)
-      `gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1`
-      $?.success?
+      system "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1"
     end
 
     def need_ocr?(file_path)
       tempfile = Tempfile.new('ocr_result')
-      `pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}' 2>&1`
-      if $?.success?
+      success = system "pdftotext -raw -nopgbrk -q '#{file_path}' '#{tempfile.path}' 2>&1"
+      if success
         text = tempfile.readlines.join
         tempfile.unlink
         tempfile.close
@@ -169,7 +174,7 @@ class DocumentTools
 
     def archive(file_path, files_path)
       clean_files_path = files_path.map { |e| "'#{e}'" }.join(' ')
-      `zip -j '#{file_path}' #{clean_files_path} 2>&1`
+      system "zip -j '#{file_path}' #{clean_files_path} 2>&1"
       file_path
     end
 

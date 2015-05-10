@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DebitMandateResponseService
+  include POSIX::Spawn
+
   def initialize(blob)
     @blob      = blob
     @scim_home = Slimpay::SCIM_HOME

@@ -13,11 +13,11 @@ class QuadratusZipService
       f.write(data)
     end
     @preseizures.each do |preseizure|
-      `cp #{preseizure.piece.content.path} #{File.join(dir, preseizure.piece.number.to_s + '.pdf')}` if preseizure.piece.try(:content).try(:path)
+      FileUtils.cp preseizure.piece.content.path, File.join(dir, preseizure.piece.number.to_s + '.pdf') if preseizure.piece.try(:content).try(:path)
     end
     file_path = File.join(dir, base_name + '.zip')
     Dir.chdir dir
-    `zip #{file_path} *`
+    POSIX::Spawn::system "zip #{file_path} *"
     file_path
   end
 

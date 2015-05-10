@@ -13,7 +13,7 @@ class DestroyCollaboratorService
     end
     @collaborator.composition.try(:destroy)
     @collaborator.remote_files.each do |r|
-      `rm #{r.temp_path}` if File.exists?(r.temp_path)
+      FileUtils.rm r.temp_path if File.exists?(r.temp_path)
     end
     if @collaborator.external_file_storage
       @collaborator.external_file_storage.try(:dropbox_basic).try(:destroy)

@@ -2,6 +2,8 @@
 require 'prawn/measurement_extensions'
 
 class KitGenerator
+  include POSIX::Spawn
+
   TRIMESTRE = [nil,"1er Trimestre","2e Trimestre","3e Trimestre","4e Trimestre"]
 
   class << self

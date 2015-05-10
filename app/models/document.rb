@@ -165,7 +165,7 @@ class Document
       else
         path = document.content.path
       end
-      `pdftotext -raw -nopgbrk -q #{path}`
+      POSIX::Spawn::system "pdftotext -raw -nopgbrk -q #{path}"
       dirname = File.dirname(path)
       filename = File.basename(path, '.pdf') + '.txt'
       filepath = File.join(dirname, filename)

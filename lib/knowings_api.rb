@@ -74,7 +74,7 @@ module KnowingsApi
       metapath    = create_meta(dir)
       basename    = ::File.basename(@file_name, '.pdf')
       output_path = ::File.join(dir, "#{basename}#{EXTENSION}")
-      `zip -j #{output_path} #{metapath} #{@filepath}`
+      POSIX::Spawn::system "zip -j #{output_path} #{metapath} #{@filepath}"
       output_path
     end
 

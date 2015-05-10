@@ -336,6 +336,7 @@ GEM
     poppler (2.2.5)
       cairo (>= 1.14.0)
       gdk_pixbuf2 (= 2.2.5)
+    posix-spawn (0.3.11)
     prawn (1.0.0.rc1)
       pdf-reader (>= 0.9.0)
       ttfunk (~> 1.0.3)
@@ -564,6 +565,7 @@ DEPENDENCIES
   oj
   paperclip
   poppler
+  posix-spawn
   prawn (= 1.0.0.rc1)
   prawn-qrcode
   quiet_assets

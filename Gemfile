@@ -44,6 +44,7 @@ gem 'validate_url'
 gem 'ansi', :require => false
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
+gem 'posix-spawn'
 
 group :assets do
   gem 'twitter-bootstrap-rails'
