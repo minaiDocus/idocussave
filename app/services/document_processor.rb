@@ -13,6 +13,7 @@ class DocumentProcessor
           pack = Pack.find_or_initialize temp_pack.name, user
           current_piece_position = pack.pieces.by_position.last.position + 1 rescue 1
           current_page_position = pack.pages.by_position.last.position + 2 rescue 1
+          added_pieces = []
           temp_documents.each do |temp_document|
             logger.info "[#{Time.now}]   #{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}"
             if !temp_document.is_a_cover? || !pack.has_cover?
@@ -46,6 +47,7 @@ class DocumentProcessor
                 piece.is_a_cover    = is_a_cover
                 piece.position      = piece_position
                 piece.save
+                added_pieces << piece
 
                 ## Dividers
                 pack_divider              = pack.dividers.build
@@ -136,7 +138,7 @@ class DocumentProcessor
           IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index', 6.hours.from_now)
           Reporting.update(pack)
 
-          piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
+          piece_files_path = added_pieces.map { |e| e.content.path }
           piece_files_path.in_groups_of(50).each do |group|
             DocumentTools.archive(pack.archive_file_path, group)
           end
