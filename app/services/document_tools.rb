@@ -97,12 +97,6 @@ class DocumentTools
       end
     end
 
-    def ocr(file_path)
-      tempfile = Tempfile.new('ocr_result')
-      `abbyyocr9 -if '#{file_path}' -f PDF -pem ImageOnText -of '#{tempfile.path}'`
-      tempfile
-    end
-
     def pack_name(file_path)
       file_path.sub(/\.pdf\z/i, '').gsub('_',' ').sub(/\s\d{3}$/,'') + ' all'
     end
