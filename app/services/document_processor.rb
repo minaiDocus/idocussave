@@ -137,7 +137,9 @@ class DocumentProcessor
           Reporting.update(pack)
 
           piece_files_path = pack.pieces.by_position.map { |e| e.content.path }
-          DocumentTools.archive(pack.archive_file_path, piece_files_path)
+          piece_files_path.in_groups_of(50).each do |group|
+            DocumentTools.archive(pack.archive_file_path, group)
+          end
 
           FileDeliveryInit.prepare(pack)
         end
