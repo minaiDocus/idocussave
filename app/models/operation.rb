@@ -7,8 +7,8 @@ class Operation
   belongs_to :user
   belongs_to :bank_account
   belongs_to :pack
-  belongs_to :piece, class_name: 'Pack::Piece'
-  has_one :preseizure, class_name: 'Pack::Report::Preseizure'
+  belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations
+  has_one :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :operation
 
   index({ fiduceo_id: 1 })
 
