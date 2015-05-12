@@ -55,18 +55,19 @@ class Admin::ProductsController < Admin::AdminController
   end
 
   def propagate
+    req = OpenStruct.new(path: request.path, remote_ip: request.remote_ip)
     if params[:propagation_options][:scope] == 'all'
       User.customers.active.asc(:code).each do |customer|
-        UpdateSubscriptionService.new(customer.subscription, {}, current_user, request).execute
+        UpdateSubscriptionService.execute(customer.subscription.id.to_s, {}, current_user.id.to_s, req)
       end
-      flash[:notice] = 'Propagé avec succès.'
+      flash[:notice] = 'Propagation en cours...'
     else
       organization = Organization.find(params[:propagation_options][:scope])
       if organization
         organization.customers.active.asc(:code).each do |customer|
-          UpdateSubscriptionService.new(customer.subscription, {}, current_user, request).execute
+          UpdateSubscriptionService.execute(customer.subscription.id.to_s, {}, current_user.id.to_s, req)
         end
-        flash[:notice] = 'Propagé avec succès.'
+        flash[:notice] = 'Propagation en cours...'
       else
         flash[:error] = "L'organisation n'est pas valide."
       end
