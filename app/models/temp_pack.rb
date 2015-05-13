@@ -160,7 +160,7 @@ class TempPack
   end
 
   def next_document_position
-    with(safe: true).inc(:position_counter, 1)
+    inc(:position_counter, 1)
   end
 
 private

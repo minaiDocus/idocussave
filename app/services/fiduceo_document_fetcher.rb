@@ -99,7 +99,7 @@ class FiduceoDocumentFetcher
             transaction.acceptable? ? retriever.error : retriever.schedule
           end
           if transaction.retrieved_document_ids.any?
-            retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids + transaction.retrieved_document_ids)
+            retriever.update_attribute(:pending_document_ids, retriever.pending_document_ids + transaction.retrieved_document_ids)
           end
         elsif transaction.error? && (retriever.processing? || retriever.wait_for_user_action?)
           retriever.error
@@ -134,7 +134,7 @@ class FiduceoDocumentFetcher
             FiduceoDocument.new retriever, document
           end
         end
-        retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+        retriever.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
       end
       if retriever.wait_selection? && retriever.temp_documents.count == 0
         retriever.schedule

@@ -119,24 +119,24 @@ class TempDocument
     end
 
     after_transition on: :ready do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(:document_not_processed_count, 1)
+      temp_document.temp_pack.inc(:document_not_processed_count, 1)
     end
 
     after_transition on: :processed do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(:document_not_processed_count, -1)
+      temp_document.temp_pack.inc(:document_not_processed_count, -1)
     end
 
     after_transition on: :bundle_needed do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(:document_bundle_needed_count, 1)
+      temp_document.temp_pack.inc(:document_bundle_needed_count, 1)
     end
 
     after_transition on: :bundling do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(:document_bundle_needed_count, -1)
-      temp_document.temp_pack.with(safe: true).inc(:document_bundling_count, 1)
+      temp_document.temp_pack.inc(:document_bundle_needed_count, -1)
+      temp_document.temp_pack.inc(:document_bundling_count, 1)
     end
 
     after_transition on: :bundled do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(:document_bundling_count, -1)
+      temp_document.temp_pack.inc(:document_bundling_count, -1)
     end
 
     after_transition on: :ocr_needed do |temp_document, transition|
