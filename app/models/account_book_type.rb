@@ -57,6 +57,17 @@ class AccountBookType
   scope :pre_assignment_processable, where(:entry_type.gt => 1)
   scope :default,                    where(is_default: true)
 
+  before_save do |journal|
+    unless journal.is_pre_assignment_processable?
+      journal.account_number         = ''
+      journal.default_account_number = ''
+      journal.charge_account         = ''
+      journal.default_charge_account = ''
+      journal.vat_account            = ''
+      journal.anomaly_account        = ''
+    end
+  end
+
   def info
     [self.name, self.description].join(' ')
   end

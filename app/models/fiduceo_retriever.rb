@@ -98,6 +98,14 @@ class FiduceoRetriever
   scope :error,                where(state: 'error')
   scope :not_processed,        where(:state.in => %w(processing wait_for_user_action))
 
+  before_save do |fiduceo_retriever|
+    if fiduceo_retriever.type == 'provider'
+      fiduceo_retriever.bank_id = nil
+    else
+      fiduceo_retriever.provider_id = nil
+    end
+  end
+
   def provider?
     type == 'provider'
   end

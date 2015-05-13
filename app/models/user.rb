@@ -160,6 +160,22 @@ class User
   accepts_nested_attributes_for :organization_rights
   accepts_nested_attributes_for :options
 
+  before_validation do |user|
+    if user.email_code.blank? && !user.is_prescriber
+      user.email_code = user.get_new_email_code
+    end
+  end
+
+  before_save do |user|
+    # FIXME use another way
+    user.set_timestamps_of_addresses
+    user.format_name
+  end
+
+  before_destroy do |user|
+    FiduceoUser.new(user, false).destroy if user.fiduceo_id.present?
+  end
+
   def name
     [first_name.presence, last_name.presence].compact.join(' ')
   end
