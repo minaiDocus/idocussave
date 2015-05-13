@@ -25,14 +25,14 @@ class PaperProcess
   validates :periods_count,  numericality: { greater_than: 0 }, if: Proc.new { |e| e.periods_count.present? }
   validates_inclusion_of :letter_type, in: [500, 1000, 3000], if: Proc.new { |e| e.type == 'return' }
 
-  scope :kits,     where(type: 'kit')
-  scope :receipts, where(type: 'receipt')
-  scope :scans,    where(type: 'scan')
-  scope :returns,  where(type: 'return')
+  scope :kits,     -> { where(type: 'kit') }
+  scope :receipts, -> { where(type: 'receipt') }
+  scope :scans,    -> { where(type: 'scan') }
+  scope :returns,  -> { where(type: 'return') }
 
-  scope :l500,  where(letter_type: 500)
-  scope :l1000, where(letter_type: 1000)
-  scope :l3000, where(letter_type: 3000)
+  scope :l500,  -> { where(letter_type: 500) }
+  scope :l1000, -> { where(letter_type: 1000) }
+  scope :l3000, -> { where(letter_type: 3000) }
 
   def self.to_csv
     criteria.map do |paper_process|

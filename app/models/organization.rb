@@ -70,10 +70,10 @@ class Organization
 
   embeds_many :addresses, as: :locatable
 
-  scope :test,        where(is_test: true)
-  scope :not_test,    where(is_test: false)
-  scope :suspended,   where(is_suspended: true)
-  scope :unsuspended, where(is_suspended: false)
+  scope :test,        -> { where(is_test: true) }
+  scope :not_test,    -> { where(is_test: false) }
+  scope :suspended,   -> { where(is_suspended: true) }
+  scope :unsuspended, -> { where(is_suspended: false) }
 
   def collaborators
     members.where(is_prescriber: true)

@@ -39,8 +39,8 @@ class Pack
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  scope :scan_delivered,      where(:scanned_pages_count.gt => 0)
-  scope :not_notified_update, where(is_update_notified: false)
+  scope :scan_delivered,      -> { where(:scanned_pages_count.gt => 0) }
+  scope :not_notified_update, -> { where(is_update_notified: false) }
 
   after_create { |pack| IndexerService.perform_async(Pack.to_s, pack.id.to_s, 'index') }
   after_update do |pack|

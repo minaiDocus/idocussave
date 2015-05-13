@@ -21,7 +21,7 @@ class ScanningProvider
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
-  scope :default, where(is_default: true)
+  scope :default, -> { where(is_default: true) }
 
   def to_s
     self.name

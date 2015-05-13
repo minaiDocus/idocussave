@@ -64,23 +64,23 @@ class Document
 
   after_destroy { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'delete') }
 
-  scope :mixed,            where(origin: 'mixed')
-  scope :not_mixed,        not_in(origin: ['mixed'])
+  scope :mixed,            -> { where(origin: 'mixed') }
+  scope :not_mixed,        -> { not_in(origin: ['mixed']) }
 
-  scope :extracted,        not_in(content_text: [""])
-  scope :not_extracted,    where(content_text: "")
-  scope :cannot_extract,   where(content_text: "-[none]")
+  scope :extracted,        -> { not_in(content_text: [""]) }
+  scope :not_extracted,    -> { where(content_text: "") }
+  scope :cannot_extract,   -> { where(content_text: "-[none]") }
 
-  scope :clean,            where(dirty: false)
-  scope :not_clean,        where(dirty: true)
+  scope :clean,            -> { where(dirty: false) }
+  scope :not_clean,        -> { where(dirty: true) }
 
-  scope :scanned,          where(origin: 'scan')
-  scope :uploaded,         where(origin: 'upload')
-  scope :dematbox_scanned, where(origin: 'dematbox_scan')
-  scope :fiduceo,          where(origin: 'fiduceo')
+  scope :scanned,          -> { where(origin: 'scan') }
+  scope :uploaded,         -> { where(origin: 'upload') }
+  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :fiduceo,          -> { where(origin: 'fiduceo') }
 
-  scope :covers,           where(is_a_cover: true)
-  scope :not_covers,       any_in(is_a_cover: [false, nil])
+  scope :covers,           -> { where(is_a_cover: true) }
+  scope :not_covers,       -> { any_in(is_a_cover: [false, nil]) }
 
   scope :of_period, lambda { |time, is_monthly|
     start_at = is_monthly ? time.beginning_of_month : time.beginning_of_quarter

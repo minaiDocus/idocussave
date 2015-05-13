@@ -31,12 +31,12 @@ class Pack::Report::Preseizure
   field :delivery_message
   field :is_locked,         type: Boolean, default: false
 
-  scope :delivered,       where(is_delivered: true)
-  scope :not_delivered,   where(is_delivered: false)
-  scope :failed_delivery, where(:delivery_message.ne => '', :delivery_message.exists => true)
+  scope :delivered,       -> { where(is_delivered: true) }
+  scope :not_delivered,   -> { where(is_delivered: false) }
+  scope :failed_delivery, -> { where(:delivery_message.ne => '', :delivery_message.exists => true) }
 
-  scope :locked,     where(is_locked: true)
-  scope :not_locked, where(is_locked: false)
+  scope :locked,     -> { where(is_locked: true) }
+  scope :not_locked, -> { where(is_locked: false) }
 
   def piece_name
     name || piece.name rescue nil

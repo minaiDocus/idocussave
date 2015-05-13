@@ -16,8 +16,8 @@ class ProductOptionOrder
 
   embedded_in :product_optionable, polymorphic: true
 
-  scope :usable, not_in(position: [-1])
-  scope :user_editable, where(:group_position.lt => 1000)
+  scope :usable,        -> { not_in(position: [-1]) }
+  scope :user_editable, -> { where(:group_position.lt => 1000) }
 
   def self.by_position
     asc([:group_position,:position])

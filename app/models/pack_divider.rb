@@ -20,12 +20,12 @@ class PackDivider
   index({ origin: 1 })
   index({ is_a_cover: 1 })
 
-  scope :uploaded,         where(origin: 'upload')
-  scope :scanned,          where(origin: 'scan')
-  scope :dematbox_scanned, where(origin: 'dematbox_scan')
-  scope :fiduceo,          where(origin: 'fiduceo')
-  scope :sheets,           where(type: 'sheet')
-  scope :pieces,           where(type: 'piece')
+  scope :uploaded,         -> { where(origin: 'upload') }
+  scope :scanned,          -> { where(origin: 'scan') }
+  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :fiduceo,          -> { where(origin: 'fiduceo') }
+  scope :sheets,           -> { where(type: 'sheet') }
+  scope :pieces,           -> { where(type: 'piece') }
 
   scope :of_period, lambda { |time, is_monthly|
     start_at = is_monthly ? time.beginning_of_month : time.beginning_of_quarter
@@ -33,8 +33,8 @@ class PackDivider
     where(created_at: { '$gte' => start_at, '$lte' => end_at })
   }
 
-  scope :covers,     where(is_a_cover: true)
-  scope :not_covers, where(is_a_cover: false)
+  scope :covers,     -> { where(is_a_cover: true) }
+  scope :not_covers, -> { where(is_a_cover: false) }
 
   class << self
     def by_position

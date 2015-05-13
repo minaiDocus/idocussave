@@ -20,14 +20,14 @@ class FiduceoProviderWish
   validates_presence_of :name, :url, :login, :description
   validates_presence_of :password, if: lambda { |e| !e.persisted? }
 
-  scope :pending,                 where(state: 'pending')
-  scope :processing,              where(state: 'processing')
-  scope :rejected,                where(state: 'rejected')
-  scope :accepted,                where(state: 'accepted')
-  scope :processed,               where(:state.in => [:rejected, :accepted])
-  scope :notified,                where(:notified_at.nin => [nil])
-  scope :not_notified,            where(notified_at: nil)
-  scope :not_processed_or_recent, where('$or' => [{ :state.in => %w(pending processing) }, { :state.in => %w(rejected accepted), :updated_at.gte => 1.month.ago }])
+  scope :pending,                 -> { where(state: 'pending') }
+  scope :processing,              -> { where(state: 'processing') }
+  scope :rejected,                -> { where(state: 'rejected') }
+  scope :accepted,                -> { where(state: 'accepted') }
+  scope :processed,               -> { where(:state.in => [:rejected, :accepted]) }
+  scope :notified,                -> { where(:notified_at.nin => [nil]) }
+  scope :not_notified,            -> { where(notified_at: nil) }
+  scope :not_processed_or_recent, -> { where('$or' => [{ :state.in => %w(pending processing) }, { :state.in => %w(rejected accepted), :updated_at.gte => 1.month.ago }]) }
 
   state_machine :initial => :pending do
     state :pending

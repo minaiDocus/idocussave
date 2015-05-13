@@ -78,30 +78,30 @@ class TempDocument
     end
   end
 
-  scope :locked,            where(is_locked: true)
-  scope :not_locked,        where(is_locked: false)
+  scope :locked,            -> { where(is_locked: true) }
+  scope :not_locked,        -> { where(is_locked: false) }
 
-  scope :scan,              where(delivery_type: 'scan')
-  scope :upload,            where(delivery_type: 'upload')
-  scope :dematbox_scan,     where(delivery_type: 'dematbox_scan')
-  scope :fiduceo,           where(delivery_type: 'fiduceo')
+  scope :scan,              -> { where(delivery_type: 'scan') }
+  scope :upload,            -> { where(delivery_type: 'upload') }
+  scope :dematbox_scan,     -> { where(delivery_type: 'dematbox_scan') }
+  scope :fiduceo,           -> { where(delivery_type: 'fiduceo') }
 
-  scope :originals,         where(is_an_original: true)
+  scope :originals,         -> { where(is_an_original: true) }
 
-  scope :ocr_layer_applied, where(is_ocr_layer_applied: true)
+  scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
 
-  scope :created,           where(state: 'created')
-  scope :unreadable,        where(state: 'unreadable')
-  scope :wait_selection,    where(state: 'wait_selection')
-  scope :ocr_needed,        where(state: 'ocr_needed')
-  scope :bundle_needed,     where(state: 'bundle_needed', is_locked: false)
-  scope :bundling,          where(state: 'bundling')
-  scope :bundled,           where(state: 'bundled')
-  scope :not_published,     not_in(state: %w(processed bundled wait_selection unreadable))
-  scope :ready,             where(state: 'ready', is_locked: false)
-  scope :processed,         any_in(state: %w(processed bundled))
-  scope :not_processed,     not_in(state: %w(processed))
-  scope :valid,             any_in(state: %w(ready ocr_needed bundle_needed bundling bundled processed))
+  scope :created,           -> { where(state: 'created') }
+  scope :unreadable,        -> { where(state: 'unreadable') }
+  scope :wait_selection,    -> { where(state: 'wait_selection') }
+  scope :ocr_needed,        -> { where(state: 'ocr_needed') }
+  scope :bundle_needed,     -> { where(state: 'bundle_needed', is_locked: false) }
+  scope :bundling,          -> { where(state: 'bundling') }
+  scope :bundled,           -> { where(state: 'bundled') }
+  scope :not_published,     -> { not_in(state: %w(processed bundled wait_selection unreadable)) }
+  scope :ready,             -> { where(state: 'ready', is_locked: false) }
+  scope :processed,         -> { any_in(state: %w(processed bundled)) }
+  scope :not_processed,     -> { not_in(state: %w(processed)) }
+  scope :valid,             -> { any_in(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }
 
   state_machine :initial => :created do
     state :created

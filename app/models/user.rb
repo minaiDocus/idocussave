@@ -141,17 +141,17 @@ class User
 
   belongs_to :scanning_provider, inverse_of: 'customers'
 
-  scope :prescribers,                 where(is_prescriber: true)
-  scope :fake_prescribers,            where(is_prescriber: true, is_fake_prescriber: true)
-  scope :not_fake_prescribers,        where(is_prescriber: true, :is_fake_prescriber.in => [false, nil])
-  scope :customers,                   where(is_prescriber: false, :is_operator.in => [false, nil])
-  scope :operators,                   where(is_operator: true)
-  scope :not_operators,               where(:is_operator.in => [false, nil])
-  scope :dropbox_extended_authorized, where(is_dropbox_extended_authorized: true)
-  scope :active,                      where(inactive_at: nil)
-  scope :closed,                      where(:inactive_at.nin => [nil])
-  scope :centralized,                 where(is_centralized: true)
-  scope :not_centralized,             where(is_centralized: false)
+  scope :prescribers,                 -> { where(is_prescriber: true) }
+  scope :fake_prescribers,            -> { where(is_prescriber: true, is_fake_prescriber: true) }
+  scope :not_fake_prescribers,        -> { where(is_prescriber: true, :is_fake_prescriber.in => [false, nil]) }
+  scope :customers,                   -> { where(is_prescriber: false, :is_operator.in => [false, nil]) }
+  scope :operators,                   -> { where(is_operator: true) }
+  scope :not_operators,               -> { where(:is_operator.in => [false, nil]) }
+  scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
+  scope :active,                      -> { where(inactive_at: nil) }
+  scope :closed,                      -> { where(:inactive_at.nin => [nil]) }
+  scope :centralized,                 -> { where(is_centralized: true) }
+  scope :not_centralized,             -> { where(is_centralized: false) }
   scope :active_at,                   -> time { any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
 
   accepts_nested_attributes_for :external_file_storage

@@ -14,7 +14,7 @@ class DocumentDelivery
   has_many :temp_documents
 
   scope :for_provider, -> provider { where(provider: provider) }
-  scope :processed, where(is_processed: true)
+  scope :processed,    -> { where(is_processed: true) }
 
   def processed
     self.is_processed = true

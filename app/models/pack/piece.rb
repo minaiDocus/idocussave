@@ -38,13 +38,13 @@ class Pack::Piece
                             url: "/account/documents/pieces/:id/download"
   do_not_validate_attachment_file_type :content
 
-  scope :scanned,          where(origin: 'scan')
-  scope :uploaded,         where(origin: 'upload')
-  scope :dematbox_scanned, where(origin: 'dematbox_scan')
-  scope :fiduceo,          where(origin: 'fiduceo')
+  scope :scanned,          -> { where(origin: 'scan') }
+  scope :uploaded,         -> { where(origin: 'upload') }
+  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :fiduceo,          -> { where(origin: 'fiduceo') }
 
-  scope :covers,     where(is_a_cover: true)
-  scope :not_covers, any_in(is_a_cover: [false, nil])
+  scope :covers,     -> { where(is_a_cover: true) }
+  scope :not_covers, -> { any_in(is_a_cover: [false, nil]) }
 
   scope :of_month, -> time { where(created_at: { '$gt' => time.beginning_of_month, '$lt' => time.end_of_month }) }
 

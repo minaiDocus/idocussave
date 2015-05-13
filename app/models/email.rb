@@ -31,10 +31,10 @@ class Email
                             url: "/admin/emailed_documents/:id"
   do_not_validate_attachment_file_type :original_content
 
-  scope :created,       where(state: 'created')
-  scope :error,         where(state: 'error')
-  scope :processed,     where(state: 'processed')
-  scope :unprocessable, where(state: 'unprocessable')
+  scope :created,       -> { where(state: 'created') }
+  scope :error,         -> { where(state: 'error') }
+  scope :processed,     -> { where(state: 'processed') }
+  scope :unprocessable, -> { where(state: 'unprocessable') }
 
   def code
     to.split('@')[0]

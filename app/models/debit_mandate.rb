@@ -40,8 +40,8 @@ class DebitMandate
   field :deliveryCountry
   field :deliveryPostalCode
 
-  scope :configured,     where(transactionStatus: 'success')
-  scope :not_configured, where(:transactionStatus.nin => ['success'])
+  scope :configured,     -> { where(transactionStatus: 'success') }
+  scope :not_configured, -> { where(:transactionStatus.nin => ['success']) }
 
   def is_configured?
     transactionStatus == 'success'

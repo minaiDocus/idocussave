@@ -31,15 +31,15 @@ class PreAssignmentDelivery
 
   scope :by_number, desc(:number)
 
-  scope :auto,   where(is_auto: true)
-  scope :manual, where(is_auto: false)
+  scope :auto,   -> { where(is_auto: true) }
+  scope :manual, -> { where(is_auto: false) }
 
-  scope :pending,      where(state: 'pending')
-  scope :building_xml, where(state: 'building_xml')
-  scope :xml_built,    where(state: 'xml_built')
-  scope :sending,      where(state: 'sending')
-  scope :sent,         where(state: 'sent')
-  scope :error,        where(state: 'error')
+  scope :pending,      -> { where(state: 'pending') }
+  scope :building_xml, -> { where(state: 'building_xml') }
+  scope :xml_built,    -> { where(state: 'xml_built') }
+  scope :sending,      -> { where(state: 'sending') }
+  scope :sent,         -> { where(state: 'sent') }
+  scope :error,        -> { where(state: 'error') }
 
   state_machine :initial => :pending do
     state :pending

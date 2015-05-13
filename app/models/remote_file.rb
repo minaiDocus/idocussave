@@ -31,17 +31,17 @@ class RemoteFile
   scope :of_service, -> service_name { where(service_name: service_name) }
   scope :with_extension, -> extension { where(extension: extension) }
 
-  scope :waiting,    where(state: :waiting)
-  scope :cancelled,  where(state: :cancelled)
-  scope :sending,    where(state: :sending)
-  scope :synced,     where(state: :synced)
-  scope :not_synced, where(state: :not_synced)
+  scope :waiting,    -> { where(state: :waiting) }
+  scope :cancelled,  -> { where(state: :cancelled) }
+  scope :sending,    -> { where(state: :sending) }
+  scope :synced,     -> { where(state: :synced) }
+  scope :not_synced, -> { where(state: :not_synced) }
 
-  scope :processed,     any_in(state: [:synced,:cancelled])
-  scope :not_processed, not_in(state: [:synced,:cancelled])
+  scope :processed,     -> { any_in(state: [:synced,:cancelled]) }
+  scope :not_processed, -> { not_in(state: [:synced,:cancelled]) }
 
-  scope :retryable,     where(:tried_count.lt => 2)
-  scope :not_retryable, where(:tried_count.gte => 2)
+  scope :retryable,     -> { where(:tried_count.lt => 2) }
+  scope :not_retryable, -> { where(:tried_count.gte => 2) }
 
   def self.cancel_all
     update_all state:         'cancelled',

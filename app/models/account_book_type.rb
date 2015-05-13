@@ -52,10 +52,10 @@ class AccountBookType
   validates_presence_of :vat_account,     if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
   validates_presence_of :anomaly_account, if: Proc.new { |j| j.is_pre_assignment_processable? }
 
-  scope :compta_processable,         where(:entry_type.gt => 0)
-  scope :not_compta_processable,     where(entry_type: 0)
-  scope :pre_assignment_processable, where(:entry_type.gt => 1)
-  scope :default,                    where(is_default: true)
+  scope :compta_processable,         -> { where(:entry_type.gt => 0) }
+  scope :not_compta_processable,     -> { where(entry_type: 0) }
+  scope :pre_assignment_processable, -> { where(:entry_type.gt => 1) }
+  scope :default,                    -> { where(is_default: true) }
 
   before_save do |journal|
     unless journal.is_pre_assignment_processable?

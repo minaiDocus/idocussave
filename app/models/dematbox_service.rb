@@ -10,8 +10,8 @@ class DematboxService
 
   validates_presence_of :name, :pid, :type, :state
 
-  scope :services, where(type: 'service')
-  scope :groups,   where(type: 'group')
+  scope :services, -> { where(type: 'service') }
+  scope :groups,   -> { where(type: 'group') }
 
   state_machine initial: :unknown do
     state :unknown

@@ -22,10 +22,10 @@ class TempPack
   belongs_to :document_delivery
   has_many :temp_documents, dependent: :destroy
 
-  scope :not_published, -> { any_of({ :document_not_processed_count.gt => 0 }, { :document_bundling_count.gt => 0 }, { :document_bundle_needed_count.gt => 0 }) }
-  scope :not_processed, where(:document_not_processed_count.gt => 0)
-  scope :bundling,      where(:document_bundling_count.gt => 0)
-  scope :bundle_needed, where(:document_bundle_needed_count.gt => 0)
+  scope :not_published,        -> { any_of({ :document_not_processed_count.gt => 0 }, { :document_bundling_count.gt => 0 }, { :document_bundle_needed_count.gt => 0 }) }
+  scope :not_processed,        -> { where(:document_not_processed_count.gt => 0) }
+  scope :bundling,             -> { where(:document_bundling_count.gt => 0) }
+  scope :bundle_needed,        -> { where(:document_bundle_needed_count.gt => 0) }
   scope :not_recently_updated, -> { where(:updated_at.lt => 5.minutes.ago) }
 
   class << self

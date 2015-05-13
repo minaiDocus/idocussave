@@ -19,11 +19,11 @@ class Pack::Report
   field :delivery_message
   field :is_locked,         type: Boolean, default: false
 
-  scope :preseizures, not_in(type: ['NDF'])
-  scope :expenses,    where(type: 'NDF')
+  scope :preseizures, -> { not_in(type: ['NDF']) }
+  scope :expenses,    -> { where(type: 'NDF') }
 
-  scope :locked,     where(is_locked: true)
-  scope :not_locked, where(is_locked: false)
+  scope :locked,     -> { where(is_locked: true) }
+  scope :not_locked, -> { where(is_locked: false) }
 
   def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
     outputter.format(ps, is_access_url)
