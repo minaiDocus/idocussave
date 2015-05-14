@@ -7,9 +7,9 @@ class Idocus.Routers.PreAssignmentsRouter extends Backbone.Router
     ':view/search/': 'search_pack_reports'
     ':view/search/:query': 'search_pack_reports'
     ':view/search/:query/page/:page': 'search_pack_reports'
-    ':view/:packName': 'preseizures'
-    ':view/:packName/page/:page': 'preseizures'
-    ':view/:packName/:preseizure_id': 'preseizure_accounts'
+    ':view/:pack_report_id': 'preseizures'
+    ':view/:pack_report_id/page/:page': 'preseizures'
+    ':view/:pack_report_id/:preseizure_id': 'preseizure_accounts'
 
   pack_reports: (view, page) ->
     @view = view || 'all'
@@ -34,19 +34,19 @@ class Idocus.Routers.PreAssignmentsRouter extends Backbone.Router
         $(@index.el).find('input[name=pack_reports_search]').val(query)
       @index.update(@view, query, page)
 
-  preseizures: (view, packName, page) ->
+  preseizures: (view, pack_report_id, page) ->
     @view = view || 'all'
     if @index == undefined
       Backbone.history.navigate("#{@view}", true)
     else
       $('#preseizure_accounts .content').html('')
-      @preseizuresIndex = new Idocus.Views.PreseizuresIndex (el: $('#preseizures .content'), view: @view, packName: packName, page: page)
+      @preseizuresIndex = new Idocus.Views.PreseizuresIndex (el: $('#preseizures .content'), view: @view, pack_report_id: pack_report_id, page: page)
       @preseizuresIndex.render()
 
-  preseizure_accounts: (view, packName, preseizure_id) ->
+  preseizure_accounts: (view, pack_report_id, preseizure_id) ->
     @view = view || 'all'
     if @index == undefined
       Backbone.history.navigate("#{@view}", true)
     else
-      @preseizureAccountsIndex = new Idocus.Views.PreseizureAccountsIndex (el: $('#preseizure_accounts .content'), view: @view, packName: packName, preseizure_id: preseizure_id)
+      @preseizureAccountsIndex = new Idocus.Views.PreseizureAccountsIndex (el: $('#preseizure_accounts .content'), view: @view, pack_report_id: pack_report_id, preseizure_id: preseizure_id)
       @preseizureAccountsIndex.render()

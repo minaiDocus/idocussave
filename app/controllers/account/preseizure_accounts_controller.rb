@@ -3,8 +3,8 @@ class Account::PreseizureAccountsController < Account::OrganizationController
   before_filter :account_params, only: :udpate
 
   def index
-    if params[:name].present?
-      report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(name: /#{params[:name].gsub('_',' ')}/).first
+    if params[:pack_report_id].present?
+      report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(_id: params[:pack_report_id]).first
       if report
         preseizure = report.preseizures.find params[:preseizure_id]
         @preseizure_accounts = preseizure.accounts.by_position.includes(:entries).to_a

@@ -4,8 +4,8 @@ class Account::PreseizuresController < Account::OrganizationController
   before_filter :load_preseizure, except: :index
 
   def index
-    if params[:name].present?
-      report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(name: /#{params[:name].gsub('_',' ')}/).first
+    if params[:pack_report_id].present?
+      report = Pack::Report.preseizures.any_in(user_id: customer_ids).where(_id: params[:pack_report_id]).first
       if report
         @preseizures = report.preseizures
         if params[:view] == 'delivered'

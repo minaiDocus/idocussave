@@ -5,7 +5,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
 
   initialize: (options) ->
     @view = options.view || 'all'
-    @packName = options.packName
+    @pack_report_id = options.pack_report_id
     @page = options.page || 1
 
     _.bindAll(this, "selectPreseizure")
@@ -13,7 +13,7 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
 
     @collection = new Idocus.Collections.Preseizures()
     @collection.on 'reset', @render, this
-    @collection.fetch(data: { name: @packName, page: @page, view: @view })
+    @collection.fetch(data: { pack_report_id: @pack_report_id, page: @page, view: @view })
     this
 
   render: ->
@@ -28,12 +28,12 @@ class Idocus.Views.PreseizuresIndex extends Backbone.View
     this
 
   addOne: (item) ->
-    view = new Idocus.Views.PreseizuresShow(model: item, view: @view, packName: @packName)
+    view = new Idocus.Views.PreseizuresShow(model: item, view: @view, pack_report_id: @pack_report_id)
     @$el.children('ul').append(view.render().el)
     this
 
   paginate: ->
-    prefix = "#{@view}/#{@packName}/"
+    prefix = "#{@view}/#{@pack_report_id}/"
     @$el.append(@paginator(collection: @collection, prefix: prefix))
     this
 
