@@ -14,7 +14,7 @@
       = stylesheet_link_tag 'account/ibiza'
     - elsif controller_name.in?(%w(retriever_transactions retrieved_banking_operations retrieved_documents))
       = stylesheet_link_tag 'account/organization/retrievers'
-    - elsif !controller_name.in?(%w(organization_addresses accounting_plans vat_accounts exercices knowings))
+    - elsif !controller_name.in?(%w(organization_addresses accounting_plans vat_accounts exercices knowings pack_reports))
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization
