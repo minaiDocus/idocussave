@@ -13,6 +13,7 @@
 //= require file-uploader/jquery.fileupload-ui
 //= require file-uploader/application
 //= require file-uploader/cors/jquery.xdr-transport
+//= require shift_selectable
 //= require bootstrap-filestyle.min
 //= require bootstrap-datepicker/core
 //

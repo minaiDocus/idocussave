@@ -5,3 +5,5 @@ jQuery ->
         $('.checkbox').attr('checked', true);
       else
         $('.checkbox').attr('checked', false);
+
+    $('#pack_report .form').find('input[type="checkbox"]').shiftSelectable();
