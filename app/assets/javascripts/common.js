@@ -1,7 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.all
-//= require twitter/bootstrap
+//= require bootstrap
 //= require jquery.qtip.min
 //= require help
 //= require tmpl.min
@@ -30,4 +30,8 @@ jQuery(function () {
   };
 
   $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr' });
+
+  $("a[rel=popover]").popover();
+  $(".tooltip").tooltip();
+  $("a[rel=tooltip]").tooltip();
 });
