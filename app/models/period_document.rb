@@ -29,7 +29,7 @@ class PeriodDocument
   field :scanned_by,              type: String
 
   validates_presence_of :name
-  validates_format_of :name, with: /^#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all$/
+  validates_format_of :name, with: /\A#{Pack::CODE_PATTERN} #{Pack::JOURNAL_PATTERN} #{Pack::PERIOD_PATTERN} all\z/
   validate :uniqueness_of_name
   validates :paperclips, :numericality => { :greater_than_or_equal_to => 0 }
   validates :oversized,  :numericality => { :greater_than_or_equal_to => 0 }
