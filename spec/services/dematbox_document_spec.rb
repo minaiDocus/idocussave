@@ -20,7 +20,7 @@ describe DematboxDocument do
       }
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      dematbox = Dematbox.new(number: 1)
+      dematbox = Dematbox.new
       dematbox.user = @user
       service = DematboxSubscribedService.new
       service.pid = '1'

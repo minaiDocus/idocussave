@@ -821,7 +821,7 @@ describe DocumentProcessor do
           'text' => nil
         }
 
-        dematbox = Dematbox.new(number: 1)
+        dematbox = Dematbox.new
         dematbox.user = @user
         service = DematboxSubscribedService.new
         service.pid = '1'
@@ -1083,7 +1083,7 @@ describe DocumentProcessor do
         }
 
         # 2 dematbox scanned files
-        dematbox = Dematbox.new(number: 1)
+        dematbox = Dematbox.new
         dematbox.user = @user
         service = DematboxSubscribedService.new
         service.pid = '1'
