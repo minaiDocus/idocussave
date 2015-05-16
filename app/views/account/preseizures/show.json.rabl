@@ -1,5 +1,9 @@
 object @preseizure
 
+node :id do |preseizure|
+  preseizure.id.to_s
+end
+
 node :name do |preseizure|
   preseizure.piece_name
 end
@@ -44,4 +48,4 @@ node :delivery_tried_at do |preseizure|
   I18n.l(preseizure.delivery_tried_at) if preseizure.delivery_tried_at
 end
 
-attributes :id, :position, :operation_label, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked, :delivery_message
+attributes :position, :operation_label, :observation, :piece_number, :currency, :conversion_rate, :third_party, :is_delivered, :type, :is_locked, :delivery_message

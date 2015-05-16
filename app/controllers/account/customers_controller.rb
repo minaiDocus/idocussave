@@ -94,7 +94,7 @@ class Account::CustomersController < Account::OrganizationController
       users = is_leader? ? @organization.customers : @user.customers
       users = users.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
       users.each do |user|
-        tags << { id: user.id, name: full_info ? user.info : user.code }
+        tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
       end
     end
 

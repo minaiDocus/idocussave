@@ -22,7 +22,7 @@
   %fieldset
     %legend Assignation
     = f.input :customer_tokens,                                                                                             |
-      input_html: { data: { pre: @scanning_provider.customers.asc(:code).map{ |e| { id: e.id, name: e.code } }.to_json } }, |
+      input_html: { data: { pre: @scanning_provider.customers.asc(:code).map{ |e| { id: e.id.to_s, name: e.code } }.to_json } }, |
       label: t('mongoid.models.scanning_provider.attributes.customers')
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'

@@ -1,9 +1,17 @@
 object @preseizure_account
 
-attributes :id, :type, :number, :lettering
+attributes :type, :number, :lettering
+
+node :id do |preseizure_account|
+  preseizure_account.id.to_s
+end
 
 child :entries do
-  attributes :id, :type
+  attributes :type
+
+  node :id do |entry|
+    entry.id.to_s
+  end
 
   node :amount do |entry|
     format_price_with_dot entry.amount_in_cents rescue nil

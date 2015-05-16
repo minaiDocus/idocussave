@@ -1,5 +1,9 @@
 object @pack_report
 
+node :id do |report|
+  report.id.to_s
+end
+
 node :name do |report|
   report.name
 end
@@ -20,4 +24,4 @@ node :delivery_message do |report|
   report.delivery_message
 end
 
-attributes :id, :is_delivered, :type, :is_locked
+attributes :is_delivered, :type, :is_locked

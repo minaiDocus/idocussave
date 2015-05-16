@@ -1,6 +1,10 @@
 object @operation
 
-attributes :id, :date, :label, :amount
+attributes :date, :label, :amount
+
+node :id do |operation|
+  operation.id.to_s
+end
 
 node :journal do |operation|
   operation.bank_account.try(:journal)

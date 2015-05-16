@@ -58,7 +58,7 @@ class Admin::UsersController < Admin::AdminController
       users = User.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
       users = users.prescribers if params[:prescriber].present?
       users.each do |user|
-        tags << {id: user.id, name: full_info ? user.info : user.code}
+        tags << {id: user.id.to_s, name: full_info ? user.info : user.code}
       end
     end
 
