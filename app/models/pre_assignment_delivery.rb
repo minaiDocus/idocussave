@@ -29,7 +29,7 @@ class PreAssignmentDelivery
 
   before_validation :set_number
 
-  scope :by_number, desc(:number)
+  scope :by_number, -> { desc(:number) }
 
   scope :auto,   -> { where(is_auto: true) }
   scope :manual, -> { where(is_auto: false) }
