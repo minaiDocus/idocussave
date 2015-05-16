@@ -2,7 +2,6 @@
 class Exercice
   include Mongoid::Document
   include Mongoid::Timestamps
-  include Mongoid::MultiParameterAttributes
 
   belongs_to :user
 
