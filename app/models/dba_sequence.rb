@@ -11,7 +11,7 @@ class DbaSequence
   index({ name: 1 }, { unique: true })
 
   def self.next(name)
-    self.where(name: name).first.inc(:counter, 1)
+    self.where(name: name).first.inc(counter: 1).counter
   rescue
     sequence = self.create(name: name)
     sequence.counter
