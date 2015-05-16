@@ -64,8 +64,6 @@ GEM
       htmlentities (~> 4.3.1)
       nokogiri (>= 1.4.1)
       rubyzip (>= 0.9.5)
-    backbone-forms-on-rails (0.10.0.2)
-      railties (~> 3.1)
     backbone-on-rails (0.9.9.0)
       eco
       ejs
@@ -512,7 +510,6 @@ DEPENDENCIES
   airbrake
   ansi
   axlsx (= 1.3.4)
-  backbone-forms-on-rails
   backbone-on-rails (= 0.9.9.0)
   barby
   better_errors (= 1.1.0)

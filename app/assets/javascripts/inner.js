@@ -1,6 +1,9 @@
 //= require underscore
 //= require backbone
-//= require backbone-forms-on-rails
+//= require backbone-forms/backbone-forms.js
+//= require backbone-forms/templates/bootstrap.js
+//= require backbone-forms/adapters/backbone.bootstrap-modal.js
+//= require backbone-forms/backbone-validation.js
 //= require idocus
 //= require_tree ../templates
 //= require_tree ./models

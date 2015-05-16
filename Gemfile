@@ -54,7 +54,6 @@ group :assets do
   gem 'jquery-ui-rails'
   gem 'bootstrap-sass', '2.0.4.2'
   gem 'backbone-on-rails', '0.9.9.0'
-  gem 'backbone-forms-on-rails'
   gem 'compass-rails'
   gem 'd3_rails'
 end
