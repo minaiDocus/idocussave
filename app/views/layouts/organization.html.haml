@@ -5,7 +5,7 @@
     %meta{ :content => 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
     %link{ :rel => 'shortcut icon', :type => 'image/ico', :href => asset_path('favicon.ico') }
     = csrf_meta_tag
-    != stylesheet_link_tag 'application', 'account/organizations'
+    = stylesheet_link_tag 'application', 'account/organizations'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
       = stylesheet_link_tag 'account/subscriptions'
     - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
@@ -26,7 +26,7 @@
             %span.icon-bar
             %span.icon-bar
           %a.logo{ href: root_path }
-            != image_tag 'logo/tiny_logo.png', :alt => 'logo'
+            = image_tag 'logo/tiny_logo.png', :alt => 'logo'
           = render partial: 'layouts/navigation'
           %p.navbar-text.pull-right
             Bienvenue
