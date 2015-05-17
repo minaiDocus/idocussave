@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrievedDocumentsController < Account::FiduceoController
-  layout 'layouts/account/retrievers'
   before_filter :load_document, only: %w(show piece)
 
   def index

@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::ReportingController < Account::AccountController
-  layout 'inner', :only => %w(show)
-
   def show
     @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
 

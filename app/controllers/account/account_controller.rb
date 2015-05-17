@@ -6,7 +6,7 @@ class Account::AccountController < ApplicationController
   before_filter :verify_if_active
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
 
-  layout "inner"
+  layout 'inner'
 
 protected
 

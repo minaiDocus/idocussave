@@ -6,7 +6,7 @@ class Account::DocumentsController < Account::AccountController
 
 protected
   def current_layout
-    action_name == 'index' ? 'inner' : nil
+    action_name == 'index' ? 'inner' : false
   end
 
 public

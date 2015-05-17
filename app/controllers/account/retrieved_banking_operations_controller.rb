@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrievedBankingOperationsController < Account::FiduceoController
-  layout 'layouts/account/retrievers'
-
   def index
     @operations = search(banking_operation_contains).
       order_by(sort_column => sort_direction).

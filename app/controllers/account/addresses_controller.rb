@@ -1,7 +1,5 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::AddressesController < Account::AccountController
-  layout 'inner'
-
   before_filter :verify_access
   before_filter :load_address, only: %w(edit update destroy)
 

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::Report::PreseizuresController < Account::AccountController
-  layout nil
+  layout false
 
   before_filter :load_report, :verify_rights
 

@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::FiduceoController < Account::AccountController
+  layout 'layouts/account/retrievers'
+
   before_filter :verify_rights
 
 private

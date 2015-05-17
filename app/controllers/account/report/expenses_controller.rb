@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::Report::ExpensesController < Account::AccountController
-  layout nil
+  layout false
 
   before_filter :load_report, :verify_rights
 

@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::PeriodsController < Account::AccountController
-  layout nil
+  layout false
 
   before_filter :load_period, :verify_rights
 

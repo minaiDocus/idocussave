@@ -1,5 +1,4 @@
 class Admin::CmsImagesController < Admin::AdminController
-  layout 'admin'
   skip_before_filter :verify_authenticity_token, :only => %w(create)
 
   def index

@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::ProviderWishesController < Account::FiduceoController
-  layout 'layouts/account/retrievers'
   before_filter :verify_rights
   before_filter :load_fiduceo_user_id
 

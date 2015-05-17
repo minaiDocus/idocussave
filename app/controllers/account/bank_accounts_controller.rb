@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::BankAccountsController < Account::FiduceoController
-  layout 'layouts/account/retrievers'
-
   def index
     if bank_account_contains && bank_account_contains[:retriever_id]
       @retriever = @user.fiduceo_retrievers.find(bank_account_contains[:retriever_id])
