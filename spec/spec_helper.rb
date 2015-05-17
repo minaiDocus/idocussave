@@ -40,11 +40,6 @@ RSpec.configure do |config|
   # config.mock_with :rr
   config.mock_with :rspec
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
-  # config.use_transactional_fixtures = false
-
   config.infer_spec_type_from_file_location!
 
   config.around(:each, :vcr) do |example|
@@ -75,7 +70,6 @@ RSpec.configure do |config|
   end
 
   config.include Capybara::DSL
-  config.include Mongoid::Matchers
   config.include FactoryGirl::Syntax::Methods
   config.extend LoginMacros
   config.include Devise::TestHelpers, :type => :controller
