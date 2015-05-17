@@ -4,4 +4,5 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Idocus::Application.config.secret_token = 'd5ea3a29aa3b3b0baeba13f283eb41d5c0d5c0a039dd3aab409ddf3321b67718aa4a9a0e29300b3575a98ad0be64ede104fecdfd3fdc6a4f62a37759db39d741'
+# TODO remove secret_token after successful migration
+Idocus::Application.config.secret_key_base = '6d050542962145eb92cbb9023d748a56b8bf334e4da3cfa7c03cd34c2f6cb026abcfa7194486d477986e2b56b0de0299422d4f9a85b2ffffb491138c3a3dc9fe'

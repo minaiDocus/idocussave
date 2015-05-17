@@ -1,9 +1,11 @@
 Idocus::Application.configure do
-  # Settings specified here will take precedence over those in config/environment.rb
+  # Settings specified here will take precedence over those in config/application.rb.
 
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
   config.cache_classes = true
+
+  config.eager_load = true
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
@@ -21,6 +23,9 @@ Idocus::Application.configure do
   # See everything in the log (default is :info)
   config.log_level = :debug
 
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :uuid ]
+
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
@@ -29,7 +34,7 @@ Idocus::Application.configure do
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -40,10 +45,10 @@ Idocus::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :address => "localhost",
-    :domain => "idocus.com",
-    :authentication => :plain,
-    :enable_starttls_auto => false
+    address:              'localhost',
+    domain:               'idocus.com',
+    authentication:       :plain,
+    enable_starttls_auto: false
   }
 
   # Enable threaded mode
@@ -57,13 +62,15 @@ Idocus::Application.configure do
   config.active_support.deprecation = :notify
 
   # Compress JavaScript and CSS
-  config.assets.compress = true
+  config.assets.js_compress = :uglifier
 
   # Don't fallback to assets pipeline
+  # config.assets.compile = false
   config.assets.compile = true
 
   # Generate digests for assets URLs
-  config.assets.digest = true
+  # config.assets.digest = true
+  config.assets.digest = false
 
   # Adding js files
   config.assets.precompile += %w(admin.js
