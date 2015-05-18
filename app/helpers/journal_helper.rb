@@ -27,6 +27,22 @@ module JournalHelper
     end
   end
 
+  def journals_for_select(journal_name)
+    values = ibiza_journals_for_select
+    if values.any?
+      if journal_name.present? && !journal_name.in?(values.map(&:last))
+        values << ["#{journal_name} (n'existe pas)", journal_name]
+        values.sort_by(&:first)
+      else
+        values
+      end
+    elsif journal_name.present?
+      [[journal_name, journal_name]]
+    else
+      []
+    end
+  end
+
   def journal_domain_for_select
     AccountBookType::DOMAINS.map do |e|
       e.present? ? [e, e] : ['Aucun', e]
