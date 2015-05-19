@@ -14,7 +14,7 @@ module JournalHelper
   end
 
   def ibiza_journals_for_select
-    Rails.cache.fetch [:ibiza, :user, @user.ibiza_id, :journals], expires_in: 5.minutes do
+    Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id, :journals], expires_in: 5.minutes do
       service = IbizaJournalsService.new(@customer)
       service.execute
       if service.success?
