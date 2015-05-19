@@ -7,7 +7,7 @@
       = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), method: 'PUT', html: { class: 'form form-horizontal margin0' } do |f|
         = f.input :number,            disabled: true
         - if @organization.ibiza.try(:is_configured?)
-          = f.input :journal, collection: journals_for_select(@bank_account.journal), required: true, include_blank: false
+          = f.input :journal, collection: journals_for_select(@bank_account.journal, 'bank'), required: true, include_blank: false
         - else
           = f.input :journal,         required: true
         = f.input :accounting_number, required: true

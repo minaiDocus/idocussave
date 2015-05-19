@@ -12,7 +12,14 @@ class IbizaJournalsService
       client.company(@user.ibiza_id).journal?
       if success?
         @journals = client.response.data.map do |j|
-          { name: j['ref'], description: j['description'] }
+          {
+            closed:      j['closed'],
+            name:        j['ref'],
+            description: j['description'],
+            iban_code:   j['ibanCode'],
+            number:      j['number'],
+            type:        j['type']
+          }
         end
       end
     end

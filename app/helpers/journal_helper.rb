@@ -13,23 +13,32 @@ module JournalHelper
     end
   end
 
-  def ibiza_journals_for_select
-    Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id, :journals], expires_in: 5.minutes do
+  def ibiza_journals
+    Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/,''), :journals], expires_in: 5.minutes do
       service = IbizaJournalsService.new(@customer)
       service.execute
       if service.success?
-        service.journals.map do |e|
-          ["#{e[:name]} (#{e[:description]})", e[:name]]
-        end
+        service.journals
       else
         []
       end
     end
   end
 
-  def journals_for_select(journal_name)
-    values = ibiza_journals_for_select
-    if values.any?
+  def journals_for_select(journal_name, type=nil)
+    journals = ibiza_journals
+    if journals.any?
+      journals = journals.select do |j|
+        j[:closed].to_i == 0
+      end
+      if type == 'bank'
+        journals = journals.select do |j|
+          j[:type].to_i.in? [5, 6]
+        end
+      end
+      values = journals.map do |j|
+        ["#{j[:name]} (#{j[:description]})", j[:name]]
+      end
       if journal_name.present? && !journal_name.in?(values.map(&:last))
         values << ["#{journal_name} (n'existe pas)", journal_name]
         values.sort_by(&:first)
