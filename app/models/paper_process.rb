@@ -19,7 +19,7 @@ class PaperProcess
   validates_length_of :tracking_number, minimum: 13, maximum: 13, if: Proc.new { |e| e.type != 'scan' }
   validates_uniqueness_of :tracking_number, if: Proc.new { |e| e.type != 'scan' }
   validates_length_of :customer_code, within: 3..15
-  validates_length_of :pack_name, within: 0..40, if: Proc.new { |e| e.pack_name.present? }
+  validates_length_of :pack_name, within: 0..40, allow_nil: true
   validate :customer_exist, if: Proc.new { |e| e.customer_code_changed? }
   validates :journals_count, numericality: { greater_than: 0 }, if: Proc.new { |e| e.journals_count.present? }
   validates :periods_count,  numericality: { greater_than: 0 }, if: Proc.new { |e| e.periods_count.present? }

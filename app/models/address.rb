@@ -26,7 +26,7 @@ class Address
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
   validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
 
-  validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50
+  validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50, allow_nil: true
 
   scope :for_billing,      -> { where(is_for_billing: true) }
   scope :for_shipping,     -> { where(is_for_shipping: true) }

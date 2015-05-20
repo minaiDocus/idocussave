@@ -56,8 +56,8 @@ class User
   validates_uniqueness_of :code
 
   validates_presence_of :company
-  validates_length_of :email, :company, :first_name, :last_name, within: 0..50
-  validates_length_of :knowings_code, within: 0..50, if: Proc.new { |u| u.knowings_code.present? }
+  validates_length_of :email, maximum: 50
+  validates_length_of :company, :first_name, :last_name, :knowings_code, within: 0..50, allow_nil: true
 
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
 
