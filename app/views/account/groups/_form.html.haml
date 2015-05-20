@@ -1,4 +1,4 @@
-= simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path(@organization) : account_organization_group_path(@organization)), html: { class: 'form form-horizontal margin0' } do |f|
+= simple_form_for @group, url: (action_name.in?(%w(new create)) ? account_organization_groups_path(@organization) : account_organization_group_path(@organization, @group)), html: { class: 'form form-horizontal margin0' } do |f|
   - if is_leader?
     %fieldset
       %legend Informations
