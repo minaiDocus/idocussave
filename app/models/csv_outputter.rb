@@ -8,7 +8,7 @@ class CsvOutputter
   belongs_to :organization
   belongs_to :user
 
-  def to_a
+  def directive_to_a
     directive.split('|').map do |e|
       e.scan(/\{(.*)\}(\w+)-(.*)\{(.*)\}/).first
     end
@@ -26,7 +26,7 @@ class CsvOutputter
 
   def format_line(entry, is_access_url=true)
     line = ''
-    to_a.each do |part|
+    directive_to_a.each do |part|
       result = case part[1]
         when /^date$/
           format = part[2].presence || "%d/%m/%Y"

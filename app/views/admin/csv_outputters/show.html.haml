@@ -12,7 +12,7 @@
     .box.span12
       = simple_form_for [:admin,@user] do
         %ul.list
-          - @csv_outputter.to_a.each do |part|
+          - @csv_outputter.directive_to_a.each do |part|
             = render partial: 'admin/csv_outputters/field', locals: { part: part }
 
   %ul.template.hide

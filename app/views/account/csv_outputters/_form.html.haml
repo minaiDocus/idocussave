@@ -23,7 +23,7 @@
   .row-fluid.margin2bottom
     .span12.fields
       %ul.list
-        - @csv_outputter.to_a.each do |part|
+        - @csv_outputter.directive_to_a.each do |part|
           = render partial: 'account/csv_outputters/field', locals: { part: part }
   .row-fluid
     .span12
