@@ -122,7 +122,7 @@ GEM
       safe_yaml (~> 1.0.0)
     d3_rails (3.3.11)
       railties (>= 3.1.0)
-    daemons (1.2.2)
+    daemons (1.1.9)
     dalli (2.7.4)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
@@ -523,7 +523,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   compass-rails
   d3_rails
-  daemons
+  daemons (= 1.1.9)
   dalli
   database_cleaner
   debugger
