@@ -24,7 +24,7 @@ class PreseizureToTxtService
             line[21..e]    = label[0..19]
             line[41]       = entry.type == 1 ? 'D' : 'C'
             line[42]       = entry.amount >= 0.0 ? '+' : '-'
-            line[43..54]   = "%012d" % (entry.amount * 100)
+            line[43..54]   = "%012d" % entry.amount_in_cents
             line[63..68]   = preseizure.deadline_date.strftime('%d%m%y') if preseizure.deadline_date
             line[107..109] = 'EUR'
             line[110..112] = preseizure.report.journal[0..2] if preseizure.report.journal.size > 2

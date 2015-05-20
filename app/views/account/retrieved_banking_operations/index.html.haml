@@ -58,5 +58,5 @@
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
               %td= operation.label
-              %td.amount= format_price_00(operation.amount * 100) + ' €'
+              %td.amount= format_price_00((operation.amount * 100).round) + ' €'
       = render partial: 'shared/list_options', locals: { collection: @operations }

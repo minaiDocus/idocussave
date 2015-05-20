@@ -24,7 +24,7 @@ class Pack::Report::Preseizure::Entry
   end
 
   def amount_in_cents
-    amount * 100 rescue nil
+    (amount * 100).round rescue nil
   end
 
   def self.by_number
