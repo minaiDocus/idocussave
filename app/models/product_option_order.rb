@@ -40,8 +40,4 @@ class ProductOptionOrder
   def eql?(product_option_order)
     self == product_option_order
   end
-
-  def to_a
-    [self.name, self.price_in_cents_wo_vat]
-  end
 end
