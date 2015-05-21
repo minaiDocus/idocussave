@@ -9,6 +9,8 @@ Bundler.require(:default, Rails.env)
 # Used by elasticsearch-transport
 require 'typhoeus/adapters/faraday'
 
+require 'prawn/measurement_extensions'
+
 module Idocus
   class Application < Rails::Application
 
