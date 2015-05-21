@@ -175,7 +175,7 @@ class OperationService
     number = nil
     if user.organization.ibiza.try(:is_configured?)
       # Ibiza accounting plan
-      doc = parsed_accounting_plan(user.code)
+      doc = parsed_open_accounting_plan(user.code)
       if doc
         result = doc.css('name').select { |name| label.match /#{Regexp.quote(name.content)}/i }.first
         number = result.parent.css('number').text if result
@@ -191,6 +191,15 @@ class OperationService
     end
     number = temporary_account unless number.present?
     number
+  end
+
+  def self.parsed_open_accounting_plan(code)
+    accounting_plan = parsed_accounting_plan(code)
+    closed_account = accounting_plan.css('closed').select{ |closed| closed.text == '1' }
+    closed_account.each do |account|
+      account.parent.remove
+    end
+    accounting_plan
   end
 
   def self.parsed_accounting_plan(code)
