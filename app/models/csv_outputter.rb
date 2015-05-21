@@ -93,17 +93,4 @@ class CsvOutputter
   def separator
     comma_as_number_separator ? ',' : '.'
   end
-
-  def copy_to_users(user_ids)
-    users = User.find user_ids
-    users.each do |user|
-      user.csv_outputter!.copy self
-    end
-  end
-
-  def copy(other)
-    self.comma_as_number_separator = other.comma_as_number_separator
-    self.directive = other.directive
-    save
-  end
 end

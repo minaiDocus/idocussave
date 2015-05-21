@@ -7,8 +7,8 @@
       %table.table.table-striped.table-condensed
         - @customers.each do |customer|
           %tr
-            %td= check_box_tag 'customers[]', customer.id, false, id: "customer_#{customer.id}"
-            %td= label_tag "customer_#{customer.id}", customer.info
+            %td= check_box_tag 'customer_ids[]', customer.id, false, id: "customer_id_#{customer.id}"
+            %td= label_tag "customer_id_#{customer.id}", customer.info
       .form-actions.margin0bottom
         = submit_tag 'Propager', class: 'btn btn-primary'
         = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'period_options'), class: 'btn'

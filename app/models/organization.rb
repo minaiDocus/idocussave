@@ -126,18 +126,6 @@ class Organization
     CsvOutputter.create(organization_id: self.id)
   end
 
-  def copy_to_users(user_ids)
-    users = User.find user_ids
-    User.observers.disable :all do
-      users.each do |user|
-        user.authd_prev_period            = self.authd_prev_period
-        user.auth_prev_period_until_day   = self.auth_prev_period_until_day
-        user.auth_prev_period_until_month = self.auth_prev_period_until_month
-        user.save
-      end
-    end
-  end
-
   def self.valid_file_naming_policy_elements
     %w(:customerCode :journal :period :position :thirdParty :date - _ \ )
   end

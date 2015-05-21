@@ -20,11 +20,15 @@ class Account::OrganizationCsvOutputtersController < Account::OrganizationContro
   end
 
   def propagate
-    organization_customer_ids = @organization.customers.active.map(&:id).map(&:to_s)
-    customer_ids = (params[:customer_ids].presence || []).select do |customer_id|
-      organization_customer_ids.include? customer_id
+    registered_ids = @organization.customers.active.map(&:id).map(&:to_s)
+    valid_ids = (params[:customer_ids].presence || []).select do |customer_id|
+      registered_ids.include? customer_id
     end
-    @csv_outputter.copy_to_users(customer_ids)
+    CsvOutputter.where(:user_id.in => valid_ids).update_all(
+      comma_as_number_separator: @csv_outputter.comma_as_number_separator,
+      directive:                 @csv_outputter.directive,
+      updated_at:                Time.now
+    )
     flash[:success] = 'Propagé avec succès.'
     redirect_to account_organization_path(@organization, tab: 'csv_outputter')
   end
