@@ -22,10 +22,10 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   def propagate_options
     _params = subscription_options_params
     if @subscription.update_attributes(_params)
-      customer_ids = params[:subscription][:customer_ids] - [''] rescue []
-      customers = @organization.customers.where(:_id.in => customer_ids)
-      if customer_ids.size == customers.size
-        subscriptions = Subscription.where(:user_id.in => customers.map(&:id))
+      ids = params[:subscription][:customer_ids] - [''] rescue []
+      registered_ids = @organization.customers.where(:_id.in => ids).distinct(:_id)
+      if ids.size == registered_ids.size
+        subscriptions = Subscription.where(:user_id.in => ids)
         subscription_ids = subscriptions.distinct(:_id)
         subscriptions.update_all(_params)
         periods = Period.where(
