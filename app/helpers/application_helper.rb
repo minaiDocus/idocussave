@@ -118,7 +118,7 @@ module ApplicationHelper
   end
 
   def logo_url
-    @gray_label ? @gray_label.logo_url : asset_path('logo/tiny_logo.png')
+    @gray_label ? @gray_label.logo_url : image_tag('logo/tiny_logo.png', alt: 'logo')
   end
 
   def sortable(column, title=nil, contains={})

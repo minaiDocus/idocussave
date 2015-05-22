@@ -4,7 +4,7 @@
     %title
       Connexion
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type' }
-    %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = stylesheet_link_tag 'application'
 
   %body
@@ -15,8 +15,7 @@
             %span.icon-bar
             %span.icon-bar
             %span.icon-bar
-          %a.logo{ href: root_path }
-            %img{ src: logo_url, alt: 'logo' }
+          %a.logo{ href: root_path }= logo_url
     .container
       .row
         .span3

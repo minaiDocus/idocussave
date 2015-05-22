@@ -3,7 +3,7 @@
   %head
     %title Idocus | Archivage numérique
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
-    %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = stylesheet_link_tag 'application'
   %body
     .navbar.navbar-fixed-top
@@ -13,8 +13,7 @@
             %span{ class: 'icon-bar' }
             %span{ class: 'icon-bar' }
             %span{ class: 'icon-bar' }
-          %a.logo{ href: root_path }
-            %img{ src: logo_url, alt: 'logo' }
+          %a.logo{ href: root_path }= logo_url
           - if current_user
             %p{ class: 'navbar-text pull-right' }
               %span{ style: 'color:#999;'} Connecté en tant que

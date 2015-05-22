@@ -3,7 +3,7 @@
   %head
     %title Idocus | Traitements papiers
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
-    %link{ rel: 'shortcut icon', type: 'image/ico', href: asset_path('favicon.ico') }
+    %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = javascript_include_tag 'application', 'paper_process'
     = stylesheet_link_tag    'application', 'paper_process'
   %body
@@ -14,8 +14,7 @@
             %span.icon-bar
             %span.icon-bar
             %span.icon-bar
-          %a.logo{ href: root_path }
-            %img{ src: logo_url, alt: 'logo' }
+          %a.logo{ href: root_path }= logo_url
           .nav-collapse
             %ul{ class: 'nav' }
               %li{ class: ('active' if controller_name == 'kits') }
