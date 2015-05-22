@@ -16,7 +16,7 @@
               = submit_tag t('filters.action'), class: 'btn btn-primary'
               = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
     .box{ style: 'padding-bottom:0;' }
-      = form_tag update_multiple_account_bank_accounts_path, method: 'PUT', class: 'form form-horizontal' do
+      = form_tag update_multiple_account_bank_accounts_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'bank_account_contains[retriever_id]', @retriever.id if @retriever
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
           %thead

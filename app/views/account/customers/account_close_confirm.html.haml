@@ -7,7 +7,7 @@
     .span12.box.aligncenter
       .warning.margin1top.margin2bottom
         Cette action est irréversible, voulez-vous réellement clôturer le dossier "#{@customer.info}" ?
-      = form_tag close_account_account_organization_customer_path(@organization, @customer), method: :put, class: 'form form-horizontal'  do
+      = form_tag close_account_account_organization_customer_path(@organization, @customer), method: 'patch', class: 'form form-horizontal'  do
         - label = 'Clôturer le dossier'
         - if params[:close_now] == '1'
           = hidden_field_tag 'close_now', 1

@@ -4,7 +4,7 @@
       %h3 Edition d'un compte bancaire du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')}
   .row-fluid
     .span12.box
-      = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), method: 'PUT', html: { class: 'form form-horizontal margin0' } do |f|
+      = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), html: { class: 'form form-horizontal margin0' } do |f|
         = f.input :number,            disabled: true
         - if @organization.ibiza.try(:is_configured?)
           = f.input :journal, collection: journals_for_select(@bank_account.journal, 'bank'), required: true, include_blank: false

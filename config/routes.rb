@@ -20,9 +20,9 @@ Idocus::Application.routes.draw do
   get 'receipts/:year/:month/:day', controller: 'receipts', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
   resources :scans, only: %w(index create) do
-    put :add,       on: :member
-    put :overwrite, on: :member
-    get :cancel,    on: :collection
+    patch :add,       on: :member
+    patch :overwrite, on: :member
+    get   :cancel,    on: :collection
   end
   get 'scans/:year/:month/:day', controller: 'scans', action: 'index', constraints: { year: /\d{4}/, month: /\d{1,2}/, day: /\d{1,2}/ }
 
@@ -41,10 +41,10 @@ Idocus::Application.routes.draw do
   namespace :account do
     root to: 'account/account#index'
     resources :organizations, except: :destroy do
-      get :edit_options,   on: :collection
-      put :update_options, on: :collection
-      put :suspend,        on: :member
-      put :unsuspend,      on: :member
+      get   :edit_options,   on: :collection
+      patch :update_options, on: :collection
+      patch :suspend,        on: :member
+      patch :unsuspend,      on: :member
       resources :addresses, controller: 'organization_addresses'
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member
@@ -72,23 +72,23 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
       end
       resources :customers do
-        get 'search_by_code',        on: :collection
-        get 'edit_ibiza',            on: :member
-        put 'update_ibiza',          on: :member
-        get 'edit_period_options',   on: :member
-        put 'update_period_options', on: :member
-        get 'account_close_confirm', on: :member
-        put 'close_account',         on: :member
+        get   'search_by_code',        on: :collection
+        get   'edit_ibiza',            on: :member
+        patch 'update_ibiza',          on: :member
+        get   'edit_period_options',   on: :member
+        patch 'update_period_options', on: :member
+        get   'account_close_confirm', on: :member
+        patch 'close_account',         on: :member
         resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan do
           member do
-            put    :import
+            patch  :import
             delete :destroy_providers
             delete :destroy_customers
           end
           resources :vat_accounts do
-            get 'edit_multiple',   on: :collection
-            put 'update_multiple', on: :collection
+            get   'edit_multiple',   on: :collection
+            patch 'update_multiple', on: :collection
           end
         end
         resources :bank_accounts, only: %w(edit update), module: 'organization'
@@ -114,8 +114,8 @@ Idocus::Application.routes.draw do
       end
       resources :journals, except: 'show'
       resource :organization_subscription, only: %w(edit update) do
-        get 'select_options',    on: :collection
-        put 'propagate_options', on: :collection
+        get   'select_options',    on: :collection
+        patch 'propagate_options', on: :collection
       end
       resource :ibiza, controller: 'ibiza', only: %w(create edit update) do
         get 'refresh_users_cache', on: :member
@@ -187,21 +187,21 @@ Idocus::Application.routes.draw do
     resource :dematbox
 
     resources :retrievers, as: :fiduceo_retrievers do
-      get  'list',                 on: :collection
-      post 'fetch',                on: :member
-      get  'wait_for_user_action', on: :member
-      put  'update_transaction',   on: :member
+      get   'list',                 on: :collection
+      post  'fetch',                on: :member
+      get   'wait_for_user_action', on: :member
+      patch 'update_transaction',   on: :member
     end
     resources :provider_wishes, as: :fiduceo_provider_wishes
     resources :retriever_transactions
     resources :retrieved_banking_operations
     resources :retrieved_documents do
-      get 'piece',    on: :member
-      get 'select',   on: :collection
-      put 'validate', on: :collection
+      get   'piece',    on: :member
+      get   'select',   on: :collection
+      patch 'validate', on: :collection
     end
     resources :bank_accounts do
-      put 'update_multiple', on: :collection
+      patch 'update_multiple', on: :collection
     end
 
     # namespace :charts do
@@ -258,9 +258,9 @@ Idocus::Application.routes.draw do
     resources :dematbox_files, only: :index
     resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy)
     resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index show edit) do
-      put 'start_process', on: :member
-      put 'reject',        on: :member
-      put 'accept',        on: :member
+      patch 'start_process', on: :member
+      patch 'reject',        on: :member
+      patch 'accept',        on: :member
     end
     resources :emailed_documents, only: %w(index show) do
       get 'show_errors', on: :member

@@ -9,9 +9,9 @@
         %h2 Demande de nouveau fournisseur par le client : #{@provider_wish.user}
       .pull-right
         - if @provider_wish.pending?
-          = link_to icon_ok + ' Démarrer le traitement', start_process_admin_fiduceo_provider_wish_path(@provider_wish), method: 'PUT', class: 'btn', data: { confirm: t('actions.confirm') }
+          = link_to icon_ok + ' Démarrer le traitement', start_process_admin_fiduceo_provider_wish_path(@provider_wish), method: 'patch', class: 'btn', data: { confirm: t('actions.confirm') }
         - if @provider_wish.processing?
-          = link_to icon_ok + ' Accepter', accept_admin_fiduceo_provider_wish_path(@provider_wish), method: 'PUT', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
+          = link_to icon_ok + ' Accepter', accept_admin_fiduceo_provider_wish_path(@provider_wish), method: 'patch', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
         - if @provider_wish.pending? || @provider_wish.processing?
           = link_to icon_not_ok + ' Rejeter', edit_admin_fiduceo_provider_wish_path(@provider_wish), class: 'btn btn-danger'
         = link_to t('actions.return'), admin_fiduceo_provider_wishes_path, class: 'btn'

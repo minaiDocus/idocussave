@@ -12,7 +12,7 @@
           = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
           = link_to icon_destroy, destroy_providers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les fournisseurs', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les fournisseurs, êtes-vous sûr ?' }
         .span6.alignright.margin1bottom
-          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
+          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form form-horizontal margin0bottom' do
             = file_field_tag :providers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
             = submit_tag 'Importer', class: 'btn btn-primary'
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom
@@ -37,7 +37,7 @@
           = link_to icon_edit, edit_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'editer'
           = link_to icon_destroy, destroy_customers_account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn', title: 'supprimer tous les clients', data: { method: :delete, confirm: 'Vous êtes sur le point de supprimer tous les clients, êtes-vous sûr ?' }
         .span6.alignright.margin1bottom
-          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'PUT', multipart: true, class: 'form form-horizontal margin0bottom' do
+          = form_tag import_account_organization_customer_accounting_plan_path(@organization, @customer), method: 'patch', multipart: true, class: 'form form-horizontal margin0bottom' do
             = file_field_tag :customers_file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
             = submit_tag 'Importer', class: 'btn btn-primary'
       %table.table.table-striped.table-condensed.table-bordered.margin0bottom

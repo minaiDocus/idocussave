@@ -68,7 +68,7 @@
               %td= paperclips = session[:new_document][:paperclips]
               %td= oversized = session[:new_document][:oversized]
               %td
-                = form_tag overwrite_scan_path(session[:old_document].id), method: 'put', class: 'margin0bottom' do
+                = form_tag overwrite_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
                   = hidden_field_tag :paperclips, paperclips
                   = hidden_field_tag :oversized, oversized
                   = submit_tag 'Remplacer', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }
@@ -77,7 +77,7 @@
               %td= session[:old_document].paperclips + (paperclips = session[:new_document][:paperclips])
               %td= session[:old_document].oversized + (oversized = session[:new_document][:oversized])
               %td
-                = form_tag add_scan_path(session[:old_document].id), method: 'put', class: 'margin0bottom' do
+                = form_tag add_scan_path(session[:old_document].id), method: 'patch', class: 'margin0bottom' do
                   = hidden_field_tag :paperclips, paperclips
                   = hidden_field_tag :oversized, oversized
                   = submit_tag 'Additionner', class: 'btn btn-danger', data: { confirm: 'Vous êtez sûr ?' }

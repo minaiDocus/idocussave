@@ -3,7 +3,7 @@
     .box
       %h3 #{@fiduceo_retriever.name} - Veuillez répondre à la/aux question(s) ci-dessous pour poursuivre
     .box{ style: 'padding-bottom:0;' }
-      = form_tag update_transaction_account_fiduceo_retriever_path(@fiduceo_retriever), method: :put, class: 'form form-horizontal margin0bottom' do
+      = form_tag update_transaction_account_fiduceo_retriever_path(@fiduceo_retriever), method: 'patch', class: 'form form-horizontal margin0bottom' do
         - @questions.each do |question|
           .control-group
             = label_tag 'answers[]', question, class: 'control-label'

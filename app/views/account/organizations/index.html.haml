@@ -76,7 +76,7 @@
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
                   %td
                     - if organization.is_suspended
-                      = link_to 'Activer', unsuspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
+                      = link_to 'Activer', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
                     - else
-                      = link_to 'Suspendre', suspend_account_organization_path(organization), method: :put, class: 'btn btn-mini'
+                      = link_to 'Suspendre', suspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
       = render partial: 'shared/list_options', locals: { collection: @organizations }

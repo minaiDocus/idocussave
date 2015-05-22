@@ -39,7 +39,7 @@
                 = submit_tag t('filters.action'), class: 'btn btn-primary'
                 = link_to icon(icon: 'remove'), select_account_retrieved_documents_path, class: 'btn', title: t('filters.reset')
     .box{ style: 'padding-bottom:0;' }
-      = form_tag validate_account_retrieved_documents_path, method: 'PUT', class: 'form form-horizontal' do
+      = form_tag validate_account_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
         = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
         = hidden_field_tag 'document_contains[date][$gte]',   (params[:document_contains][:date]['$gte'] rescue '')
