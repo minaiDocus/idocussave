@@ -12,5 +12,5 @@
         - if params[:close_now] == '1'
           = hidden_field_tag 'close_now', 1
           - label += ' maintenant !'
-        = submit_tag label, class: 'btn btn-danger', confirm: t('actions.confirm')
+        = submit_tag label, class: 'btn btn-danger', data: { confirm: t('actions.confirm') }
         = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer), class: 'btn'
