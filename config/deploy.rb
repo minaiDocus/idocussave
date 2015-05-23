@@ -40,6 +40,7 @@ namespace :shared do
   desc "Create symlink"
   task :create_symlink do
     command = []
+    command << "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     command << "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     command << "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
     command << "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
@@ -93,6 +94,7 @@ namespace :shared do
     end
 
     files = [
+      'secrets.yml',
       'mongoid.yml',
       'dematbox.yml',
       'fiduceo.yml',

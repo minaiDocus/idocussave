@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.13'
+gem 'rails', '4.1.10'
 
 gem 'rake'
 gem 'mongoid'
@@ -8,7 +8,7 @@ gem 'mongoid-paperclip', :require => 'mongoid_paperclip'
 gem 'paperclip'
 gem 'daemons', '1.1.9'
 gem 'haml-rails'
-gem 'devise', '3.3.0'
+gem 'devise'
 gem 'simple_form'
 gem 'kaminari'
 gem 'mongoid_slug', :require => 'mongoid/slug'

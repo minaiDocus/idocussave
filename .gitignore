@@ -11,6 +11,7 @@ public/assets
 coverage/
 doc_data.txt
 .sass-cache
+config/secrets.yml
 config/mongoid.yml
 config/dematbox.yml
 config/fiduceo.yml
