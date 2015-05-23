@@ -195,9 +195,11 @@ class OperationService
 
   def self.parsed_open_accounting_plan(code)
     accounting_plan = parsed_accounting_plan(code)
-    closed_account = accounting_plan.css('closed').select{ |closed| closed.text == '1' }
-    closed_account.each do |account|
-      account.parent.remove
+    if accounting_plan
+      closed_account = accounting_plan.css('closed').select{ |closed| closed.text == '1' }
+      closed_account.each do |account|
+        account.parent.remove
+      end
     end
     accounting_plan
   end
