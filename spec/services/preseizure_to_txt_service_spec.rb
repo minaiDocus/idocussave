@@ -13,7 +13,7 @@ describe PreseizureToTxtService do
     @preseizure.date = Time.local(2015,1,13)
     @preseizure.name = 'TS%0001 AC 201501'
     @preseizure.third_party = 'TIERS'
-    @preseizure.observation = 'abcdefghijk'
+    @preseizure.piece_number = '123'
     @preseizure.user = user
     @preseizure.save
     report.preseizures << @preseizure
@@ -74,13 +74,13 @@ describe PreseizureToTxtService do
     result = PreseizureToTxtService.new(@preseizure).execute
     lines = result.split("\n")
     expect(lines.size).to eq 3
-    expect(lines[0]).to eq 'M1TES    AC000130115 TIERS. abcdefghijk  C+000000002400                                                    EUR                                                                       1.pdf                                                                      '
-    expect(lines[1]).to eq 'M2TES    AC000130115 TIERS. abcdefghijk  D+000000002000                                                    EUR                                                                       1.pdf                                                                      '
-    expect(lines[2]).to eq 'M3TES    AC000130115 TIERS. abcdefghijk  D+000000000400                                                    EUR                                                                       1.pdf                                                                      '
+    expect(lines[0]).to eq 'M1TES    AC000130115 TIERS - 123         C+000000002400                                                    EUR                                                                       1.pdf                                                                      '
+    expect(lines[1]).to eq 'M2TES    AC000130115 TIERS - 123         D+000000002000                                                    EUR                                                                       1.pdf                                                                      '
+    expect(lines[2]).to eq 'M3TES    AC000130115 TIERS - 123         D+000000000400                                                    EUR                                                                       1.pdf                                                                      '
   end
 
   it 'should match without label' do
-    @preseizure.observation = ''
+    @preseizure.piece_number = ''
     @preseizure.third_party = ''
     result = PreseizureToTxtService.new(@preseizure).execute
     lines = result.split("\n")
@@ -90,16 +90,13 @@ describe PreseizureToTxtService do
     expect(lines[2]).to eq 'M3TES    AC000130115                     D+000000000400                                                    EUR                                                                       1.pdf                                                                      '
   end
 
-  it 'should have two lines each that should match' do
-    @preseizure.observation = '012345678910111213141516171819202122'
+  it 'with label size exceeding 30 characters, should have one line each that should match' do
+    @preseizure.piece_number = '012345678910111213141516171819202122'
     @preseizure.third_party = 'TIERS'
     lines = PreseizureToTxtService.new(@preseizure).execute.split("\n")
-    expect(lines.size).to eq 6
-    expect(lines[0]).to eq 'M1TES    AC000130115 TIERS. 0123456789101C+000000002400                                                    EUR      TIERS. 01234567891011121314151                                   1.pdf                                                                      '
-    expect(lines[1]).to eq 'M1TES    AC000130115 6171819202122                 0000                                                    EUR                                                                       1.pdf                                                                      '
-    expect(lines[2]).to eq 'M2TES    AC000130115 TIERS. 0123456789101D+000000002000                                                    EUR      TIERS. 01234567891011121314151                                   1.pdf                                                                      '
-    expect(lines[3]).to eq 'M2TES    AC000130115 6171819202122                 0000                                                    EUR                                                                       1.pdf                                                                      '
-    expect(lines[4]).to eq 'M3TES    AC000130115 TIERS. 0123456789101D+000000000400                                                    EUR      TIERS. 01234567891011121314151                                   1.pdf                                                                      '
-    expect(lines[5]).to eq 'M3TES    AC000130115 6171819202122                 0000                                                    EUR                                                                       1.pdf                                                                      '
+    expect(lines.size).to eq 3
+    expect(lines[0]).to eq 'M1TES    AC000130115 TIERS - 012345678910C+000000002400                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
+    expect(lines[1]).to eq 'M2TES    AC000130115 TIERS - 012345678910D+000000002000                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
+    expect(lines[2]).to eq 'M3TES    AC000130115 TIERS - 012345678910D+000000000400                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
   end
 end
