@@ -71,6 +71,7 @@ describe PrepaCompta::DocumentBundler do
     end
 
     after(:all) do
+      Dir.chdir Rails.root
       path = File.join(Rails.root, 'files', 'test', 'prepacompta', '2013-01-01')
       FileUtils.remove_entry(path)
     end
