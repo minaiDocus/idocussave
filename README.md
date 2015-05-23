@@ -20,7 +20,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 ## Technologies :
 - Linux - Debian 64bit - personnalisé
 - Ruby 1.9.3p547 (2014-05-14 revision 45962) [x86_64-linux]
-- Ruby on Rails 4.0.13
+- Ruby on Rails 4.1.10
 - MongoDB 2.4
 - ImageMagick 6.5.1-0 2009-04-10 Q16 OpenMP
 - Pdftk 2.02
