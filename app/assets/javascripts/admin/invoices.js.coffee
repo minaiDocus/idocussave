@@ -13,7 +13,7 @@ jQuery ->
       url: "/admin/invoices/#{number}.json"
       data: data
       datatype: 'json'
-      type: 'PUT'
+      type: 'PATCH'
 
   $('.select-date.received_at').change (e) ->
     number = $(this).parents('tr').attr('id').split('_')[1]
@@ -22,4 +22,4 @@ jQuery ->
       url: "/admin/invoices/#{number}.json"
       data: data
       datatype: 'json'
-      type: 'PUT'
+      type: 'PATCH'

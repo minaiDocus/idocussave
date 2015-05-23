@@ -13,7 +13,7 @@ checkbox_event_handler = ->
       url: url,
       data: hsh,
       dataType: 'json',
-      type: 'PUT'
+      type: 'PATCH'
 
 jQuery ->
   checkbox_event_handler()
@@ -43,7 +43,7 @@ jQuery ->
       url: url,
       data: hsh,
       dataType: 'json',
-      type: 'PUT'
+      type: 'PATCH'
 
     prompt.addClass('hide')
     original.removeClass('hide')
