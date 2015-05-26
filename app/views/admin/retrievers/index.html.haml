@@ -104,8 +104,8 @@
                     %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
                     %td= link_to retriever.user.code, [:admin, retriever.user]
                     %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
-                    %td= retriever_presenter.service_name
-                    %td= retriever_presenter.name
+                    %td= link_to retriever_presenter.service_name, "https://backoffice-coffre.idocus.com/coffre/Provider.seam?providerId=#{retriever.provider_id || retriever.bank_id}", target: '_blank'
+                    %td= link_to retriever_presenter.name, "https://backoffice-coffre.idocus.com/coffre/Retriever.seam?retrieverId=#{retriever.fiduceo_id}", target: '_blank'
                     %td= retriever_presenter.journal.try(:name) || '-'
                     %td= retriever_presenter.mode
                     %td!= retriever_presenter.state(:observer)
