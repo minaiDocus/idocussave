@@ -47,7 +47,7 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     addressable (2.3.6)
-    airbrake (4.1.0)
+    airbrake (4.2.0)
       builder
       multi_json
     akami (1.2.2)
