@@ -118,9 +118,9 @@ namespace :shared do
 end
 
 namespace :mod_rails do
-  desc "Restart the application altering tmp/restart.txt for mod_rails."
+  desc "Restart the application."
   task :restart, :roles => :app do
-    run "touch #{current_release}/tmp/restart.txt"
+    run "/home/grevalis/myapps/opt/passenger-5.0.8/bin/passenger-config restart-app /home/grevalis/www/idocus/#{rails_env}"
   end
 end
 
