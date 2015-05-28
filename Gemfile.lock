@@ -138,7 +138,7 @@ GEM
     delayed_job_mongoid (2.1.0)
       delayed_job (>= 3.0, < 5)
       mongoid (>= 3.0, < 5)
-    devise (3.4.1)
+    devise (3.5.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
