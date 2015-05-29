@@ -55,7 +55,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
     command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
-    command << "ln -nfs #{shared_path}/config/initializers/errbit.rb #{release_path}/config/initializers/errbit.rb"
     command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     command << "ln -s #{shared_path}/data #{release_path}/data"
     command << "ln -s #{shared_path}/files #{release_path}/files"
@@ -82,8 +81,7 @@ namespace :shared do
     files = [
       'num.rb',
       'compta.rb',
-      'site.rb',
-      'errbit.rb'
+      'site.rb'
     ]
 
     files.each do |file|
