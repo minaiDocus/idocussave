@@ -1,0 +1,31 @@
+#account_number_rule.row-fluid.margin1top
+  .span12
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span6
+            %h3 Informations sur la règle #{@account_number_rule.name}
+          .span6.alignright
+            = link_to t('actions.return'), account_organization_path(@organization, tab: 'account_number_rules'), class: 'btn'
+  .row-fluid
+    .span12.box
+      %table.table.table-striped.table-condensed
+        %tbody
+          %tr
+            %th type de règle
+            %td #{@account_number_rule.rule_type}
+          %tr
+            %th règle
+            %td #{@account_number_rule.content}
+          %tr
+            %th priorité
+            %td #{@account_number_rule.priority}
+          -if @account_number_rule.rule_type == 'match'
+            %tr
+              %th nom de compte tièrs
+              %td #{@account_number_rule.third_party_account}
+          -if @account_number_rule.users.count > 0
+            %th utilisateur concerné
+            %td
+              -@account_number_rule.users.asc(:code).each do |user|
+                #{user.code} / 

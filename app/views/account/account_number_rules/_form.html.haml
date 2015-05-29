@@ -1,0 +1,15 @@
+= simple_form_for [:account, @organization, @account_number_rule], html: { class: 'form form-horizontal margin0' } do |f|
+  = f.input :name
+  = f.input :affect, collection: ['organization', 'user'], include_blank: false, disabled: action_name.in?(%w(edit update))
+  = f.input :rule_type, collection: ['match', 'truncate'], include_blank: false
+  = f.input :content
+  = f.input :priority, as: :integer
+  = f.input :third_party_account, required: true
+  -if @user.is_admin
+    = f.association :users, collection: @organization.customers, label_method: :info, value_method: :id, as: :check_boxes
+  -else
+    = f.association :users, collection: @user.customers, label_method: :info, value_method: :id, as: :check_boxes
+
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_organization_path(@organization, tab: 'account_number_rules'), class: 'btn'

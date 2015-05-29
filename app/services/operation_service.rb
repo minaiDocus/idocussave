@@ -108,7 +108,7 @@ class OperationService
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = account_number(user, operation.label, bank_account.try(:temporary_account).presence)
+            account.number     = AccountNumberFinderService.new(user, operation, bank_account.try(:temporary_account).presence).execute
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new
@@ -170,46 +170,3 @@ class OperationService
     end
     pack_report
   end
-
-  def self.account_number(user, label, temporary_account='471000')
-    number = nil
-    if user.organization.ibiza.try(:is_configured?)
-      # Ibiza accounting plan
-      doc = parsed_open_accounting_plan(user.code)
-      if doc
-        result = doc.css('name').select { |name| label.match /#{Regexp.quote(name.content)}/i }.first
-        number = result.parent.css('number').text if result
-      end
-    else
-      # DB Accounting Plan
-      if user.accounting_plan
-        provider = user.accounting_plan.providers.select do |provider|
-          label.match /#{Regexp.quote(provider.third_party_name)}/i
-        end.first
-        number = provider.third_party_account if provider
-      end
-    end
-    number = temporary_account unless number.present?
-    number
-  end
-
-  def self.parsed_open_accounting_plan(code)
-    accounting_plan = parsed_accounting_plan(code)
-    if accounting_plan
-      closed_account = accounting_plan.css('closed').select{ |closed| closed.text == '1' }
-      closed_account.each do |account|
-        account.parent.remove
-      end
-    end
-    accounting_plan
-  end
-
-  def self.parsed_accounting_plan(code)
-    path = File.join([Rails.root, 'data', 'compta', 'mapping', "#{code}.xml"])
-    if File.exist? path
-      Nokogiri::XML(open(path))
-    else
-      nil
-    end
-  end
-end

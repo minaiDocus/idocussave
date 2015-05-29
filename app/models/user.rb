@@ -131,6 +131,7 @@ class User
   has_many :operations
   has_many :pre_assignment_deliveries
   has_many :paper_processes
+  has_many :rules,              class_name: 'AccountNumberRule',        inverse_of: 'users'
   has_one :subscription
   has_one :composition
   has_one :debit_mandate

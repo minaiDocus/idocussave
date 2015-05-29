@@ -1,0 +1,63 @@
+# -*- encoding : UTF-8 -*-
+class Account::AccountNumberRulesController < Account::OrganizationController
+  before_filter :load_account_number_rule, except: %w(new create)
+
+  def show
+  end
+
+	def new
+    @account_number_rule = AccountNumberRule.new
+  end
+
+  def create
+    @account_number_rule = AccountNumberRule.new account_number_rule_params
+    @account_number_rule.organization = @organization
+    if @account_number_rule.save
+      flash[:success] = 'Créé avec succès.'
+    else
+      flash[:error] = 'Impossible de créer.'
+    end
+    redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+  end
+
+  def edit
+  end
+
+  def update
+    params[:account_number_rule][:user_ids] += @account_number_rule.users - customers
+    if @account_number_rule.update_attributes(account_number_rule_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+    else
+      render 'edit'
+    end
+  end
+
+  def destroy
+    @account_number_rule.destroy
+    flash[:success] = 'Supprimé avec succès.'
+    redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+  end
+
+  def account_number_rule_params
+    attributes = [
+      :name,
+      :rule_type,
+      :content,
+      :priority,
+      :third_party_account
+    ]
+    params[:account_number_rule][:third_party_account] = nil if params[:account_number_rule][:rule_type] == "truncate"
+    attributes << :affect if action_name == "create"
+    if @account_number_rule.try(:persisted?)
+      attributes << { user_ids: [] } if @account_number_rule.affect == "user"
+    elsif params[:account_number_rule][:affect] == "user"
+      attributes << { user_ids: [] }
+    end
+    params.require(:account_number_rule).permit(*attributes)
+  end
+
+  def load_account_number_rule
+    @account_number_rule = @organization.rules.find params[:id]
+  end
+end
