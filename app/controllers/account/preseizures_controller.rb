@@ -55,7 +55,7 @@ private
                                        :piece_number,
                                        :amount,
                                        :currency,
-                                       :convertion_rate,
+                                       :conversion_rate,
                                        :deadline_date,
                                        :observation)
   end
