@@ -30,7 +30,8 @@ class DocumentProcessor
                 DocumentTools.create_stamped_file temp_document.content.path, piece_file_path, user.stamp_name, piece_name, {
                   origin: temp_document.delivery_type,
                   is_stamp_background_filled: user.is_stamp_background_filled,
-                  dir: dir
+                  dir: dir,
+                  logger: logger
                 }
 
                 pages_number = DocumentTools.pages_number piece_file_path
