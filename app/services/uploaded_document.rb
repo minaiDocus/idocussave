@@ -30,6 +30,7 @@ class UploadedDocument
 
     if @errors.empty?
       pack = TempPack.find_or_create_by_name pack_name
+      pack.update_pack_state
       options = {
         delivery_type: 'upload',
         delivered_by: @code,

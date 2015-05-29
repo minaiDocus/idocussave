@@ -35,7 +35,6 @@ class TempPack
 
     def find_or_create_by_name(name)
       if (temp_pack=find_by_name(name))
-        temp_pack.update_pack_state
         temp_pack
       else
         temp_pack = TempPack.new
@@ -43,7 +42,6 @@ class TempPack
         temp_pack.user = User.find_by_code name.split[0]
         temp_pack.organization = temp_pack.user.try(:organization)
         temp_pack.save
-        temp_pack.update_pack_state
         temp_pack
       end
     end

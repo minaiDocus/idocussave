@@ -37,6 +37,7 @@ class DocumentDelivery
   def add_or_replace(file, options={})
     pack_name = DocumentTools.pack_name options[:original_file_name]
     temp_pack = TempPack.find_or_create_by_name pack_name
+    temp_pack.update_pack_state
 
     temp_document = temp_documents.where(original_file_name: options[:original_file_name]).first
 
