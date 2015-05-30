@@ -91,6 +91,7 @@ class PrepaCompta
           temp_document.is_an_original      = false
           temp_document.is_a_cover          = original_temp_document.is_a_cover?
           temp_document.content             = open(file_path)
+          temp_document.pages_number        = DocumentTools.pages_number(temp_document.content.path)
           temp_document.position            = temp_pack.next_document_position
           temp_document.delivered_by        = original_temp_document.delivered_by
           temp_document.delivery_type       = original_temp_document.delivery_type
