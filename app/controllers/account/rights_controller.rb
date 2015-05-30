@@ -7,7 +7,7 @@ class Account::RightsController < Account::OrganizationController
   end
 
   def update
-    @collaborator.update_attributes(collaborator_params)
+    @collaborator.update(collaborator_params)
     flash[:success] = 'Modifié avec succès.'
     redirect_to account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization')
   end

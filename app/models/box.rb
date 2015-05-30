@@ -51,7 +51,7 @@ class Box
   def get_access_token(code)
     result = session.get_access_token(code)
     @session = nil
-    update_attributes(access_token: result.token, refresh_token: result.refresh_token, is_configured: true)
+    update(access_token: result.token, refresh_token: result.refresh_token, is_configured: true)
   end
 
   def client
@@ -63,7 +63,7 @@ class Box
   end
 
   def reset_session
-    update_attributes(access_token: nil, refresh_token: nil, is_configured: false)
+    update(access_token: nil, refresh_token: nil, is_configured: false)
   end
 
   def is_up_to_date?(folder, file_name, file_path)

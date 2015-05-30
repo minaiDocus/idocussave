@@ -150,7 +150,7 @@ class Pack::Report
                     expense.obs_type               = obs['type'].to_i
                     expense.position               = piece.position
                     expense.save
-                    piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
+                    piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
 
                     observation         = Pack::Report::Observation.new
                     observation.expense = expense
@@ -225,7 +225,7 @@ class Pack::Report
                       preseizure.observation     = part.css('remarque').first.try(:content)
                       preseizure.position        = piece.position
                       preseizure.save
-                      piece.update_attributes(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
+                      piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
                       preseizures << preseizure
                       part.css('account').each do |account|
                         paccount            = Pack::Report::Preseizure::Account.new

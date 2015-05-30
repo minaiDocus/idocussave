@@ -28,7 +28,7 @@ class Account::ExercicesController < Account::OrganizationController
   end
 
   def update
-    if @exercice.update_attributes(exercice_params)
+    if @exercice.update(exercice_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_exercices_path(@organization, @customer)
     else

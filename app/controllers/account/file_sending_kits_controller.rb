@@ -7,7 +7,7 @@ class Account::FileSendingKitsController < Account::OrganizationController
   end
 
   def update
-    if @file_sending_kit.update_attributes(file_sending_kit_params)
+    if @file_sending_kit.update(file_sending_kit_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'file_sending_kit')
     else

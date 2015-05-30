@@ -6,7 +6,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Fid
   end
 
   def update
-    if @bank_account.update_attributes(bank_account_params)
+    if @bank_account.update(bank_account_params)
       @bank_account.operations.where(is_locked: true).update_all(is_locked: false)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')

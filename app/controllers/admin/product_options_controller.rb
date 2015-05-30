@@ -20,7 +20,7 @@ class Admin::ProductOptionsController < Admin::AdminController
   end
 
   def update
-    if @product_option.update_attributes product_option_params
+    if @product_option.update product_option_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_products_path
     else

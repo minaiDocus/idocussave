@@ -58,7 +58,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update_ibiza
-    if @customer.update_attributes(ibiza_params)
+    if @customer.update(ibiza_params)
       flash[:success] = 'Modifié avec succès'
     else
       flash[:error] = 'Impossible de modifier'
@@ -70,7 +70,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update_period_options
-    if @customer.update_attributes(period_options_params)
+    if @customer.update(period_options_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'period_options')
     else

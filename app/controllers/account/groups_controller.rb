@@ -28,7 +28,7 @@ class Account::GroupsController < Account::OrganizationController
   end
 
   def update
-    if @group.update_attributes(safe_group_params)
+    if @group.update(safe_group_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_groups_path(@organization)
     else

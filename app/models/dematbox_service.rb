@@ -38,7 +38,7 @@ class DematboxService
         }
         service = DematboxService.where(pid: raw_service[:service_id]).first
         if service
-          service.update_attributes(_attributes)
+          service.update(_attributes)
         else
           service = DematboxService.create(_attributes)
         end

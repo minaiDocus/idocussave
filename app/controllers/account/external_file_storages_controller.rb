@@ -27,16 +27,16 @@ public
     result = ""
     if params[:dropbox_basic]
       @external_file_storage.dropbox_basic.create if !@external_file_storage.dropbox_basic
-      result = @external_file_storage.dropbox_basic.update_attributes dropbox_basic_params
+      result = @external_file_storage.dropbox_basic.update dropbox_basic_params
     elsif params[:google_doc]
       @external_file_storage.google_doc.create if !@external_file_storage.google_doc
-      result = @external_file_storage.google_doc.update_attributes google_doc_params
+      result = @external_file_storage.google_doc.update google_doc_params
     elsif params[:ftp]
       @external_file_storage.ftp.create if !@external_file_storage.ftp
-      result = @external_file_storage.ftp.update_attributes ftp_params
+      result = @external_file_storage.ftp.update ftp_params
     elsif params[:box]
       @external_file_storage.box.create if !@external_file_storage.box
-      result = @external_file_storage.box.update_attributes box_params
+      result = @external_file_storage.box.update box_params
     end
     if result == true
       flash[:notice] = "Modifié avec succés."

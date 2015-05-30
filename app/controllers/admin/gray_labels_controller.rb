@@ -27,7 +27,7 @@ class Admin::GrayLabelsController < Admin::AdminController
   end
 
   def update
-    if @gray_label.update_attributes gray_label_params
+    if @gray_label.update gray_label_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_gray_label_path(@gray_label)
     else

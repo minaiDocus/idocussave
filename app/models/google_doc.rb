@@ -17,7 +17,7 @@ class GoogleDoc
   end
 
   def reset
-    update_attributes(token: '', refresh_token: '', token_expires_at: nil, is_configured: false)
+    update(token: '', refresh_token: '', token_expires_at: nil, is_configured: false)
   end
 
   def sync(remote_files)

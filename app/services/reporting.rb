@@ -28,7 +28,7 @@ class Reporting
             UpdatePeriodPriceService.new(period_document.period).execute
           end
           if period_document.pages - period_document.uploaded_pages > 0
-            period.delivery.update_attributes(state: 'delivered')
+            period.delivery.update(state: 'delivered')
           end
         end
         remaining_dividers -= current_dividers.count

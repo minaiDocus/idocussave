@@ -211,7 +211,7 @@ describe AssignDefaultJournalsService do
 
         context 'when pre assignment is authorized and 1 slot available' do
           before(:all) do
-            @user.options.update_attributes(
+            @user.options.update(
               is_preassignment_authorized: true,
               max_number_of_journals: 1
             )

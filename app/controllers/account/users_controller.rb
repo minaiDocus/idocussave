@@ -7,7 +7,7 @@ class Account::UsersController < Account::AccountController
   def update
     @user = current_user
     if @user.valid_password?(params[:user][:current_password])
-      if @user.update_attributes(user_params)
+      if @user.update(user_params)
         flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
       else
         flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"

@@ -13,7 +13,7 @@ class GoogleDriveSyncService
         @session = @client.load_session(@google_doc.token)
       elsif @google_doc.refresh_token.present?
         @session = @client.new_session(@google_doc.refresh_token)
-        @google_doc.update_attributes(
+        @google_doc.update(
           token: @client.access_token.token,
           token_expires_at: Time.at(@client.access_token.expires_at)
         )
@@ -26,7 +26,7 @@ class GoogleDriveSyncService
       @error = e
       case e.result.response.status
       when 401
-        @google_doc.update_attributes(token: '', token_expires_at: nil)
+        @google_doc.update(token: '', token_expires_at: nil)
         init_session
       when 403
         @google_doc.reset
