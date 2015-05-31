@@ -846,6 +846,24 @@ fr:
       period_billing:
         order: Ordre
         amount_in_cents_wo_vat: Montant en centime (HT)
+      account_number_rule:
+        zero: 0 règle de plan de compte
+        one: 1 règle de plan de compte
+        other: '%{count} règles de plan de compte'
+        name: Règle de plan de compte
+        attributes:
+          name: Nom
+          affect: Affecté à
+          rule_type: Type de règle
+          content: Contenu
+          third_party_account: Numéro de compte tiers
+          priority: Priorité
+          affect_values:
+            organization: Organisation
+            user: Client
+          rule_type_values:
+            match: Recherche
+            truncate: Correction du plan de compte
     state_machines:
       fiduceo_retriever:
         states:

@@ -17,15 +17,16 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     else
       flash[:error] = 'Impossible de créer.'
     end
-    redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+    redirect_to account_organization_account_number_rule_path(@organization, @account_number_rule)
   end
 
   def edit
   end
 
   def update
-    params[:account_number_rule][:user_ids] += @account_number_rule.users - customers
-    if @account_number_rule.update_attributes(account_number_rule_params)
+    # re-assign customers of other collaborators
+    params[:account_number_rule][:user_ids] += (@account_number_rule.users - customers).map(&:id).map(&:to_s)
+    if @account_number_rule.update(account_number_rule_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'account_number_rules')
     else
@@ -47,17 +48,17 @@ class Account::AccountNumberRulesController < Account::OrganizationController
       :priority,
       :third_party_account
     ]
-    params[:account_number_rule][:third_party_account] = nil if params[:account_number_rule][:rule_type] == "truncate"
-    attributes << :affect if action_name == "create"
+    params[:account_number_rule][:third_party_account] = nil if params[:account_number_rule][:rule_type] == 'truncate'
+    attributes << :affect if action_name == 'create'
     if @account_number_rule.try(:persisted?)
-      attributes << { user_ids: [] } if @account_number_rule.affect == "user"
-    elsif params[:account_number_rule][:affect] == "user"
+      attributes << { user_ids: [] } if @account_number_rule.affect == 'user'
+    elsif params[:account_number_rule][:affect] == 'user'
       attributes << { user_ids: [] }
     end
     params.require(:account_number_rule).permit(*attributes)
   end
 
   def load_account_number_rule
-    @account_number_rule = @organization.rules.find params[:id]
+    @account_number_rule = @organization.account_number_rules.find params[:id]
   end
 end

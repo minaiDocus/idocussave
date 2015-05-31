@@ -1,83 +1,70 @@
 class AccountNumberFinderService
-  def initialize(user, operation, temporary_account='471000')
+  def initialize(user, temporary_account='471000')
     @user = user
-    @operation = operation
     @temporary_account = temporary_account
+    @rules = @user.account_number_rules
+    @rules += @user.organization.account_number_rules.global
+    @rules.sort_by!(&:priority)
   end
 
-  def execute
+  def execute(label)
     number = nil
-
-    rules = @operation.user.rules + @operation.user.organization.rules.where(affect: 'organization')
-    rules.sort_by(:priority)!
-    number = match_rules(rules, @operation.label)
-    unless number.present?
-      accounting_plan = get_accounting_plan(@user)
-      if accounting_plan.count != 0
-        number = match_accounting_plan(accounting_plan, rules, @operation.label)
-      end
-      number = @temporary_account unless number.present?
-    end
+    number = self.class.find_with_rules(@rules, label) if @rules.any?
+    number ||= self.class.find_with_accounting_plan(accounting_plan, label, @rules) if accounting_plan.size != 0
+    number ||= @temporary_account
     number
   end
 
-  class << self
+  def accounting_plan
+    @accounting_plan ||= self.class.get_accounting_plan(@user)
+  end
 
-    def check_matches(label, matches_score)
-      words = label.split(' ')
+  class << self
+    def get_the_highest_match(label, names)
+      scores = names.map do |name|
+        [name, 0]
+      end
+      words = label.split(/\s+/)
       words.each do |word|
-        matches.each do |name, score|
-          if name.match /#{Regexp.quote(word)}/i
-            score += 1
-          end
+        scores.each do |name, score|
+          score += 1 if name.match /#{Regexp.quote(word)}/i
         end
       end
-      matches.sort_by{|n, s| s}.reverse!
-      matches.first
+      scores.sort_by(&:last).last.first
     end
 
-    def match_rules(rules, label)
+    def find_with_rules(rules, label)
       number = nil
-      matches_score = Array.new
-
-      match_rules = rules.select{ |rule| rule.rule_type == "match" }
-      matches = match_rules.select{ |rule| label.match /#{Regexp.quote(rule.content)}/i }
-      matches.each do |match|
-        matches_score << [match.content, 0]
-      end
-      check = check_matches(label, matches_score)
-      result = matches.select { |match| match[0] == check[0]}.first
+      match_rules = rules.select{ |rule| rule.rule_type == 'match' }
+      match_rules = match_rules.select{ |rule| label.match /#{Regexp.quote(rule.content)}/i }
+      name = get_the_highest_match(label, match_rules.map(&:content))
+      result = match_rules.select { |match| match.content == name }.first
       number = result.third_party_account if result
       number
     end
 
-    def match_accounting_plan(accounting_plan, rules, label)
+    def find_with_accounting_plan(accounting_plan, label, rules=[])
       number = nil
-      matches = Array.new
-      matches_score = Array.new
+      truncate_rules = rules.select { |rule| rule.rule_type == 'truncate' }
 
-      truncate_rules = rules.select{|rule| rule.rule_type == "truncate" }
-      matches += truncate_rules.select do |rule|
-        accounting_plan.select{ |provider| label.match /#{Regexp.quote(provider[0].gsub(/ ?#{rule.content}/i, ""))}/i }
+      matches = truncate_rules.select do |rule|
+        accounting_plan.select{ |account| label.match /#{Regexp.quote(account[0].gsub(/ ?#{rule.content}/i, ''))}/i }
       end
-      matches += accountingPlan.select { |provider| label.match /#{Regexp.quote(provider[0])}/i }
+      matches += accounting_plan.select { |account| label.match /#{Regexp.quote(account[0])}/i }
       matches.uniq!
-      matches.each do |match|
-        matches_score << [match[0], 0]
-      end
-      check = check_matches(label, matches_score)
-      result = matches.select { |match| match[0] == check[0]}.first
+      name = get_the_highest_match(label, matches.map(&:first))
+      result = matches.select { |match| match[0] == name }.first
       number = result[1] if result
       number
     end
 
     def get_accounting_plan(user)
-      accounting_plan = Array.new
+      accounting_plan = []
       if user.organization.ibiza.try(:is_configured?)
         doc = parsed_open_accounting_plan(user.code)
         if doc
-          doc.css('wsAccounts').each do |provider|
-            accounting_plan << [provider.css('name').text , provider.css('number').text]
+          doc.css('wsAccounts').each do |account|
+            accounting_plan << [account.css('name').text , account.css('number').text]
           end
         end
       elsif user.accounting_plan
@@ -102,7 +89,7 @@ class AccountNumberFinderService
     end
 
     def parsed_accounting_plan(code)
-      path = File.join([Rails.root, 'data', 'compta', 'mapping', "#{code}.xml"])
+      path = Rails.root.join('data', 'compta', 'mapping', code, '.xml').to_s
       if File.exist? path
         Nokogiri::XML(open(path))
       else

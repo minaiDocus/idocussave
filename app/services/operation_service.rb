@@ -69,6 +69,7 @@ class OperationService
           pack_report = initialize_pack_report(user, pack || bank_account)
           counter = pack_report.preseizures.count
           to_deliver_preseizures = []
+          account_number_finder = AccountNumberFinderService.new(user, bank_account.try(:temporary_account).presence)
 
           operations.each do |operation|
             counter += 1
@@ -108,7 +109,7 @@ class OperationService
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = AccountNumberFinderService.new(user, operation, bank_account.try(:temporary_account).presence).execute
+            account.number     = account_number_finder.execute(operation.label)
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new
@@ -170,3 +171,4 @@ class OperationService
     end
     pack_report
   end
+end

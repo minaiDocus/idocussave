@@ -1,10 +1,10 @@
 = simple_form_for [:account, @organization, @account_number_rule], html: { class: 'form form-horizontal margin0' } do |f|
   = f.input :name
-  = f.input :affect, collection: ['organization', 'user'], include_blank: false, disabled: action_name.in?(%w(edit update))
-  = f.input :rule_type, collection: ['match', 'truncate'], include_blank: false
+  = f.input :affect, collection: affect_options_for_select, include_blank: false, disabled: action_name.in?(%w(edit update)), hint: ('Ne pourra plus être changé par la suite.' if action_name.in?(%w(new create)))
+  = f.input :rule_type, collection: rule_type_options_for_select, include_blank: false, hint: 'Effectue une recherche ou une correction du plan de compte avec le champ "Contenu" ci-dessous.'
   = f.input :content
-  = f.input :priority, as: :integer
-  = f.input :third_party_account, required: true
+  = f.input :priority, as: :integer, hint: 'Plus le nombre est petit plus la règle est importante.'
+  = f.input :third_party_account, required: true, hint: 'Le numéro qui sera assigné si la recherche est un succès.'
   -if @user.is_admin
     = f.association :users, collection: @organization.customers, label_method: :info, value_method: :id, as: :check_boxes
   -else

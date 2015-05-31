@@ -257,28 +257,31 @@
                 %td= @organization.is_quadratus_used ? t('yes_value') : t('no_value')
           .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
         #account_number_rules.tab-pane{ class: ('active' if params[:tab] == 'account_number_rules') }
+          %p
+            Les règles (#{@organization.account_number_rules.size}) ci-dessous s'appliquent aux opérations récupérées depuis les automates.
           %table.table.table-striped.table-condensed
             %thead
               %tr
-                %th Nom
-                %th Affecté à
-                %th Type
-                %th Contenu
-                %th Compte tiers
+                %th= t('mongoid.models.account_number_rule.attributes.priority')
+                %th= t('mongoid.models.account_number_rule.attributes.name')
+                %th= t('mongoid.models.account_number_rule.attributes.affect')
+                %th= t('mongoid.models.account_number_rule.attributes.rule_type')
+                %th= t('mongoid.models.account_number_rule.attributes.content')
+                %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
             %tbody
-              - @organization.rules.each do |rule|
+              - @organization.account_number_rules.asc(:priority).each do |rule|
                 %tr
+                  %td= rule.priority
                   %td= rule.name
-                  %td= rule.affect
-                  %td= rule.rule_type
+                  %td= t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                  %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type)
                   %td= rule.content
-                  %td=rule.third_party_account
+                  %td= rule.third_party_account
                   %td
-                    = link_to icon_show + ' ' + 'Voir', account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini'
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini'
-                    = link_to icon_destroy + ' ' + t('actions.destroy'), account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }
+                    = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
+                    = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
+                    = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
           = link_to icon_new + ' Nouvelle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary pull-right'
-
         - if @user.is_admin
           #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
             %table.table.table-striped.table-condensed

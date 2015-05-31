@@ -61,7 +61,7 @@ class Organization
   has_many   :temp_packs
   has_many   :temp_documents
   has_many   :paper_processes
-  has_many   :rules,              class_name: 'AccountNumberRule',  inverse_of: 'organization'
+  has_many   :account_number_rules
   has_one    :subscription
   has_one    :file_sending_kit
   has_one    :ibiza

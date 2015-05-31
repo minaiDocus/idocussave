@@ -4,28 +4,34 @@
       .span12.box
         .row-fluid
           .span6
-            %h3 Informations sur la règle #{@account_number_rule.name}
+            %h3 Informations sur la règle : #{@account_number_rule.name}
           .span6.alignright
+            = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_account_number_rule_path(@organization, @account_number_rule), class: 'btn btn-primary'
+            = link_to icon_destroy + ' ' + t('actions.destroy'), account_organization_account_number_rule_path(@organization, @account_number_rule), class: 'btn btn-danger', method: :delete, data: { confirm: t('actions.confirm') }
             = link_to t('actions.return'), account_organization_path(@organization, tab: 'account_number_rules'), class: 'btn'
   .row-fluid
     .span12.box
-      %table.table.table-striped.table-condensed
+      %table.table.table-striped.table-condensed.margin0bottom
         %tbody
           %tr
-            %th type de règle
-            %td #{@account_number_rule.rule_type}
+            %th= t('mongoid.models.account_number_rule.attributes.affect')
+            %td= t('mongoid.models.account_number_rule.attributes.affect_values.' + @account_number_rule.affect)
           %tr
-            %th règle
-            %td #{@account_number_rule.content}
+            %th= t('mongoid.models.account_number_rule.attributes.rule_type')
+            %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + @account_number_rule.rule_type)
           %tr
-            %th priorité
-            %td #{@account_number_rule.priority}
-          -if @account_number_rule.rule_type == 'match'
+            %th= t('mongoid.models.account_number_rule.attributes.content')
+            %td= @account_number_rule.content
+          %tr
+            %th= t('mongoid.models.account_number_rule.attributes.priority')
+            %td= @account_number_rule.priority
+          - if @account_number_rule.rule_type == 'match'
             %tr
-              %th nom de compte tièrs
-              %td #{@account_number_rule.third_party_account}
-          -if @account_number_rule.users.count > 0
-            %th utilisateur concerné
+              %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
+              %td= @account_number_rule.third_party_account
+          - if @account_number_rule.users.count > 0
+            %th Clients concernés (#{@account_number_rule.users.size})
             %td
-              -@account_number_rule.users.asc(:code).each do |user|
-                #{user.code} / 
+              - @account_number_rule.users.asc(:code).each do |user|
+                = link_to user.info, account_organization_customer_path(@organization, user)
+                %br
