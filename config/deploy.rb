@@ -51,7 +51,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/ibiza.yml #{release_path}/config/ibiza.yml"
     command << "ln -nfs #{shared_path}/config/slimpay.yml #{release_path}/config/slimpay.yml"
     command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
-    command << "ln -nfs #{shared_path}/config/initializers/num.rb #{release_path}/config/initializers/num.rb"
     command << "ln -nfs #{shared_path}/config/initializers/compta.rb #{release_path}/config/initializers/compta.rb"
     command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
@@ -79,7 +78,6 @@ namespace :shared do
     command = []
 
     files = [
-      'num.rb',
       'compta.rb',
       'site.rb'
     ]

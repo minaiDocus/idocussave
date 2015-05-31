@@ -10,7 +10,9 @@ private
   def authenticate
     unless current_user && current_user.is_admin
       authenticate_or_request_with_http_basic do |name, password|
-        @user = Num::USERS.select { |u| u[0] == name && u[1] == password }.first
+        @user = Settings.paper_process_operators.select do |operator|
+          operator['username'] == name && operator['password'] == password
+        end.first
         @user.present?
       end
     end
