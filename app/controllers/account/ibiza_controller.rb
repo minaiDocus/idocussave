@@ -5,7 +5,7 @@ class Account::IbizaController < Account::OrganizationController
   def create
     @ibiza = Ibiza.new
     @ibiza.organization = @organization
-    if @ibiza.update_attributes(ibiza_params)
+    if @ibiza.update(ibiza_params)
       flash[:success] = 'Créé avec succès.'
     else
       flash[:error] = 'Impossible de créer.'
@@ -18,7 +18,7 @@ class Account::IbizaController < Account::OrganizationController
   end
 
   def update
-    if @organization.ibiza.update_attributes(ibiza_params)
+    if @organization.ibiza.update(ibiza_params)
       flash[:success] = 'Modifié avec succès.'
     else
       flash[:error] = 'Impossible de modifier.'

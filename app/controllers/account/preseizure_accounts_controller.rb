@@ -19,7 +19,7 @@ class Account::PreseizureAccountsController < Account::OrganizationController
   def update
     @account = Pack::Report::Preseizure::Account.find params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(Pack::Report::Preseizure::Account, nil, params[:id]) unless @account.preseizure.report.user.in? customers
-    @account.update_attributes(account_params)
+    @account.update(account_params)
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end

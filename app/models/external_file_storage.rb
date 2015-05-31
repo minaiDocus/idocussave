@@ -30,11 +30,11 @@ class ExternalFileStorage
   after_create :init_services
 
   def authorize(flags)
-    update_attributes(authorized: authorized | flags)
+    update(authorized: authorized | flags)
   end
 
   def unauthorize(flags)
-    update_attributes(authorized: authorized ^ ( authorized & flags))
+    update(authorized: authorized ^ ( authorized & flags))
   end
 
   def is_dropbox_basic_authorized?
@@ -116,14 +116,14 @@ class ExternalFileStorage
   def use(flags)
     trusted_flags = authorized & flags
     if trusted_flags == flags and services_used_count < 2
-      update_attributes(used: used | trusted_flags)
+      update(used: used | trusted_flags)
     else
       false
     end
   end
 
   def unuse(flags)
-    update_attributes(used: used ^ ( used & flags ))
+    update(used: used ^ ( used & flags ))
   end
 
   def is_used?(flag)

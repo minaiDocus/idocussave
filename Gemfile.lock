@@ -289,7 +289,7 @@ GEM
       tzinfo (>= 0.3.37)
     mongoid-paperclip (0.0.9)
       paperclip (>= 2.3.6)
-    mongoid_slug (4.0.0)
+    mongoid-slug (4.0.0)
       mongoid (>= 3.0)
       stringex (~> 2.0)
     moped (2.0.4)
@@ -555,7 +555,7 @@ DEPENDENCIES
   meta_request
   mongoid
   mongoid-paperclip
-  mongoid_slug
+  mongoid-slug
   nested_form
   net-sftp
   nokogiri

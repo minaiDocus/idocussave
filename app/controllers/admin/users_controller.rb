@@ -41,7 +41,7 @@ class Admin::UsersController < Admin::AdminController
       if params[:user][:is_prescriber]
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
-      if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update_attributes(user_params))
+      if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update(user_params))
         format.json{ render json: {}, status: :ok }
         format.html{ redirect_to admin_user_path(@user) }
       else

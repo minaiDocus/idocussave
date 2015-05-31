@@ -27,7 +27,7 @@ class Account::AddressesController < Account::AccountController
   end
 
   def update
-    if @address.update_attributes(address_params) && @user.save
+    if @address.update(address_params) && @user.save
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_addresses_path
     else

@@ -15,7 +15,9 @@ private
 
   def authenticate
     authenticate_or_request_with_http_basic do |name, password|
-      [name, password].in? Compta::USERS
+      Settings.compta_operators.select do |operator|
+        operator['username'] == name && operator['password'] == password
+      end.first.present?
     end
   end
 

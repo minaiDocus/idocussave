@@ -18,7 +18,7 @@ class UpdateSubscriptionService
 
   def execute
     @subscription.previous_option_ids = @subscription.options.map(&:id)
-    @subscription.update_attributes(@params)
+    @subscription.update(@params)
     EvaluateSubscriptionService.execute(@subscription, @requester, @request) unless @subscription.organization
     UpdatePeriodService.new(@subscription.current_period).execute
   end

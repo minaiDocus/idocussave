@@ -19,7 +19,7 @@ class AccountingPlan
         attrs = row.to_hash.slice('NOM_TIERS', 'COMPTE_TIERS', 'COMPTE_CONTREPARTIE', 'CODE_TVA')
         attrs = { third_party_name: attrs['NOM_TIERS'], third_party_account: attrs['COMPTE_TIERS'], conterpart_account: attrs['COMPTE_CONTREPARTIE'], code: attrs['CODE_TVA'] }
         if (item = items.find_by_name(row['NOM_TIERS']))
-          item.update_attributes(attrs)
+          item.update(attrs)
         else
           item = AccountingPlanItem.new(attrs)
           if type == 'providers'

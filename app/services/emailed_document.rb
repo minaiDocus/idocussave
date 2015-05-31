@@ -278,6 +278,7 @@ private
 
   def save_attachments
     pack = TempPack.find_or_create_by_name pack_name
+    pack.update_pack_state
     @temp_documents = []
     attachments.each do |attachment|
       options = {

@@ -41,7 +41,7 @@ class ReminderEmail
         processed_user_ids << client.id
         save
       end
-      self.update_attributes(delivered_at: Time.now)
+      self.update(delivered_at: Time.now)
     else
       clients
     end

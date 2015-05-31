@@ -52,7 +52,7 @@ class Account::OrganizationsController < Account::AccountController
   end
 
   def update
-    if @organization.update_attributes(organization_params)
+    if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       if params[:part] != 'other_software'
         redirect_to account_organization_path(@organization)

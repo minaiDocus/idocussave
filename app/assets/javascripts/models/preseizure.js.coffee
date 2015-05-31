@@ -17,7 +17,7 @@ class Idocus.Models.Preseizure extends Backbone.Model
       type: "Number", title: "Montant d'origine"
     currency:
       type: "Text", title: "Devise"
-    convertion_rate:
+    conversion_rate:
       type: "Text", title: "Taux de conversion"
     observation:
       type: "TextArea", title: "Remarque"

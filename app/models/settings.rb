@@ -10,4 +10,12 @@ class Settings
   setting :notify_scans_not_delivered_to,  type: Array,  default: []
 
   setting :dropbox_extended_session
+
+  # operator : { username: '', password: '', scanning_provider: '', is_return_labels_authorized: false }
+  setting :paper_process_operators, type: Array, default: []
+  # operator : { username: '', password: '' }
+  setting :compta_operators,        type: Array, default: []
+
+  setting :default_url, type: String, default: ''
+  setting :inner_url,   type: String, default: ''
 end

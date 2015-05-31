@@ -100,14 +100,14 @@ class ScansController < PaperProcessesController
 protected
 
   def is_return_labels_authorized?
-    (@user && @user[3]) or current_user
+    (@user && @user['is_return_labels_authorized']) or current_user
   end
   helper_method :is_return_labels_authorized?
 
 private
 
   def load_scanned_by
-    @scanned_by = @user.try(:[], 2)
+    @scanned_by = @user.try(:[], 'scanning_provider')
   end
 
   def load_resource

@@ -23,6 +23,7 @@ class DematboxDocument
         @temp_document.temp_pack.is_bundle_needed ? @temp_document.bundle_needed : @temp_document.ready
       else
         pack = TempPack.find_or_create_by_name pack_name
+        pack.update_pack_state
         options = {
           delivered_by:          user.code,
           delivery_type:         'dematbox_scan',

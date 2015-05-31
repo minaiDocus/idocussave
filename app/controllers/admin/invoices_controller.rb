@@ -35,7 +35,7 @@ class Admin::InvoicesController < Admin::AdminController
   end
 
   def update
-    @invoice.update_attributes invoice_params
+    @invoice.update invoice_params
     respond_to do |format|
       format.html { redirect_to admin_invoices_path }
       format.json { render json: {}, status: :ok }

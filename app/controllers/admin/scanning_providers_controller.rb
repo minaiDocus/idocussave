@@ -24,7 +24,7 @@ class Admin::ScanningProvidersController < Admin::AdminController
   end
 
   def update
-    if @scanning_provider.update_attributes scanning_provider_params
+    if @scanning_provider.update scanning_provider_params
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_scanning_provider_path(@scanning_provider)
     else

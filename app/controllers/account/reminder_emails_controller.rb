@@ -26,7 +26,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
   end
 
   def update
-    if @reminder_email.update_attributes(reminder_email_params)
+    if @reminder_email.update(reminder_email_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'reminder_emails')
     else

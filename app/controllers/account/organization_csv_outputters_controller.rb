@@ -7,7 +7,7 @@ class Account::OrganizationCsvOutputtersController < Account::OrganizationContro
   end
 
   def update
-    if @csv_outputter.update_attributes(csv_outputter_params)
+    if @csv_outputter.update(csv_outputter_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'csv_outputter')
     else

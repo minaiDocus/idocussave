@@ -14,7 +14,7 @@ class ReturnLabelsController < ApplicationController
   end
 
   def new
-    @scanned_by = @user.try(:[], 2) || nil
+    @scanned_by = @user.try(:[], 'scanning_provider') || nil
     @return_labels = ReturnLabels.new(scanned_by: @scanned_by, time: @current_time)
     @customers = @return_labels.users.sort_by do |e|
       (e.is_return_label_generated_today? ? '1_' : '0_') + e.code
@@ -34,7 +34,11 @@ private
   def authenticate
     unless current_user && current_user.is_admin
       authenticate_or_request_with_http_basic do |name, password|
-        @user = Num::USERS.select { |u| u[0] == name && u[1] == password && u[3] == true }.first
+        @user = Settings.paper_process_operators.select do |operator|
+          operator['username'] == name &&
+          operator['password'] == password &&
+          operator['is_return_labels_authorized'] == true
+        end.first
         @user.present?
       end
     end

@@ -25,7 +25,7 @@ class Account::PreseizuresController < Account::OrganizationController
   def update
     respond_to do |format|
       begin
-        @preseizure.update_attributes(preseizure_params)
+        @preseizure.update(preseizure_params)
         format.json { render json: { status: :ok } }
       rescue Mongoid::Errors::InvalidTime
         format.json { render json: { status: :unprocessable_entity } }
@@ -55,7 +55,7 @@ private
                                        :piece_number,
                                        :amount,
                                        :currency,
-                                       :convertion_rate,
+                                       :conversion_rate,
                                        :deadline_date,
                                        :observation)
   end

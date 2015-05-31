@@ -26,7 +26,7 @@ class Account::OrganizationAddressesController < Account::OrganizationController
   end
 
   def update
-    if @address.update_attributes(address_params) && @organization.save
+    if @address.update(address_params) && @organization.save
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_addresses_path(@organization)
     else

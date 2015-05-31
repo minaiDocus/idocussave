@@ -13,7 +13,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   end
 
   def update
-    if @accounting_plan.update_attributes(accounting_plan_params)
+    if @accounting_plan.update(accounting_plan_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_accounting_plan_path(@organization, @customer)
     else

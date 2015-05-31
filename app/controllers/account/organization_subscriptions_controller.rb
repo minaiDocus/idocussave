@@ -21,7 +21,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
   def propagate_options
     _params = subscription_options_params
-    if @subscription.update_attributes(_params)
+    if @subscription.update(_params)
       ids = params[:subscription][:customer_ids] - [''] rescue []
       registered_ids = @organization.customers.where(:_id.in => ids).distinct(:_id)
       if ids.size == registered_ids.size
@@ -34,7 +34,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
           :end_at.gte => Time.now
         )
         periods.each do |period|
-          period.update_attributes(_params)
+          period.update(_params)
           UpdatePeriodPriceService.new(period).execute
         end
         flash[:success] = 'Propagé avec succès.'

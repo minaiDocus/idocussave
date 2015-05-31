@@ -40,7 +40,12 @@ class FiduceoRetrieverPresenter < BasePresenter
         else
           label_type = 'success'   if fiduceo_retriever.scheduled? || fiduceo_retriever.ready?
           label_type = 'important' if fiduceo_retriever.error?
-          result = h.content_tag :span, formatted_state, class: "label label-#{label_type}"
+          result = h.content_tag :span, class: "label label-#{label_type}" do
+            concat formatted_state
+            if fiduceo_retriever.transaction_status == 'CHECK_ACCOUNT'
+              concat(h.content_tag :i, '', class: 'icon-info-sign', style: 'margin-left:3px;', title: last_event)
+            end
+          end
         end
         result
       end

@@ -39,7 +39,7 @@ class Pack::Report::Expense
   end
 
   def add_link(sheet, index, is_access_url)
-    sheet.add_hyperlink :location => File.join([SITE_INNER_URL,(is_access_url ? piece.get_access_url : piece.content.url)]), ref: sheet.rows[index-1].cells.second
+    sheet.add_hyperlink :location => File.join([Settings.inner_url, (is_access_url ? piece.get_access_url : piece.content.url)]), ref: sheet.rows[index-1].cells.second
   end
 
   class << self
@@ -323,7 +323,7 @@ class Pack::Report::Expense
         Pack::Report::Expense.pro.each do |pr|
           data = pr.to_row(is_access_url)
           (4..6).each{|i| data[i] = Pack::Report::Expense.format_price(data[i]) }
-          cell_link = make_cell(content: "<link href='#{File.join([SITE_INNER_URL,(is_access_url ? pr.piece.get_access_url : pr.piece.content.url)])}'>#{data[0]}</link>")
+          cell_link = make_cell(content: "<link href='#{File.join([Settings.inner_url, (is_access_url ? pr.piece.get_access_url : pr.piece.content.url)])}'>#{data[0]}</link>")
           data[0] = cell_link
           table([data], column_widths: widths, cell_style: { inline_format: true, border_color: "FFFFFF", size: 8 }) do
             cells.column(4..6).style(total_cell)
@@ -360,7 +360,7 @@ class Pack::Report::Expense
         Pack::Report::Expense.perso.each do |expense|
           data = expense.to_row(is_access_url)
           (4..6).each{|i| data[i] = Pack::Report::Expense.format_price(data[i]) }
-          cell_link = make_cell(content: "<link href='#{File.join([SITE_INNER_URL,(is_access_url ? expense.piece.get_access_url : expense.piece.content.url)])}'>#{data[0]}</link>")
+          cell_link = make_cell(content: "<link href='#{File.join([Settings.inner_url, (is_access_url ? expense.piece.get_access_url : expense.piece.content.url)])}'>#{data[0]}</link>")
           data[0] = cell_link
           table([data], column_widths: widths, cell_style: {inline_format: true, border_color: "FFFFFF", size: 8}) do
             cells.column(4..6).style(total_cell)

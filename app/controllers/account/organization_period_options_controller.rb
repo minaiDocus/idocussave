@@ -6,7 +6,7 @@ class Account::OrganizationPeriodOptionsController < Account::OrganizationContro
   end
 
   def update
-    if @organization.update_attributes(organization_params)
+    if @organization.update(organization_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'period_options')
     else

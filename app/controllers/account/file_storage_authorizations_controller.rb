@@ -9,7 +9,7 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
   end
 
   def update
-    @someone.update_attributes(user_params)
+    @someone.update(user_params)
     flash[:success] = 'Modifié avec succès.'
     redirect_to @url_path
   end

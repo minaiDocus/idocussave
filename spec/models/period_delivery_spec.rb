@@ -12,7 +12,7 @@ describe PeriodDelivery do
   end
 
   it "should pass from received to delivered" do
-    @period.delivery.update_attributes(state: 'received')
+    @period.delivery.update(state: 'received')
     @period.delivery.delivered!
     expect(@period.delivery.state).to eq('delivered')
   end
