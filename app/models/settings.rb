@@ -15,4 +15,7 @@ class Settings
   setting :paper_process_operators, type: Array, default: []
   # operator : { username: '', password: '' }
   setting :compta_operators,        type: Array, default: []
+
+  setting :default_url, type: String, default: ''
+  setting :inner_url,   type: String, default: ''
 end

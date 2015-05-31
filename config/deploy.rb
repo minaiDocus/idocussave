@@ -51,7 +51,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/ibiza.yml #{release_path}/config/ibiza.yml"
     command << "ln -nfs #{shared_path}/config/slimpay.yml #{release_path}/config/slimpay.yml"
     command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
-    command << "ln -nfs #{shared_path}/config/initializers/site.rb #{release_path}/config/initializers/site.rb"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     command << "ln -s #{shared_path}/data #{release_path}/data"
@@ -75,15 +74,6 @@ namespace :shared do
   desc "Prepare config files"
   task :config do
     command = []
-
-    files = ['site.rb']
-
-    files.each do |file|
-      command << "if [ -e #{shared_path}/config/initializers/#{file} ]"
-      command << "then rm #{release_path}/config/initializers/#{file}"
-      command << "else mv #{release_path}/config/initializers/#{file} #{shared_path}/config/initializers"
-      command << "fi"
-    end
 
     files = [
       'secrets.yml',

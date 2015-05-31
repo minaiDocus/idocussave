@@ -53,7 +53,7 @@ module IbizaAPI
                   xml.date computed_date(preseizure)
                   if preseizure.piece
                     xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
-                    xml.voucherID SITE_INNER_URL + preseizure.piece.get_access_url
+                    xml.voucherID Settings.inner_url + preseizure.piece.get_access_url
                     xml.voucherRef preseizure.piece_number
                   end
                   xml.accountNumber account.number

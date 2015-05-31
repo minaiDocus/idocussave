@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    @gray_label ? "/gr/sessions/#{@gray_label.slug}/destroy" : SITE_DEFAULT_URL
+    @gray_label ? "/gr/sessions/#{@gray_label.slug}/destroy" : Settings.default_url
   end
 
   def login_user!

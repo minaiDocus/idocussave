@@ -65,9 +65,9 @@ class CsvOutputter
           "#{conversion_rate}".gsub(/[\.,\,]/, separator)
         when /^piece_url$/
           if is_access_url
-            SITE_INNER_URL + entry.preseizure.piece.try(:get_access_url)
+            Settings.inner_url + entry.preseizure.piece.try(:get_access_url)
           else
-            SITE_INNER_URL + entry.preseizure.piece_content_url
+            Settings.inner_url + entry.preseizure.piece_content_url
           end
         when /^remark$/
           entry.preseizure.observation

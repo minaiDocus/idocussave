@@ -13,7 +13,7 @@ class GrayLabel::SessionsController < ApplicationController
       session[:gray_label_slug] = nil
       redirect_to @gray_label.back_url
     else
-      redirect_to SITE_DEFAULT_URL
+      redirect_to Settings.default_url
     end
   end
 
