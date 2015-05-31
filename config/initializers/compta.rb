@@ -1,5 +1,3 @@
 module Compta
-  ROOT_DIR = ENV['COMPTA_ROOT_DIR'] || File.join([Rails.root,'files', Rails.env, 'prepacompta'])
-
-  USERS = []
+  ROOT_DIR = Rails.root.join('data/compta')
 end
