@@ -14,10 +14,10 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     @account_number_rule.organization = @organization
     if @account_number_rule.save
       flash[:success] = 'Créé avec succès.'
+      redirect_to account_organization_account_number_rule_path(@organization, @account_number_rule)
     else
-      flash[:error] = 'Impossible de créer.'
+      render 'new'
     end
-    redirect_to account_organization_account_number_rule_path(@organization, @account_number_rule)
   end
 
   def edit
