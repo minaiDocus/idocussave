@@ -131,6 +131,7 @@ class User
   has_many :operations
   has_many :pre_assignment_deliveries
   has_many :paper_processes
+  has_and_belongs_to_many :account_number_rules
   has_one :subscription
   has_one :composition
   has_one :debit_mandate
