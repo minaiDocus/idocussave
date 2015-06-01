@@ -24,6 +24,7 @@ class StopSubscriptionService
     @user.options.max_number_of_journals      = 0
     @user.options.is_preassignment_authorized = false
     @user.options.save
+    @user.account_number_rules = []
     RemoveFiduceoService.new(@user.id.to_s).delay.execute
     @user.dematbox.try(:unsubscribe)
     @user.external_file_storage.try(:destroy)
