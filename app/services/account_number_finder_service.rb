@@ -30,7 +30,7 @@ class AccountNumberFinderService
           score += 1 if name.match /#{Regexp.quote(word)}/i
         end
       end
-      scores.sort_by(&:last).last.first
+      scores.sort_by(&:last).last.try(:first)
     end
 
     def find_with_rules(rules, label)
@@ -47,9 +47,12 @@ class AccountNumberFinderService
       number = nil
       truncate_rules = rules.select { |rule| rule.rule_type == 'truncate' }
 
-      matches = truncate_rules.select do |rule|
-        accounting_plan.select{ |account| label.match /#{Regexp.quote(account[0].gsub(/ ?#{rule.content}/i, ''))}/i }
-      end
+      matches = truncate_rules.map do |rule|
+        accounting_plan.select do |account|
+          clean_name = account[0].gsub(/ ?#{Regexp.quote(rule.content)}/i, '')
+          label.match /#{Regexp.quote(clean_name)}/i
+        end
+      end.flatten(1)
       matches += accounting_plan.select { |account| label.match /#{Regexp.quote(account[0])}/i }
       matches.uniq!
       name = get_the_highest_match(label, matches.map(&:first))

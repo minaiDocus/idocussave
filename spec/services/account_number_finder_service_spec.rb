@@ -7,7 +7,7 @@ describe AccountNumberFinderService do
       @organization = create(:organization)
       @user = create(:user)
       @organization.members << @user
-      @accounting_plan = [['GOOGLE', '0GOO'], ['SLIMPAY', '0SLIM'], ['FIDUCEO', '0FID']]
+      @accounting_plan = [['GOOGLE', '0GOO'], ['SLIMPAY', '0SLIM'], ['FIDUCEO', '0FID'], ['IBIZA /NS', '0IBI']]
     end
 
     context 'without rules and without accounting plan' do
@@ -61,6 +61,31 @@ describe AccountNumberFinderService do
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Orange Janvier 2015')
 
         expect(result).to eq('0ORA')
+      end
+    end
+
+    context 'with truncate rules' do
+      before(:all) do
+        @rule = AccountNumberRule.new
+        @rule.organization = @organization
+        @rule.name = '/NS'
+        @rule.affect = 'organization'
+        @rule.rule_type = 'truncate'
+        @rule.content = '/NS'
+        @rule.priority = 0
+        @rule.save
+      end
+
+      after(:all) do
+        @rule.destroy
+      end
+
+      it 'returns 0IBI' do
+        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Ibiza $150.0')
+
+        expect(result).to eq('0IBI')
       end
     end
   end
