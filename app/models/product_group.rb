@@ -8,7 +8,6 @@ class ProductGroup
   field :title,               type: String,  default: ''
   field :position,            type: Integer, default: 1
   field :is_option_dependent, type: Boolean, default: false
-  field :_slugs,              type: Array,   default: []
 
   validates_presence_of :name, :title
 

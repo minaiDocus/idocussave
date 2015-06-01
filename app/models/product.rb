@@ -7,7 +7,6 @@ class Product
   field :title,           type: String,  default: ''
   field :period_duration, type: Integer, default: 1
   field :position,        type: Integer, default: 1
-  field :_slugs,          type: Array,   default: []
 
   validates_presence_of :title
 

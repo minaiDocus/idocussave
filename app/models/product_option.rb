@@ -14,7 +14,6 @@ class ProductOption
   field :action_names,          type: Array,   default: []
   field :notify,                type: Boolean, default: false
   field :is_default,            type: Boolean, default: false
-  field :_slugs,                type: Array,   default: []
 
   validates_presence_of :name, :title, :price_in_cents_wo_vat
 

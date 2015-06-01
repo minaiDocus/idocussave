@@ -8,7 +8,6 @@ class Organization
   field :name,         type: String
   field :description,  type: String
   field :code,         type: String
-  field :_slugs,       type: Array, default: []
 
   # Authorization
   field :is_detail_authorized,                  type: Boolean, default: false

@@ -34,7 +34,6 @@ class AccountBookType
   field :is_default,                     type: Boolean, default: false
   field :is_expense_categories_editable, type: Boolean, default: false
   field :instructions,                   type: String
-  field :_slugs,                         type: Array,   default: []
 
   slug :name
 

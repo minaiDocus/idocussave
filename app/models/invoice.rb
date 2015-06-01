@@ -14,7 +14,6 @@ class Invoice
   field :content_content_type
   field :content_file_size,     type: Integer
   field :content_updated_at,    type: Time
-  field :_slugs,                type: Array, default: []
 
   has_mongoid_attached_file :content,
     styles: {

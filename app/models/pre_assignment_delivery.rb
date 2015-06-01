@@ -17,7 +17,6 @@ class PreAssignmentDelivery
   field :grouped_date, type: Date
   field :xml_data
   field :error_message
-  field :_slugs,       type: Array, default: []
 
   validates_presence_of :pack_name, :number, :state
   validates_uniqueness_of :number

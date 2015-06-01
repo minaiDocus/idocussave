@@ -8,7 +8,6 @@ class ScanningProvider
   field :name,       type: String
   field :code,       type: String
   field :is_default, type: Boolean, default: false
-  field :_slugs,     type: Array,   default: []
 
   slug :name
 

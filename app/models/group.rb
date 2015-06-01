@@ -7,7 +7,6 @@ class Group
 
   field :name,        type: String
   field :description, type: String
-  field :_slugs,      type: Array, default: []
 
   # Dropbox Extended
   field :dropbox_delivery_folder, type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
