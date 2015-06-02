@@ -7,6 +7,16 @@ class Account::AccountNumberRulesController < Account::OrganizationController
 
 	def new
     @account_number_rule = AccountNumberRule.new
+    if params[:template].present?
+      template = @organization.account_number_rules.find params[:template]
+      @account_number_rule.name                = template.name_pattern + " (#{template.similar_name.size + 1})"
+      @account_number_rule.affect              = template.affect
+      @account_number_rule.rule_type           = template.rule_type
+      @account_number_rule.content             = template.content
+      @account_number_rule.third_party_account = template.third_party_account
+      @account_number_rule.priority            = template.priority
+      @account_number_rule.users               = template.users
+    end
   end
 
   def create

@@ -281,6 +281,7 @@
                   %td= rule.content
                   %td= rule.third_party_account
                   %td
+                    = link_to icon(icon: 'plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-mini', title: 'Créer une règle en se basant sur cette règle'
                     = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
                     = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
                     = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'

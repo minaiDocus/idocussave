@@ -24,6 +24,14 @@ class AccountNumberRule
   scope :global,    -> { where(affect: 'organization') }
   scope :customers, -> { where(affect: 'user') }
 
+  def name_pattern
+    name.gsub(/\s+\(\d+\)\z/, '')
+  end
+
+  def similar_name
+    organization.account_number_rules.where(name: /#{name_pattern}/)
+  end
+
 private
 
   def uniqueness_of_name
