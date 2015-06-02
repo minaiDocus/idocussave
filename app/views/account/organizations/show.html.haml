@@ -273,7 +273,10 @@
                 %tr
                   %td= rule.priority
                   %td= rule.name
-                  %td= t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                  %td
+                    = t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                    - if rule.affect == 'user'
+                      (#{rule.users.size})
                   %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type)
                   %td= rule.content
                   %td= rule.third_party_account
