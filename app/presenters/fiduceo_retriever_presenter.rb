@@ -43,7 +43,7 @@ class FiduceoRetrieverPresenter < BasePresenter
           result = h.content_tag :span, class: "label label-#{label_type}" do
             concat formatted_state
             if fiduceo_retriever.transaction_status == 'CHECK_ACCOUNT'
-              concat(h.content_tag :i, '', class: 'icon-info-sign', style: 'margin-left:3px;', title: last_event)
+              concat(h.content_tag :i, '', class: 'icon-info-sign', style: 'margin-left:3px;', title: last_event.gsub(/\AErreur : /, ''))
             end
           end
         end
