@@ -167,7 +167,6 @@ class DocumentTools
 
       name = stamp_name(pattern, name, origin)
       stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled)
-      options[:logger].info "    stamp(#{File.exists?(stamp_file_path)}) : name:[#{name}] - pattern:[#{pattern}] - dir:#{dir}(#{File.exists?(dir)}) - is_stamp_background_filled:#{is_stamp_background_filled}"
       Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
       output_file_path
     end
