@@ -150,5 +150,9 @@ class Ibiza
     end
   end
 
+  def is_exercices_present?(id)
+    Rails.cache.read("ibiza_#{id}_exercices").present?
+  end
+
   class NoExercicesFound < RuntimeError; end
 end

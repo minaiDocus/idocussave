@@ -35,7 +35,7 @@ class PreAssignmentDeliveryService
       @delivery.save
       @delivery.xml_built
     else
-      if client.response.success?
+      if @ibiza.is_exercices_present?(@user.ibiza_id)
         @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
       else
         @delivery.error_message = @report.delivery_message = client.response.message.to_s.presence || client.response.code
