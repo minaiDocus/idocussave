@@ -20,7 +20,11 @@ class DematboxDocument
         @temp_document.dematbox_service_id  = params['service_id']
         @temp_document.dematbox_text        = params['text']
         @temp_document.save
-        @temp_document.temp_pack.is_bundle_needed ? @temp_document.bundle_needed : @temp_document.ready
+        if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed
+          @temp_document.bundle_needed
+        else
+          @temp_document.ready
+        end
       else
         pack = TempPack.find_or_create_by_name pack_name
         pack.update_pack_state

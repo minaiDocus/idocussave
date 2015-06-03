@@ -116,8 +116,10 @@ class TempPack
         else
           if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
             temp_document.ocr_needed
+          elsif is_bundle_needed && (temp_document.delivery_type == 'scan' || temp_document.pages_number > 2)
+            temp_document.bundle_needed
           else
-            is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+            temp_document.ready
           end
         end
       else
