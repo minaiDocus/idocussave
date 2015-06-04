@@ -109,8 +109,6 @@ private
         :name,
         :code,
         :leader_id,
-        :file_naming_policy,
-        :is_file_naming_policy_active,
         :is_detail_authorized,
         :is_test,
         :is_journals_management_centralized,
@@ -122,8 +120,6 @@ private
         :name,
         :authd_prev_period,
         :auth_prev_period_until_day,
-        :file_naming_policy,
-        :is_file_naming_policy_active,
         :is_journals_management_centralized,
         :is_quadratus_used,
         :is_pre_assignment_date_computed

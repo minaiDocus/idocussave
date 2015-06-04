@@ -289,8 +289,6 @@ fr:
           attributes:
             authd_prev_period:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
-            file_naming_policy:
-              invalid: "Invalide ( doit être composé des élements suivants : customerCode, journal, period, position, thirdParty, date, -, _ et [espace])"
         exercice:
           attributes:
             start_date:
@@ -595,8 +593,6 @@ fr:
           authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
           auth_prev_period_until_day: Jour de clôture de la période précédente
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
-          file_naming_policy: Charte de nommage des fichiers
-          is_file_naming_policy_active: Charte de nommage activé ?
       group:
         zero: 0 groupe
         one: 1 groupe
@@ -864,6 +860,23 @@ fr:
           rule_type_values:
             match: Recherche
             truncate: Correction du plan de compte
+      file_naming_policy:
+        zero: 0 charte de nommage
+        one: 1 charte de nommage
+        other: '%{count} chartes de nommage'
+        name: charte de nommage
+        attributes:
+          is_active: Activé
+          format: Format d'affichage du nom
+          separator: Séparateur
+          first_user_identifier: Premier identifiant client
+          second_user_identifier: Deuxième identifiant client
+          is_journal_used: Journal iDocus
+          is_period_used: Période iDocus
+          is_piece_numer_used: N° de piece iDocus
+          is_third_party_used: Nom du tiers
+          is_invoice_number_used: N° de facture d'origine
+          is_invoice_date_used: Date de la facture
     state_machines:
       fiduceo_retriever:
         states:

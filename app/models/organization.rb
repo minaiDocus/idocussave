@@ -20,13 +20,6 @@ class Organization
   field :is_quadratus_used,               type: Boolean, default: false
   field :is_pre_assignment_date_computed, type: Boolean, default: false
 
-  field :file_naming_policy,           type: String,  default: ':customerCode_:journal_:period_:position'
-  field :is_file_naming_policy_active, type: Boolean, default: false
-
-  validates_length_of :file_naming_policy, maximum: 80
-  validates_presence_of :file_naming_policy
-  validate :file_naming_policy_elements
-
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31
   field :auth_prev_period_until_month, type: Integer, default: 0 # 0..3
@@ -67,6 +60,7 @@ class Organization
   has_one    :gray_label
   has_one    :csv_outputter
   has_one    :knowings
+  has_one    :file_naming_policy
 
   embeds_many :addresses, as: :locatable
 
@@ -126,10 +120,6 @@ class Organization
     CsvOutputter.create(organization_id: self.id)
   end
 
-  def self.valid_file_naming_policy_elements
-    %w(:customerCode :journal :period :position :thirdParty :date - _ \ )
-  end
-
   def billing_address
     self.addresses.for_billing.first
   end
@@ -144,13 +134,5 @@ class Organization
 
   def is_subscription_lower_options_disabled
     !is_subscription_lower_options_enabled
-  end
-
-private
-
-  def file_naming_policy_elements
-    if file_naming_policy.gsub(/(#{Organization.valid_file_naming_policy_elements.join('|')})/, '').present?
-      errors.add(:file_naming_policy, :invalid)
-    end
   end
 end

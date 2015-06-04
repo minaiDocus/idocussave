@@ -217,3 +217,6 @@ fr:
         third_party_account: Numéro de compte tiers
         priority: Priorité
         users: Clients
+      file_naming_policy:
+        is_active: Activer le renommage des fichiers
+        separator: Séparer les éléments par
