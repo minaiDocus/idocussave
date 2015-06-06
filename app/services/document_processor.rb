@@ -142,6 +142,9 @@ class DocumentProcessor
             DocumentTools.archive(pack.archive_file_path, group)
           end
 
+          if temp_pack.is_pre_assignment_needed?
+            PrepaCompta::PreAssignment.prepare(added_pieces)
+          end
           FileDeliveryInit.prepare(pack)
         end
       end

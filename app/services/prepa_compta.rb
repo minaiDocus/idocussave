@@ -150,4 +150,45 @@ class PrepaCompta
       end
     end
   end
+
+  class PreAssignment
+    def self.prepare(pieces)
+      pieces.each do |piece|
+        Prepare.new(piece).execute unless piece.is_a_cover
+      end
+    end
+
+    class Prepare
+      def initialize(piece)
+        @piece = piece
+        @dir = dir
+      end
+
+      def execute
+        FileUtils.mkdir_p(@dir)
+        FileUtils.cp(@piece.content.path, File.join(@dir, file_name))
+        @piece.update(is_awaiting_pre_assignment: true)
+      end
+
+      def file_name
+        DocumentTools.file_name(@piece.name)
+      end
+
+      def dir
+        list = [current_base_dir]
+        list << 'dynamic' if @piece.temp_document.is_an_original
+        list << compta_type
+        File.join list
+      end
+
+      def compta_type
+        journal = @piece.user.account_book_types.where(name: @piece.journal).first
+        journal.compta_type
+      end
+
+      def current_base_dir
+        File.join Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d')
+      end
+    end
+  end
 end

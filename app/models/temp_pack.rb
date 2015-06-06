@@ -64,7 +64,11 @@ class TempPack
     name.split[2]
   end
 
-  def is_bundle_needed
+  def is_bundle_needed?
+    journal.try(:compta_processable?) || false
+  end
+
+  def is_pre_assignment_needed?
     journal.try(:compta_processable?) || false
   end
 
@@ -116,7 +120,7 @@ class TempPack
         else
           if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
             temp_document.ocr_needed
-          elsif is_bundle_needed && (temp_document.delivery_type == 'scan' || temp_document.pages_number > 2)
+          elsif is_bundle_needed? && (temp_document.delivery_type == 'scan' || temp_document.pages_number > 2)
             temp_document.bundle_needed
           else
             temp_document.ready
