@@ -237,6 +237,7 @@ GEM
     hashie (2.0.5)
     highline (1.6.19)
     hike (1.2.3)
+    hirb (0.7.3)
     hitimes (1.2.2)
     hpricot (0.8.6)
     html2haml (2.0.0)
@@ -547,6 +548,7 @@ DEPENDENCIES
   guard-livereload
   guard-rspec
   haml-rails
+  hirb
   hpricot
   jquery-rails
   jquery-ui-rails
