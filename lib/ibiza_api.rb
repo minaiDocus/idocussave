@@ -155,7 +155,7 @@ module IbizaAPI
         begin
           @original.send(name, *args)
         rescue NoMethodError
-          parse_body(name)
+          @original.parse_body(name)
         end
       end
 

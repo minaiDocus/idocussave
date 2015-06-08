@@ -34,8 +34,12 @@ public
     if params[:not_approved] == 'true'
       flash[:notice] = 'Configuration de Dropbox annulée.'
     else
-      @dropbox.get_access_token
-      flash[:notice] = 'Votre compte Dropbox a été configuré avec succès.'
+      begin
+        @dropbox.get_access_token
+        flash[:notice] = 'Votre compte Dropbox a été configuré avec succès.'
+      rescue DropboxAuthError
+        flash[:error] = 'Impossible de configurer votre compte Dropbox.'
+      end
     end
     redirect_to account_profile_path(panel: 'efs_management')
   end

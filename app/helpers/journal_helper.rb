@@ -14,14 +14,18 @@ module JournalHelper
   end
 
   def ibiza_journals
-    Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/,''), :journals], expires_in: 5.minutes do
-      service = IbizaJournalsService.new(@customer)
-      service.execute
-      if service.success?
-        service.journals
-      else
-        []
+    if @customer.ibiza_id.present?
+      Rails.cache.fetch [:ibiza, :user, @customer.ibiza_id.gsub(/({|})/,''), :journals], expires_in: 5.minutes do
+        service = IbizaJournalsService.new(@customer)
+        service.execute
+        if service.success?
+          service.journals
+        else
+          []
+        end
       end
+    else
+      []
     end
   end
 

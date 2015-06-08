@@ -44,6 +44,7 @@ gem 'ansi', :require => false
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'posix-spawn'
+gem 'hirb', :require => false
 
 gem 'sass-rails', '4.0.5'
 gem 'coffee-rails', '~> 4.0.0'

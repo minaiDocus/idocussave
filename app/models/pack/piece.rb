@@ -22,7 +22,6 @@ class Pack::Piece
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
 
   before_validation :set_number
-  before_create     :send_to_compta
 
   belongs_to :organization
   belongs_to :user
@@ -83,31 +82,6 @@ class Pack::Piece
 
   def fiduceo?
     origin == 'fiduceo'
-  end
-
-  def account_book_type
-    @account_book_type ||= pack.owner.account_book_types.where(name: journal).first
-  end
-
-  def compta_processable?
-    account_book_type && account_book_type.compta_processable? && !is_a_cover
-  end
-
-  def send_to_compta
-    if compta_processable?
-      compta_type = account_book_type.compta_type
-      if fiduceo?
-        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),'fiduceo',compta_type])
-      else
-        path = File.join([Compta::ROOT_DIR,'input',Time.now.strftime('%Y%m%d'),compta_type])
-      end
-      FileUtils.mkdir_p(path)
-      filename = DocumentTools.file_name(self.name)
-      content_path = (self.content.queued_for_write[:original].presence || self.content).path
-      FileUtils.cp(content_path, File.join([path,filename]))
-      self.is_awaiting_pre_assignment = true
-      self.save if persisted?
-    end
   end
 
 private

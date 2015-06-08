@@ -3,14 +3,14 @@ class Account::IbizaController < Account::OrganizationController
   before_filter :verify_rights, except: :refresh_users_cache
 
   def create
-    @ibiza = Ibiza.new
+    @ibiza = Ibiza.new(ibiza_params)
     @ibiza.organization = @organization
-    if @ibiza.update(ibiza_params)
+    if @ibiza.save
       flash[:success] = 'Créé avec succès.'
+      redirect_to account_organization_path(@organization, tab: 'ibiza')
     else
-      flash[:error] = 'Impossible de créer.'
+      render 'edit'
     end
-    redirect_to account_organization_path(@organization, tab: 'ibiza')
   end
 
   def edit
@@ -20,10 +20,10 @@ class Account::IbizaController < Account::OrganizationController
   def update
     if @organization.ibiza.update(ibiza_params)
       flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_path(@organization, tab: 'ibiza')
     else
-      flash[:error] = 'Impossible de modifier.'
+      render 'edit'
     end
-    redirect_to account_organization_path(@organization, tab: 'ibiza')
   end
 
   def refresh_users_cache

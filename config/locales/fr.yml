@@ -298,9 +298,9 @@ fr:
         paper_process:
           attributes:
             tracking_number:
-              takin: existe déjà
+              taken: existe déjà
             customer_code:
-              takin: existe déjà
+              taken: existe déjà
             journals_count:
               greater_than: 'doit être supérieur à %{count}'
             periods_count:

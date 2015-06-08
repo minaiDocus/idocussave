@@ -57,7 +57,7 @@ class DocumentDelivery
   def replace(temp_document, file)
     temp_document.content = file
     temp_document.save
-    temp_document.temp_pack.is_bundle_needed ? temp_document.bundle_needed : temp_document.ready
+    temp_document.temp_pack.is_bundle_needed? ? temp_document.bundle_needed : temp_document.ready
   end
 
   class << self

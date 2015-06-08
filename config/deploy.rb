@@ -102,7 +102,7 @@ end
 namespace :mod_rails do
   desc "Restart the application."
   task :restart, :roles => :app do
-    run "/home/grevalis/myapps/opt/passenger-5.0.8/bin/passenger-config restart-app /home/grevalis/www/idocus/#{rails_env}"
+    run "/home/grevalis/myapps/opt/passenger-5.0.8/bin/passenger-config restart-app /home/grevalis/www/idocus/#{rails_env} --ignore-app-not-running"
   end
 end
 
