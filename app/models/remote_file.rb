@@ -94,23 +94,24 @@ class RemoteFile
   end
 
   def name
-    if remotable && remotable.class.name == Pack::Piece.name && pack.organization.is_file_naming_policy_active
-      part = remotable.name.split
-      result = pack.organization.file_naming_policy.
-        gsub(':customerCode', part[0].sub(/.*%/,'')).
-        gsub(':journal',      part[1]).
-        gsub(':position',     "%0#{DocumentProcessor::POSITION_SIZE}d" % part[3].to_i)
-      if remotable.try(:preseizures).try(:any?)
-        preseizure = remotable.preseizures.first
-        result = result.gsub(':thirdParty', preseizure.third_party.to_s).
-          gsub(':date',   preseizure.date.try(:to_date).try(:to_s)).
-          gsub(':period', [part[2][0..3], part[2][4..5]].join('-'))
-      else
-        result = result.gsub(':thirdParty', '').
-          gsub(':date',   '').
-          gsub(':period', [part[2][0..3], part[2][4..5]].join)
+    if remotable.class == Pack::Piece && (pack.organization.foc_file_naming_policy.scope == 'organization' || group.present? || user.is_prescriber)
+      name_part = remotable.name.split
+      options = {
+        user_code:    pack.owner.code,
+        user_name:    pack.owner.name,
+        journal:      name_part[1],
+        period:       name_part[2],
+        piece_number: "%0#{DocumentProcessor::POSITION_SIZE}d" % name_part[3].to_i,
+        extension:    '.pdf'
+      }
+      if (preseizure = remotable.preseizures.first)
+        options.merge!({
+          third_party:    preseizure.third_party.presence,
+          invoice_number: preseizure.piece_number.presence,
+          invoice_date:   preseizure.date.try(:to_date).try(:to_s).presence
+        })
       end
-      result + '.pdf'
+      CustomFileNameService.new(pack.organization.foc_file_naming_policy).execute(options)
     else
       local_name
     end
@@ -160,7 +161,7 @@ class RemoteFile
 
   def to_s
     if self.state.in? %w(waiting cancelled)
-      "#{formated_service_name}#{formated_state} #{local_name}"
+      "#{formated_service_name}#{formated_state} #{name}"
     else
       "#{formated_service_name}#{formated_state} #{self.path} #{self.at}"
     end

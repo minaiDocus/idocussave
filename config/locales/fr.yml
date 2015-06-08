@@ -866,14 +866,13 @@ fr:
         other: '%{count} chartes de nommage'
         name: charte de nommage
         attributes:
-          is_active: Activé
-          format: Format d'affichage du nom
+          scope: Portée
           separator: Séparateur
           first_user_identifier: Premier identifiant client
           second_user_identifier: Deuxième identifiant client
           is_journal_used: Journal iDocus
           is_period_used: Période iDocus
-          is_piece_numer_used: N° de piece iDocus
+          is_piece_number_used: N° de piece iDocus
           is_third_party_used: Nom du tiers
           is_invoice_number_used: N° de facture d'origine
           is_invoice_date_used: Date de la facture

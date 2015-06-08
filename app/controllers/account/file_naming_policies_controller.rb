@@ -1,18 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::FileNamingPoliciesController < Account::OrganizationController
   before_filter :verify_rights
-  before_filter :load_file_naming_policy, except: :create
-
-  def create
-    @file_naming_policy = FileNamingPolicy.new(file_naming_policy_params)
-    @file_naming_policy.organization = @organization
-    if @file_naming_policy.save
-      flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_path(@organization, tab: 'file_naming_policy')
-    else
-      render 'edit'
-    end
-  end
+  before_filter :load_file_naming_policy
 
   def edit
   end
@@ -28,20 +17,20 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
 
 private
 
-  def load_file_naming_policy
-    @file_naming_policy = @organization.file_naming_policy
-  end
-
-	def verify_rights
+  def verify_rights
     unless is_leader?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
   end
 
+  def load_file_naming_policy
+    @file_naming_policy = @organization.foc_file_naming_policy
+  end
+
   def file_naming_policy_params
     params.require(:file_naming_policy).permit(
-    	:is_active,
+      :scope,
       :separator,
       :first_user_identifier,
       :first_user_identifier_position,

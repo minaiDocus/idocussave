@@ -69,15 +69,19 @@ class FileDeliveryInit
         end
         # pieces
         if type.in? [RemoteFile::ALL, RemoteFile::PIECES_ONLY]
+          is_custom_name_active = organization.foc_file_naming_policy.scope == 'organization' || object.class == Group || object.is_prescriber
+          is_custom_name_needed = is_custom_name_active && organization.foc_file_naming_policy.pre_assignment_needed?
           pieces.each do |piece|
-            piece.extend FileDeliveryInit::RemoteFile
-            temp_remote_files = piece.get_remote_files(object,service_name)
-            if force
-              temp_remote_files.each do |remote_file|
-                remote_file.waiting!
+            unless piece.is_awaiting_pre_assignment && is_custom_name_needed
+              piece.extend FileDeliveryInit::RemoteFile
+              temp_remote_files = piece.get_remote_files(object,service_name)
+              if force
+                temp_remote_files.each do |remote_file|
+                  remote_file.waiting!
+                end
               end
+              current_remote_files += temp_remote_files
             end
-            current_remote_files += temp_remote_files
           end
         end
         # report

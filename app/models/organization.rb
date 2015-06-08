@@ -116,6 +116,11 @@ class Organization
   end
   alias :csv_outputter! :find_or_create_csv_outputter
 
+  def find_or_create_file_naming_policy
+    self.file_naming_policy ||= FileNamingPolicy.create(organization_id: self.id)
+  end
+  alias :foc_file_naming_policy :find_or_create_file_naming_policy
+
   def create_csv_outputter
     CsvOutputter.create(organization_id: self.id)
   end

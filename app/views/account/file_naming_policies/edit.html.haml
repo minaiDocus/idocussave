@@ -6,7 +6,7 @@
   .row-fluid
     .span12.box
       = simple_form_for (@file_naming_policy || FileNamingPolicy.new), url: account_organization_file_naming_policy_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
-        = f.input :is_active, as: 'boolean'
+        = f.input :scope, collection: [['collaborateurs et clients', 'organization'], ['collaborateurs uniquement', 'collaborators']], include_blank: false
         = f.input :separator, collection: ['_' , '-'], include_blank: false
 
         %table.table-condensed
@@ -19,44 +19,44 @@
           %tbody
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.first_user_identifier')
-              %th= f.input_field :first_user_identifier, collection: ['Code client iDocus', 'Nom du client'], include_blank: false, label: false
+              %th= f.input_field :first_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom du client', 'name']], include_blank: false, label: false
               %th= f.input_field :first_user_identifier_position, as: :integer, include_blank: false, label: false
               %th Obligatoire
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.second_user_identifier')
-              %th= f.input_field :second_user_identifier, collection: ['Code client iDocus', 'Nom du client'], label: false
+              %th= f.input_field :second_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom du client', 'name']], label: false
               %th= f.input_field :second_user_identifier_position, as: :integer, label: false
               %th Facultatif
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.is_journal_used')
-              %th= f.input_field :is_journal_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_journal_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :journal_position, as: :integer, include_blank: false, label: false
               %th Facultatif
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.is_period_used')
-              %th= f.input_field :is_period_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_period_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :period_position, as: :integer, include_blank: false, label: false
               %th Facultatif
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.is_piece_number_used')
-              %th= f.input_field :is_piece_number_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_piece_number_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :piece_number_position, as: :integer, include_blank: false, label: false
               %th Facultatif
             %tr
               %th= icon(icon: 'info-sign') + t('mongoid.models.file_naming_policy.attributes.is_third_party_used')
-              %th= f.input_field :is_third_party_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_third_party_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :third_party_position, as: :integer, label: false
               %th{:rowspan => 3, :width => "150"}
                 En sélectionnant cette valeur, votre fichier vous sera livré qu'après le traitement en pré-affectation comptable, sous réserve que la donnée soit disponible.
             %tr
               %th= icon(icon: 'info-sign') + t('mongoid.models.file_naming_policy.attributes.is_invoice_number_used')
-              %th= f.input_field :is_invoice_number_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_invoice_number_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :invoice_number_position, as: :integer, label: false
             %tr
               %th= icon(icon: 'info-sign') + t('mongoid.models.file_naming_policy.attributes.is_invoice_date_used')
-              %th= f.input_field :is_invoice_date_used, collection: ['Oui', 'Non'], include_blank: false, label: false
+              %th= f.input_field :is_invoice_date_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %th= f.input_field :invoice_date_position, as: :integer, label: false
-        %em= icon(icon: 'info-sign') +  'cette option n’est disponible que sur les dossiers en pré-affectation comptable'
+        %em= icon(icon: 'info-sign') + 'cette option n’est disponible que sur les dossiers en pré-affectation comptable'
 
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'

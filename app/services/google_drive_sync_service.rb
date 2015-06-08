@@ -65,12 +65,11 @@ class GoogleDriveSyncService
   def send_file(collection, remote_file, remote_path, index)
     tries = 0
     begin
-      basename = File.basename remote_file.local_path
       remote_filepath = File.join(remote_path, remote_file.name)
       remote_file.sending!(remote_filepath)
       print "\t[#{'%0.3d' % (index+1)}] #{remote_filepath} sending..."
-      mimetype = DocumentTools.mimetype(basename)
-      collection.upload_from_file(remote_file.local_path, basename, { content_type: mimetype })
+      mimetype = DocumentTools.mimetype(remote_file.name)
+      collection.upload_from_file(remote_file.local_path, remote_file.name, { content_type: mimetype })
       remote_file.synced!
       print "done\n"
     rescue => e

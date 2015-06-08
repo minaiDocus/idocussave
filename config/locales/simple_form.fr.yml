@@ -79,8 +79,6 @@ fr:
         authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
         auth_prev_period_until_day: Jour de clôture de la période précédente
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel)
-        file_naming_policy: Charte de nommage des fichiers
-        is_file_naming_policy_active: Activer la charte
         is_detail_authorized: Autoriser les détails dans le reporting ?
         is_test: Organisation de test ?
         is_journals_management_centralized: Gestion des journaux comptables centralisé ?
@@ -218,5 +216,5 @@ fr:
         priority: Priorité
         users: Clients
       file_naming_policy:
-        is_active: Activer le renommage des fichiers
+        scope: Portée
         separator: Séparer les éléments par
