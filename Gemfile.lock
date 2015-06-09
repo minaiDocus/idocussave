@@ -1,10 +1,9 @@
 GIT
   remote: git@github.com:Pikomu/delayed_job_web.git
-  revision: d2f58492d509c08f682d4586af8cd634b3c0b57d
+  revision: f1a601b2d5013ddb7190a20101b5d76b6f254465
   branch: master
   specs:
-    delayed_job_web (1.2.9)
-      activerecord (> 3.0.0)
+    delayed_job_web (1.2.10)
       delayed_job (> 2.0.3)
       sinatra (>= 1.4.4)
 
@@ -256,7 +255,7 @@ GEM
     jquery-ui-rails (1.1.0)
       jquery-rails
       railties (>= 3.1.0)
-    json (1.8.2)
+    json (1.8.3)
     jwt (1.2.1)
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
@@ -282,7 +281,7 @@ GEM
     method_source (0.8.2)
     mime-types (2.5)
     mini_portile (0.6.2)
-    minitest (5.6.1)
+    minitest (5.7.0)
     mongoid (4.0.2)
       activemodel (~> 4.0)
       moped (~> 2.0.0)
@@ -447,10 +446,10 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.9.0)
     simplecov-html (0.9.0)
-    sinatra (1.4.5)
+    sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
+      tilt (>= 1.3, < 3)
     slop (3.6.0)
     spreadsheet (1.0.1)
       ruby-ole (>= 1.0)
