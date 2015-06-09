@@ -92,7 +92,7 @@ class AccountNumberFinderService
     end
 
     def parsed_accounting_plan(code)
-      path = Rails.root.join('data', 'compta', 'mapping', code, '.xml').to_s
+      path = Rails.root.join('data', 'compta', 'mapping', "#{code}.xml").to_s
       if File.exist? path
         Nokogiri::XML(open(path))
       else
