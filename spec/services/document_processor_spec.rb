@@ -2087,7 +2087,7 @@ describe DocumentProcessor do
         @user.reload
         @pack = @user.packs.first
         @temp_pack = TempPack.where(name: @pack.name).first
-        @path = File.join([Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'AC'], 'TS0001_TS_201301_001.pdf')
+        @path = File.join(Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001.pdf')
       end
 
       after(:all) do
