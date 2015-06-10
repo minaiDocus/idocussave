@@ -5,7 +5,7 @@
         %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
           %a{ href: '#information', data: { toggle: 'tab' } } Information
         %li{ class: ('active' if params[:tab] == 'file_naming_policy') }
-          %a{ href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage
+          %a{ href: '#file_naming_policy', data: { toggle: 'tab' } } Nom des fichiers PDF/TIFF
         %li{ class: ('active' if params[:tab] == 'addresses') }
           %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
         %li{ class: ('active' if params[:tab] == 'period_options') }
@@ -88,7 +88,7 @@
                     collaborateurs uniquement
               %tr
                 %th Exemple
-                %td= CustomFileNameService.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_name' => 'John Doe', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
+                %td= CustomFileNameService.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
           - if is_leader?
             .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
         #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }

@@ -26,8 +26,8 @@ class FileNamingPolicy
 
   validates_inclusion_of :scope, in: %w(organization collaborators)
   validates_inclusion_of :separator, in: ['-', '_']
-  validates_inclusion_of :first_user_identifier, in: %w(code name)
-  validates_inclusion_of :second_user_identifier, in: %w(code name), if: -> p { p.second_user_identifier.present? }
+  validates_inclusion_of :first_user_identifier, in: %w(code company)
+  validates_inclusion_of :second_user_identifier, in: %w(code company), if: -> p { p.second_user_identifier.present? }
 
   def pre_assignment_needed?
     is_third_party_used || is_invoice_number_used || is_invoice_date_used

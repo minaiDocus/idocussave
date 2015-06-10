@@ -98,7 +98,7 @@ class RemoteFile
       name_part = remotable.name.split
       options = {
         user_code:    pack.owner.code,
-        user_name:    pack.owner.name,
+        user_company: pack.owner.company,
         journal:      name_part[1],
         period:       name_part[2],
         piece_number: "%0#{DocumentProcessor::POSITION_SIZE}d" % name_part[3].to_i,

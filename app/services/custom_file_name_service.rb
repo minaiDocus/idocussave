@@ -7,9 +7,9 @@ class CustomFileNameService
     options = options.with_indifferent_access
     data = []
     data << [options['user_code'],      @policy.first_user_identifier_position]  if @policy.first_user_identifier == 'code'
-    data << [options['user_name'],      @policy.first_user_identifier_position]  if @policy.first_user_identifier == 'name'
+    data << [options['user_company'],   @policy.first_user_identifier_position]  if @policy.first_user_identifier == 'company'
     data << [options['user_code'],      @policy.second_user_identifier_position] if @policy.second_user_identifier == 'code'
-    data << [options['user_name'],      @policy.second_user_identifier_position] if @policy.second_user_identifier == 'name'
+    data << [options['user_company'],   @policy.second_user_identifier_position] if @policy.second_user_identifier == 'company'
     data << [options['journal'],        @policy.journal_position]                if @policy.is_journal_used
     data << [options['period'],         @policy.period_position]                 if @policy.is_period_used
     data << [options['piece_number'],   @policy.piece_number_position]           if @policy.is_piece_number_used

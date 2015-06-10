@@ -19,12 +19,12 @@
           %tbody
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.first_user_identifier')
-              %th= f.input_field :first_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom du client', 'name']], include_blank: false, label: false
+              %th= f.input_field :first_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom de la société', 'company']], include_blank: false, label: false
               %th= f.input_field :first_user_identifier_position, as: :integer, include_blank: false, label: false
               %th Obligatoire
             %tr
               %th= t('mongoid.models.file_naming_policy.attributes.second_user_identifier')
-              %th= f.input_field :second_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom du client', 'name']], label: false
+              %th= f.input_field :second_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom de la société', 'company']], label: false
               %th= f.input_field :second_user_identifier_position, as: :integer, label: false
               %th Facultatif
             %tr
