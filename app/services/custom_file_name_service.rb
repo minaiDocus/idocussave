@@ -20,6 +20,7 @@ class CustomFileNameService
                   map(&:first).
                   compact.
                   join(@policy.separator).
+                  gsub(/\/+\s*/, '').
                   gsub(/\s+/, @policy.separator)
     file_name + options['extension']
   end
