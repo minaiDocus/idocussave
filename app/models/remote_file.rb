@@ -102,7 +102,7 @@ class RemoteFile
         journal:      name_part[1],
         period:       name_part[2],
         piece_number: "%0#{DocumentProcessor::POSITION_SIZE}d" % name_part[3].to_i,
-        extension:    '.pdf'
+        extension:    extension
       }
       if (preseizure = remotable.preseizures.first)
         options.merge!({
