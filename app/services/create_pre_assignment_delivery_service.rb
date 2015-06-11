@@ -27,7 +27,7 @@ class CreatePreAssignmentDeliveryService
         grouped_preseizures = { date => @preseizures }
       else
         grouped_preseizures = @preseizures.group_by do |preseizure|
-          preseizure.date.beginning_of_month.to_date
+          preseizure.date.try(:beginning_of_month).try(:to_date) || DocumentTools.to_period(@report.name)
         end
       end
 
