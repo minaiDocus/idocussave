@@ -78,7 +78,7 @@ private
 
   def user_params
     params.require(:user).permit(:code,
-                                 :group_ids,
+                                 { group_ids: [] },
                                  :company,
                                  :first_name,
                                  :last_name,
