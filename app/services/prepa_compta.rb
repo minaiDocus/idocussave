@@ -171,7 +171,17 @@ class PrepaCompta
       end
 
       def file_name
-        DocumentTools.file_name(@piece.name)
+        data = [@piece.name]
+        if journal.is_pre_assignment_processable?
+          data << "DTI#{journal.default_account_number}" if journal.default_account_number.present?
+          data << "ATI#{journal.account_number}"         if journal.account_number.present?
+          data << "DCP#{journal.default_charge_account}" if journal.default_charge_account.present?
+          data << "ACP#{journal.charge_account}"         if journal.charge_account.present?
+          data << "TVA#{journal.vat_account}"            if is_taxable && journal.vat_account.present?
+          data << "ANO#{journal.anomaly_account}"
+          data << "TAX#{is_taxable ? 1 : 0}"
+        end
+        data.join('_').gsub(/\/+/, '').gsub(' ', '_') + '.pdf'
       end
 
       def dir
@@ -188,6 +198,14 @@ class PrepaCompta
 
       def current_base_dir
         File.join Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d')
+      end
+
+      def journal
+        @journal ||= @piece.user.account_book_types.where(name: @piece.journal).first
+      end
+
+      def is_taxable
+        @is_taxable ||= @piece.user.options.is_taxable
       end
     end
   end
