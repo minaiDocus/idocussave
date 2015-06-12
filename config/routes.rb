@@ -50,7 +50,9 @@ Idocus::Application.routes.draw do
         get  :select_propagation_options, on: :member
         post :propagate,                  on: :member
       end
-      resource :file_naming_policy
+      resource :file_naming_policy, only: %w(edit update) do
+        patch 'preview', on: :member
+      end
       resources :account_number_rules
       resource :knowings, only: %w(new create edit update)
       resources :reminder_emails, except: :index do

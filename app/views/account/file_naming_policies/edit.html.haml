@@ -63,6 +63,11 @@
               %td.name= label_tag 'file_naming_policy[is_invoice_date_used]', t('mongoid.models.file_naming_policy.attributes.is_invoice_date_used')
               %td.is_used= f.input_field :is_invoice_date_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position= f.input_field :invoice_date_position, as: :integer, label: false
+        %table.table-condensed#result
+          %tbody
+            %tr
+              %th.name Résultat :
+              %td.value
 
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'

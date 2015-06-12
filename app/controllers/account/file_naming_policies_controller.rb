@@ -15,6 +15,24 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
     end
   end
 
+  def preview
+    @file_naming_policy.assign_attributes(file_naming_policy_params)
+    file_name = CustomFileNameService.new(@file_naming_policy).execute({
+      user_code:      'TS%00001',
+      user_company:   'iDocus',
+      journal:        'AC',
+      period:         '201501',
+      piece_number:   '001',
+      third_party:    'Google',
+      invoice_number: '001002',
+      invoice_date:   '2015-01-02',
+      extension:      '.pdf'
+    })
+    respond_to do |format|
+      format.json { render json: { file_name: file_name } }
+    end
+  end
+
 private
 
   def verify_rights
