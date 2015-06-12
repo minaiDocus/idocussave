@@ -173,11 +173,11 @@ class PrepaCompta
       def file_name
         data = [@piece.name]
         if journal.is_pre_assignment_processable?
-          data << "DTI#{journal.default_account_number}" if journal.default_account_number.present?
-          data << "ATI#{journal.account_number}"         if journal.account_number.present?
-          data << "DCP#{journal.default_charge_account}" if journal.default_charge_account.present?
-          data << "ACP#{journal.charge_account}"         if journal.charge_account.present?
-          data << "TVA#{journal.vat_account}"            if is_taxable && journal.vat_account.present?
+          data << "DTI#{journal.default_account_number}"
+          data << "ATI#{journal.account_number}"
+          data << "DCP#{journal.default_charge_account}"
+          data << "ACP#{journal.charge_account}"
+          data << "TVA#{journal.vat_account}"
           data << "ANO#{journal.anomaly_account}"
           data << "TAX#{is_taxable ? 1 : 0}"
         end
