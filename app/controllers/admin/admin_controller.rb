@@ -42,52 +42,52 @@ class Admin::AdminController < ApplicationController
       object
     end
 
-    @bundle_needed_temp_packs = TempPack.desc(:updated_at).bundle_needed.map do |temp_pack|
+    @bundle_needed_temp_packs = TempPack.bundle_needed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundle_needed.by_position.first.try(:updated_at)
+      object.date           = temp_pack.temp_documents.bundle_needed.by_position.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundle_needed.count
       object.message        = temp_pack.temp_documents.bundle_needed.distinct('delivery_type').join(', ')
       object
-    end
+    end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    @bundling_temp_packs = TempPack.desc(:updated_at).bundling.map do |temp_pack|
+    @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundling.by_position.first.try(:updated_at)
+      object.date           = temp_pack.temp_documents.bundling.by_position.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.bundling.count
       object.message        = temp_pack.temp_documents.bundling.distinct('delivery_type').join(', ')
       object
-    end
+    end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
 
-    @processing_temp_packs = TempPack.desc(:updated_at).not_processed.map do |temp_pack|
+    @processing_temp_packs = TempPack.not_processed.map do |temp_pack|
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.ready.by_position.first.try(:updated_at)
+      object.date           = temp_pack.temp_documents.ready.by_position.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all$/,'')
       object.document_count = temp_pack.temp_documents.ready.count
       object.message        = temp_pack.temp_documents.ready.distinct('delivery_type').join(', ')
       object
-    end
+    end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
 
     pack_ids = RemoteFile.not_processed.retryable.distinct(:pack_id)
-    @currently_being_delivered_packs = Pack.where(:_id.in => pack_ids).desc(:updated_at).map do |pack|
+    @currently_being_delivered_packs = Pack.where(:_id.in => pack_ids).map do |pack|
       object = OpenStruct.new
-      object.date           = pack.remote_files.not_processed.retryable.asc(:created_at).first.try(:created_at)
+      object.date           = pack.remote_files.not_processed.retryable.asc(:created_at).last.try(:created_at)
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.retryable.count
       object.message        = pack.remote_files.not_processed.retryable.distinct(:service_name).join(', ')
       object
-    end
+    end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
 
     pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id)
-    @failed_packs_delivery = Pack.where(:_id.in => pack_ids).desc(:updated_at).map do |pack|
+    @failed_packs_delivery = Pack.where(:_id.in => pack_ids).map do |pack|
       object = OpenStruct.new
-      object.date           = pack.remote_files.not_processed.not_retryable.asc(:created_at).first.try(:created_at)
+      object.date           = pack.remote_files.not_processed.not_retryable.asc(:created_at).last.try(:created_at)
       object.name           = pack.name.sub(/ all$/,'')
       object.document_count = pack.remote_files.not_processed.not_retryable.count
       object.message        = pack.remote_files.not_processed.not_retryable.distinct(:service_name).join(', ')
       object
-    end
+    end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
 
     pending_pre_assignments   = PreAssignmentService.pending
     @blocked_pre_assignments  = pending_pre_assignments.select { |e| e.message.present? }
