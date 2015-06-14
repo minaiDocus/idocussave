@@ -89,7 +89,7 @@ class Pack::Report::Expense
     # 12 => index of the first pro row
     # 6 => gap between pro and perso rows
 
-    def sum_total_cell(type, first_index= 12 + self.distinct_type.count , last_index=first_index + self.pro.count + self.perso.count + 6)
+    def sum_total_cell(type, first_index= 12 + self.distinct_type.count, last_index=first_index + self.pro.count + self.perso.count + 6)
       total = []
       total <<  "=SUMIF(E#{first_index}:E#{last_index},\"#{type}\",F#{first_index}:F#{last_index})"
       total <<  "=SUMIF(E#{first_index}:E#{last_index},\"#{type}\",G#{first_index}:G#{last_index})"

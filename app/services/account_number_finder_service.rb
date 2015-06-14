@@ -67,12 +67,12 @@ class AccountNumberFinderService
         doc = parsed_open_accounting_plan(user.code)
         if doc
           doc.css('wsAccounts').each do |account|
-            accounting_plan << [account.css('name').text , account.css('number').text]
+            accounting_plan << [account.css('name').text, account.css('number').text]
           end
         end
       elsif user.accounting_plan
         user.accounting_plan.providers.each do |provider|
-          accounting_plan << [provider.third_party_name , provider.third_party_account]
+          accounting_plan << [provider.third_party_name, provider.third_party_account]
         end
       end
       accounting_plan
