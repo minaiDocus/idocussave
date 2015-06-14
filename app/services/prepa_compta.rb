@@ -152,14 +152,26 @@ class PrepaCompta
   end
 
   class PreAssignment
-    def self.prepare(pieces)
-      pieces.each do |piece|
-        Prepare.new(piece).execute unless piece.is_a_cover
+    class << self
+      def prepare(pieces)
+        pieces.each do |piece|
+          Prepare.new(piece).execute unless piece.is_a_cover
+        end
       end
-    end
 
-    def self.prepare_mapping(users)
-      PrepareMapping.new.execute(users)
+      def prepare_mapping(users)
+        PrepareMapping.new.execute(users)
+      end
+
+      def prepare_users_list(users)
+        data = [['code', 'name', 'company'].join(',')]
+        users.each do |user|
+          data << [user.code, user.name, user.company].join(',')
+        end
+        File.open(Rails.root.join('data/compta/mapping_csv/liste_dossiers.csv'), 'w') do |f|
+          f.write data.join("\n")
+        end
+      end
     end
 
     class Prepare

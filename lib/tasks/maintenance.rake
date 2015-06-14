@@ -127,9 +127,10 @@ namespace :maintenance do
     task :update_accounting_plan => [:environment] do
       organization_ids = Organization.not_test.map(&:id)
       user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
-      users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active
+      users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active.sort_by(&:code)
 
-      PrepaCompta::PreAssignment.prepare_mapping(users.sort_by(&:code))
+      PrepaCompta::PreAssignment.prepare_users_list(users)
+      PrepaCompta::PreAssignment.prepare_mapping(users)
     end
   end
 end
