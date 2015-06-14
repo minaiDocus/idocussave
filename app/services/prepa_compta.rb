@@ -225,7 +225,8 @@ class PrepaCompta
               xml_data = get_ibiza_accounting_plan(client, user.ibiza_id) if user.ibiza_id.present?
               if xml_data
                 FileUtils.rm error_file_path if File.exist?(error_file_path)
-                write_accounting_plan(user.code, xml_data)
+                csv_data = ibiza_accounting_plan_to_csv(xml_data)
+                write_accounting_plan(user.code, xml_data, csv_data)
               else
                 FileUtils.touch error_file_path
               end
@@ -233,16 +234,21 @@ class PrepaCompta
           else
             _users.each do |user|
               xml_data = accounting_plan_to_xml(user.accounting_plan)
-              write_accounting_plan(user.code, xml_data)
+              csv_data = accounting_plan_to_csv(user.accounting_plan)
+              write_accounting_plan(user.code, xml_data, csv_data)
             end
           end
         end
         true
       end
 
-      def write_accounting_plan(code, xml_data)
+      def write_accounting_plan(code, xml_data, csv_data)
         File.open(Rails.root.join("data/compta/mapping/#{code}.xml"), 'w') do |f|
           f.write xml_data
+        end
+
+        File.open(Rails.root.join("data/compta/mapping_csv/#{code}.csv"), 'w') do |f|
+          f.write csv_data
         end
       end
 
@@ -272,6 +278,21 @@ class PrepaCompta
         builder.to_xml
       end
 
+      def accounting_plan_to_csv(accounting_plan)
+        data = [['category', 'name', 'number', 'associate'].join(',')]
+        [[1, accounting_plan.customers], [2, accounting_plan.providers]].each do |category, accounts|
+          accounts.each do |account|
+            data << [
+              category,
+              account.third_party_name,
+              account.third_party_account,
+              account.conterpart_account,
+            ].join(',')
+          end
+        end
+        data.join("\n")
+      end
+
       def get_ibiza_accounting_plan(client, ibiza_id)
         client.request.clear
         client.company(ibiza_id).accounts?
@@ -281,6 +302,19 @@ class PrepaCompta
         else
           false
         end
+      end
+
+      def ibiza_accounting_plan_to_csv(xml_data)
+        header = ['category', 'name', 'number', 'associate'].join(',')
+        accounts = Nokogiri::XML(xml_data).css('wsAccounts').map do |account|
+          [
+            account.css('category').text.to_i,
+            account.css('name').text,
+            account.css('number').text,
+            account.css('associate').text
+          ]
+        end.sort_by(&:first).map{ |a| a.join(',') }
+        ([header] + accounts).join("\n")
       end
     end
   end
