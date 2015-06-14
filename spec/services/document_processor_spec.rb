@@ -2097,7 +2097,7 @@ describe DocumentProcessor do
       end
 
       it 'should create file to preassign successfully' do
-        expect(File.exists?(@path)).to be true
+        expect(File.exist?(@path)).to be true
       end
     end
 

@@ -9,7 +9,7 @@ class Pdftk
   def initialize(execute_path = nil)
     @exe_path = execute_path || find_binary_path
     raise "Location of #{EXE_NAME} unknow" if @exe_path.empty?
-    raise "Bad location of #{EXE_NAME}'s path" unless File.exists?(@exe_path)
+    raise "Bad location of #{EXE_NAME}'s path" unless File.exist?(@exe_path)
     raise "#{EXE_NAME} is not executable" unless File.executable?(@exe_path)
   end
 
@@ -50,7 +50,7 @@ private
   def find_binary_path
     possible_locations = (ENV['PATH'].split(':')+%w[/usr/bin /usr/local/bin ~/bin]).uniq
     exe_path ||= Pdftk.config[:exe_path] unless Pdftk.config.empty?
-    exe_path ||= possible_locations.map{|l| File.expand_path("#{l}/#{EXE_NAME}") }.find{|location| File.exists? location}
+    exe_path ||= possible_locations.map{|l| File.expand_path("#{l}/#{EXE_NAME}") }.find{|location| File.exist? location}
     exe_path || ''
   end
 end

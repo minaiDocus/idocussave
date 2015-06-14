@@ -23,7 +23,7 @@ class UploadedDocument
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
     if @errors.empty?
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
-      unless File.exists?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+      unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
         @errors << [:file_is_corrupted_or_protected, nil]
       end
     end

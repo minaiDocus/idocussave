@@ -8,12 +8,12 @@ class DestroyCollaboratorService
     @collaborator.subscription.try(:destroy)
     @collaborator.periods.destroy_all
     @collaborator.debit_mandate.try(:destroy)
-    if @collaborator.composition.present? && File.exists?("#{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
+    if @collaborator.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
       system("rm -r #{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
     end
     @collaborator.composition.try(:destroy)
     @collaborator.remote_files.each do |r|
-      FileUtils.rm r.temp_path if File.exists?(r.temp_path)
+      FileUtils.rm r.temp_path if File.exist?(r.temp_path)
     end
     if @collaborator.external_file_storage
       @collaborator.external_file_storage.try(:dropbox_basic).try(:destroy)

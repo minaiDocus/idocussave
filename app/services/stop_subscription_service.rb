@@ -28,7 +28,7 @@ class StopSubscriptionService
     RemoveFiduceoService.new(@user.id.to_s).delay.execute
     @user.dematbox.try(:unsubscribe)
     @user.external_file_storage.try(:destroy)
-    if @user.composition.present? && File.exists?("#{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
+    if @user.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
       system("rm -r #{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")
     end
     @user.composition.try(:destroy)

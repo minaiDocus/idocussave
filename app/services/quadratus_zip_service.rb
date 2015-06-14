@@ -23,7 +23,7 @@ class QuadratusZipService
 
   class << self
     def remove_temp_dir(dir)
-      FileUtils.remove_dir dir if File.exists? dir
+      FileUtils.remove_dir dir if File.exist? dir
     end
     handle_asynchronously :remove_temp_dir, queue: 'remove temp dir', priority: 10, :run_at => Proc.new { 6.hours.from_now }
   end
