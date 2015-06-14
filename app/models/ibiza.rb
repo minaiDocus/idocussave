@@ -49,44 +49,6 @@ class Ibiza
   end
   handle_asynchronously :verify_token, queue: 'ibiza token verification', priority: 0
 
-  def self.update_files_for(user_codes)
-    users = User.any_in(code: user_codes).entries
-    grouped_users = users.group_by { |e| e.organization.try(:id) || e.id }
-    grouped_users.each do |e|
-      users = e[1]
-      organization = users.first.organization
-      if organization.ibiza && organization.ibiza.is_configured?
-        organization.ibiza.update_files_for users
-      end
-    end
-    true
-  end
-
-  def update_files_for(users)
-    users.each do |user|
-      error_file_path = "#{Rails.root}/data/compta/mapping/#{user.code}.error"
-      if user.ibiza_id
-        client.request.clear
-        client.company(user.ibiza_id).accounts?
-        if client.response.success?
-          body = client.response.body
-          body.force_encoding('UTF-8')
-          if File.exist?(error_file_path)
-            FileUtils.rm error_file_path
-          end
-          File.open("#{Rails.root}/data/compta/mapping/#{user.code}.xml",'w') do |f|
-            f.write body
-          end
-        else
-          FileUtils.touch error_file_path
-        end
-      else
-        FileUtils.touch error_file_path
-      end
-    end
-    true
-  end
-
   # nil : updating cache
   # [...] : cached values
   # false : error occurs

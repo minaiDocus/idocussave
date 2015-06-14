@@ -158,6 +158,10 @@ class PrepaCompta
       end
     end
 
+    def self.prepare_mapping(users)
+      PrepareMapping.new.execute(users)
+    end
+
     class Prepare
       def initialize(piece)
         @piece = piece
@@ -206,6 +210,77 @@ class PrepaCompta
 
       def is_taxable
         @is_taxable ||= @piece.user.options.is_taxable
+      end
+    end
+
+    class PrepareMapping
+      def execute(users)
+        grouped_users = users.group_by(&:organization)
+        grouped_users.each do |organization, _users|
+          if organization.try(:ibiza).try(:is_configured?)
+            client = organization.ibiza.client
+            _users.each do |user|
+              error_file_path = Rails.root.join("data/compta/mapping/#{user.code}.error")
+              xml_data = false
+              xml_data = get_ibiza_accounting_plan(client, user.ibiza_id) if user.ibiza_id.present?
+              if xml_data
+                FileUtils.rm error_file_path if File.exist?(error_file_path)
+                write_accounting_plan(user.code, xml_data)
+              else
+                FileUtils.touch error_file_path
+              end
+            end
+          else
+            _users.each do |user|
+              xml_data = accounting_plan_to_xml(user.accounting_plan)
+              write_accounting_plan(user.code, xml_data)
+            end
+          end
+        end
+        true
+      end
+
+      def write_accounting_plan(code, xml_data)
+        File.open(Rails.root.join("data/compta/mapping/#{code}.xml"), 'w') do |f|
+          f.write xml_data
+        end
+      end
+
+      def accounting_plan_to_xml(accounting_plan)
+        builder = Nokogiri::XML::Builder.new do
+          data {
+            accounting_plan.customers.each do |customer|
+              wsAccounts {
+                category 1
+                associate customer.conterpart_account
+                name customer.third_party_name
+                number customer.third_party_account
+                send(:'vat-account', accounting_plan.vat_accounts.find_by_code(customer.code).try(:account_number))
+              }
+            end
+            accounting_plan.providers.each do |provider|
+              wsAccounts {
+                category 2
+                associate provider.conterpart_account
+                name provider.third_party_name
+                number provider.third_party_account
+                send(:'vat-account', accounting_plan.vat_accounts.find_by_code(provider.code).try(:account_number))
+              }
+            end
+          }
+        end
+        builder.to_xml
+      end
+
+      def get_ibiza_accounting_plan(client, ibiza_id)
+        client.request.clear
+        client.company(ibiza_id).accounts?
+        if client.response.success?
+          xml_data = client.response.body
+          xml_data.force_encoding('UTF-8')
+        else
+          false
+        end
       end
     end
   end

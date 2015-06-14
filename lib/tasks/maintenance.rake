@@ -129,7 +129,7 @@ namespace :maintenance do
       user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
       users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active
 
-      AccountingPlan.update_files_for(users.map(&:code).sort)
+      PrepaCompta::PreAssignment.prepare_mapping(users.sort_by(&:code))
     end
   end
 end
