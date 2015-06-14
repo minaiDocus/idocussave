@@ -7,6 +7,7 @@ describe DocumentProcessor do
       Timecop.freeze(Time.local(2013,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user.options = UserOptions.create(user_id: @user.id)
       @user.find_or_create_subscription
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
 
@@ -2087,7 +2088,7 @@ describe DocumentProcessor do
         @user.reload
         @pack = @user.packs.first
         @temp_pack = TempPack.where(name: @pack.name).first
-        @path = File.join(Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001.pdf')
+        @path = File.join(Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
       end
 
       after(:all) do
