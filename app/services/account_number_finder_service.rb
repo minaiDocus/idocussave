@@ -26,11 +26,12 @@ class AccountNumberFinderService
       end
       words = label.split(/\s+/)
       words.each do |word|
-        scores.each do |name, score|
-          score += 1 if name.match /#{Regexp.quote(word)}/i
+        scores.each_with_index do |(name, _), index|
+          scores[index][1] += 1 if name.match /#{Regexp.quote(word)}/i
         end
       end
-      scores.sort_by(&:last).last.try(:first)
+      scores.select{ |s| s[1] > 0 }.
+        sort_by(&:last).last.try(:first)
     end
 
     def find_with_rules(rules, label)

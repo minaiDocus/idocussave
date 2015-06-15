@@ -21,7 +21,7 @@ describe AccountNumberFinderService do
       it 'returns 0TEMP' do
         allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return([])
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv GoogleDrive $10.00')
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 
         expect(result).to eq('0TEMP')
       end
@@ -31,7 +31,7 @@ describe AccountNumberFinderService do
       it 'returns 0GOO' do
         allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv GoogleDrive $10.00')
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 
         expect(result).to eq('0GOO')
       end
@@ -50,6 +50,14 @@ describe AccountNumberFinderService do
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('paiement par carte €20.00')
 
         expect(result).to eq('0CAR')
+      end
+
+      it 'returns 0TEMP based on scores' do
+        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Caisse-epargne Janvier 2015')
+
+        expect(result).to eq('0TEMP')
       end
     end
 
@@ -124,7 +132,7 @@ describe AccountNumberFinderService do
       it 'returns 0GOG based on rules' do
         allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv GoogleDrive $10.00')
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 
         expect(result).to eq('0GOG')
       end
