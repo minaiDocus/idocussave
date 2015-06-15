@@ -324,7 +324,9 @@ class PrepaCompta
 
       def ibiza_accounting_plan_to_csv(xml_data)
         header = ['category', 'name', 'number', 'associate'].join(',')
-        accounts = Nokogiri::XML(xml_data).css('wsAccounts').map do |account|
+        accounts = Nokogiri::XML(xml_data).css('wsAccounts').select do |account|
+          account.css('closed').text.to_i == 0
+        end.map do |account|
           [
             account.css('category').text.to_i,
             account.css('name').text,
