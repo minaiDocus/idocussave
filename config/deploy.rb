@@ -65,7 +65,7 @@ namespace :shared do
     command << "mkdir -p #{shared_path}/public/system/#{rails_env}"
     command << "mkdir -p #{release_path}/tmp/barcode"
     command << "mkdir -p #{shared_path}/data/compta/mapping"
-    command << "mkdir -p #{shared_path}/data/compta/mapping_csv"
+    command << "mkdir -p #{shared_path}/data/compta/abbyy/mapping_csv"
     command << "mkdir -p #{shared_path}/files/#{rails_env}/kit"
     command << "mkdir -p #{shared_path}/files/#{rails_env}/archives/invoices"
     command << "mkdir -p #{shared_path}/files/#{rails_env}/compositions"

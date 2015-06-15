@@ -164,12 +164,18 @@ class PrepaCompta
       end
 
       def prepare_users_list(users)
-        data = [['code', 'name', 'company'].join(',')]
+        lines = [[:code, :name, :company, :address_first_name, :address_last_name, :address_company, :address_1, :address_2, :city, :zip, :state, :country].join(',')]
         users.each do |user|
-          data << [user.code, user.name, user.company].join(',')
+          address = user.addresses.for_shipping.first
+          line = [user.code, user.name, user.company]
+          keys = [:first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country]
+          keys.each do |key|
+            line << address.try(key).try(:gsub, ',', '')
+          end
+          lines << line.join(',')
         end
-        File.open(Rails.root.join('data/compta/mapping_csv/liste_dossiers.csv'), 'w') do |f|
-          f.write data.join("\n")
+        File.open(Rails.root.join('data/compta/abbyy/liste_dossiers.csv'), 'w') do |f|
+          f.write lines.join("\n")
         end
       end
     end
@@ -259,7 +265,7 @@ class PrepaCompta
           f.write xml_data
         end
 
-        File.open(Rails.root.join("data/compta/mapping_csv/#{code}.csv"), 'w') do |f|
+        File.open(Rails.root.join("data/compta/abbyy/mapping_csv/#{code}.csv"), 'w') do |f|
           f.write csv_data
         end
       end
