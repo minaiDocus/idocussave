@@ -128,20 +128,20 @@ describe CustomFileNameService do
       expect(result).to eq('TS%0001_AC_201501_001_Google_001002_2015-01-02.pdf')
     end
 
-    it 'returns TS%0001_AC_DIVERS_201501_001_TEST_CO.pdf' do
+    it 'returns TS%0001_AC_201501_001_TEST_CO_test.pdf' do
       options = {
         user_code: 'TS%0001',
         user_company: 'iDocus',
-        journal: 'AC: DIVERS',
+        journal: 'AC',
         period: '201501',
         piece_number: '001',
-        third_party: 'TEST&CO',
+        third_party: 'TEST&CO : test',
         extension: '.pdf'
       }
       policy = FileNamingPolicy.new(is_third_party_used: true)
       result = CustomFileNameService.new(policy).execute(options)
 
-      expect(result).to eq('TS%0001_AC_DIVERS_201501_001_TEST_CO.pdf')
+      expect(result).to eq('TS%0001_AC_201501_001_TEST_CO_test.pdf')
     end
   end
 end
