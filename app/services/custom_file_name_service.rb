@@ -19,8 +19,9 @@ class CustomFileNameService
     file_name = data.sort_by(&:last).
                   map(&:first).
                   compact.
+                  map(&:strip).
                   join(@policy.separator).
-                  gsub(/(\/|&)+\s*/, '').
+                  gsub(/\s*(\/|\||\\|:|&)+\s*/, @policy.separator).
                   gsub(/\s+/, @policy.separator)
     file_name + options['extension']
   end
