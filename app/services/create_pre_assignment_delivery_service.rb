@@ -44,7 +44,7 @@ class CreatePreAssignmentDeliveryService
         delivery.preseizures  = preseizures
         if delivery.save
           # Bug : Mongoid N-N relation, when assigning 1 object does not persist automatically
-          preseizures.first.timeless.save if preseizures.size == 1
+          preseizures.first.save if preseizures.size == 1
           @deliveries << delivery
         end
       end
