@@ -287,7 +287,7 @@
                     - @user.account_book_types.each do |journal|
                       %li
                         %b= journal.name
-                        = "(#{journal.description.sub(/^\s*\(/,'').sub(/\)\s*$/,'')})"
+                        = "(#{journal.description.sub(/\A\s*\(/,'').sub(/\)\s*\z/,'')})"
                   Vos périodes actuellement accessibles :
                   %ul
                     - period_service.names.each do |name|

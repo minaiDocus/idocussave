@@ -173,7 +173,7 @@ class ExternalFileStorage
 
   def self.delivery_path(remote_file, pseudo_path)
     info_path = Pack.info_path(remote_file.pack_name,remote_file.receiver)
-    static_path(pseudo_path.sub(/\/$/,""),info_path)
+    static_path(pseudo_path.sub(/\/\z/,""),info_path)
   end
 
   def get_service_by_name(name)

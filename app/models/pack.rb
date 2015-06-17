@@ -9,7 +9,7 @@ class Pack
   PERIOD_PATTERN = '\d{4}([01T]\d)*'
   POSITION_PATTERN = '(all|\d{3})'
   EXTENSION_PATTERN = '\.(pdf|PDF)'
-  FILENAME_PATTERN = /^#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}$/
+  FILENAME_PATTERN = /\A#{CODE_PATTERN}_#{JOURNAL_PATTERN}_#{PERIOD_PATTERN}_#{POSITION_PATTERN}#{EXTENSION_PATTERN}\z/
 
   belongs_to :owner, class_name: "User", inverse_of: :packs
   belongs_to :organization

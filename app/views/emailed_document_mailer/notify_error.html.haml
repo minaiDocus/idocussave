@@ -39,7 +39,7 @@
     %br
     %ul
       - @journals.each do |journal|
-        %li= "#{journal.name} (#{journal.description.sub(/^\s*\(/,'').sub(/\)\s*$/,'')})"
+        %li= "#{journal.name} (#{journal.description.sub(/\A\s*\(/,'').sub(/\)\s*\z/,'')})"
     %br
     Vos périodes actuellement accessibles :
     %br

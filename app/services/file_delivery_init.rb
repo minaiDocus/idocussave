@@ -110,7 +110,7 @@ class FileDeliveryInit
     def get_tiff_file
       file_path = self.content.path
       dir = Dir.mktmpdir('tiff_')
-      temp_path = "#{dir}/#{self.content_file_name.sub(/\.pdf$/,'.tiff')}"
+      temp_path = "#{dir}/#{self.content_file_name.sub(/\.pdf\z/,'.tiff')}"
       DocumentTools.generate_tiff_file(file_path, temp_path)
       temp_path
     end

@@ -207,7 +207,7 @@ module IbizaAPI
 
     def append(name, *args)
       name = name.to_s
-      if name.to_s =~ /^(.*)(!|\?)$/
+      if name.to_s =~ /\A(.*)(!|\?)\z/
         @request << $1
         if args.any?
           if $2 == '!'

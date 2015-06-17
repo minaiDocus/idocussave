@@ -103,7 +103,7 @@ class DocumentTools
     end
 
     def pack_name(file_path)
-      file_path.sub(/\.pdf\z/i, '').gsub('_',' ').sub(/\s\d{3}$/,'') + ' all'
+      file_path.sub(/\.pdf\z/i, '').gsub('_',' ').sub(/\s\d{3}\z/,'') + ' all'
     end
 
     def name_with_position(name, position, size=3)

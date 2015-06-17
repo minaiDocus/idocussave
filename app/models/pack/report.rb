@@ -128,7 +128,7 @@ class Pack::Report
                   report.pack         = pack
                   report.document     = document
                   report.type         = 'NDF'
-                  report.name         = pack.name.sub(/ all$/, '')
+                  report.name         = pack.name.sub(/ all\z/, '')
                   report.save
                 end
                 lot.css('piece').each do |part|
@@ -203,7 +203,7 @@ class Pack::Report
                     report.pack         = pack
                     report.document     = document
                     report.type         = e
-                    report.name         = pack.name.sub(/ all$/, '')
+                    report.name         = pack.name.sub(/ all\z/, '')
                     report.save
                   end
                   lot.css('piece').each do |part|
@@ -278,7 +278,7 @@ class Pack::Report
 
     def directories
       Dir.entries(output_path).
-          select { |e| e.match(/^\d{8}$/) }
+          select { |e| e.match(/\A\d{8}\z/) }
     end
 
     def processed_dirs

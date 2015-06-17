@@ -32,7 +32,7 @@ class OperationImportService
           customer_element.xpath('//pack').each do |pack_element|
             name = pack_element.attributes['name'].value
             pack_name = name.gsub('_', ' ')
-            pack_name += ' all' unless pack_name.match('/ all$/')
+            pack_name += ' all' unless pack_name.match(/ all\z/)
             pack = user.packs.where(name: pack_name).first
             if pack
               pack_element.xpath('//piece').each do |piece_element|

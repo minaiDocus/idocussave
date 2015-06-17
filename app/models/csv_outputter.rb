@@ -28,10 +28,10 @@ class CsvOutputter
     line = ''
     directive_to_a.each do |part|
       result = case part[1]
-        when /^date$/
+        when /\Adate\z/
           format = part[2].presence || "%d/%m/%Y"
           entry.preseizure.date.try(:strftime,format) || ''
-        when /^period_date$/
+        when /\Aperiod_date\z/
           format = part[2].presence || "%d/%m/%Y"
           result = entry.preseizure.date < entry.preseizure.period_date || entry.preseizure.date > entry.preseizure.end_period_date rescue true
           if result
@@ -39,49 +39,49 @@ class CsvOutputter
           else
             entry.preseizure.date.try(:strftime,format) || ''
           end
-        when /^deadline_date$/
+        when /\Adeadline_date\z/
           format = part[2].presence || "%d/%m/%Y"
           entry.preseizure.deadline_date.try(:strftime,format) || ''
-        when /^type$/
+        when /\Atype\z/
           entry.preseizure.report.type
-        when /^client_code$/
+        when /\Aclient_code\z/
           entry.preseizure.report.user.code
-        when /^journal$/
+        when /\Ajournal\z/
           entry.preseizure.report.journal
-        when /^period$/
+        when /\Aperiod\z/
           entry.preseizure.piece_name.try(:split).try(:[], 2)
-        when /^piece_number$/
+        when /\Apiece_number\z/
           entry.preseizure.piece_name.try(:split).try(:[], 3).try(:to_i)
-        when /^original_piece_number$/
+        when /\Aoriginal_piece_number\z/
           entry.preseizure.piece_number
-        when /^piece$/
+        when /\Apiece\z/
           entry.preseizure.piece_name.try(:gsub, ' ', '_')
-        when /^original_amount$/
+        when /\Aoriginal_amount\z/
           "#{entry.preseizure.amount}".gsub(/[\.,\,]/, separator)
-        when /^currency$/
+        when /\Acurrency\z/
           "#{entry.preseizure.currency}".gsub(/[\.,\,]/, separator)
-        when /^conversion_rate$/
+        when /\Aconversion_rate\z/
           conversion_rate = "%0.3f" % entry.preseizure.conversion_rate rescue ""
           "#{conversion_rate}".gsub(/[\.,\,]/, separator)
-        when /^piece_url$/
+        when /\Apiece_url\z/
           if is_access_url
             Settings.inner_url + entry.preseizure.piece.try(:get_access_url)
           else
             Settings.inner_url + entry.preseizure.piece_content_url
           end
-        when /^remark$/
+        when /\Aremark\z/
           entry.preseizure.observation
-        when /^third_party$/
+        when /\Athird_party\z/
           entry.preseizure.third_party
-        when /^number$/
+        when /\Anumber\z/
           entry.account.number
-        when /^debit$/
+        when /\Adebit\z/
           "#{entry.get_debit}".gsub(/[\.,\,]/, separator)
-        when /^credit$/
+        when /\Acredit\z/
           "#{entry.get_credit}".gsub(/[\.,\,]/, separator)
-        when /^title$/
+        when /\Atitle\z/
           '' # TODO implement me
-        when /^lettering$/
+        when /\Alettering\z/
           entry.account.lettering
         else ''
       end

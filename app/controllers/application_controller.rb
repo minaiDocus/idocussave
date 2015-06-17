@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   end
 
   def login_user!
-    unless current_user and request.path.match(/^\/users.*/)
+    unless current_user and request.path.match(/\A\/users.*/)
       session[:targeted_path] = request.path
     end
     authenticate_user!

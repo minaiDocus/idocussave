@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ErrorsController < ApplicationController
   def routing
-    if params[:a].match(/^system.*\/contents\//)
+    if params[:a].match(/\Asystem.*\/contents\//)
       raise ActionController::RoutingError.new('Not Found')
     else
       render '/404.html.haml', status: 404, layout: 'error'

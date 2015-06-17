@@ -222,7 +222,7 @@ class TempDocument
 
   def name_with_position
     name = File.basename self.content_file_name, '.*'
-    name.sub!(/_\d+$/, '') if scanned?
+    name.sub!(/_\d+\z/, '') if scanned?
     "#{name}_%0#{DocumentProcessor::POSITION_SIZE}d" % position
   end
 
@@ -250,7 +250,7 @@ class TempDocument
   def is_a_cover?
     if scanned?
       if original_file_name.present?
-        File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/^0*$/).present?
+        File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\A0*\z/).present?
       else
         is_a_cover
       end

@@ -358,7 +358,7 @@ class User
 private
 
   def format_of_code
-    if self.organization && !self.code.match(/^#{self.organization.code}%[A-Z0-9]{1,13}$/)
+    if self.organization && !self.code.match(/\A#{self.organization.code}%[A-Z0-9]{1,13}\z/)
       errors.add(:code, :invalid)
     end
   end

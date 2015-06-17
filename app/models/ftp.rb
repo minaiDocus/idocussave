@@ -23,7 +23,7 @@ class Ftp
 
   def client
     if is_configured?
-      @ftp ||= Net::FTP.new(host.sub(/^ftp:\/\//,''), login, password)
+      @ftp ||= Net::FTP.new(host.sub(/\Aftp:\/\//,''), login, password)
     else
       nil
     end
@@ -55,7 +55,7 @@ class Ftp
   def verify!
     require "net/ftp"
     begin
-      Net::FTP.open(self.host.sub(/^ftp:\/\//,''),self.login,self.password)
+      Net::FTP.open(self.host.sub(/\Aftp:\/\//,''),self.login,self.password)
       self.is_configured = true
     rescue Net::FTPPermError, SocketError
       self.is_configured = false

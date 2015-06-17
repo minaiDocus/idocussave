@@ -20,8 +20,8 @@ class Pack::Report::Expense
 
   default_scope -> { asc(:position) }
 
-  scope :perso, -> { where(origin: /^perso$/i) }
-  scope :pro,   -> { where(origin: /^pro$/i) }
+  scope :perso, -> { where(origin: /\Aperso\z/i) }
+  scope :pro,   -> { where(origin: /\Apro\z/i) }
 
   scope :abnormal, -> { where(obs_type: 0) }
   scope :normal,   -> { not_in(obs_type: [0]) }

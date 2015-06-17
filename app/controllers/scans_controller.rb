@@ -18,7 +18,7 @@ class ScansController < PaperProcessesController
     if params[:period_document] && params[:period_document][:name] && params[:period_document][:paperclips] && params[:period_document][:oversized]
       params[:period_document][:name].gsub!('_',' ')
       params[:period_document][:name].strip!
-      if params[:period_document][:name].present? && !params[:period_document][:name].match(/ all$/)
+      if params[:period_document][:name].present? && !params[:period_document][:name].match(/ all\z/)
         params[:period_document][:name] << ' all'
       end
       @document = PeriodDocument.where(name: params[:period_document][:name]).desc(:created_at).first

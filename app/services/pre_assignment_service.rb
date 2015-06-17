@@ -19,7 +19,7 @@ class PreAssignmentService
       _pending(options).map do |e|
         o = OpenStruct.new
         o.date           = e['date'].try(:localtime)
-        o.name           = e['first_piece_name'].sub(/\s\d+$/, '')
+        o.name           = e['first_piece_name'].sub(/\s\d+\z/, '')
         o.document_count = e['piece_counts'].to_i
         o.message        = e['_id']['comment']
         o

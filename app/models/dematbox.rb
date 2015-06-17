@@ -46,7 +46,7 @@ class Dematbox
     _services = build_services
     result = DematboxApi.subscribe(user.code, _services, pairing_code)
     update_attribute(:beginning_configuration_at, nil) unless beginning_configuration_at.nil?
-    if result.match(/^200\s*:\s*OK$/)
+    if result.match(/\A200\s*:\s*OK\z/)
       set_services(_services)
     else
       result
@@ -75,7 +75,7 @@ class Dematbox
 
   def unsubscribe
     result = DematboxApi.unsubscribe(user.code)
-    if result.match(/^200\s*:\s*OK$/)
+    if result.match(/\A200\s*:\s*OK\z/)
       destroy
     end
   end

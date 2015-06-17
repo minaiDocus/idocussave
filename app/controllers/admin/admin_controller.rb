@@ -36,7 +36,7 @@ class Admin::AdminController < ApplicationController
     ).map do |data|
       object = OpenStruct.new
       object.date           = data['updated_at'].try(:localtime)
-      object.name           = TempPack.find(data['_id']).name.sub(/ all$/,'')
+      object.name           = TempPack.find(data['_id']).name.sub(/ all\z/,'')
       object.document_count = data['count'].to_i
       object.message        = false
       object
@@ -45,7 +45,7 @@ class Admin::AdminController < ApplicationController
     @bundle_needed_temp_packs = TempPack.bundle_needed.map do |temp_pack|
       object = OpenStruct.new
       object.date           = temp_pack.temp_documents.bundle_needed.by_position.last.try(:updated_at)
-      object.name           = temp_pack.name.sub(/ all$/,'')
+      object.name           = temp_pack.name.sub(/ all\z/,'')
       object.document_count = temp_pack.temp_documents.bundle_needed.count
       object.message        = temp_pack.temp_documents.bundle_needed.distinct('delivery_type').join(', ')
       object
@@ -54,7 +54,7 @@ class Admin::AdminController < ApplicationController
     @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
       object = OpenStruct.new
       object.date           = temp_pack.temp_documents.bundling.by_position.last.try(:updated_at)
-      object.name           = temp_pack.name.sub(/ all$/,'')
+      object.name           = temp_pack.name.sub(/ all\z/,'')
       object.document_count = temp_pack.temp_documents.bundling.count
       object.message        = temp_pack.temp_documents.bundling.distinct('delivery_type').join(', ')
       object
@@ -63,7 +63,7 @@ class Admin::AdminController < ApplicationController
     @processing_temp_packs = TempPack.not_processed.map do |temp_pack|
       object = OpenStruct.new
       object.date           = temp_pack.temp_documents.ready.by_position.last.try(:updated_at)
-      object.name           = temp_pack.name.sub(/ all$/,'')
+      object.name           = temp_pack.name.sub(/ all\z/,'')
       object.document_count = temp_pack.temp_documents.ready.count
       object.message        = temp_pack.temp_documents.ready.distinct('delivery_type').join(', ')
       object
@@ -73,7 +73,7 @@ class Admin::AdminController < ApplicationController
     @currently_being_delivered_packs = Pack.where(:_id.in => pack_ids).map do |pack|
       object = OpenStruct.new
       object.date           = pack.remote_files.not_processed.retryable.asc(:created_at).last.try(:created_at)
-      object.name           = pack.name.sub(/ all$/,'')
+      object.name           = pack.name.sub(/ all\z/,'')
       object.document_count = pack.remote_files.not_processed.retryable.count
       object.message        = pack.remote_files.not_processed.retryable.distinct(:service_name).join(', ')
       object
@@ -83,7 +83,7 @@ class Admin::AdminController < ApplicationController
     @failed_packs_delivery = Pack.where(:_id.in => pack_ids).map do |pack|
       object = OpenStruct.new
       object.date           = pack.remote_files.not_processed.not_retryable.asc(:created_at).last.try(:created_at)
-      object.name           = pack.name.sub(/ all$/,'')
+      object.name           = pack.name.sub(/ all\z/,'')
       object.document_count = pack.remote_files.not_processed.not_retryable.count
       object.message        = pack.remote_files.not_processed.not_retryable.distinct(:service_name).join(', ')
       object
@@ -97,7 +97,7 @@ class Admin::AdminController < ApplicationController
     @reports_delivery = Pack::Report.locked.desc(:updated_at).map do |report|
       object = OpenStruct.new
       object.date           = report.updated_at
-      object.name           = report.name.sub(/ all$/,'')
+      object.name           = report.name.sub(/ all\z/,'')
       object.document_count = report.preseizures.locked.count
       object.message        = false
       object

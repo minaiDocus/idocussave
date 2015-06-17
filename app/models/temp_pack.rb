@@ -171,10 +171,10 @@ private
 
   def new_file_name(file_name, position)
     number = "%03d" % position
-    if file_name.match /_\d{3}.pdf$/
-      file_name.sub(/_\d{3}.pdf$/,"_#{number}.pdf")
+    if file_name.match /_\d{3}.pdf\z/
+      file_name.sub(/_\d{3}.pdf\z/,"_#{number}.pdf")
     else
-      file_name.sub(/.pdf$/,"_#{number}.pdf")
+      file_name.sub(/.pdf\z/,"_#{number}.pdf")
     end
   end
 end
