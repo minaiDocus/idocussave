@@ -137,9 +137,8 @@ private
       :is_default
     ]
     attrs << :name if @user.is_admin || Settings.is_journals_modification_authorized || !@customer || !@journal || @journal.is_open_for_modification?
-    attributes = params.require(:account_book_type).permit(*attrs)
     if is_preassignment_authorized?
-      attributes.merge!(params.require(:account_book_type).permit(
+      attrs += [
         :domain,
         :entry_type,
         :default_account_number,
@@ -148,11 +147,10 @@ private
         :charge_account,
         :vat_account,
         :anomaly_account
-      ))
+      ]
     end
-    if current_user.is_admin
-      attributes.merge!(params.require(:account_book_type).permit(:is_expense_categories_editable))
-    end
+    attrs << :is_expense_categories_editable if current_user.is_admin
+    attributes = params.require(:account_book_type).permit(*attrs)
     if (@journal && @journal.is_expense_categories_editable) || current_user.is_admin
       if params[:account_book_type][:expense_categories_attributes].present?
         attributes.merge!({
