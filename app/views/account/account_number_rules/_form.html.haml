@@ -6,9 +6,9 @@
   = f.input :priority, as: :integer, hint: 'Plus le nombre est petit plus la règle est importante.'
   = f.input :third_party_account, required: true, hint: 'Le numéro qui sera assigné si la recherche est un succès.'
   -if @user.is_admin
-    = f.association :users, collection: @organization.customers, label_method: :info, value_method: :id, as: :check_boxes
+    = f.association :users, collection: @organization.customers.asc(:code), label_method: :info, value_method: :id, as: :check_boxes
   -else
-    = f.association :users, collection: @user.customers, label_method: :info, value_method: :id, as: :check_boxes
+    = f.association :users, collection: @user.customers.asc(:code), label_method: :info, value_method: :id, as: :check_boxes
 
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
