@@ -71,20 +71,21 @@ end
 pids = []
 
 [
-  { name: 'ftp_fetcher',               sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
-  { name: 'bundler',                   sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
-  { name: 'processor',                 sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
-  { name: 'preassignment_fetcher',     sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
-  { name: 'fiduceo_document_fetcher',  sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
-  { name: 'operation_processor',       sleep_duration: 5.seconds,  cmd: Proc.new { OperationService.process } },
-  { name: 'emailed_document_fetcher',  sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
-  { name: 'delivery-dropbox_extended', sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
-  { name: 'delivery-dropbox_basic',    sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
-  { name: 'delivery-google_drive',     sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },
-  { name: 'delivery-ftp',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('ftp') } },
-  { name: 'delivery-box',              sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } },
-  { name: 'delivery-knowings',         sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('kwg') } },
-  { name: 'delivery-ibiza',            sleep_duration: 5.seconds,  cmd: Proc.new { PreAssignmentDeliveryService.execute } }
+  { name: 'ftp_fetcher',                 sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
+  { name: 'bundler',                     sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::DocumentBundler.bundle } },
+  { name: 'processor',                   sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
+  { name: 'preassignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
+  { name: 'abbyy_preassignment_fetcher', sleep_duration: 10.seconds, cmd: Proc.new { PrepaCompta::PreAssignment.fetch } },
+  { name: 'fiduceo_document_fetcher',    sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
+  { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { OperationService.process } },
+  { name: 'emailed_document_fetcher',    sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
+  { name: 'delivery-dropbox_extended',   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
+  { name: 'delivery-dropbox_basic',      sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
+  { name: 'delivery-google_drive',       sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },
+  { name: 'delivery-ftp',                sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('ftp') } },
+  { name: 'delivery-box',                sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('box') } },
+  { name: 'delivery-knowings',           sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('kwg') } },
+  { name: 'delivery-ibiza',              sleep_duration: 5.seconds,  cmd: Proc.new { PreAssignmentDeliveryService.execute } }
 ].each do |program|
   pids << fork do
     while($running)

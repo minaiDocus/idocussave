@@ -178,6 +178,108 @@ class PrepaCompta
           f.write lines.join("\n")
         end
       end
+
+      def fetch
+        Dir.glob(Rails.root.join('data/compta/abbyy/output/*.xml')).each do |file_path|
+          if File.atime(file_path) < 5.seconds.ago
+            file = File.open(file_path)
+            doc = Nokogiri::XML(file)
+            file.close
+            schema = Nokogiri::XML::Schema(File.read(Rails.root.join('lib/xsd/pre_assignment.xsd')))
+            if schema.validate(doc).map(&:to_s).empty?
+              piece_data = doc.css('piece').first
+              piece_name = piece_data['name'].gsub('_', ' ')
+              piece = Pack::Piece.where(name: piece_name).first
+              if piece
+                pack = piece.pack
+                user = pack.owner
+                period = user.subscription.find_or_create_period(Time.now)
+                document = Reporting.find_or_create_period_document(pack, period)
+                report = document.report
+                unless report
+                  journal = user.account_book_types.where(name: piece_name.split[1]).first
+                  report = Pack::Report.new
+                  report.organization = user.organization
+                  report.user         = user
+                  report.pack         = pack
+                  report.document     = document
+                  report.type         = journal.compta_type
+                  report.name         = pack.name.sub(/ all\z/, '')
+                  report.save
+                end
+
+                preseizure                 = Pack::Report::Preseizure.new
+                preseizure.report          = report
+                preseizure.piece           = piece
+                preseizure.user            = user
+                preseizure.organization    = user.organization
+                preseizure.piece_number    = piece_data.css('numero_piece').first.try(:content)
+                preseizure.amount          = to_float(piece_data.css('montant_origine').first.try(:content))
+                preseizure.currency        = piece_data.css('devise').first.try(:content)
+                preseizure.conversion_rate = to_float(piece_data.css('taux_conversion').first.try(:content))
+                preseizure.third_party     = piece_data.css('tiers').first.try(:content)
+                preseizure.date            = piece_data.css('date').first.try(:content).try(:to_date)
+                preseizure.deadline_date   = piece_data.css('echeance').first.try(:content).try(:to_date)
+                preseizure.observation     = piece_data.css('remarque').first.try(:content)
+                preseizure.position        = piece.position
+                preseizure.save
+                piece.update(is_awaiting_pre_assignment: false, pre_assignment_comment: nil)
+                piece_data.css('account').each do |account|
+                  paccount            = Pack::Report::Preseizure::Account.new
+                  paccount.type       = Pack::Report::Preseizure::Account.get_type(account['type'])
+                  paccount.number     = account['number']
+                  paccount.lettering  = account.css('lettrage').first.try(:content)
+                  account.css('debit').each do |debit|
+                    entry        = Pack::Report::Preseizure::Entry.new
+                    entry.type   = Pack::Report::Preseizure::Entry::DEBIT
+                    entry.number = debit['number'].to_i
+                    entry.amount = to_float(debit.content)
+                    entry.save
+                    paccount.entries << entry
+                    preseizure.entries << entry
+                  end
+                  account.css('credit').each do |credit|
+                    entry        = Pack::Report::Preseizure::Entry.new
+                    entry.type   = Pack::Report::Preseizure::Entry::CREDIT
+                    entry.number = credit['number'].to_i
+                    entry.amount = to_float(credit.content)
+                    entry.save
+                    paccount.entries << entry
+                    preseizure.entries << entry
+                  end
+                  paccount.save
+                  preseizure.accounts << paccount
+                end
+
+                UpdatePeriodDataService.new(period).execute
+                UpdatePeriodPriceService.new(period).execute
+                CreatePreAssignmentDeliveryService.new(preseizure, true).execute
+                # For manual delivery
+                if report.preseizures.not_delivered.not_locked.count > 0
+                  report.update_attribute(:is_delivered, false)
+                end
+                FileDeliveryInit.prepare(report)
+                FileDeliveryInit.prepare(pack)
+                path = Rails.root.join("data/compta/abbyy/processed/#{Time.now.strftime("%Y-%m-%d")}")
+                FileUtils.mkdir_p path
+                FileUtils.mv file_path, path
+              else
+                FileUtils.mv file_path, Rails.root.join('data/compta/abbyy/errors')
+              end
+            else
+              FileUtils.mv file_path, Rails.root.join('data/compta/abbyy/errors')
+            end
+          end
+        end
+      end
+
+      def to_float(txt)
+        if txt.presence
+          txt.sub(',','.').to_f
+        else
+          nil
+        end
+      end
     end
 
     class Prepare
