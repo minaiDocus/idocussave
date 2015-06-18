@@ -233,40 +233,43 @@ class PrepaCompta
 
     class PrepareMapping
       def execute(users)
+        data = []
         grouped_users = users.group_by(&:organization)
-        grouped_users.each do |organization, _users|
+        grouped_users.each do |organization, customers|
           if organization.try(:ibiza).try(:is_configured?)
             client = organization.ibiza.client
-            _users.each do |user|
-              error_file_path = Rails.root.join("data/compta/mapping/#{user.code}.error")
-              xml_data = false
-              xml_data = get_ibiza_accounting_plan(client, user.ibiza_id) if user.ibiza_id.present?
-              if xml_data
-                FileUtils.rm error_file_path if File.exist?(error_file_path)
-                csv_data = ibiza_accounting_plan_to_csv(xml_data)
-                write_accounting_plan(user.code, xml_data, csv_data)
-              else
-                FileUtils.touch error_file_path
+            customers.each do |customer|
+              if customer.ibiza_id.present?
+                xml_data = get_ibiza_accounting_plan(client, customer.ibiza_id)
+                csv_data = ibiza_accounting_plan_to_csv(customer.code, xml_data) if xml_data
+                data << [customer, xml_data, csv_data] if xml_data
               end
             end
           else
-            _users.each do |user|
-              xml_data = accounting_plan_to_xml(user.accounting_plan)
-              csv_data = accounting_plan_to_csv(user.accounting_plan)
-              write_accounting_plan(user.code, xml_data, csv_data)
+            customers.each do |customer|
+              xml_data = accounting_plan_to_xml(customer.accounting_plan)
+              csv_data = accounting_plan_to_csv(customer.code, customer.accounting_plan)
             end
           end
         end
+        write_xml_accounting_plan(data)
+        write_csv_accounting_plan(data)
         true
       end
 
-      def write_accounting_plan(code, xml_data, csv_data)
-        File.open(Rails.root.join("data/compta/mapping/#{code}.xml"), 'w') do |f|
-          f.write xml_data
+      def write_xml_accounting_plan(data)
+        data.each do |customer, xml_data, _|
+          File.open(Rails.root.join("data/compta/mapping/#{customer.code}.xml"), 'w') do |f|
+            f.write xml_data
+          end
         end
+      end
 
-        File.open(Rails.root.join("data/compta/abbyy/mapping_csv/#{code}.csv"), 'w') do |f|
-          f.write csv_data
+      def write_csv_accounting_plan(data)
+        raw = [['category', 'name', 'number', 'associate', 'customer_code'].join(',')]
+        raw += data.map{ |e| e[2] }
+        File.open(Rails.root.join("data/compta/abbyy/comptes.csv"), 'w') do |f|
+          f.write raw.join("\n")
         end
       end
 
@@ -296,8 +299,8 @@ class PrepaCompta
         builder.to_xml
       end
 
-      def accounting_plan_to_csv(accounting_plan)
-        data = [['category', 'name', 'number', 'associate'].join(',')]
+      def accounting_plan_to_csv(customer_code, accounting_plan)
+        data = []
         [[1, accounting_plan.customers], [2, accounting_plan.providers]].each do |category, accounts|
           accounts.each do |account|
             data << [
@@ -305,6 +308,7 @@ class PrepaCompta
               account.third_party_name,
               account.third_party_account,
               account.conterpart_account,
+              customer_code
             ].join(',')
           end
         end
@@ -322,19 +326,20 @@ class PrepaCompta
         end
       end
 
-      def ibiza_accounting_plan_to_csv(xml_data)
-        header = ['category', 'name', 'number', 'associate'].join(',')
-        accounts = Nokogiri::XML(xml_data).css('wsAccounts').select do |account|
-          account.css('closed').text.to_i == 0
+      def ibiza_accounting_plan_to_csv(customer_code, xml_data)
+        Nokogiri::XML(xml_data).css('wsAccounts').select do |account|
+          account.css('closed').text.to_i == 0 && account.css('category').text.to_i.in?([1,2])
         end.map do |account|
           [
             account.css('category').text.to_i,
             account.css('name').text,
             account.css('number').text,
-            account.css('associate').text
+            account.css('associate').text,
+            customer_code
           ]
-        end.sort_by(&:first).map{ |a| a.join(',') }
-        ([header] + accounts).join("\n")
+        end.sort_by(&:first).
+            map{ |a| a.join(',') }.
+            join("\n")
       end
     end
   end
