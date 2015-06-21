@@ -126,7 +126,7 @@ class FileDeliveryInit
         else
           period = DocumentTools.to_period(self.name)
         end
-        exercice = ExerciceService.find(user, period, false)
+        exercise = FindExercise.new(user, period, user.organization.ibiza).execute
         domain = user.account_book_types.where(name: journal).first.try(:domain)
         nature = nil
         if domain == 'AC - Achats'
@@ -138,10 +138,10 @@ class FileDeliveryInit
         options[:user_code]       = user.knowings_code.presence || user.code
         options[:visibility]      = user.knowings_visibility
         options[:user_company]    = user.company
-        if exercice
+        if exercise
           options[:exercice]      = true
-          options[:start_time]    = exercice.start_date.to_time
-          options[:end_time]      = exercice.end_date.to_time
+          options[:start_time]    = exercise.start_date.to_time
+          options[:end_time]      = exercise.end_date.to_time
         else
           options[:exercice]      = false
         end

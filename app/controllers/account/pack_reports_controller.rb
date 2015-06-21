@@ -38,10 +38,11 @@ class Account::PackReportsController < Account::OrganizationController
         if preseizures.any?
           file_name = "#{@report.name.gsub(' ','_')}.xml"
           ibiza = @organization.ibiza
-          if ibiza && @report.user.ibiza_id
+          if ibiza.try(:is_configured?) && @report.user.ibiza_id
             date = DocumentTools.to_period(@report.name)
-            if (exercice=ExerciceService.find(@report.user, date, false))
-              data = IbizaAPI::Utils.to_import_xml(exercice, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
+            exercise = FindExercise.new(@report.user, date, ibiza).execute
+            if exercise
+              data = IbizaAPI::Utils.to_import_xml(exercise, preseizures, ibiza.description, ibiza.description_separator, ibiza.piece_name_format, ibiza.piece_name_format_sep)
               send_data(data, type: 'application/xml', filename: file_name)
             else
               raise Mongoid::Errors::DocumentNotFound.new(Pack::Report, file_name: file_name)

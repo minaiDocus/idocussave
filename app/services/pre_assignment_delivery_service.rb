@@ -25,7 +25,11 @@ class PreAssignmentDeliveryService
   end
 
   def exercise
-    @exercise ||= ExerciceService.find(@user, @delivery.grouped_date, false)
+    @exercise ||= FindExercise.new(@user, @delivery.grouped_date, @ibiza).execute
+  end
+
+  def is_exercises_present?
+    Rails.cache.read(FindExercise.ibiza_exercises_cache_name(@user.ibiza_id, @ibiza.updated_at)).present?
   end
 
   def build_xml
@@ -35,10 +39,10 @@ class PreAssignmentDeliveryService
       @delivery.save
       @delivery.xml_built
     else
-      if @ibiza.is_exercices_present?(@user.ibiza_id)
+      if is_exercises_present?
         @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans Ibiza."
       else
-        @delivery.error_message = @report.delivery_message = client.response.message.to_s.presence || client.response.code
+        @delivery.error_message = @report.delivery_message = client.response.message.to_s
       end
       @report.save
       @delivery.save

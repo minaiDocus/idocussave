@@ -99,22 +99,4 @@ class Ibiza
       end
     end
   end
-
-  def exercices(id)
-    Rails.cache.fetch "ibiza_#{id}_exercices", expires_in: 1.hour do
-      client.request.clear
-      client.company(id).exercices?
-      if client.response.success?
-        client.response.data
-      else
-        raise NoExercicesFound, "for #{id}"
-      end
-    end
-  end
-
-  def is_exercices_present?(id)
-    Rails.cache.read("ibiza_#{id}_exercices").present?
-  end
-
-  class NoExercicesFound < RuntimeError; end
 end
