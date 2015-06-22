@@ -2,6 +2,15 @@
 require 'spec_helper'
 
 describe FindExercise do
+  before(:all) do
+    @time = Time.local(2015,2,1,0,0,0)
+    @cache_name = 'ibiza_2015-02-01_00:00:00_+0300_{123456}_exercises'
+  end
+
+  before(:each) do
+    Rails.cache.delete @cache_name
+  end
+
   describe '#execute' do
     before(:all) do
       @user = create(:user)
@@ -15,7 +24,7 @@ describe FindExercise do
 
       context 'with empty exercises' do
         it 'returns nil' do
-          expect(FindExercise.new(@user, Date.parse('15-1-2015')).execute).to be_nil
+          expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to be_nil
         end
       end
 
@@ -23,11 +32,11 @@ describe FindExercise do
         it 'returns nil' do
           exercise = Exercice.new
           exercise.user = @user
-          exercise.start_date = Date.parse('1-2-2014')
-          exercise.end_date = Date.parse('28-2-2015')
+          exercise.start_date = Date.parse('01-02-2014')
+          exercise.end_date = Date.parse('28-02-2015')
           exercise.is_closed = true
           exercise.save
-          expect(FindExercise.new(@user, Date.parse('15-1-2015')).execute).to be_nil
+          expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to be_nil
         end
       end
 
@@ -35,32 +44,32 @@ describe FindExercise do
         it 'returns an exercise' do
           exercise = Exercice.new
           exercise.user = @user
-          exercise.start_date = Date.parse('1-2-2014')
-          exercise.end_date = Date.parse('28-2-2015')
+          exercise.start_date = Date.parse('01-02-2014')
+          exercise.end_date = Date.parse('28-02-2015')
           exercise.is_closed = false
           exercise.save
-          expect(FindExercise.new(@user, Date.parse('15-1-2015')).execute).to eq exercise
+          expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to eq exercise
         end
 
         context 'outside date range' do
           it 'returns nil' do
             exercise = Exercice.new
             exercise.user = @user
-            exercise.start_date = Date.parse('1-1-2014')
+            exercise.start_date = Date.parse('01-01-2014')
             exercise.end_date = Date.parse('31-12-2014')
             exercise.is_closed = false
             exercise.save
-            expect(FindExercise.new(@user, Date.parse('15-1-2015')).execute).to be_nil
+            expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to be_nil
           end
 
           it 'returns nil' do
             exercise = Exercice.new
             exercise.user = @user
-            exercise.start_date = Date.parse('1-2-2015')
-            exercise.end_date = Date.parse('31-1-2016')
+            exercise.start_date = Date.parse('01-02-2015')
+            exercise.end_date = Date.parse('31-01-2016')
             exercise.is_closed = false
             exercise.save
-            expect(FindExercise.new(@user, Date.parse('15-1-2015')).execute).to be_nil
+            expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to be_nil
           end
         end
       end
@@ -70,7 +79,7 @@ describe FindExercise do
       context 'ibiza is not configured' do
         it 'returns false' do
           ibiza = Ibiza.new
-          expect(FindExercise.new(@user, Date.parse('15-1-2015'), ibiza).execute).to eq false
+          expect(FindExercise.new(@user, Date.parse('15-01-2015'), ibiza).execute).to eq false
         end
       end
 
@@ -78,7 +87,7 @@ describe FindExercise do
         it 'returns nil' do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
-            allow(ibiza).to receive(:updated_at) { Time.now }
+            allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:is_configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
@@ -92,7 +101,7 @@ describe FindExercise do
         it 'returns nil' do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
-            allow(ibiza).to receive(:updated_at) { Time.local(2015,2,1,0,0,1) }
+            allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:is_configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
@@ -106,7 +115,7 @@ describe FindExercise do
         it 'returns false with an error' do
           VCR.use_cassette('find_exercise/insufficient_rights') do
             ibiza = double('ibiza')
-            allow(ibiza).to receive(:updated_at) { Time.local(2015,2,1,0,0,2) }
+            allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:is_configured?) { true }
             client = IbizaAPI::Client.new('123456')
             allow(ibiza).to receive(:client) { client }
@@ -122,12 +131,12 @@ describe FindExercise do
         it 'returns an exercise' do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
-            allow(ibiza).to receive(:updated_at) { Time.local(2015,2,1,0,0,3) }
+            allow(ibiza).to receive(:updated_at) { @time }
             allow(ibiza).to receive(:is_configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
 
-            exercise = FindExercise.new(@user, Date.parse('15-1-2015'), ibiza).execute
+            exercise = FindExercise.new(@user, Date.parse('15-01-2015'), ibiza).execute
 
             expect(exercise).to be_present
             expect(exercise.start_date).to eq(Date.parse('01-09-2014'))
@@ -143,9 +152,8 @@ describe FindExercise do
     it 'returns false' do
       VCR.use_cassette('find_exercise/insufficient_rights') do
         client = IbizaAPI::Client.new('123456')
-        time = Time.local(2015,2,1,0,0,4)
 
-        result = FindExercise.ibiza_exercises(client, '{123456}', time)
+        result = FindExercise.ibiza_exercises(client, '{123456}', @time)
 
         expect(result).to eq false
       end
@@ -154,9 +162,8 @@ describe FindExercise do
     it 'returns 1 exercise' do
       VCR.use_cassette('find_exercise/exercises') do
         client = IbizaAPI::Client.new('123456')
-        time = Time.local(2015,2,1,0,0,5)
 
-        exercises = FindExercise.ibiza_exercises(client, '{123456}', time)
+        exercises = FindExercise.ibiza_exercises(client, '{123456}', @time)
         exercise = exercises.first
 
         expect(exercises.size).to eq 1
@@ -169,14 +176,12 @@ describe FindExercise do
     it 'write in the cache' do
       VCR.use_cassette('find_exercise/exercises') do
         client = IbizaAPI::Client.new('123456')
-        time = Time.local(2015,2,1,0,0,6)
-        cache_name = FindExercise.ibiza_exercises_cache_name('{123456}', time)
 
-        expect(Rails.cache.read(cache_name)).to be_nil
+        expect(Rails.cache.read(@cache_name)).to be_nil
 
-        exercises = FindExercise.ibiza_exercises(client, '{123456}', time)
+        exercises = FindExercise.ibiza_exercises(client, '{123456}', @time)
 
-        expect(Rails.cache.read(cache_name)).to eq(exercises)
+        expect(Rails.cache.read(@cache_name)).to eq(exercises)
       end
     end
   end

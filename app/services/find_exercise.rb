@@ -13,7 +13,7 @@ class FindExercise
       if @ibiza.is_configured?
         exercises = self.class.ibiza_exercises(@ibiza.client, @user.ibiza_id, @ibiza.updated_at)
       else
-        exercices = false
+        exercises = false
       end
     else
       exercises = @user.exercices
