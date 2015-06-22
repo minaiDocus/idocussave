@@ -1,24 +1,24 @@
 # -*- encoding : UTF-8 -*-
-class Account::ExercicesController < Account::OrganizationController
+class Account::ExercisesController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :verify_access
   before_filter :load_customer
-  before_filter :load_exercice, except: %w(index new create)
+  before_filter :load_exercise, except: %w(index new create)
 
   def index
-    @exercices = @customer.exercices.desc(:start_date)
+    @exercises = @customer.exercises.desc(:start_date)
   end
 
   def new
-    @exercice = Exercice.new
+    @exercise = Exercise.new
   end
 
   def create
-    @exercice = Exercice.new exercice_params
-    @exercice.user = @customer
-    if @exercice.save
+    @exercise = Exercise.new exercise_params
+    @exercise.user = @customer
+    if @exercise.save
       flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_customer_exercices_path(@organization, @customer)
+      redirect_to account_organization_customer_exercises_path(@organization, @customer)
     else
       render action: 'new'
     end
@@ -28,18 +28,18 @@ class Account::ExercicesController < Account::OrganizationController
   end
 
   def update
-    if @exercice.update(exercice_params)
+    if @exercise.update(exercise_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_exercices_path(@organization, @customer)
+      redirect_to account_organization_customer_exercises_path(@organization, @customer)
     else
       render 'edit'
     end
   end
 
   def destroy
-    @exercice.destroy
+    @exercise.destroy
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_organization_customer_exercices_path(@organization, @customer)
+    redirect_to account_organization_customer_exercises_path(@organization, @customer)
   end
 
 private
@@ -63,13 +63,13 @@ private
     raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
   end
 
-  def load_exercice
-    @exercice = @customer.exercices.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Exercice, nil, params[:id]) unless @exercice
+  def load_exercise
+    @exercise = @customer.exercises.find params[:id]
+    raise Mongoid::Errors::DocumentNotFound.new(Exercise, nil, params[:id]) unless @exercise
   end
 
-  def exercice_params
-    params.require(:exercice).permit(:start_date,
+  def exercise_params
+    params.require(:exercise).permit(:start_date,
                                      'start_date(3i)',
                                      'start_date(2i)',
                                      'start_date(1i)',

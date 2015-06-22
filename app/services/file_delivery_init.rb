@@ -139,11 +139,11 @@ class FileDeliveryInit
         options[:visibility]      = user.knowings_visibility
         options[:user_company]    = user.company
         if exercise
-          options[:exercice]      = true
+          options[:exercise]      = true
           options[:start_time]    = exercise.start_date.to_time
           options[:end_time]      = exercise.end_date.to_time
         else
-          options[:exercice]      = false
+          options[:exercise]      = false
         end
         options[:date]            = period.to_time
         options[:tiers]           = preseizure.try(:third_party) if knowings.is_third_party_included

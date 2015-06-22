@@ -16,7 +16,7 @@ class FindExercise
         exercises = false
       end
     else
-      exercises = @user.exercices
+      exercises = @user.exercises
     end
     if exercises
       exercises.reject(&:is_closed).select do |exercise|

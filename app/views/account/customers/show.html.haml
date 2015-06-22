@@ -267,7 +267,7 @@
                     - if @customer.active?
                       = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
                       = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
-                    = link_to 'Exercices comptables', account_organization_customer_exercices_path(@organization, @customer), class: 'btn'
+                    = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
             - if @user.is_admin
               #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }
                 .aligncenter

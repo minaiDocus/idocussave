@@ -96,7 +96,7 @@ Idocus::Application.routes.draw do
           end
         end
         resources :bank_accounts, only: %w(edit update), module: 'organization'
-        resources :exercices
+        resources :exercises
         resources :journals, except: %w(index show) do
           get  'select', on: :collection
           post 'copy',   on: :collection

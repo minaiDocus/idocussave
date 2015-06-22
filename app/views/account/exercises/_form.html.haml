@@ -1,0 +1,19 @@
+= simple_form_for @exercise, url: exercise_form_url(@organization, @customer, @exercise), html: { class: 'form form-horizontal margin0' } do |f|
+  .control-group
+    = label_tag 'exercise[start_date]', 'Date de début', class: 'control-label'
+    .controls
+      .input-prepend.date.datepicker
+        %span.add-on
+          %i.icon-th
+        = text_field_tag 'exercise[start_date]', @exercise.start_date
+  .control-group
+    = label_tag 'exercise[end_date]', 'Date de fin', class: 'control-label'
+    .controls
+      .input-prepend.date.datepicker
+        %span.add-on
+          %i.icon-th
+        = text_field_tag 'exercise[end_date]', @exercise.end_date
+  = f.input :is_closed, as: :boolean
+  .form-actions.margin0bottom
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_organization_customer_exercises_path(@organization, @customer), class: 'btn'

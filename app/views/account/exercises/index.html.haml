@@ -1,0 +1,26 @@
+#exercises
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .pull-left
+            %h3 Exercices comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+          .pull-right
+            = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'
+
+  .row-fluid
+    .span12.box
+      %table.table.table-striped.table-condensed.margin0bottom
+        %tr
+          %th Date de début
+          %th Date de fin
+          %th Fermé ?
+          %th Actions
+        - @exercises.each do |exercise|
+          %tr
+            %td= l(exercise.start_date, format: :long)
+            %td= l(exercise.end_date, format: :long)
+            %td= exercise.is_closed ? t('yes_value') : t('no_value')
+            %td
+              = icon_link_to edit_account_organization_customer_exercise_path(@organization, @customer, exercise), { icon: 'edit' }, { class: 'btn btn-mini' }
+              = icon_link_to account_organization_customer_exercise_path(@organization, @customer, exercise), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: t('actions.confirm') } }

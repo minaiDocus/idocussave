@@ -39,11 +39,11 @@ module Account::OrganizationHelper
     end
   end
 
-  def exercice_form_url(organization, customer, exercice)
-    if action_name == 'new' || !exercice.persisted?
-      account_organization_customer_exercices_url(organization, customer)
+  def exercise_form_url(organization, customer, exercise)
+    if action_name == 'new' || !exercise.persisted?
+      account_organization_customer_exercises_url(organization, customer)
     else
-      account_organization_customer_exercice_url(organization, customer, exercice)
+      account_organization_customer_exercise_url(organization, customer, exercise)
     end
   end
 

@@ -100,7 +100,7 @@ module KnowingsApi
                 xml.property options[:user_code], name: 'pgec:codeClient', transient: 'true'
                 xml.property options[:user_company], create: 'true', name: 'pgec:clientTitle' if options[:user_company].present?
                 xml.property @pole_name, create: 'true', name: 'pgec:poleName'
-                if options[:exercice]
+                if options[:exercise]
                   xml.property 'Exercice', name: 'pgec:folderType'
                   xml.property "#{options[:start_time].strftime('%Y-%m-%d')}T00:00:00+0#{options[:start_time].dst? ? 2 : 1}:00", name: 'pgec:from'
                   xml.property "#{options[:end_time].strftime('%Y-%m-%d')}T00:00:00+0#{options[:end_time].dst? ? 2 : 1}:00", name: 'pgec:to'

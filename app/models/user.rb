@@ -125,7 +125,7 @@ class User
   has_many :fiduceo_transactions,                                                               dependent: :destroy
   has_many :fiduceo_provider_wishes,                                                            dependent: :destroy
   has_many :bank_accounts,                                                                      dependent: :destroy
-  has_many :exercices
+  has_many :exercises
   has_many :sended_emails,      class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy
   has_many :received_emails,    class_name: 'Email',                    inverse_of: :to_user,   dependent: :destroy
   has_many :operations

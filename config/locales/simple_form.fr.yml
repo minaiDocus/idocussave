@@ -127,7 +127,7 @@ fr:
         state: Etat
         is_third_party_included: Inclure le tiers ?
         is_pre_assignment_state_included: Inclure l'état de la pré-affectation ?
-      exercice:
+      exercise:
         start_date: Date de début
         end_date: Date de fin
         is_closed: Fermé ?

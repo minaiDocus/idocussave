@@ -18,7 +18,7 @@ describe FindExercise do
 
     context 'use local exercises' do
       before(:each) do
-        @user.exercices.destroy_all
+        @user.exercises.destroy_all
         @user.reload
       end
 
@@ -30,7 +30,7 @@ describe FindExercise do
 
       context 'with closed exercise' do
         it 'returns nil' do
-          exercise = Exercice.new
+          exercise = Exercise.new
           exercise.user = @user
           exercise.start_date = Date.parse('01-02-2014')
           exercise.end_date = Date.parse('28-02-2015')
@@ -42,7 +42,7 @@ describe FindExercise do
 
       context 'with open exercises' do
         it 'returns an exercise' do
-          exercise = Exercice.new
+          exercise = Exercise.new
           exercise.user = @user
           exercise.start_date = Date.parse('01-02-2014')
           exercise.end_date = Date.parse('28-02-2015')
@@ -53,7 +53,7 @@ describe FindExercise do
 
         context 'outside date range' do
           it 'returns nil' do
-            exercise = Exercice.new
+            exercise = Exercise.new
             exercise.user = @user
             exercise.start_date = Date.parse('01-01-2014')
             exercise.end_date = Date.parse('31-12-2014')
@@ -63,7 +63,7 @@ describe FindExercise do
           end
 
           it 'returns nil' do
-            exercise = Exercice.new
+            exercise = Exercise.new
             exercise.user = @user
             exercise.start_date = Date.parse('01-02-2015')
             exercise.end_date = Date.parse('31-01-2016')

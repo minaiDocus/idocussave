@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Exercice
+class Exercise
   include Mongoid::Document
   include Mongoid::Timestamps
 
@@ -18,7 +18,7 @@ class Exercice
 private
 
   def uniqueness_of_date
-    if (exercice = user.exercices.where(start_date: start_date, end_date: end_date).first) && exercice != self
+    if (exercise = user.exercises.where(start_date: start_date, end_date: end_date).first) && exercise != self
       errors.add(:start_date, :taken)
       errors.add(:end_date, :taken)
     end

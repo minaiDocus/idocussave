@@ -289,7 +289,7 @@ fr:
           attributes:
             authd_prev_period:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
-        exercice:
+        exercise:
           attributes:
             start_date:
               taken: existe déjà
@@ -767,7 +767,7 @@ fr:
           pole_name: Nom du Pôle
           is_third_party_included: Tiers inclus ?
           is_pre_assignment_state_included: Etat de la pré-affectation inclus ?
-      exercice:
+      exercise:
         zero: 0 exercice
         one: 1 exercice
         other: '%{count} exercices'
