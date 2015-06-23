@@ -8,13 +8,14 @@ class UploadedDocument
     VALID_EXTENSION.join(' ')
   end
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader=nil)
     @file = file
     @original_file_name = original_file_name.gsub(/\0/,'')
     @user = user
     @code = @user.code
     @journal = journal
     @prev_period_offset = prev_period_offset.to_i
+    @uploader = uploader || user
 
     @errors = []
 
@@ -33,7 +34,7 @@ class UploadedDocument
       pack.update_pack_state
       options = {
         delivery_type: 'upload',
-        delivered_by: @code,
+        delivered_by: @uploader.code,
         original_file_name: @original_file_name,
         is_content_file_valid: true
       }

@@ -7,7 +7,8 @@ class Account::Documents::UploadsController < Account::AccountController
                                              params[:files][0].original_filename,
                                              customer,
                                              params[:file_account_book_type],
-                                             params[:file_prev_period_offset]
+                                             params[:file_prev_period_offset],
+                                             current_user
     tempfile_path = params[:files][0].tempfile.path
     if File.exist? tempfile_path
       File.delete tempfile_path
