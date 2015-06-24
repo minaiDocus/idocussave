@@ -634,7 +634,7 @@
 
     // do_qtip(["left bottom"],["top right"],["#documentslist"],["#help1"],["jtools"]);
 
-    if ($("#file_code").length > 0) {
+    if ($('#h_file_code').length > 0) {
       file_upload_params = $('#fileupload').data('params')
 
       function file_upload_update_fields(code) {
@@ -643,14 +643,14 @@
         for (var i=0; i<account_book_types.length; i++) {
           content = content + "<option value=" + account_book_types[i] + ">" + account_book_types[i] + "</option>";
         }
-        $('#file_account_book_type').html(content);
+        $('#h_file_account_book_type').html(content);
 
         var periods = file_upload_params[code]['periods'];
         content = '';
         for (var i=0; i<periods.length; i++) {
           content = content + "<option value=" + periods[i][1] + ">" + periods[i][0] + "</option>";
         }
-        $('#file_prev_period_offset').html(content);
+        $('#h_file_prev_period_offset').html(content);
 
         if (file_upload_params[code]['message'] != undefined) {
           $('.prev_period_offset .help-block .period').html(file_upload_params[code]['message']['period']);
@@ -661,13 +661,58 @@
         }
       }
 
-      if($("#file_code").val() != null)
-        file_upload_update_fields($("#file_code").val());
+      if($('#h_file_code').val() != null) {
+        file_upload_update_fields($('#h_file_code').val());
+        $('#file_code').val($('#h_file_code').val());
+      }
 
-      $("#file_code").on('change', function() {
+      $('#h_file_code').on('change', function() {
         file_upload_update_fields($(this).val());
+        $('#file_code').val($(this).val());
       });
     }
+
+    $('#file_account_book_type').val($('#h_file_account_book_type').val());
+    $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
+
+    $('#h_file_account_book_type').on('change', function() {
+      $('#file_account_book_type').val($(this).val());
+    });
+
+    $('#h_file_prev_period_offset').on('change', function() {
+      $('#file_prev_period_offset').val($(this).val());
+    });
+
+    function lock_file_upload_params() {
+      if($('#h_file_code').length > 0)
+        $('select[name="h_file_code"]').attr('disabled', 'disabled');
+      $('select[name="h_file_account_book_type"]').attr('disabled', 'disabled');
+      $('select[name="h_file_prev_period_offset"]').attr('disabled', 'disabled');
+    }
+
+    function unlock_file_upload_params() {
+      if($('#h_file_code').length > 0)
+        $('select[name="h_file_code"]').removeAttr('disabled');
+      $('select[name="h_file_account_book_type"]').removeAttr('disabled');
+      $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
+    }
+
+    function lock_or_unlock_file_upload_params() {
+      if($('.template-upload').length > 0)
+        lock_file_upload_params();
+      else
+        unlock_file_upload_params();
+    }
+
+    var lock_or_unlock_file_upload_params_interval = null;
+
+    $('#uploadDialog').on('show', function() {
+      lock_or_unlock_file_upload_params_interval = setInterval(lock_or_unlock_file_upload_params, 500);
+    })
+
+    $('#uploadDialog').on('hide', function() {
+      clearInterval(lock_or_unlock_file_upload_params_interval);
+    })
 
     if($('#pack').length > 0) {
       var url = '/account/documents/' + $('#pack').data('id');
