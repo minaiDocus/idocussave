@@ -271,6 +271,7 @@
           .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
         - if @organization.ibiza.try(:is_configured?)
           #account_number_rules.tab-pane{ class: ('active' if params[:tab] == 'account_number_rules') }
+            = link_to icon_new + ' Nouvelle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary pull-right'
             %p
               Les règles (#{@organization.account_number_rules.size}) ci-dessous s'appliquent aux opérations récupérées depuis les automates.
             %table.table.table-striped.table-condensed
@@ -299,7 +300,6 @@
                       = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
                       = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
                       = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
-            = link_to icon_new + ' Nouvelle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary pull-right'
         - if @user.is_admin
           #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
             %table.table.table-striped.table-condensed
