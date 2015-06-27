@@ -686,17 +686,28 @@
     });
 
     function lock_file_upload_params() {
-      if($('#h_file_code').length > 0)
+      var title = null;
+      if($('#h_file_code').length > 0) {
+        title = 'Vous avez sélectionné des documents à ajouter dans un client / type / période, veuillez démarrer le téléchargement avant de changer pour téléverser à nouveau.';
         $('select[name="h_file_code"]').attr('disabled', 'disabled');
+        $('select[name="h_file_code"]').attr('title', title);
+      } else {
+        title = 'Vous avez sélectionné des documents à ajouter dans un type ou période, veuillez démarrer le téléchargement avant de changer pour téléverser à nouveau.';
+      }
       $('select[name="h_file_account_book_type"]').attr('disabled', 'disabled');
       $('select[name="h_file_prev_period_offset"]').attr('disabled', 'disabled');
+      $('select[name="h_file_account_book_type"]').attr('title', title);
+      $('select[name="h_file_prev_period_offset"]').attr('title', title);
     }
 
     function unlock_file_upload_params() {
       if($('#h_file_code').length > 0)
         $('select[name="h_file_code"]').removeAttr('disabled');
+        $('select[name="h_file_code"]').removeAttr('title');
       $('select[name="h_file_account_book_type"]').removeAttr('disabled');
       $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
+      $('select[name="h_file_account_book_type"]').removeAttr('title');
+      $('select[name="h_file_prev_period_offset"]').removeAttr('title');
     }
 
     function lock_or_unlock_file_upload_params() {
