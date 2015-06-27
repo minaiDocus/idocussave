@@ -27,7 +27,10 @@
                   = link_to invoice.organization.name, account_organization_path(invoice.organization)
               %td
                 - if invoice.user && !invoice.organization
-                  = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
+                  - if invoice.user.organization
+                    = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
+                  - else
+                    = invoice.user.code
               %td.price
                 - if invoice.amount_in_cents_w_vat
                   = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
