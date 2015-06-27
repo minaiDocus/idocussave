@@ -669,6 +669,8 @@
       $('#h_file_code').on('change', function() {
         file_upload_update_fields($(this).val());
         $('#file_code').val($(this).val());
+        $('#file_account_book_type').val($('#h_file_account_book_type').val());
+        $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
       });
     }
 
