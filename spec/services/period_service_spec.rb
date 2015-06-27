@@ -193,12 +193,21 @@ describe PeriodService do
   end
 
   describe '#prev_expires_at' do
-    it 'returns 11 january 2014 23:59:59' do
+    it 'returns 11 January 2014 23:59:59' do
       periods = PeriodService.new period_duration: 1,
                                   authd_prev_period: 1,
                                   auth_prev_period_until_day: 11,
                                   auth_prev_period_until_month: 0,
                                   current_time: @time
+      expect(periods.prev_expires_at).to eq(Time.local(2014,1,11).end_of_day)
+    end
+
+    it 'returns 11 January 2014 23:59:59' do
+      periods = PeriodService.new period_duration: 3,
+                                  authd_prev_period: 1,
+                                  auth_prev_period_until_day: 11,
+                                  auth_prev_period_until_month: 0,
+                                  current_time: Time.local(2014,3,20)
       expect(periods.prev_expires_at).to eq(Time.local(2014,1,11).end_of_day)
     end
 
@@ -209,6 +218,15 @@ describe PeriodService do
                                   auth_prev_period_until_month: 2,
                                   current_time: @time
       expect(periods.prev_expires_at).to eq(Time.local(2014,3,11).end_of_day)
+    end
+
+    it 'returns 11 January 2014 23:59:59' do
+      periods = PeriodService.new period_duration: 12,
+                                  authd_prev_period: 1,
+                                  auth_prev_period_until_day: 11,
+                                  auth_prev_period_until_month: 0,
+                                  current_time: Time.local(2014,3,20)
+      expect(periods.prev_expires_at).to eq(Time.local(2014,1,11).end_of_day)
     end
 
     it 'returns 11 April 2014 23:59:59' do

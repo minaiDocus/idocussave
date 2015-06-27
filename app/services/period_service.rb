@@ -60,7 +60,15 @@ class PeriodService
     if @auth_prev_period_until_month == 0 && @auth_prev_period_until_day == 0
       nil
     else
-      beginning_of_month = (@current_time + @auth_prev_period_until_month).beginning_of_month
+      case @period_duration
+      when 1
+        beginning = @current_time
+      when 3
+        beginning = @current_time.beginning_of_quarter
+      when 12
+        beginning = @current_time.beginning_of_year
+      end
+      beginning_of_month = (beginning + @auth_prev_period_until_month).beginning_of_month
       day = @auth_prev_period_until_day - 1.day
       (beginning_of_month + day).end_of_day
     end
