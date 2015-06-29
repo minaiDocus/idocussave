@@ -11,6 +11,7 @@ class DebitMandate
   field :signatureOperationResult
   field :signatureDate
   field :mandateScore
+  field :clientReference
   field :cardTransactionId
   field :cardRequestId
   field :cardOperationType
