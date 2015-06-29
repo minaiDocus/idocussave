@@ -533,6 +533,7 @@ DEPENDENCIES
   delayed_job_mongoid
   delayed_job_web!
   devise
+  eco
   elasticsearch-model
   elasticsearch-rails
   factory_girl_rails
