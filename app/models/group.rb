@@ -35,19 +35,12 @@ class Group
   end
 
   def member_tokens=(user_ids)
-    if (members.size > 0 && user_ids.size > 0) || (members.size == 0 && user_ids.size == 0)
-      member_ids = members.map { |m| m.id.to_s }
-      is_included = true
-      member_ids.each do |id|
-        is_included = false unless id.in?(user_ids)
+    member_ids = members.map { |m| m.id.to_s }
+    if user_ids.sort != member_ids.sort
+      members.clear
+      User.find(user_ids).each do |user|
+        members << user
       end
-      if !is_included || user_ids.size != member_ids.size
-        self.members = User.find(user_ids)
-      end
-    elsif members.size > 0 && user_ids.size == 0
-      self.members.clear
-    elsif members.size == 0 && user_ids.size > 0
-      self.members = User.find(user_ids)
     end
   end
 
