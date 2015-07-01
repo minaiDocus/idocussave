@@ -69,7 +69,7 @@ class FileDeliveryInit
         end
         # pieces
         if type.in? [RemoteFile::ALL, RemoteFile::PIECES_ONLY]
-          is_custom_name_active = organization.foc_file_naming_policy.scope == 'organization' || object.class == Group || object.is_prescriber
+          is_custom_name_active = organization.foc_file_naming_policy.scope == 'organization' || object.class.in?([Organization, Group]) || object.is_prescriber
           is_custom_name_needed = is_custom_name_active && organization.foc_file_naming_policy.pre_assignment_needed?
           pieces.each do |piece|
             unless piece.is_awaiting_pre_assignment && is_custom_name_needed
