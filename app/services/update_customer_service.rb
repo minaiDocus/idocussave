@@ -8,11 +8,11 @@ class UpdateCustomerService
   def execute
     @customer.assign_attributes(@params)
     if @customer.valid? && @customer.email_changed?
-      encrypted_token, token = Devise.token_generator.generate(User, :reset_password_token)
-      @customer.reset_password_token = token
+      token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
+      @customer.reset_password_token = encrypted_token
       @customer.reset_password_sent_at = Time.now
       @customer.save
-      WelcomeMailer.welcome_customer(@customer, encrypted_token).deliver
+      WelcomeMailer.welcome_customer(@customer, token).deliver
     end
     @customer.save
   end
