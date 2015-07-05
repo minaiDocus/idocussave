@@ -34,6 +34,8 @@ protected
         format.json { render json: { status: :error, code: 500 } }
       end
     end
+  rescue ActionController::UnknownFormat
+    render status: 400, text: '404'
   end
 
   def load_user_and_role(name=:@user)

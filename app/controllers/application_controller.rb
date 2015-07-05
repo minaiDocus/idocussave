@@ -90,16 +90,18 @@ protected
            AbstractController::ActionNotFound,
            Mongoid::Errors::DocumentNotFound
       respond_to do |format|
-        format.html { render '/404', status: 404 }
+        format.html { render '/404', status: 404, layout: 'error' }
         format.json { render json: { status: :not_found, code: 404 } }
       end
     rescue => e
       Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|
-        format.html { render '/500', status: 500 }
+        format.html { render '/500', status: 500, layout: 'error' }
         format.json { render json: { status: :error, code: 500 } }
       end
     end
+  rescue ActionController::UnknownFormat
+    render status: 400, text: '404'
   end
 
   def authenticate_admin_user!
