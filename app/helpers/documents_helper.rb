@@ -9,9 +9,8 @@ module DocumentsHelper
   end
 
   def account_book_types_option
-    @user.account_book_types.by_position.map do |u|
-      description = u.description.blank? ? "" : " " + u.description
-      [u.name + description, u.name]
+    @user.account_book_types.by_position.map do |j|
+      [j.name+' '+j.description, j.name]
     end
   end
 
@@ -185,7 +184,9 @@ module DocumentsHelper
       @user.customers.active.each do |customer|
         period_service = PeriodService.new user: customer
         hsh = {
-          journals: customer.account_book_types.asc(:name).map(&:name),
+          journals: customer.account_book_types.asc(:name).map { |j|
+            j.name+' '+j.description
+          },
           periods:  options_for_period(period_service)
         }
         if period_service.prev_expires_at
