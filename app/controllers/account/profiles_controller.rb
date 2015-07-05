@@ -15,7 +15,9 @@ class Account::ProfilesController < Account::AccountController
   def update
     if params[:user][:current_password]
       if @user.valid_password?(params[:user][:current_password])
-        if @user.update(user_params)
+        @user.password =              params[:user][:password]
+        @user.password_confirmation = params[:user][:password_confirmation]
+        if @user.save
           flash[:notice] = "Votre mot de passe a été mis à jour avec succès"
         else
           flash[:alert] = "Une erreur est survenue lors de la mise à jour de votre mot de passe"
@@ -41,9 +43,7 @@ class Account::ProfilesController < Account::AccountController
 
 private
   def user_params
-    params.require(:user).permit(:current_password,
-                                 :password, :password_confirmation,
-                                 :is_reminder_email_active,
+    params.require(:user).permit(:is_reminder_email_active,
                                  :is_document_notifier_active,
                                  :is_mail_receipt_activated)
   end
