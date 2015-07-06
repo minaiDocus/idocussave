@@ -16,9 +16,6 @@ class Ibiza
 
   validates_inclusion_of :state, in: %w(none waiting valid invalid)
 
-  before_save :set_state, if: Proc.new { |e| 'token'.in?(e.changed) }
-  after_update :flush_users_cache, if: Proc.new { |e| 'token'.in?(e.changed) }
-
   def is_configured?
     state == 'valid'
   end
@@ -28,24 +25,22 @@ class Ibiza
   end
 
   def set_state
-    if self.token.present?
-      self.state = 'waiting'
+    if token.present?
+      update(state: 'waiting')
       verify_token
     else
-      self.state = 'none'
+      update(state: 'none')
     end
   end
 
   def verify_token
+    client.request.clear
     client.company?
     if client.response.success?
-      reload
-      self.state = 'valid' if self.token.present?
+      update(state: 'valid')
     else
-      reload
-      self.state = 'invalid' if self.token.present?
+      update(state: 'invalid')
     end
-    save unless Rails.env == 'test'
   end
   handle_asynchronously :verify_token, queue: 'ibiza token verification', priority: 0
 

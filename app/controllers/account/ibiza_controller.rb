@@ -1,11 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaController < Account::OrganizationController
   before_filter :verify_rights, except: :refresh_users_cache
+  before_filter :load_ibiza, except: :create
 
   def create
     @ibiza = Ibiza.new(ibiza_params)
     @ibiza.organization = @organization
     if @ibiza.save
+      @ibiza.set_state if @ibiza.token.present?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_path(@organization, tab: 'ibiza')
     else
@@ -14,11 +16,16 @@ class Account::IbizaController < Account::OrganizationController
   end
 
   def edit
-    @ibiza = @organization.ibiza
   end
 
   def update
-    if @organization.ibiza.update(ibiza_params)
+    @ibiza.assign_attributes(ibiza_params)
+    is_token_changed = @ibiza.token_changed?
+    if @ibiza.save
+      if is_token_changed
+        @ibiza.set_state
+        @ibiza.flush_users_cache
+      end
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'ibiza')
     else
@@ -27,9 +34,9 @@ class Account::IbizaController < Account::OrganizationController
   end
 
   def refresh_users_cache
-    if @organization.ibiza.try(:is_configured?)
-      @organization.ibiza.flush_users_cache
-      @organization.ibiza.get_users_only_once
+    if @ibiza.try(:is_configured?)
+      @ibiza.flush_users_cache
+      @ibiza.get_users_only_once
       flash[:success] = 'Rafraîchissement de la liste des dossiers Ibiza en cours.'
     end
     path = params[:back].present? ? params[:back] : account_organization_path
@@ -43,6 +50,10 @@ private
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end
+  end
+
+  def load_ibiza
+    @ibiza = @organization.ibiza
   end
 
   def ibiza_params
