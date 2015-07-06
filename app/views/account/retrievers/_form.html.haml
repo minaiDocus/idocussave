@@ -2,7 +2,7 @@
 #banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
 
 = simple_form_for [:account, @fiduceo_retriever], html: { class: 'retriever_form form form-horizontal' } do |f|
-  = f.input :type, collection: [['Documents', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
+  = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
   = f.input :service_name, as: :hidden
   = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
   = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
