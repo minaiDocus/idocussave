@@ -75,7 +75,7 @@ class Ibiza
       result = false
     end
     Rails.cache.write([:ibiza, id, :users_is_flushing], false)
-    Rails.cache.write([:ibiza, id, :users], result)
+    Rails.cache.write([:ibiza, id, :users], result, expires_in: 5.minutes)
     result
   end
   handle_asynchronously :get_users, queue: 'ibiza get users', priority: 1
