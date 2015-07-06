@@ -104,15 +104,8 @@ class FiduceoDocumentFetcher
         elsif transaction.error? && (retriever.processing? || retriever.wait_for_user_action?)
           retriever.error
           if transaction.critical_error?
-            content = ""
-            content << "Utilisateur : #{transaction.user.code}<br>"
-            content << "Récupérateur : #{transaction.retriever.name} - (#{transaction.retriever.service_name})<br>"
-            content << "Transaction : #{transaction.status} - #{transaction.id}<br>"
-            content << "<br><br>#{transaction.events.inspect}"
             addresses = Array(Settings.notify_errors_to)
-            if addresses.size > 0
-              NotificationMailer.notify(addresses, "[iDocus] Erreur transaction fiduceo - #{transaction.status}", content).deliver
-            end
+            FiduceoRetrieverMailer.notify_transaction_error(addresses, transaction).deliver if addresses.size > 0
           end
         end
       end

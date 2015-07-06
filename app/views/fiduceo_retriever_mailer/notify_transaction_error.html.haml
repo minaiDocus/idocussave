@@ -1,0 +1,22 @@
+!!!
+%html
+  %head
+    %title [iDocus] Erreur transaction fiduceo - #{@transaction.status}
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    %table
+      %tbody
+        %tr
+          %th Utilisateur :
+          %td= link_to @transaction.user.code, account_fiduceo_retrievers_url(user_code: @transaction.user.code)
+        %tr
+          %th Récupérateur :
+          %td= "#{@transaction.retriever.name} - (#{@transaction.retriever.service_name})"
+        %tr
+          %th Type :
+          %td= @transaction.retriever.type == 'provider' ? 'Documents' : 'Opérations bancaires'
+        %tr
+          %th Transaction :
+          %td= "#{@transaction.status} - #{@transaction.id}"
+    %br
+    %p= @transaction.events.inspect
