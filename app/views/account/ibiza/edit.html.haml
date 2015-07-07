@@ -10,7 +10,7 @@
           = f.input :token, hint: link_to('Obtenir un jeton', "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
           = f.input :is_auto_deliver, as: :boolean
         %fieldset
-          %legend Format de nom de la pièce
+          %legend Format de nom de la pièce iDocus dans IbiZa
           %table.table.table-condensed
             %thead
               %tr
@@ -49,7 +49,7 @@
                 %td= number_field_tag "ibiza[piece_name_format][number][position]", (@ibiza.piece_name_format['number']['position'] rescue 1)
           = f.input :piece_name_format_sep
         %fieldset
-          %legend Format de la description
+          %legend Format de l'écriture comptable dans IbiZa
           %table.table.table-condensed
             %thead
               %tr
@@ -72,7 +72,7 @@
                 %td
                   %label.checkbox
                     = check_box_tag "ibiza[description][operation_label][is_used]", 1, (@ibiza.description['operation_label']['is_used'] rescue false)
-                    %span.text Libellé de l'opération
+                    %span.text Libellé de l'opération bancaire
                 %td= number_field_tag "ibiza[description][operation_label][position]", (@ibiza.description['operation_label']['position'] rescue 1)
               %tr
                 %td

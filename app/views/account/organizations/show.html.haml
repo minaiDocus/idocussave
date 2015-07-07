@@ -154,7 +154,7 @@
                 %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
                 %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
           - if @organization.ibiza
-            %h4.margin2top.margin1bottom Format de nom de la pièce
+            %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans IbiZa
             %table.table.table-condensed.table-striped
               %thead
                 %tr
@@ -192,7 +192,7 @@
                     - value = @organization.ibiza.piece_name_format['number']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.piece_name_format['number']['position'] rescue 1
-            %h4.margin2top.margin1bottom Format de la description
+            %h4.margin2top.margin1bottom Format de l'écriture comptable dans IbiZa
             %table.table.table-condensed.table-striped
               %thead
                 %tr
@@ -213,7 +213,7 @@
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
                 %tr
-                  %td.name Libellé de l'opération
+                  %td.name Libellé de l'opération bancaire
                   %td.is_used
                     - value = @organization.ibiza.description['operation_label']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
