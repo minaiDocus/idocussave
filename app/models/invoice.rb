@@ -10,10 +10,6 @@ class Invoice
   field :amount_in_cents_w_vat, type: Integer
   field :requested_at,          type: Date
   field :received_at,           type: Date
-  field :content_file_name
-  field :content_content_type
-  field :content_file_size,     type: Integer
-  field :content_updated_at,    type: Time
 
   has_mongoid_attached_file :content,
     styles: {

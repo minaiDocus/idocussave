@@ -6,10 +6,6 @@ class Pack::Piece
 
   field :name
   field :number,                     type: Integer
-  field :content_file_name
-  field :content_content_type
-  field :content_file_size,          type: Integer
-  field :content_updated_at,         type: Time
   field :is_a_cover,                 type: Boolean, default: false
   field :origin
   field :position,                   type: Integer

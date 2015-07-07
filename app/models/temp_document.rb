@@ -5,19 +5,8 @@ class TempDocument
   include Mongoid::Paperclip
 
   field :original_file_name
-
-  field :content_file_name
-  field :content_content_type
-  field :content_file_size,    type: Integer
-  field :content_updated_at,   type: Time
   field :is_thumb_generated,   type: Boolean, default: false
-
-  field :raw_content_file_name
-  field :raw_content_content_type
-  field :raw_content_file_size,    type: Integer
-  field :raw_content_updated_at,   type: Time
-  field :pages_number,             type: Integer
-
+  field :pages_number,         type: Integer
   field :position,             type: Integer
   field :is_an_original,       type: Boolean, default: true # original or bundled
   field :is_a_cover,           type: Boolean, default: false

@@ -21,11 +21,6 @@ class Email
 
   validates_uniqueness_of :message_id
 
-  field :original_content_file_name
-  field :original_content_content_type
-  field :original_content_file_size,    type: Integer
-  field :original_content_updated_at,   type: Time
-
   has_mongoid_attached_file :original_content,
                             path: ":rails_root/files/:rails_env/:class/:attachment/:filename",
                             url: "/admin/emailed_documents/:id"

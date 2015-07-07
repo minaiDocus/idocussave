@@ -5,16 +5,12 @@ class Document
   include Mongoid::Paperclip
   include Elasticsearch::Model
 
-  field :content_file_name
-  field :content_content_type
-  field :content_file_size,    type: Integer
-  field :content_updated_at,   type: Time
-  field :content_text,         type: String,  default: ""
-  field :is_a_cover,           type: Boolean, default: false
+  field :content_text, type: String,  default: ""
+  field :is_a_cover,   type: Boolean, default: false
   field :origin
-  field :tags,                 type: Array,   default: []
-  field :position,             type: Integer
-  field :dirty,                type: Boolean, default: true
+  field :tags,         type: Array,   default: []
+  field :position,     type: Integer
+  field :dirty,        type: Boolean, default: true
   field :token
 
   validates_inclusion_of :origin, within: %w(mixed scan upload dematbox_scan fiduceo)
