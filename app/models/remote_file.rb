@@ -31,11 +31,11 @@ class RemoteFile
   scope :of_service, -> service_name { where(service_name: service_name) }
   scope :with_extension, -> extension { where(extension: extension) }
 
-  scope :waiting,    -> { where(state: :waiting) }
-  scope :cancelled,  -> { where(state: :cancelled) }
-  scope :sending,    -> { where(state: :sending) }
-  scope :synced,     -> { where(state: :synced) }
-  scope :not_synced, -> { where(state: :not_synced) }
+  scope :waiting,          -> { where(state: :waiting) }
+  scope :cancelled,        -> { where(state: :cancelled) }
+  scope :sending,          -> { where(state: :sending) }
+  scope :synchronized,     -> { where(state: :synced) }
+  scope :not_synchronized, -> { where(state: :not_synced) }
 
   scope :processed,     -> { any_in(state: [:synced,:cancelled]) }
   scope :not_processed, -> { not_in(state: [:synced,:cancelled]) }
