@@ -58,7 +58,7 @@ namespace :maintenance do
         print '.'
       end
       puts ''
-      Organization.not_test.asc(:created_at).each do |organization|
+      Organization.billed.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
         periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time.dup)
         if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
@@ -107,7 +107,7 @@ namespace :maintenance do
   namespace :prepacompta do
     desc 'Update accounting plan'
     task :update_accounting_plan => [:environment] do
-      organization_ids = Organization.not_test.map(&:id)
+      organization_ids = Organization.billed.map(&:id)
       user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
       users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active.sort_by(&:code)
 

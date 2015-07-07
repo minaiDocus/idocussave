@@ -21,7 +21,7 @@
                 %tr
                   %th= label_tag 'organization_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
                   %th= label_tag 'organization_contains[created_at][$lte]', t('mongoid.models.common.attributes.created_at')
-                  %th= label_tag 'organization_contains[is_test]', t('mongoid.models.organization.attributes.is_test') + " (#{Organization.test.count})"
+                  %th= label_tag 'organization_contains[is_test]', t('mongoid.models.organization.attributes.is_test') + " (#{Organization.not_billed.count})"
                   %th= label_tag 'organization_contains[is_suspended]', t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
                   %th= label_tag 'organization_contains[is_without_address]', "Sans adresse ? (#{@without_address_count})"
                   %th= label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ? (#{@debit_mandate_not_configured_count})"
