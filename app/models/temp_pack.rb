@@ -164,7 +164,7 @@ class TempPack
   end
 
   def next_document_position
-    inc(position_counter: 1).position_counter
+    with(safe: true).inc(position_counter: 1).position_counter
   end
 
 private
