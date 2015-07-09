@@ -556,7 +556,7 @@ fr:
           state: Etat
           description: Description
           description_separator: Séparateur du champ description
-          piece_name_format: Format de nom de la pièce
+          piece_name_format: Format de nom de la pièce iDocus dans IbiZa
           piece_name_format_sep: Séparateur du format de nom de la pièce
           state_value:
             none: non assigné
