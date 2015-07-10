@@ -24,8 +24,17 @@ class PreAssignmentDeliveryService
     result
   end
 
+  def grouped_date
+    first_date = @preseizures.map(&:date).compact.sort.first
+    if first_date && @delivery.grouped_date.year == first_date.year && @delivery.grouped_date.month == first_date.month
+      first_date.to_date
+    else
+      @delivery.grouped_date
+    end
+  end
+
   def exercise
-    @exercise ||= FindExercise.new(@user, @delivery.grouped_date, @ibiza).execute
+    @exercise ||= FindExercise.new(@user, grouped_date, @ibiza).execute
   end
 
   def is_exercises_present?
