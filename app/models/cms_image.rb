@@ -5,10 +5,6 @@ class CmsImage
   include Mongoid::Paperclip
 
   field :original_file_name
-  field :content_file_name
-  field :content_content_type
-  field :content_file_size,    type: Integer
-  field :content_updated_at,   type: Time
 
   has_mongoid_attached_file :content,
     styles: {
