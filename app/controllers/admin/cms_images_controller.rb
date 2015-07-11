@@ -8,8 +8,12 @@ class Admin::CmsImagesController < Admin::AdminController
   def create
     @cms_image = CmsImage.new
     @cms_image.original_file_name = params[:files][0].original_filename
-    @cms_image.content = params[:files][0].tempfile
-    @cms_image.save
+    Dir.mktmpdir do |dir|
+      file_path = File.join(dir, params[:files][0].original_filename)
+      FileUtils.cp params[:files][0].tempfile.path, file_path
+      @cms_image.content = open(file_path)
+      @cms_image.save
+    end
 
     data = [{ thumb: @cms_image.content.url(:thumb).to_s, url: @cms_image.content.url.to_s, name: @cms_image.name }]
 
