@@ -51,7 +51,7 @@ class DocumentTools
         is_ok = false
       end
       if strict
-        success = system "pdftk '#{file_path}' dump_data 2>&1"
+        success = system "#{Pdftk.config[:exe_path]} '#{file_path}' dump_data 2>&1"
         is_ok = false unless success
       end
       # consumes too much cpu cycle

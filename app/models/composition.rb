@@ -43,7 +43,7 @@ class Composition
       system(cmd)
 
       combined_name  = "#{Rails.root}/files/#{Rails.env}/compositions/#{composition.id}/#{name}.pdf"
-      cmd = "pdftk #{ temp_paths.join(" ") } output #{combined_name}"
+      cmd = "#{Pdftk.config[:exe_path]} #{ temp_paths.join(" ") } output #{combined_name}"
       Rails.logger.debug("Will compose new document with #{cmd}")
       system(cmd)
       composition.name = name
