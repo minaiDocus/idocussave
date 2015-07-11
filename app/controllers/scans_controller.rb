@@ -38,7 +38,7 @@ class ScansController < PaperProcessesController
         @document.organization = @document.user.try(:organization)
         @document.scanned_at   = Time.now
         @document.scanned_by   = @scanned_by
-        if @document.save
+        if @document.user && @document.save
           create_paper_process(@document)
           if @document.period
             UpdatePeriodDataService.new(@document.period).execute
@@ -48,6 +48,7 @@ class ScansController < PaperProcessesController
           flash[:error] = nil
           session[:document] = nil
         else
+          @document.errors.add(:name, :invalid) unless @document.user
           flash[:success] = nil
           flash[:error] = 'Donnée(s) invalide(s).'
           session[:document] = @document
