@@ -154,7 +154,8 @@ jQuery ->
       $('#fiduceo_retriever_param3').val($('#fiduceo_retriever_sparam3').val())
 
     if $('#fiduceo_retriever_provider_id').is(':disabled')
-      $('#fiduceo_retriever_provider_id').val($('#fiduceo_retriever_service_name').val())
+      $('#fiduceo_retriever_provider_id').addClass('hide')
+      $('#fiduceo_retriever_provider_id').after('<input class="string required disabled" disabled="disabled" id="fiduceo_retriever_provider_name" name="fiduceo_retriever[provider_name]" value="'+$('#fiduceo_retriever_service_name').val()+'" type="text">')
     else
       $('#fiduceo_retriever_provider_id').tokenInput window.providers,
         theme: 'facebook'
@@ -175,7 +176,8 @@ jQuery ->
           update_provider()
 
     if $('#fiduceo_retriever_bank_id').is(':disabled')
-      $('#fiduceo_retriever_bank_id').val($('#fiduceo_retriever_service_name').val())
+      $('#fiduceo_retriever_bank_id').addClass('hide')
+      $('#fiduceo_retriever_bank_id').after('<input class="string required disabled" disabled="disabled" id="fiduceo_retriever_bank_name" name="fiduceo_retriever[bank_name]" value="'+$('#fiduceo_retriever_service_name').val()+'" type="text">')
     else
       $('#fiduceo_retriever_bank_id').tokenInput window.banks,
         theme: 'facebook'
