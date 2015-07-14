@@ -2,6 +2,7 @@
 class TempPack
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Locker
 
   field :name # ex : TS0001 TS 201301 all
   field :position_counter,             type: Integer, default: 0
@@ -164,7 +165,9 @@ class TempPack
   end
 
   def next_document_position
-    with(safe: true).inc(position_counter: 1).position_counter
+    with_lock(timeout: 1, retries: 100, retry_sleep: 0.01) do
+      with(safe: true).inc(position_counter: 1).position_counter
+    end
   end
 
 private
