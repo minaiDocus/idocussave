@@ -40,6 +40,8 @@ update_form = ->
           content += '<option value="' + option + '">' + option + '</option>'
         $("label[for='fiduceo_retriever_sparam1']").html(label)
         $('#fiduceo_retriever_sparam1').html(content)
+        if retriever['inputs'][2]['name'].match(/^caisse$/i) && window.selected_cash_register != null
+          $('#fiduceo_retriever_sparam1 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
         $('.sparam1').show()
         $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
       else
@@ -56,6 +58,8 @@ update_form = ->
           content += '<option value="' + option + '">' + option + '</option>'
         $("label[for='fiduceo_retriever_sparam2']").html(label)
         $('#fiduceo_retriever_sparam2').html(content)
+        if retriever['inputs'][3]['name'].match(/^caisse$/i) && window.selected_cash_register != null
+          $('#fiduceo_retriever_sparam2 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
         $('.sparam2').show()
         $('#fiduceo_retriever_param2').val($('#fiduceo_retriever_sparam2').val())
       else
@@ -72,6 +76,8 @@ update_form = ->
           content += '<option value="' + option + '">' + option + '</option>'
         $("label[for='fiduceo_retriever_sparam3']").html(label)
         $('#fiduceo_retriever_sparam3').html(content)
+        if retriever['inputs'][4]['name'].match(/^caisse$/i) && window.selected_cash_register != null
+          $('#fiduceo_retriever_sparam3 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
         $('.sparam3').show()
         $('#fiduceo_retriever_param3').val($('#fiduceo_retriever_sparam3').val())
       else
@@ -136,6 +142,7 @@ jQuery ->
     window.selected_providers = $('#providers').data('selectedProviders')
     window.banks = $('#banks').data('banks')
     window.selected_banks = $('#banks').data('selectedBanks')
+    window.selected_cash_register = $('#banks').data('selectedCashRegister')
 
     update_selects_list($('#fiduceo_retriever_type').val() == 'provider')
 

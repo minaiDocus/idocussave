@@ -1,5 +1,5 @@
 #providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
-#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
+#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json, selected_cash_register: @fiduceo_retriever.cash_register } }
 
 = simple_form_for [:account, @fiduceo_retriever], html: { class: 'retriever_form form form-horizontal' } do |f|
   = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?

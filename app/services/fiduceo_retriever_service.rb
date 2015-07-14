@@ -15,6 +15,8 @@ class FiduceoRetrieverService
             bank = list.banks.select { |e| e[:id] == params[:bank_id] }.first
             retriever.wait_for_user = bank[:wait_for_user]
             retriever.wait_for_user_label = bank[:wait_for_user_label]
+            input = bank[:inputs].select { |input| input[:name].match /\Acaisse\z/i }.first
+            retriever.cash_register = retriever.send(input[:tag]) if input
           elsif retriever.provider?
             provider = list.providers.select { |e| e[:id] == params[:provider_id] }.first
             retriever.wait_for_user = provider[:wait_for_user]
@@ -38,7 +40,13 @@ class FiduceoRetrieverService
         client = Fiduceo::Client.new retriever.user.fiduceo_id
         client.retriever(nil, :put, format_params(retriever))
         if client.response.code == 200
-          retriever.journal = nil if retriever.bank?
+          if retriever.bank?
+            retriever.journal = nil
+            list = FiduceoProvider.new retriever.user.fiduceo_id
+            bank = list.banks.select { |e| e[:id] == retriever.bank_id }.first
+            input = bank[:inputs].select { |input| input[:name].match /\Acaisse\z/i }.first
+            retriever.cash_register = retriever.send(input[:tag]) if input
+          end
           retriever.journal_name = retriever.journal.try(:name)
           retriever.save
           if retriever.error? && params[:pass].present?

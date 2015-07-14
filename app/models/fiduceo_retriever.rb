@@ -18,6 +18,7 @@ class FiduceoRetriever
   field :type,                                        default: 'provider'
   field :name
   field :login
+  field :cash_register
   field :state
   field :is_active,                    type: Boolean, default: true
   field :is_selection_needed,          type: Boolean, default: true
