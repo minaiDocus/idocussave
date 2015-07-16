@@ -114,7 +114,11 @@ class PreAssignmentDeliveryService
       @report.is_locked         = false
       @report.save
 
-      if @preseizures.size > 1
+      retry_delivery = true
+      ['Le journal est inconnu', 'Le compte est fermÃ©', 'Le compte est absent'].each do |message|
+        retry_delivery = false if client.response.message.to_s.match /#{message}/
+      end
+      if retry_delivery && @preseizures.size > 1
         @preseizures.each do |preseizure|
           delivery = CreatePreAssignmentDeliveryService.new(preseizure, false).execute.first
           delivery.update_attribute(:is_auto, @delivery.is_auto)
