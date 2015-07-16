@@ -9,8 +9,9 @@
         %span{ class: 'label label-info', style: 'margin-right:5px;' }= extension[1..-1]
       %br
       %br
+      %span.label.label-important ATTENTION
       %span.red
-        PDF protégés non acceptés.
+        \: Fichiers de plus de 100 pages ou plus de 10 mégas non acceptés. PDF protégés non acceptés.
       %br
       %br
     %form#fileupload.form.form-horizontal{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }

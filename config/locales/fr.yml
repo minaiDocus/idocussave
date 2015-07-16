@@ -276,7 +276,8 @@ fr:
               greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
         uploaded_document:
           attributes:
-            file_size_is_too_big: 'taille %{size_in_mo} Mo trop gros (50 Mo max.)'
+            pages_number_is_too_high: 'nombre de pages : %{pages_number}, trop élevé (100 pages max.)'
+            file_size_is_too_big: 'taille : %{size_in_mo} Mo, trop gros (10 Mo max.)'
             invalid_file_extension: 'extension %{extension} invalide (%{valid_extensions})'
             journal_unknown: 'journal %{journal} inconnu'
             invalid_period: "période '%{period}' inconnu"

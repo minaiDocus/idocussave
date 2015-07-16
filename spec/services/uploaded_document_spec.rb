@@ -306,17 +306,30 @@ describe UploadedDocument do
         it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.invalid_period', period: '201212') }
       end
 
-      context 'when file size are too big' do
+      context 'when file size is too big' do
         before(:each) do
-          allow(@file).to receive(:size).and_return(52428801)
+          allow(@file).to receive(:size).and_return(11_000_000)
           @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
         end
 
         subject { @uploaded_document }
 
         it { is_expected.to be_invalid }
-        it { expect(subject.errors).to eq [[:file_size_is_too_big, size_in_mo: '50.00']] }
-        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.file_size_is_too_big', size_in_mo: '50.00') }
+        it { expect(subject.errors).to eq [[:file_size_is_too_big, size_in_mo: '11.00']] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.file_size_is_too_big', size_in_mo: '11.00') }
+      end
+
+      context 'when pages number is too high' do
+        before(:each) do
+          allow_any_instance_of(UploadedDocument).to receive(:pages_number).and_return(101)
+          @uploaded_document = UploadedDocument.new(@file, 'upload.pdf', @user, 'TS', 0)
+        end
+
+        subject { @uploaded_document }
+
+        it { is_expected.to be_invalid }
+        it { expect(subject.errors).to eq [[:pages_number_is_too_high, pages_number: 101]] }
+        it { expect(subject.full_error_messages).to eq I18n.t('mongoid.errors.models.uploaded_document.attributes.pages_number_is_too_high', pages_number: 101) }
       end
 
       context 'when extension is invalid' do

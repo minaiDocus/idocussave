@@ -23,6 +23,7 @@ class UploadedDocument
     @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
     if @errors.empty?
+      @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
       unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
         @errors << [:file_is_corrupted_or_protected, nil]
@@ -125,11 +126,19 @@ private
     end
   end
 
+  def valid_pages_number?
+    pages_number <= 100
+  end
+
+  def pages_number
+    DocumentTools.pages_number(@file.path) rescue 0
+  end
+
   def valid_file_size?
-    @file.size <= 52428800
+    @file.size <= 10_000_000
   end
 
   def size_in_mo
-    "%0.2f" % (@file.size / 1048576.0)
+    "%0.2f" % (@file.size / 1_000_000.0)
   end
 end
