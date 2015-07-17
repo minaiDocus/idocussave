@@ -40,11 +40,12 @@ private
 
   def search(contains)
     deliveries = PreAssignmentDelivery.all
-    deliveries = deliveries.where(created_at: contains[:created_at])                    if contains[:created_at].present?
-    deliveries = deliveries.where(pack_name:  /#{Regexp.quote(contains[:pack_name])}/i) if contains[:pack_name].present?
-    deliveries = deliveries.where(total_item: contains[:total_item].to_i)               if contains[:total_item].present?
-    deliveries = deliveries.where(is_auto:    contains[:is_auto].to_i == 1)             if contains[:is_auto].present?
-    deliveries = deliveries.where(state:      contains[:state])                         if contains[:state].present?
+    deliveries = deliveries.where(created_at:    contains[:created_at])                        if contains[:created_at].present?
+    deliveries = deliveries.where(pack_name:     /#{Regexp.quote(contains[:pack_name])}/i)     if contains[:pack_name].present?
+    deliveries = deliveries.where(total_item:    contains[:total_item].to_i)                   if contains[:total_item].present?
+    deliveries = deliveries.where(is_auto:       contains[:is_auto].to_i == 1)                 if contains[:is_auto].present?
+    deliveries = deliveries.where(state:         contains[:state])                             if contains[:state].present?
+    deliveries = deliveries.where(error_message: /#{Regexp.quote(contains[:error_message])}/i) if contains[:error_message].present?
     deliveries
   end
 end

@@ -13,13 +13,14 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :number,     t('mongoid.models.pre_assignment_delivery.attributes.number')
-                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :updated_at, t('mongoid.models.common.attributes.updated_at')
-                %th= sortable :pack_name,  t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
-                %th= sortable :total_item, t('mongoid.models.pre_assignment_delivery.attributes.total_item')
-                %th= sortable :is_auto,    t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
-                %th= sortable :state,      t('mongoid.models.pre_assignment_delivery.attributes.state')
+                %th= sortable :number,        t('mongoid.models.pre_assignment_delivery.attributes.number')
+                %th= sortable :created_at,    t('mongoid.models.common.attributes.created_at')
+                %th= sortable :updated_at,    t('mongoid.models.common.attributes.updated_at')
+                %th= sortable :pack_name,     t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+                %th= sortable :total_item,    'Nb'
+                %th= sortable :is_auto,       'Auto'
+                %th= sortable :state,         t('mongoid.models.pre_assignment_delivery.attributes.state')
+                %th= sortable :error_message, t('mongoid.models.pre_assignment_delivery.attributes.error_message')
                 %th Action
             %tbody
               - @pre_assignment_deliveries.each do |delivery|
@@ -31,6 +32,7 @@
                   %td= delivery.total_item
                   %td= delivery.is_auto ? t('yes_value') : t('no_value')
                   %td= pre_assignment_delivery_state delivery
+                  %td= delivery.error_message.to_s[0..55]
                   %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery.number), title: 'Afficher les détails'
       = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
     .span3

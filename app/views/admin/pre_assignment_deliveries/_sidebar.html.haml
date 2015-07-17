@@ -23,6 +23,9 @@
       = label_tag 'pre_assignment_delivery_contains[state]', t('mongoid.models.pre_assignment_delivery.attributes.state')
       = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true
 
+      = label_tag 'pre_assignment_delivery_contains[error_message]', t('mongoid.models.pre_assignment_delivery.attributes.error_message')
+      = text_field_tag 'pre_assignment_delivery_contains[error_message]', (params[:pre_assignment_delivery_contains][:error_message] rescue ''), class: 'span12'
+
       = label_tag 'pre_assignment_delivery_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
       .filter_date
         .input-prepend.date.datepicker
