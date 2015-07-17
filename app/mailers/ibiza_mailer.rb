@@ -2,16 +2,11 @@
 class IbizaMailer < ActionMailer::Base
   default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
 
-  def notify_delivery(delivery, addresses, ibiza, object)
-    @delivery = delivery
-    @ibiza  = ibiza
-    if object.class == Pack::Report
-      @report = object
-    else
-      @preseizure = object
-      @report     = @preseizure.report
+  def notify_deliveries(deliveries, addresses)
+    @deliveries = deliveries
+    @deliveries.each do |delivery|
+      attachments["#{delivery.number}.xml"] = delivery.xml_data if delivery.xml_data.present?
     end
-    attachments['entries.xml'] = @delivery.xml_data if @delivery.xml_data.present?
     to = addresses.first
     cc = addresses[1..-1] || []
     mail(to: to, cc: cc, subject: "[iDocus] Import d'écriture")

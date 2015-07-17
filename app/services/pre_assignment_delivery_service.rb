@@ -2,8 +2,27 @@
 class PreAssignmentDeliveryService
   class << self
     def execute
+      last_notify_at = Time.now
       PreAssignmentDelivery.pending.asc(:number).each do |delivery|
         PreAssignmentDeliveryService.new(delivery).execute
+        if last_notify_at <= 15.minutes.ago
+          notify
+          last_notify_at = Time.now
+        end
+      end
+      notify
+    end
+
+    def notify
+      deliveries = PreAssignmentDelivery.not_notified.asc(:number)
+      if deliveries.size > 0
+        addresses = Array(Settings.notify_ibiza_deliveries_to)
+        if addresses.size > 0
+          IbizaMailer.notify_deliveries(deliveries, addresses).deliver
+          deliveries.update_all(is_notified: true, notified_at: Time.now)
+        else
+          deliveries.unset(:is_to_notify)
+        end
       end
     end
   end
@@ -130,26 +149,16 @@ class PreAssignmentDeliveryService
   end
 
   def notify?
-    Settings.notify_on_ibiza_delivery == 'yes' && addresses.size > 0
+    Settings.notify_on_ibiza_delivery == 'yes'
   end
 
   def notify_error?
-    Settings.notify_on_ibiza_delivery == 'error' && addresses.size > 0
-  end
-
-private
-
-  def object_to_notify
-    @preseizures.size > 1 ? @report : @preseizures.first
+    Settings.notify_on_ibiza_delivery == 'error'
   end
 
   def notify
     if notify? || (notify_error? && @delivery.error?)
-      IbizaMailer.notify_delivery(@delivery, addresses, @ibiza, object_to_notify).deliver
+      @delivery.update(is_to_notify: true)
     end
-  end
-
-  def addresses
-    Array(Settings.notify_ibiza_deliveries_to)
   end
 end

@@ -17,6 +17,9 @@ class PreAssignmentDelivery
   field :grouped_date, type: Date
   field :xml_data
   field :error_message
+  field :is_to_notify, type: Boolean
+  field :is_notified,  type: Boolean
+  field :notified_at,  type: Time
 
   validates_presence_of :pack_name, :number, :state
   validates_uniqueness_of :number
@@ -25,6 +28,8 @@ class PreAssignmentDelivery
   index({ state: 1 })
   index({ is_auto: 1 })
   index({ total_item: 1 })
+  index({ is_to_notify: 1 })
+  index({ is_notified: 1 })
 
   before_validation :set_number
 
@@ -39,6 +44,9 @@ class PreAssignmentDelivery
   scope :sending,      -> { where(state: 'sending') }
   scope :sent,         -> { where(state: 'sent') }
   scope :error,        -> { where(state: 'error') }
+
+  scope :notified,     -> { where(is_notified: true) }
+  scope :not_notified, -> { where(is_to_notify: true, :is_notified.in => [nil, false]) }
 
   state_machine :initial => :pending do
     state :pending
