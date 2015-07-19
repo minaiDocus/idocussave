@@ -66,10 +66,7 @@ Idocus::Application.routes.draw do
         get  'customer_labels', on: :member
         get  'workshop_labels', on: :member
       end
-      resource :csv_outputter, only: %w(edit update), controller: 'organization_csv_outputters' do
-        get  'select_propagation_options', on: :member
-        post 'propagate',                  on: :member
-      end
+      resource :csv_outputter, only: %w(edit update), controller: 'organization_csv_outputters'
       resources :groups
       resources :collaborators do
         resource :rights, only: %w(edit update)

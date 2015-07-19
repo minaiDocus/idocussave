@@ -8,6 +8,7 @@ class RemoteFile
   belongs_to :organization
   belongs_to :group
   belongs_to :remotable, polymorphic: true
+  has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
 
   field :path,          type: String, default: ''
   field :temp_path,     type: String, default: ''

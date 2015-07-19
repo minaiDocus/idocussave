@@ -18,6 +18,8 @@
       = f.simple_fields_for :options do |o|
         = o.input :is_taxable, as: :boolean
         = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, include_blank: false
+        - if @user.is_admin
+          = o.input :is_own_csv_descriptor_used, as: :boolean, hint: "Si non, utilisera le format de CSV de l'organisation"
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if params[:action].in?(%w(new create))

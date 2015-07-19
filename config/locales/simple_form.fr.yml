@@ -70,6 +70,7 @@ fr:
         is_taxable: Est assujetti à TVA ?
         is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
         is_auto_deliver: Livraison automatique ?
+        is_own_csv_descriptor_used: Utilise son propre format de CSV ?
       organization:
         name: Nom
         description: Description

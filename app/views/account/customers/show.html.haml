@@ -86,6 +86,10 @@
                     %tr
                       %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
                       %td= @customer.options.pre_assignment_date_computed? ? t('yes_value') : t('no_value')
+                    - if @user.is_admin
+                      %tr
+                        %th= t('mongoid.models.user_options.attributes.is_own_csv_descriptor_used')
+                        %td= @customer.options.own_csv_descriptor_used? ? t('yes_value') : "#{t('no_value')} (Valeur de l'organisation)"
               - if @customer.active?
                 .row-fluid
                   .span12
@@ -271,7 +275,14 @@
             - if @user.is_admin
               #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }
                 .aligncenter
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@organization, @customer), class: 'btn btn-primary'
+                  - if @customer.options.is_own_csv_descriptor_used
+                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@organization, @customer), class: 'btn btn-primary'
+                  - else
+                    .margin1bottom
+                      Utilise le format de CSV de l'organisation (
+                      = link_to 'changer', edit_account_organization_customer_path(@organization, @customer)
+                      )
+                    = link_to icon_edit + ' ' + t('actions.edit'), '#', class: 'btn btn-primary', disabled: true
               - if @customer.active?
                 #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
                   = render partial: 'account/customers/file_storages', locals: { user: @customer }

@@ -25,37 +25,6 @@ class Pack::Report
   scope :locked,     -> { where(is_locked: true) }
   scope :not_locked, -> { where(is_locked: false) }
 
-  def to_csv(outputter=self.user.csv_outputter!, ps=self.preseizures, is_access_url=true)
-    outputter.format(ps, is_access_url)
-  end
-
-  def generate_files(user=self.user)
-    # TODO implement me
-    generate_csv_files(user)
-  end
-
-  def generate_csv_files(user=self.user)
-    outputter = self.user.csv_outputter!
-    filespath = []
-    if type != 'NDF'
-      tmp = self.preseizures.group_by { |p| p.created_at.strftime("%Y%m%d") }
-      tab = tmp.values
-      tab.each do |pre|
-        idx = pre.map(&:_id)
-        date = pre[0].created_at
-        data = to_csv(outputter, self.preseizures.any_in(_id: idx), user.is_access_by_token_active)
-        basename = self.name.gsub(' ','_')
-        name = "#{basename}_L#{date.strftime("%Y%m%d")}"
-        dir = Dir.mktmpdir("#{name}__")
-        file = File.new("#{dir}/#{name}.csv", "w")
-        file.write(data)
-        file.close
-        filespath << file.path
-      end
-    end
-    filespath
-  end
-
   def journal
     result = name.split[1]
     if user

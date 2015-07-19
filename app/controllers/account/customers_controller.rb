@@ -137,6 +137,7 @@ private
       :knowings_visibility,
       { options_attributes: [:is_taxable, :is_pre_assignment_date_computed] }
     ]
+    attributes[-1][:options_attributes] << :is_own_csv_descriptor_used if @user.is_admin
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)
   end

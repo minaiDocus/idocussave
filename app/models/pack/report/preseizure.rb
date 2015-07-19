@@ -10,6 +10,7 @@ class Pack::Report::Preseizure
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :delete
   has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
   has_and_belongs_to_many :pre_assignment_deliveries
+  has_and_belongs_to_many :remote_files, inverse_of: 'preseizures'
 
   field :name
   field :type
