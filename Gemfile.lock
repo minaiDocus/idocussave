@@ -98,6 +98,9 @@ GEM
     celluloid (0.16.0)
       timers (~> 4.0.0)
     chunky_png (1.3.4)
+    ckeditor (4.1.2)
+      cocaine
+      orm_adapter (~> 0.5.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     cocaine (0.5.5)
@@ -525,6 +528,7 @@ DEPENDENCIES
   capistrano_colors
   capybara
   chunky_png
+  ckeditor
   coffee-rails (~> 4.0.0)
   compass-rails
   d3_rails

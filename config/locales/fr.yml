@@ -787,7 +787,7 @@ fr:
           state: Etat
           from: Emetteur
           to: Destinataire
-          subject: Objet
+          subject: Sujet
           attachment_names_count: Nb de F.
           size: Taille
       event:

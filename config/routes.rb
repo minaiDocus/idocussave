@@ -1,4 +1,5 @@
 Idocus::Application.routes.draw do
+  mount Ckeditor::Engine => '/ckeditor'
   root to: 'account/account#index'
 
   wash_out :dematbox

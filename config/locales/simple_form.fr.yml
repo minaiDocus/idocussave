@@ -137,7 +137,7 @@ fr:
         name: Nom
         delivery_day: Jour de l'envoi
         period: Période
-        object: Objet
+        subject: Sujet
         content: Contenu
       file_sending_kit:
         title: Titre
