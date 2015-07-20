@@ -19,9 +19,9 @@
         - if @organization.ibiza.try(:is_configured?)
           %li{ class: ('active' if params[:tab] == 'account_number_rules') }
             %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles de plan de compte
+        %li{ class: ('active' if params[:tab] == 'reminder_emails') }
+          %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
         - if @user.is_admin
-          %li{ class: ('active' if params[:tab] == 'reminder_emails') }
-            %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
           %li{ class: ('active' if params[:tab] == 'file_sending_kit') }
             %a{ href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
           %li{ class: ('active' if params[:tab] == 'subscription') }

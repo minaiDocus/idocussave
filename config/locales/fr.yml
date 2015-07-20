@@ -499,7 +499,7 @@ fr:
         name: Email de rappel
         pluralized_name: Emails de rappels
         attributes:
-          name: Nom
+          name: Nom de l'email
           delivery_day: Jour de l'envoi
           period: Période
           period_options:
