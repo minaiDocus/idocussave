@@ -27,9 +27,18 @@ class PackDivider
   scope :sheets,           -> { where(type: 'sheet') }
   scope :pieces,           -> { where(type: 'piece') }
 
-  scope :of_period, lambda { |time, is_monthly|
-    start_at = is_monthly ? time.beginning_of_month : time.beginning_of_quarter
-    end_at = is_monthly ? time.end_of_month : time.end_of_quarter
+  scope :of_period, lambda { |time, duration|
+    case duration
+    when 1
+      start_at = time.beginning_of_month
+      end_at   = time.end_of_month
+    when 3
+      start_at = time.beginning_of_quarter
+      end_at   = time.end_of_quarter
+    when 12
+      start_at = time.beginning_of_year
+      end_at   = time.end_of_year
+    end
     where(created_at: { '$gte' => start_at, '$lte' => end_at })
   }
 

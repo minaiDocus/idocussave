@@ -6,12 +6,11 @@ class Reporting
       time = pack.created_at
       while remaining_dividers > 0
         period = pack.owner.subscription.find_or_create_period(time)
-        is_monthly = period.duration == 1
-        current_dividers = pack.dividers.of_period(time, is_monthly)
+        current_dividers = pack.dividers.of_period(time, period.duration)
         if current_dividers.any?
           period_document = find_or_create_period_document(pack, period)
           if period_document
-            current_pages = pack.pages.of_period(time, is_monthly)
+            current_pages = pack.pages.of_period(time, period.duration)
             period_document.pieces                  = current_dividers.pieces.count
             period_document.pages                   = current_pages.count
             period_document.scanned_pieces          = current_dividers.scanned.pieces.count
