@@ -46,6 +46,7 @@ gem 'elasticsearch-rails'
 gem 'posix-spawn'
 gem 'hirb', :require => false
 gem 'mongoid-locker'
+gem 'ckeditor'
 
 gem 'eco'
 gem 'sass-rails', '4.0.5'

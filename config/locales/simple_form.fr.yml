@@ -134,10 +134,10 @@ fr:
         end_date: Date de fin
         is_closed: Fermé ?
       reminder_email:
-        name: Nom
+        name: Nom de l'email
         delivery_day: Jour de l'envoi
         period: Période
-        object: Objet
+        subject: Sujet
         content: Contenu
       file_sending_kit:
         title: Titre
