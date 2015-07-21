@@ -29,7 +29,8 @@ class Account::PackReportsController < Account::OrganizationController
     case params[:download].try(:[], :format)
     when 'csv'
       if preseizures.any?
-        send_data(@report.to_csv(@report.user.csv_outputter!, preseizures), type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
+        data = PreseizuresToCsv.new(@report.user, preseizures)
+        send_data(data, type: 'text/csv', filename: "#{@report.name.gsub(' ','_')}.csv")
       else
         render action: 'select_to_download'
       end
