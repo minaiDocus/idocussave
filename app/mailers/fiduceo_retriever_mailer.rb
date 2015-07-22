@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoRetrieverMailer < ActionMailer::Base
-  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
-
   def notify_transaction_error(addresses, transaction)
     to = addresses.first
     cc = addresses[1..-1] || []

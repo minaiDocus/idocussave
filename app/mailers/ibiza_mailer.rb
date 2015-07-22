@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class IbizaMailer < ActionMailer::Base
-  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
-
   def notify_deliveries(deliveries, addresses)
     @deliveries = deliveries
     @deliveries.each do |delivery|

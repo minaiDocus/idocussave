@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class EmailedDocumentMailer < ActionMailer::Base
-  default from: 'notification@idocus.com', reply_to: 'support@idocus.com'
-
   def notify_success(email, emailed_document)
     @emailed_document = emailed_document
     @journals         = emailed_document.user.account_book_types

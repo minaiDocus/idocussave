@@ -55,5 +55,7 @@ module Idocus
     config.wash_out.namespace = 'http://service.operator.dematbox.sagemcom.com/'
 
     Paperclip.options[:log] = false
+
+    ActionMailer::Base.default from: 'iDocus <notification@idocus.com>', reply_to: 'Support iDocus <support@idocus.com>'
   end
 end
