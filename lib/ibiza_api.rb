@@ -2,7 +2,8 @@
 module IbizaAPI
   class Utils
     def self.description(preseizure, fields, separator)
-      used_fields = fields.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
+      used_fields = { 'operation_label' => { 'is_used' => true, 'position' => 1 } }
+      used_fields.merge! fields.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
       sorted_used_fields = used_fields.sort { |(ak,av),(bk,bv)| av['position'] <=> bv['position'] }
       results = sorted_used_fields.map do |k,_|
         if k == 'journal'
@@ -18,7 +19,7 @@ module IbizaAPI
         end
       end.compact
       if results.empty?
-        preseizure.third_party.presence || preseizure.operation_label
+        preseizure.third_party.presence
       else
         results.compact.join(separator)
       end

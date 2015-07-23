@@ -199,67 +199,76 @@
                   %th.name Valeur
                   %th.is_used Utilisé ?
                   %th.position Position
+                  %th
               %tbody
+                %tr
+                  %td.name Libellé de l'opération bancaire
+                  %td.is_used= t('yes_value')
+                  %td.position= @organization.ibiza.description['operation_label']['position'] rescue 1
+                  %td Obligatoire pour une opération provenant d'un automate bancaire.
                 %tr
                   %td.name Date réelle
                   %td.is_used
                     - value = @organization.ibiza.description['date']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['date']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Tiers
                   %td.is_used
                     - value = @organization.ibiza.description['third_party']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['third_party']['position'] rescue 1
-                %tr
-                  %td.name Libellé de l'opération bancaire
-                  %td.is_used
-                    - value = @organization.ibiza.description['operation_label']['is_used'] rescue false
-                    = value ? t('yes_value') : t('no_value')
-                  %td.position= @organization.ibiza.description['operation_label']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Montant d'origine
                   %td.is_used
                     - value = @organization.ibiza.description['amount']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['amount']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Devise
                   %td.is_used
                     - value = @organization.ibiza.description['currency']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['currency']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Taux de conversion
                   %td.is_used
                     - value = @organization.ibiza.description['conversion_rate']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['conversion_rate']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Remarque
                   %td.is_used
                     - value = @organization.ibiza.description['observation']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['observation']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Journal
                   %td.is_used
                     - value = @organization.ibiza.description['journal']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['journal']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Nom de pièce (iDocus)
                   %td.is_used
                     - value = @organization.ibiza.description['piece_name']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
+                  %td
                 %tr
                   %td.name Référence pièce
                   %td.is_used
                     - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
+                  %td
           - if is_leader?
             .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
         #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }
