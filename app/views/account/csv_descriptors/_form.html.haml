@@ -17,22 +17,22 @@
         %span.label.label-info %%
         \: %
 
-- url = account_organization_csv_outputter_path(@organization)
-- url = account_organization_customer_csv_outputter_path(@organization, @customer) if @customer.present?
-= simple_form_for @csv_outputter, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
+- url = account_organization_csv_descriptor_path(@organization)
+- url = account_organization_customer_csv_descriptor_path(@organization, @customer) if @customer.present?
+= simple_form_for @csv_descriptor, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
   .row-fluid.margin2bottom
     .span12.fields
       %ul.list
-        - @csv_outputter.directive_to_a.each do |part|
-          = render partial: 'account/csv_outputters/field', locals: { part: part }
+        - @csv_descriptor.directive_to_a.each do |part|
+          = render partial: 'account/csv_descriptors/field', locals: { part: part }
   .row-fluid
     .span12
       = f.input :directive, as: :hidden
       = f.input :comma_as_number_separator, as: :boolean
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - cancel_url = account_organization_path(@organization, tab: 'csv_outputter')
-    - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_outputter') if @customer.present?
+    - cancel_url = account_organization_path(@organization, tab: 'csv_descriptor')
+    - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') if @customer.present?
     = link_to t('actions.cancel'), cancel_url, class: 'btn'
 
-.template.hide= render 'account/csv_outputters/field', locals: { selected: :date }
+.template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }

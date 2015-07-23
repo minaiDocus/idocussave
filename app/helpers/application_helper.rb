@@ -212,29 +212,29 @@ module ApplicationHelper
     end
   end
 
-  def csv_outputter_options
+  def csv_descriptor_options
     [
-      [t('mongoid.models.csv_outputter.attributes.type'),:type],
-      [t('mongoid.models.csv_outputter.attributes.client_code'),:client_code],
-      [t('mongoid.models.csv_outputter.attributes.journal'),:journal],
-      [t('mongoid.models.csv_outputter.attributes.period'),:period],
-      [t('mongoid.models.csv_outputter.attributes.piece_number'),:piece_number],
-      [t('mongoid.models.csv_outputter.attributes.original_piece_number'),:original_piece_number],
-      [t('mongoid.models.csv_outputter.attributes.date'),:date],
-      [t('mongoid.models.csv_outputter.attributes.period_date'),:period_date],
-      [t('mongoid.models.csv_outputter.attributes.deadline_date'),:deadline_date],
-      [t('mongoid.models.csv_outputter.attributes.title'),:title],
-      [t('mongoid.models.csv_outputter.attributes.piece'),:piece],
-      [t('mongoid.models.csv_outputter.attributes.number'),:number],
-      [t('mongoid.models.csv_outputter.attributes.original_amount'),:original_amount],
-      [t('mongoid.models.csv_outputter.attributes.currency'),:currency],
-      [t('mongoid.models.csv_outputter.attributes.conversion_rate'),:conversion_rate],
-      [t('mongoid.models.csv_outputter.attributes.credit'),:credit],
-      [t('mongoid.models.csv_outputter.attributes.debit'),:debit],
-      [t('mongoid.models.csv_outputter.attributes.lettering'),:lettering],
-      [t('mongoid.models.csv_outputter.attributes.piece_url'),:piece_url],
-      [t('mongoid.models.csv_outputter.attributes.remark'),:remark],
-      [t('mongoid.models.csv_outputter.attributes.third_party'),:third_party]
+      [t('mongoid.models.csv_descriptor.attributes.type'),:type],
+      [t('mongoid.models.csv_descriptor.attributes.client_code'),:client_code],
+      [t('mongoid.models.csv_descriptor.attributes.journal'),:journal],
+      [t('mongoid.models.csv_descriptor.attributes.period'),:period],
+      [t('mongoid.models.csv_descriptor.attributes.piece_number'),:piece_number],
+      [t('mongoid.models.csv_descriptor.attributes.original_piece_number'),:original_piece_number],
+      [t('mongoid.models.csv_descriptor.attributes.date'),:date],
+      [t('mongoid.models.csv_descriptor.attributes.period_date'),:period_date],
+      [t('mongoid.models.csv_descriptor.attributes.deadline_date'),:deadline_date],
+      [t('mongoid.models.csv_descriptor.attributes.title'),:title],
+      [t('mongoid.models.csv_descriptor.attributes.piece'),:piece],
+      [t('mongoid.models.csv_descriptor.attributes.number'),:number],
+      [t('mongoid.models.csv_descriptor.attributes.original_amount'),:original_amount],
+      [t('mongoid.models.csv_descriptor.attributes.currency'),:currency],
+      [t('mongoid.models.csv_descriptor.attributes.conversion_rate'),:conversion_rate],
+      [t('mongoid.models.csv_descriptor.attributes.credit'),:credit],
+      [t('mongoid.models.csv_descriptor.attributes.debit'),:debit],
+      [t('mongoid.models.csv_descriptor.attributes.lettering'),:lettering],
+      [t('mongoid.models.csv_descriptor.attributes.piece_url'),:piece_url],
+      [t('mongoid.models.csv_descriptor.attributes.remark'),:remark],
+      [t('mongoid.models.csv_descriptor.attributes.third_party'),:third_party]
     ]
   end
 end

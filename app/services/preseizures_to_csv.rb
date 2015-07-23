@@ -20,9 +20,9 @@ private
 
   def descriptor
     if @user.options.is_own_csv_descriptor_used
-      @user.csv_outputter
+      @user.csv_descriptor
     else
-      @user.organization.csv_outputter
+      @user.organization.csv_descriptor
     end
   end
 

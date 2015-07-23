@@ -422,11 +422,11 @@ fr:
           title: Nom (public)
           position: Position
           is_option_dependent: Bouton radio ? (sinon case à cocher)
-      csv_outputter:
-        zero: 0 csv formateur
-        one: 1 csv formateur
-        other: '%{count} csv formateur'
-        name: CSV Formateur
+      csv_descriptor:
+        zero: 0 descripteur csv
+        one: 1 descripteur csv
+        other: '%{count} descripteurs csv'
+        name: Descripteur CSV
         attributes:
           client_code: Code client
           journal: Journal

@@ -58,7 +58,7 @@ class Organization
   has_one    :file_sending_kit
   has_one    :ibiza
   has_one    :gray_label
-  has_one    :csv_outputter
+  has_one    :csv_descriptor
   has_one    :knowings
   has_one    :file_naming_policy
 
@@ -111,18 +111,18 @@ class Organization
     self.subscription ||= Subscription.create(organization_id: self.id)
   end
 
-  def find_or_create_csv_outputter
-    self.csv_outputter ||= create_csv_outputter
+  def find_or_create_csv_descriptor
+    self.csv_descriptor ||= create_csv_descriptor
   end
-  alias :csv_outputter! :find_or_create_csv_outputter
+  alias :csv_descriptor! :find_or_create_csv_descriptor
 
   def find_or_create_file_naming_policy
     self.file_naming_policy ||= FileNamingPolicy.create(organization_id: self.id)
   end
   alias :foc_file_naming_policy :find_or_create_file_naming_policy
 
-  def create_csv_outputter
-    CsvOutputter.create(organization_id: self.id)
+  def create_csv_descriptor
+    CsvDescriptor.create(organization_id: self.id)
   end
 
   def billing_address

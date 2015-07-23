@@ -156,7 +156,7 @@ fr:
         right_logo_path: Chemin
         right_logo_height: Hauteur
         right_logo_width: Largeur
-      csv_outputter:
+      csv_descriptor:
         comma_as_number_separator: Séparer les chiffres par une virgule
       external_file_storage:
         is_dropbox_basic_authorized: Dropbox Basic autorisé ?

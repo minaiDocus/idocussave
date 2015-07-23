@@ -1,4 +1,4 @@
-class CsvOutputter
+class CsvDescriptor
   include Mongoid::Document
   include Mongoid::Timestamps
 

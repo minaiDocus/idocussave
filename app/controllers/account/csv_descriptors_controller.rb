@@ -1,16 +1,16 @@
 # -*- encoding : UTF-8 -*-
-class Account::CsvOutputtersController < Account::OrganizationController
+class Account::CsvDescriptorsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_customer
-  before_filter :load_csv_outputter
+  before_filter :load_csv_descriptor
 
   def edit
   end
 
   def update
-    if @csv_outputter.update(csv_outputter_params)
+    if @csv_descriptor.update(csv_descriptor_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_outputter')
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
     else
       render 'edit'
     end
@@ -30,11 +30,11 @@ private
     raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
   end
 
-  def load_csv_outputter
-    @csv_outputter = @customer.csv_outputter!
+  def load_csv_descriptor
+    @csv_descriptor = @customer.csv_descriptor!
   end
 
-  def csv_outputter_params
-    params.require(:csv_outputter).permit(:directive, :comma_as_number_separator)
+  def csv_descriptor_params
+    params.require(:csv_descriptor).permit(:directive, :comma_as_number_separator)
   end
 end

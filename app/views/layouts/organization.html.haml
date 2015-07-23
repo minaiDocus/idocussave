@@ -8,8 +8,8 @@
     = stylesheet_link_tag 'application', 'account/organizations'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
       = stylesheet_link_tag 'account/subscriptions'
-    - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
-      = stylesheet_link_tag 'account/csv_outputters'
+    - elsif controller_name.in?(%w(csv_descriptors organization_csv_descriptors))
+      = stylesheet_link_tag 'account/csv_descriptors'
     - elsif controller_name.in?(%w(organizations ibiza))
       = stylesheet_link_tag 'account/ibiza'
     - elsif controller_name.in?(%w(retriever_transactions retrieved_banking_operations retrieved_documents))
@@ -45,7 +45,7 @@
           .box.sidebar-nav
             %ul.nav.nav-list
               %li.nav-header= @organization.name
-              %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_outputters organization_csv_outputters knowings ibiza account_number_rules file_naming_policies)) && !request.path.match(/customers/)) ? 'active' : '') }
+              %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza account_number_rules file_naming_policies)) && !request.path.match(/customers/)) ? 'active' : '') }
                 = link_to 'Paramètres', account_organization_path(@organization)
               %li{ class: (controller_name == 'groups' ? 'active' : '') }
                 = link_to 'Groupes', account_organization_groups_path(@organization)
@@ -70,8 +70,8 @@
     = javascript_include_tag 'application', 'inner'
     - if controller_name.in?(%w(subscriptions organization_subscriptions))
       = javascript_include_tag 'account/subscriptions', 'account/organization_subscriptions'
-    - elsif controller_name.in?(%w(csv_outputters organization_csv_outputters))
-      = javascript_include_tag 'account/csv_outputters'
+    - elsif controller_name.in?(%w(csv_descriptors organization_csv_descriptors))
+      = javascript_include_tag 'account/csv_descriptors'
     - elsif !controller_name.in?(%w(rights collaborators groups organization_addresses customer_addresses accounting_plans vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails retriever_transactions retrieved_banking_operations retrieved_documents file_sending_kits))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'

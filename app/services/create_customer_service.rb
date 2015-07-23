@@ -39,7 +39,7 @@ class CreateCustomerService
         scanning_provider.save
       end
 
-      CsvOutputter.create(user_id: @customer.id)
+      CsvDescriptor.create(user_id: @customer.id)
 
       @customer.authd_prev_period            = @organization.authd_prev_period
       @customer.auth_prev_period_until_day   = @organization.auth_prev_period_until_day

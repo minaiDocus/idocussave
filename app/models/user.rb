@@ -136,7 +136,7 @@ class User
   has_one :composition
   has_one :debit_mandate
   has_one :external_file_storage,                                               autosave: true, dependent: :destroy
-  has_one :csv_outputter,                                                                       autosave: true
+  has_one :csv_descriptor,                                                                      autosave: true
   has_one :accounting_plan
   has_one :options,             class_name: 'UserOptions',              inverse_of: 'user',     autosave: true
   has_one :dematbox
@@ -158,7 +158,7 @@ class User
 
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :addresses,             allow_destroy: true
-  accepts_nested_attributes_for :csv_outputter
+  accepts_nested_attributes_for :csv_descriptor
   accepts_nested_attributes_for :organization_rights
   accepts_nested_attributes_for :options
 
@@ -259,8 +259,8 @@ class User
     find_or_create_external_file_storage
   end
 
-  def csv_outputter!
-    self.csv_outputter ||= CsvOutputter.create(user_id: self.id)
+  def csv_descriptor!
+    self.csv_descriptor ||= CsvDescriptor.create(user_id: self.id)
   end
 
   def active_for_authentication?

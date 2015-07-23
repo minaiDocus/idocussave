@@ -67,7 +67,7 @@ Idocus::Application.routes.draw do
         get  'customer_labels', on: :member
         get  'workshop_labels', on: :member
       end
-      resource :csv_outputter, only: %w(edit update), controller: 'organization_csv_outputters'
+      resource :csv_descriptor, only: %w(edit update), controller: 'organization_csv_descriptors'
       resources :groups
       resources :collaborators do
         resource :rights, only: %w(edit update)
@@ -99,7 +99,7 @@ Idocus::Application.routes.draw do
           get  'select', on: :collection
           post 'copy',   on: :collection
         end
-        resource :csv_outputter, only: %w(edit update)
+        resource :csv_descriptor, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|

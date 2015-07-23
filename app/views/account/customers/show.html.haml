@@ -42,8 +42,8 @@
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
             - if @user.is_admin
-              %li{ class: ('active' if params[:tab] == 'csv_outputter') }
-                %a{ href: '#csv_outputter', data: { toggle: 'tab' } } Format de sortie CSV
+              %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
+                %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format de sortie CSV
               - if @customer.active?
                 %li{ class: ('active' if params[:tab] == 'file_storages') }
                   %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
@@ -273,10 +273,10 @@
                       = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
                     = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
             - if @user.is_admin
-              #csv_outputter.tab-pane{ class: ('active' if params[:tab] == 'csv_outputter') }
+              #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 .aligncenter
                   - if @customer.options.is_own_csv_descriptor_used
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_outputter_path(@organization, @customer), class: 'btn btn-primary'
+                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
                   - else
                     .margin1bottom
                       Utilise le format de CSV de l'organisation (
