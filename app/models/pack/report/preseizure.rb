@@ -24,7 +24,6 @@ class Pack::Report::Preseizure
   field :currency,        type: String
   field :conversion_rate, type: Float
   field :third_party,     type: String
-  field :fiduceo_id
   field :category_id,     type: Integer
 
   field :is_delivered,      type: Boolean, default: false
