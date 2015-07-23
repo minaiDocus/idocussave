@@ -92,6 +92,8 @@ CKEDITOR.editorConfig = function( config )
     }
   });
 
+  config.templates = "my_templates";
+
   // Toolbar groups configuration.
   config.toolbar = [
     { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source'] },
@@ -108,6 +110,8 @@ CKEDITOR.editorConfig = function( config )
   ];
 
   config.toolbar_mini = [
+    { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Templates' ] },
+    '/',
     { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
     { name: 'styles', items: [ 'Font', 'FontSize' ] },
     { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },

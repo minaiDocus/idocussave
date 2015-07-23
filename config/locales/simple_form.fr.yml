@@ -136,7 +136,7 @@ fr:
       reminder_email:
         name: Nom de l'email
         delivery_day: Jour de l'envoi
-        period: Période
+        period: Périodicité
         subject: Sujet
         content: Contenu
       file_sending_kit:
