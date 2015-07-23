@@ -501,7 +501,7 @@ fr:
         attributes:
           name: Nom de l'email
           delivery_day: Jour de l'envoi
-          period: Période
+          period: Périodicité
           period_options:
             monthly: Mensuel
             quarterly: Trimestriel

@@ -1,5 +1,5 @@
 = simple_form_for [:account, @organization, @reminder_email], html: { class: 'form form-horizontal margin0' } do |f|
-  = f.input :name
+  = f.input :name, :placeholder => 'Exemple: Envoi 1'
   = f.input :delivery_day, as: :integer, required: true
   = f.input :period, collection: [[t('mongoid.models.reminder_email.attributes.period_options.monthly'), 1], [t('mongoid.models.reminder_email.attributes.period_options.quarterly'), 3]], include_blank: false, required: true
   = f.input :subject, input_html: { class: 'input-xxlarge' }
