@@ -351,6 +351,7 @@ class PrepaCompta
             customers.each do |customer|
               xml_data = accounting_plan_to_xml(customer.accounting_plan)
               csv_data = accounting_plan_to_csv(customer.code, customer.accounting_plan)
+              data << [customer, xml_data, csv_data]
             end
           end
         end
