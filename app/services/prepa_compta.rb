@@ -366,6 +366,7 @@ class PrepaCompta
             f.write xml_data
           end
         end
+        system "zip #{Rails.root.join("data/compta/mapping/mapping.zip")} #{Rails.root.join("data/compta/mapping/*.xml")}"
       end
 
       def write_csv_accounting_plan(data)
