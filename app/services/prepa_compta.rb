@@ -422,17 +422,21 @@ class PrepaCompta
         client.request.clear
         client.company(ibiza_id).accounts?
         if client.response.success?
-          xml_data = client.response.body
-          xml_data.force_encoding('UTF-8')
+          xml_data = client.response.body.force_encoding('UTF-8')
+          document = Nokogiri::XML(xml_data)
+          document.css('wsAccounts').each do |account|
+            unless account.css('closed').text.to_i == 0 && account.css('category').text.to_i.in?([1,2])
+              account.remove
+            end
+          end
+          document.to_s
         else
           false
         end
       end
 
       def ibiza_accounting_plan_to_csv(customer_code, xml_data)
-        Nokogiri::XML(xml_data).css('wsAccounts').select do |account|
-          account.css('closed').text.to_i == 0 && account.css('category').text.to_i.in?([1,2])
-        end.map do |account|
+        Nokogiri::XML(xml_data).css('wsAccounts').map do |account|
           [
             account.css('category').text.to_i,
             account.css('name').text,
