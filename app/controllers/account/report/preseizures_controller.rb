@@ -22,7 +22,7 @@ class Account::Report::PreseizuresController < Account::AccountController
     respond_to do |format|
       format.html {}
       format.csv do
-        data = PreseizuresToCsv.new(@report.user, @report.preseizures)
+        data = PreseizuresToCsv.new(@report.user, @report.preseizures).execute
         send_data(data, type: "text/csv", filename: "#{@report.name.gsub(' ','_')}.csv")
       end
     end
