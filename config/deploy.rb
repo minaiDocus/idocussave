@@ -30,6 +30,12 @@ set :stages, %w(production staging sandbox)
 set :default_stage, "production"
 require 'capistrano/ext/multistage'
 
+set :whenever_command, 'bundle exec whenever'
+# set :whenever_environment, defer { stage }
+# set :whenever_identifier, defer { "#{application}_#{stage}" }
+set :whenever_roles, defer { stage == :production ? [:app] : [:nothing] }
+require 'whenever/capistrano'
+
 before "deploy", "manager:stop", "delayed_job:stop", "deploy:setup", "shared:mkdir"
 before "deploy:update", "git:push"
 after "deploy:finalize_update", "shared:config"

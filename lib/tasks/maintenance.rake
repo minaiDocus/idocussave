@@ -5,23 +5,30 @@ namespace :maintenance do
   namespace :notification do
     desc 'Notify updated documents'
     task :document_updated => [:environment] do
+      puts "[#{Time.now}] maintenance:notification:document_updated - START"
       DocumentNotifier.notify_updated
+      puts "[#{Time.now}] maintenance:notification:document_updated - END"
     end
 
     desc 'Notify pending documents'
     task :document_pending => [:environment] do
+      puts "[#{Time.now}] maintenance:notification:document_pending - START"
       DocumentNotifier.notify_pending
+      puts "[#{Time.now}] maintenance:notification:document_pending - END"
     end
 
     desc 'Notify scans not delivered'
     task :scans_not_delivered => [:environment] do
+      puts "[#{Time.now}] maintenance:notification:scans_not_delivered - START"
       ScanService.notify_not_delivered
+      puts "[#{Time.now}] maintenance:notification:scans_not_delivered - END"
     end
   end
 
   namespace :reporting do
     desc 'Init current period'
     task :init => [:environment] do
+      puts "[#{Time.now}] maintenance:reporting:init - START"
       Organization.all.each do |organization|
         RemoveNotReusableOptionsService.new(organization.subscription).execute
         organization.customers.active.each do |customer|
@@ -41,14 +48,14 @@ namespace :maintenance do
           end
         end
       end
+      puts "[#{Time.now}] maintenance:reporting:init - END"
     end
   end
 
   namespace :invoice do
     desc 'Generate invoice'
     task :generate => [:environment] do
-      puts '##########################################################################################'
-      puts "Task beginning at #{Time.now}"
+      puts "[#{Time.now}] maintenance:invoice:generate - START"
       time = Time.now - 1.month
       time = Time.local(time.year, time.month)
       puts 'Updating all periods'
@@ -99,20 +106,21 @@ namespace :maintenance do
         end
       end
       Invoice.archive
-      puts "Task end at #{Time.now}"
-      puts '##########################################################################################'
+      puts "[#{Time.now}] maintenance:invoice:generate - END"
     end
   end
 
   namespace :prepacompta do
     desc 'Update accounting plan'
     task :update_accounting_plan => [:environment] do
+      puts "[#{Time.now}] maintenance:prepacompta:update_accounting_plan - START"
       organization_ids = Organization.billed.map(&:id)
       user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
       users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active.sort_by(&:code)
 
       PrepaCompta::PreAssignment.prepare_users_list(users)
       PrepaCompta::PreAssignment.prepare_mapping(users)
+      puts "[#{Time.now}] maintenance:prepacompta:update_accounting_plan - END"
     end
   end
 end
