@@ -21,7 +21,7 @@ namespace :maintenance do
     task :scans_not_delivered => [:environment] do
       puts "[#{Time.now}] maintenance:notification:scans_not_delivered - START"
       ScanService.notify_not_delivered
-      puts "[#{Time.now}] maintenance:notification:scans_not_delivered - END"
+      puts "\n[#{Time.now}] maintenance:notification:scans_not_delivered - END"
     end
   end
 
