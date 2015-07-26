@@ -1,36 +1,38 @@
 # -*- encoding : UTF-8 -*-
 class FileDeliveryInit
   def self.prepare(object, options={})
-    options = { type: RemoteFile::ALL, force: false, delay: false }.merge(options).with_indifferent_access
-    if object.class.name == Pack.name
-      pack = object
-    elsif object.class.name == Pack::Report.name
-      options[:type] = RemoteFile::REPORT
-      pack = object.pack
-    end
-    pack.extend RemotePack
-    if options[:users].present?
-      users = options.delete(:users)
-      users.each do |user|
-        pack.init_delivery_for(user, options)
+    if object.class != Pack::Report || !object.organization.try(:ibiza).try(:is_configured?)
+      options = { type: RemoteFile::ALL, force: false, delay: false }.merge(options).with_indifferent_access
+      if object.class == Pack
+        pack = object
+      elsif object.class == Pack::Report
+        options[:type] = RemoteFile::REPORT
+        pack = object.pack
       end
-    elsif options[:groups].present?
-      groups = options.delete(:groups)
-      groups.each do |group|
-        pack.init_delivery_for(group, options)
-      end
-    else
-      owner = pack.owner
-      pack.init_delivery_for(owner, options) if options[:type] != RemoteFile::REPORT
-      if options[:type] != RemoteFile::REPORT && owner.organization.try(:knowings).try(:ready?)
-        pack.init_delivery_for(owner.organization, options.merge(type: RemoteFile::PIECES_ONLY))
-      end
-      owner.prescribers.each do |prescriber|
-        pack.init_delivery_for(prescriber, options)
-      end
-      owner.groups.each do |group|
-        if group.is_dropbox_authorized
+      pack.extend RemotePack
+      if options[:users].present?
+        users = options.delete(:users)
+        users.each do |user|
+          pack.init_delivery_for(user, options)
+        end
+      elsif options[:groups].present?
+        groups = options.delete(:groups)
+        groups.each do |group|
           pack.init_delivery_for(group, options)
+        end
+      else
+        owner = pack.owner
+        pack.init_delivery_for(owner, options) if options[:type] != RemoteFile::REPORT
+        if options[:type] != RemoteFile::REPORT && owner.organization.try(:knowings).try(:ready?)
+          pack.init_delivery_for(owner.organization, options.merge(type: RemoteFile::PIECES_ONLY))
+        end
+        owner.prescribers.each do |prescriber|
+          pack.init_delivery_for(prescriber, options)
+        end
+        owner.groups.each do |group|
+          if group.is_dropbox_authorized
+            pack.init_delivery_for(group, options)
+          end
         end
       end
     end
