@@ -122,7 +122,7 @@ namespace :deploy do
 end
 
 namespace :git do
-  desc "Push code to local and origin"
+  desc "Push code to origin"
   task :push, :roles => :app do
     %x(git push origin master)
   end
