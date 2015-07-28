@@ -338,9 +338,9 @@
                       = @organization.customers.active.count
                   %td
                     = link_to icon(icon: 'plus'), new_account_organization_reminder_email_path(@organization, template: reminder_email), class: 'btn btn-mini', title: 'Configurer un nouveau e-mail de rappel en se basant sur cet e-mail'
-                    = link_to icon_show, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', target: :_blank
-                    = link_to icon_edit, edit_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini'
-                    = link_to icon_destroy, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }
+                    = link_to icon_show, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', target: :_blank, title: "Voir"
+                    = link_to icon_edit, edit_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', title: 'Editer'
+                    = link_to icon_destroy, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
                     = link_to icon(icon: 'play') + ' ' + t('mongoid.models.reminder_email.actions.send'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', data: { confirm: t('mongoid.models.reminder_email.actions.send_confirmation') }, method: :post
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary pull-right'
         - if @user.is_admin
