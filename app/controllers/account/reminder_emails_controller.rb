@@ -9,6 +9,14 @@ class Account::ReminderEmailsController < Account::OrganizationController
 
   def new
     @reminder_email = ReminderEmail.new
+    if params[:template].present?
+      template = @organization.reminder_emails.find params[:template]
+      @reminder_email.name = template.name
+      @reminder_email.delivery_day = template.delivery_day
+      @reminder_email.period = template.period
+      @reminder_email.subject = template.subject
+      @reminder_email.content = template.content
+    end
   end
 
   def create
