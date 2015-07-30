@@ -6,7 +6,11 @@ class Dematbox
   belongs_to :user
   embeds_many :services, class_name: 'DematboxSubscribedService', inverse_of: :dematbox
 
+  field :is_configured, type: Boolean, default: false
   field :beginning_configuration_at, type: Time
+
+  scope :configured,     -> { where(is_configured: true) }
+  scope :not_configured, -> { where(is_configured: false) }
 
   def journal_names
     user.account_book_types.asc(:name).map(&:name)
@@ -47,6 +51,7 @@ class Dematbox
     result = DematboxApi.subscribe(user.code, _services, pairing_code)
     update_attribute(:beginning_configuration_at, nil) unless beginning_configuration_at.nil?
     if result.match(/\A200\s*:\s*OK\z/)
+      update_attribute(:is_configured, true)
       set_services(_services)
     else
       result
