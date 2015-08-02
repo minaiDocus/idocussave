@@ -109,20 +109,4 @@ namespace :maintenance do
       puts "[#{Time.now}] maintenance:invoice:generate - END"
     end
   end
-
-  namespace :prepacompta do
-    desc 'Update accounting plan'
-    task :update_accounting_plan => [:environment] do
-      puts "[#{Time.now}] maintenance:prepacompta:update_accounting_plan - START"
-      organization_ids = Organization.billed.map(&:id)
-      user_ids = AccountBookType.where(:user_id.exists => true).compta_processable.distinct(:user_id)
-      user_ids += User.where(:fiduceo_id.nin => [nil, '']).distinct(:_id)
-      user_ids.uniq!
-      users = User.where(:organization_id.in => organization_ids, :_id.in => user_ids).active.sort_by(&:code)
-
-      PrepaCompta::PreAssignment.prepare_users_list(users)
-      PrepaCompta::PreAssignment.prepare_mapping(users)
-      puts "[#{Time.now}] maintenance:prepacompta:update_accounting_plan - END"
-    end
-  end
 end

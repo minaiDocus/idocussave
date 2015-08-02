@@ -16,7 +16,21 @@ class AccountNumberFinderService
   end
 
   def accounting_plan
-    @accounting_plan ||= self.class.get_accounting_plan(@user)
+    @accounting_plan ||= find_or_update_accounting_plan.map do |account|
+      [account.third_party_name, account.third_party_account]
+    end
+  end
+
+  def find_or_update_accounting_plan
+    accounts = (@user.accounting_plan.customers + @user.accounting_plan.providers)
+    if accounts.present?
+      accounts
+    elsif @user.accounting_plan.last_checked_at <= 5.minutes.ago
+      UpdateAccountingPlan.new(@user).execute
+      (@user.accounting_plan.customers + @user.accounting_plan.providers)
+    else
+      []
+    end
   end
 
   class << self
@@ -60,45 +74,6 @@ class AccountNumberFinderService
       result = matches.select { |match| match[0] == name }.first
       number = result[1] if result
       number
-    end
-
-    def get_accounting_plan(user)
-      accounting_plan = []
-      if user.organization.ibiza.try(:is_configured?)
-        doc = parsed_open_accounting_plan(user.code)
-        if doc
-          doc.css('wsAccounts').each do |account|
-            accounting_plan << [account.css('name').text, account.css('number').text]
-          end
-        end
-      elsif user.accounting_plan
-        user.accounting_plan.providers.each do |provider|
-          accounting_plan << [provider.third_party_name, provider.third_party_account]
-        end
-      end
-      accounting_plan
-    end
-
-    def parsed_open_accounting_plan(code)
-      accounting_plan = parsed_accounting_plan(code)
-      if accounting_plan
-        closed_account = accounting_plan.css('closed').select{ |closed| closed.text == '1' }
-        closed_account.each do |account|
-          account.parent.remove
-        end
-        accounting_plan
-      else
-        nil
-      end
-    end
-
-    def parsed_accounting_plan(code)
-      path = Rails.root.join('data', 'compta', 'mapping', "#{code}.xml").to_s
-      if File.exist? path
-        Nokogiri::XML(open(path))
-      else
-        nil
-      end
     end
   end
 end

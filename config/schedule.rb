@@ -11,7 +11,7 @@ every :day, at: '04:00 am' do
 end
 
 every :day, at: '04:30 am' do
-  rake 'maintenance:prepacompta:update_accounting_plan', options
+  rake 'prepa_compta:update_accounting_plan', options
 end
 
 every :day, at: '06:00 am' do
