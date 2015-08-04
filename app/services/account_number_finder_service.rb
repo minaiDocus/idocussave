@@ -25,7 +25,7 @@ class AccountNumberFinderService
     accounts = (@user.accounting_plan.customers + @user.accounting_plan.providers)
     if accounts.present?
       accounts
-    elsif @user.accounting_plan.last_checked_at <= 5.minutes.ago
+    elsif @user.accounting_plan.last_checked_at.nil? || @user.accounting_plan.last_checked_at <= 5.minutes.ago
       UpdateAccountingPlan.new(@user).execute
       (@user.accounting_plan.customers + @user.accounting_plan.providers)
     else
