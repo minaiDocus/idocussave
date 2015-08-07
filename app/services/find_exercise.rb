@@ -19,9 +19,17 @@ class FindExercise
       exercises = @user.exercises
     end
     if exercises
-      exercises.reject(&:is_closed).select do |exercise|
+      exercises = exercises.reject(&:is_closed).sort_by(&:start_date)
+      result = exercises.select do |exercise|
         exercise.start_date <= @date && @date <= exercise.end_date
       end.first
+      if result.nil?
+        result = exercises.select do |exercise|
+          exercise.start_date.beginning_of_month == @date.beginning_of_month ||
+          exercise.end_date.beginning_of_month == @date.beginning_of_month
+        end.first
+      end
+      result
     else
       false
     end
@@ -43,6 +51,10 @@ class FindExercise
             exercise.end_date   = exercise_data['end'].to_date
             exercise.is_closed  = exercise_data['state'].to_i == 2
             exercise
+          end
+          exercises.each do |exercise|
+            exercise.prev = exercises.select { |e| e.end_date == exercise.start_date - 1.day }.first
+            exercise.next = exercises.select { |e| e.start_date == exercise.end_date + 1.day }.first
           end
         else
           exercises = false

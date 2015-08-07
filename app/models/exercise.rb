@@ -15,6 +15,14 @@ class Exercise
   scope :opened, -> { where(is_closed: false) }
   scope :closed, -> { where(is_closed: true) }
 
+  def prev
+    user.exercises.where(end_date: start_date - 1.day).first
+  end
+
+  def next
+    user.exercises.where(start_date: end_date + 1.day).first
+  end
+
 private
 
   def uniqueness_of_date

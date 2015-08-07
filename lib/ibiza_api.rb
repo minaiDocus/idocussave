@@ -51,7 +51,7 @@ module IbizaAPI
               preseizure.accounts.each do |account|
                 xml.importEntry {
                   xml.journalRef preseizure.report.journal
-                  xml.date computed_date(preseizure)
+                  xml.date computed_date(preseizure, exercise)
                   if preseizure.piece
                     xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
                     xml.voucherID Settings.inner_url + preseizure.piece.get_access_url
@@ -59,7 +59,7 @@ module IbizaAPI
                   end
                   xml.accountNumber account.number
                   xml.accountName account.number
-                  xml.term computed_deadline_date(preseizure) if preseizure.deadline_date.present?
+                  xml.term computed_deadline_date(preseizure, exercise) if preseizure.deadline_date.present?
                   xml.description description(preseizure, fields, separator)
                   if account.entries.first.type == Pack::Report::Preseizure::Entry::DEBIT
                     xml.debit account.entries.first.amount
@@ -76,7 +76,7 @@ module IbizaAPI
     end
 
     # TODO refactor me
-    def self.computed_date(preseizure)
+    def self.computed_date(preseizure, exercise)
       date = preseizure.date.try(:to_date)
 
       if preseizure.is_period_range_used
@@ -84,15 +84,23 @@ module IbizaAPI
       end
 
       if preseizure.is_period_range_used && out_of_period_range
-        preseizure.period_start_date
+        result = preseizure.period_start_date
       else
-        date
+        result = date
+      end
+
+      if result < exercise.start_date && result.beginning_of_month == exercise.start_date.beginning_of_month
+        exercise.start_date
+      elsif exercise.next.nil? && result > exercise.end_date && result.beginning_of_month == exercise.end_date.beginning_of_month
+        exercise.end_date
+      else
+        result
       end
     end
 
-    def self.computed_deadline_date(preseizure)
+    def self.computed_deadline_date(preseizure, exercise)
       if preseizure.deadline_date.present?
-        date = computed_date(preseizure)
+        date = computed_date(preseizure, exercise)
         result = preseizure.deadline_date < date ? date : preseizure.deadline_date
         result.to_date
       else

@@ -59,6 +59,8 @@ class Pack::Report::Preseizure
   def end_period_date
     if quarterly?
       period_date + 3.months
+    elsif annually?
+      period_date + 12.months
     else
       period_date.end_of_month
     end

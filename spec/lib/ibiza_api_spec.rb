@@ -4,22 +4,43 @@ describe 'IbizaAPI::Utils' do
   describe '.computed_date' do
     before(:each) do
       @preseizure = OpenStruct.new
+      @exercise = OpenStruct.new
     end
 
     context 'when no range applies' do
       before(:each) do
         @preseizure.is_period_range_used = false
+        @exercise.start_date = Date.new(2014,1,10)
+        @exercise.end_date = Date.new(2015,1,9)
       end
 
-      it 'return preseizure date' do
+      it 'returns preseizure date' do
         @preseizure.date = Date.new(2014,1,15)
-        expect(IbizaAPI::Utils.computed_date(@preseizure)).to eq(@preseizure.date)
+        expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.date)
+      end
+
+      it 'returns exercise start date' do
+        @preseizure.date = Date.new(2014,1,5)
+        expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@exercise.start_date)
+      end
+
+      it 'returns exercise end date' do
+        @preseizure.date = Date.new(2015,1,20)
+        expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@exercise.end_date)
+      end
+
+      it 'returns preseizure date' do
+        @preseizure.date = Date.new(2015,1,20)
+        @exercise.next = true
+        expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.date)
       end
     end
 
     context 'when period range applies' do
       before(:each) do
         @preseizure.is_period_range_used = true
+        @exercise.start_date = Date.new(2014,1,1)
+        @exercise.end_date = Date.new(2014,12,31)
       end
 
       context 'when preseizure date is nil' do
@@ -27,9 +48,9 @@ describe 'IbizaAPI::Utils' do
           @preseizure.date = nil
         end
 
-        it 'return period start date' do
+        it 'returns period start date' do
           @preseizure.period_start_date = Date.new(2014,1,15)
-          expect(IbizaAPI::Utils.computed_date(@preseizure)).to eq(@preseizure.period_start_date)
+          expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.period_start_date)
         end
       end
 
@@ -40,8 +61,8 @@ describe 'IbizaAPI::Utils' do
           @preseizure.period_end_date   = Date.new(2014,3,1)
         end
 
-        it 'return preseizure date' do
-          expect(IbizaAPI::Utils.computed_date(@preseizure)).to eq(@preseizure.date)
+        it 'returns preseizure date' do
+          expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.date)
         end
       end
 
@@ -52,8 +73,8 @@ describe 'IbizaAPI::Utils' do
           @preseizure.period_end_date   = Date.new(2014,3,1)
         end
 
-        it 'return period start date' do
-          expect(IbizaAPI::Utils.computed_date(@preseizure)).to eq(@preseizure.period_start_date)
+        it 'returns period start date' do
+          expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.period_start_date)
         end
       end
 
@@ -64,8 +85,8 @@ describe 'IbizaAPI::Utils' do
           @preseizure.date              = Date.new(2014,3,1)
         end
 
-        it 'return period start date' do
-          expect(IbizaAPI::Utils.computed_date(@preseizure)).to eq(@preseizure.period_start_date)
+        it 'returns period start date' do
+          expect(IbizaAPI::Utils.computed_date(@preseizure, @exercise)).to eq(@preseizure.period_start_date)
         end
       end
     end

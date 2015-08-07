@@ -51,6 +51,38 @@ describe FindExercise do
           expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to eq exercise
         end
 
+        it 'returns the first exercise' do
+          exercise = Exercise.new
+          exercise.user = @user
+          exercise.start_date = Date.parse('15-04-2014')
+          exercise.end_date = Date.parse('14-04-2015')
+          exercise.is_closed = false
+          exercise.save
+          exercise2 = Exercise.new
+          exercise2.user = @user
+          exercise2.start_date = Date.parse('15-04-2013')
+          exercise2.end_date = Date.parse('14-04-2014')
+          exercise2.is_closed = false
+          exercise2.save
+          expect(FindExercise.new(@user, Date.parse('10-04-2014')).execute).to eq exercise2
+        end
+
+        it 'returns the last exercise' do
+          exercise = Exercise.new
+          exercise.user = @user
+          exercise.start_date = Date.parse('15-04-2014')
+          exercise.end_date = Date.parse('14-04-2015')
+          exercise.is_closed = false
+          exercise.save
+          exercise2 = Exercise.new
+          exercise2.user = @user
+          exercise2.start_date = Date.parse('15-04-2013')
+          exercise2.end_date = Date.parse('14-04-2014')
+          exercise2.is_closed = false
+          exercise2.save
+          expect(FindExercise.new(@user, Date.parse('20-04-2014')).execute).to eq exercise
+        end
+
         context 'outside date range' do
           it 'returns nil' do
             exercise = Exercise.new
@@ -70,6 +102,42 @@ describe FindExercise do
             exercise.is_closed = false
             exercise.save
             expect(FindExercise.new(@user, Date.parse('15-01-2015')).execute).to be_nil
+          end
+
+          context 'but month start date is the same as date' do
+            it 'returns an exercise' do
+              exercise2 = Exercise.new
+              exercise2.user = @user
+              exercise2.start_date = Date.parse('20-03-2016')
+              exercise2.end_date = Date.parse('19-03-2017')
+              exercise2.is_closed = false
+              exercise2.save
+              exercise = Exercise.new
+              exercise.user = @user
+              exercise.start_date = Date.parse('20-03-2015')
+              exercise.end_date = Date.parse('19-03-2016')
+              exercise.is_closed = false
+              exercise.save
+              expect(FindExercise.new(@user, Date.parse('15-03-2015')).execute).to eq exercise
+            end
+          end
+
+          context 'but month end date is the same as date' do
+            it 'returns an exercise' do
+              exercise2 = Exercise.new
+              exercise2.user = @user
+              exercise2.start_date = Date.parse('10-03-2014')
+              exercise2.end_date = Date.parse('09-03-2015')
+              exercise2.is_closed = false
+              exercise2.save
+              exercise = Exercise.new
+              exercise.user = @user
+              exercise.start_date = Date.parse('10-03-2013')
+              exercise.end_date = Date.parse('09-03-2014')
+              exercise.is_closed = false
+              exercise.save
+              expect(FindExercise.new(@user, Date.parse('15-03-2015')).execute).to eq exercise2
+            end
           end
         end
       end
