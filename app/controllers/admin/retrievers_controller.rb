@@ -10,6 +10,14 @@ class Admin::RetrieversController < Admin::AdminController
   def destroy
   end
 
+  def fetch
+    retrievers = search(retriever_contains)
+    count = retrievers.count
+    FiduceoDocumentFetcher.initiate_transactions(retrievers)
+    flash[:notice] = "#{count} récupération(s) en cours."
+    redirect_to admin_fiduceo_retrievers_path(params.except(:authenticity_token))
+  end
+
 private
 
   def load_retriever

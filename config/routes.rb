@@ -258,7 +258,9 @@ Idocus::Application.routes.draw do
       post 'load_from_external', on: :collection
     end
     resources :dematbox_files, only: :index
-    resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy)
+    resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy) do
+      post 'fetch', on: :collection
+    end
     resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index show edit) do
       patch 'start_process', on: :member
       patch 'reject',        on: :member
