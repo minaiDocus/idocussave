@@ -143,7 +143,7 @@ class DocumentProcessor
           end
 
           if temp_pack.is_pre_assignment_needed?
-            PrepaCompta::PreAssignment.prepare(added_pieces)
+            PrepaCompta::PreAssigningPiece.execute(added_pieces)
           end
           FileDeliveryInit.prepare(pack)
         end

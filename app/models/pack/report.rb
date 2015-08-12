@@ -242,7 +242,7 @@ class Pack::Report
     end
 
     def output_path
-      File.join([Compta::ROOT_DIR,'output'])
+      File.join([PrepaCompta.pre_assignments_dir, 'output'])
     end
 
     def directories

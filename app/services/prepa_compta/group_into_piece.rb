@@ -1,0 +1,60 @@
+# -*- encoding : UTF-8 -*-
+class PrepaCompta::GroupIntoPiece
+  def initialize(temp_pack, file_names, origin)
+    @temp_pack  = temp_pack
+    @file_names = file_names
+    @origin     = origin
+  end
+
+  def execute
+    Dir.mktmpdir do |tmpdir|
+      file_path = File.join tmpdir, @temp_pack.basefilename
+
+      if file_paths.size > 1
+        Pdftk.new.merge file_paths, file_path
+      else
+        FileUtils.cp file_paths.first, file_path
+      end
+
+      create_temp_document file_path
+      temp_documents.each(&:bundled)
+    end
+  end
+
+  def file_paths
+    @file_paths ||= @file_names.map do |file_name|
+      PrepaCompta.grouping_dir.join((@origin + 's'), file_name)
+    end
+  end
+
+  def temp_document_positions
+    @piece_positions ||= @file_names.map do |file_name|
+      PrepaCompta::GroupDocument.position(file_name)
+    end
+  end
+
+  def temp_documents
+    @temp_documents ||= @temp_pack.temp_documents.any_in(position: temp_document_positions).by_position
+  end
+
+  def original_temp_document
+    temp_documents.first
+  end
+
+private
+
+  def create_temp_document(file_path)
+    temp_document = TempDocument.new
+    temp_document.temp_pack      = @temp_pack
+    temp_document.user           = @temp_pack.user
+    temp_document.organization   = @temp_pack.organization
+    temp_document.position       = @temp_pack.next_document_position
+    temp_document.content        = open file_path
+    temp_document.pages_number   = DocumentTools.pages_number file_path
+    temp_document.is_an_original = false
+    temp_document.is_a_cover     = original_temp_document.is_a_cover?
+    temp_document.delivered_by   = original_temp_document.delivered_by
+    temp_document.delivery_type  = original_temp_document.delivery_type
+    temp_document.save && temp_document.ready
+  end
+end

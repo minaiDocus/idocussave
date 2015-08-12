@@ -4,13 +4,13 @@
     <complexType>
       <sequence>
         <element type="string" name="date"/>
-        <element type="string" name="tiers"/>
-        <element type="string" name="numero_piece"/>
-        <element type="string" name="montant_origine"/>
-        <element type="string" name="devise"/>
-        <element type="string" name="taux_conversion"/>
-        <element type="string" name="echeance"/>
-        <element type="string" name="remarque"/>
+        <element type="string" name="third_party"/>
+        <element type="string" name="piece_number"/>
+        <element type="string" name="amount"/>
+        <element type="string" name="currency"/>
+        <element type="string" name="conversion_rate"/>
+        <element type="string" name="deadline_date"/>
+        <element type="string" name="observation"/>
         <element name="account" maxOccurs="unbounded" minOccurs="2">
           <complexType>
             <sequence>

@@ -26,6 +26,8 @@ class Pack::Report::Preseizure
   field :third_party,     type: String
   field :category_id,     type: Integer
 
+  field :is_made_by_abbyy, type: Boolean, default: false
+
   field :is_delivered,      type: Boolean, default: false
   field :delivery_tried_at, type: Time
   field :delivery_message

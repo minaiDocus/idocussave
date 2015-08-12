@@ -1,0 +1,24 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <element name="group_documents">
+    <complexType>
+      <sequence>
+        <element name="pack">
+          <complexType>
+            <sequence>
+              <element name="piece" maxOccurs="unbounded" minOccurs="0">
+                <complexType>
+                  <sequence>
+                    <element type="string" name="file_name" maxOccurs="unbounded" minOccurs="1"/>
+                  </sequence>
+                  <attribute type="byte" name="number" use="optional"/>
+                  <attribute type="string" name="origin" use="optional"/>
+                </complexType>
+              </element>
+            </sequence>
+            <attribute type="string" name="name"/>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+</schema>

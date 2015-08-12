@@ -6,10 +6,6 @@ every :day do
   rake 'maintenance:notification:scans_not_delivered', options
 end
 
-every :day, at: '04:00 am' do
-  rake 'document:bundler:prepare', options
-end
-
 every :day, at: '04:30 am' do
   rake 'prepa_compta:update_accounting_plan', options
 end

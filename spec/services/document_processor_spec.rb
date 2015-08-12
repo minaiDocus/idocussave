@@ -2088,7 +2088,7 @@ describe DocumentProcessor do
         @user.reload
         @pack = @user.packs.first
         @temp_pack = TempPack.where(name: @pack.name).first
-        @path = File.join(Compta::ROOT_DIR, 'input', Time.now.strftime('%Y%m%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
+        @path = PrepaCompta.pre_assignments_dir.join('input', Time.now.strftime('%Y-%m-%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
       end
 
       after(:all) do

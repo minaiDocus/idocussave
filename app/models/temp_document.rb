@@ -228,7 +228,7 @@ class TempDocument
     delivery_type == 'upload'
   end
 
-  def scanned_by_dematbox?
+  def scanned_with_dematbox?
     delivery_type == 'dematbox_scan'
   end
 
@@ -246,10 +246,6 @@ class TempDocument
     else
       false
     end
-  end
-
-  def burst(dir='/tmp')
-    Pdftk.new.burst content.path, dir, name_with_position, DocumentProcessor::POSITION_SIZE
   end
 
   def corruption_notified

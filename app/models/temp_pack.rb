@@ -27,7 +27,7 @@ class TempPack
   scope :not_processed,        -> { where(:document_not_processed_count.gt => 0) }
   scope :bundling,             -> { where(:document_bundling_count.gt => 0) }
   scope :bundle_needed,        -> { where(:document_bundle_needed_count.gt => 0) }
-  scope :not_recently_updated, -> { where(:updated_at.lt => 5.minutes.ago) }
+  scope :not_recently_updated, -> { where(:updated_at.lt => 15.minutes.ago) }
 
   class << self
     def find_by_name(name)
