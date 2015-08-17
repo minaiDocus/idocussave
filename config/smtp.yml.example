@@ -1,0 +1,18 @@
+localhost:
+  address: localhost
+  port:    1025
+
+primary:
+  address:              localhost
+  domain:               idocus.com
+  authentication:       :plain
+  enable_starttls_auto: false
+
+secondary:
+  address:              smtp.gmail.com
+  port:                 587
+  domain:               idocus.com
+  user_name:            notification@idocus.com
+  password:             PASSWORD
+  authentication:       login
+  enable_starttls_auto: true

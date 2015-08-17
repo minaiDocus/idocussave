@@ -58,6 +58,7 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/slimpay.yml #{release_path}/config/slimpay.yml"
     command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
     command << "ln -nfs #{shared_path}/config/pdftk.yml #{release_path}/config/pdftk.yml"
+    command << "ln -nfs #{shared_path}/config/smtp.yml #{release_path}/config/smtp.yml"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     command << "ln -s #{shared_path}/data #{release_path}/data"
@@ -97,7 +98,8 @@ namespace :shared do
       'ibiza.yml',
       'slimpay.yml',
       'google_drive.yml',
-      'pdftk.yml'
+      'pdftk.yml',
+      'smtp.yml',
     ]
 
     files.each do |file|

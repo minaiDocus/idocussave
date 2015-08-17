@@ -19,7 +19,7 @@ describe AccountNumberFinderService do
 
     context 'without rules and without accounting plan' do
       it 'returns 0TEMP' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return([])
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 
@@ -29,7 +29,7 @@ describe AccountNumberFinderService do
 
     context 'with accounting plan' do
       it 'returns 0GOO' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 
@@ -37,7 +37,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0SLIM' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Slimpay Janvier 2015')
 
@@ -45,7 +45,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0CAR based on scores' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('paiement par carte €20.00')
 
@@ -53,7 +53,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0TEMP based on scores' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Caisse-epargne Janvier 2015')
 
@@ -79,7 +79,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0ORA' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return([])
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return([])
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Orange Janvier 2015')
 
@@ -104,7 +104,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0IBI' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Ibiza $150.0')
 
@@ -130,7 +130,7 @@ describe AccountNumberFinderService do
       end
 
       it 'returns 0GOG based on rules' do
-        allow(AccountNumberFinderService).to receive(:get_accounting_plan).and_return(@accounting_plan)
+        allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
         result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Google $10.00')
 

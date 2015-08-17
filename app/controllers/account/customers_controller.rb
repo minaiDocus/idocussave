@@ -58,7 +58,12 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def update_ibiza
-    if @customer.update(ibiza_params)
+    @customer.assign_attributes(ibiza_params)
+    is_ibiza_id_changed = @customer.ibiza_id_changed?
+    if @customer.save
+      if is_ibiza_id_changed && @user.ibiza_id.present?
+        UpdateAccountingPlan.async_execute(@user.id.to_s)
+      end
       flash[:success] = 'Modifié avec succès'
     else
       flash[:error] = 'Impossible de modifier'

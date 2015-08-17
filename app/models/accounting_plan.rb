@@ -12,6 +12,8 @@ class AccountingPlan
   accepts_nested_attributes_for :customers,    allow_destroy: true
   accepts_nested_attributes_for :vat_accounts, allow_destroy: true
 
+  field :last_checked_at, type: Time
+
   def import(file, type)
     items = type == 'providers' ? providers : customers
     begin
@@ -34,5 +36,51 @@ class AccountingPlan
     rescue
       false
     end
+  end
+
+  def to_xml
+    builder = Nokogiri::XML::Builder.new do
+      data {
+        customers.each do |customer|
+          wsAccounts {
+            category 1
+            associate customer.conterpart_account
+            name customer.third_party_name
+            number customer.third_party_account
+            send(:'vat-account', vat_accounts.find_by_code(customer.code).try(:account_number))
+          }
+        end
+        providers.each do |provider|
+          wsAccounts {
+            category 2
+            associate provider.conterpart_account
+            name provider.third_party_name
+            number provider.third_party_account
+            send(:'vat-account', vat_accounts.find_by_code(provider.code).try(:account_number))
+          }
+        end
+      }
+    end
+    builder.to_xml
+  end
+
+  def to_csv(header=true)
+    if header
+      data = [['category', 'name', 'number', 'associate', 'customer_code'].join(',')]
+    else
+      data = []
+    end
+    [[1, customers], [2, providers]].each do |category, accounts|
+      accounts.each do |account|
+        data << [
+          category,
+          account.third_party_name,
+          account.third_party_account,
+          account.conterpart_account,
+          user.code
+        ].join(',')
+      end
+    end
+    data.join("\n")
   end
 end

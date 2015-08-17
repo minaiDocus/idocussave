@@ -194,18 +194,21 @@
               .span12
                 .well
                   %h3.aligncenter.margin2bottom iDocus'Box
-                  - if @user.dematbox.try(:services).try(:any?)
+                  - if @user.dematbox.try(:is_configured)
                     %h4.margin1bottom Liste des services
-                    %table.table.table-striped.table-bordered.table-condensed.margin0bottom
-                      %thead
-                        %tr
-                          %th Groupe
-                          %th Nom
-                      %tbody
-                        - @user.dematbox.services.asc([:group_name, :name]).each do |service|
+                    - if @user.dematbox.try(:services).try(:any?)
+                      %table.table.table-striped.table-bordered.table-condensed.margin0bottom
+                        %thead
                           %tr
-                            %td= service.group_name
-                            %td= service.name
+                            %th Groupe
+                            %th Nom
+                        %tbody
+                          - @user.dematbox.services.asc([:group_name, :name]).each do |service|
+                            %tr
+                              %td= service.group_name
+                              %td= service.name
+                    - elsif @user.account_book_types.size == 0
+                      %p Pas de journaux paramétrés.
                   - elsif @user.dematbox.try(:beginning_configuration_at).present?
                     Configuration en cours...veuillez recharger votre page dans quelques secondes.
                   - else

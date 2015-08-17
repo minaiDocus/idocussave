@@ -11,7 +11,8 @@ class CmsImage
       thumb: ["96x96>", :png],
     },
     path: ":rails_root/public:url",
-    url: "/system/:rails_env/:class/:attachment/:id/:style/:filename"
+    url: "/system/:rails_env/:class/:attachment/:id/:style/:filename",
+    use_timestamp: false
   do_not_validate_attachment_file_type :content
 
   def self.find_by_name(name)
