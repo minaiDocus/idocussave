@@ -1,4 +1,4 @@
-# -*- encoding : UTF8 -*-
+# -*- encoding : UTF-8 -*-
 namespace :prepa_compta do
   desc 'Update accounting plan'
   task :update_accounting_plan => [:environment] do
