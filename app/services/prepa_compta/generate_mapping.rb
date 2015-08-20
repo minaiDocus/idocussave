@@ -31,6 +31,10 @@ private
     PrepaCompta.pre_assignments_dir.join('mapping')
   end
 
+  def abbyy_dir
+    PrepaCompta.pre_assignments_dir.join('abbyy')
+  end
+
   def write_xml(user_code, content)
     file_path = dir.join("#{user_code}.xml")
     File.write file_path, content
@@ -38,7 +42,7 @@ private
 
   def write_csv(body)
     header = [['category', 'name', 'number', 'associate', 'customer_code'].join(',')]
-    file_path = dir.join('abbyy', 'comptes.csv')
+    file_path = abbyy_dir.join('comptes.csv')
     File.write file_path, (header + body).join("\n")
   end
 
@@ -54,7 +58,7 @@ private
       line << 'FR'
       lines << line.join(',')
     end
-    file_path = dir.join('abbyy', 'liste_dossiers.csv')
+    file_path = abbyy_dir.join('liste_dossiers.csv')
     File.write file_path, lines.join("\n")
   end
 end
