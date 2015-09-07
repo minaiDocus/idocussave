@@ -100,7 +100,7 @@ describe PreseizureToTxtService do
     expect(lines[2]).to eq 'M3TES    AC000130115 TIERS - 012345678910D+000000000400                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
   end
 
-  it 'has an account number longer than 8 caracters' do
+  it 'has an account number longer than 8 characters' do
     @preseizure.accounts.destroy_all
     @preseizure.reload
 
