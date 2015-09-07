@@ -10,7 +10,7 @@
                   <sequence>
                     <element type="string" name="file_name" maxOccurs="unbounded" minOccurs="1"/>
                   </sequence>
-                  <attribute type="byte" name="number" use="optional"/>
+                  <attribute type="short" name="number" use="optional"/>
                   <attribute type="string" name="origin" use="optional"/>
                 </complexType>
               </element>
