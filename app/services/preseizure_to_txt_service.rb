@@ -13,7 +13,9 @@ class PreseizureToTxtService
         line = ' '*256
         line[0] = 'M'
         account_number = entry.account.try(:number) || ''
-        line[1..8]     = account_number[0..7] + (' ' * (8-account_number.size))
+        8.times do |i|
+          line[i+1] = account_number[i] || ' '
+        end
         line[9..10]    = preseizure.report.journal[0..1]
         line[11..13]   = '000'
         line[14..19]   = preseizure.date.strftime('%d%m%y') if preseizure.date

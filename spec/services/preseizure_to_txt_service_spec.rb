@@ -99,4 +99,27 @@ describe PreseizureToTxtService do
     expect(lines[1]).to eq 'M2TES    AC000130115 TIERS - 012345678910D+000000002000                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
     expect(lines[2]).to eq 'M3TES    AC000130115 TIERS - 012345678910D+000000000400                                                    EUR      TIERS - 0123456789101112131415                                   1.pdf                                                                      '
   end
+
+  it 'has an account number longer than 8 caracters' do
+    @preseizure.accounts.destroy_all
+    @preseizure.reload
+
+    account = Pack::Report::Preseizure::Account.new
+    account.type = 1
+    account.number = 'NUMBER789'
+    account.save
+    @preseizure.accounts << account
+    entry = Pack::Report::Preseizure::Entry.new
+    entry.type = 2
+    entry.amount = 24.0
+    entry.number = '1'
+    entry.save
+    account.entries << entry
+    @preseizure.entries << entry
+
+    result = PreseizureToTxtService.new(@preseizure).execute
+    lines = result.split("\n")
+    expect(lines.size).to eq 1
+    expect(lines[0]).to eq 'MNUMBER78AC000130115 TIERS - 123         C+000000002400                                                    EUR                                                                       1.pdf                                                                      '
+  end
 end
