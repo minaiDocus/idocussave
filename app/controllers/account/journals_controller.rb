@@ -22,6 +22,7 @@ class Account::JournalsController < Account::OrganizationController
       if @customer
         UpdateJournalRelationService.new(@journal).execute
         EventCreateService.new.add_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+        @customer.dematbox.async_subscribe if @customer.dematbox.try(:is_configured)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -42,6 +43,7 @@ class Account::JournalsController < Account::OrganizationController
       if @customer
         UpdateJournalRelationService.new(@journal).execute
         EventCreateService.new.journal_update(@journal, @customer, changes, current_user, path: request.path, ip_address: request.remote_ip)
+        @customer.dematbox.async_subscribe if changes['name'].present? && @customer.dematbox.try(:is_configured)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
@@ -58,6 +60,7 @@ class Account::JournalsController < Account::OrganizationController
       if @customer
         UpdateJournalRelationService.new(@journal).execute
         EventCreateService.new.remove_journal(@journal, @customer, current_user, path: request.path, ip_address: request.remote_ip)
+        @customer.dematbox.async_subscribe if @customer.dematbox.try(:is_configured)
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'journals')
       else
         redirect_to account_organization_journals_path(@organization)
