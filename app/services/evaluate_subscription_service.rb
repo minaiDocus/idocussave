@@ -68,6 +68,7 @@ private
 
   def unauthorize_dematbox
     @user.update_attribute(:is_dematbox_authorized, false) if @user.is_dematbox_authorized
+    @user.dematbox.delay(priority: 1).unsubscribe if @user.dematbox.try(:is_configured)
   end
 
   def authorize_fiduceo
