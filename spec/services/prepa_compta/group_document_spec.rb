@@ -513,6 +513,7 @@ describe PrepaCompta::GroupDocument do
       end
 
       it 'successfully group documents' do
+        Timecop.freeze(Time.local(2015,1,2,0,1,0))
         2.times do |i|
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
@@ -595,7 +596,8 @@ describe PrepaCompta::GroupDocument do
             </pack>
           </group_documents>'
         File.write(@result_file_path, data)
-        File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
+        File.utime(Time.local(2015,1,2), Time.local(2015,1,2), @result_file_path)
+        FileUtils.mkdir_p Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
 
         PrepaCompta::GroupDocument.execute
 
@@ -611,7 +613,7 @@ describe PrepaCompta::GroupDocument do
         expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_3.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_4.content.path)).to eq 8
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '02_1')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_003_001.pdf'))).to be_truthy
@@ -631,6 +633,8 @@ describe PrepaCompta::GroupDocument do
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_006_004.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_006_005.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('result.xml'))).to be_truthy
+
+        Timecop.return
       end
     end
   end

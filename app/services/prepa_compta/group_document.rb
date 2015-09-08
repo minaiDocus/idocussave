@@ -147,11 +147,11 @@ private
   end
 
   def base_archive_path
-    @base_archive_path ||= PrepaCompta.grouping_dir.join('archives', Date.today.strftime('%Y/%m'))
+    @base_archive_path ||= PrepaCompta.grouping_dir.join('archives', Date.today.strftime('%Y/%m/%d'))
   end
 
   def archive_path
-    @archive_path ||= base_archive_path.join "#{Date.today.strftime('%d')}_#{process_number}"
+    @archive_path ||= base_archive_path.to_s + "_#{process_number}"
   end
 
   def process_number
