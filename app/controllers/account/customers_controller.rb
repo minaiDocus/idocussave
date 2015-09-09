@@ -211,7 +211,7 @@ private
     users = users.where(:company => /#{Regexp.quote(contains[:company])}/i) unless contains[:company].blank?
     users = users.where(:code => /#{Regexp.quote(contains[:code])}/i) unless contains[:code].blank?
     if is_leader? && params[:collaborator_id].present?
-      ids = @organization.groups.any_in(collaborator_ids: [params[:collaborator_id]]).map(&:_id)
+      ids = @organization.groups.any_in(member_ids: [params[:collaborator_id]]).map(&:_id)
       ids = ids.map { |e| e.to_s }
       users = users.any_in(group_ids: ids)
     elsif params[:group_ids].present?
