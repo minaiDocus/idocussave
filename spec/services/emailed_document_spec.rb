@@ -114,6 +114,7 @@ describe EmailedDocument do
       end
 
       allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 2.2.megabytes }
+      allow_any_instance_of(EmailedDocument::Attachment).to receive(:pages_number) { 2 }
 
       emailed_document = EmailedDocument.new mail
       expect(emailed_document.attachments[0]).to be_valid
@@ -123,6 +124,24 @@ describe EmailedDocument do
       expect(emailed_document.attachments[4]).to be_valid
       expect(emailed_document.valid_attachments?).to be false
       expect(emailed_document).to be_invalid
+    end
+
+    it 'with pages number > 100 should be invalid' do
+      code = @user.email_code
+      mail = Mail.new do
+        from     'customer@example.com'
+        to       "#{code}@fw.idocus.com"
+        subject  'TS'
+        add_file filename: 'doc1.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+      end
+
+      allow_any_instance_of(EmailedDocument::Attachment).to receive(:pages_number) { 110 }
+
+      emailed_document = EmailedDocument.new mail
+      expect(emailed_document.attachments.first).not_to be_valid
+      expect(emailed_document.valid_attachments?).to be false
+      expect(emailed_document).to be_invalid
+      expect(emailed_document.errors).to eq([['doc1.pdf', :pages_number]])
     end
 
     it 'with corrupted file should be invalid' do

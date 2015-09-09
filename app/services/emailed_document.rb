@@ -195,6 +195,12 @@ class EmailedDocument
     end
   end
 
+  def valid_attachment_pages_numbers?
+    @valid_attachment_pages_numbers ||= attachments.inject(true) do |acc, attachment|
+      acc && attachment.valid_pages_number?
+    end
+  end
+
   def invalid_attachment_contents?
     !valid_attachment_contents?
   end
@@ -260,8 +266,9 @@ private
         unless attachment.valid?
           attachment_errors = []
           attachment_errors << attachment.name
-          attachment_errors << :size    unless attachment.valid_size?
-          attachment_errors << :content unless attachment.valid_content?
+          attachment_errors << :size         unless attachment.valid_size?
+          attachment_errors << :content      unless attachment.valid_content?
+          attachment_errors << :pages_number unless attachment.valid_pages_number?
           _errors << attachment_errors
         end
       end
@@ -329,6 +336,14 @@ private
       end
     end
 
+    def pages_number
+      DocumentTools.pages_number(@file_path) rescue 0
+    end
+
+    def valid_pages_number?
+      pages_number <= 100
+    end
+
     # syntactic sugar ||= does not store false/nil value
     def is_printable_only?
       if @is_printable_only_set
@@ -340,7 +355,7 @@ private
     end
 
     def valid?
-      valid_size? && valid_content?
+      valid_size? && valid_content? && valid_pages_number?
     end
 
     def dir

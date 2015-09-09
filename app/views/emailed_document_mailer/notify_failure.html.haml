@@ -25,6 +25,8 @@
         %li la taille totale des pièces jointes est supérieure à 10 Mo
       - unless @emailed_document.valid_attachment_sizes?
         %li au moins une des pièces jointes a une taille supérieure à 5 Mo
+      - unless @emailed_document.valid_attachment_pages_numbers?
+        %li au moins une des pièces jointes a un nombre de pages supérieurs à 100
       - unless @emailed_document.attachments.any?
         %li aucune pièce jointe n’est au format PDF
       - unless @emailed_document.valid_attachment_contents?
