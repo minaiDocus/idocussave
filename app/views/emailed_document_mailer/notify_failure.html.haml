@@ -22,7 +22,7 @@
       - unless @emailed_document.period
         %li période inconnue
       - unless @emailed_document.valid_total_size?
-        %li la taille totale des pièces jointes est supérieure à 20 Mo
+        %li la taille totale des pièces jointes est supérieure à 10 Mo
       - unless @emailed_document.valid_attachment_sizes?
         %li au moins une des pièces jointes a une taille supérieure à 5 Mo
       - unless @emailed_document.attachments.any?
