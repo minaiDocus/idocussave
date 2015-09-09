@@ -188,6 +188,7 @@ fr:
       authorize_dematbox: Autoriser Dematbox
       authorize_fiduceo: Autoriser Fiduceo
       authorize_preassignment: Autoriser la pré-affectation
+      authorize_upload: Autoriser le téléversement
       update_max_number_of_journals: Modifier le nombre max. de journaux
 
   mongoid:
@@ -926,6 +927,7 @@ fr:
           error:         En erreur
           processed:     Traité
           unprocessable: Intraitable
+          rejected:      Rejetté
       temp_document:
         states:
           created: Créé

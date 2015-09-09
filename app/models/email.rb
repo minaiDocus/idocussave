@@ -40,6 +40,7 @@ class Email
     state :error
     state :processed
     state :unprocessable
+    state :rejected
 
     event :error do
       transition :created => :error
@@ -51,6 +52,10 @@ class Email
 
     event :failure do
       transition [:created, :error] => :unprocessable
+    end
+
+    event :reject do
+      transition [:created, :error] => :rejected
     end
   end
 end

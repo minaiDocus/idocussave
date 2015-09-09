@@ -19,7 +19,7 @@
         .control-group
           = label_tag :h_file_code, 'Code client : ', class: 'control-label', style: 'font-weight:900;'
           .controls
-            = select_tag :h_file_code, options_for_select(@user.customers.active.asc(:code).map{|e| [e.short_info, e.code]}), id: :h_file_code, style: 'font-size:11px;'
+            = select_tag :h_file_code, options_for_select(file_upload_users_list.map{|e| [e.short_info, e.code]}), id: :h_file_code, style: 'font-size:11px;'
             = hidden_field_tag :file_code
       .control-group
         = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label', style: 'font-weight:900;'

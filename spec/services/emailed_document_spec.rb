@@ -285,6 +285,8 @@ describe EmailedDocument do
       Timecop.freeze(Time.local(2014,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user.options = UserOptions.new(is_upload_authorized: true)
+      @user.options.save
 
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       @journal.save
@@ -311,6 +313,30 @@ describe EmailedDocument do
 
       expect(emailed_document).to be_invalid
       expect(email.state).to eql('unprocessable')
+    end
+
+    it 'with invalid code should create email with state rejected' do
+      mail = Mail.new do
+        from    'customer@example.com'
+        to      "abc@fw.idocus.com"
+        subject 'TS'
+      end
+      email = EmailedDocument.receive(mail)
+
+      expect(email.state).to eql('rejected')
+    end
+
+    it 'with upload unauthorized should create email with state rejected' do
+      allow_any_instance_of(UserOptions).to receive(:is_upload_authorized).and_return(false)
+      code = @user.email_code
+      mail = Mail.new do
+        from    'customer@example.com'
+        to      "#{code}@fw.idocus.com"
+        subject 'TS'
+      end
+      email = EmailedDocument.receive(mail)
+
+      expect(email.state).to eql('rejected')
     end
 
     it 'should create email with invalid content' do

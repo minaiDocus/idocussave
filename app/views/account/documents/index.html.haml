@@ -21,9 +21,10 @@
           .pull-right
             - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
             - # |
-            %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
-              %span.icon.icon-plus
-              Ajouter des documents
+            - if (@user.is_prescriber && file_upload_users_list.present? ) || @user.options.is_upload_authorized
+              %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
+                %span.icon.icon-plus
+                Ajouter des documents
   .row-fluid
     .span3
       #documentslist.well.qtip-target

@@ -80,27 +80,32 @@ class EmailedDocument
         email
       else
         begin
-          emailed_document = EmailedDocument.new mail
+          if email.to_user.try(:options).try(:is_upload_authorized)
+            emailed_document = EmailedDocument.new mail
 
-          email.attachment_names = emailed_document.attachments.map(&:name) unless email.attachment_names.present?
-          email.size             = emailed_document.total_size              unless email.size > 0
-          email.save
-
-          if emailed_document.valid?
-            email.success
-            emailed_document.temp_documents.each do |temp_document|
-              email.temp_documents << temp_document
-            end
+            email.attachment_names = emailed_document.attachments.map(&:name) unless email.attachment_names.present?
+            email.size             = emailed_document.total_size              unless email.size > 0
             email.save
-            if emailed_document.user.is_mail_receipt_activated
-              EmailedDocumentMailer.notify_success(mail.from.first, emailed_document).deliver
+
+            if emailed_document.valid?
+              email.success
+              emailed_document.temp_documents.each do |temp_document|
+                email.temp_documents << temp_document
+              end
+              email.save
+              if emailed_document.user.is_mail_receipt_activated
+                EmailedDocumentMailer.notify_success(mail.from.first, emailed_document).deliver
+              end
+            else
+              email.update_attribute(:errors_list, emailed_document.errors)
+              email.failure
+              emailed_document.user && EmailedDocumentMailer.notify_failure(mail.from.first, emailed_document).deliver
             end
+            [emailed_document, email]
           else
-            email.update_attribute(:errors_list, emailed_document.errors)
-            email.failure
-            emailed_document.user && EmailedDocumentMailer.notify_failure(mail.from.first, emailed_document).deliver
+            email.reject
+            email
           end
-          [emailed_document, email]
         rescue => e
           email.error unless email.error?
           if email.to_user && !email.is_error_notified

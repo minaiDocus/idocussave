@@ -3,6 +3,7 @@ class EvaluateSubscriptionService
     :authorize_dematbox,
     :authorize_fiduceo,
     :authorize_preassignment,
+    :authorize_upload,
     :update_max_number_of_journals
   ]
 
@@ -22,6 +23,7 @@ class EvaluateSubscriptionService
     is_dematbox_authorized      = false
     is_fiduceo_authorized       = false
     is_preassignment_authorized = false
+    is_upload_authorized        = false
 
     options_to_notify = []
     @subscription.options.each do |product_option|
@@ -36,6 +38,8 @@ class EvaluateSubscriptionService
           is_fiduceo_authorized = true
         when 'authorize_preassignment'
           is_preassignment_authorized = true
+        when 'authorize_upload'
+          is_upload_authorized = true
         when 'update_max_number_of_journals'
           update_max_number_of_journals(product_option)
         end
@@ -45,6 +49,7 @@ class EvaluateSubscriptionService
     is_dematbox_authorized      ? authorize_dematbox      : unauthorize_dematbox
     is_fiduceo_authorized       ? authorize_fiduceo       : unauthorize_fiduceo
     is_preassignment_authorized ? authorize_preassignment : unauthorize_preassignment
+    is_upload_authorized        ? authorize_upload        : unauthorize_upload
     notify(options_to_notify) if options_to_notify.present?
   end
 
@@ -101,6 +106,18 @@ private
           EventCreateService.new.journal_update(*params)
         end
       end
+    end
+  end
+
+  def authorize_upload
+    unless @user.options.is_upload_authorized
+      @user.options.update_attribute(:is_upload_authorized, true)
+    end
+  end
+
+  def unauthorize_upload
+    if @user.options.is_upload_authorized
+      @user.options.update_attribute(:is_upload_authorized, false)
     end
   end
 

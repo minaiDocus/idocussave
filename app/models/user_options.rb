@@ -10,6 +10,7 @@ class UserOptions
   field :is_pre_assignment_date_computed, type: Integer, default: -1
   field :is_auto_deliver,                 type: Integer, default: -1
   field :is_own_csv_descriptor_used,      type: Boolean, default: false
+  field :is_upload_authorized,            type: Boolean, default: false
 
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
   validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
@@ -32,5 +33,9 @@ class UserOptions
 
   def own_csv_descriptor_used?
     is_own_csv_descriptor_used
+  end
+
+  def upload_authorized?
+    is_upload_authorized
   end
 end

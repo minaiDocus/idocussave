@@ -1,10 +1,19 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaperProcessesController < Account::AccountController
+  before_filter :verify_rights
+
   def index
     @paper_processes = search(paper_process_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
 private
+
+  def verify_rights
+    unless (@user.organization && @user.is_prescriber) || @user.options.is_upload_authorized
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to root_path
+    end
+  end
 
   def sort_column
     params[:sort] || 'updated_at'

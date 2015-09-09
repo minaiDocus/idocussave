@@ -178,10 +178,16 @@ module DocumentsHelper
     end
   end
 
+  def file_upload_users_list
+    @file_upload_users_list ||= @user.customers.active.asc(:code).select do |customer|
+      customer.options.is_upload_authorized
+    end
+  end
+
   def file_upload_params
     if @user.organization && @user.is_prescriber
       result = {}
-      @user.customers.active.each do |customer|
+      file_upload_users_list.each do |customer|
         period_service = PeriodService.new user: customer
         hsh = {
           journals: customer.account_book_types.asc(:name).map { |j|

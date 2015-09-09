@@ -25,7 +25,7 @@ class ReminderEmail
     end
     if clients.any?
       clients.each do |client|
-        if client.is_reminder_email_active
+        if client.is_reminder_email_active && client.options.is_upload_authorized
           period = client.periods.desc(:start_at).first
           if period
             packs_delivered = client.packs.where(:created_at.gt => period.start_at).scan_delivered.count
