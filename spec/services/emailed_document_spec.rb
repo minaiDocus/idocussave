@@ -100,7 +100,7 @@ describe EmailedDocument do
       expect(emailed_document).to be_invalid
     end
 
-    it 'with total file sizes > 20 Mo should be invalid' do
+    it 'with total file sizes > 10 Mo should be invalid' do
       code = @user.email_code
       mail = Mail.new do
         from     'customer@example.com'
@@ -113,7 +113,7 @@ describe EmailedDocument do
         add_file filename: 'doc5.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
       end
 
-      allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 5.megabytes }
+      allow_any_instance_of(EmailedDocument::Attachment).to receive(:size) { 2.2.megabytes }
 
       emailed_document = EmailedDocument.new mail
       expect(emailed_document.attachments[0]).to be_valid

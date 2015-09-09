@@ -284,7 +284,10 @@
                         exemple :
                         %b
                           %i #{@user.account_book_types.first.name} #{period_service.names.first}
-                    %li La somme des tailles des pièces jointes de votre mail ne doit pas dépasser 20 Mo.
+                    %li
+                      La somme des tailles des pièces jointes de votre mail ne doit pas dépasser
+                      %b 10 Mo
+                      \.
                   Vos journaux comptables accessibles :
                   %ul
                     - @user.account_book_types.each do |journal|

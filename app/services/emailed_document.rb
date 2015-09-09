@@ -170,7 +170,7 @@ class EmailedDocument
   end
 
   def valid_total_size?
-    total_size <= 20.megabytes
+    total_size <= 10.megabytes
   end
 
   def valid_attachments?
