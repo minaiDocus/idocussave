@@ -11,26 +11,31 @@ class Admin::ReportingController < Admin::AdminController
     respond_to do |format|
       format.html
       format.xls do
-        if params[:organization_id].present? && (organization = Organization.find(params[:organization_id]))
-          organization_ids = [organization.id]
-          customer_ids = organization.customers.map(&:id)
-          filename = "reporting_#{organization.name.downcase.underscore}_#{@year}.xls"
-          with_organization_info = false
+        if params[:simplified] == '1'
+          filename = "reporting_simplifié_iDocus_#{@year}.xls"
+          send_data GlobalReportToXls.new(@year).execute, type: 'application/vnd.ms-excel', filename: filename
         else
-          organization_ids = @organizations.map(&:id)
-          customer_ids = @organizations.map{ |o| o.customers.map(&:id) }.flatten
-          filename = "reporting_iDocus_#{@year}.xls"
-          with_organization_info = true
+          if params[:organization_id].present? && (organization = Organization.find(params[:organization_id]))
+            organization_ids = [organization.id]
+            customer_ids = organization.customers.map(&:id)
+            filename = "reporting_#{organization.name.downcase.underscore}_#{@year}.xls"
+            with_organization_info = false
+          else
+            organization_ids = @organizations.map(&:id)
+            customer_ids = @organizations.map{ |o| o.customers.map(&:id) }.flatten
+            filename = "reporting_iDocus_#{@year}.xls"
+            with_organization_info = true
+          end
+          periods = Period.any_of(
+              { :user_id.in         => customer_ids },
+              { :organization_id.in => organization_ids }
+            ).where(
+              :start_at.gte => beginning_of_year,
+              :end_at.lte   => end_of_year
+            ).asc(:start_at).entries
+          data = PeriodsToXlsService.new(periods, with_organization_info).execute
+          send_data data, type: 'application/vnd.ms-excel', filename: filename
         end
-        periods = Period.any_of(
-            { :user_id.in         => customer_ids },
-            { :organization_id.in => organization_ids }
-          ).where(
-            :start_at.gte => beginning_of_year,
-            :end_at.lte   => end_of_year
-          ).asc(:start_at).entries
-        data = PeriodsToXlsService.new(periods, with_organization_info).execute
-        send_data data, type: 'application/vnd.ms-excel', filename: filename
       end
     end
   end

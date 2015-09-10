@@ -4,6 +4,7 @@
       %h3 Reporting de l'année #{@year}
     .span6.alignright
       = link_to image_tag('application/icon-xls.png', alt: 'Export xls', style: 'position:relative;top:-2px;') + ' Export XLS', "/admin/reporting/#{@year}.xls"
+      = link_to image_tag('application/icon-xls.png', alt: 'Export xls simplifié', style: 'position:relative;top:-2px;') + ' Export XLS simplifié', "/admin/reporting/#{@year}.xls?simplified=1"
   .row-fluid
     .span12
       %table.table.table-striped.table-bordered
