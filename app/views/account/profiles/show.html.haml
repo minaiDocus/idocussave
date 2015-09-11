@@ -226,10 +226,10 @@
                 %h3.aligncenter Notification par mail
                 = simple_form_for @user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
                   = hidden_field_tag :panel, 'subscription_options'
-                  - if @user.options.is_upload_authorized && !@user.is_prescriber
+                  - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
                     = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
                   = f.input :is_document_notifier_active, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouveaux documents sont disponibles", wrapper: :inline_checkbox
-                  - if @user.options.is_upload_authorized && !@user.is_prescriber
+                  - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
                     = f.input :is_mail_receipt_activated, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail", wrapper: :inline_checkbox
                   .form-actions
                     = f.submit 'Valider', class: 'btn'
@@ -263,7 +263,7 @@
                 .modal-body
                   %iframe{ :src => '' }
 
-          - if @user.options.is_upload_authorized && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
+          - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
             - period_service = PeriodService.new user: @user, current_time: Time.now.beginning_of_month
             #emailed_documents.row-fluid.pan{ class: (@active_panel == 'emailed_documents' ? 'active' : '')}
               .span12

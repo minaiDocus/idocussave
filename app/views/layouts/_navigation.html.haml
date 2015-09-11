@@ -22,7 +22,7 @@
         - if @user.is_fiduceo_authorized
           %li{ :class=>('active' if controller_name.in?(%w(retrievers provider_wishes retriever_transactions retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
             = link_to 'Mes automates', account_fiduceo_retrievers_path
-        - if (@user.organization && @user.is_prescriber) || @user.options.is_upload_authorized
+        - if @user.is_admin || (@user.organization && @user.is_prescriber) || @user.options.is_upload_authorized
           %li{ class: ('active' if controller_name == 'paper_processes') }
             = link_to 'Suivi', account_paper_processes_path
       %li.dropdown

@@ -9,7 +9,7 @@ class Account::PaperProcessesController < Account::AccountController
 private
 
   def verify_rights
-    unless (@user.organization && @user.is_prescriber) || @user.options.is_upload_authorized
+    unless @user.is_admin || (@user.organization && @user.is_prescriber) || @user.options.is_upload_authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end

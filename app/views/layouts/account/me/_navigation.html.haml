@@ -21,6 +21,6 @@
         - if @user.is_prescriber || !@user.is_centralized
           %li{ class: ('active' if @active_panel == 'invoices') }
             != link_to 'Factures', '#invoices', class: 'do-show'
-        - if @user.options.is_upload_authorized && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
+        - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
           %li{ class: ('active' if @active_panel == 'emailed_documents') }
             != link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
