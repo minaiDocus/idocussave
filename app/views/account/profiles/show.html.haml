@@ -80,6 +80,8 @@
           #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
             .span12.well
               %h3.aligncenter Stockage externe des documents
+              Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
+              %br
               - if @external_file_storage.authorized > 0
                 %br
                 - if @external_file_storage.is_dropbox_basic_authorized?
@@ -100,7 +102,16 @@
                           Pour connecter iDocus à votre compte Dropbox, cliquez
                           != link_to "ici", authorize_url_account_dropbox_path
                         #{"."}
-                        = render partial: 'storage_form', locals: { instance: @external_file_storage.dropbox_basic }
+                        .row-fluid
+                          .span6.margin2top
+                            = render partial: 'storage_form', locals: { instance: @external_file_storage.dropbox_basic }
+                          .span6.margin2top
+                            %h4 Import de documents vers iDocus
+                            La synchronisation de votre dossier d’import se fait automatiquement à 9h, 12h et 17h.
+                            %br
+                            Vous pouvez lancer une synchronisation immédiate en appuyant sur le bouton ci-dessous:
+                            %br
+                            = link_to 'Synchroniser immédiatement', fetch_documents_account_dropbox_path, class: 'btn'
 
                 - if @external_file_storage.is_google_docs_authorized?
                   - service_number = ExternalFileStorage::F_GOOGLE_DOCS
@@ -120,7 +131,8 @@
                           Pour connecter iDocus à votre compte Google Drive, cliquez
                           = link_to "ici", authorize_url_account_google_drive_path, method: :post
                         #{"."}
-                        = render partial: 'storage_form', locals: { instance: @external_file_storage.google_doc }
+                        .margin2top
+                          = render partial: 'storage_form', locals: { instance: @external_file_storage.google_doc }
 
                 - if @external_file_storage.is_ftp_authorized?
                   - service_number = ExternalFileStorage::F_FTP
@@ -140,7 +152,8 @@
                           Pour connecter iDocus à votre compte FTP, cliquez
                           != link_to "ici", "#ftpDialog", "data-toggle" => "modal"
                         \.
-                        = render partial: 'storage_form', locals: { instance: @external_file_storage.ftp }
+                        .margin2top
+                          = render partial: 'storage_form', locals: { instance: @external_file_storage.ftp }
 
                 - if @external_file_storage.is_box_authorized?
                   - service_number = ExternalFileStorage::F_BOX
@@ -160,7 +173,8 @@
                           Pour connecter iDocus à votre compte Box, cliquez
                           != link_to "ici", authorize_url_account_box_path
                         #{"."}
-                        = render partial: 'storage_form', locals: { instance: @external_file_storage.box }
+                        .margin2top
+                          = render partial: 'storage_form', locals: { instance: @external_file_storage.box }
 
             .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
               .modal-header

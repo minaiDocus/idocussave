@@ -1,3 +1,4 @@
+%h4 Export de documents depuis iDocus
 = simple_form_for instance, url: account_external_file_storage_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
   = f.input :path, label: "Chemin de livraison : ", input_html: { class: 'input-xlarge' }
   = f.input :file_type_to_deliver, label: "Format des fichiers à livrer : ", collection: file_type_to_deliver_options, include_blank: false

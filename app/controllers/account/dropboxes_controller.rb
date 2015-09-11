@@ -36,10 +36,21 @@ public
     else
       begin
         @dropbox.get_access_token
+        FetchFromDropbox.new(@dropbox).delay.execute
         flash[:notice] = 'Votre compte Dropbox a été configuré avec succès.'
       rescue DropboxAuthError
         flash[:error] = 'Impossible de configurer votre compte Dropbox.'
       end
+    end
+    redirect_to account_profile_path(panel: 'efs_management')
+  end
+
+  def fetch_documents
+    begin
+      FetchFromDropbox.new(@dropbox).delay.execute
+      flash[:notice] = 'Vos documents Dropbox sont en cours de synchronisation.'
+    rescue DropboxError
+        flash[:error] = 'Impossible de synchroniser les documents de votre compte Dropbox.'
     end
     redirect_to account_profile_path(panel: 'efs_management')
   end

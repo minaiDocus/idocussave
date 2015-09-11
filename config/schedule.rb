@@ -37,3 +37,15 @@ end
 every :month, at: '02:02 am' do
   rake 'maintenance:reporting:init', options
 end
+
+every :day, at: '09:00 am' do
+  rake 'maintenance:fetch_dropbox', options
+end
+
+every :day, at: '12:00 am' do
+  rake 'maintenance:fetch_dropbox', options
+end
+
+every :day, at: '05:00 pm' do
+  rake 'maintenance:fetch_dropbox', options
+end

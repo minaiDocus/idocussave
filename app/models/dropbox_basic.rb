@@ -7,6 +7,7 @@ class DropboxBasic
 
   field :session,              type: String,  default: ''
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'
+  field :export_path,          type: String,  default: ':code/:period/:account_book'
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   def new_session
