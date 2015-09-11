@@ -587,7 +587,8 @@ fr:
           is_test: Mode test ?
           is_suspended: Est suspendu ?
           is_journals_management_centralized: Gestion des journaux comptables centralisé ?
-          is_quadratus_used: Activer les options de Quadratus ?
+          is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?
+          is_csv_descriptor_used: Activer l’option de création du fichier export .csv (un nouvel onglet va s’afficher)?
           is_pre_assignment_date_computed: Recalculer la date de pré-affectation (période) ?
           status:
             admin: Administrateur

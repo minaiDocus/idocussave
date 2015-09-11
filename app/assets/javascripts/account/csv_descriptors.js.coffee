@@ -1,25 +1,45 @@
 initialize_csv_editor = ->
-  $('#csv_descriptors.edit option:selected').each (index, e) ->
+  $('#csv_descriptors.edit #select_directive option:selected').each (index, e) ->
     type = $(e).attr('value')
     if type == 'date' || type == 'deadline_date' || type == 'period_date'
-      $(e).parents('li').find('input[name=format]').removeAttr('disabled')
+      $(this).parents('li').find('#text_format').hide()
+      $(this).parents('li').find('#text_format').attr('disabled','disabled')
+      $(this).parents('li').find('#select_format').show()
+      $(this).parents('li').find('#select_format').removeAttr('disabled')
+    else if type == 'other'
+      $(this).parents('li').find('#select_format').hide()
+      $(this).parents('li').find('#select_format').attr('disabled','disabled')
+      $(this).parents('li').find('#text_format').show()
+      $(this).parents('li').find('#text_format').removeAttr('disabled')
     else
-      $(this).parents('li').find('input[name=format]').val('')
-      $(e).parents('li').find('input[name=format]').attr('disabled','disabled')
+      $(this).parents('li').find('#select_format').hide()
+      $(this).parents('li').find('#select_format').attr('disabled','disabled')
+      $(this).parents('li').find('#text_format').hide()
+      $(this).parents('li').find('#text_format').attr('disabled','disabled')
 
 activate_csv_field_action = ->
   $('#csv_descriptors.edit .remove_field').unbind('click')
   $('#csv_descriptors.edit .remove_field').bind 'click', ->
     $(this).parents('li').remove()
     false
-  $('#csv_descriptors.edit select').unbind('change')
-  $('#csv_descriptors.edit select').bind 'change', ->
+  $('#csv_descriptors.edit #select_directive').unbind('change')
+  $('#csv_descriptors.edit #select_directive').bind 'change', ->
     type = $(this).children('option:selected').attr('value')
     if type == 'date' || type == 'deadline_date' || type == 'period_date'
-      $(this).parents('li').find('input[name=format]').removeAttr('disabled')
+      $(this).parents('li').find('#text_format').hide()
+      $(this).parents('li').find('#text_format').attr('disabled','disabled')
+      $(this).parents('li').find('#select_format').show()
+      $(this).parents('li').find('#select_format').removeAttr('disabled')
+    else if type == 'other'
+      $(this).parents('li').find('#select_format').hide()
+      $(this).parents('li').find('#select_format').attr('disabled','disabled')
+      $(this).parents('li').find('#text_format').show()
+      $(this).parents('li').find('#text_format').removeAttr('disabled')
     else
-      $(this).parents('li').find('input[name=format]').val('')
-      $(this).parents('li').find('input[name=format]').attr('disabled','disabled')
+      $(this).parents('li').find('#select_format').hide()
+      $(this).parents('li').find('#select_format').attr('disabled','disabled')
+      $(this).parents('li').find('#text_format').hide()
+      $(this).parents('li').find('#text_format').attr('disabled','disabled')
 
 activate_csv_global_action = ->
   $('#csv_descriptors.edit .add_field').click ->
@@ -44,11 +64,13 @@ jQuery ->
       directive = []
       $('#csv_descriptors.edit .list li').each (index,element) ->
         li = $(this)
-        left_addition = li.find('input[name=left_addition]').val()
-        right_addition = li.find('input[name=right_addition]').val()
-        format = li.find('input[name=format]').val()
         field = li.find('option:selected').val()
-        part = '{' + left_addition + '}' + field + '-' + format + '{' + right_addition + '}'
+        if field == 'date' || field == 'deadline_date' || field == 'period_date'
+          part = field + '-' + li.find('#select_format').val()
+        else if field == 'other'
+          part = field + '-' + li.find('#text_format').val()
+        else
+          part = field
         directive.push(part)
       $('#csv_descriptor_directive').val(directive.join('|'))
       true

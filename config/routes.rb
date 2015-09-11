@@ -99,7 +99,10 @@ Idocus::Application.routes.draw do
           get  'select', on: :collection
           post 'copy',   on: :collection
         end
-        resource :csv_descriptor, only: %w(edit update)
+        resource :csv_descriptor do
+          patch 'activate',   on: :member
+          patch 'deactivate', on: :member
+        end
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|

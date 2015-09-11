@@ -43,7 +43,7 @@
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
             - if @user.is_admin
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
-                %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format de sortie CSV
+                %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
               - if @customer.active?
                 %li{ class: ('active' if params[:tab] == 'file_storages') }
                   %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
@@ -273,16 +273,22 @@
                       = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
                     = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
             - if @user.is_admin
-              #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor') }
+              #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter
-                  - if @customer.options.is_own_csv_descriptor_used
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
+                  -unless @customer.options.is_own_csv_descriptor_used
+                    Ce dossier utilise le format de fichier d'export .csv de l'organisation.
+                    %br
+                    = link_to 'Cliquez ici', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
+                    pour créer un format propre au dossier.
                   - else
-                    .margin1bottom
-                      Utilise le format de CSV de l'organisation (
-                      = link_to 'changer', edit_account_organization_customer_path(@organization, @customer)
-                      )
-                    = link_to icon_edit + ' ' + t('actions.edit'), '#', class: 'btn btn-primary', disabled: true
+                    Ce dossier utilise son propre format de fichier d'export .csv.
+                    %br
+                    = link_to 'Cliquez ici ', deactivate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
+                    pour adopter le format de l'organisation.
+                    %br
+                    Vous pouvez également éditer le format actuel en cliquant sur le bouton ci-dessous.
+                    %br
+                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
               - if @customer.active?
                 #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
                   = render partial: 'account/customers/file_storages', locals: { user: @customer }

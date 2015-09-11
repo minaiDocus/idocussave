@@ -1,30 +1,24 @@
 .row-fluid.margin2bottom
   .span12
-    .pull-left
-      = link_to icon_new + ' Ajouter une entrée', '#', class: 'btn add_field'
-      = link_to icon_destroy + ' Supprimer toutes les entrées', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn remove_all_fields'
-    .pull-right.margin1top
-      %span.well.well-small.margin1right
-        %span.label.label-info %Y
-        \: Année
-      %span.well.well-small.margin1right
-        %span.label.label-info %m
-        \: Mois
-      %span.well.well-small.margin1right
-        %span.label.label-info %d
-        \: Jour
-      %span.well.well-small
-        %span.label.label-info %%
-        \: %
+    .span12
+      Ajouter les champs souhaités.
+      %b
+        N’oubliez pas de mettre un champ « Séparateur » après chacun des champs sélectionnés.
+      %br
+        Le champ « Séparateur » est constitué d’un point-virgule (;) et est nécessaire après chaque champ.
+      %br
+      = link_to icon_new + ' Ajouter un champ', '#', class: 'btn add_field'
+      = link_to icon_destroy + ' Supprimer tous les champs', '#', data: { confirm: 'Etes-vous sûr ?' }, class: 'btn remove_all_fields'
 
 - url = account_organization_csv_descriptor_path(@organization)
 - url = account_organization_customer_csv_descriptor_path(@organization, @customer) if @customer.present?
 = simple_form_for @csv_descriptor, url: url, html: { class: 'form form-horizontal margin0bottom' } do |f|
   .row-fluid.margin2bottom
-    .span12.fields
-      %ul.list
-        - @csv_descriptor.directive_to_a.each do |part|
-          = render partial: 'account/csv_descriptors/field', locals: { part: part }
+    .span12.border
+      .span.fields
+        %ul.list
+          - @csv_descriptor.directive_to_a.each do |part|
+            = render partial: 'account/csv_descriptors/field', locals: { part: part }
   .row-fluid
     .span12
       = f.input :directive, as: :hidden

@@ -212,9 +212,8 @@ module ApplicationHelper
     end
   end
 
-  def csv_descriptor_options
+  def csv_descriptor_directive_options
     [
-      [t('mongoid.models.csv_descriptor.attributes.type'),:type],
       [t('mongoid.models.csv_descriptor.attributes.client_code'),:client_code],
       [t('mongoid.models.csv_descriptor.attributes.journal'),:journal],
       [t('mongoid.models.csv_descriptor.attributes.period'),:period],
@@ -234,7 +233,22 @@ module ApplicationHelper
       [t('mongoid.models.csv_descriptor.attributes.lettering'),:lettering],
       [t('mongoid.models.csv_descriptor.attributes.piece_url'),:piece_url],
       [t('mongoid.models.csv_descriptor.attributes.remark'),:remark],
-      [t('mongoid.models.csv_descriptor.attributes.third_party'),:third_party]
+      [t('mongoid.models.csv_descriptor.attributes.third_party'),:third_party],
+      ['Separateur', :separator],
+      ['Autre', :other]
+    ]
+  end
+
+  def csv_descriptor_format_options
+    [
+      ['AAAA/MM'],
+      ['MM/AAAA'],
+      ['AAAA/MM/JJ'],
+      ['JJ/MM/AAAA'],
+      ['AA/MM'],
+      ['MM/AA'],
+      ['AA/MM/JJ'],
+      ['JJ/MM/AA']
     ]
   end
 end

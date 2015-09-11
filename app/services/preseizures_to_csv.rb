@@ -29,12 +29,20 @@ private
   def format_line(entry)
     line = ''
     @descriptor.directive_to_a.each do |part|
-      result = case part[1]
+      result = case part[0]
         when /\Adate\z/
-          format = part[2].presence || "%d/%m/%Y"
+          format = part[1].presence || "AAAA/MM/JJ"
+          format.gsub!(/AAAA/, "%Y")
+          format.gsub!(/AA/, "%y")
+          format.gsub!(/MM/, "%m")
+          format.gsub!(/JJ/, "%d")
           entry.preseizure.date.try(:strftime, format) || ''
         when /\Aperiod_date\z/
-          format = part[2].presence || "%d/%m/%Y"
+          format = part[1].presence || "AAAA/MM/JJ"
+          format.gsub!(/AAAA/, "%Y")
+          format.gsub!(/AA/, "%y")
+          format.gsub!(/MM/, "%m")
+          format.gsub!(/JJ/, "%d")
           result = entry.preseizure.date < entry.preseizure.period_date || entry.preseizure.date > entry.preseizure.end_period_date rescue true
           if result
             entry.preseizure.period_date.try(:strftime,format) || ''
@@ -42,10 +50,12 @@ private
             entry.preseizure.date.try(:strftime, format) || ''
           end
         when /\Adeadline_date\z/
-          format = part[2].presence || "%d/%m/%Y"
+          format = part[1].presence || "AAAA/MM/JJ"
+          format.gsub!(/AAAA/, "%Y")
+          format.gsub!(/AA/, "%y")
+          format.gsub!(/MM/, "%m")
+          format.gsub!(/JJ/, "%d")
           entry.preseizure.deadline_date.try(:strftime, format) || ''
-        when /\Atype\z/
-          entry.preseizure.report.type
         when /\Aclient_code\z/
           entry.preseizure.report.user.code
         when /\Ajournal\z/
@@ -85,9 +95,13 @@ private
           '' # TODO implement me
         when /\Alettering\z/
           entry.account.lettering
+        when /\Aother\z/
+          part[1].presence || ""
+        when /\Aseparator\z/
+          ";"
         else ''
       end
-      line += "#{part[0]}#{result}#{part[3]}"
+      line += "#{result}"
     end
     line
   end

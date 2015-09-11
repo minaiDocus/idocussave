@@ -18,7 +18,7 @@ class Account::OrganizationCsvDescriptorsController < Account::OrganizationContr
 private
 
   def verify_rights
-    unless @user.is_admin
+    unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization)
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

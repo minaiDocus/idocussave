@@ -113,6 +113,7 @@ private
         :is_test,
         :is_journals_management_centralized,
         :is_quadratus_used,
+        :is_csv_descriptor_used,
         :is_pre_assignment_date_computed
       )
     else
@@ -122,6 +123,7 @@ private
         :auth_prev_period_until_day,
         :is_journals_management_centralized,
         :is_quadratus_used,
+        :is_csv_descriptor_used,
         :is_pre_assignment_date_computed
       )
     end

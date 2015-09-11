@@ -1,8 +1,10 @@
 #csv_descriptors.edit
   .row-fluid
     .span12.box
-      %h3 Edition du format de sortie CSV du client: #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')}
+      %h3 Edition du format d’export .csv du client: #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')}
 
   .row-fluid
-    .span12.box
-      = render partial: 'form'
+    .span8.box
+      = render partial: 'account/csv_descriptors/form'
+    .span4.box
+      = render partial: 'account/csv_descriptors/legend'

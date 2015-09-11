@@ -1,8 +1,10 @@
 #csv_descriptors.edit
   .row-fluid
     .span12.box
-      %h3 Edition du format de sortie CSV
+      %h3 Edition du format d’export .csv
 
   .row-fluid
-    .span12.box
+    .span8.box
       = render partial: 'account/csv_descriptors/form'
+    .span4.box
+      = render partial: 'account/csv_descriptors/legend'

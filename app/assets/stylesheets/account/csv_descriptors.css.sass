@@ -1,8 +1,10 @@
 #csv_descriptors
   &.edit
-    .fields
+    .border
       border: 2px dashed grey
       padding: 0
+      .fields
+        width: 405px
       .list
         list-style-type: none
         margin: 5px
@@ -18,3 +20,11 @@
         width: 73px
       input, select
         font-size: 10px
+      input[id=text_format]
+        width: 170px
+    table
+      .name
+        text-align: left
+      .hint
+        text-align: left
+        font-weight: normal

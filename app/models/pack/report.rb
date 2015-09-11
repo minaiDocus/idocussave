@@ -230,7 +230,7 @@ class Pack::Report
                     report.update_attribute(:is_delivered, false)
                   end
                   CreatePreAssignmentDeliveryService.new(preseizures, true).execute
-                  FileDeliveryInit.prepare(report)
+                  FileDeliveryInit.prepare(report) if report.organization.is_csv_descriptor_used
                   FileDeliveryInit.prepare(pack)
                 end
               end

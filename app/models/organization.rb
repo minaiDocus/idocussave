@@ -19,6 +19,7 @@ class Organization
   field :is_suspended,                    type: Boolean, default: false
   field :is_quadratus_used,               type: Boolean, default: false
   field :is_pre_assignment_date_computed, type: Boolean, default: false
+  field :is_csv_descriptor_used,          type: Boolean, default: false
 
   field :authd_prev_period,            type: Integer, default: 1
   field :auth_prev_period_until_day,   type: Integer, default: 11 # 0..31

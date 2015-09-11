@@ -10,7 +10,7 @@ class CsvDescriptor
 
   def directive_to_a
     directive.split('|').map do |e|
-      e.scan(/\{(.*)\}(\w+)-(.*)\{(.*)\}/).first
+      e.scan(/(\w+)-?(.+)?/).first
     end
   end
 

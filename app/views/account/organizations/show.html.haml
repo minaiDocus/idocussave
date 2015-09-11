@@ -21,13 +21,14 @@
             %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles affectations bancaires
         %li{ class: ('active' if params[:tab] == 'reminder_emails') }
           %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
+        - if @organization.is_csv_descriptor_used
+          %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
+            %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
         - if @user.is_admin
           %li{ class: ('active' if params[:tab] == 'file_sending_kit') }
             %a{ href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
           %li{ class: ('active' if params[:tab] == 'subscription') }
             %a{ href: '#subscription', data: { toggle: 'tab' } } Abonnement
-          %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
-            %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format de sortie CSV
 
       .tab-content
         #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
@@ -277,6 +278,9 @@
               %tr
                 %th= t('mongoid.models.organization.attributes.is_quadratus_used')
                 %td= @organization.is_quadratus_used ? t('yes_value') : t('no_value')
+              %tr
+                %th= t('mongoid.models.organization.attributes.is_csv_descriptor_used')
+                %td= @organization.is_csv_descriptor_used ? t('yes_value') : t('no_value')
           .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
         - if @organization.ibiza.try(:is_configured?)
           #account_number_rules.tab-pane{ class: ('active' if params[:tab] == 'account_number_rules') }
@@ -343,6 +347,13 @@
                     = link_to icon_destroy, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
                     = link_to icon(icon: 'play') + ' ' + t('mongoid.models.reminder_email.actions.send'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', data: { confirm: t('mongoid.models.reminder_email.actions.send_confirmation') }, method: :post
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary pull-right'
+        #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
+          .aligncenter
+            Créez un fichier d’export des écritures comptables en format .csv. Choisissez les différentes données que vous souhaitez récupérer en comptabilité.
+            %br
+            N.B.: ce fichier est nécessaire pour tous les outils comptables ne fonctionnant pas avec iDocus par API (Mode SaaS intégral)
+            %br
+            = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
         - if @user.is_admin
           #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
             %table.table.table-striped.table-condensed
@@ -400,6 +411,3 @@
             .alignright
               = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
               = link_to icon_edit + ' Propager les quotas', select_options_account_organization_organization_subscription_path(@organization), class: 'btn btn-primary'
-          #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor') }
-            .aligncenter
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
