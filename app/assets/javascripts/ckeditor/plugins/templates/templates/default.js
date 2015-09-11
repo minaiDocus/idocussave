@@ -6,7 +6,7 @@ CKEDITOR.addTemplates("my_templates",
   [
     {
       title: 'Cabinet & iDocus',
-      description: "Rappelez aux clients de nous envoyer leur document. Les informations entre double crochés vont être modifiés à l'envoie du mail, tandi que ceux en gras sont à modifier." ,
+      description: "Rappelez aux clients de nous envoyer leur documents. Les informations entre crochés double vont être modifiées à l'envoi du mail, tandis que celles en gras sont à modifier." ,
       html:
         "<div style='font-family:arial'>" +
         "Bonjour [[nom du client]],</br>" +
@@ -25,7 +25,7 @@ CKEDITOR.addTemplates("my_templates",
     },
     {
       title: 'Cabinet',
-      description: "Rappelez aux clients de nous envoyer leur document. Les informations entre double crochés vont être modifiés à l'envoie du mail, tandis que ceux en gras sont à modifier." ,
+      description: "Rappelez aux clients de nous envoyer leur documents. Les informations entre crochés double vont être modifiées à l'envoie du mail, tandis que celle en gras sont à modifier." ,
       html:
         "<div style='font-family:arial'>" +
         "Bonjour [[nom du client]],</br>" +
