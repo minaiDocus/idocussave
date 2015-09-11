@@ -73,6 +73,7 @@ group :development, :test do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'libnotify'
+  gem 'rack-mini-profiler'
 end
 
 group :test do
