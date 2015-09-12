@@ -128,12 +128,11 @@ class OperationService
             to_deliver_preseizures << preseizure
             operation.update_attribute(:processed_at, Time.now)
           end
-          to_deliver_preseizures.group_by(&:report).each do |_, pres|
-            CreatePreAssignmentDeliveryService.new(pres, true).execute
-          end
-          # For manual delivery
           if pack_report.preseizures.not_delivered.not_locked.count > 0
             pack_report.update_attribute(:is_delivered, false)
+          end
+          to_deliver_preseizures.group_by(&:report).each do |_, pres|
+            CreatePreAssignmentDeliveryService.new(pres, true).execute
           end
         else
           operations.each do |operation|

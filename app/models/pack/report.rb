@@ -226,11 +226,10 @@ class Pack::Report
                   end
                   UpdatePeriodDataService.new(period).execute
                   UpdatePeriodPriceService.new(period).execute
-                  CreatePreAssignmentDeliveryService.new(preseizures, true).execute
-                  # For manual delivery
                   if report.preseizures.not_delivered.not_locked.count > 0
                     report.update_attribute(:is_delivered, false)
                   end
+                  CreatePreAssignmentDeliveryService.new(preseizures, true).execute
                   FileDeliveryInit.prepare(report)
                   FileDeliveryInit.prepare(pack)
                 end
