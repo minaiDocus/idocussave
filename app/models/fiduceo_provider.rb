@@ -38,7 +38,7 @@ class FiduceoProvider
             bank1[:name].downcase <=> bank2[:name].downcase
           end
           register_to_cache_list cache_name
-          Rails.cache.write(cache_name, results, :expires_in => 7.days, :compress => true)
+          Rails.cache.write(cache_name, results, :expires_in => 1.hour, :compress => true)
           results
         else
           raise Fiduceo::Errors::ServiceUnavailable.new('banks')
@@ -74,10 +74,10 @@ class FiduceoProvider
     end
 
     def providers
-      Rails.cache.fetch('fiduceo_provider_providers', :expires_in => 7.days, :compress => true) do
+      Rails.cache.fetch('fiduceo_provider_providers', :expires_in => 1.hour, :compress => true) do
         results = Fiduceo.providers
         if results.class == Array
-          Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 7.days, :compress => true)
+          Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 1.hour, :compress => true)
           results.map do |provider|
             _provider = {
               name: provider.name,
