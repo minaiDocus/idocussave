@@ -18,7 +18,7 @@
           %a{ href: '#other_software', data: { toggle: 'tab' } } Autres logiciels
         - if @organization.ibiza.try(:is_configured?)
           %li{ class: ('active' if params[:tab] == 'account_number_rules') }
-            %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles de plan de compte
+            %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles affectations bancaires
         %li{ class: ('active' if params[:tab] == 'reminder_emails') }
           %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
         - if @user.is_admin
