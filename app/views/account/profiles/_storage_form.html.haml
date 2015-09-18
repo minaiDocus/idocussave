@@ -1,6 +1,11 @@
-%h4 Export de documents depuis iDocus
-= simple_form_for instance, url: account_external_file_storage_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
-  = f.input :path, label: "Chemin de livraison : ", input_html: { class: 'input-xlarge' }
-  = f.input :file_type_to_deliver, label: "Format des fichiers à livrer : ", collection: file_type_to_deliver_options, include_blank: false
-  .form-actions.padding0bottom.margin0bottom
-    = f.submit "Valider", class: 'btn'
+#profile.storage_form
+  %h4 Export de documents depuis iDocus
+  = simple_form_for instance, url: account_external_file_storage_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
+    = f.input :path, label: ("Modifier le chemin de livraison #{link_to(('<i class="icon-info-sign"></i>').html_safe, '#', :class =>"do-popover", :title => "Informations","data-content" => "Choisissez l’ordre de classement de vos documents en modifiant leur positionnement dans le champ ci-contre.<br>Ex: :code/:account_book/:year:month/<br><br>Attention à respecter le contenu de chacun des champs:<br>:code/ pour Code iDocus<br>:year:month/ pour la date du lot iDocus<br>:account_book/ pour le journal comptable iDocus")} : ").html_safe, input_html: { class: 'input-xlarge' }
+    .control-group
+      = label(:storage, :final_path, "Pre-visualusation de la configuration choisie : ", class: "control-label")
+      .controls
+        = text_field(:storage, :final_path, readonly: true,disable: true, class: 'input-xlarge')
+    = f.input :file_type_to_deliver, label: "Format des fichiers à livrer : ", collection: file_type_to_deliver_options, include_blank: false
+    .form-actions.padding0bottom.margin0bottom
+      = f.submit "Valider", class: 'btn'

@@ -8,6 +8,13 @@ apply_services_numbers_limit = ->
 jQuery ->
   apply_services_numbers_limit()
 
+  $(".use_service").each ->
+    service = $(this).attr("id").split("_")[1]
+    if $(this).is(":checked")
+      $(".service_config_"+service).show()
+    else
+      $(".service_config_"+service).hide()
+
   # external file storage management
   $(".use_service").change ->
     service = $(this).attr("id").split("_")[1]
@@ -55,3 +62,20 @@ jQuery ->
     $invoiceDialog.find('h3').text($(this).attr('title'))
     $invoiceDialog.find("iframe").attr('src',$(this).attr('href'))
     $invoiceDialog.modal()
+
+  if $('#profile.storage_form').length > 0
+    $('form input').on 'change', ->
+      service = $(this).closest("[class*='service_config_']").attr("class").split("_")[2]
+      path = ''
+      if service == '2' || service == '16'
+        path += 'Applications > iDocus > '
+      path += $(this).val();
+      path = path.replace(':code', 'TS%00001')
+      path = path.replace(':year', '2015')
+      path = path.replace(':month', '01')
+      path = path.replace(':account_book', 'AC')
+      path = path.replace(/\//g, ' > ')
+      path = path.replace(/>\W$/, '')
+      $(this).parent().parent().parent().parent().find("#storage_final_path").val(path)
+
+  $('.do-popover').popover()
