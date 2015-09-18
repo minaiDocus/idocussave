@@ -5,6 +5,20 @@ apply_services_numbers_limit = ->
   else if services_used_count == 2
     $(".use_service:not(:checked)").attr("disabled","disabled")
 
+update_path_preview = (element) ->
+  service = element.closest("[class*='service_config_']").attr("class").split("_")[2]
+  path = ''
+  if service == '2'
+    path += 'Applications > iDocus > '
+  path += element.val();
+  path = path.replace(':code', 'TS%00001')
+  path = path.replace(':year', '2015')
+  path = path.replace(':month', '01')
+  path = path.replace(':account_book', 'AC')
+  path = path.replace(/\//g, ' > ')
+  path = path.replace(/>\W$/, '')
+  element.parent().parent().parent().parent().find("#storage_final_path").val(path)
+
 jQuery ->
   apply_services_numbers_limit()
 
@@ -64,18 +78,12 @@ jQuery ->
     $invoiceDialog.modal()
 
   if $('#profile.storage_form').length > 0
-    $('form input').on 'change', ->
-      service = $(this).closest("[class*='service_config_']").attr("class").split("_")[2]
-      path = ''
-      if service == '2' || service == '16'
-        path += 'Applications > iDocus > '
-      path += $(this).val();
-      path = path.replace(':code', 'TS%00001')
-      path = path.replace(':year', '2015')
-      path = path.replace(':month', '01')
-      path = path.replace(':account_book', 'AC')
-      path = path.replace(/\//g, ' > ')
-      path = path.replace(/>\W$/, '')
-      $(this).parent().parent().parent().parent().find("#storage_final_path").val(path)
+    update_path_preview($('#dropbox_basic_path'))
+    update_path_preview($('#google_doc_path'))
+    update_path_preview($('#ftp_path'))
+    update_path_preview($('#box_path'))
+
+    $('#dropbox_basic_path, #google_doc_path, #ftp_path, #box_path').on 'change', ->
+      update_path_preview($(this))
 
   $('.do-popover').popover()

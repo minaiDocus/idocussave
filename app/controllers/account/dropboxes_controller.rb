@@ -46,12 +46,8 @@ public
   end
 
   def fetch_documents
-    begin
-      FetchFromDropbox.new(@dropbox).delay.execute
-      flash[:notice] = 'Vos documents Dropbox sont en cours de synchronisation.'
-    rescue DropboxError
-        flash[:error] = 'Impossible de synchroniser les documents de votre compte Dropbox.'
-    end
+    FetchFromDropbox.new(@dropbox).delay.execute
+    flash[:notice] = 'Vos documents Dropbox sont en cours de synchronisation.'
     redirect_to account_profile_path(panel: 'efs_management')
   end
 end

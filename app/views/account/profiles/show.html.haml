@@ -90,32 +90,30 @@
                   .well
                     .row-fluid
                       .span1
-                        != check_box_tag :enable_dropbox, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
-                        %div{:style => "float: left; text-align: center; width: 50px"}
-                          %a.logo
-                            = image_tag 'application/dropbox_logo.png', :alt => 'logo'
-                          %b
-                            != label_tag :"service_#{service_number}", "DROPBOX"
+                        = check_box_tag :enable_dropbox, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                        %div{ style: 'float:left; text-align:center; width:50px' }
+                          %a.logo= image_tag 'application/dropbox_logo.png', :alt => 'logo'
+                          %b DROPBOX
                       .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                         - if @external_file_storage.dropbox_basic.is_configured?
                           %h5
                             Votre compte iDocus est connecté à votre compte Dropbox.
-                            != link_to "Paramètres", authorize_url_account_dropbox_path
+                            = link_to 'Paramètres.', authorize_url_account_dropbox_path
                         - else
                           %h5
                             Pour connecter iDocus à votre compte Dropbox,
-                            != link_to " cliquez ici", authorize_url_account_dropbox_path
+                            = link_to ' cliquez ici', authorize_url_account_dropbox_path
                             %br
-                            iDocus va créer un premier dossier « Applications » puis « iDocus »
+                            iDocus va créer un premier dossier « Applications » puis « iDocus ».
                         #{"."}
                     .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                       .span12
                         .row-fluid
                           .span6.margin2top
-                            = render partial: 'storage_form', locals: { instance: @external_file_storage.dropbox_basic }
+                            = render partial: 'storage_form', locals: { storage: @external_file_storage.dropbox_basic }
                           .span6.margin2top
                             %h4 Import de documents vers iDocus
-                            Importer automatiquement des documents depuis la DropBox. Idocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
+                            Importer automatiquement des documents depuis la DropBox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
                             %br
                             Vous n’avez plus qu’à déposer vos documents dans la bonne période (période actuelle ou période précédente) et dans le bon journal comptable qui vous a été attribué.
                             %br
@@ -132,26 +130,24 @@
                   .well
                     .row-fluid
                       .span1
-                        != check_box_tag :enable_google_docs, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
-                        %div{:style => "float: left; text-align: center; width: 50px"}
-                          %a.logo
-                            = image_tag 'application/googledrive_logo.png', :alt => 'logo'
-                          %b
-                            != label_tag :"service_#{service_number}", "GOOGLE DRIVE (Beta)"
+                        = check_box_tag :enable_google_docs, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                        %div{ style: 'float:left; text-align:center; width:50px' }
+                          %a.logo= image_tag 'application/googledrive_logo.png', alt: 'logo'
+                          %b GOOGLE DRIVE (Beta)
                       .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                         - if @external_file_storage.google_doc.is_configured?
                           %h5
                             Votre compte iDocus est connecté à votre compte Google Drive.
-                            = link_to "Paramètres", authorize_url_account_google_drive_path, method: :post
+                            = link_to 'Paramètres.', authorize_url_account_google_drive_path, method: :post
                         - else
                           %h5
                             Pour connecter iDocus à votre compte Google Drive,
-                            = link_to " cliquez ici", authorize_url_account_google_drive_path, method: :post
+                            = link_to ' cliquez ici.', authorize_url_account_google_drive_path, method: :post
                         #{"."}
                     .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                       .span12
                         .margin2top
-                          = render partial: 'storage_form', locals: { instance: @external_file_storage.google_doc }
+                          = render partial: 'storage_form', locals: { storage: @external_file_storage.google_doc }
 
                 - if @external_file_storage.is_ftp_authorized?
                   - service_number = ExternalFileStorage::F_FTP
@@ -159,26 +155,24 @@
                   .well
                     .row-fluid
                       .span1
-                        != check_box_tag :enable_ftp, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
-                        %div{:style => "float: left; text-align: center; width: 50px"}
-                          %a.logo
-                            = image_tag 'application/ftp_logo.png', :alt => 'logo'
-                          %b
-                            != label_tag :"service_#{service_number}", "FTP"
+                        = check_box_tag :enable_ftp, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                        %div{ style: 'float:left; text-align:center; width:50px' }
+                          %a.logo= image_tag 'application/ftp_logo.png', alt: 'logo'
+                          %b FTP
                       .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                         - if @external_file_storage.ftp.is_configured?
                           %h5
                             Votre compte iDocus est connecté à votre compte FTP.
-                            != link_to "Paramètres", "#ftpDialog", "data-toggle" => "modal"
+                            = link_to 'Paramètres.', '#ftpDialog', 'data-toggle' => 'modal'
                         - else
                           %h5
                             Pour connecter iDocus à votre compte FTP,
-                            != link_to " cliquez ici", "#ftpDialog", "data-toggle" => "modal"
+                            = link_to ' cliquez ici.', '#ftpDialog', 'data-toggle' => 'modal'
                         \.
                     .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                       .span12
                         .margin2top
-                          = render partial: 'storage_form', locals: { instance: @external_file_storage.ftp }
+                          = render partial: 'storage_form', locals: { storage: @external_file_storage.ftp }
 
                 - if @external_file_storage.is_box_authorized?
                   - service_number = ExternalFileStorage::F_BOX
@@ -186,28 +180,24 @@
                   .well
                     .row-fluid
                       .span1
-                        != check_box_tag :enable_box, 1, is_service_used, :id => "service_#{service_number}", :class => "checkbox use_service", :style => "float:left;margin-right:5px;margin-top:0;"
-                        %div{:style => "float: left; text-align: center; width: 50px"}
-                          %a.logo
-                            = image_tag 'application/box_logo.png', :alt => 'logo'
-                          %b
-                            != label_tag :"service_#{service_number}", "Box.com"
+                        = check_box_tag :enable_box, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
+                        %div{ style: 'float:left; text-align:center; width:50px' }
+                          %a.logo= image_tag 'application/box_logo.png', alt: 'logo'
+                          %b Box.com
                       .span11.aligncenter{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                         - if @external_file_storage.box.is_configured?
                           %h5
                             Votre compte iDocus est connecté à votre compte Box.com.
-                            != link_to "Paramètres", authorize_url_account_box_path
+                            = link_to 'Paramètres.', authorize_url_account_box_path
                         - else
                           %h5
                             Pour connecter iDocus à votre compte Box,
-                            != link_to " cliquez ici", authorize_url_account_box_path
-                            %br
-                            iDocus va créer un premier dossier « Applications » puis « iDocus »
+                            = link_to ' cliquez ici.', authorize_url_account_box_path
                         #{"."}
                     .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                       .span12
                         .margin2top
-                          = render partial: 'storage_form', locals: { instance: @external_file_storage.box }
+                          = render partial: 'storage_form', locals: { storage: @external_file_storage.box }
 
             .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
               .modal-header
