@@ -6,46 +6,46 @@ every :day do
   rake 'maintenance:notification:scans_not_delivered', options
 end
 
-every :day, at: '04:30 am' do
+every :day, at: '04:30' do
   rake 'prepa_compta:update_accounting_plan', options
 end
 
-every :day, at: '06:00 am' do
+every :day, at: '06:00' do
   rake 'fiduceo:transaction:initiate', options
 end
 
-every :day, at: '07:00 am' do
+every :day, at: '07:00' do
   rake 'fiduceo:notify_password_renewal', options
 end
 
-every :day, at: '08:00 am' do
+every :day, at: '08:00' do
   rake 'fiduceo:provider:notify_processed_wishes', options
 end
 
-every :day, at: '08:01 am' do
+every :day, at: '08:01' do
   rake 'maintenance:notification:document_updated', options
 end
 
-every :day, at: '08:02 am' do
+every :day, at: '08:02' do
   rake 'maintenance:notification:document_pending', options
 end
 
-every :month, at: '02:00 am' do
+every :month, at: '02:00' do
   rake 'maintenance:invoice:generate', options
 end
 
-every :month, at: '02:02 am' do
+every :month, at: '02:02' do
   rake 'maintenance:reporting:init', options
 end
 
-every :day, at: '09:00 am' do
-  rake 'maintenance:fetch_dropbox', options
+every :day, at: '09:00' do
+  rake 'maintenance:fetch_from_dropbox', options
 end
 
-every :day, at: '12:00 am' do
-  rake 'maintenance:fetch_dropbox', options
+every :day, at: '12:00' do
+  rake 'maintenance:fetch_from_dropbox', options
 end
 
-every :day, at: '05:00 pm' do
-  rake 'maintenance:fetch_dropbox', options
+every :day, at: '17:00' do
+  rake 'maintenance:fetch_from_dropbox', options
 end

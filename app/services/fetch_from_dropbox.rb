@@ -4,6 +4,7 @@ class FetchFromDropbox
     def execute
       DropboxBasic.all.each do |dropbox_basic|
         new(dropbox_basic).execute
+        print '.'
       end
     end
   end
@@ -23,7 +24,8 @@ class FetchFromDropbox
   end
 
   def customers
-    if (@user.is_prescriber)
+    if @user.is_prescriber && @user.organization
+      @user.extend_organization_role
       @user.customers.entries
     else
       [@user]
@@ -31,7 +33,7 @@ class FetchFromDropbox
   end
 
   def path
-    if (@user.is_prescriber)
+    if @user.is_prescriber
       "exportation vers iDocus/#{@user.code} - #{@user.company.gsub(/[^0-9A-Za-z]/, '')}/" + @dropbox_basic.export_path
     else
       "exportation vers iDocus/" + @dropbox_basic.export_path
@@ -41,7 +43,7 @@ class FetchFromDropbox
   def update_directories
     periods = ['période actuelle', 'période précédente']
     @customers.each do |customer|
-      delete_unused_journal_folder(customer)
+      delete_unused_journal_folder customer
       original_path = @path
       customer_path = original_path.gsub(/:code/ , "#{customer.code} - #{customer.company.gsub(/[^0-9A-Za-z]/, '')}")
       periods.each do |period|
@@ -69,7 +71,7 @@ class FetchFromDropbox
             files_metadata = @dropbox_basic.client.metadata(curent_path.gsub(/:account_book/ , account_book_type.name))
             files_metadata['contents'].each do |file_metadata|
               contents = @dropbox_basic.client.get_file(file_metadata['path'])
-              if (UploadedDocument.valid_extensions.include?(File.extname(file_metadata['path'])))
+              if UploadedDocument.valid_extensions.include?(File.extname(file_metadata['path']))
                 File.open("#{Rails.root}/tmp/#{File.basename(file_metadata['path'])}", 'wb') do |f|
                   f.puts contents
                   if period == 'période actuelle'
