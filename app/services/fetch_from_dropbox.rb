@@ -17,7 +17,7 @@ class FetchFromDropbox
   end
 
   def execute
-    if @dropbox_basic.is_configured?
+    if @dropbox_basic.external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX) && @dropbox_basic.is_configured?
       fetch_documents
       update_directories
     end
