@@ -80,7 +80,7 @@
           #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
             .span12.well
               %h3.aligncenter Stockage externe des documents
-              Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents). Nous pouvons également aller chercher les documents directement sur ces supports externes (Import de documents)
+              Configurer l’accès à vos services de stockage externe de documents vous permet de recevoir tous les documents numérisés par iDocus sur un autre support que notre plateforme (Export de documents).
               %br
               - if @external_file_storage.authorized > 0
                 %br
@@ -111,18 +111,6 @@
                         .row-fluid
                           .span6.margin2top
                             = render partial: 'storage_form', locals: { storage: @external_file_storage.dropbox_basic }
-                          .span6.margin2top
-                            %h4 Import de documents vers iDocus
-                            Importer automatiquement des documents depuis la DropBox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
-                            %br
-                            Vous n’avez plus qu’à déposer vos documents dans la bonne période (période actuelle ou période précédente) et dans le bon journal comptable qui vous a été attribué.
-                            %br
-                            %br
-                            La synchronisation de votre dossier d’import se fait automatiquement à 9h, 12h et 17h.
-                            %br
-                            Vous pouvez lancer une synchronisation immédiate en appuyant sur le bouton ci-dessous:
-                            %br
-                            = link_to 'Synchroniser immédiatement', fetch_documents_account_dropbox_path, class: 'btn'
 
                 - if @external_file_storage.is_google_docs_authorized?
                   - service_number = ExternalFileStorage::F_GOOGLE_DOCS
