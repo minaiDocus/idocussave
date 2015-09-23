@@ -5,7 +5,7 @@ class UpdatePreseizureAccountNumbers
       bank_account = BankAccount.find bank_account_id
       new(bank_account, changes).execute
     end
-    handle_asynchronously :async_execute, queue: 'update_preseizure_account_number', priority: 0
+    handle_asynchronously :async_execute, priority: 0
   end
 
   def initialize(bank_account, changes)

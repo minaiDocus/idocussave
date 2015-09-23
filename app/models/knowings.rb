@@ -76,7 +76,7 @@ class Knowings
       invalid_configuration
     end
   end
-  handle_asynchronously :process_verification, queue: 'knowings access verification', priority: 0
+  handle_asynchronously :process_verification, priority: 0
 
   def sync(remote_files, log=Logger.new(STDOUT))
     remote_files.each_with_index do |remote_file,index|

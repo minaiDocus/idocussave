@@ -16,7 +16,7 @@ class UpdateAccountingPlan
       user = User.find user_id
       new(user).execute
     end
-    handle_asynchronously :async_execute, queue: 'update_accounting_plan', priority: 5
+    handle_asynchronously :async_execute, priority: 5
   end
 
   def initialize(user)

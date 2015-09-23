@@ -42,7 +42,7 @@ class Ibiza
       update(state: 'invalid')
     end
   end
-  handle_asynchronously :verify_token, queue: 'ibiza token verification', priority: 0
+  handle_asynchronously :verify_token, priority: 0
 
   # nil : updating cache
   # [...] : cached values
@@ -78,7 +78,7 @@ class Ibiza
     Rails.cache.write([:ibiza, id, :users], result, expires_in: 5.minutes)
     result
   end
-  handle_asynchronously :get_users, queue: 'ibiza get users', priority: 1
+  handle_asynchronously :get_users, priority: 1
 
   def flush_users_cache
     Rails.cache.delete([:ibiza, id, :users])
