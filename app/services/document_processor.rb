@@ -75,10 +75,12 @@ class DocumentProcessor
 
                 ## Original document
                 if pack.original_document.present?
-                  if is_a_cover
-                    pack.original_document.prepend piece_file_path
-                  else
-                    pack.original_document.append piece_file_path
+                  if pack.original_document.content_file_size < 400.megabytes
+                    if is_a_cover
+                      pack.original_document.prepend piece_file_path
+                    else
+                      pack.original_document.append piece_file_path
+                    end
                   end
                 else
                   new_file_name = pack.name.gsub(' ', '_') + '.pdf'
