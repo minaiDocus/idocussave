@@ -31,6 +31,11 @@ describe PrepaCompta::GroupDocument do
       expect(result).to eq 3
     end
 
+    it 'returns 1017' do
+      result = PrepaCompta::GroupDocument.position('TS_0001_AC_201501_1017_001.pdf')
+      expect(result).to eq 1017
+    end
+
     it 'returns nil' do
       result = PrepaCompta::GroupDocument.position('TS0001_AC_201501_005_001_001.pdf')
       expect(result).to be_nil
@@ -43,8 +48,18 @@ describe PrepaCompta::GroupDocument do
       expect(result).to eq 'TS0001 AC 201501'
     end
 
+    it 'returns TS0001 AC 201501' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1045.pdf')
+      expect(result).to eq 'TS0001 AC 201501'
+    end
+
     it 'returns TS%0001 AC 201501' do
       result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_005.pdf')
+      expect(result).to eq 'TS%0001 AC 201501'
+    end
+
+    it 'returns TS%0001 AC 201501' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1045.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
@@ -53,13 +68,78 @@ describe PrepaCompta::GroupDocument do
       expect(result).to eq 'TS0001 AC 201501'
     end
 
+    it 'returns TS0001 AC 201501' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1045_001.pdf')
+      expect(result).to eq 'TS0001 AC 201501'
+    end
+
     it 'returns TS%0001 AC 201501' do
       result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_003_001.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
+    it 'returns TS%0001 AC 201501' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1045_001.pdf')
+      expect(result).to eq 'TS%0001 AC 201501'
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015T1_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015T1_1005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015_1005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
     it 'returns nil' do
       result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015T1_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015_005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015T1_1005_001_001.pdf')
+      expect(result).to be_nil
+    end
+
+    it 'returns nil' do
+      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015_1005_001_001.pdf')
       expect(result).to be_nil
     end
   end
@@ -443,6 +523,72 @@ describe PrepaCompta::GroupDocument do
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002_003.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002_004.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002_005.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('result.xml'))).to be_truthy
+      end
+
+      it 'successfully group uploaded documents with 4 digit numbering of files' do
+        base_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'uploads')
+
+        [@file_with_3_pages_path, @file_with_5_pages_path].each_with_index do |file_path, index|
+          temp_document = TempDocument.new
+          temp_document.temp_pack      = @temp_pack
+          temp_document.user           = @user
+          temp_document.position       = 1001+index
+          temp_document.delivered_by   = 'test'
+          temp_document.delivery_type  = 'upload'
+          temp_document.is_an_original = true
+          temp_document.is_a_cover     = false
+          temp_document.state          = 'bundling'
+          temp_document.save
+
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", DocumentProcessor::POSITION_SIZE
+        end
+
+        @temp_pack.update(position_counter: 1002)
+
+        data = '<?xml version="1.0" encoding="utf-8"?>
+          <group_documents>
+            <pack name="TS%0001_AC_201501">
+              <piece number="1" origin="upload">
+                <file_name>TS_0001_AC_201501_1001_001.pdf</file_name>
+                <file_name>TS_0001_AC_201501_1001_002.pdf</file_name>
+              </piece>
+              <piece number="2" origin="upload">
+                <file_name>TS_0001_AC_201501_1001_003.pdf</file_name>
+                <file_name>TS_0001_AC_201501_1002_001.pdf</file_name>
+                <file_name>TS_0001_AC_201501_1002_002.pdf</file_name>
+                <file_name>TS_0001_AC_201501_1002_003.pdf</file_name>
+              </piece>
+              <piece number="3" origin="upload">
+                <file_name>TS_0001_AC_201501_1002_004.pdf</file_name>
+                <file_name>TS_0001_AC_201501_1002_005.pdf</file_name>
+              </piece>
+            </pack>
+          </group_documents>'
+        File.write(@result_file_path, data)
+        File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
+
+        PrepaCompta::GroupDocument.execute
+
+        document_1 = @temp_pack.temp_documents.where(position: 1003).first
+        document_2 = @temp_pack.temp_documents.where(position: 1004).first
+        document_3 = @temp_pack.temp_documents.where(position: 1005).first
+        expect(File.exist?(@errors_file_path)).to be_falsy
+        expect(@temp_pack.temp_documents.count).to eq 5
+        expect(@temp_pack.temp_documents.bundled.count).to eq 2
+        expect(@temp_pack.temp_documents.ready.count).to eq 3
+        expect(DocumentTools.pages_number(document_1.content.path)).to eq 2
+        expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
+        expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_001.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_002.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_003.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1002_001.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1002_002.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1002_003.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1002_004.pdf'))).to be_truthy
+        expect(File.exist?(archive_path.join('TS_0001_AC_201501_1002_005.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('result.xml'))).to be_truthy
       end
 

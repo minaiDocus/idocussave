@@ -127,7 +127,7 @@ private
   end
 
   def format_of_name
-    errors.add(:name, :invalid) unless self.name.match(/\A[A-Z0-9]+\z/)
+    errors.add(:name, :invalid) unless self.name.match(/\A[A-Z][A-Z0-9]+\z/)
   end
 
   def pre_assignment_attributes

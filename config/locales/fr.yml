@@ -286,7 +286,7 @@ fr:
         bank_account:
           attributes:
             journal:
-              invalid: Invalide ( doit être composé uniquement des caractéres A à Z et des chiffres 0 à 9 )
+              invalid: 'Invalide ( doit être composé uniquement des caractéres A à Z et des chiffres 0 à 9, et doit commencer par une lettre )'
         organization:
           attributes:
             authd_prev_period:

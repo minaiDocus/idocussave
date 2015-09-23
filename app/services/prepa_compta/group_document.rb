@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class PrepaCompta::GroupDocument
   RESULT_FILE_PATH = PrepaCompta.grouping_dir.join('result.xml')
-  FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z0-9]+_\d{4}([01T]\d)*)_\d{3}\.pdf\z/i
-  FILE_NAME_PATTERN_2 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z0-9]+_\d{4}([01T]\d)*)_\d{3}_\d{3}\.pdf\z/i
+  FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}\.pdf\z/i
+  FILE_NAME_PATTERN_2 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}_\d{3}\.pdf\z/i
 
   @@schema = Nokogiri::XML::Schema(Rails.root.join('lib/xsd/group_documents.xsd'))
 

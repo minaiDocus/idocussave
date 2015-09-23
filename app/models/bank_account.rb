@@ -24,7 +24,7 @@ class BankAccount
 
   validates_presence_of :journal, :accounting_number, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_length_of :journal, within: 2..6, if: Proc.new { |bank_account| bank_account.persisted? }
-  validates_format_of :journal, with: /\A[A-Za-z0-9]*\z/, if: Proc.new { |bank_account| bank_account.persisted? }
+  validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |bank_account| bank_account.persisted? }
 
   scope :configured,     -> { where(:journal.nin => [nil, ''], :accounting_number.nin => [nil, '']) }
   scope :not_configured, -> { where(:journal.in  => [nil, ''], :accounting_number.in  => [nil, '']) }
