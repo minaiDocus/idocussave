@@ -1,8 +1,8 @@
 defaults: &defaults
-  app_key: ''
-  app_secret: ''
-  extended_app_key: ''
-  extended_app_secret: ''
+  app_key:
+  app_secret:
+  extended_app_key:
+  extended_app_secret:
 
 test:
   <<: *defaults
