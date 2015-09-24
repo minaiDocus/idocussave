@@ -56,6 +56,7 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/emailed_document.yml #{release_path}/config/emailed_document.yml"
     command << "ln -nfs #{shared_path}/config/ibiza.yml #{release_path}/config/ibiza.yml"
     command << "ln -nfs #{shared_path}/config/slimpay.yml #{release_path}/config/slimpay.yml"
+    command << "ln -nfs #{shared_path}/config/dropbox.yml #{release_path}/config/dropbox.yml"
     command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
     command << "ln -nfs #{shared_path}/config/pdftk.yml #{release_path}/config/pdftk.yml"
     command << "ln -nfs #{shared_path}/config/smtp.yml #{release_path}/config/smtp.yml"
@@ -104,6 +105,7 @@ namespace :shared do
       'emailed_document.yml',
       'ibiza.yml',
       'slimpay.yml',
+      'dropbox.yml',
       'google_drive.yml',
       'pdftk.yml',
       'smtp.yml',

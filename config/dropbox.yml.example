@@ -1,0 +1,20 @@
+defaults: &defaults
+  app_key: ''
+  app_secret: ''
+  extended_app_key: ''
+  extended_app_secret: ''
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+sandbox:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
