@@ -6,7 +6,9 @@ class Account::CsvDescriptorsController < Account::OrganizationController
 
   def edit
     if params[:template].present?
-      @csv_descriptor = CsvDescriptor.find(params[:template])
+      template = @organization.csv_descriptor
+      @csv_descriptor.comma_as_number_separator = template.comma_as_number_separator
+      @csv_descriptor.directive = template.directive
     end
   end
 
@@ -20,22 +22,20 @@ class Account::CsvDescriptorsController < Account::OrganizationController
   end
 
   def activate
-    @customer.options.is_own_csv_descriptor_used = true
-    @customer.save
-    redirect_to edit_account_organization_customer_csv_descriptor_path(@organization, @customer, template: @organization.csv_descriptor)
+    @customer.options.update_attribute(:is_own_csv_descriptor_used, true)
+    redirect_to edit_account_organization_customer_csv_descriptor_path(@organization, @customer, template: true)
   end
 
   def deactivate
-    @customer.options.is_own_csv_descriptor_used = false
-    @customer.save
-    flash[:success] = "Modifié avec succès."
+    @customer.options.update_attribute(:is_own_csv_descriptor_used, false)
+    flash[:success] = 'Modifié avec succès.'
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
   end
 
 private
 
   def verify_rights
-    unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @user.organization.is_csv_descriptor_used
+    unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @organization.is_csv_descriptor_used
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

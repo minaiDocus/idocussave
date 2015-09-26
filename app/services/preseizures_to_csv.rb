@@ -43,8 +43,8 @@ private
           format.gsub!(/AA/, "%y")
           format.gsub!(/MM/, "%m")
           format.gsub!(/JJ/, "%d")
-          result = entry.preseizure.date < entry.preseizure.period_date || entry.preseizure.date > entry.preseizure.end_period_date rescue true
-          if result
+          res = entry.preseizure.date < entry.preseizure.period_date || entry.preseizure.date > entry.preseizure.end_period_date rescue true
+          if res
             entry.preseizure.period_date.try(:strftime,format) || ''
           else
             entry.preseizure.date.try(:strftime, format) || ''
@@ -96,12 +96,12 @@ private
         when /\Alettering\z/
           entry.account.lettering
         when /\Aother\z/
-          part[1].presence || ""
+          part[1].presence || ''
         when /\Aseparator\z/
-          ";"
+          ';'
         else ''
       end
-      line += "#{result}"
+      line += result
     end
     line
   end
