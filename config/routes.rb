@@ -163,7 +163,7 @@ Idocus::Application.routes.draw do
     resource :dropbox do
       get 'authorize_url',   on: :member
       get 'callback',        on: :member
-      # get 'fetch_documents', on: :member
+      get 'fetch_documents', on: :member
     end
     resource :box do
       get 'authorize_url', on: :member

@@ -45,9 +45,9 @@ public
     redirect_to account_profile_path(panel: 'efs_management')
   end
 
-  # def fetch_documents
-  #   FetchFromDropbox.new(@dropbox).delay.execute
-  #   flash[:notice] = 'Vos documents Dropbox sont en cours de synchronisation.'
-  #   redirect_to account_profile_path(panel: 'efs_management')
-  # end
+  def fetch_documents
+    FetchFromDropbox.new(@dropbox).delay.execute
+    flash[:notice] = 'Vos documents Dropbox sont en cours de synchronisation.'
+    redirect_to account_profile_path(panel: 'efs_management')
+  end
 end
