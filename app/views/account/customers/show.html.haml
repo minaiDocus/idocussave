@@ -289,8 +289,8 @@
                     %br
                     = link_to 'Cliquez ici', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
                     pour créer un format propre au dossier.
-              - if @customer.active?
-                #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
-                  = render partial: 'account/customers/file_storages', locals: { user: @customer }
-                  .alignright
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'
+            - if @user.is_admin && @customer.active?
+              #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
+                = render partial: 'account/customers/file_storages', locals: { user: @customer }
+                .alignright
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'
