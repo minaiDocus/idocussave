@@ -44,9 +44,9 @@
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
-              - if @customer.active?
-                %li{ class: ('active' if params[:tab] == 'file_storages') }
-                  %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
+            - if @user.is_admin && @customer.active?
+              %li{ class: ('active' if params[:tab] == 'file_storages') }
+                %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
           .tab-content
             #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
