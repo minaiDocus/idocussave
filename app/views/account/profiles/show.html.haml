@@ -102,7 +102,7 @@
                         - else
                           %h5
                             Pour connecter iDocus à votre compte Dropbox,
-                            = link_to ' cliquez ici', authorize_url_account_dropbox_path
+                            = link_to ' cliquez ici.', authorize_url_account_dropbox_path
                             %br
                             iDocus va créer un premier dossier « Applications » puis « iDocus ».
                         #{"."}
@@ -113,16 +113,12 @@
                             = render partial: 'storage_form', locals: { storage: @external_file_storage.dropbox_basic }
                           .span6.margin2top
                             %h4 Import de documents vers iDocus
-                            Importer automatiquement des documents depuis la DropBox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
+                            Importer automatiquement des documents depuis la Dropbox. iDocus créé un dossier « exportation vers iDocus » dans le dossier « iDocus ».
                             %br
                             Vous n’avez plus qu’à déposer vos documents dans la bonne période (période actuelle ou période précédente) et dans le bon journal comptable qui vous a été attribué.
                             %br
                             %br
-                            La synchronisation de votre dossier d’import se fait automatiquement à 9h, 12h et 17h.
-                            %br
-                            Vous pouvez lancer une synchronisation immédiate en appuyant sur le bouton ci-dessous:
-                            %br
-                            = link_to 'Synchroniser immédiatement', fetch_documents_account_dropbox_path, class: 'btn'
+                            La récupération de votre dossier d’import se fait automatiquement.
 
                 - if @external_file_storage.is_google_docs_authorized?
                   - service_number = ExternalFileStorage::F_GOOGLE_DOCS

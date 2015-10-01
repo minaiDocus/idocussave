@@ -109,11 +109,4 @@ namespace :maintenance do
       puts "[#{Time.now}] maintenance:invoice:generate - END"
     end
   end
-
-  desc 'fetch all dropbox documents'
-  task :fetch_from_dropbox => [:environment] do
-    puts "[#{Time.now}] maintenance:fetch_from_dropbox - START"
-    FetchFromDropbox.execute
-    puts "\n[#{Time.now}] maintenance:fetch_from_dropbox - END"
-  end
 end

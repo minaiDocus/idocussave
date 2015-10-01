@@ -91,6 +91,7 @@ private
     unless @user.options.is_preassignment_authorized
       @user.options.update_attribute(:is_preassignment_authorized, true)
       AssignDefaultJournalsService.new(@user, @collaborator, @request).execute
+      DropboxImportFolder.changed(@user)
     end
   end
 

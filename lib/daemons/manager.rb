@@ -83,6 +83,7 @@ pids = []
   { name: 'fiduceo_document_fetcher',    sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
   { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { OperationService.process } },
   { name: 'emailed_document_fetcher',    sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
+  { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
   { name: 'delivery-dropbox_extended',   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
   { name: 'delivery-dropbox_basic',      sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbb') } },
   { name: 'delivery-google_drive',       sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('gdr') } },

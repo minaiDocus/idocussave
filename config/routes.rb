@@ -39,6 +39,8 @@ Idocus::Application.routes.draw do
   get 'gr/sessions/:slug/create',  controller: 'gray_label/sessions', action: 'create'
   get 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy'
 
+  post 'dropbox/webhook', controller: 'dropboxes', action: 'webhook'
+
   namespace :account do
     root to: 'account/account#index'
     resources :organizations, except: :destroy do
@@ -161,9 +163,8 @@ Idocus::Application.routes.draw do
     resource :profile
     resources :addresses
     resource :dropbox do
-      get 'authorize_url',   on: :member
-      get 'callback',        on: :member
-      get 'fetch_documents', on: :member
+      get 'authorize_url', on: :member
+      get 'callback',      on: :member
     end
     resource :box do
       get 'authorize_url', on: :member

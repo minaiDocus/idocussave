@@ -46,6 +46,8 @@ class CreateCustomerService
       @customer.auth_prev_period_until_month = @organization.auth_prev_period_until_month
       @customer.save
 
+      DropboxImportFolder.changed(@customer)
+
       WelcomeMailer.welcome_customer(@customer, token).deliver
     end
     @customer

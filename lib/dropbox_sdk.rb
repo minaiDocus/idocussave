@@ -649,6 +649,65 @@ class DropboxClient
         parse_response(response, raw=true)
     end
 
+    # A way of letting you keep a local representation of the Dropbox folder
+    # heirarchy.  You can periodically call delta() to get a list of "delta
+    # entries", which are instructions on how to update your local state to
+    # match the server's state.
+    #
+    # Arguments:
+    # * +cursor+: On the first call, omit this argument (or pass in +nil+).  On
+    #   subsequent calls, pass in the +cursor+ string returned by the previous
+    #   call.
+    # * +path_prefix+: If provided, results will be limited to files and folders
+    #   whose paths are equal to or under +path_prefix+.  The +path_prefix+ is
+    #   fixed for a given cursor.  Whatever +path_prefix+ you use on the first
+    #   +delta()+ must also be passed in on subsequent calls that use the returned
+    #   cursor.
+    #
+    # Returns: A hash with three fields.
+    # * +entries+: A list of "delta entries" (described below)
+    # * +reset+: If +true+, you should reset local state to be an empty folder
+    #   before processing the list of delta entries.  This is only +true+ only
+    #   in rare situations.
+    # * +cursor+: A string that is used to keep track of your current state.
+    #   On the next call to delta(), pass in this value to return entries
+    #   that were recorded since the cursor was returned.
+    # * +has_more+: If +true+, then there are more entries available; you can
+    #   call delta() again immediately to retrieve those entries.  If +false+,
+    #   then wait at least 5 minutes (preferably longer) before checking again.
+    #
+    # Delta Entries: Each entry is a 2-item list of one of following forms:
+    # * [_path_, _metadata_]: Indicates that there is a file/folder at the given
+    #   path.  You should add the entry to your local state.  (The _metadata_
+    #   value is the same as what would be returned by the #metadata() call.)
+    #   * If the path refers to parent folders that don't yet exist in your
+    #     local state, create those parent folders in your local state.  You
+    #     will eventually get entries for those parent folders.
+    #   * If the new entry is a file, replace whatever your local state has at
+    #     _path_ with the new entry.
+    #   * If the new entry is a folder, check what your local state has at
+    #     _path_.  If it's a file, replace it with the new entry.  If it's a
+    #     folder, apply the new _metadata_ to the folder, but do not modify
+    #     the folder's children.
+    # * [path, +nil+]: Indicates that there is no file/folder at the _path_ on
+    #   Dropbox.  To update your local state to match, delete whatever is at
+    #   _path_, including any children (you will sometimes also get separate
+    #   delta entries for each child, but this is not guaranteed).  If your
+    #   local state doesn't have anything at _path_, ignore this entry.
+    #
+    # Remember: Dropbox treats file names in a case-insensitive but case-preserving
+    # way.  To facilitate this, the _path_ strings above are lower-cased versions of
+    # the actual path.  The _metadata_ dicts have the original, case-preserved path.
+    def delta(cursor=nil, path_prefix=nil)
+        params = {
+          'cursor' => cursor,
+          'path_prefix' => path_prefix,
+        }
+
+        response = @session.do_post build_url("/delta", params)
+        parse_response(response)
+    end
+
     def build_url(url, params=nil, content_server=false) # :nodoc:
         port = 443
         host = content_server ? Dropbox::API_CONTENT_SERVER : Dropbox::API_SERVER
@@ -663,7 +722,9 @@ class DropboxClient
         end
 
         if params
-            target.query = params.collect {|k,v|
+            target.query = params.select { |k,v|
+                v ? true : false
+            }.collect {|k,v|
                 URI.escape(k) + "=" + URI.escape(v)
             }.join("&")
         end

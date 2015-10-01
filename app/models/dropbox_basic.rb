@@ -7,8 +7,18 @@ class DropboxBasic
 
   field :session,              type: String,  default: ''
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'
-  field :export_path,          type: String,  default: ':code/:period/:account_book'
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
+
+  field :dropbox_id,          type: Integer
+  field :changed_at,          type: Time
+  field :checked_at,          type: Time
+  field :delta_cursor,        type: String
+  field :delta_path_prefix,   type: String
+  field :import_folder_paths, type: Array, default: []
+
+  def user
+    external_file_storage.user
+  end
 
   def new_session
     unless @current_session
@@ -43,6 +53,10 @@ class DropboxBasic
 
   def is_configured?
     new_session.authorized?
+  end
+
+  def is_used?
+    external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
   end
 
   def client
