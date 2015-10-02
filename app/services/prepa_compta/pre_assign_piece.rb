@@ -5,7 +5,7 @@ class PrepaCompta::PreAssignPiece
   end
 
   def execute
-    grouped_xml_pieces do |pack, xml_pieces|
+    grouped_xml_pieces.each do |pack, xml_pieces|
       period = pack.owner.subscription.find_or_create_period(Time.now)
       document = Reporting.find_or_create_period_document(pack, period)
       report = document.report || create_report(pack, document)
@@ -108,7 +108,7 @@ private
   end
 
   def create_report(pack, document)
-    journal = user.account_book_types.where(name: pack.name.split[1]).first
+    journal = pack.owner.account_book_types.where(name: pack.name.split[1]).first
     report = Pack::Report.new
     report.organization = pack.owner.organization
     report.user         = pack.owner
