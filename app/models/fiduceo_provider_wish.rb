@@ -28,6 +28,7 @@ class FiduceoProviderWish
   scope :notified,                -> { where(:notified_at.nin => [nil]) }
   scope :not_notified,            -> { where(notified_at: nil) }
   scope :not_processed_or_recent, -> { where('$or' => [{ :state.in => %w(pending processing) }, { :state.in => %w(rejected accepted), :updated_at.gte => 1.month.ago }]) }
+  scope :not_processed,           -> { where(:state.in => [:pending, :processing]) }
 
   state_machine :initial => :pending do
     state :pending

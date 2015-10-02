@@ -105,7 +105,7 @@ class Admin::AdminController < ApplicationController
 
     @failed_reports_delivery = Pack::Report.failed_delivery
 
-    @provider_wishes = FiduceoProviderWish.desc(:created_at).limit(5).entries
+    @provider_wishes = FiduceoProviderWish.not_processed.desc(:created_at).limit(5).entries
 
     @unbillable_organizations = Organization.billed.
                                   where('addresses.is_for_billing' => { '$nin' => [true] }).
