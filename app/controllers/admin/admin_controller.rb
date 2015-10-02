@@ -105,7 +105,6 @@ class Admin::AdminController < ApplicationController
 
     @failed_reports_delivery = Pack::Report.failed_delivery
 
-    @emails          = Email.desc(:created_at).limit(10)
     @provider_wishes = FiduceoProviderWish.desc(:created_at).limit(5).entries
 
     @unbillable_organizations = Organization.billed.
