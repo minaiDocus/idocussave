@@ -101,7 +101,7 @@ private
           ';'
         else ''
       end
-      line += result
+      line += result.to_s
     end
     line
   end
