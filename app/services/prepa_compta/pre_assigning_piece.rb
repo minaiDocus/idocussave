@@ -13,8 +13,11 @@ class PrepaCompta::PreAssigningPiece
   end
 
   def execute
-    copy_to_dir manual_dir
-    copy_to_dir abbyy_dir unless journal.compta_type == 'NDF'
+    if @piece.user.code == 'MCN%PPP'
+      copy_to_dir abbyy_dir unless journal.compta_type == 'NDF'
+    else
+      copy_to_dir manual_dir
+    end
     @piece.update(is_awaiting_pre_assignment: true)
   end
 
