@@ -11,64 +11,54 @@
               %li
                 %a{ href: '#ocr_needed_temp_packs', data: { toggle: 'tab' } }
                   %span.label.label-success OCR
-                  %span.badge.badge-success= @ocr_needed_temp_packs.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#bundle_needed_temp_packs', data: { toggle: 'tab' } }
                   %span.label Regroupement
-                  %span.badge= @bundle_needed_temp_packs.count
+                  %span.badge 0
               %li.active
                 %a{ href: '#bundling_temp_packs', data: { toggle: 'tab' } }
                   %span.label.label-success Regroupement
-                  %span.badge.badge-success= @bundling_temp_packs.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#processing_temp_packs', data: { toggle: 'tab' } }
                   %span.label.label-success Publication
-                  %span.badge.badge-success= @processing_temp_packs.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#currently_being_delivered_packs', data: { toggle: 'tab' } }
                   %span.label.label-success Livraison
-                  %span.badge.badge-success= @currently_being_delivered_packs.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#failed_packs_delivery', data: { toggle: 'tab' } }
                   %span.label.label-important Livraison
-                  %span.badge.badge-important= @failed_packs_delivery.count
+                  %span.badge.badge-important 0
               %li
                 %a{ href: '#blocked_pre_assignments', data: { toggle: 'tab' } }
                   %span.label Pré-affectation
-                  %span.badge= @blocked_pre_assignments.count
+                  %span.badge 0
               %li
                 %a{ href: '#awaiting_pre_assignments', data: { toggle: 'tab' } }
                   %span.label.label-success Pré-affectation
-                  %span.badge.badge-success= @awaiting_pre_assignments.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#reports_delivery', data: { toggle: 'tab' } }
                   %span.label.label-success Livr. Pré-aff.
-                  %span.badge.badge-success= @reports_delivery.count
+                  %span.badge.badge-success 0
               %li
                 %a{ href: '#failed_reports_delivery', data: { toggle: 'tab' } }
                   %span.label.label-important Livr. Pré-aff.
-                  %span.badge.badge-important= @failed_reports_delivery.count
+                  %span.badge.badge-important 0
             .tab-content
               #ocr_needed_temp_packs.tab-pane
-                = render partial: 'process', locals: { name: 'OCR', collection: @ocr_needed_temp_packs, type: :success }
               #bundle_needed_temp_packs.tab-pane
-                = render partial: 'process', locals: { name: 'Regroupement', collection: @bundle_needed_temp_packs, type: nil }
               #bundling_temp_packs.tab-pane.active
-                = render partial: 'process', locals: { name: 'Regroupement', collection: @bundling_temp_packs, type: :success }
               #processing_temp_packs.tab-pane
-                = render partial: 'process', locals: { name: 'Publication', collection: @processing_temp_packs, type: :success }
               #currently_being_delivered_packs.tab-pane
-                = render partial: 'process', locals: { name: 'Livraison', collection: @currently_being_delivered_packs, type: :success }
               #failed_packs_delivery.tab-pane
-                = render partial: 'process', locals: { name: 'Livraison', collection: @failed_packs_delivery, type: :important }
               #blocked_pre_assignments.tab-pane
-                = render partial: 'process', locals: { name: 'Pré-affectation', collection: @blocked_pre_assignments, type: nil }
               #awaiting_pre_assignments.tab-pane
-                = render partial: 'process', locals: { name: 'Pré-affectation', collection: @awaiting_pre_assignments, type: :success }
               #reports_delivery.tab-pane
-                = render partial: 'process', locals: { name: 'Livr. Pré-aff.', collection: @reports_delivery, type: :success }
               #failed_reports_delivery.tab-pane
-                = render partial: 'process', locals: { name: 'Livr. Pré-aff.', collection: @failed_reports_delivery, type: :important }
     .span4
       .row-fluid
         .span6

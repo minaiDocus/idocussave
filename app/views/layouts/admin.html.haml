@@ -11,6 +11,7 @@
         <script src="/assets/html5.js" type="text/javascript"></script>
       <![endif]-->
     = javascript_include_tag 'admin'
+    = javascript_include_tag 'admin/admin' if controller_name == 'admin'
     = javascript_include_tag 'admin/user' if params[:controller] == 'admin/users'
     = javascript_include_tag 'admin/invoices' if controller_name == 'invoices'
     = javascript_include_tag 'admin/scanning_providers' if controller_name == 'scanning_providers'

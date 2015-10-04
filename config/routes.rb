@@ -290,6 +290,17 @@ Idocus::Application.routes.draw do
     end
   end
 
+  get 'admin/ocr_needed_temp_packs',           controller: 'admin/admin', action: 'ocr_needed_temp_packs'
+  get 'admin/bundle_needed_temp_packs',        controller: 'admin/admin', action: 'bundle_needed_temp_packs'
+  get 'admin/bundling_temp_packs',             controller: 'admin/admin', action: 'bundling_temp_packs'
+  get 'admin/processing_temp_packs',           controller: 'admin/admin', action: 'processing_temp_packs'
+  get 'admin/currently_being_delivered_packs', controller: 'admin/admin', action: 'currently_being_delivered_packs'
+  get 'admin/failed_packs_delivery',           controller: 'admin/admin', action: 'failed_packs_delivery'
+  get 'admin/blocked_pre_assignments',         controller: 'admin/admin', action: 'blocked_pre_assignments'
+  get 'admin/awaiting_pre_assignments',        controller: 'admin/admin', action: 'awaiting_pre_assignments'
+  get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
+  get 'admin/failed_reports_delivery',         controller: 'admin/admin', action: 'failed_reports_delivery'
+
   get '/admin/reporting(/:year)', controller: 'admin/reporting', action: :index
   get '/admin/process_reporting(/:year)(/:month)', controller: 'admin/process_reporting', action: :index
 
