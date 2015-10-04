@@ -40,11 +40,12 @@ class Admin::AdminController < ApplicationController
 
   def bundle_needed_temp_packs
     @bundle_needed_temp_packs = TempPack.bundle_needed.map do |temp_pack|
+      temp_documents = temp_pack.temp_documents.bundle_needed.by_position.entries
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundle_needed.by_position.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all\z/,'')
-      object.document_count = temp_pack.temp_documents.bundle_needed.count
-      object.message        = temp_pack.temp_documents.bundle_needed.distinct('delivery_type').join(', ')
+      object.document_count = temp_documents.count
+      object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
       object
     end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
     render partial: 'process', locals: { collection: @bundle_needed_temp_packs }
@@ -52,11 +53,12 @@ class Admin::AdminController < ApplicationController
 
   def bundling_temp_packs
     @bundling_temp_packs = TempPack.bundling.map do |temp_pack|
+      temp_documents = temp_pack.temp_documents.bundling.by_position.entries
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.bundling.by_position.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all\z/,'')
-      object.document_count = temp_pack.temp_documents.bundling.count
-      object.message        = temp_pack.temp_documents.bundling.distinct('delivery_type').join(', ')
+      object.document_count = temp_documents.count
+      object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
       object
     end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
     render partial: 'process', locals: { collection: @bundling_temp_packs }
@@ -64,11 +66,12 @@ class Admin::AdminController < ApplicationController
 
   def processing_temp_packs
     @processing_temp_packs = TempPack.not_processed.map do |temp_pack|
+      temp_documents = temp_pack.temp_documents.ready.by_position.entries
       object = OpenStruct.new
-      object.date           = temp_pack.temp_documents.ready.by_position.last.try(:updated_at)
+      object.date           = temp_documents.last.try(:updated_at)
       object.name           = temp_pack.name.sub(/ all\z/,'')
-      object.document_count = temp_pack.temp_documents.ready.count
-      object.message        = temp_pack.temp_documents.ready.distinct('delivery_type').join(', ')
+      object.document_count = temp_documents.count
+      object.message        = temp_documents.map(&:delivery_type).uniq.join(', ')
       object
     end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
     render partial: 'process', locals: { collection: @processing_temp_packs }
@@ -91,25 +94,24 @@ class Admin::AdminController < ApplicationController
   def failed_packs_delivery
     pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id)
     @failed_packs_delivery = Pack.where(:_id.in => pack_ids).map do |pack|
+      remote_files = pack.remote_files.not_processed.not_retryable.asc(:created_at)
       object = OpenStruct.new
-      object.date           = pack.remote_files.not_processed.not_retryable.asc(:created_at).last.try(:created_at)
+      object.date           = remote_files.last.try(:created_at)
       object.name           = pack.name.sub(/ all\z/,'')
-      object.document_count = pack.remote_files.not_processed.not_retryable.count
-      object.message        = pack.remote_files.not_processed.not_retryable.distinct(:service_name).join(', ')
+      object.document_count = remote_files.count
+      object.message        = remote_files.map(&:service_name).uniq.join(', ')
       object
     end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
     render partial: 'process', locals: { collection: @failed_packs_delivery }
   end
 
   def blocked_pre_assignments
-    pending_pre_assignments   = PreAssignmentService.pending
-    @blocked_pre_assignments  = pending_pre_assignments.select { |e| e.message.present? }
+    @blocked_pre_assignments  = PreAssignmentService.pending.select { |e| e.message.present? }
     render partial: 'process', locals: { collection: @blocked_pre_assignments }
   end
 
   def awaiting_pre_assignments
-    pending_pre_assignments   = PreAssignmentService.pending
-    @awaiting_pre_assignments = pending_pre_assignments.select { |e| e.message.blank? }.
+    @awaiting_pre_assignments = PreAssignmentService.pending.select { |e| e.message.blank? }.
       each { |e| e.message = false }
     render partial: 'process', locals: { collection: @awaiting_pre_assignments }
   end
