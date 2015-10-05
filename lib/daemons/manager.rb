@@ -16,7 +16,7 @@ Signal.trap("USR1") do
   $continue = true
 end
 
-@program_name_prefix = '[idd]'
+@program_name_prefix = "[#{Rails.env[0..2]}][idd]"
 $PROGRAM_NAME = "#{@program_name_prefix}manager"
 
 def go_sleep(duration, program_name, state_prefix='sleeping')
