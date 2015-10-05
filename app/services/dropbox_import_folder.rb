@@ -73,7 +73,7 @@ class DropboxImportFolder
     end
   end
 
-# private
+private
 
   def client
     @client ||= @dropbox.client
