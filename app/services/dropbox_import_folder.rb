@@ -39,7 +39,7 @@ class DropboxImportFolder
 
     default_path_prefix = "/exportation vers iDocus/#{user.code}"
     unless user.is_prescriber
-      default_path_prefix += " - #{user.company.gsub(/[\\\/\:\?\*\"\|]/, '')}"
+      default_path_prefix += " - #{user.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
     end
 
     @current_cursor = @dropbox.delta_cursor
@@ -110,7 +110,7 @@ class DropboxImportFolder
       base_path = Pathname.new '/exportation vers iDocus'
       base_path = base_path.join user.code if user.is_prescriber
       customers.each do |customer|
-        customer_path = base_path.join "#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|]/, '')}"
+        customer_path = base_path.join "#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
         period_types.each do |period_type|
           period_path = customer_path.join period_type
           customer.account_book_types.asc(:name).each do |account_book_type|
