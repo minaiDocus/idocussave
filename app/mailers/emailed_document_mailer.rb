@@ -1,24 +1,24 @@
 # -*- encoding : UTF-8 -*-
 class EmailedDocumentMailer < ActionMailer::Base
-  def notify_success(email_address, email_message_id, emailed_document)
+  def notify_success(email, emailed_document)
     @emailed_document = emailed_document
     @journals         = emailed_document.user.account_book_types
     @period_service   = PeriodService.new user: emailed_document.user, current_time: Time.now.beginning_of_month
-    mail(to: email_address, subject: '[iDocus] Envoi par mail : succès', references: ["<#{email_message_id}>"])
+    mail(to: email.from, subject: "[iDocus] Envoi par mail (#{email.subject}) : succès", references: ["<#{email.message_id}>"])
   end
 
-  def notify_failure(email_address, email_message_id, emailed_document)
+  def notify_failure(email, emailed_document)
     @emailed_document = emailed_document
     @journals         = emailed_document.user.account_book_types
     @period_service   = PeriodService.new user: emailed_document.user, current_time: Time.now.beginning_of_month
-    mail(to: email_address, subject: '[iDocus] Envoi par mail : échec', references: ["<#{email_message_id}>"])
+    mail(to: email.from, subject: "[iDocus] Envoi par mail (#{email.subject}) : échec", references: ["<#{email.message_id}>"])
   end
 
-  def notify_error(email_address, email_message_id, user, attachment_names)
-    @user             = user
+  def notify_error(email, attachment_names)
+    @user             = email.to_user
     @attachment_names = attachment_names
-    @journals         = user.account_book_types
-    @period_service   = PeriodService.new user: user, current_time: Time.now.beginning_of_month
-    mail(to: email_address, subject: '[iDocus] Envoi par mail : erreur', references: ["<#{email_message_id}>"])
+    @journals         = @user.account_book_types
+    @period_service   = PeriodService.new user: @user, current_time: Time.now.beginning_of_month
+    mail(to: email.from, subject: "[iDocus] Envoi par mail (#{email.subject}) : erreur", references: ["<#{email.message_id}>"])
   end
 end

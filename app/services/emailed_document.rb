@@ -94,12 +94,12 @@ class EmailedDocument
               end
               email.save
               if emailed_document.user.is_mail_receipt_activated
-                EmailedDocumentMailer.notify_success(email.from, email.message_id, emailed_document).deliver
+                EmailedDocumentMailer.notify_success(email, emailed_document).deliver
               end
             else
               email.update_attribute(:errors_list, emailed_document.errors)
               email.failure
-              emailed_document.user && EmailedDocumentMailer.notify_failure(email.from, email.message_id, emailed_document).deliver
+              emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver
             end
             [emailed_document, email]
           else
@@ -114,7 +114,7 @@ class EmailedDocument
             end.select do |filename|
               File.extname(filename).downcase == '.pdf'
             end
-            EmailedDocumentMailer.notify_error(email.from, email.message_id, email.to_user, attachment_names).deliver
+            EmailedDocumentMailer.notify_error(email, attachment_names).deliver
             email.update_attribute(:is_error_notified, true)
           end
           if rescue_error
