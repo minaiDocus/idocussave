@@ -6,7 +6,7 @@ class UpdateCustomerService
   end
 
   def execute
-    previous_group_ids = @customer.groups.map(:id)
+    previous_group_ids = @customer.groups.map(&:id)
     @customer.assign_attributes(@params)
     if @customer.valid?
       if @customer.email_changed?
