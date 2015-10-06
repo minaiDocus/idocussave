@@ -15,11 +15,11 @@ class DropboxImportFolder
     def changed(object)
       if object.is_a? User
         users = []
-        users << user
-        users << user.organization.leader
-        users += user.groups.map(&:collaborators).flatten
+        users << object
+        users << object.organization.leader
+        users += object.groups.map(&:collaborators).flatten
       else
-        users = object
+        users = [object]
       end
       users.each do |user|
         dropbox = user.external_file_storage.try(:dropbox_basic)
