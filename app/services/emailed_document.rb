@@ -112,7 +112,7 @@ class EmailedDocument
             attachment_names = mail.attachments.map do |attachment|
               attachment.filename
             end.select do |filename|
-              File.extname(filename) == '.pdf'
+              File.extname(filename).downcase == '.pdf'
             end
             EmailedDocumentMailer.notify_error(mail.from.first, email.to_user, attachment_names).deliver
             email.update_attribute(:is_error_notified, true)
@@ -253,7 +253,7 @@ private
   def get_attachments
     if user.present? && journal.present? && period.present?
       @mail.attachments.select do |attachment|
-        File.extname(attachment.filename) == '.pdf'
+        File.extname(attachment.filename).downcase == '.pdf'
       end.map { |a| Attachment.new(a, file_name) }
     else
       []
