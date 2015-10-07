@@ -215,6 +215,27 @@ private
 
   def remove_folders
     unused_folder_paths = @dropbox.import_folder_paths - folder_paths
+    if user.is_prescriber
+      paths = []
+      unused_folder_paths.each do |unused_folder_path|
+        is_already_added = false
+        paths.each do |path|
+          if unused_folder_path.match /\A#{path}/
+            is_already_added = true
+            break
+          end
+        end
+        unless is_already_added
+          customer, journal, period_offset = get_info_from_path unused_folder_path
+          if customer
+            paths << unused_folder_path
+          else
+            paths << unused_folder_path.split('/')[0..3].join('/')
+          end
+        end
+      end
+      unused_folder_paths = paths
+    end
     unused_folder_paths.each do |unused_folder_path|
       begin
         client.file_delete unused_folder_path
