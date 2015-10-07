@@ -19,7 +19,7 @@ class DropboxImportFolder
         users << object.organization.leader
         users += object.groups.map(&:collaborators).flatten
       else
-        users = [object]
+        users = object
       end
       users.each do |user|
         dropbox = user.external_file_storage.try(:dropbox_basic)
