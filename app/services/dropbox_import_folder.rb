@@ -37,7 +37,7 @@ class DropboxImportFolder
       @dropbox = object
     end
 
-    default_path_prefix = "/exportation vers iDocus/#{user.code.gsub('&', '')}"
+    default_path_prefix = "/exportation vers iDocus/#{user.code}"
     unless user.is_prescriber
       default_path_prefix += " - #{user.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
     end
@@ -114,7 +114,7 @@ private
         period_types.each do |period_type|
           period_path = customer_path.join period_type
           customer.account_book_types.asc(:name).each do |account_book_type|
-            @folder_paths << period_path.join(account_book_type.name).to_s.gsub('&', '')
+            @folder_paths << period_path.join(account_book_type.name).to_s
           end
         end
       end
