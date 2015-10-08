@@ -32,7 +32,7 @@ class Organization
   validates_presence_of :name, :code
   validates_uniqueness_of :name
   validates_length_of :code, in: 1..4
-  validates_format_of :code, with: /\A[A-Z0-9&]*\z/
+  validates_format_of :code, with: /\A[A-Z0-9]*\z/
 
   slug :name
 
