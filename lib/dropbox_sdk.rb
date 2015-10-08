@@ -725,7 +725,7 @@ class DropboxClient
             target.query = params.select { |k,v|
                 v ? true : false
             }.collect {|k,v|
-                URI.escape(k) + "=" + URI.escape(v)
+                CGI.escape(k) + "=" + CGI.escape(v)
             }.join("&")
         end
 
