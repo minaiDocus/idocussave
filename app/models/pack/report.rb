@@ -51,7 +51,9 @@ class Pack::Report
         object = OpenStruct.new
         object.date           = delivery['failed_at'].try(:localtime)
         object.document_count = delivery['count'].to_i
-        object.name           = Pack::Report.find(delivery['_id']['report_id']).name
+        object.name           = Rails.cache.fetch ['failed_delivery', 'report_name', delivery['_id']['report_id'].to_s] do
+          Pack::Report.find(delivery['_id']['report_id']).name
+        end
         object.message        = delivery['_id']['delivery_message']
         object
       end
