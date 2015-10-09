@@ -44,6 +44,10 @@ class RemoteFile
   scope :retryable,     -> { where(:tried_count.lt => 2) }
   scope :not_retryable, -> { where(:tried_count.gte => 2) }
 
+  after_create  :update_pack
+  after_save    :update_pack
+  after_destroy :update_pack
+
   def self.cancel_all
     update_all state:         'cancelled',
                tried_count:   0,
@@ -198,5 +202,9 @@ class RemoteFile
 
   def set_tried_at
     self.tried_at = Time.now
+  end
+
+  def update_pack
+    pack.timeless.update_attribute(:remote_files_updated_at, Time.now) if pack
   end
 end

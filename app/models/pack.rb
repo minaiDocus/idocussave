@@ -32,6 +32,9 @@ class Pack
   field :is_update_notified,   type: Boolean, default: true
   field :is_fully_processed,   type: Boolean, default: true
 
+  # for cache purpose
+  field :remote_files_updated_at, type: Time
+
   index({ pages_count: 1 })
   index({ scanned_pages_count: 1 })
   index({ is_update_notified: 1 })

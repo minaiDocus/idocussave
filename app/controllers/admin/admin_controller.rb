@@ -80,7 +80,9 @@ class Admin::AdminController < ApplicationController
   def currently_being_delivered_packs
     pack_ids = RemoteFile.not_processed.retryable.distinct(:pack_id)
     @currently_being_delivered_packs = Pack.where(:_id.in => pack_ids).map do |pack|
-      remote_files = pack.remote_files.not_processed.retryable.asc(:created_at).entries
+      remote_files = Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'retryable', pack.remote_files_updated_at] do
+        pack.remote_files.not_processed.retryable.asc(:created_at).entries
+      end
       object = OpenStruct.new
       object.date           = remote_files.last.try(:created_at)
       object.name           = pack.name.sub(/ all\z/,'')
@@ -94,7 +96,9 @@ class Admin::AdminController < ApplicationController
   def failed_packs_delivery
     pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id)
     @failed_packs_delivery = Pack.where(:_id.in => pack_ids).map do |pack|
-      remote_files = pack.remote_files.not_processed.not_retryable.asc(:created_at)
+      remote_files = Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
+        pack.remote_files.not_processed.not_retryable.asc(:created_at).entries
+      end
       object = OpenStruct.new
       object.date           = remote_files.last.try(:created_at)
       object.name           = pack.name.sub(/ all\z/,'')
