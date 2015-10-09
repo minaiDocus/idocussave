@@ -1,16 +1,19 @@
 # -*- encoding : UTF-8 -*-
 class PreAssignmentDeliveryService
+  @@processed_at = nil
+  @@notified_at = Time.now
+
   class << self
-    def execute
-      last_notify_at = Time.now
+    def execute(notify_now=false)
       PreAssignmentDelivery.pending.asc(:number).each do |delivery|
         PreAssignmentDeliveryService.new(delivery).execute
-        if last_notify_at <= 15.minutes.ago
-          notify
-          last_notify_at = Time.now
-        end
+        notify if @@notified_at <= 15.minutes.ago
+        @@processed_at = Time.now
       end
-      notify
+      if notify_now || @@notified_at <= 15.minutes.ago || (@@processed_at && @@processed_at <= 1.minute.ago)
+        notify
+        @@processed_at = nil
+      end
     end
 
     def notify
@@ -23,6 +26,7 @@ class PreAssignmentDeliveryService
         else
           deliveries.unset(:is_to_notify)
         end
+        @@notified_at = Time.now
       end
     end
   end
