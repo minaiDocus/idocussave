@@ -207,7 +207,7 @@ class Pack
     end
 
     def find_or_initialize(name, user)
-      find_by_name(name) || Pack.new(name: name, owner_id: user.id, organization_id: user.organization.try(:id))
+      find_by_name(name) || Pack.new(name: name, owner_id: user.id, organization_id: user.organization.try(:id), created_at: Time.now, updated_at: Time.now)
     end
 
     def info_path(pack_name, receiver=nil)

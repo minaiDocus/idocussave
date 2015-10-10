@@ -51,8 +51,6 @@ class TempPack
   def update_pack_state
     if journal && journal.compta_processable?
       pack = Pack.find_or_initialize(name, user)
-      pack.created_at ||= Time.now
-      pack.updated_at ||= Time.now
       pack.timeless.update_attribute(:is_fully_processed, false) if pack.is_fully_processed
     end
   end
