@@ -25,7 +25,9 @@
                   %td.date= collaborator.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
                     %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
-                  %td= link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
+                  %td
+                    - unless collaborator.is_admin
+                      = link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
       = render partial: 'shared/list_options', locals: { collection: @collaborators }
     .span3.box
       = render partial: 'sidebar'

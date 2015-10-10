@@ -4,4 +4,3 @@
       .nav-collapse
         %ul.nav
           %li{ class: ('active' if action_name == 'index') }= link_to 'Index', admin_users_path
-          %li{ class: ('active' if action_name == 'new') }= link_to t('actions.new'), new_admin_user_path

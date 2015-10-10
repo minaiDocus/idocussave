@@ -4,7 +4,7 @@
   = f.input :company
   = f.input :first_name
   = f.input :last_name
-  = f.input :email, hint: "Correspond à l'identifiant de connexion de votre collaborateur"
+  = f.input :email, hint: "Correspond à l'identifiant de connexion de votre collaborateur", disabled: @collaborator.is_admin
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if action_name.in?(%w(new create))

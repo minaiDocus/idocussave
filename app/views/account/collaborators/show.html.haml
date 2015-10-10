@@ -38,21 +38,42 @@
           %table.table.table-striped.table-condensed
             %tr
               %th= t('mongoid.models.organization_rights.names.collaborators_management')
-              %td= @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
+              %td
+                - if @collaborator.is_admin
+                  = t('yes_value')
+                - else
+                  = @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
             %tr
               %th= t('mongoid.models.organization_rights.names.customers_management')
-              %td= @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
+              %td
+                - if @collaborator.is_admin
+                  = t('yes_value')
+                - else
+                  = @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
             %tr
               %th= t('mongoid.models.organization_rights.names.groups_management')
-              %td= @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
+              %td
+                - if @collaborator.is_admin
+                  = t('yes_value')
+                - else
+                  = @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
             %tr
               %th= t('mongoid.models.organization_rights.names.journals_management')
-              %td= @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')
+              %td
+                - if @collaborator.is_admin
+                  = t('yes_value')
+                - else
+                  = @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')
             %tr
               %th= t('mongoid.models.organization_rights.names.customer_journals_management')
-              %td= @collaborator.find_or_create_organization_rights.is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
-          .alignright
-            = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @collaborator), class: 'btn btn-primary'
+              %td
+                - if @collaborator.is_admin
+                  = t('yes_value')
+                - else
+                  = @collaborator.find_or_create_organization_rights.is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
+          - unless @collaborator.is_admin
+            .alignright
+              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @collaborator), class: 'btn btn-primary'
         - if @user.is_admin
           #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
             = render partial: 'account/customers/file_storages', locals: { user: @collaborator }

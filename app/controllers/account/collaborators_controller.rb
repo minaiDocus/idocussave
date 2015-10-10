@@ -55,10 +55,14 @@ class Account::CollaboratorsController < Account::OrganizationController
   end
 
   def destroy
-    if DestroyCollaboratorService.new(@collaborator).execute
-      flash[:success] = 'Supprimé avec succès.'
+    if @collaborator.is_admin
+      flash[:error] = t('authorization.unessessary_rights')
     else
-      flash[:error] = 'Impossible de supprimer.'
+      if DestroyCollaboratorService.new(@collaborator).execute
+        flash[:success] = 'Supprimé avec succès.'
+      else
+        flash[:error] = 'Impossible de supprimer.'
+      end
     end
     redirect_to account_organization_collaborators_path(@organization)
   end
@@ -78,12 +82,15 @@ private
   end
 
   def user_params
-    params.require(:user).permit(:code,
-                                 { group_ids: [] },
-                                 :company,
-                                 :first_name,
-                                 :last_name,
-                                 :email)
+    attributes = [
+      :code,
+      { group_ids: [] },
+      :company,
+      :first_name,
+      :last_name
+    ]
+    attributes << :email unless @collaborator.is_admin
+    params.require(:user).permit(*attributes)
   end
 
   def sort_column

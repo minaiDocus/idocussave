@@ -12,7 +12,7 @@ protected
 public
   def index
     options = {}
-    if @user.organization && @user.is_prescriber
+    if @user.is_prescriber
       owner_ids = [@user.id.to_s] + @user.customer_ids.map(&:to_s)
       options[:owner_ids] = owner_ids
     else
@@ -55,7 +55,7 @@ public
     else
       options = { page: params[:page], per_page: params[:per_page] }
       options.merge!({ sort: true }) unless params[:filter].present?
-      if @user.organization && @user.is_prescriber
+      if @user.is_prescriber
         owner_ids = []
         if params[:view].present? && params[:view] != 'all'
           @other_user = @user.customers.find(params[:view])
@@ -75,7 +75,7 @@ public
 
   def archive
     pack = Pack.find(params[:id])
-    if @user.organization && @user.is_prescriber
+    if @user.is_prescriber
       pack = pack.owner.in?(@user.customers) ? pack : nil
     else
       pack = pack.owner == @user ? pack : nil
@@ -121,7 +121,7 @@ public
     filepath = document.content.path(params[:style])
     users = []
     if @user
-      if @user.organization && @user.is_prescriber
+      if @user.is_prescriber
         users = @user.customers
       else
         users = [@user]
@@ -146,7 +146,7 @@ public
       filepath = piece.content.path
       users = []
       if @user
-        if @user.organization && @user.is_prescriber
+        if @user.is_prescriber
           users = @user.customers
         else
           users = [@user]

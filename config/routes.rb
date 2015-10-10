@@ -238,7 +238,7 @@ Idocus::Application.routes.draw do
 
   namespace :admin do
     root :to => "admin#index"
-    resources :users, except: %w(edit destroy) do
+    resources :users, except: %w(new create edit destroy) do
       get  'search_by_code',                   on: :collection
       post 'send_reset_password_instructions', on: :member
     end

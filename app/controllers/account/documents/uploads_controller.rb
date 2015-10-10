@@ -2,7 +2,7 @@
 class Account::Documents::UploadsController < Account::AccountController
   def create
     data = nil
-    customer = @user.customers.active.find_by_code params[:file_code] if @user.organization && @user.is_prescriber
+    customer = @user.customers.active.find_by_code params[:file_code] if @user.is_prescriber
     customer ||= @user
     if customer.options.is_upload_authorized
       uploaded_document = UploadedDocument.new params[:files][0].tempfile,

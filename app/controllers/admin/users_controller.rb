@@ -20,22 +20,6 @@ class Admin::UsersController < Admin::AdminController
   def show
   end
 
-  def new
-    @user = User.new
-  end
-
-  def create
-    @user = User.new user_params
-    AccountingPlan.create(user_id: @user.id)
-    if @user.save
-      flash[:notice] = 'Crée avec succès.'
-      redirect_to admin_users_path
-    else
-      flash[:error] = 'Erreur lors de la création.'
-      render action: 'new'
-    end
-  end
-
   def update
     respond_to do |format|
       if params[:user][:is_prescriber]
