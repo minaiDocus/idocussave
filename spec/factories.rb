@@ -10,6 +10,7 @@ FactoryGirl.define do
     sequence(:email_code) { |n| "%08d" % n }
     factory :admin do
       is_admin true
+      is_prescriber true
     end
     factory :prescriber do
       is_prescriber true

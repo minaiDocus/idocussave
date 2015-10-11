@@ -16,9 +16,13 @@ describe 'Create event on visit' do
   end
 
   context 'as an user' do
-    login_user
-
     it 'create page visit event on /account/documents' do
+      @user = FactoryGirl.create(:user)
+      @user.options = UserOptions.create(user_id: @user.id)
+
+      page.driver.post user_session_path,
+        user: { email: @user.email, password: @user.password }
+
       visit '/account/documents'
       expect(page.current_path).to eq('/account/documents')
       user = User.first
@@ -29,9 +33,15 @@ describe 'Create event on visit' do
   end
 
   context 'as an admin' do
-    login_admin
-
     it 'does not create page visit event on /account/documents' do
+      @user = FactoryGirl.create(:admin, code: 'TS%0001')
+      @user.organization = Organization.create(name: 'TEST', code: 'TS')
+      @user.save
+      @user.extend_organization_role
+
+      page.driver.post user_session_path,
+        user: { email: @user.email, password: @user.password }
+
       visit '/account/documents'
       expect(page.current_path).to eq('/account/documents')
       event = Event.first
