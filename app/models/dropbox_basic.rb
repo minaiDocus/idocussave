@@ -16,6 +16,8 @@ class DropboxBasic
   field :delta_path_prefix,   type: String
   field :import_folder_paths, type: Array, default: []
 
+  validate :beginning_of_path
+
   def user
     external_file_storage.user
   end
@@ -118,6 +120,14 @@ class DropboxBasic
           remote_file.not_synced!("[#{e.class}] #{e.message}")
         end
       end
+    end
+  end
+
+private
+
+  def beginning_of_path
+    if path.match /\A\/*exportation vers iDocus/
+      errors.add(:path, :invalid)
     end
   end
 end
