@@ -89,7 +89,9 @@ private
       :first_name,
       :last_name
     ]
-    attributes << :email unless @collaborator.is_admin
+    if action_name.in?(%w(new create)) || !@collaborator.is_admin
+      attributes << :email
+    end
     params.require(:user).permit(*attributes)
   end
 
