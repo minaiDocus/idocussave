@@ -245,6 +245,7 @@ Idocus::Application.routes.draw do
     resources :invoices, only: %w(index show update) do
       get  'archive',     on: :collection
       post 'debit_order', on: :collection
+      post 'download',    on: :collection
     end
     resources :cms_images
     resources :products, except: 'show' do

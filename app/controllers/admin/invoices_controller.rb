@@ -15,6 +15,15 @@ class Admin::InvoicesController < Admin::AdminController
     end
   end
 
+  def download
+    if params['invoice_ids'].present?
+      zip_path = InvoicesToZip.new(params['invoice_ids']).execute
+      send_file(zip_path, type: 'application/zip', filename: 'factures.zip', x_sendfile: true)
+    else
+      redirect_to admin_invoices_path
+    end
+  end
+
   def debit_order
     invoice_time = params[:invoice_date].presence.to_time rescue Time.now
     debit_date   = params[:debit_date].presence.to_date rescue Date.today
@@ -34,23 +43,11 @@ class Admin::InvoicesController < Admin::AdminController
     end
   end
 
-  def update
-    @invoice.update invoice_params
-    respond_to do |format|
-      format.html { redirect_to admin_invoices_path }
-      format.json { render json: {}, status: :ok }
-    end
-  end
-
 private
 
   def load_invoice
     @invoice = Invoice.find_by_number params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(Invoice, number: params[:id]) unless @invoice
-  end
-
-  def invoice_params
-    params.require(:invoice).permit(:requested_at, :received_at)
   end
 
   def sort_column
@@ -112,16 +109,6 @@ private
       invoices = invoices.where(created_at: contains[:created_at]) unless contains[:created_at].blank?
     rescue Mongoid::Errors::InvalidTime
       params[:invoice_contains].delete(:created_at)
-    end
-    begin
-      invoices = invoices.where(requested_at: contains[:requested_at]) unless contains[:requested_at].blank?
-    rescue Mongoid::Errors::InvalidTime
-      params[:invoice_contains].delete(:requested_at)
-    end
-    begin
-      invoices = invoices.where(received_at: contains[:received_at]) unless contains[:received_at].blank?
-    rescue Mongoid::Errors::InvalidTime
-      params[:invoice_contains].delete(:received_at)
     end
     invoices
   end

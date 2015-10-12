@@ -26,26 +26,6 @@
           %span.add-on
             <=
           = text_field_tag 'invoice_contains[created_at][$lte]', (params[:invoice_contains][:created_at]['$lte'] rescue '')
-      = label_tag 'invoice_contains[requested_at][$gte]', t('mongoid.models.invoice.attributes.requested_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'invoice_contains[requested_at][$gte]', (params[:invoice_contains][:requested_at]['$gte'] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'invoice_contains[requested_at][$lte]', (params[:invoice_contains][:requested_at]['$lte'] rescue '')
-      = label_tag 'invoice_contains[received_at][$gte]', t('mongoid.models.invoice.attributes.received_at')
-      .filter_date
-        .input-prepend.date.datepicker
-          %span.add-on
-            >=
-          = text_field_tag 'invoice_contains[received_at][$gte]', (params[:invoice_contains][:received_at]['$gte'] rescue '')
-        .input-prepend.date.datepicker
-          %span.add-on
-            <=
-          = text_field_tag 'invoice_contains[received_at][$lte]', (params[:invoice_contains][:received_at]['$lte'] rescue '')
       %br
       = submit_tag t('filters.action'), class: 'btn btn-primary'
       = link_to t('filters.reset'), admin_invoices_path, class: 'btn'
