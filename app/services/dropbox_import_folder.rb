@@ -172,7 +172,7 @@ private
   def process_file(file_path, metadata)
     path = File.dirname file_path
     file_name = File.basename file_path
-    unless file_name.match(/\(erreur fichier non valide pour iDocus\)/)
+    unless file_name.match(/\(erreur fichier non valide pour iDocus\)/i)
       if valid_path?(path)
         if UploadedDocument.valid_extensions.include?(File.extname(file_path)) && metadata['bytes'] <= 10.megabytes
           customer, journal_name, period_offset = get_info_from_path path
@@ -201,7 +201,7 @@ private
 
   def mark_file_as_not_processable(path, file_name)
     begin
-      new_file_name = File.basename(file_name, '.*') + ' (erreur fichier non valide pour iDocus\)' + File.extname(file_name)
+      new_file_name = File.basename(file_name, '.*') + ' (erreur fichier non valide pour iDocus)' + File.extname(file_name)
       client.file_move(File.join(path, file_name), File.join(path, new_file_name))
     rescue DropboxError => e
       raise unless e.message == 'File has been deleted' || e.message.match(/not found/)
