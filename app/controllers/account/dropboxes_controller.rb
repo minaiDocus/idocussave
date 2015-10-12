@@ -36,7 +36,7 @@ public
     else
       begin
         @dropbox.get_access_token
-        @dropbox.update_attributes(
+        @dropbox.update(
           dropbox_id:        params[:uid],
           delta_cursor:      nil,
           delta_path_prefix: nil,

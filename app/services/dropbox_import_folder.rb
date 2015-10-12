@@ -64,7 +64,7 @@ class DropboxImportFolder
         @current_cursor = delta['cursor']
       end
       update_folders
-      @dropbox.update_attributes(
+      @dropbox.update(
         delta_cursor:        @current_cursor,
         delta_path_prefix:   @current_path_prefix,
         import_folder_paths: folder_paths,
