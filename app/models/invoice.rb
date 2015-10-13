@@ -8,8 +8,6 @@ class Invoice
   field :number,                type: String
   field :vat_ratio,             type: Float,   default: 1.2
   field :amount_in_cents_w_vat, type: Integer
-  field :requested_at,          type: Date
-  field :received_at,           type: Date
 
   has_mongoid_attached_file :content,
     styles: {

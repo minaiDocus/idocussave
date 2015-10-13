@@ -23,3 +23,6 @@ jQuery ->
       data: data
       datatype: 'json'
       type: 'PATCH'
+
+  $("#check_all").change (e) ->
+    $(".invoices").prop('checked', $(this).prop('checked'))

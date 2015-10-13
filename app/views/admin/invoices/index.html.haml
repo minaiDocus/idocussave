@@ -6,47 +6,38 @@
   .row-fluid
     .span9
       = render partial: 'shared/list_options', locals: { collection: @invoices }
-      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
-        %thead
-          %tr
-            %th= sortable :number, t('mongoid.models.invoice.attributes.number')
-            %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-            %th= sortable :organization_id, t('mongoid.models.organization.name')
-            %th= sortable :user_id, t('mongoid.models.user.name')
-            %th.price= sortable :amount_in_cents_w_vat, t('mongoid.models.invoice.attributes.amount_w_vat')
-            %th= sortable :requested_at, t('mongoid.models.invoice.attributes.requested_at')
-            %th= sortable :received_at, t('mongoid.models.invoice.attributes.received_at')
-            %th.actions= t('actions.name')
-        %tbody
-          - @invoices.each do |invoice|
-            %tr{ id: "invoice_#{invoice.number}" }
-              %td= invoice.number
-              %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
-              %td
-                - if invoice.organization
-                  = link_to invoice.organization.name, account_organization_path(invoice.organization)
-              %td
-                - if invoice.user && !invoice.organization
-                  - if invoice.user.organization
-                    = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
-                  - else
-                    = invoice.user.code
-              %td.price
-                - if invoice.amount_in_cents_w_vat
-                  = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
-              %td.dynamic_date
-                .input-append.date.datepicker
-                  = text_field_tag 'invoice[requested_at]', invoice.requested_at.try(:strftime, "%Y-%m-%d"), class: 'select-date requested_at'
-                  %span.add-on
-                    %i.icon-th
-              %td.dynamic_date
-                .input-append.date.datepicker
-                  = text_field_tag 'invoice[received_at]', invoice.received_at.try(:strftime, "%Y-%m-%d"), class: 'select-date received_at'
-                  %span.add-on
-                    %i.icon-th
-              %td.actions
-                = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
-                = icon_link_to admin_invoice_path(invoice), { icon: 'download' }, { target: '_blank' }
+      = form_tag download_admin_invoices_path do |f|
+        %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+          %thead
+            %tr
+              %th= check_box_tag 'check_all'
+              %th= sortable :number, t('mongoid.models.invoice.attributes.number')
+              %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
+              %th= sortable :organization_id, t('mongoid.models.organization.name') + ' / ' + t('mongoid.models.user.name')
+              %th.price= sortable :amount_in_cents_w_vat, t('mongoid.models.invoice.attributes.amount_w_vat')
+              %th.actions= t('actions.name')
+          %tbody
+            - @invoices.each do |invoice|
+              %tr
+                %td= check_box_tag "invoice_ids[]", invoice.id, false, class: 'invoices'
+                %td= invoice.number
+                %td= l(invoice.created_at, format: '%d %b %Y %H:%M')
+                %td
+                  - if invoice.organization
+                    = link_to invoice.organization.name, account_organization_path(invoice.organization)
+                  - if invoice.user && !invoice.organization
+                    - if invoice.user.organization
+                      = link_to invoice.user.code, account_organization_customer_path(invoice.user.organization, invoice.user)
+                    - else
+                      = invoice.user.code
+                %td.price
+                  - if invoice.amount_in_cents_w_vat
+                    = format_price_00(invoice.amount_in_cents_w_vat) + ' €'
+                %td.actions
+                  = link_to icon_show, admin_invoice_path(invoice), class: 'do-showInvoice', title: "#{invoice.number}.pdf"
+                  = icon_link_to admin_invoice_path(invoice), { icon: 'download' }, { target: '_blank' }
+        %br
+        = submit_tag 'Télécharger les fichiers sélectionnés', class: 'btn btn-primary'
       = render partial: 'shared/list_options', locals: { collection: @invoices }
     .span3
       = render partial: 'sidebar'
