@@ -30,7 +30,7 @@ class Account::BankAccountsController < Account::FiduceoController
         collaborators = @user.groups.map(&:collaborators).flatten
         collaborators = [@user.organization.leader] if collaborators.empty?
         collaborators.each do |collaborator|
-          NotificationMailer.delay(priority: 1).new_bank_accounts(collaborator, @user, added_bank_accounts)
+          BankAccount.notify(collaborator.id.to_s, @user.id.to_s, added_bank_accounts.map(&:id).map(&:to_s))
         end
       end
       flash[:success] = 'Modifié avec succès.'
