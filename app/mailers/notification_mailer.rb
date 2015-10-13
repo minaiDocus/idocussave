@@ -16,10 +16,10 @@ class NotificationMailer < ActionMailer::Base
     mail(to: to, cc: cc, subject: "[iDocus] Modification de l'abonnement du client : #{user}")
   end
 
-  def new_bank_accounts(collaborator, user, bank_accounts)
+  def new_bank_accounts(collaborator, customer, bank_accounts)
     @collaborator  = collaborator
-    @user          = user
+    @customer      = customer
     @bank_accounts = bank_accounts
-    mail(to: @collaborator.email, subject: "[iDocus] compte bancaire paramétré par votre client #{@user.company}")
+    mail(to: @collaborator.email, subject: "[iDocus] compte bancaire paramétré par votre client #{@customer.company}")
   end
 end
