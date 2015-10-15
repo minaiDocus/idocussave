@@ -155,7 +155,7 @@
                 %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
                 %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
           - if @organization.ibiza
-            %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans Ibiza
+            %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans Ibiza (colonne Pièces dans iBIza)
             %table.table.table-condensed.table-striped
               %thead
                 %tr
@@ -264,12 +264,12 @@
                   %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
                   %td
                 %tr
-                  %td.name Référence pièce
+                  %td.name Référence pièce d'origine
                   %td.is_used
                     - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
                     = value ? t('yes_value') : t('no_value')
                   %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
-                  %td
+                  %td Permet d'afficher dans IbiZa une référence dans la colonne Ref pièce d'iBiZa (la colonne doit être affichée)
           - if is_leader?
             .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
         #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }

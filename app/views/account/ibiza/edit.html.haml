@@ -10,7 +10,7 @@
           = f.input :token, hint: link_to('Obtenir un jeton', "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
           = f.input :is_auto_deliver, as: :boolean
         %fieldset
-          %legend Format de nom de la pièce iDocus dans Ibiza
+          %legend Format de nom de la pièce iDocus dans Ibiza (colonne Pièces dans iBIza)
           %table.table.table-condensed
             %thead
               %tr
@@ -124,9 +124,9 @@
                 %td
                   %label.checkbox
                     = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
-                    %span.text Référence pièce
+                    %span.text Référence pièce d'origine
                 %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
-                %td
+                %td Permet d'afficher dans IbiZa une référence dans la colonne Ref pièce d'iBiZa (la colonne doit être affichée)
           = f.input :description_separator
         .form-actions.margin0bottom
           = f.submit 'Valider', class: 'btn btn-primary'
