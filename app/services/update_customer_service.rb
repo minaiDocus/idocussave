@@ -16,7 +16,7 @@ class UpdateCustomerService
         @customer.save
         WelcomeMailer.welcome_customer(@customer, token).deliver
       end
-      DropboxImportFolder.changed(@user, true) if @customer.company_changed?
+      DropboxImportFolder.changed(@user) if @customer.company_changed?
       if previous_group_ids.sort != @customer.group_ids.sort
         groups = Group.find (previous_group_ids + @customer.group_ids)
         collaborators = groups.map(&:collaborators).flatten
