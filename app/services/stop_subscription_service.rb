@@ -33,7 +33,7 @@ class StopSubscriptionService
     end
     @user.composition.try(:destroy)
     @user.debit_mandate.try(:destroy)
-    DropboxImportFolder.changed(@user, true)
+    DropboxImportFolder.changed(@user)
     @user.valid?
   end
 end
