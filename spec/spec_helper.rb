@@ -8,6 +8,7 @@ ENV["RAILS_ENV"] ||= 'test'
 
 # Set webmock, that is used by vcr, to allow net connections BEFORE we require the environment file
 require 'webmock'
+require 'webmock/rspec'
 
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
@@ -41,6 +42,8 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   config.infer_spec_type_from_file_location!
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
 
   config.around(:each, :vcr) do |example|
     name = example.metadata[:full_description].split(/\s+/, 2).join("/").underscore.gsub(/[^\w\/]+/, "_")

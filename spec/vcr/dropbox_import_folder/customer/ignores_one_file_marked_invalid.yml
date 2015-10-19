@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropbox.com/1/delta?cursor=AAGhHsG9BlDjdqkKJcMLfvLsqzdvLjJTPApmP8wmri38SbyLxPRYJNURdxWWO7z8moNn0FNzU-14QEwcEC-Iam7N7fVPIY8I82u9Ulw39E1UFBLfO4yth56qliWTZr5ZPOVEibKa_retswglhwnFZ4l2s0Ggv1CTy9IkMkkZtlmOCcuSH9xaGgeWaop5f0qwAWY&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - '*/*'
+      User-Agent:
+      - OfficialDropboxRubySDK/1.1
+      Authorization:
+      - OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn",
+        oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Mon, 12 Oct 2015 12:39:58 GMT
+      Content-Type:
+      - text/javascript
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Content-Type-Options:
+      - nosniff
+      X-Server-Response-Time:
+      - '43'
+      X-Dropbox-Request-Id:
+      - 456e2d4146af5a23c3c2058db594827d
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Frame-Options:
+      - SAMEORIGIN
+    body:
+      encoding: US-ASCII
+      string: '{"has_more": false, "cursor": "AAGtycDeEP4Vgiw0FAoz9kVk5mc_Gpthr3V8c0W8yn769-Yq-pIHr3OMxcuMJOLn9UXWpHx5DnlIkpSWT73VZnu2ouzqHp1Kd2AO2tdUL9D0MtFghxXBuNxICl4kmOpfILsj3jy_rvqQD25edU1AV_xwvMnTxtoQC09-Gubdt9ogdtm8MGMDkBHKv0Nl0HdSKzM",
+        "entries": [["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/corrupted.pdf",
+        null], ["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/corrupted
+        (erreur fichier non valide pour idocus).pdf", {"rev": "1653d59c017", "thumb_exists":
+        false, "path": "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode
+        actuelle/AC/corrupted (erreur fichier non valide pour idocus).pdf", "is_dir":
+        false, "client_mtime": "Mon, 12 Oct 2015 12:09:47 +0000", "icon": "page_white_acrobat",
+        "bytes": 1117, "modified": "Mon, 12 Oct 2015 12:38:55 +0000", "size": "1.1
+        KB", "root": "app_folder", "mime_type": "application/pdf", "revision": 357}]],
+        "reset": false}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+recorded_with: VCR 2.9.3
