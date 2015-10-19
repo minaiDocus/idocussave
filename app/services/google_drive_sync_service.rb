@@ -68,8 +68,7 @@ class GoogleDriveSyncService
       remote_filepath = File.join(remote_path, remote_file.name)
       remote_file.sending!(remote_filepath)
       print "\t[#{'%0.3d' % (index+1)}] #{remote_filepath} sending..."
-      mimetype = DocumentTools.mimetype(remote_file.name)
-      collection.upload_from_file(remote_file.local_path, remote_file.name, { content_type: mimetype })
+      collection.upload_from_file(remote_file.local_path, remote_file.name, :convert => false)
       remote_file.synced!
       print "done\n"
     rescue => e
