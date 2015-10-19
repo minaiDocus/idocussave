@@ -252,7 +252,7 @@ private
         end
         unless is_already_added
           customer, journal, period_offset = get_info_from_path unused_folder_path
-          if customer
+          if customer && unused_folder_path.match(/\/#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}\//)
             paths << unused_folder_path
           else
             paths << unused_folder_path.split('/')[0..3].join('/')
