@@ -123,11 +123,32 @@ private
   end
 
   def folder_states
-    @folder_states ||= folder_paths.map { |path| [path, @initial_cursor.present?] }
+    if @folder_states
+      @folder_states
+    else
+      new_folder_paths = folder_paths - @dropbox.import_folder_paths
+      unused_folder_paths = @dropbox.import_folder_paths - folder_paths
+
+      @folder_states = folder_paths.map do |folder_path|
+        if new_folder_paths.include?(folder_path)
+          [folder_path, false]
+        else
+          [folder_path, @initial_cursor.present?]
+        end
+      end
+
+      @folder_states += unused_folder_paths.map do |folder_path|
+        [folder_path, nil]
+      end
+
+      @folder_states
+    end
   end
 
-  def deleted_folder_paths
-    folder_states.select { |path, is_present| !is_present }.map(&:first)
+  def already_removed_folder(path)
+    @folder_states.delete_if do |folder_state|
+      folder_state[0].downcase == path
+    end
   end
 
   def process_entry(path, metadata)
@@ -135,7 +156,7 @@ private
       if metadata['is_dir']
         folder_states.each do |folder_state|
           if folder_state.first.downcase == path
-            folder_state[1] = true
+            folder_state[1] = true unless folder_state[1].nil?
           end
         end
       else
@@ -144,7 +165,11 @@ private
     elsif File.extname(path).empty?
       folder_states.each do |folder_state|
         if folder_state.first.downcase.match /\A#{Regexp.quote(path)}/
-          folder_state[1] = false
+          if folder_state[1] == true
+            folder_state[1] = false
+          elsif folder_state[1].nil?
+            already_removed_folder(path)
+          end
         end
       end
     end
@@ -214,7 +239,7 @@ private
   end
 
   def remove_folders
-    unused_folder_paths = @dropbox.import_folder_paths - folder_paths
+    unused_folder_paths = folder_states.select { |path, state| state.nil? }.map(&:first)
     if user.is_prescriber
       paths = []
       unused_folder_paths.each do |unused_folder_path|
@@ -246,8 +271,7 @@ private
   end
 
   def add_folders
-    new_folder_paths = folder_paths - @dropbox.import_folder_paths
-    new_folder_paths += deleted_folder_paths
+    new_folder_paths = folder_states.select { |path, state| state == false }.map(&:first)
     new_folder_paths.uniq.each do |new_folder_path|
       begin
         client.file_create_folder new_folder_path
