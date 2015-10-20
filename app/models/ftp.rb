@@ -74,7 +74,7 @@ class Ftp
   end
 
   def is_updated(remote_file_name, file_path)
-    result = client.list.select { |entry| entry.match(/#{remote_file_name}/) }.first
+    result = client.list.select { |entry| entry.force_encoding('UTF-8').match(/#{remote_file_name}/) }.first
     if result
       size = result.split(/\s/).reject(&:empty?)[4].to_i rescue 0
       if size == File.size(file_path)
