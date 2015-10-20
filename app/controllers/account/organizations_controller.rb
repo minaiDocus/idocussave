@@ -146,12 +146,12 @@ private
   helper_method :is_leader?
 
   def sort_column
-    params[:sort] || 'created_at'
+    params[:sort] || 'name'
   end
   helper_method :sort_column
 
   def sort_direction
-    params[:direction] || 'desc'
+    params[:direction] || 'asc'
   end
   helper_method :sort_direction
 
