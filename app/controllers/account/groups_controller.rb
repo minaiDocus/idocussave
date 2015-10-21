@@ -75,7 +75,7 @@ private
         { member_tokens: [] }
       )
     else
-      params.require(:group).permit(:customer_tokens)
+      params.require(:group).permit(customer_tokens: [])
     end
   end
 
