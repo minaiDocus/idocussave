@@ -40,6 +40,7 @@ class Group
       members.clear
       User.find(user_ids).each do |user|
         members << user
+        user.timeless.save unless persisted?
       end
     end
   end
