@@ -6,7 +6,8 @@
           .pull-left
             %h3 Liste des collaborateurs (#{@collaborators.count})
           .pull-right
-            = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
+            -if @organization.is_active
+              = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
 
   .row-fluid
     .span9.box
@@ -26,7 +27,7 @@
                   %td.user_info
                     %span.info= link_to collaborator.info, account_organization_collaborator_path(@organization, collaborator)
                   %td
-                    - unless collaborator.is_admin
+                    - if @organization.is_active && !collaborator.is_admin
                       = link_to icon_destroy, account_organization_collaborator_path(@organization, collaborator), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
       = render partial: 'shared/list_options', locals: { collection: @collaborators }
     .span3.box

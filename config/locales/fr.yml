@@ -585,6 +585,8 @@ fr:
           centralized_customers_count: Nombre de clients centralisés
           is_detail_authorized: Autoriser les détails dans le reporting ?
           is_test: Mode test ?
+          is_for_admin: Administratif ?
+          is_active: Est actif ?
           is_suspended: Est suspendu ?
           is_journals_management_centralized: Gestion des journaux comptables centralisé ?
           is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?

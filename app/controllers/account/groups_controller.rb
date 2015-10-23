@@ -50,8 +50,8 @@ class Account::GroupsController < Account::OrganizationController
 private
 
   def verify_rights
-    unless is_leader?
-      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && @user.cannot_manage_groups?)
+    unless is_leader? && @organization.is_active
+      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && @user.cannot_manage_groups?) || !@organization.is_active
         flash[:error] = t('authorization.unessessary_rights')
         redirect_to account_organization_path(@organization)
       end

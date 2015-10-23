@@ -16,6 +16,8 @@ class Organization
   field :is_subscription_lower_options_enabled, type: Boolean, default: false
   # Misc
   field :is_test,                         type: Boolean, default: false
+  field :is_for_admin,                    type: Boolean, default: false
+  field :is_active,                       type: Boolean, default: true
   field :is_suspended,                    type: Boolean, default: false
   field :is_quadratus_used,               type: Boolean, default: false
   field :is_pre_assignment_date_computed, type: Boolean, default: false
@@ -66,10 +68,14 @@ class Organization
 
   embeds_many :addresses, as: :locatable
 
-  scope :not_billed,  -> { where(is_test: true) }
-  scope :billed,      -> { where(is_test: false) }
+  scope :not_billed,  -> { where('$or' => [{is_test: true}, {is_active: false}, {is_for_admin: true}]) }
+  scope :billed,      -> { where(is_test: false, is_active: true, is_for_admin: false) }
   scope :suspended,   -> { where(is_suspended: true) }
   scope :unsuspended, -> { where(is_suspended: false) }
+  scope :admin,       -> { where(is_for_admin: true) }
+  scope :client,      -> { where(is_for_admin: false) }
+  scope :active,      -> { where(is_active: true) }
+  scope :inactive,    -> { where(is_active: false) }
 
   def collaborators
     members.where(is_prescriber: true)

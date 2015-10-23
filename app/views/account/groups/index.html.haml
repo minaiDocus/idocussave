@@ -4,7 +4,7 @@
       .pull-left
         %h3 Liste des groupes (#{@groups.count})
       .pull-right
-        - if is_leader?
+        - if is_leader? && @organization.is_active
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
   .row-fluid
     .span9.box
@@ -27,14 +27,15 @@
                   %td= group.collaborators.count
                   %td= group.customers.count
                   %td.last
-                    - if is_leader? || @user.can_manage_groups?
-                      = icon_link_to edit_account_organization_group_path(@organization, group), { icon: 'edit' }, { class: 'btn btn-mini' }
-                    - if is_leader?
-                      - if group.is_dropbox_authorized
-                        - confirm = "Attention ! la suppression de ce groupe entraîne l'arrêt du déversement automatique de ses documents dans votre dropbox. Voulez-vous continuer ?"
-                      - else
-                        - confirm = 'Etês vous sûr ?'
-                      = icon_link_to account_organization_group_path(@organization, group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: confirm } }
+                    - if @organization.is_active
+                      - if is_leader? || @user.can_manage_groups?
+                        = icon_link_to edit_account_organization_group_path(@organization, group), { icon: 'edit' }, { class: 'btn btn-mini' }
+                      - if is_leader?
+                        - if group.is_dropbox_authorized
+                          - confirm = "Attention ! la suppression de ce groupe entraîne l'arrêt du déversement automatique de ses documents dans votre dropbox. Voulez-vous continuer ?"
+                        - else
+                          - confirm = 'Etês vous sûr ?'
+                        = icon_link_to account_organization_group_path(@organization, group), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: confirm } }
       = render partial: 'shared/list_options', locals: { collection: @groups }
     .span3.box
       = render partial: 'sidebar'

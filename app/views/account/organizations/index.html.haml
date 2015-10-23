@@ -22,6 +22,8 @@
                   %th= label_tag 'organization_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
                   %th= label_tag 'organization_contains[created_at][$lte]', t('mongoid.models.common.attributes.created_at')
                   %th= label_tag 'organization_contains[is_test]', t('mongoid.models.organization.attributes.is_test') + " (#{Organization.not_billed.count})"
+                  %th= label_tag 'organization_contains[is_for_admin]', 'Est client ?' + " (#{Organization.client.count})"
+                  %th= label_tag 'organization_contains[is_active]', 'Est inactif ?' + " (#{Organization.inactive.count})"
                   %th= label_tag 'organization_contains[is_suspended]', t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
                   %th= label_tag 'organization_contains[is_without_address]', "Sans adresse ? (#{@without_address_count})"
                   %th= label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ? (#{@debit_mandate_not_configured_count})"
@@ -39,7 +41,9 @@
                       = text_field_tag 'organization_contains[created_at][$lte]', (params[:organization_contains][:created_at]['$lte'] rescue ''), class: 'input-small', placeholder: 'Fin'
                       %span.add-on
                         %i.icon-th
-                  %td= select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue nil)), include_blank: true
+                  %td= select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue 0)), include_blank: true
+                  %td= select_tag 'organization_contains[is_for_admin]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_for_admin] rescue 0)), include_blank: true
+                  %td= select_tag 'organization_contains[is_active]', options_for_select([['Oui', 0], ['Non', 1]], (params[:organization_contains][:is_active] rescue 1)), include_blank: true
                   %td= select_tag 'organization_contains[is_suspended]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_suspended] rescue nil)), include_blank: true
                   %td= select_tag 'organization_contains[is_without_address]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_without_address] rescue nil)), include_blank: true
                   %td= select_tag 'organization_contains[is_debit_mandate_not_configured]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_debit_mandate_not_configured] rescue nil)), include_blank: true
@@ -58,6 +62,8 @@
               %tr
                 %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
                 %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test')
+                %th= sortable :is_for_admin, 'Est client ?'
+                %th= sortable :is_active, 'Est inactif ?'
                 %th= sortable :is_suspended, t('mongoid.models.organization.attributes.is_suspended')
                 %th Sans adresse ?
                 %th Prélèvement non configuré ?
@@ -69,6 +75,8 @@
                 %tr
                   %td= l(organization.created_at)
                   %td= organization.is_test ? icon_ok : ''
+                  %td= organization.is_for_admin ? '' : icon_ok
+                  %td= organization.is_active ? '' : icon_ok
                   %td= organization.is_suspended ? icon_ok : ''
                   %td= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? icon_ok : ''
                   %td= organization.leader.try(:debit_mandate).try(:is_configured?) ? '' : icon_ok
@@ -76,7 +84,7 @@
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
                   %td
                     - if organization.is_suspended
-                      = link_to 'Activer', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
+                      = link_to 'Reprendre', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
                     - else
                       = link_to 'Suspendre', suspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'
       = render partial: 'shared/list_options', locals: { collection: @organizations }

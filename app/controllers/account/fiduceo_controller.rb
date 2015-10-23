@@ -7,7 +7,7 @@ class Account::FiduceoController < Account::AccountController
 private
 
   def verify_rights
-    unless @user.is_fiduceo_authorized
+    unless @user.is_fiduceo_authorized && @user.organization.is_active
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end

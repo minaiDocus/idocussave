@@ -73,6 +73,11 @@ private
     unless is_leader? || @user.can_manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
+    else
+      if action_name.in?(%w(new create destroy edit update)) && !@organization.is_active
+        flash[:error] = t('authorization.unessessary_rights')
+        redirect_to account_organization_path(@organization)
+      end
     end
   end
 

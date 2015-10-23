@@ -16,7 +16,7 @@
           = link_to 'Mon organisation', account_organization_path(@user.organization)
       %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
         = link_to 'Mes documents', account_documents_path
-      - if @user.active?
+      - if @user.active? && @user.organization.is_active
         %li{ :class=>('active' if controller_name == 'reporting') }
           = link_to 'Mon reporting', account_reporting_path
         - if @user.is_fiduceo_authorized

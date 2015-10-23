@@ -45,9 +45,12 @@ Idocus::Application.routes.draw do
     root to: 'account/account#index'
     resources :organizations, except: :destroy do
       get   :edit_options,   on: :collection
+      get   :close_confirm,  on: :member
       patch :update_options, on: :collection
       patch :suspend,        on: :member
       patch :unsuspend,      on: :member
+      patch :activate,       on: :member
+      patch :deactivate,     on: :member
       resources :addresses, controller: 'organization_addresses'
       resource :period_options, only: %w(edit update), controller: 'organization_period_options' do
         get  :select_propagation_options, on: :member

@@ -76,6 +76,22 @@ class Account::OrganizationsController < Account::AccountController
     redirect_to account_organizations_path
   end
 
+  def activate
+    @organization.update_attribute(:is_active, true)
+    flash[:success] = 'Activé avec succès.'
+    redirect_to account_organization_path(@organization)
+  end
+
+  def deactivate
+    DeactivateOrganization.new(@organization.id.to_s).execute
+    @organization.update_attribute(:is_active, false)
+    flash[:success] = 'Désactivé avec succès.'
+    redirect_to account_organization_path(@organization)
+  end
+
+  def close_confirm
+  end
+
 private
 
   def verify_rights
@@ -157,6 +173,7 @@ private
 
   def organization_contains
     @contains ||= {}
+    @default_contains = {:is_test => '0', :is_for_admin => '0', :is_active => '1'}
     if params[:organization_contains] && @contains.blank?
       @contains = params[:organization_contains].delete_if do |key,value|
         if value.blank? && !value.is_a?(Hash)
@@ -168,8 +185,10 @@ private
           false
         end
       end
+      @contains
+    else
+      @default_contains
     end
-    @contains
   end
   helper_method :organization_contains
 
@@ -177,6 +196,8 @@ private
     organizations = Organization.all.includes(:leader)
     organizations = organizations.where(created_at:   contains[:created_at])                      unless contains[:created_at].blank?
     organizations = organizations.where(is_test:      (contains[:is_test] == '1'))                unless contains[:is_test].blank?
+    organizations = organizations.where(is_for_admin: (contains[:is_for_admin] == '1'))           unless contains[:is_for_admin].blank?
+    organizations = organizations.where(is_active:    (contains[:is_active] == '1'))              unless contains[:is_active].blank?
     organizations = organizations.where(is_suspended: (contains[:is_suspended] == '1'))           unless contains[:is_suspended].blank?
     if contains[:is_without_address].present?
       if contains[:is_without_address] == '1'
