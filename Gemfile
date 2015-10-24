@@ -48,6 +48,7 @@ gem 'hirb', :require => false
 gem 'mongoid-locker'
 gem 'ckeditor'
 gem 'whenever', :require => false
+gem 'dropbox-sdk', :require => 'dropbox_sdk'
 
 gem 'eco'
 gem 'sass-rails', '4.0.5'

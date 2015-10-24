@@ -115,10 +115,6 @@ Idocus::Application.routes.draw do
           end
         end
       end
-      resource :dropbox_extended, only: [] do
-        get 'authorize_url', on: :member
-        get 'callback',      on: :member
-      end
       resources :journals, except: 'show'
       resource :organization_subscription, only: %w(edit update) do
         get   'select_options',    on: :collection

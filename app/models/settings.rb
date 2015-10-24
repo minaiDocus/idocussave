@@ -9,7 +9,7 @@ class Settings
   setting :notify_on_ibiza_delivery,       type: String, default: 'error' # yes/no/error
   setting :notify_scans_not_delivered_to,  type: Array,  default: []
 
-  setting :dropbox_extended_session
+  setting :dropbox_extended_access_token
 
   # operator : { username: '', password: '', scanning_provider: '', is_return_labels_authorized: false }
   setting :paper_process_operators, type: Array, default: []

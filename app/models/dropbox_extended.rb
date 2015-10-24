@@ -5,43 +5,32 @@ class DropboxExtended
       ExternalFileStorage::PDF
     end
 
-    def get_session
-      session = nil
-      if Settings.dropbox_extended_session.present?
-        session = DropboxSession.deserialize(Settings.dropbox_extended_session)
-      else
-        session = DropboxSession.new(DropboxExtended::APP_KEY, DropboxExtended::APP_SECRET)
-      end
-      session.get_request_token
-      save_session session
-      session
+    def get_authorize_url
+      @flow ||= DropboxOAuth2FlowNoRedirect.new(Dropbox::EXTENDED_APP_KEY, Dropbox::EXTENDED_APP_SECRET)
+      @flow.start
     end
 
-    def save_session(session)
-      Settings.dropbox_extended_session = session.serialize
+    def get_access_token(code)
+      @flow ||= DropboxOAuth2FlowNoRedirect.new(Dropbox::EXTENDED_APP_KEY, Dropbox::EXTENDED_APP_SECRET)
+      self.access_token, user_id = @flow.finish(code)
+      reset_client
+      access_token
     end
 
-    def get_authorize_url(callback='')
-      session = get_session
-      if callback.empty?
-        session.get_authorize_url
-      else
-        session.get_authorize_url callback
-      end
+    def access_token
+      Settings.dropbox_extended_access_token
     end
 
-    def get_access_token
-      session = get_session
-      session.get_access_token
-      save_session session
-    end
-
-    def reset_session
-      Settings.dropbox_extended_session = nil
+    def access_token=(token)
+      Settings.dropbox_extended_access_token = token
     end
 
     def client
-      @client ||= DropboxClient.new(get_session, DropboxExtended::ACCESS_TYPE)
+      @client ||= DropboxClient.new(access_token, Dropbox::EXTENDED_ACCESS_TYPE)
+    end
+
+    def reset_client
+      @client = nil
     end
 
     def is_up_to_date(remote_filepath, filepath)

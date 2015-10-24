@@ -2,18 +2,19 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.dropbox.com/1/delta?cursor=AAG2JqUOLV_173LQAf6tJMKGMbDfuhBN9RfaUT7ShWoIhHQdWMU8QfgR2PAwFavUXOt8ej36yQDbkmRyh-kP8h1j_PklEVzNKG6HBclc5Fwirn-MHnL9dxYReqopWJfD1U82YMlAGDiFzvZfVyn7EviqOXfNpin_5KHHt3z9Et-u5g&path_prefix=/exportation%20vers%20iDocus/TS%25COL1
+    uri: https://api.dropbox.com/1/delta
     body:
       encoding: US-ASCII
-      string: ''
+      string: cursor=AAGZ2f4nTuNezjIJ7SbaToHSCdtrd6BFQmAZI1s0V3xzwyXXcPxepqYyAbiXaO8034W2oW_8uCSInbCiZwFgJ5OSsMOzgEuMs-3QxQm_fqyfiXQWa5l6HwSVkyFivDeGZWPAw-_gaJLNHquGJd35NW-AVn0FWVEy-dnEBsulrE4M7w&path_prefix=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1
     headers:
       Accept:
       - '*/*'
       User-Agent:
-      - OfficialDropboxRubySDK/1.1
+      - OfficialDropboxRubySDK/1.6.5
+      Content-Type:
+      - application/x-www-form-urlencoded
       Authorization:
-      - OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn",
-        oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"
+      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
   response:
     status:
       code: 200
@@ -22,7 +23,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 13 Oct 2015 16:19:51 GMT
+      - Sat, 24 Oct 2015 19:23:06 GMT
       Content-Type:
       - text/javascript
       Transfer-Encoding:
@@ -31,10 +32,13 @@ http_interactions:
       - keep-alive
       X-Content-Type-Options:
       - nosniff
+      Set-Cookie:
+      - gvc=MjY2NTM1MjUzNDcxODcyMjYxMDEwNTc3OTcwMDUwOTE2MjI1NDgw; expires=Thu, 22
+        Oct 2020 19:23:06 GMT; httponly; Path=/; secure
       X-Server-Response-Time:
-      - '53'
+      - '65'
       X-Dropbox-Request-Id:
-      - 91c8975ec4d26d05369f158b53bdfbcb
+      - efbc3c3c7891de07fb9aaec759b3ce4b
       Pragma:
       - no-cache
       Cache-Control:
@@ -45,16 +49,16 @@ http_interactions:
       - SAMEORIGIN
     body:
       encoding: US-ASCII
-      string: '{"has_more": false, "cursor": "AAFTQsbKiqFgM0AiRuQ4PA07KluNBgRehry6_d5aMlcRCRWh-SM_j5DAax1xfQiHfHGE7rwo9gdRqRFI4OUSipqjdGS3N5wZYWVekRFdLrUyEK9rdxqhRdCNednnIy_iuEPBYr8abbtOOto63_lOP3UH7c16BB0FXSdoEGW4H6MPag",
+      string: '{"has_more": false, "cursor": "AAHVB1HPH6ovrzxlkydqq4vZKNO8Gx4geZ-5BcRI3A82_vNB8gv_MJ7l4gnsEuI6QXn1jwcOnrEyYYQWoyFVBzVuDzgZAKw4e6yKu-6kqornG0QqIWSU-vTHC-pYBxSMLE05enxUaUoROHL1JSN3il0jnKSpdLdcOKBdrAy8VpJTwQ",
         "entries": [["/exportation\u00a0vers idocus/ts%col1/ts%0001 - abc/p\u00e9riode
         actuelle/ac/corrupted.pdf", null], ["/exportation\u00a0vers idocus/ts%col1/ts%0001
         - abc/p\u00e9riode actuelle/ac/corrupted (erreur fichier non valide pour idocus).pdf",
-        {"rev": "1923d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
+        {"rev": "2c33d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
         iDocus/TS%COL1/TS%0001 - ABC/p\u00e9riode actuelle/AC/corrupted (erreur fichier
-        non valide pour iDocus).pdf", "is_dir": false, "client_mtime": "Tue, 13 Oct
-        2015 16:16:20 +0000", "icon": "page_white_acrobat", "bytes": 1117, "modified":
-        "Tue, 13 Oct 2015 16:16:35 +0000", "size": "1.1 KB", "root": "app_folder",
-        "mime_type": "application/pdf", "revision": 402}]], "reset": false}'
+        non valide pour iDocus).pdf", "is_dir": false, "client_mtime": "Sat, 24 Oct
+        2015 19:18:56 +0000", "icon": "page_white_acrobat", "bytes": 1117, "modified":
+        "Sat, 24 Oct 2015 19:19:11 +0000", "size": "1.1 KB", "root": "app_folder",
+        "mime_type": "application/pdf", "revision": 707}]], "reset": false}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 recorded_with: VCR 2.9.3

@@ -6,14 +6,14 @@ class Account::DropboxesController < Account::AccountController
 private
 
   def dropbox_authorized?
-    unless @user.external_file_storage.try("is_dropbox_basic_authorized?")
+    unless @user.external_file_storage.try(:is_dropbox_basic_authorized?)
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Dropbox."
       redirect_to account_profile_path
     end
   end
 
   def load_dropbox
-    @dropbox = @user.external_file_storage.try("dropbox_basic")
+    @dropbox = @user.external_file_storage.try(:dropbox_basic)
     if @dropbox.nil?
       @dropbox = DropboxBasic.new
       @user.find_or_create_external_file_storage.dropbox_basic = @dropbox
@@ -24,29 +24,36 @@ private
 public
 
   def authorize_url
-    @dropbox.reset_session
-    @dropbox.new_session
-    redirect_to @dropbox.get_authorize_url callback_account_dropbox_url
-    # render :text => @dropbox.get_authorize_url(callback_account_dropbox_url)
+    flow = DropboxOAuth2FlowBase.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
+    session[:dropbox_basic_state] = SecureRandom.hex(30)
+    redirect_to flow._get_authorize_url(callback_account_dropbox_url, session[:dropbox_basic_state])
   end
 
   def callback
-    if params[:not_approved] == 'true'
-      flash[:notice] = 'Configuration de Dropbox annulée.'
-    else
-      begin
-        @dropbox.get_access_token
-        @dropbox.update(
-          dropbox_id:        params[:uid],
-          delta_cursor:      nil,
-          delta_path_prefix: nil,
-          changed_at:        Time.now
-        )
-        flash[:notice] = 'Votre compte Dropbox a été configuré avec succès.'
-      rescue DropboxAuthError
-        flash[:error] = 'Impossible de configurer votre compte Dropbox.'
+    if params[:state].present? && params[:state] == session[:dropbox_basic_state]
+      if params[:error] == 'access_denied'
+        flash[:notice] = "Vous avez refusé l'accès à votre compte Dropbox."
+      else
+        begin
+          flow = DropboxOAuth2FlowBase.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
+          access_token, user_id = flow._finish(params[:code], callback_account_dropbox_url)
+          @dropbox.client.disable_access_token if @dropbox.is_configured?
+          @dropbox.update(
+            access_token:      access_token,
+            dropbox_id:        user_id,
+            delta_cursor:      nil,
+            delta_path_prefix: nil,
+            changed_at:        Time.now
+          )
+          flash[:success] = 'Votre compte Dropbox a été configuré avec succès.'
+        rescue DropboxAuthError
+          flash[:error] = 'Impossible de configurer votre compte Dropbox.'
+        end
       end
+    else
+      flash[:error] = 'La requête est invalide ou a expiré.'
     end
+    session[:dropbox_basic_state] = nil
     redirect_to account_profile_path(panel: 'efs_management')
   end
 end

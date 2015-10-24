@@ -5,7 +5,7 @@ class DropboxBasic
 
   belongs_to :external_file_storage
 
-  field :session,              type: String,  default: ''
+  field :access_token
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'
   field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
@@ -18,43 +18,24 @@ class DropboxBasic
 
   validate :beginning_of_path
 
+  before_destroy do
+    self.class.disable_access_token(self.access_token) if self.access_token.present?
+  end
+
+  class << self
+    def disable_access_token(access_token)
+      client = DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
+      client.disable_access_token
+    end
+    handle_asynchronously :disable_access_token, priority: 5
+  end
+
   def user
     external_file_storage.user
   end
 
-  def new_session
-    unless @current_session
-      if self.session.present?
-        @current_session = DropboxSession.deserialize(self.session)
-      else
-        @current_session = DropboxSession.new(Dropbox::APP_KEY, Dropbox::APP_SECRET)
-      end
-      @current_session.get_request_token
-      update_attribute(:session, @current_session.serialize)
-    end
-    @current_session
-  end
-
-  def get_access_token
-    if self.session.present?
-      current_session = DropboxSession.deserialize(self.session)
-      current_session.get_access_token
-      update_attribute(:session, current_session.serialize)
-    else
-      false
-    end
-  end
-
-  def get_authorize_url(callback='')
-    if callback.empty?
-      new_session.get_authorize_url
-    else
-      new_session.get_authorize_url(callback)
-    end
-  end
-
   def is_configured?
-    new_session.authorized?
+    access_token.present?
   end
 
   def is_used?
@@ -63,15 +44,10 @@ class DropboxBasic
 
   def client
     if is_configured?
-      @client ||= DropboxClient.new(new_session, Dropbox::ACCESS_TYPE)
+      @client ||= DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
     else
       nil
     end
-  end
-
-  def reset_session
-    self.session = ''
-    self.save
   end
 
   def is_up_to_date(remote_filepath, filepath)

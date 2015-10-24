@@ -13,9 +13,7 @@
       %tr
         %th Dropbox Extended
         %td= icon_tag user.is_dropbox_extended_authorized
-        %td
-          = icon_tag(DropboxExtended.get_session.authorized?)
-          = link_to "#{DropboxExtended.get_session.authorized? ? 're' : ''}configurer", authorize_url_account_organization_dropbox_extended_path(@organization) + "?user=#{user.slug}", class: 'btn btn-mini'
+        %td= icon_tag(DropboxExtended.access_token.present?)
         %td
         %td= file_type_to_deliver user.file_type_to_deliver
         %td= user.dropbox_delivery_folder

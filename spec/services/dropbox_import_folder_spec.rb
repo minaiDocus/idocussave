@@ -22,16 +22,20 @@ describe DropboxImportFolder do
         efs = @user.find_or_create_external_file_storage
         efs.use ExternalFileStorage::F_DROPBOX
         @dropbox = efs.dropbox_basic
-        @dropbox.session = "---\n- 2dqp6mmtv6r0u6i\n- 59dfvae34ievygaw\n- Ef7bavtM3EGgW84G\n- A0evPNPJ9OAQrhlQ\n- x201tvs8q2eicni\n- bcdhzr36fnu5fpn\n"
+        @dropbox.access_token = '65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN'
         @dropbox.save
 
         @user.reload
 
         @headers = {
           'Accept'        => '*/*',
-          'Authorization' => 'OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn", oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"',
-          'User-Agent'    => 'OfficialDropboxRubySDK/1.1'
+          'Authorization' => 'Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN',
+          'User-Agent'    => 'OfficialDropboxRubySDK/1.6.5'
         }
+
+        @headers_2 = @headers.merge({
+          'Content-Type'  => 'application/x-www-form-urlencoded',
+        })
       end
 
       after(:all) do
@@ -48,29 +52,36 @@ describe DropboxImportFolder do
           DropboxImportFolder.new(@dropbox).check
         end
 
-        # delta
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta?path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt').with(headers: @headers)
+        folder_paths = [
+          '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC',
+          '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT',
+          '/exportation vers iDocus/TS%0001 - TeSt/période précédente/AC',
+          '/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT'
+        ]
 
+        # delta
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+          with(headers: @headers_2).
+          with(body: "path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
         # creates folder '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[0])}")
         # creates folder '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[1])}")
         # creates folder '/exportation vers iDocus/TS%0001 - TeSt/période précédente/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[2])}")
         # creates folder '/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[3])}")
 
         expect(WebMock).to have_requested(:any, /.*/).times(5)
 
         expect(@dropbox.checked_at).to be_present
         expect(@dropbox.delta_cursor).to be_present
         expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%0001 - TeSt')
-        expect(@dropbox.import_folder_paths).to eq([
-          '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC',
-          '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT',
-          '/exportation vers iDocus/TS%0001 - TeSt/période précédente/AC',
-          '/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT'
-        ])
+        expect(@dropbox.import_folder_paths).to eq(folder_paths)
       end
 
       context 'given initial folders have been created' do
@@ -86,7 +97,7 @@ describe DropboxImportFolder do
 
         context 'given a valid file at : /exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/test.pdf' do
           it 'fetches one valid file' do
-            delta_cursor = @dropbox.delta_cursor = 'AAHv8awX-MkrLKupZtbUIEIpDRa8ARiDFDSLVnpLxKBnZPmrXxeuxF1kYtkXqOk5SbcO3hoEoTcPNDZFszHtCg4xdMFz167WZrmL7TV3B9vtq1Rpmx8ZBWfgtnsJj0B6_zUml-6D65RWAUJMM7_a7_cozm0SbRDhE2rX6y0pCZ5l59A5vH9HDvqsiFIgSYf5oDo'
+            delta_cursor = @dropbox.delta_cursor = 'AAHUYFz8b09BNdQnXbWzcMx1onR8cUW1DO4QsuuDTvXQAaXaT-aaOD_oeztZp1WrR52g2avgtXRjrw5k2fWTnKdojCoGxnV4VkuN334RireEhKOiPaEL9RwCgPd2q7uEiXIRrVv5oEmIf_1XrXqtLtlUtHek9Da3ZMkEi8fXLaIOpqUWOjO1ipjLOzYigMYMbp4'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/fetches_one_valid_file') do
@@ -94,11 +105,16 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # get file
-            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/test.pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/test.pdf').
+              with(headers: @headers)
             # delete file
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/test.pdf&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).
+              with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/test.pdf'.downcase)}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -113,7 +129,7 @@ describe DropboxImportFolder do
 
         context 'given an invalid file at : /exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted.pdf' do
           it 'marks one invalid file' do
-            delta_cursor = @dropbox.delta_cursor = 'AAFT8pB18BeBFBmgMJnIij1oalkQaI86DItmZF2gOtvj2KT-qdxLwRqNVek4KIyafXUQiIjMdH0toxfY-WtjDHDD4esnbBudO0rxau4WnOpzUeW1OVol7EmY_rXOL_r5gkuqgcbbA5Pr5ovDAWwRs2cKG05PhM6XJWBxrlCgUJ1UlVXrmmn7wTikUQMVVvpkIUE'
+            delta_cursor = @dropbox.delta_cursor = 'AAHvNtByv6vt4jX-RTfuwQ473Lk7IfzEsEKKcuALOWX5WqWNI313siq-aYS7_UCiK0742nh64Ic0skeE7z7goiyhL9I1O0I8Tq5UcA7WJnVlGYct7TPgVtvDPAOFdnNmZx5E-v1M8-dgXcMvdri4Q4EdGFgtg3elKaYPsSXcGqHJq9NHQpfNMeOKuLcBnzpAOqY'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/marks_one_invalid_file') do
@@ -121,11 +137,16 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # get file
-            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/corrupted.pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/corrupted.pdf').
+              with(headers: @headers)
             # rename file
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move?from_path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/corrupted.pdf&root=sandbox&to_path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/corrupted%20(erreur%20fichier%20non%20valide%20pour%20iDocus).pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move').
+              with(headers: @headers_2).
+              with(body: 'root=sandbox&from_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fac%2Fcorrupted.pdf&to_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fac%2Fcorrupted+%28erreur+fichier+non+valide+pour+iDocus%29.pdf')
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -136,7 +157,7 @@ describe DropboxImportFolder do
 
         context 'given an invalid file already marked at : /exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC/corrupted (erreur fichier non valide pour idocus).pdf' do
           it 'ignores one file marked invalid' do
-            delta_cursor = @dropbox.delta_cursor = 'AAGhHsG9BlDjdqkKJcMLfvLsqzdvLjJTPApmP8wmri38SbyLxPRYJNURdxWWO7z8moNn0FNzU-14QEwcEC-Iam7N7fVPIY8I82u9Ulw39E1UFBLfO4yth56qliWTZr5ZPOVEibKa_retswglhwnFZ4l2s0Ggv1CTy9IkMkkZtlmOCcuSH9xaGgeWaop5f0qwAWY'
+            delta_cursor = @dropbox.delta_cursor = 'AAH-omVMlxwDei1x3DtMP1YFpKwLR_XGT939FfQ-GFXD5R8Ab_OkffQGZa8CsrCqZvnSaIobgc8FdqcuJXCTIdT799MMwjA9v_jhWdbzjlk4eX-y7dtaIw11olDPEUZNHK6X0zrkYzuvOm292adzrF2mFFWbuj9HDzkOju91gvRgJokoSWDuwgyVD786FohhrXk'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/ignores_one_file_marked_invalid') do
@@ -144,7 +165,9 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
 
             expect(WebMock).to have_requested(:any, /.*/).once
 
@@ -155,7 +178,7 @@ describe DropboxImportFolder do
 
         context 'given folder "/exportation vers iDocus/TS%0001 - TeSt/période précédente" is removed' do
           it 'recreates deleted folders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAGtycDeEP4Vgiw0FAoz9kVk5mc_Gpthr3V8c0W8yn769-Yq-pIHr3OMxcuMJOLn9UXWpHx5DnlIkpSWT73VZnu2ouzqHp1Kd2AO2tdUL9D0MtFghxXBuNxICl4kmOpfILsj3jy_rvqQD25edU1AV_xwvMnTxtoQC09-Gubdt9ogdtm8MGMDkBHKv0Nl0HdSKzM'
+            delta_cursor = @dropbox.delta_cursor = 'AAGkvb1ZwDBvVxkgLshA58LfkBJ79YBnK-tTXKGrI-07o-s9r_QkNDDlYDwABZrXWNHT0W3tt0b2kzqMP9rT6Jugqe9fWb-OxY5A-1BZ66IHNtMOJ7EYx9vpUuBFS5fi6XKTdPzXAu5RXni5XVyghq_KSHjAQ-XHjA0T-ldbWaTr1lHdQP8byFQaFkklbqyPo1Q'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/recreates_deleted_folders') do
@@ -163,11 +186,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # create folder AC
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: 'root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%250001+-+TeSt%2Fp%C3%A9riode+pr%C3%A9c%C3%A9dente%2FAC')
             # create folder VT
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: 'root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%250001+-+TeSt%2Fp%C3%A9riode+pr%C3%A9c%C3%A9dente%2FVT')
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -175,7 +202,7 @@ describe DropboxImportFolder do
 
         context 'given folder at "/exportation vers iDocus/TS%0001 - TeSt/période actuelle" renamed or moved to "PERIODE"' do
           it 'recreates renamed or moved folders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAF8WWOASwvuQN7x3kOpyhAM6l1qvvty_Y1nF7D7wmsnzldRc-spypxbDT1bKKUcaIEjNZwuvvKdG0dO3RGfPW-jGZkJpmlfI0lFYJ8a3JSKD8Dp6pxqV1rcZDVU-etsXPFC2yKGmrh_ogfXGa1IjfyEDpC4U203xBK9bIYkyPvUgaU4CBH5dzqugzYh7OX4uNo'
+            delta_cursor = @dropbox.delta_cursor = 'AAHNv9G4Ed85Mih1-_YCl1X85MoV4KAizO1vvg06uvHavrLkBZSikJMOn8Kszf59SMQb_746_Z5LPYlhXGs-lsO6L-BRsyFrTdxy10CjbW3WLfljJ3HCnxOGJmUfEMETwkg-9Nr8Bzbr8Pmj40tc0KvqBUgWBBFYNgn31xx7wGGcnociVfxgMdF6nPlR3QPvDfU'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/recreates_renamed_or_moved_folders') do
@@ -183,11 +210,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # create folder AC
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC')}")
             # create folder VT
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -203,7 +234,7 @@ describe DropboxImportFolder do
           end
 
           it 'creates 2 folders BQ' do
-            delta_cursor = @dropbox.delta_cursor = 'AAHQ44-hxlVDBbNvEkri4zt3TXhWQ0j26EMDJbPl5qZ3rLh0ED3mczMfxyxDtIj_fBeznwGENXuLRMrIBLa1yXQVPt2wXbpdaDoK6aoJZCkVRJnRsLmlzWUGWLJyt7fUo2gWHOTa0ROb3xKLtSrzR975dRqocXEMHZIBff_jfqyg1Zv7LiPw6qIgYBTOtA92aWs'
+            delta_cursor = @dropbox.delta_cursor = 'AAGciVi-0S27vUnG74p8d4eyih-QamQRxfb5A9pmbxS6Rtlh_L4q2Mx7NCf9gEPqiXHw-KSM4mxfOPR55WwhDqTJffXz6rjVjEUDg0KVsoZN8w4OTCHPpm2mjdxteRNm2Pbi5a9Jis1Bcsc5rbrW_fVUvvVfJZ-__vjMePgWcIzaKa42DJN3yOhmlT8c_g3BqsU'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/creates_2_folders_bq') do
@@ -211,11 +242,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # create folder 'BQ' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/BQ')}")
             # create folder 'BQ' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -231,7 +266,7 @@ describe DropboxImportFolder do
           end
 
           it 'deletes 2 folders BQ and creates 2 folders BQ1' do
-            delta_cursor = @dropbox.delta_cursor = 'AAGzIe8i0TwKe6y5SwY_Mu2QXEbeofy7TQHJuf7hCU7uOZCLSraFla7IzhElEL7aoMhfgXSLTLF5LVstA0dnGVkSr8Eg1a6IN6bQGWZWs8m1JNknqARPpUd_VgeiFaSEDP_wuBeVrcPJCa0AgodzOAlpmbSuPcsq8-xZcc7I1qKRYzyEh3qCHchcv5GuMieaZIg'
+            delta_cursor = @dropbox.delta_cursor = 'AAEQ6oaXeiGb3TG3jZSI4rX8zk8tq_hdWHDvzk_0D3a3wIvWxPG4ccWFO8hanJZLa2-UUuhk7drYKUPI_RA9tE46CNemdO0ThG7IfiChN2JY9A3LVUS43o-zsCpCINnTLWRLfX1yBnBLZLwGVaVlgCqoXKw0azydkrgTRDngGTUOos3_j0m8iLbANXpWLV0maFs'
             @dropbox.import_folder_paths = [
               '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC',
               '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT',
@@ -247,15 +282,21 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # create folder 'BQ1' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/BQ1&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/BQ1')}")
             # create folder 'BQ1' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ1&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période précédente/BQ1')}")
             # delete folder 'BQ' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/BQ')}")
             # delete folder 'BQ' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(5)
           end
@@ -271,7 +312,7 @@ describe DropboxImportFolder do
           end
 
           it 'deletes 2 folders VT' do
-            delta_cursor = @dropbox.delta_cursor = 'AAFq_rI5by6mNwnS6XJJQywuAH3BmSFaUrFaQWdSsprkNxjcKp4878rh_gQm9r0EGL3p2E5_g_Izhm7A34wO8EGoLrA4CqbJrbqYACKtQy7dwz9onli8yGsCod91i9zAhGp5xVwOPSmPApkFRCBsAVypoYKb2dUYcFBaEfjA9qHB1OSGJTWOD1xaz_sb9tuD3nM'
+            delta_cursor = @dropbox.delta_cursor = 'AAFXd1wVC74Y2lAlTsCfiYbXlJ-eTmmCe0mwCiJy6WVBiNuw7rSm_DUyOgOJt9_IONcUg2hEuWITupNangBXN_qhYBQMkdiY6HtstK-UwF4_JXJ2fsW423u_qPFoE5BUbR_g2OW1nsZdLaNssKnTGfuhziTfdT04c4js5BVsjNlTHXut0iSW_mxuJluM3f04H94'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/customer/deletes_2_folders_VT') do
@@ -279,11 +320,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
             # delete folder 'VT' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT')}")
             # delete folder 'VT' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -297,7 +342,7 @@ describe DropboxImportFolder do
                   it 'executes multiple jobs' do
                     @user.account_book_types.where(name: 'AC').first.destroy
                     AccountBookType.create(user_id: @user.id, name: 'OD', description: '( Opération diverse )')
-                    delta_cursor = @dropbox.delta_cursor = 'AAForDKHWmGFe5QFgnkpRdvQTVZtI2aSUBnLIGL578Iq5x-8RsBajq4sfPCr34F5y-U4A5vy63SUjZ0i_A_0XSboN2qOStcrgx82yI-fSqdhWWn5GWRDwoXHLHdxZHFRd-M'
+                    delta_cursor = @dropbox.delta_cursor = 'AAHwJLrKrkXuhWX--5dtipzNeMDyP6uF7__k2DFEc05ugF5HpsiDHLVX2-IwLMN2-7YlsSQtodssf3vobtMUP68R26olrEJhNDirMiirohLhA6-_Tg7mzm9jfzoygBU6kzTa-2BW2B8bB51f3kjWqlrZZGmD26QPx9iGICHteQtAzJQ0VvehARaBrexA98XCUWo'
                     @dropbox.save
 
                     VCR.use_cassette('dropbox_import_folder/customer/executes_multiple_jobs') do
@@ -305,23 +350,35 @@ describe DropboxImportFolder do
                     end
 
                     # delta
-                    expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt").with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+                      with(headers: @headers_2).
+                      with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
                     # get corrupted file
-                    expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/corrupted.pdf').with(headers: @headers)
+                    expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/corrupted.pdf').
+                      with(headers: @headers)
                     # mark corrupted file as invalid
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move?from_path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/corrupted.pdf&root=sandbox&to_path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/corrupted%20(erreur%20fichier%20non%20valide%20pour%20iDocus).pdf').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move').
+                      with(headers: @headers_2).
+                      with(body: 'root=sandbox&from_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fvt%2Fcorrupted.pdf&to_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fvt%2Fcorrupted+%28erreur+fichier+non+valide+pour+iDocus%29.pdf')
                     # get file
-                    expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/test.pdf').with(headers: @headers)
+                    expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/test.pdf').
+                      with(headers: @headers)
                     # delete file
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/vt/test.pdf&root=sandbox').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+                      with(headers: @headers_2).
+                      with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT/test.pdf'.downcase)}")
                     # remove journal AC from folder période actuelle
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+                      with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC')}")
                     # create journal OD into folder période actuelle
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20actuelle/OD&root=sandbox').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+                      with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période actuelle/OD')}")
                     # create journal OD into folder période précédente
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/OD&root=sandbox').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+                      with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période précédente/OD')}")
                     # create folder VT into période précédente
-                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+                    expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+                      with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT')}")
 
                     expect(WebMock).to have_requested(:any, /.*/).times(9)
 
@@ -378,16 +435,20 @@ describe DropboxImportFolder do
         efs = @collaborator.find_or_create_external_file_storage
         efs.use ExternalFileStorage::F_DROPBOX
         @dropbox = efs.dropbox_basic
-        @dropbox.session = "---\n- 2dqp6mmtv6r0u6i\n- 59dfvae34ievygaw\n- Ef7bavtM3EGgW84G\n- A0evPNPJ9OAQrhlQ\n- x201tvs8q2eicni\n- bcdhzr36fnu5fpn\n"
+        @dropbox.access_token = '65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN'
         @dropbox.save
 
         @collaborator.reload
 
         @headers = {
           'Accept'        => '*/*',
-          'Authorization' => 'OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn", oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"',
-          'User-Agent'    => 'OfficialDropboxRubySDK/1.1'
+          'Authorization' => 'Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN',
+          'User-Agent'    => 'OfficialDropboxRubySDK/1.6.5'
         }
+
+        @headers_2 = @headers.merge({
+          'Content-Type'  => 'application/x-www-form-urlencoded',
+        })
       end
 
       after(:all) do
@@ -404,33 +465,7 @@ describe DropboxImportFolder do
           DropboxImportFolder.new(@dropbox).check
         end
 
-        # delta
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta?path_prefix=/exportation%20vers%20iDocus/TS%25COL1').with(headers: @headers)
-
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/VT'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
-
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
-        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ'
-        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
-
-        expect(WebMock).to have_requested(:any, /.*/).times(9)
-
-        expect(@dropbox.checked_at).to be_present
-        expect(@dropbox.delta_cursor).to be_present
-        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%COL1')
-        expect(@dropbox.import_folder_paths).to eq([
+        folder_paths = [
           '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC',
           '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT',
           '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC',
@@ -439,7 +474,45 @@ describe DropboxImportFolder do
           '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ',
           '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC',
           '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ'
-        ])
+        ]
+
+        # delta
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+          with(headers: @headers_2).
+          with(body: "path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
+
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[0])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[1])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[2])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/VT'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[3])}")
+
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[4])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[5])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[6])}")
+        # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ'
+        expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+          with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape(folder_paths[7])}")
+
+        expect(WebMock).to have_requested(:any, /.*/).times(9)
+
+        expect(@dropbox.checked_at).to be_present
+        expect(@dropbox.delta_cursor).to be_present
+        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%COL1')
+        expect(@dropbox.import_folder_paths).to eq(folder_paths)
       end
 
       context 'given initial folders have been created' do
@@ -459,7 +532,7 @@ describe DropboxImportFolder do
 
         context 'given a valid file at : /exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC/test.pdf' do
           it 'fetches one valid file' do
-            delta_cursor = @dropbox.delta_cursor = 'AAEEqgyGzAYewkCYFws6QGewrmYXLNsaO9qZAXDA99ltWaooHoSzNBWn3dFu8Ub19BIsMO6yz2XIzTSm-NAih8C-tcXZG-JJfdDaHUFZ8EJtXcLEYzgY1n6mlM540-LxYZ1W0LBa9jS4WMRlVuKvZQqrs8crqlutLtw7KANesGCyDQ'
+            delta_cursor = @dropbox.delta_cursor = 'AAEYqODXf58U-SteDlRC3j-xD4ncrMh1d8diaw-iLFo2jJyqJ8h0KhQWz7SuyRnTU1LkGe79FEDut4WiyYx1zKLrlWdGFq67kXngH_tLznncVLy2ptCuSN3ok9LZmF0VIVoT4YCVDUzX1OU2h1TQ8PEfT_NHWGpFEIwZoeO_fAif_A'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/fetches_one_valid_file') do
@@ -467,11 +540,16 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # get file
-            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%25col1/ts%250002%20-%20def/p%C3%A9riode%20actuelle/ac/test.pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%25col1/ts%250002%20-%20def/p%C3%A9riode%20actuelle/ac/test.pdf').
+              with(headers: @headers)
             # delete file
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20idocus/ts%25col1/ts%250002%20-%20def/p%C3%A9riode%20actuelle/ac/test.pdf&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).
+              with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC/test.pdf'.downcase)}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -486,7 +564,7 @@ describe DropboxImportFolder do
 
         context 'given an invalid file at : /exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted.pdf' do
           it 'marks one invalid file' do
-            delta_cursor = @dropbox.delta_cursor = 'AAEK3C9X0YOrLgbLiMg8U00t4KgHMRoONDHQyo9IjYy9f4zWGSVBiN9xKnaASiqvAEE5A-ka1Aj5MHP-kChc5nPIqOuvu22dQNfqmC08UItT_mN2JZOCOvJ_8N9jAHquagXjvIKxzevZsT8UPlZkAXFwtkS-TWyr4-dfdtlXH7NLXA'
+            delta_cursor = @dropbox.delta_cursor = 'AAFXJ4MsSG-zlrMbG8pYPyDLVTiLQL1bHrWT8Cak1RMi3CgFa1jaIwN7kAnKiVNJOqcgayS9pDyovPZwSxMJPtFHq1n8uKXYDZhgXQQbOFEkhnVC2cd2UCHawYImpb_DSC9JGkjia5qMOteZvMMpbHxFrVyxoO3W5ku_A8_PtcJbDQ'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/marks_one_invalid_file') do
@@ -494,11 +572,16 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # get file
-            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%25col1/ts%250001%20-%20abc/p%C3%A9riode%20actuelle/ac/corrupted.pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%25col1/ts%250001%20-%20abc/p%C3%A9riode%20actuelle/ac/corrupted.pdf').
+              with(headers: @headers)
             # rename file
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move?from_path=/exportation%20vers%20idocus/ts%25col1/ts%250001%20-%20abc/p%C3%A9riode%20actuelle/ac/corrupted.pdf&root=sandbox&to_path=/exportation%20vers%20idocus/ts%25col1/ts%250001%20-%20abc/p%C3%A9riode%20actuelle/ac/corrupted%20(erreur%20fichier%20non%20valide%20pour%20iDocus).pdf').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move').
+              with(headers: @headers_2).
+              with(body: 'root=sandbox&from_path=%2Fexportation%C2%A0vers+idocus%2Fts%25col1%2Fts%250001+-+abc%2Fp%C3%A9riode+actuelle%2Fac%2Fcorrupted.pdf&to_path=%2Fexportation%C2%A0vers+idocus%2Fts%25col1%2Fts%250001+-+abc%2Fp%C3%A9riode+actuelle%2Fac%2Fcorrupted+%28erreur+fichier+non+valide+pour+iDocus%29.pdf')
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
 
@@ -509,7 +592,7 @@ describe DropboxImportFolder do
 
         context 'given an invalid file already marked at : /exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC/corrupted (erreur fichier non valide pour idocus).pdf' do
           it 'ignores one file marked invalid' do
-            delta_cursor = @dropbox.delta_cursor = 'AAG2JqUOLV_173LQAf6tJMKGMbDfuhBN9RfaUT7ShWoIhHQdWMU8QfgR2PAwFavUXOt8ej36yQDbkmRyh-kP8h1j_PklEVzNKG6HBclc5Fwirn-MHnL9dxYReqopWJfD1U82YMlAGDiFzvZfVyn7EviqOXfNpin_5KHHt3z9Et-u5g'
+            delta_cursor = @dropbox.delta_cursor = 'AAGZ2f4nTuNezjIJ7SbaToHSCdtrd6BFQmAZI1s0V3xzwyXXcPxepqYyAbiXaO8034W2oW_8uCSInbCiZwFgJ5OSsMOzgEuMs-3QxQm_fqyfiXQWa5l6HwSVkyFivDeGZWPAw-_gaJLNHquGJd35NW-AVn0FWVEy-dnEBsulrE4M7w'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/ignores_one_file_marked_invalid') do
@@ -517,7 +600,9 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
 
             expect(WebMock).to have_requested(:any, /.*/).once
 
@@ -526,9 +611,9 @@ describe DropboxImportFolder do
           end
         end
 
-        context 'given folder "/exportation vers iDocus/TS%COL1/TS%0002 - BEF" is removed' do
+        context 'given folder "/exportation vers iDocus/TS%COL1/TS%0002 - DEF" is removed' do
           it 'recreates deleted folders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAFTQsbKiqFgM0AiRuQ4PA07KluNBgRehry6_d5aMlcRCRWh-SM_j5DAax1xfQiHfHGE7rwo9gdRqRFI4OUSipqjdGS3N5wZYWVekRFdLrUyEK9rdxqhRdCNednnIy_iuEPBYr8abbtOOto63_lOP3UH7c16BB0FXSdoEGW4H6MPag'
+            delta_cursor = @dropbox.delta_cursor = 'AAHVB1HPH6ovrzxlkydqq4vZKNO8Gx4geZ-5BcRI3A82_vNB8gv_MJ7l4gnsEuI6QXn1jwcOnrEyYYQWoyFVBzVuDzgZAKw4e6yKu-6kqornG0QqIWSU-vTHC-pYBxSMLE05enxUaUoROHL1JSN3il0jnKSpdLdcOKBdrAy8VpJTwQ'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/recreates_deleted_folders') do
@@ -536,15 +621,21 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(5)
           end
@@ -552,7 +643,7 @@ describe DropboxImportFolder do
 
         context 'given folder at "/exportation vers iDocus/TS%COL1/TS%0001 - ABC" renamed or moved to "OLD"' do
           it 'recreates renamed or moved folders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAE4uvq0UnA5udRVwaNwhFy2qXP0JNbyKsgcXZdZ6F1UqXKE3I-Stv4_MlF6GAA045GWbM4iLj42Sh3YpEeM1ruK97r0DwXXaYnao6VQgB7_Mm_xaWj4g49b_hpmKhzWT82FW9lDtgQxuLwgjhLjYcsAOgjR1qIZ-IDjTsuAvMyYZA'
+            delta_cursor = @dropbox.delta_cursor = 'AAEWDmDqZQmdH7Kbicsm0hi6Pcs0pUUcZgYNleHKYfSngzFmXmZxkaorbQ0AeDtSga8I58QmBgSh92332V6PyK_OZ6qNG9QhkoX_F_ZU3qEr70WQgADGHe5n52Hg9yJB_cN_ivEXa_O_y6FcQsQCOu3fg_RZ_qWuvmWSwIqJyFIeoA'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/recreates_renamed_or_moved_folders') do
@@ -560,15 +651,21 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
-            # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC')}")
+            # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/BQ'
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
-            # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/VT'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC')}")
+            # creates folder '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/BQ'
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/VT')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(5)
           end
@@ -584,7 +681,7 @@ describe DropboxImportFolder do
           end
 
           it 'creates 2 folders VT' do
-            delta_cursor = @dropbox.delta_cursor = 'AAG-wLmKCIa4wEISQcCQAio9DFoQ8xytlMG6S3qiJRuqSy8pTidLx_D3sEG1UE1zo9mjapUlWml0cOqSvuzFKkfJjTMjy8eVQi-hSsc4G_W2IJ9kWPp2d49W2FNjfdyDIzdHWNZ4nWO5vT6LamdsYnxsNKxMBAA3nHdaXP39GWmYZQ'
+            delta_cursor = @dropbox.delta_cursor = 'AAE-wwU07MFokYbCkVxWM9oZ1LL3aiMMkVpwoeXhRiqBUvdahVv9KslE8Pnwp6217hA9nX78raNAJL1Vc_GwX2E74yCEEQlI6_YtPj0Y_dCS20zLNGUQ0NxaJWHvo_8L1mm02nSao1UBSOaxQz1Gv7VrdFHAUJyvPpyH73I9kBsDow'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/creates_2_folders_vt') do
@@ -592,11 +689,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # create folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/VT'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/VT')}")
             # create folder '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/VT'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/VT')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -612,7 +713,7 @@ describe DropboxImportFolder do
           end
 
           it 'deletes 2 folders BQ and creates 2 folders BQ1' do
-            delta_cursor = @dropbox.delta_cursor = 'AAHFIuSQJFLWWWBxk0SuUGdC7NnHzUUugEokgzPU4ws5yATzyytmzd2cX_SwORSqS797p6whZVczhHHnWrbsU7cHArR4xH7_GuZp9f3uOS-wskJ_mKlWDBou_fQ_cHC9xXhV-J4gmEri_lUhEG5kCL2yg6QA1zU-OnFPnB2W9GBgbg'
+            delta_cursor = @dropbox.delta_cursor = 'AAFqwYsvGNEvUtFnv75jI_uvcAbJh4FDMfbQOlspQGQ4M_-UuKSwdjnaJlOdEq3zQ162r_LFnHhnu87tWA6fN9pL6wv6fLG1TguWGDExqR3QQn1LctZEgrxlKSMu62c1q8NCI8SyhL9NMhgmhWd7u7M_XiWdkOqXaQDF2RmRre77Xw'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/deletes_2_folders_BQ_and_creates_2_folders_bq1') do
@@ -620,15 +721,21 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # create folder 'BQ1' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/BQ1&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ1')}")
             # create folder 'BQ1' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ1&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ1')}")
             # delete folder 'BQ' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ')}")
             # delete folder 'BQ' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(5)
           end
@@ -644,7 +751,7 @@ describe DropboxImportFolder do
           end
 
           it 'deletes 2 folders VT' do
-            delta_cursor = @dropbox.delta_cursor = 'AAH0y7qHzlsm42XuS3VsLCF3QmrvyGVp7FZmxNq_RcAJWorMEf6lEHDbsGquwJJeOEbWLAG4RJkszUf1NMtxzCJvmtl0sM1zsuMnS-pzWrWhousiWxRJX8645sDxJCxEqs1V3PTvnfOA4DHBWC47Iz_agZhxxhcmNm0IiOavaQ4aMg'
+            delta_cursor = @dropbox.delta_cursor = 'AAE4gRCiNu0uIxU4U-sbrwgw34Mfj59372ycZelcbiKCIj6cLgTrg-rwxR75SB5_LGWhD9CjmEVHoiA7sK0BrLfdl-xRHRkcqcIvRBeYklFyc0sbhU5-5K7FaBYcpNp1TJZ-GUlDrlhQIN3rIaeHKQ7waJPrTAiUdugkrO131kQ1Mw'
             @dropbox.import_folder_paths = [
               '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC',
               '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT',
@@ -664,11 +771,15 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # delete folder 'VT' into folder 'période actuelle'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20actuelle/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/VT')}")
             # delete folder 'VT' into folder 'période précédente'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/VT&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/VT')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(3)
           end
@@ -688,7 +799,7 @@ describe DropboxImportFolder do
           end
 
           it 'removes folder TS%0001 - ABC' do
-            delta_cursor = @dropbox.delta_cursor = 'AAHMXgzzm-HWVn2gu7ZRfoKxW90zSNa6-7whYtzhhDh2qNopbjOdrWC-sfPCaxv7ohi2rm0mLQ1GUWT5z0x_u5Lq4gtQp-YlQW5IyEf2V5GVLJWN7E4Ytuww_fXPTSyl0ZdUIc5rlrAGIe5inY1SKGwGkAf5Dqsy50G7onECq6s1Eg'
+            delta_cursor = @dropbox.delta_cursor = 'AAFP3ZgpBI8HvTyPKBey0nr2BXfqRhmbRjbixs86HeLy1U51sJN5EktuA8Vga2kjbdkPRXdGfQZrn0d686DpTkJrJRThFWznD6U7zN22n3NOhxQPkPbJT2_KKHyEWrT2i8TovqMoE7NK1HtNdcIXNU778tudxPIvzH9gjst89Rt0CA'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/removes_folder_ts%0001_-_abc') do
@@ -696,9 +807,12 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # deletes folder TS%0001 - ABC
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250001%20-%20ABC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0001 - ABC')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(2)
           end
@@ -726,7 +840,7 @@ describe DropboxImportFolder do
           end
 
           it 'creates TS%0003\'s folders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAGCHcV1jdcMV3psRBxXHISYoIOApIQqbltOlSQjv07H5sVa0nSzdg33Rh6pb3TLV-sPnK7OEgQM_GMbFu2aDSlKIzrrfQGhpNsegqIW3wt9bjEXssYQbgvTgz2ElWL8ta3cmxBC7US-ArkXw84KZuHbt4gZwe0cti_ovitErwAhDg'
+            delta_cursor = @dropbox.delta_cursor = 'AAFpUGtY65bkw3p8BUksAJ20DidN5mc1k2S0cdOvEEwOwtHl93svFe--pAn7kARELvTslPSmhhzC9Ao_85nJlr0i5uwHEFqnJjgF36Q9Yno-DKRsxJASM7YhVcDu2N7XzfcsxLit0Y7KZvBe6rf4d72gOAy0By08ceekAPVu9Q40Fg'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/creates_ts%0003s_folders') do
@@ -734,15 +848,21 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250003%20-%20GHI/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250003%20-%20GHI/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/BQ')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250003%20-%20GHI/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250003%20-%20GHI/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(5)
           end
@@ -760,7 +880,7 @@ describe DropboxImportFolder do
           end
 
           it 'removes folder "TS%0002 - DEF" and creates folder "TS%0002 - DDD" and subfolders' do
-            delta_cursor = @dropbox.delta_cursor = 'AAF9_atGN6nync9ulo96tCrJu41UT-YYwiLVOSwAIN_uNdJvk4Yu88gg5Sayr7fGi6syiPgjQk7xI1jDI77CUp7JVIO86xEYHIadKS4cGUBGHmsrFVpZOKVmlaqw6F-culSF3lrDBkJuSDZEUXzxoxvV5a7oOJ19XzMOzYpLet0EJg'
+            delta_cursor = @dropbox.delta_cursor = 'AAFaPkSZoRPGcHi2bW_Zmi5q0wE-Rzibv_q-tsq0EcUvYF1q4_QXfBUP20urPfDvBJAi6wZ3vlpbGEqa8G8VM9X813MRzaPtpp0Hvu8JXSlKVxP1cDpQr1_xHFhUvce-6I395zjXQAjtavBXG9y8gyHk2RQZmXq8MK3F3oxgt-qtqw'
             @dropbox.save
 
             VCR.use_cassette('dropbox_import_folder/collaborator/renames_folder_ts%0002_-_def') do
@@ -768,17 +888,24 @@ describe DropboxImportFolder do
             end
 
             # delta
-            expect(WebMock).to have_requested(:post, "https://api.dropbox.com/1/delta?cursor=#{delta_cursor}&path_prefix=/exportation%20vers%20iDocus/TS%25COL1").with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%COL1')}")
             # deletes folder '/exportation vers iDocus/TS%0002 - DEF'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DEF&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/delete').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DEF')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période actuelle/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DDD/p%C3%A9riode%20actuelle/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période actuelle/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période actuelle/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DDD/p%C3%A9riode%20actuelle/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période actuelle/BQ')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période précédente/AC'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DDD/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/AC&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période précédente/AC')}")
             # creates folder '/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période précédente/BQ'
-            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder?path=/exportation%20vers%20iDocus/TS%25COL1/TS%250002%20-%20DDD/p%C3%A9riode%20pr%C3%A9c%C3%A9dente/BQ&root=sandbox').with(headers: @headers)
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/create_folder').
+              with(headers: @headers_2).with(body: "root=sandbox&path=#{CGI::escape('/exportation vers iDocus/TS%COL1/TS%0002 - DDD/période précédente/BQ')}")
 
             expect(WebMock).to have_requested(:any, /.*/).times(6)
           end

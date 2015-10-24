@@ -19,13 +19,13 @@ private
 public
 
   def authorize_url
-    session[:google_drive_state] = params[:authenticity_token][0..29]
+    session[:google_drive_state] = SecureRandom.hex(30)
     redirect_to GoogleDrive::Client.new.authorize_url(callback_account_google_drive_url, session[:google_drive_state])
   end
 
   def callback
-    if params[:code].present?
-      if params[:state] == session[:google_drive_state]
+    if params[:state].present? && params[:state] == session[:google_drive_state]
+      if params[:code].present?
         begin
           client = GoogleDrive::Client.new
           client.authorize(params[:code], callback_account_google_drive_url)
@@ -38,13 +38,13 @@ public
         rescue OAuth2::Error
           flash[:error] = 'Impossible de configurer votre compte Google Drive.'
         end
-      else
-        flash[:error] = 'Accès refusé.'
+      elsif params[:error] == 'access_denied'
+        flash[:error] = "Vous avez refusé l'accès à votre compte Google Drive."
       end
-      session[:google_drive_state] = nil
-    elsif params[:error] == 'access_denied'
-      flash[:error] = "Vous avez refusé l'accès à votre compte Google Drive."
+    else
+      flash[:error] = 'La requête est invalide ou a expiré.'
     end
+    session[:google_drive_state] = nil
     redirect_to account_profile_path
   end
 end

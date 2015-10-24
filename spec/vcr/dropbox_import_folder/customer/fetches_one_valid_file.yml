@@ -2,18 +2,19 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.dropbox.com/1/delta?cursor=AAHv8awX-MkrLKupZtbUIEIpDRa8ARiDFDSLVnpLxKBnZPmrXxeuxF1kYtkXqOk5SbcO3hoEoTcPNDZFszHtCg4xdMFz167WZrmL7TV3B9vtq1Rpmx8ZBWfgtnsJj0B6_zUml-6D65RWAUJMM7_a7_cozm0SbRDhE2rX6y0pCZ5l59A5vH9HDvqsiFIgSYf5oDo&path_prefix=/exportation%20vers%20iDocus/TS%250001%20-%20TeSt
+    uri: https://api.dropbox.com/1/delta
     body:
       encoding: US-ASCII
-      string: ''
+      string: cursor=AAHUYFz8b09BNdQnXbWzcMx1onR8cUW1DO4QsuuDTvXQAaXaT-aaOD_oeztZp1WrR52g2avgtXRjrw5k2fWTnKdojCoGxnV4VkuN334RireEhKOiPaEL9RwCgPd2q7uEiXIRrVv5oEmIf_1XrXqtLtlUtHek9Da3ZMkEi8fXLaIOpqUWOjO1ipjLOzYigMYMbp4&path_prefix=%2Fexportation%C2%A0vers+iDocus%2FTS%250001+-+TeSt
     headers:
       Accept:
       - '*/*'
       User-Agent:
-      - OfficialDropboxRubySDK/1.1
+      - OfficialDropboxRubySDK/1.6.5
+      Content-Type:
+      - application/x-www-form-urlencoded
       Authorization:
-      - OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn",
-        oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"
+      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
   response:
     status:
       code: 200
@@ -22,7 +23,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 12 Oct 2015 11:12:15 GMT
+      - Sat, 24 Oct 2015 15:51:28 GMT
       Content-Type:
       - text/javascript
       Transfer-Encoding:
@@ -31,10 +32,13 @@ http_interactions:
       - keep-alive
       X-Content-Type-Options:
       - nosniff
+      Set-Cookie:
+      - gvc=Mjk3MjY0NzExMzAyODA2MTg1Njc1NTkzNzQxNjE2MjAyODczNTkw; expires=Thu, 22
+        Oct 2020 15:51:28 GMT; httponly; Path=/; secure
       X-Server-Response-Time:
-      - '42'
+      - '88'
       X-Dropbox-Request-Id:
-      - bd730b09cc2b15e5a455cc3948414f01
+      - 88a6053f26a70e31bb356a57bd5a094e
       Pragma:
       - no-cache
       Cache-Control:
@@ -45,45 +49,14 @@ http_interactions:
       - SAMEORIGIN
     body:
       encoding: US-ASCII
-      string: '{"has_more": false, "cursor": "AAFT8pB18BeBFBmgMJnIij1oalkQaI86DItmZF2gOtvj2KT-qdxLwRqNVek4KIyafXUQiIjMdH0toxfY-WtjDHDD4esnbBudO0rxau4WnOpzUeW1OVol7EmY_rXOL_r5gkuqgcbbA5Pr5ovDAWwRs2cKG05PhM6XJWBxrlCgUJ1UlVXrmmn7wTikUQMVVvpkIUE",
-        "entries": [["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac",
-        {"bytes": 0, "rev": "1553d59c017", "revision": 341, "icon": "folder", "path":
-        "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC", "is_dir":
-        true, "thumb_exists": false, "root": "app_folder", "modified": "Sun, 11 Oct
-        2015 18:15:17 +0000", "size": "0 bytes"}], ["/exportation\u00a0vers idocus/ts%0001
-        - test", {"bytes": 0, "rev": "1573d59c017", "revision": 343, "icon": "folder",
-        "path": "/exportation\u00a0vers iDocus/TS%0001 - TeSt", "is_dir": true, "thumb_exists":
-        false, "root": "app_folder", "modified": "Sun, 11 Oct 2015 18:15:17 +0000",
-        "size": "0 bytes"}], ["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode
-        actuelle", {"bytes": 0, "rev": "1583d59c017", "revision": 344, "icon": "folder",
-        "path": "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle",
-        "is_dir": true, "thumb_exists": false, "root": "app_folder", "modified": "Sun,
-        11 Oct 2015 18:15:17 +0000", "size": "0 bytes"}], ["/exportation\u00a0vers
-        idocus/ts%0001 - test/p\u00e9riode actuelle/vt", {"bytes": 0, "rev": "1593d59c017",
-        "revision": 345, "icon": "folder", "path": "/exportation\u00a0vers iDocus/TS%0001
-        - TeSt/p\u00e9riode actuelle/VT", "is_dir": true, "thumb_exists": false, "root":
-        "app_folder", "modified": "Sun, 11 Oct 2015 18:15:20 +0000", "size": "0 bytes"}],
-        ["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode pr\u00e9c\u00e9dente/ac",
-        {"bytes": 0, "rev": "15a3d59c017", "revision": 346, "icon": "folder", "path":
-        "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode pr\u00e9c\u00e9dente/AC",
-        "is_dir": true, "thumb_exists": false, "root": "app_folder", "modified": "Sun,
-        11 Oct 2015 18:15:24 +0000", "size": "0 bytes"}], ["/exportation\u00a0vers
-        idocus/ts%0001 - test/p\u00e9riode pr\u00e9c\u00e9dente", {"bytes": 0, "rev":
-        "15b3d59c017", "revision": 347, "icon": "folder", "path": "/exportation\u00a0vers
-        iDocus/TS%0001 - TeSt/p\u00e9riode pr\u00e9c\u00e9dente", "is_dir": true,
-        "thumb_exists": false, "root": "app_folder", "modified": "Sun, 11 Oct 2015
-        18:15:24 +0000", "size": "0 bytes"}], ["/exportation\u00a0vers idocus/ts%0001
-        - test/p\u00e9riode pr\u00e9c\u00e9dente/vt", {"bytes": 0, "rev": "15c3d59c017",
-        "revision": 348, "icon": "folder", "path": "/exportation\u00a0vers iDocus/TS%0001
-        - TeSt/p\u00e9riode pr\u00e9c\u00e9dente/VT", "is_dir": true, "thumb_exists":
-        false, "root": "app_folder", "modified": "Sun, 11 Oct 2015 18:15:28 +0000",
-        "size": "0 bytes"}], ["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode
-        actuelle/ac/test.pdf", {"rev": "15d3d59c017", "thumb_exists": false, "path":
-        "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/test.pdf",
-        "is_dir": false, "client_mtime": "Mon, 12 Oct 2015 11:11:54 +0000", "icon":
-        "page_white_acrobat", "bytes": 1234, "modified": "Mon, 12 Oct 2015 11:11:54
-        +0000", "size": "1.2 KB", "root": "app_folder", "mime_type": "application/pdf",
-        "revision": 349}]], "reset": false}'
+      string: '{"has_more": false, "cursor": "AAGt-TDC8DRxC5MKnIzrKmQtYuTOruJCLIRtUIUVd3__EMJIF_BH8luFUUXTK9cHlDzjAHacJVpL5-3Qvp4Z7yMYPQOwWWucdhoid66QtRx6c4h26oUUYrOkhqirbqfNpq2uaSzJZw9XZAEY_zrtJ5R3crNLOHRXUlQucAL1rQgTBssQUmMQ3vDyQrn5SYEQm7Y",
+        "entries": [["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/test.pdf",
+        {"rev": "2673d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
+        iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/test.pdf", "is_dir": false,
+        "client_mtime": "Sat, 24 Oct 2015 15:50:33 +0000", "icon": "page_white_acrobat",
+        "bytes": 1234, "modified": "Sat, 24 Oct 2015 15:50:33 +0000", "size": "1.2
+        KB", "root": "app_folder", "mime_type": "application/pdf", "revision": 615}]],
+        "reset": false}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
@@ -96,10 +69,9 @@ http_interactions:
       Accept:
       - '*/*'
       User-Agent:
-      - OfficialDropboxRubySDK/1.1
+      - OfficialDropboxRubySDK/1.6.5
       Authorization:
-      - OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn",
-        oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"
+      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
   response:
     status:
       code: 200
@@ -108,7 +80,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 12 Oct 2015 11:12:18 GMT
+      - Sat, 24 Oct 2015 15:51:29 GMT
       Content-Type:
       - application/pdf
       Content-Length:
@@ -121,19 +93,19 @@ http_interactions:
       Accept-Ranges:
       - bytes
       X-Dropbox-Metadata:
-      - '{"rev": "15d3d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
+      - '{"rev": "2673d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
         iDocus/TS%0001 - TeSt/p\u00e9riode actuelle/AC/test.pdf", "is_dir": false,
-        "client_mtime": "Mon, 12 Oct 2015 11:11:54 +0000", "icon": "page_white_acrobat",
-        "bytes": 1234, "modified": "Mon, 12 Oct 2015 11:11:54 +0000", "size": "1.2
-        KB", "root": "app_folder", "mime_type": "application/pdf", "revision": 349}'
+        "client_mtime": "Sat, 24 Oct 2015 15:50:33 +0000", "icon": "page_white_acrobat",
+        "bytes": 1234, "modified": "Sat, 24 Oct 2015 15:50:33 +0000", "size": "1.2
+        KB", "root": "app_folder", "mime_type": "application/pdf", "revision": 615}'
       X-Server-Response-Time:
-      - '193'
+      - '209'
       Content-Security-Policy-Report-Only:
       - default-src *; script-src 'none'; report-uri https://www.dropbox.com/csp_log
       Etag:
-      - 349n
+      - 615n
       X-Dropbox-Request-Id:
-      - 04f8168c217508ed98e8fc6360c0a9a0
+      - 383ea825484c0b03d1bbe3edbf95b454
       Pragma:
       - public
       Cache-Control:
@@ -181,18 +153,19 @@ http_interactions:
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
     method: post
-    uri: https://api.dropbox.com/1/fileops/delete?path=/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/test.pdf&root=sandbox
+    uri: https://api.dropbox.com/1/fileops/delete
     body:
       encoding: US-ASCII
-      string: ''
+      string: root=sandbox&path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fac%2Ftest.pdf
     headers:
       Accept:
       - '*/*'
       User-Agent:
-      - OfficialDropboxRubySDK/1.1
+      - OfficialDropboxRubySDK/1.6.5
+      Content-Type:
+      - application/x-www-form-urlencoded
       Authorization:
-      - OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="bcdhzr36fnu5fpn",
-        oauth_token="59dfvae34ievygaw", oauth_signature="x201tvs8q2eicni&2dqp6mmtv6r0u6i"
+      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
   response:
     status:
       code: 200
@@ -201,7 +174,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Mon, 12 Oct 2015 11:12:20 GMT
+      - Sat, 24 Oct 2015 15:51:32 GMT
       Content-Type:
       - text/javascript
       Transfer-Encoding:
@@ -210,10 +183,13 @@ http_interactions:
       - keep-alive
       X-Content-Type-Options:
       - nosniff
+      Set-Cookie:
+      - gvc=MzQ1NzEzODY0MzE3MzMyMDk5MzAyMzE4ODQ1OTA5NTcxMjQ4MzU%3D; expires=Thu, 22
+        Oct 2020 15:51:32 GMT; httponly; Path=/; secure
       X-Server-Response-Time:
-      - '204'
+      - '253'
       X-Dropbox-Request-Id:
-      - dc13dbf80cabe75cd37144b143364b88
+      - b9f6aa551106a481366ac0e01afaee58
       Pragma:
       - no-cache
       Cache-Control:
@@ -224,8 +200,8 @@ http_interactions:
       - SAMEORIGIN
     body:
       encoding: US-ASCII
-      string: '{"is_deleted": true, "revision": 350, "bytes": 0, "thumb_exists": false,
-        "rev": "15e3d59c017", "modified": "Mon, 12 Oct 2015 11:12:20 +0000", "mime_type":
+      string: '{"is_deleted": true, "revision": 616, "bytes": 0, "thumb_exists": false,
+        "rev": "2683d59c017", "modified": "Sat, 24 Oct 2015 15:51:32 +0000", "mime_type":
         "application/pdf", "path": "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode
         actuelle/AC/test.pdf", "is_dir": false, "size": "0 bytes", "root": "app_folder",
         "client_mtime": "Wed, 31 Dec 1969 23:59:59 +0000", "icon": "page_white_acrobat"}'
