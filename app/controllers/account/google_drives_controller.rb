@@ -45,6 +45,6 @@ public
       flash[:error] = 'La requête est invalide ou a expiré.'
     end
     session[:google_drive_state] = nil
-    redirect_to account_profile_path
+    redirect_to account_profile_path(panel: 'efs_management')
   end
 end
