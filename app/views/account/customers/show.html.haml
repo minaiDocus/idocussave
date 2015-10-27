@@ -223,6 +223,9 @@
                 = link_to 'Liste des transactions', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
                 = link_to 'Liste des opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
                 = link_to 'Liste des documents', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
+                %br
+                = link_to 'Paramétrage des automates bancaires', account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn margin1right margin1top'
+                = link_to 'Sélection de documents restant', select_account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1top'
                 %table.table.table-condensed.table-striped.margin2top.margin0bottom
                   %thead
                     %tr

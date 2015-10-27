@@ -111,10 +111,15 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|
+          r.resources :bank_accounts do
+            patch 'update_multiple', on: :collection
+          end
           r.resources :retriever_transactions, only: %w(index show)
           r.resources :retrieved_banking_operations, only: :index
           r.resources :retrieved_documents, only: %w(index show) do
             get 'piece', on: :member
+            get 'select', on: :collection
+            patch 'validate', on: :collection
           end
         end
       end

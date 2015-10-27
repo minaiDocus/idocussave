@@ -1,0 +1,7 @@
+= form_tag account_organization_customer_bank_accounts_path(@organization, @customer), method: :get, class: 'form form-horizontal filter margin0bottom' do
+  = label_tag 'bank_account_contains[retriever_id]', 'Banque'
+  = select_tag 'bank_account_contains[retriever_id]', options_for_select(@user.fiduceo_retrievers.banks.map { |e| [e.name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
+
+  .margin2top
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
+  = link_to t('filters.reset'), account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn'
