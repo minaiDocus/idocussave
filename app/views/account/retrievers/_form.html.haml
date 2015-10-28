@@ -8,7 +8,7 @@
   = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
   = f.input :name
   - unless @fiduceo_retriever.persisted? && @fiduceo_retriever.bank?
-    = f.input :journal_id, collection: @user.account_book_types, include_blank: false
+    = f.input :journal_id, collection: @user.account_book_types.asc(:name), include_blank: false
   = f.input :login
   = f.input :pass, required: true, as: :password
   .param1{ style: 'display:none' }
