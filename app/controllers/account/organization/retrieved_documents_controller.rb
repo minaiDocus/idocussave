@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrievedDocumentsController < Account::Organization::FiduceoController
-  before_filter :load_document, except: [:index, :select]
+  before_filter :load_document, except: %w(index select validate)
 
   def index
     @documents = search(document_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
@@ -26,7 +26,6 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
   def select
     @documents = search(document_contains).order_by(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
     @retriever.schedule if @retriever && @retriever.wait_selection?
-    @is_filter_empty = document_contains.empty?
   end
 
   def validate
@@ -43,7 +42,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
         flash[:success] = 'Le document sélectionné sera intégré.'
       end
     end
-    redirect_to select_account_retrieved_documents_path(document_contains: document_contains)
+    redirect_to select_account_organization_customer_retrieved_documents_path(@organization, @customer, document_contains: document_contains)
   end
 
 private

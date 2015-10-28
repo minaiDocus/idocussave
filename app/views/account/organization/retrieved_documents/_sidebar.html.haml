@@ -1,12 +1,21 @@
-= form_tag account_organization_customer_retrieved_documents_path(@organization, @customer), method: :get, class: 'form form-horizontal filter margin0bottom' do
+- if action_name == 'index'
+  - path = account_organization_customer_retrieved_documents_path(@organization, @customer)
+- elsif action_name == 'select'
+  - path = select_account_organization_customer_retrieved_documents_path(@organization, @customer)
+
+= form_tag path, method: :get, class: 'form form-horizontal filter margin0bottom' do
   - if @transaction
     = label_tag 'document_contains[transaction_id]', 'Transaction'
     = l(@transaction.created_at)
     = hidden_field_tag 'document_contains[transaction_id]', @transaction.id
+  - elsif @retriever
+    = hidden_field_tag 'document_contains[retriever_id]', @retriever.id
 
   = label_tag 'document_contains[service_name]', 'Service'
   - if @transaction
-    = @transaction.custom_service_name
+    %span.label= @transaction.custom_service_name
+  - elsif @retriever
+    %span.label= @retriever.name
   - else
     = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'span12'
 
@@ -27,4 +36,4 @@
 
   .margin2top
   = submit_tag t('filters.action'), class: 'btn btn-primary'
-  = link_to t('filters.reset'), account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
+  = link_to t('filters.reset'), path, class: 'btn'

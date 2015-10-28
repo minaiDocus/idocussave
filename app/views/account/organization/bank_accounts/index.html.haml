@@ -1,12 +1,12 @@
-#bank_accounts
+#bank_accounts.select
   .row-fluid
     .span12.box
-      %h3 Paramétrage des automates bancaires #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')} (#{@bank_accounts.count})
-  .row-fluidrou
-    .span9.box
+      %h3 Sélection des comptes bancaires #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')} (#{@bank_accounts.count})
+  .row-fluid
+    .span9
       .box{ style: 'padding-bottom:0;' }
-        = form_tag update_multiple_account_organization_customer_bank_accounts_path, method: 'patch', class: 'form form-horizontal' do
-          = hidden_field_tag 'bank_account_contains[retriever_id]', @retriever.id if @retriever
+        = form_tag update_multiple_account_organization_customer_bank_accounts_path(@organization, @customer), method: 'post', class: 'form form-horizontal' do
+          = hidden_field_tag 'bank_account_contains[retriever_id]', (params[:bank_account_contains][:retriever_id] rescue nil)
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr

@@ -1,9 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::BankAccountsController < Account::Organization::FiduceoController
-  before_filter :load_bank_account, :except => [:index, :update_multiple]
+  before_filter :load_bank_account, except: %w(index update_multiple)
 
   def index
-    @bank_accounts = search(bank_account_contains)
+    if bank_account_contains && bank_account_contains[:retriever_id]
+      @retriever = @customer.fiduceo_retrievers.find(bank_account_contains[:retriever_id])
+      @retriever.schedule if @retriever && @retriever.wait_selection?
+    end
+    @bank_accounts = BankAccountService.new(@customer, @retriever).bank_accounts
   end
 
   def edit
@@ -25,7 +29,6 @@ class Account::Organization::BankAccountsController < Account::Organization::Fid
   def update_multiple
     bank_accounts = BankAccountService.new(@customer).bank_accounts
     if params[:bank_accounts].is_a?(Hash) && params[:bank_accounts].any?
-      added_bank_accounts = []
       params[:bank_accounts].each do |fiduceo_id, value|
         bank_account = bank_accounts.select { |e| e.fiduceo_id == fiduceo_id }.first
         if bank_account
@@ -33,22 +36,14 @@ class Account::Organization::BankAccountsController < Account::Organization::Fid
           if !bank_account.persisted? && is_selected
             bank_account.save
             OperationService.update_bank_account(bank_account)
-            added_bank_accounts << bank_account
           elsif bank_account.persisted? && !is_selected
             bank_account.destroy
           end
         end
       end
-      if added_bank_accounts.any?
-        collaborators = @customer.groups.map(&:collaborators).flatten
-        collaborators = [@customer.organization.leader] if collaborators.empty?
-        collaborators.each do |collaborator|
-          BankAccount.notify(collaborator.id.to_s, @customer.id.to_s, added_bank_accounts.map(&:id).map(&:to_s))
-        end
-      end
       flash[:success] = 'Modifié avec succès.'
     end
-    redirect_to account_bank_accounts_path(bank_account_contains: bank_account_contains)
+    redirect_to account_organization_customer_bank_accounts_path(@organization, @customer, bank_account_contains: bank_account_contains)
   end
 
 private
@@ -78,10 +73,4 @@ private
     @contains
   end
   helper_method :bank_account_contains
-
-  def search(contains)
-    bank_accounts = BankAccountService.new(@customer).bank_accounts
-    bank_accounts = bank_accounts.where(retriever_id: contains[:retriever_id]) if contains[:retriever_id]
-    bank_accounts
-  end
 end

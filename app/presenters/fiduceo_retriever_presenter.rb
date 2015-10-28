@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class FiduceoRetrieverPresenter < BasePresenter
   presents :fiduceo_retriever
-  delegate :name, :service_name, :journal, :type, :transaction_status, to: :fiduceo_retriever
+  delegate :name, :service_name, :journal, :type, :transaction_status, :user, to: :fiduceo_retriever
 
   def mode
     fiduceo_retriever.is_auto ? 'Automatique' : 'Manuel'
@@ -17,14 +17,14 @@ class FiduceoRetrieverPresenter < BasePresenter
             if scope == :account
               h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
             elsif scope == :observer
-              h.content_tag :span, 'Sélection des documents', class: 'label'
+              h.link_to 'Sélectionnez les documents', h.select_account_organization_customer_retrieved_documents_path(user.organization, user, document_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
             end
           end
         else
           if scope == :account
             h.link_to 'Sélectionnez vos comptes', h.account_bank_accounts_path(bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
           elsif scope == :observer
-            h.content_tag :span, 'Sélection des comptes', class: 'label'
+            h.link_to 'Sélectionnez les comptes', h.account_organization_customer_bank_accounts_path(user.organization, user, bank_account_contains: { retriever_id: fiduceo_retriever }), class: 'btn btn-mini'
           end
         end
       elsif fiduceo_retriever.wait_for_user_action?
