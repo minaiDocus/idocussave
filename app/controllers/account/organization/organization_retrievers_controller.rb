@@ -2,12 +2,9 @@
 class Account::Organization::OrganizationRetrieversController < Account::Organization::FiduceoController
   def update
     @fiduceo_retriever = FiduceoRetriever.find params[:id]
-    @fiduceo_retriever = FiduceoRetrieverService.update(@fiduceo_retriever, fiduceo_retriever_params)
-    if @fiduceo_retriever.valid?
-      flash[:success] = 'Modifié avec succès.'
-    else
-      flash[:error] = 'Une erreur est survenue lors de la modification.'
-    end
+    @fiduceo_retriever.update(fiduceo_retriever_params)
+    @fiduceo_retriever.update(journal_name: @fiduceo_retriever.journal.try(:name))
+    flash[:success] = 'Modifié avec succès.'
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'retrievers')
   end
 
