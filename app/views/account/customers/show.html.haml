@@ -239,15 +239,19 @@
                   %tbody
                     - @customer.fiduceo_retrievers.asc(:created_at).each do |retriever|
                       - present retriever do |retriever_presenter|
-                        %tr
-                          %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
-                          %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
-                          %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
-                          %td= retriever_presenter.service_name
-                          %td= retriever_presenter.name
-                          %td= retriever_presenter.journal.try(:name) || '-'
-                          %td= retriever_presenter.mode
-                          %td.retriever_state!= retriever_presenter.state(:observer)
+                        = simple_form_for retriever, url: account_organization_customer_organization_retriever_path(@organization, @customer, retriever), method: 'patch' do |f|
+                          %tr
+                            %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
+                            %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
+                            %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
+                            %td= retriever_presenter.service_name
+                            %td= retriever_presenter.name
+                            - unless retriever.bank?
+                              %td= f.input :journal_id, collection: @customer.account_book_types.asc(:name), label: false, :selected => retriever.journal._id, :input_html => {:onchange => "if(confirm('Êtes-vous sur de vouloir modifier le journal comptable?')){this.form.submit()}else{this.form.reset()}"}
+                            - else
+                              %td= retriever_presenter.journal.try(:name) || '-'
+                            %td= retriever_presenter.mode
+                            %td.retriever_state!= retriever_presenter.state(:observer)
               - if @customer.fiduceo_retrievers.banks.count > 0
                 #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
                   %table.table.table-striped.table-condensed.margin0bottom
