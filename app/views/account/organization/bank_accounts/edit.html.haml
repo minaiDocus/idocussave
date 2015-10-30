@@ -12,6 +12,7 @@
           = f.input :journal,         required: true
         = f.input :accounting_number, required: true
         = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
+        = f.input :start_at, as: :date, html5: true, input_html: { min: (@bank_account.operations.first.date if @bank_account.operations.count >= 1), max: Date.today }, hint: "Les opérations plus anciennes que la date indiquée ne seront pas livrées"
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'btn'

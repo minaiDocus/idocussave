@@ -17,7 +17,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Fid
     @bank_account.assign_attributes(bank_account_params)
     changes = @bank_account.changes.dup
     if @bank_account.save
-      @bank_account.operations.where(is_locked: true).update_all(is_locked: false)
+      @bank_account.operations.where(is_locked: true, :date.gte => @bank_account.start_at).update_all(is_locked: false)
       UpdatePreseizureAccountNumbers.async_execute(@bank_account.id.to_s, changes)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
@@ -53,7 +53,7 @@ private
   end
 
   def bank_account_params
-    params.require(:bank_account).permit(:journal, :accounting_number, :temporary_account)
+    params.require(:bank_account).permit(:journal, :accounting_number, :temporary_account, :start_at)
   end
 
   def bank_account_contains

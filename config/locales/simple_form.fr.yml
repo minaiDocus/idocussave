@@ -50,6 +50,7 @@ fr:
         journal: Journal comptable de l’outil comptable
         accounting_number: Numéro de compte comptable
         temporary_account: Compte d’attente
+        start_at: Date limite de livraison
       user:
         code: Code
         company: Société
