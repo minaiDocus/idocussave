@@ -23,7 +23,7 @@ class BankAccount
   validates_presence_of :fiduceo_id, :bank_name, :name, :number
   validate :uniqueness_of_number
 
-  validates_presence_of :journal, :accounting_number, if: Proc.new { |bank_account| bank_account.persisted? }
+  validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_length_of :journal, within: 2..6, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |bank_account| bank_account.persisted? }
 

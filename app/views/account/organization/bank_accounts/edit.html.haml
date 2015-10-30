@@ -12,15 +12,15 @@
           = f.input :journal,         required: true
         = f.input :accounting_number, required: true
         = f.input :temporary_account, required: true, hint: 'si tiers non identifiable'
-        .control-group
-          = label_tag 'bank_account[start_date]', "Choisir la date de récupération de l'historique bancaire", class: 'control-label'
+        .control-group{ class: ('error' if @bank_account.errors.keys.include?(:start_date)) }
+          = label_tag 'bank_account[start_date]', content_tag(:abbr, '*', title: 'champ requis') + " Choisir la date de récupération de l'historique bancaire", class: 'control-label'
           .controls
             .input-prepend.date.datepicker
               %span.add-on
                 %i.icon-th
-              = text_field_tag 'bank_account[start_date]', @bank_account.start_date
-              - if @bank_account.operations.count >= 1
-                %i L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.first.date.strftime("%d/%m/%Y")}
+              = text_field_tag 'bank_account[start_date]', @bank_account.start_date, { style: 'width: 180px; left: -3px;' }
+            - if @bank_account.operations.count >= 1
+              %p.help-block L'opération bancaire la plus ancienne remontée par l'automate date du #{@bank_account.operations.asc(:date).first.date.strftime("%d/%m/%Y")}
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'bank_accounts'), class: 'btn'
