@@ -18,7 +18,7 @@ class BankAccount
   field :journal
   field :accounting_number, default: '512000'
   field :temporary_account, default: '471000'
-  field :start_at, type: Date
+  field :start_date, type: Date
 
   validates_presence_of :fiduceo_id, :bank_name, :name, :number
   validate :uniqueness_of_number

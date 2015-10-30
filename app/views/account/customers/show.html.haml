@@ -261,7 +261,7 @@
                       %th= t('mongoid.models.bank_account.attributes.number')
                       %th= t('mongoid.models.bank_account.attributes.journal')
                       %th= t('mongoid.models.bank_account.attributes.accounting_number')
-                      %th= t('mongoid.models.bank_account.attributes.start_at')
+                      %th= t('mongoid.models.bank_account.attributes.start_date')
                       %th Action
                     - @customer.bank_accounts.each do |bank_account|
                       %tr
@@ -270,7 +270,7 @@
                         %td= bank_account.number
                         %td= bank_account.journal
                         %td= bank_account.accounting_number
-                        %td= bank_account.start_at
+                        %td= bank_account.start_date
                         %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
             - if @organization.ibiza.try(:token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
