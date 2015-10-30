@@ -48,7 +48,7 @@ fr:
       bank_account:
         number: Numéro de compte
         journal: Journal comptable de l’outil comptable
-        accounting_number: Numéro de compte comptable
+        accounting_number: Compte de trésorerie
         temporary_account: Compte d’attente
         start_date: Date limite de livraison
       user:
