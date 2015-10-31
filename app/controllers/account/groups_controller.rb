@@ -65,7 +65,6 @@ private
         :description,
         :dropbox_delivery_folder,
         :is_dropbox_authorized,
-        :file_type_to_deliver,
         { member_tokens: [] }
       )
     elsif is_leader?

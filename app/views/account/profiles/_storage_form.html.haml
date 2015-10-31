@@ -6,6 +6,5 @@
       = label :storage, :final_path, 'Pre-visualusation de la configuration choisie : ', class: 'control-label'
       .controls
         = text_field :storage, :final_path, disabled: true, class: 'input-xlarge'
-    = f.input :file_type_to_deliver, label: 'Format des fichiers à livrer : ', collection: file_type_to_deliver_options, include_blank: false
     .form-actions.padding0bottom.margin0bottom
       = f.submit 'Valider', class: 'btn'

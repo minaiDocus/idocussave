@@ -12,7 +12,6 @@ class Ftp
   field :password,             type: String,  default: 'password'
   field :path,                 type: String,  default: 'iDocus/:code/:year:month/:account_book/'
   field :is_configured,        type: Boolean, default: false
-  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   scope :configured,     -> { where(is_configured: true) }
   scope :not_configured, -> { where(is_configured: false) }

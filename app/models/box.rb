@@ -9,7 +9,6 @@ class Box
   field :refresh_token
   field :path,                 type: String,  default: ':code/:year:month/:account_book'
   field :is_configured,        type: Boolean, default: false
-  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   class << self
     def configure

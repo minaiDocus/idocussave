@@ -21,7 +21,7 @@
               %a{ href: '#information', data: { toggle: 'tab' } } Information
             -if @organization.is_active
               %li{ class: ('active' if params[:tab] == 'file_naming_policy') }
-                %a{ href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF/TIFF
+                %a{ href: '#file_naming_policy', data: { toggle: 'tab' } } Charte de nommage PDF
               %li{ class: ('active' if params[:tab] == 'addresses') }
                 %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
               %li{ class: ('active' if params[:tab] == 'period_options') }

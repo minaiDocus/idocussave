@@ -222,10 +222,6 @@ describe DocumentTools do
       expect(DocumentTools.mimetype('TS0001_Ts_201501_001.csv')).to eq 'text/csv'
     end
 
-    it 'returns image/tiff' do
-      expect(DocumentTools.mimetype('TS0001_Ts_201501_001.tiff')).to eq 'image/tiff'
-    end
-
     it 'returns nil' do
       expect(DocumentTools.mimetype('TS0001_Ts_201501_001.png')).to be_nil
     end

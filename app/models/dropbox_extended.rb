@@ -1,10 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class DropboxExtended
   class << self
-    def file_type_to_deliver
-      ExternalFileStorage::PDF
-    end
-
     def get_authorize_url
       @flow ||= DropboxOAuth2FlowNoRedirect.new(Dropbox::EXTENDED_APP_KEY, Dropbox::EXTENDED_APP_SECRET)
       @flow.start

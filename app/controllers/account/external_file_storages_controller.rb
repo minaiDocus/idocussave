@@ -50,18 +50,18 @@ public
   end
 
   def dropbox_basic_params
-    params.require(:dropbox_basic).permit(:path, :file_type_to_deliver)
+    params.require(:dropbox_basic).permit(:path)
   end
 
   def google_doc_params
-    params.require(:google_doc).permit(:path, :file_type_to_deliver)
+    params.require(:google_doc).permit(:path)
   end
 
   def ftp_params
-    params.require(:ftp).permit(:path, :file_type_to_deliver)
+    params.require(:ftp).permit(:path)
   end
 
   def box_params
-    params.require(:box).permit(:path, :file_type_to_deliver)
+    params.require(:box).permit(:path)
   end
 end

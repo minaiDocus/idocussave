@@ -15,24 +15,4 @@ module Account::ProfileHelper
         ''
     end
   end
-
-  def file_type_to_deliver_options
-    [
-        ['PDF et TIFF', ExternalFileStorage::ALL_TYPES],
-        ['PDF', ExternalFileStorage::PDF],
-        ['TIFF', ExternalFileStorage::TIFF]
-    ]
-  end
-
-  def file_type_to_deliver(number)
-    if number == ExternalFileStorage::ALL_TYPES
-      'PDF et TIFF'
-    elsif number == ExternalFileStorage::PDF
-      'PDF'
-    elsif number == ExternalFileStorage::TIFF
-      'TIFF'
-    else
-      ''
-    end
-  end
 end

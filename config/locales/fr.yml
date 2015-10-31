@@ -615,7 +615,6 @@ fr:
           customers_count: Nombre de clients
           dropbox_delivery_folder: Chemin de livraison
           is_dropbox_authorized: Autorisé ?
-          file_type_to_deliver: Format des fichiers à livrer
       organization_rights:
         zero: 0 droits
         one: 1 droit

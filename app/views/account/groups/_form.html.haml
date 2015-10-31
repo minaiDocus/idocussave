@@ -9,7 +9,6 @@
         %legend Dropbox Extended
         = f.input :dropbox_delivery_folder, label: t('mongoid.models.group.attributes.dropbox_delivery_folder'), input_html: { class: 'input-xxlarge' }
         = f.input :is_dropbox_authorized, as: :boolean, label: t('mongoid.models.group.attributes.is_dropbox_authorized')
-        = f.input :file_type_to_deliver, label: t('mongoid.models.group.attributes.file_type_to_deliver'), collection: file_type_to_deliver_options, include_blank: false
     %fieldset
       %legend Assignation
       .control-group

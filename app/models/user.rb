@@ -44,7 +44,6 @@ class User
   field :inactive_at,                    type: Time
   field :dropbox_delivery_folder,        type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_extended_authorized, type: Boolean, default: false
-  field :file_type_to_deliver,           type: Integer, default: ExternalFileStorage::PDF
   field :is_reminder_email_active,       type: Boolean, default: true
   field :is_document_notifier_active,    type: Boolean, default: true
   field :is_centralized,                 type: Boolean, default: true

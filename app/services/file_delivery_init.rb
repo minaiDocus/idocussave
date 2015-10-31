@@ -104,14 +104,6 @@ class FileDeliveryInit
     PIECES_ONLY   = 2
     REPORT        = 3
 
-    def get_tiff_file
-      file_path = self.content.path
-      dir = Dir.mktmpdir('tiff_')
-      temp_path = "#{dir}/#{self.content_file_name.sub(/\.pdf\z/,'.tiff')}"
-      DocumentTools.generate_tiff_file(file_path, temp_path)
-      temp_path
-    end
-
     def kzip_options
       user = self.pack.owner
       knowings = user.organization.knowings
@@ -164,17 +156,11 @@ class FileDeliveryInit
         remote_file.receiver     = object
         remote_file.pack         = self.pack
         remote_file.service_name = service_name
-        remote_file.remotable = self
-        if extension == '.tiff'
-          remote_file.extension = '.tiff'
-          remote_file.temp_path = get_tiff_file
-        elsif extension == KnowingsApi::File::EXTENSION
+        remote_file.remotable    = self
+        if extension == KnowingsApi::File::EXTENSION
           remote_file.extension = '.kzip'
           remote_file.temp_path = get_kzip_file
         end
-        remote_file.save
-      elsif remote_file.temp_path.match(/_all.tiff/)
-        remote_file.temp_path = get_tiff_file
         remote_file.save
       end
       remote_file
@@ -182,24 +168,12 @@ class FileDeliveryInit
 
     def get_remote_files(object,service_name)
       current_remote_files = []
-      if service_name == 'Dropbox Extended'
-        if object.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
-          current_remote_files << get_remote_file(object,service_name,'.pdf')
-        end
-        if object.file_type_to_deliver.in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
-          current_remote_files << get_remote_file(object,service_name,'.tiff')
-        end
-      elsif service_name == 'Knowings'
+      if service_name == 'Knowings'
         if preseizures.any? || !is_awaiting_pre_assignment
           current_remote_files << get_remote_file(object, service_name, KnowingsApi::File::EXTENSION)
         end
       else
-        if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::PDF, nil]
-          current_remote_files << get_remote_file(object,service_name,'.pdf')
-        end
-        if object.external_file_storage.get_service_by_name(service_name).try(:file_type_to_deliver).in? [ExternalFileStorage::ALL_TYPES, ExternalFileStorage::TIFF]
-          current_remote_files << get_remote_file(object,service_name,'.tiff')
-        end
+        current_remote_files << get_remote_file(object, service_name)
       end
       current_remote_files
     end

@@ -7,7 +7,6 @@ class DropboxBasic
 
   field :access_token
   field :path,                 type: String,  default: ':code/:year:month/:account_book/'
-  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   field :dropbox_id,          type: Integer
   field :changed_at,          type: Time

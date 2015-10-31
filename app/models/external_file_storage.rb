@@ -10,10 +10,6 @@ class ExternalFileStorage
   F_FTP         = 8
   F_BOX         = 16
 
-  ALL_TYPES = 1
-  PDF       = 2
-  TIFF      = 3
-
   belongs_to :user
   has_one :dropbox_basic, autosave: true, dependent: :destroy
   has_one :google_doc,    autosave: true, dependent: :destroy

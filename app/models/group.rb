@@ -11,7 +11,6 @@ class Group
   # Dropbox Extended
   field :dropbox_delivery_folder, type: String,  default: 'iDocus_delivery/:code/:year:month/:account_book/'
   field :is_dropbox_authorized,   type: Boolean, default: false
-  field :file_type_to_deliver,    type: Integer, default: ExternalFileStorage::PDF
 
   validates_presence_of :name, :organization_id
   validate :uniqueness_of_name

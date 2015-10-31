@@ -17,10 +17,6 @@ class DocumentTools
       document.pages.count
     end
 
-    def generate_tiff_file(file_path, temppath)
-      system "gs -o '#{temppath}' -sDEVICE=tiff32nc -sCompression=lzw -r200 '#{file_path}' 2>&1"
-    end
-
     def to_pdf(file_path, output_file_path)
       system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
     end
@@ -203,8 +199,6 @@ class DocumentTools
         'application/pdf'
       when '.csv'
         'text/csv'
-      when '.tiff'
-        'image/tiff'
       else
         nil
       end

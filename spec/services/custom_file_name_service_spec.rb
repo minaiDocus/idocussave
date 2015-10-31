@@ -65,28 +65,6 @@ describe CustomFileNameService do
       expect(result).to eq('TS%0001_AC_201501_001_A_B.pdf')
     end
 
-    it 'returns 001_201501_AC_iDocus_TS%0001.tiff' do
-      options = {
-        user_code: 'TS%0001',
-        user_company: 'iDocus',
-        journal: 'AC',
-        period: '201501',
-        piece_number: '001',
-        extension: '.tiff'
-      }
-      policy = FileNamingPolicy.new(
-        first_user_identifier_position: 4,
-        second_user_identifier: 'company',
-        second_user_identifier_position: 3,
-        journal_position: 2,
-        period_position: 1,
-        piece_number_position: 0
-      )
-      result = CustomFileNameService.new(policy).execute(options)
-
-      expect(result).to eq('001_201501_AC_iDocus_TS%0001.tiff')
-    end
-
     it 'returns TS%0001-AC-201501-001-DIVERS-TEST.pdf' do
       options = {
         user_code: 'TS%0001',

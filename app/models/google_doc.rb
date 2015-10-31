@@ -10,7 +10,6 @@ class GoogleDoc
   field :token_expires_at,     type: Time
   field :is_configured,        type: Boolean, default: false
   field :path,                                default: 'iDocus/:code/:year:month/:account_book/'
-  field :file_type_to_deliver, type: Integer, default: ExternalFileStorage::PDF
 
   def is_configured?
     is_configured
