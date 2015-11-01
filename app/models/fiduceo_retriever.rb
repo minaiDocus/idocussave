@@ -61,12 +61,6 @@ class FiduceoRetriever
       end
     end
 
-    after_transition :processing => :scheduled do |retriever, transition|
-      if retriever.bank? && retriever.bank_accounts.any?
-        OperationService.delay(run_at: 3.minutes.from_now).fetch retriever
-      end
-    end
-
     event :schedule do
       transition [:ready, :processing, :wait_selection, :wait_for_user_action, :error] => :scheduled
     end

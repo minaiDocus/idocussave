@@ -96,7 +96,12 @@ class FiduceoDocumentFetcher
               retriever.update_attribute(:is_selection_needed, false)
             end
           else
-            transaction.acceptable? ? retriever.error : retriever.schedule
+            if transaction.acceptable?
+              retriever.error
+            else
+              retriever.schedule
+              retriever.bank_accounts.update_all(is_operations_up_to_date: false) if retriever.bank?
+            end
           end
           if transaction.retrieved_document_ids.any?
             retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids + transaction.retrieved_document_ids)

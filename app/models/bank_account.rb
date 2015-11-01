@@ -12,6 +12,7 @@ class BankAccount
   before_save :upcase_journal
 
   field :fiduceo_id
+  field :is_operations_up_to_date, type: Boolean, default: false
   field :bank_name
   field :name
   field :number
@@ -29,6 +30,7 @@ class BankAccount
 
   scope :configured,     -> { where(:journal.nin => [nil, ''], :accounting_number.nin => [nil, '']) }
   scope :not_configured, -> { where(:journal.in  => [nil, ''], :accounting_number.in  => [nil, '']) }
+  scope :outdated,       -> { where(is_operations_up_to_date: false) }
 
   def configured?
     journal.present? && accounting_number.present?

@@ -1,5 +1,15 @@
 # -*- encoding : UTF-8 -*-
 class OperationService
+  def self.fetch_all
+    BankAccount.outdated.each do |bank_account|
+      transaction = bank_account.retriever.transactions.desc(:created_at).first
+      if transaction.updated_at <= 3.minutes.ago
+        self.fetch(bank_account)
+        bank_account.update_attribute(:is_operations_up_to_date, true)
+      end
+    end
+  end
+
   def self.fetch(object, update=false)
     if object.class.to_s.in?(%w(User FiduceoRetriever))
       bank_accounts = object.bank_accounts
@@ -7,6 +17,7 @@ class OperationService
       bank_accounts = Array(object)
     end
     bank_accounts.each do |bank_account|
+      is_configured = bank_account.configured?
       options = { account_id: bank_account.fiduceo_id }
       date = bank_account.operations.desc(:date).first.try(:date)
       if date
@@ -26,6 +37,7 @@ class OperationService
           operation.user         = bank_account.user
           operation.bank_account = bank_account
           operation.fiduceo_id   = temp_operation.id
+          operation.is_locked    = !is_configured
           assign_attributes(operation, temp_operation)
           operation.save
         end
@@ -36,8 +48,7 @@ class OperationService
   def self.update_bank_account(bank_account)
     options = { account_id: bank_account.fiduceo_id }
     operation_ids = FiduceoOperation.new(bank_account.user.fiduceo_id, options).operations.map(&:id) || []
-    bank_account.user.operations.where(:fiduceo_id.in => operation_ids).
-      update_all(bank_account_id: bank_account.id, is_locked: !bank_account.configured?)
+    bank_account.user.operations.where(:fiduceo_id.in => operation_ids).update_all(bank_account_id: bank_account.id)
   end
 
   def self.assign_attributes(operation, temp_operation)

@@ -83,7 +83,11 @@ if Rails.env.production?
     { name: 'preassignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
     { name: 'abbyy_preassignment_fetcher', sleep_duration: 10.seconds, cmd: Proc.new { PrepaCompta::PreAssignPiece.new.execute } },
     { name: 'fiduceo_document_fetcher',    sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
-    { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { OperationService.process } },
+    { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new {
+        OperationService.fetch_all
+        OperationService.process
+      }
+    },
     { name: 'emailed_document_fetcher',    sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
     { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
     { name: 'delivery-dropbox_extended',   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },
