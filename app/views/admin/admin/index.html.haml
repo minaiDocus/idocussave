@@ -99,27 +99,27 @@
                 %tr
                   %td Dropbox Ext.
                   %td= RemoteFile.of_service('Dropbox Extended').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Dropbox Extended').not_retryable.count
+                  %td= RemoteFile.of_service('Dropbox Extended').not_processed.not_retryable.count
                 %tr
                   %td Dropbox
                   %td= RemoteFile.of_service('Dropbox').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Dropbox').not_retryable.count
+                  %td= RemoteFile.of_service('Dropbox').not_processed.not_retryable.count
                 %tr
                   %td Google Drive
                   %td= RemoteFile.of_service('Google Drive').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Google Drive').not_retryable.count
+                  %td= RemoteFile.of_service('Google Drive').not_processed.not_retryable.count
                 %tr
                   %td Box
                   %td= RemoteFile.of_service('Box').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Box').not_retryable.count
+                  %td= RemoteFile.of_service('Box').not_processed.not_retryable.count
                 %tr
                   %td FTP
                   %td= RemoteFile.of_service('FTP').not_processed.retryable.count
-                  %td= RemoteFile.of_service('FTP').not_retryable.count
+                  %td= RemoteFile.of_service('FTP').not_processed.not_retryable.count
                 %tr
                   %td Knowings
                   %td= RemoteFile.of_service('Knowings').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Knowings').not_retryable.count
+                  %td= RemoteFile.of_service('Knowings').not_processed.not_retryable.count
         .row-fluid
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
