@@ -66,6 +66,7 @@ private
     retrievers = retrievers.where(name:               /#{Regexp.quote(contains[:name])}/i)               if contains[:name].present?
     retrievers = retrievers.where(state:              contains[:state])                                  if contains[:state].present?
     retrievers = retrievers.where(transaction_status: /#{Regexp.quote(contains[:transaction_status])}/i) if contains[:transaction_status].present?
+    retrievers = retrievers.where(is_sane:            contains[:is_sane])                                if contains[:is_sane].present?
     retrievers
   end
 end

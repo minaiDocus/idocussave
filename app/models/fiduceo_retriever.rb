@@ -23,6 +23,7 @@ class FiduceoRetriever
   field :is_active,                    type: Boolean, default: true
   field :is_selection_needed,          type: Boolean, default: true
   field :is_auto,                      type: Boolean, default: true
+  field :is_sane,                      type: Boolean, default: true
   field :is_password_renewal_notified, type: Boolean, default: false
   field :wait_for_user,                type: Boolean, default: false
   field :wait_for_user_label
@@ -87,6 +88,7 @@ class FiduceoRetriever
   end
 
   scope :scheduled,            -> { where(state: 'scheduled', is_active: true) }
+  scope :insane,               -> { where(state: 'scheduled', is_active: true, is_sane: false) }
   scope :processing,           -> { where(state: 'processing') }
   scope :wait_selection,       -> { where(state: 'wait_selection') }
   scope :wait_for_user_action, -> { where(state: 'wait_for_user_action') }

@@ -720,6 +720,7 @@ fr:
           transaction_status: Statut
           is_active: Activer le récupérateur ?
           is_auto: Automatique ?
+          is_sane: Fonctionnelle
       fiduceo_provider_wish:
         zero: 0 fournisseur
         one: 1 fournisseur

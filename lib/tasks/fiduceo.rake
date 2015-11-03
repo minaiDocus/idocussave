@@ -17,6 +17,13 @@ namespace :fiduceo do
     puts "[#{Time.now}] fiduceo:notify_password_renewal - END"
   end
 
+  desc 'Notify insane retrievers'
+  task :notify_insane_retrievers => [:environment] do
+    puts "[#{Time.now}] fiduceo:notify_insane_retriever - START"
+    InsaneRetrieverFinder.execute
+    puts "[#{Time.now}] fiduceo:notify_insane_retriever - END"
+  end
+
   namespace :transaction do
     desc 'Initiate fiduceo transactions'
     task :initiate => [:environment] do

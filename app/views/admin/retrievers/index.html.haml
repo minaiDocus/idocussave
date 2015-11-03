@@ -27,6 +27,7 @@
                 %th.field.text_field= label_tag 'retriever_contains[name]', t('mongoid.models.fiduceo_retriever.attributes.name')
                 %th.field= label_tag 'retriever_contains[state]', t('mongoid.models.fiduceo_retriever.attributes.state')
                 %th.field.text_field= label_tag 'retriever_contains[transaction_status]', t('mongoid.models.fiduceo_retriever.attributes.transaction_status')
+                %th.field= label_tag 'retriever_contains[is_sane]', t('mongoid.models.fiduceo_retriever.attributes.is_sane')
                 %th
             %tbody
               %tr
@@ -56,6 +57,7 @@
                 %td.field.text_field= text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
                 %td.field= select_tag 'retriever_contains[state]', options_for_select(FiduceoRetriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
                 %td.field.text_field= text_field_tag 'retriever_contains[transaction_status]', (params[:retriever_contains][:transaction_status] rescue '')
+                %td.field= select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true
                 %td
                   = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
                   = link_to t('filters.reset'), admin_fiduceo_retrievers_path, class: 'btn'
@@ -101,6 +103,7 @@
                 %th Mode
                 %th= t('mongoid.models.fiduceo_retriever.attributes.state')
                 %th= sortable :transaction_status, t('mongoid.models.fiduceo_retriever.attributes.transaction_status')
+                %th= sortable :is_sane,            t('mongoid.models.fiduceo_retriever.attributes.is_sane')
                 %th Action
             %tbody
               - @retrievers.each do |retriever|
@@ -116,5 +119,6 @@
                     %td= retriever_presenter.mode
                     %td!= retriever_presenter.state(:admin)
                     %td= retriever_presenter.transaction_status
+                    %td= retriever.is_sane ? t('yes_value') : t('no_value')
                     %td= link_to icon(icon: 'eye-open'), account_fiduceo_retrievers_path(user_code: retriever.user.code)
       = render partial: 'shared/list_options', locals: { collection: @retrievers }
