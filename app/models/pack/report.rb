@@ -150,7 +150,7 @@ class Pack::Report
     end
 
     def fetch_preseizure(dir)
-      %w(AC CB VT).each do |e|
+      %w(AC VT).each do |e|
         filepath = File.join([output_path,dir,"#{e}.xml"])
         file = File.open(filepath) rescue nil
         if file
