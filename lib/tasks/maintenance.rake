@@ -6,7 +6,9 @@ namespace :maintenance do
     desc 'Notify updated documents'
     task :document_updated => [:environment] do
       puts "[#{Time.now}] maintenance:notification:document_updated - START"
-      DocumentNotifier.notify_updated
+      start_at = (Time.now - 12.hours).beginning_of_day
+      end_at = start_at.end_of_day
+      DocumentNotifier.notify_updated(start_at, end_at)
       puts "[#{Time.now}] maintenance:notification:document_updated - END"
     end
 

@@ -7,12 +7,12 @@
     Bonjour #{@user.name},
     %br
     %br
-    Le #{I18n.l(@time, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to @url, @url} .
+    Le #{I18n.l(@start_at, format: '%d %B %Y')}, les documents ci-dessous ont été ajoutés ou mis à jour dans votre interface, à l'adresse #{link_to @url, @url} .
     %br
     %br
     %ul
       - @packs.each do |pack|
-        - _pack = UpdatedPackPresenter.new(pack, @time)
+        - _pack = UpdatedPackPresenter.new(pack, @start_at, @end_at)
         %li
           #{pack.name} : #{_pack.new_pages_count} nouvelle(s) page(s)
           %ul
