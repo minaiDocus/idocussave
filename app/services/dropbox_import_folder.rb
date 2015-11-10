@@ -5,7 +5,15 @@ class DropboxImportFolder
       DropboxBasic.all.entries.each do |dropbox|
         if dropbox.is_used? && dropbox.is_configured?
           if dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
-            new(dropbox).check
+            begin
+              new(dropbox).check
+            rescue DropboxAuthError => e
+              if e.message.match(/User is not authenticated/)
+                dropbox.update_attribute(:access_token, nil)
+              else
+                raise
+              end
+            end
             print '.'
           end
         end
