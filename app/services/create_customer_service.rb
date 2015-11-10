@@ -14,6 +14,8 @@ class CreateCustomerService
     @customer.set_random_password
     @customer.is_group_required = !(@requester.my_organization || @requester.is_admin)
     if @customer.save
+      @customer.updated_at ||= Time.now
+      @customer.created_at ||= @customer.updated_at
       token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
       @customer.reset_password_token = encrypted_token
       @customer.reset_password_sent_at = Time.now
