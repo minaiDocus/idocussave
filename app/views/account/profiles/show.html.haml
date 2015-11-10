@@ -314,10 +314,10 @@
             .span12
               .well
                 .aligncenter
-                  %h3 Réouvrir mon l'organisation
+                  %h3 Réactiver mon compte client
                   %br
-                  Pour réouvrir votre organization veuillez envoyer un courriel à
-                  = link_to 'support@idocus.com', 'mailto:support@idocus.com'
+                  Pour réactiver votre compte client veuillez envoyer un courriel à
+                  = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
 
         - if @user.is_prescriber || !@user.is_centralized
           - unless @user.try(:organization).try(:is_suspended)

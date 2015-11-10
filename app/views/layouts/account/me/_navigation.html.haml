@@ -24,7 +24,7 @@
               != link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
       - if !@user.organization.is_active && @user == @user.organization.leader
         %li{ class: ('active' if @active_panel == 'active_organization') }
-          != link_to "Réactiver votre organization", '#active_organization', class: 'do-show'
+          != link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
       - if @user.is_prescriber || !@user.is_centralized
         - unless @user.try(:organization).try(:is_suspended) && @user.active?
           %li{ class: ('active' if @active_panel == 'invoices') }
