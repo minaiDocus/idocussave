@@ -85,8 +85,8 @@ private
       tried_count = 1
       begin
         @client.send(name, *args)
-      rescue Errno::ETIMEDOUT, DropboxError => e
-        if e.class == Errno::ETIMEDOUT || e.message.match(/503 Service Unavailable|Internal Server Error/)
+      rescue Errno::ETIMEDOUT, Timeout::Error, DropboxError => e
+        if e.class.in?([Errno::ETIMEDOUT, Timeout::Error]) || e.message.match(/503 Service Unavailable|Internal Server Error/)
           if tried_count <= 3
             sleep(5*tried_count)
             tried_count += 1
