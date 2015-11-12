@@ -125,14 +125,26 @@ class FiduceoDocumentFetcher
     def fetch_documents(retriever)
       client = Fiduceo::Client.new retriever.user.fiduceo_id
       fetched_document_ids = retriever.temp_documents.distinct(:fiduceo_id)
+      documents = []
       retriever.pending_document_ids.each do |id|
-        unless id.in? fetched_document_ids
+        if id.in? fetched_document_ids
+          retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+        else
           document = client.document id
           if client.response.code == 200
-            FiduceoDocument.new retriever, document
+            documents << document
+            retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
           end
         end
-        retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+      end
+      documents.sort_by do |document|
+        if document['metadatas']['metadata']['date'].present?
+          Time.zone.parse(document['metadatas']['metadata']['date']).to_time
+        else
+          Time.now
+        end
+      end.each do |document|
+        FiduceoDocument.new retriever, document
       end
       if retriever.wait_selection? && retriever.temp_documents.count == 0
         retriever.schedule
