@@ -30,7 +30,7 @@ every :day, at: '08:02' do
   rake 'maintenance:notification:document_pending', options
 end
 
-every :day, at: '8:30' do
+every :day, at: '9:30' do
   rake 'fiduceo:notify_insane_retrievers', options
 end
 
