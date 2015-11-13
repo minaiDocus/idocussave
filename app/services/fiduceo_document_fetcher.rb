@@ -138,8 +138,9 @@ class FiduceoDocumentFetcher
         end
       end
       documents.sort_by do |document|
-        if document['metadatas']['metadata']['date'].present?
-          Time.zone.parse(document['metadatas']['metadata']['date']).to_time
+        date = document['metadatas']['metadata'].select { |e| e['name'] == 'DATE' }.first['value']
+        if date.present?
+          Time.zone.parse(date).to_time
         else
           Time.now
         end
