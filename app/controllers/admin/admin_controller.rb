@@ -101,15 +101,20 @@ class Admin::AdminController < ApplicationController
   def failed_packs_delivery
     pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id)
     @failed_packs_delivery = Pack.where(:_id.in => pack_ids).map do |pack|
-      remote_files = Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
-        pack.remote_files.not_processed.not_retryable.asc(:created_at).entries
+      Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
+        remote_files = pack.remote_files.not_processed.not_retryable.asc(:created_at).entries
+        data = remote_files.map do |remote_file|
+          name = remote_file.user.try(:code) || remote_file.group.try(:name) || remote_file.organization.try(:name)
+          [name, remote_file.service_name].join(' : ')
+        end.uniq
+
+        object = OpenStruct.new
+        object.date           = remote_files.last.try(:created_at)
+        object.name           = pack.name.sub(/ all\z/,'')
+        object.document_count = remote_files.count
+        object.message        = data.join(', ')
+        object
       end
-      object = OpenStruct.new
-      object.date           = remote_files.last.try(:created_at)
-      object.name           = pack.name.sub(/ all\z/,'')
-      object.document_count = remote_files.count
-      object.message        = remote_files.map(&:service_name).uniq.join(', ')
-      object
     end.sort_by{ |o| [o.date ? 0 : 1, o.date] }.reverse
     render partial: 'process', locals: { collection: @failed_packs_delivery }
   end
