@@ -31,12 +31,12 @@ class InsaneRetrieverFinder
           if (Date.today - bank_account.operations.desc(:date).first.date).to_i > 7
             if has_stopped && other_has_operations
               @retriever.is_sane = false
-              @retriever.save
             end
           end
         end
       end
     end
+    @retriever.save
   end
 
   def is_documents_working
@@ -45,10 +45,10 @@ class InsaneRetrieverFinder
       if (Date.today - @retriever.temp_documents.desc(:created_at).first.created_at.to_date).to_i > 7
         if has_stopped && other_has_documents
           @retriever.is_sane = false
-          @retriever.save
         end
       end
     end
+    @retriever.save
   end
 
   def has_stopped
