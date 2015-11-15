@@ -11,7 +11,6 @@ describe PreseizureToTxtService do
     report.save
     @preseizure = Pack::Report::Preseizure.new
     @preseizure.date = Time.local(2015,1,13)
-    @preseizure.name = 'TS%0001 AC 201501'
     @preseizure.third_party = 'TIERS'
     @preseizure.piece_number = '123'
     @preseizure.user = user

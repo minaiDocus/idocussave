@@ -90,7 +90,6 @@ class OperationService
             preseizure.report          = pack_report
             preseizure.operation       = operation
             preseizure.type            = 'FLUX'
-            preseizure.name            = pack_report.name
             preseizure.date            = operation.date
             preseizure.position        = counter
             preseizure.operation_label = operation.label

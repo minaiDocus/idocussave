@@ -12,7 +12,6 @@ class Pack::Report::Preseizure
   has_and_belongs_to_many :pre_assignment_deliveries
   has_and_belongs_to_many :remote_files, inverse_of: 'preseizures'
 
-  field :name
   field :type
   field :date,            type: Time
   field :deadline_date,   type: Time
@@ -41,7 +40,7 @@ class Pack::Report::Preseizure
   scope :not_locked, -> { where(is_locked: false) }
 
   def piece_name
-    name || piece.name rescue nil
+    piece.try(:name) || report.name
   end
 
   def piece_content_url
