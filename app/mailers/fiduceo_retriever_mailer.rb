@@ -14,7 +14,7 @@ class FiduceoRetrieverMailer < ActionMailer::Base
 
   def notify_insane_retrievers(addresses)
     @insane_retrievers = FiduceoRetriever.insane
-    @insane_retrievers.sort_by!{ |insane_retriever| [insane_retriever.user.name, insane_retriever.name] }.reverse!
+    @insane_retrievers = @insane_retrievers.sort_by { |retriever| [retriever.user.code, retriever.type, retriever.service_name] }
     to = addresses.first
     cc = addresses[1..-1] || []
     mail(to: to, cc: cc, subject: '[iDocus] Erreur récupérateur fiduceo - INSANE')
