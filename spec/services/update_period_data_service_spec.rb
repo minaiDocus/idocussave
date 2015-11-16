@@ -46,9 +46,9 @@ describe UpdatePeriodDataService do
     report = Pack::Report.create(name: document.name)
     report.document = document
     report.save
-    preseizure = Pack::Report::Preseizure.create(name: document.name, piece_id: BSON::ObjectId.new)
+    preseizure = Pack::Report::Preseizure.create(piece_id: BSON::ObjectId.new)
     report.preseizures << preseizure
-    preseizure2 = Pack::Report::Preseizure.create(name: document.name, piece_id: BSON::ObjectId.new)
+    preseizure2 = Pack::Report::Preseizure.create(piece_id: BSON::ObjectId.new)
     report.preseizures << preseizure2
     expense = Pack::Report::Expense.create
     report.expenses << expense
