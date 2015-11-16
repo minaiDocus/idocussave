@@ -106,7 +106,7 @@ describe AccountNumberFinderService do
       it 'returns 0IBI' do
         allow_any_instance_of(AccountNumberFinderService).to receive(:accounting_plan).and_return(@accounting_plan)
 
-        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv Ibiza $150.0')
+        result = AccountNumberFinderService.new(@user, '0TEMP').execute('Prlv iBiza $150.0')
 
         expect(result).to eq('0IBI')
       end

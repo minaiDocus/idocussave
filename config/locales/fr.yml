@@ -344,7 +344,7 @@ fr:
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
           prescriber: Prescripteur
-          ibiza_id: Compte lié Ibiza
+          ibiza_id: Compte lié iBiza
           authd_prev_period: Nb de périodes antérieures accéssibles (Téléversement)
           auth_prev_period_until_day: Jour de clôture de la période précédente
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
@@ -549,17 +549,17 @@ fr:
           is_active: Est actif ?
           link_to_session_create: Chemin de création de la session
       ibiza:
-        zero: 0 Ibiza
-        one: Ibiza
-        other: '%{count} Ibiza'
-        name: Ibiza
+        zero: 0 iBiza
+        one: iBiza
+        other: '%{count} iBiza'
+        name: iBiza
         attributes:
           is_auto_deliver: Livraison automatique ?
           token: Jeton
           state: Etat
           description: Description
           description_separator: Séparateur du champ description
-          piece_name_format: Format de nom de la pièce iDocus dans Ibiza (colonne Pièces dans iBIza)
+          piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne Pièces dans iBiza)
           piece_name_format_sep: Séparateur du format de nom de la pièce
           state_value:
             none: non assigné
@@ -822,14 +822,14 @@ fr:
         zero: 0 livraison
         one: 1 livraison
         other: '%{count} livraisons'
-        name: Livraison de pré-affectation vers Ibiza
+        name: Livraison de pré-affectation vers iBiza
         attributes:
           pack_name: Nom du lot
           number: N°
           state: Etat
           is_auto: Automatique ?
           total_item: Nombre d'élément
-          ibiza_id: Identifiant Ibiza
+          ibiza_id: Identifiant iBiza
           grouped_date: Date groupé
           xml_data: Donnée XML
           error_message: Message d'erreur

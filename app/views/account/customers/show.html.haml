@@ -29,7 +29,7 @@
                 %a{ href: '#period_options', data: { toggle: 'tab' } } Options des périodes
             - if @organization.ibiza.try(:is_configured?)
               %li{ class: ('active' if params[:tab] == 'ibiza') }
-                %a{ href: '#ibiza', data: { toggle: 'tab' } } Ibiza
+                %a{ href: '#ibiza', data: { toggle: 'tab' } } iBiza
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized

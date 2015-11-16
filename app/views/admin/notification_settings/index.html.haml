@@ -41,13 +41,13 @@
   .row-fluid.margin1top
     .span12
       .pull-left.margin1bottom
-        %h4 Livraison de pré-affectation vers Ibiza
+        %h4 Livraison de pré-affectation vers iBiza
       .pull-right.margin1bottom
         = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
       %table.table.table-condensed.table-striped.table-bordered
         %tr
           %th Description
-          %td Lorsqu'une livraison de pré-affectation vers Ibiza est effectué
+          %td Lorsqu'une livraison de pré-affectation vers iBiza est effectué
         %tr
           %th Adresse mail à notifier (#{Settings.notify_ibiza_deliveries_to.try(:size) || 0})
           %td!= notification_addresses(Settings.notify_ibiza_deliveries_to)

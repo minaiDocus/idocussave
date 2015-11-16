@@ -27,7 +27,7 @@ class Idocus.Views.PackReportsShow extends Backbone.View
 
   deliver: (e) ->
     e.preventDefault()
-    if confirm("Vous êtes sur le point d'envoyer des écritures dans Ibiza. Etes-vous sûr ?")
+    if confirm("Vous êtes sur le point d'envoyer des écritures dans iBiza. Etes-vous sûr ?")
       $(e.currentTarget).tooltip('hide')
       @model.deliver()
       @model.set('is_delivered', true)
@@ -39,11 +39,11 @@ class Idocus.Views.PackReportsShow extends Backbone.View
     content += "<tr><td><b>Date d'ajout de la première écriture :</b></td><td>" + @model.get('created_at') + "</td></tr>"
     content += "<tr><td><b>Date d'ajout de la dernière écriture :</b></td><td>" + @model.get('updated_at') + "</td></tr>"
     if window.is_ibiza_configured
-      content += "<tr><td><b>Date du dernier envoi dans Ibiza :</b></td><td>"
+      content += "<tr><td><b>Date du dernier envoi dans iBiza :</b></td><td>"
       if @model.get('delivery_tried_at') != null
         content += @model.get('delivery_tried_at')
       content += "</td></tr>"
-      content += "<tr><td colspan=\"2\"><b>Message d'erreur d'envoi dans Ibiza :</b><br>"
+      content += "<tr><td colspan=\"2\"><b>Message d'erreur d'envoi dans iBiza :</b><br>"
       if @model.get('delivery_message') != null
         content += @model.get('delivery_message').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       content += "</td></tr>"

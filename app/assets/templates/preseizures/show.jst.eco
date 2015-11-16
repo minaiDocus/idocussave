@@ -3,7 +3,7 @@
     <% if(window.is_ibiza_configured): %>
       <td class="option">
         <% if(@model.get('is_locked') == false && @model.get('is_delivered') == false): %>
-          <a class="tip deliver" href="" title="Envoyer vers Ibiza">
+          <a class="tip deliver" href="" title="Envoyer vers iBiza">
             <i class="icon-refresh"></i>
           </a>
         <% end %>

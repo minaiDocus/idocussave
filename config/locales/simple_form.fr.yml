@@ -209,7 +209,7 @@ fr:
         state: Etat
         description: Description
         description_separator: Séparateur du champ description
-        piece_name_format: Format de nom de la pièce iDocus dans Ibiza (colonne Pièces dans iBIza)
+        piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne Pièces dans iBiza)
         piece_name_format_sep: Séparateur du format de nom de la pièce
       account_number_rule:
         name: Nom

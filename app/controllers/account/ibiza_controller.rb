@@ -37,7 +37,7 @@ class Account::IbizaController < Account::OrganizationController
     if @ibiza.try(:is_configured?)
       @ibiza.flush_users_cache
       @ibiza.get_users_only_once
-      flash[:success] = 'Rafraîchissement de la liste des dossiers Ibiza en cours.'
+      flash[:success] = 'Rafraîchissement de la liste des dossiers iBiza en cours.'
     end
     path = params[:back].present? ? params[:back] : account_organization_path
     redirect_to path
