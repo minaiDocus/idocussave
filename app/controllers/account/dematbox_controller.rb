@@ -6,7 +6,7 @@ class Account::DematboxController < Account::AccountController
   def create
     @dematbox.async_subscribe(params[:pairing_code])
     flash[:notice] = 'Configuration en cours...'
-    redirect_to account_profile_path(panel: 'dematbox')
+    redirect_to account_profile_path(panel: 'idocus_box')
   end
 
 private
