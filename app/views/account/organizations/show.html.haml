@@ -285,7 +285,7 @@
                         - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
                         = value ? t('yes_value') : t('no_value')
                       %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
-                      %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce d'iBiza (la colonne doit être affichée)
+                      %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
               - if is_leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
             #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }

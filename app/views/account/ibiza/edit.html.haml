@@ -126,7 +126,7 @@
                     = check_box_tag "ibiza[description][piece_number][is_used]", 1, (@ibiza.description['piece_number']['is_used'] rescue false)
                     %span.text Référence pièce d'origine
                 %td= number_field_tag "ibiza[description][piece_number][position]", (@ibiza.description['piece_number']['position'] rescue 1)
-                %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce d'iBiza (la colonne doit être affichée)
+                %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
           = f.input :description_separator
         .form-actions.margin0bottom
           = f.submit 'Valider', class: 'btn btn-primary'
