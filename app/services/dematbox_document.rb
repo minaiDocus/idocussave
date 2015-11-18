@@ -79,14 +79,14 @@ class DematboxDocument
         temp_document.dematbox_notified_at = Time.now
         result = temp_document.save
         if temp_document.uploaded?
-          DematboxServiceApi.upload_notification temp_document.dematbox_doc_id, temp_document.dematbox_box_id
+          DematboxServiceApi.delay(run_at: 3.seconds.from_now, priority: 0).upload_notification temp_document.dematbox_doc_id, temp_document.dematbox_box_id
         end
       elsif result.split(':')[0].to_i.in?([0, 501, 603, 701, 703, 704]) && temp_document.updated_at > 5.minutes.ago
-        DematboxDocument.delay(run_at: 15.from_now, priority: 0).notify_uploaded_without_delay(id)
+        DematboxDocument.delay(run_at: 15.seconds.from_now, priority: 0).notify_uploaded_without_delay(id)
       end
       result
     end
-    handle_asynchronously :notify_uploaded, priority: 0
+    handle_asynchronously :notify_uploaded, priority: 0, run_at: Proc.new { 3.seconds.from_now }
   end
 
 private
