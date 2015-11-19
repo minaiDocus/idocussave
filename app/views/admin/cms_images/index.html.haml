@@ -1,15 +1,9 @@
-.navbar
-  .navbar-inner
-    .container-fluid
-      %ul.nav
-        %li.active= link_to 'Index', admin_cms_images_path
-
 .row-fluid
-  .span12.panel
+  .span12
     %h2.margin1bottom.title Toutes les Images (#{@cms_images.count})
 
 .row-fluid
-  .span12.panel
+  .span12
     .row-fluid
       .span9.padding1top
         %form{ id: 'fileupload', action: '/admin/cms_images', method: 'POST', enctype: 'multipart/form-data' }
