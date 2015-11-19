@@ -430,7 +430,7 @@ fr:
         name: Descripteur CSV
         attributes:
           client_code: Code client
-          journal: Journal
+          journal: Journal iDocus
           type: Type de traitement
           period: Période iDocus
           piece_number: Numéro de pièce iDocus
