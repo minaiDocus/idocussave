@@ -37,7 +37,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 * Dropbox
 * Google Drive
 * Box
-* Ftp
+* FTP
 
 ## Installation
 *A venir*
