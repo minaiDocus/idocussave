@@ -5,8 +5,8 @@ class Ibiza
 
   belongs_to :organization
 
-  field :token, type: String
-  field :state, type: String, default: 'none'
+  field :access_token
+  field :state, default: 'none'
 
   field :description,           type: Hash,    default: {}
   field :description_separator, type: String,  default: ' - '
@@ -21,11 +21,11 @@ class Ibiza
   end
 
   def client
-    @_client ||= IbizaAPI::Client.new(self.token)
+    @client ||= IbizaAPI::Client.new(access_token)
   end
 
   def set_state
-    if token.present?
+    if access_token.present?
       update(state: 'waiting')
       verify_token
     else

@@ -205,7 +205,7 @@ fr:
         is_for_kit_shipping: Pour le kit ?
       ibiza:
         is_auto_deliver: Livraison automatique ?
-        token: Jeton
+        access_token: Jeton d'accès
         state: Etat
         description: Description
         description_separator: Séparateur du champ description

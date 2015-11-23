@@ -555,7 +555,7 @@ fr:
         name: iBiza
         attributes:
           is_auto_deliver: Livraison automatique ?
-          token: Jeton
+          access_token: Jeton d'accès
           state: Etat
           description: Description
           description_separator: Séparateur du champ description

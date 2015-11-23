@@ -7,7 +7,7 @@ class Account::IbizaController < Account::OrganizationController
     @ibiza = Ibiza.new(ibiza_params)
     @ibiza.organization = @organization
     if @ibiza.save
-      @ibiza.set_state if @ibiza.token.present?
+      @ibiza.set_state if @ibiza.access_token.present?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_path(@organization, tab: 'ibiza')
     else
@@ -20,7 +20,7 @@ class Account::IbizaController < Account::OrganizationController
 
   def update
     @ibiza.assign_attributes(ibiza_params)
-    is_token_changed = @ibiza.token_changed?
+    is_token_changed = @ibiza.access_token_changed?
     if @ibiza.save
       if is_token_changed
         @ibiza.set_state
@@ -57,7 +57,7 @@ private
   end
 
   def ibiza_params
-    params.require(:ibiza).permit(:token, :is_auto_deliver, :description_separator, :piece_name_format_sep).tap do |whitelist|
+    params.require(:ibiza).permit(:access_token, :is_auto_deliver, :description_separator, :piece_name_format_sep).tap do |whitelist|
       whitelist[:description]       = params[:ibiza][:description].permit!
       whitelist[:piece_name_format] = params[:ibiza][:piece_name_format].permit!
     end

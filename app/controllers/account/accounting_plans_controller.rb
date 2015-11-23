@@ -58,7 +58,7 @@ class Account::AccountingPlansController < Account::OrganizationController
 private
 
   def verify_access
-    if @organization.ibiza.try(:token).present?
+    if @organization.ibiza.try(:access_token).present?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path
     end

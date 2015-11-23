@@ -38,7 +38,7 @@
               - if @customer.fiduceo_retrievers.banks.count > 0
                 %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                   %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Comptes bancaires
-            - if @organization.ibiza.try(:token).blank?
+            - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
             - if @organization.is_csv_descriptor_used
@@ -272,7 +272,7 @@
                         %td= bank_account.accounting_number
                         %td= bank_account.start_date
                         %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
-            - if @organization.ibiza.try(:token).blank?
+            - if @organization.ibiza.try(:access_token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid
                   .span12.aligncenter
