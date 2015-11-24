@@ -1,5 +1,8 @@
 same_id = (element) ->
-  element['id'] == window.fiduceo_retriever_id
+  if window.special_bank_ids.indexOf(element['id']) != -1
+    element['id'] == window.fiduceo_retriever_id && element['name'] == window.fiduceo_retriever_name
+  else
+    element['id'] == window.fiduceo_retriever_id
 
 update_form = ->
   if $('#fiduceo_retriever_type').val() == 'provider'
@@ -35,15 +38,18 @@ update_form = ->
     if retriever['inputs'][2]
       label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][2]['name']
       if retriever['inputs'][2]['inputValues'] != undefined
-        content = ""
-        for option in retriever['inputs'][2]['inputValues']['enumValue']
-          content += '<option value="' + option + '">' + option + '</option>'
-        $("label[for='fiduceo_retriever_sparam1']").html(label)
-        $('#fiduceo_retriever_sparam1').html(content)
-        if retriever['inputs'][2]['name'].match(/^caisse$/i) && window.selected_cash_register != null
-          $('#fiduceo_retriever_sparam1 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
-        $('.sparam1').show()
-        $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
+        if window.special_bank_ids.indexOf(retriever['id']) != -1
+          $('#fiduceo_retriever_param1').val(retriever['name'])
+        else
+          content = ""
+          for option in retriever['inputs'][2]['inputValues']['enumValue']
+            content += '<option value="' + option + '">' + option + '</option>'
+          $("label[for='fiduceo_retriever_sparam1']").html(label)
+          $('#fiduceo_retriever_sparam1').html(content)
+          if retriever['inputs'][2]['name'].match(/^caisse$/i) && window.selected_cash_register != null
+            $('#fiduceo_retriever_sparam1 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
+          $('.sparam1').show()
+          $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
       else
         $("label[for='fiduceo_retriever_param1']").html(label)
         $('.param1').show()
@@ -143,6 +149,8 @@ jQuery ->
     window.banks = $('#banks').data('banks')
     window.selected_banks = $('#banks').data('selectedBanks')
     window.selected_cash_register = $('#banks').data('selectedCashRegister')
+    # Crédit du Nord (Professionnels) et ses filiales
+    window.special_bank_ids = ['4f6740766caddc2c2c3e558f', '551d01b0b5b437370f010000']
 
     update_selects_list($('#fiduceo_retriever_type').val() == 'provider')
 
@@ -176,9 +184,11 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
+          window.fiduceo_retriever_name = item['name']
           update_form()
           update_provider()
         onDelete: (item) ->
+          window.fiduceo_retriever_name = null
           update_form()
           update_provider()
 
@@ -198,9 +208,11 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
+          window.fiduceo_retriever_name = item['name']
           update_form()
           update_provider()
         onDelete: (item) ->
+          window.fiduceo_retriever_name = null
           update_form()
           update_provider()
 
