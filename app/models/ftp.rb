@@ -56,7 +56,7 @@ class Ftp
     begin
       Net::FTP.open(self.host.sub(/\Aftp:\/\//,''),self.login,self.password)
       self.is_configured = true
-    rescue Net::FTPPermError, SocketError
+    rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED
       self.is_configured = false
       reset_info
     end

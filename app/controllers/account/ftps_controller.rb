@@ -17,9 +17,7 @@ public
     @ftp.host = params[:ftp][:host]
     @ftp.login = params[:ftp][:login]
     @ftp.password = params[:ftp][:password]
-    is_ok = @ftp.valid?
-    is_ok = @ftp.verify! if is_ok
-    if is_ok
+    if @ftp.save && @ftp.verify!
       flash[:notice] = "Configuré avec succès."
     else
       flash[:error] = "Paramètre(s) non valide."
