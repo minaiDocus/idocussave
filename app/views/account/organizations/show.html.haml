@@ -171,7 +171,7 @@
                     %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
                     %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
-                %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (colonne Pièces dans iBiza)
+                %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
                 %table.table.table-condensed.table-striped
                   %thead
                     %tr
@@ -280,7 +280,7 @@
                       %td.position= @organization.ibiza.description['piece_name']['position'] rescue 1
                       %td
                     %tr
-                      %td.name Référence pièce d'origine
+                      %td.name Numéro de pièce d'origine
                       %td.is_used
                         - value = @organization.ibiza.description['piece_number']['is_used'] rescue false
                         = value ? t('yes_value') : t('no_value')

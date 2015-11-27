@@ -12,7 +12,7 @@ class Idocus.Models.Preseizure extends Backbone.Model
     operation_label:
       type: "TextArea", title: "Libellé de l'opération"
     piece_number:
-      type: "Text", title: "Numéro de pièce"
+      type: "Text", title: "Numéro de pièce d'origine"
     amount:
       type: "Number", title: "Montant d'origine"
     currency:
