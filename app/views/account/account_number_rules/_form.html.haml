@@ -7,7 +7,7 @@
       = f.input :content
       = f.input :priority, as: :integer, hint: 'Plus le nombre est petit plus la règle est importante.'
       = f.input :third_party_account, required: true, hint: 'Le numéro qui sera assigné si la recherche est un succès.'
-    
+
     .span6.affect_to
       %h6 Choisir le(s) groupe(s) et/ou client(s) affectés par la règle.
       .row-fluid
@@ -26,7 +26,7 @@
                 = check_box_tag 'account_number_rule[group][]', group.members.map{ |m| m.id.to_s }, false, id: "account_number_rule_group_#{group.id}"
                 %label{ for: "account_number_rule_group_#{group.id}" }= group.name
             .span6
-              = t('mongoid.models.group.attributes.user')
+              = t('mongoid.models.account_number_rule.attributes.users')
               %br
               (
               = link_to 'Tous', '#', class: 'all_users'

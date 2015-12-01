@@ -861,6 +861,7 @@ fr:
           content: Contenu
           third_party_account: Numéro de compte tiers
           priority: Priorité
+          users: Clients
           affect_values:
             organization: Organisation
             user: Client
