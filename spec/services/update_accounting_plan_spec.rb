@@ -6,7 +6,7 @@ describe UpdateAccountingPlan do
     organization = create(:organization)
     @user = create(:user, ibiza_id: "{IDENTIFIER}")
     organization.members << @user
-    ibiza = Ibiza.new(token: "xxxtokenxxx", state: 'valid')
+    ibiza = Ibiza.new(access_token: "xxxtokenxxx", state: 'valid')
     ibiza.organization = organization
     ibiza.save
   end
