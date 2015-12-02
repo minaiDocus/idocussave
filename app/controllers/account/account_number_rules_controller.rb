@@ -36,7 +36,9 @@ class Account::AccountNumberRulesController < Account::OrganizationController
 
   def update
     # re-assign customers of other collaborators
-    params[:account_number_rule][:user_ids] += (@account_number_rule.users - customers).map(&:id).map(&:to_s)
+    if params[:account_number_rule] && params[:account_number_rule][:user_ids].present?
+      params[:account_number_rule][:user_ids] += (@account_number_rule.users - customers).map(&:id).map(&:to_s)
+    end
     if @account_number_rule.update(account_number_rule_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'account_number_rules')
