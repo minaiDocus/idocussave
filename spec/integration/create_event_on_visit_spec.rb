@@ -19,6 +19,8 @@ describe 'Create event on visit' do
     it 'create page visit event on /account/documents' do
       @user = FactoryGirl.create(:user)
       @user.options = UserOptions.create(user_id: @user.id)
+      @user.organization = Organization.create(name: 'TEST', code: 'TS')
+      @user.save
 
       page.driver.post user_session_path,
         user: { email: @user.email, password: @user.password }
