@@ -1,7 +1,7 @@
 #receipts.margin2bottom{ data: { codes: User.customers.map(&:code).map(&:presence).compact.sort.to_json } }
   .row-fluid
     .span1
-      = link_to 'Export CSV', receipts_path(format: 'csv'), class: 'btn'
+      = link_to 'Export CSV', receipts_path(format: 'csv', year: @current_time.year, month: @current_time.month, day: @current_time.day), class: 'btn'
     .span11
       .margin2bottom
         %table.table.table-bordered.navigation
