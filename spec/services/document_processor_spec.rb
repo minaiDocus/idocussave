@@ -2067,7 +2067,8 @@ describe DocumentProcessor do
 
           file_name = 'TS0001_TS_201301_001.pdf'
           file_path = File.join(dir, file_name)
-          FileUtils.cp @file_with_2_pages, file_path
+          original_file_path = File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf')
+          Pdftk.new.merge([original_file_path, original_file_path], file_path)
           temp_document = TempDocument.new
 
           temp_document.temp_pack          = temp_pack
@@ -2095,6 +2096,12 @@ describe DocumentProcessor do
         TempPack.destroy_all
         Pack.destroy_all
         File.delete @path
+      end
+
+      it 'creates two sheets metadata' do
+        expect(@pack.dividers.sheets.count).to eq(2)
+        expect(@pack.dividers.sheets.first.position).to eq(1)
+        expect(@pack.dividers.sheets.last.position).to eq(2)
       end
 
       it 'should create file to preassign successfully' do
