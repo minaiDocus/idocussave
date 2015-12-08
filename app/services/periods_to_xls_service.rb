@@ -40,33 +40,29 @@ class PeriodsToXlsService
     list = []
 
     documents.each do |document|
-      data_service = PeriodBillingService.new(document.period)
-      document.period.duration.times do |index|
-        month = document.period.start_at.month + index
-        data = []
-        data << document.period.user.try(:organization).try(:name) if @with_organization_info
-        data += [
-          month,
-          document.period.start_at.year,
-          document.period.user.code,
-          document.period.user.company,
-          document.name,
-          data_service.data(:pieces, month),
-          data_service.data(:scanned_pieces, month),
-          data_service.data(:uploaded_pieces, month),
-          data_service.data(:dematbox_scanned_pieces, month),
-          data_service.data(:fiduceo_pieces, month),
-          data_service.data(:scanned_sheets, month),
-          data_service.data(:pages, month),
-          data_service.data(:scanned_pages, month),
-          data_service.data(:uploaded_pages, month),
-          data_service.data(:dematbox_scanned_pages, month),
-          data_service.data(:fiduceo_pages, month),
-          data_service.data(:paperclips, month),
-          data_service.data(:oversized, month)
-        ]
-        list << data
-      end
+      data = []
+      data << document.period.user.try(:organization).try(:name) if @with_organization_info
+      data += [
+        document.period.end_at.month,
+        document.period.start_at.year,
+        document.period.user.code,
+        document.period.user.company,
+        document.name,
+        document.pieces,
+        document.scanned_pieces,
+        document.uploaded_pieces,
+        document.dematbox_scanned_pieces,
+        document.fiduceo_pieces,
+        document.scanned_sheets,
+        document.pages,
+        document.scanned_pages,
+        document.uploaded_pages,
+        document.dematbox_scanned_pages,
+        document.fiduceo_pages,
+        document.paperclips,
+        document.oversized
+      ]
+      list << data
     end
 
     range = @with_organization_info ? 0..5 : 0..4
