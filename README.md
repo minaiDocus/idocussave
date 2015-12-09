@@ -25,7 +25,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 - ImageMagick 6.5.1-0 2009-04-10 Q16 OpenMP
 - Pdftk 2.02
 - Poppler
-- Elasticsearch 1.4.4
+- Elasticsearch 2.1.0
 
 *Liste non exhaustive*
 
