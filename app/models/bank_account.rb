@@ -25,7 +25,7 @@ class BankAccount
   validate :uniqueness_of_number
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |bank_account| bank_account.persisted? }
-  validates_length_of :journal, within: 2..6, if: Proc.new { |bank_account| bank_account.persisted? }
+  validates_length_of :journal, within: 2..10, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |bank_account| bank_account.persisted? }
 
   scope :configured,     -> { where(:journal.nin => [nil, ''], :accounting_number.nin => [nil, '']) }
