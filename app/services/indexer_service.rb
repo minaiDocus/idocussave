@@ -2,7 +2,7 @@
 class IndexerService
   class << self
     def perform_async(klass, id, operation, time=nil)
-      delay(queue: 'indexing', priority: 1, run_at: time || Time.now).perform klass, id, operation
+      delay(priority: 1, run_at: time || Time.now).perform klass, id, operation
     end
 
     def perform(klass, id, operation)

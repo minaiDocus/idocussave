@@ -3,7 +3,7 @@ set :deploy_to, "/home/grevalis/www/idocus/production"
 namespace :delayed_job do
   desc "Start delayed_job process"
   task :start, :roles => :app do
-    run "cd #{release_path}; RAILS_ENV=#{rails_env} script/delayed_job --pool=indexing,main --pool=main:4 start"
+    run "cd #{release_path}; RAILS_ENV=#{rails_env} script/delayed_job -n 5 start"
   end
 
   desc "Stop delayed_job process"
