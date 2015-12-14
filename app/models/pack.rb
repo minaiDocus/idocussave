@@ -3,6 +3,7 @@ class Pack
   include Mongoid::Document
   include Mongoid::Timestamps
   include Elasticsearch::Model
+  include Mongoid::Locker
 
   CODE_PATTERN = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'
   JOURNAL_PATTERN = '[a-zA-Z0-9]+'
@@ -31,6 +32,7 @@ class Pack
   field :scanned_pages_count,  type: Integer, default: 0
   field :is_update_notified,   type: Boolean, default: true
   field :is_fully_processed,   type: Boolean, default: true
+  field :is_indexing,          type: Boolean, default: false
 
   # for cache purpose
   field :remote_files_updated_at, type: Time
