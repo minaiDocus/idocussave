@@ -92,7 +92,7 @@ public
   def sync_with_external_file_storage
     if current_user.is_admin
       if params[:pack_ids].present?
-        @packs = Pack.find(params[:pack_ids])
+        @packs = Pack.where(:_id.in => params[:pack_ids])
       else
         @packs = @user.packs
       end
