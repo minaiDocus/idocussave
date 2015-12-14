@@ -44,10 +44,8 @@ class Document
   after_create do |document|
     IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
     unless document.mixed? || Rails.env.test?
-      Document.delay(priority: 9, run_at: 5.minutes.from_now).
-        generate_thumbs(document.id.to_s)
-      Document.delay(priority: 10, run_at: 5.minutes.from_now).
-        extract_content(document.id.to_s)
+      Document.delay(priority: 9).generate_thumbs(document.id.to_s)
+      Document.delay(priority: 10).extract_content(document.id.to_s)
     end
   end
 
