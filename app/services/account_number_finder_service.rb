@@ -41,7 +41,11 @@ class AccountNumberFinderService
       words = label.split(/\s+/)
       words.each do |word|
         scores.each_with_index do |(name, _), index|
-          scores[index][1] += 1 if name.match /#{Regexp.quote(word)}/i
+          if name.include? '*'
+            scores[index][1] += 1 if /#{Regexp.quote(name).gsub('\\ ', '|').gsub('\\*', '\w+')}/i.match word
+          else
+            scores[index][1] += 1 if name.match /#{Regexp.quote(word)}/i
+          end
         end
       end
       scores.select{ |s| s[1] > 0 }.
@@ -51,7 +55,7 @@ class AccountNumberFinderService
     def find_with_rules(rules, label)
       number = nil
       match_rules = rules.select{ |rule| rule.rule_type == 'match' }
-      match_rules = match_rules.select{ |rule| label.match /#{Regexp.quote(rule.content)}/i }
+      match_rules = match_rules.select{ |rule| label.match /#{Regexp.quote(rule.content.gsub('*', ''))}/i }
       name = get_the_highest_match(label, match_rules.map(&:content))
       result = match_rules.select { |match| match.content == name }.first
       number = result.third_party_account if result
