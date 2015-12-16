@@ -137,7 +137,7 @@ class DocumentProcessor
             pack.is_fully_processed = true
           end
           pack.save
-          PackIndexer.init(pack)
+          PackIndexer.init(pack) unless Rails.env.test?
           Reporting.update(pack)
 
           piece_files_path = added_pieces.map { |e| e.content.path }
