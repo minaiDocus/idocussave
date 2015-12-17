@@ -859,7 +859,7 @@ fr:
           affect: Affecté à
           rule_type: Type de règle
           content: Contenu
-          third_party_account: Numéro de compte tiers
+          third_party_account: Numéro de compte
           priority: Priorité
           users: Clients
           affect_values:

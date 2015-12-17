@@ -4,8 +4,8 @@
       = f.input :name
       = f.input :affect, collection: affect_options_for_select, include_blank: false, disabled: action_name.in?(%w(edit update)), hint: ('Ne pourra plus être changé par la suite.' if action_name.in?(%w(new create)))
       = f.input :rule_type, collection: rule_type_options_for_select, include_blank: false, hint: 'Effectue une recherche ou une correction du plan de compte avec le champ "Contenu" ci-dessous.'
-      = f.input :content, hint: "Le charactère * en début ou fin de contenu revient à dire qu'il y a au moins un charactère inconnu à cette emplacement."
-      = f.input :priority, as: :integer, hint: 'Plus le nombre est petit plus la règle est importante.'
+      = f.input :content, hint: "Saisir le contenu à rechercher dans le libellé. Utiliser un astérisque (*) pour représenter du texte ou des caractères avant ou après le contenu recherché (ex : 0001Google devient *Google ou 012F5SFR2253 devient *SFR*)"
+      = f.input :priority, as: :integer, hint: "Quand deux règles sont similaires, indiquer laquelle est prioritaire sur l'autre. 0 étant prioritaire sur 1, 1 étant prioritaire sur 2..."
       = f.input :third_party_account, required: true, hint: 'Le numéro qui sera assigné si la recherche est un succès.'
 
     .span6.affect_to

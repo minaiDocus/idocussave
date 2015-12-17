@@ -216,8 +216,8 @@ fr:
         rule_type: Type de règle
         affect: Affecté à
         content: Contenu
-        third_party_account: Numéro de compte tiers
-        priority: Priorité
+        third_party_account: Numéro de compte
+        priority: Priorisation de règles similaires
         users: Clients
       file_naming_policy:
         scope: Portée
