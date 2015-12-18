@@ -117,7 +117,7 @@ private
   def verify_rights
     authorized = true
     authorized = false unless can_manage?
-    authorized = false if action_name.in?(%w(account_close_confirm close_account)) && !@user.is_admin
+    authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
     authorized = false if action_name.in?(%w(new create destroy)) && !@organization.is_active
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
