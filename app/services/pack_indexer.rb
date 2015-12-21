@@ -1,4 +1,5 @@
 # -*- encoding : UTF-8 -*-
+# NOTE : does not work in test mode, because Delayed::Job is not used
 class PackIndexer
   class << self
     def init(pack)
