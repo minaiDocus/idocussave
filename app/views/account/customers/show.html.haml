@@ -89,10 +89,6 @@
                     %tr
                       %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
                       %td= @customer.options.pre_assignment_date_computed? ? t('yes_value') : t('no_value')
-                    - if @organization.is_csv_descriptor_used
-                      %tr
-                        %th= t('mongoid.models.user_options.attributes.is_own_csv_descriptor_used')
-                        %td= @customer.options.own_csv_descriptor_used? ? t('yes_value') : "#{t('no_value')} (Valeur de l'organisation)"
               - if @customer.active?
                 .row-fluid
                   .span12
