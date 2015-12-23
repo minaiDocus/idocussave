@@ -4,7 +4,7 @@
       .row-fluid
         .span12.box
           .row-fluid
-            %div{ class: (@customer.active? || (@user.is_admin && @customer.inactive_at > Time.now)) ? 'span6' : 'span12' }
+            %div{ class: (@customer.active? || @user.is_admin) ? 'span6' : 'span12' }
               - if @customer.inactive?
                 %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
               %h3= @customer.info
@@ -15,6 +15,8 @@
                 - if @user.is_admin
                   - if @customer.active? || @customer.inactive_at > Time.now
                     = link_to icon_not_ok + ' Clôturer le dossier maintenant !', account_close_confirm_account_organization_customer_path(@organization, @customer, close_now: 1), class: 'btn btn-danger'
+                  - if @customer.inactive?
+                    = link_to 'Réouvrir le dossier', account_reopen_confirm_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
 
       .row-fluid
         .span12.box

@@ -1,0 +1,11 @@
+#customer.account_reopen_confirm
+  .row-fluid
+    .span12.box
+      %h3= link_to @customer, account_organization_customer_path(@organization, @customer)
+
+  .row-fluid
+    .span12.box.aligncenter
+      .warning.margin1top.margin2bottom
+        Voulez-vous réellement réouvrir le dossier "#{@customer.info}" ?
+      = link_to 'Réouvrir le dossier', reopen_account_account_organization_customer_path(@organization, @customer), method: 'patch', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }
+      = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer), class: 'btn'

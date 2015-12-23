@@ -92,6 +92,15 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer)
   end
 
+  def account_reopen_confirm
+  end
+
+  def reopen_account
+    ReopenSubscription.new(@customer, @user).execute
+    flash[:success] = 'Dossier réouvert avec succès.'
+    redirect_to account_organization_customer_path(@organization, @customer)
+  end
+
   def search_by_code
     tags = []
     full_info = params[:full_info].present?
@@ -118,6 +127,7 @@ private
     authorized = true
     authorized = false unless can_manage?
     authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
+    authorized = false if action_name.in?(%w(account_reopen_confirm reopen_account)) && !@user.is_admin
     authorized = false if action_name.in?(%w(new create destroy)) && !@organization.is_active
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
