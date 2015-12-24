@@ -151,6 +151,8 @@ jQuery ->
     window.selected_cash_register = $('#banks').data('selectedCashRegister')
     # Crédit du Nord (Professionnels) et ses filiales
     window.special_bank_ids = ['4f6740766caddc2c2c3e558f', '551d01b0b5b437370f010000']
+    if window.selected_banks.length == 1 && window.special_bank_ids.indexOf(window.selected_banks[0]['id']) != -1
+      window.fiduceo_retriever_name = window.selected_banks[0]['name']
 
     update_selects_list($('#fiduceo_retriever_type').val() == 'provider')
 
