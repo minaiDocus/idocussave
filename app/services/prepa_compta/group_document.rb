@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class PrepaCompta::GroupDocument
-  RESULT_FILE_PATH = PrepaCompta.grouping_dir.join('result.xml')
   FILE_NAME_PATTERN_1 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}\.pdf\z/i
   FILE_NAME_PATTERN_2 = /\A([A-Z0-9]+_*[A-Z0-9]*_[A-Z][A-Z0-9]+_\d{4}([01T]\d)*)_\d{3,4}_\d{3}\.pdf\z/i
 
@@ -8,7 +7,9 @@ class PrepaCompta::GroupDocument
 
   class << self
     def execute
-      new.execute
+      processable_results.map do |file_path|
+        new(file_path).execute
+      end
     end
 
     def position(file_name)
@@ -38,42 +39,43 @@ class PrepaCompta::GroupDocument
         nil
       end
     end
+
+    def processable_results
+      Dir.glob(PrepaCompta.grouping_dir.join('*.xml')).select do |file_path|
+        File.atime(file_path) < 1.minute.ago
+      end
+    end
   end
 
-  def initialize
+  def initialize(file_path)
     @errors               = []
     @processed_file_paths = []
+    @xml_file_path        = file_path
   end
 
   def execute
-    if processable_result?
-      if valid_result_data?
-        document.css('pack').each do |pack_tag|
-          temp_pack = find_temp_pack(pack_tag['name'])
-          pack_tag.css('piece').each do |piece_tag|
-            file_names = piece_tag.css('file_name').map(&:content)
-            grouper = PrepaCompta::GroupIntoPiece.new(temp_pack, file_names, piece_tag['origin'])
-            grouper.execute
-            @processed_file_paths += grouper.file_paths
-          end
+    if valid_result_data?
+      document.css('pack').each do |pack_tag|
+        temp_pack = find_temp_pack(pack_tag['name'])
+        pack_tag.css('piece').each do |piece_tag|
+          file_names = piece_tag.css('file_name').map(&:content)
+          grouper = PrepaCompta::GroupIntoPiece.new(temp_pack, file_names, piece_tag['origin'])
+          grouper.execute
+          @processed_file_paths += grouper.file_paths
         end
-        archive
-        true
-      else
-        write_errors_to_file
-        false
       end
+      archive
+      true
+    else
+      write_errors_to_file
+      false
     end
   end
 
 private
 
-  def processable_result?
-    File.exist?(RESULT_FILE_PATH) && File.mtime(RESULT_FILE_PATH) <= 1.minute.ago
-  end
-
   def document
-    @document ||= Nokogiri::XML(File.read(RESULT_FILE_PATH))
+    @document ||= Nokogiri::XML(File.read(@xml_file_path))
   end
 
   def find_temp_pack(name)
@@ -142,29 +144,18 @@ private
   end
 
   def write_errors_to_file
-    POSIX::Spawn::system "rm #{PrepaCompta.grouping_dir.join('result.xml')}"
-    File.write PrepaCompta.grouping_dir.join('errors.txt'), @errors.join("\n")
-  end
-
-  def base_archive_path
-    @base_archive_path ||= PrepaCompta.grouping_dir.join('archives', Date.today.strftime('%Y/%m/%d'))
+    FileUtils.mkdir_p PrepaCompta.grouping_dir.join('errors')
+    FileUtils.mv @xml_file_path, PrepaCompta.grouping_dir.join('errors')
+    File.write PrepaCompta.grouping_dir.join("errors/#{File.basename(@xml_file_path,'.xml')}.txt"), @errors.join("\n")
   end
 
   def archive_path
-    @archive_path ||= base_archive_path.to_s + "_#{process_number}"
-  end
-
-  def process_number
-    if File.exist?(base_archive_path)
-      Dir.glob(base_archive_path.join('*')).size + 1
-    else
-      1
-    end
+    @archive_path ||= PrepaCompta.grouping_dir.join('archives', Date.today.strftime('%Y/%m/%d'))
   end
 
   def archive
     POSIX::Spawn::system "mkdir -p #{archive_path}"
-    POSIX::Spawn::system "mv #{RESULT_FILE_PATH} #{archive_path}"
+    POSIX::Spawn::system "mv #{@xml_file_path} #{archive_path}"
     @processed_file_paths.each do |file_path|
       POSIX::Spawn::system "mv #{file_path} #{archive_path}"
     end

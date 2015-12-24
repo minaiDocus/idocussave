@@ -2,7 +2,7 @@
   <element name="group_documents">
     <complexType>
       <sequence>
-        <element name="pack" maxOccurs="unbounded">
+        <element name="pack" maxOccurs="1">
           <complexType>
             <sequence>
               <element name="piece" maxOccurs="unbounded" minOccurs="0">
