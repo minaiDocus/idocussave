@@ -73,7 +73,7 @@ services = []
 
 if Rails.env.production?
   services = [
-    { name: 'ftp_fetcher',                 sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_petersbourg', 'idopetersB', '/', 'petersbourg') } },
+    { name: 'ftp_fetcher',                 sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_ppp', 'RT3rkfphZ7fxWzJmZAue', '/', 'ppp') } },
     { name: 'document_grouper',            sleep_duration: 5.seconds,  cmd: Proc.new {
         PrepaCompta::GroupingDocument.execute
         PrepaCompta::GroupDocument.execute
