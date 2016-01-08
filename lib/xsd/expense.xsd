@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="first_name" type="xs:string"/>
+	<xs:element name="obs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="comment"/>
+				<xs:element ref="guest" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="type" type="xs:byte" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ttc" type="xs:string"/>
+	<xs:element name="source" type="xs:string"/>
+	<xs:element name="ht" type="xs:string"/>
+	<xs:element name="tva" type="xs:string"/>
+	<xs:element name="last_name" type="xs:string"/>
+	<xs:element name="guest">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element ref="first_name" minOccurs="0"/>
+				<xs:element ref="last_name" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="comment" type="xs:string"/>
+	<xs:element name="type" type="xs:string"/>
+	<xs:element name="date" type="xs:string"/>
+	<xs:element name="piece">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+				<xs:element ref="type"/>
+				<xs:element ref="source"/>
+				<xs:element ref="ht"/>
+				<xs:element ref="tva"/>
+				<xs:element ref="ttc"/>
+				<xs:element ref="obs"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -80,8 +80,7 @@ if Rails.env.production?
       }
     },
     { name: 'processor',                   sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
-    { name: 'preassignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { Pack::Report.fetch } },
-    { name: 'abbyy_preassignment_fetcher', sleep_duration: 10.seconds, cmd: Proc.new { PrepaCompta::PreAssignPiece.new.execute } },
+    { name: 'pre_assignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::PreAssignPiece.fetch_all } },
     { name: 'fiduceo_document_fetcher',    sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
     { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new {
         OperationService.fetch_all

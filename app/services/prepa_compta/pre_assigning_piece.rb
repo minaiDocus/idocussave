@@ -42,10 +42,7 @@ private
   end
 
   def manual_dir
-    list = PrepaCompta.pre_assignments_dir
-    list = list.join('input', Time.now.strftime('%Y-%m-%d'))
-    list = list.join('dynamic') if @piece.temp_document.is_an_original
-    list.join(journal.compta_type)
+    list = PrepaCompta.pre_assignments_dir.join 'input', journal.compta_type
   end
 
   def abbyy_dir

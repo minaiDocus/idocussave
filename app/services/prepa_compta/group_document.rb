@@ -41,7 +41,7 @@ class PrepaCompta::GroupDocument
     end
 
     def processable_results
-      Dir.glob(PrepaCompta.grouping_dir.join('*.xml')).select do |file_path|
+      Dir.glob(PrepaCompta.grouping_dir.join('output/*.xml')).select do |file_path|
         File.atime(file_path) < 1.minute.ago
       end
     end
