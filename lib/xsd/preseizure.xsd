@@ -30,7 +30,7 @@
                   </sequence>
                   <attribute type="string" name="type" use="required"/>
                   <attribute type="string" name="number" use="required"/>
-                  <attribute type="string" name="lettrage" use="optional"/>
+                  <attribute type="string" name="lettering" use="optional"/>
                 </complexType>
               </element>
             </sequence>

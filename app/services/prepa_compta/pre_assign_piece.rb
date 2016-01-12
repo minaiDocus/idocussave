@@ -43,7 +43,7 @@ class PrepaCompta::PreAssignPiece
     end
   end
 
-  private
+private
 
   def valid_files_path
     Dir.glob(output_path.join('*.xml')).select do |file_path|
@@ -132,13 +132,13 @@ class PrepaCompta::PreAssignPiece
     preseizure.deadline_date    = data.at_css('deadline_date').try(:content).try(:to_date)
     preseizure.observation      = data.at_css('observation').try(:content)
     preseizure.position         = piece.position
-    preseizure.is_made_by_abbyy = is_abbyy?
+    preseizure.is_made_by_abbyy = is_abbyy_preseizure?
     preseizure.save
     data.css('account').each do |xml_account|
       account = Pack::Report::Preseizure::Account.new
       account.type      = Pack::Report::Preseizure::Account.get_type(xml_account['type'])
       account.number    = xml_account['number']
-      account.lettering = xml_account['lettrage']
+      account.lettering = (is_abbyy_preseizure? ? xml_account['lettrage'] : xml_account['lettering'])
       account.save
       preseizure.accounts << account
       xml_account.css('debit,credit').each do |xml_entity|
