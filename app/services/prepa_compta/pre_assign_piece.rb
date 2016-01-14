@@ -108,7 +108,7 @@ private
       path = output_path.join("processed/#{Time.now.strftime("%Y-%m-%d")}")
       FileUtils.mkdir_p path
       FileUtils.mv file_path, path
-      if is_preseizure?
+      if manual_pre_assignment?
         archive_path      = manual_archive_dir.join(report.type).to_s
         file_name_pattern = manual_dir.join report.type, "#{piece.name.gsub(' ','_')}*.pdf"
         move_to_archive archive_path, file_name_pattern
@@ -223,6 +223,10 @@ private
 
   def is_a_preseizure?
     is_abbyy_preseizure? || is_preseizure?
+  end
+
+  def manual_pre_assignment?
+    is_preseizure? || is_expense?
   end
 
   def output_path
