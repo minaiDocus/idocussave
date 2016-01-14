@@ -172,7 +172,7 @@ private
     expense.save
     observation         = Pack::Report::Observation.new
     observation.expense = expense
-    observation.comment = obs.css('comment').first.try(:content)
+    observation.comment = obs.at_css('observation').try(:content)
     observation.save
     obs.css('guest').each do |guest|
       first_name = guest.css('first_name').first.try(:content)

@@ -4,7 +4,7 @@
 	<xs:element name="obs">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="comment"/>
+				<xs:element ref="observation"/>
 				<xs:element ref="guest" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<xs:attribute name="type" type="xs:byte" use="required"/>
@@ -23,7 +23,7 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="comment" type="xs:string"/>
+	<xs:element name="observation" type="xs:string"/>
 	<xs:element name="type" type="xs:string"/>
 	<xs:element name="date" type="xs:string"/>
 	<xs:element name="piece">
