@@ -34,8 +34,9 @@
                           - period.product_option_orders.each do |option|
                             %li
                               = option.group_title
-                              \:
-                              = option.title
+                              - if option.title.present?
+                                \:
+                                = option.title
       = render partial: 'list_options'
     .span3.box
       = render partial: 'sidebar'

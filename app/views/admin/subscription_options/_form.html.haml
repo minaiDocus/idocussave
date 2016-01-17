@@ -1,0 +1,10 @@
+.row-fluid
+  .span12.panel
+    = simple_form_for [:admin, @subscription_option], html: { class: 'form form-horizontal margin2top' } do |f|
+      = f.input :name
+      = f.input :price_in_cents_wo_vat, as: :integer
+      = f.input :position,              as: :integer
+      = f.input :period_duration,       as: :integer
+      .form-actions.margin0bottom
+        = f.submit t('actions.submit'), class: 'btn btn-primary'
+        = link_to t('actions.cancel'), admin_subscriptions_path, class: 'btn'

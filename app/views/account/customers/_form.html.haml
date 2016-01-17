@@ -1,23 +1,22 @@
 ﻿= simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
   .row-fluid
     .span12
-      = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
-      - if action_name.in? %w(new create)
-        .control-group
-          = label_tag 'subscription[type]', "Type d'abonnement", class: 'control-label'
-          .controls
-            = select_tag 'subscription[type]', options_for_select([['Mensuel', 1], ['Trimestriel', 3], ['Annuel', 12]])
+      %h4.margin10left.margin2bottom Information de base
+      = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%, 15 caractères alphanumériques maximum, code cabinet inclus.", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
       - group_collection = groups.map { |g| [g.name, g.id] }
-      = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: t('mongoid.models.group.name').pluralize
+      = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: 'A quel groupe, le dossier doit-il être attribué ?'
       = f.input :company
+      %h4.margin10left.margin2bottom Contact principal
       = f.input :first_name
       = f.input :last_name
-      = f.input :email, hint: "Correspond à l'identifiant de connexion de votre client"
-      = f.input :knowings_code
-      = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
-      = f.simple_fields_for :options do |o|
-        = o.input :is_taxable, as: :boolean
-        = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, include_blank: false
+      = f.input :phone_number
+      = f.input :email, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
+      - if action_name.in?(%w(edit update))
+        = f.input :knowings_code
+        = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
+        = f.simple_fields_for :options do |o|
+          = o.input :is_taxable, as: :boolean
+          = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, include_blank: false
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if params[:action].in?(%w(new create))

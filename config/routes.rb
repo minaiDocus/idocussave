@@ -125,6 +125,7 @@ Idocus::Application.routes.draw do
             patch 'validate', on: :collection
           end
         end
+        resources :orders, except: %w(edit update destroy)
       end
       resources :journals, except: 'show'
       resource :organization_subscription, only: %w(edit update) do
@@ -259,6 +260,9 @@ Idocus::Application.routes.draw do
       get  'propagation_options', on: :collection
       post 'propagate',           on: :collection
     end
+    get 'subscriptions', controller: 'subscriptions', action: 'index'
+    get 'orders', controller: 'orders', action: 'index'
+    resources :subscription_options, except: %w(index show)
     resources :product_options, except: %w(index show)
     resources :product_groups, except: %w(index show)
     resources :events, only: %w(index show)
@@ -284,14 +288,18 @@ Idocus::Application.routes.draw do
     end
     resources :pre_assignment_deliveries, only: %w(index show)
     resources :notification_settings, only: %w(index) do
-      get  'edit_error',          on: :collection
-      post 'update_error',        on: :collection
-      get  'edit_subscription',   on: :collection
-      post 'update_subscription', on: :collection
-      get  'edit_ibiza',          on: :collection
-      post 'update_ibiza',        on: :collection
-      get  'edit_scans',          on: :collection
-      post 'update_scans',        on: :collection
+      get  'edit_error',             on: :collection
+      post 'update_error',           on: :collection
+      get  'edit_subscription',      on: :collection
+      post 'update_subscription',    on: :collection
+      get  'edit_dematbox_order',    on: :collection
+      post 'update_dematbox_order',  on: :collection
+      get  'edit_paper_set_order',   on: :collection
+      post 'update_paper_set_order', on: :collection
+      get  'edit_ibiza',             on: :collection
+      post 'update_ibiza',           on: :collection
+      get  'edit_scans',             on: :collection
+      post 'update_scans',           on: :collection
     end
 
     authenticated :user, -> user { user.is_admin } do

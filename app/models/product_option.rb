@@ -21,7 +21,7 @@ class ProductOption
 
   belongs_to :product
   belongs_to :product_group
-  has_and_belongs_to_many :subscribers, class_name: 'Subscription', inverse_of: :options
+  has_and_belongs_to_many :subscribers, class_name: 'Subscription', inverse_of: :old_options
 
   scope :default, -> { where(is_default: true) }
 

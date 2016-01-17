@@ -244,7 +244,7 @@ describe EmailedDocument do
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
       subscription = Subscription.create(user_id: @user.id, period_duration: 12)
-      UpdatePeriodService.new(subscription.current_period).execute
+      UpdatePeriod.new(subscription.current_period).execute
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       @journal.save
     end

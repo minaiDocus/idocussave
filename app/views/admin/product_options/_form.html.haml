@@ -12,7 +12,7 @@
       .control-group
         %span.control-label= t('simple_form.labels.product_option.action_names')
         .controls
-          - EvaluateSubscriptionService::ACTIONS.each do |action_name|
+          - [:authorize_dematbox, :authorize_fiduceo, :authorize_preassignment, :authorize_upload, :update_max_number_of_journals].each do |action_name|
             = check_box_tag 'product_option[action_names][]', action_name, @product_option.action_names.include?(action_name.to_s), id: "product_option_action_names_#{action_name}", class: 'pull-left'
             = label_tag "product_option_action_names_#{action_name}", t("subscription.actions.#{action_name}"), class_name: 'control-label', class: 'margin2left'
           = hidden_field_tag 'product_option[action_names][]', ''

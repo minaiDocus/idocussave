@@ -5,8 +5,131 @@
 
   .row-fluid
     .span12.box
-      = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
-        = render partial: 'form', locals: { f: f }
-        .form-actions.margin0bottom
-          = f.submit 'Valider', class: 'btn btn-primary'
-          = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'
+      %div{ style: 'width: 485px; margin: 0px auto;' }
+        = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+          - lock = ''
+          - if @subscription.configured?
+            - lock = @subscription.light_package? ? 'annual_package_locked' : 'ligth_package_locked'
+          .package{ class: "#{lock} #{'locked' if lock.present?}" }
+            %h4.aligncenter Quel(s) forfait(s) choisissez-vous pour le dossier ?
+            %br
+            = f.input :is_basic_package_active,     label: 'iDo’Basique',   as: :boolean, input_html: { class: 'light_package' }, disabled: @subscription.is_basic_package_active
+            = f.input :is_mail_package_active,      label: 'iDo’Courrier',  as: :boolean, input_html: { class: 'light_package' }, disabled: @subscription.is_mail_package_active
+            = f.input :is_scan_box_package_active,  label: 'iDo’Box',       as: :boolean, input_html: { class: 'light_package' }, disabled: @subscription.is_scan_box_package_active
+            = f.input :is_retriever_package_active, label: 'iDo’FacBanque', as: :boolean, input_html: { class: 'light_package' }, disabled: @subscription.is_retriever_package_active
+            = f.input :is_annual_package_active,    label: 'Pack Annuel',   as: :boolean, disabled: @subscription.is_annual_package_active
+            .aligncenter
+              %i Pour consulter nos tarifs, rendez-vous dans le menu « Produits et tarifs »
+          .period_duration{ style: 'display:none' }
+            %hr
+            %h4.aligncenter Quelle périodicité souhaitez-vous pour le forfait ?
+            %br
+            = f.input :period_duration, label: "Type d'abonnement", collection: [['Mensuel', 1], ['Trimestriel', 3]], include_blank: false, disabled: lock.present?
+          .number_of_journals{ style: 'display:none' }
+            %hr
+            %h4.aligncenter Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
+            .control-group.radio_buttons.subscription_number_of_journals
+              .controls
+                - (5..10).each do |number|
+                  %span.radio
+                    %label{ for: "subscription_number_of_journals_#{number}" }
+                      = radio_button_tag 'subscription[number_of_journals]', number, @subscription.number_of_journals == number, class: 'radio_buttons', disabled: (number < @subscription.number_of_journals)
+                      = number
+          .pre_assignment{ style: 'display:none' }
+            %hr
+            %h4.aligncenter Souhaitez-vous la pré-affectation comptable ?
+            .control-group.radio_buttons.subscription_is_pre_assignment_active
+              .controls
+                %span.radio
+                  %label{ for: 'subscription_is_pre_assignment_active_true' }
+                    = radio_button_tag 'subscription[is_pre_assignment_active]', 'true', @subscription.is_pre_assignment_active, class: 'radio_buttons'
+                    Oui
+                %span.radio
+                  %label{ for: 'subscription_is_pre_assignment_active_false' }
+                    = radio_button_tag 'subscription[is_pre_assignment_active]', 'false', !@subscription.is_pre_assignment_active, class: 'radio_buttons', disabled: (@subscription.is_pre_assignment_active && @subscription.configured?)
+                    Non
+          .stamp{ style: 'display:none' }
+            %hr
+            %h4.aligncenter
+              Souhaitez-vous bénéficier du tamponnage du papier en sortie de numérisation
+              %span.stamp_price{ style: 'font-size:14px;' }
+              ?
+            .control-group.radio_buttons.subscription_is_stamp_active
+              .controls
+                %span.radio
+                  %label{ for: 'subscription_is_stamp_active_true' }
+                    = radio_button_tag 'subscription[is_stamp_active]', 'true', @subscription.is_stamp_active, class: 'radio_buttons'
+                    Oui
+                %span.radio
+                  %label{ for: 'subscription_is_stamp_active_false' }
+                    = radio_button_tag 'subscription[is_stamp_active]', 'false', !@subscription.is_stamp_active, class: 'radio_buttons', disabled: @subscription.is_stamp_active
+                    Non
+            .aligncenter
+              %i (Ce tamponnage permet d’avoir un tampon « Numérisé le…”  sur le verso de la feuille numérisée)
+          .scanner{ style: 'display:none' }
+            %hr
+            %h4.aligncenter Souhaitez-vous ajouter la reconnaissance de pages blanches pour le scanner (1€HT) ?
+            .control-group.radio_buttons.subscription_is_blank_page_remover_active
+              .controls
+                %span.radio
+                  %label{ for: 'subscription_is_blank_page_remover_active_true' }
+                    = radio_button_tag 'subscription[is_blank_page_remover_active]', 'true', @subscription.is_blank_page_remover_active, class: 'radio_buttons'
+                    Oui
+                %span.radio
+                  %label{ for: 'subscription_is_blank_page_remover_activefalse' }
+                    = radio_button_tag 'subscription[is_blank_page_remover_active]', 'false', !@subscription.is_blank_page_remover_active, class: 'radio_buttons', disabled: @subscription.is_blank_page_remover_active
+                    Non
+          - if @user.is_admin
+            .well.margin2top
+              %h4.aligncenter Quelle(s) option(s) appliquer à ce dossier ?
+              %table.table.table-condensed.margin1top.extra_options.margin0bottom
+                %tbody
+                  - SubscriptionOption.by_position.each do |option|
+                    %tr
+                      %td= check_box_tag('subscription[option_ids][]', option.id, @subscription.options.include?(option), id: "subscription_option_ids_#{option.id}", data: { price: (option.price_in_cents_wo_vat / 100.0) })
+                      %td= label_tag "subscription_option_ids_#{option.id}", option.name
+                      %td.alignright= format_price_00(option.price_in_cents_wo_vat) + '€'
+            .well.margin0bottom
+              %h4.aligncenter Quotas
+              %hr
+              %h4.aligncenter Feuilles
+              %br
+              = f.input :max_sheets_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_sheet, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Pages téléversées
+              %br
+              = f.input :max_upload_pages_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_upload, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Pages iDocus'Box
+              %br
+              = f.input :max_dematbox_scan_pages_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_dematbox_scan, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Pièces presaisies
+              %br
+              = f.input :max_preseizure_pieces_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_preseizure, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Pièces notes de frais
+              %br
+              = f.input :max_expense_pieces_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_expense, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Attaches
+              %br
+              = f.input :max_paperclips_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_paperclips, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+              %hr
+              %h4.aligncenter Hors format
+              %br
+              = f.input :max_oversized_authorized, label: 'Maximum', as: :integer
+              = f.input :unit_price_of_excess_oversized, label: 'Prix unitaire d\'un dépassement (centime)', as: :integer
+          %hr
+          .aligncenter
+            %h4 Prix du forfait avec les options sélectionnées :
+            %b.total_price{ style: 'font-size:20px' }
+          .form-actions.margin0bottom
+            = f.submit 'Valider', class: 'btn btn-primary'
+            = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'

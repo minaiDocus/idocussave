@@ -10,7 +10,7 @@ describe PeriodService do
     before(:all) do
       @user = FactoryGirl.create(:user, code: 'TS0001')
       @subscription = Subscription.create(user_id: @user.id, period_duration: 3)
-      UpdatePeriodService.new(@subscription.current_period).execute
+      UpdatePeriod.new(@subscription.current_period).execute
       @period_service = PeriodService.new user: @user, current_time: @time
     end
 

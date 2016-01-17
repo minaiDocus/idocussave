@@ -21,8 +21,10 @@
           = link_to 'Factures', admin_invoices_path
     %li{ class: ('active' if controller_name == 'users') }
       = link_to 'Utilisateurs', admin_users_path
-    %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
-      = link_to 'Produits', admin_products_path
+    %li{ class: ('active' if controller_name == 'subscriptions') }
+      = link_to 'Abonnements', admin_subscriptions_path
+    %li{ class: ('active' if controller_name == 'orders') }
+      = link_to 'Commandes', admin_orders_path
     %li{ class: ('active' if controller_name == 'events') }
       = link_to 'Visites', admin_events_path
     %li{ class: ('active' if controller_name.in?(%w(retrievers provider_wishes))) }
@@ -31,12 +33,14 @@
       = link_to 'Livraison vers iBiza', admin_pre_assignment_deliveries_path
     %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }
       = link_to "iDocus'Box", admin_dematboxes_path
-    %li= link_to 'Tâches', '/admin/delayed_job'
     %li.dropdown
       = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
         Autres
         %b.caret
       %ul.dropdown-menu
+        %li= link_to 'Tâches', '/admin/delayed_job'
+        %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
+          = link_to 'Produits', admin_products_path
         %li{ class: ('active' if controller_name == 'emailed_documents') }
           = link_to 'Récéptions Mail', admin_emailed_documents_path
         %li{ class: ('active' if controller_name == 'cms_images') }

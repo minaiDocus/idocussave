@@ -20,10 +20,14 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def show
-    @subscription = @customer.subscription
-    @period = @subscription.periods.desc(:created_at).first
-    @journals = @customer.account_book_types.asc(:name)
-    @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)
+    if @customer.subscription.configured?
+      @subscription = @customer.subscription
+      @period = @subscription.periods.desc(:created_at).first
+      @journals = @customer.account_book_types.asc(:name)
+      @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)
+    else
+      redirect_to edit_account_organization_customer_subscription_path(@organization, @customer)
+    end
   end
 
   def new
@@ -32,7 +36,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def create
-    @customer = CreateCustomerService.new(@organization, @user, user_params, subscription_params, current_user, request).execute
+    @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
     if @customer.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer)
@@ -96,7 +100,7 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def reopen_account
-    ReopenSubscription.new(@customer, @user).execute
+    ReopenSubscription.new(@customer, @user, request).execute
     flash[:success] = 'Dossier réouvert avec succès.'
     redirect_to account_organization_customer_path(@organization, @customer)
   end
@@ -147,6 +151,7 @@ private
       :first_name,
       :last_name,
       :email,
+      :phone_number,
       { group_ids: [] },
       :knowings_code,
       :knowings_visibility,
@@ -155,10 +160,6 @@ private
     attributes[-1][:options_attributes] << :is_own_csv_descriptor_used if @user.is_admin
     attributes << :code if action_name == 'create'
     params.require(:user).permit(*attributes)
-  end
-
-  def subscription_params
-    params.require(:subscription).permit(:type)
   end
 
   def ibiza_params

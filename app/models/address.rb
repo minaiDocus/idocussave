@@ -5,13 +5,18 @@ class Address
 
   field :first_name
   field :last_name
+  field :email
   field :company
+  field :company_number
   field :address_1
   field :address_2
   field :city
   field :zip
   field :state
   field :country
+  field :building
+  field :door_code
+  field :other
   field :phone
   field :phone_mobile
 
@@ -19,12 +24,15 @@ class Address
   field :is_for_shipping,     type: Boolean, default: false
   field :is_for_kit_shipping, type: Boolean, default: false
 
+  attr_accessor :is_for_an_order
+
   embedded_in :locatable, polymorphic: true
 
   validates_presence_of :first_name, :last_name, unless: Proc.new { |e| e.locatable.try(:class) == ScanningProvider }
   validates_presence_of :city, :zip
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
   validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
+  validates_presence_of :company, :company_number, :phone, if: Proc.new { |a| a.is_for_an_order }
 
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50, allow_nil: true
 
@@ -88,5 +96,9 @@ class Address
 
   def info
     [address_1, address_2, zip, city, state].select(&:present?).join(', ')
+  end
+
+  def long_info
+    [company, company_number, first_name, last_name, phone, city, zip, address_1, door_code, other].select(&:present?).join(' - ')
   end
 end

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class UpdateSubscriptionService
+class UpdateSubscription
   class << self
     def execute(subscription_id, params, requester_id, request=nil)
       subscription = Subscription.find subscription_id
@@ -17,9 +17,12 @@ class UpdateSubscriptionService
   end
 
   def execute
-    @subscription.previous_option_ids = @subscription.options.map(&:id)
-    @subscription.update(@params)
-    EvaluateSubscriptionService.execute(@subscription, @requester, @request) unless @subscription.organization
-    UpdatePeriodService.new(@subscription.current_period).execute
+    if @subscription.update(@params)
+      EvaluateSubscription.new(@subscription, @requester, @request).execute
+      UpdatePeriod.new(@subscription.current_period).execute
+      true
+    else
+      false
+    end
   end
 end

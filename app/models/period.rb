@@ -2,12 +2,14 @@
 class Period
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Locker
 
   belongs_to :user
   belongs_to :organization
   belongs_to :subscription
   has_many :documents, class_name: 'PeriodDocument'
   has_many :invoices
+  has_many :orders
   embeds_many :product_option_orders, as: :product_optionable
   embeds_many :billings, class_name: 'PeriodBilling'
   embeds_one  :delivery, class_name: 'PeriodDelivery'
@@ -21,6 +23,7 @@ class Period
   field :products_price_in_cents_wo_vat,           type: Integer, default: 0
   field :recurrent_products_price_in_cents_wo_vat, type: Integer, default: 0
   field :ponctual_products_price_in_cents_wo_vat,  type: Integer, default: 0
+  field :orders_price_in_cents_wo_vat,             type: Integer, default: 0
   field :excesses_price_in_cents_wo_vat,           type: Integer, default: 0
   field :tva_ratio,                                type: Float,   default: 1.2
 

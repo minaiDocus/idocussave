@@ -11,13 +11,9 @@ class ProductOptionOrder
   field :position,              type: Integer
   field :duration,              type: Integer
   field :quantity,              type: Integer
-  field :action_names,          type: Array
-  field :notify
+  field :is_an_extra,           type: Boolean
 
   embedded_in :product_optionable, polymorphic: true
-
-  scope :usable,        -> { not_in(position: [-1]) }
-  scope :user_editable, -> { where(:group_position.lt => 1000) }
 
   def self.by_position
     asc([:group_position,:position])
@@ -32,8 +28,7 @@ class ProductOptionOrder
     result = false unless self.price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat
     result = false unless self.duration              == product_option_order.duration
     result = false unless self.quantity              == product_option_order.quantity
-    result = false unless self.action_names          == product_option_order.action_names
-    result = false unless self.notify                == product_option_order.notify
+    result = false unless self.is_an_extra           == product_option_order.is_an_extra
     result
   end
 

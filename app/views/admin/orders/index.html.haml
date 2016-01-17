@@ -1,0 +1,42 @@
+#orders
+  .row-fluid.margin1bottom
+    .span12
+      %h3 Liste des commandes de scanner iDocus'Box et de Kit papier (#{@orders.count})
+
+  .row-fluid
+    .span9
+      = render partial: 'shared/list_options', locals: { collection: @orders }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th= sortable :created_at, t('mongoid.models.common.attributes.created_at'), { order_contains: order_contains }
+            %th= sortable :user_id, 'Client', { order_contains: order_contains }
+            %th= sortable :type, t('mongoid.models.order.attributes.type'), { order_contains: order_contains }
+            %th Quantité
+            %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: order_contains }
+            %th Adresse de livraison
+        %tbody
+          - @orders.each do |order|
+            %tr
+              %td= l order.created_at
+              %td= link_to "#{order.user.code} - #{order.user.company}", account_organization_customer_orders_path(order.organization, order.user)
+              - if order.dematbox?
+                %td iDocus'Box
+                %td= order.dematbox_count
+                %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                %td= order.address.long_info
+              - else
+                %td Kit papier
+                %td
+                  = order.paper_set_casing_size.to_s + 'g'
+                  %br
+                  = order.paper_set_folder_count.to_s + ' chemises'
+                  %br
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                  à
+                  = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                %td= order.user.addresses.for_kit_shipping.first.try(:long_info)
+      = render partial: 'shared/list_options', locals: { collection: @orders }
+    .span3
+      = render partial: 'sidebar'

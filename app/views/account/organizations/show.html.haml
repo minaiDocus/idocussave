@@ -411,10 +411,10 @@
                     %td.price= format_price_00((@total * @subscription.tva_ratio) - @subscription.current_period.products_price_in_cents_w_vat) + ' €'
                   - @subscription_options.each do |option|
                     %tr
-                      %td= option.group_title
-                      %td= option.title
+                      %td Autres
+                      %td= option.name
                       %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
-                      %td.price= format_price_00(option.price_in_cents_wo_vat * @subscription.tva_ratio) + ' €'
+                      %td.price= format_price_00(option.price_in_cents_w_vat) + ' €'
                   %tr
                     %td
                     %th Total

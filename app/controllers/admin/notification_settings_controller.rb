@@ -21,6 +21,24 @@ class Admin::NotificationSettingsController < Admin::AdminController
     redirect_to admin_notification_settings_path
   end
 
+  def edit_dematbox_order
+  end
+
+  def update_dematbox_order
+    Settings.notify_dematbox_order_to = params[:notification][:to].split(',').map(&:strip)
+    flash[:notice] = 'Modifié avec succès.'
+    redirect_to admin_notification_settings_path
+  end
+
+  def edit_paper_set_order
+  end
+
+  def update_paper_set_order
+    Settings.notify_paper_set_order_to = params[:notification][:to].split(',').map(&:strip)
+    flash[:notice] = 'Modifié avec succès.'
+    redirect_to admin_notification_settings_path
+  end
+
   def edit_ibiza
   end
 

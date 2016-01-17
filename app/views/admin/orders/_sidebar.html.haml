@@ -1,0 +1,39 @@
+.row-fluid
+  .span12.well.margin0bottom
+    %h3 Filtres
+
+    %br
+    = form_tag admin_orders_path, method: :get, class: 'form form-vertical margin0bottom' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+
+      = label_tag 'order_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'order_contains[created_at][$gte]', (params[:order_contains][:created_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'order_contains[created_at][$lte]', (params[:order_contains][:created_at]['$lte'] rescue '')
+
+      = label_tag 'order_contains[user_code]', 'Code client'
+      = text_field_tag 'order_contains[user_code]', (params[:order_contains][:user_code] rescue ''), class: 'span12'
+
+      = label_tag 'order_contains[type]', t('mongoid.models.order.attributes.type')
+      = select_tag 'order_contains[type]', options_for_select([["iDocus'Box", 'dematbox'],['Kit papier', 'paper_set']], (params[:order_contains][:type] rescue '')), include_blank: true
+
+      = label_tag 'order_contains[price_in_cents_wo_vat][$gte]', t('mongoid.models.order.attributes.price_in_cents_wo_vat')
+      .input-prepend
+        %span.add-on
+          >=
+        = text_field_tag 'order_contains[price_in_cents_wo_vat][$gte]', (params[:order_contains][:price_in_cents_wo_vat]['$gte'] rescue ''), style: 'width:100px'
+      .input-prepend
+        %span.add-on
+          <=
+        = text_field_tag 'order_contains[price_in_cents_wo_vat][$lte]', (params[:order_contains][:price_in_cents_wo_vat]['$lte'] rescue ''), style: 'width:100px'
+      %br
+      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+      = link_to t('filters.reset'), admin_orders_path, class: 'btn'

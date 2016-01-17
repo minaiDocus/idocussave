@@ -10,12 +10,23 @@ class Subscription
   has_many :periods
   has_many :documents, class_name: 'PeriodDocument'
   has_many :invoices
-  has_and_belongs_to_many :options, class_name: 'ProductOption', inverse_of: :subscribers
-
-  attr_accessor :previous_option_ids
+  has_and_belongs_to_many :old_options, class_name: 'ProductOption', inverse_of: :subscribers # TODO remove me after migration
+  has_and_belongs_to_many :options, class_name: 'SubscriptionOption', inverse_of: :subscribers
 
   field :period_duration, type: Integer, default: 1
   field :tva_ratio,       type: Float,   default: 1.2
+
+  field :is_basic_package_active,      type: Boolean, default: false
+  field :is_mail_package_active,       type: Boolean, default: false
+  field :is_scan_box_package_active,   type: Boolean, default: false
+  field :is_retriever_package_active,  type: Boolean, default: false
+  field :is_annual_package_active,     type: Boolean, default: false
+  field :number_of_journals,           type: Integer, default: 5
+  field :is_blank_page_remover_active, type: Boolean, default: false
+  field :is_pre_assignment_active,     type: Boolean, default: true
+  field :is_stamp_active,              type: Boolean, default: false
+
+  validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 10 }
 
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
   field :max_upload_pages_authorized,        type: Integer, default: 200 # téléversés
@@ -53,11 +64,23 @@ class Subscription
       period.is_centralized = user.is_centralized
     end
     period.save
-    UpdatePeriodService.new(period).execute
+    UpdatePeriod.new(period).execute
     period
   end
 
   def find_or_create_period(time)
     find_period(time) || create_period(time)
+  end
+
+  def configured?
+    is_basic_package_active     ||
+    is_mail_package_active      ||
+    is_scan_box_package_active  ||
+    is_retriever_package_active ||
+    is_annual_package_active
+  end
+
+  def light_package?
+    !is_annual_package_active
   end
 end

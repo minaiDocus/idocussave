@@ -1,36 +1,5 @@
 # -*- encoding : UTF-8 -*-
 module Account::SubscriptionsHelper
-  def is_product_option_checked?(index, option, options)
-    if option.product_group.is_option_dependent
-      if options.include? option
-        true
-      elsif options.map(&:product_group).include?(option.product_group)
-        false
-      else
-        index == 0
-      end
-    else
-      option.in? options
-    end
-  end
-
-  def is_product_option_disabled?(option, group, options)
-    if @user.is_admin
-      false
-    else
-      if @user.organization.try(:is_subscription_lower_options_disabled)
-        if group.is_option_dependent
-          selected_option = options.select { |option| option.product_group == group }.first
-          selected_option ? option.position < selected_option.position : false
-        else
-          option.in? options
-        end
-      else
-        false
-      end
-    end
-  end
-
   def option_warning_classes(customer, option)
     retrievers_option_warning_class(customer, option).to_s +
     preassignment_option_warning_class(customer, option).to_s

@@ -1,0 +1,52 @@
+!!!
+%html
+  %head
+    %title [iDocus] Commande de Demat'Box
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Merci de livrer #{@order.dematbox_count} Demat'Box EXPERT (au tarif unitaire de 299€HT) au client suivant:
+    %br
+    %br
+    Nom de la société: #{@address.company}
+    %br
+    N° de Siret: #{@address.company_number}
+    %br
+    %br
+    Adresse de livraison:
+    %br
+    Rue: #{@address.address_1}
+    %br
+    Code postal: #{@address.zip}
+    %br
+    Ville: #{@address.city}
+    %br
+    Bâtiment: #{@address.building}
+    %br
+    Digicode: #{@address.door_code}
+    %br
+    Autre (sonnerie, concierge...): #{@address.other}
+    %br
+    %br
+    Nom du contact: #{@address.last_name}
+    %br
+    Prénom du contact: #{@address.first_name}
+    %br
+    Numéro de téléphone : #{@address.phone}
+    %br
+    %br
+    Facturation
+    %br
+    %br
+    iDocus
+    %br
+    Paiement : 30 jours fin de mois le 5
+    %br
+    %br
+    Cordialement,
+    %br
+    L'équipe iDocus.
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

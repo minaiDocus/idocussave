@@ -56,7 +56,8 @@ fr:
         company: Société
         first_name: Prénom
         last_name: Nom
-        email: Email
+        email: Courriel
+        phone_number: Numéro de téléphone
         password: Mot de passe
         password_confirmation: Comfirmer le mot de passe
         is_admin: Est admin ?
@@ -202,7 +203,7 @@ fr:
         phone_mobile: Tél mobile
         is_for_billing: Pour la facturation ?
         is_for_shipping: Pour le retour ?
-        is_for_kit_shipping: Pour le kit ?
+        is_for_kit_shipping: Pour la livraison du Kit papier ?
       ibiza:
         is_auto_deliver: Livraison automatique ?
         access_token: Jeton d'accès
@@ -222,3 +223,14 @@ fr:
       file_naming_policy:
         scope: Portée
         separator: Séparer les éléments par
+      subscription_option:
+        name: Nom
+        price_in_cents_wo_vat: Prix (en centimes)
+        position: Position
+        period_duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
+      order:
+        dematbox_count: Combien de scanner souhaitez-vous commander pour ce dossier?
+        paper_set_casing_size: Taille d'enveloppe
+        paper_set_folder_count: Nombre de chemises
+        paper_set_start_date: Date de début
+        paper_set_end_date: Date de fin

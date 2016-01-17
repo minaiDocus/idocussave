@@ -1,17 +1,17 @@
 # -*- encoding : UTF-8 -*-
 class ReopenSubscription
-  def initialize(user, requester)
-    @user = user
+  def initialize(user, requester, request=nil)
+    @user         = user
     @subscription = @user.subscription
-    @requester = requester
+    @requester    = requester
+    @request      = request
   end
 
   def execute
     @user.inactive_at = nil
-    @subscription.previous_option_ids = @subscription.options.map(&:id)
     @user.options.max_number_of_journals = 5
-    EvaluateSubscriptionService.execute(@subscription, @requester)
-    UpdatePeriodService.new(@subscription.current_period).execute
+    EvaluateSubscription.new(@subscription, @requester, @request).execute
+    UpdatePeriod.new(@subscription.current_period).execute
     @user.find_or_create_external_file_storage
     @user.save
   end

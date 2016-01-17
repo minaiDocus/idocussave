@@ -1,18 +1,18 @@
 ﻿# -*- encoding : UTF-8 -*-
 class Account::OrganizationSubscriptionsController < Account::OrganizationController
   before_filter :verify_rights
-  before_filter :load_resources
+  before_filter :load_subscription
 
   def edit
   end
 
   def update
-    subscription_form = SubscriptionForm.new(@subscription, @user, request)
-    if subscription_form.submit(subscription_params)
+    if @subscription.update(subscription_params)
+      UpdatePeriod.new(@subscription.current_period).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_path(@organization, tab: 'subscription')
     else
-      render 'edit'
+      render :edit
     end
   end
 
@@ -20,7 +20,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   end
 
   def propagate_options
-    _params = subscription_options_params
+    _params = subscription_quotas_params
     if @subscription.update(_params)
       ids = params[:subscription][:customer_ids] - [''] rescue []
       registered_ids = @organization.customers.where(:_id.in => ids).distinct(:_id)
@@ -40,10 +40,10 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
         flash[:success] = 'Propagé avec succès.'
         redirect_to account_organization_path(@organization, tab: 'subscription')
       else
-        render 'select_options'
+        render :select_options
       end
     else
-      render 'select_options'
+      render :select_options
     end
   end
 
@@ -56,20 +56,15 @@ private
     end
   end
 
-  def load_resources
+  def load_subscription
     @subscription = @organization.find_or_create_subscription
-    @products     = Product.by_position
-    @options      = @subscription.options.entries
   end
 
   def subscription_params
-    {
-      period_duration: params[:subscription][:period_duration],
-      product:         params[:subscription][:product]
-    }.with_indifferent_access
+    params.require(:subscription).permit(option_ids: [])
   end
 
-  def subscription_options_params
+  def subscription_quotas_params
     _params = params.require(:subscription).permit(
       :max_sheets_authorized,
       :max_upload_pages_authorized,

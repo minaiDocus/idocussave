@@ -331,6 +331,7 @@ fr:
           first_name: Prénom
           last_name: Nom
           email: Email
+          phone_number: N° de téléphone
           inactive_at: Dossier clôturé au
           is_inactive: Dossier clôturé ?
           is_admin: Est administrateur ?
@@ -884,6 +885,30 @@ fr:
           is_third_party_used: Nom du tiers
           is_invoice_number_used: N° de facture d'origine
           is_invoice_date_used: Date de la facture
+      subscription_option:
+        zero: 0 option d'abonnement
+        one: 1 option d'abonnement
+        other: "%{count} options d'abonnement"
+        name: Option d'abonnement
+        attributes:
+          name: Nom
+          price_in_cents_wo_vat: Prix (en centimes)
+          position: Position
+          period_duration: Durée
+      order:
+        zero: 0 option commande
+        one: 1 option commande
+        other: "%{count} commandes"
+        name: Commande
+        attributes:
+          type: Produit
+          price_in_cents_wo_vat: Prix (en centimes)
+          vat_ratio: ratio TVA
+          dematbox_count: nombre d'iDocus'Box
+          kit_casing_size: Taille d'enveloppe
+          kit_folder_count: Nombre de chemise
+          kit_start_date: Date de début
+          kit_end_date: Date de fin
     state_machines:
       fiduceo_retriever:
         states:

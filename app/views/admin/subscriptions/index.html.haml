@@ -1,0 +1,50 @@
+#subscriptions
+  .row-fluid
+    .span12.panel
+      %h3 Abonnements
+
+  .row-fluid
+    .span12.panel
+      %h4 Forfaits
+      .aligncenter
+        %b{ style: 'font-size: 18px;' } -> En cours de construction <-
+      .well.margin2top
+        %b iDo'Basique
+      .well
+        %b iDo'Courrier
+      .well
+        %b iDo'Box
+      .well
+        %b iDo'FacBanque
+      .well
+        %b Pack Annuel
+
+  .row-fluid
+    .span12.panel
+      .row-fluid.margin1top.margin1bottom
+        .span6
+          %h4 Options
+        .span6.alignright
+          = link_to 'Nouveau', new_admin_subscription_option_path, class: 'btn btn-primary'
+      %table.table.table-bordered.table-condensed.table-striped
+        %thead
+          %tr
+            %th.position=              t('mongoid.models.subscription_option.attributes.position')
+            %th.updated_at=            t('mongoid.models.common.attributes.updated_at')
+            %th.name=                  t('mongoid.models.subscription_option.attributes.name')
+            %th.price_in_cents_wo_vat= t('mongoid.models.subscription_option.attributes.price_in_cents_wo_vat')
+            %th.period_duration=       t('mongoid.models.subscription_option.attributes.period_duration')
+            %th Abonnés
+            %th Actions
+        %tbody
+          - @subscription_options.each do |option|
+            %tr
+              %td= option.position
+              %td= l option.updated_at
+              %td= option.name
+              %td.alignright= option.price_in_cents_wo_vat
+              %td= option.period_duration
+              %td= option.subscribers.count
+              %td
+                = icon_link_to edit_admin_subscription_option_path(option), { icon: 'edit' }
+                = icon_link_to admin_subscription_option_path(option), { icon: 'remove' }, { data: { method: 'DELETE', confirm: t('actions.confirm') } }

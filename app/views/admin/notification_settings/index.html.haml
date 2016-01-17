@@ -41,6 +41,34 @@
   .row-fluid.margin1top
     .span12
       .pull-left.margin1bottom
+        %h4 Commande de Dematbox
+      .pull-right.margin1bottom
+        = link_to icon_edit + 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th Description
+          %td Lorsqu'une commande de Dematbox est validée
+        %tr
+          %th Adresse mail à notifier (#{Settings.notify_dematbox_order_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.notify_dematbox_order_to)
+
+  .row-fluid.margin1top
+    .span12
+      .pull-left.margin1bottom
+        %h4 Commande de Kit papier
+      .pull-right.margin1bottom
+        = link_to icon_edit + 'Editer', edit_paper_set_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
+      %table.table.table-condensed.table-striped.table-bordered
+        %tr
+          %th Description
+          %td Lorsqu'une commande de Kit papier est validée
+        %tr
+          %th Adresse mail à notifier (#{Settings.notify_paper_set_order_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.notify_paper_set_order_to)
+
+  .row-fluid.margin1top
+    .span12
+      .pull-left.margin1bottom
         %h4 Livraison de pré-affectation vers iBiza
       .pull-right.margin1bottom
         = link_to icon_edit + 'Editer', edit_ibiza_admin_notification_settings_path, class: 'btn btn-primary btn-mini'

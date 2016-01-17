@@ -58,6 +58,7 @@ class Organization
   has_many   :temp_documents
   has_many   :paper_processes
   has_many   :account_number_rules
+  has_many   :orders
   has_one    :subscription
   has_one    :file_sending_kit
   has_one    :ibiza

@@ -1,48 +1,107 @@
-toggle_products = ->
-  period_duration = $('#subscription_period_duration').attr('value')
-  $('.product').hide()
-  $('.product.period_duration_'+period_duration).show()
-  $('.product').find('input:first').removeAttr('checked')
-  $('.product.period_duration_'+period_duration+':first').find('input:first').attr('checked','checked')
+update_form = ->
+  options = ['period_duration', 'number_of_journals', 'pre_assignment', 'stamp', 'scanner']
+  selected_options = []
 
-init_prices = (input) ->
-  id = $(input).parents('table').attr('id')
-  quantity = $(input).parents('tr').find('td .quantity').text()
-  $('.depend_on_'+id).each (index, element) ->
-    $(element).find('tr').each (i, e) ->
-      original_price = $(e).find('.original_price').text()
-      new_price = original_price * quantity / 100
-      price = (new_price).formatMoney(2,',','.') + " € HT"
-      $(e).find('.price label').text(price)
+  if $('.package').hasClass('locked')
+    if $('.package').hasClass('ligth_package_locked')
+      $('.package input').attr('disabled', 'disabled')
+  else
+    $('.package input').removeAttr('disabled')
+
+  if $('#subscription_is_basic_package_active').is(':checked')
+    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment'
+    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+  if $('#subscription_is_mail_package_active').is(':checked')
+    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment', 'stamp'
+    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+  if $('#subscription_is_scan_box_package_active').is(':checked')
+    selected_options.push 'period_duration', 'number_of_journals', 'pre_assignment', 'scanner'
+    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+  if $('#subscription_is_retriever_package_active').is(':checked')
+    selected_options.push 'period_duration', 'number_of_journals'
+    $('#subscription_is_annual_package_active').attr('disabled', 'disabled')
+  if $('#subscription_is_annual_package_active').is(':checked')
+    selected_options.push 'number_of_journals'
+    $('.package .light_package').attr('disabled', 'disabled')
+  for option in options
+    if selected_options.indexOf(option) != -1
+      $('.'+option).show()
+    else
+      $('.'+option).hide()
+
+update_price = ->
+  price_list = {
+    'subscription':        [10,   30,   null],
+    'pre_assignment':      [9,    15,   null],
+    'return_paper':        [10,   10,   null],
+    'stamp':               [5,    5,    null],
+    'blank_page_deletion': [1,    1,    null],
+    'retriever':           [5,    15,   null],
+    'annual_subscription': [null, null, 199]
+  }
+  selected_options = []
+  price = 0
+  period_type = 0
+
+  if $('#subscription_is_annual_package_active').is(':checked')
+    $('#subscription_period_duration').val(3)
+    period_type = 2
+    $('.stamp_price').html('(-€HT)')
+
+    selected_options = ['annual_subscription']
+  else
+    period_duration = $('#subscription_period_duration').val()
+    if period_duration == '1'
+      period_type = 0
+      $('.stamp_price').html('(5€HT)')
+    else if period_duration == '3'
+      period_type = 1
+      $('.stamp_price').html('(15€HT)')
+
+    options = []
+    if $('#subscription_is_basic_package_active').is(':checked')
+      options.push 'subscription', 'pre_assignment'
+    if $('#subscription_is_mail_package_active').is(':checked')
+      options.push 'subscription', 'pre_assignment', 'return_paper', 'stamp'
+    if $('#subscription_is_scan_box_package_active').is(':checked')
+      options.push 'subscription', 'pre_assignment', 'blank_page_deletion'
+    if $('#subscription_is_retriever_package_active').is(':checked')
+      options.push 'retriever'
+    options = _.uniq(options)
+
+    for option in options
+      if option == 'stamp'
+        if $('#subscription_is_stamp_active_true').is(':checked')
+          selected_options.push 'stamp'
+      else if option == 'pre_assignment'
+        if $('#subscription_is_pre_assignment_active_true').is(':checked')
+          selected_options.push 'pre_assignment'
+      else if option == 'blank_page_deletion'
+        if $('#subscription_is_blank_page_remover_active_true').is(':checked')
+          selected_options.push 'blank_page_deletion'
+      else
+        selected_options.push option
+
+  number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]:checked').val())
+  if number_of_journals > 5
+    price += number_of_journals - 5
+
+  if $('.extra_options').length > 0
+    for input in $('.extra_options input:checked')
+      price += $(input).data('price')
+
+  for option in selected_options
+    price += price_list[option][period_type]
+
+  $('.total_price').html(price+",00€ HT")
 
 jQuery ->
-  if $("#subscriptions.edit, #organization_subscriptions.edit").length > 0
-    toggle_products()
+  if $('#subscriptions.edit, #organization_subscriptions.edit').length > 0
+    update_form()
+    update_price()
 
-    $('#subscription_period_duration').change ->
-      toggle_products()
+    $('.package input').on 'change', ->
+      update_form()
 
-    $('td.input input:checked').each (index, element) ->
-      init_prices(element)
-
-    $('td.input input').change ->
-      init_prices(this)
-
-  if $('#subscriptions.edit').length > 0
-    deletion_of_retrievers_warning = "Attention ! Ceci supprimera les automates configurés sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?"
-    $('.warn_for_deletion_of_retrievers').change (e) ->
-      if $(e.target).attr('type') == 'radio'
-        is_ok = window.confirm(deletion_of_retrievers_warning)
-        $('.authorize_retrievers').attr('checked', 'checked') unless is_ok
-      else if $(e.target).attr('checked') != 'checked'
-        is_ok = window.confirm(deletion_of_retrievers_warning)
-        $(e.target).attr('checked', 'checked') unless is_ok
-
-    deletion_of_preassignment_warning = "Attention ! Ceci supprimera la configuration de pré-affectation des journaux comptables sur ce compte, cette action n'est pas réversible. Voulez-vous continuer ?"
-    $('.warn_for_deletion_of_preassignment').change (e) ->
-      if $(e.target).attr('type') == 'radio'
-        is_ok = window.confirm(deletion_of_preassignment_warning)
-        $('.authorize_preassignment').attr('checked', 'checked') unless is_ok
-      else if $(e.target).attr('checked') != 'checked'
-        is_ok = window.confirm(deletion_of_preassignment_warning)
-        $(e.target).attr('checked', 'checked') unless is_ok
+    $('input, select').on 'change', ->
+      update_price()

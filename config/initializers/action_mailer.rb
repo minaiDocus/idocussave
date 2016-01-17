@@ -8,7 +8,7 @@ module ActionMailer
       return super if Rails.env.test?
       if Rails.env.development?
         name = 'localhost'
-      elsif mailer_name.in?(['welcome_mailer', 'invoice_mailer', 'devise/mailer'])
+      elsif mailer_name.in?(['welcome_mailer', 'invoice_mailer', 'devise/mailer', 'order_mailer'])
         name = 'secondary'
       else
         name = 'primary'

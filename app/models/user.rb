@@ -38,6 +38,7 @@ class User
   field :code,                           type: String
   field :first_name,                     type: String
   field :last_name,                      type: String
+  field :phone_number,                   type: String
   field :company,                        type: String
   field :is_prescriber,                  type: Boolean, default: false
   field :is_fake_prescriber,             type: Boolean, default: false
@@ -130,6 +131,7 @@ class User
   has_many :operations
   has_many :pre_assignment_deliveries
   has_many :paper_processes
+  has_many :orders
   has_and_belongs_to_many :account_number_rules
   has_one :subscription
   has_one :composition
