@@ -187,9 +187,9 @@ module ApplicationHelper
 
   def pre_assignment_date_computed_options
     [
-      ["Valeur de l'organisation", -1],
-      [t('no_value'),               0],
-      [t('yes_value'),              1]
+      ["Paramètres du cabinet",          -1],
+      ["Non, date d’origine",             0],
+      ["Oui, Date de la période iDocus",  1]
     ]
   end
   alias_method :auto_deliver_options, :pre_assignment_date_computed_options

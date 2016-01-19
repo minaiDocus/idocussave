@@ -27,7 +27,7 @@
               %li{ class: ('active' if params[:tab] == 'subscription') }
                 %a{ href: '#subscription', data: { toggle: 'tab' } } Abonnement
               %li{ class: ('active' if params[:tab] == 'period_options') }
-                %a{ href: '#period_options', data: { toggle: 'tab' } } Options des périodes
+                %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
             - if @organization.ibiza.try(:is_configured?)
               %li{ class: ('active' if params[:tab] == 'ibiza') }
                 %a{ href: '#ibiza', data: { toggle: 'tab' } } iBiza
@@ -86,7 +86,7 @@
                       %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
                     %tr
                       %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
-                      %td= @customer.options.pre_assignment_date_computed? ? t('yes_value') : t('no_value')
+                      %td= @customer.options.pre_assignment_date_computed? ? 'Oui, date de la période iDocus' : 'Non, date d’origine'
               - if @customer.active?
                 .row-fluid
                   .span12
