@@ -47,7 +47,7 @@ private
 
   def valid_files_path
     Dir.glob(output_path.join('*.xml')).select do |file_path|
-      File.atime(file_path) < 10.seconds.ago
+      File.atime(file_path) < 2.minutes.ago
     end
   end
 
