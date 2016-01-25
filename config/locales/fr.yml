@@ -901,6 +901,7 @@ fr:
         other: "%{count} commandes"
         name: Commande
         attributes:
+          state: Statut
           type: Produit
           price_in_cents_wo_vat: Prix (en centimes)
           vat_ratio: ratio TVA
@@ -977,3 +978,8 @@ fr:
           sending: Envoi en cours
           sent: Envoyé
           error: Erreur
+      order:
+        states:
+          pending: En attente
+          confirmed: Confirmé
+          cancelled: Annulée

@@ -14,6 +14,6 @@ class OrderMailer < ActionMailer::Base
     addresses = Array(Settings.notify_paper_set_order_to)
     to = addresses.first
     cc = addresses[1..-1] || []
-    mail(to: to, cc: cc, subject: 'Commande de Kit papier')
+    mail(to: to, cc: cc, subject: 'Commande de Kit envoi courrier')
   end
 end

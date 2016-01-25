@@ -1,19 +1,22 @@
 # -*- encoding : UTF-8 -*-
-class PaperSetOrder
-  def initialize(user, order)
-    @user   = user
-    @order  = order
-    @period = @user.subscription.current_period
+class OrderPaperSet
+  def initialize(user, order, is_an_update=false)
+    @user         = user
+    @order        = order
+    @period       = user.subscription.current_period
+    @is_an_update = is_an_update
   end
 
   def execute
-    @order.user = @user
-    @order.organization = @user.organization
+    @order.user ||= @user
+    @order.organization ||= @user.organization
     @order.period_duration = @period.duration
     @order.price_in_cents_wo_vat = price_in_cents_wo_vat
     if @order.save
-      @period.orders << @order
-      OrderMailer.delay(priority: 1).notify_paper_set_order(@order)
+      unless @is_an_update
+        @period.orders << @order
+        ConfirmOrder.execute(@order.id.to_s)
+      end
       UpdatePeriod.new(@period).execute
       true
     else
@@ -22,6 +25,10 @@ class PaperSetOrder
   end
 
 private
+
+  def price_in_cents_wo_vat
+    (price_of_periods + price_of_previous_periods) * 100
+  end
 
   def periods_count
     count = 0
@@ -68,10 +75,6 @@ private
     else
       0
     end
-  end
-
-  def price_in_cents_wo_vat
-    (price_of_periods + price_of_previous_periods) * 100
   end
 
   def paper_set_prices

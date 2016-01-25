@@ -118,11 +118,11 @@
                   .span6.alignright
                     - link_name = ''
                     - if @subscription.is_mail_package_active && @subscription.is_scan_box_package_active
-                      - link_name = "Commande de scanner iDocus'box et de Kit papier"
+                      - link_name = "Commande de scanner iDocus'box et de Kit envoi courrier"
                     - elsif @subscription.is_scan_box_package_active
                       - link_name = "Commande de scanner iDocus'box"
                     - elsif @subscription.is_mail_package_active || @subscription.is_annual_package_active
-                      - link_name = 'Commande de Kit papier'
+                      - link_name = 'Commande de Kit envoi courrier'
                     - if link_name.present?
                       = link_to link_name, account_organization_customer_orders_path(@organization, @customer), class: 'btn'
                 = render partial: 'options'

@@ -2,15 +2,17 @@
 class Order
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Locker
 
   belongs_to :organization
   belongs_to :user
   belongs_to :period
   embeds_one :address, as: :locatable
 
+  field :state,                 type: String, default: 'pending'
   field :type
   field :price_in_cents_wo_vat, type: Integer
-  field :vat_ratio, type: Float, default: 1.2
+  field :vat_ratio,             type: Float,  default: 1.2
 
   field :dematbox_count, type: Integer, default: 0
 
@@ -20,6 +22,7 @@ class Order
   field :paper_set_start_date,   type: Date
   field :paper_set_end_date,     type: Date
 
+  validates_presence_of :state
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_presence_of :price_in_cents_wo_vat
   validates_presence_of :vat_ratio
@@ -35,6 +38,10 @@ class Order
 
   accepts_nested_attributes_for :address
 
+  scope :pending,   -> { where(state: 'pending') }
+  scope :confirmed, -> { where(state: 'confirmed') }
+  scope :cancelled, -> { where(state: 'cancelled') }
+
   def dematbox?
     type == 'dematbox'
   end
@@ -45,5 +52,19 @@ class Order
 
   def price_in_cents_w_vat
     price_in_cents_wo_vat * vat_ratio
+  end
+
+  state_machine :initial => :pending do
+    state :pending
+    state :confirmed
+    state :cancelled
+
+    event :confirm do
+      transition :pending => :confirmed
+    end
+
+    event :cancel do
+      transition :pending => :cancelled
+    end
   end
 end

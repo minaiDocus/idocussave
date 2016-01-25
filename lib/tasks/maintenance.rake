@@ -54,6 +54,18 @@ namespace :maintenance do
     end
   end
 
+  namespace :orders do
+    desc 'Comfirm all pending orders'
+    task :comfirm_all_pending => [:environment] do
+      puts "[#{Time.now}] maintenance:orders:comfirm_all_pending - START"
+      Order.pending.each do |order|
+        ConfirmOrder.new(order).execute
+        print '.'
+      end
+      puts "\n[#{Time.now}] maintenance:orders:comfirm_all_pending - END"
+    end
+  end
+
   namespace :invoice do
     desc 'Generate invoice'
     task :generate => [:environment] do

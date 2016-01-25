@@ -1,13 +1,13 @@
 !!!
 %html
   %head
-    %title [iDocus] Commande de Kit papier
+    %title [iDocus] Commande de Kit envoi courrier
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour,
     %br
     %br
-    Le client #{link_to @order.user.code, account_organization_customer_orders_url(@order.user.organization, @order.user)} vient de passe une commande d'un kit papier avec les caractéristiques suivantes :
+    Le client #{link_to @order.user.code, account_organization_customer_orders_url(@order.user.organization, @order.user)} vient de passe une commande d'un Kit envoi courrier avec les caractéristiques suivantes :
     %br
     \- Taille d'enveloppe :
     = @order.paper_set_casing_size.to_s + 'g'
@@ -21,7 +21,7 @@
     = l @order.paper_set_end_date, format: '%B %Y'
     %br
     %br
-    Pour créer le kit, merci de suivre ce lien : #{link_to account_organization_path(@order.user.organization, tab: 'file_sending_kit'), account_organization_path(@order.user.organization, tab: 'file_sending_kit')}
+    Pour créer le kit, merci de suivre ce lien : #{link_to account_organization_url(@order.user.organization, tab: 'file_sending_kit'), account_organization_url(@order.user.organization, tab: 'file_sending_kit')}
     %br
     %br
     Cordialement,

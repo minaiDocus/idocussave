@@ -23,7 +23,7 @@
       = text_field_tag 'order_contains[user_code]', (params[:order_contains][:user_code] rescue ''), class: 'span12'
 
       = label_tag 'order_contains[type]', t('mongoid.models.order.attributes.type')
-      = select_tag 'order_contains[type]', options_for_select([["iDocus'Box", 'dematbox'],['Kit papier', 'paper_set']], (params[:order_contains][:type] rescue '')), include_blank: true
+      = select_tag 'order_contains[type]', options_for_select([["iDocus'Box", 'dematbox'],['Kit envoi courrier', 'paper_set']], (params[:order_contains][:type] rescue '')), include_blank: true
 
       = label_tag 'order_contains[price_in_cents_wo_vat][$gte]', t('mongoid.models.order.attributes.price_in_cents_wo_vat')
       .input-prepend
@@ -34,6 +34,10 @@
         %span.add-on
           <=
         = text_field_tag 'order_contains[price_in_cents_wo_vat][$lte]', (params[:order_contains][:price_in_cents_wo_vat]['$lte'] rescue ''), style: 'width:100px'
+
+      = label_tag 'order_contains[state]', t('mongoid.models.order.attributes.state')
+      = select_tag 'order_contains[state]', options_for_select([["En attente", 'pending'],['Confirmé', 'confirmed'], ['Annulée', 'cancelled']], (params[:order_contains][:state] rescue '')), include_blank: true
+
       %br
       = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
       = link_to t('filters.reset'), admin_orders_path, class: 'btn'

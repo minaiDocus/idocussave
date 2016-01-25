@@ -43,6 +43,7 @@ private
     orders = orders.any_in(user_id:              user_ids)                         if user_ids.any?
     orders = orders.where(type:                  contains[:type])                  if contains[:type].present?
     orders = orders.where(price_in_cents_wo_vat: contains[:price_in_cents_wo_vat]) if contains[:price_in_cents_wo_vat].present?
+    orders = orders.where(state:                 contains[:state])                 if contains[:state].present?
     orders
   end
 end

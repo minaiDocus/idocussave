@@ -99,6 +99,6 @@ class Address
   end
 
   def long_info
-    [company, company_number, first_name, last_name, phone, city, zip, address_1, door_code, other].select(&:present?).join(' - ')
+    [company, company_number, first_name, last_name, phone, address_1, zip, city, building, door_code, other].select(&:present?).join(' - ')
   end
 end

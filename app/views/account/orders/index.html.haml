@@ -7,7 +7,7 @@
         - if @customer.subscription.is_scan_box_package_active
           = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, type: 'dematbox'), class: 'btn btn-primary'
         - if @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
-          = link_to 'Commander un Kit papier', new_account_organization_customer_order_path(@organization, @customer, type: 'paper_set'), class: 'btn btn-primary'
+          = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, type: 'paper_set'), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box
@@ -19,6 +19,8 @@
             %th Quantité
             %th Prix (HT)
             %th Adresse de livraison
+            %th Statut
+            %th Actions
         %tbody
           - @orders.each do |order|
             %tr
@@ -29,7 +31,7 @@
                 %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
                 %td= order.address.long_info
               - else
-                %td Kit papier
+                %td Kit envoi courrier
                 %td
                   = order.paper_set_casing_size.to_s + 'g'
                   %br
@@ -40,3 +42,8 @@
                   = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
                 %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
                 %td= order.user.addresses.for_kit_shipping.first.try(:long_info)
+              %td= Order.state_machine.states[order.state].human_name
+              %td
+                - if order.pending? && (Time.now < order.created_at + 24.hours)
+                  = link_to icon_edit + 'Modifier', edit_account_organization_customer_order_path(@organization, @customer, order), class: 'btn btn-mini'
+                  = link_to icon_destroy + 'Annuler', account_organization_customer_order_path(@organization, @customer, order), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'

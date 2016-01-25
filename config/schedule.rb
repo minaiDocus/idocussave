@@ -34,6 +34,10 @@ every :day, at: '9:30' do
   rake 'fiduceo:notify_insane_retrievers', options
 end
 
+every :month, at: '00:00' do
+  rake 'maintenance:orders:comfirm_all_pending', options
+end
+
 every :month, at: '02:00' do
   rake 'maintenance:invoice:generate', options
 end

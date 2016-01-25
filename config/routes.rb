@@ -125,7 +125,7 @@ Idocus::Application.routes.draw do
             patch 'validate', on: :collection
           end
         end
-        resources :orders, except: %w(edit update destroy)
+        resources :orders, except: 'show'
       end
       resources :journals, except: 'show'
       resource :organization_subscription, only: %w(edit update) do

@@ -1,7 +1,7 @@
 #orders
   .row-fluid.margin1bottom
     .span12
-      %h3 Liste des commandes de scanner iDocus'Box et de Kit papier (#{@orders.count})
+      %h3 Liste des commandes de scanner iDocus'Box et de Kit envoi courrier (#{@orders.count})
 
   .row-fluid
     .span9
@@ -15,6 +15,7 @@
             %th Quantité
             %th= sortable :price_in_cents_wo_vat, 'Prix (HT)', { order_contains: order_contains }
             %th Adresse de livraison
+            %th= sortable :state, t('mongoid.models.order.attributes.state'), { order_contains: order_contains }
         %tbody
           - @orders.each do |order|
             %tr
@@ -26,7 +27,7 @@
                 %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
                 %td= order.address.long_info
               - else
-                %td Kit papier
+                %td Kit envoi courrier
                 %td
                   = order.paper_set_casing_size.to_s + 'g'
                   %br
@@ -37,6 +38,7 @@
                   = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
                 %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
                 %td= order.user.addresses.for_kit_shipping.first.try(:long_info)
+              %td= Order.state_machine.states[order.state].human_name
       = render partial: 'shared/list_options', locals: { collection: @orders }
     .span3
       = render partial: 'sidebar'

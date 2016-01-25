@@ -1,14 +1,15 @@
-#order.new
+#order.edit
   .row-fluid
     .span12.box
       %h3
+        Edition de la
         - if @order.dematbox?
-          Commande du scanner iDocus’Box
+          commande du scanner iDocus’Box
         - else
-          Commande de Kit envoi courrier
+          commande de Kit envoi courrier
         pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
 
   .row-fluid
     .span12.box
-      = simple_form_for @order, url: account_organization_customer_orders_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+      = simple_form_for @order, url: account_organization_customer_order_path(@organization, @customer, @order), html: { class: 'form form-horizontal margin0' } do |f|
         = render partial: 'form', locals: { f: f }

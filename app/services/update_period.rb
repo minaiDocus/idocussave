@@ -209,6 +209,12 @@ private
       option.price_in_cents_wo_vat = order.price_in_cents_wo_vat
       option.duration = 1
       option.is_an_extra = true
+      if order.pending?
+        option.group_title = 'En cours'
+      elsif order.cancelled?
+        option.group_title = 'Annulée'
+        option.price_in_cents_wo_vat = 0.0
+      end
       option
     end
   end
