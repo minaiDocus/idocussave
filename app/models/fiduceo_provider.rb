@@ -15,7 +15,9 @@ class FiduceoProvider
       else
         results = client.banks
         if client.response.code == 200
-          results = results[1].map do |bank|
+          results = results[1].select do |bank|
+            bank.deleted != "true"
+          end.map do |bank|
             _bank = {
               name: bank.name,
               type: 'bank',
@@ -78,7 +80,9 @@ class FiduceoProvider
         results = Fiduceo.providers
         if results.class == Array
           Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 1.hour, :compress => true)
-          results.map do |provider|
+          results.select do |provider|
+            provider.deleted != "true"
+          end.map do |provider|
             _provider = {
               name: provider.name,
               type: 'provider',
