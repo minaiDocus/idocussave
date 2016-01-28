@@ -24,7 +24,7 @@
             %hr
             %h4.aligncenter Quelle périodicité souhaitez-vous pour le forfait ?
             %br
-            = f.input :period_duration, label: "Type d'abonnement", collection: [['Mensuel', 1], ['Trimestriel', 3]], include_blank: false, disabled: lock.present?
+            = f.input :period_duration, label: 'Périodicité forfait', collection: [['Mensuel', 1], ['Trimestriel', 3]], include_blank: false, disabled: lock.present?, input_html: { title: ("Il n'est pas possible de modifier la périodicité d'un forfait déjà actif" if @subscription.configured?) }
           .number_of_journals{ style: 'display:none' }
             %hr
             %h4.aligncenter Combien de journaux comptables souhaitez-vous affecter au dossier (5 inclus– 1€HT/journal supp.) ?
