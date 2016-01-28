@@ -29,6 +29,55 @@ update_form = ->
     else
       $('.'+option).hide()
 
+update_warning = ->
+  to_be_disabled_text = null
+  if $('#subscription_period_duration').val() == '1'
+    to_be_disabled_text = "(sera effectif le mois prochain)"
+  else if $('#subscription_period_duration').val() == '3'
+    to_be_disabled_text = "(sera effectif le trimestre prochain)"
+
+  if $('#subscription_is_basic_package_active').is(':checked')
+    $('.basic_package_disable_warning').remove()
+  else if $('#subscription_is_basic_package_active').data('original-value') == 1
+    unless $('.basic_package_disable_warning').length > 0
+      $('#subscription_is_basic_package_active').after('<b class="basic_package_disable_warning">'+to_be_disabled_text+'</b>')
+
+  if $('#subscription_is_mail_package_active').is(':checked')
+    $('.mail_package_disable_warning').remove()
+  else if $('#subscription_is_mail_package_active').data('original-value') == 1
+    unless $('.mail_package_disable_warning').length > 0
+      $('#subscription_is_mail_package_active').after('<b class="mail_package_disable_warning">'+to_be_disabled_text+'</b>')
+
+  if $('#subscription_is_scan_box_package_active').is(':checked')
+    $('.scan_box_package_disable_warning').remove()
+  else if $('#subscription_is_scan_box_package_active').data('original-value') == 1
+    unless $('.scan_box_package_disable_warning').length > 0
+      $('#subscription_is_scan_box_package_active').after('<b class="scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
+
+  if $('#subscription_is_retriever_package_active').is(':checked')
+    $('.retriever_package_disable_warning').remove()
+  else if $('#subscription_is_retriever_package_active').data('original-value') == 1
+    unless $('.retriever_package_disable_warning').length > 0
+      $('#subscription_is_retriever_package_active').after('<b class="retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
+
+  if $('#subscription_is_pre_assignment_active_true').is(':checked')
+    $('.pre_assignment_disable_warning').remove()
+  else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1
+    unless $('.pre_assignment_disable_warning').length > 0
+      $('#subscription_is_pre_assignment_active_false').parent('label').parent('span').after('<p class="help-block pre_assignment_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+
+  if $('#subscription_is_stamp_active_true').is(':checked')
+    $('.stamp_disable_warning').remove()
+  else if $('#subscription_is_stamp_active_true').data('original-value') == 1
+    unless $('.stamp_disable_warning').length > 0
+      $('#subscription_is_stamp_active_false').parent('label').parent('span').after('<p class="help-block stamp_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+
+  if $('#subscription_is_blank_page_remover_active_true').is(':checked')
+    $('.blank_page_remover_disable_warning').remove()
+  else if $('#subscription_is_blank_page_remover_active_true').data('original-value') == 1
+    unless $('.blank_page_remover_disable_warning').length > 0
+      $('#subscription_is_blank_page_remover_active_false').parent('label').parent('span').after('<p class="help-block blank_page_remover_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+
 update_price = ->
   price_list = {
     'subscription':        [10,   30,   null],
@@ -98,10 +147,12 @@ update_price = ->
 jQuery ->
   if $('#subscriptions.edit, #organization_subscriptions.edit').length > 0
     update_form()
+    update_warning()
     update_price()
 
     $('.package input').on 'change', ->
       update_form()
 
     $('input, select').on 'change', ->
+      update_warning()
       update_price()

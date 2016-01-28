@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class EvaluateSubscription
-  def initialize(subscription, requester, request=nil)
+  def initialize(subscription, requester=nil, request=nil)
     @subscription = subscription
     @customer     = subscription.user
     @requester    = requester
@@ -19,7 +19,7 @@ class EvaluateSubscription
       @subscription.is_retriever_package_active ? authorize_fiduceo        : unauthorize_fiduceo
       @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
     end
-    AssignDefaultJournalsService.new(@customer, @requester, @request).execute
+    AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
   end
 
 private
@@ -47,7 +47,7 @@ private
   def authorize_pre_assignment
     unless @customer.options.is_preassignment_authorized
       @customer.options.update_attribute(:is_preassignment_authorized, true)
-      AssignDefaultJournalsService.new(@customer, @requester).execute
+      AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
       DropboxImportFolder.changed(@customer)
     end
   end

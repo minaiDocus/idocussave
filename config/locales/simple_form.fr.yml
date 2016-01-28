@@ -227,7 +227,7 @@ fr:
         name: Nom
         price_in_cents_wo_vat: Prix (en centimes)
         position: Position
-        period_duration: "Durée de l'abonnement (1 = une seule fois, 0 = reconduit à chaque période)"
+        period_duration: Durée de l'abonnement
       order:
         dematbox_count: Combien de scanner souhaitez-vous commander pour ce dossier?
         paper_set_casing_size: Taille d'enveloppe

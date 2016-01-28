@@ -7,19 +7,36 @@ class SubscriptionForm
   end
 
   def submit(params)
+    dont_apply_now = !(@requester.is_admin && params[:is_to_apply_now] == '1')
+
     if @subscription.configured?
       if @subscription.light_package?
-        unless @subscription.is_basic_package_active
-          @subscription.is_basic_package_active     = params[:is_basic_package_active]     == '1'
+        if @subscription.is_basic_package_active && dont_apply_now
+          @subscription.is_basic_package_to_be_disabled     = params[:is_basic_package_active]     == '0'
+        else
+          @subscription.is_basic_package_active             = params[:is_basic_package_active]     == '1'
+          @subscription.is_basic_package_to_be_disabled     = false if @subscription.is_basic_package_to_be_disabled
         end
-        unless @subscription.is_mail_package_active
-          @subscription.is_mail_package_active      = params[:is_mail_package_active]      == '1'
+
+        if @subscription.is_mail_package_active && dont_apply_now
+          @subscription.is_mail_package_to_be_disabled      = params[:is_mail_package_active]      == '0'
+        else
+          @subscription.is_mail_package_active              = params[:is_mail_package_active]      == '1'
+          @subscription.is_mail_package_to_be_disabled      = false if @subscription.is_mail_package_to_be_disabled
         end
-        unless @subscription.is_scan_box_package_active
-          @subscription.is_scan_box_package_active  = params[:is_scan_box_package_active]  == '1'
+
+        if @subscription.is_scan_box_package_active && dont_apply_now
+          @subscription.is_scan_box_package_to_be_disabled  = params[:is_scan_box_package_active]  == '0'
+        else
+          @subscription.is_scan_box_package_active          = params[:is_scan_box_package_active]  == '1'
+          @subscription.is_scan_box_package_to_be_disabled  = false if @subscription.is_scan_box_package_to_be_disabled
         end
-        unless @subscription.is_retriever_package_active
-          @subscription.is_retriever_package_active = params[:is_retriever_package_active] == '1'
+
+        if @subscription.is_retriever_package_active && dont_apply_now
+          @subscription.is_retriever_package_to_be_disabled = params[:is_retriever_package_active] == '0'
+        else
+          @subscription.is_retriever_package_active         = params[:is_retriever_package_active] == '1'
+          @subscription.is_retriever_package_to_be_disabled = false if @subscription.is_retriever_package_to_be_disabled
         end
       end
     else
@@ -39,19 +56,41 @@ class SubscriptionForm
         @subscription.period_duration             = params[:period_duration]
       end
     end
-    if params[:number_of_journals].to_i > @subscription.number_of_journals
+    if params[:number_of_journals].to_i > @subscription.user.account_book_types.count
       @subscription.number_of_journals = params[:number_of_journals]
     end
-    if @subscription.is_scan_box_package_active && !@subscription.is_blank_page_remover_active
-      @subscription.is_blank_page_remover_active = params[:is_blank_page_remover_active] == 'true'
-    end
-    if @subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
-      unless @subscription.is_pre_assignment_active
-        @subscription.is_pre_assignment_active = params[:is_pre_assignment_active] == 'true'
+
+    if @subscription.is_scan_box_package_active
+      if @subscription.is_blank_page_remover_active && dont_apply_now
+        @subscription.is_blank_page_remover_to_be_disabled = params[:is_blank_page_remover_active] == 'false'
+      else
+        @subscription.is_blank_page_remover_active = params[:is_blank_page_remover_active] == 'true'
+        @subscription.is_blank_page_remover_to_be_disabled = false if @subscription.is_blank_page_remover_to_be_disabled
       end
+    else
+      @subscription.is_blank_page_remover_active = false
     end
-    if @subscription.is_mail_package_active && !@subscription.is_stamp_active
-      @subscription.is_stamp_active = params[:is_stamp_active] == 'true'
+
+    if @subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+      if @subscription.is_pre_assignment_active && dont_apply_now
+        @subscription.is_pre_assignment_to_be_disabled = params[:is_pre_assignment_active] == 'false'
+      else
+        @subscription.is_pre_assignment_active = params[:is_pre_assignment_active] == 'true'
+        @subscription.is_pre_assignment_to_be_disabled = false if @subscription.is_pre_assignment_to_be_disabled
+      end
+    else
+      @subscription.is_pre_assignment_active = false
+    end
+
+    if @subscription.is_mail_package_active
+      if @subscription.is_stamp_active && dont_apply_now
+        @subscription.is_stamp_to_be_disabled = params[:is_stamp_active] == 'false'
+      else
+        @subscription.is_stamp_active = params[:is_stamp_active] == 'true'
+        @subscription.is_stamp_to_be_disabled = false if @subscription.is_stamp_to_be_disabled
+      end
+    else
+      @subscription.is_stamp_active = false
     end
 
     if @requester.is_admin
@@ -75,7 +114,7 @@ class SubscriptionForm
       @subscription.assign_attributes(_params)
     end
 
-    if @subscription.save && @subscription.configured?
+    if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
       EvaluateSubscription.new(@subscription, @requester, @request).execute
       UpdatePeriod.new(@subscription.current_period).execute
       true

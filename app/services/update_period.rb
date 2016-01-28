@@ -53,6 +53,14 @@ private
     end
   end
 
+  def to_be_disabled_text
+    if @period.duration == 1
+      ' (disparaîtra le mois prochain)'
+    else
+      ' (disparaîtra le trimestre prochain)'
+    end
+  end
+
   def base_options
     if @subscription.is_annual_package_active
       annual_subscription_option
@@ -67,6 +75,7 @@ private
         option.name                  = 'basic_package_subscription'
         option.group_title           = "iDo'Basique"
         option.title                 = 'Téléchargement + Pré-saisie comptable'
+        option.title                 += to_be_disabled_text if @subscription.is_basic_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
         option.quantity              = 1
@@ -83,6 +92,7 @@ private
         option.name                  = 'mail_package_subscription'
         option.group_title           = "iDo'Courrier"
         option.title                 = 'Envoi par courrier A/R + Pré-saisie comptable'
+        option.title                 += to_be_disabled_text if @subscription.is_mail_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
         option.quantity              = 1
@@ -93,6 +103,7 @@ private
           option.name                  = 'mail_package-stamp'
           option.group_title           = "iDo'Courrier - Option"
           option.title                 = 'Tamponnage du papier en sortie de numérisation'
+          option.title                 += to_be_disabled_text if @subscription.is_stamp_to_be_disabled
           option.price_in_cents_wo_vat = package_options_price([:stamp], type)
           option.duration              = 0
           option.quantity              = 1
@@ -109,6 +120,7 @@ private
         option.name                  = 'dematbox_package_subscription'
         option.group_title           = "iDo'Box"
         option.title                 = "Scan par iDocus'Box + Pré-saisie comptable"
+        option.title                 += to_be_disabled_text if @subscription.is_scan_box_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
         option.quantity              = 1
@@ -119,6 +131,7 @@ private
           option.name                  = 'dematbox_package-blank_page_deletion'
           option.group_title           = "iDo'Box - Option"
           option.title                 = 'Reconnaissance et élimination des pages blanches'
+          option.title                 += to_be_disabled_text if @subscription.is_blank_page_remover_to_be_disabled
           option.price_in_cents_wo_vat = package_options_price([:blank_page_deletion], type)
           option.duration              = 0
           option.quantity              = 1
@@ -130,6 +143,7 @@ private
         option.name                  = 'retriever_package_subscription'
         option.group_title           = "iDo'FacBanque"
         option.title                 = 'Récupération banque + factures sur Internet'
+        option.title                 += to_be_disabled_text if @subscription.is_retriever_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
         option.quantity              = 1

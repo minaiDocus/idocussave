@@ -26,6 +26,16 @@ class Subscription
   field :is_pre_assignment_active,     type: Boolean, default: true
   field :is_stamp_active,              type: Boolean, default: false
 
+  field :is_basic_package_to_be_disabled,      type: Boolean
+  field :is_mail_package_to_be_disabled,       type: Boolean
+  field :is_scan_box_package_to_be_disabled,   type: Boolean
+  field :is_retriever_package_to_be_disabled,  type: Boolean
+  field :is_blank_page_remover_to_be_disabled, type: Boolean
+  field :is_pre_assignment_to_be_disabled,     type: Boolean
+  field :is_stamp_to_be_disabled,              type: Boolean
+
+  attr_accessor :is_to_apply_now
+
   validates :number_of_journals, numericality: { greater_than_or_equal_to: 5, less_than_or_equal_to: 10 }
 
   field :max_sheets_authorized,              type: Integer, default: 100 # numérisés
@@ -78,6 +88,24 @@ class Subscription
     is_scan_box_package_active  ||
     is_retriever_package_active ||
     is_annual_package_active
+  end
+
+  def to_be_configured?
+    is_basic_package_active     && !is_basic_package_to_be_disabled     ||
+    is_mail_package_active      && !is_mail_package_to_be_disabled      ||
+    is_scan_box_package_active  && !is_scan_box_package_to_be_disabled  ||
+    is_retriever_package_active && !is_retriever_package_to_be_disabled ||
+    is_annual_package_active
+  end
+
+  def downgrade
+    self.is_basic_package_active      = false if is_basic_package_to_be_disabled
+    self.is_mail_package_active       = false if is_mail_package_to_be_disabled
+    self.is_scan_box_package_active   = false if is_scan_box_package_to_be_disabled
+    self.is_retriever_package_active  = false if is_retriever_package_to_be_disabled
+    self.is_blank_page_remover_active = false if is_blank_page_remover_to_be_disabled
+    self.is_pre_assignment_active     = false if is_pre_assignment_to_be_disabled
+    self.is_stamp_active              = false if is_stamp_to_be_disabled
   end
 
   def light_package?

@@ -11,6 +11,7 @@ class SubscriptionOption
   field :period_duration,       type: Integer, default: 1
 
   validates_presence_of :name, :price_in_cents_wo_vat, :position, :period_duration
+  validates_inclusion_of :period_duration, in: [0,1]
 
   scope :default, -> { asc(:position) }
 

@@ -6,6 +6,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :load_subscription
 
   def edit
+    @subscription.downgrade
   end
 
   def update

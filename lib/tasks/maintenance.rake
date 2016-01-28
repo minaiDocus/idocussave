@@ -32,14 +32,14 @@ namespace :maintenance do
     task :init => [:environment] do
       puts "[#{Time.now}] maintenance:reporting:init - START"
       Organization.all.each do |organization|
-        RemoveNotReusableOptionsService.new(organization.subscription).execute
+        DowngradeSubscription.new(organization.subscription).execute
         organization.customers.active.each do |customer|
           begin
             subscription = customer.subscription
-            if subscription.period_duration == 1 || Time.now.month == Time.now.beginning_of_quarter.month
-              RemoveNotReusableOptionsService.new(subscription).execute
+            if subscription.period_duration == 1 || (subscription.period_duration == 3 && Time.now.month == Time.now.beginning_of_quarter.month) || (subscription.period_duration == 12 && Time.now.month == 1)
+              DowngradeSubscription.new(subscription).execute
             end
-            subscription.find_or_create_period Time.now
+            subscription.current_period
             if subscription.period_duration != 1
               time = 1.month.ago
               period = subscription.find_period time

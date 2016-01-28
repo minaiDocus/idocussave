@@ -43,7 +43,7 @@
               %td= l option.updated_at
               %td= option.name
               %td.alignright= option.price_in_cents_wo_vat
-              %td= option.period_duration
+              %td= option.period_duration == 0 ? 'Continuelle' : 'Une période'
               %td= option.subscribers.count
               %td
                 = icon_link_to edit_admin_subscription_option_path(option), { icon: 'edit' }

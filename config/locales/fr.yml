@@ -894,7 +894,7 @@ fr:
           name: Nom
           price_in_cents_wo_vat: Prix (en centimes)
           position: Position
-          period_duration: Durée
+          period_duration: Durée de l'abonnement
       order:
         zero: 0 option commande
         one: 1 option commande

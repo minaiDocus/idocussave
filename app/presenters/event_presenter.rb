@@ -20,6 +20,8 @@ class EventPresenter < BasePresenter
       event.user_code
     elsif event.action == 'visit'
       'Visiteur'
+    else
+      'iDocus'
     end
   end
 
