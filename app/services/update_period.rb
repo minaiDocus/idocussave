@@ -144,12 +144,12 @@ private
         option.group_title           = "iDo'FacBanque"
         option.title                 = 'Récupération banque + factures sur Internet'
         option.title                 += to_be_disabled_text if @subscription.is_retriever_package_to_be_disabled
-        option.price_in_cents_wo_vat = price
+        option.price_in_cents_wo_vat = package_options_price([:retriever], type)
         option.duration              = 0
         option.quantity              = 1
         selected_options << option
       end
-      unless @subscription.is_pre_assignment_active
+      if (@subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active) && !@subscription.is_pre_assignment_active
         option = ProductOptionOrder.new
         option.name                  = 'all_package-disable_pre_assignment'
         option.group_title           = 'Tous forfaits'
