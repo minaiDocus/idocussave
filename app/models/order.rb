@@ -38,6 +38,9 @@ class Order
 
   accepts_nested_attributes_for :address
 
+  scope :dematboxes, -> { where(type: 'dematbox') }
+  scope :paper_sets, -> { where(type: 'paper_set') }
+
   scope :pending,   -> { where(state: 'pending') }
   scope :confirmed, -> { where(state: 'confirmed') }
   scope :cancelled, -> { where(state: 'cancelled') }

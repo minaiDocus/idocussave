@@ -66,58 +66,41 @@ class Invoice
     @data = []
 
     time = self.created_at - 1.month
-    if organization
-      periods = Period.where(:user_id.in => organization.customers.centralized.map(&:_id)).
-        where(:start_at.lte => time.dup, :end_at.gte => time.dup)
 
-      @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
-      @data = [
-          ["Prestation iDocus pour le mois de " + previous_month.downcase + " " + year.to_s, format_price(@total) + " €"],
-          ["Nombre de clients actifs : #{periods.count}",""]
-      ]
+    customer_ids = organization.customers.centralized.map(&:_id)
+    periods = Period.where(:user_id.in => customer_ids).where(:start_at.lte => time.dup, :end_at.gte => time.dup)
+    subscription_ids = periods.map(&:subscription_id)
 
-      options = organization.subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
-          first.product_option_orders.
-          where(:group_position.gte => 1000).
-          by_position rescue []
-      options.each do |option|
-        @data << ["#{option.group_title} #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
-        @total += option.price_in_cents_wo_vat
-      end
-      @address = organization.addresses.for_billing.first
-    else
-      period = user.subscription.find_or_create_period(time)
-      options = period.product_option_orders
-      if period.duration == 1
-        options.each do |option|
-          if option.position != -1
-            @data << [option.group_title + " : " + option.title, format_price(option.price_in_cents_wo_vat) + " €"]
-          end
-        end
-        @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
-        @total += period.price_in_cents_wo_vat
-      elsif period.duration == 3
-        @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, [period])
-        options.each do |option|
-          if option.position != -1 && option.duration != 1
-            price = option.price_in_cents_wo_vat / 3
-            @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
-          end
-        end
-        if time.month == time.beginning_of_quarter.month
-          options.each do |option|
-            if option.duration == 1
-              price = option.price_in_cents_wo_vat
-              @data << [option.group_title + " : " + option.title, format_price(price) + " €"]
-            end
-          end
-        end
-        if time.month == time.end_of_quarter.month
-          @data << ["Dépassement",format_price(period.excesses_price_in_cents_wo_vat) + " €"]
-        end
-      end
-      @address = user.addresses.for_billing.first
+    basic_package_count     = Subscription.where(:_id.in => subscription_ids, is_basic_package_active:     true).count
+    mail_package_count      = Subscription.where(:_id.in => subscription_ids, is_mail_package_active:      true).count
+    scan_box_package_count  = Subscription.where(:_id.in => subscription_ids, is_scan_box_package_active:  true).count
+    retriever_package_count = Subscription.where(:_id.in => subscription_ids, is_retriever_package_active: true).count
+    annual_package_count    = Subscription.where(:_id.in => subscription_ids, is_annual_package_active:    true).count
+    ordered_paper_set_count = organization.orders.paper_sets.confirmed.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month).count
+    ordered_scanner_count   = organization.orders.dematboxes.confirmed.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month).count
+
+    @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
+    @data = [
+        ["Nombre de dossier : #{periods.count}", ""],
+        ["Forfaits et options iDocus pour " + previous_month.downcase + " " + year.to_s + " :", format_price(@total) + " €"],
+        ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Basique", ""],
+        ["- #{mail_package_count} forfait#{'s' if mail_package_count > 1} iDo’Courrier", ""],
+        ["- #{scan_box_package_count} forfait#{'s' if scan_box_package_count > 1} iDo'Box", ""],
+        ["- #{retriever_package_count} forfait#{'s' if retriever_package_count > 1} iDo'FacBanque", ""],
+        ["- #{annual_package_count} forfait#{'s' if annual_package_count > 1} Pack Annuel", ""],
+        ["- #{ordered_paper_set_count} commande#{'s' if ordered_paper_set_count > 1} de kit#{'s' if ordered_paper_set_count > 1}", ""],
+        ["- #{ordered_scanner_count} commande#{'s' if ordered_scanner_count > 1} de scanner#{'s' if ordered_scanner_count > 1} iDo'Box", ""]
+    ]
+
+    options = organization.subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
+      first.
+      product_option_orders.
+      by_position rescue []
+    options.each do |option|
+      @data << ["#{option.group_title} - #{option.title}", format_price(option.price_in_cents_wo_vat) + " €"]
+      @total += option.price_in_cents_wo_vat
     end
+    @address = organization.addresses.for_billing.first
 
     self.amount_in_cents_w_vat = (@total * self.vat_ratio).round
 
