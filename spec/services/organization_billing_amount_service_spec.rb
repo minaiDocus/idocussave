@@ -7,14 +7,14 @@ describe OrganizationBillingAmountService do
     # First customer, monthly
     customer1 = FactoryGirl.create(:user, code: 'TS%0001')
     subscription = customer1.find_or_create_subscription
-    option = ProductOption.create(name: 'option', title: 'Option', price_in_cents_wo_vat: 2500, duration: 0)
+    option = SubscriptionOption.create(name: 'Option', price_in_cents_wo_vat: 2500, period_duration: 0)
     subscription.options << option
     UpdatePeriodPriceService.new(subscription.current_period).execute
     # Second customer, quarterly
     customer2 = FactoryGirl.create(:user, code: 'TS%0002')
     subscription2 = customer2.find_or_create_subscription
     subscription2.update_attribute(:period_duration, 3)
-    option2 = ProductOption.create(name: 'option_2', title: 'Option 2', price_in_cents_wo_vat: 3000, duration: 0)
+    option2 = SubscriptionOption.create(name: 'Option 2', price_in_cents_wo_vat: 3000, period_duration: 0)
     subscription2.options << option2
     UpdatePeriodPriceService.new(subscription2.current_period).execute
     # Organization
@@ -22,9 +22,7 @@ describe OrganizationBillingAmountService do
     organization.members << customer1
     organization.members << customer2
     organization_subscription = organization.find_or_create_subscription
-    group = ProductGroup.create(name: 'group', title: 'Groupe', position: 1000)
-    option3 = ProductOption.create(name: 'option_3', title: 'Option 3', price_in_cents_wo_vat: 1500, position: 3, duration: 0)
-    group.product_options << option3
+    option3 = SubscriptionOption.create(name: 'Option 3', price_in_cents_wo_vat: 1500, position: 3, period_duration: 0)
     organization_subscription.options << option3
     UpdatePeriodPriceService.new(organization_subscription.current_period).execute
 

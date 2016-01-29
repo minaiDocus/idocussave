@@ -28,12 +28,6 @@ private
     end
   end
 
-  def extra_options
-    @period.product_option_orders.select do |option|
-      option.group_position >= 1000
-    end
-  end
-
   def recurrent_price
     amount = recurrent_options.sum(&:price_in_cents_wo_vat)
     if @period.duration == 3
@@ -59,10 +53,6 @@ private
   end
 
   def total_price
-    if @period.user
-      @period.products_price_in_cents_wo_vat + @period.excesses_price_in_cents_wo_vat
-    else
-      extra_options.sum(&:price_in_cents_wo_vat)
-    end
+    @period.products_price_in_cents_wo_vat + @period.excesses_price_in_cents_wo_vat
   end
 end

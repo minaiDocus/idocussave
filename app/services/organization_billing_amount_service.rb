@@ -7,7 +7,7 @@ class OrganizationBillingAmountService
 
   def execute
     PeriodBillingService.amount_in_cents_wo_vat(@time.month, customer_periods) +
-      options.sum(&:price_in_cents_wo_vat)
+      (period.try(:price_in_cents_wo_vat) || 0)
   end
 
   def customer_ids
@@ -27,15 +27,5 @@ class OrganizationBillingAmountService
 
   def period
     @period ||= @organization.subscription.find_period(@time)
-  end
-
-  def options
-    if period
-      period.product_option_orders.select do |option|
-        option.group_position >= 1000
-      end
-    else
-      []
-    end
   end
 end

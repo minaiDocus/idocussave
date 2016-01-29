@@ -103,17 +103,15 @@ describe UpdatePeriodPriceService do
     it 'set values' do
       period = Period.create
       option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
-      option2 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1000)
-      option3 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 1000)
+      option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 2)
       period.product_option_orders << option1
       period.product_option_orders << option2
-      period.product_option_orders << option3
 
       UpdatePeriodPriceService.new(period).execute
 
-      expect(period.recurrent_products_price_in_cents_wo_vat).to eq 2000
+      expect(period.recurrent_products_price_in_cents_wo_vat).to eq 1000
       expect(period.ponctual_products_price_in_cents_wo_vat).to eq 2000
-      expect(period.products_price_in_cents_wo_vat).to eq 4000
+      expect(period.products_price_in_cents_wo_vat).to eq 3000
       expect(period.excesses_price_in_cents_wo_vat).to eq 0
       expect(period.price_in_cents_wo_vat).to eq 3000
     end
