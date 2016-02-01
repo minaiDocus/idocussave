@@ -23,6 +23,6 @@ class PackIndexer
       end
       IndexerService.perform(Pack.to_s, pack.id.to_s, 'index')
     end
-    handle_asynchronously :execute, priority: 1, run_at: Proc.new { 15.seconds.from_now }
+    handle_asynchronously :execute, priority: 10, run_at: Proc.new { 15.seconds.from_now }
   end
 end
