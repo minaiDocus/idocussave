@@ -98,26 +98,6 @@ namespace :maintenance do
           end
           InvoiceMailer.delay(priority: 5).notify(invoice)
         end
-        periods = Period.where(:user_id.in => organization.customers.not_centralized.map(&:id)).where(start_at: time.dup)
-        if periods.count > 0
-          puts "-> Not centralized invoices :"
-          periods.map do |period|
-            [period.user, period]
-          end.sort do |a, b|
-            a.first.code <=> b.first.code
-          end.each do |customer, period|
-            if customer.addresses.select{ |a| a.is_for_shipping }.count > 0
-              invoice = Invoice.new
-              invoice.user = customer
-              invoice.period = period
-              invoice.save
-              print "\t#{invoice.number} : #{customer.info}..."
-              invoice.create_pdf
-              print "done\n"
-              InvoiceMailer.delay(priority: 5).notify(invoice)
-            end
-          end
-        end
       end
       Invoice.archive
       puts "[#{Time.now}] maintenance:invoice:generate - END"
