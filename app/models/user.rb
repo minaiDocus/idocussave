@@ -47,6 +47,7 @@ class User
   field :is_dropbox_extended_authorized, type: Boolean, default: false
   field :is_reminder_email_active,       type: Boolean, default: true
   field :is_document_notifier_active,    type: Boolean, default: true
+  # INFO : keeping attribute "is_centralized" for backward compatibility
   field :is_centralized,                 type: Boolean, default: true
   field :is_operator,                    type: Boolean
 
@@ -153,8 +154,6 @@ class User
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
   scope :active,                      -> { where(inactive_at: nil) }
   scope :closed,                      -> { where(:inactive_at.nin => [nil]) }
-  scope :centralized,                 -> { where(is_centralized: true) }
-  scope :not_centralized,             -> { where(is_centralized: false) }
   scope :active_at,                   -> time { any_of({ :inactive_at.in => [nil] }, { :inactive_at.nin => [nil], :inactive_at.gt => time.end_of_month }) }
 
   accepts_nested_attributes_for :external_file_storage

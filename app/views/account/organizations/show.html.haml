@@ -81,14 +81,8 @@
                       %th= t('mongoid.models.organization.attributes.customers_count')
                       %td= link_to @organization.customers.count, account_organization_customers_path(@organization)
                     %tr
-                      %th= t('mongoid.models.organization.attributes.centralized_customers_count')
-                      %td= @organization.customers.centralized.count
-                    %tr
                       %th Nombre de clients actifs
                       %td= @organization.customers.active.count
-                    %tr
-                      %th Nombre de clients actifs et centralisés
-                      %td= @organization.customers.active.centralized.count
               - if is_leader?
                 .row-fluid
                   .span12= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization), class: 'btn btn-primary'

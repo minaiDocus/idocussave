@@ -71,7 +71,6 @@ class Subscription
       period.organization = organization
     else
       period.user = user
-      period.is_centralized = user.is_centralized
     end
     period.save
     UpdatePeriod.new(period).execute

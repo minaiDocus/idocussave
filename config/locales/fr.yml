@@ -341,7 +341,6 @@ fr:
           is_access_by_token_active: Accès par jeton activé ?
           is_reminder_email_active: Rappel activé ?
           is_document_notifier_active: Notification des nouveaux documents activé ?
-          is_centralized: Est centralisé ?
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
           prescriber: Prescripteur
@@ -582,8 +581,6 @@ fr:
           members_count: Nombre de membres
           customers: Clients
           customers_count: Nombre de clients
-          centralized_customers: Clients centralisés
-          centralized_customers_count: Nombre de clients centralisés
           is_detail_authorized: Divulguer le coût iDocus au client ?
           is_test: Mode test ?
           is_for_admin: Administratif ?

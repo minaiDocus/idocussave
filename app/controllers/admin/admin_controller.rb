@@ -8,13 +8,7 @@ class Admin::AdminController < ApplicationController
   def index
     @provider_wishes = FiduceoProviderWish.not_processed.desc(:created_at).limit(5).entries
 
-    @unbillable_organizations = Organization.billed.
-                                  where('addresses.is_for_billing' => { '$nin' => [true] }).
-                                  select { |o| o.customers.active.centralized.count > 0 }
-    @unbillable_customers = User.customers.
-                              not_centralized.
-                              where('addresses.is_for_billing' => { '$nin' => [true] }).
-                              includes(:organization)
+    @unbillable_organizations = Organization.billed.where('addresses.is_for_billing' => { '$nin' => [true] })
   end
 
   def ocr_needed_temp_packs

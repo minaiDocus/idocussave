@@ -67,10 +67,6 @@
             %th= t('mongoid.models.user.attributes.is_document_notifier_active')
             %td.value= check_box_tag 'user[is_document_notifier_active]', 1, @user.is_document_notifier_active
           %tr
-            %th= t('mongoid.models.user.attributes.is_centralized')
-            %td.value
-              = check_box_tag 'user[is_centralized]', 1, @user.is_centralized
-          %tr
             %th= t('mongoid.models.user.attributes.is_fiduceo_authorized')
             %td.value
               = check_box_tag 'user[is_fiduceo_authorized]', 1, @user.is_fiduceo_authorized, disabled: true

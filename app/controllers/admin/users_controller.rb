@@ -80,7 +80,6 @@ private
       :is_fake_prescriber,
       :is_reminder_email_active,
       :is_document_notifier_active,
-      :is_centralized,
       :is_access_by_token_active,
       :stamp_name,
       :is_stamp_background_filled

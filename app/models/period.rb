@@ -17,6 +17,7 @@ class Period
   field :start_at,       type: Time,    default: Proc.new { Time.now.beginning_of_month }
   field :end_at,         type: Time,    default: Proc.new { Time.now.end_of_month }
   field :duration,       type: Integer, default: 1
+  # INFO : keeping attribute "is_centralized" for backward compatibility
   field :is_centralized, type: Boolean, default: true
 
   field :price_in_cents_wo_vat,                    type: Integer, default: 0
@@ -65,9 +66,6 @@ class Period
   scope :monthly,   -> { where(duration: 1) }
   scope :quarterly, -> { where(duration: 3) }
   scope :annual,    -> { where(duration: 12) }
-
-  scope :centralized,     -> { where(is_centralized: true) }
-  scope :not_centralized, -> { where(is_centralized: false) }
 
   before_create :add_one_delivery
   before_save :set_start_at_and_end_at

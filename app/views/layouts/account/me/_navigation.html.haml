@@ -8,7 +8,7 @@
           != link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
     - if @user.active?
       - if @user.organization.is_active
-        - if @user.is_prescriber || !@user.is_centralized
+        - if @user.is_prescriber
           %li{ class: ('active' if @active_panel == 'payment_management') }
             != link_to 'Mode de paiement', '#payment_management', class: 'do-show'
         - unless @user.try(:organization).try(:is_suspended)
@@ -25,7 +25,7 @@
       - if !@user.organization.is_active && @user == @user.organization.leader
         %li{ class: ('active' if @active_panel == 'active_organization') }
           != link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
-      - if @user.is_prescriber || !@user.is_centralized
+      - if @user.is_prescriber || @user.invoices.count > 0
         - unless @user.try(:organization).try(:is_suspended) && @user.active?
           %li{ class: ('active' if @active_panel == 'invoices') }
             != link_to 'Factures', '#invoices', class: 'do-show'

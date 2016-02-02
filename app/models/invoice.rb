@@ -67,7 +67,7 @@ class Invoice
 
     time = self.created_at - 1.month
 
-    customer_ids = organization.customers.centralized.map(&:_id)
+    customer_ids = organization.customers.map(&:_id)
     periods = Period.where(:user_id.in => customer_ids).where(:start_at.lte => time.dup, :end_at.gte => time.dup)
     subscription_ids = periods.map(&:subscription_id)
 

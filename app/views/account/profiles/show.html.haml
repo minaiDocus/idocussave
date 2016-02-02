@@ -54,7 +54,7 @@
 
       - if @user.active?
         -if @user.organization.is_active
-          - if @user.is_prescriber || !@user.is_centralized
+          - if @user.is_prescriber
             #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
               .span12.well
                 %h3.aligncenter Prélèvement
@@ -319,7 +319,7 @@
                   Pour réactiver votre compte client veuillez envoyer un courriel à
                   = link_to 'commercial@idocus.com', 'mailto:commercial@idocus.com'
 
-        - if @user.is_prescriber || !@user.is_centralized
+        - if @user.is_prescriber || @user.invoices.count > 0
           - unless @user.try(:organization).try(:is_suspended)
             #invoices.row-fluid.pan{ class: (@active_panel == 'invoices' ? 'active' : '')}
               .span12

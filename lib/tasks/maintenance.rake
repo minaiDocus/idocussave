@@ -81,14 +81,14 @@ namespace :maintenance do
       puts ''
       Organization.billed.asc(:created_at).each do |organization|
         puts "Generating invoice for organization : #{organization.name}"
-        periods = Period.where(:user_id.in => organization.customers.centralized.map(&:id)).where(start_at: time.dup)
+        periods = Period.where(:user_id.in => organization.customers.map(&:id)).where(start_at: time.dup)
         if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
           invoice = Invoice.new
           invoice.organization = organization
           invoice.user = organization.leader
           invoice.period = organization.periods.desc(:end_at).first
           invoice.save
-          print "-> Centralized invoice : #{invoice.number}..."
+          print "-> Invoice #{invoice.number}..."
           invoice.create_pdf
           print "done\n"
           periods.map(&:user).sort do |a, b|
