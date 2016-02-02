@@ -132,6 +132,7 @@ private
     authorized = false unless can_manage?
     authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
     authorized = false if action_name.in?(%w(new create destroy)) && !@organization.is_active
+    authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
