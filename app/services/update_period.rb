@@ -15,7 +15,6 @@ class UpdatePeriod
       end
       @period.product_option_orders = options
       if @period.save
-        PeriodBillingService.new(@period).fill_past_with_0
         UpdatePeriodPriceService.new(@period).execute
       end
     end

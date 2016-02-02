@@ -8,6 +8,7 @@ class SubscriptionForm
 
   def submit(params)
     dont_apply_now = !(@requester.is_admin && params[:is_to_apply_now] == '1')
+    is_new = !@subscription.configured?
 
     if @subscription.configured?
       if @subscription.light_package?
@@ -116,6 +117,7 @@ class SubscriptionForm
 
     if @subscription.configured? && @subscription.to_be_configured? && @subscription.save
       EvaluateSubscription.new(@subscription, @requester, @request).execute
+      PeriodBillingService.new(@subscription.current_period).fill_past_with_0 if is_new
       UpdatePeriod.new(@subscription.current_period).execute
       true
     else
