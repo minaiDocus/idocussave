@@ -40,18 +40,6 @@ class BankAccount
     !configured?
   end
 
-  class << self
-    def notify(collaborator_id, customer_id, bank_account_ids)
-      bank_accounts = BankAccount.where(:_id.in => bank_account_ids)
-      if bank_accounts.any?
-        collaborator  = User.find collaborator_id
-        customer      = User.find customer_id
-        NotificationMailer.new_bank_accounts(collaborator, customer, bank_accounts).deliver
-      end
-    end
-    handle_asynchronously :notify, priority: 1
-  end
-
 private
 
   def upcase_journal
