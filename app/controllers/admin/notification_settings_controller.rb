@@ -12,15 +12,6 @@ class Admin::NotificationSettingsController < Admin::AdminController
     redirect_to admin_notification_settings_path
   end
 
-  def edit_subscription
-  end
-
-  def update_subscription
-    Settings.notify_subscription_changes_to = params[:notification][:to].split(',').map(&:strip)
-    flash[:notice] = 'Modifié avec succès.'
-    redirect_to admin_notification_settings_path
-  end
-
   def edit_dematbox_order
   end
 

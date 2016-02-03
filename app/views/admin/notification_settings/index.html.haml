@@ -27,20 +27,6 @@
   .row-fluid.margin1top
     .span12
       .pull-left.margin1bottom
-        %h4 Abonnement
-      .pull-right.margin1bottom
-        = link_to icon_edit + 'Editer', edit_subscription_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
-      %table.table.table-condensed.table-striped.table-bordered
-        %tr
-          %th Description
-          %td Lorsqu'une option de produit, ayant "#{t('simple_form.labels.product_option.notify')}" d'activé, est sélectionné
-        %tr
-          %th Adresse mail à notifier (#{Settings.notify_subscription_changes_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_subscription_changes_to)
-
-  .row-fluid.margin1top
-    .span12
-      .pull-left.margin1bottom
         %h4 Commande de Dematbox
       .pull-right.margin1bottom
         = link_to icon_edit + 'Editer', edit_dematbox_order_admin_notification_settings_path, class: 'btn btn-primary btn-mini'
