@@ -36,10 +36,10 @@
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized
               %li{ class: ('active' if params[:tab] == 'retrievers') }
-                %a{ href: '#retrievers', data: { toggle: 'tab' } } Automates
+                %a{ href: '#retrievers', data: { toggle: 'tab' } } iDo’FacBanque
               - if @customer.fiduceo_retrievers.banks.count > 0
                 %li{ class: ('active' if params[:tab] == 'bank_accounts') }
-                  %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Comptes bancaires
+                  %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
@@ -227,16 +227,14 @@
                       = link_to icon(icon: 'th-large') + ' Copier', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.active? && @customer.is_fiduceo_authorized
               #retrievers.tab-pane{ class: ('active' if params[:tab] == 'retrievers') }
-                = link_to 'Liste des transactions', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
-                = link_to 'Liste des opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
-                = link_to 'Liste des documents', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1right'
+                = link_to 'Statut automate', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
+                = link_to 'Opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
+                = link_to 'Documents (Factures)', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1right'
                 = link_to 'Sélection des comptes bancaires', account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn margin1right'
                 = link_to 'Sélection des documents', select_account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
                 %table.table.table-condensed.table-striped.margin2top.margin0bottom
                   %thead
                     %tr
-                      %th= t('mongoid.models.common.attributes.created_at')
-                      %th= t('mongoid.models.common.attributes.updated_at')
                       %th= t('mongoid.models.fiduceo_retriever.attributes.type')
                       %th= t('mongoid.models.fiduceo_retriever.attributes.service_name')
                       %th= t('mongoid.models.fiduceo_retriever.attributes.name')
@@ -248,8 +246,6 @@
                       - present retriever do |retriever_presenter|
                         = simple_form_for retriever, url: account_organization_customer_organization_retriever_path(@organization, @customer, retriever), method: 'patch' do |f|
                           %tr
-                            %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
-                            %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
                             %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
                             %td= retriever_presenter.service_name
                             %td= retriever_presenter.name
