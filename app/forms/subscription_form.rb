@@ -7,7 +7,7 @@ class SubscriptionForm
   end
 
   def submit(params)
-    dont_apply_now = !(@requester.is_admin && params[:is_to_apply_now] == '1')
+    dont_apply_now = !(@subscription.user.recently_created? || (@requester.is_admin && params[:is_to_apply_now] == '1'))
     is_new = !@subscription.configured?
 
     if @subscription.configured?

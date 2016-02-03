@@ -35,46 +35,47 @@ update_warning = ->
     to_be_disabled_text = "(sera effectif le mois prochain)"
   else if $('#subscription_period_duration').val() == '3'
     to_be_disabled_text = "(sera effectif le trimestre prochain)"
+  is_recently_created = $('form').data('is-recently-created') == true
 
   if $('#subscription_is_basic_package_active').is(':checked')
     $('.basic_package_disable_warning').remove()
-  else if $('#subscription_is_basic_package_active').data('original-value') == 1
+  else if $('#subscription_is_basic_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.basic_package_disable_warning').length > 0
       $('#subscription_is_basic_package_active').after('<b class="basic_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_mail_package_active').is(':checked')
     $('.mail_package_disable_warning').remove()
-  else if $('#subscription_is_mail_package_active').data('original-value') == 1
+  else if $('#subscription_is_mail_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.mail_package_disable_warning').length > 0
       $('#subscription_is_mail_package_active').after('<b class="mail_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_scan_box_package_active').is(':checked')
     $('.scan_box_package_disable_warning').remove()
-  else if $('#subscription_is_scan_box_package_active').data('original-value') == 1
+  else if $('#subscription_is_scan_box_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.scan_box_package_disable_warning').length > 0
       $('#subscription_is_scan_box_package_active').after('<b class="scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_retriever_package_active').is(':checked')
     $('.retriever_package_disable_warning').remove()
-  else if $('#subscription_is_retriever_package_active').data('original-value') == 1
+  else if $('#subscription_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.retriever_package_disable_warning').length > 0
       $('#subscription_is_retriever_package_active').after('<b class="retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_pre_assignment_active_true').is(':checked')
     $('.pre_assignment_disable_warning').remove()
-  else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1
+  else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.pre_assignment_disable_warning').length > 0
       $('#subscription_is_pre_assignment_active_false').parent('label').parent('span').after('<p class="help-block pre_assignment_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
 
   if $('#subscription_is_stamp_active_true').is(':checked')
     $('.stamp_disable_warning').remove()
-  else if $('#subscription_is_stamp_active_true').data('original-value') == 1
+  else if $('#subscription_is_stamp_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.stamp_disable_warning').length > 0
       $('#subscription_is_stamp_active_false').parent('label').parent('span').after('<p class="help-block stamp_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
 
   if $('#subscription_is_blank_page_remover_active_true').is(':checked')
     $('.blank_page_remover_disable_warning').remove()
-  else if $('#subscription_is_blank_page_remover_active_true').data('original-value') == 1
+  else if $('#subscription_is_blank_page_remover_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.blank_page_remover_disable_warning').length > 0
       $('#subscription_is_blank_page_remover_active_false').parent('label').parent('span').after('<p class="help-block blank_page_remover_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
 

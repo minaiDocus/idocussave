@@ -6,7 +6,7 @@
   .row-fluid
     .span12.box
       %div{ style: 'width: 485px; margin: 0px auto;' }
-        = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
+        = simple_form_for @subscription, url: account_organization_customer_subscription_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, data: { is_recently_created: @customer.recently_created? } do |f|
           - lock = ''
           - if @subscription.configured?
             - lock = @subscription.light_package? ? 'annual_package_locked' : 'ligth_package_locked'

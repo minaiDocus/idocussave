@@ -355,6 +355,10 @@ class User
     super && (active? || (inactive_at + 18.months) > Time.now)
   end
 
+  def recently_created?
+    self.created_at > 24.hours.ago
+  end
+
 private
 
   def format_of_code
