@@ -10,10 +10,9 @@ class Organization
   field :code,         type: String
 
   # Authorization
-  field :is_detail_authorized,                  type: Boolean, default: false
-  field :is_period_duration_editable,           type: Boolean, default: true
-  field :is_journals_management_centralized,    type: Boolean, default: true
-  field :is_subscription_lower_options_enabled, type: Boolean, default: false
+  field :is_detail_authorized,               type: Boolean, default: false
+  field :is_period_duration_editable,        type: Boolean, default: true
+  field :is_journals_management_centralized, type: Boolean, default: true
   # Misc
   field :is_test,                         type: Boolean, default: false
   field :is_for_admin,                    type: Boolean, default: false
@@ -144,9 +143,5 @@ class Organization
 
   def kit_shipping_address
     self.addresses.for_kit_shipping.first
-  end
-
-  def is_subscription_lower_options_disabled
-    !is_subscription_lower_options_enabled
   end
 end

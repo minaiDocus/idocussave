@@ -8,22 +8,6 @@
       .span12.box
         = form_tag update_options_account_organizations_path, method: 'patch', class: 'form form-horizontal margin0' do |f|
           %fieldset
-            %legend Abonnement
-            .control-group
-              %label.control-label
-                Autoriser les abonnements à la baisse ?
-                %br
-                (
-                = link_to 'Tous', '#', class: 'all_organizations'
-                \/
-                = link_to 'Aucun', '#', class: 'no_organizations'
-                )
-              .controls
-                - Organization.asc(:name).each do |organization|
-                  = check_box_tag 'subscription_options[organization_ids][]', organization.id, organization.is_subscription_lower_options_enabled, id: "subscription_options_organization_id_#{organization.id}", class: 'pull-left organization'
-                  %label.margin2left{ for: "subscription_options_organization_id_#{organization.id}" }= organization.name
-                = hidden_field_tag 'subscription_options[organization_ids][]', ''
-          %fieldset
             %legend Journaux comptables
             .control-group
               = label_tag 'settings[is_journals_modification_authorized]', 'Autoriser la modification et la suppression ?', class: 'control-label'
