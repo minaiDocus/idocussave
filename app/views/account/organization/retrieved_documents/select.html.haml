@@ -1,7 +1,7 @@
 #retrieved_documents.select
   .row-fluid
     .span12.box
-      %h3 Sélection de documents restant à intégrer du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')} (#{@documents.count})
+      %h3 Sélection de documents restant à intégrer du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@documents.count})
   .row-fluid
     .span9.box{ style: 'padding-bottom:0;' }
       = form_tag validate_account_organization_customer_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do

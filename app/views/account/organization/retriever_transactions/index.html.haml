@@ -1,7 +1,7 @@
 #retriever_transactions
   .row-fluid
     .span12.box
-      %h3 Liste des transactions du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')} (#{@transactions.count})
+      %h3 Liste des transactions du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@transactions.count})
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @transactions }

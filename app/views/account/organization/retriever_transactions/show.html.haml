@@ -4,7 +4,7 @@
       .row-fluid
         .span10
           %h3
-            #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'retrievers')}
+            #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)}
             \ -
             - if @transaction.retriever.nil?
               %span.label supprimé

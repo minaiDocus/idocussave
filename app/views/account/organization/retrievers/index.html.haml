@@ -1,0 +1,55 @@
+= render 'account/customers/header'
+
+.row-fluid
+  .span12.box
+    %ul.nav.nav-tabs
+      %li= link_to 'Information', account_organization_customer_path(@organization, @customer, tab: 'information')
+      %li= link_to 'Adresses', account_organization_customer_path(@organization, @customer, tab: 'addresses')
+      - if @customer.active?
+        %li= link_to 'Forfaits', account_organization_customer_path(@organization, @customer, tab: 'subscription')
+        - if @customer.options.is_upload_authorized
+          %li= link_to 'Option téléversement', account_organization_customer_path(@organization, @customer, tab: 'period_options')
+      - if @organization.ibiza.try(:is_configured?)
+        %li= link_to 'iBiza', account_organization_customer_path(@organization, @customer, tab: 'ibiza')
+      %li= link_to 'Journaux comptables', account_organization_customer_path(@organization, @customer, tab: 'journals')
+      - if @customer.active? && @customer.is_fiduceo_authorized
+        %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
+        - if @customer.fiduceo_retrievers.banks.count > 0
+          %li= link_to 'Paramètres bancaires', account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
+      - if @organization.ibiza.try(:access_token).blank?
+        %li= link_to 'Divers', account_organization_customer_path(@organization, @customer, tab: 'others')
+      - if @organization.is_csv_descriptor_used
+        %li= link_to 'Format d’export .csv', account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
+      - if @user.is_admin && @customer.active?
+        %li= link_to 'Stockages externes', account_organization_customer_path(@organization, @customer, tab: 'file_storages')
+
+    .tab-content
+      #retrievers.tab-pane.active
+        = link_to 'Statut automate', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
+        = link_to 'Opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
+        = link_to 'Documents (Factures)', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1right'
+        = link_to 'Sélection des comptes bancaires', account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn margin1right'
+        = link_to 'Sélection des documents', select_account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
+        %table.table.table-condensed.table-striped.margin2top.margin0bottom
+          %thead
+            %tr
+              %th= t('mongoid.models.fiduceo_retriever.attributes.type')
+              %th= t('mongoid.models.fiduceo_retriever.attributes.service_name')
+              %th= t('mongoid.models.fiduceo_retriever.attributes.name')
+              %th Journal
+              %th Mode
+              %th.retriever_state= t('mongoid.models.fiduceo_retriever.attributes.state')
+          %tbody
+            - @customer.fiduceo_retrievers.asc(:created_at).each do |retriever|
+              - present retriever do |retriever_presenter|
+                = simple_form_for retriever, url: account_organization_customer_retriever_path(@organization, @customer, retriever), method: 'patch' do |f|
+                  %tr
+                    %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
+                    %td= retriever_presenter.service_name
+                    %td= retriever_presenter.name
+                    - unless retriever.bank?
+                      %td= f.input :journal_id, collection: @customer.account_book_types.asc(:name), label: false, :selected => retriever.journal._id, :input_html => {:onchange => "if(confirm('Êtes-vous sur de vouloir modifier le journal comptable?')){this.form.submit()}else{this.form.reset()}"}
+                    - else
+                      %td= retriever_presenter.journal.try(:name) || '-'
+                    %td= retriever_presenter.mode
+                    %td.retriever_state!= retriever_presenter.state(:observer)

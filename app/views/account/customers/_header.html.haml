@@ -1,0 +1,14 @@
+.row-fluid
+  .span12.box
+    .row-fluid
+      .span6
+        - if @customer.inactive?
+          %span.label.label-important.pull-left.margin1right.closed_account Dossier clôturé
+        %h3= @customer.info
+      .span6.alignright
+        - if @customer.active?
+          = link_to icon_not_ok + ' Clôturer le dossier', account_close_confirm_account_organization_customer_path(@organization, @customer), class: 'btn btn-danger'
+        - else
+          = link_to 'Réouvrir le dossier', account_reopen_confirm_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+        - if @user.is_admin && (@customer.active? || @customer.inactive_at > Time.now)
+          = link_to icon_not_ok + ' Clôturer le dossier maintenant !', account_close_confirm_account_organization_customer_path(@organization, @customer, close_now: 1), class: 'btn btn-danger'
