@@ -1,0 +1,15 @@
+.row-fluid
+  .box
+    %h3 Liste des automates disponibles pour le client : #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
+  .box
+    .row-fluid
+      .span6
+        %h3 Documents (#{@providers.size})
+        %ul
+          - @providers.each do |provider|
+            %li= link_to provider['name'], new_account_organization_customer_fiduceo_retriever_path(@organization, @customer, provider_id: provider['id'], service_name: provider['name'])
+      .span6
+        %h3 Banques (#{@banks.size})
+        %ul
+          - @banks.each do |bank|
+            %li= link_to bank['name'], new_account_organization_customer_fiduceo_retriever_path(@organization, @customer, bank_id: bank['id'], service_name: bank['name'])

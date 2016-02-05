@@ -24,7 +24,7 @@ class Account::RetrieversController < Account::FiduceoController
   def create
     @fiduceo_retriever = FiduceoRetrieverService.create(@user, fiduceo_retriever_params)
     if @fiduceo_retriever.persisted?
-      flash[:success] = 'Récupérateur paramétré.'
+      flash[:success] = 'Créé avec succès.'
       redirect_to account_fiduceo_retrievers_path
     else
       render action: :new

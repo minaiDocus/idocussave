@@ -22,7 +22,7 @@
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized
-              %li= link_to "iDo'FacBanque", account_organization_customer_retrievers_path(@organization, @customer)
+              %li= link_to "iDo'FacBanque", account_organization_customer_fiduceo_retrievers_path(@organization, @customer)
               - if @customer.fiduceo_retrievers.banks.count > 0
                 %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                   %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
@@ -230,7 +230,7 @@
                   %tbody
                     - @customer.fiduceo_retrievers.asc(:created_at).each do |retriever|
                       - present retriever do |retriever_presenter|
-                        = simple_form_for retriever, url: account_organization_customer_retriever_path(@organization, @customer, retriever), method: 'patch' do |f|
+                        = simple_form_for retriever, url: account_organization_customer_fiduceo_retriever_path(@organization, @customer, retriever), method: 'patch' do |f|
                           %tr
                             %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
                             %td= retriever_presenter.service_name

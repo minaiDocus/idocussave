@@ -113,7 +113,12 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|
-          r.resources :retrievers
+          r.resources :retrievers, as: :fiduceo_retrievers do
+            get   'list',                 on: :collection
+            post  'fetch',                on: :member
+            get   'wait_for_user_action', on: :member
+            patch 'update_transaction',   on: :member
+          end
           r.resources :bank_accounts, only: %w(index edit update) do
             post 'update_multiple', on: :collection
           end

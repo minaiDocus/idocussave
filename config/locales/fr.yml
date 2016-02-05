@@ -716,7 +716,7 @@ fr:
             bank: Op. bancaires
           state: Etat
           transaction_status: Statut
-          is_active: Activer le récupérateur ?
+          is_active: Activer l'automate ?
           is_auto: Automatique ?
           is_sane: Fonctionnelle
       fiduceo_provider_wish:

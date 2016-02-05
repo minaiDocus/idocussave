@@ -1,0 +1,6 @@
+#retriever.edit.row-fluid
+  .span12
+    .box
+      %h3 Modification de l'automate : #{@fiduceo_retriever.name}, pour le client : #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
+    .box{ style: 'padding-bottom:0;' }
+      = render partial: 'form'

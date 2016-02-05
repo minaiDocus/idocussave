@@ -1,0 +1,33 @@
+#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
+#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json, selected_cash_register: @fiduceo_retriever.cash_register } }
+
+- if action_name.in?(%w(new create))
+  - url = account_organization_customer_fiduceo_retrievers_path(@organization, @customer, @fiduceo_retriever)
+- else
+  - url = account_organization_customer_fiduceo_retriever_path(@organization, @customer, @fiduceo_retriever)
+= simple_form_for @fiduceo_retriever, url: url, html: { class: 'retriever_form form form-horizontal' } do |f|
+  = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
+  = f.input :service_name, as: :hidden
+  = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
+  = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
+  = f.input :name
+  - unless @fiduceo_retriever.persisted? && @fiduceo_retriever.bank?
+    = f.input :journal_id, collection: @customer.account_book_types.asc(:name), include_blank: false, required: true
+  = f.input :login
+  = f.input :pass, required: true, as: :password
+  .param1{ style: 'display:none' }
+    = f.input :param1
+  .sparam1{ style: 'display:none' }
+    = f.input :sparam1, collection: [], include_blank: false
+  .param2{ style: 'display:none' }
+    = f.input :param2
+  .sparam2{ style: 'display:none' }
+    = f.input :sparam2, collection: [], include_blank: false
+  .param3{ style: 'display:none' }
+    = f.input :param3
+  .sparam3{ style: 'display:none' }
+    = f.input :sparam3, collection: [], include_blank: false
+  = f.input :is_active, as: :boolean
+  .form-actions
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_organization_customer_fiduceo_retrievers_path(@organization, @customer), class: 'btn'

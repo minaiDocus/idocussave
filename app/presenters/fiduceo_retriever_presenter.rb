@@ -62,12 +62,17 @@ class FiduceoRetrieverPresenter < BasePresenter
     fiduceo_retriever.transactions.last.events
   end
 
-  def action_link
+  def action_link(organization=nil, customer=nil)
     if fiduceo_retriever.is_active
       if fiduceo_retriever.scheduled? or fiduceo_retriever.ready? or fiduceo_retriever.error?
         title = 'Lancer la récupération'
         title = 'Réessayer maintenant' if fiduceo_retriever.error?
-        h.link_to icon(icon: 'download'), h.fetch_account_fiduceo_retriever_path(fiduceo_retriever), data: { method: :post, confirm: t('actions.confirm') }, title: title, rel: 'tooltip'
+        if organization.present?
+          url = h.fetch_account_organization_customer_fiduceo_retriever_path(organization, customer, fiduceo_retriever)
+        else
+          url = h.fetch_account_fiduceo_retriever_path(fiduceo_retriever)
+        end
+        h.link_to icon(icon: 'download'), url, data: { method: :post, confirm: t('actions.confirm') }, title: title, rel: 'tooltip'
       else
         ''
       end

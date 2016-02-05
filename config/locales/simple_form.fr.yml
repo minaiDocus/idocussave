@@ -36,7 +36,7 @@ fr:
         name: Nom personnalisé
         login: Identifiant
         pass: Mot de passe
-        is_active: Activer le récupérateur ?
+        is_active: Activer l'automate ?
       fiduceo_provider_wish:
         state: Etat
         name: Nom

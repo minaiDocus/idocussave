@@ -1,7 +1,7 @@
 #retrieved_banking_operations
   .row-fluid
     .span12.box
-      %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@operations.count})
+      %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)} (#{@operations.count})
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @operations }
