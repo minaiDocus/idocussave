@@ -123,7 +123,7 @@ private
   end
 
   def load_fiduceo_retriever
-    @fiduceo_retriever = FiduceoRetriever.find params[:id]
+    @fiduceo_retriever = @user.fiduceo_retrievers.find params[:id]
   end
 
   def load_providers_and_banks
