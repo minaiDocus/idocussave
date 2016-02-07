@@ -29,6 +29,20 @@ module JournalHelper
     end
   end
 
+  def ibiza_journals_beginning_with_a_number?
+    ibiza_journals.select do |j|
+      j[:name].match /\A\d/
+    end.any?
+  end
+
+  def ibiza_journals_beginning_with_a_number_hint
+    if ibiza_journals_beginning_with_a_number?
+      'iDocus ne supportant pas les journaux comptables avec un nom numérique, nous avons rajouter JC devant le nom du journal comptable issu de votre outil'
+    else
+      nil
+    end
+  end
+
   def journals_for_select(journal_name, type=nil)
     journals = ibiza_journals
     if journals.any?
@@ -41,16 +55,22 @@ module JournalHelper
         end
       end
       values = journals.map do |j|
-        ["#{j[:name]} (#{j[:description]})", j[:name]]
+        description = "#{j[:name]} (#{j[:description]})"
+        description = 'JC' + description if j[:name].match(/\A\d/)
+        [description, j[:name]]
       end
       if journal_name.present? && !journal_name.in?(values.map(&:last))
-        values << ["#{journal_name} (n'existe pas)", journal_name]
+        description = journal_name
+        description = 'JC' + description if journal_name.match(/\A\d/)
+        values << ["#{description} (n'existe pas)", journal_name]
         values.sort_by(&:first)
       else
         values
       end
     elsif journal_name.present?
-      [[journal_name, journal_name]]
+      description = journal_name
+      description = 'JC' + description if journal_name.match(/\A\d/)
+      [[description, journal_name]]
     else
       []
     end
