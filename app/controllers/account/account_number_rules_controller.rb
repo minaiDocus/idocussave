@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Account::AccountNumberRulesController < Account::OrganizationController
-  before_filter :verify_rights
   before_filter :load_account_number_rule, except: %w(new create)
 
   def show
@@ -75,12 +74,5 @@ private
 
   def load_account_number_rule
     @account_number_rule = @organization.account_number_rules.find params[:id]
-  end
-
-  def verify_rights
-    unless @organization.ibiza.try(:is_configured?)
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path(@organization)
-    end
   end
 end

@@ -28,9 +28,8 @@
                 %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
               %li{ class: ('active' if params[:tab] == 'reminder_emails') }
                 %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
-              - if @organization.ibiza.try(:is_configured?)
-                %li{ class: ('active' if params[:tab] == 'account_number_rules') }
-                  %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles affectations bancaires
+              %li{ class: ('active' if params[:tab] == 'account_number_rules') }
+                %a{ href: '#account_number_rules', data: { toggle: 'tab' } } Règles affectations bancaires
               %li{ class: ('active' if params[:tab] == 'knowings') }
                 %a{ href: '#knowings', data: { toggle: 'tab' } } Knowings
             %li{ class: ('active' if params[:tab] == 'ibiza') }
@@ -293,37 +292,36 @@
                     %td= @organization.is_csv_descriptor_used ? t('yes_value') : t('no_value')
               - if is_leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
-            - if @organization.ibiza.try(:is_configured?)
-              #account_number_rules.tab-pane{ class: ('active' if params[:tab] == 'account_number_rules') }
-                = link_to icon_new + ' Nouvelle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary pull-right'
-                %p
-                  Les règles (#{@organization.account_number_rules.size}) ci-dessous s'appliquent aux opérations récupérées depuis les automates.
-                %table.table.table-striped.table-condensed
-                  %thead
+            #account_number_rules.tab-pane{ class: ('active' if params[:tab] == 'account_number_rules') }
+              = link_to icon_new + ' Nouvelle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary pull-right'
+              %p
+                Les règles (#{@organization.account_number_rules.size}) ci-dessous s'appliquent aux opérations récupérées depuis les automates.
+              %table.table.table-striped.table-condensed
+                %thead
+                  %tr
+                    %th= t('mongoid.models.account_number_rule.attributes.priority')
+                    %th= t('mongoid.models.account_number_rule.attributes.name')
+                    %th= t('mongoid.models.account_number_rule.attributes.affect')
+                    %th= t('mongoid.models.account_number_rule.attributes.rule_type')
+                    %th= t('mongoid.models.account_number_rule.attributes.content')
+                    %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
+                %tbody
+                  - @organization.account_number_rules.asc(:priority).each do |rule|
                     %tr
-                      %th= t('mongoid.models.account_number_rule.attributes.priority')
-                      %th= t('mongoid.models.account_number_rule.attributes.name')
-                      %th= t('mongoid.models.account_number_rule.attributes.affect')
-                      %th= t('mongoid.models.account_number_rule.attributes.rule_type')
-                      %th= t('mongoid.models.account_number_rule.attributes.content')
-                      %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
-                  %tbody
-                    - @organization.account_number_rules.asc(:priority).each do |rule|
-                      %tr
-                        %td= rule.priority
-                        %td= rule.name
-                        %td
-                          = t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
-                          - if rule.affect == 'user'
-                            (#{rule.users.size})
-                        %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type)
-                        %td= rule.content
-                        %td= rule.third_party_account
-                        %td
-                          = link_to icon(icon: 'plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-mini', title: 'Créer une règle en se basant sur cette règle'
-                          = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
-                          = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
-                          = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
+                      %td= rule.priority
+                      %td= rule.name
+                      %td
+                        = t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                        - if rule.affect == 'user'
+                          (#{rule.users.size})
+                      %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type)
+                      %td= rule.content
+                      %td= rule.third_party_account
+                      %td
+                        = link_to icon(icon: 'plus'), new_account_organization_account_number_rule_path(@organization, template: rule), class: 'btn btn-mini', title: 'Créer une règle en se basant sur cette règle'
+                        = link_to icon_show, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Voir'
+                        = link_to icon_edit, edit_account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', title: 'Editer'
+                        = link_to icon_destroy, account_organization_account_number_rule_path(@organization, rule), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
             #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
               %p Configurez ici un nouvel e-mail de rappel qui sera envoyé à vos clients afin qu'ils n'oublient pas d'envoyer leurs documents.
               %table.table.table-striped.table-condensed
