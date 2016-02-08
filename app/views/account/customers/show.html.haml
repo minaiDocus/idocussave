@@ -211,6 +211,26 @@
                     - elsif @customer.active?
                       = link_to icon(icon: 'plus') + ' ' + t('actions.new'), new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
                       = link_to icon(icon: 'th-large') + ' Copier', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
+            - if @customer.fiduceo_retrievers.banks.count > 0
+              #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
+                %table.table.table-striped.table-condensed.margin0bottom
+                  %tr
+                    %th= t('mongoid.models.bank_account.attributes.bank_name')
+                    %th= t('mongoid.models.bank_account.attributes.name')
+                    %th= t('mongoid.models.bank_account.attributes.number')
+                    %th= t('mongoid.models.bank_account.attributes.journal')
+                    %th= t('mongoid.models.bank_account.attributes.accounting_number')
+                    %th= t('mongoid.models.bank_account.attributes.start_date')
+                    %th Paramétrer
+                  - @customer.bank_accounts.each do |bank_account|
+                    %tr
+                      %td= bank_account.bank_name
+                      %td= bank_account.name
+                      %td= bank_account.number
+                      %td= bank_account.journal
+                      %td= bank_account.accounting_number
+                      %td= bank_account.start_date
+                      %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
             - if @organization.ibiza.try(:access_token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid
