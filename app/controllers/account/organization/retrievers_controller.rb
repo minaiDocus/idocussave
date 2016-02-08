@@ -6,7 +6,7 @@ class Account::Organization::RetrieversController < Account::OrganizationControl
 
   def index
     @fiduceo_retrievers = search(fiduceo_retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    render partial: 'account/retrievers/retrievers' if params[:part].present?
+    render partial: 'account/retrievers/retrievers', locals: { scope: :collaborator } if params[:part].present?
   end
 
   def list

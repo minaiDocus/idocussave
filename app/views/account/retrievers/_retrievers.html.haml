@@ -23,7 +23,7 @@
           %td= fiduceo_retriever_presenter.name
           %td= fiduceo_retriever_presenter.journal.try(:name) || '-'
           %td= fiduceo_retriever_presenter.mode
-          %td.retriever_state!= fiduceo_retriever_presenter.state
+          %td.retriever_state!= fiduceo_retriever_presenter.state(scope)
           %td
             - if @customer.present?
               = fiduceo_retriever_presenter.action_link(@organization, @customer)

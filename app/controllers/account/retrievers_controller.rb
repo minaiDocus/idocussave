@@ -7,7 +7,7 @@ class Account::RetrieversController < Account::FiduceoController
   def index
     @fiduceo_retrievers = search(fiduceo_retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = fiduceo_retriever_contains.empty?
-    render partial: 'retrievers' if params[:part].present?
+    render partial: 'retrievers', locals: { scope: :account } if params[:part].present?
   end
 
   def list
