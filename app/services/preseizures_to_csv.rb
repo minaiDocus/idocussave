@@ -91,8 +91,8 @@ private
           "#{entry.get_debit}".gsub(/[\.,\,]/, @descriptor.separator)
         when /\Acredit\z/
           "#{entry.get_credit}".gsub(/[\.,\,]/, @descriptor.separator)
-        when /\Atitle\z/
-          '' # TODO implement me
+        when /\Aoperation_label\z/
+          entry.preseizure.operation_label
         when /\Alettering\z/
           entry.account.lettering
         when /\Aother\z/

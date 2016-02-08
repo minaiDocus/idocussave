@@ -222,7 +222,7 @@ module ApplicationHelper
       [t('mongoid.models.csv_descriptor.attributes.date'),:date],
       [t('mongoid.models.csv_descriptor.attributes.period_date'),:period_date],
       [t('mongoid.models.csv_descriptor.attributes.deadline_date'),:deadline_date],
-      [t('mongoid.models.csv_descriptor.attributes.title'),:title],
+      [t('mongoid.models.csv_descriptor.attributes.operation_label'),:operation_label],
       [t('mongoid.models.csv_descriptor.attributes.piece'),:piece],
       [t('mongoid.models.csv_descriptor.attributes.number'),:number],
       [t('mongoid.models.csv_descriptor.attributes.original_amount'),:original_amount],

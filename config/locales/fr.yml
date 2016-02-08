@@ -438,7 +438,7 @@ fr:
           date: Date réelle
           period_date: 1er ou date réelle
           deadline_date: Echéance
-          title: Libellé
+          operation_label: Libellé bancaire
           piece: Nom de la pièce
           number: Numéro de compte
           original_amount: Montant
