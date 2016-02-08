@@ -34,7 +34,7 @@ class BankAccount
   scope :not_configured, -> { where(:journal.in  => [nil, ''], :accounting_number.in  => [nil, '']) }
   scope :outdated,       -> { where(is_operations_up_to_date: false) }
 
-  before_validation :set_foreign_journal
+  before_validation :set_foreign_journal, if: Proc.new { |bank_account| bank_account.persisted? }
 
   def configured?
     journal.present? && accounting_number.present?
