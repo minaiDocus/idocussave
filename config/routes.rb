@@ -59,7 +59,7 @@ Idocus::Application.routes.draw do
       resource :file_naming_policy, only: %w(edit update) do
         patch 'preview', on: :member
       end
-      resources :account_number_rules
+      resources :account_number_rules, except: :index
       resource :knowings, only: %w(new create edit update)
       resources :reminder_emails, except: :index do
         post 'deliver', on: :member
