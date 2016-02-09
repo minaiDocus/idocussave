@@ -42,7 +42,7 @@ class AccountNumberFinderService
       words.each do |word|
         scores.each_with_index do |(name, _), index|
           if name.include? '*'
-            scores[index][1] += 1 if /#{Regexp.quote(name).gsub('\\ ', '|').gsub('\\*', '\w+')}/i.match word
+            scores[index][1] += 1 if /#{Regexp.quote(name).gsub('\\ ', '|').gsub('\\*', '\w*')}/i.match word
           else
             scores[index][1] += 1 if name.match /#{Regexp.quote(word)}/i
           end
