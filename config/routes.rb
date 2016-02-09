@@ -174,7 +174,6 @@ Idocus::Application.routes.draw do
     end
 
     resource :profile
-    resources :addresses
     resource :dropbox do
       get 'authorize_url', on: :member
       get 'callback',      on: :member
