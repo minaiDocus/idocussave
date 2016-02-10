@@ -12,7 +12,7 @@ class Account::OrdersController < Account::OrganizationController
   def new
     @order = Order.new
     @order.user = @customer
-    if params[:type] == 'paper_set'
+    if params[:order][:type] == 'paper_set'
       @order.type = 'paper_set'
       @order.paper_set_folder_count = @customer.options.max_number_of_journals
       time = Time.now.end_of_year
@@ -86,8 +86,12 @@ private
     authorized = false unless is_leader? || @user.can_manage_customers?
     authorized = false unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
     if action_name.in?(%w(new create))
-      authorized = false if params[:type].in?(['dematbox', nil]) && !subscription.is_scan_box_package_active
-      authorized = false if params[:type] == 'paper_set' && !subscription.is_mail_package_active && !subscription.is_annual_package_active
+      if !params[:order].present?
+        authorized = false
+      else
+        authorized = false if params[:order][:type].in?(['dematbox', nil]) && !subscription.is_scan_box_package_active
+        authorized = false if params[:order][:type] == 'paper_set' && !subscription.is_mail_package_active && !subscription.is_annual_package_active
+      end
     end
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')

@@ -5,9 +5,9 @@
         %h3 Listes des commandes pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
       .pull-right
         - if @customer.subscription.is_scan_box_package_active
-          = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, type: 'dematbox'), class: 'btn btn-primary'
+          = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' }), class: 'btn btn-primary'
         - if @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
-          = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, type: 'paper_set'), class: 'btn btn-primary'
+          = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box
