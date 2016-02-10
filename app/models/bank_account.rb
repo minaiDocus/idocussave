@@ -58,11 +58,13 @@ private
   end
 
   def set_foreign_journal
-    if self.journal.match(/\A\d/)
-      self.foreign_journal = self.journal
-      self.journal = 'JC' + self.foreign_journal
-    else
-      self.foreign_journal = nil
+    if self.journal.present?
+      if self.journal.match(/\A\d/)
+        self.foreign_journal = self.journal
+        self.journal = 'JC' + self.foreign_journal
+      else
+        self.foreign_journal = nil
+      end
     end
   end
 end
