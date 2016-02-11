@@ -93,7 +93,7 @@ class FileSendingKitGenerator
     end
 
     def address(user)
-      address = user.addresses.for_shipping.first
+      address = user.paper_return_address
       [
         address.company,
         [address.last_name, address.first_name].join(' '),
@@ -104,21 +104,21 @@ class FileSendingKitGenerator
       reject { |e| e.nil? or e.empty? }
     end
 
-    def to_labels(clients_data, kit_shipping=false)
+    def to_labels(clients_data, paper_set_shipping=false)
       labels = []
       clients_data.each do |client_data|
-        label = to_label(client_data, kit_shipping)
+        label = to_label(client_data, paper_set_shipping)
         2.times { labels << label }
       end
       labels
     end
 
-    def to_label(client_data, kit_shipping=false)
+    def to_label(client_data, paper_set_shipping=false)
       user = client_data[:user]
-      if kit_shipping
-        address = user.addresses.for_kit_shipping.first
+      if paper_set_shipping
+        address = user.paper_set_shipping_address
       else
-        address = user.addresses.for_shipping.first
+        address = user.paper_return_address
       end
       journals_count = user.account_book_types.count
       journals_count = 5 if journals_count < 5
@@ -189,7 +189,7 @@ class FileSendingKitGenerator
 
     def to_return_label(client_data)
       customer = client_data[:customer]
-      address = customer.addresses.for_shipping.first
+      address = customer.paper_return_address
       BarCode.generate_png(customer.code, 20, 0)
       stringified_address = stringify_return_address(address)
       data = []

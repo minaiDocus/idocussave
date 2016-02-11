@@ -16,7 +16,7 @@ class Account::CustomerAddressesController < Account::OrganizationController
 
   def create
     @address = @customer.addresses.new(address_params)
-    if @address.save && @customer.save
+    if @address.save
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else
@@ -28,7 +28,7 @@ class Account::CustomerAddressesController < Account::OrganizationController
   end
 
   def update
-    if @address.update(address_params) && @customer.save
+    if @address.update(address_params)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else
@@ -66,17 +66,20 @@ private
       :first_name,
       :last_name,
       :company,
+      :company_number,
       :address_1,
       :address_2,
       :city,
       :zip,
       :state,
       :country,
+      :building,
+      :door_code,
+      :other,
       :phone,
-      :phone_mobile,
-      :is_for_billing,
-      :is_for_shipping,
-      :is_for_kit_shipping
+      :is_for_paper_return,
+      :is_for_paper_set_shipping,
+      :is_for_dematbox_shipping
     )
   end
 end

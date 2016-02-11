@@ -194,16 +194,20 @@ fr:
         first_name: Prénom
         last_name: Nom
         company: Société
+        company_number: N° de Siret
         address_1: Adresse
         address_2: Adresse (suite)
         city: Ville
         zip: Code postal
         state: Etat
-        phone: Tél fixe
-        phone_mobile: Tél mobile
+        phone: Tél fixe ou mobile
+        building: Bâtiment
+        door_code: Digicode
+        other: Autre (sonnerie, concierge...)
         is_for_billing: Pour la facturation ?
-        is_for_shipping: Pour le retour ?
-        is_for_kit_shipping: Pour la livraison du Kit envoi courrier ?
+        is_for_paper_return: Pour le retour des factures papier ?
+        is_for_paper_set_shipping: Pour la livraison du kit courrier ?
+        is_for_dematbox_shipping: Pour la livraison de l’iDocus Box ?
       ibiza:
         is_auto_deliver: Livraison automatique ?
         access_token: Jeton d'accès Scan et OCR

@@ -20,9 +20,10 @@ class Address
   field :phone
   field :phone_mobile
 
-  field :is_for_billing,      type: Boolean, default: false
-  field :is_for_shipping,     type: Boolean, default: false
-  field :is_for_kit_shipping, type: Boolean, default: false
+  field :is_for_billing,            type: Boolean, default: false
+  field :is_for_paper_return,       type: Boolean, default: false
+  field :is_for_paper_set_shipping, type: Boolean, default: false
+  field :is_for_dematbox_shipping,  type: Boolean, default: false
 
   attr_accessor :is_for_an_order
 
@@ -36,11 +37,12 @@ class Address
 
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50, allow_nil: true
 
-  scope :for_billing,      -> { where(is_for_billing: true) }
-  scope :for_shipping,     -> { where(is_for_shipping: true) }
-  scope :for_kit_shipping, -> { where(is_for_kit_shipping: true) }
+  scope :for_billing,            -> { where(is_for_billing:            true) }
+  scope :for_paper_return,       -> { where(is_for_paper_return:       true) }
+  scope :for_paper_set_shipping, -> { where(is_for_paper_set_shipping: true) }
+  scope :for_dematbox_shipping,  -> { where(is_for_dematbox_shipping:  true) }
 
-  before_save :set_billing_address, :set_shipping_address, :set_kit_shipping_address
+  before_save :set_types
 
   def name
     [self.first_name, self.last_name].join(' ')
@@ -58,40 +60,23 @@ class Address
     end
   end
 
-  def set_billing_address
-    if self.is_for_billing.in? ["1", true]
-      locatable.addresses.each do |address|
-        address.is_for_billing = false
-      end
-      self.is_for_billing = true
-    else
-      self.is_for_billing = false
-    end
+  def set_types
+    is_for('is_for_billing')
+    is_for('is_for_paper_return')
+    is_for('is_for_paper_set_shipping')
+    is_for('is_for_dematbox_shipping')
     true
   end
 
-  def set_shipping_address
-    if self.is_for_shipping.in? ["1", true]
+  def is_for(attribute)
+    if send(attribute).in? ['1', true]
       locatable.addresses.each do |address|
-        address.is_for_shipping = false
+        address.send(attribute + '=', false)
       end
-      self.is_for_shipping = true
+      send(attribute + '=', true)
     else
-      self.is_for_shipping = false
+      send(attribute + '=', false)
     end
-    true
-  end
-
-  def set_kit_shipping_address
-    if self.is_for_kit_shipping.in? ["1", true]
-      locatable.addresses.each do |address|
-        address.is_for_kit_shipping = false
-      end
-      self.is_for_kit_shipping = true
-    else
-      self.is_for_kit_shipping = false
-    end
-    true
   end
 
   def info

@@ -59,10 +59,9 @@ private
       :state,
       :country,
       :phone,
-      :phone_mobile,
       :is_for_billing,
-      :is_for_shipping,
-      :is_for_kit_shipping
+      :is_for_paper_return,
+      :is_for_paper_set_shipping
     )
   end
 end

@@ -78,11 +78,11 @@
             #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
               .row-fluid.margin1bottom
                 .span4
-                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.billing_address,  single: true, type: 'billing' }
+                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.paper_return_address,  single: true, type: 'paper_return' }
                 .span4
-                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.shipping_address, single: true, type: 'shipping' }
+                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
                 .span4
-                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.kit_shipping_address, single: true, type: 'kit_shipping' }
+                  = render partial: 'account/customer_addresses/address', locals: { address: @customer.dematbox_shipping_address, single: true, type: 'dematbox_shipping' }
               - if @customer.active?
                 .row-fluid
                   .span12.aligncenter

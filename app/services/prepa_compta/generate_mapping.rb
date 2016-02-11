@@ -49,7 +49,7 @@ private
   def generate_csv_users_list
     lines = [[:code, :name, :company, :address_first_name, :address_last_name, :address_company, :address_1, :address_2, :city, :zip, :state, :country, :country_code].join(',')]
     @users.each do |user|
-      address = user.addresses.for_shipping.first
+      address = user.paper_return_address
       line = [user.code, user.name, user.company]
       keys = [:first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country]
       keys.each do |key|

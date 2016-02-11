@@ -145,11 +145,11 @@ class Organization
     self.addresses.for_billing.first
   end
 
-  def shipping_address
-    self.addresses.for_shipping.first
+  def paper_return_address
+    self.addresses.for_paper_return.first
   end
 
-  def kit_shipping_address
-    self.addresses.for_kit_shipping.first
+  def paper_set_shipping_address
+    self.addresses.for_paper_set_shipping.first
   end
 end

@@ -240,16 +240,16 @@ class User
     self.subscription ||= Subscription.create(user_id: self.id)
   end
 
-  def billing_address
-    self.addresses.for_billing.first
+  def paper_return_address
+    self.addresses.for_paper_return.first
   end
 
-  def shipping_address
-    self.addresses.for_shipping.first
+  def paper_set_shipping_address
+    self.addresses.for_paper_set_shipping.first
   end
 
-  def kit_shipping_address
-    self.addresses.for_kit_shipping.first
+  def dematbox_shipping_address
+    self.addresses.for_dematbox_shipping.first
   end
 
   def find_or_create_external_file_storage

@@ -3,13 +3,22 @@
     %tr
       %th{ colspan: 2 }
         - if single
-          = t('mongoid.models.address.attributes.billing') if type == 'billing'
-          = t('mongoid.models.address.attributes.shipping') if type == 'shipping'
-          = t('mongoid.models.address.attributes.kit_shipping') if type == 'kit_shipping'
+          = t('mongoid.models.address.attributes.' + type)
         - else
-          - if address.is_for_billing || address.is_for_shipping || address.is_for_kit_shipping
-            .pull-left
-              = [(address.is_for_billing ? t('mongoid.models.address.attributes.billing') : nil), (address.is_for_shipping ? t('mongoid.models.address.attributes.shipping') : nil), (address.is_for_kit_shipping ? t('mongoid.models.address.attributes.kit_shipping') : nil)].compact.to_sentence
+          .pull-left
+            - if address.is_for_paper_return || address.is_for_paper_set_shipping || address.is_for_dematbox_shipping
+              - if address.is_for_paper_return
+                = t('mongoid.models.address.attributes.paper_return')
+                - if address.is_for_paper_set_shipping || address.is_for_dematbox_shipping
+                  %br
+              - if address.is_for_paper_set_shipping
+                = t('mongoid.models.address.attributes.paper_set_shipping')
+                - if address.is_for_dematbox_shipping
+                  %br
+              - if address.is_for_dematbox_shipping
+                = t('mongoid.models.address.attributes.dematbox_shipping')
+            - else
+              Adresse non attribuée
           .pull-right
             = link_to icon_edit, edit_account_organization_customer_address_path(@organization, @customer,address), class: 'btn btn-mini'
             = link_to icon_destroy, account_organization_customer_address_path(@organization, @customer,address), :method => :delete, data: { :confirm => t('actions.confirm') }, class: 'btn btn-mini'
@@ -18,12 +27,20 @@
       %tr
         %th= t('mongoid.models.address.attributes.company')
         %td= address.company
+      - if address.is_for_dematbox_shipping && (!single || type == 'dematbox_shipping')
+        %tr
+          %th= t('mongoid.models.address.attributes.company_number')
+          %td= address.company_number
       %tr
         %th= t('mongoid.models.address.attributes.first_name')
         %td= address.first_name
       %tr
         %th= t('mongoid.models.address.attributes.last_name')
         %td= address.last_name
+      - if address.is_for_dematbox_shipping && (!single || type == 'dematbox_shipping')
+        %tr
+          %th= t('mongoid.models.address.attributes.phone')
+          %td= address.phone
       %tr
         %th= t('mongoid.models.address.attributes.address_1')
         %td= address.address_1
@@ -36,3 +53,7 @@
       %tr
         %th= t('mongoid.models.address.attributes.zip')
         %td= address.zip
+      - if address.is_for_dematbox_shipping && (!single || type == 'dematbox_shipping')
+        %tr
+          %th= t('mongoid.models.address.attributes.building')
+          %td= address.building

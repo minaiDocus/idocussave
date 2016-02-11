@@ -41,7 +41,7 @@
                   à
                   = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
                 %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
-                %td= order.user.addresses.for_kit_shipping.first.try(:long_info)
+                %td= order.user.paper_set_shipping_address.try(:long_info)
               %td= Order.state_machine.states[order.state].human_name
               %td
                 - if order.pending? && (Time.now < order.created_at + 24.hours)

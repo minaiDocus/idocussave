@@ -366,19 +366,24 @@ fr:
           first_name: Prénom
           last_name: Nom
           company: Société
+          company_number: N° de Siret
           address_1: Adresse
           address_2: Adresse (suite)
           city: Ville
           zip: Code postal
           state: Etat
-          phone: Tél fixe
-          phone_mobile: Tél mobile
+          phone: Tél fixe ou mobile
+          building: Bâtiment
+          door_code: Digicode
+          other: Autre (sonnerie, concierge...)
           billing: Facturation
-          shipping: Retour
-          kit_shipping: Livraison du kit
+          paper_return: Retour des factures papier
+          paper_set_shipping: Livraison du kit courrier
+          dematbox_shipping: Livraison de l’iDocus Box
           billing_address: Adresse de facturation
-          shipping_address: Adresse de retour
-          kit_shipping_address: Adresse de livraison du kit
+          paper_return_address: Adresse de retour des factures papier
+          paper_set_shipping_address: Adresse de livraison du kit courrier
+          dematbox_shipping_address: Adresse de livraison de l’iDocus Box
       cms_image:
         zero: 0 images
         one: 1 image
