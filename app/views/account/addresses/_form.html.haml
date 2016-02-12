@@ -6,9 +6,19 @@
   = f.input :address_2
   = f.input :city
   = f.input :zip
-  = f.input :is_for_billing,      as: :boolean
-  = f.input :is_for_shipping,     as: :boolean
-  = f.input :is_for_kit_shipping, as: :boolean
+  - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
+    %hr
+    %h4.dematbox_only Pour la livraison de l'iDocus Box uniquement
+    = f.input :company_number
+    = f.input :phone
+    = f.input :building
+    = f.input :door_code
+    = f.input :other
+  %hr
+  = f.input :is_for_paper_return,       as: :boolean
+  = f.input :is_for_paper_set_shipping, as: :boolean
+  - if @address.is_for_dematbox_shipping || @user.subscription.is_scan_box_package_active
+    = f.input :is_for_dematbox_shipping,  as: :boolean
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     - link_name = action_name == 'new' ? t('actions.return').capitalize : t('actions.cancel').capitalize

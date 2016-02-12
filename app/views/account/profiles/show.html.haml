@@ -43,11 +43,11 @@
               %br
               .row-fluid
                 .span4
-                  = render partial: 'account/addresses/address', locals: { address: @user.billing_address, single: true, type: 'billing' }
+                  = render partial: 'account/addresses/address', locals: { address: @user.paper_return_address, single: true, type: 'paper_return' }
                 .span4
-                  = render partial: 'account/addresses/address', locals: { address: @user.shipping_address, single: true, type: 'shipping' }
+                  = render partial: 'account/addresses/address', locals: { address: @user.paper_set_shipping_address, single: true, type: 'paper_set_shipping' }
                 .span4
-                  = render partial: 'account/addresses/address', locals: { address: @user.kit_shipping_address, single: true, type: 'kit_shipping' }
+                  = render partial: 'account/addresses/address', locals: { address: @user.dematbox_shipping_address, single: true, type: 'dematbox_shipping' }
               .row-fluid
                 .span12.aligncenter.margin1top
                   = link_to 'Configurer', account_addresses_path, class: 'btn'

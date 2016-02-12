@@ -59,17 +59,20 @@ private
       :first_name,
       :last_name,
       :company,
+      :company_number,
       :address_1,
       :address_2,
       :city,
       :zip,
       :state,
       :country,
+      :building,
+      :door_code,
+      :other,
       :phone,
-      :phone_mobile,
-      :is_for_billing,
-      :is_for_shipping,
-      :is_for_kit_shipping
+      :is_for_paper_return,
+      :is_for_paper_set_shipping,
+      :is_for_dematbox_shipping
     )
   end
 end
