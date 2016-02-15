@@ -63,4 +63,23 @@ class Address
   def long_info
     [company, company_number, first_name, last_name, phone, address_1, zip, city, building, door_code, other].select(&:present?).join(' - ')
   end
+
+  def copy(address)
+    self.first_name     = address.first_name
+    self.last_name      = address.last_name
+    self.email          = address.email
+    self.company        = address.company
+    self.company_number = address.company_number
+    self.address_1      = address.address_1
+    self.address_2      = address.address_2
+    self.city           = address.city
+    self.zip            = address.zip
+    self.state          = address.state
+    self.country        = address.country
+    self.building       = address.building
+    self.door_code      = address.door_code
+    self.other          = address.other
+    self.phone          = address.phone
+    self.phone_mobile   = address.phone_mobile
+  end
 end

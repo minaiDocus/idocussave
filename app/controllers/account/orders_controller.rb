@@ -28,13 +28,14 @@ class Account::OrdersController < Account::OrganizationController
       @order.paper_set_end_date = time.to_date
     else
       @order.type = 'dematbox'
+      @order.address = @customer.dematbox_shipping_address.try(:dup) || Address.new
     end
-    @order.address = Address.new
   end
 
   def create
     @order = Order.new(order_params)
     if @order.dematbox? && OrderDematbox.new(@customer, @order).execute
+      copy_back_address
       flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
       redirect_to account_organization_customer_orders_path(@organization, @customer)
     elsif @order.paper_set? && OrderPaperSet.new(@customer, @order).execute
@@ -52,6 +53,7 @@ class Account::OrdersController < Account::OrganizationController
     if @order.update(order_params)
       if @order.dematbox?
         OrderDematbox.new(@customer, @order, true).execute
+        copy_back_address
       else
         OrderPaperSet.new(@customer, @order, true).execute
       end
@@ -149,5 +151,15 @@ private
     ]
     attributes << :type if action_name.in?(%w(new create))
     params.require(:order).permit(*attributes)
+  end
+
+  def copy_back_address
+    address = @customer.dematbox_shipping_address
+    unless address
+      address = Address.new(is_for_dematbox_shipping: true)
+      address.locatable = @customer
+    end
+    address.copy(@order.address)
+    address.save
   end
 end
