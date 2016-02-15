@@ -14,7 +14,8 @@ class Account::OrganizationAddressesController < Account::OrganizationController
 
   def create
     @address = @organization.addresses.new(address_params)
-    if @address.save && @organization.save
+    if @address.save
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_addresses_path(@organization)
     else
@@ -26,7 +27,8 @@ class Account::OrganizationAddressesController < Account::OrganizationController
   end
 
   def update
-    if @address.update(address_params) && @organization.save
+    if @address.update(address_params)
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_addresses_path(@organization)
     else

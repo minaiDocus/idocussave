@@ -15,7 +15,8 @@ class Account::AddressesController < Account::AccountController
 
   def create
     @address = @user.addresses.new(address_params)
-    if @address.save && @user.save
+    if @address.save
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Créé avec succès.'
       redirect_to account_addresses_path
     else
@@ -27,7 +28,8 @@ class Account::AddressesController < Account::AccountController
   end
 
   def update
-    if @address.update(address_params) && @user.save
+    if @address.update(address_params)
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_addresses_path
     else

@@ -17,6 +17,7 @@ class Account::CustomerAddressesController < Account::OrganizationController
   def create
     @address = @customer.addresses.new(address_params)
     if @address.save
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else
@@ -29,6 +30,7 @@ class Account::CustomerAddressesController < Account::OrganizationController
 
   def update
     if @address.update(address_params)
+      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_addresses_path(@organization, @customer)
     else

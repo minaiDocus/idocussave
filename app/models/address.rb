@@ -40,8 +40,6 @@ class Address
   scope :for_paper_set_shipping, -> { where(is_for_paper_set_shipping: true) }
   scope :for_dematbox_shipping,  -> { where(is_for_dematbox_shipping:  true) }
 
-  before_save :set_types
-
   def name
     [self.first_name, self.last_name].join(' ')
   end
@@ -55,25 +53,6 @@ class Address
       other.as_location == self.as_location
     else
       false
-    end
-  end
-
-  def set_types
-    is_for('is_for_billing')
-    is_for('is_for_paper_return')
-    is_for('is_for_paper_set_shipping')
-    is_for('is_for_dematbox_shipping')
-    true
-  end
-
-  def is_for(attribute)
-    if send(attribute).in? ['1', true]
-      locatable.addresses.each do |address|
-        address.send(attribute + '=', false)
-      end
-      send(attribute + '=', true)
-    else
-      send(attribute + '=', false)
     end
   end
 
