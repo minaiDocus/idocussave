@@ -34,7 +34,6 @@ class Account::OrdersController < Account::OrganizationController
 
   def create
     @order = Order.new(order_params)
-    @order.address.is_for_an_order = true if @order.address
     if @order.dematbox? && OrderDematbox.new(@customer, @order).execute
       flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
       redirect_to account_organization_customer_orders_path(@organization, @customer)
@@ -50,7 +49,6 @@ class Account::OrdersController < Account::OrganizationController
   end
 
   def update
-    @order.address.is_for_an_order = true if @order.address
     if @order.update(order_params)
       if @order.dematbox?
         OrderDematbox.new(@customer, @order, true).execute

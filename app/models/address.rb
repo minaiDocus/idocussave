@@ -25,15 +25,13 @@ class Address
   field :is_for_paper_set_shipping, type: Boolean, default: false
   field :is_for_dematbox_shipping,  type: Boolean, default: false
 
-  attr_accessor :is_for_an_order
-
   embedded_in :locatable, polymorphic: true
 
   validates_presence_of :first_name, :last_name, unless: Proc.new { |e| e.locatable.try(:class) == ScanningProvider }
   validates_presence_of :city, :zip
   validates_presence_of :address_1, unless: Proc.new { |a| a.address_2.present? }
   validates_presence_of :address_2, unless: Proc.new { |a| a.address_1.present? }
-  validates_presence_of :company, :company_number, :phone, if: Proc.new { |a| a.is_for_an_order }
+  validates_presence_of :company, :company_number, :phone, if: Proc.new { |a| a.is_for_dematbox_shipping }
 
   validates_length_of :first_name, :last_name, :company, :address_1, :address_2, :city, :zip, :state, :country, :phone, :phone_mobile, within: 0..50, allow_nil: true
 

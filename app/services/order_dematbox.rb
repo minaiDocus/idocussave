@@ -11,6 +11,7 @@ class OrderDematbox
     @order.user ||= @user
     @order.organization ||= @user.organization
     @order.price_in_cents_wo_vat = 35900 * @order.dematbox_count
+    @order.address.is_for_dematbox_shipping = true if @order.address
     if @order.save
       unless @is_an_update
         @period.orders << @order
