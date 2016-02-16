@@ -206,7 +206,7 @@ fr:
         other: Autre (sonnerie, concierge...)
         is_for_billing: Pour la facturation ?
         is_for_paper_return: Pour le retour des factures papier ?
-        is_for_paper_set_shipping: Pour la livraison du kit courrier ?
+        is_for_paper_set_shipping: Pour la livraison du kit envoi courrier ?
         is_for_dematbox_shipping: Pour la livraison de l’iDocus Box ?
       ibiza:
         is_auto_deliver: Livraison automatique ?

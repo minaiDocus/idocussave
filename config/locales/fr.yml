@@ -378,11 +378,11 @@ fr:
           other: Autre (sonnerie, concierge...)
           billing: Facturation
           paper_return: Retour des factures papier
-          paper_set_shipping: Livraison du kit courrier
+          paper_set_shipping: Livraison du kit envoi courrier
           dematbox_shipping: Livraison de l’iDocus Box
           billing_address: Adresse de facturation
           paper_return_address: Adresse de retour des factures papier
-          paper_set_shipping_address: Adresse de livraison du kit courrier
+          paper_set_shipping_address: Adresse de livraison du kit envoi courrier
           dematbox_shipping_address: Adresse de livraison de l’iDocus Box
       cms_image:
         zero: 0 images
