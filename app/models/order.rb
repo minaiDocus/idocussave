@@ -26,10 +26,9 @@ class Order
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_presence_of :price_in_cents_wo_vat
   validates_presence_of :vat_ratio
+  validates_presence_of  :address
 
   validates_inclusion_of :dematbox_count,         in: [1, 2],              if: Proc.new { |o| o.dematbox? }
-  validates_presence_of  :address,                                         if: Proc.new { |o| o.dematbox? }
-
   validates_presence_of  :period_duration,                                 if: Proc.new { |o| o.paper_set? }
   validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: Proc.new { |o| o.paper_set? }
   validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: Proc.new { |o| o.paper_set? }

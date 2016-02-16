@@ -26,10 +26,12 @@ class Account::OrdersController < Account::OrganizationController
         time = time.beginning_of_year
       end
       @order.paper_set_end_date = time.to_date
+      @order.address = @customer.paper_set_shipping_address.try(:dup)
     else
       @order.type = 'dematbox'
-      @order.address = @customer.dematbox_shipping_address.try(:dup) || Address.new
+      @order.address = @customer.dematbox_shipping_address.try(:dup)
     end
+    @order.address ||= Address.new
   end
 
   def create
@@ -39,6 +41,7 @@ class Account::OrdersController < Account::OrganizationController
       flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
       redirect_to account_organization_customer_orders_path(@organization, @customer)
     elsif @order.paper_set? && OrderPaperSet.new(@customer, @order).execute
+      copy_back_address
       flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
       redirect_to account_organization_customer_orders_path(@organization, @customer)
     else
@@ -53,10 +56,10 @@ class Account::OrdersController < Account::OrganizationController
     if @order.update(order_params)
       if @order.dematbox?
         OrderDematbox.new(@customer, @order, true).execute
-        copy_back_address
       else
         OrderPaperSet.new(@customer, @order, true).execute
       end
+      copy_back_address
       flash[:success] = 'Votre commande a été modifiée avec succès.'
       redirect_to account_organization_customer_orders_path(@organization, @customer)
     else
@@ -120,23 +123,28 @@ private
     end
   end
 
+  def address_attributes
+    [
+      :first_name,
+      :last_name,
+      :email,
+      :phone,
+      :company,
+      :company_number,
+      :address_1,
+      :address_2,
+      :city,
+      :zip,
+      :building,
+      :door_code,
+      :other
+    ]
+  end
+
   def dematbox_order_params
     attributes = [
       :dematbox_count,
-      address_attributes: [
-        :first_name,
-        :last_name,
-        :email,
-        :phone,
-        :company,
-        :company_number,
-        :address_1,
-        :city,
-        :zip,
-        :building,
-        :door_code,
-        :other
-      ]
+      address_attributes: address_attributes
     ]
     attributes << :type if action_name.in?(%w(new create))
     params.require(:order).permit(*attributes)
@@ -147,16 +155,26 @@ private
       :paper_set_casing_size,
       :paper_set_folder_count,
       :paper_set_start_date,
-      :paper_set_end_date
+      :paper_set_end_date,
+      address_attributes: address_attributes
     ]
     attributes << :type if action_name.in?(%w(new create))
     params.require(:order).permit(*attributes)
   end
 
   def copy_back_address
-    address = @customer.dematbox_shipping_address
+    if @order.dematbox?
+      address = @customer.dematbox_shipping_address
+    else
+      address = @customer.paper_set_shipping_address
+    end
     unless address
-      address = Address.new(is_for_dematbox_shipping: true)
+      address = Address.new
+      if @order.dematbox?
+        address.is_for_dematbox_shipping = true
+      else
+        address.is_for_paper_set_shipping = true
+      end
       address.locatable = @customer
     end
     address.copy(@order.address)
