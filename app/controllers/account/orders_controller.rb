@@ -24,7 +24,7 @@ class Account::OrdersController < Account::OrganizationController
       when 12
         time = time.beginning_of_year
       end
-      @order.paper_set_end_date = time
+      @order.paper_set_end_date = time.to_date
     else
       @order.type = 'dematbox'
     end
