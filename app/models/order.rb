@@ -35,6 +35,8 @@ class Order
   validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: Proc.new { |o| o.paper_set? }
   validates_presence_of  :paper_set_start_date,                            if: Proc.new { |o| o.paper_set? }
   validates_presence_of  :paper_set_end_date,                              if: Proc.new { |o| o.paper_set? }
+  validate :inclusion_of_paper_set_start_date,                             if: Proc.new { |o| o.paper_set? }
+  validate :inclusion_of_paper_set_end_date,                               if: Proc.new { |o| o.paper_set? }
 
   accepts_nested_attributes_for :address
 
@@ -68,6 +70,57 @@ class Order
 
     event :cancel do
       transition :pending => :cancelled
+    end
+  end
+
+  def paper_set_start_dates
+    date = paper_set_starting_date
+    if self.period_duration == 12
+      maximum_date = date - 36.months
+    else
+      maximum_date = date - 12.months
+    end
+    dates = []
+    while date >= maximum_date
+      dates << date
+      date -= self.period_duration.months
+    end
+    dates
+  end
+
+  def paper_set_end_dates
+    date = paper_set_starting_date
+    maximum_date = date.end_of_year
+    dates = []
+    while date <= maximum_date
+      dates << date
+      date += self.period_duration.months
+    end
+    dates
+  end
+
+private
+
+  def paper_set_starting_date
+    case self.period_duration
+    when 1
+      Date.today.beginning_of_month
+    when 3
+      Date.today.beginning_of_quarter
+    when 12
+      Date.today.beginning_of_year
+    end
+  end
+
+  def inclusion_of_paper_set_start_date
+    unless paper_set_start_date.in? paper_set_start_dates
+      errors.add(:paper_set_start_date, :invalid)
+    end
+  end
+
+  def inclusion_of_paper_set_end_date
+    unless paper_set_end_date.in? paper_set_end_dates
+      errors.add(:paper_set_end_date, :invalid)
     end
   end
 end
