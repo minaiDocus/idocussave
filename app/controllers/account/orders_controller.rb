@@ -12,6 +12,7 @@ class Account::OrdersController < Account::OrganizationController
   def new
     @order = Order.new
     @order.user = @customer
+    @order.period_duration = @customer.subscription.period_duration
     if params[:order][:type] == 'paper_set'
       @order.type = 'paper_set'
       @order.paper_set_folder_count = @customer.options.max_number_of_journals

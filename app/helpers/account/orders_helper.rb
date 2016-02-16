@@ -4,41 +4,16 @@ module Account::OrdersHelper
     ['1er trimestre', '2ème trimestre', '3ème trimestre', '4ème trimestre']
   end
 
-  def paper_set_starting_date(period_duration)
-    case period_duration
-    when 1
-      Date.today.beginning_of_month
-    when 3
-      Date.today.beginning_of_quarter
-    when 12
-      Date.today.beginning_of_year
+  def paper_set_start_date_options(order)
+    order.paper_set_start_dates.map do |date|
+      [paper_set_date_to_name(order.period_duration, date), date]
     end
   end
 
-  def paper_set_start_date_options(period_duration)
-    date = paper_set_starting_date period_duration
-    if period_duration == 12
-      maximum_date = date - 36.months
-    else
-      maximum_date = date - 12.months
+  def paper_set_end_date_options(order)
+    order.paper_set_end_dates.map do |date|
+      [paper_set_date_to_name(order.period_duration, date), date]
     end
-    options = []
-    while date >= maximum_date
-      options << [paper_set_date_to_name(period_duration, date), date]
-      date -= period_duration.months
-    end
-    options
-  end
-
-  def paper_set_end_date_options(period_duration)
-    date = paper_set_starting_date period_duration
-    maximum_date = date.end_of_year
-    options = []
-    while date <= maximum_date
-      options << [paper_set_date_to_name(period_duration, date), date]
-      date += period_duration.months
-    end
-    options
   end
 
   def paper_set_date_to_name(period_duration, date)

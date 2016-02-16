@@ -26,8 +26,8 @@
     %b Commande d’un kit complet pour envoi du courrier à iDocus
   = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
   = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
-  = f.input :paper_set_start_date, collection: paper_set_start_date_options(@customer.subscription.period_duration), include_blank: false
-  = f.input :paper_set_end_date, collection: paper_set_end_date_options(@customer.subscription.period_duration), include_blank: false
+  = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
+  = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
   %hr
   .aligncenter
     %h4 Total de la commande :
