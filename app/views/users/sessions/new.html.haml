@@ -1,4 +1,4 @@
-%h2{ style: 'margin-left:160px' } Connexion au compte iDocus
+%h2.aligncenter Connexion au compte iDocus
 
 %hr
 
@@ -11,11 +11,13 @@
   - error_class = ''
 
 = simple_form_for resource, url: session_path(resource_name), html: { class: 'form form-horizontal' } do |f|
-  = f.input :email, label: 'E-mail :', wrapper_html: { class: error_class }
-  = f.input :password, label: 'Mot de passe :', wrapper_html: { class: error_class }
+  = f.input :email, label: 'Identifiant (E-mail) :', wrapper_html: { class: error_class }
+  = f.input :password, label: 'Mot de passe :', wrapper_html: { class: error_class }, required: true
   .control-group
     .controls
       = f.check_box :remember_me, class: 'pull-left'
-      = f.label :remember_me, 'Se souvenir ? (3 jours maximum)', class: 'control-label', style: 'padding:0;padding-top:1px;margin-left:5px;text-align:left;width:180px;'
+      = f.label :remember_me, 'Rester connecté ?', class: 'control-label', style: 'padding:0;padding-top:1px;margin-left:5px;text-align:left;width:180px;'
   .form-actions.padding0bottom
     = f.submit 'Connexion', class: 'btn btn-primary pull-left'
+    %div{ style: 'margin-top:6px;' }
+      = link_to 'Mot de passe oublié ?', new_user_password_path, style: 'margin-left:10px;'

@@ -18,18 +18,8 @@
           %a.logo{ href: root_path }= logo_url
     .container
       .row
-        .span3
-          .well.sidebar-nav
-            %ul.nav.nav-list
-              %li{ class: controller_name == 'sessions' ? 'active': '' }
-                = link_to 'Connexion à mon compte', new_user_session_path
-
-              %li{ class: controller_name == 'passwords' ? 'active': '' }
-                = link_to 'Réinitialiser mon mot de passe', new_user_password_path
-
-              %li{ class: controller_name == 'unlocks' ? 'active': '' }
-                = link_to 'Déverrouiller mon compte', new_user_unlock_path
-        .span9
+        .span3{ style: 'height:1px;' }
+        .span6
           .well
             != yield
 
