@@ -102,13 +102,14 @@ class Order
 private
 
   def paper_set_starting_date
+    start_date = self.created_at.try(:to_date) || Date.today
     case self.period_duration
     when 1
-      Date.today.beginning_of_month
+      start_date.beginning_of_month
     when 3
-      Date.today.beginning_of_quarter
+      start_date.beginning_of_quarter
     when 12
-      Date.today.beginning_of_year
+      start_date.beginning_of_year
     end
   end
 
