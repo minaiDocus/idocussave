@@ -76,9 +76,9 @@ class Order
   def paper_set_start_dates
     date = paper_set_starting_date
     if self.period_duration == 12
-      maximum_date = date - 36.months
+      maximum_date = (date - 36.months).beginning_of_year
     else
-      maximum_date = date - 12.months
+      maximum_date = (date - 12.months).beginning_of_year
     end
     dates = []
     while date >= maximum_date
