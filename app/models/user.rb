@@ -62,6 +62,7 @@ class User
   validates_length_of :company, :first_name, :last_name, :knowings_code, within: 0..50, allow_nil: true
 
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
+  validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
 
   field :knowings_code
   field :knowings_visibility,            type: Integer, default: 0
@@ -370,5 +371,13 @@ private
 
   def presence_of_group
     errors.add(:group_ids, :empty) if groups.count == 0
+  end
+
+  def belonging_of_groups
+    self.groups.each do |group|
+      unless group.organization_id == self.organization_id
+        errors.add(:group_ids, :invalid)
+      end
+    end
   end
 end
