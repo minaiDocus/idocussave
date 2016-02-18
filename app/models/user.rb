@@ -111,6 +111,11 @@ class User
   belongs_to :organization, inverse_of: 'members'
   has_and_belongs_to_many :groups, inverse_of: 'members'
 
+  has_many :children, class_name: 'User', inverse_of: :parent
+  belongs_to :parent, class_name: 'User', inverse_of: :children
+
+  validate :belonging_of_parent, if: Proc.new { |u| u.parent_id_changed? }
+
   has_many :periods
   has_many :period_documents
   has_many :packs,              class_name: "Pack",                     inverse_of: :owner
@@ -378,6 +383,12 @@ private
       unless group.organization_id == self.organization_id
         errors.add(:group_ids, :invalid)
       end
+    end
+  end
+
+  def belonging_of_parent
+    unless self.parent.organization_id == self.organization_id
+      errors.add(:parent_id, :invalid)
     end
   end
 end

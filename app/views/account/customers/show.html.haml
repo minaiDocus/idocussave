@@ -57,6 +57,13 @@
                       %th= t('mongoid.models.user.attributes.code')
                       %td= @customer.code
                     %tr
+                      %th Collaborateur en charge
+                      %td
+                        - if @customer.parent
+                          = @customer.parent.info
+                        - else
+                          %i Aucun
+                    %tr
                       %th= t('mongoid.models.user.attributes.knowings_code')
                       %td= @customer.knowings_code
                     %tr

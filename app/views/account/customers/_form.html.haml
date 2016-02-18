@@ -5,6 +5,7 @@
       = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%, 15 caractères alphanumériques maximum, code cabinet inclus.", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
       - group_collection = groups.map { |g| [g.name, g.id] }
       = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: 'A quel groupe, le dossier doit-il être attribué ?'
+      = f.association :parent, collection: @organization.collaborators.asc([:first_name, :last_name]).map { |c| [c.name, c.id] }, label: 'Quel est le collaborateur en charge du dossier?', hint: 'Ceci permettra à iDocus de contacter le collaborateur en charge du dossier en cas de soucis.'
       = f.input :company
       %h4.margin10left.margin2bottom Contact principal
       = f.input :first_name
