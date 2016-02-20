@@ -320,7 +320,7 @@ fr:
         attributes:
           name: Nom complet
           formatted_identifier: Identifiant
-          company: Société
+          company: Nom de la société
           code: Code
           knowings_code: Code Knowings
           knowings_visibility: Visibilité Knowings

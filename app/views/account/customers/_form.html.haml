@@ -1,13 +1,14 @@
 ﻿= simple_form_for @customer, url: customer_form_url(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
   .row-fluid
-    .span12
-      %h4.margin10left.margin2bottom Information de base
+    .span6
+      %h4 Information de base
       = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%, 15 caractères alphanumériques maximum, code cabinet inclus.", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
       - group_collection = groups.map { |g| [g.name, g.id] }
       = f.input :group_ids, collection: group_collection, as: :check_boxes, required: !is_leader?, label: 'A quel groupe, le dossier doit-il être attribué ?'
       = f.association :parent, collection: @organization.collaborators.asc([:first_name, :last_name]).map { |c| [c.name, c.id] }, label: 'Quel est le collaborateur en charge du dossier?', hint: 'Ceci permettra à iDocus de contacter le collaborateur en charge du dossier en cas de soucis.'
+    .span6
       = f.input :company
-      %h4.margin10left.margin2bottom Contact principal
+      %h4 Contact principal
       = f.input :first_name
       = f.input :last_name
       = f.input :phone_number

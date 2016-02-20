@@ -53,7 +53,7 @@ fr:
         start_date: Date limite de livraison
       user:
         code: Code
-        company: Société
+        company: Nom de la société
         first_name: Prénom
         last_name: Nom
         email: Courriel
