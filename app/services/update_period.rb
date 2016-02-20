@@ -89,7 +89,7 @@ private
         option = ProductOptionOrder.new
         option.name                  = 'mail_package_subscription'
         option.group_title           = "iDo'Courrier"
-        option.title                 = 'Envoi par courrier A/R + Pré-saisie comptable'
+        option.title                 = 'Téléchargement + Envoi par courrier A/R + Pré-saisie comptable'
         option.title                 += to_be_disabled_text if @subscription.is_mail_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
@@ -117,7 +117,7 @@ private
         option = ProductOptionOrder.new
         option.name                  = 'dematbox_package_subscription'
         option.group_title           = "iDo'Box"
-        option.title                 = "Scan par iDocus'Box + Pré-saisie comptable"
+        option.title                 = "Téléchargement + Scan par iDocus'Box + Pré-saisie comptable"
         option.title                 += to_be_disabled_text if @subscription.is_scan_box_package_to_be_disabled
         option.price_in_cents_wo_vat = price
         option.duration              = 0
@@ -140,7 +140,7 @@ private
         option = ProductOptionOrder.new
         option.name                  = 'retriever_package_subscription'
         option.group_title           = "iDo'FacBanque"
-        option.title                 = 'Récupération banque + factures sur Internet'
+        option.title                 = 'Récupération banque + Factures sur Internet'
         option.title                 += to_be_disabled_text if @subscription.is_retriever_package_to_be_disabled
         option.price_in_cents_wo_vat = package_options_price([:retriever], type)
         option.duration              = 0
@@ -165,7 +165,7 @@ private
     option = ProductOptionOrder.new
     option.name                  = 'annual_package_subscription'
     option.group_title           = 'Pack Annuel'
-    option.title                 = "Envoi courrier + téléchargement + iDo'FacBanque + Pré-saisie comptable"
+    option.title                 = "Envoi courrier + Téléchargement + iDo'FacBanque + Pré-saisie comptable"
     option.price_in_cents_wo_vat = 19900.0
     option.duration              = 0
     option.quantity              = 1
