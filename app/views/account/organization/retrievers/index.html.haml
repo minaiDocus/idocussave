@@ -21,6 +21,7 @@
         %li= link_to 'Divers', account_organization_customer_path(@organization, @customer, tab: 'others')
       - if @organization.is_csv_descriptor_used
         %li= link_to 'Format d’export .csv', account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
+      %li= link_to 'Outil GED', account_organization_customer_path(@organization, @customer, tab: 'ged')
       - if @user.is_admin && @customer.active?
         %li= link_to 'Stockages externes', account_organization_customer_path(@organization, @customer, tab: 'file_storages')
 
