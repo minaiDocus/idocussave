@@ -2,7 +2,7 @@
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, except: %w(index new create search_by_code)
   before_filter :verify_rights, except: 'index'
-  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options)
+  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
 
   def index
     respond_to do |format|
@@ -96,6 +96,19 @@ class Account::CustomersController < Account::OrganizationController
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'ged')
     else
       render 'edit_knowings_options'
+    end
+  end
+
+  def edit_compta_options
+  end
+
+
+  def update_compta_options
+    if @customer.update(compta_options_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'compta')
+    else
+      render 'edit_compta_options'
     end
   end
 
@@ -195,6 +208,10 @@ private
 
   def knowings_options_params
     params.require(:user).permit(:knowings_code, :knowings_visibility)
+  end
+
+  def compta_options_params
+    params.require(:user).permit({ options_attributes: [:is_taxable, :is_pre_assignment_date_computed] })
   end
 
   def load_customer

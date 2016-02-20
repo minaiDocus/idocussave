@@ -26,6 +26,8 @@
               - if @customer.fiduceo_retrievers.banks.count > 0
                 %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                   %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
+            %li{ class: ('active' if params[:tab] == 'compta') }
+              %a{ href: '#compta', data: { toggle: 'tab' } } Outil Comptable
             - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
@@ -69,12 +71,6 @@
                     %tr
                       %th= t('mongoid.models.user.attributes.company')
                       %td= @customer.company
-                    %tr
-                      %th= t('mongoid.models.user_options.attributes.is_taxable')
-                      %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
-                    %tr
-                      %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
-                      %td= @customer.options.pre_assignment_date_computed? ? 'Oui, date de la période iDocus' : 'Non, date d’origine'
               - if @customer.active?
                 .row-fluid
                   .span12
@@ -235,6 +231,19 @@
                       %td= bank_account.accounting_number
                       %td= bank_account.start_date
                       %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
+            #compta.tab-pane{ class: ('active' if params[:tab] == 'compta') }
+              %table.table.table-striped.table-condensed
+                %thead
+                  %tbody
+                    %tr
+                      %th= t('mongoid.models.user_options.attributes.is_taxable')
+                      %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
+                      %td= @customer.options.pre_assignment_date_computed? ? 'Oui, date de la période iDocus' : 'Non, date d’origine'
+              .row-fluid
+                .span12
+                  = link_to icon_edit + ' ' + t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             - if @organization.ibiza.try(:access_token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid

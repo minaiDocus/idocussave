@@ -16,6 +16,7 @@
         %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
         - if @customer.fiduceo_retrievers.banks.count > 0
           %li= link_to 'Paramètres bancaires', account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
+      %li= link_to 'Outil Comptable', account_organization_customer_path(@organization, @customer, tab: 'compta')
       - if @organization.ibiza.try(:access_token).blank?
         %li= link_to 'Divers', account_organization_customer_path(@organization, @customer, tab: 'others')
       - if @organization.is_csv_descriptor_used

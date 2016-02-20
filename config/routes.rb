@@ -86,6 +86,8 @@ Idocus::Application.routes.draw do
         patch 'update_period_options',   on: :member
         get   'edit_knowings_options',   on: :member
         patch 'update_knowings_options', on: :member
+        get   'edit_compta_options',     on: :member
+        patch 'update_compta_options',   on: :member
         get   'account_close_confirm',   on: :member
         patch 'close_account',           on: :member
         get   'account_reopen_confirm',  on: :member
