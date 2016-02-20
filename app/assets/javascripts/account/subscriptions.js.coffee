@@ -41,43 +41,43 @@ update_warning = ->
     $('.basic_package_disable_warning').remove()
   else if $('#subscription_is_basic_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.basic_package_disable_warning').length > 0
-      $('#subscription_is_basic_package_active').after('<b class="basic_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_basic_package_active').parent('label').append('<b class="basic_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_mail_package_active').is(':checked')
     $('.mail_package_disable_warning').remove()
   else if $('#subscription_is_mail_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.mail_package_disable_warning').length > 0
-      $('#subscription_is_mail_package_active').after('<b class="mail_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_mail_package_active').parent('label').append('<b class="mail_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_scan_box_package_active').is(':checked')
     $('.scan_box_package_disable_warning').remove()
   else if $('#subscription_is_scan_box_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.scan_box_package_disable_warning').length > 0
-      $('#subscription_is_scan_box_package_active').after('<b class="scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_scan_box_package_active').parent('label').append('<b class="scan_box_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_retriever_package_active').is(':checked')
     $('.retriever_package_disable_warning').remove()
   else if $('#subscription_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
     unless $('.retriever_package_disable_warning').length > 0
-      $('#subscription_is_retriever_package_active').after('<b class="retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
+      $('#subscription_is_retriever_package_active').parent('label').append('<b class="retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
 
   if $('#subscription_is_pre_assignment_active_true').is(':checked')
     $('.pre_assignment_disable_warning').remove()
   else if $('#subscription_is_pre_assignment_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.pre_assignment_disable_warning').length > 0
-      $('#subscription_is_pre_assignment_active_false').parent('label').parent('span').after('<p class="help-block pre_assignment_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+      $('#subscription_is_pre_assignment_active_false').parent('label').parent('.choice').after('<div class="pre_assignment_disable_warning"><b>'+to_be_disabled_text+'</b></div>')
 
   if $('#subscription_is_stamp_active_true').is(':checked')
     $('.stamp_disable_warning').remove()
   else if $('#subscription_is_stamp_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.stamp_disable_warning').length > 0
-      $('#subscription_is_stamp_active_false').parent('label').parent('span').after('<p class="help-block stamp_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+      $('#subscription_is_stamp_active_false').parent('label').parent('.choice').after('<div class="stamp_disable_warning"><b>'+to_be_disabled_text+'</b></div>')
 
   if $('#subscription_is_blank_page_remover_active_true').is(':checked')
     $('.blank_page_remover_disable_warning').remove()
   else if $('#subscription_is_blank_page_remover_active_true').data('original-value') == 1 && !is_recently_created
     unless $('.blank_page_remover_disable_warning').length > 0
-      $('#subscription_is_blank_page_remover_active_false').parent('label').parent('span').after('<p class="help-block blank_page_remover_disable_warning"><b>'+to_be_disabled_text+'</b></p>')
+      $('#subscription_is_blank_page_remover_active_false').parent('label').parent('.choice').after('<div class="blank_page_remover_disable_warning"><b>'+to_be_disabled_text+'</b></div>')
 
 update_price = ->
   price_list = {
@@ -132,9 +132,10 @@ update_price = ->
       else
         selected_options.push option
 
-  number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]:checked').val())
-  if number_of_journals > 5
-    price += number_of_journals - 5
+  if options.length > 0
+    number_of_journals = parseInt($('input[name="subscription[number_of_journals]"]:checked').val())
+    if number_of_journals > 5
+      price += number_of_journals - 5
 
   if $('.extra_options').length > 0
     for input in $('.extra_options input:checked')
