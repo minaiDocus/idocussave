@@ -13,8 +13,6 @@
       = f.input :phone_number
       = f.input :email, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
       - if action_name.in?(%w(edit update))
-        = f.input :knowings_code
-        = f.input :knowings_visibility, collection: knowings_visibility_options, include_blank: false
         = f.simple_fields_for :options do |o|
           = o.input :is_taxable, as: :boolean
           = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, include_blank: false

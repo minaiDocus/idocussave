@@ -2,7 +2,7 @@
 class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, except: %w(index new create search_by_code)
   before_filter :verify_rights, except: 'index'
-  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options)
+  before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options)
 
   def index
     respond_to do |format|
@@ -87,6 +87,18 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+  def edit_knowings_options
+  end
+
+  def update_knowings_options
+    if @customer.update(knowings_options_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'ged')
+    else
+      render 'edit_knowings_options'
+    end
+  end
+
   def account_close_confirm
   end
 
@@ -155,8 +167,6 @@ private
       :phone_number,
       { group_ids: [] },
       :parent_id,
-      :knowings_code,
-      :knowings_visibility,
       { options_attributes: [:is_taxable, :is_pre_assignment_date_computed] }
     ]
     attributes[-1][:options_attributes] << :is_own_csv_descriptor_used if @user.is_admin
@@ -181,6 +191,10 @@ private
         :auth_prev_period_until_day
       )
     end
+  end
+
+  def knowings_options_params
+    params.require(:user).permit(:knowings_code, :knowings_visibility)
   end
 
   def load_customer

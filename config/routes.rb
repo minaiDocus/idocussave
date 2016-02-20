@@ -79,15 +79,17 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
       end
       resources :customers do
-        get   'search_by_code',         on: :collection
-        get   'edit_ibiza',             on: :member
-        patch 'update_ibiza',           on: :member
-        get   'edit_period_options',    on: :member
-        patch 'update_period_options',  on: :member
-        get   'account_close_confirm',  on: :member
-        patch 'close_account',          on: :member
-        get   'account_reopen_confirm', on: :member
-        patch 'reopen_account',         on: :member
+        get   'search_by_code',          on: :collection
+        get   'edit_ibiza',              on: :member
+        patch 'update_ibiza',            on: :member
+        get   'edit_period_options',     on: :member
+        patch 'update_period_options',   on: :member
+        get   'edit_knowings_options',   on: :member
+        patch 'update_knowings_options', on: :member
+        get   'account_close_confirm',   on: :member
+        patch 'close_account',           on: :member
+        get   'account_reopen_confirm',  on: :member
+        patch 'reopen_account',          on: :member
         resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan do
           member do

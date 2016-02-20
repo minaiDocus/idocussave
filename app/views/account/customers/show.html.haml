@@ -32,6 +32,9 @@
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
+            - if @organization.knowings.try(:ready?)
+              %li{ class: ('active' if params[:tab] == 'ged') }
+                %a{ href: '#ged', data: { toggle: 'tab' } } Outil GED
             - if @user.is_admin && @customer.active?
               %li{ class: ('active' if params[:tab] == 'file_storages') }
                 %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
@@ -63,12 +66,6 @@
                           = @customer.parent.info
                         - else
                           %i Aucun
-                    %tr
-                      %th= t('mongoid.models.user.attributes.knowings_code')
-                      %td= @customer.knowings_code
-                    %tr
-                      %th= t('mongoid.models.user.attributes.knowings_visibility')
-                      %td= knowings_visibility @customer.knowings_visibility
                     %tr
                       %th= t('mongoid.models.user.attributes.company')
                       %td= @customer.company
@@ -263,6 +260,20 @@
                     %br
                     = link_to 'Cliquez ici', activate_account_organization_customer_csv_descriptor_path(@organization, @customer), method: :patch
                     pour créer un format propre au dossier.
+            - if @organization.knowings.try(:ready?)
+              #ged.tab-pane{ class: ('active' if params[:tab] == 'ged') }
+                %table.table.table-striped.table-condensed
+                  %thead
+                    %tbody
+                      %tr
+                        %th= t('mongoid.models.user.attributes.knowings_code')
+                        %td= @customer.knowings_code
+                      %tr
+                        %th= t('mongoid.models.user.attributes.knowings_visibility')
+                        %td= knowings_visibility @customer.knowings_visibility
+                .row-fluid
+                  .span12
+                    = link_to icon_edit + ' ' + t('actions.edit'), edit_knowings_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             - if @user.is_admin && @customer.active?
               #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
                 = render partial: 'account/customers/file_storages', locals: { user: @customer }
