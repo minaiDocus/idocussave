@@ -17,23 +17,28 @@
                 .package_choice
                   %label
                     = f.check_box :is_basic_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
-                    iDo’Basique
+                    %b iDo’Basique
+                    %i (Téléchargement + Pré-saisie comptable)
                 .package_choice
                   %label
                     = f.check_box :is_mail_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
-                    iDo’Courrier
+                    %b iDo’Courrier
+                    %i (Téléchargement + Envoi par courrier A/R + Pré-saisie comptable)
                 .package_choice
                   %label
                     = f.check_box :is_scan_box_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_scan_box_package_active || @subscription.is_scan_box_package_to_be_disabled) ? 1 : 0) }
-                    iDo’Box
+                    %b iDo’Box
+                    %i (Téléchargement + Scan par iDocus'Box + Pré-saisie comptable)
                 .package_choice
                   %label
                     = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0) }
-                    iDo’FacBanque
+                    %b iDo’FacBanque
+                    %i (Récupération banque + Factures sur Internet)
                 .package_choice
                   %label
                     = f.check_box :is_annual_package_active, disabled: @subscription.is_annual_package_active
-                    Pack Annuel
+                    %b Pack Annuel
+                    %i (Envoi par courrier A/R + Téléchargement + iDo'FacBanque + Pré-saisie comptable)
                 .retriever_package_warning{ style: 'display:none' }
                   %i Rappel: iDo’FacBanque sélectionné seul n’aura que la pré-saisie des écritures bancaires. Vous pourrez retrouver les factures récupérées par les automates dans « mes documents ».
                   %br
