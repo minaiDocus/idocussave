@@ -34,6 +34,10 @@
                   %label
                     = f.check_box :is_annual_package_active, disabled: @subscription.is_annual_package_active
                     Pack Annuel
+                .retriever_package_warning{ style: 'display:none' }
+                  %i Rappel: iDo’FacBanque sélectionné seul n’aura que la pré-saisie des écritures bancaires. Vous pourrez retrouver les factures récupérées par les automates dans « mes documents ».
+                  %br
+                  %i Les factures seront pré-saisies si iDo’FacBanque est sélectionné en plus d’un autre forfait.
             %tr.period_duration{ style: 'display:none' }
               %td.question Quelle périodicité souhaitez-vous pour le forfait ?
               %td= f.select :period_duration, [['Mensuel', 1], ['Trimestriel', 3]], { include_blank: false }, { disabled: lock.present?, title: ("Il n'est pas possible de modifier la périodicité d'un forfait déjà actif" if @subscription.configured?) }

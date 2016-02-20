@@ -57,7 +57,12 @@ update_warning = ->
 
   if $('#subscription_is_retriever_package_active').is(':checked')
     $('.retriever_package_disable_warning').remove()
+    if !$('#subscription_is_basic_package_active').is(':checked') && !$('#subscription_is_mail_package_active').is(':checked') && !$('#subscription_is_scan_box_package_active').is(':checked')
+      $('.retriever_package_warning').show()
+    else
+      $('.retriever_package_warning').hide()
   else if $('#subscription_is_retriever_package_active').data('original-value') == 1 && !is_recently_created
+    $('.retriever_package_warning').hide()
     unless $('.retriever_package_disable_warning').length > 0
       $('#subscription_is_retriever_package_active').parent('label').append('<b class="retriever_package_disable_warning">'+to_be_disabled_text+'</b>')
 
