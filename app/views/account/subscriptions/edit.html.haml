@@ -66,7 +66,7 @@
                     Oui
                 .choice
                   %label{ for: 'subscription_is_pre_assignment_active_false' }
-                    = f.radio_button :is_pre_assignment_active, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 1 : 0) }
+                    = f.radio_button :is_pre_assignment_active, false, data: { original_value: ((@subscription.is_pre_assignment_active || @subscription.is_pre_assignment_to_be_disabled) ? 0 : 1) }
                     Non
             %tr.stamp{ style: 'display:none' }
               %td.question
@@ -80,7 +80,7 @@
                     Oui
                 .choice
                   %label{ for: 'subscription_is_stamp_active_false' }
-                    = f.radio_button :is_stamp_active, false, data: { original_value: ((@subscription.is_stamp_active || @subscription.is_stamp_to_be_disabled) ? 1 : 0) }
+                    = f.radio_button :is_stamp_active, false, data: { original_value: ((@subscription.is_stamp_active || @subscription.is_stamp_to_be_disabled) ? 0 : 1) }
                     Non
                 %div{ style: "clear:both;" }
                   %i Ce tamponnage permet d’avoir un tampon « Numérisé le…”  sur le verso de la feuille numérisée.
@@ -93,7 +93,7 @@
                     Oui
                 .choice
                   %label{ for: 'subscription_is_blank_page_remover_active_false' }
-                    = f.radio_button :is_blank_page_remover_active, false, data: { original_value: ((@subscription.is_blank_page_remover_active || @subscription.is_blank_page_remover_to_be_disabled) ? 1 : 0) }
+                    = f.radio_button :is_blank_page_remover_active, false, data: { original_value: ((@subscription.is_blank_page_remover_active || @subscription.is_blank_page_remover_to_be_disabled) ? 0 : 1) }
                     Non
         - if @user.is_admin
           .well
