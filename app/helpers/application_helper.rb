@@ -192,7 +192,14 @@ module ApplicationHelper
       ["Oui, Date de la période iDocus",  1]
     ]
   end
-  alias_method :auto_deliver_options, :pre_assignment_date_computed_options
+
+  def auto_deliver_options
+    [
+      ["Paramètres du cabinet", -1],
+      [t('no_value'),            0],
+      [t('yes_value'),           1]
+    ]
+  end
 
   def transaction_status_for_select(default=nil)
     options = []
