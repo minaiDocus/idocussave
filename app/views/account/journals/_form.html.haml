@@ -6,40 +6,43 @@
   - else
     = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
   = f.input :description
-  = f.input :domain, collection: journal_domain_for_select, include_blank: false
-  = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
-  .pre-assignment-attributes{ style: 'display:none;' }
-    .row-fluid
-      .span5.well.margin2bottom
-        %h4 Comptes d’attente : si pas de référence trouvée dans le plan comptable
-        %br
-        = f.input :account_number, input_html: { disabled: is_disabled }, required: true
-        = f.input :charge_account, input_html: { disabled: is_disabled }, required: true, wrapper_html: { class: 'last' }
-      .span1.aligncenter.padding7top.padding7bottom
-        %b OU
-      .span5.well.margin2bottom
-        %h4 Comptes par défaut : systématiquement, sans aucune référence au plan comptable
-        %br
-        = f.input :default_account_number, input_html: { disabled: is_disabled }, required: true
-        = f.input :default_charge_account, input_html: { disabled: is_disabled }, required: true, wrapper_html: { class: 'last' }
-    - if !@customer || @customer.options.is_taxable
-      - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
-      = f.input :vat_account, input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
-    = f.input :anomaly_account, input_html: { disabled: is_disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
-    - # Disabled for now
-    - if false && @user.is_admin
-      = f.input :is_expense_categories_editable, as: :boolean
-    - if false && @journal.persisted? && @journal.is_expense_categories_editable && is_preassignment_authorized?
-      .control-group
-        %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
-        .controls
-          = f.fields_for :expense_categories do |category|
-            .well
-              = category.link_to_remove icon_destroy, class: 'btn btn-mini'
-              = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
-              = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
-          = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
-  = f.input :instructions, as: :text, input_html: { maxlength: 400 }
+  - if @organization.knowings.try(:is_configured?)
+    = f.input :domain, collection: journal_domain_for_select, include_blank: false
+  - if !@customer || @customer.subscription.is_pre_assignment_active
+    = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
+    .pre-assignment-attributes{ style: 'display:none;' }
+      .row-fluid
+        .span5.well.margin2bottom
+          %h4 Comptes d’attente : si pas de référence trouvée dans le plan comptable
+          %br
+          = f.input :account_number, input_html: { disabled: is_disabled }, required: true
+          = f.input :charge_account, input_html: { disabled: is_disabled }, required: true, wrapper_html: { class: 'last' }
+        .span1.aligncenter.padding7top.padding7bottom
+          %b OU
+        .span5.well.margin2bottom
+          %h4 Comptes par défaut : systématiquement, sans aucune référence au plan comptable
+          %br
+          = f.input :default_account_number, input_html: { disabled: is_disabled }, required: true
+          = f.input :default_charge_account, input_html: { disabled: is_disabled }, required: true, wrapper_html: { class: 'last' }
+      - if !@customer || @customer.options.is_taxable
+        - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
+        = f.input :vat_account, input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
+      = f.input :anomaly_account, input_html: { disabled: is_disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+      - # Disabled for now
+      - if false && @user.is_admin
+        = f.input :is_expense_categories_editable, as: :boolean
+      - if false && @journal.persisted? && @journal.is_expense_categories_editable && is_preassignment_authorized?
+        .control-group
+          %label.control-label= t('simple_form.labels.account_book_type.expense_categories')
+          .controls
+            = f.fields_for :expense_categories do |category|
+              .well
+                = category.link_to_remove icon_destroy, class: 'btn btn-mini'
+                = category.input :name, label: t('simple_form.labels.account_book_type.expense_category.name')
+                = category.input :description, label: t('simple_form.labels.account_book_type.expense_category.description'), as: :text, input_html: { rows: 3 }
+            = f.link_to_add 'Ajouter une catégorie', :expense_categories, class: 'btn'
+  - if !@customer || @customer.subscription.is_mail_package_active
+    = f.input :instructions, as: :text, input_html: { maxlength: 400 }
   = f.input :is_default, as: :boolean unless @customer
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
