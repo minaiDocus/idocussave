@@ -99,9 +99,9 @@ fr:
         nature: Nature
         account_number: Numéro de compte
       account_book_type:
-        name: Code journal
-        pseudonym: Code journal logiciel comptable
-        description: Description
+        name: Code journal iDocus
+        pseudonym: Code journal comptable
+        description: Nom du journal comptable à mettre entre parenthèses ()
         domain: Domaine (Knowings)
         entry_type: Type de saisie (Pré-affectation)
         entry_type_0: Aucun
@@ -112,14 +112,14 @@ fr:
         account_number: Compte de tiers
         default_charge_account: Compte de charge / produit
         charge_account: Compte de charge / produit
-        vat_account: Compte TVA
+        vat_account: Compte de TVA appliqué à tous les documents dans le journal comptable iDocus
         anomaly_account: "Compte d'anomalie"
         is_expense_categories_editable: Catégories de dépenses editable ?
         expense_categories: Catégories de dépenses
         expense_category:
           name: Nom
           description: Description
-        instructions: Instructions (400 char. max.)
+        instructions: Instructions pour vos clients iDo'Courrier
         position: Position
         is_default: Par défaut ?
         clients: Clients

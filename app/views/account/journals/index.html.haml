@@ -14,14 +14,15 @@
         %thead
           %tr
             %th.aligncenter{ rowspan: 2, style: 'vertical-align:middle' } Par defaut ?
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
-            %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
-            %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Code journal iDocus
+            %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
+            %th.aligncenter{ colspan: 4 } Pré-saisie comptable
             %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
           %tr
-            %th Type
-            %th N°
-            %th Compte charge
+            %th Type de pré-saisie
+            %th Type de compte
+            %th Compte tiers
+            %th Compte de charge/produit
         %tbody
           - @journals.each do |journal|
             %tr
@@ -29,8 +30,11 @@
               %td= journal.name
               %td= journal.description
               %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
-              %td= journal.account_number
-              %td= journal.charge_account
               %td
-                = link_to icon_edit, edit_account_organization_journal_path(@organization, journal), class: 'btn btn-mini'
-                = link_to icon_destroy, account_organization_journal_path(@organization, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+                - if journal.is_pre_assignment_processable?
+                  = journal.default_account? ? 'compte par défaut' : "compte d'attente"
+              %td= journal.account_number.presence || journal.default_account_number
+              %td= journal.charge_account.presence || journal.default_charge_account
+              %td
+                = link_to icon_edit + 'Editer', edit_account_organization_journal_path(@organization, journal), class: 'btn btn-mini'
+                = link_to icon_destroy + 'Supprimer', account_organization_journal_path(@organization, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'

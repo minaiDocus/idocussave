@@ -90,6 +90,10 @@ class AccountBookType
     return nil
   end
 
+  def default_account?
+    self.default_account_number.present? && self.default_charge_account.present?
+  end
+
   class << self
     def by_position
       asc([:position, :name])

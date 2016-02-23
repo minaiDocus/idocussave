@@ -4,7 +4,7 @@
   - if @customer && @organization.ibiza.try(:is_configured?)
     = f.input :pseudonym, collection: journals_for_select(@journal.pseudonym), hint: 'si différent de "Code journal" ci-dessus'
   - else
-    = f.input :pseudonym, hint: 'si différent de "Code journal" ci-dessus'
+    = f.input :pseudonym, hint: 'Si différent de "Code journal iDocus"'
   = f.input :description
   = f.input :domain, collection: journal_domain_for_select, include_blank: false
   = f.input :entry_type, collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
