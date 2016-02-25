@@ -190,8 +190,8 @@
                       %td
                         - if journal.is_pre_assignment_processable?
                           = journal.default_account? ? 'compte par défaut' : "compte d'attente"
-                      %td= journal.account_number.presence || journal.default_account_number
-                      %td= journal.charge_account.presence || journal.default_charge_account
+                      %td= journal.meta_account_number
+                      %td= journal.meta_charge_account
                       %td= journal.fiduceo_retrievers.count
                       - if (is_leader? || @user.rights.is_customer_journals_management_authorized) && @customer.active?
                         %td

@@ -33,8 +33,8 @@
               %td
                 - if journal.is_pre_assignment_processable?
                   = journal.default_account? ? 'compte par défaut' : "compte d'attente"
-              %td= journal.account_number.presence || journal.default_account_number
-              %td= journal.charge_account.presence || journal.default_charge_account
+              %td= journal.meta_account_number
+              %td= journal.meta_charge_account
               %td
                 = link_to icon_edit + 'Editer', edit_account_organization_journal_path(@organization, journal), class: 'btn btn-mini'
                 = link_to icon_destroy + 'Supprimer', account_organization_journal_path(@organization, journal), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
