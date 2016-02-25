@@ -10,13 +10,14 @@
             %tr
               %th.check_box{ rowspan: 2, style: 'vertical-align:middle' }
               %th.aligncenter{ rowspan: 2, style: 'vertical-align:middle' } Par defaut ?
-              %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé court
-              %th{ rowspan: 2, style: 'vertical-align:middle' } Libellé long
-              %th.aligncenter{ colspan: 3 } Traitement Pré-Saisie ou NDF
+              %th{ rowspan: 2, style: 'vertical-align:middle' } Code journal iDocus
+              %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
+              %th.aligncenter{ colspan: 4 } Pré-saisie comptable
             %tr
-              %th Type
-              %th N°
-              %th Compte charge
+              %th Type de pré-saisie
+              %th Type de compte
+              %th Compte tiers
+              %th Compte de charge/produit
           %tbody
             - @journals.each do |journal|
               %tr
@@ -25,8 +26,9 @@
                 %td= label_tag "journals_ids_#{journal.id}", journal.name
                 %td= label_tag "journals_ids_#{journal.id}", journal.description
                 %td= label_tag "journals_ids_#{journal.id}", t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
-                %td= label_tag "journals_ids_#{journal.id}", journal.account_number || ''
-                %td= label_tag "journals_ids_#{journal.id}", journal.charge_account || ''
+                %td= label_tag "journals_ids_#{journal.id}", (journal.is_pre_assignment_processable? ? (journal.default_account? ? 'compte par défaut' : "compte d'attente") : '')
+                %td= label_tag "journals_ids_#{journal.id}", journal.meta_account_number || ''
+                %td= label_tag "journals_ids_#{journal.id}", journal.meta_charge_account || ''
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'journals'), class: 'btn'
