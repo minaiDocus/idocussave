@@ -150,10 +150,9 @@ private
       attrs += [
         :domain,
         :entry_type,
-        :default_account_number,
-        :account_number,
-        :default_charge_account,
-        :charge_account,
+        :account_type,
+        :meta_account_number,
+        :meta_charge_account,
         :vat_account,
         :anomaly_account
       ]

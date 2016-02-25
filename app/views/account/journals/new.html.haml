@@ -1,4 +1,4 @@
-#journal
+#journal.new
   .row-fluid
     .span12.box
       %h3
@@ -7,4 +7,55 @@
           pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')}
   .row-fluid
     .span12.box
-      = render partial: 'form'
+      - is_disabled = !is_preassignment_authorized?
+      = simple_nested_form_for @journal, url: journal_form_url(@organization, @customer, @journal), html: { class: 'form form-horizontal margin0' } do |f|
+        %fieldset
+          %legend Codes journaux
+          = f.input :name, label: 'Attribuez un nom de code journal iDocus', hint: 'Ce code doit si possible être similaire à celui utilisé dans votre outil comptable. La modification de ce code journal n’est possible que pendant 24 heures.'
+          = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
+          - if @customer && @organization.ibiza.try(:is_configured?)
+            - collection = journals_for_select(@journal.pseudonym)
+          - else
+            - collection = nil
+            = f.input :pseudonym, label: 'Quel est le code journal comptable de votre outil comptable à associer ?', collection: collection, hint: (collection.present? ? 'Choisissez dans le menu déroulant les journaux comptables issus de la connexion avec votre outil comptable.' : nil)
+
+        - if @organization.knowings.try(:is_configured?)
+          %fieldset
+            %legend Knowings
+            = f.input :domain, label: 'A quel domaine Knowings souhaitez-vous rattacher le journal comptable iDocus ?', collection: journal_domain_for_select, include_blank: false
+
+        - if !@customer || is_preassignment_authorized?
+          %fieldset
+            %legend Pré-saisie comptable
+            = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
+
+            .pre-assignment-attributes{ style: 'display:none;' }
+              = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
+              .account_type_help.margin2bottom
+                %i
+                  %u Compte d’attente:
+                la pré-saisie comptable sera effectuée avec les informations issues du plan comptable de votre outil comptable. Si il n’y a pas d’informations dans ce plan de compte, iDocus saisira les écritures dans les comptes d’attente paramétrés ici.
+                %br
+                %i
+                  %u Compte par défaut:
+                iDocus saisira
+                %b systématiquement
+                toutes les factures déposées dans le journal comptable sur les comptes paramétrés sans se référer au plan comptable.
+              = f.input :meta_account_number, required: true
+              = f.input :meta_charge_account, required: true
+
+              - if !@customer || @customer.options.is_taxable
+                - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
+                = f.input :vat_account, label: 'Quel est le compte de TVA attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
+              = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie (document n’étant pas une facture, facture illisible…) ?', input_html: { disabled: is_disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'
+
+        - if !@customer || @customer.subscription.is_mail_package_active
+          %fieldset
+            %legend Instructions pour iDo'Courrier
+            = f.input :instructions, as: :text, input_html: { maxlength: 400 }
+
+        = f.input :is_default, as: :boolean unless @customer
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          - unless @customer
+            = link_to t('actions.cancel'), account_organization_journals_path(@organization), class: 'btn'

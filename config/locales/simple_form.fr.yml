@@ -108,10 +108,8 @@ fr:
         entry_type_1: Notes de frais
         entry_type_2: Achat
         entry_type_3: Vente
-        default_account_number: Compte de tiers
-        account_number: Compte de tiers
-        default_charge_account: Compte de charge / produit
-        charge_account: Compte de charge / produit
+        meta_account_number: Compte de tiers
+        meta_charge_account: Compte de charge / produit
         vat_account: Compte de TVA appliqué à tous les documents dans le journal comptable iDocus
         anomaly_account: "Compte d'anomalie"
         is_expense_categories_editable: Catégories de dépenses editable ?

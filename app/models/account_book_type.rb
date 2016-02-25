@@ -47,9 +47,10 @@ class AccountBookType
   validate :format_of_name
   validate :uniqueness_of_name
 
-  validate :pre_assignment_attributes,    if: Proc.new { |j| j.is_pre_assignment_processable? }
-  validates_presence_of :vat_account,     if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
-  validates_presence_of :anomaly_account, if: Proc.new { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :meta_account_number, if: Proc.new { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :meta_charge_account, if: Proc.new { |j| j.is_pre_assignment_processable? }
+  validates_presence_of :vat_account,         if: Proc.new { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
+  validates_presence_of :anomaly_account,     if: Proc.new { |j| j.is_pre_assignment_processable? }
 
   scope :compta_processable,         -> { where(:entry_type.gt => 0) }
   scope :not_compta_processable,     -> { where(entry_type: 0) }
@@ -64,6 +65,46 @@ class AccountBookType
       journal.default_charge_account = ''
       journal.vat_account            = ''
       journal.anomaly_account        = ''
+    end
+  end
+
+  def account_type
+    if @account_type
+      @account_type
+    else
+      default_account? ? 'default' : 'waiting'
+    end
+  end
+
+  def account_type=(value)
+    @account_type=value
+  end
+
+  def meta_account_number
+    default_account? ? default_account_number : account_number
+  end
+
+  def meta_account_number=(value)
+    if account_type == 'default'
+      self.default_account_number = value
+      self.account_number = nil
+    else
+      self.account_number = value
+      self.default_account_number = nil
+    end
+  end
+
+  def meta_charge_account
+    default_account? ? default_charge_account : charge_account
+  end
+
+  def meta_charge_account=(value)
+    if account_type == 'default'
+      self.default_charge_account = value
+      self.charge_account = nil
+    else
+      self.charge_account = value
+      self.default_charge_account = nil
     end
   end
 
@@ -91,7 +132,7 @@ class AccountBookType
   end
 
   def default_account?
-    self.default_account_number.present? && self.default_charge_account.present?
+    self.default_account_number.present? || self.default_charge_account.present?
   end
 
   class << self
@@ -132,18 +173,6 @@ private
 
   def format_of_name
     errors.add(:name, :invalid) unless self.name.match(/\A[A-Z][A-Z0-9]+\z/)
-  end
-
-  def pre_assignment_attributes
-    errors.add(:account_number, :blank) if account_number.blank? && default_account_number.blank? && default_charge_account.blank?
-    errors.add(:charge_account, :blank) if charge_account.blank? && default_account_number.blank? && default_charge_account.blank?
-    errors.add(:default_account_number, :blank) if default_account_number.blank? && account_number.blank? && charge_account.blank?
-    errors.add(:default_charge_account, :blank) if default_charge_account.blank? && account_number.blank? && charge_account.blank?
-
-    errors.add(:account_number, :invalid) if account_number.present? && (default_account_number.present? || default_charge_account.present?)
-    errors.add(:charge_account, :invalid) if charge_account.present? && (default_account_number.present? || default_charge_account.present?)
-    errors.add(:default_account_number, :invalid) if default_account_number.present? && (account_number.present? || charge_account.present?)
-    errors.add(:default_charge_account, :invalid) if default_charge_account.present? && (account_number.present? || charge_account.present?)
   end
 
   def uniqueness_of_name

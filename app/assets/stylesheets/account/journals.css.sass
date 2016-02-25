@@ -6,5 +6,29 @@
       width: 15px
 
 #journal
-  .control-group.last
-    margin-bottom: 0
+  &.new, &.edit
+    form
+      .account_type_help
+        margin-left: 300px
+      .account_book_type_account_type
+        margin-bottom: 0
+      .control-label
+        width: 280px
+      .controls
+        margin-left: 300px
+      .form-actions, .commands
+        padding-left: 300px
+  &.new
+    .prev, .next
+      background-color: #b0232a
+      padding: 5px 10px
+      color: #fff
+      text-decoration: none
+    .prev:hover, .next:hover
+      background-color: #000
+      text-decoration:none
+    .prev
+      float:left
+      margin-right: 5px
+    .next
+      float:right
