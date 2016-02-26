@@ -54,7 +54,10 @@
             %legend Instructions pour iDo'Courrier
             = f.input :instructions, as: :text, input_html: { maxlength: 400 }
 
-        = f.input :is_default, as: :boolean unless @customer
+        - unless @customer
+          %fieldset
+            %legend Option
+            = f.input :is_default, as: :boolean
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
           - unless @customer
