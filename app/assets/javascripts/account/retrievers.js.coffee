@@ -36,7 +36,9 @@ update_form = ->
       $('#fiduceo_retriever_pass').attr('placeholder', retriever['inputs'][1]['info'])
 
     if retriever['inputs'][2]
-      label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][2]['name']
+      label = retriever['inputs'][2]['name']
+      if retriever['inputs'][2]['required'] == 'true'
+        label = '<abbr title="champ requis">*</abbr> ' + label
       if retriever['inputs'][2]['inputValues'] != undefined
         if window.special_bank_ids.indexOf(retriever['id']) != -1
           $('#fiduceo_retriever_param1').val(retriever['name'])
@@ -57,7 +59,9 @@ update_form = ->
           $('#fiduceo_retriever_param1').attr('placeholder', retriever['inputs'][2]['info'])
 
     if retriever['inputs'][3]
-      label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][3]['name']
+      label = retriever['inputs'][3]['name']
+      if retriever['inputs'][3]['required'] == 'true'
+        label = '<abbr title="champ requis">*</abbr> ' + label
       if retriever['inputs'][3]['inputValues'] != undefined
         content = ""
         for option in retriever['inputs'][3]['inputValues']['enumValue']
@@ -75,7 +79,9 @@ update_form = ->
           $('#fiduceo_retriever_param2').attr('placeholder', retriever['inputs'][3]['info'])
 
     if retriever['inputs'][4]
-      label = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][4]['name']
+      label = retriever['inputs'][4]['name']
+      if retriever['inputs'][4]['required'] == 'true'
+        label = '<abbr title="champ requis">*</abbr> ' + label
       if retriever['inputs'][4]['inputValues'] != undefined
         content = ""
         for option in retriever['inputs'][4]['inputValues']['enumValue']
