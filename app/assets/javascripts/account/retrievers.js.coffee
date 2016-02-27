@@ -139,8 +139,12 @@ update_provider = ->
         url = $.grep(window.banks, (e) -> e.id == result.id)[0]['url']
       if url != undefined && url != null
         link = '<a href="'+url+'" target="_blank">'+url+'</a>'
-        help_block = '<p class="help-block"><br/><br/>'+link+'<p>'
-        $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').after(help_block)
+        help_html = '<p class="help-block"><br/><br/>'+link+'<p>'
+        $field = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id')
+        $help_block = $field.next('p')
+        if $help_block != undefined
+          $help_block.remove()
+        $field.after(help_html)
     else
       $('#fiduceo_retriever_service_name').val('')
       $('#fiduceo_retriever_name').val('')
