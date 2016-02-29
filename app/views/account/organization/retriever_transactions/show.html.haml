@@ -1,4 +1,7 @@
 #retriever_transaction
+  - unless @customer.configured?
+    = render 'account/customers/steps'
+
   .row-fluid
     .span12.box
       .row-fluid

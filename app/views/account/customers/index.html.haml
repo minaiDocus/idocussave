@@ -7,7 +7,7 @@
             %h3 Liste des clients (#{@customers.count})
           .pull-right
             - if (is_leader? || @user.can_manage_customers?) && @organization.is_active
-              = link_to icon_new + ' ' + t('actions.new'), new_account_organization_customer_path(@organization), class: 'btn btn-primary'
+              = link_to icon_new + ' ' + t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
   .row-fluid
     .span9.box
       = render partial: 'list_options'

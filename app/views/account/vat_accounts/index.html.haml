@@ -1,12 +1,23 @@
 #vat_accounts
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .pull-left
-            %h3 Paramètrage des TVA du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'others')}
-          .pull-right
-            = link_to icon_edit + ' ' + t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span12
+            .pull-left
+              %h3 Paramètrage des TVA du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'others')}
+            .pull-right
+              = link_to icon_edit + ' ' + t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span6
+            %h3 Comptes de TVA
+          .span6.alignright
+            = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+
   .row-fluid
     .span12.box
       %table.table.table-striped.table-condensed.margin0bottom
@@ -19,3 +30,7 @@
             %td= vat_account.code
             %td= vat_account.nature
             %td= vat_account.account_number
+
+      - unless @customer.configured?
+        .pull-right.margin2top
+          = link_to icon_edit + ' ' + t('actions.edit'), edit_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn btn-primary'

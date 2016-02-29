@@ -1,13 +1,22 @@
 #customer.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition des options de comptabilité du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta')}
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des options de comptabilité du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'compta')}
+  - else
+    = render 'steps'
+    .row-fluid
+      .span12.box
+        %h3 Options
   .row-fluid
     .span12.box
       = simple_form_for @customer, url: update_compta_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
         = f.simple_fields_for :options do |o|
-          = o.input :is_taxable, as: :boolean
-          = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, include_blank: false
+          = o.input :is_taxable, collection: [['Oui', true], ['Non (aucune TVA ne sera reportée en pré-affectation)', false]], as: :radio_buttons
+          = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, as: :radio_buttons
         .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn'
+          - if @customer.configured?
+            = f.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn'
+          - else
+            = f.submit t('actions.next_step'), class: 'btn btn-primary'

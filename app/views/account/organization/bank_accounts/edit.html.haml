@@ -1,4 +1,7 @@
 #bank_accounts
+  - unless @customer.configured?
+    = render 'account/customers/steps'
+
   .row-fluid
     .span12.box
       %h3 Edition d'un compte bancaire du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')}

@@ -2,6 +2,7 @@
 class Account::OrdersController < Account::OrganizationController
   before_filter :load_customer
   before_filter :verify_rights
+  before_filter :redirect_to_current_step
   before_filter :load_order, only: %w(edit update destroy)
   before_filter :verify_editability, only: %w(edit update destroy)
 
@@ -27,23 +28,33 @@ class Account::OrdersController < Account::OrganizationController
       end
       @order.paper_set_end_date = time.to_date
       @order.address = @customer.paper_set_shipping_address.try(:dup)
+      @order.paper_return_address = @customer.paper_return_address.try(:dup)
     else
       @order.type = 'dematbox'
       @order.address = @customer.dematbox_shipping_address.try(:dup)
     end
     @order.address ||= Address.new
+    @order.paper_return_address ||= Address.new
   end
 
   def create
     @order = Order.new(order_params)
     if @order.dematbox? && OrderDematbox.new(@customer, @order).execute
       copy_back_address
-      flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
-      redirect_to account_organization_customer_orders_path(@organization, @customer)
+      if @customer.configured?
+        flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
+        redirect_to account_organization_customer_orders_path(@organization, @customer)
+      else
+        next_configuration_step
+      end
     elsif @order.paper_set? && OrderPaperSet.new(@customer, @order).execute
       copy_back_address
-      flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
-      redirect_to account_organization_customer_orders_path(@organization, @customer)
+      if @customer.configured?
+        flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
+        redirect_to account_organization_customer_orders_path(@organization, @customer)
+      else
+        next_configuration_step
+      end
     else
       render action: :new
     end
@@ -158,11 +169,15 @@ private
       :paper_set_end_date,
       address_attributes: address_attributes
     ]
+    attributes << { paper_return_address_attributes: address_attributes } unless @customer.configured?
     attributes << :type if action_name.in?(%w(new create))
     params.require(:order).permit(*attributes)
   end
 
   def copy_back_address
+    if @order.paper_set? && !@customer.configured?
+      copy_back_paper_return_address
+    end
     if @order.dematbox?
       address = @customer.dematbox_shipping_address
     else
@@ -178,6 +193,17 @@ private
       address.locatable = @customer
     end
     address.copy(@order.address)
+    address.save
+  end
+
+  def copy_back_paper_return_address
+    address = @customer.paper_return_address
+    unless address
+      address = Address.new
+      address.is_for_paper_return = true
+      address.locatable = @customer
+    end
+    address.copy(@order.paper_return_address)
     address.save
   end
 end

@@ -2,6 +2,7 @@
 class Account::CustomerAddressesController < Account::OrganizationController
   before_filter :load_customer
   before_filter :verify_if_customer_is_active
+  before_filter :redirect_to_current_step
   before_filter :load_address, only: %w(edit update destroy)
 
   def index

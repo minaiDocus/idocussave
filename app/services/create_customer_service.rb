@@ -17,6 +17,7 @@ class CreateCustomerService
       @customer.reset_password_token = encrypted_token
       @customer.reset_password_sent_at = Time.now
       @customer.options = UserOptions.new
+      @customer.current_configuration_step = 'account'
       @customer.save
 
       AccountingPlan.create(user_id: @customer.id)

@@ -1,7 +1,13 @@
 ﻿#subscriptions.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition de l'abonnement du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
+  - if @subscription.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition de l'abonnement du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 Sélection forfait(s)/option(s)
 
   .row-fluid
     .span12.box
@@ -12,7 +18,14 @@
         %table.table
           %tbody
             %tr.package{ class: "#{lock} #{'locked' if lock.present?}" }
-              %td.question Quel(s) forfait(s) choisissez-vous pour le dossier ?
+              %td.question
+                Quel(s) forfait(s) choisissez-vous pour le dossier ?
+                %br
+                %br
+                %b
+                  Pour consulter nos produits et leurs tarifs, rendez-vous dans le menu «
+                  = link_to 'Produits et tarifs', 'https://docs.idocus.com/Guide&tarifs_2016_iDocus.pdf', target: '_blank'
+                  ». iDo'Basique est compris dans iDo'Courrier et iDo'Box.
               %td
                 .package_choice
                   %label
@@ -153,5 +166,8 @@
           %h4 Prix du forfait avec les options sélectionnées :
           %b.total_price{ style: 'font-size:20px' }
         .form-actions.margin0bottom
-          = f.submit 'Valider', class: 'btn btn-primary'
-          = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'
+          - if @subscription.configured?
+            = f.submit 'Valider', class: 'btn btn-primary'
+            = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'
+          - else
+            = f.submit t('actions.next_step'), class: 'btn btn-primary'

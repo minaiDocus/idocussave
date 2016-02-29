@@ -1,0 +1,22 @@
+#list_journals
+  = render 'account/customers/steps'
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span6
+          %h3 Création des journaux comptables
+        .span6.alignright
+          = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+
+  .row-fluid
+    .span12.box
+      - if @customer.subscription.is_mail_package_active
+        Rappel: il est nécessaire de créer vos journaux comptables afin de créer les chemises correspondantes lors de la commande de votre kit.
+        %br
+        %br
+      - if @journals.any?
+        Voici les journaux comptables assignés au dossier :
+        %ul
+          - @journals.each do |journal|
+            %li= journal.name + journal.description
+      = link_to icon_new + 'Créer un journal comptable', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'

@@ -1,7 +1,17 @@
 #accounting_plan
-  .row-fluid
-    .span12.box
-      %h3 Plan comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Plan comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span6
+            %h3 Plan comptable
+          .span6.alignright
+            = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span6.box

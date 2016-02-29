@@ -98,6 +98,10 @@ class User
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
+  field :current_configuration_step
+
+  validates_inclusion_of :current_configuration_step, in: %w(account subscription compta_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
+
   attr_accessor :is_group_required
 
   slug do |user|
@@ -207,6 +211,10 @@ class User
 
   def to_s
     info
+  end
+
+  def configured?
+    current_configuration_step.nil?
   end
 
   def self.find_by_email(param)

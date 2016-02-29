@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::FiduceoController < Account::OrganizationController
   before_filter :load_customer
+  before_filter :redirect_to_current_step
   before_filter :verify_rights
 
 private

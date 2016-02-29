@@ -14,8 +14,9 @@
       = f.input :phone_number
       = f.input :email, hint: "Le courriel sert d’identifiant à iDocus et de contact principal en cas de besoin de la part d’iDocus"
   .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
     - if params[:action].in?(%w(new create))
+      = f.submit t('actions.next_step'), class: 'btn btn-primary'
       = link_to t('actions.cancel'), account_organization_customers_path(@organization), class: 'btn'
     - else
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
       = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer), class: 'btn'

@@ -1,8 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index new create search_by_code)
+  before_filter :load_customer, except: %w(index info new create search_by_code)
   before_filter :verify_rights, except: 'index'
   before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
+  before_filter :redirect_to_current_step, except: :next_step
 
   def index
     respond_to do |format|
@@ -20,14 +21,13 @@ class Account::CustomersController < Account::OrganizationController
   end
 
   def show
-    if @customer.subscription.configured?
-      @subscription = @customer.subscription
-      @period = @subscription.periods.desc(:created_at).first
-      @journals = @customer.account_book_types.asc(:name)
-      @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)
-    else
-      redirect_to edit_account_organization_customer_subscription_path(@organization, @customer)
-    end
+    @subscription = @customer.subscription
+    @period = @subscription.periods.desc(:created_at).first
+    @journals = @customer.account_book_types.asc(:name)
+    @pending_journals = @customer.fiduceo_retrievers.where(journal_id: nil, :journal_name.nin => [nil]).distinct(:journal_name)
+  end
+
+  def info
   end
 
   def new
@@ -38,8 +38,7 @@ class Account::CustomersController < Account::OrganizationController
   def create
     @customer = CreateCustomerService.new(@organization, @user, user_params, current_user, request).execute
     if @customer.persisted?
-      flash[:success] = 'Créé avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer)
+      next_configuration_step
     else
       render action: 'new'
     end
@@ -92,8 +91,12 @@ class Account::CustomersController < Account::OrganizationController
 
   def update_knowings_options
     if @customer.update(knowings_options_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'ged')
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'ged')
+      else
+        next_configuration_step
+      end
     else
       render 'edit_knowings_options'
     end
@@ -102,11 +105,14 @@ class Account::CustomersController < Account::OrganizationController
   def edit_compta_options
   end
 
-
   def update_compta_options
     if @customer.update(compta_options_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'compta')
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'compta')
+      else
+        next_configuration_step
+      end
     else
       render 'edit_compta_options'
     end
@@ -146,6 +152,14 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+  def next_step
+    if @customer.configured?
+      redirect_to account_organization_customer_path(@organization, @customer)
+    else
+      next_configuration_step
+    end
+  end
+
 private
 
   def can_manage?
@@ -156,7 +170,7 @@ private
     authorized = true
     authorized = false unless can_manage?
     authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
-    authorized = false if action_name.in?(%w(new create destroy)) && !@organization.is_active
+    authorized = false if action_name.in?(%w(info new create destroy)) && !@organization.is_active
     authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')

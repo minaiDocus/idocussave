@@ -1,6 +1,12 @@
-#retriever.new.row-fluid
-  .span12
-    .box
-      %h3 Configuration d'un nouvel automate pour le client : #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
-    .box{ style: 'padding-bottom:0;' }
-      = render partial: 'form'
+#retriever.new
+  - unless @customer.configured?
+    = render 'account/customers/steps'
+
+  .row-fluid
+    .span12
+      .box
+        %h3 Configuration d'un nouvel automate pour le client : #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
+  .row-fuild
+    .span12
+      .box{ style: 'padding-bottom:0;' }
+        = render partial: 'form'

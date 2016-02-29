@@ -9,13 +9,13 @@
     %br
     = f.simple_fields_for :address do |builder|
       .row-fluid
-        .span5
+        .span6
           = builder.input :last_name, label: 'Nom du contact', required: true
           = builder.input :first_name, label: 'Prénom du contact', required: true
           = builder.input :phone, label: 'Numéro de téléphone direct (fixe ou mobile)', required: true
           = builder.input :company, label: 'Nom de la société', required: true
           = builder.input :company_number, label: 'N° de Siret', required: true
-        .span5
+        .span6
           = builder.input :address_1, label: 'Rue', required: true
           = builder.input :zip, label: 'Code postal', required: true
           = builder.input :city, label: 'Ville', required: true
@@ -26,14 +26,18 @@
     .aligncenter.margin2bottom
       %b Commande d’un kit complet pour envoi du courrier à iDocus
     .row-fluid
-      .span6
+      %div{ class: (@customer.configured? ? 'span6' : 'span4') }
         = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
         = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
         = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
         = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
-      .span6
+      %div{ class: (@customer.configured? ? 'span6' : 'span4') }
         .address_title
-          %b Adresse de livraison
+          %b
+            - if @customer.configured?
+              Adresse de livraison
+            - else
+              Adresse de livraison du kit envoi courrier
         = f.simple_fields_for :address do |builder|
           = builder.input :company, label: 'Nom de la société'
           = builder.input :last_name, label: 'Nom', required: true
@@ -42,10 +46,25 @@
           = builder.input :address_2, label: 'Adresse (suite)'
           = builder.input :city, label: 'Ville', required: true
           = builder.input :zip, label: 'Code postal', required: true
+      - unless @customer.configured?
+        .span4
+          .address_title
+            %b Adresse de retour des papiers numérisés
+          = f.simple_fields_for :paper_return_address do |builder|
+            = builder.input :company, label: 'Nom de la société'
+            = builder.input :last_name, label: 'Nom', required: true
+            = builder.input :first_name, label: 'Prénom', required: true
+            = builder.input :address_1, label: 'Adresse', required: true
+            = builder.input :address_2, label: 'Adresse (suite)'
+            = builder.input :city, label: 'Ville', required: true
+            = builder.input :zip, label: 'Code postal', required: true
     %hr
     .aligncenter
       %h4 Total de la commande :
       %b.total_price{ style: 'font-size:20px' }
   .form-actions.margin0bottom
-    = f.submit 'Commander', class: 'btn btn-primary'
-    = link_to 'Annuler', account_organization_customer_orders_path(@organization, @customer), class: 'btn'
+    - if @customer.configured?
+      = f.submit 'Commander', class: 'btn btn-primary'
+      = link_to 'Annuler', account_organization_customer_orders_path(@organization, @customer), class: 'btn'
+    - else
+      = f.submit t('actions.next_step'), class: 'btn btn-primary'

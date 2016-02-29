@@ -24,9 +24,12 @@
       = f.input :directive, as: :hidden
       = f.input :comma_as_number_separator, as: :boolean
   .form-actions.margin0bottom
-    = f.submit t('actions.submit'), class: 'btn btn-primary'
-    - cancel_url = account_organization_path(@organization, tab: 'csv_descriptor')
-    - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') if @customer.present?
-    = link_to t('actions.cancel'), cancel_url, class: 'btn'
+    - if @customer && !@customer.configured?
+      = f.submit t('actions.next_step'), class: 'btn btn-primary'
+    - else
+      = f.submit t('actions.submit'), class: 'btn btn-primary'
+      - cancel_url = account_organization_path(@organization, tab: 'csv_descriptor')
+      - cancel_url = account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor') if @customer.present?
+      = link_to t('actions.cancel'), cancel_url, class: 'btn'
 
 .template.hide= render 'account/csv_descriptors/field', locals: { selected: :date }

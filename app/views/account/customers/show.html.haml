@@ -23,9 +23,8 @@
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized
               %li= link_to "iDo'FacBanque", account_organization_customer_fiduceo_retrievers_path(@organization, @customer)
-              - if @customer.fiduceo_retrievers.banks.count > 0
-                %li{ class: ('active' if params[:tab] == 'bank_accounts') }
-                  %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
+              %li{ class: ('active' if params[:tab] == 'bank_accounts') }
+                %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
               %a{ href: '#compta', data: { toggle: 'tab' } } Outil Comptable
             - if @organization.ibiza.try(:access_token).blank?
@@ -218,26 +217,25 @@
                     - elsif @customer.active?
                       = link_to icon(icon: 'plus') + ' ' + 'Ajouter nouveau', new_account_organization_customer_journal_path(@organization, @customer), class: 'btn btn-primary'
                       = link_to icon(icon: 'th-large') + ' Copier depuis base existante', select_account_organization_customer_journals_path(@organization, @customer), class: 'btn btn-primary'
-            - if @customer.fiduceo_retrievers.banks.count > 0
-              #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
-                %table.table.table-striped.table-condensed.margin0bottom
+            #bank_accounts.tab-pane{ class: ('active' if params[:tab] == 'bank_accounts') }
+              %table.table.table-striped.table-condensed.margin0bottom
+                %tr
+                  %th= t('mongoid.models.bank_account.attributes.bank_name')
+                  %th= t('mongoid.models.bank_account.attributes.name')
+                  %th= t('mongoid.models.bank_account.attributes.number')
+                  %th= t('mongoid.models.bank_account.attributes.journal')
+                  %th= t('mongoid.models.bank_account.attributes.accounting_number')
+                  %th= t('mongoid.models.bank_account.attributes.start_date')
+                  %th Paramétrer
+                - @customer.bank_accounts.each do |bank_account|
                   %tr
-                    %th= t('mongoid.models.bank_account.attributes.bank_name')
-                    %th= t('mongoid.models.bank_account.attributes.name')
-                    %th= t('mongoid.models.bank_account.attributes.number')
-                    %th= t('mongoid.models.bank_account.attributes.journal')
-                    %th= t('mongoid.models.bank_account.attributes.accounting_number')
-                    %th= t('mongoid.models.bank_account.attributes.start_date')
-                    %th Paramétrer
-                  - @customer.bank_accounts.each do |bank_account|
-                    %tr
-                      %td= bank_account.bank_name
-                      %td= bank_account.name
-                      %td= bank_account.number
-                      %td= bank_account.journal
-                      %td= bank_account.accounting_number
-                      %td= bank_account.start_date
-                      %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
+                    %td= bank_account.bank_name
+                    %td= bank_account.name
+                    %td= bank_account.number
+                    %td= bank_account.journal
+                    %td= bank_account.accounting_number
+                    %td= bank_account.start_date
+                    %td= icon_link_to edit_account_organization_customer_bank_account_path(@organization, @customer, bank_account), { icon: 'edit' }, { class: 'btn btn-mini' }
             #compta.tab-pane{ class: ('active' if params[:tab] == 'compta') }
               %table.table.table-striped.table-condensed
                 %thead
@@ -247,7 +245,7 @@
                       %td= @customer.options.is_taxable ? t('yes_value') : t('no_value')
                     %tr
                       %th= t('mongoid.models.user_options.attributes.is_pre_assignment_date_computed')
-                      %td= @customer.options.pre_assignment_date_computed? ? 'Oui, date de la période iDocus' : 'Non, date d’origine'
+                      %td= @customer.options.pre_assignment_date_computed? ? 'Date de la période iDocus' : 'Date d’origine'
               .row-fluid
                 .span12
                   = link_to icon_edit + ' ' + t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'

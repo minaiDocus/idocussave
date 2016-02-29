@@ -3,6 +3,7 @@ class Account::ExercisesController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :verify_access
   before_filter :load_customer
+  before_filter :redirect_to_current_step
   before_filter :load_exercise, except: %w(index new create)
 
   def index

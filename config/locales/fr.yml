@@ -167,6 +167,7 @@ fr:
     submit: Valider
     confirm: Êtes-vous sûr ?
     propagate: Propager
+    next_step: Etape suivante >
 
   filters:
     name: Filtre
@@ -344,7 +345,7 @@ fr:
           is_dematbox_authorized: Dematbox autorisé ?
           is_fiduceo_authorized: Fiduceo autorisé ?
           prescriber: Prescripteur
-          ibiza_id: Compte lié iBiza
+          ibiza_id: Dossier correpondant dans iBiza
           authd_prev_period: Nombre de périodes antérieures accéssibles au téléversement des pièces par l'utilisateur
           auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
           auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
@@ -354,9 +355,9 @@ fr:
         one: 1 option
         other: '%{count} options'
         attributes:
-          is_taxable: Est assujetti à TVA ?
-          is_pre_assignment_date_computed: Recalcul date de saisie des factures ?
-          is_auto_deliver: Livraison automatique ?
+          is_taxable: Le dossier est-il assujetti à TVA?
+          is_pre_assignment_date_computed: Date de saisie des factures
+          is_auto_deliver: Livrer automatiquement les écritures ?
           is_own_csv_descriptor_used: Utilise son propre format de CSV ?
       address:
         zero: 0 adresses
@@ -559,7 +560,7 @@ fr:
         other: '%{count} iBiza'
         name: iBiza
         attributes:
-          is_auto_deliver: Livraison automatique ?
+          is_auto_deliver: Livrer automatiquement les écritures ?
           access_token: Jeton d'accès Scan et OCR
           state: Etat
           access_token_2: Jeton d'accès iDo'FacBanque
@@ -596,7 +597,7 @@ fr:
           is_journals_management_centralized: Journaux comptables partagés ?
           is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?
           is_csv_descriptor_used: Activer l’option de création du fichier export .csv (un nouvel onglet va s’afficher)?
-          is_pre_assignment_date_computed: Recalcul date de saisie des factures ?
+          is_pre_assignment_date_computed: Date de saisie des factures
           status:
             admin: Administrateur
             collaborator: Collaborateur

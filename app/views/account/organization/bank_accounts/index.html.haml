@@ -1,4 +1,7 @@
 #bank_accounts.select
+  - unless @customer.configured?
+    = render 'account/customers/steps'
+
   .row-fluid
     .span12.box
       %h3 Sélection des comptes bancaires #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)} (#{@bank_accounts.count})

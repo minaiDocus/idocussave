@@ -1,7 +1,14 @@
 #customer.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition des options iBiza du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza')}
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des options iBiza du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 iBiza
+
   .rwo-fluid
     .span12.box
       = simple_form_for @customer, url: update_ibiza_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
@@ -14,9 +21,12 @@
         - else
           - users = []
           - hint = 'Erreur'
-        = f.input :ibiza_id,   label: t('mongoid.models.user.attributes.ibiza_id'), collection: users, input_html: { class: 'margin0bottom' }, hint: hint
+        = f.input :ibiza_id, label: 'Sélectionner le dossier correspondant dans iBiza', collection: users, input_html: { class: 'margin0bottom' }, hint: hint
         = f.simple_fields_for :options do |o|
           = o.input :is_auto_deliver, collection: auto_deliver_options, include_blank: false
         .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ibiza'), class: 'btn'
+          - if @customer.configured?
+            = f.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'ibiza'), class: 'btn'
+          - else
+            = f.submit t('actions.next_step'), class: 'btn btn-primary'

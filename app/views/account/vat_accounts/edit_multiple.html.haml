@@ -1,7 +1,14 @@
 #accounting_plan.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition des #{link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)} du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'others')}
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des #{link_to 'TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer)} du client : #{link_to @customer.info, account_organization_customer_path(@organization, @customer, tab: 'others')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 Comptes de TVA
+
   .row-fluid
     .span12.box
       = simple_nested_form_for @accounting_plan, url: update_multiple_account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), html: { class: 'form form-horizontal margin0' }, wrapper: false do |f|

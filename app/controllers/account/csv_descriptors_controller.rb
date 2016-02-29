@@ -2,6 +2,7 @@
 class Account::CsvDescriptorsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_customer
+  before_filter :redirect_to_current_step
   before_filter :load_csv_descriptor
 
   def edit
@@ -14,8 +15,12 @@ class Account::CsvDescriptorsController < Account::OrganizationController
 
   def update
     if @csv_descriptor.update(csv_descriptor_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
+      else
+        next_configuration_step
+      end
     else
       render 'edit'
     end

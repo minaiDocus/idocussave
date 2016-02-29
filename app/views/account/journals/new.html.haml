@@ -1,9 +1,11 @@
 #journal.new
+  - if @customer && !@customer.configured?
+    = render 'account/customers/steps'
   .row-fluid
     .span12.box
       %h3
         Nouveau journal comptable
-        - if @customer
+        - if @customer && @customer.configured?
           pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'journals')}
   .row-fluid
     .span12.box

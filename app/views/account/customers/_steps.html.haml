@@ -1,0 +1,23 @@
+.row-fluid
+  .span12.box.step_navigation
+    .step{ class: ('active' if controller_name == 'customers' && action_name.in?(%w(new create))) }
+      .number Etape 1
+      .title Informations dossier
+    .step{ class: ('active' if (controller_name == 'subscriptions' || (controller_name == 'customers' && action_name.in?(%w(edit_compta_options update_compta_options))))) }
+      .number Etape 2
+      .title Sélection forfait(s)/option(s)
+    .step{ class: ('active' if controller_name.in?(%w(use_csv_descriptors csv_descriptors accounting_plans vat_accounts exercises)) || (controller_name == 'customers' && action_name.in?(%w(edit_ibiza update_ibiza)))) }
+      .number Etape 3
+      .title Comptabilité
+    .step{ class: ('active' if controller_name == 'list_journals') }
+      .number Etape 4
+      .title Création de journaux comptables
+    .step{ class: ('active' if controller_name == 'orders') }
+      .number Etape 5
+      .title Commandes Kits/scanner
+    .step{ class: ('active' if controller_name.in?(%w(retrievers retriever_transactions retrieved_banking_operations retrieved_documents bank_accounts'))) }
+      .number Etape 6
+      .title Création automate
+    .step{ class: ('active' if controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))) }
+      .number Etape 7
+      .title Outils GED

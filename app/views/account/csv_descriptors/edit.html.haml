@@ -1,7 +1,13 @@
 #csv_descriptors.edit
-  .row-fluid
-    .span12.box
-      %h3 Edition du format d’export .csv du client: #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')}
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition du format d’export .csv du client: #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')}
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        %h3 Format d’export .csv
 
   .row-fluid
     .span8.box

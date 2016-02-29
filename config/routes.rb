@@ -79,6 +79,7 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
       end
       resources :customers do
+        get   'info',                    on: :collection
         get   'search_by_code',          on: :collection
         get   'edit_ibiza',              on: :member
         patch 'update_ibiza',            on: :member
@@ -92,8 +93,9 @@ Idocus::Application.routes.draw do
         patch 'close_account',           on: :member
         get   'account_reopen_confirm',  on: :member
         patch 'reopen_account',          on: :member
+        get   'next_step',               on: :member
         resources :addresses, controller: 'customer_addresses'
-        resource :accounting_plan do
+        resource :accounting_plan, except: %w(new create destroy) do
           member do
             patch  :import
             delete :destroy_providers
@@ -104,16 +106,17 @@ Idocus::Application.routes.draw do
             patch 'update_multiple', on: :collection
           end
         end
-        resources :bank_accounts, only: %w(edit update), module: 'organization'
         resources :exercises
         resources :journals, except: %w(index show) do
           get  'select', on: :collection
           post 'copy',   on: :collection
         end
+        resources :list_journals, only: %w(index)
         resource :csv_descriptor do
           patch 'activate',   on: :member
           patch 'deactivate', on: :member
         end
+        resource :use_csv_descriptor, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|

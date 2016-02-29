@@ -1,0 +1,19 @@
+#info
+  .row-fluid
+    .span12.box
+      %h3 Page d’accueil de création d’un dossier
+  .row-fluid
+    .span12.box
+      Bienvenu sur l’assistant création de dossier. Vous allez pouvoir créer votre dossier client en suivant les étapes qui vous aideront à bien paramétrer votre dossier.
+      %br
+      %br
+      Certaines étapes sont obligatoires, d’autres peuvent être terminées plus tard. A chaque fin de page, merci de cliquer sur Etape suivante ou Terminer plus tard.
+      %br
+      %br
+      Vous ne pourrez passer à l’Etape suivante que si tous les champs sont bien renseignés.
+      %br
+      %br
+      Bonne configuration!
+      %br
+      %br
+      = link_to t('actions.next_step'), new_account_organization_customer_path(@organization), class: 'btn btn-primary'

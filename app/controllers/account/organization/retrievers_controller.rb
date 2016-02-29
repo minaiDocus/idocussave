@@ -1,6 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::RetrieversController < Account::OrganizationController
-  before_filter :load_customer
+class Account::Organization::RetrieversController < Account::Organization::FiduceoController
   before_filter :load_fiduceo_retriever, except: %w(index list new create)
   before_filter :load_providers_and_banks, only: %w(list new create edit update)
 
@@ -119,11 +118,6 @@ private
     else
       params.require(:fiduceo_retriever).permit(:provider_id, :bank_id, :type, :service_name, :journal_id, :name, :login, :pass, :param1, :param2, :param3, :is_active)
     end
-  end
-
-  def load_customer
-    @customer = customers.find_by_slug! params[:customer_id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
   end
 
   def load_fiduceo_retriever

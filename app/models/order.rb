@@ -8,6 +8,7 @@ class Order
   belongs_to :user
   belongs_to :period
   embeds_one :address, as: :locatable
+  embeds_one :paper_return_address, as: :locatable, class_name: 'Address'
 
   field :state,                 type: String, default: 'pending'
   field :type
@@ -37,7 +38,7 @@ class Order
   validate :inclusion_of_paper_set_start_date,                             if: Proc.new { |o| o.paper_set? }
   validate :inclusion_of_paper_set_end_date,                               if: Proc.new { |o| o.paper_set? }
 
-  accepts_nested_attributes_for :address
+  accepts_nested_attributes_for :address, :paper_return_address
 
   scope :dematboxes, -> { where(type: 'dematbox') }
   scope :paper_sets, -> { where(type: 'paper_set') }

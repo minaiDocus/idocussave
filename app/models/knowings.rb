@@ -53,9 +53,10 @@ class Knowings
     self.is_active
   end
 
-  def is_configured?
+  def configured?
     configuration_valid?
   end
+  alias :is_configured? :configured?
 
   def ready?
     is_configured? && active?

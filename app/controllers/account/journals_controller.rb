@@ -3,6 +3,7 @@ class Account::JournalsController < Account::OrganizationController
   before_filter :load_customer, except: %w(index)
   before_filter :verify_rights
   before_filter :verify_if_customer_is_active
+  before_filter :redirect_to_current_step
   before_filter :load_journal, only: %w(edit update destroy)
   before_filter :verify_max_number, only: %w(new create select copy)
 

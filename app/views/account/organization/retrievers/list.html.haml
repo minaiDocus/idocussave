@@ -1,7 +1,12 @@
+- unless @customer.configured?
+  = render 'account/customers/steps'
+
 .row-fluid
-  .box
+  .span12.box
     %h3 Liste des automates disponibles pour le client : #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
-  .box
+
+.row-fluid
+  .span12.box
     .row-fluid
       .span6
         %h3 Documents (#{@providers.size})

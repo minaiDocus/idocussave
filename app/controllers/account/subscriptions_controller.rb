@@ -3,6 +3,7 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_customer
   before_filter :verify_if_customer_is_active
+  before_filter :redirect_to_current_step
   before_filter :load_subscription
 
   def edit
@@ -12,9 +13,14 @@ class Account::SubscriptionsController < Account::OrganizationController
   def update
     subscription_form = SubscriptionForm.new(@subscription, @user, request)
     if subscription_form.submit(params[:subscription])
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
+      else
+        next_configuration_step
+      end
     else
+      flash[:error] = 'Vous devez sélectionner un forfait.'
       render :edit
     end
   end

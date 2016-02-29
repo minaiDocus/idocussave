@@ -1,12 +1,22 @@
 #exercises
-  .row-fluid
-    .span12.box
-      .row-fluid
-        .span12
-          .pull-left
-            %h3 Exercices comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
-          .pull-right
-            = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span12
+            .pull-left
+              %h3 Exercices comptable du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'others')}
+            .pull-right
+              = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'
+  - else
+    = render 'account/customers/steps'
+    .row-fluid
+      .span12.box
+        .row-fluid
+          .span6
+            %h3 Exercices comptables
+          .span6.alignright
+            = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box
@@ -24,3 +34,6 @@
             %td
               = icon_link_to edit_account_organization_customer_exercise_path(@organization, @customer, exercise), { icon: 'edit' }, { class: 'btn btn-mini' }
               = icon_link_to account_organization_customer_exercise_path(@organization, @customer, exercise), { icon: 'remove' }, { class: 'btn btn-mini', data: { method: 'DELETE', confirm: t('actions.confirm') } }
+      - unless @customer.configured?
+        .pull-right.margin2top
+          = link_to icon_new + ' Nouveau', new_account_organization_customer_exercise_path(@organization, @customer), class: 'btn btn-primary'

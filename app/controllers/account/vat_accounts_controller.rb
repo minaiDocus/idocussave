@@ -2,6 +2,7 @@
 class Account::VatAccountsController < Account::OrganizationController
   before_filter :load_customer
   before_filter :verify_if_customer_is_active
+  before_filter :redirect_to_current_step
   before_filter :load_accounting_plan
   before_filter :verify_rights
 
