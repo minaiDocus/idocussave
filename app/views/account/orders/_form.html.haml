@@ -67,4 +67,4 @@
       = f.submit 'Commander', class: 'btn btn-primary'
       = link_to 'Annuler', account_organization_customer_orders_path(@organization, @customer), class: 'btn'
     - else
-      = f.submit t('actions.next_step'), class: 'btn btn-primary'
+      = f.submit t('actions.' + (last_step? ? 'finish' : 'next_step')), class: 'btn btn-primary'

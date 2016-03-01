@@ -6,7 +6,7 @@
         .span6
           %h3 Création des journaux comptables
         .span6.alignright
-          = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+          = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box

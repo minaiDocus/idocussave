@@ -53,6 +53,7 @@ protected
   end
 
   def next_configuration_step
+    was_last_step = last_step?
     @customer.current_configuration_step = case @customer.current_configuration_step
     when 'account'
       'subscription'
@@ -127,6 +128,7 @@ protected
     if @customer.current_configuration_step
       redirect_to step_path(@customer.current_configuration_step)
     else
+      flash[:success] = 'Dossier configuré avec succès.' if was_last_step
       redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
@@ -163,6 +165,30 @@ protected
       controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))
     end
   end
+
+  def last_step?
+    case @customer.current_configuration_step
+    when 'journals'
+      !@customer.subscription.is_mail_package_active &&
+      !@customer.subscription.is_scan_box_package_active &&
+      !@customer.subscription.is_retriever_package_active &&
+      !@organization.knowings.try(:configured?)
+    when 'order_paper_set'
+      !@customer.subscription.is_scan_box_package_active &&
+      !@customer.subscription.is_retriever_package_active &&
+      !@organization.knowings.try(:configured?)
+    when 'order_dematbox'
+      !@customer.subscription.is_retriever_package_active &&
+      !@organization.knowings.try(:configured?)
+    when 'retrievers'
+      !@organization.knowings.try(:configured?)
+    when 'ged'
+      true
+    else
+      false
+    end
+  end
+  helper_method :last_step?
 
   def step_path(step)
     case step
