@@ -39,8 +39,6 @@
         %b.caret
       %ul.dropdown-menu
         %li= link_to 'Tâches', '/admin/delayed_job'
-        %li{ class: ('active' if params[:controller].in? %w(admin/products admin/product_options admin/product_groups)) }
-          = link_to 'Produits', admin_products_path
         %li{ class: ('active' if controller_name == 'emailed_documents') }
           = link_to 'Récéptions Mail', admin_emailed_documents_path
         %li{ class: ('active' if controller_name == 'cms_images') }

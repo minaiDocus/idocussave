@@ -1,9 +1,0 @@
-.row-fluid
-  .span12.panel
-    = simple_form_for [:admin, @product], html: { class: 'form form-horizontal margin2top' } do |f|
-      = f.input :title
-      = f.input :position, as: :integer
-      = f.input :period_duration, collection: [['Mensuel', 1], ['Trimestriel', 3], ['Annuel', 12]], include_blank: false
-      .form-actions.margin0bottom
-        = f.submit t('actions.submit'), class: 'btn btn-primary'
-        = link_to t('actions.cancel'), admin_products_path, class: 'btn'

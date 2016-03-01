@@ -261,15 +261,9 @@ Idocus::Application.routes.draw do
       post 'download',    on: :collection
     end
     resources :cms_images
-    resources :products, except: 'show' do
-      get  'propagation_options', on: :collection
-      post 'propagate',           on: :collection
-    end
     get 'subscriptions', controller: 'subscriptions', action: 'index'
     get 'orders', controller: 'orders', action: 'index'
     resources :subscription_options, except: %w(index show)
-    resources :product_options, except: %w(index show)
-    resources :product_groups, except: %w(index show)
     resources :events, only: %w(index show)
     resources :gray_labels
     resources :scanning_providers

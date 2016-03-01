@@ -24,24 +24,6 @@ FactoryGirl.define do
     end
   end
 
-  factory Product do
-    sequence(:title) { |n| "product_title_#{n}" }
-    sequence(:position) { |n| n }
-  end
-
-   factory ProductGroup do
-    sequence(:name) { |n| "product_group_name_#{n}" }
-    sequence(:title) { |n| "product_group_title_#{n}" }
-    sequence(:position) { |n| n }
-  end
-
-  factory ProductOption do
-    sequence(:name) { |n| "product_option_name_#{n}" }
-    sequence(:title) { |n| "product_option_title_#{n}" }
-    sequence(:price_in_cents_wo_vat) { |n| n*100+100 }
-    sequence(:position) { |n| n }
-  end
-
   factory PeriodDocument do
     sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
   end

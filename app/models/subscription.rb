@@ -10,7 +10,6 @@ class Subscription
   has_many :periods
   has_many :documents, class_name: 'PeriodDocument'
   has_many :invoices
-  has_and_belongs_to_many :old_options, class_name: 'ProductOption', inverse_of: :subscribers # TODO remove me after migration
   has_and_belongs_to_many :options, class_name: 'SubscriptionOption', inverse_of: :subscribers
 
   field :period_duration, type: Integer, default: 1
