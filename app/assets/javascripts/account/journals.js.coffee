@@ -42,6 +42,8 @@ form_to_wizard = ->
       create_prev_button(i)
       create_next_button(i, count)
 
+    $(this).show()
+
 jQuery ->
   if $('#journal form').length > 0
     if $('#journal.new form').length > 0
