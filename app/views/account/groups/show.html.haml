@@ -10,22 +10,26 @@
               = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_group_path(@organization, @group), class: 'btn btn-primary'
 
   .row-fluid
-    .span6.box
+    .span4.box
+      %h4.margin1bottom Informations
       %table.table.table-condensed.table-bordered.table-striped.margin0bottom
-        %thead
-          %tr
-            %th{ colspan: 2 }
-              %h3.aligncenter Informations
         %tbody
+          %tr
+            %th= t('mongoid.models.common.attributes.created_at')
+            %td= l @group.created_at
           %tr
             %th= t('mongoid.models.group.attributes.name')
             %td= @group.name
           %tr
             %th= t('mongoid.models.group.attributes.description')
             %td= @group.description
-          %tr
-            %th= t('mongoid.models.group.attributes.collaborators_count')
-            %td= @group.collaborators.count
-          %tr
-            %th= t('mongoid.models.group.attributes.customers_count')
-            %td= @group.customers.count
+    .span4.box
+      %h4.margin1bottom Liste des collaborateurs (#{@group.collaborators.count})
+      %ul
+        - @group.collaborators.asc(:code).each do |collaborator|
+          %li= collaborator.info
+    .span4.box
+      %h4.margin1bottom Liste des clients (#{@group.customers.count})
+      %ul
+        - @group.customers.asc(:code).each do |customer|
+          %li= customer.info
