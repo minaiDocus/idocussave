@@ -5,19 +5,24 @@
 
   .row-fluid
     .span12.panel
-      %h4 Forfaits
-      .aligncenter
-        %b{ style: 'font-size: 18px;' } -> En cours de construction <-
-      .well.margin2top
-        %b iDo'Basique
-      .well
-        %b iDo'Courrier
-      .well
-        %b iDo'Box
-      .well
-        %b iDo'FacBanque
-      .well
-        %b Pack Annuel
+      %h4.margin1top.margin1bottom Forfaits
+      %table.table.table-condensed.table-striped.table-bordered
+        %thead
+          %tr
+            %th
+            %th iDo'Basique
+            %th iDo'Courrier
+            %th iDo'Box
+            %th iDo'FacBanque
+            %th Pack Annuel
+        %tbody
+          %tr
+            %th Abonnés
+            %td= @basic_package_count
+            %td= @mail_package_count
+            %td= @scan_box_package_count
+            %td= @retriever_package_count
+            %td= @annual_package_count
 
   .row-fluid
     .span12.panel
