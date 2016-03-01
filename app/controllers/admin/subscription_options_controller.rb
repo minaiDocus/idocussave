@@ -21,6 +21,11 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
 
   def update
     if @subscription_option.update(subscription_option_params)
+      @subscription_option.subscribers.each do |subscription|
+        if subscription.owner.try(:active?)
+          UpdatePeriod.new(subscription.current_period).delay(priority: 0).execute
+        end
+      end
       flash[:notice] = 'Modifié avec succès.'
       redirect_to admin_subscriptions_path
     else

@@ -109,4 +109,8 @@ class Subscription
   def light_package?
     !is_annual_package_active
   end
+
+  def owner
+    user || organization
+  end
 end

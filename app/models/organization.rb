@@ -111,6 +111,14 @@ class Organization
     self.name
   end
 
+  def active?
+    is_active
+  end
+
+  def inactive?
+    !is_active
+  end
+
   def find_or_create_file_sending_kit
     self.file_sending_kit ||= FileSendingKit.create(organization_id: self.id)
   end
