@@ -11,10 +11,12 @@ private
   def sort_column
     params[:sort] || 'created_at'
   end
+  helper_method :sort_column
 
   def sort_direction
     params[:direction] || 'desc'
   end
+  helper_method :sort_direction
 
   def order_contains
     @contains ||= {}
@@ -32,6 +34,7 @@ private
     end
     @contains
   end
+  helper_method :order_contains
 
   def search(contains)
     orders = Order.all

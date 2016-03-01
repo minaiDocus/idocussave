@@ -12,10 +12,12 @@ private
   def sort_column
     params[:sort] || 'date'
   end
+  helper_method :sort_column
 
   def sort_direction
     params[:direction] || 'desc'
   end
+  helper_method :sort_direction
 
   def banking_operation_contains
     @contains ||= {}

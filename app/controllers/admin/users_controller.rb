@@ -89,10 +89,12 @@ private
   def sort_column
     params[:sort] || 'created_at'
   end
+  helper_method :sort_column
 
   def sort_direction
     params[:direction] || 'desc'
   end
+  helper_method :sort_direction
 
   def user_contains
     @contains ||= {}
@@ -110,6 +112,7 @@ private
     end
     @contains
   end
+  helper_method :user_contains
 
   def search(contains)
     users = User.not_operators
