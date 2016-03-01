@@ -3,7 +3,7 @@ class DropboxImportFolder
   class << self
     def check
       DropboxBasic.all.entries.each do |dropbox|
-        if dropbox.is_used? && dropbox.is_configured? && dropbox.user.options.try(:upload_authorized?)
+        if dropbox.is_used? && dropbox.is_configured? && (dropbox.user.is_prescriber || dropbox.user.options.try(:upload_authorized?))
           if dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
             begin
               new(dropbox).check
@@ -31,7 +31,7 @@ class DropboxImportFolder
       end
       users.each do |user|
         dropbox = user.external_file_storage.try(:dropbox_basic)
-        if dropbox && dropbox.is_used? && dropbox.is_configured? && user.options.try(:upload_authorized?)
+        if dropbox && dropbox.is_used? && dropbox.is_configured? && (dropbox.user.is_prescriber || dropbox.user.options.try(:upload_authorized?))
           dropbox.update_attribute(:changed_at, Time.now)
         end
       end
