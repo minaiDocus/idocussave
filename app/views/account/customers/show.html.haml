@@ -16,9 +16,6 @@
               - if @customer.options.is_upload_authorized
                 %li{ class: ('active' if params[:tab] == 'period_options') }
                   %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
-            - if @organization.ibiza.try(:is_configured?)
-              %li{ class: ('active' if params[:tab] == 'ibiza') }
-                %a{ href: '#ibiza', data: { toggle: 'tab' } } iBiza
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized
@@ -26,7 +23,7 @@
               %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
-              %a{ href: '#compta', data: { toggle: 'tab' } } Outil Comptable
+              %a{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
             - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Divers
@@ -132,30 +129,6 @@
                   .row-fluid
                     .span12
                       = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
-            - if @organization.ibiza.try(:is_configured?)
-              #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
-                %table.table.table-striped.table-condensed
-                  %tbody
-                    %tr
-                      %th= t('mongoid.models.user.attributes.ibiza_id')
-                      - users = @organization.ibiza.users
-                      - if @customer.ibiza_id.nil?
-                        %td
-                          %i Aucun
-                      - elsif users.is_a?(Array)
-                        %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
-                      - elsif users.nil?
-                        %td
-                          %span.label Rafraîchissement en cours
-                      - else
-                        %td
-                          %span.label.label-important Erreur
-                    %tr
-                      %th= t('mongoid.models.user_options.attributes.is_auto_deliver')
-                      %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
-                .row-fluid
-                  .span12
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
               - if @pending_journals.present?
                 .alert
@@ -249,6 +222,30 @@
               .row-fluid
                 .span12
                   = link_to icon_edit + ' ' + t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+              - if @organization.ibiza.try(:configured?)
+                %h4.margin2top.margin1bottom iBiza
+                %table.table.table-striped.table-condensed
+                  %tbody
+                    %tr
+                      %th= t('mongoid.models.user.attributes.ibiza_id')
+                      - users = @organization.ibiza.users
+                      - if @customer.ibiza_id.nil?
+                        %td
+                          %i Aucun
+                      - elsif users.is_a?(Array)
+                        %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
+                      - elsif users.nil?
+                        %td
+                          %span.label Rafraîchissement en cours
+                      - else
+                        %td
+                          %span.label.label-important Erreur
+                    %tr
+                      %th= t('mongoid.models.user_options.attributes.is_auto_deliver')
+                      %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
+                .row-fluid
+                  .span12
+                    = link_to icon_edit + ' ' + t('actions.edit'), edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             - if @organization.ibiza.try(:access_token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid

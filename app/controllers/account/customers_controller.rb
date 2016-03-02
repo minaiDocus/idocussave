@@ -69,7 +69,7 @@ class Account::CustomersController < Account::OrganizationController
           UpdateAccountingPlan.async_execute(@user.id.to_s)
         end
         flash[:success] = 'Modifié avec succès'
-        redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza')
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'compta')
       else
         next_configuration_step
       end
