@@ -100,7 +100,7 @@ class User
 
   field :current_configuration_step
 
-  validates_inclusion_of :current_configuration_step, in: %w(account subscription compta_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
+  validates_inclusion_of :current_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
 
   attr_accessor :is_group_required
 

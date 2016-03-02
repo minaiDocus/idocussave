@@ -84,8 +84,12 @@ class Account::CustomersController < Account::OrganizationController
 
   def update_period_options
     if @customer.update(period_options_params)
-      flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_customer_path(@organization, @customer, tab: 'period_options')
+      if @customer.configured?
+        flash[:success] = 'Modifié avec succès.'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'period_options')
+      else
+        next_configuration_step
+      end
     else
       render 'edit_period_options'
     end

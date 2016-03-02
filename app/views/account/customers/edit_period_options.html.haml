@@ -1,8 +1,14 @@
 #customer.edit_period_options
+  - if @customer.configured?
+    .row-fluid
+      .span12.box
+        %h3 Edition des options des périodes du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'period_options')}
+  - else
+    = render 'steps'
+    .row-fluid
+      .span12.box
+        %h3 Paramètres de téléversement des pièces
   .row-fluid
-    .span12.box
-      %h3 Edition des options des périodes du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'period_options')}
-  .rwo-fluid
     .span12.box
       = simple_form_for @customer, url: update_period_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
         .row-fluid
@@ -12,5 +18,8 @@
             - if @user.is_admin
               = f.input :auth_prev_period_until_month, as: :integer, input_html: { min: 0, max: 2 }, hint: '0 = actuel, 1 = le mois suivant, 2 = dans 2 mois'
         .form-actions.margin0bottom
-          = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'period_options'), class: 'btn'
+          - if @customer.configured?
+            = f.submit t('actions.submit'), class: 'btn btn-primary'
+            = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'period_options'), class: 'btn'
+          - else
+            = f.submit t('actions.next_step'), class: 'btn btn-primary'

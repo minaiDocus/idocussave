@@ -60,14 +60,22 @@ protected
     when 'subscription'
       if @customer.subscription.is_pre_assignment_active
         'compta_options'
+      elsif @customer.options.is_upload_authorized
+        'period_options'
       else
         'journals'
       end
     when 'compta_options'
-      if @organization.ibiza.try(:configured?)
-        'ibiza'
+      'period_options'
+    when 'period_options'
+      if @customer.subscription.is_pre_assignment_active
+        if @organization.ibiza.try(:configured?)
+          'ibiza'
+        else
+          'use_csv_descriptor'
+        end
       else
-        'use_csv_descriptor'
+        'journals'
       end
     when 'use_csv_descriptor'
       if @customer.options.is_own_csv_descriptor_used
@@ -141,6 +149,8 @@ protected
       controller_name == 'subscriptions'
     when 'compta_options'
       controller_name == 'customers' && action_name.in?(%w(edit_compta_options update_compta_options))
+    when 'period_options'
+      controller_name == 'customers' && action_name.in?(%w(edit_period_options update_period_options))
     when 'ibiza'
       controller_name == 'customers' && action_name.in?(%w(edit_ibiza update_ibiza))
     when 'use_csv_descriptor'
@@ -198,6 +208,8 @@ protected
       edit_account_organization_customer_subscription_path(@organization, @customer)
     when 'compta_options'
       edit_compta_options_account_organization_customer_path(@organization, @customer)
+    when 'period_options'
+      edit_period_options_account_organization_customer_path(@organization, @customer)
     when 'ibiza'
       edit_ibiza_account_organization_customer_path(@organization, @customer)
     when 'use_csv_descriptor'
