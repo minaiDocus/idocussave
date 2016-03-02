@@ -1,5 +1,5 @@
 ﻿#subscriptions.edit
-  - if @subscription.configured?
+  - if @customer.configured?
     .row-fluid
       .span12.box
         %h3 Edition de l'abonnement du client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
@@ -166,7 +166,7 @@
           %h4 Prix du forfait avec les options sélectionnées :
           %b.total_price{ style: 'font-size:20px' }
         .form-actions.margin0bottom
-          - if @subscription.configured?
+          - if @customer.configured?
             = f.submit 'Valider', class: 'btn btn-primary'
             = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'subscription'), class: 'btn'
           - else
