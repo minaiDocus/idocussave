@@ -188,8 +188,8 @@ module ApplicationHelper
   def pre_assignment_date_computed_options
     [
       ["Paramètres du cabinet (appliquer la règle définie dans les paramètres du cabinet)", -1],
-      ["Date d’origine (La facture sera saisie à sa date d’origine)", 0],
-      ["Date de la période iDocus (La facture sera saisie au 1er jour du mois/trimestre en cours dans lequel la facture est déposée dans iDocus (Ex: une facture de janvier déposée le 15 novembre sera saisie au 1er novembre)", 1]
+      ["Date d’origine (la facture sera saisie à sa date d’origine)", 0],
+      ["Date de la période iDocus (la facture sera saisie au 1er jour du mois/trimestre en cours dans lequel la facture est déposée dans iDocus, exemple: une facture de janvier déposée le 15 novembre sera saisie au 1er novembre)", 1]
     ]
   end
 

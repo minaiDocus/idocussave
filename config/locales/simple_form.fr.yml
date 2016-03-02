@@ -52,7 +52,7 @@ fr:
         temporary_account: Compte d’attente
         start_date: Date limite de livraison
       user:
-        code: Code
+        code: Code du dossier
         company: Nom de la société
         first_name: Prénom
         last_name: Nom

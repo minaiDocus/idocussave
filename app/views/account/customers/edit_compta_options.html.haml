@@ -12,7 +12,7 @@
     .span12.box
       = simple_form_for @customer, url: update_compta_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|
         = f.simple_fields_for :options do |o|
-          = o.input :is_taxable, collection: [['Oui', true], ['Non (aucune TVA ne sera reportée en pré-affectation)', false]], as: :radio_buttons
+          = o.input :is_taxable, collection: [['Oui', true], ['Non (aucune TVA ne sera reportée en pré-saisie)', false]], as: :radio_buttons
           = o.input :is_pre_assignment_date_computed, collection: pre_assignment_date_computed_options, as: :radio_buttons
         .form-actions.margin0bottom
           - if @customer.configured?

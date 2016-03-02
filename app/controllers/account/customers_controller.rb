@@ -64,14 +64,19 @@ class Account::CustomersController < Account::OrganizationController
     @customer.assign_attributes(ibiza_params)
     is_ibiza_id_changed = @customer.ibiza_id_changed?
     if @customer.save
-      if is_ibiza_id_changed && @user.ibiza_id.present?
-        UpdateAccountingPlan.async_execute(@user.id.to_s)
+      if @customer.configured?
+        if is_ibiza_id_changed && @user.ibiza_id.present?
+          UpdateAccountingPlan.async_execute(@user.id.to_s)
+        end
+        flash[:success] = 'Modifié avec succès'
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza')
+      else
+        next_configuration_step
       end
-      flash[:success] = 'Modifié avec succès'
     else
       flash[:error] = 'Impossible de modifier'
+      render 'edit'
     end
-    redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza')
   end
 
   def edit_period_options
