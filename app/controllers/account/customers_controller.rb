@@ -3,7 +3,7 @@ class Account::CustomersController < Account::OrganizationController
   before_filter :load_customer, except: %w(index info new create search_by_code)
   before_filter :verify_rights, except: 'index'
   before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
-  before_filter :redirect_to_current_step, except: %w(next_step previous_step)
+  before_filter :redirect_to_current_step
 
   def index
     respond_to do |format|
@@ -158,22 +158,6 @@ class Account::CustomersController < Account::OrganizationController
 
     respond_to do |format|
       format.json{ render json: tags.to_json, status: :ok }
-    end
-  end
-
-  def next_step
-    if @customer.configured?
-      redirect_to account_organization_customer_path(@organization, @customer)
-    else
-      next_configuration_step
-    end
-  end
-
-  def previous_step
-    if @customer.configured?
-      redirect_to account_organization_customer_path(@organization, @customer)
-    else
-      previous_configuration_step
     end
   end
 

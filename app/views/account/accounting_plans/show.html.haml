@@ -11,8 +11,8 @@
           .span6
             %h3 Plan comptable
           .span6.alignright
-            = link_to t('actions.previous_step'), previous_step_account_organization_customer_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.next_step'), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+            = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span6.box

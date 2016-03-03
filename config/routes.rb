@@ -93,8 +93,12 @@ Idocus::Application.routes.draw do
         patch 'close_account',           on: :member
         get   'account_reopen_confirm',  on: :member
         patch 'reopen_account',          on: :member
-        get   'next_step',               on: :member
-        get   'previous_step',           on: :member
+        resource :setup, only: [] do
+          member do
+            get 'next'
+            get 'previous'
+          end
+        end
         resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan, except: %w(new create destroy) do
           member do
