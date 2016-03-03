@@ -71,8 +71,12 @@ class Account::OrdersController < Account::OrganizationController
         OrderPaperSet.new(@customer, @order, true).execute
       end
       copy_back_address
-      flash[:success] = 'Votre commande a été modifiée avec succès.'
-      redirect_to account_organization_customer_orders_path(@organization, @customer)
+      if @customer.configured?
+        flash[:success] = 'Votre commande a été modifiée avec succès.'
+        redirect_to account_organization_customer_orders_path(@organization, @customer)
+      else
+        next_configuration_step
+      end
     else
       render action: :edit
     end

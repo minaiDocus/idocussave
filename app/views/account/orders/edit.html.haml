@@ -1,4 +1,6 @@
 #order.edit
+  - unless @customer.configured?
+    = render 'account/customers/steps'
   .row-fluid
     .span12.box
       %h3
@@ -7,7 +9,8 @@
           commande du scanner iDocus’Box
         - else
           commande de Kit envoi courrier
-        pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
+        - if @customer.configured?
+          pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
 
   .row-fluid
     .span12.box

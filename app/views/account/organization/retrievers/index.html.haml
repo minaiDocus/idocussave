@@ -8,6 +8,7 @@
         .span6
           %h3 Création automate
         .span6.alignright
+          = link_to t('actions.previous_step'), previous_step_account_organization_customer_path(@organization, @customer), class: 'btn'
           = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_step_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
 
 .row-fluid

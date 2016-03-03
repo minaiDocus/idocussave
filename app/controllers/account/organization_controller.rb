@@ -141,6 +141,79 @@ protected
     end
   end
 
+  def previous_configuration_step
+    @customer.current_configuration_step = case @customer.current_configuration_step
+    when 'ged'
+      if @customer.subscription.is_retriever_package_active
+        'retrievers'
+      elsif @customer.subscription.is_scan_box_package_active
+        'order_dematbox'
+      elsif @customer.subscription.is_mail_package_active
+        'order_paper_set'
+      else
+        'journals'
+      end
+    when 'retrievers'
+      if @customer.subscription.is_scan_box_package_active
+        'order_dematbox'
+      elsif @customer.subscription.is_mail_package_active
+        'order_paper_set'
+      else
+        'journals'
+      end
+    when 'order_dematbox'
+      if @customer.subscription.is_mail_package_active
+        'order_paper_set'
+      else
+        'journals'
+      end
+    when 'order_paper_set'
+      'journals'
+    when 'journals'
+      if @customer.subscription.is_pre_assignment_active
+        if @organization.ibiza.try(:configured?)
+          'ibiza'
+        else
+          'exercises'
+        end
+      elsif @customer.options.is_upload_authorized
+        'period_options'
+      else
+        'subscription'
+      end
+    when 'ibiza'
+      'period_options'
+    when 'exercises'
+      'vat_accounts'
+    when 'vat_accounts'
+      'accounting_plans'
+    when 'accounting_plans'
+      if @customer.options.is_own_csv_descriptor_used
+        'csv_descriptor'
+      else
+        'use_csv_descriptor'
+      end
+    when 'csv_descriptor'
+      'use_csv_descriptor'
+    when 'use_csv_descriptor'
+      'period_options'
+    when 'period_options'
+      if @customer.subscription.is_pre_assignment_active
+        'compta_options'
+      else
+        'subscription'
+      end
+    when 'compta_options'
+      'subscription'
+    when 'subscription'
+      'subscription'
+    when 'account'
+      'account'
+    end
+    @customer.save
+    redirect_to step_path(@customer.current_configuration_step)
+  end
+
   def current_step?
     case @customer.current_configuration_step
     when 'account'
@@ -166,9 +239,9 @@ protected
     when 'journals'
       controller_name.in?(%w(journals list_journals))
     when 'order_paper_set'
-      controller_name == 'orders' && action_name.in?(%w(new create)) && params[:order][:type] == 'paper_set'
+      controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'paper_set') || action_name.in?(%w(edit update)))
     when 'order_dematbox'
-      controller_name == 'orders' && action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox'
+      controller_name == 'orders' && ((action_name.in?(%w(new create)) && params[:order][:type] == 'dematbox') || action_name.in?(%w(edit update)))
     when 'retrievers'
       controller_name.in?(%w(retrievers retriever_transactions retrieved_banking_operations retrieved_documents bank_accounts')) && params[:customer_id].present?
     when 'ged'
@@ -225,9 +298,19 @@ protected
     when 'journals'
       account_organization_customer_list_journals_path(@organization, @customer)
     when 'order_paper_set'
-      new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' })
+      order = @customer.orders.paper_sets.pending.first
+      if order
+        edit_account_organization_customer_order_path(@organization, @customer, order)
+      else
+        new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' })
+      end
     when 'order_dematbox'
-      new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' })
+      order = @customer.orders.dematboxes.pending.first
+      if order
+        edit_account_organization_customer_order_path(@organization, @customer, order)
+      else
+        new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' })
+      end
     when 'retrievers'
       account_organization_customer_fiduceo_retrievers_path(@organization, @customer)
     when 'ged'

@@ -14,4 +14,5 @@
         = f.simple_fields_for :options do |o|
           = o.input :is_own_csv_descriptor_used, as: :radio_buttons
         .form-actions.margin0bottom
+          = link_to t('actions.previous_step'), previous_step_account_organization_customer_path(@organization, @customer), class: 'btn'
           = f.submit t('actions.next_step'), class: 'btn btn-primary'

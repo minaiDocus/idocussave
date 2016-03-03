@@ -13,6 +13,22 @@ class Account::SubscriptionsController < Account::OrganizationController
   def update
     subscription_form = SubscriptionForm.new(@subscription, @user, request)
     if subscription_form.submit(params[:subscription])
+      unless @subscription.is_mail_package_active
+        paper_set_orders = @customer.orders.paper_sets.pending
+        if paper_set_orders.any?
+          paper_set_orders.each do |order|
+            DestroyOrder.new(order).execute
+          end
+        end
+      end
+      unless @subscription.is_scan_box_package_active
+        dematbox_orders = @customer.orders.dematboxes.pending
+        if dematbox_orders.any?
+          dematbox_orders.each do |order|
+            DestroyOrder.new(order).execute
+          end
+        end
+      end
       if @customer.configured?
         flash[:success] = 'Modifié avec succès.'
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')

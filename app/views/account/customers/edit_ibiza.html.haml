@@ -29,4 +29,5 @@
             = f.submit t('actions.submit'), class: 'btn btn-primary'
             = link_to t('actions.cancel'), account_organization_customer_path(@organization, @customer, tab: 'compta'), class: 'btn'
           - else
+            = link_to t('actions.previous_step'), previous_step_account_organization_customer_path(@organization, @customer), class: 'btn'
             = f.submit t('actions.next_step'), class: 'btn btn-primary'
