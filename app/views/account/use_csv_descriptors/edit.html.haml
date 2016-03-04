@@ -15,4 +15,5 @@
           = o.input :is_own_csv_descriptor_used, as: :radio_buttons
         .form-actions.margin0bottom
           = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
           = f.submit t('actions.next_step'), class: 'btn btn-primary'

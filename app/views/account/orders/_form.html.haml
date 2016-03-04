@@ -68,4 +68,6 @@
       = link_to 'Annuler', account_organization_customer_orders_path(@organization, @customer), class: 'btn'
     - else
       = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+      - unless last_step?
+        = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
       = f.submit t('actions.' + (last_step? ? 'finish' : 'next_step')), class: 'btn btn-primary'

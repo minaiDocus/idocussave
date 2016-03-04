@@ -97,6 +97,8 @@ Idocus::Application.routes.draw do
           member do
             get 'next'
             get 'previous'
+            get 'resume'
+            get 'complete_later'
           end
         end
         resources :addresses, controller: 'customer_addresses'

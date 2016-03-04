@@ -99,8 +99,9 @@ class User
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
 
   field :current_configuration_step
+  field :last_configuration_step
 
-  validates_inclusion_of :current_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
+  validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
 
   attr_accessor :is_group_required
 
