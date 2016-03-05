@@ -53,6 +53,7 @@
           = builder.input :address_2, label: 'Adresse (suite)'
           = builder.input :city, label: 'Ville', required: true
           = builder.input :zip, label: 'Code postal', required: true
+        = link_to "Copier l'adresse livraison de kit", '#', class: 'copy_address btn'
     %hr
     .aligncenter
       %h4 Total de la commande :

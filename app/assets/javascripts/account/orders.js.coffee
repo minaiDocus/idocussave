@@ -54,3 +54,13 @@ jQuery ->
 
     $('select').on 'change', ->
       update_price()
+
+    $('.copy_address').on 'click', (e) ->
+      e.preventDefault()
+      $('#order_paper_return_address_attributes_company').val($('#order_address_attributes_company').val())
+      $('#order_paper_return_address_attributes_last_name').val($('#order_address_attributes_last_name').val())
+      $('#order_paper_return_address_attributes_first_name').val($('#order_address_attributes_first_name').val())
+      $('#order_paper_return_address_attributes_address_1').val($('#order_address_attributes_address_1').val())
+      $('#order_paper_return_address_attributes_address_2').val($('#order_address_attributes_address_2').val())
+      $('#order_paper_return_address_attributes_city').val($('#order_address_attributes_city').val())
+      $('#order_paper_return_address_attributes_zip').val($('#order_address_attributes_zip').val())
