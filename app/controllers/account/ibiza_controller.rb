@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::IbizaController < Account::OrganizationController
-  before_filter :verify_rights, except: :refresh_users_cache
+  before_filter :verify_rights
   before_filter :load_ibiza, except: :create
 
   def create
@@ -30,16 +30,6 @@ class Account::IbizaController < Account::OrganizationController
     else
       render 'edit'
     end
-  end
-
-  def refresh_users_cache
-    if @ibiza.try(:is_configured?)
-      @ibiza.flush_users_cache
-      @ibiza.get_users_only_once
-      flash[:success] = 'Rafraîchissement de la liste des dossiers iBiza en cours.'
-    end
-    path = params[:back].present? ? params[:back] : account_organization_path
-    redirect_to path
   end
 
 private

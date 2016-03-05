@@ -151,9 +151,8 @@ Idocus::Application.routes.draw do
         get   'select_options',    on: :collection
         patch 'propagate_options', on: :collection
       end
-      resource :ibiza, controller: 'ibiza', only: %w(create edit update) do
-        get 'refresh_users_cache', on: :member
-      end
+      resource :ibiza, controller: 'ibiza', only: %w(create edit update)
+      resources :ibiza_users, only: 'index'
       resources :pre_assignments, only: :index
       resources :pre_assignment_delivery_errors, only: :index
       resources :pack_reports, only: :index do
