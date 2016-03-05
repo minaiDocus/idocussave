@@ -22,6 +22,11 @@ class Account::AccountingPlansController < Account::OrganizationController
     end
   end
 
+  def import_model
+    data = "NOM_TIERS;COMPTE_TIERS;COMPTE_CONTREPARTIE;CODE_TVA\n"
+    send_data(data, type: 'plain/text', filename: "modèle d'import.csv")
+  end
+
   def import
     if params[:providers_file]
       file = params[:providers_file]

@@ -104,6 +104,7 @@ Idocus::Application.routes.draw do
         resources :addresses, controller: 'customer_addresses'
         resource :accounting_plan, except: %w(new create destroy) do
           member do
+            get    :import_model
             patch  :import
             delete :destroy_providers
             delete :destroy_customers
