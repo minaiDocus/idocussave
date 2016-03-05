@@ -151,6 +151,7 @@ private
       :city,
       :zip,
       :building,
+      :place_called_or_postal_box,
       :door_code,
       :other
     ]

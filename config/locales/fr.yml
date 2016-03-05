@@ -377,7 +377,8 @@ fr:
           zip: Code postal
           state: Etat
           phone: Tél fixe ou mobile
-          building: Bâtiment
+          building: Bâtiment et appartement
+          place_called_or_postal_box: Lieu-dit ou BP
           door_code: Digicode
           other: Autre (sonnerie, concierge...)
           billing: Facturation

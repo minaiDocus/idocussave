@@ -16,10 +16,11 @@
           = builder.input :company, label: 'Nom de la société', required: true
           = builder.input :company_number, label: 'N° de Siret', required: true
         .span6
-          = builder.input :address_1, label: 'Rue', required: true
+          = builder.input :address_1, label: 'N° et libellé de la voie', required: true
+          = builder.input :place_called_or_postal_box, label: 'Lieu-dit ou BP'
           = builder.input :zip, label: 'Code postal', required: true
           = builder.input :city, label: 'Ville', required: true
-          = builder.input :building, label: 'Bâtiment'
+          = builder.input :building, label: 'Bâtiment et appartement'
           = builder.input :door_code, label: 'Digicode'
           = builder.input :other, label: 'Autre (sonnerie, concierge...)'
   - else

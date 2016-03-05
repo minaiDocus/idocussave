@@ -17,13 +17,15 @@
     %br
     Adresse de livraison:
     %br
-    Rue: #{@address.address_1}
+    N° et libellé de la voie: #{@address.address_1}
+    %br
+    Lieu-dit ou BP: #{@address.place_called_or_postal_box}
     %br
     Code postal: #{@address.zip}
     %br
     Ville: #{@address.city}
     %br
-    Bâtiment: #{@address.building}
+    Bâtiment et appartement: #{@address.building}
     %br
     Digicode: #{@address.door_code}
     %br

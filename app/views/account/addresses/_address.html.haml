@@ -47,6 +47,10 @@
       %tr
         %th= t('mongoid.models.address.attributes.address_2')
         %td= address.address_2
+      - if address.is_for_dematbox_shipping && (!single || type == 'dematbox_shipping')
+        %tr
+          %th= t('mongoid.models.address.attributes.place_called_or_postal_box')
+          %td= address.place_called_or_postal_box
       %tr
         %th= t('mongoid.models.address.attributes.city')
         %td= address.city
