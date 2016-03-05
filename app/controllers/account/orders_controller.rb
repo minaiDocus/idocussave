@@ -171,17 +171,15 @@ private
       :paper_set_folder_count,
       :paper_set_start_date,
       :paper_set_end_date,
-      address_attributes: address_attributes
+      address_attributes: address_attributes,
+      paper_return_address_attributes: address_attributes
     ]
-    attributes << { paper_return_address_attributes: address_attributes } unless @customer.configured?
     attributes << :type if action_name.in?(%w(new create))
     params.require(:order).permit(*attributes)
   end
 
   def copy_back_address
-    if @order.paper_set? && !@customer.configured?
-      copy_back_paper_return_address
-    end
+    copy_back_paper_return_address if @order.paper_set?
     if @order.dematbox?
       address = @customer.dematbox_shipping_address
     else

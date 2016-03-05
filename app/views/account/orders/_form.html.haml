@@ -26,18 +26,14 @@
     .aligncenter.margin2bottom
       %b Commande d’un kit complet pour envoi du courrier à iDocus
     .row-fluid
-      %div{ class: (@customer.configured? ? 'span6' : 'span4') }
+      .span4
         = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
         = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
         = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
         = f.input :paper_set_end_date, collection: paper_set_end_date_options(@order), include_blank: false
-      %div{ class: (@customer.configured? ? 'span6' : 'span4') }
+      .span4
         .address_title
-          %b
-            - if @customer.configured?
-              Adresse de livraison
-            - else
-              Adresse de livraison du kit envoi courrier
+          %b Adresse de livraison du kit envoi courrier
         = f.simple_fields_for :address do |builder|
           = builder.input :company, label: 'Nom de la société'
           = builder.input :last_name, label: 'Nom', required: true
@@ -46,18 +42,17 @@
           = builder.input :address_2, label: 'Adresse (suite)'
           = builder.input :city, label: 'Ville', required: true
           = builder.input :zip, label: 'Code postal', required: true
-      - unless @customer.configured?
-        .span4
-          .address_title
-            %b Adresse de retour des papiers numérisés
-          = f.simple_fields_for :paper_return_address do |builder|
-            = builder.input :company, label: 'Nom de la société'
-            = builder.input :last_name, label: 'Nom', required: true
-            = builder.input :first_name, label: 'Prénom', required: true
-            = builder.input :address_1, label: 'Adresse', required: true
-            = builder.input :address_2, label: 'Adresse (suite)'
-            = builder.input :city, label: 'Ville', required: true
-            = builder.input :zip, label: 'Code postal', required: true
+      .span4
+        .address_title
+          %b Adresse de retour des papiers numérisés
+        = f.simple_fields_for :paper_return_address do |builder|
+          = builder.input :company, label: 'Nom de la société'
+          = builder.input :last_name, label: 'Nom', required: true
+          = builder.input :first_name, label: 'Prénom', required: true
+          = builder.input :address_1, label: 'Adresse', required: true
+          = builder.input :address_2, label: 'Adresse (suite)'
+          = builder.input :city, label: 'Ville', required: true
+          = builder.input :zip, label: 'Code postal', required: true
     %hr
     .aligncenter
       %h4 Total de la commande :
