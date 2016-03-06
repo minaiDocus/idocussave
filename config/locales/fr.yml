@@ -913,12 +913,12 @@ fr:
           state: Statut
           type: Produit
           price_in_cents_wo_vat: Prix (en centimes)
-          vat_ratio: ratio TVA
-          dematbox_count: nombre d'iDocus'Box
-          kit_casing_size: Taille d'enveloppe
-          kit_folder_count: Nombre de chemise
-          kit_start_date: Date de début
-          kit_end_date: Date de fin
+          vat_ratio: Ratio TVA
+          dematbox_count: Nombre d'iDocus'Box
+          paper_set_casing_size: Taille d'enveloppe
+          paper_set_folder_count: Nombre de chemise
+          paper_set_start_date: Date de début
+          paper_set_end_date: Date de fin
     state_machines:
       fiduceo_retriever:
         states:
