@@ -47,10 +47,6 @@ module Account::OrganizationHelper
     end
   end
 
-  def groups
-    is_leader? ? @organization.groups : @user.groups
-  end
-
   def description_keys(ibiza)
     if ibiza
       used_fields = ibiza.description.select { |k,v| v['is_used'].to_i == 1 || v['is_used'] == true }
