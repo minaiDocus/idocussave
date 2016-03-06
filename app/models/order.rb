@@ -27,7 +27,8 @@ class Order
   validates_inclusion_of :type, in: %w(dematbox paper_set)
   validates_presence_of :price_in_cents_wo_vat
   validates_presence_of :vat_ratio
-  validates_presence_of  :address
+  validates_presence_of :address
+  validates_presence_of :paper_return_address, if: Proc.new { |o| o.paper_set? }
 
   validates_inclusion_of :dematbox_count,         in: [1, 2],              if: Proc.new { |o| o.dematbox? }
   validates_presence_of  :period_duration,                                 if: Proc.new { |o| o.paper_set? }
