@@ -12,13 +12,12 @@
     = render 'account/customers/steps'
     .row-fluid
       .span12.box
-        .row-fluid
-          .span6
-            %h3 Exercices comptables
-          .span6.alignright
-            = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-            = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+        .pull-left
+          %h3 Exercices comptables pour le dossier : #{@customer}
+        .pull-right
+          = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+          = link_to t('actions.next_step'), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
   .row-fluid
     .span12.box

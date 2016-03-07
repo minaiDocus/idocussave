@@ -4,14 +4,12 @@
   = render 'account/customers/steps'
   .row-fluid
     .span12.box
-      .row-fluid
-        .span6
-          %h3 Création automate
-        .span6.alignright
-          = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          - unless last_step?
-            = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
-          = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
+      %h3 Création des automates pour le dossier : #{@customer}
+      .aligncenter.margin1top
+        = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        - unless last_step?
+          = link_to t('actions.complete_later'), complete_later_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
+        = link_to t('actions.' + (last_step? ? 'finish' : 'next_step')), next_account_organization_customer_setup_path(@organization, @customer), class: 'btn btn-primary'
 
 .row-fluid
   .span12.box

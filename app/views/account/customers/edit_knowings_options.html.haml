@@ -7,7 +7,7 @@
     = render 'account/customers/steps'
     .row-fluid
       .span12.box
-        %h3 GED
+        %h3 Configuration de la GED pour le dossier : #{@customer}
   .row-fluid
     .span12.box
       = simple_form_for @customer, url: update_knowings_options_account_organization_customer_path(@organization, @customer), html: { class: 'form form-horizontal margin0' } do |f|

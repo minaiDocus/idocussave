@@ -11,6 +11,8 @@
           commande de Kit envoi courrier
         - if @customer.configured?
           pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
+        - else
+          pour le dossier : #{@customer}
 
   .row-fluid
     .span12.box
