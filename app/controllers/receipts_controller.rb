@@ -19,24 +19,35 @@ class ReceiptsController < PaperProcessesController
 
   def create
     _params = paper_process_params
-    @paper_process = PaperProcess.where(
-      type: 'receipt',
-      tracking_number: _params[:tracking_number]
-    ).first
-    @paper_process ||= PaperProcess.new(type: 'receipt')
-    @paper_process.assign_attributes(_params)
-    if @paper_process.persisted? && @paper_process.valid?
-      session[:receipt_paper_process] = nil
-      @paper_process.save
-      flash[:success] = 'Modifié avec succès.'
-    elsif @paper_process.save
-      session[:receipt_paper_process] = nil
-      @paper_process.user             = User.find_by_code @paper_process.customer_code
-      @paper_process.organization     = @paper_process.user.try(:organization)
-      @paper_process.save
-      flash[:success] = 'Créé avec succès.'
+    user = User.find_by_code _params[:customer_code]
+    if user
+      user.with_lock(timeout: 1, retries: 10, retry_sleep: 0.1) do
+        @paper_process = PaperProcess.where(
+          type: 'receipt',
+          tracking_number: _params[:tracking_number]
+        ).first
+        @paper_process ||= PaperProcess.new(type: 'receipt')
+        @paper_process.assign_attributes(_params)
+        if @paper_process.persisted? && @paper_process.valid?
+          session[:receipt_paper_process] = nil
+          @paper_process.save
+          flash[:success] = 'Modifié avec succès.'
+        elsif @paper_process.save
+          session[:receipt_paper_process] = nil
+          @paper_process.user             = user
+          @paper_process.organization     = user.organization
+          @paper_process.save
+          flash[:success] = 'Créé avec succès.'
+        else
+          session[:receipt_paper_process] = @paper_process
+          flash[:error] = 'Donnée(s) invalide(s).'
+        end
+      end
     else
-      session[:receipt_paper_process] = @paper_process
+      paper_process = PaperProcess.new(type: 'receipt')
+      paper_process.assign_attributes(_params)
+      paper_process.valid?
+      session[:receipt_paper_process] = paper_process
       flash[:error] = 'Donnée(s) invalide(s).'
     end
     redirect_to receipts_path

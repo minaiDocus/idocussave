@@ -3,6 +3,7 @@ class User
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Slug
+  include Mongoid::Locker
   devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
 
   AUTHENTICATION_TOKEN_LENGTH = 20
