@@ -4,7 +4,6 @@ class PackIndexer
   class << self
     def init(pack)
       pack.with_lock(timeout: 1, retries: 100, retry_sleep: 0.01) do
-        pack.reload
         unless pack.is_indexing
           pack.timeless.update_attribute(:is_indexing, true)
           execute(pack.id.to_s)

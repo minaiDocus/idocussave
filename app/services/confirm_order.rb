@@ -19,7 +19,6 @@ class ConfirmOrder
   def execute
     is_confirmed = false
     @order.with_lock(timeout: 2, retries: 20, retry_sleep: 0.1) do
-      @order.reload
       if @order.pending?
         @order.confirm
         is_confirmed = true

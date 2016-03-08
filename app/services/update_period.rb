@@ -8,7 +8,6 @@ class UpdatePeriod
   def execute
     @period.with_lock(timeout: 3, retries: 30, retry_sleep: 0.1) do
       @subscription.reload
-      @period.reload
       @period.duration = @subscription.period_duration
       copyable_keys.each do |key|
         @period[key] = @subscription[key]
