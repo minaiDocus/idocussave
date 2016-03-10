@@ -19,13 +19,13 @@ class OperationService
     bank_accounts.each do |bank_account|
       is_configured = bank_account.configured?
       options = { account_id: bank_account.fiduceo_id }
-      date = bank_account.operations.desc(:date).first.try(:date)
+      date = bank_account.start_date
       if date
-        start_date = date - 60.days
-        if bank_account.start_date && bank_account.start_date > start_date
-          start_date = bank_account.start_date
+        last_operation_date = bank_account.operations.desc(:date).first.try(:date)
+        if last_operation_date && date < (last_operation_date - 60.days)
+          date = last_operation_date - 60.days
         end
-        options[:from_date] = start_date.strftime('%d/%m/%Y')
+        options[:from_date] = date.strftime('%d/%m/%Y')
         options[:to_date]   = Date.today.strftime('%d/%m/%Y')
       end
       operations = FiduceoOperation.new(bank_account.user.fiduceo_id, options).operations || []
