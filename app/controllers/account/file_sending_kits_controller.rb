@@ -27,7 +27,12 @@ class Account::FileSendingKitsController < Account::OrganizationController
         unless client.paper_set_shipping_address && client.paper_return_address
           without_shipping_address << client
         end
-        clients_data << { :user => client, :start_month => params[:users]["#{client.id}"][:start_month].to_i, :offset_month => params[:users]["#{client.id}"][:offset_month].to_i }
+        clients_data << {
+          user: client,
+          start_month: params[:users]["#{client.id}"][:start_month].to_i,
+          offset_month: params[:users]["#{client.id}"][:offset_month].to_i,
+          all_journals: (params[:users]["#{client.id}"][:all_journals] == 'true')
+        }
       end
     end
 

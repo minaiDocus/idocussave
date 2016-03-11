@@ -16,7 +16,7 @@ class Account::OrdersController < Account::OrganizationController
     @order.period_duration = @customer.subscription.period_duration
     if params[:order][:type] == 'paper_set'
       @order.type = 'paper_set'
-      @order.paper_set_folder_count = @customer.options.max_number_of_journals
+      @order.journals = @customer.account_book_types.asc(:name).map(&:name)
       time = Time.now.end_of_year
       case @customer.subscription.period_duration
       when 1
@@ -134,7 +134,7 @@ private
     when 'dematbox'
       dematbox_order_params
     when 'paper_set'
-      paper_set_order_params
+      paper_set_order_params.tap { |e| e['journals'] = e['journals'].map(&:presence).compact }
     end
   end
 
@@ -169,9 +169,9 @@ private
   def paper_set_order_params
     attributes = [
       :paper_set_casing_size,
-      :paper_set_folder_count,
       :paper_set_start_date,
       :paper_set_end_date,
+      journals: [],
       address_attributes: address_attributes,
       paper_return_address_attributes: address_attributes
     ]
