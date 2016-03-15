@@ -10,7 +10,7 @@ class CreatePreAssignmentDeliveryService
   end
 
   def valid?
-    @report.try(:organization).try(:ibiza).try(:is_configured?) &&
+    ibiza.try(:configured?) &&
       (!@is_auto || @report.user.options.auto_deliver?) &&
       @report.user.try(:ibiza_id).present? &&
       !@preseizures.select(&:is_locked).first
@@ -24,14 +24,26 @@ class CreatePreAssignmentDeliveryService
       grouped_preseizures = {}
       if @report.user.options.pre_assignment_date_computed?
         date = DocumentTools.to_period(@report.name)
-        grouped_preseizures = { date => @preseizures }
+        grouped_preseizures = { [date, nil] => @preseizures }
       else
         grouped_preseizures = @preseizures.group_by do |preseizure|
-          preseizure.date.try(:beginning_of_month).try(:to_date) || DocumentTools.to_period(@report.name)
+          date = preseizure.date.try(:beginning_of_month).try(:to_date) || DocumentTools.to_period(@report.name)
+          [date, nil]
         end
       end
 
-      grouped_preseizures.each do |date, preseizures|
+      if ibiza.two_channel_delivery?
+        groups = {}
+        grouped_preseizures.each do |date, channel, preseizures|
+          bank_preseizures = preseizures.select(&:operation)
+          normal_preseizures = preseizures - bank_preseizures
+          groups = groups.merge({ [date, true] => bank_preseizures })   if bank_preseizures.size > 0
+          groups = groups.merge({ [date, nil]  => normal_preseizures }) if normal_preseizures.size > 0
+        end
+        grouped_preseizures = groups
+      end
+
+      grouped_preseizures.each do |date, channel, preseizures|
         delivery = PreAssignmentDelivery.new
         delivery.report       = @report
         delivery.user         = @report.user
@@ -54,5 +66,11 @@ class CreatePreAssignmentDeliveryService
     else
       false
     end
+  end
+
+private
+
+  def ibiza
+    @report.try(:organization).try(:ibiza)
   end
 end

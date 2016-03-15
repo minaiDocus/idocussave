@@ -157,9 +157,13 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('mongoid.models.ibiza.attributes.state')
+                    %th= t('mongoid.models.ibiza.attributes.access_token')
                     %td
-                      %span{ class: "label #{ibiza_state_label(@organization.ibiza)}" }= ibiza_state(@organization.ibiza)
+                      %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state))}" }= ibiza_state(@organization.ibiza.try(:state))
+                  %tr
+                    %th= t('mongoid.models.ibiza.attributes.access_token_2')
+                    %td
+                      %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state_2))}" }= ibiza_state(@organization.ibiza.try(:state_2))
                   %tr
                     %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
                     %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')

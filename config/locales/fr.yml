@@ -555,15 +555,17 @@ fr:
         name: iBiza
         attributes:
           is_auto_deliver: Livraison automatique ?
-          access_token: Jeton d'accès
+          access_token: Jeton d'accès Scan et OCR
           state: Etat
+          access_token_2: Jeton d'accès iDo'FacBanque
+          state_2: Etat
           description: Description
           description_separator: Séparateur du champ description
           piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
           piece_name_format_sep: Séparateur du format de nom de la pièce
-          state_value:
+          states:
             none: non assigné
-            waiting: en cours de validation
+            waiting: en cours de vérification
             valid: validé
             invalid: non valide
       organization:

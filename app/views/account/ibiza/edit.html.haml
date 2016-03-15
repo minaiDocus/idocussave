@@ -8,6 +8,7 @@
         %fieldset
           %legend Connexion à iBiza pour le transfert des écritures
           = f.input :access_token, hint: link_to("Obtenir un jeton d'accès", "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
+          = f.input :access_token_2, hint: link_to("Obtenir un jeton d'accès", "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
           = f.input :is_auto_deliver, as: :boolean
         %fieldset
           %legend Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)

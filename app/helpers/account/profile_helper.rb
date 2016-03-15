@@ -1,10 +1,10 @@
 module Account::ProfileHelper
-  def ibiza_state(ibiza)
-    t('mongoid.models.ibiza.attributes.state_value.'+(ibiza.try(:state) || 'none'))
+  def ibiza_state(state)
+    t('mongoid.models.ibiza.attributes.states.'+(state.presence || 'none'))
   end
 
-  def ibiza_state_label(ibiza)
-    case ibiza.try(:state)
+  def ibiza_state_label(state)
+    case state
       when 'waiting'
         'label-warning'
       when 'valid'
