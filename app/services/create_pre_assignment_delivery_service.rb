@@ -34,7 +34,7 @@ class CreatePreAssignmentDeliveryService
 
       if ibiza.two_channel_delivery?
         groups = {}
-        grouped_preseizures.each do |date, channel, preseizures|
+        grouped_preseizures.each do |(date, channel), preseizures|
           bank_preseizures = preseizures.select(&:operation)
           normal_preseizures = preseizures - bank_preseizures
           groups = groups.merge({ [date, true] => bank_preseizures })   if bank_preseizures.size > 0
@@ -43,7 +43,7 @@ class CreatePreAssignmentDeliveryService
         grouped_preseizures = groups
       end
 
-      grouped_preseizures.each do |date, channel, preseizures|
+      grouped_preseizures.each do |(date, channel), preseizures|
         delivery = PreAssignmentDelivery.new
         delivery.report       = @report
         delivery.user         = @report.user
