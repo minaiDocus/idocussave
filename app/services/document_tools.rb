@@ -177,6 +177,7 @@ class DocumentTools
       part = name.split[2]
       year = part[0..3].to_i
       month = part[4..5]
+      month = '1' unless month.present?
       case month
       when "T1"
         month = 1
