@@ -7,15 +7,15 @@
         .span12.box
           %ul.nav.nav-tabs
             %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
-              %a{ href: '#information', data: { toggle: 'tab' } } Information
-            %li{ class: ('active' if params[:tab] == 'addresses') }
-              %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
+              %a{ href: '#information', data: { toggle: 'tab' } } Informations
             - if @customer.active?
               %li{ class: ('active' if params[:tab] == 'subscription') }
                 %a{ href: '#subscription', data: { toggle: 'tab' } } Forfaits
-              - if @customer.options.is_upload_authorized
-                %li{ class: ('active' if params[:tab] == 'period_options') }
-                  %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
+            %li{ class: ('active' if params[:tab] == 'addresses') }
+              %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
+            - if @customer.active? && @customer.options.is_upload_authorized
+              %li{ class: ('active' if params[:tab] == 'period_options') }
+                %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
             - if @customer.active? && @customer.is_fiduceo_authorized
