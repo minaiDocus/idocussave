@@ -95,7 +95,12 @@ protected
       'journals'
     when 'journals'
       if @customer.subscription.is_mail_package_active
-        'order_paper_set'
+        if @customer.account_book_types.count > 0
+          'order_paper_set'
+        else
+          flash[:error] = 'Vous devez configurer au moins un journal comptable.'
+          'journals'
+        end
       elsif @customer.subscription.is_scan_box_package_active
         'order_dematbox'
       elsif @customer.subscription.is_retriever_package_active
