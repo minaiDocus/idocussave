@@ -207,16 +207,23 @@
                             - unless @user.is_admin || Settings.is_journals_modification_authorized
                               %i (pour #{distance_of_time_in_words_to_now(journal.created_at + 24.hours)})
               .row-fluid
-                .span6
-                  Pré-affectation comptable :
-                  %span.label= @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
-                  %span.margin2left
-                  Total :
+                .span7
+                  %b Pré-saisie comptable activée pour le dossier :
+                  %span.label{ class: 'label-' + (@customer.options.is_preassignment_authorized ? 'success' : 'important') }
+                    = @customer.options.is_preassignment_authorized ? t('yes_value') : t('no_value')
+                  - unless @customer.options.is_preassignment_authorized
+                    %i.margin1left
+                      = link_to '(Activer la pré-saisie comptable)', edit_account_organization_customer_subscription_path(@organization, @customer)
+                  %br
+                  %b Nombre de journaux comptables utilisés :
                   %span.label= @customer.account_book_types.count
-                  %span.margin2left
-                  Total autorisé :
+                  %br
+                  %b Nombre de journaux comptables autorisés :
                   %span.label= @customer.options.max_number_of_journals
-                .span6.alignright
+                  - if @customer.options.max_number_of_journals < 10
+                    %i.margin1left
+                      = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)
+                .span5.alignright
                   - if @customer.active? && (is_leader? || @user.rights.is_customer_journals_management_authorized)
                     - if is_max_number_of_journals_reached?
                       = link_to icon(icon: 'plus') + ' ' + 'Ajouter nouveau', '#', class: 'btn btn-primary', disabled: 'disabled'
