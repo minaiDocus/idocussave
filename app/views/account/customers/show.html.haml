@@ -78,7 +78,7 @@
               - if @customer.active?
                 .row-fluid
                   .span12
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    = link_to icon_edit + ' ' + 'Modifier', edit_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
               .row-fluid.margin1bottom
                 .span4
@@ -90,7 +90,7 @@
               - if @customer.active?
                 .row-fluid
                   .span12.aligncenter
-                    = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
+                    = link_to icon_edit + ' ' + 'Modifier', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.active?
               #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
                 %h4.margin2bottom
@@ -104,7 +104,7 @@
                 = render partial: 'options'
                 .row-fluid.margin1top
                   .span12
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    = link_to icon_edit + ' ' + 'Modifier', edit_account_organization_customer_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
               #orders.tab-pane{ class: ('active' if params[:tab] == 'orders') }
                 %table.table.table-condensed.table-striped.table-bordered.margin2bottom
                   %thead
@@ -162,7 +162,7 @@
                           %td= @customer.auth_prev_period_until_month
                   .row-fluid
                     .span12
-                      = link_to icon_edit + ' ' + t('actions.edit'), edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                      = link_to icon_edit + ' ' + 'Modifier', edit_period_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             #journals.tab-pane{ class: ('active' if params[:tab] == 'journals') }
               - if @pending_journals.present?
                 .alert
@@ -262,7 +262,7 @@
                       %td= @customer.options.pre_assignment_date_computed? ? 'Date de la période iDocus' : 'Date d’origine'
               .row-fluid
                 .span12
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                  = link_to icon_edit + ' ' + 'Modifier', edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
               - if @organization.ibiza.try(:configured?)
                 %h4.margin2top.margin1bottom iBiza
                 %table.table.table-striped.table-condensed
@@ -286,7 +286,7 @@
                       %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
                 .row-fluid
                   .span12
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             - if @organization.ibiza.try(:access_token).blank?
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid
@@ -306,7 +306,7 @@
                     %br
                     Vous pouvez également éditer le format actuel en cliquant sur le bouton ci-dessous.
                     %br
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
+                    = link_to icon_edit + ' ' + 'Modifier', edit_account_organization_customer_csv_descriptor_path(@organization, @customer), class: 'btn btn-primary'
                   - else
                     Ce dossier utilise le format de fichier d'export .csv de l'organisation.
                     %br
@@ -325,9 +325,9 @@
                         %td= knowings_visibility @customer.knowings_visibility
                 .row-fluid
                   .span12
-                    = link_to icon_edit + ' ' + t('actions.edit'), edit_knowings_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    = link_to icon_edit + ' ' + 'Modifier', edit_knowings_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
             - if @user.is_admin && @customer.active?
               #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
                 = render partial: 'account/customers/file_storages', locals: { user: @customer }
                 .alignright
-                  = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'
+                  = link_to icon_edit + ' ' + 'Modifier', edit_account_organization_customer_file_storage_authorizations_path(@organization, @customer), class: 'btn btn-primary'
