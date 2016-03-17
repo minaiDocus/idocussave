@@ -6,10 +6,6 @@ class Account::OrdersController < Account::OrganizationController
   before_filter :load_order, only: %w(edit update destroy)
   before_filter :verify_editability, only: %w(edit update destroy)
 
-  def index
-    @orders = @customer.orders.desc(:created_at)
-  end
-
   def new
     @order = Order.new
     @order.user = @customer
@@ -43,7 +39,7 @@ class Account::OrdersController < Account::OrganizationController
       copy_back_address
       if @customer.configured?
         flash[:success] = "La commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box est enregistrée. Vous pouvez la modifier/annuler pendant encore 24 heures."
-        redirect_to account_organization_customer_orders_path(@organization, @customer)
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
       else
         next_configuration_step
       end
@@ -51,7 +47,7 @@ class Account::OrdersController < Account::OrganizationController
       copy_back_address
       if @customer.configured?
         flash[:success] = 'Votre commande de Kit envoi courrier a été prise en compte.'
-        redirect_to account_organization_customer_orders_path(@organization, @customer)
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
       else
         next_configuration_step
       end
@@ -73,7 +69,7 @@ class Account::OrdersController < Account::OrganizationController
       copy_back_address
       if @customer.configured?
         flash[:success] = 'Votre commande a été modifiée avec succès.'
-        redirect_to account_organization_customer_orders_path(@organization, @customer)
+        redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
       else
         next_configuration_step
       end
@@ -85,11 +81,11 @@ class Account::OrdersController < Account::OrganizationController
   def destroy
     DestroyOrder.new(@order).execute
     if @order.dematbox?
-      "Votre commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box d'un montant de #{format_price_00(@order.price_in_cents_w_vat)}€ HT, a été annulée."
+      flash[:success] = "Votre commande de #{@order.dematbox_count} scanner#{'s' if @order.dematbox_count > 1} iDocus'Box d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
     else
-      "Votre commande de Kit envoi courrier d'un montant de #{format_price_00(@order.price_in_cents_w_vat)}€ HT, a été annulée."
+      flash[:success] = "Votre commande de Kit envoi courrier d'un montant de #{format_price_00(@order.price_in_cents_wo_vat)}€ HT, a été annulée."
     end
-    redirect_to account_organization_customer_orders_path(@organization, @customer)
+    redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
   end
 
 private
@@ -103,6 +99,7 @@ private
     subscription = @customer.subscription
     authorized = true
     authorized = false unless is_leader? || @user.can_manage_customers?
+    authorized = false unless @customer.active?
     authorized = false unless subscription.is_mail_package_active || subscription.is_scan_box_package_active || subscription.is_annual_package_active
     if action_name.in?(%w(new create))
       if !params[:order].present?
@@ -125,7 +122,7 @@ private
   def verify_editability
     if (Time.now > @order.created_at + 24.hours) || !@order.pending?
       flash[:error] = "Cette action n'est plus valide."
-      redirect_to account_organization_customer_orders_path(@organization, @customer)
+      account_organization_customer_path(@organization, @customer, tab: 'orders')
     end
   end
 

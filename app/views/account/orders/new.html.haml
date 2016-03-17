@@ -9,7 +9,7 @@
         - else
           Commande de Kit envoi courrier
         - if @customer.configured?
-          pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'subscription')}
+          pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders')}
         - else
           pour le dossier : #{@customer}
 

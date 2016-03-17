@@ -11,6 +11,8 @@
             - if @customer.active?
               %li{ class: ('active' if params[:tab] == 'subscription') }
                 %a{ href: '#subscription', data: { toggle: 'tab' } } Forfaits
+              %li{ class: ('active' if params[:tab] == 'orders') }
+                %a{ href: '#orders', data: { toggle: 'tab' } } Commandes Kits/Scan
             %li{ class: ('active' if params[:tab] == 'addresses') }
               %a{ href: '#addresses', data: { toggle: 'tab' } } Adresses
             - if @customer.active? && @customer.options.is_upload_authorized
@@ -88,30 +90,59 @@
                     = link_to icon_edit + ' ' + 'Configurer', account_organization_customer_addresses_path(@organization, @customer), class: 'btn btn-primary'
             - if @customer.active?
               #subscription.tab-pane{ class: ('active' if params[:tab] == 'subscription') }
-                .row-fuild
-                  .span6.margin2bottom
-                    %h4
-                      Périodicité
-                      - if @subscription.period_duration == 1
-                        mensuelle
-                      - elsif @subscription.period_duration == 3
-                        trimestrielle
-                      - elsif @subscription.period_duration == 12
-                        annuel
-                  .span6.alignright
-                    - link_name = ''
-                    - if @subscription.is_mail_package_active && @subscription.is_scan_box_package_active
-                      - link_name = "Commande de scanner iDocus'box et de Kit envoi courrier"
-                    - elsif @subscription.is_scan_box_package_active
-                      - link_name = "Commande de scanner iDocus'box"
-                    - elsif @subscription.is_mail_package_active || @subscription.is_annual_package_active
-                      - link_name = 'Commande de Kit envoi courrier'
-                    - if link_name.present?
-                      = link_to link_name, account_organization_customer_orders_path(@organization, @customer), class: 'btn'
+                %h4.margin2bottom
+                  Périodicité
+                  - if @subscription.period_duration == 1
+                    mensuelle
+                  - elsif @subscription.period_duration == 3
+                    trimestrielle
+                  - elsif @subscription.period_duration == 12
+                    annuel
                 = render partial: 'options'
                 .row-fluid.margin1top
                   .span12
                     = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_customer_subscription_path(@organization, @customer), class: 'btn btn-primary pull-right'
+              #orders.tab-pane{ class: ('active' if params[:tab] == 'orders') }
+                %table.table.table-condensed.table-striped.table-bordered.margin2bottom
+                  %thead
+                    %tr
+                      %th Date de la commande
+                      %th Produit
+                      %th Quantité
+                      %th Prix (HT)
+                      %th Adresse de livraison
+                      %th Statut
+                      %th Actions
+                  %tbody
+                    - @customer.orders.desc(:created_at).each do |order|
+                      %tr
+                        %td= l order.created_at
+                        - if order.dematbox?
+                          %td iDocus'Box
+                          %td= order.dematbox_count
+                          %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                        - else
+                          %td Kit envoi courrier
+                          %td
+                            = order.paper_set_casing_size.to_s + 'g'
+                            %br
+                            = order.journals.size.to_s + ' chemises'
+                            %br
+                            = paper_set_date_to_name(order.period_duration, order.paper_set_start_date)
+                            à
+                            = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
+                          %td.alignright= format_price_00(order.price_in_cents_wo_vat) + ' €'
+                        %td= order.address.try(:long_info)
+                        %td= Order.state_machine.states[order.state].human_name
+                        %td
+                          - if order.pending? && (Time.now < order.created_at + 24.hours)
+                            = link_to icon_edit + 'Modifier', edit_account_organization_customer_order_path(@organization, @customer, order), class: 'btn btn-mini'
+                            = link_to icon_destroy + 'Annuler', account_organization_customer_order_path(@organization, @customer, order), method: 'delete', data: { confirm: t('actions.confirm') }, class: 'btn btn-mini'
+                .pull-right
+                  - if @customer.subscription.is_scan_box_package_active
+                    = link_to "Commander un/des scanner(s) iDocus'box", new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' }), class: 'btn btn-primary'
+                  - if @customer.subscription.is_mail_package_active || @customer.subscription.is_annual_package_active
+                    = link_to 'Commander un Kit envoi courrier', new_account_organization_customer_order_path(@organization, @customer, order: { type: 'paper_set' }), class: 'btn btn-primary'
               - if @customer.options.is_upload_authorized
                 #period_options.tab-pane{ class: ('active' if params[:tab] == 'period_options') }
                   %table.table.table-striped.table-condensed

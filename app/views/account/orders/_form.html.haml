@@ -62,7 +62,7 @@
   .form-actions.margin0bottom
     - if @customer.configured?
       = f.submit 'Commander', class: 'btn btn-primary'
-      = link_to 'Annuler', account_organization_customer_orders_path(@organization, @customer), class: 'btn'
+      = link_to 'Annuler', account_organization_customer_path(@organization, @customer, tab: 'orders'), class: 'btn'
     - else
       = link_to t('actions.previous_step'), previous_account_organization_customer_setup_path(@organization, @customer), class: 'btn'
       - unless last_step?

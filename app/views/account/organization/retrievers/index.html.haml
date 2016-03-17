@@ -17,6 +17,7 @@
       %ul.nav.nav-tabs
         %li= link_to 'Informations', account_organization_customer_path(@organization, @customer, tab: 'information')
         %li= link_to 'Forfaits', account_organization_customer_path(@organization, @customer, tab: 'subscription')
+        %li= link_to 'Commandes Kits/Scan', account_organization_customer_path(@organization, @customer, tab: 'orders')
         %li= link_to 'Adresses', account_organization_customer_path(@organization, @customer, tab: 'addresses')
         - if @customer.options.is_upload_authorized
           %li= link_to 'Option téléversement', account_organization_customer_path(@organization, @customer, tab: 'period_options')
