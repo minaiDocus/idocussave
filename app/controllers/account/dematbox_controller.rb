@@ -5,7 +5,13 @@ class Account::DematboxController < Account::AccountController
 
   def create
     @dematbox.async_subscribe(params[:pairing_code])
-    flash[:notice] = 'Configuration en cours...'
+    flash[:notice] = "Configuration de iDocus'Box en cours..."
+    redirect_to account_profile_path(panel: 'idocus_box')
+  end
+
+  def destroy
+    @dematbox.unsubscribe
+    flash[:notice] = 'Supprimé avec succèss.'
     redirect_to account_profile_path(panel: 'idocus_box')
   end
 

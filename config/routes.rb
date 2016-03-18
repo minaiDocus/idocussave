@@ -144,6 +144,7 @@ Idocus::Application.routes.draw do
             get 'select', on: :collection
             patch 'validate', on: :collection
           end
+          r.resource :dematbox, only: %w(create destroy)
         end
         resources :orders, except: %w(index show)
       end
@@ -218,7 +219,7 @@ Idocus::Application.routes.draw do
     resources :compositions do
       delete 'reset', :on => :collection
     end
-    resource :dematbox
+    resource :dematbox, only: %w(create destroy)
 
     resources :retrievers, as: :fiduceo_retrievers do
       get   'list',                 on: :collection
