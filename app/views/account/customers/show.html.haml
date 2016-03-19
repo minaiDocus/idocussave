@@ -28,7 +28,7 @@
               %a{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
             - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
-                %a{ href: '#others', data: { toggle: 'tab' } } Divers
+                %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
