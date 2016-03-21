@@ -869,10 +869,10 @@ fr:
         other: '%{count} règles de plan de compte'
         name: Règle de plan de compte
         attributes:
-          name: Nom
+          name: Nom de la règle
           affect: Affecté à
           rule_type: Type de règle
-          content: Contenu
+          content: Contenu recherché
           third_party_account: Numéro de compte
           priority: Priorité
           users: Clients

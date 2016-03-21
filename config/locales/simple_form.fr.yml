@@ -218,10 +218,10 @@ fr:
         piece_name_format: Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
         piece_name_format_sep: Séparateur du format de nom de la pièce
       account_number_rule:
-        name: Nom
+        name: Nom de la règle
         rule_type: Type de règle
         affect: Affecté à
-        content: Contenu
+        content: Contenu recherché
         third_party_account: Numéro de compte
         priority: Priorisation de règles similaires
         users: Clients

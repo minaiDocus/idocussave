@@ -1,6 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::AccountNumberRulesController < Account::OrganizationController
-  before_filter :load_account_number_rule, except: %w(new create)
+  before_filter :load_account_number_rule, except: %w(index new create)
+
+  def index
+    @account_number_rules = @organization.account_number_rules.asc(:priority)
+  end
 
   def show
   end
@@ -40,7 +44,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
     end
     if @account_number_rule.update(account_number_rule_params)
       flash[:success] = 'Modifié avec succès.'
-      redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+      redirect_to account_organization_account_number_rules_path(@organization)
     else
       render 'edit'
     end
@@ -49,7 +53,7 @@ class Account::AccountNumberRulesController < Account::OrganizationController
   def destroy
     @account_number_rule.destroy
     flash[:success] = 'Supprimé avec succès.'
-    redirect_to account_organization_path(@organization, tab: 'account_number_rules')
+    redirect_to account_organization_account_number_rules_path(@organization)
   end
 
 private
