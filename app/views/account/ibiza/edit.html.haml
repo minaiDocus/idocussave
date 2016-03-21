@@ -7,8 +7,8 @@
       = simple_form_for (@ibiza || Ibiza.new), url: account_organization_ibiza_path(@organization), html: { class: 'form form-horizontal margin0bottom' } do |f|
         %fieldset
           %legend Connexion à iBiza pour le transfert des écritures
-          = f.input :access_token, hint: link_to("Obtenir un jeton d'accès", "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
-          = f.input :access_token_2, hint: link_to("Obtenir un jeton d'accès", "https://saas.irf-cloud.com/irfservice/get-token.aspx?partnerId=#{IbizaAPI::Config::PARTNER_ID}", target: '_blank')
+          = f.input :access_token, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
+          = f.input :access_token_2, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
           = f.input :is_auto_deliver, as: :boolean
         %fieldset
           %legend Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
