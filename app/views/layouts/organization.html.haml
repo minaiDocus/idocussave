@@ -49,15 +49,15 @@
               %li.nav-header= @organization.name
               %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza account_number_rules file_naming_policies)) && !request.path.match(/customers/)) ? 'active' : '') }
                 = link_to 'Paramètres', account_organization_path(@organization)
-              -if @organization.is_active
-                - if is_leader? || @user.can_manage_journals?
-                  %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
-                    = link_to 'Journaux comptables', account_organization_journals_path(@organization)
               %li{ class: (controller_name == 'groups' ? 'active' : '') }
                 = link_to 'Groupes', account_organization_groups_path(@organization)
               - if is_leader? || @user.can_manage_collaborators?
                 %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
                   = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
+              - if @organization.is_active
+                - if is_leader? || @user.can_manage_journals?
+                  %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
+                    = link_to 'Journaux comptables partagés', account_organization_journals_path(@organization)
               %li{ class: (request.path.match(/customers/) ? 'active' : '') }
                 = link_to 'Clients', account_organization_customers_path(@organization)
               %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports)) ? 'active' : '') }
