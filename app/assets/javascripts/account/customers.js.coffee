@@ -14,7 +14,7 @@ jQuery ->
       dataType: 'json',
       type: 'GET',
       success: (data) ->
-        original_value = $('#user_ibiza_id').data('original-value')
+        original_value = $('#user_ibiza_id').data('original-value') || ''
         for d in data
           option_html = ''
           if original_value.length > 0 && original_value == d['id']
