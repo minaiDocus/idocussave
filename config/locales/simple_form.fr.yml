@@ -235,6 +235,6 @@ fr:
       order:
         dematbox_count: Combien de scanner souhaitez-vous commander pour ce dossier?
         paper_set_casing_size: Taille d'enveloppe
+        paper_set_folder_count: Nombre de chemises
         paper_set_start_date: Date de début
         paper_set_end_date: Date de fin
-        journals: Journaux comptables

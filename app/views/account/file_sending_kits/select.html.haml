@@ -11,14 +11,12 @@
           %th Nom
           %th Début (Mois)
           %th Durée (Mois)
-          %th Ignorer les JC de la commande ?
         - @organization.customers.active.asc(:code).each do |client|
           %tr
             %td= check_box_tag "users[#{client.id}][is_checked]", "true", false
             %td= client.info
             %td= number_field_tag "users[#{client.id}][start_month]", 0, style: 'width:50px;'
             %td= number_field_tag "users[#{client.id}][offset_month]", 1, style: 'width:50px;'
-            %td= check_box_tag "users[#{client.id}][all_journals]", 'true', false
       .control-group.boolean
         = label_tag 'one_workshop_labels_page_per_customer', "Une page d'étiquette par client ?", class: 'control-label boolean'
         .controls

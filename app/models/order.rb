@@ -19,9 +19,9 @@ class Order
 
   field :period_duration,        type: Integer, default: 1
   field :paper_set_casing_size,  type: Integer, default: 0
+  field :paper_set_folder_count, type: Integer, default: 0
   field :paper_set_start_date,   type: Date
   field :paper_set_end_date,     type: Date
-  field :journals,               type: Array,   default: []
 
   validates_presence_of :state
   validates_inclusion_of :type, in: %w(dematbox paper_set)
@@ -33,12 +33,11 @@ class Order
   validates_inclusion_of :dematbox_count,         in: [1, 2],              if: Proc.new { |o| o.dematbox? }
   validates_presence_of  :period_duration,                                 if: Proc.new { |o| o.paper_set? }
   validates_inclusion_of :paper_set_casing_size,  in: [500, 1000, 3000],   if: Proc.new { |o| o.paper_set? }
+  validates_inclusion_of :paper_set_folder_count, in: [5, 6, 7, 8, 9, 10], if: Proc.new { |o| o.paper_set? }
   validates_presence_of  :paper_set_start_date,                            if: Proc.new { |o| o.paper_set? }
   validates_presence_of  :paper_set_end_date,                              if: Proc.new { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date,                             if: Proc.new { |o| o.paper_set? }
   validate :inclusion_of_paper_set_end_date,                               if: Proc.new { |o| o.paper_set? }
-  validate :inclusion_of_journals,                                         if: Proc.new { |o| o.paper_set? }
-  validate :number_of_journals,                                            if: Proc.new { |o| o.paper_set? }
 
   accepts_nested_attributes_for :address, :paper_return_address
 
@@ -125,15 +124,5 @@ private
     unless paper_set_end_date.in? paper_set_end_dates
       errors.add(:paper_set_end_date, :invalid)
     end
-  end
-
-  def inclusion_of_journals
-    unless user.account_book_types.where(:name.in => journals).size == journals.size
-      errors.add(:journals, :invalid)
-    end
-  end
-
-  def number_of_journals
-    errors.add(:journals, :too_short) unless journals.size > 0
   end
 end
