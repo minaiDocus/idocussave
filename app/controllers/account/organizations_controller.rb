@@ -124,7 +124,6 @@ private
         :leader_id,
         :is_detail_authorized,
         :is_test,
-        :is_journals_management_centralized,
         :is_quadratus_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed
@@ -134,7 +133,6 @@ private
         :name,
         :authd_prev_period,
         :auth_prev_period_until_day,
-        :is_journals_management_centralized,
         :is_quadratus_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed

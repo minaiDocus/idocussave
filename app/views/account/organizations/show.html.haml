@@ -58,9 +58,6 @@
                       %th= t('mongoid.models.organization.attributes.leader')
                       %td= @organization.leader.try(:info)
                     %tr
-                      %th= t('mongoid.models.organization.attributes.is_journals_management_centralized')
-                      %td= @organization.is_journals_management_centralized ? t('yes_value') : t('no_value')
-                    %tr
                       %th= t('mongoid.models.organization.attributes.is_detail_authorized')
                       %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
                     %tr

@@ -39,7 +39,7 @@ private
   end
 
   def journals
-    result = source.account_book_types.default
+    result = @organization.account_book_types.default
     result = result.where(:name.nin => current_journal_names) if current_journal_names.present?
     if is_preassignment_authorized?
       js = result.where(:entry_type.gt => 0).asc([:entry_type, :name]).entries
@@ -47,14 +47,6 @@ private
       js.take available_slot
     else
       result.not_compta_processable.asc(:name).limit(available_slot)
-    end
-  end
-
-  def source
-    if @collaborator.is_admin || @organization.is_journals_management_centralized
-      @organization
-    else
-      @collaborator
     end
   end
 

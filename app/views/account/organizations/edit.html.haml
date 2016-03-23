@@ -13,7 +13,6 @@
             = f.input :leader_id, collection: @organization.collaborators, label_method: :info
             = f.input :is_detail_authorized, as: :boolean
             = f.input :is_test,              as: :boolean
-          = f.input :is_journals_management_centralized, as: :boolean
           = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]
         - else
           = f.input :is_quadratus_used, as: 'boolean'

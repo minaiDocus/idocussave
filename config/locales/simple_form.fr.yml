@@ -84,7 +84,6 @@ fr:
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
         is_detail_authorized: Divulguer le coût iDocus au client ?
         is_test: Organisation de test ?
-        is_journals_management_centralized: Journaux comptables partagés ?
         is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?
         is_csv_descriptor_used: Activer l’option de création du fichier export .csv (un nouvel onglet va s’afficher)?
         is_pre_assignment_date_computed: Date de saisie des factures

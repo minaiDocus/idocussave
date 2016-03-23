@@ -8,7 +8,7 @@ class Account::JournalsController < Account::OrganizationController
   before_filter :verify_max_number, only: %w(new create select copy)
 
   def index
-    @journals = source.account_book_types.desc(:is_default).asc(:name)
+    @journals = @organization.account_book_types.desc(:is_default).asc(:name)
   end
 
   def new
@@ -17,7 +17,7 @@ class Account::JournalsController < Account::OrganizationController
 
   def create
     @journal = AccountBookType.new journal_params
-    (@customer || source).account_book_types << @journal
+    (@customer || @organization).account_book_types << @journal
     if @journal.save
       flash[:success] = 'Créé avec succès.'
       if @customer
@@ -76,7 +76,7 @@ class Account::JournalsController < Account::OrganizationController
   end
 
   def select
-    @journals = source.account_book_types.desc(:is_default).asc(:name)
+    @journals = @organization.account_book_types.desc(:is_default).asc(:name)
     @journals = @journals.not_compta_processable unless @customer.options.is_preassignment_authorized
   end
 
@@ -170,10 +170,6 @@ private
     attributes
   end
 
-  def source
-    (@organization.is_journals_management_centralized || @user.is_admin) ? @organization : @user
-  end
-
   def load_customer
     if params[:customer_id].present?
       @customer = customers.find_by_slug! params[:customer_id]
@@ -182,7 +178,7 @@ private
   end
 
   def load_journal
-    @journal = (@customer || source).account_book_types.find_by_slug! params[:id]
+    @journal = (@customer || @organization).account_book_types.find_by_slug! params[:id]
     raise Mongoid::Errors::DocumentNotFound.new(AccountBookType, slug: params[:id]) unless @journal
   end
 
