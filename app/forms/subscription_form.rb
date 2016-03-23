@@ -61,17 +61,6 @@ class SubscriptionForm
       @subscription.number_of_journals = params[:number_of_journals]
     end
 
-    if @subscription.is_scan_box_package_active
-      if @subscription.is_blank_page_remover_active && dont_apply_now
-        @subscription.is_blank_page_remover_to_be_disabled = params[:is_blank_page_remover_active] == 'false'
-      else
-        @subscription.is_blank_page_remover_active = params[:is_blank_page_remover_active] == 'true'
-        @subscription.is_blank_page_remover_to_be_disabled = false if @subscription.is_blank_page_remover_to_be_disabled
-      end
-    else
-      @subscription.is_blank_page_remover_active = false
-    end
-
     if @subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
       if @subscription.is_pre_assignment_active && dont_apply_now
         @subscription.is_pre_assignment_to_be_disabled = params[:is_pre_assignment_active] == 'false'

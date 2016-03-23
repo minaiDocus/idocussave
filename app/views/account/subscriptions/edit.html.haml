@@ -97,17 +97,6 @@
                     Non
                 %div{ style: "clear:both;" }
                   %i Ce tamponnage permet d’avoir un tampon « Numérisé le…”  sur le verso de la feuille numérisée.
-            %tr.scanner{ style: 'display:none' }
-              %td.question Souhaitez-vous ajouter la reconnaissance de pages blanches pour le scanner (1€HT) ?
-              %td
-                .choice
-                  %label{ for: 'subscription_is_blank_page_remover_active_true' }
-                    = f.radio_button :is_blank_page_remover_active, true, data: { original_value: ((@subscription.is_blank_page_remover_active || @subscription.is_blank_page_remover_to_be_disabled) ? 1 : 0) }
-                    Oui
-                .choice
-                  %label{ for: 'subscription_is_blank_page_remover_active_false' }
-                    = f.radio_button :is_blank_page_remover_active, false, data: { original_value: ((@subscription.is_blank_page_remover_active || @subscription.is_blank_page_remover_to_be_disabled) ? 0 : 1) }
-                    Non
         - if @user.is_admin
           .well
             .row-fluid

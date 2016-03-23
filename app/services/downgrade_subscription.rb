@@ -19,7 +19,6 @@ class DowngradeSubscription
     if @subscription.is_scan_box_package_to_be_disabled
       @subscription.is_scan_box_package_active           = false
       @subscription.is_scan_box_package_to_be_disabled   = false
-      @subscription.is_blank_page_remover_active         = false
     end
     if @subscription.is_retriever_package_to_be_disabled
       @subscription.is_retriever_package_active          = false
@@ -27,10 +26,6 @@ class DowngradeSubscription
     end
     if !@subscription.is_basic_package_active && !@subscription.is_mail_package_active && !@subscription.is_scan_box_package_active && !@subscription.is_annual_package_active
       @subscription.is_pre_assignment_active             = false
-    end
-    if @subscription.is_blank_page_remover_to_be_disabled
-      @subscription.is_blank_page_remover_active         = false
-      @subscription.is_blank_page_remover_to_be_disabled = false
     end
     if @subscription.is_pre_assignment_to_be_disabled
       @subscription.is_pre_assignment_active             = false

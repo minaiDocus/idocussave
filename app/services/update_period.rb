@@ -123,18 +123,6 @@ private
         option.duration              = 0
         option.quantity              = 1
         selected_options << option
-
-        if @subscription.is_blank_page_remover_active
-          option = ProductOptionOrder.new
-          option.name                  = 'dematbox_package-blank_page_deletion'
-          option.group_title           = "iDo'Box - Option"
-          option.title                 = 'Reconnaissance et élimination des pages blanches'
-          option.title                 += to_be_disabled_text if @subscription.is_blank_page_remover_to_be_disabled
-          option.price_in_cents_wo_vat = package_options_price([:blank_page_deletion], type)
-          option.duration              = 0
-          option.quantity              = 1
-          selected_options << option
-        end
       end
       if @subscription.is_retriever_package_active
         option = ProductOptionOrder.new
@@ -233,12 +221,11 @@ private
 
   def prices_list
     @prices_list ||= {
-      subscription:        [10, 30],
-      pre_assignment:      [9,  15],
-      return_paper:        [10, 10],
-      stamp:               [5,  5],
-      blank_page_deletion: [1,  1],
-      retriever:           [5,  15]
+      subscription:   [10, 30],
+      pre_assignment: [9,  15],
+      return_paper:   [10, 10],
+      stamp:          [5,  5],
+      retriever:      [5,  15]
     }
   end
 

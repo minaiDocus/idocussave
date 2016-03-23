@@ -16,19 +16,19 @@ describe DowngradeSubscription do
 
   it 'disables unneeded packages' do
     subscription = Subscription.new
-    subscription.is_mail_package_active               = true
-    subscription.is_scan_box_package_active           = true
-    subscription.is_scan_box_package_to_be_disabled   = true
-    subscription.is_blank_page_remover_active         = true
-    subscription.is_blank_page_remover_to_be_disabled = false
+    subscription.is_scan_box_package_active     = true
+    subscription.is_mail_package_active         = true
+    subscription.is_mail_package_to_be_disabled = true
+    subscription.is_stamp_active                = true
+    subscription.is_stamp_to_be_disabled        = false
     subscription.save
 
     DowngradeSubscription.new(subscription, false).execute
 
-    expect(subscription.is_mail_package_active).to               eq(true)
-    expect(subscription.is_scan_box_package_active).to           eq(false)
-    expect(subscription.is_scan_box_package_to_be_disabled).to   eq(false)
-    expect(subscription.is_blank_page_remover_active).to         eq(false)
-    expect(subscription.is_blank_page_remover_to_be_disabled).to eq(false)
+    expect(subscription.is_scan_box_package_active).to     eq(true)
+    expect(subscription.is_mail_package_active).to         eq(false)
+    expect(subscription.is_mail_package_to_be_disabled).to eq(false)
+    expect(subscription.is_stamp_active).to                eq(false)
+    expect(subscription.is_stamp_to_be_disabled).to        eq(false)
   end
 end
