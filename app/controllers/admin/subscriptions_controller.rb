@@ -8,5 +8,7 @@ class Admin::SubscriptionsController < Admin::AdminController
     @scan_box_package_count  = Subscription.where(:user_id.in => user_ids, is_scan_box_package_active:  true).count
     @retriever_package_count = Subscription.where(:user_id.in => user_ids, is_retriever_package_active: true).count
     @annual_package_count    = Subscription.where(:user_id.in => user_ids, is_annual_package_active:    true).count
+    @pre_assignment_count    = Subscription.where(:user_id.in => user_ids, is_pre_assignment_active:    true).count
+    @stamp_count             = Subscription.where(:user_id.in => user_ids, is_stamp_active:             true).count
   end
 end
