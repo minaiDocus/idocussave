@@ -26,8 +26,9 @@ class Invoice
 
   before_validation :set_number
 
-  belongs_to :user
   belongs_to :organization
+  # INFO : keeping those 3 relations for backward compatibility
+  belongs_to :user
   belongs_to :subscription
   belongs_to :period
 
