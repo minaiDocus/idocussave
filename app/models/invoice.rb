@@ -70,28 +70,59 @@ class Invoice
 
     customer_ids = organization.customers.map(&:_id)
     periods = Period.where(:user_id.in => customer_ids).where(:start_at.lte => time.dup, :end_at.gte => time.dup)
-    subscription_ids = periods.map(&:subscription_id)
 
-    basic_package_count     = Subscription.where(:_id.in => subscription_ids, is_basic_package_active:     true).count
-    mail_package_count      = Subscription.where(:_id.in => subscription_ids, is_mail_package_active:      true).count
-    scan_box_package_count  = Subscription.where(:_id.in => subscription_ids, is_scan_box_package_active:  true).count
-    retriever_package_count = Subscription.where(:_id.in => subscription_ids, is_retriever_package_active: true).count
-    annual_package_count    = Subscription.where(:_id.in => subscription_ids, is_annual_package_active:    true).count
+    basic_package_count     = 0
+    mail_package_count      = 0
+    scan_box_package_count  = 0
+    retriever_package_count = 0
+    annual_package_count    = 0
+
+    periods.each do |period|
+      period.product_option_orders.each do |option|
+        case option.name
+        when 'basic_package_subscription'
+          basic_package_count += 1
+        when 'mail_package_subscription'
+          mail_package_count += 1
+        when 'dematbox_package_subscription'
+          scan_box_package_count += 1
+        when 'retriever_package_subscription'
+          retriever_package_count += 1
+        when 'annual_package_subscription'
+          annual_package_count += 1
+        end
+      end
+    end
+
     ordered_paper_set_count = organization.orders.paper_sets.confirmed.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month).count
     ordered_scanner_count   = organization.orders.dematboxes.confirmed.where(:created_at.gte => time.beginning_of_month, :created_at.lte => time.end_of_month).count
 
     @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
     @data = [
-        ["Nombre de dossier : #{periods.count}", ""],
-        ["Forfaits et options iDocus pour " + previous_month.downcase + " " + year.to_s + " :", format_price(@total) + " €"],
-        ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Basique", ""],
-        ["- #{mail_package_count} forfait#{'s' if mail_package_count > 1} iDo’Courrier", ""],
-        ["- #{scan_box_package_count} forfait#{'s' if scan_box_package_count > 1} iDo'Box", ""],
-        ["- #{retriever_package_count} forfait#{'s' if retriever_package_count > 1} iDo'FacBanque", ""],
-        ["- #{annual_package_count} forfait#{'s' if annual_package_count > 1} Pack Annuel", ""],
-        ["- #{ordered_paper_set_count} commande#{'s' if ordered_paper_set_count > 1} de kit#{'s' if ordered_paper_set_count > 1}", ""],
-        ["- #{ordered_scanner_count} commande#{'s' if ordered_scanner_count > 1} de scanner#{'s' if ordered_scanner_count > 1} iDo'Box", ""]
+      ["Nombre de dossiers : #{periods.count}", ""],
+      ["Forfaits et options iDocus pour " + previous_month.downcase + " " + year.to_s + " :", format_price(@total) + " €"]
     ]
+    if basic_package_count > 0
+      @data << ["- #{basic_package_count} forfait#{'s' if basic_package_count > 1} iDo'Basique", '']
+    end
+    if mail_package_count > 0
+      @data << ["- #{mail_package_count} forfait#{'s' if mail_package_count > 1} iDo’Courrier", '']
+    end
+    if scan_box_package_count > 0
+      @data << ["- #{scan_box_package_count} forfait#{'s' if scan_box_package_count > 1} iDo'Box", '']
+    end
+    if retriever_package_count > 0
+      @data << ["- #{retriever_package_count} forfait#{'s' if retriever_package_count > 1} iDo'FacBanque", '']
+    end
+    if annual_package_count > 0
+      @data << ["- #{annual_package_count} forfait#{'s' if annual_package_count > 1} Pack Annuel", '']
+    end
+    if ordered_paper_set_count > 0
+      @data << ["- #{ordered_paper_set_count} commande#{'s' if ordered_paper_set_count > 1} de kit#{'s' if ordered_paper_set_count > 1}", '']
+    end
+    if ordered_scanner_count > 0
+      @data << ["- #{ordered_scanner_count} commande#{'s' if ordered_scanner_count > 1} de scanner#{'s' if ordered_scanner_count > 1} iDo'Box", '']
+    end
 
     options = organization.subscription.periods.select { |period| period.start_at <= time and period.end_at >= time }.
       first.
@@ -161,7 +192,7 @@ class Invoice
 
       # Detail
       pdf.move_down 30
-      data = [["<b>Nature</b>","<b>Prix HT</b>"]] + @data + [["",""]]
+      data = [["<b>Forfaits & Prestations</b>","<b>Prix HT</b>"]] + @data + [["",""]]
 
       pdf.table(data, width: 540, cell_style: { inline_format: true }) do
         style(row(0..-1), borders: [], text_color: "49442A")
@@ -202,10 +233,7 @@ class Invoice
       pdf.text "Cette somme sera prélevée sur votre compte le 4 #{months[self.created_at.month].downcase} #{self.created_at.year}"
 
       pdf.move_down 7
-      pdf.text "Le détail de la prestation est consultable dans votre espace client sur www.idocus.com, dans la rubrique \"mon reporting\" en filtrant sur \"montant HT\""
-
-      pdf.move_up 4
-      pdf.text "Votre login d’accès au site : #{(user || organization.leader).email}"
+      pdf.text "<b>Retrouvez le détails de vos consommations dans votre espace client dans le menu \"Mon Reporting\".</b>", align: :center, inline_format: true
     end
 
     self.content = File.new "#{Rails.root}/tmp/#{self.number}.pdf"
