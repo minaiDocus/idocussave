@@ -99,7 +99,7 @@ class Invoice
 
     @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
     @data = [
-      ["Nombre de dossiers : #{periods.count}", ""],
+      ["Nombre de dossiers actifs : #{periods.count}", ""],
       ["Forfaits et options iDocus pour " + previous_month.downcase + " " + year.to_s + " :", format_price(@total) + " €"]
     ]
     if basic_package_count > 0
