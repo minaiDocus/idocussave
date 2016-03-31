@@ -10,7 +10,14 @@
       - period.product_option_orders.by_position.each do |option|
         %tr
           %td= option.group_title
-          %td= option.title
+          %td
+            = option.title
+            - if option.is_to_be_disabled
+              %b
+                - if period.duration == 1
+                  (disparaîtra le mois prochain)
+                - else
+                  (disparaîtra le trimestre prochain)
           %td.price= format_price_00(option.price_in_cents_wo_vat) + ' €'
           %td.price= format_price_00(option.price_in_cents_wo_vat * period.tva_ratio) + ' €'
     %tr

@@ -12,6 +12,7 @@ class ProductOptionOrder
   field :duration,              type: Integer
   field :quantity,              type: Integer
   field :is_an_extra,           type: Boolean
+  field :is_to_be_disabled,     type: Boolean
 
   embedded_in :product_optionable, polymorphic: true
 
