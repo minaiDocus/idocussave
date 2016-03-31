@@ -18,6 +18,7 @@ class OrderPaperSet
         @period.orders << @order
         ConfirmOrder.execute(@order.id.to_s)
       end
+      auto_ajust_number_of_journals_authorized
       UpdatePeriod.new(@period).execute
       true
     else
@@ -87,5 +88,12 @@ private
         [25, 36, 47, 58, 69, 80, 93, 104, 115, 126, 137, 148, 159, 170, 181, 191, 202, 213, 224, 235, 246, 257, 268, 279]
       ]
     ]
+  end
+
+  def auto_ajust_number_of_journals_authorized
+    if @order.paper_set_folder_count != @user.subscription.number_of_journals && @order.paper_set_folder_count >= @user.account_book_types.count
+      @user.subscription.number_of_journals = @order.paper_set_folder_count
+      EvaluateSubscription.new(@user.subscription).execute if @user.subscription.save
+    end
   end
 end
