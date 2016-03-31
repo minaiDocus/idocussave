@@ -20,6 +20,9 @@ class DematboxDocument
         @temp_document.dematbox_service_id  = params['service_id']
         @temp_document.dematbox_text        = params['text']
         @temp_document.save
+        # INFO : Blank pages are removed, so we need to reassign pages_number
+        @temp_document.pages_number = DocumentTools.pages_number(@temp_document.content.path)
+        @temp_document.save
         if @temp_document.pages_number > 2 && @temp_document.temp_pack.is_bundle_needed?
           @temp_document.bundle_needed
         else
