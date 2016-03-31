@@ -39,31 +39,39 @@ module Admin::ProcessReportingHelper
   end
 
   def sum_of_requested_kits(customers, time)
-    pattern = /env.*papier.*numérisation/i
-    customer_ids = Period.where(
-      :user_id.in     => customers.map(&:id),
-      :created_at.gte => time.dup,
-      :created_at.lte => time.end_of_month
-    ).select do |period|
-      options = period.product_option_orders.select do |option|
-        option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
-      end
-      options.size > 0
-    end.map(&:user_id).uniq
+    if time < Time.local(2016)
+      pattern = /env.*papier.*numérisation/i
+      customer_ids = Period.where(
+        :user_id.in     => customers.map(&:id),
+        :created_at.gte => time.dup,
+        :created_at.lte => time.end_of_month
+      ).select do |period|
+        options = period.product_option_orders.select do |option|
+          option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
+        end
+        options.size > 0
+      end.map(&:user_id).uniq
 
-    previous_month = time - 1.month
-    previous_count = Period.where(
-      :user_id.in     => customer_ids,
-      :created_at.gte => previous_month,
-      :created_at.lte => previous_month.end_of_month
-    ).select do |period|
-      options = period.product_option_orders.select do |option|
-        option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
-      end
-      options.size > 0
-    end.size
+      previous_month = time - 1.month
+      previous_count = Period.where(
+        :user_id.in     => customer_ids,
+        :created_at.gte => previous_month,
+        :created_at.lte => previous_month.end_of_month
+      ).select do |period|
+        options = period.product_option_orders.select do |option|
+          option.title.match(pattern) || (option.group_title.match(pattern) && option.title.match(/Oui/i))
+        end
+        options.size > 0
+      end.size
 
-    customer_ids.size - previous_count
+      customer_ids.size - previous_count
+    else
+      Order.paper_sets.confirmed.where(
+        :user_id.in     => customers.map(&:id),
+        :created_at.gte => time.dup,
+        :created_at.lte => time.end_of_month
+      ).count
+    end
   end
 
   def sum_of_sent_kits(organization, time)
