@@ -26,23 +26,25 @@ create_next_button = (i, count) ->
 form_to_wizard = ->
   steps = $('form').find('fieldset')
   count = steps.size()
-  $('.form-actions').hide()
+  if (count == 1)
+    $('.form-actions').show()
+  else
+    $('.form-actions').hide()
+    steps.each (i) ->
+      $(this).wrap("<div id='step" + i + "'></div>")
+      $(this).append("<div id='step" + i + "commands' class='commands'></div>")
 
-  steps.each (i) ->
-    $(this).wrap("<div id='step" + i + "'></div>")
-    $(this).append("<div id='step" + i + "commands' class='commands'></div>")
+      if (i == 0)
+        create_next_button(i, count)
+      else if (i == count - 1)
+        $('#step' + i).hide()
+        create_prev_button(i)
+      else
+        $('#step' + i).hide()
+        create_prev_button(i)
+        create_next_button(i, count)
 
-    if (i == 0)
-      create_next_button(i, count)
-    else if (i == count - 1)
-      $('#step' + i).hide()
-      create_prev_button(i)
-    else
-      $('#step' + i).hide()
-      create_prev_button(i)
-      create_next_button(i, count)
-
-    $(this).show()
+      $(this).show()
 
 jQuery ->
   if $('#journal form').length > 0
