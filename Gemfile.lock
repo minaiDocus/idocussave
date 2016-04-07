@@ -604,6 +604,3 @@ DEPENDENCIES
   wash_out!
   webmock
   whenever
-
-BUNDLED WITH
-   1.11.2
