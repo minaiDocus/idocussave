@@ -39,25 +39,38 @@ class AccountingPlan
   end
 
   def to_xml
+    _address = user.paper_return_address
     builder = Nokogiri::XML::Builder.new do
       data {
-        customers.each do |customer|
-          wsAccounts {
-            category 1
-            associate customer.conterpart_account
-            name customer.third_party_name
-            number customer.third_party_account
-            send(:'vat-account', vat_accounts.find_by_code(customer.code).try(:account_number))
-          }
-        end
-        providers.each do |provider|
-          wsAccounts {
-            category 2
-            associate provider.conterpart_account
-            name provider.third_party_name
-            number provider.third_party_account
-            send(:'vat-account', vat_accounts.find_by_code(provider.code).try(:account_number))
-          }
+        address {
+          name          user.company
+          contact       user.name
+          address_1     _address.try(:address_1)
+          address_2     _address.try(:address_2)
+          zip           _address.try(:zip)
+          city          _address.try(:city)
+          country       _address.try(:country)
+          country_code 'FR'
+        }
+        accounting_plans do 
+          customers.each do |customer|
+            wsAccounts {
+              category 1
+              associate customer.conterpart_account
+              name customer.third_party_name
+              number customer.third_party_account
+              send(:'vat-account', vat_accounts.find_by_code(customer.code).try(:account_number))
+            }
+          end
+          providers.each do |provider|
+            wsAccounts {
+              category 2
+              associate provider.conterpart_account
+              name provider.third_party_name
+              number provider.third_party_account
+              send(:'vat-account', vat_accounts.find_by_code(provider.code).try(:account_number))
+            }
+          end
         end
       }
     end
