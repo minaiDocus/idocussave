@@ -2,7 +2,8 @@
 require 'net/ftp'
 
 class DocumentFetcher
-  FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
+  #FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
+  FILENAME_PATTERN = /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
 
   class << self
     def fetch(url, username, password, dir='/', provider='')
@@ -16,7 +17,6 @@ class DocumentFetcher
         position = dir[11..-7] || 1
         corrupted_documents = []
         document_delivery = DocumentDelivery.find_or_create_by(date, provider, position)
-
         file_names = valid_file_names(ftp.nlst.sort)
         grouped_packs(file_names).each do |pack_name, file_names|
           documents = []
@@ -26,7 +26,8 @@ class DocumentFetcher
               get_file ftp, file_name, clean_file_name(file_name) do |file|
                 document = document_delivery.add_or_replace file, original_file_name: file_name,
                                                                   delivery_type: 'scan',
-                                                                  delivered_by: provider
+                                                                  delivered_by: provider,
+                                                                  pack_name: pack_name
               end
             end
             documents << document
@@ -86,7 +87,7 @@ class DocumentFetcher
     end
 
     def clean_file_name(file_name)
-      file_name.gsub(/\s/, '_').sub(/.PDF\z/, '.pdf')
+      file_name.gsub(/\s/, '_').sub(/.PDF\z/, '.pdf').gsub(/page(\d+)(\.pdf)\z/i, '\1\2')
     end
 
     def valid_file_names(file_names)

@@ -41,20 +41,25 @@ class PrepaCompta::GroupIntoPiece
     temp_documents.first
   end
 
+  def bundling_document_ids
+    temp_documents.map(&:id) if original_temp_document.scanned? 
+  end
+
 private
 
   def create_temp_document(file_path)
     temp_document = TempDocument.new
-    temp_document.temp_pack      = @temp_pack
-    temp_document.user           = @temp_pack.user
-    temp_document.organization   = @temp_pack.organization
-    temp_document.position       = @temp_pack.next_document_position
-    temp_document.content        = open file_path
-    temp_document.pages_number   = DocumentTools.pages_number file_path
-    temp_document.is_an_original = false
-    temp_document.is_a_cover     = original_temp_document.is_a_cover?
-    temp_document.delivered_by   = original_temp_document.delivered_by
-    temp_document.delivery_type  = original_temp_document.delivery_type
+    temp_document.temp_pack                   = @temp_pack
+    temp_document.user                        = @temp_pack.user
+    temp_document.organization                = @temp_pack.organization
+    temp_document.position                    = @temp_pack.next_document_position
+    temp_document.content                     = open file_path
+    temp_document.pages_number                = DocumentTools.pages_number file_path
+    temp_document.is_an_original              = false
+    temp_document.is_a_cover                  = original_temp_document.is_a_cover?
+    temp_document.delivered_by                = original_temp_document.delivered_by
+    temp_document.delivery_type               = original_temp_document.delivery_type
+    temp_document.scan_bundling_document_ids  = bundling_document_ids
     temp_document.save && temp_document.ready
   end
 end

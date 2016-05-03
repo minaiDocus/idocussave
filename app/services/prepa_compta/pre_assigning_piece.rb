@@ -59,6 +59,6 @@ private
 
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
-    FileUtils.cp(@piece.content.path, File.join(dir, file_name))
+    FileUtils.cp(@piece.content.path, File.join(dir, @piece.name.gsub(' ','_') + '.pdf'))
   end
 end

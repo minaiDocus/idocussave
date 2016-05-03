@@ -35,6 +35,7 @@ class TempDocument
   field :state,                    default: 'created'
   field :stated_at, type: Time
   field :is_locked, type: Boolean, default: false
+  field :scan_bundling_document_ids, type: Array, default: []
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan fiduceo)
 
@@ -238,7 +239,12 @@ class TempDocument
   def is_a_cover?
     if scanned?
       if original_file_name.present?
-        File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\A0*\z/).present?
+        case original_file_name
+          when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
+            File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\A0*\z/).present?
+          when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
+            File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\Apage0001\z/).present?
+        end
       else
         is_a_cover
       end

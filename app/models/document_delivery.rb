@@ -35,7 +35,7 @@ class DocumentDelivery
   end
 
   def add_or_replace(file, options={})
-    pack_name = DocumentTools.pack_name options[:original_file_name]
+    pack_name = DocumentTools.pack_name options[:pack_name]
     temp_pack = TempPack.find_or_create_by_name pack_name
     temp_pack.update_pack_state
 
