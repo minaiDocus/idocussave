@@ -20,6 +20,9 @@
     à
     = l @order.paper_set_end_date, format: '%B %Y'
     %br
+    \- Type de Période :
+    = period_type(@order.period_duration)
+    %br
     %br
     Pour créer le kit, merci de suivre ce lien : #{link_to account_organization_url(@order.user.organization, tab: 'file_sending_kit'), account_organization_url(@order.user.organization, tab: 'file_sending_kit')}
     %br
