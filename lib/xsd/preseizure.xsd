@@ -14,6 +14,7 @@
               <element type="string" name="conversion_rate"/>
               <element type="string" name="deadline_date"/>
               <element type="string" name="observation"/>
+              <element type="boolean" name="is_made_by_abbyy"/>
               <element name="account" maxOccurs="unbounded" minOccurs="2">
                 <complexType>
                   <sequence>

@@ -3,8 +3,6 @@ class PrepaCompta::PreAssignPiece
   def initialize(process)
     @process = process
     case process
-      when 'abbyy_preseizure'
-        @schema =  Nokogiri::XML::Schema(Rails.root.join('lib/xsd/abbyy_preseizure.xsd'))
       when 'preseizure'
         @schema =  Nokogiri::XML::Schema(Rails.root.join('lib/xsd/preseizure.xsd'))
       when 'expense'
@@ -18,7 +16,7 @@ class PrepaCompta::PreAssignPiece
     end
 
     def fetch_all
-      %w(preseizure abbyy_preseizure expense).each { |process| execute(process) }
+      %w(preseizure expense).each { |process| execute(process) }
     end
   end
 
@@ -32,7 +30,7 @@ class PrepaCompta::PreAssignPiece
 
       UpdatePeriodDataService.new(period).execute
       UpdatePeriodPriceService.new(period).execute
-      if is_a_preseizure?
+      if is_preseizure?
         if report.preseizures.not_delivered.not_locked.count > 0
           report.update_attribute(:is_delivered, false)
         end
@@ -83,7 +81,7 @@ private
 
   def is_already_pre_assigned?(piece)
     return true unless piece.is_awaiting_pre_assignment?
-    is_a_preseizure? ? piece.preseizures.any? : piece.expense.present?
+    is_preseizure? ? piece.preseizures.any? : piece.expense.present?
   end
 
   def grouped_xml_pieces
@@ -95,9 +93,7 @@ private
   def get_pre_assignments(xml_pieces, report)
     pre_assignments = []
     xml_pieces.each do |piece, xml_piece, file_path|
-      if is_abbyy_preseizure?
-        pre_assignments << create_preseizure(piece, report, xml_piece)
-      elsif is_preseizure?
+      if is_preseizure?
         xml_piece.css('preseizure').each do |data|
           pre_assignments << create_preseizure(piece, report, data)
         end
@@ -108,11 +104,9 @@ private
       path = output_path.join("processed/#{Time.now.strftime("%Y-%m-%d")}")
       FileUtils.mkdir_p path
       FileUtils.mv file_path, path
-      if manual_pre_assignment?
-        archive_path      = manual_archive_dir.join(report.type).to_s
-        file_name_pattern = manual_dir.join report.type, "#{piece.name.gsub(' ','_')}*.pdf"
-        move_to_archive archive_path, file_name_pattern
-      end
+      archive_path      = manual_archive_dir.join(report.type).to_s
+      file_name_pattern = manual_dir.join report.type, "#{piece.name.gsub(' ','_')}*.pdf"
+      move_to_archive archive_path, file_name_pattern  
     end
     pre_assignments
   end
@@ -132,13 +126,13 @@ private
     preseizure.deadline_date    = data.at_css('deadline_date').try(:content).try(:to_date)
     preseizure.observation      = data.at_css('observation').try(:content)
     preseizure.position         = piece.position
-    preseizure.is_made_by_abbyy = is_abbyy_preseizure?
+    preseizure.is_made_by_abbyy = data.at_css('is_made_by_abbyy').try(:content)
     preseizure.save
     data.css('account').each do |xml_account|
       account = Pack::Report::Preseizure::Account.new
       account.type      = Pack::Report::Preseizure::Account.get_type(xml_account['type'])
       account.number    = xml_account['number']
-      account.lettering = (is_abbyy_preseizure? ? xml_account['lettrage'] : xml_account['lettering'])
+      account.lettering = xml_account['lettering']
       account.save
       preseizure.accounts << account
       xml_account.css('debit,credit').each do |xml_entity|
@@ -209,10 +203,6 @@ private
     end
   end
 
-  def is_abbyy_preseizure?
-    @process == 'abbyy_preseizure'
-  end
-
   def is_preseizure?
     @process == 'preseizure'
   end
@@ -221,18 +211,8 @@ private
     @process == 'expense'
   end
 
-  def is_a_preseizure?
-    is_abbyy_preseizure? || is_preseizure?
-  end
-
-  def manual_pre_assignment?
-    is_preseizure? || is_expense?
-  end
-
   def output_path
-    return PrepaCompta.pre_assignments_dir.join 'abbyy/output' if is_abbyy_preseizure?
-    return PrepaCompta.pre_assignments_dir.join 'output/preseizures' if is_preseizure?
-    PrepaCompta.pre_assignments_dir.join 'output/expenses' if is_expense?
+    is_preseizure? ? PrepaCompta.pre_assignments_dir.join('output/preseizures') : PrepaCompta.pre_assignments_dir.join('output/expenses')
   end
 
   def move_and_write_errors(file_path, errors)
