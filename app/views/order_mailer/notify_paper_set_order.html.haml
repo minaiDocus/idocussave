@@ -21,7 +21,11 @@
     = l @order.paper_set_end_date, format: '%B %Y'
     %br
     \- Type de Période :
-    = period_type(@order.period_duration)
+    - period_type = case @order.period_duration
+      - when 1 then 'Mensuel'
+      - when 3 then 'Trimestriel'
+      - when 12 then 'Annuel'
+    = period_type
     %br
     %br
     Pour créer le kit, merci de suivre ce lien : #{link_to account_organization_url(@order.user.organization, tab: 'file_sending_kit'), account_organization_url(@order.user.organization, tab: 'file_sending_kit')}

@@ -16,4 +16,5 @@ class OrderMailer < ActionMailer::Base
     cc = addresses[1..-1] || []
     mail(to: to, cc: cc, subject: 'Commande de Kit envoi courrier')
   end
+
 end
