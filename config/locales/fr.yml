@@ -870,13 +870,15 @@ fr:
           content: Contenu recherché
           third_party_account: Numéro de compte
           priority: Priorité
+          customer_code: Code client
           users: Clients
+          categorization: Catégorisation
           affect_values:
             organization: Organisation
             user: Client
           rule_type_values:
             match: Recherche
-            truncate: Correction du plan de compte
+            truncate: Correction
       file_naming_policy:
         zero: 0 charte de nommage
         one: 1 charte de nommage

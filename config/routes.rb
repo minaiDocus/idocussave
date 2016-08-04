@@ -60,7 +60,12 @@ Idocus::Application.routes.draw do
       resource :file_naming_policy, only: %w(edit update) do
         patch 'preview', on: :member
       end
-      resources :account_number_rules
+      resources :account_number_rules do 
+        post    'export_or_destroy',         on: :collection
+        get     'import_model',              on: :collection
+        get     'import_form',               on: :collection
+        patch   'import',                    on: :collection
+      end
       resource :knowings, only: %w(new create edit update)
       resources :reminder_emails, except: :index do
         post 'deliver', on: :member

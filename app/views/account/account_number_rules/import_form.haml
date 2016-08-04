@@ -1,0 +1,26 @@
+#account_number_rule.import
+  .row-fluid
+    .span12.box
+      %h3 Importer des règles d'affectations bancaires en masse
+
+  .row-fluid
+    .span12.box
+      = form_tag import_account_organization_account_number_rules_path(@organization), method: 'patch', multipart: true, class: 'form form-horizontal margin0' do
+        .row-fluid
+          %p Une règle d'affectation doit avoir un nom unique. Si des règles dans le fichier d'import portent le même nom qu'une règle déjà existante, ces règles seront auto incrémentées. 
+          .span12
+            .control-group
+              = label_tag 'import_file', 'Fichier à importer', class: 'control-label'
+              .controls
+                = file_field_tag :file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
+                = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_account_number_rules_path(@organization)
+            .control-group
+              = label_tag 'account_number_rule[affect]', t('mongoid.models.account_number_rule.attributes.affect'), class: 'select control-label'
+              .controls
+                = select_tag 'account_number_rule[affect]', options_for_select(affect_options_for_select), include_blank: false, hint: 'Ne pourra plus être changé par la suite.'
+                %p.help-block Ne pourra plus être changé par la suite. 
+          .span12.affect_to{ style: 'display:none'}
+            = render partial: 'affect_to_form'
+        .form-actions.margin0bottom
+          = submit_tag 'Importer', class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_account_number_rules_path(@organization), class: 'btn'

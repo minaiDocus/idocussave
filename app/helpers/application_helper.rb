@@ -26,6 +26,10 @@ module ApplicationHelper
     content_tag :i, '', class: 'icon-ban-circle'
   end
 
+  def icon_download
+    content_tag :i, '', class: 'icon-download'
+  end
+
   def icon_new
     content_tag :i, '', class: 'icon-plus'
   end
