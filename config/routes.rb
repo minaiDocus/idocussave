@@ -40,6 +40,7 @@ Idocus::Application.routes.draw do
   get 'gr/sessions/:slug/destroy', controller: 'gray_label/sessions', action: 'destroy'
 
   post 'dropbox/webhook', controller: 'dropboxes', action: 'webhook'
+  get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
   namespace :account do
     root to: 'account/account#index'

@@ -11,4 +11,10 @@ class DropboxesController < ApplicationController
       render text: 'Unauthorized.'
     end
   end
+
+  def verify
+    render text: params[:challenge] and return if params[:challenge].present?
+    render text: 'challenge parameter is missing' 
+  end
+
 end
