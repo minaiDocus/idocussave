@@ -5,7 +5,7 @@ class PreAssignmentDeliveryService
 
   class << self
     def execute(notify_now=false)
-      PreAssignmentDelivery.pending.asc(:number).each do |delivery|
+      PreAssignmentDelivery.xml_built.asc(:number).each do |delivery|
         PreAssignmentDeliveryService.new(delivery).execute
         notify if @@notified_at <= 15.minutes.ago
         @@processed_at = Time.now
@@ -29,6 +29,11 @@ class PreAssignmentDeliveryService
         @@notified_at = Time.now
       end
     end
+
+    def build_xml(delivery_id)
+      delivery = PreAssignmentDelivery.find(delivery_id)
+      new(delivery).build_xml
+    end
   end
 
   attr_accessor :delivery, :ibiza, :preseizures, :report, :user
@@ -42,7 +47,7 @@ class PreAssignmentDeliveryService
   end
 
   def execute
-    result = send if build_xml
+    result = send
     notify
     result
   end
