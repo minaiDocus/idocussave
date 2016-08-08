@@ -26,6 +26,7 @@ class DropboxImportFolder
         users << object
         users << object.organization.leader
         users += object.groups.map(&:collaborators).flatten
+        users.compact!
       else
         users = object
       end
