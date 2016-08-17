@@ -146,7 +146,7 @@ class Invoice
       header_data = [
         [
           "IDOCUS\n3, rue Copernic\n75116 Paris.",
-          "SAS au capital de 10 000 €\nRCS PARIS: 804 067 726\nTVA FR1280406772600013",
+          "SAS au capital de 50 000 €\nRCS PARIS: 804 067 726\nTVA FR12804067726",
           "contact@idocus.com\nwww.idocus.com\nTél : 0 811 030 177"
         ]
       ]
