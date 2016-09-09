@@ -48,6 +48,14 @@ class SubscriptionForm
         @subscription.is_scan_box_package_active  = false
         @subscription.is_retriever_package_active = false
         @subscription.period_duration             = 12
+      elsif params[:is_micro_package_active] == '1'
+        @subscription.is_micro_package_active     = true
+        @subscription.is_annual_package_active    = false
+        @subscription.is_basic_package_active     = false
+        @subscription.is_mail_package_active      = false
+        @subscription.is_scan_box_package_active  = false
+        @subscription.is_retriever_package_active = params[:is_retriever_package_active] == '1'
+        @subscription.period_duration             = params[:period_duration]
       else
         @subscription.is_annual_package_active    = false
         @subscription.is_basic_package_active     = params[:is_basic_package_active]     == '1'
@@ -61,7 +69,7 @@ class SubscriptionForm
       @subscription.number_of_journals = params[:number_of_journals]
     end
 
-    if @subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+    if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
       if @subscription.is_pre_assignment_active && dont_apply_now
         @subscription.is_pre_assignment_to_be_disabled = params[:is_pre_assignment_active] == 'false'
       else

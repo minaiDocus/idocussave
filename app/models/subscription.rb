@@ -15,6 +15,7 @@ class Subscription
   field :period_duration, type: Integer, default: 1
   field :tva_ratio,       type: Float,   default: 1.2
 
+  field :is_micro_package_active,     type: Boolean, default: false
   field :is_basic_package_active,     type: Boolean, default: false
   field :is_mail_package_active,      type: Boolean, default: false
   field :is_scan_box_package_active,  type: Boolean, default: false
@@ -24,12 +25,15 @@ class Subscription
   field :is_pre_assignment_active,    type: Boolean, default: true
   field :is_stamp_active,             type: Boolean, default: false
 
+  field :is_micro_package_to_be_disabled,     type: Boolean
   field :is_basic_package_to_be_disabled,     type: Boolean
   field :is_mail_package_to_be_disabled,      type: Boolean
   field :is_scan_box_package_to_be_disabled,  type: Boolean
   field :is_retriever_package_to_be_disabled, type: Boolean
   field :is_pre_assignment_to_be_disabled,    type: Boolean
   field :is_stamp_to_be_disabled,             type: Boolean
+  field :start_at,       type: Time
+  field :end_at,         type: Time
 
   attr_accessor :is_to_apply_now
 
@@ -80,6 +84,7 @@ class Subscription
 
   def configured?
     is_basic_package_active     ||
+    is_micro_package_active     ||
     is_mail_package_active      ||
     is_scan_box_package_active  ||
     is_retriever_package_active ||
@@ -88,6 +93,7 @@ class Subscription
 
   def to_be_configured?
     is_basic_package_active     && !is_basic_package_to_be_disabled     ||
+    is_micro_package_active     && !is_micro_package_to_be_disabled     ||
     is_mail_package_active      && !is_mail_package_to_be_disabled      ||
     is_scan_box_package_active  && !is_scan_box_package_to_be_disabled  ||
     is_retriever_package_active && !is_retriever_package_to_be_disabled ||
@@ -96,6 +102,7 @@ class Subscription
 
   def downgrade
     self.is_basic_package_active     = false if is_basic_package_to_be_disabled
+    self.is_micro_package_active     = false if is_micro_package_to_be_disabled
     self.is_mail_package_active      = false if is_mail_package_to_be_disabled
     self.is_scan_box_package_active  = false if is_scan_box_package_to_be_disabled
     self.is_retriever_package_active = false if is_retriever_package_to_be_disabled
@@ -107,7 +114,46 @@ class Subscription
     !is_annual_package_active
   end
 
+  def annual_or_micro_package_active?
+    is_annual_package_active || is_micro_package_active
+  end
+
   def owner
     user || organization
   end
+
+  def set_start_at_and_end_at 
+    if self.is_micro_package_active
+      #updating start_at and end_at when subscription term is reached
+      if self.end_at.present? && self.end_at < Time.now
+        self.start_at = (self.end_at + 1.day).beginning_of_month
+        self.end_at   = (self.start_at + 11.months).end_of_month
+      end
+      #when unset 
+      self.start_at ||= Time.now.beginning_of_month
+      self.end_at   ||= (self.start_at + 11.months).end_of_month
+      save
+    end
+  end
+
+  def current_preceeding_periods
+    return [] unless is_micro_package_active
+    periods.where(:start_at.gte => self.start_at, :end_at.lte => current_period.start_at)
+  end
+
+  def excess_of(value, max_value=nil)
+    return 0 unless is_micro_package_active && current_period.start_at.between?(self.start_at, self.end_at)
+    max_value ||= "max_#{value.to_s}_authorized"
+    cumulative_value     = current_preceeding_periods.map(&value.to_sym).sum
+    current_value        = current_period.send(value.to_sym)
+    max_authorized_value = self.send(max_value.to_sym)
+    if cumulative_value > max_authorized_value
+      current_period.send(value.to_sym)
+    elsif cumulative_value + current_value > max_authorized_value
+      cumulative_value + current_value - max_authorized_value
+    else 
+      0
+    end 
+  end
+
 end

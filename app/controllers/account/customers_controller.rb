@@ -4,6 +4,7 @@ class Account::CustomersController < Account::OrganizationController
   before_filter :verify_rights, except: 'index'
   before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
   before_filter :redirect_to_current_step
+  before_filter :verify_if_account_can_be_closed, only: %w(account_close_confirm close_account)
 
   def index
     respond_to do |format|
@@ -183,6 +184,14 @@ private
     if @customer.inactive?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
+    end
+  end
+
+  def verify_if_account_can_be_closed
+    subscription = @customer.subscription
+    if subscription.is_micro_package_active && subscription.created_at > 12.months.ago && !params[:close_now]
+      flash[:error] = "Ce dossier est souscrit à un forfait iDo'Micro avec un engagement minimum de un an"
+      redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
 

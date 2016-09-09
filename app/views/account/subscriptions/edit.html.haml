@@ -29,17 +29,17 @@
               %td
                 .package_choice
                   %label
-                    = f.check_box :is_basic_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
+                    = f.check_box :is_basic_package_active, class: 'light_package', disabled: @subscription.annual_or_micro_package_active?, data: { original_value: ((@subscription.is_basic_package_active || @subscription.is_basic_package_to_be_disabled) ? 1 : 0) }
                     %b iDo’Basique
                     %i (Téléchargement + Pré-saisie comptable)
                 .package_choice
                   %label
-                    = f.check_box :is_mail_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
+                    = f.check_box :is_mail_package_active, class: 'light_package', disabled: @subscription.annual_or_micro_package_active?, data: { original_value: ((@subscription.is_mail_package_active || @subscription.is_mail_package_to_be_disabled) ? 1 : 0) }
                     %b iDo’Courrier
                     %i (Téléchargement + Envoi par courrier A/R + Pré-saisie comptable)
                 .package_choice
                   %label
-                    = f.check_box :is_scan_box_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_scan_box_package_active || @subscription.is_scan_box_package_to_be_disabled) ? 1 : 0) }
+                    = f.check_box :is_scan_box_package_active, class: 'light_package', disabled: @subscription.annual_or_micro_package_active?, data: { original_value: ((@subscription.is_scan_box_package_active || @subscription.is_scan_box_package_to_be_disabled) ? 1 : 0) }
                     %b iDo’Box
                     %i (Téléchargement + Scan par iDocus'Box + Pré-saisie comptable)
                 .package_choice
@@ -47,6 +47,12 @@
                     = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0) }
                     %b iDo’FacBanque
                     %i (Récupération banque + Factures sur Internet)
+                - if @user.is_admin || %w(DPA ADV).include?(@organization.code)
+                  .package_choice
+                    %label
+                      = f.check_box :is_micro_package_active, class: 'light_package', disabled: !lock || @subscription.annual_or_micro_package_active?, data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }
+                      %b iDo’Micro
+                      %i (Téléchargement + Pré-saisie comptable + Engagement 12 mois)
                 .package_choice
                   %label
                     = f.check_box :is_annual_package_active, disabled: @subscription.is_annual_package_active
@@ -56,6 +62,8 @@
                   %i Rappel: iDo’FacBanque sélectionné seul n’aura que la pré-saisie des écritures bancaires. Vous pourrez retrouver les factures récupérées par les automates dans « mes documents ».
                   %br
                   %i Les factures seront pré-saisies si iDo’FacBanque est sélectionné en plus d’un autre forfait.
+                .micro_package_warning{ style: 'display:none' }
+                  %i Rappel: Avec iDo’Micro, l'option pré-affectation comptable est offerte mais vous avez un engagement minimum de 12 mois au cours desquels vous ne pourriez ni changer de forfait ni clôturer le dossier.
             %tr.period_duration{ style: 'display:none' }
               %td.question Quelle périodicité souhaitez-vous pour le forfait ?
               %td= f.select :period_duration, [['Mensuel', 1], ['Trimestriel', 3]], { include_blank: false }, { disabled: lock.present?, title: ("Il n'est pas possible de modifier la périodicité d'un forfait déjà actif" if @subscription.configured?) }

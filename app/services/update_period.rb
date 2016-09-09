@@ -71,6 +71,19 @@ private
         option.quantity              = 1
         selected_options << option
       end
+      if @subscription.is_micro_package_active
+        is_base_package_priced = true
+        price = package_options_price([:subscription], type)
+        option = ProductOptionOrder.new
+        option.name                  = 'micro_package_subscription'
+        option.group_title           = "iDo'Micro"
+        option.title                 = 'Téléchargement + Pré-saisie comptable + Engagement 12 mois'
+        option.is_to_be_disabled     = @subscription.is_micro_package_to_be_disabled
+        option.price_in_cents_wo_vat = price
+        option.duration              = 0
+        option.quantity              = 1
+        selected_options << option
+      end
       if @subscription.is_mail_package_active
         if is_base_package_priced
           price = package_options_price([:return_paper], type)

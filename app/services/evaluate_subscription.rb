@@ -8,18 +8,19 @@ class EvaluateSubscription
   end
 
   def execute
-    update_max_number_of_journals
+    update_max_number_of_journals 
     if @subscription.is_annual_package_active
       unauthorize_dematbox
       authorize_fiduceo
       authorize_pre_assignment
       authorize_upload
     else
-      if @subscription.is_basic_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
+      if @subscription.is_basic_package_active || @subscription.is_micro_package_active || @subscription.is_mail_package_active || @subscription.is_scan_box_package_active
         authorize_upload
       else
         unauthorize_upload
       end
+      @subscription.set_start_at_and_end_at 
       @subscription.is_scan_box_package_active  ? authorize_dematbox       : unauthorize_dematbox
       @subscription.is_retriever_package_active ? authorize_fiduceo        : unauthorize_fiduceo
       @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
@@ -88,4 +89,5 @@ private
       @customer.options.update_attribute(:max_number_of_journals, @subscription.number_of_journals)
     end
   end
+
 end

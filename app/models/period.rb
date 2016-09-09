@@ -187,38 +187,31 @@ class Period
   end
 
   def excess_sheets
-    excess = scanned_sheets - max_sheets_authorized
-    excess > 0 ? excess : 0
+    excess_of(:scanned_sheets, :max_sheets_authorized)
   end
 
   def excess_paperclips
-    excess = paperclips - max_paperclips_authorized
-    excess > 0 ? excess : 0
+    excess_of(:paperclips)
   end
 
   def excess_oversized
-    excess = oversized - max_oversized_authorized
-    excess > 0 ? excess : 0
+    excess_of(:oversized)
   end
 
   def excess_uploaded_pages
-    excess = uploaded_pages - max_upload_pages_authorized
-    excess > 0 ? excess : 0
+    excess_of(:uploaded_pages, :max_upload_pages_authorized)
   end
 
   def excess_dematbox_scanned_pages
-    excess = dematbox_scanned_pages - max_dematbox_scan_pages_authorized
-    excess > 0 ? excess : 0
+    excess_of(:dematbox_scanned_pages, :max_dematbox_scan_pages_authorized)
   end
 
   def excess_preseizure_pieces
-    excess = preseizure_pieces - max_preseizure_pieces_authorized
-    excess > 0 ? excess : 0
+    excess_of(:preseizure_pieces)
   end
 
   def excess_expense_pieces
-    excess = expense_pieces - max_expense_pieces_authorized
-    excess > 0 ? excess : 0
+    excess_of(:expense_pieces)
   end
 
   def excess_compta_pieces
@@ -234,6 +227,16 @@ class Period
   end
 
 private
+  def excess_of(value, max_value=nil)
+    max_value ||= "max_#{value.to_s}_authorized"
+    return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
+    unless subscription.is_micro_package_active
+      excess = self.send(value.to_sym) - self.send(max_value.to_sym)
+      excess > 0 ? excess : 0
+    else
+      subscription.excess_of(value, max_value)
+    end
+  end
 
   def set_start_at_and_end_at
     if duration == 1

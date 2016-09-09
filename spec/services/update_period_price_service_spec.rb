@@ -2,8 +2,13 @@
 require 'spec_helper'
 
 describe UpdatePeriodPriceService do
+  before(:all) do
+    @user = FactoryGirl.create(:user)
+    @subscription = Subscription.create(user_id: @user.id)
+  end
+
   it 'have default values' do
-    period = Period.create
+    period = Period.create(subscription: @subscription)
 
     UpdatePeriodPriceService.new(period).execute
 
@@ -15,14 +20,11 @@ describe UpdatePeriodPriceService do
   end
 
   context 'as customer' do
-    before(:all) do
-      @user = FactoryGirl.create(:user)
-    end
-
     context 'for monthly' do
       it 'set values' do
         period = Period.new
         period.user = @user
+        period.subscription = @subscription
         period.duration = 1
         period.save
         option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
@@ -50,6 +52,7 @@ describe UpdatePeriodPriceService do
       it 'set values' do
         period = Period.new
         period.user = @user
+        period.subscription = @subscription
         period.duration = 3
         period.save
         option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 900,  duration: 0, group_position: 1)
@@ -77,6 +80,7 @@ describe UpdatePeriodPriceService do
       it 'set values' do
         period = Period.new
         period.user = @user
+        period.subscription = @subscription
         period.duration = 12
         period.save
         option = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 19900, duration: 0, group_position: 1)
@@ -102,6 +106,7 @@ describe UpdatePeriodPriceService do
   context 'as organization' do
     it 'set values' do
       period = Period.create
+      period.subscription = Subscription.create 
       option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
       option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 2)
       period.product_option_orders << option1

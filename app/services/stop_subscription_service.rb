@@ -21,6 +21,7 @@ class StopSubscriptionService
     @user.is_fiduceo_authorized  = false
     @user.is_dematbox_authorized = false
     @user.save
+    @user.subscription.update_attributes(start_at: nil, end_at: nil)
     @user.options.max_number_of_journals      = 0
     @user.options.is_preassignment_authorized = false
     @user.options.save

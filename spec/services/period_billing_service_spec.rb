@@ -6,6 +6,7 @@ describe PeriodBillingService do
     context 'for month' do
       before(:all) do
         period = Period.new
+        period.subscription = Subscription.create
         period.duration = 1
         period.price_in_cents_wo_vat = 1000
         @period_billing_service = PeriodBillingService.new(period)
@@ -17,7 +18,7 @@ describe PeriodBillingService do
         expect(amount).to eq(1000)
       end
 
-      it 'with order 2 returns 0' do
+      it 'with order 2 returns 1000' do
         amount = @period_billing_service.amount_in_cents_wo_vat(2)
 
         expect(amount).to eq(1000)
@@ -192,6 +193,7 @@ describe PeriodBillingService do
     context 'for month' do
       before(:all) do
         period = Period.new
+        period.subscription = Subscription.create
         period.duration = 1
         period.oversized = 1
         @period_billing_service = PeriodBillingService.new(period)
@@ -214,6 +216,7 @@ describe PeriodBillingService do
       context 'without billing' do
         before(:all) do
           period = Period.new
+          period.subscription = Subscription.create
           period.duration = 3
           period.oversized = 1
           @period_billing_service = PeriodBillingService.new(period)
@@ -259,6 +262,7 @@ describe PeriodBillingService do
       context 'with billing' do
         before(:all) do
           period = Period.new
+          period.subscription = Subscription.create
           period.duration = 3
           period.oversized = 5
           billing = PeriodBilling.new
@@ -310,6 +314,7 @@ describe PeriodBillingService do
       context 'without billing' do
         before(:all) do
           period = Period.new
+          period.subscription = Subscription.create
           period.duration = 12
           period.oversized = 1
           @period_billing_service = PeriodBillingService.new(period)
@@ -331,6 +336,7 @@ describe PeriodBillingService do
       context 'with billing' do
         before(:all) do
           period = Period.new
+          period.subscription = Subscription.create
           period.duration = 12
           period.oversized = 5
           billing = PeriodBilling.new
@@ -387,6 +393,7 @@ describe PeriodBillingService do
     context 'for quarter' do
       before(:each) do
         @period = Period.new
+        @period.subscription = Subscription.create
         @period.duration = 3
         @period.recurrent_products_price_in_cents_wo_vat = 300
         @period.ponctual_products_price_in_cents_wo_vat  = 500
@@ -590,6 +597,7 @@ describe PeriodBillingService do
     context 'for annual' do
       before(:each) do
         @period = Period.new
+        @period.subscription = Subscription.create
         @period.duration = 12
         @period.recurrent_products_price_in_cents_wo_vat = 19900
         @period.excesses_price_in_cents_wo_vat           = 780

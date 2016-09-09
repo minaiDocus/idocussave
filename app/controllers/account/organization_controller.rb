@@ -137,7 +137,7 @@ protected
     when 'ged'
       nil
     end
-    @customer.save
+    @customer.save!
     if @customer.current_configuration_step
       redirect_to step_path(@customer.current_configuration_step)
     else

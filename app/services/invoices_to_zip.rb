@@ -30,7 +30,6 @@ class InvoicesToZip
 
   class << self
     def remove_temp_dir(dir)
-      debugger
       FileUtils.rm_rf dir if File.exist? dir
     end
     handle_asynchronously :remove_temp_dir, :run_at => Proc.new { 1.hour.from_now }
