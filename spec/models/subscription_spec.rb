@@ -179,36 +179,72 @@ describe Subscription do
     end
 
     describe '#set_start_at_and_end_at' do 
-      before(:all) do
-        Timecop.freeze(Time.local(2016,1,1)) 
-        @user = FactoryGirl.create(:user)
-        @subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true)
-        @subscription.user.options = UserOptions.new
-        @subscription.set_start_at_and_end_at
-        Timecop.return
+      context 'for monthly' do
+        before(:all) do
+          Timecop.freeze(Time.local(2016,1,1)) 
+          @user = FactoryGirl.create(:user)
+          @subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true)
+          @subscription.user.options = UserOptions.new
+          @subscription.set_start_at_and_end_at
+          Timecop.return
+        end
+
+        it 'returns right values' do   
+          expect(@subscription.start_at).to eq Time.local(2016,1,1).beginning_of_month
+          expect(@subscription.end_at).to eq Time.local(2016,12).end_of_month
+        end
+
+        context 'when subscription term is reached' do
+          before do 
+            Timecop.freeze(Time.local(2017,1,1))
+          end
+          
+          it 'EvaluateSubscription updates start_at and end_at' do 
+            evaluator = EvaluateSubscription.new(@subscription)
+            allow(evaluator).to receive(:authorize_pre_assignment)
+            evaluator.execute
+            expect(@subscription.start_at).to eq Time.local(2017,1).beginning_of_month
+            expect(@subscription.end_at).to eq (Time.local(2017,12)).end_of_month
+          end
+
+          after do
+            Timecop.return 
+          end
+        end  
       end
 
-      it 'returns right values' do   
-        expect(@subscription.start_at).to eq Time.local(2016,1,1).beginning_of_month
-        expect(@subscription.end_at).to eq Time.local(2016,12).end_of_month
-      end
-
-      context 'when subscription term is reached' do
-        before do 
-          Timecop.freeze(Time.local(2017,1,1))
-        end
-        
-        it 'EvaluateSubscription updates start_at and end_at' do 
-          evaluator = EvaluateSubscription.new(@subscription)
-          allow(evaluator).to receive(:authorize_pre_assignment)
-          evaluator.execute
-          expect(@subscription.start_at).to eq Time.local(2017,1).beginning_of_month
-          expect(@subscription.end_at).to eq (Time.local(2017,12)).end_of_month
+      context 'for quaterly' do
+        before(:all) do
+          Timecop.freeze(Time.local(2016,3,1)) 
+          @user = FactoryGirl.create(:user)
+          @subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true, period_duration: 3)
+          @subscription.user.options = UserOptions.new
+          @subscription.set_start_at_and_end_at
+          Timecop.return
         end
 
-        after do
-          Timecop.return 
+        it 'returns right values' do   
+          expect(@subscription.start_at).to eq Time.local(2016,1,1).beginning_of_month
+          expect(@subscription.end_at).to eq Time.local(2016,12).end_of_month
         end
+
+        context 'when subscription term is reached' do
+          before do 
+            Timecop.freeze(Time.local(2017,3,1))
+          end
+          
+          it 'EvaluateSubscription updates start_at and end_at' do 
+            evaluator = EvaluateSubscription.new(@subscription)
+            allow(evaluator).to receive(:authorize_pre_assignment)
+            evaluator.execute
+            expect(@subscription.start_at).to eq Time.local(2017,1).beginning_of_month
+            expect(@subscription.end_at).to eq (Time.local(2017,12)).end_of_month
+          end
+
+          after do
+            Timecop.return 
+          end
+        end  
       end
     end
   end

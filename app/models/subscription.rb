@@ -126,11 +126,11 @@ class Subscription
     if self.is_micro_package_active
       #updating start_at and end_at when subscription term is reached
       if self.end_at.present? && self.end_at < Time.now
-        self.start_at = (self.end_at + 1.day).beginning_of_month
+        self.start_at = self.period_duration == 1 ? (self.end_at + 1.day).beginning_of_month : (self.end_at + 1.day).beginning_of_quarter
         self.end_at   = (self.start_at + 11.months).end_of_month
       end
       #when unset 
-      self.start_at ||= Time.now.beginning_of_month
+      self.start_at ||= self.period_duration == 1 ? Time.now.beginning_of_month : Time.now.beginning_of_quarter
       self.end_at   ||= (self.start_at + 11.months).end_of_month
       save
     end
