@@ -230,7 +230,7 @@ private
   def excess_of(value, max_value=nil)
     max_value ||= "max_#{value.to_s}_authorized"
     return 0 unless self.respond_to?(value.to_sym) && self.respond_to?(max_value.to_sym)
-    unless subscription.is_micro_package_active
+    unless subscription.try(:is_micro_package_active)
       excess = self.send(value.to_sym) - self.send(max_value.to_sym)
       excess > 0 ? excess : 0
     else
