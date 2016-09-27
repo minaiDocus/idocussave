@@ -34,6 +34,7 @@ class FiduceoRetriever
 
   validates_presence_of :type, :name, :login, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
+  validates_presence_of :journal, if: :provider?
   validate :inclusion_of_frequency
 
   scope :providers,                     -> { where(type: 'provider') }
