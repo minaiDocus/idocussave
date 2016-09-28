@@ -3,8 +3,8 @@ class Pack::Report::Preseizure::Entry
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'         , inverse_of: :entries
-  belongs_to :account   , class_name: 'Pack::Report::Preseizure::Account', inverse_of: :entries
+  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'         , inverse_of: :entries, index: true
+  belongs_to :account   , class_name: 'Pack::Report::Preseizure::Account', inverse_of: :entries, index: true
 
   DEBIT  = 1
   CREDIT = 2

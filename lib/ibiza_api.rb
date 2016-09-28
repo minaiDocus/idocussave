@@ -61,10 +61,11 @@ module IbizaAPI
                   xml.accountName account.number
                   xml.term computed_deadline_date(preseizure, exercise) if preseizure.deadline_date.present?
                   xml.description description(preseizure, fields, separator)
-                  if account.entries.first.type == Pack::Report::Preseizure::Entry::DEBIT
-                    xml.debit account.entries.first.amount
+                  entry = account.entries.first
+                  if entry.type == Pack::Report::Preseizure::Entry::DEBIT
+                    xml.debit entry.amount
                   else
-                    xml.credit account.entries.first.amount
+                    xml.credit entry.amount
                   end
                 }
               end
