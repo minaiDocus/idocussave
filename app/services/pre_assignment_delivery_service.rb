@@ -79,7 +79,7 @@ class PreAssignmentDeliveryService
       if is_exercises_present?
         @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans iBiza."
       else
-        @delivery.error_message = @report.delivery_message = client.response.message.to_s
+        @delivery.error_message = @report.delivery_message = @ibiza.client.response.message.to_s
       end
       @report.save
       @delivery.save
