@@ -2,7 +2,7 @@ class Pack::Report::Preseizure::Account
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
+  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts, index: true
   has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :destroy
 
   accepts_nested_attributes_for :entries
