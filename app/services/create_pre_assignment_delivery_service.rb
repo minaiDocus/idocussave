@@ -57,13 +57,14 @@ class CreatePreAssignmentDeliveryService
         if delivery.save
           # Bug : Mongoid N-N relation, when assigning 1 object does not persist automatically
           preseizures.first.save if preseizures.size == 1
-          # Builing Xml separately and normal_preseizures have higher priority than bank_operations
-          priority = preseizures.first.type.nil? ? 1 : 2
+          # Building XML separately and normal preseizures have higher priority than bank operations
+          priority = preseizures.map(&:type).include?(nil) ? 7 : 8
           PreAssignmentDeliveryService.delay(priority: priority).build_xml(delivery.id)
+
           @deliveries << delivery
         end
       end
-      
+
       @report.update_attribute(:is_locked, (@report.preseizures.not_locked.count == 0))
       @deliveries
     else

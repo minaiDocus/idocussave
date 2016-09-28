@@ -96,6 +96,8 @@ class PreAssignmentDeliveryService
       @report.is_locked         = false
       @report.save
 
+      notify
+
       false
     end
   end
