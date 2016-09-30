@@ -1,6 +1,7 @@
 class UserOptions
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Locker
 
   belongs_to :user
 

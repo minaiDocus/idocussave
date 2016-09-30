@@ -21,7 +21,7 @@ class ReceiptsController < PaperProcessesController
     _params = paper_process_params
     user = User.find_by_code _params[:customer_code]
     if user
-      user.with_lock(timeout: 1, retries: 10, retry_sleep: 0.1) do
+      user.options.with_lock(timeout: 1, retries: 10, retry_sleep: 0.1) do
         @paper_process = PaperProcess.where(
           type: 'receipt',
           tracking_number: _params[:tracking_number]
