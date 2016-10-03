@@ -103,21 +103,7 @@ class PreAssignmentDeliveryService
   end
 
   def client
-    if @client
-      @client
-    else
-      access_token = nil
-      if @ibiza.two_channel_delivery?
-        if @preseizures.first.operation.present?
-          access_token = @ibiza.access_token_2
-        else
-          access_token = @ibiza.access_token
-        end
-      else
-        access_token = @ibiza.practical_access_token
-      end
-      @client = IbizaAPI::Client.new(access_token)
-    end
+    @client ||= IbizaAPI::Client.new(@delivery.ibiza_access_token)
   end
 
   def send

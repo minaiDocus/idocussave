@@ -23,6 +23,7 @@
           %th Cabinet
           %th Client
           %th Id. iBiza
+          %th Token
           %th Lot
           %th Total
           %th Mode
@@ -36,6 +37,7 @@
             %td= delivery.organization.name
             %td= delivery.user.company
             %td= delivery.user.ibiza_id
+            %td= delivery.ibiza_access_token
             %td= delivery.pack_name
             %td= delivery.preseizures.count
             %td= delivery.is_auto ? 'Auto.' : 'Manuel'

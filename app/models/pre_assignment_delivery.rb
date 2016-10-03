@@ -82,6 +82,18 @@ class PreAssignmentDelivery
       where(number: number.to_i).first
     end
   end
+  
+  def ibiza
+    @ibiza ||= organization.ibiza
+  end
+
+  def ibiza_access_token
+    if ibiza.two_channel_delivery?
+      preseizures.first.operation.present? ? ibiza.access_token_2 : ibiza.access_token
+    else
+      ibiza.practical_access_token
+    end
+  end
 
 private
 
