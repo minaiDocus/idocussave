@@ -47,7 +47,7 @@
                     = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0) }
                     %b iDo’FacBanque
                     %i (Récupération banque + Factures sur Internet)
-                - if @user.is_admin || %w(DPA ADV).include?(@organization.code)
+                - if @user.is_admin || Settings.micro_package_authorized_to.include?(@organization.code)
                   .package_choice
                     %label
                       = f.check_box :is_micro_package_active, class: 'light_package', disabled: !lock || @subscription.annual_or_micro_package_active?, data: { original_value: ((@subscription.is_micro_package_active || @subscription.is_micro_package_to_be_disabled) ? 1 : 0) }

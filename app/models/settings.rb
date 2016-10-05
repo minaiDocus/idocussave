@@ -9,6 +9,7 @@ class Settings
   setting :notify_scans_not_delivered_to, type: Array,  default: []
   setting :notify_dematbox_order_to,      type: Array,  default: []
   setting :notify_paper_set_order_to,     type: Array,  default: []
+  setting :micro_package_authorized_to,   type: Array,  default: []
 
   setting :dropbox_extended_access_token
 
