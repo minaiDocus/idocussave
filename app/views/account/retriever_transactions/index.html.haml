@@ -53,8 +53,8 @@
                 - if transaction.retriever.nil?
                   %span.label supprimé
                 = transaction.custom_service_name
-              %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{transaction.type}")
-              %td= link_to t('mongoid.state_machines.fiduceo_transaction.status.' + transaction.status.downcase).capitalize, account_retriever_transaction_path(transaction)
+              %td= t("mongoid.models.retriever.attributes.type_values.#{transaction.type}")
+              %td= link_to t('mongoid.state_machines.retriever_transaction.status.' + transaction.status.downcase).capitalize, account_retriever_transaction_path(transaction)
               %td
                 - if transaction.retrieved_document_ids.count > 0
                   = link_to transaction.retrieved_document_ids.count, account_retrieved_documents_path(document_contains: { transaction_id: transaction.id })

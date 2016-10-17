@@ -15,7 +15,7 @@ class Pack::Piece
 
   index({ number: 1 }, { unique: true })
 
-  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
+  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
   before_validation :set_number
 
@@ -36,7 +36,7 @@ class Pack::Piece
   scope :scanned,          -> { where(origin: 'scan') }
   scope :uploaded,         -> { where(origin: 'upload') }
   scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
-  scope :fiduceo,          -> { where(origin: 'fiduceo') }
+  scope :retrieved,        -> { where(origin: 'retriever') }
 
   scope :covers,     -> { where(is_a_cover: true) }
   scope :not_covers, -> { any_in(is_a_cover: [false, nil]) }
@@ -76,8 +76,8 @@ class Pack::Piece
     origin == 'dematbox_scan'
   end
 
-  def fiduceo?
-    origin == 'fiduceo'
+  def retrieved?
+    origin == 'retriever'
   end
 
 private

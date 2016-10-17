@@ -1,13 +1,13 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::BankAccountsController < Account::Organization::FiduceoController
+class Account::Organization::BankAccountsController < Account::Organization::RetrieverController
   before_filter :load_bank_account, except: %w(index update_multiple)
 
   def index
     if bank_account_contains && bank_account_contains[:retriever_id]
-      @retriever = @customer.fiduceo_retrievers.find(bank_account_contains[:retriever_id])
-      @retriever.schedule if @retriever && @retriever.wait_selection?
+      @retriever = @customer.retrievers.find(bank_account_contains[:retriever_id])
+      @retriever.ready if @retriever && @retriever.waiting_selection?
     end
-    @bank_accounts = BankAccountService.new(@customer, @retriever).bank_accounts
+    @bank_accounts = @customer.bank_accounts
   end
 
   def edit
@@ -27,20 +27,12 @@ class Account::Organization::BankAccountsController < Account::Organization::Fid
   end
 
   def update_multiple
-    bank_accounts = BankAccountService.new(@customer).bank_accounts
-    if params[:bank_accounts].is_a?(Hash) && params[:bank_accounts].any?
-      params[:bank_accounts].each do |fiduceo_id, value|
-        bank_account = bank_accounts.select { |e| e.fiduceo_id == fiduceo_id }.first
-        if bank_account
-          is_selected = value == '1'
-          if !bank_account.persisted? && is_selected
-            bank_account.save
-            OperationService.update_bank_account(bank_account)
-          elsif bank_account.persisted? && !is_selected
-            bank_account.destroy
-          end
-        end
-      end
+    bank_accounts = @user.bank_accounts
+    if params[:bank_account_ids].is_a?(Array)
+      selected_bank_accounts = @user.bank_accounts.where(:_id.in => params[:bank_account_ids])
+      unselected_bank_accounts = @user.bank_accounts.where(:_id.nin => params[:bank_account_ids])
+      selected_bank_accounts.update_all(is_used: true)
+      unselected_bank_accounts.update_all(is_used: false)
       flash[:success] = 'Modifié avec succès.'
     end
     redirect_to account_organization_customer_bank_accounts_path(@organization, @customer, bank_account_contains: bank_account_contains)

@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::RetrievedDocumentsController < Account::FiduceoController
+class Account::RetrievedDocumentsController < Account::RetrieverController
   before_filter :load_document, only: %w(show piece)
 
   def index
@@ -9,7 +9,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
 
   def show
     if File.exist?(@document.content.path)
-      file_name = @document.fiduceo_metadata['libelle'] + '.pdf'
+      file_name = @document.metadata['name'] + '.pdf'
       send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
@@ -26,7 +26,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
 
   def select
     @documents = search(document_contains).order_by(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
-    @retriever.schedule if @retriever && @retriever.wait_selection?
+    @retriever.ready if @retriever && @retriever.waiting_selection?
     @is_filter_empty = document_contains.empty?
   end
 
@@ -36,7 +36,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
       flash[:notice] = 'Aucun document sélectionné.'
     else
       documents.each do |document|
-        document.ready
+        document.ready if document.waiting_selection?
       end
       if documents.count > 1
         flash[:success] = "Les #{documents.count} documents sélectionnés seront intégrés."
@@ -50,7 +50,7 @@ class Account::RetrievedDocumentsController < Account::FiduceoController
 private
 
   def load_document
-    @document = @user.temp_documents.fiduceo.find(params[:id])
+    @document = @user.temp_documents.retrieved.find(params[:id])
   end
 
   def sort_column
@@ -82,23 +82,23 @@ private
   helper_method :document_contains
 
   def search(contains)
-    documents = @user.temp_documents.fiduceo.includes(:fiduceo_retriever)
-    documents = documents.where('fiduceo_metadata.libelle' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
+    documents = @user.temp_documents.retrieved.includes(:retriever)
+    documents = documents.where('metadata.name' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
     if contains[:service_name]
-      documents = documents.where(fiduceo_service_name: /#{Regexp.quote(contains[:service_name])}/i)
+      documents = documents.where(retriever_service_name: /#{Regexp.quote(contains[:service_name])}/i)
     elsif contains[:retriever_id]
-      @retriever = @user.fiduceo_retrievers.find(contains[:retriever_id])
-      documents = documents.where(:fiduceo_retriever_id => @retriever.id)
+      @retriever = @user.retrievers.find(contains[:retriever_id])
+      documents = documents.where(:retriever_id => @retriever.id)
     end
     if contains[:transaction_id]
-      @transaction = @user.fiduceo_transactions.find(contains[:transaction_id])
-      documents = documents.where(:fiduceo_id.in => @transaction.retrieved_document_ids)
+      @transaction = @user.transactions.find(contains[:transaction_id])
+      documents = documents.where(:api_id.in => @transaction.retrieved_document_ids)
     end
     if contains[:date].present?
       begin
         contains[:date]['$gte'] = Time.zone.parse(contains[:date]['$gte']).to_time if contains[:date]['$gte']
         contains[:date]['$lte'] = Time.zone.parse(contains[:date]['$lte']).to_time if contains[:date]['$lte']
-        documents = documents.where('fiduceo_metadata.date' => contains[:date])
+        documents = documents.where('metadata.date' => contains[:date])
       rescue ArgumentError
         documents = []
       end

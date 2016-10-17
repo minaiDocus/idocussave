@@ -28,7 +28,7 @@ fr:
         leader: 'Prescripteur'
         name: 'Nom'
         description: 'Description'
-      fiduceo_retriever:
+      retriever:
         provider_id: Fournisseur
         bank_id: Banque
         type: Type
@@ -36,7 +36,6 @@ fr:
         name: Nom personnalisé
         login: Identifiant
         pass: Mot de passe
-        is_active: Activer l'automate ?
       fiduceo_provider_wish:
         state: Etat
         name: Nom

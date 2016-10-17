@@ -317,7 +317,7 @@ protected
         new_account_organization_customer_order_path(@organization, @customer, order: { type: 'dematbox' })
       end
     when 'retrievers'
-      account_organization_customer_fiduceo_retrievers_path(@organization, @customer)
+      account_organization_customer_retrievers_path(@organization, @customer)
     when 'ged'
       edit_knowings_options_account_organization_customer_path(@organization, @customer)
     end

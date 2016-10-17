@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::RetrievedDocumentsController < Account::Organization::FiduceoController
+class Account::Organization::RetrievedDocumentsController < Account::Organization::RetrieverController
   before_filter :load_document, except: %w(index select validate)
 
   def index
@@ -8,7 +8,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 
   def show
     if File.exist?(@document.content.path)
-      file_name = @document.fiduceo_metadata['libelle'] + '.pdf'
+      file_name = @document.metadata['name'] + '.pdf'
       send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
       raise Mongoid::Errors::DocumentNotFound.new(TempDocument, nil, params[:id])
@@ -48,7 +48,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 private
 
   def load_document
-    @document = @customer.temp_documents.fiduceo.find(params[:id])
+    @document = @customer.temp_documents.retrieved.find(params[:id])
   end
 
   def sort_column
@@ -80,24 +80,24 @@ private
   helper_method :document_contains
 
   def search(contains)
-    documents = @customer.temp_documents.fiduceo.includes(:fiduceo_retriever)
-    documents = documents.where('fiduceo_metadata.libelle' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
+    documents = @customer.temp_documents.retrieved.includes(:retriever)
+    documents = documents.where('metadata.name' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
     if contains[:service_name]
-      retriever_ids = @customer.fiduceo_retrievers.where(name: /#{Regexp.quote(contains[:service_name])}/i).distinct(:_id)
-      documents = documents.where(:fiduceo_retriever_id.in => retriever_ids)
+      retriever_ids = @customer.retrievers.where(name: /#{Regexp.quote(contains[:service_name])}/i).distinct(:_id)
+      documents = documents.where(:retriever_id.in => retriever_ids)
     elsif contains[:retriever_id]
-      @retriever = @customer.fiduceo_retrievers.find(contains[:retriever_id])
-      documents = documents.where(:fiduceo_retriever_id => @retriever.id)
+      @retriever = @customer.retrievers.find(contains[:retriever_id])
+      documents = documents.where(:retriever_id => @retriever.id)
     end
     if contains[:transaction_id]
-      @transaction = @customer.fiduceo_transactions.find(contains[:transaction_id])
-      documents = documents.where(:fiduceo_id.in => @transaction.retrieved_document_ids)
+      @transaction = @customer.transactions.find(contains[:transaction_id])
+      documents = documents.where(:id.in => @transaction.retrieved_document_ids)
     end
     if contains[:date].present?
       begin
         contains[:date]['$gte'] = Time.zone.parse(contains[:date]['$gte']).to_time if contains[:date]['$gte']
         contains[:date]['$lte'] = Time.zone.parse(contains[:date]['$lte']).to_time if contains[:date]['$lte']
-        documents = documents.where('fiduceo_metadata.date' => contains[:date])
+        documents = documents.where('metadata.date' => contains[:date])
       rescue ArgumentError
         documents = []
       end

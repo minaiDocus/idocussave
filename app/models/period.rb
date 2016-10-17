@@ -54,8 +54,8 @@ class Period
   field :dematbox_scanned_pages,   type: Integer, default: 0
   field :uploaded_pieces,          type: Integer, default: 0
   field :uploaded_pages,           type: Integer, default: 0
-  field :fiduceo_pieces,           type: Integer, default: 0
-  field :fiduceo_pages,            type: Integer, default: 0
+  field :retrieved_pieces,         type: Integer, default: 0
+  field :retrieved_pages,          type: Integer, default: 0
   field :paperclips,               type: Integer, default: 0
   field :oversized,                type: Integer, default: 0
   field :preseizure_pieces,        type: Integer, default: 0

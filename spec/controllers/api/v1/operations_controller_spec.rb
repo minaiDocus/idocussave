@@ -21,21 +21,21 @@ describe Api::V1::OperationsController do
       @organization.members << @user
 
       @bank_account = BankAccount.new
-      @bank_account.user       = @user
-      @bank_account.fiduceo_id = ':fiduceo_id'
-      @bank_account.bank_name  = 'BANK'
-      @bank_account.name       = 'Bank'
-      @bank_account.number     = '123456789'
-      @bank_account.journal    = 'BQ'
+      @bank_account.user      = @user
+      @bank_account.api_id    = ':api_id'
+      @bank_account.bank_name = 'BANK'
+      @bank_account.name      = 'Bank'
+      @bank_account.number    = '123456789'
+      @bank_account.journal   = 'BQ'
       @bank_account.save
 
       @bank_account2 = BankAccount.new
-      @bank_account2.user       = @user
-      @bank_account2.fiduceo_id = ':fiduceo_id'
-      @bank_account2.bank_name  = 'BANK2'
-      @bank_account2.name       = 'Bank2'
-      @bank_account2.number     = '987654321'
-      @bank_account2.journal    = 'CB'
+      @bank_account2.user      = @user
+      @bank_account2.api_id    = ':api_id'
+      @bank_account2.bank_name = 'BANK2'
+      @bank_account2.name      = 'Bank2'
+      @bank_account2.number    = '987654321'
+      @bank_account2.journal   = 'CB'
       @bank_account2.save
 
       3.times.each do |i|

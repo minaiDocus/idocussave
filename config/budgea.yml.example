@@ -1,0 +1,21 @@
+defaults: &defaults
+  domain: idocus.biapi.pro
+  client_id:
+  client_secret:
+  redirect_uri: http://localhost:3000/
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  redirect_uri: https://staging.idocus.com/
+
+production:
+  domain: idocus.biapi.pro
+  client_id:
+  client_secret:
+  redirect_uri: https://my.idocus.com/

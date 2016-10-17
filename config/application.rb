@@ -42,14 +42,15 @@ module Idocus
       :password,
       :rawScan,
       :improvedScan,
-      :pass,
-      :param1,
-      :param2,
-      :param3,
+      :dyn_attr,
+      :dyn_list_attr,
+      :dyn_pass_attr,
       :custom_connection_info,
       :answers,
       :access_token,
-      :token
+      :token,
+      :connections, # Budgea webhooks param
+      :user         # Budgea webhooks param
     ]
 
     config.generators do |g|

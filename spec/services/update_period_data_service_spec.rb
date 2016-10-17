@@ -16,8 +16,8 @@ describe UpdatePeriodDataService do
     expect(period.dematbox_scanned_pages).to eq 0
     expect(period.uploaded_pieces).to eq 0
     expect(period.uploaded_pages).to eq 0
-    expect(period.fiduceo_pieces).to eq 0
-    expect(period.fiduceo_pages).to eq 0
+    expect(period.retrieved_pieces).to eq 0
+    expect(period.retrieved_pages).to eq 0
     expect(period.paperclips).to eq 0
     expect(period.oversized).to eq 0
     expect(period.preseizure_pieces).to eq 0
@@ -38,8 +38,8 @@ describe UpdatePeriodDataService do
     document.dematbox_scanned_pages = 10
     document.uploaded_pieces = 10
     document.uploaded_pages = 10
-    document.fiduceo_pieces = 10
-    document.fiduceo_pages = 10
+    document.retrieved_pieces = 10
+    document.retrieved_pages = 10
     document.paperclips = 10
     document.oversized = 10
     period.documents << document
@@ -62,8 +62,8 @@ describe UpdatePeriodDataService do
     document2.dematbox_scanned_pages = 5
     document2.uploaded_pieces = 5
     document2.uploaded_pages = 5
-    document2.fiduceo_pieces = 5
-    document2.fiduceo_pages = 5
+    document2.retrieved_pieces = 5
+    document2.retrieved_pages = 5
     document2.paperclips = 5
     document2.oversized = 5
     period.documents << document2
@@ -80,8 +80,8 @@ describe UpdatePeriodDataService do
     expect(period.dematbox_scanned_pages).to eq 15
     expect(period.uploaded_pieces).to eq 15
     expect(period.uploaded_pages).to eq 15
-    expect(period.fiduceo_pieces).to eq 15
-    expect(period.fiduceo_pages).to eq 15
+    expect(period.retrieved_pieces).to eq 15
+    expect(period.retrieved_pages).to eq 15
     expect(period.paperclips).to eq 15
     expect(period.oversized).to eq 15
     expect(period.preseizure_pieces).to eq 2

@@ -81,9 +81,6 @@ class User
 
   field :ibiza_id, type: String
 
-  field :is_fiduceo_authorized, type: Boolean, default: false
-  field :fiduceo_id
-
   field :email_code
   field :is_mail_receipt_activated, type: Boolean, default: true
 
@@ -133,9 +130,10 @@ class User
   has_many :expenses,           class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :temp_packs
   has_many :temp_documents
-  has_many :fiduceo_retrievers,                                                                 dependent: :destroy
-  has_many :fiduceo_transactions,                                                               dependent: :destroy
+
+  # TODO migrate it
   has_many :fiduceo_provider_wishes,                                                            dependent: :destroy
+
   has_many :bank_accounts,                                                                      dependent: :destroy
   has_many :exercises
   has_many :sended_emails,      class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy
@@ -153,6 +151,11 @@ class User
   has_one :accounting_plan
   has_one :options,             class_name: 'UserOptions',              inverse_of: 'user',     autosave: true
   has_one :dematbox
+
+  has_one  :budgea_account,                                                                     dependent: :destroy
+  has_many :retrievers,                                                                         dependent: :destroy
+  has_many :retriever_transactions,                                                             dependent: :destroy
+  has_many :retrieved_data,                                                                     dependent: :destroy
 
   belongs_to :scanning_provider, inverse_of: 'customers'
 
@@ -183,10 +186,6 @@ class User
     # FIXME use another way
     user.set_timestamps_of_addresses
     user.format_name
-  end
-
-  before_destroy do |user|
-    FiduceoUser.new(user, false).destroy if user.fiduceo_id.present?
   end
 
   def name

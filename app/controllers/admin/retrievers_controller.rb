@@ -4,24 +4,18 @@ class Admin::RetrieversController < Admin::AdminController
     @retrievers = search(retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
-  def edit
-  end
-
-  def destroy
-  end
-
   def fetch
     retrievers = search(retriever_contains)
     count = retrievers.count
-    FiduceoDocumentFetcher.initiate_transactions(retrievers)
+    retrievers.each(&:synchronize)
     flash[:notice] = "#{count} récupération(s) en cours."
-    redirect_to admin_fiduceo_retrievers_path(params.except(:authenticity_token))
+    redirect_to admin_retrievers_path(params.except(:authenticity_token))
   end
 
 private
 
   def load_retriever
-    @retriever = FiduceoRetriever.find params[:id]
+    @retriever = Retriever.find params[:id]
   end
 
   def sort_column
@@ -57,7 +51,7 @@ private
     if params[:retriever_contains] && params[:retriever_contains][:user_code].present?
       user_ids = User.where(code: /#{Regexp.quote(params[:retriever_contains][:user_code])}/i).distinct(:_id)
     end
-    retrievers = FiduceoRetriever.all
+    retrievers = Retriever.all
     retrievers = retrievers.where(created_at:         contains[:created_at])                             if contains[:created_at].present?
     retrievers = retrievers.where(updated_at:         contains[:updated_at])                             if contains[:updated_at].present?
     retrievers = retrievers.any_in(user_id:           user_ids)                                          if user_ids.any?

@@ -20,8 +20,8 @@ class Reporting
             period_document.dematbox_scanned_pages  = current_pages.dematbox_scanned.count
             period_document.uploaded_pieces         = current_dividers.uploaded.pieces.count
             period_document.uploaded_pages          = current_pages.uploaded.count
-            period_document.fiduceo_pieces          = current_dividers.fiduceo.pieces.count
-            period_document.fiduceo_pages           = current_pages.fiduceo.count
+            period_document.retrieved_pieces        = current_dividers.retrieved.pieces.count
+            period_document.retrieved_pages         = current_pages.retrieved.count
             period_document.save
             UpdatePeriodDataService.new(period_document.period).execute
             UpdatePeriodPriceService.new(period_document.period).execute

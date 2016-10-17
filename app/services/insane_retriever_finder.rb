@@ -1,13 +1,13 @@
 class InsaneRetrieverFinder
   def self.execute
-    retrievers = FiduceoRetriever.scheduled
+    retrievers = Retriever.ready
     retrievers.each do |retriever|
       new(retriever).execute
     end
-    insane_retrievers = FiduceoRetriever.insane
+    insane_retrievers = Retriever.insane
     if insane_retrievers.count > 0
       addresses = Array(Settings.notify_errors_to)
-      FiduceoRetrieverMailer.notify_insane_retrievers(addresses).deliver
+      RetrieverMailer.notify_insane_retrievers(addresses).deliver
     end
   end
 
@@ -25,7 +25,7 @@ class InsaneRetrieverFinder
 
   def is_operations_working
     @retriever.is_sane = true
-    operations = Operation.where(:bank_account_id.in => @retriever.bank_accounts.distinct(:_id))
+    operations = Operation.where(:bank_account_id.in => @retriever.bank_accounts.used.distinct(:_id))
     if operations.count > 0
       if (Date.today - operations.desc(:date).first.date).to_i > 7
         if has_stopped && other_has_operations
@@ -53,7 +53,7 @@ class InsaneRetrieverFinder
     last_month = 0
     is_stopped = false
     if @retriever.bank?
-      operations = Operation.where(:bank_account_id.in => @retriever.bank_accounts.distinct(:_id))
+      operations = Operation.where(:bank_account_id.in => @retriever.bank_accounts.used.distinct(:_id))
       this_month += operations.where(:date.lte => Date.today, :date.gte => Date.today - 1.month).count
       last_month += operations.where(:date.lt => Date.today - 1.month, :date.gte => Date.today - 2.month).count
       is_stopped = true if (last_month - this_month) > last_month.to_f / 4
@@ -67,9 +67,9 @@ class InsaneRetrieverFinder
 
   def other_has_operations
     has_no_operations = 0
-    same_retrievers = FiduceoRetriever.scheduled.where(service_name: @retriever.service_name) - [@retriever]
+    same_retrievers = Retriever.ready.where(service_name: @retriever.service_name) - [@retriever]
     same_retrievers.each do |same_retriever|
-      operations = Operation.where(:bank_account_id.in => same_retriever.bank_accounts.distinct(:_id))
+      operations = Operation.where(:bank_account_id.in => same_retriever.bank_accounts.used.distinct(:_id))
       if operations.count > 0
         if (Date.today - operations.desc(:date).first.date).to_i > 7
           has_no_operations += 1
@@ -81,7 +81,7 @@ class InsaneRetrieverFinder
 
   def other_has_documents
     has_no_documents = 0
-    same_retrievers = FiduceoRetriever.scheduled.where(service_name: @retriever.service_name) - [@retriever]
+    same_retrievers = Retriever.ready.where(service_name: @retriever.service_name) - [@retriever]
     same_retrievers.each do |same_retriever|
       if same_retriever.temp_documents.count > 0
         if (Date.today - same_retriever.temp_documents.desc(:created_at).first.created_at.to_date).to_i > 7

@@ -49,7 +49,6 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     command << "ln -nfs #{shared_path}/config/mongoid.yml #{release_path}/config/mongoid.yml"
     command << "ln -nfs #{shared_path}/config/dematbox.yml #{release_path}/config/dematbox.yml"
-    command << "ln -nfs #{shared_path}/config/fiduceo.yml #{release_path}/config/fiduceo.yml"
     command << "ln -nfs #{shared_path}/config/box.yml #{release_path}/config/box.yml"
     command << "ln -nfs #{shared_path}/config/dematbox_service_api.yml #{release_path}/config/dematbox_service_api.yml"
     command << "ln -nfs #{shared_path}/config/knowings.yml #{release_path}/config/knowings.yml"
@@ -60,6 +59,7 @@ namespace :shared do
     command << "ln -nfs #{shared_path}/config/google_drive.yml #{release_path}/config/google_drive.yml"
     command << "ln -nfs #{shared_path}/config/pdftk.yml #{release_path}/config/pdftk.yml"
     command << "ln -nfs #{shared_path}/config/smtp.yml #{release_path}/config/smtp.yml"
+    command << "ln -nfs #{shared_path}/config/budgea.yml #{release_path}/config/budgea.yml"
     command << "ln -nfs #{shared_path}/config/initializers/fix_ssl.rb #{release_path}/config/initializers/fix_ssl.rb"
     command << "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
     command << "ln -s #{shared_path}/data #{release_path}/data"
@@ -98,7 +98,6 @@ namespace :shared do
       'secrets.yml',
       'mongoid.yml',
       'dematbox.yml',
-      'fiduceo.yml',
       'box.yml',
       'dematbox_service_api.yml',
       'knowings.yml',
@@ -109,6 +108,7 @@ namespace :shared do
       'google_drive.yml',
       'pdftk.yml',
       'smtp.yml',
+      'budgea.yml'
     ]
 
     files.each do |file|

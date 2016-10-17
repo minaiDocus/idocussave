@@ -1,0 +1,95 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://idocus.biapi.pro/2.0/auth/init?client_id=4393859&client_secret=rZDGxlModEXlmm1EAmq6mafnIAKBD1e6
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Fri, 23 Sep 2016 09:58:26 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '71'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"auth_token": "/Trri/B/sg9kUzIcIyZPIklVw05mOZ+G", "type": "permanent"}'
+    http_version: 
+  recorded_at: Fri, 23 Sep 2016 09:58:26 GMT
+- request:
+    method: post
+    uri: https://idocus.biapi.pro/2.0/users/me/connections?id_bank=40&login=John%20Doe&password=1234&website=par
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer /Trri/B/sg9kUzIcIyZPIklVw05mOZ+G
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Fri, 23 Sep 2016 09:58:58 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '151'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Stale:
+      - '1'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"error_message": null, "id_user": 100, "id_provider": 40, "id_bank":
+        40, "last_update": null, "expire": null, "error": null, "active": true, "id":
+        32}'
+    http_version: 
+  recorded_at: Fri, 23 Sep 2016 09:58:59 GMT
+recorded_with: VCR 3.0.0

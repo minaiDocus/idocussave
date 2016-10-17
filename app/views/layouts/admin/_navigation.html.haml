@@ -28,7 +28,7 @@
     %li{ class: ('active' if controller_name == 'events') }
       = link_to 'Visites', admin_events_path
     %li{ class: ('active' if controller_name.in?(%w(retrievers provider_wishes))) }
-      = link_to 'Automates', admin_fiduceo_retrievers_path
+      = link_to 'Automates', admin_retrievers_path
     %li{ class: ('active' if controller_name == 'pre_assignment_deliveries') }
       = link_to 'Livraison vers iBiza', admin_pre_assignment_deliveries_path
     %li{ class: ('active' if controller_name.in?(%w(dematboxes dematbox_services dematbox_files))) }

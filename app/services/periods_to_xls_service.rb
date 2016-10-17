@@ -52,13 +52,13 @@ class PeriodsToXlsService
         document.scanned_pieces,
         document.uploaded_pieces,
         document.dematbox_scanned_pieces,
-        document.fiduceo_pieces,
+        document.retrieved_pieces,
         document.scanned_sheets,
         document.pages,
         document.scanned_pages,
         document.uploaded_pages,
         document.dematbox_scanned_pages,
-        document.fiduceo_pages,
+        document.retrieved_pages,
         document.paperclips,
         document.oversized
       ]

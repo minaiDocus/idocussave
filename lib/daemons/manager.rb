@@ -65,7 +65,7 @@ end
 def with_state(program_name, sleep_duration, &block)
   $PROGRAM_NAME = "#{@program_name_prefix}#{program_name}[running]"
   with_error_handler(program_name, &block)
-  go_sleep(sleep_duration, program_name) if $running
+  go_sleep(sleep_duration, program_name) if $running && sleep_duration
 end
 
 pids = []
@@ -81,12 +81,9 @@ if Rails.env.production?
     },
     { name: 'processor',                   sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
     { name: 'pre_assignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::PreAssignPiece.fetch_all } },
-    { name: 'fiduceo_document_fetcher',    sleep_duration: 5.seconds,  cmd: Proc.new { FiduceoDocumentFetcher.fetch } },
-    { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new {
-        OperationService.fetch_all
-        OperationService.process
-      }
-    },
+    { name: 'sync_retriever',              sleep_duration: nil,        cmd: Proc.new { SynchronizeRetriever.in_parallel } },
+    { name: 'process_retrieved_data',      sleep_duration: 1.seconds,  cmd: Proc.new { ProcessRetrievedData.execute } },
+    { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { ProcessOperation.execute } },
     { name: 'emailed_document_fetcher',    sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
     { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
     { name: 'delivery-dropbox_extended',   sleep_duration: 10.seconds, cmd: Proc.new { Delivery.process('dbx') } },

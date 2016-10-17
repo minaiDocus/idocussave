@@ -14,7 +14,7 @@ class PackDivider
 
   validates_presence_of  :name, :type, :origin, :pages_number, :position
   validates_inclusion_of :type, within: %w(sheet piece)
-  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan fiduceo)
+  validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
   index({ type: 1 })
   index({ origin: 1 })
@@ -23,7 +23,7 @@ class PackDivider
   scope :uploaded,         -> { where(origin: 'upload') }
   scope :scanned,          -> { where(origin: 'scan') }
   scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
-  scope :fiduceo,          -> { where(origin: 'fiduceo') }
+  scope :retrieved,        -> { where(origin: 'retriever') }
   scope :sheets,           -> { where(type: 'sheet') }
   scope :pieces,           -> { where(type: 'piece') }
 

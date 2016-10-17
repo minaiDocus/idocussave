@@ -22,7 +22,7 @@
         - if @customer.options.is_upload_authorized
           %li= link_to 'Option téléversement', account_organization_customer_path(@organization, @customer, tab: 'period_options')
         %li= link_to 'Journaux comptables', account_organization_customer_path(@organization, @customer, tab: 'journals')
-        - if @customer.active? && @customer.is_fiduceo_authorized
+        - if @customer.active? && @customer.options.is_retriever_authorized
           %li.active= link_to "iDo'FacBanque", '#retrievers', data: { toggle: 'tab' }
           %li= link_to 'Paramètres bancaires', account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
         %li= link_to 'Comptabilité', account_organization_customer_path(@organization, @customer, tab: 'compta')
@@ -35,8 +35,8 @@
           %li= link_to 'Stockages externes', account_organization_customer_path(@organization, @customer, tab: 'file_storages')
 
     #retrievers
-      = link_to 'Ajouter un automate', new_account_organization_customer_fiduceo_retriever_path(@organization, @customer), class: 'btn btn-primary margin1right'
-      = link_to 'Liste des automates', list_account_organization_customer_fiduceo_retrievers_path(@organization, @customer), class: 'btn margin1right'
+      = link_to 'Ajouter un automate', new_account_organization_customer_retriever_path(@organization, @customer), class: 'btn btn-primary margin1right'
+      = link_to 'Liste des automates', list_account_organization_customer_retrievers_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Demander un nouvel automate', new_account_organization_customer_fiduceo_provider_wish_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Suivi de mes demandes', account_organization_customer_fiduceo_provider_wishes_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Statut automate', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
@@ -44,6 +44,7 @@
       = link_to 'Documents (Factures)', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Sélection des comptes bancaires', account_organization_customer_bank_accounts_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Sélection des documents', select_account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn'
+
       %hr
-      %h3.margin2bottom Liste des automates (#{@fiduceo_retrievers.count})
+      %h3.margin2bottom Liste des automates (#{@retrievers.count})
       .retrievers_list

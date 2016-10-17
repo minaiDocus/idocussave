@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::RetrievedBankingOperationsController < Account::Organization::FiduceoController
+class Account::Organization::RetrievedBankingOperationsController < Account::Organization::RetrieverController
   def index
     @operations = search(banking_operation_contains).
       order_by(sort_column => sort_direction).
@@ -38,7 +38,7 @@ private
   helper_method :banking_operation_contains
 
   def search(contains)
-    operations = @customer.operations.fiduceo
+    operations = @customer.operations.retrieved
     operations = operations.where(category: /#{Regexp.quote(contains[:category])}/i) unless contains[:category].blank?
     operations = operations.where(label:    /#{Regexp.quote(contains[:label])}/i)    unless contains[:label].blank?
     begin

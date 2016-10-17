@@ -20,8 +20,8 @@
                 %a{ href: '#period_options', data: { toggle: 'tab' } } Option téléversement
             %li{ class: ('active' if params[:tab] == 'journals') }
               %a{ href: '#journals', data: { toggle: 'tab' } } Journaux comptables
-            - if @customer.active? && @customer.is_fiduceo_authorized
-              %li= link_to "iDo'FacBanque", account_organization_customer_fiduceo_retrievers_path(@organization, @customer)
+            - if @customer.active? && @customer.options.is_retriever_authorized
+              %li= link_to "iDo'FacBanque", account_organization_customer_retrievers_path(@organization, @customer)
               %li{ class: ('active' if params[:tab] == 'bank_accounts') }
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
@@ -201,7 +201,7 @@
                           = journal.default_account? ? 'compte par défaut' : "compte d'attente"
                       %td= journal.meta_account_number
                       %td= journal.meta_charge_account
-                      %td= journal.fiduceo_retrievers.count
+                      %td= journal.retrievers.count
                       - if (is_leader? || @user.rights.is_customer_journals_management_authorized) && @customer.active?
                         %td
                           = link_to icon_edit + 'Editer', edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
@@ -244,7 +244,7 @@
                   %th= t('mongoid.models.bank_account.attributes.accounting_number')
                   %th= t('mongoid.models.bank_account.attributes.start_date')
                   %th Paramétrer
-                - @customer.bank_accounts.each do |bank_account|
+                - @customer.bank_accounts.used.each do |bank_account|
                   %tr
                     %td= bank_account.bank_name
                     %td= bank_account.name

@@ -29,8 +29,8 @@ class PeriodPresenter
     total[:dematbox_scanned_pages]  = 0
     total[:uploaded_pieces]         = 0
     total[:uploaded_pages]          = 0
-    total[:fiduceo_pieces]          = 0
-    total[:fiduceo_pages]           = 0
+    total[:retrieved_pieces]        = 0
+    total[:retrieved_pages]         = 0
     total[:paperclips]              = 0
     total[:oversized]               = 0
 
@@ -59,8 +59,8 @@ class PeriodPresenter
       list[:dematbox_scanned_pages]  = document.dematbox_scanned_pages.to_s
       list[:uploaded_pieces]         = document.uploaded_pieces.to_s
       list[:uploaded_pages]          = document.uploaded_pages.to_s
-      list[:fiduceo_pieces]          = document.fiduceo_pieces.to_s
-      list[:fiduceo_pages]           = document.fiduceo_pages.to_s
+      list[:retrieved_pieces]        = document.retrieved_pieces.to_s
+      list[:retrieved_pages]         = document.retrieved_pages.to_s
       list[:paperclips]              = document.paperclips.to_s
       list[:oversized]               = document.oversized.to_s
       if document.report.try(:type)
@@ -88,8 +88,8 @@ class PeriodPresenter
       total[:dematbox_scanned_pages]  += document.dematbox_scanned_pages
       total[:uploaded_pieces]         += document.uploaded_pieces
       total[:uploaded_pages]          += document.uploaded_pages
-      total[:fiduceo_pieces]          += document.fiduceo_pieces
-      total[:fiduceo_pages]           += document.fiduceo_pages
+      total[:retrieved_pieces]        += document.retrieved_pieces
+      total[:retrieved_pages]         += document.retrieved_pages
       total[:paperclips]              += document.paperclips
       total[:oversized]               += document.oversized
     end
@@ -103,8 +103,8 @@ class PeriodPresenter
     total[:dematbox_scanned_pages]  = total[:dematbox_scanned_pages].to_s
     total[:uploaded_pieces]         = total[:uploaded_pieces].to_s
     total[:uploaded_pages]          = total[:uploaded_pages].to_s
-    total[:fiduceo_pieces]          = total[:fiduceo_pieces].to_s
-    total[:fiduceo_pages]           = total[:fiduceo_pages].to_s
+    total[:retrieved_pieces]        = total[:retrieved_pieces].to_s
+    total[:retrieved_pages]         = total[:retrieved_pages].to_s
     total[:paperclips]              = total[:paperclips].to_s
     total[:oversized]               = total[:oversized].to_s
 

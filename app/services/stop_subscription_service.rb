@@ -18,15 +18,15 @@ class StopSubscriptionService
       @user.inactive_at = Time.now
     end
     @user.email_code             = nil
-    @user.is_fiduceo_authorized  = false
     @user.is_dematbox_authorized = false
     @user.save
     @user.subscription.update_attributes(start_at: nil, end_at: nil)
+    @user.options.is_retriever_authorized     = false
     @user.options.max_number_of_journals      = 0
     @user.options.is_preassignment_authorized = false
     @user.options.save
     @user.account_number_rules = []
-    RemoveFiduceoService.new(@user.id.to_s).delay.execute
+    RemoveRetrieverService.new(@user.id.to_s).delay.execute
     @user.dematbox.try(:unsubscribe)
     @user.external_file_storage.try(:destroy)
     if @user.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@user.composition.id}")

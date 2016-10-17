@@ -1,0 +1,116 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/documents/55/file
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer TydyTI9C4YgG6kyujoulpuT0AQ57l5It
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Mon, 26 Sep 2016 19:42:23 GMT
+      Content-Type:
+      - application/pdf
+      Transfer-Encoding:
+      - chunked
+      Content-Disposition:
+      - attachment
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        JVBERi0xLjQNCiWTjIueIFJlcG9ydExhYiBHZW5lcmF0ZWQgUERGIGRvY3Vt
+        ZW50IGh0dHA6Ly93d3cucmVwb3J0bGFiLmNvbQ0KMSAwIG9iag0KPDwgL0Yx
+        IDIgMCBSIC9GMiAzIDAgUiA+Pg0KZW5kb2JqDQoyIDAgb2JqDQo8PCAvQmFz
+        ZUZvbnQgL0hlbHZldGljYSAvRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZyAv
+        TmFtZSAvRjEgL1N1YnR5cGUgL1R5cGUxIC9UeXBlIC9Gb250ID4+DQplbmRv
+        YmoNCjMgMCBvYmoNCjw8IC9CYXNlRm9udCAvSGVsdmV0aWNhLUJvbGQgL0Vu
+        Y29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YyIC9TdWJ0eXBlIC9U
+        eXBlMSAvVHlwZSAvRm9udCA+Pg0KZW5kb2JqDQo0IDAgb2JqDQo8PCAvQ29u
+        dGVudHMgOCAwIFIgL01lZGlhQm94IFsgMCAwIDU5NS4yNzU2IDg0MS44ODk4
+        IF0gL1BhcmVudCA3IDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDEgMCBSIC9Q
+        cm9jU2V0IFsgL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSSBd
+        ID4+IC9Sb3RhdGUgMCAvVHJhbnMgPDwgID4+IA0KICAvVHlwZSAvUGFnZSA+
+        Pg0KZW5kb2JqDQo1IDAgb2JqDQo8PCAvT3V0bGluZXMgOSAwIFIgL1BhZ2VN
+        b2RlIC9Vc2VOb25lIC9QYWdlcyA3IDAgUiAvVHlwZSAvQ2F0YWxvZyA+Pg0K
+        ZW5kb2JqDQo2IDAgb2JqDQo8PCAvQXV0aG9yIChhbm9ueW1vdXMpIC9DcmVh
+        dGlvbkRhdGUgKEQ6MjAxNjA5MjYxNDUxMDItMDEnMDAnKSAvQ3JlYXRvciAo
+        UmVwb3J0TGFiIFBERiBMaWJyYXJ5IC0gd3d3LnJlcG9ydGxhYi5jb20pIC9L
+        ZXl3b3JkcyAoKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAt
+        IHd3dy5yZXBvcnRsYWIuY29tKSAvU3ViamVjdCAodW5zcGVjaWZpZWQpIA0K
+        ICAvVGl0bGUgKHVudGl0bGVkKSA+Pg0KZW5kb2JqDQo3IDAgb2JqDQo8PCAv
+        Q291bnQgMSAvS2lkcyBbIDQgMCBSIF0gL1R5cGUgL1BhZ2VzID4+DQplbmRv
+        YmoNCjggMCBvYmoNCjw8IC9GaWx0ZXIgWyAvQVNDSUk4NURlY29kZSAvRmxh
+        dGVEZWNvZGUgXSAvTGVuZ3RoIDE0MDQgPj4NCnN0cmVhbQ0KR2F0VTI9YDw9
+        WSY6UC5PcyJIXkM5bTMhWzRFXV9hQm9bJWdHLlg0TElFRHJMT3JYYlgmS1BU
+        Vm1sUj1VOSZBNCdNaE08UGVCRTwxKTFGQF0icilSMl1rOUBAMCsiMCkwT1Bs
+        YDNBPSNNLF8qVVBFZDVDNEBPKWhKVSxZTDxfaDQ0PEZvJEteclQjNFMpXEdK
+        KzslXlxwaXVxOExBcnUobUkvVGYyQzcybkxSOStdM11MJj1gbG9jVlRPRjVc
+        J3JVJWJOKGAtIm0pLSIhbUF1PSFMRGU6ciNsbXQuby8uUVczKlhPIm0pN1o1
+        JUZucl5JWD1pSE9TSkoyZGdnYV5VMlQqazJaSl50ZVZgXChKVWRzIVZwMGNk
+        aFIhRFwkOlYhIUFuTUtCRW9LcEtaMEdRKCgzdGFqWmU7TTRzX0oyUTUoYVdE
+        aSopaFJLMVJOWVc0ViVGI29qI0IwUnRPUkglUkJhYF1zOWdbQWw3ZENQUWRq
+        Y0sqYSdXY0V0akdkO1J1RjMnOmVAJCs8MXRkY21KYFhpOSk5PXAwY2kpdFJK
+        OlxNYytmJ3JLTlljTHE6IzV0ajhZOU0+Sjk5bTJxQkBjQ1IjTz5bbT43YUtj
+        dVBGTDM0UU0rPEFQX0ZCTDdcLkMsMWRGWignbmp0QEVSTDROYmdITCk9KUs6
+        QyNSckxJS0AuY1NTUTpqdUA+RzQtWEZxXzRtVk02Y00kUFBlJ0tWcC1nME5B
+        aGQkQ2U/bWNAKG0jXDMoVmcoOGRFcnBUUlJMXjUwcmNnPTciamUmLi84alle
+        XipFUG5EbFFwWCZUXjFNIjchIyovIlxBaHEkKkxvRDk1PmBmZUtGQkZfQz45
+        MSNWJStlYkxcMzxlWWpWJCwtS0ByPSs3RTtJcldmMTBvMVhMKzpQTy9BSmsl
+        a0VhKiRdR1sqKGFfVkwyWy1pXiJlK2NTcWM1OlVEWmIrcDlgTW5KOyhFR3Fv
+        Z19NJGBjaSwldVkibCgyQHFYNEBdP0o/czpbbTpQZSZXdHRnR1lWXmNTYHJf
+        OD1MKDtXPmpnYl0pUVA6YTAjSUtBU0M1bmFhXCwpWSVbJjooVmNtPE8qOWsu
+        SSxebEptOUEuc2dXRiwmVSNiOz1aZUUhUGdkRmo/OlwjISJGPHE8c2MyST41
+        YDJVITpPZGNUQ2xgTGs5V2snXCVhVElHZDcuZkhCXi9vYyNwQUk1Y1ZVcEoz
+        TEhzJGlWL2ZNQk4rRVxdMylwJV0xYWgmTkc3SD5qWlE8aTtYOEJTKlNnMWtj
+        JD4hXHVaUT1sIjpjWURqRkpFOVoocCFIKyNKamgzXlpHLitucWU8OkNsXDUn
+        IzBfR3EoJVdaWSowMlxkWmUxOlI4aS1iLTIlNUohT3A1XCFlQyc0LVhVdGxC
+        K0woZElTZVRNMDojVy8pdFtiS15dbCxKaXNEQUhNcDImYXNjNFgiZGwtWVRa
+        cEZ0RWFaOy0uO1RBREs0WSo9a1VlR1xNN09cbWc6XDQqcitMQUNCaHRBNDlc
+        ViIjQEVWXFBlJjQzUkktMy87dV9JIW5SVT9mKDkrMzUsTGxXXV1kN2dIIS9K
+        ZHFVQkpDWSRvdVdTNVE7JV8iMWEhK10jR01IYGhfbiMjPlxNPEEhYE1HTmpn
+        X15rZUovJkRFRlxvJCZGb0hZVm5OJD05J2dSXTdiImcyLVpMOypWR2UjYV4l
+        V2g4UHJaclYjZGwtcCNXamM0Iyg/NClKV0NcVjojNSNVKUgqMz5tJztncV9a
+        UEo0NyY4TikzQm9pTm9cSFRCXl9mOCtncnUkKSVGOTNYY11uIU0jLF9HLTI5
+        KEFHNUtUWylCXzJbKi10Qis1NC88Y0hqZW1NSk5kLDxvTlErP2Nyb0QhPH4+
+        ZW5kc3RyZWFtDQplbmRvYmoNCjkgMCBvYmoNCjw8IC9Db3VudCAwIC9UeXBl
+        IC9PdXRsaW5lcyA+Pg0KZW5kb2JqDQp4cmVmDQowIDEwDQowMDAwMDAwMDAw
+        IDY1NTM1IGYNCjAwMDAwMDAwNzUgMDAwMDAgbg0KMDAwMDAwMDExOSAwMDAw
+        MCBuDQowMDAwMDAwMjI5IDAwMDAwIG4NCjAwMDAwMDAzNDQgMDAwMDAgbg0K
+        MDAwMDAwMDU1MSAwMDAwMCBuDQowMDAwMDAwNjM4IDAwMDAwIG4NCjAwMDAw
+        MDA4ODcgMDAwMDAgbg0KMDAwMDAwMDk0OSAwMDAwMCBuDQowMDAwMDAyNDQ5
+        IDAwMDAwIG4NCnRyYWlsZXINCjw8IC9JRCANCiAlIFJlcG9ydExhYiBnZW5l
+        cmF0ZWQgUERGIGRvY3VtZW50IC0tIGRpZ2VzdCAoaHR0cDovL3d3dy5yZXBv
+        cnRsYWIuY29tKQ0KIFsoV2FcMTc3XDMzNFwyNzRbXDM0NFpxXDIxMVwzNzcu
+        XDIyNGtZXDMyNikgKFdhXDE3N1wzMzRcMjc0W1wzNDRacVwyMTFcMzc3Llwy
+        MjRrWVwzMjYpXQ0KIC9JbmZvIDYgMCBSIC9Sb290IDUgMCBSIC9TaXplIDEw
+        ID4+DQpzdGFydHhyZWYNCjI0OTgNCiUlRU9GDQo=
+    http_version: 
+  recorded_at: Mon, 26 Sep 2016 19:42:23 GMT
+recorded_with: VCR 3.0.0

@@ -19,9 +19,9 @@
       - if @user.active? && @user.organization.is_active
         %li{ :class=>('active' if controller_name == 'reporting') }
           = link_to 'Mon reporting', account_reporting_path
-        - if @user.is_fiduceo_authorized
+        - if @user.options.is_retriever_authorized
           %li{ :class=>('active' if controller_name.in?(%w(retrievers provider_wishes retriever_transactions retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
-            = link_to 'Mes automates', account_fiduceo_retrievers_path
+            = link_to 'Mes automates', account_retrievers_path
         - if @user.is_prescriber || @user.options.is_upload_authorized
           %li{ class: ('active' if controller_name == 'paper_processes') }
             = link_to 'Suivi', account_paper_processes_path

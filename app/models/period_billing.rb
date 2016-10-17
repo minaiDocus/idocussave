@@ -15,8 +15,8 @@ class PeriodBilling
   field :dematbox_scanned_pages,  type: Integer, default: 0
   field :uploaded_pieces,         type: Integer, default: 0
   field :uploaded_pages,          type: Integer, default: 0
-  field :fiduceo_pieces,          type: Integer, default: 0
-  field :fiduceo_pages,           type: Integer, default: 0
+  field :retrieved_pieces,        type: Integer, default: 0
+  field :retrieved_pages,         type: Integer, default: 0
   field :preseizure_pieces,       type: Integer, default: 0
   field :expense_pieces,          type: Integer, default: 0
   field :paperclips,              type: Integer, default: 0
@@ -32,11 +32,11 @@ class PeriodBilling
   validate :uniqueness_of_order
 
   def pieces
-    scanned_pieces + uploaded_pieces + dematbox_scanned_pieces + fiduceo_pieces
+    scanned_pieces + uploaded_pieces + dematbox_scanned_pieces + retrieved_pieces
   end
 
   def pages
-    scanned_pages + uploaded_pages + dematbox_scanned_pages + fiduceo_pages
+    scanned_pages + uploaded_pages + dematbox_scanned_pages + retrieved_pages
   end
 
   def compta_pieces

@@ -10,16 +10,12 @@ every :day, at: '04:30' do
   rake 'prepa_compta:update_accounting_plan', options
 end
 
-every :day, at: '06:00' do
-  rake 'fiduceo:transaction:initiate', options
-end
-
 every :day, at: '07:00' do
-  rake 'fiduceo:notify_password_renewal', options
+  rake 'retriever:notify_password_renewal', options
 end
 
 every :day, at: '08:00' do
-  rake 'fiduceo:provider:notify_processed_wishes', options
+  rake 'retriever:provider:notify_processed_wishes', options
 end
 
 every :day, at: '08:01' do
@@ -31,7 +27,7 @@ every :day, at: '08:02' do
 end
 
 every :day, at: '9:30' do
-  rake 'fiduceo:notify_insane_retrievers', options
+  rake 'retriever:notify_insane_retrievers', options
 end
 
 every :month, at: '00:00' do

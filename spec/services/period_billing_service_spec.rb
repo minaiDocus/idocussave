@@ -406,8 +406,8 @@ describe PeriodBillingService do
         @period.dematbox_scanned_pages                   = 240
         @period.uploaded_pieces                          = 115
         @period.uploaded_pages                           = 250
-        @period.fiduceo_pieces                           = 100
-        @period.fiduceo_pages                            = 200
+        @period.retrieved_pieces                         = 100
+        @period.retrieved_pages                          = 200
         @period.preseizure_pieces                        = 110
         @period.expense_pieces                           = 0
         @period.paperclips                               = 5
@@ -436,8 +436,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)
@@ -465,8 +465,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)
@@ -494,8 +494,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)
@@ -523,8 +523,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)
@@ -552,8 +552,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(240)
         expect(billing.uploaded_pieces).to eq(115)
         expect(billing.uploaded_pages).to eq(250)
-        expect(billing.fiduceo_pieces).to eq(100)
-        expect(billing.fiduceo_pages).to eq(200)
+        expect(billing.retrieved_pieces).to eq(100)
+        expect(billing.retrieved_pages).to eq(200)
         expect(billing.preseizure_pieces).to eq(110)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(5)
@@ -581,8 +581,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(240)
         expect(billing.uploaded_pieces).to eq(115)
         expect(billing.uploaded_pages).to eq(250)
-        expect(billing.fiduceo_pieces).to eq(100)
-        expect(billing.fiduceo_pages).to eq(200)
+        expect(billing.retrieved_pieces).to eq(100)
+        expect(billing.retrieved_pages).to eq(200)
         expect(billing.preseizure_pieces).to eq(110)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(5)
@@ -609,8 +609,8 @@ describe PeriodBillingService do
         @period.dematbox_scanned_pages                   = 240
         @period.uploaded_pieces                          = 115
         @period.uploaded_pages                           = 250
-        @period.fiduceo_pieces                           = 100
-        @period.fiduceo_pages                            = 200
+        @period.retrieved_pieces                         = 100
+        @period.retrieved_pages                          = 200
         @period.preseizure_pieces                        = 110
         @period.expense_pieces                           = 0
         @period.paperclips                               = 5
@@ -639,8 +639,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(240)
         expect(billing.uploaded_pieces).to eq(115)
         expect(billing.uploaded_pages).to eq(250)
-        expect(billing.fiduceo_pieces).to eq(100)
-        expect(billing.fiduceo_pages).to eq(200)
+        expect(billing.retrieved_pieces).to eq(100)
+        expect(billing.retrieved_pages).to eq(200)
         expect(billing.preseizure_pieces).to eq(110)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(5)
@@ -668,8 +668,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)
@@ -720,8 +720,8 @@ describe PeriodBillingService do
         expect(billing.dematbox_scanned_pages).to eq(0)
         expect(billing.uploaded_pieces).to eq(0)
         expect(billing.uploaded_pages).to eq(0)
-        expect(billing.fiduceo_pieces).to eq(0)
-        expect(billing.fiduceo_pages).to eq(0)
+        expect(billing.retrieved_pieces).to eq(0)
+        expect(billing.retrieved_pages).to eq(0)
         expect(billing.preseizure_pieces).to eq(0)
         expect(billing.expense_pieces).to eq(0)
         expect(billing.paperclips).to eq(0)

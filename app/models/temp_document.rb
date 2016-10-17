@@ -22,12 +22,14 @@ class TempDocument
   field :dematbox_is_notified
   field :dematbox_notified_at
 
-  field :fiduceo_id
-  field :fiduceo_metadata, type: Hash
-  field :fiduceo_service_name
-  field :fiduceo_custom_service_name
+  field :api_id
+  field :api_name
+  field :retrieved_fingerprint
+  field :retrieved_metadata, type: Hash
+  field :retriever_service_name
+  field :retriever_name
 
-  field :signature
+  field :metadata, type: Hash
 
   field :is_corruption_notified, type: Boolean
   field :corruption_notified_at, type: Time
@@ -37,17 +39,17 @@ class TempDocument
   field :is_locked, type: Boolean, default: false
   field :scan_bundling_document_ids, type: Array, default: []
 
-  validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan fiduceo)
+  validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
 
   index({ delivery_type: 1 })
   index({ state: 1 })
   index({ is_an_original: 1 })
 
   belongs_to :organization
-  belongs_to :user
+  belongs_to :user,                                                         index: true
   belongs_to :temp_pack
   belongs_to :document_delivery
-  belongs_to :fiduceo_retriever
+  belongs_to :retriever,                                                    index: true
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
   has_mongoid_attached_file :content,     styles: { thumb: ["46x67>", :png] },
@@ -73,7 +75,7 @@ class TempDocument
   scope :scan,              -> { where(delivery_type: 'scan') }
   scope :upload,            -> { where(delivery_type: 'upload') }
   scope :dematbox_scan,     -> { where(delivery_type: 'dematbox_scan') }
-  scope :fiduceo,           -> { where(delivery_type: 'fiduceo') }
+  scope :retrieved,         -> { where(delivery_type: 'retriever') }
 
   scope :originals,         -> { where(is_an_original: true) }
 
@@ -232,8 +234,8 @@ class TempDocument
     delivery_type == 'dematbox_scan'
   end
 
-  def fiduceo?
-    delivery_type == 'fiduceo'
+  def retrieved?
+    delivery_type == 'retriever'
   end
 
   def is_a_cover?

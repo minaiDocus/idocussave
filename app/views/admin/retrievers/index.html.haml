@@ -1,7 +1,7 @@
 #retrievers
   .row-fluid
     .span12
-      = render 'layouts/admin/fiduceo/navigation'
+      = render 'layouts/admin/retriever/navigation'
 
   .row-fluid.marginbottom
     .span12.margin1bottom
@@ -10,7 +10,7 @@
   .row-fluid
     .span12
       .filter.panel.margin1top
-        = form_tag admin_fiduceo_retrievers_path, method: :get, class: 'form form-horizontal margin0bottom' do
+        = form_tag admin_retrievers_path, method: :get, class: 'form form-horizontal margin0bottom' do
           = hidden_field_tag :direction, sort_direction
           = hidden_field_tag :sort, sort_column
           = hidden_field_tag :per_page, per_page
@@ -22,12 +22,11 @@
                 %th.field.date_field= label_tag 'retriever_contains[created_at][$gte]', 'Créé le'
                 %th.field.date_field= label_tag 'retriever_contains[updated_at][$gte]', 'Modifié le'
                 %th.field.text_field= label_tag 'retriever_contains[user_code]', t('mongoid.models.user.name')
-                %th.field= label_tag 'retriever_contains[type]', t('mongoid.models.fiduceo_retriever.attributes.type')
-                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('mongoid.models.fiduceo_retriever.attributes.service_name')
-                %th.field.text_field= label_tag 'retriever_contains[name]', t('mongoid.models.fiduceo_retriever.attributes.name')
-                %th.field= label_tag 'retriever_contains[state]', t('mongoid.models.fiduceo_retriever.attributes.state')
-                %th.field.text_field= label_tag 'retriever_contains[transaction_status]', t('mongoid.models.fiduceo_retriever.attributes.transaction_status')
-                %th.field= label_tag 'retriever_contains[is_sane]', t('mongoid.models.fiduceo_retriever.attributes.is_sane')
+                %th.field= label_tag 'retriever_contains[type]', t('mongoid.models.retriever.attributes.type')
+                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('mongoid.models.retriever.attributes.service_name')
+                %th.field.text_field= label_tag 'retriever_contains[name]', t('mongoid.models.retriever.attributes.name')
+                %th.field= label_tag 'retriever_contains[state]', t('mongoid.models.retriever.attributes.state')
+                %th.field= label_tag 'retriever_contains[is_sane]', t('mongoid.models.retriever.attributes.is_sane')
                 %th
             %tbody
               %tr
@@ -55,17 +54,16 @@
                 %td.field= select_tag 'retriever_contains[type]', options_for_select([['Document', :provider], ['Op. Bancaire', :bank]], (params[:retriever_contains][:type] rescue '')), include_blank: true
                 %td.field.text_field= text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue '')
                 %td.field.text_field= text_field_tag 'retriever_contains[name]', (params[:retriever_contains][:name] rescue '')
-                %td.field= select_tag 'retriever_contains[state]', options_for_select(FiduceoRetriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
-                %td.field.text_field= text_field_tag 'retriever_contains[transaction_status]', (params[:retriever_contains][:transaction_status] rescue '')
+                %td.field= select_tag 'retriever_contains[state]', options_for_select(Retriever.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:retriever_contains][:state] rescue '')), include_blank: true
                 %td.field= select_tag 'retriever_contains[is_sane]', options_for_select([['Oui', 1], ['Non', 0]], (params[:retriever_contains][:is_sane] rescue '')), include_blank: true
                 %td
                   = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
-                  = link_to t('filters.reset'), admin_fiduceo_retrievers_path, class: 'btn'
+                  = link_to t('filters.reset'), admin_retrievers_path, class: 'btn'
 
   .row-fluid
     .span12
       .panel
-        = form_tag fetch_admin_fiduceo_retrievers_path(params), class: 'form form-horizontal margin0bottom' do
+        = form_tag fetch_admin_retrievers_path(params), class: 'form form-horizontal margin0bottom' do
           = submit_tag "Lancer la récupération (#{@retrievers.count})", name: nil, class: 'btn btn-primary'
 
   .row-fluid
@@ -74,19 +72,17 @@
         .span6
           = render partial: 'shared/list_options', locals: { collection: @retrievers }
         .span6.alignright.padding1top
-          = link_to admin_fiduceo_retrievers_path do
+          = link_to admin_retrievers_path do
             %span.badge Tous
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { created_at: { '$gte' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
+          = link_to admin_retrievers_path(retriever_contains: { created_at: { '$gte' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
             %span.badge Récent
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'scheduled' }, per_page: params[:per_page]) do
-            %span.badge.badge-success Programmé
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
-            %span.badge.badge-success Prêt
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'processing' }, per_page: params[:per_page]) do
-            %span.badge En cours
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'wait_selection' }, per_page: params[:per_page]) do
+          = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
+            %span.badge.badge-success OK
+          = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_data' }, per_page: params[:per_page]) do
+            %span.badge En attente des données
+          = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
             %span.badge Sélection
-          = link_to admin_fiduceo_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
+          = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do
             %span.badge.badge-important Erreur
       .row-fluid
         .span12
@@ -96,14 +92,12 @@
                 %th= sortable :created_at,         'Créé le'
                 %th= sortable :updated_at,         'Modifié le'
                 %th= sortable :user_id,            t('mongoid.models.user.name')
-                %th= sortable :type,               t('mongoid.models.fiduceo_retriever.attributes.type')
-                %th= sortable :service_name,       t('mongoid.models.fiduceo_retriever.attributes.service_name')
-                %th= sortable :name,               t('mongoid.models.fiduceo_retriever.attributes.name')
+                %th= sortable :type,               t('mongoid.models.retriever.attributes.type')
+                %th= sortable :service_name,       t('mongoid.models.retriever.attributes.service_name')
+                %th= sortable :name,               t('mongoid.models.retriever.attributes.name')
                 %th Journal
-                %th Mode
-                %th= t('mongoid.models.fiduceo_retriever.attributes.state')
-                %th= sortable :transaction_status, t('mongoid.models.fiduceo_retriever.attributes.transaction_status')
-                %th= sortable :is_sane,            t('mongoid.models.fiduceo_retriever.attributes.is_sane')
+                %th= t('mongoid.models.retriever.attributes.state')
+                %th= sortable :is_sane,            t('mongoid.models.retriever.attributes.is_sane')
                 %th Action
             %tbody
               - @retrievers.each do |retriever|
@@ -112,13 +106,11 @@
                     %td= l(retriever.created_at, format: '%d %b %Y %H:%M')
                     %td= l(retriever.updated_at, format: '%d %b %Y %H:%M')
                     %td= link_to retriever.user.code, [:admin, retriever.user]
-                    %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{retriever_presenter.type}")
-                    %td= link_to retriever_presenter.service_name, "https://backoffice-coffre.idocus.com/coffre/Provider.seam?providerId=#{retriever.provider_id || retriever.bank_id}", target: '_blank'
-                    %td= link_to retriever_presenter.name, "https://backoffice-coffre.idocus.com/coffre/Retriever.seam?retrieverId=#{retriever.fiduceo_id}", target: '_blank'
+                    %td= t("mongoid.models.retriever.attributes.type_values.#{retriever_presenter.type}")
+                    %td= retriever_presenter.service_name
+                    %td= retriever_presenter.name
                     %td= retriever_presenter.journal.try(:name) || '-'
-                    %td= retriever_presenter.mode
                     %td!= retriever_presenter.state(:admin)
-                    %td= retriever_presenter.transaction_status
                     %td= retriever.is_sane ? t('yes_value') : t('no_value')
-                    %td= link_to icon(icon: 'eye-open'), account_fiduceo_retrievers_path(user_code: retriever.user.code)
+                    %td= link_to icon(icon: 'eye-open'), account_retrievers_path(user_code: retriever.user.code)
       = render partial: 'shared/list_options', locals: { collection: @retrievers }

@@ -14,7 +14,6 @@ doc_data.txt
 config/secrets.yml
 config/mongoid.yml
 config/dematbox.yml
-config/fiduceo.yml
 config/box.yml
 config/dematbox_service_api.yml
 config/knowings.yml
@@ -25,3 +24,4 @@ config/dropbox.yml
 config/google_drive.yml
 config/pdftk.yml
 config/smtp.yml
+config/budgea.yml

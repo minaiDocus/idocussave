@@ -4,15 +4,17 @@ class Operation
   include Mongoid::Timestamps
 
   belongs_to :organization
-  belongs_to :user
-  belongs_to :bank_account
+  belongs_to :user,                                                                     index: true
+  belongs_to :bank_account,                                                             index: true
   belongs_to :pack
   belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations
   has_one :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :operation
 
-  index({ fiduceo_id: 1 })
+  index({ api_id: 1 })
+  index({ api_name: 1 })
 
-  field :fiduceo_id
+  field :api_id
+  field :api_name
   field :date,             type: Date
   field :value_date,       type: Date
   field :transaction_date, type: Date
@@ -20,7 +22,7 @@ class Operation
   field :amount,           type: Float
   field :comment
   field :supplier_found
-  field :type_id
+  field :type
   field :category_id,      type: Integer
   field :category
   field :accessed_at,      type: Time
@@ -29,8 +31,8 @@ class Operation
 
   validates_presence_of :date, :label, :amount
 
-  scope :fiduceo,       -> { where(fiduceo_id: { '$exists' => true }) }
-  scope :other,         -> { where(fiduceo_id: { '$exists' => false }) }
+  scope :retrieved,     -> { where(api_id: { '$exists' => true }) }
+  scope :other,         -> { where(api_id: { '$exists' => false }) }
   scope :not_accessed,  -> { where(accessed_at: nil) }
   scope :not_processed, -> { where(processed_at: { '$exists' => false }) }
   scope :processed,     -> { where(processed_at: { '$ne' => nil }) }

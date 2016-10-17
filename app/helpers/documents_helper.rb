@@ -97,7 +97,7 @@ module DocumentsHelper
           concat content_tag :td, "#{k['uploaded']}", style: 'text-align:right'
           concat content_tag :td, "#{k['scanned']}", style: 'text-align:right'
           concat content_tag :td, "#{k['dematbox_scanned']}", style: 'text-align:right'
-          concat content_tag :td, "#{k['fiduceo']}", style: 'text-align:right'
+          concat content_tag :td, "#{k['retrieved']}", style: 'text-align:right'
           }
         )
       end

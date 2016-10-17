@@ -50,7 +50,7 @@
 
   - annual_summary = []
   - 12.times do
-    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :fiduceo_pieces => 0, :fiduceo_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
+    - annual_summary << { :pieces => 0, :sheets => 0, :pages => 0, :excess_sheets => 0, :uploaded_pieces => 0, :uploaded_pages => 0, :excess_uploaded_pages => 0, :dematbox_scanned_pieces => 0, :dematbox_scanned_pages => 0, :excess_dematbox_scanned_pages => 0, :retrieved_pieces => 0, :retrieved_pages => 0, :compta_pieces => 0, :excess_compta_pieces => 0, :paperclips => 0, :oversized => 0, :price_in_cents => 0, :price_in_cents_of_excess => 0, :delivery_status => [0,0,0], :active_user => 0 }
 
   .row
     .span12
@@ -120,12 +120,12 @@
                             %span{ :class => "hide dematbox_scanned_pages value_15" }
                               - period.duration.times do |i|
                                 %div{ class: "period_#{i+1}" }= period_billing.data(:dematbox_scanned_pages, i+1)
-                            %span{ :class => "hide fiduceo_pieces value_17" }
+                            %span{ :class => "hide retrieved_pieces value_17" }
                               - period.duration.times do |i|
-                                %div{ class: "period_#{i+1}" }= period_billing.data(:fiduceo_pieces, i+1)
-                            %span{ :class => "hide fiduceo_pages value_18" }
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:retrieved_pieces, i+1)
+                            %span{ :class => "hide retrieved_pages value_18" }
                               - period.duration.times do |i|
-                                %div{ class: "period_#{i+1}" }= period_billing.data(:fiduceo_pages, i+1)
+                                %div{ class: "period_#{i+1}" }= period_billing.data(:retrieved_pages, i+1)
                             %span{ :class => "hide paperclips value_6" }
                               - period.duration.times do |i|
                                 %div{ class: "period_#{i+1}" }= period_billing.data(:paperclips, i+1)
@@ -168,8 +168,8 @@
                               - annual_summary[period.start_at.month + i - 1][:dematbox_scanned_pieces] += period_billing.data(:dematbox_scanned_pieces, i+1)
                               - annual_summary[period.start_at.month + i - 1][:dematbox_scanned_pages] += period_billing.data(:dematbox_scanned_pages, i+1)
                               - annual_summary[period.start_at.month + i - 1][:excess_dematbox_scanned_pages] += period_billing.data(:excess_dematbox_scanned_pages, i+1)
-                              - annual_summary[period.start_at.month + i - 1][:fiduceo_pieces] += period_billing.data(:fiduceo_pieces, i+1)
-                              - annual_summary[period.start_at.month + i - 1][:fiduceo_pages] += period_billing.data(:fiduceo_pages, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:retrieved_pieces] += period_billing.data(:retrieved_pieces, i+1)
+                              - annual_summary[period.start_at.month + i - 1][:retrieved_pages] += period_billing.data(:retrieved_pages, i+1)
                               - annual_summary[period.start_at.month + i - 1][:compta_pieces] += period_billing.data(:compta_pieces, i+1)
                               - annual_summary[period.start_at.month + i - 1][:excess_compta_pieces] += period_billing.data(:excess_compta_pieces, i+1)
                               - annual_summary[period.start_at.month + i - 1][:paperclips] += period_billing.data(:paperclips, i+1)
@@ -203,9 +203,9 @@
                     Nb de pages iDocus'Box
                   %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
                     Dépassement iDocus'Box
-                  %span{ :class => "hide fiduceo_pieces value_17" }
+                  %span{ :class => "hide retrieved_pieces value_17" }
                     Nb de pièces Automatique
-                  %span{ :class => "hide fiduceo_pages value_18" }
+                  %span{ :class => "hide retrieved_pages value_18" }
                     Nb de pages Automatique
                   %span{ :class => "hide compta_pieces value_12" }
                     Nb de pièces pré-affectées
@@ -252,10 +252,10 @@
                       #{month[:dematbox_scanned_pages]}
                     %span{ :class => "hide excess_dematbox_scanned_pages value_16" }
                       #{month[:excess_dematbox_scanned_pages]}
-                    %span{ :class => "hide fiduceo_pieces value_17" }
-                      #{month[:fiduceo_pieces]}
-                    %span{ :class => "hide fiduceo_pages value_18" }
-                      #{month[:fiduceo_pages]}
+                    %span{ :class => "hide retrieved_pieces value_17" }
+                      #{month[:retrieved_pieces]}
+                    %span{ :class => "hide retrieved_pages value_18" }
+                      #{month[:retrieved_pages]}
                     %span{ :class => "hide compta_pieces value_12" }
                       #{month[:compta_pieces]}
                     %span{ :class => "hide excess_compta_pieces value_13" }
@@ -381,7 +381,7 @@
               content += "<td class='right'>"+o.documents.list[i].historic[k].uploaded+"</td>";
               content += "<td class='right'>"+o.documents.list[i].historic[k].scanned+"</td>";
               content += "<td class='right'>"+o.documents.list[i].historic[k].dematbox_scanned+"</td>";
-              content += "<td class='right'>"+o.documents.list[i].historic[k].fiduceo+"</td>";
+              content += "<td class='right'>"+o.documents.list[i].historic[k].retrieved+"</td>";
               content += "</tr>";
             }
             content += "</table>";
@@ -395,9 +395,9 @@
                 {%= o.documents.list[i].name %}
               {% } %}
             </td>
-            <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %}, {%= o.documents.list[i].fiduceo_pieces %})</td>
+            <td class="center">{%= o.documents.list[i].pieces %} ({%= o.documents.list[i].uploaded_pieces %}, {%= o.documents.list[i].scanned_pieces %}, {%= o.documents.list[i].dematbox_scanned_pieces %}, {%= o.documents.list[i].retrieved_pieces %})</td>
             <td class="center">{%= o.documents.list[i].scanned_sheets %}</td>
-            <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %}, {%= o.documents.list[i].fiduceo_pages %})</td>
+            <td class="center">{%= o.documents.list[i].pages %} ({%= o.documents.list[i].uploaded_pages %}, {%= o.documents.list[i].scanned_pages %}, {%= o.documents.list[i].dematbox_scanned_pages %}, {%= o.documents.list[i].retrieved_pages %})</td>
             <td class="center">{%= o.documents.list[i].paperclips %}</td>
             <td class="center">{%= o.documents.list[i].oversized %}</td>
             <td class="last">
@@ -416,9 +416,9 @@
         {% } %}
         <tr>
           <td><b>Total</b></td>
-          <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %}, {%= o.documents.total.fiduceo_pieces %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pieces %} ({%= o.documents.total.uploaded_pieces %}, {%= o.documents.total.scanned_pieces %}, {%= o.documents.total.dematbox_scanned_pieces %}, {%= o.documents.total.retrieved_pieces %})</b></td>
           <td class="center"><b>{%= o.documents.total.scanned_sheets %}</b></td>
-          <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %}, {%= o.documents.total.fiduceo_pages %})</b></td>
+          <td class="center"><b>{%= o.documents.total.pages %} ({%= o.documents.total.uploaded_pages %}, {%= o.documents.total.scanned_pages %}, {%= o.documents.total.dematbox_scanned_pages %}, {%= o.documents.total.retrieved_pages %})</b></td>
           <td class="center"><b>{%= o.documents.total.paperclips %}</b></td>
           <td class="center"><b>{%= o.documents.total.oversized %}</b></td>
           <td class="last"></td>

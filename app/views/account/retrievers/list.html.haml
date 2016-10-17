@@ -7,9 +7,9 @@
         %h3 Documents (#{@providers.size})
         %ul
           - @providers.each do |provider|
-            %li= link_to provider['name'], new_account_fiduceo_retriever_path(provider_id: provider['id'], service_name: provider['name'])
+            %li= link_to provider['name'], new_account_retriever_path(provider_id: provider['id'], service_name: provider['name'])
       .span6
         %h3 Banques (#{@banks.size})
         %ul
           - @banks.each do |bank|
-            %li= link_to bank['name'], new_account_fiduceo_retriever_path(bank_id: bank['id'], service_name: bank['name'])
+            %li= link_to bank['name'], new_account_retriever_path(bank_id: bank['id'], service_name: bank['name'])

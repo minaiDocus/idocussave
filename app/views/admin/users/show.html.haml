@@ -67,9 +67,9 @@
             %th= t('mongoid.models.user.attributes.is_document_notifier_active')
             %td.value= check_box_tag 'user[is_document_notifier_active]', 1, @user.is_document_notifier_active
           %tr
-            %th= t('mongoid.models.user.attributes.is_fiduceo_authorized')
+            %th= t('mongoid.models.user_options.attributes.is_retriever_authorized')
             %td.value
-              = check_box_tag 'user[is_fiduceo_authorized]', 1, @user.is_fiduceo_authorized, disabled: true
+              = check_box_tag 'user[options][is_retriever_authorized]', 1, @user.options.is_retriever_authorized, disabled: true
           %tr
             %th= t('mongoid.models.user.attributes.is_access_by_token_active')
             %td.value= check_box_tag 'user[is_access_by_token_active]', 1, @user.is_access_by_token_active

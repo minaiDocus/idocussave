@@ -11,7 +11,7 @@
         %table.table-condensed
           %tr
             %th= label_tag 'bank_account_contains[retriever_id]', 'Banque'
-            %td= select_tag 'bank_account_contains[retriever_id]', options_for_select(@user.fiduceo_retrievers.banks.map { |e| [e.name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
+            %td= select_tag 'bank_account_contains[retriever_id]', options_for_select(@user.retrievers.banks.map { |e| [e.name, e.id] }, (params[:bank_account_contains][:retriever_id] rescue nil)), include_blank: true
             %td
               = submit_tag t('filters.action'), class: 'btn btn-primary'
               = link_to icon(icon: 'remove'), account_bank_accounts_path, class: 'btn', title: t('filters.reset')
@@ -25,13 +25,13 @@
               %th Banque
               %th Numéro de compte
           %tbody
+            = hidden_field_tag 'bank_account_ids[]'
             - @bank_accounts.each do |bank_account|
               %tr
                 %td
                   - if bank_account.bank_name.present?
-                    = hidden_field_tag "bank_accounts[#{bank_account.fiduceo_id}]", 0, id: "bank_accounts_#{bank_account.id}"
-                    = check_box_tag "bank_accounts[#{bank_account.fiduceo_id}]", 1, bank_account.persisted?, class: 'checkbox'
-                %td= label_tag "bank_accounts[#{bank_account.fiduceo_id}]", bank_account.bank_name.presence || '(inconnu)'
-                %td= label_tag "bank_accounts[#{bank_account.fiduceo_id}]", bank_account.number
+                    = check_box_tag 'bank_account_ids[]', bank_account.id, bank_account.is_used, class: 'checkbox', id: "bank_account_ids_#{bank_account.id}"
+                %td= label_tag "bank_account_ids[#{bank_account.id}]", bank_account.bank_name.presence || '(inconnu)'
+                %td= label_tag "bank_account_ids[#{bank_account.id}]", bank_account.number
         .form-actions
           = submit_tag 'Valider les changements', class: 'btn btn-primary', data: { confirm: t('actions.confirm') }

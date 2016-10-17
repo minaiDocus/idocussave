@@ -6,33 +6,36 @@ class BankAccount
   attr_accessor :service_name
 
   belongs_to :user
-  belongs_to :retriever, class_name: 'FiduceoRetriever', inverse_of: 'bank_accounts'
+  belongs_to :retriever
   has_many :operations, dependent: :nullify
 
   before_save :upcase_journal
 
-  field :fiduceo_id
-  field :is_operations_up_to_date, type: Boolean, default: false
+  field :api_id
+  field :api_name, default: 'budgea'
+
   field :bank_name
   field :name
   field :number
+  field :is_used,           type: Boolean, default: false
   field :journal
   field :foreign_journal
-  field :accounting_number, default: '512000'
-  field :temporary_account, default: '471000'
-  field :start_date, type: Date
+  field :accounting_number,                default: '512000'
+  field :temporary_account,                default: '471000'
+  field :start_date,        type: Date
 
-  validates_presence_of :fiduceo_id, :bank_name, :name, :number
+  validates_presence_of :api_id, :bank_name, :name, :number
   validate :uniqueness_of_number
 
+  # TODO move validations to a form_service
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_length_of :journal, within: 2..10, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |bank_account| bank_account.persisted? }
   validates_length_of :foreign_journal, within: 2..10, allow_nil: true
 
+  scope :used,           -> { where(is_used: true) }
   scope :configured,     -> { where(:journal.nin => [nil, ''], :accounting_number.nin => [nil, '']) }
   scope :not_configured, -> { where(:journal.in  => [nil, ''], :accounting_number.in  => [nil, '']) }
-  scope :outdated,       -> { where(is_operations_up_to_date: false) }
 
   before_validation :set_foreign_journal, if: Proc.new { |bank_account| bank_account.persisted? }
 

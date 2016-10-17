@@ -1,33 +1,24 @@
-#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @fiduceo_retriever.provider_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json } }
-#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @fiduceo_retriever.bank_id.to_s && e[:name] == @fiduceo_retriever.service_name }.to_json, selected_cash_register: @fiduceo_retriever.cash_register } }
+#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @retriever.provider_id.to_s && e[:name] == @retriever.service_name }.to_json } }
+#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @retriever.bank_id.to_s && e[:name] == @retriever.service_name }.to_json } }
 
 - if action_name.in?(%w(new create))
-  - url = account_organization_customer_fiduceo_retrievers_path(@organization, @customer, @fiduceo_retriever)
+  - url = account_organization_customer_retrievers_path(@organization, @customer, @retriever)
 - else
-  - url = account_organization_customer_fiduceo_retriever_path(@organization, @customer, @fiduceo_retriever)
-= simple_form_for @fiduceo_retriever, url: url, html: { class: 'retriever_form form form-horizontal' } do |f|
-  = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @fiduceo_retriever.persisted?
+  - url = account_organization_customer_retriever_path(@organization, @customer, @retriever)
+= simple_form_for @retriever, url: url, html: { class: 'retriever_form form form-horizontal' } do |f|
+  = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @retriever.persisted?
   = f.input :service_name, as: :hidden
-  = f.input :provider_id, required: true, disabled: @fiduceo_retriever.persisted?
-  = f.input :bank_id, required: true, disabled: @fiduceo_retriever.persisted?
+  = f.input :provider_id, required: true, disabled: @retriever.persisted?
+  = f.input :bank_id, required: true, disabled: @retriever.persisted?
   = f.input :name
-  - unless @fiduceo_retriever.persisted? && @fiduceo_retriever.bank?
+  - unless @retriever.persisted? && @retriever.bank?
     = f.input :journal_id, collection: @customer.account_book_types.asc(:name), include_blank: false, required: true
   = f.input :login
-  = f.input :pass, required: true, as: :password
-  .param1{ style: 'display:none' }
-    = f.input :param1
-  .sparam1{ style: 'display:none' }
-    = f.input :sparam1, collection: [], include_blank: false
-  .param2{ style: 'display:none' }
-    = f.input :param2
-  .sparam2{ style: 'display:none' }
-    = f.input :sparam2, collection: [], include_blank: false
-  .param3{ style: 'display:none' }
-    = f.input :param3
-  .sparam3{ style: 'display:none' }
-    = f.input :sparam3, collection: [], include_blank: false
-  = f.input :is_active, as: :boolean
+  = f.input :password, required: true, as: :password
+  = f.input :dyn_attr_name, as: :hidden
+  = f.input :dyn_attr, wrapper_html: { class: 'dyn_attr', style: 'display:none' }
+  = f.input :dyn_list_attr, collection: [], include_blank: false, wrapper_html: { class: 'dyn_list_attr', style: 'display:none' }
+  = f.input :dyn_pass_attr, type: :password, as: :password, wrapper_html: { class: 'dyn_pass_attr', style: 'display:none' }
   .form-actions
     = f.submit t('actions.submit'), class: 'btn btn-primary'
-    = link_to t('actions.cancel'), account_organization_customer_fiduceo_retrievers_path(@organization, @customer), class: 'btn'
+    = link_to t('actions.cancel'), account_organization_customer_retrievers_path(@organization, @customer), class: 'btn'

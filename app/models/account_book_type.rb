@@ -13,7 +13,7 @@ class AccountBookType
   belongs_to :organization
   belongs_to :user
 
-  has_many :fiduceo_retrievers, inverse_of: 'journal'
+  has_many :retrievers, inverse_of: 'journal'
 
   embeds_many :expense_categories, cascade_callbacks: true
 

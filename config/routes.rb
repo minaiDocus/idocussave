@@ -42,6 +42,8 @@ Idocus::Application.routes.draw do
   post 'dropbox/webhook', controller: 'dropboxes', action: 'webhook'
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'
 
+  post 'retriever/callback', controller: 'retrievers', action: 'callback'
+
   namespace :account do
     root to: 'account/account#index'
     resources :organizations, except: :destroy do
@@ -134,11 +136,11 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
         resource :subscription
         with_options module: 'organization' do |r|
-          r.resources :retrievers, as: :fiduceo_retrievers do
-            get   'list',                 on: :collection
-            post  'fetch',                on: :member
-            get   'wait_for_user_action', on: :member
-            patch 'update_transaction',   on: :member
+          r.resources :retrievers do
+            get   'list',                     on: :collection
+            post  'sync',                     on: :member
+            get   'waiting_additionnal_info', on: :member
+            patch 'additionnal_info',         on: :member
           end
           r.resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index new create)
           r.resources :bank_accounts, only: %w(index edit update) do
@@ -147,8 +149,8 @@ Idocus::Application.routes.draw do
           r.resources :retriever_transactions, only: %w(index show)
           r.resources :retrieved_banking_operations, only: :index
           r.resources :retrieved_documents, only: %w(index show) do
-            get 'piece', on: :member
-            get 'select', on: :collection
+            get   'piece',    on: :member
+            get   'select',   on: :collection
             patch 'validate', on: :collection
           end
           r.resource :dematbox, only: %w(create destroy)
@@ -228,11 +230,11 @@ Idocus::Application.routes.draw do
     end
     resource :dematbox, only: %w(create destroy)
 
-    resources :retrievers, as: :fiduceo_retrievers do
-      get   'list',                 on: :collection
-      post  'fetch',                on: :member
-      get   'wait_for_user_action', on: :member
-      patch 'update_transaction',   on: :member
+    resources :retrievers do
+      get   'list',                     on: :collection
+      post  'sync',                     on: :member
+      get   'waiting_additionnal_info', on: :member
+      patch 'additionnal_info',         on: :member
     end
     resources :provider_wishes, as: :fiduceo_provider_wishes
     resources :retriever_transactions
@@ -296,10 +298,10 @@ Idocus::Application.routes.draw do
       post 'load_from_external', on: :collection
     end
     resources :dematbox_files, only: :index
-    resources :retrievers, as: :fiduceo_retrievers, only: %w(index edit destroy) do
+    resources :retrievers, only: %w(index edit destroy) do
       post 'fetch', on: :collection
     end
-    resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index show edit) do
+    resources :retriever_provider_wishes, only: %w(index show edit) do
       patch 'start_process', on: :member
       patch 'reject',        on: :member
       patch 'accept',        on: :member

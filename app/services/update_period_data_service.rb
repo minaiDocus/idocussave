@@ -14,8 +14,8 @@ class UpdatePeriodDataService
     @period.dematbox_scanned_pages  = @period.documents.sum(:dematbox_scanned_pages)  || 0
     @period.uploaded_pieces         = @period.documents.sum(:uploaded_pieces)         || 0
     @period.uploaded_pages          = @period.documents.sum(:uploaded_pages)          || 0
-    @period.fiduceo_pieces          = @period.documents.sum(:fiduceo_pieces)          || 0
-    @period.fiduceo_pages           = @period.documents.sum(:fiduceo_pages)           || 0
+    @period.retrieved_pieces        = @period.documents.sum(:retrieved_pieces)        || 0
+    @period.retrieved_pages         = @period.documents.sum(:retrieved_pages)         || 0
     @period.paperclips              = @period.documents.sum(:paperclips)              || 0
     @period.oversized               = @period.documents.sum(:oversized)               || 0
     @period.preseizure_pieces       = preseizure_pieces_count

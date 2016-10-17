@@ -174,20 +174,20 @@ class Pack
   def historic
     _documents = self.pages.asc(:created_at).entries
     current_date = _documents.first.created_at
-    @events = [{:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0, :fiduceo => 0}]
+    @events = [{:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0, :retrieved => 0}]
     current_offset = 0
     _documents.each do |document|
       if document.created_at > current_date.end_of_day
         current_date = document.created_at
         current_offset += 1
-        @events << {:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0, :fiduceo => 0}
+        @events << {:date => current_date, :uploaded => 0, :scanned => 0, :dematbox_scanned => 0, :retrieved => 0}
       end
       if document.uploaded?
         @events[current_offset][:uploaded] += 1
       elsif document.dematbox_scanned?
         @events[current_offset][:dematbox_scanned] += 1
-      elsif document.fiduceo?
-        @events[current_offset][:fiduceo] += 1
+      elsif document.retrieved?
+        @events[current_offset][:retrieved] += 1
       else
         @events[current_offset][:scanned] += 1
       end

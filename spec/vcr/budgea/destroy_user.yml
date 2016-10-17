@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://idocus.biapi.pro/2.0/users/me
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer DMfV/r+Ko8qkJJr/4TITQ5YFgbiN2lnA
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Fri, 23 Sep 2016 09:51:21 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '113'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"survey_url": "https://www.budgea.com/user/guestUnsubscribe?id=23&email=DMfV%2Fr%2BKo8qkJJr%2F4TITQ5YFgbiN2lnA"}'
+    http_version: 
+  recorded_at: Fri, 23 Sep 2016 09:51:21 GMT
+recorded_with: VCR 3.0.0

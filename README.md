@@ -30,7 +30,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 *Liste non exhaustive*
 
 ## Services externes :
-* Fiduceo
+* Budget Insight
 * Ibiza
 * Knowings
 * Quadratus

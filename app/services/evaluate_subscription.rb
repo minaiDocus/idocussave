@@ -11,7 +11,7 @@ class EvaluateSubscription
     update_max_number_of_journals 
     if @subscription.is_annual_package_active
       unauthorize_dematbox
-      authorize_fiduceo
+      authorize_retriever
       authorize_pre_assignment
       authorize_upload
     else
@@ -22,7 +22,7 @@ class EvaluateSubscription
       end
       @subscription.set_start_at_and_end_at 
       @subscription.is_scan_box_package_active  ? authorize_dematbox       : unauthorize_dematbox
-      @subscription.is_retriever_package_active ? authorize_fiduceo        : unauthorize_fiduceo
+      @subscription.is_retriever_package_active ? authorize_retriever      : unauthorize_retriever
       @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
     end
     AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
@@ -39,14 +39,14 @@ private
     @customer.dematbox.delay(priority: 1).unsubscribe if @customer.dematbox.try(:is_configured)
   end
 
-  def authorize_fiduceo
-    @customer.update_attribute(:is_fiduceo_authorized, true) unless @customer.is_fiduceo_authorized
+  def authorize_retriever
+    @customer.options.update(:is_retriever_authorized, true) unless @customer.options.is_retriever_authorize
   end
 
-  def unauthorize_fiduceo
-    if @customer.is_fiduceo_authorized
-      @customer.update_attribute(:is_fiduceo_authorized, false)
-      RemoveFiduceoService.new(@customer.id.to_s).delay.execute if @customer.fiduceo_id.present?
+  def unauthorize_retriever
+    if @customer.options.is_retriever_authorize
+      @customer.options.update(:is_retriever_authorize, false)
+      RemoveRetrieverService.new(@customer.id.to_s).delay.execute if @customer.budgea_account.present?
     end
   end
 

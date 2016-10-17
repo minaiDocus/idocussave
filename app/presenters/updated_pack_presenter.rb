@@ -27,6 +27,6 @@ class UpdatedPackPresenter
   end
 
   def new_auto_retrieved_pages_count
-    @new_auto_retrieved_pages_count ||= new_pages.fiduceo.count
+    @new_auto_retrieved_pages_count ||= new_pages.retrieved.count
   end
 end

@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
-class Account::Organization::RetrieverTransactionsController < Account::Organization::FiduceoController
+class Account::Organization::RetrieverTransactionsController < Account::Organization::RetrieverController
   def index
     @transactions = search(transaction_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def show
-    @transaction = @customer.fiduceo_transactions.find params[:id]
+    @transaction = @customer.retriever_transactions.find params[:id]
   end
 
 private
@@ -39,7 +39,7 @@ private
   helper_method :transaction_contains
 
   def search(contains)
-    transactions = @customer.fiduceo_transactions.includes(:retriever)
+    transactions = @customer.retriever_transactions.includes(:retriever)
     transactions = transactions.where(custom_service_name: /#{Regexp.quote(contains[:custom_service_name])}/i) if contains[:custom_service_name]
     transactions = transactions.where(type:                Regexp.quote(contains[:type]))                      if contains[:type]
     transactions = transactions.where(status:              Regexp.quote(contains[:status]).upcase)             if contains[:status]

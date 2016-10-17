@@ -1,7 +1,6 @@
 # -*- encoding : UTF-8 -*-
-class Account::ProviderWishesController < Account::FiduceoController
+class Account::ProviderWishesController < Account::RetrieverController
   before_filter :verify_rights
-  before_filter :load_fiduceo_user_id
 
   def index
     @provider_wishes = search(provider_wish_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
@@ -24,7 +23,7 @@ class Account::ProviderWishesController < Account::FiduceoController
 private
 
   def verify_rights
-    unless @user.is_fiduceo_authorized
+    unless @user.options.is_retriever_authorized
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end

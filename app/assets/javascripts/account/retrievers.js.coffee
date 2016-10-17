@@ -1,154 +1,81 @@
 same_id = (element) ->
-  if window.special_bank_ids.indexOf(element['id']) != -1
-    element['id'] == window.fiduceo_retriever_id && element['name'] == window.fiduceo_retriever_name
-  else
-    element['id'] == window.fiduceo_retriever_id
+  element['id'] == window.retriever_id
 
 update_form = ->
-  if $('#fiduceo_retriever_type').val() == 'provider'
-    window.fiduceo_retriever_id = $('#fiduceo_retriever_provider_id').val()
+  if $('#retriever_type').val() == 'provider'
+    window.retriever_id = parseInt($('#retriever_provider_id').val())
   else
-    window.fiduceo_retriever_id = $('#fiduceo_retriever_bank_id').val()
+    window.retriever_id = parseInt($('#retriever_bank_id').val())
 
-  $('#fiduceo_retriever_param1').val('')
-  $('#fiduceo_retriever_param2').val('')
-  $('#fiduceo_retriever_param3').val('')
-  $("label[for='fiduceo_retriever_sparam1']").html('')
-  $('#fiduceo_retriever_sparam1').html('')
-  $("label[for='fiduceo_retriever_sparam2']").html('')
-  $('#fiduceo_retriever_sparam2').html('')
-  $("label[for='fiduceo_retriever_sparam3']").html('')
-  $('#fiduceo_retriever_sparam3').html('')
-  if window.fiduceo_retriever_id != ""
-    if $('#fiduceo_retriever_type').val() == 'provider'
+  $('.dyn_attr').hide()
+  $('.dyn_list_attr').hide()
+  $('.dyn_pass_attr').hide()
+
+  $('#retriever_dyn_attr_name').val('')
+  $('#retriever_dyn_attr').val('')
+  $("label[for='retriever_dyn_list_attr']").html('')
+  $('#retriever_dyn_list_attr').html('')
+  $("label[for='retriever_dyn_pass_attr']").html('')
+  $('#retriever_dyn_pass_attr').val('')
+
+  if Number.isInteger window.retriever_id
+    if $('#retriever_type').val() == 'provider'
       retriever = window.providers.filter(same_id)[0]
     else
       retriever = window.banks.filter(same_id)[0]
 
-    content = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][0]['name']
-    $("label[for='fiduceo_retriever_login']").html(content)
-    if retriever['inputs'][0]['info'] != 'NONE' && retriever['inputs'][0]['info'] != undefined
-      $('#fiduceo_retriever_login').attr('placeholder', retriever['inputs'][0]['info'])
-
-    content = '<abbr title="champ requis">*</abbr> ' + retriever['inputs'][1]['name']
-    $("label[for='fiduceo_retriever_pass']").html(content)
-    if retriever['inputs'][1]['info'] != 'NONE' && retriever['inputs'][1]['info'] != undefined
-      $('#fiduceo_retriever_pass').attr('placeholder', retriever['inputs'][1]['info'])
-
-    if retriever['inputs'][2]
-      label = retriever['inputs'][2]['name']
-      if retriever['inputs'][2]['required'] == 'true'
-        label = '<abbr title="champ requis">*</abbr> ' + label
-      if retriever['inputs'][2]['inputValues'] != undefined
-        if window.special_bank_ids.indexOf(retriever['id']) != -1
-          $('#fiduceo_retriever_param1').val(retriever['name'])
-        else
-          content = ""
-          for option in retriever['inputs'][2]['inputValues']['enumValue']
-            content += '<option value="' + option + '">' + option + '</option>'
-          $("label[for='fiduceo_retriever_sparam1']").html(label)
-          $('#fiduceo_retriever_sparam1').html(content)
-          if retriever['inputs'][2]['name'].match(/^caisse$/i) && window.selected_cash_register != null
-            $('#fiduceo_retriever_sparam1 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
-          $('.sparam1').show()
-          $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
-      else
-        $("label[for='fiduceo_retriever_param1']").html(label)
-        $('.param1').show()
-        if retriever['inputs'][2]['info'] != 'NONE' && retriever['inputs'][2]['info'] != undefined
-          $('#fiduceo_retriever_param1').attr('placeholder', retriever['inputs'][2]['info'])
-
-    if retriever['inputs'][3]
-      label = retriever['inputs'][3]['name']
-      if retriever['inputs'][3]['required'] == 'true'
-        label = '<abbr title="champ requis">*</abbr> ' + label
-      if retriever['inputs'][3]['inputValues'] != undefined
-        content = ""
-        for option in retriever['inputs'][3]['inputValues']['enumValue']
-          content += '<option value="' + option + '">' + option + '</option>'
-        $("label[for='fiduceo_retriever_sparam2']").html(label)
-        $('#fiduceo_retriever_sparam2').html(content)
-        if retriever['inputs'][3]['name'].match(/^caisse$/i) && window.selected_cash_register != null
-          $('#fiduceo_retriever_sparam2 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
-        $('.sparam2').show()
-        $('#fiduceo_retriever_param2').val($('#fiduceo_retriever_sparam2').val())
-      else
-        $("label[for='fiduceo_retriever_param2']").html(label)
-        $('.param2').show()
-        if retriever['inputs'][3]['info'] != 'NONE' && retriever['inputs'][3]['info'] != undefined
-          $('#fiduceo_retriever_param2').attr('placeholder', retriever['inputs'][3]['info'])
-
-    if retriever['inputs'][4]
-      label = retriever['inputs'][4]['name']
-      if retriever['inputs'][4]['required'] == 'true'
-        label = '<abbr title="champ requis">*</abbr> ' + label
-      if retriever['inputs'][4]['inputValues'] != undefined
-        content = ""
-        for option in retriever['inputs'][4]['inputValues']['enumValue']
-          content += '<option value="' + option + '">' + option + '</option>'
-        $("label[for='fiduceo_retriever_sparam3']").html(label)
-        $('#fiduceo_retriever_sparam3').html(content)
-        if retriever['inputs'][4]['name'].match(/^caisse$/i) && window.selected_cash_register != null
-          $('#fiduceo_retriever_sparam3 option[value="'+(window.selected_cash_register)+'"]').prop('selected', true)
-        $('.sparam3').show()
-        $('#fiduceo_retriever_param3').val($('#fiduceo_retriever_sparam3').val())
-      else
-        $("label[for='fiduceo_retriever_param3']").html(label)
-        $('.param3').show()
-        if retriever['inputs'][4]['info'] != 'NONE' && retriever['inputs'][4]['info'] != undefined
-          $('#fiduceo_retriever_param3').attr('placeholder', retriever['inputs'][4]['info'])
+    for field in retriever['fields']
+      label = '<abbr title="champ requis">*</abbr> ' + field['label']
+      if field['name'] == 'login'
+        $("label[for='retriever_login']").html(label)
+      else if field['name'] == 'password'
+        $("label[for='retriever_password']").html(label)
+      else if field['type'] == 'list'
+        content = ''
+        for option in field['values']
+          content += '<option value="' + option['value'] + '">' + option['label'] + '</option>'
+        $("label[for='retriever_dyn_list_attr']").html(label)
+        $('#retriever_dyn_list_attr').html(content)
+        # TODO reselect option
+        $('#retriever_dyn_attr_name').val(field['name'])
+        $('.dyn_list_attr').show()
+        $('#retriever_dyn_attr').val($('#retriever_dyn_list_attr').val())
+      else if field['type'] == 'text' || field['type'] == 'date'
+        $('#retriever_dyn_attr_name').val(field['name'])
+        $("label[for='retriever_dyn_attr']").html(label)
+        $('.dyn_attr').show()
+      else if field['type'] == 'password'
+        $('#retriever_dyn_attr_name').val(field['name'])
+        $("label[for='retriever_dyn_pass_attr']").html(label)
+        $('.dyn_pass_attr').show()
   else
     content = '<abbr title="champ requis">*</abbr> Identifiant'
-    $("label[for='fiduceo_retriever_login']").html(content)
-    $("#fiduceo_retriever_login").removeAttr('placeholder')
+    $("label[for='retriever_login']").html(content)
 
     content = '<abbr title="champ requis">*</abbr> Mot de passe'
-    $("label[for='fiduceo_retriever_pass']").html(content)
-    $("#fiduceo_retriever_pass").removeAttr('placeholder')
-
-    $('.param1').hide()
-    $('.param2').hide()
-    $('.param3').hide()
-    $('.sparam1').hide()
-    $('.sparam2').hide()
-    $('.sparam3').hide()
-    $('#fiduceo_retriever_param1').removeAttr('placeholder')
-    $('#fiduceo_retriever_param2').removeAttr('placeholder')
-    $('#fiduceo_retriever_param3').removeAttr('placeholder')
+    $("label[for='retriever_password']").html(content)
 
 update_selects_list = (show_provider)->
   if show_provider
-    $('#fiduceo_retriever_provider_id').parents('.controls').parents('.control-group').show()
-    $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').hide()
-    $('#fiduceo_retriever_journal_id').parents('.controls').parents('.control-group').show()
+    $('#retriever_provider_id').parents('.controls').parents('.control-group').show()
+    $('#retriever_bank_id').parents('.controls').parents('.control-group').hide()
+    $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
   else
-    $('#fiduceo_retriever_provider_id').parents('.controls').parents('.control-group').hide()
-    $('#fiduceo_retriever_bank_id').parents('.controls').parents('.control-group').show()
-    $('#fiduceo_retriever_journal_id').parents('.controls').parents('.control-group').hide()
+    $('#retriever_provider_id').parents('.controls').parents('.control-group').hide()
+    $('#retriever_bank_id').parents('.controls').parents('.control-group').show()
+    $('#retriever_journal_id').parents('.controls').parents('.control-group').hide()
 
 update_provider = ->
-  unless $('#fiduceo_retriever_provider_id').is(':disabled') && $('#fiduceo_retriever_bank_id').is(':disabled')
+  unless $('#retriever_provider_id').is(':disabled') && $('#retriever_bank_id').is(':disabled')
     result = null
-    result = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').tokenInput('get')[0]
+    result = $('#retriever_'+$('#retriever_type').val()+'_id').tokenInput('get')[0]
     if result
-      $('#fiduceo_retriever_service_name').val(result.name)
-      $('#fiduceo_retriever_name').val(result.name)
-      if $('#fiduceo_retriever_type').val() == 'provider'
-        url = $.grep(window.providers, (e) -> e.id == result.id)[0]['url']
-      else
-        url = $.grep(window.banks, (e) -> e.id == result.id)[0]['url']
-      if url != undefined && url != null
-        link = '<a href="'+url+'" target="_blank">'+url+'</a>'
-        help_html = '<p class="help-block"><br/><br/>'+link+'<p>'
-        $field = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id')
-        $help_block = $field.next('p')
-        if $help_block != undefined
-          $help_block.remove()
-        $field.after(help_html)
+      $('#retriever_service_name').val(result.name)
+      $('#retriever_name').val(result.name)
     else
-      $('#fiduceo_retriever_service_name').val('')
-      $('#fiduceo_retriever_name').val('')
-      $help_block = $('#fiduceo_retriever_'+$('#fiduceo_retriever_type').val()+'_id').next('p')
+      $('#retriever_service_name').val('')
+      $('#retriever_name').val('')
+      $help_block = $('#retriever_'+$('#retriever_type').val()+'_id').next('p')
       if $help_block != undefined
         $help_block.remove()
 
@@ -159,32 +86,25 @@ jQuery ->
     window.banks = $('#banks').data('banks')
     window.selected_banks = $('#banks').data('selectedBanks')
     window.selected_cash_register = $('#banks').data('selectedCashRegister')
-    # Crédit du Nord (Professionnels) et ses filiales
-    window.special_bank_ids = ['4f6740766caddc2c2c3e558f', '551d01b0b5b437370f010000']
-    if window.selected_banks.length == 1 && window.special_bank_ids.indexOf(window.selected_banks[0]['id']) != -1
-      window.fiduceo_retriever_name = window.selected_banks[0]['name']
+    update_selects_list($('#retriever_type').val() == 'provider')
 
-    update_selects_list($('#fiduceo_retriever_type').val() == 'provider')
-
-    $('#fiduceo_retriever_type').on 'change', ->
+    $('#retriever_type').on 'change', ->
       update_selects_list($(this).val() == 'provider')
       update_form()
       update_provider()
 
     update_form()
 
-    $('#fiduceo_retriever_sparam1').on 'change', ->
-      $('#fiduceo_retriever_param1').val($('#fiduceo_retriever_sparam1').val())
-    $('#fiduceo_retriever_sparam2').on 'change', ->
-      $('#fiduceo_retriever_param2').val($('#fiduceo_retriever_sparam2').val())
-    $('#fiduceo_retriever_sparam3').on 'change', ->
-      $('#fiduceo_retriever_param3').val($('#fiduceo_retriever_sparam3').val())
+    $('#retriever_dyn_list_attr').on 'change', ->
+      $('#retriever_dyn_attr').val($('#retriever_dyn_list_attr').val())
+    $('#retriever_dyn_pass_attr').on 'change', ->
+      $('#retriever_dyn_attr').val($('#retriever_dyn_pass_attr').val())
 
-    if $('#fiduceo_retriever_provider_id').is(':disabled')
-      $('#fiduceo_retriever_provider_id').addClass('hide')
-      $('#fiduceo_retriever_provider_id').after('<input class="string required disabled" disabled="disabled" id="fiduceo_retriever_provider_name" name="fiduceo_retriever[provider_name]" value="'+$('#fiduceo_retriever_service_name').val()+'" type="text">')
+    if $('#retriever_provider_id').is(':disabled')
+      $('#retriever_provider_id').addClass('hide')
+      $('#retriever_provider_id').after('<input class="string required disabled" disabled="disabled" id="retriever_provider_name" name="retriever[provider_name]" value="'+$('#retriever_service_name').val()+'" type="text">')
     else
-      $('#fiduceo_retriever_provider_id').tokenInput window.providers,
+      $('#retriever_provider_id').tokenInput window.providers,
         theme: 'facebook'
         searchDelay: 500
         minChars: 1
@@ -196,19 +116,17 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          window.fiduceo_retriever_name = item['name']
           update_form()
           update_provider()
         onDelete: (item) ->
-          window.fiduceo_retriever_name = null
           update_form()
           update_provider()
 
-    if $('#fiduceo_retriever_bank_id').is(':disabled')
-      $('#fiduceo_retriever_bank_id').addClass('hide')
-      $('#fiduceo_retriever_bank_id').after('<input class="string required disabled" disabled="disabled" id="fiduceo_retriever_bank_name" name="fiduceo_retriever[bank_name]" value="'+$('#fiduceo_retriever_service_name').val()+'" type="text">')
+    if $('#retriever_bank_id').is(':disabled')
+      $('#retriever_bank_id').addClass('hide')
+      $('#retriever_bank_id').after('<input class="string required disabled" disabled="disabled" id="retriever_bank_name" name="retriever[bank_name]" value="'+$('#retriever_service_name').val()+'" type="text">')
     else
-      $('#fiduceo_retriever_bank_id').tokenInput window.banks,
+      $('#retriever_bank_id').tokenInput window.banks,
         theme: 'facebook'
         searchDelay: 500
         minChars: 1
@@ -220,11 +138,9 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          window.fiduceo_retriever_name = item['name']
           update_form()
           update_provider()
         onDelete: (item) ->
-          window.fiduceo_retriever_name = null
           update_form()
           update_provider()
 
@@ -256,8 +172,8 @@ jQuery ->
           _url += '&per_page=' + per_page
         if page != ''
           _url += '&page=' + page
-        if window.fiduceo_retriever_contains_name != ''
-          _url += '&fiduceo_retriever_contains[name]=' + window.fiduceo_retriever_contains_name
+        if window.retriever_contains_name != ''
+          _url += '&retriever_contains[name]=' + window.retriever_contains_name
       $.ajax
         url: _url
         dataType: 'html'
@@ -275,22 +191,22 @@ jQuery ->
             url = $(this).attr('href')
             load_retrievers_list(url)
 
-    window.fiduceo_retriever_contains_name = ''
-    window.fiduceo_retrievers_url = 'retrievers?part=true'
+    window.retriever_contains_name = ''
+    window.retrievers_url = 'retrievers?part=true'
     load_retrievers_list()
 
     $('.retriever_seach.form').on 'submit', (e) ->
-      window.fiduceo_retriever_contains_name = $('#fiduceo_retriever_contains_name').val()
+      window.retriever_contains_name = $('#retriever_contains_name').val()
       e.preventDefault()
       load_retrievers_list()
     $('.reset_filter').on 'click', (e) ->
       e.preventDefault()
-      $('#fiduceo_retriever_contains_name').val('')
+      $('#retriever_contains_name').val('')
       $('#direction').val(null)
       $('#sort').val(null)
       $('#per_page').val(null)
       $('#page').val(null)
-      window.fiduceo_retriever_contains_name = ''
+      window.retriever_contains_name = ''
       load_retrievers_list()
 
     window.setInterval(load_retrievers_list, 5000)

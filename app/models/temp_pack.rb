@@ -83,14 +83,14 @@ class TempPack
     if options[:dematbox_doc_id].present?
       opts = { dematbox_doc_id: options[:dematbox_doc_id] }
       temp_document = TempDocument.find_or_initialize_with opts
-    elsif options[:signature].present?
-      opts = { signature: options[:signature], user_id: options[:user_id] }
+    elsif options[:fingerprint].present?
+      opts = { retrieved_fingerprint: options[:fingerprint], user_id: options[:user_id] }
       temp_document = TempDocument.find_or_initialize_with opts
     else
       temp_document ||= TempDocument.new
     end
 
-    if options[:delivery_type] != 'fiduceo' || !temp_document.persisted?
+    if options[:delivery_type] != 'retriever' || !temp_document.persisted?
       temp_document.temp_pack           = self
       temp_document.user                = user
       temp_document.organization        = organization
@@ -105,16 +105,17 @@ class TempPack
       temp_document.dematbox_service_id = options[:dematbox_service_id] if options[:dematbox_service_id]
       temp_document.dematbox_text       = options[:dematbox_text]       if options[:dematbox_text]
 
-      temp_document.fiduceo_id                  = options[:fiduceo_id]          if options[:fiduceo_id]
-      temp_document.fiduceo_metadata            = options[:fiduceo_metadata]    if options[:fiduceo_metadata]
-      temp_document.fiduceo_service_name        = options[:service_name]        if options[:service_name]
-      temp_document.fiduceo_custom_service_name = options[:custom_service_name] if options[:custom_service_name]
+      temp_document.api_id                 = options[:api_id]                 if options[:api_id]
+      temp_document.api_name               = options[:api_name]               if options[:api_name]
+      temp_document.retrieved_metadata     = options[:retrieved_metadata]     if options[:retrieved_metadata]
+      temp_document.retriever_service_name = options[:retriever_service_name] if options[:retriever_service_name]
+      temp_document.retriever_name         = options[:retriever_name]         if options[:retriever_name]
 
       temp_document.save
       if options[:is_content_file_valid]
         temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
         temp_document.save
-        if temp_document.fiduceo?
+        if temp_document.retrieved?
           options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
         else
           if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
@@ -150,14 +151,14 @@ class TempPack
     temp_documents.upload.by_position.ready
   end
 
-  def ready_fiduceo_documents
-    temp_documents.fiduceo.by_position.ready
+  def ready_retrieved_documents
+    temp_documents.retrieved.by_position.ready
   end
 
   def ready_documents
     documents = ready_uploaded_documents
     documents += ready_dematbox_documents
-    documents += ready_fiduceo_documents
+    documents += ready_retrieved_documents
     documents += ready_scanned_documents
     documents
   end
