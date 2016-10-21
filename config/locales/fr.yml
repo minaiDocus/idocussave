@@ -925,10 +925,10 @@ fr:
           updating: Mise à jour en cours
           destroying: Suppression en cours
           synchronizing: Synchronisation en cours
-          waiting_data: En attente des données
           waiting_selection: En attente de sélection
           waiting_additionnal_info: En attente de l'utilisateur
           error: Erreur
+          unavailable: Indisponible
       retriever_transaction:
         status:
           pending: en attente

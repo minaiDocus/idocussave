@@ -74,9 +74,6 @@ private
     elsif retriever.destroying?
       log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.api_id} - destroy"
       DestroyRetrieverConnection.execute(retriever)
-    elsif retriever.waiting_data? && retriever.updated_at <= 2.minutes.ago
-      retriever.update(error_message: 'Aucune donnée reçu')
-      retriever.error
     end
   end
 

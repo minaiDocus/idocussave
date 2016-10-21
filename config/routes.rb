@@ -301,7 +301,7 @@ Idocus::Application.routes.draw do
     resources :retrievers, only: %w(index edit destroy) do
       post 'fetch', on: :collection
     end
-    resources :retriever_provider_wishes, only: %w(index show edit) do
+    resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index show edit) do
       patch 'start_process', on: :member
       patch 'reject',        on: :member
       patch 'accept',        on: :member

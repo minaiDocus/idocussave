@@ -78,8 +78,6 @@
             %span.badge Récent
           = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
             %span.badge.badge-success OK
-          = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_data' }, per_page: params[:per_page]) do
-            %span.badge En attente des données
           = link_to admin_retrievers_path(retriever_contains: { state: 'waiting_selection' }, per_page: params[:per_page]) do
             %span.badge Sélection
           = link_to admin_retrievers_path(retriever_contains: { state: 'error' }, per_page: params[:per_page]) do

@@ -21,6 +21,12 @@ protected
         format.html { render '/404', status: 404, layout: 'inner' }
         format.json { render json: { status: :not_found, code: 404 } }
       end
+    rescue Budgea::Errors::ServiceUnavailable => e
+      Airbrake.notify(e, airbrake_request_data)
+      respond_to do |format|
+        format.html { render '/503', status: 503, layout: 'inner' }
+        format.json { render json: { status: :error, code: 503 } }
+      end
     rescue => e
       Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|

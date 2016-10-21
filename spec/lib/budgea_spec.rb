@@ -1,4 +1,6 @@
-require 'spec_helper.rb'
+# -*- encoding : UTF-8 -*-
+# TODO finish it
+require 'spec_helper'
 
 describe Budgea do
   before(:all) do

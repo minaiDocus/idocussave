@@ -131,7 +131,7 @@ class User
   has_many :temp_packs
   has_many :temp_documents
 
-  # TODO migrate it
+  # TODO migrate me
   has_many :fiduceo_provider_wishes,                                                            dependent: :destroy
 
   has_many :bank_accounts,                                                                      dependent: :destroy

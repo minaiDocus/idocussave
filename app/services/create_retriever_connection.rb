@@ -13,13 +13,13 @@ class CreateRetrieverConnection
 
   def create
     data = client.create_connection(connection_params)
-    result = if client.response.code.in? [200, 202]
+    if client.response.code.in? [200, 202]
       @retriever.api_id             = data['id']
       @retriever.sync_at            = Time.parse data['last_update'] if data['last_update'].present?
       @retriever.additionnal_fields = data['fields'] if data['fields'].present?
       @retriever.save
       if client.response.code == 200
-        @retriever.wait_data
+        @retriever.ready
       else
         @retriever.wait_additionnal_info
       end
@@ -28,8 +28,6 @@ class CreateRetrieverConnection
       @retriever.error
       false
     end
-    @retriever.update(password: nil, dyn_attr: nil, dyn_attr_name: nil)
-    result
   end
 
 private

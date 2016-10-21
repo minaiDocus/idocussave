@@ -17,11 +17,11 @@ class Retriever
   field :service_name
   field :type,                                        default: 'provider'
   field :name
-  # TODO verify uniqueness of the couple service_name and login for a user ? (par vs pro....)
   field :login
   # TODO encrypt password, dyn_attr & answers
   field :password
   field :dyn_attr_name
+  field :dyn_attr_type
   field :dyn_attr
   field :additionnal_fields,     type: Array
   field :answers,                type: Hash
@@ -47,7 +47,8 @@ class Retriever
   scope :waiting_selection,        -> { where(state: 'waiting_selection') }
   scope :waiting_additionnal_info, -> { where(state: 'waiting_additionnal_info') }
   scope :error,                    -> { where(state: 'error') }
-  scope :not_processed,            -> { where(:state.in => %w(creating updating destroying synchronizing waiting_data)) }
+  scope :unavailable,              -> { where(state: 'unavailable') }
+  scope :not_processed,            -> { where(:state.in => %w(creating updating destroying synchronizing)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
 
   state_machine initial: :creating do
@@ -56,17 +57,31 @@ class Retriever
     state :updating
     state :destroying
     state :synchronizing
-    state :waiting_data
     state :waiting_selection
     state :waiting_additionnal_info
     state :error
+    state :unavailable
 
     before_transition :error => :ready do |retriever, transition|
       retriever.error_message = nil
     end
 
+    before_transition any => [:ready, :error, :waiting_additionnal_info] do |retriever, transition|
+      retriever.password = nil
+      unless retriever.dyn_attr_type == 'list'
+        retriever.dyn_attr_name = nil
+        retriever.dyn_attr_type = nil
+        retriever.dyn_attr      = nil
+      end
+    end
+
+    before_transition any => [:ready, :error] do |retriever, transition|
+      retriever.additionnal_fields = nil
+      retriever.answers            = nil
+    end
+
     event :ready do
-      transition [:creating, :updating, :synchronizing, :waiting_data, :waiting_selection, :error] => :ready
+      transition [:creating, :updating, :synchronizing, :waiting_selection, :error] => :ready
     end
 
     event :create_connection do
@@ -85,12 +100,8 @@ class Retriever
       transition [:ready, :error] => :synchronizing
     end
 
-    event :wait_data do
-      transition [:creating, :updating, :synchronizing] => :waiting_data
-    end
-
     event :wait_selection do
-      transition [:waiting_data] => :waiting_selection
+      transition [:ready] => :waiting_selection
     end
 
     event :wait_additionnal_info do
@@ -98,7 +109,11 @@ class Retriever
     end
 
     event :error do
-      transition [:ready, :creating, :updating, :destroying, :synchronizing, :waiting_data] => :error
+      transition [:ready, :creating, :updating, :destroying, :synchronizing] => :error
+    end
+
+    event :unavailable do
+      transition any => :unavailable
     end
   end
 

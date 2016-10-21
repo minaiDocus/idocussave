@@ -36,8 +36,6 @@ class RetrieverPresenter < BasePresenter
       h.content_tag :span, 'Mise à jour en cours', class: 'label'
     elsif retriever.synchronizing?
       h.content_tag :span, 'Synchronisation en cours', class: 'label'
-    elsif retriever.waiting_data?
-      h.content_tag :span, 'En attente des données', class: 'label'
     elsif retriever.destroying?
       h.content_tag :span, 'Suppression en cours', class: 'label'
     else

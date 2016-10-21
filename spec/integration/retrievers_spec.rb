@@ -1,4 +1,5 @@
 # -*- encoding : UTF-8 -*-
+# TODO finish it
 require 'spec_helper'
 
 describe 'Retrievers' do

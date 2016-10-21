@@ -24,7 +24,6 @@ class TempDocument
 
   field :api_id
   field :api_name
-  field :retrieved_fingerprint
   field :retrieved_metadata, type: Hash
   field :retriever_service_name
   field :retriever_name

@@ -11,7 +11,6 @@ update_form = ->
   $('.dyn_list_attr').hide()
   $('.dyn_pass_attr').hide()
 
-  $('#retriever_dyn_attr_name').val('')
   $('#retriever_dyn_attr').val('')
   $("label[for='retriever_dyn_list_attr']").html('')
   $('#retriever_dyn_list_attr').html('')
@@ -23,6 +22,13 @@ update_form = ->
       retriever = window.providers.filter(same_id)[0]
     else
       retriever = window.banks.filter(same_id)[0]
+
+    if retriever['capabilities'].length == 2
+      $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
+      if $('#retriever_type').val() == 'provider'
+        $('#retriever_type').after('<p class="help-block red">Récupère les opérations bancaires aussi.</p>')
+      else
+        $('#retriever_type').after('<p class="help-block red">Récupère les documents aussi.</p>')
 
     for field in retriever['fields']
       label = '<abbr title="champ requis">*</abbr> ' + field['label']
@@ -36,16 +42,14 @@ update_form = ->
           content += '<option value="' + option['value'] + '">' + option['label'] + '</option>'
         $("label[for='retriever_dyn_list_attr']").html(label)
         $('#retriever_dyn_list_attr').html(content)
-        # TODO reselect option
-        $('#retriever_dyn_attr_name').val(field['name'])
+        if window.selected_dyn_attr_value != null
+          $('#retriever_dyn_list_attr option[value="'+(window.selected_dyn_attr_value)+'"]').prop('selected', true)
         $('.dyn_list_attr').show()
         $('#retriever_dyn_attr').val($('#retriever_dyn_list_attr').val())
       else if field['type'] == 'text' || field['type'] == 'date'
-        $('#retriever_dyn_attr_name').val(field['name'])
         $("label[for='retriever_dyn_attr']").html(label)
         $('.dyn_attr').show()
       else if field['type'] == 'password'
-        $('#retriever_dyn_attr_name').val(field['name'])
         $("label[for='retriever_dyn_pass_attr']").html(label)
         $('.dyn_pass_attr').show()
   else
@@ -55,8 +59,8 @@ update_form = ->
     content = '<abbr title="champ requis">*</abbr> Mot de passe'
     $("label[for='retriever_password']").html(content)
 
-update_selects_list = (show_provider)->
-  if show_provider
+update_selects_list = ->
+  if $('#retriever_type').val() == 'provider'
     $('#retriever_provider_id').parents('.controls').parents('.control-group').show()
     $('#retriever_bank_id').parents('.controls').parents('.control-group').hide()
     $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
@@ -75,9 +79,14 @@ update_provider = ->
     else
       $('#retriever_service_name').val('')
       $('#retriever_name').val('')
-      $help_block = $('#retriever_'+$('#retriever_type').val()+'_id').next('p')
-      if $help_block != undefined
-        $help_block.remove()
+
+update_all = ->
+  $help_block = $('#retriever_type').next('p')
+  if $help_block != undefined
+    $help_block.remove()
+  update_selects_list()
+  update_form()
+  update_provider()
 
 jQuery ->
   if $('.retriever_form').length > 0
@@ -85,13 +94,14 @@ jQuery ->
     window.selected_providers = $('#providers').data('selectedProviders')
     window.banks = $('#banks').data('banks')
     window.selected_banks = $('#banks').data('selectedBanks')
-    window.selected_cash_register = $('#banks').data('selectedCashRegister')
-    update_selects_list($('#retriever_type').val() == 'provider')
+    if $('#selected').length > 0
+      window.selected_dyn_attr_value = $('#selected').data('dynAttrValue')
+    else
+      window.selected_dyn_attr_value = null
+    update_selects_list()
 
     $('#retriever_type').on 'change', ->
-      update_selects_list($(this).val() == 'provider')
-      update_form()
-      update_provider()
+      update_all()
 
     update_form()
 
@@ -116,11 +126,9 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          update_form()
-          update_provider()
+          update_all()
         onDelete: (item) ->
-          update_form()
-          update_provider()
+          update_all()
 
     if $('#retriever_bank_id').is(':disabled')
       $('#retriever_bank_id').addClass('hide')
@@ -138,11 +146,9 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          update_form()
-          update_provider()
+          update_all()
         onDelete: (item) ->
-          update_form()
-          update_provider()
+          update_all()
 
     update_provider()
 

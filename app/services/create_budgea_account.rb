@@ -14,11 +14,11 @@ class CreateBudgeaAccount
           if client.response.code == 200
             budgea_account.identifier = client.user_id
           else
-            # handle failure
+            # TODO handle failure
           end
           budgea_account.save
         else
-          # handle failure
+          # TODO handle failure
         end
       end
     end

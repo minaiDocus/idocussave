@@ -36,7 +36,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
       flash[:notice] = 'Aucun document sélectionné.'
     else
       documents.each do |document|
-        document.ready if document.waiting_selection?
+        document.ready if document.wait_selection?
       end
       if documents.count > 1
         flash[:success] = "Les #{documents.count} documents sélectionnés seront intégrés."

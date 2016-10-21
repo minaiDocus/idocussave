@@ -21,7 +21,7 @@ class RetrievedDocument
         api_name:               'budgea',
         retriever_service_name: retriever.service_name,
         retriever_name:         retriever.name,
-        retrieved_metadata:     document
+        retrieved_metadata:     document,
         metadata:               formatted_metadata,
         is_content_file_valid:  true,
         wait_selection:         waiting_selection?
@@ -95,7 +95,7 @@ private
   end
 
   def waiting_selection?
-    if @retriever.is_selection_needed?
+    if @retriever.is_selection_needed
       true
     else
       Time.parse(@document['timestamp']) < 2.months.ago

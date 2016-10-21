@@ -137,17 +137,18 @@
                   %th= Retriever.state_machine.states['ready'].human_name
                   %td= Retriever.ready.count
                 %tr
-                  %th= Retriever.state_machine.states['waiting_data'].human_name
-                  %td= Retriever.waiting_data.count
-                %tr
                   %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
                   %td= Retriever.waiting_selection.count
                 %tr
-                  %th= Retriever.state_machine.states['waiting_additionnal_info'].human_name[0..20] + '.'
-                  %td= Retriever.waiting_additionnal_info.count
-                %tr
-                  %th= Retriever.state_machine.states['error'].human_name
+                  %th= 'En erreur'
                   %td= Retriever.error.count
+                %tr
+                  %th Données en cours de tr.
+                  %td
+                    = RetrievedData.not_processed.count
+                    (
+                    = RetrievedData.error.count
+                    )
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
             %table.table.table-striped.table-condensed.table-bordered
@@ -216,7 +217,7 @@
               - @provider_wishes.each do |provider_wish|
                 %tr
                   %td= l(provider_wish.created_at, format: '%e %b %H:%M')
-                  %td= link_to provider_wish.user.code, account_provider_wishes_path(user_code: provider_wish.user.code)
+                  %td= link_to provider_wish.user.code, account_fiduceo_provider_wishes_path(user_code: provider_wish.user.code)
                   %td= provider_wish.name
                   %td= provider_wish_state(provider_wish)
       .row-fluid

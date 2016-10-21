@@ -12,19 +12,22 @@ class DestroyRetrieverConnection
   end
 
   def destroy
-    if @retriever.api_id.present? && is_retriever_uniq?
-      if client.destroy_connection(@retriever.api_id)
-        # TODO take into account a duplication of connection
+    is_destroyed = false
+    @user.budgea_account.with_lock(timeout: 2, retries: 10, retry_sleep: 0.2) do
+      if @retriever.api_id.nil? || is_retriever_not_uniq?
         @retriever.bank_accounts.destroy_all
-        @retriever.destroy
-      else
-        @retriever.update(error_message: client.error_message)
-        @retriever.error
-        false
+        is_destroyed = @retriever.destroy
       end
-    else
+    end
+    return true if is_destroyed
+
+    if client.destroy_connection(@retriever.api_id)
       @retriever.bank_accounts.destroy_all
       @retriever.destroy
+    else
+      @retriever.update(error_message: client.error_message)
+      @retriever.error
+      false
     end
   end
 
@@ -34,7 +37,7 @@ private
     @client ||= Budgea::Client.new @user.budgea_account.access_token
   end
 
-  def is_retriever_uniq?
-    @user.retrievers.where(api_id: @retriever.api_id).count == 1
+  def is_retriever_not_uniq?
+    @user.retrievers.where(api_id: @retriever.api_id).count > 1
   end
 end

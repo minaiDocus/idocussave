@@ -84,7 +84,7 @@ class TempPack
       opts = { dematbox_doc_id: options[:dematbox_doc_id] }
       temp_document = TempDocument.find_or_initialize_with opts
     elsif options[:fingerprint].present?
-      opts = { retrieved_fingerprint: options[:fingerprint], user_id: options[:user_id] }
+      opts = { content_fingerprint: options[:fingerprint], user_id: options[:user_id] }
       temp_document = TempDocument.find_or_initialize_with opts
     else
       temp_document ||= TempDocument.new
@@ -107,6 +107,7 @@ class TempPack
 
       temp_document.api_id                 = options[:api_id]                 if options[:api_id]
       temp_document.api_name               = options[:api_name]               if options[:api_name]
+      temp_document.metadata               = options[:metadata]               if options[:metadata]
       temp_document.retrieved_metadata     = options[:retrieved_metadata]     if options[:retrieved_metadata]
       temp_document.retriever_service_name = options[:retriever_service_name] if options[:retriever_service_name]
       temp_document.retriever_name         = options[:retriever_name]         if options[:retriever_name]

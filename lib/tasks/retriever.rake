@@ -21,12 +21,13 @@ namespace :retriever do
     puts "[#{Time.now}] retriever:notify_insane_retriever - END"
   end
 
-  namespace :provider do
-    desc 'Notify processed wishes'
-    task :notify_processed_wishes => [:environment] do
-      puts "[#{Time.now}] retriever:provider:notify_processed_wishes - START"
-      RetrieverProviderWish.deliver_mails
-      puts "[#{Time.now}] retriever:provider:notify_processed_wishes - END"
-    end
-  end
+  # TODO reevaluate utility
+  # namespace :provider do
+  #   desc 'Notify processed wishes'
+  #   task :notify_processed_wishes => [:environment] do
+  #     puts "[#{Time.now}] retriever:provider:notify_processed_wishes - START"
+  #     RetrieverProviderWish.deliver_mails
+  #     puts "[#{Time.now}] retriever:provider:notify_processed_wishes - END"
+  #   end
+  # end
 end

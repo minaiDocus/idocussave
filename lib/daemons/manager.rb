@@ -71,6 +71,7 @@ end
 pids = []
 services = []
 
+# TODO refactor me
 if Rails.env.production?
   services = [
     { name: 'ftp_fetcher',                 sleep_duration: 10.minutes, cmd: Proc.new { DocumentFetcher.fetch('ftp.idocus.com', 'grevalis_ppp', 'RT3rkfphZ7fxWzJmZAue', '/', 'ppp') } },
@@ -95,7 +96,12 @@ if Rails.env.production?
     { name: 'delivery-ibiza',              sleep_duration: 5.seconds,  cmd: Proc.new { PreAssignmentDeliveryService.execute } }
   ]
 elsif Rails.env.staging?
-  services = [{ name: 'import_from_dropbox', sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } }]
+  services = [
+    { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
+    { name: 'sync_retriever',              sleep_duration: nil,        cmd: Proc.new { SynchronizeRetriever.in_parallel } },
+    { name: 'process_retrieved_data',      sleep_duration: 1.seconds,  cmd: Proc.new { ProcessRetrievedData.execute } },
+    { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { ProcessOperation.execute } }
+  ]
 end
 
 services.each do |program|

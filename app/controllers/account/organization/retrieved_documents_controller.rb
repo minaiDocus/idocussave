@@ -25,7 +25,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 
   def select
     @documents = search(document_contains).order_by(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
-    @retriever.schedule if @retriever && @retriever.wait_selection?
+    @retriever.ready if @retriever && @retriever.waiting_selection?
   end
 
   def validate
@@ -34,7 +34,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
       flash[:notice] = 'Aucun document sélectionné.'
     else
       documents.each do |document|
-        document.ready
+        document.ready if document.wait_selection?
       end
       if documents.count > 1
         flash[:success] = "Les #{documents.count} documents sélectionnés seront intégrés."
