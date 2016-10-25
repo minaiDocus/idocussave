@@ -20,8 +20,10 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   end
 
   def create
-    retriever_form = RetrieverForm.new(@retriever.new(user_id: @customer.id))
-    if retriever_form.submit(retriever_params)
+    @retriever = Retriever.new(retriever_params)
+    @retriever.confirm_dyn_params = true
+    @retriever.user = @customer
+    if @retriever.save
       flash[:success] = 'Création en cours.'
       redirect_to account_organization_customer_retrievers_path(@organization, @customer)
     else
@@ -33,8 +35,8 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   end
 
   def update
-    retriever_form = RetrieverForm.new(@retriever)
-    if retriever_form.submit(retriever_params)
+    @retriever.confirm_dyn_params = true
+    if @retriever.update(retriever_params)
       if @retriever.api_id.present?
         @retriever.udpate_connection
         flash[:success] = 'Modification en cours.'
@@ -112,10 +114,16 @@ private
   end
 
   def retriever_params
+    dyn_attrs = [
+      { param1: [:name, :value] },
+      { param2: [:name, :value] },
+      { param3: [:name, :value] },
+      { param4: [:name, :value] },
+    ]
     if action_name == 'update'
-      params.require(:retriever).permit(:journal_id, :name, :login, :password, :dyn_attr)
+      params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)
     else
-      params.require(:retriever).permit(:provider_id, :bank_id, :type, :service_name, :journal_id, :name, :login, :password, :dyn_attr)
+      params.require(:retriever).permit(:provider_id, :bank_id, :type, :journal_id, :name, *dyn_attrs)
     end
   end
 

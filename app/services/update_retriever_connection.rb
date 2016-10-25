@@ -35,9 +35,10 @@ private
     if @retriever.additionnal_fields.present?
       params.merge!(@retriever.answers)
     else
-      params[:login] = @retriever.login
-      params[:password] = @retriever.password if @retriever.password.present?
-      params[@retriever.dyn_attr_name] = @retriever.dyn_attr if @retriever.dyn_attr.present?
+      4.times do |i|
+        param = @retriever.send("param#{i+1}")
+        params[param['name']] = param['value'] if param
+      end
     end
     params
   end

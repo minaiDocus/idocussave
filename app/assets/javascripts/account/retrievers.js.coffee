@@ -2,20 +2,18 @@ same_id = (element) ->
   element['id'] == window.retriever_id
 
 update_form = ->
+  change_providers_list()
+  update_provider()
+
+  $('#params').html('')
+  $help_block = $('#retriever_type').next('p')
+  if $help_block != undefined
+    $help_block.remove()
+
   if $('#retriever_type').val() == 'provider'
     window.retriever_id = parseInt($('#retriever_provider_id').val())
   else
     window.retriever_id = parseInt($('#retriever_bank_id').val())
-
-  $('.dyn_attr').hide()
-  $('.dyn_list_attr').hide()
-  $('.dyn_pass_attr').hide()
-
-  $('#retriever_dyn_attr').val('')
-  $("label[for='retriever_dyn_list_attr']").html('')
-  $('#retriever_dyn_list_attr').html('')
-  $("label[for='retriever_dyn_pass_attr']").html('')
-  $('#retriever_dyn_pass_attr').val('')
 
   if Number.isInteger window.retriever_id
     if $('#retriever_type').val() == 'provider'
@@ -30,44 +28,36 @@ update_form = ->
       else
         $('#retriever_type').after('<p class="help-block red">Récupère les documents aussi.</p>')
 
-    for field in retriever['fields']
-      label = '<abbr title="champ requis">*</abbr> ' + field['label']
-      if field['name'] == 'login'
-        $("label[for='retriever_login']").html(label)
-      else if field['name'] == 'password'
-        $("label[for='retriever_password']").html(label)
-      else if field['type'] == 'list'
-        content = ''
-        for option in field['values']
-          content += '<option value="' + option['value'] + '">' + option['label'] + '</option>'
-        $("label[for='retriever_dyn_list_attr']").html(label)
-        $('#retriever_dyn_list_attr').html(content)
-        if window.selected_dyn_attr_value != null
-          $('#retriever_dyn_list_attr option[value="'+(window.selected_dyn_attr_value)+'"]').prop('selected', true)
-        $('.dyn_list_attr').show()
-        $('#retriever_dyn_attr').val($('#retriever_dyn_list_attr').val())
-      else if field['type'] == 'text' || field['type'] == 'date'
-        $("label[for='retriever_dyn_attr']").html(label)
-        $('.dyn_attr').show()
-      else if field['type'] == 'password'
-        $("label[for='retriever_dyn_pass_attr']").html(label)
-        $('.dyn_pass_attr').show()
-  else
-    content = '<abbr title="champ requis">*</abbr> Identifiant'
-    $("label[for='retriever_login']").html(content)
+    if retriever['id'] == $('#params').data('connector-id')
+      attributes = $('#params').data('attributes')
+    else
+      attributes = {}
 
-    content = '<abbr title="champ requis">*</abbr> Mot de passe'
-    $("label[for='retriever_password']").html(content)
+    for i in [1..(retriever['fields'].length)]
+      field = retriever['fields'][i-1]
+      field['param_name'] = 'param' + i
+      tmpl_name = 'tmpl-input'
+      attribute = attributes[field['param_name']]
+      if attribute
+        field['value'] = attribute['value']
+        field['error'] = attribute['error']
+      if field['type'] == 'list'
+        tmpl_name = 'tmpl-select'
+      if field['type'] == 'date' || field['type'] == 'redirect_uri'
+        field['type'] = 'text'
+      $('#params').append(tmpl(tmpl_name, field))
 
-update_selects_list = ->
+change_providers_list = ->
   if $('#retriever_type').val() == 'provider'
     $('#retriever_provider_id').parents('.controls').parents('.control-group').show()
     $('#retriever_bank_id').parents('.controls').parents('.control-group').hide()
     $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
+    $('#retriever_bank_id').tokenInput('remove', { id: parseInt($('#retriever_bank_id').val()) })
   else
     $('#retriever_provider_id').parents('.controls').parents('.control-group').hide()
     $('#retriever_bank_id').parents('.controls').parents('.control-group').show()
     $('#retriever_journal_id').parents('.controls').parents('.control-group').hide()
+    $('#retriever_provider_id').tokenInput('remove', { id: parseInt($('#retriever_provider_id').val()) })
 
 update_provider = ->
   unless $('#retriever_provider_id').is(':disabled') && $('#retriever_bank_id').is(':disabled')
@@ -80,35 +70,15 @@ update_provider = ->
       $('#retriever_service_name').val('')
       $('#retriever_name').val('')
 
-update_all = ->
-  $help_block = $('#retriever_type').next('p')
-  if $help_block != undefined
-    $help_block.remove()
-  update_selects_list()
-  update_form()
-  update_provider()
-
 jQuery ->
   if $('.retriever_form').length > 0
-    window.providers = $('#providers').data('providers')
+    window.providers          = $('#providers').data('providers')
     window.selected_providers = $('#providers').data('selectedProviders')
-    window.banks = $('#banks').data('banks')
-    window.selected_banks = $('#banks').data('selectedBanks')
-    if $('#selected').length > 0
-      window.selected_dyn_attr_value = $('#selected').data('dynAttrValue')
-    else
-      window.selected_dyn_attr_value = null
-    update_selects_list()
+    window.banks              = $('#banks').data('banks')
+    window.selected_banks     = $('#banks').data('selectedBanks')
 
     $('#retriever_type').on 'change', ->
-      update_all()
-
-    update_form()
-
-    $('#retriever_dyn_list_attr').on 'change', ->
-      $('#retriever_dyn_attr').val($('#retriever_dyn_list_attr').val())
-    $('#retriever_dyn_pass_attr').on 'change', ->
-      $('#retriever_dyn_attr').val($('#retriever_dyn_pass_attr').val())
+      update_form()
 
     if $('#retriever_provider_id').is(':disabled')
       $('#retriever_provider_id').addClass('hide')
@@ -126,9 +96,9 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          update_all()
+          update_form()
         onDelete: (item) ->
-          update_all()
+          update_form()
 
     if $('#retriever_bank_id').is(':disabled')
       $('#retriever_bank_id').addClass('hide')
@@ -146,11 +116,11 @@ jQuery ->
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->
-          update_all()
+          update_form()
         onDelete: (item) ->
-          update_all()
+          update_form()
 
-    update_provider()
+    update_form()
 
   if $('#retrieved_documents.select, #bank_accounts.select').length > 0
     $('#master_checkbox').change ->

@@ -1,0 +1,39 @@
+:plain
+  <script type="text/x-tmpl" id="tmpl-input">
+    <div class="control-group string required retriever_{%=o.param_name%} {% if(o.error != null) { %} error {% } %}">
+      <label class="string required control-label" for="retriever_{%=o.param_name%}_value">
+        {% if(/optionnel/.exec(o.label) == null) { %}
+          <abbr title="champ requis">*</abbr>
+        {% } %}
+        {%=o.label%}
+      </label>
+      <div class="controls">
+        <input class="string" name="retriever[{%=o.param_name%}][name]" type="hidden" value="{%=o.name%}">
+        <input class="string required" id="retriever_{%=o.param_name%}_value" name="retriever[{%=o.param_name%}][value]" type="{%=o.type%}" value="{%=o.value%}">
+        {% if(o.error != null) { %}
+          <span class="help-inline">{%=o.error%}</span>
+        {% } %}
+      </div>
+    </div>
+  </script>
+  <script type="text/x-tmpl" id="tmpl-select">
+    <div class="control-group select required retriever_{%=o.param_name%} {% if(o.error != null) { %} error {% } %}">
+      <label class="select required control-label" for="retriever_{%=o.param_name%}_value">
+        {% if(/optionnel/.exec(o.label) == null) { %}
+          <abbr title="champ requis">*</abbr>
+        {% } %}
+        {%=o.label%}
+      </label>
+      <div class="controls">
+        <input class="string" name="retriever[{%=o.param_name%}][name]" type="hidden" value="{%=o.name%}">
+        <select class="select required" id="retriever_{%=o.param_name%}_value" name="retriever[{%=o.param_name%}][value]">
+          {% for (var i=0; i<o.values.length; i++) { %}
+            <option {% if(o.values[i].value == o.value) { %} selected="selected" {% } %} value="{%=o.values[i].value%}">{%=o.values[i].label%}</option>
+          {% } %}
+        </select>
+        {% if(o.error != null) { %}
+          <span class="help-inline">{%=o.error%}</span>
+        {% } %}
+      </div>
+    </div>
+  </script>

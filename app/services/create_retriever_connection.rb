@@ -42,11 +42,10 @@ private
     else
       params = { id_provider: @retriever.provider_id }
     end
-    params = params.merge({
-      login:    @retriever.login,
-      password: @retriever.password
-    })
-    params[@retriever.dyn_attr_name] = @retriever.dyn_attr
+    4.times do |i|
+      param = @retriever.send("param#{i+1}")
+      params[param['name']] = param['value'] if param
+    end
     params
   end
 end

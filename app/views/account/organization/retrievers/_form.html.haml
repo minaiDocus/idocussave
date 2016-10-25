@@ -1,7 +1,5 @@
-#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @retriever.provider_id.to_s && e[:name] == @retriever.service_name }.to_json } }
-#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @retriever.bank_id.to_s && e[:name] == @retriever.service_name }.to_json } }
-- if @retriever.dyn_attr_type == 'list'
-  #selected{ data: { dyn_attr_value: @retriever.dyn_attr } }
+#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @retriever.provider_id }.to_json } }
+#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @retriever.bank_id }.to_json } }
 
 - if action_name.in?(%w(new create))
   - url = account_organization_customer_retrievers_path(@organization, @customer, @retriever)
@@ -15,11 +13,9 @@
   = f.input :name
   - unless @retriever.persisted? && @retriever.bank?
     = f.input :journal_id, collection: @customer.account_book_types.asc(:name), include_blank: false, required: true
-  = f.input :login
-  = f.input :password, required: true, as: :password
-  = f.input :dyn_attr, wrapper_html: { class: 'dyn_attr', style: 'display:none' }
-  = f.input :dyn_list_attr, collection: [], include_blank: false, wrapper_html: { class: 'dyn_list_attr', style: 'display:none' }
-  = f.input :dyn_pass_attr, type: :password, as: :password, wrapper_html: { class: 'dyn_pass_attr', style: 'display:none' }
+  #params{ data: { connector_id: @retriever.connector_id, attributes: retriever_dyn_attrs(@retriever) } }
   .form-actions
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), account_organization_customer_retrievers_path(@organization, @customer), class: 'btn'
+
+= render partial: 'account/retrievers/form_template'

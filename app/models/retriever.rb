@@ -3,7 +3,7 @@ class Retriever
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  attr_accessor :dyn_list_attr, :dyn_pass_attr
+  attr_accessor :confirm_dyn_params
 
   belongs_to :user
   belongs_to :journal,        class_name: 'AccountBookType'
@@ -11,18 +11,17 @@ class Retriever
   has_many   :temp_documents
   has_many   :bank_accounts
 
-  field :api_id,                       type: Integer
-  field :provider_id,                  type: Integer
-  field :bank_id,                      type: Integer
+  field :api_id,                 type: Integer
+  field :provider_id,            type: Integer
+  field :bank_id,                type: Integer
   field :service_name
-  field :type,                                        default: 'provider'
+  field :type,                                  default: 'provider'
   field :name
-  field :login
-  # TODO encrypt password, dyn_attr & answers
-  field :password
-  field :dyn_attr_name
-  field :dyn_attr_type
-  field :dyn_attr
+  # TODO encrypt
+  field :param1,                 type: Hash
+  field :param2,                 type: Hash
+  field :param3,                 type: Hash
+  field :param4,                 type: Hash
   field :additionnal_fields,     type: Array
   field :answers,                type: Hash
   field :journal_name
@@ -35,9 +34,11 @@ class Retriever
 
   index({ state: 1 })
 
-  validates_presence_of  :type, :name, :login, :service_name
+  validates_presence_of  :type, :name, :service_name
   validates_inclusion_of :type, in: %w(provider bank)
   validates_presence_of  :journal, if: :provider?
+  validate :truthfullness_of_connector_id
+  validate :presence_of_dyn_params, if: :confirm_dyn_params
 
   scope :providers,           -> { where(type: 'provider') }
   scope :banks,               -> { where(type: 'bank') }
@@ -67,11 +68,12 @@ class Retriever
     end
 
     before_transition any => [:ready, :error, :waiting_additionnal_info] do |retriever, transition|
-      retriever.password = nil
-      unless retriever.dyn_attr_type == 'list'
-        retriever.dyn_attr_name = nil
-        retriever.dyn_attr_type = nil
-        retriever.dyn_attr      = nil
+      4.times do |i|
+        param_name = "param#{i+1}"
+        param = retriever.send(param_name)
+        if param && param['type'] != 'list' && !param['name'].in?(%w(login username name email mail merchant_id))
+          retriever.send("#{param_name}=", nil)
+        end
       end
     end
 
@@ -125,11 +127,62 @@ class Retriever
     end
   end
 
+  before_validation do |retriever|
+    retriever.service_name ||= connector[:name]
+  end
+
+  def connector_id
+    provider_id || bank_id
+  end
+
   def provider?
     type == 'provider'
   end
 
   def bank?
     type == 'bank'
+  end
+
+private
+
+  def truthfullness_of_connector_id
+    unless connector
+      errors.add("#{type}_id", :invalid)
+    end
+  end
+
+  def presence_of_dyn_params
+    if connector
+      4.times do |i|
+        param_name = "param#{i+1}"
+        param = send(param_name)
+        field = connector[:fields][i]
+        if field
+          if param['name'] == field['name']
+            send(param_name)['type'] = field['type']
+            if param['value'].present?
+              if field['type'] == 'list'
+                values = field['values'].map { |e| e['value'] }
+                unless values.include? param['value']
+                  errors.add(param_name, :invalid)
+                end
+              elsif param['value'].size > 256
+                errors.add(param_name, :invalid)
+              end
+            elsif !field['label'].match /optionnel/
+              errors.add(param_name, :blank)
+            end
+          else
+            errors.add(param_name, :invalid)
+          end
+        elsif send(param_name).present?
+          send(param_name, nil)
+        end
+      end
+    end
+  end
+
+  def connector
+    @connector ||= RetrieverProvider.find(connector_id)
   end
 end
