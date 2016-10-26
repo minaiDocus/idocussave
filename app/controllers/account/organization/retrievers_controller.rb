@@ -69,12 +69,13 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   end
 
   def additionnal_info
-    # TODO sanitize params[:answers]
-    @retriever.answers = params[:answers]
-    @retriever.save
-    @retriever.update_connection
-    flash[:info] = 'Traitement en cours...'
-    redirect_to account_organization_customer_retrievers_path(@organization, @customer)
+    if @retriever.update(answers: params[:answers])
+      @retriever.update_connection
+      flash[:info] = 'Traitement en cours...'
+      redirect_to account_organization_customer_retrievers_path(@organization, @customer)
+    else
+      render :waiting_additionnal_info
+    end
   end
 
 private

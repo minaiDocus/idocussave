@@ -39,6 +39,7 @@ class Retriever
   validates_presence_of  :journal, if: :provider?
   validate :truthfullness_of_connector_id
   validate :presence_of_dyn_params, if: :confirm_dyn_params
+  validate :presence_of_answers, if: Proc.new { |r| r.answers.present? }
 
   scope :providers,           -> { where(type: 'provider') }
   scope :banks,               -> { where(type: 'bank') }
@@ -179,6 +180,19 @@ private
           send(param_name, nil)
         end
       end
+    end
+  end
+
+  def presence_of_answers
+    names = additionnal_fields.map { |e| e['name'] }.sort
+    if answers.keys.sort == names
+      answers.each do |key, value|
+        unless value.size > 0 && value.size < 256
+          errors.add(:answers, :invalid)
+        end
+      end
+    else
+      errors.add(:answers, :invalid)
     end
   end
 
