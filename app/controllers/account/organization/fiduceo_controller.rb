@@ -14,7 +14,7 @@ private
   def verify_rights
     unless (is_leader? || @user.can_manage_customers?) && @customer.active? && @customer.is_fiduceo_authorized && @customer.organization.is_active
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 end

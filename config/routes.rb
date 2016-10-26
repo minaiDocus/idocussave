@@ -140,6 +140,7 @@ Idocus::Application.routes.draw do
             get   'wait_for_user_action', on: :member
             patch 'update_transaction',   on: :member
           end
+          r.resources :provider_wishes, as: :fiduceo_provider_wishes, only: %w(index new create)
           r.resources :bank_accounts, only: %w(index edit update) do
             post 'update_multiple', on: :collection
           end

@@ -37,6 +37,8 @@
     #retrievers
       = link_to 'Ajouter un automate', new_account_organization_customer_fiduceo_retriever_path(@organization, @customer), class: 'btn btn-primary margin1right'
       = link_to 'Liste des automates', list_account_organization_customer_fiduceo_retrievers_path(@organization, @customer), class: 'btn margin1right'
+      = link_to 'Demander un nouvel automate', new_account_organization_customer_fiduceo_provider_wish_path(@organization, @customer), class: 'btn margin1right'
+      = link_to 'Suivi de mes demandes', account_organization_customer_fiduceo_provider_wishes_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Statut automate', account_organization_customer_retriever_transactions_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Opérations bancaires', account_organization_customer_retrieved_banking_operations_path(@organization, @customer), class: 'btn margin1right'
       = link_to 'Documents (Factures)', account_organization_customer_retrieved_documents_path(@organization, @customer), class: 'btn margin1right'

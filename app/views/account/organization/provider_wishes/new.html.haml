@@ -1,0 +1,15 @@
+.row-fluid
+  .span12
+    .box
+      %h3 Nouvelle demande d'automate pour le client #{link_to @customer, account_organization_customer_fiduceo_retrievers_path(@organization, @customer)}
+    .box{ style: 'padding-bottom:0;' }
+      = simple_form_for @fiduceo_provider_wish, url: account_organization_customer_fiduceo_provider_wishes_path(@organization, @customer), html: { class: 'form form-horizontal' } do |f|
+        = f.input :name
+        = f.input :url
+        = f.input :login
+        = f.input :password, required: true
+        = f.input :custom_connection_info
+        = f.input :description, as: :text
+        .form-actions
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_customer_fiduceo_retrievers_path(@organization, @customer), class: 'btn'
