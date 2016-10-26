@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrieversController < Account::Organization::RetrieverController
   before_filter :load_retriever, except: %w(index list new create)
-  before_filter :load_providers_and_banks, only: %w(list new create edit update)
+  before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
     @retrievers = search(retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
@@ -13,10 +13,17 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
 
   def new
     @retriever = Retriever.new
-    @retriever.provider_id  = params[:provider_id]
-    @retriever.bank_id      = params[:bank_id]
-    @retriever.service_name = params[:service_name]
-    @retriever.type         = params[:bank_id].present? ? 'bank' : 'provider'
+    @retriever.connector_id = params[:connector_id].try(:to_i)
+    if @retriever.connector
+      case @retriever.connector['capabilites']
+      when ['bank']
+        @retriever.type = 'bank'
+      when ['providers']
+        @retriever.type = 'provider'
+      else
+        @retriever.type = 'both'
+      end
+    end
   end
 
   def create
@@ -124,7 +131,7 @@ private
     if action_name == 'update'
       params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)
     else
-      params.require(:retriever).permit(:provider_id, :bank_id, :type, :journal_id, :name, *dyn_attrs)
+      params.require(:retriever).permit(:connector_id, :journal_id, :name, *dyn_attrs)
     end
   end
 
@@ -132,7 +139,8 @@ private
     @retriever = @customer.retrievers.find params[:id]
   end
 
-  def load_providers_and_banks
+  def load_connectors
+    @connectors = RetrieverProvider.all
     list = RetrieverProvider.new
     @providers = list.providers
     @banks = list.banks

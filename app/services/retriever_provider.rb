@@ -51,10 +51,13 @@ class RetrieverProvider
       flush_providers_cache
     end
 
-    def find(id)
+    def all
       rp = RetrieverProvider.new
-      list = rp.providers + rp.banks
-      list.select{ |e| e[:id] == id }.first
+      (rp.providers + rp.banks).uniq
+    end
+
+    def find(id)
+      all.select{ |e| e[:id] == id }.first
     end
   end
 

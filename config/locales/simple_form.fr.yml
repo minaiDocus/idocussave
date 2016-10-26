@@ -29,8 +29,7 @@ fr:
         name: 'Nom'
         description: 'Description'
       retriever:
-        provider_id: Fournisseur
-        bank_id: Banque
+        connector_id: Fournisseur/Banque
         type: Type
         journal: Journal
         name: Nom personnalisé

@@ -1,14 +1,12 @@
-#providers{ data: { providers: @providers.to_json, selected_providers: @providers.select { |e| e['id'] == @retriever.provider_id }.to_json } }
-#banks{ data: { banks: @banks.to_json, selected_banks: @banks.select { |e| e['id'] == @retriever.bank_id }.to_json } }
+#connectors{ data: { connectors: @connectors.to_json, selected_connectors: [@retriever.connector].compact.to_json } }
 
 = simple_form_for [:account, @retriever], html: { class: 'retriever_form form form-horizontal' } do |f|
-  = f.input :type, collection: [['Documents (Factures)', 'provider'], ['Opérations bancaires', 'bank']], include_blank: false, disabled: @retriever.persisted?
+  = f.input :connector_id, required: true, disabled: @retriever.persisted?
   = f.input :service_name, as: :hidden
-  = f.input :provider_id, required: true, disabled: @retriever.persisted?
-  = f.input :bank_id, required: true, disabled: @retriever.persisted?, wrapper_html: { style: 'display:none' }
+  = f.input :type, disabled: true
   = f.input :name
   - unless @retriever.persisted? && @retriever.bank?
-    = f.input :journal_id, collection: @user.account_book_types.asc(:name), include_blank: false, required: true
+    = f.input :journal_id, collection: @user.account_book_types.asc(:name), include_blank: false, required: true, wrapper_html: { style: 'display:none' }
   #params{ data: { connector_id: @retriever.connector_id, attributes: retriever_dyn_attrs(@retriever) } }
   .form-actions
     = f.submit t('actions.submit'), class: 'btn btn-primary'

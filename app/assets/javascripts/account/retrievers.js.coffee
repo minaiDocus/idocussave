@@ -2,39 +2,24 @@ same_id = (element) ->
   element['id'] == window.retriever_id
 
 update_form = ->
-  change_providers_list()
-  update_provider()
+  connector = null
+  window.retriever_id = parseInt($('#retriever_connector_id').val())
+  if Number.isInteger window.retriever_id
+    connector = window.connectors.filter(same_id)[0]
+
+  update_connector_info(connector)
+  show_or_hide_journals()
 
   $('#params').html('')
-  $help_block = $('#retriever_type').next('p')
-  if $help_block != undefined
-    $help_block.remove()
 
-  if $('#retriever_type').val() == 'provider'
-    window.retriever_id = parseInt($('#retriever_provider_id').val())
-  else
-    window.retriever_id = parseInt($('#retriever_bank_id').val())
-
-  if Number.isInteger window.retriever_id
-    if $('#retriever_type').val() == 'provider'
-      retriever = window.providers.filter(same_id)[0]
-    else
-      retriever = window.banks.filter(same_id)[0]
-
-    if retriever['capabilities'].length == 2
-      $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
-      if $('#retriever_type').val() == 'provider'
-        $('#retriever_type').after('<p class="help-block red">Récupère les opérations bancaires aussi.</p>')
-      else
-        $('#retriever_type').after('<p class="help-block red">Récupère les documents aussi.</p>')
-
-    if retriever['id'] == $('#params').data('connector-id')
+  if connector
+    if connector['id'] == $('#params').data('connector-id')
       attributes = $('#params').data('attributes')
     else
       attributes = {}
 
-    for i in [1..(retriever['fields'].length)]
-      field = retriever['fields'][i-1]
+    for i in [1..(connector['fields'].length)]
+      field = connector['fields'][i-1]
       field['param_name'] = 'param' + i
       tmpl_name = 'tmpl-input'
       attribute = attributes[field['param_name']]
@@ -47,72 +32,54 @@ update_form = ->
         field['type'] = 'text'
       $('#params').append(tmpl(tmpl_name, field))
 
-change_providers_list = ->
-  if $('#retriever_type').val() == 'provider'
-    $('#retriever_provider_id').parents('.controls').parents('.control-group').show()
-    $('#retriever_bank_id').parents('.controls').parents('.control-group').hide()
+show_or_hide_journals = ->
+  if $('#retriever_type').val() == 'provider' || $('#retriever_type').val() == 'both'
+    $('#retriever_journal_id').removeAttr('disabled')
     $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
-    $('#retriever_bank_id').tokenInput('remove', { id: parseInt($('#retriever_bank_id').val()) })
   else
-    $('#retriever_provider_id').parents('.controls').parents('.control-group').hide()
-    $('#retriever_bank_id').parents('.controls').parents('.control-group').show()
+    $('#retriever_journal_id').attr('disabled', 'disabled')
     $('#retriever_journal_id').parents('.controls').parents('.control-group').hide()
-    $('#retriever_provider_id').tokenInput('remove', { id: parseInt($('#retriever_provider_id').val()) })
 
-update_provider = ->
-  unless $('#retriever_provider_id').is(':disabled') && $('#retriever_bank_id').is(':disabled')
-    result = null
-    result = $('#retriever_'+$('#retriever_type').val()+'_id').tokenInput('get')[0]
-    if result
-      $('#retriever_service_name').val(result.name)
-      $('#retriever_name').val(result.name)
+update_connector_info = (connector) ->
+  if connector
+    if connector['capabilities'].length == 1 && connector['capabilities'][0] == 'bank'
+      $('#retriever_type').val('bank')
+      $('#retriever_type_name').val('Opérations bancaires')
+    else if connector['capabilities'].length == 1 && connector['capabilities'][0] == 'document'
+      $('#retriever_type').val('provider')
+      $('#retriever_type_name').val('Documents (Factures)')
     else
-      $('#retriever_service_name').val('')
-      $('#retriever_name').val('')
+      $('#retriever_type').val('both')
+      $('#retriever_type_name').val('Documents & Opérations bancaires')
+    $('#retriever_service_name').val(connector['name'])
+    $('#retriever_name').val(connector['name'])
+  else
+    $('#retriever_type').val('')
+    $('#retriever_type_name').val('')
+    $('#retriever_service_name').val('')
+    $('#retriever_name').val('')
 
 jQuery ->
   if $('.retriever_form').length > 0
-    window.providers          = $('#providers').data('providers')
-    window.selected_providers = $('#providers').data('selectedProviders')
-    window.banks              = $('#banks').data('banks')
-    window.selected_banks     = $('#banks').data('selectedBanks')
+    window.connectors          = $('#connectors').data('connectors')
+    window.selected_connectors = $('#connectors').data('selectedConnectors')
 
-    $('#retriever_type').on 'change', ->
-      update_form()
+    $('#retriever_type').hide()
+    $('#retriever_type').after('<input class="string disabled" disabled="disabled" id="retriever_type_name" name="retriever[type_name]" type="text">')
 
-    if $('#retriever_provider_id').is(':disabled')
-      $('#retriever_provider_id').addClass('hide')
-      $('#retriever_provider_id').after('<input class="string required disabled" disabled="disabled" id="retriever_provider_name" name="retriever[provider_name]" value="'+$('#retriever_service_name').val()+'" type="text">')
+    if $('#retriever_connector_id').is(':disabled')
+      $('#retriever_connector_id').addClass('hide')
+      $('#retriever_connector_id').after('<input class="string required disabled" disabled="disabled" id="retriever_provider_name" name="retriever[provider_name]" value="'+$('#retriever_service_name').val()+'" type="text">')
     else
-      $('#retriever_provider_id').tokenInput window.providers,
+      $('#retriever_connector_id').tokenInput window.connectors,
         theme: 'facebook'
         searchDelay: 500
         minChars: 1
         resultsLimit: 10
         tokenLimit: 1
         preventDuplicates: true
-        prePopulate: window.selected_providers
-        hintText: 'Tapez un fournisseur à rechercher'
-        noResultsText: 'Aucun résultat'
-        searchingText: 'Recherche en cours...'
-        onAdd: (item) ->
-          update_form()
-        onDelete: (item) ->
-          update_form()
-
-    if $('#retriever_bank_id').is(':disabled')
-      $('#retriever_bank_id').addClass('hide')
-      $('#retriever_bank_id').after('<input class="string required disabled" disabled="disabled" id="retriever_bank_name" name="retriever[bank_name]" value="'+$('#retriever_service_name').val()+'" type="text">')
-    else
-      $('#retriever_bank_id').tokenInput window.banks,
-        theme: 'facebook'
-        searchDelay: 500
-        minChars: 1
-        resultsLimit: 10
-        tokenLimit: 1
-        preventDuplicates: true
-        prePopulate: window.selected_banks
-        hintText: 'Tapez une banque à rechercher'
+        prePopulate: window.selected_connectors
+        hintText: 'Tapez un fournisseur/banque à rechercher'
         noResultsText: 'Aucun résultat'
         searchingText: 'Recherche en cours...'
         onAdd: (item) ->

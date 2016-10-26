@@ -12,10 +12,9 @@ class Retriever
   has_many   :bank_accounts
 
   field :api_id,                 type: Integer
-  field :provider_id,            type: Integer
-  field :bank_id,                type: Integer
+  field :connector_id,           type: Integer
   field :service_name
-  field :type,                                  default: 'provider'
+  field :type
   field :name
   # TODO encrypt
   field :param1,                 type: Hash
@@ -35,14 +34,15 @@ class Retriever
   index({ state: 1 })
 
   validates_presence_of  :type, :name, :service_name
-  validates_inclusion_of :type, in: %w(provider bank)
-  validates_presence_of  :journal, if: :provider?
+  validates_inclusion_of :type, in: %w(provider bank both)
+  validates_presence_of  :journal, if: Proc.new { |r| r.provider? || r.both? }
   validate :truthfullness_of_connector_id
   validate :presence_of_dyn_params, if: :confirm_dyn_params
   validate :presence_of_answers, if: Proc.new { |r| r.answers.present? }
 
   scope :providers,           -> { where(type: 'provider') }
   scope :banks,               -> { where(type: 'bank') }
+  scope :both,                -> { where(type: 'both') }
   scope :new_password_needed, -> { where(is_new_password_needed: true) }
 
   scope :ready,                    -> { where(state: 'ready') }
@@ -120,20 +120,18 @@ class Retriever
     end
   end
 
-  before_save do |retriever|
-    if retriever.type == 'provider'
-      retriever.bank_id = nil
-    else
-      retriever.provider_id = nil
-    end
-  end
-
   before_validation do |retriever|
+    if retriever.type.nil?
+      case connector[:capabilites]
+      when ['bank']
+        retriever.type = 'bank'
+      when ['providers']
+        retriever.type = 'provider'
+      else
+        retriever.type = 'both'
+      end
+    end
     retriever.service_name ||= connector[:name]
-  end
-
-  def connector_id
-    provider_id || bank_id
   end
 
   def provider?
@@ -144,12 +142,18 @@ class Retriever
     type == 'bank'
   end
 
+  def both?
+    type == 'both'
+  end
+
+  def connector
+    @connector ||= RetrieverProvider.find(connector_id)
+  end
+
 private
 
   def truthfullness_of_connector_id
-    unless connector
-      errors.add("#{type}_id", :invalid)
-    end
+    errors.add(:connector_id, :invalid) unless connector
   end
 
   def presence_of_dyn_params
@@ -194,9 +198,5 @@ private
     else
       errors.add(:answers, :invalid)
     end
-  end
-
-  def connector
-    @connector ||= RetrieverProvider.find(connector_id)
   end
 end

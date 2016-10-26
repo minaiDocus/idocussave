@@ -723,6 +723,7 @@ fr:
           service_name: Service
           type: Type
           type_values:
+            both: Doc. et Op. Bancaires
             provider: Documents
             bank: Op. bancaires
           state: Etat

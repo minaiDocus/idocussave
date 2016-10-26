@@ -38,9 +38,9 @@ private
 
   def connection_params
     if @retriever.bank?
-      params = { id_bank: @retriever.bank_id }
+      params = { id_bank: @retriever.connector_id }
     else
-      params = { id_provider: @retriever.provider_id }
+      params = { id_provider: @retriever.connector_id }
     end
     4.times do |i|
       param = @retriever.send("param#{i+1}")
