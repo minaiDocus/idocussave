@@ -142,6 +142,17 @@ class Budgea
       end
     end
 
+    def request_new_connector(params)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + '/connectors',
+        method:  :post,
+        headers: { accept: :json },
+        params:  authentification_params.merge(params)
+      )
+      @response = @request.run
+      parsed_response
+    end
+
     def create_connection(params)
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/connections',

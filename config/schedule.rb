@@ -14,10 +14,9 @@ every :day, at: '07:00' do
   rake 'retriever:notify_password_renewal', options
 end
 
-# TODO reevaluate utility
-# every :day, at: '08:00' do
-#   rake 'retriever:provider:notify_processed_wishes', options
-# end
+every :day, at: '08:00' do
+  rake 'retriever:provider:notify_processed_requests', options
+end
 
 every :day, at: '08:01' do
   rake 'maintenance:notification:document_updated', options

@@ -27,7 +27,7 @@
       = link_to 'Commandes', admin_orders_path
     %li{ class: ('active' if controller_name == 'events') }
       = link_to 'Visites', admin_events_path
-    %li{ class: ('active' if controller_name.in?(%w(retrievers provider_wishes))) }
+    %li{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests))) }
       = link_to 'Automates', admin_retrievers_path
     %li{ class: ('active' if controller_name == 'pre_assignment_deliveries') }
       = link_to 'Livraison vers iBiza', admin_pre_assignment_deliveries_path

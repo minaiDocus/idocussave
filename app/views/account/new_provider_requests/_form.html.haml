@@ -1,0 +1,11 @@
+= simple_form_for [:account, @new_provider_request], html: { class: 'form form-horizontal' } do |f|
+  = f.input :name
+  = f.input :url
+  = f.input :email
+  = f.input :login
+  = f.input :password, required: true
+  = f.input :types, hint: 'Document, opération bancaire, les deux, autres...'
+  = f.input :description, as: :text
+  .form-actions
+    = f.submit t('actions.submit'), class: 'btn btn-primary'
+    = link_to t('actions.cancel'), account_new_provider_requests_path, class: 'btn'

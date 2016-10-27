@@ -214,12 +214,12 @@
               %th Nom
               %th Etat
             %tbody
-              - @provider_wishes.each do |provider_wish|
+              - @new_provider_requests.each do |new_provider_request|
                 %tr
-                  %td= l(provider_wish.created_at, format: '%e %b %H:%M')
-                  %td= link_to provider_wish.user.code, account_fiduceo_provider_wishes_path(user_code: provider_wish.user.code)
-                  %td= provider_wish.name
-                  %td= provider_wish_state(provider_wish)
+                  %td= l(new_provider_request.created_at, format: '%e %b %H:%M')
+                  %td= link_to new_provider_request.user.code, account_new_provider_requests_path(user_code: new_provider_request.user.code)
+                  %td= new_provider_request.name
+                  %td= new_provider_request_state(new_provider_request)
       .row-fluid
         .span12
           %h3.label{ style: 'padding:3px 5px 3px;' } Organisations facturées n'ayant pas d'adresse de facturation

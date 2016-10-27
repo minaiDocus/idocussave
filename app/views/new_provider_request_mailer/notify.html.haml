@@ -14,23 +14,23 @@
       Les automates suivants ont été développés et sont déjà disponibles dans votre interface. Vous pouvez maintenant les configurer :
       %br
       %ul
-        - @accepted.each do |provider_wish|
-          %li= provider_wish.name
+        - @accepted.each do |new_provider_request|
+          %li= new_provider_request.name
       %br
     - if @rejected.any?
       Les automates suivants n’ont pas pu être développés :
       %ul
-        - @rejected.each do |provider_wish|
+        - @rejected.each do |new_provider_request|
           %li
-            = provider_wish.name
+            = new_provider_request.name
             \:
-            = " #{provider_wish.message}"
+            = " #{new_provider_request.message}"
       %br
     - if @processing.any?
       Les automates suivants sont en cours d’analyse :
       %ul
-        - @processing.each do |provider_wish|
-          %li= provider_wish.name
+        - @processing.each do |new_provider_request|
+          %li= new_provider_request.name
       %br
     Cordialement,
     %br

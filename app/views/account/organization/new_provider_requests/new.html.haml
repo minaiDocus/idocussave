@@ -1,0 +1,6 @@
+.row-fluid
+  .span12
+    .box
+      %h3 Nouvelle demande d'automate pour le client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)}
+    .box{ style: 'padding-bottom:0;' }
+      = render partial: 'form'

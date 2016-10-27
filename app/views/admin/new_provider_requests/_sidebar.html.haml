@@ -1,0 +1,78 @@
+.row-fluid
+  .span12.well.margin0bottom
+    %h3 Filtres
+
+    %br
+    = form_tag admin_new_provider_requests_path, method: :get, class: 'form form-vertical margin0bottom' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+
+      = label_tag 'new_provider_request_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'new_provider_request_contains[created_at][$gte]', (params[:new_provider_request_contains][:created_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'new_provider_request_contains[created_at][$lte]', (params[:new_provider_request_contains][:created_at]['$lte'] rescue '')
+
+      = label_tag 'new_provider_request_contains[updated_at][$gte]', t('mongoid.models.common.attributes.updated_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'new_provider_request_contains[updated_at][$gte]', (params[:new_provider_request_contains][:updated_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'new_provider_request_contains[updated_at][$lte]', (params[:new_provider_request_contains][:updated_at]['$lte'] rescue '')
+
+      = label_tag 'user_contains[code]', t('mongoid.models.user.name')
+      = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'span12'
+
+      = label_tag 'new_provider_request_contains[state]', t('mongoid.models.new_provider_request.attributes.state')
+      = select_tag 'new_provider_request_contains[state]', options_for_select(NewProviderRequest.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:new_provider_request_contains][:state] rescue '')), include_blank: true
+
+      = label_tag 'new_provider_request_contains[name]', t('mongoid.models.new_provider_request.attributes.name')
+      = text_field_tag 'new_provider_request_contains[name]', (params[:new_provider_request_contains][:name] rescue ''), class: 'span12'
+
+      = label_tag 'new_provider_request_contains[url]', t('mongoid.models.new_provider_request.attributes.url')
+      = text_field_tag 'new_provider_request_contains[url]', (params[:new_provider_request_contains][:url] rescue ''), class: 'span12'
+
+      = label_tag 'new_provider_request_contains[email]', t('mongoid.models.new_provider_request.attributes.email')
+      = text_field_tag 'new_provider_request_contains[email]', (params[:new_provider_request_contains][:email] rescue ''), class: 'span12'
+
+      = label_tag 'new_provider_request_contains[login]', t('mongoid.models.new_provider_request.attributes.login')
+      = text_field_tag 'new_provider_request_contains[login]', (params[:new_provider_request_contains][:login] rescue ''), class: 'span12'
+
+      = label_tag 'new_provider_request_contains[is_notified]', t('mongoid.models.new_provider_request.attributes.is_notified')
+      = select_tag 'new_provider_request_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:new_provider_request_contains][:is_notified] rescue '')), include_blank: true
+
+      = label_tag 'new_provider_request_contains[notified_at][$gte]', t('mongoid.models.new_provider_request.attributes.notified_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'new_provider_request_contains[notified_at][$gte]', (params[:new_provider_request_contains][:notified_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'new_provider_request_contains[notified_at][$lte]', (params[:new_provider_request_contains][:notified_at]['$lte'] rescue '')
+
+      = label_tag 'new_provider_request_contains[processing_at][$gte]', t('mongoid.models.new_provider_request.attributes.processing_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'new_provider_request_contains[processing_at][$gte]', (params[:new_provider_request_contains][:processing_at]['$gte'] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'new_provider_request_contains[processing_at][$lte]', (params[:new_provider_request_contains][:processing_at]['$lte'] rescue '')
+
+      %br
+      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+      = link_to t('filters.reset'), admin_new_provider_requests_path, class: 'btn'

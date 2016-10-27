@@ -6,7 +6,7 @@ class Admin::AdminController < ApplicationController
   layout 'admin'
 
   def index
-    @provider_wishes = FiduceoProviderWish.not_processed.desc(:created_at).limit(5).entries
+    @new_provider_requests = NewProviderRequest.not_processed.desc(:created_at).limit(5).entries
 
     @unbillable_organizations = Organization.billed.where('addresses.is_for_billing' => { '$nin' => [true] })
   end

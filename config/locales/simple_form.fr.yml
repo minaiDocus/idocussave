@@ -35,14 +35,16 @@ fr:
         name: Nom personnalisé
         login: Identifiant
         pass: Mot de passe
-      fiduceo_provider_wish:
+      new_provider_request:
         state: Etat
         name: Nom
         url: URL
+        email: Email
         login: Identifiant
         password: Mot de passe
+        types: Types de récupération
         description: Description
-        custom_connection_info: Information de connexion supplémentaire
+        message: Message
       bank_account:
         number: Numéro de compte
         journal: Journal comptable de l’outil comptable

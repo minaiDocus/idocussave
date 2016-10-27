@@ -1,0 +1,72 @@
+#new_provider_request
+  .row-fluid
+    .span12
+      = render 'layouts/admin/retriever/navigation'
+
+  .row-fluid
+    .span12.panel
+      .pull-left
+        %h2 Demande de nouveau fournisseur par le client : #{@new_provider_request.user}
+      .pull-right
+        - if @new_provider_request.pending?
+          = link_to icon_ok + ' Démarrer le traitement', start_process_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn', data: { confirm: t('actions.confirm') }
+        - if @new_provider_request.processing?
+          = link_to icon_ok + ' Accepter', accept_admin_new_provider_request_path(@new_provider_request), method: 'patch', class: 'btn btn-success', data: { confirm: t('actions.confirm') }
+        - if @new_provider_request.pending? || @new_provider_request.processing?
+          = link_to icon_not_ok + ' Rejeter', edit_admin_new_provider_request_path(@new_provider_request), class: 'btn btn-danger'
+        = link_to t('actions.return'), admin_new_provider_requests_path, class: 'btn'
+
+  .row-fluid
+    .span12
+      %table.table.table-striped.table-condensed.table-bordered
+        %tr
+          %th= t('mongoid.models.common.attributes.created_at')
+          %td= l @new_provider_request.created_at
+        %tr
+          %th= t('mongoid.models.common.attributes.updated_at')
+          %td= l @new_provider_request.updated_at
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.processing_at')
+          %td
+            - if @new_provider_request.processing_at
+              = l @new_provider_request.processing_at
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.notified_at')
+          %td
+            - if @new_provider_request.notified_at
+              = l @new_provider_request.notified_at
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.state')
+          %td= new_provider_request_state @new_provider_request
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.message')
+          %td
+            - if @new_provider_request.message.presence
+              = @new_provider_request.message
+            - else
+              %i.gray vide
+        %tr
+          %th= t('mongoid.models.user.name')
+          %td= link_to @new_provider_request.user, [:admin, @new_provider_request.user]
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.name')
+          %td= @new_provider_request.name
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.url')
+          %td= @new_provider_request.url
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.email')
+          %td= @new_provider_request.email
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.login')
+          %td= @new_provider_request.login
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.types')
+          %td= @new_provider_request.types
+        %tr
+          %th= t('mongoid.models.new_provider_request.attributes.description')
+          %td= @new_provider_request.description

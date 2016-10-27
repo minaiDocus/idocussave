@@ -1,24 +1,30 @@
 # -*- encoding : UTF-8 -*-
-class FiduceoProviderWish
+class NewProviderRequest
   include Mongoid::Document
   include Mongoid::Timestamps
 
   belongs_to :user
 
-  attr_accessor :password, :custom_connection_info
+  attr_accessor :edited_by_customer
 
-  field :state, default: 'pending'
+  field :api_id
+  field :state,       default: 'pending'
   field :name
-  field :url,   default: 'http://www.example.com'
+  field :url,         default: 'https://www.example.com'
+  field :email
   field :login
+  # TODO encrypt password
+  field :password
+  field :types
   field :description
 
   field :message
   field :notified_at,   type: Time
   field :processing_at, type: Time
 
-  validates_presence_of :name, :url, :login, :description
-  validates_presence_of :password, if: lambda { |e| !e.persisted? }
+  validates_presence_of :name, :url
+  validates_presence_of :password, :types, if: :edited_by_customer
+  validate :presence_of_login
 
   scope :pending,                 -> { where(state: 'pending') }
   scope :processing,              -> { where(state: 'processing') }
@@ -36,8 +42,8 @@ class FiduceoProviderWish
     state :rejected
     state :accepted
 
-    before_transition any => :processing do |provider_wish, transition|
-      provider_wish.processing_at = Time.now
+    before_transition any => :processing do |request, transition|
+      request.processing_at = Time.now
     end
 
     event :start_process do
@@ -53,41 +59,36 @@ class FiduceoProviderWish
     end
   end
 
-  before_create do |provider_wish|
-    client = Fiduceo::Client.new provider_wish.user.fiduceo_id
-    params = {
-      name:                   provider_wish.name,
-      url:                    provider_wish.url,
-      login:                  provider_wish.login,
-      pass:                   provider_wish.password,
-      custom_connection_info: provider_wish.custom_connection_info,
-      description:            provider_wish.description
-    }
-    client.put_provider_wish params
-    # TODO implement failure management
-  end
-
   def is_notified?
     notified_at.present?
   end
 
   class << self
     def deliver_mails
-      users = User.find FiduceoProviderWish.processed.not_notified.distinct(:user_id)
+      users = User.find NewProviderRequest.processed.not_notified.distinct(:user_id)
       users.each do |user|
         deliver_mail(user)
       end
     end
 
     def deliver_mail(user)
-      accepted = user.fiduceo_provider_wishes.accepted.not_notified
-      rejected = user.fiduceo_provider_wishes.rejected.not_notified
+      accepted = user.new_provider_requests.accepted.not_notified
+      rejected = user.new_provider_requests.rejected.not_notified
       if accepted.any? || rejected.any?
-        processing = user.fiduceo_provider_wishes.processing
-        FiduceoProviderWishMailer.notify(user, accepted, rejected, processing).deliver
+        processing = user.new_provider_requests.processing
+        NewProviderRequestMailer.notify(user, accepted, rejected, processing).deliver
         accepted.update_all(notified_at: Time.now) if accepted.any?
         rejected.update_all(notified_at: Time.now) if rejected.any?
       end
+    end
+  end
+
+private
+
+  def presence_of_login
+    unless email.present? || login.present?
+      errors.add(:email, :blank)
+      errors.add(:login, :blank)
     end
   end
 end

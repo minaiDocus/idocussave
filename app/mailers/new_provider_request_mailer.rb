@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class FiduceoProviderWishMailer < ActionMailer::Base
+class NewProviderRequestMailer < ActionMailer::Base
   def notify(user, accepted, rejected, processing)
     @user       = user
     @accepted   = accepted

@@ -162,11 +162,11 @@ module ApplicationHelper
     presenter
   end
 
-  def provider_wish_state(provider_wish)
+  def new_provider_request_state(new_provider_request)
     klass = 'label'
-    klass += ' label-success'   if provider_wish.accepted?
-    klass += ' label-important' if provider_wish.rejected?
-    content_tag :span, FiduceoProviderWish.state_machine.states[provider_wish.state].human_name, class: klass
+    klass += ' label-success'   if new_provider_request.accepted?
+    klass += ' label-important' if new_provider_request.rejected?
+    content_tag :span, NewProviderRequest.state_machine.states[new_provider_request.state].human_name, class: klass
   end
 
   def knowings_visibility_options

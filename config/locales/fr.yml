@@ -728,19 +728,21 @@ fr:
             bank: Op. bancaires
           state: Etat
           is_sane: Fonctionnelle
-      fiduceo_provider_wish:
-        zero: 0 fournisseur
-        one: 1 fournisseur
-        other: '%{count} fournisseurs'
-        name: Fournisseur Fiduceo
+      new_provider_request:
+        zero: 0 demande de fournisseur
+        one: 1 demande de fournisseur
+        other: '%{count} demande de fournisseurs'
+        name: Demande de fournisseur de récupération
         attributes:
           state: Etat
+          api_id: Id. API
           name: Nom
           url: URL
+          email: Email
           login: Identifiant
           password: Mot de passe
+          types: Types de récupération
           description: Description
-          custom_connection_info: Information de connexion supplémentaire
           message: Message
           is_notified: Notifié ?
           notified_at: Notifié le
@@ -950,7 +952,7 @@ fr:
           timeout: delai d'attente dépassé
           broker_unavailable: service indisponible
           rejected: trop de tentative
-      retriever_provider_wish:
+      new_provider_request:
         states:
           pending: En attente
           processing: Traitement en cours

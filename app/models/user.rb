@@ -130,10 +130,6 @@ class User
   has_many :expenses,           class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :temp_packs
   has_many :temp_documents
-
-  # TODO migrate me
-  has_many :fiduceo_provider_wishes,                                                            dependent: :destroy
-
   has_many :bank_accounts,                                                                      dependent: :destroy
   has_many :exercises
   has_many :sended_emails,      class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy
@@ -156,6 +152,7 @@ class User
   has_many :retrievers,                                                                         dependent: :destroy
   has_many :retriever_transactions,                                                             dependent: :destroy
   has_many :retrieved_data,                                                                     dependent: :destroy
+  has_many :new_provider_requests,                                                              dependent: :destroy
 
   belongs_to :scanning_provider, inverse_of: 'customers'
 
