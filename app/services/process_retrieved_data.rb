@@ -41,13 +41,26 @@ class ProcessRetrievedData
 
           is_new_transaction_present = false
           connection['accounts'].each do |account|
-            bank_account = user.bank_accounts.where(api_id: account['id']).first
+            bank_account = user.bank_accounts.any_of(
+                {
+                  api_id: account['id']
+                },
+                {
+                  bank_name: retriever.service_name,
+                  number:    account['number']
+                }
+              ).first
+
             if bank_account
               # NOTE 'deleted' type is datetime
               if account['deleted'].present?
                 bank_account.operations.update_all(api_id: nil)
                 bank_account.destroy
                 bank_account = nil
+              else
+                bank_account.api_id = account['id']
+                bank_account.name   = account['name']
+                bank_account.save if bank_account.changed?
               end
             else
               bank_account = BankAccount.new
