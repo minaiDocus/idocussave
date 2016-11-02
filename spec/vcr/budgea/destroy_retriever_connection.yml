@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: delete
-    uri: https://idocus.biapi.pro/2.0/users/me/connections/32
+    uri: https://idocus.biapi.pro/2.0/users/me/connections/245
     body:
       encoding: US-ASCII
       string: ''
@@ -12,7 +12,7 @@ http_interactions:
       Accept:
       - json
       Authorization:
-      - Bearer /Trri/B/sg9kUzIcIyZPIklVw05mOZ+G
+      - Bearer cgtHGWA7a/uelIoViOZyTTbWoqeo52nt
   response:
     status:
       code: 200
@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.6.2
       Date:
-      - Fri, 23 Sep 2016 15:18:45 GMT
+      - Wed, 02 Nov 2016 13:04:12 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -44,5 +44,5 @@ http_interactions:
       encoding: US-ASCII
       string: '{}'
     http_version: 
-  recorded_at: Fri, 23 Sep 2016 15:18:47 GMT
+  recorded_at: Wed, 02 Nov 2016 13:04:13 GMT
 recorded_with: VCR 3.0.0

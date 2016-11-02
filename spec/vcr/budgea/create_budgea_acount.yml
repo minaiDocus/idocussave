@@ -1,0 +1,95 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://idocus.biapi.pro/2.0/auth/init?client_id=4393859&client_secret=rZDGxlModEXlmm1EAmq6mafnIAKBD1e6
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Wed, 02 Nov 2016 12:41:38 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '71'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"auth_token": "cgtHGWA7a/uelIoViOZyTTbWoqeo52nt", "type": "permanent"}'
+    http_version: 
+  recorded_at: Wed, 02 Nov 2016 12:41:38 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/profiles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer cgtHGWA7a/uelIoViOZyTTbWoqeo52nt
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Wed, 02 Nov 2016 12:41:39 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '349'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"total": 1, "profiles": [{"id_user": 116, "admin": false, "email":
+        "cgtHGWA7a/uelIoViOZyTTbWoqeo52nt@biapi.pro", "state": 1, "contact": {"city":
+        null, "first_name": null, "name": null, "society": null, "gender": null, "phone":
+        null, "postal_code": null, "address": null}, "role": "admin", "sponsor": "530001",
+        "conf": {}, "type": null, "id": 113}]}'
+    http_version: 
+  recorded_at: Wed, 02 Nov 2016 12:41:39 GMT
+recorded_with: VCR 3.0.0

@@ -8,8 +8,7 @@ class CreateBudgeaAccount
         if client.response.code == 200
           budgea_account = BudgeaAccount.new
           budgea_account.user = user
-          budgea_account.access_token = result['access_token']
-          budgea_account.save
+          budgea_account.access_token = result
           client.get_profiles
           if client.response.code == 200
             budgea_account.identifier = client.user_id

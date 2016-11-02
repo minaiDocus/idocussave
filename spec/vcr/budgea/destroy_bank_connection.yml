@@ -1,8 +1,8 @@
 ---
 http_interactions:
 - request:
-    method: post
-    uri: https://idocus.biapi.pro/2.0/auth/init?client_id=4393859&client_secret=rZDGxlModEXlmm1EAmq6mafnIAKBD1e6
+    method: delete
+    uri: https://idocus.biapi.pro/2.0/users/me/connections/257
     body:
       encoding: US-ASCII
       string: ''
@@ -11,6 +11,8 @@ http_interactions:
       - Typhoeus - https://github.com/typhoeus/typhoeus
       Accept:
       - json
+      Authorization:
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
   response:
     status:
       code: 200
@@ -19,11 +21,11 @@ http_interactions:
       Server:
       - nginx/1.6.2
       Date:
-      - Wed, 02 Nov 2016 13:18:33 GMT
+      - Wed, 02 Nov 2016 13:25:09 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
-      - '71'
+      - '2'
       Access-Control-Allow-Origin:
       - '*'
       Access-Control-Allow-Headers:
@@ -40,7 +42,7 @@ http_interactions:
       - DENY
     body:
       encoding: US-ASCII
-      string: '{"auth_token": "fU96lhgzv3NEUPyq4kupX1GljSGPgbHu", "type": "permanent"}'
+      string: '{}'
     http_version: 
-  recorded_at: Wed, 02 Nov 2016 13:18:33 GMT
+  recorded_at: Wed, 02 Nov 2016 13:25:09 GMT
 recorded_with: VCR 3.0.0

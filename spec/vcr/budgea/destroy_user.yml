@@ -12,7 +12,7 @@ http_interactions:
       Accept:
       - json
       Authorization:
-      - Bearer DMfV/r+Ko8qkJJr/4TITQ5YFgbiN2lnA
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
   response:
     status:
       code: 200
@@ -21,11 +21,11 @@ http_interactions:
       Server:
       - nginx/1.6.2
       Date:
-      - Fri, 23 Sep 2016 09:51:21 GMT
+      - Wed, 02 Nov 2016 13:31:54 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
-      - '113'
+      - '107'
       Access-Control-Allow-Origin:
       - '*'
       Access-Control-Allow-Headers:
@@ -42,7 +42,7 @@ http_interactions:
       - DENY
     body:
       encoding: US-ASCII
-      string: '{"survey_url": "https://www.budgea.com/user/guestUnsubscribe?id=23&email=DMfV%2Fr%2BKo8qkJJr%2F4TITQ5YFgbiN2lnA"}'
+      string: '{"survey_url": "https://www.budgea.com/user/guestUnsubscribe?id=64&email=fU96lhgzv3NEUPyq4kupX1GljSGPgbHu"}'
     http_version: 
-  recorded_at: Fri, 23 Sep 2016 09:51:21 GMT
+  recorded_at: Wed, 02 Nov 2016 13:31:55 GMT
 recorded_with: VCR 3.0.0

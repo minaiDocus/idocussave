@@ -1,5 +1,4 @@
 # -*- encoding : UTF-8 -*-
-# TODO finish it
 require 'spec_helper'
 
 describe Budgea do
@@ -13,13 +12,6 @@ describe Budgea do
   it 'creates an anonymous user successfully' do
     expect(@client.access_token.size).to eq 32
   end
-
-  # it 'gets a temporary token' do
-  #   VCR.use_cassette('budgea/get_temporary_token') do
-  #     token = @client.get_temporary_token
-  #     expect(token.size).to eq(32)
-  #   end
-  # end
 
   it 'gets profiles and assign user_id successfully' do
     keys = ['admin', 'conf', 'contact', 'email', 'id', 'id_user', 'role', 'sponsor', 'state', 'type']
@@ -55,7 +47,12 @@ describe Budgea do
       expect(@connection['active']).to be true
     end
 
-    # NOTE update does not work...
+    it 'updates a bank connection' do
+      VCR.use_cassette('budgea/update_bank_connection') do
+        updated_connection = @client.update_connection @connection['id'], login: 'John Doe 2'
+        expect(updated_connection['last_update']).not_to eq(@connection['last_update'])
+      end
+    end
 
     it 'gets accounts' do
       expect(@accounts.size).to eq(4)
@@ -75,12 +72,12 @@ describe Budgea do
       end
     end
 
-    # it 'destroys bank connection' do
-    #   VCR.use_cassette('budgea/destroy_bank_connection') do
-    #     result = @client.destroy_connection(@connection['id'])
-    #     expect(result).to be true
-    #   end
-    # end
+    it 'destroys bank connection' do
+      VCR.use_cassette('budgea/destroy_bank_connection') do
+        result = @client.destroy_connection(@connection['id'])
+        expect(result).to be true
+      end
+    end
   end
 
   describe 'document retriever' do
@@ -95,7 +92,7 @@ describe Budgea do
         @client.create_connection params
       end
       @documents = VCR.use_cassette('budgea/get_providers_documents') do
-        # INSPECT why is get_documents with connection_id does not return any documents ?
+        # TODO why is get_documents with connection_id does not return any documents ?
         @client.get_documents#(@connection['id'])
       end
     end
@@ -126,12 +123,12 @@ describe Budgea do
     end
   end
 
-  # it 'destroy an anonymous user successfully' do
-  #   VCR.use_cassette('budgea/destroy_user') do
-  #     expect(@client.destroy_user).to be true
-  #   end
-  #   expect(@client.access_token).to be nil
-  # end
+  it 'destroy an anonymous user successfully' do
+    VCR.use_cassette('budgea/destroy_user') do
+      expect(@client.destroy_user).to be true
+    end
+    expect(@client.access_token).to be nil
+  end
 
   it 'gets banks list successfully' do
     keys = ['beta', 'capabilities', 'charged', 'code', 'color', 'fields', 'hidden', 'id', 'id_category', 'name', 'slug']

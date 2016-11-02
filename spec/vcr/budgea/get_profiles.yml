@@ -12,7 +12,7 @@ http_interactions:
       Accept:
       - json
       Authorization:
-      - Bearer TydyTI9C4YgG6kyujoulpuT0AQ57l5It
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
   response:
     status:
       code: 200
@@ -21,7 +21,7 @@ http_interactions:
       Server:
       - nginx/1.6.2
       Date:
-      - Fri, 30 Sep 2016 15:59:22 GMT
+      - Wed, 02 Nov 2016 13:18:33 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -42,11 +42,11 @@ http_interactions:
       - DENY
     body:
       encoding: US-ASCII
-      string: '{"total": 1, "profiles": [{"id_user": 106, "admin": false, "email":
-        "TydyTI9C4YgG6kyujoulpuT0AQ57l5It@biapi.pro", "state": 1, "contact": {"city":
+      string: '{"total": 1, "profiles": [{"id_user": 122, "admin": false, "email":
+        "fU96lhgzv3NEUPyq4kupX1GljSGPgbHu@biapi.pro", "state": 1, "contact": {"city":
         null, "first_name": null, "name": null, "society": null, "gender": null, "phone":
-        null, "postal_code": null, "address": null}, "role": "admin", "sponsor": "V20001",
-        "conf": {}, "type": null, "id": 103}]}'
+        null, "postal_code": null, "address": null}, "role": "admin", "sponsor": "B30001",
+        "conf": {}, "type": null, "id": 119}]}'
     http_version: 
-  recorded_at: Fri, 30 Sep 2016 15:59:22 GMT
+  recorded_at: Wed, 02 Nov 2016 13:18:34 GMT
 recorded_with: VCR 3.0.0

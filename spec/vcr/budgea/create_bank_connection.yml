@@ -12,7 +12,7 @@ http_interactions:
       Accept:
       - json
       Authorization:
-      - Bearer TydyTI9C4YgG6kyujoulpuT0AQ57l5It
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
   response:
     status:
       code: 200
@@ -21,11 +21,11 @@ http_interactions:
       Server:
       - nginx/1.6.2
       Date:
-      - Fri, 30 Sep 2016 16:41:05 GMT
+      - Wed, 02 Nov 2016 13:23:59 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
-      - '168'
+      - '169'
       Access-Control-Allow-Origin:
       - '*'
       Access-Control-Allow-Headers:
@@ -44,9 +44,9 @@ http_interactions:
       - DENY
     body:
       encoding: US-ASCII
-      string: '{"error_message": null, "id_user": 106, "id_provider": 40, "id_bank":
-        40, "last_update": "2016-09-30 18:41:03", "expire": null, "error": null, "active":
-        true, "id": 62}'
+      string: '{"error_message": null, "id_user": 122, "id_provider": 40, "id_bank":
+        40, "last_update": "2016-11-02 14:23:54", "expire": null, "error": null, "active":
+        true, "id": 257}'
     http_version: 
-  recorded_at: Fri, 30 Sep 2016 16:41:05 GMT
+  recorded_at: Wed, 02 Nov 2016 13:23:59 GMT
 recorded_with: VCR 3.0.0
