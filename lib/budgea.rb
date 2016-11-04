@@ -142,6 +142,27 @@ class Budgea
       end
     end
 
+    def get_new_access_token(user_id)
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + "/users/#{user_id}/token",
+        method:  :post,
+        headers: headers,
+        params:  { application: 'sharedAccess' }
+      )
+      @response = @request.run
+      parsed_response
+    end
+
+    def delete_access_token
+      @request = Typhoeus::Request.new(
+        @settings[:base_url] + '/users/me/token',
+        method:  :delete,
+        headers: headers
+      )
+      @response = @request.run
+      @response.code == 200
+    end
+
     def request_new_connector(params)
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/connectors',
