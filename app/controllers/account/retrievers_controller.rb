@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrieversController < Account::RetrieverController
   before_filter :load_retriever, except: %w(index list new create)
+  before_filter :verify_rights, except: %w(index list new create)
   before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
@@ -138,6 +139,25 @@ private
 
   def load_retriever
     @retriever = @user.retrievers.find params[:id]
+  end
+
+  def verify_rights
+    is_ok = false
+
+    if action_name.in? %w(edit update destroy sync)
+      if action_name == 'destroy' && (@retriever.ready? || @retriever.error? || @retriever.unavailable?)
+        is_ok = true
+      elsif @retriever.ready? || @retriever.error?
+        is_ok = true unless action_name == 'sync' && @retriever.api_id.nil?
+      end
+    elsif action_name.in?(%w(waiting_additionnal_info additionnal_info)) && @retriever.waiting_additionnal_info?
+      is_ok = true
+    end
+
+    unless is_ok
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_retrievers_path
+    end
   end
 
   def load_connectors
