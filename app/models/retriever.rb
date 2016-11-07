@@ -122,11 +122,12 @@ class Retriever
 
   before_validation do |retriever|
     if retriever.type.nil?
-      case connector[:capabilites]
-      when ['bank']
-        retriever.type = 'bank'
-      when ['providers']
-        retriever.type = 'provider'
+      if connector[:capabilities].size == 1
+        if connector[:capabilities].first == 'bank'
+          retriever.type = 'bank'
+        else
+          retriever.type = 'provider'
+        end
       else
         retriever.type = 'both'
       end
