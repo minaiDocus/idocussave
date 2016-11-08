@@ -65,7 +65,7 @@ private
   def formatted_state
     if retriever.error?
       str = 'Erreur'
-      if retriever.error_message.present? && retriever.error_message.size <= 40
+      if retriever.error_message.present? && retriever.error_message.size <= 50
         str += ": #{retriever.error_message}"
       end
       str

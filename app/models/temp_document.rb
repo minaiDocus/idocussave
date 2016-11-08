@@ -43,6 +43,7 @@ class TempDocument
   index({ delivery_type: 1 })
   index({ state: 1 })
   index({ is_an_original: 1 })
+  index({ api_id: 1 })
 
   belongs_to :organization
   belongs_to :user,                                                         index: true
