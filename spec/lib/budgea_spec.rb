@@ -92,8 +92,7 @@ describe Budgea do
         @client.create_connection params
       end
       @documents = VCR.use_cassette('budgea/get_providers_documents') do
-        # TODO why is get_documents with connection_id does not return any documents ?
-        @client.get_documents#(@connection['id'])
+        @client.get_documents(@connection['id'])
       end
     end
 

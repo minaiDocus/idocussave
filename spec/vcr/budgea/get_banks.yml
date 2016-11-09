@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://idocus.biapi.pro/2.0/banks?client_id=4393859&client_secret=rZDGxlModEXlmm1EAmq6mafnIAKBD1e6&expand=fields
+    uri: https://idocus.biapi.pro/2.0/banks?client_id=30638817&client_secret=xKEOtBwqzvnlYR4kj2u5oXsqcOEl1t2Z&expand=fields
     body:
       encoding: US-ASCII
       string: ''
