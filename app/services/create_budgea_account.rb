@@ -10,7 +10,7 @@ class CreateBudgeaAccount
 
   def execute
     @user.options.with_lock(timeout: 10, retry_sleep: 1) do
-      unless @user.budgea_account.try(:access_token).present?
+      unless @user.budgea_account.try(:persisted?)
         result = try_request { client.create_user }
         if client.response.code == 200
           budgea_account = BudgeaAccount.new
@@ -30,7 +30,7 @@ class CreateBudgeaAccount
         end
       end
     end
-    @user.budgea_account.present?
+    @user.budgea_account.try(:persisted?)
   end
 
 private
