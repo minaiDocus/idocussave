@@ -12,7 +12,6 @@
             %li{ class: ('active' if controller_name == 'new_provider_requests' && action_name == 'index') }= link_to 'Suivi de mes demandes', account_new_provider_requests_path
             %li.divider
             %li.nav-header Historique de récupération
-            %li{ class: ('active' if controller_name == 'retriever_transactions') }= link_to 'Transactions', account_retriever_transactions_path
             %li{ class: ('active' if controller_name == 'retrieved_banking_operations' && action_name == 'index') }= link_to 'Opérations bancaires', account_retrieved_banking_operations_path
             %li{ class: ('active' if controller_name == 'retrieved_documents' && action_name == 'index') }= link_to 'Documents', account_retrieved_documents_path
             %li.divider

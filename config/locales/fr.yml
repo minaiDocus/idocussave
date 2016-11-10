@@ -932,26 +932,6 @@ fr:
           waiting_additionnal_info: En attente de l'utilisateur
           error: Erreur
           unavailable: Indisponible
-      retriever_transaction:
-        status:
-          pending: en attente
-          scheduled: programmé
-          in_progress: en cours
-          wait_for_user_action: en attente de l'utilisateur
-          completed: fini
-          completed_nothing_to_download: fini sans rien a télécharger
-          completed_nothing_new_to_download: fini sans nouveau document
-          completed_with_missing_docs: fini avec des documents manquants
-          completed_with_errors: fini avec erreur
-          login_failed: authentification échouée
-          unexpected_account_data: donnée(s) de login non valide
-          check_account: vérifier votre compte
-          dematerialisation_needed: dématérialisation requise
-          retriever_error: erreur fonctionnelle
-          provider_unavailable: fournisseur indisponible
-          timeout: delai d'attente dépassé
-          broker_unavailable: service indisponible
-          rejected: trop de tentative
       new_provider_request:
         states:
           pending: En attente

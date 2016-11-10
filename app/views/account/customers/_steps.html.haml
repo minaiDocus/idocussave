@@ -18,7 +18,7 @@
     .step{ class: ('active' if controller_name == 'orders') }
       .number Etape 6
       .title Commandes Kits/scanner
-    .step{ class: ('active' if controller_name.in?(%w(retrievers retriever_transactions retrieved_banking_operations retrieved_documents bank_accounts'))) }
+    .step{ class: ('active' if controller_name.in?(%w(retrievers retrieved_banking_operations retrieved_documents bank_accounts'))) }
       .number Etape 7
       .title Création automate
     .step{ class: ('active' if controller_name == 'customers' && action_name.in?(%w(edit_knowings_options update_knowings_options))) }

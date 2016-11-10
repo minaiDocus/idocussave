@@ -205,14 +205,6 @@ module ApplicationHelper
     ]
   end
 
-  def transaction_status_for_select(default=nil)
-    options = []
-    t('mongoid.state_machines.retriever_transaction.status').each do |key, value|
-      options << [value.capitalize, key]
-    end
-    options_for_select(options, default)
-  end
-
   def period_type(duration)
     if duration == 1
       'Mensuel'

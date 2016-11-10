@@ -154,7 +154,7 @@ jQuery ->
 
     window.setInterval(load_retrievers_list, 5000)
 
-  if $('#retrievers .filter, #retriever_transactions .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
+  if $('#retrievers .filter, #retrieved_banking_operations .filter, #retrieved_documents .filter').length > 0
     $('a.toggle_filter').click (e) ->
       e.preventDefault();
       if $('.filter').hasClass('hide')

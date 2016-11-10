@@ -150,7 +150,6 @@ class User
 
   has_one  :budgea_account,                                                                     dependent: :destroy
   has_many :retrievers,                                                                         dependent: :destroy
-  has_many :retriever_transactions,                                                             dependent: :destroy
   has_many :retrieved_data,                                                                     dependent: :destroy
   has_many :new_provider_requests,                                                              dependent: :destroy
 

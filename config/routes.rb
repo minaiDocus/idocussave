@@ -146,7 +146,6 @@ Idocus::Application.routes.draw do
           r.resources :bank_accounts, only: %w(index edit update) do
             post 'update_multiple', on: :collection
           end
-          r.resources :retriever_transactions, only: %w(index show)
           r.resources :retrieved_banking_operations, only: :index
           r.resources :retrieved_documents, only: %w(index show) do
             get   'piece',    on: :member
@@ -237,7 +236,6 @@ Idocus::Application.routes.draw do
       patch 'additionnal_info',         on: :member
     end
     resources :new_provider_requests, only: %w(index new create edit update)
-    resources :retriever_transactions
     resources :retrieved_banking_operations
     resources :retrieved_documents do
       get   'piece',    on: :member

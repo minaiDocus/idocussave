@@ -7,7 +7,6 @@ class Retriever
 
   belongs_to :user
   belongs_to :journal,        class_name: 'AccountBookType'
-  has_many   :retriever_transactions
   has_many   :temp_documents
   has_many   :bank_accounts
 
