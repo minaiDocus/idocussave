@@ -133,12 +133,12 @@ class Budgea
         headers: headers
       )
       @response = @request.run
-      result = JSON.parse(@response.body)
       if @response.code == 200
+        result = JSON.parse(@response.body)
         @user_id = result['profiles'].first['id_user'] unless @user_id
         result['profiles']
       else
-        result
+        @response.body
       end
     end
 

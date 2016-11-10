@@ -1,0 +1,115 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://idocus.biapi.pro/2.0/auth/init?client_id=30638817&client_secret=xKEOtBwqzvnlYR4kj2u5oXsqcOEl1t2Z
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Thu, 10 Nov 2016 16:14:14 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '71'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"auth_token": "fU96lhgzv3NEUPyq4kupX1GljSGPgbHu", "type": "permanent"}'
+    http_version: 
+  recorded_at: Thu, 10 Nov 2016 16:14:14 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/profiles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 10 Nov 2016 16:14:15 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/profiles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 10 Nov 2016 16:14:16 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/profiles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer fU96lhgzv3NEUPyq4kupX1GljSGPgbHu
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 10 Nov 2016 16:14:18 GMT
+recorded_with: VCR 3.0.0

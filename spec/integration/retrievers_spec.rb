@@ -6,7 +6,7 @@ describe 'Retrievers' do
     @user = FactoryGirl.create :user, code: 'IDO%0001'
     @user.options = UserOptions.create(user_id: @user.id)
 
-    VCR.use_cassette('budgea/create_budgea_acount') do
+    VCR.use_cassette('budgea/create_budgea_account') do
       CreateBudgeaAccount.execute(@user)
     end
 
