@@ -1,0 +1,27 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : "2015-07-04 15:17:30",
+          "id" : 17,
+          "name" : "Compte chèque",
+          "number" : "3002900000",
+          "type" : "checking"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2015-07-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2015-07-03 17:37:16",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}

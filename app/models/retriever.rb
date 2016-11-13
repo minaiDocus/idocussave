@@ -107,7 +107,7 @@ class Retriever
     end
 
     event :wait_additionnal_info do
-      transition [:creating, :updating] => :waiting_additionnal_info
+      transition [:ready, :error, :creating, :updating] => :waiting_additionnal_info
     end
 
     event :error do

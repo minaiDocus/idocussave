@@ -159,7 +159,7 @@ class ProcessRetrievedData
             retriever.error
           when 'additionalInformationNeeded'
             retriever.ready if retriever.error?
-            retriever.waiting_additionnal_info
+            retriever.wait_additionnal_info
           when 'websiteUnavailable'
             retriever.update(error_message: 'Site web indisponible.')
             retriever.error

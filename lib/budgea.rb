@@ -265,7 +265,11 @@ class Budgea
         file.close
         file.path
       else
-        JSON.parse(@response.body)
+        begin
+          JSON.parse(@response.body)
+        rescue JSON::ParserError
+          @response.body
+        end
       end
     end
 

@@ -1,0 +1,47 @@
+{
+  "connections" : [
+    {
+      "accounts": null,
+      "subscriptions": [
+        {
+          "documents" : [
+            {
+              "id_category" : null,
+              "id_user" : 7,
+              "name" : "Not loaded",
+              "id_thumbnail" : 12,
+              "id_file" : 11,
+              "url" : "https://idocus.biapi.pro/2.0/users/me/documents/15/file/2pages.pdf",
+              "timestamp" : "2015-07-04 15:16:30",
+              "number" : "2pages",
+              "duedate" : null,
+              "untaxed_amount" : 0.0,
+              "issuer" : "Connecteur de test",
+              "readonly" : true,
+              "id_type" : 8,
+              "id_subscription" : 5,
+              "income" : false,
+              "date" : "2015-07-01",
+              "thumb_url" : "https://idocus.biapi.pro/2.0/users/me/documents/15/thumbnail/2pages.pdf_thumbnail.png",
+              "id" : 15,
+              "vat" : null,
+              "total_amount" : 0.0
+            }
+          ]
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2015-07-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2015-07-03 17:37:16",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}

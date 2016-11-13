@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 11 Nov 2016 20:00:15 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 11 Nov 2016 20:00:17 GMT
+- request:
+    method: get
+    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer rj3SxgMSyueBl1UVjXvWBH2gaRr/CMMl
+  response:
+    status:
+      code: 0
+      message: 
+    headers: {}
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 11 Nov 2016 20:00:20 GMT
+recorded_with: VCR 3.0.0
