@@ -1,0 +1,74 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : null,
+          "id" : 17,
+          "name" : "Compte chèque",
+          "number" : "3002900000",
+          "transactions" : [
+            {
+              "application_date" : "2015-06-17",
+              "comment" : null,
+              "date" : "2015-06-18",
+              "deleted" : null,
+              "id" : 309,
+              "last_update" : "2015-07-04 15:17:30",
+              "original_wording" : "FACTURE CB HALL'S BEER",
+              "rdate" : "2015-06-17",
+              "type" : "card",
+              "value" : -16.22
+            }
+          ],
+          "type" : "checking"
+        },
+        {
+          "deleted" : null,
+          "id" : 18,
+          "name" : "Compte courant",
+          "number" : "3002900001",
+          "transactions" : [
+            {
+              "application_date" : "2015-06-16",
+              "comment" : null,
+              "date" : "2015-06-16",
+              "deleted" : null,
+              "id" : 320,
+              "last_update" : "2015-07-04 15:17:28",
+              "original_wording" : "FACTURE CB N°5678",
+              "rdate" : "2015-06-16",
+              "type" : "card",
+              "value" : -20.5
+            },
+            {
+              "application_date" : "2015-06-15",
+              "comment" : null,
+              "date" : "2015-06-15",
+              "deleted" : null,
+              "id" : 315,
+              "last_update" : "2015-07-04 15:17:28",
+              "original_wording" : "FACTURE CB N°1234",
+              "rdate" : "2015-06-15",
+              "type" : "card",
+              "value" : -18.85
+            }
+          ],
+          "type" : "card"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2015-07-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2015-07-03 17:37:16",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}

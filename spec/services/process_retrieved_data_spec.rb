@@ -73,6 +73,20 @@ describe ProcessRetrievedData do
       expect(@user.operations.count).to eq 1
     end
 
+    it 'creates only one bank account, and 3 operations' do
+      expect(@user.bank_accounts.count).to eq 1
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      expect(@user.bank_accounts.count).to eq 2
+      expect(@user.operations.count).to eq 3
+    end
+
     it 'destroys the bank account, but not the operation' do
       operation = Operation.new
       operation.user         = @user
