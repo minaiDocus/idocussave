@@ -3,7 +3,6 @@ class BankAccount
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  attr_accessor :service_name
   attr_accessor :is_for_pre_assignment
 
   belongs_to :user
