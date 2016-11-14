@@ -5,9 +5,13 @@ class RequestNewProvider
   end
 
   def execute
-    result = client.request_new_connector(params)
-    if client.response.code == 200
-      @new_provider_request.update(api_id: result['id'], password: nil)
+    if CreateBudgeaAccount.execute(@new_provider_request.user)
+      result = client.request_new_connector(params)
+      if client.response.code == 200
+        @new_provider_request.update(api_id: result['id'], password: nil)
+      else
+        raise RuntimeException
+      end
     else
       raise RuntimeException
     end
