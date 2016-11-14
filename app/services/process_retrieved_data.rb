@@ -42,8 +42,9 @@ class ProcessRetrievedData
                   bank_account.destroy
                   bank_account = nil
                 else
-                  bank_account.api_id = account['id']
-                  bank_account.name   = account['name']
+                  bank_account.api_id   = account['id']
+                  bank_account.api_name = 'budgea'
+                  bank_account.name     = account['name']
                   bank_account.save if bank_account.changed?
                 end
               else
