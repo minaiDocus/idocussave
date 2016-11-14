@@ -16,6 +16,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
   def update
     @bank_account.assign_attributes(bank_account_params)
     changes = @bank_account.changes.dup
+    @bank_account.is_for_pre_assignment = true
     if @bank_account.save
       @bank_account.operations.where(is_locked: true, :date.gte => @bank_account.start_date).update_all(is_locked: false)
       UpdatePreseizureAccountNumbers.async_execute(@bank_account.id.to_s, changes)

@@ -305,11 +305,11 @@ describe ProcessRetrievedData do
   context 'retriever state is error' do
     before(:each) do
       @retriever.error
-      @retriever.error_message = 'something'
+      @retriever.update(error_message: 'something')
     end
 
     it 'changes state to ready' do
-      pending
+      @retriever.update(is_selection_needed: false)
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
