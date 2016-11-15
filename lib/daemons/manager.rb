@@ -83,7 +83,7 @@ if Rails.env.production?
     { name: 'processor',                   sleep_duration: 5.seconds,  cmd: Proc.new { DocumentProcessor.process } },
     { name: 'pre_assignment_fetcher',       sleep_duration: 30.seconds, cmd: Proc.new { PrepaCompta::PreAssignPiece.fetch_all } },
     { name: 'sync_retriever',              sleep_duration: nil,        cmd: Proc.new { SynchronizeRetriever.concurrently } },
-    { name: 'process_retrieved_data',      sleep_duration: 1.seconds,  cmd: Proc.new { ProcessRetrievedData.execute } },
+    { name: 'process_retrieved_data',      sleep_duration: nil,        cmd: Proc.new { ProcessRetrievedData.concurrently } },
     { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { ProcessOperation.execute } },
     { name: 'emailed_document_fetcher',    sleep_duration: 1.minute,   cmd: Proc.new { EmailedDocument.fetch_all } },
     { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
@@ -99,7 +99,7 @@ elsif Rails.env.staging?
   services = [
     { name: 'import_from_dropbox',         sleep_duration: 10.seconds, cmd: Proc.new { DropboxImportFolder.check } },
     { name: 'sync_retriever',              sleep_duration: nil,        cmd: Proc.new { SynchronizeRetriever.concurrently } },
-    { name: 'process_retrieved_data',      sleep_duration: 1.seconds,  cmd: Proc.new { ProcessRetrievedData.execute } },
+    { name: 'process_retrieved_data',      sleep_duration: nil,        cmd: Proc.new { ProcessRetrievedData.concurrently } },
     { name: 'operation_processor',         sleep_duration: 5.seconds,  cmd: Proc.new { ProcessOperation.execute } }
   ]
 end
