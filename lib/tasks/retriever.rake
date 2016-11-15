@@ -21,6 +21,13 @@ namespace :retriever do
     puts "[#{Time.now}] retriever:notify_insane_retriever - END"
   end
 
+  desc 'Clean oldest retrieved data'
+  task :clean_retrieved_data => [:environment] do
+    puts "[#{Time.now}] retriever:clean_retrieved_data - START"
+    RetrievedData.remove_oldest
+    puts "[#{Time.now}] retriever:clean_retrieved_data - END"
+  end
+
   namespace :provider do
     desc 'Notify processed requests'
     task :notify_processed_requests => [:environment] do

@@ -41,3 +41,7 @@ end
 every :month, at: '02:02' do
   rake 'maintenance:reporting:init', options
 end
+
+every :month, at: '02:04' do
+  rake 'retriever:clean_retrieved_data', options
+end

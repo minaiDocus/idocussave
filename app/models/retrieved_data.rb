@@ -30,4 +30,8 @@ class RetrievedData
       transition :error => :not_processed
     end
   end
+
+  def self.remove_oldest
+    RetrievedData.where(:created_at.lt => 1.month.ago).destroy_all
+  end
 end
