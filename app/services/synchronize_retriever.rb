@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class SynchronizeRetriever
   class << self
-    def in_parallel(running_time=10.seconds)
+    def concurrently(running_time=10.seconds)
       new(running_time).execute
     end
   end
@@ -79,12 +79,16 @@ private
 
   def log(message)
     @semaphore.synchronize do
-      puts message
       logger.info(message)
+      logger2.info(message)
     end
   end
 
   def logger
     @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_retriever_sync.log")
+  end
+
+  def logger2
+    @@logger2 ||= Logger.new(STDOUT)
   end
 end
