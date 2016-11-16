@@ -8,15 +8,16 @@ class NewProviderRequest
   attr_accessor :edited_by_customer
 
   field :api_id
-  field :state,       default: 'pending'
+  field :state,                        default: 'pending'
   field :name
-  field :url,         default: 'https://www.example.com'
+  field :url,                          default: 'https://www.example.com'
   field :email
   field :login
   # TODO encrypt password
   field :password
   field :types
   field :description
+  field :is_sent,       type: Boolean, default: false
 
   field :message
   field :notified_at,   type: Time

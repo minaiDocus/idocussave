@@ -8,7 +8,7 @@ class RequestNewProvider
     if CreateBudgeaAccount.execute(@new_provider_request.user)
       result = client.request_new_connector(params)
       if client.response.code == 200
-        @new_provider_request.update(api_id: result['id'], password: nil)
+        @new_provider_request.update(is_sent: true, password: nil)
       else
         raise RuntimeException
       end
