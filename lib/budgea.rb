@@ -24,19 +24,16 @@ class Budgea
     attr_accessor :request
     attr_accessor :response
     attr_accessor :access_token
-    attr_accessor :user_id
     attr_accessor :error_message
 
-    def initialize(access_token=nil, user_id=nil)
-      # NOTE is settings variable really needed ?
+    def initialize(access_token=nil)
       @settings = {
-        :base_url      => "https://#{Budgea.config.domain}/2.0",
-        :client_id     => Budgea.config.client_id,
-        :client_secret => Budgea.config.client_secret,
+        base_url:      "https://#{Budgea.config.domain}/2.0",
+        client_id:     Budgea.config.client_id,
+        client_secret: Budgea.config.client_secret,
       }
       # NOTE access_token is used only for limiting the scope of a request to the user only, because we could use the couple client_id/client_secret or manage_token to do all the request since it's all server side
       @access_token = access_token
-      @user_id = user_id
     end
 
     def create_user
@@ -78,17 +75,6 @@ class Budgea
       end
     end
 
-    # for use on client side
-    # def get_temporary_token
-    #   @request = Typhoeus::Request.new(
-    #     @settings[:base_url] + '/auth/token/code',
-    #     method:  :get,
-    #     headers: headers
-    #   )
-    #   @response = @request.run
-    #   JSON.parse(@response.body)['code']
-    # end
-
     def get_banks
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/banks?expand=fields',
@@ -96,9 +82,7 @@ class Budgea
         headers: { accept: :json },
         params:  authentification_params
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
-      result['banks'] ? result['banks'] : result
+      run_and_parse_response 'banks'
     end
 
     def get_providers
@@ -108,10 +92,8 @@ class Budgea
         headers: { accept: :json },
         params:  authentification_params
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
       # NOTE it is really 'banks' here...
-      result['banks'] ? result['banks'] : result
+      run_and_parse_response 'banks'
     end
 
     def get_categories
@@ -121,9 +103,7 @@ class Budgea
         headers: { accept: :json },
         params:  authentification_params
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
-      result['categories'] ? result['categories'] : result
+      run_and_parse_response 'categories'
     end
 
     def get_profiles
@@ -132,14 +112,7 @@ class Budgea
         method:  :get,
         headers: headers
       )
-      @response = @request.run
-      if @response.code == 200
-        result = JSON.parse(@response.body)
-        @user_id = result['profiles'].first['id_user'] unless @user_id
-        result['profiles']
-      else
-        @response.body
-      end
+      run_and_parse_response 'profiles'
     end
 
     def get_new_access_token(user_id)
@@ -149,8 +122,7 @@ class Budgea
         headers: headers,
         params:  { application: 'sharedAccess' }
       )
-      @response = @request.run
-      parsed_response
+      run_and_parse_response
     end
 
     def delete_access_token
@@ -170,8 +142,7 @@ class Budgea
         headers: { accept: :json },
         params:  authentification_params.merge(params)
       )
-      @response = @request.run
-      parsed_response
+      run_and_parse_response
     end
 
     def create_connection(params)
@@ -181,8 +152,7 @@ class Budgea
         headers: headers,
         params:  params
       )
-      @response = @request.run
-      parsed_response
+      run_and_parse_response
     end
 
     def update_connection(id, params)
@@ -192,8 +162,7 @@ class Budgea
         headers: headers,
         body:    params
       )
-      @response = @request.run
-      parsed_response
+      run_and_parse_response
     end
 
     def destroy_connection(id)
@@ -212,8 +181,7 @@ class Budgea
         method:  :put,
         headers: headers
       )
-      @response = @request.run
-      parsed_response
+      run_and_parse_response
     end
 
     def get_accounts
@@ -222,9 +190,7 @@ class Budgea
         method:  :get,
         headers: headers
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
-      result['accounts'] ? result['accounts'] : result
+      run_and_parse_response 'accounts'
     end
 
     def get_transactions(account_id)
@@ -233,9 +199,7 @@ class Budgea
         method:  :get,
         headers: headers
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
-      result['transactions'] ? result['transactions'] : result
+      run_and_parse_response 'transactions'
     end
 
     def get_documents(connection_id=nil)
@@ -247,9 +211,7 @@ class Budgea
         method:  :get,
         headers: headers
       )
-      @response = @request.run
-      result = JSON.parse(@response.body)
-      result['documents'] ? result['documents'] : result
+      run_and_parse_response 'documents'
     end
 
     def get_file(document_id)
@@ -289,7 +251,8 @@ class Budgea
       }
     end
 
-    def parsed_response
+    def run_and_parse_response(collection_name=nil)
+      @response = @request.run
       if @response.code.in? [200, 202, 204, 400, 403, 500, 503]
         result = JSON.parse(@response.body)
         @error_message = case result['code']
@@ -305,7 +268,7 @@ class Budgea
         if result['message'] && result['message'].match(/Can't force synchronization of connection/)
           @error_message = 'Ne peut pas forcer la synchronisation.'
         end
-        result
+        (collection_name && result[collection_name]) || result
       else
         @error_message = @response.body
       end

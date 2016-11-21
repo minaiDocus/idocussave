@@ -16,9 +16,9 @@ class CreateBudgeaAccount
           budgea_account = BudgeaAccount.new
           budgea_account.user = @user
           budgea_account.access_token = result
-          try_request { client.get_profiles }
+          profiles = try_request { client.get_profiles }
           if client.response.code == 200
-            budgea_account.identifier = client.user_id
+            budgea_account.identifier = profiles.first['id_user']
           else
             message = "[#{@user.code}] Get identifier<br/>[#{client.response.code}] : #{client.response.body}"
             notify_failure(message)

@@ -13,13 +13,11 @@ describe Budgea do
     expect(@client.access_token.size).to eq 32
   end
 
-  it 'gets profiles and assign user_id successfully' do
+  it 'gets profiles' do
     keys = ['admin', 'conf', 'contact', 'email', 'id', 'id_user', 'role', 'sponsor', 'state', 'type']
     VCR.use_cassette('budgea/get_profiles') do
-      expect(@client.user_id).to be nil
       profiles = @client.get_profiles
       expect(profiles.first.keys.sort).to eq keys
-      expect(@client.user_id).not_to be nil
     end
   end
 
