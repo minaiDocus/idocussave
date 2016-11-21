@@ -147,7 +147,7 @@ class Retriever
   end
 
   def connector
-    @connector ||= RetrieverProvider.find(connector_id)
+    @connector ||= BudgeaConnector.find(connector_id)
   end
 
 private

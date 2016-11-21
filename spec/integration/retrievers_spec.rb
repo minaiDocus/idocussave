@@ -11,11 +11,11 @@ describe 'Retrievers' do
     end
 
     VCR.use_cassette('budgea/get_providers') do
-      RetrieverProvider.new.providers
+      BudgeaConnector.providers
     end
 
     VCR.use_cassette('budgea/get_banks') do
-      RetrieverProvider.new.banks
+      BudgeaConnector.banks
     end
 
     @retriever = Retriever.new

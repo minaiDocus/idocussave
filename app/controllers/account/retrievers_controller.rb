@@ -161,9 +161,8 @@ private
   end
 
   def load_connectors
-    @connectors = RetrieverProvider.all
-    list = RetrieverProvider.new
-    @providers = list.providers
-    @banks = list.banks
+    @connectors = BudgeaConnector.all
+    @providers  = BudgeaConnector.providers
+    @banks      = BudgeaConnector.banks
   end
 end
