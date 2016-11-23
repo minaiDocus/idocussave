@@ -40,12 +40,12 @@ private
   end
 
   def authorize_retriever
-    @customer.options.update(:is_retriever_authorized, true) unless @customer.options.is_retriever_authorize
+    @customer.options.update(:is_retriever_authorized, true) unless @customer.options.is_retriever_authorized
   end
 
   def unauthorize_retriever
-    if @customer.options.is_retriever_authorize
-      @customer.options.update(:is_retriever_authorize, false)
+    if @customer.options.is_retriever_authorized
+      @customer.options.update(:is_retriever_authorized, false)
       RemoveRetrieverService.new(@customer.id.to_s).delay.execute if @customer.budgea_account.present?
     end
   end
