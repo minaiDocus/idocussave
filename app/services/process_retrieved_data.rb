@@ -77,12 +77,17 @@ class ProcessRetrievedData
     @retrieved_data.content['connections'].each do |connection|
       unless connection['id'].in?(@retrieved_data.processed_connection_ids)
         is_connection_ok = true
-        retriever = user.retrievers.where(api_id: connection['id']).asc(:created_at).first
+        retriever = user.retrievers.where(budgea_id: connection['id']).asc(:created_at).first
         if retriever
           is_new_transaction_present = false
           if connection['accounts'].present?
             connection['accounts'].each do |account|
-              bank_account = user.bank_accounts.any_of(
+              bank_accounts = if retriever.connector.is_fiduceo_active?
+                user.sandbox_bank_accounts
+              else
+                user.bank_accounts
+              end
+              bank_account = bank_accounts.any_of(
                   {
                     api_id: account['id']
                   },
@@ -95,7 +100,11 @@ class ProcessRetrievedData
               if bank_account
                 # NOTE 'deleted' type is datetime
                 if account['deleted'].present?
-                  bank_account.operations.update_all(api_id: nil)
+                  if retriever.connector.is_fiduceo_active?
+                    bank_account.sandbox_operations.update_all(api_id: nil)
+                  else
+                    bank_account.operations.update_all(api_id: nil)
+                  end
                   bank_account.destroy
                   bank_account = nil
                 else
@@ -105,7 +114,11 @@ class ProcessRetrievedData
                   bank_account.save if bank_account.changed?
                 end
               else
-                bank_account = BankAccount.new
+                bank_account = if retriever.connector.is_fiduceo_active?
+                  SandboxBankAccount.new
+                else
+                  BankAccount.new
+                end
                 bank_account.user      = user
                 bank_account.retriever = retriever
                 bank_account.api_id    = account['id']
@@ -119,12 +132,22 @@ class ProcessRetrievedData
                 is_new_transaction_present = true
                 is_configured = bank_account.configured?
                 account['transactions'].each do |transaction|
-                  operation = bank_account.operations.where(api_id: transaction['id'], api_name: 'budgea').first
+                  operations = if retriever.connector.is_fiduceo_active?
+                    bank_account.sandbox_operations
+                  else
+                    bank_account.operations
+                  end
+                  operation = operations.where(api_id: transaction['id'], api_name: 'budgea').first
                   if operation
                     assign_attributes(operation, transaction)
                     operation.save if operation.changed?
                   else
-                    orphaned_operation = user.operations.where(
+                    operations = if retriever.connector.is_fiduceo_active?
+                      user.sandbox_operations
+                    else
+                      user.operations
+                    end
+                    orphaned_operation = operations.where(
                       date:       transaction['date'],
                       value_date: transaction['application_date'],
                       label:      transaction['original_wording'],
@@ -133,14 +156,21 @@ class ProcessRetrievedData
                       api_id:     nil
                     ).first
                     if orphaned_operation
-                      orphaned_operation.bank_account = bank_account
+                      if retriever.connector.is_fiduceo_active?
+                        orphaned_operation.sandbox_bank_account = bank_account
+                      else
+                        orphaned_operation.bank_account = bank_account
+                      end
                       orphaned_operation.api_id       = transaction['id']
                       orphaned_operation.save
                     else
-                      operation = Operation.new
+                      operation = if retriever.connector.is_fiduceo_active?
+                        SandboxOperation.new(sandbox_bank_account_id: bank_account.id)
+                      else
+                        Operation.new(bank_account_id: bank_account.id)
+                      end
                       operation.organization = user.organization
                       operation.user         = user
-                      operation.bank_account = bank_account
                       operation.api_id       = transaction['id']
                       operation.api_name     = 'budgea'
                       operation.is_locked    = !is_configured
@@ -163,7 +193,12 @@ class ProcessRetrievedData
                   subscription['documents'].sort_by do |document|
                     Time.parse(document['date'])
                   end.each do |document|
-                    unless retriever.temp_documents.where(api_id: document['id']).first
+                    already_exist = if retriever.connector.is_fiduceo_active?
+                      retriever.sandbox_documents.where(api_id: document['id']).first
+                    else
+                      retriever.temp_documents.where(api_id: document['id']).first
+                    end
+                    unless already_exist
                       tries = 1
                       is_success = false
                       error = nil
@@ -172,7 +207,17 @@ class ProcessRetrievedData
                         temp_file_path = client.get_file document['id']
                         begin
                           if client.response.code == 200
-                            RetrievedDocument.new(retriever, document, temp_file_path)
+                            if retriever.connector.is_fiduceo_active?
+                              sandbox_document = SandboxDocument.new
+                              sandbox_document.user               = retriever.user
+                              sandbox_document.retriever          = retriever
+                              sandbox_document.api_id             = document['id']
+                              sandbox_document.retrieved_metadata = document
+                              sandbox_document.content            = open(temp_file_path)
+                              sandbox_document.save
+                            else
+                              RetrievedDocument.new(retriever, document, temp_file_path)
+                            end
                             is_success = true
                             is_new_document_present = true
                           end
@@ -212,20 +257,25 @@ class ProcessRetrievedData
           when 'wrongpass'
             retriever.update(
               is_new_password_needed: true,
-              error_message: 'Mot de passe incorrecte.'
+              budgea_error_message: 'Mot de passe incorrecte.'
             )
-            retriever.error
+            retriever.fail_budgea_connection
           when 'additionalInformationNeeded'
-            retriever.ready if retriever.error?
-            retriever.wait_additionnal_info
+            retriever.success_budgea_connection if retriever.budgea_connection_failed?
+            if connection['fields'].present?
+              retriever.update(budgea_additionnal_fields: connection['fields'])
+              retriever.pause_budgea_connection
+            end
           when 'websiteUnavailable'
-            retriever.update(error_message: 'Site web indisponible.')
-            retriever.error
+            retriever.update(budgea_error_message: 'Site web indisponible.')
+            retriever.fail_budgea_connection
           when 'bug'
-            retriever.update(error_message: 'Service indisponible.')
-            retriever.error
+            retriever.update(budgea_error_message: 'Service indisponible.')
+            retriever.fail_budgea_connection
           else
-            retriever.ready if is_new_document_present || is_new_transaction_present
+            if is_new_document_present || is_new_transaction_present || retriever.error?
+              retriever.success_budgea_connection
+            end
           end
 
           retriever.update(sync_at: Time.parse(connection['last_update']))

@@ -175,7 +175,7 @@ class Budgea
       @response.code == 200
     end
 
-    def sync_connection(id)
+    def trigger_connection(id)
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/connections/#{id}",
         method:  :put,

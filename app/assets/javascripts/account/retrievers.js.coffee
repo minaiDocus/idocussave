@@ -3,8 +3,8 @@ same_id = (element) ->
 
 update_form = ->
   connector = null
-  window.retriever_id = parseInt($('#retriever_connector_id').val())
-  if Number.isInteger window.retriever_id
+  window.retriever_id = $('#retriever_connector_id').val()
+  if window.retriever_id.length == 24
     connector = window.connectors.filter(same_id)[0]
 
   update_connector_info(connector)
@@ -18,8 +18,11 @@ update_form = ->
     else
       attributes = {}
 
-    for i in [1..(connector['fields'].length)]
-      field = connector['fields'][i-1]
+    i = 0
+    for key in Object.keys(connector['fields'])
+      i += 1
+      field = connector['fields'][key]
+      field['name'] = key
       field['param_name'] = 'param' + i
       tmpl_name = 'tmpl-input'
       attribute = attributes[field['param_name']]
@@ -33,7 +36,7 @@ update_form = ->
       $('#params').append(tmpl(tmpl_name, field))
 
 show_or_hide_journals = ->
-  if $('#retriever_type').val() == 'provider' || $('#retriever_type').val() == 'both'
+  if $('#retriever_capabilities').val() == 'document' || $('#retriever_capabilities').val() == 'bank_and_document'
     $('#retriever_journal_id').removeAttr('disabled')
     $('#retriever_journal_id').parents('.controls').parents('.control-group').show()
   else
@@ -42,20 +45,21 @@ show_or_hide_journals = ->
 
 update_connector_info = (connector) ->
   if connector
-    if connector['capabilities'].length == 1 && connector['capabilities'][0] == 'bank'
-      $('#retriever_type').val('bank')
-      $('#retriever_type_name').val('Opérations bancaires')
-    else if connector['capabilities'].length == 1 && connector['capabilities'][0] == 'document'
-      $('#retriever_type').val('provider')
-      $('#retriever_type_name').val('Documents (Factures)')
+    if connector['capabilities'].length == 1
+      if connector['capabilities'][0] == 'bank'
+        $('#retriever_capabilities').val('bank')
+        $('#retriever_capability_names').val('Opérations bancaires')
+      else
+        $('#retriever_capabilities').val('document')
+        $('#retriever_capability_names').val('Documents (Factures)')
     else
-      $('#retriever_type').val('both')
-      $('#retriever_type_name').val('Documents & Opérations bancaires')
+      $('#retriever_capabilities').val('bank_and_document')
+      $('#retriever_capability_names').val('Documents & Opérations bancaires')
     $('#retriever_service_name').val(connector['name'])
     $('#retriever_name').val(connector['name'])
   else
-    $('#retriever_type').val('')
-    $('#retriever_type_name').val('')
+    $('#retriever_capabilities').val('')
+    $('#retriever_capability_names').val('')
     $('#retriever_service_name').val('')
     $('#retriever_name').val('')
 
@@ -64,8 +68,8 @@ jQuery ->
     window.connectors          = $('#connectors').data('connectors')
     window.selected_connectors = $('#connectors').data('selectedConnectors')
 
-    $('#retriever_type').hide()
-    $('#retriever_type').after('<input class="string disabled" disabled="disabled" id="retriever_type_name" name="retriever[type_name]" type="text">')
+    $('#retriever_capabilities').hide()
+    $('#retriever_capabilities').after('<input class="string disabled" disabled="disabled" id="retriever_capability_names" name="retriever[type_name]" type="text">')
 
     if $('#retriever_connector_id').is(':disabled')
       $('#retriever_connector_id').addClass('hide')

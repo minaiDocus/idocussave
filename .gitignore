@@ -25,3 +25,4 @@ config/google_drive.yml
 config/pdftk.yml
 config/smtp.yml
 config/budgea.yml
+config/fiduceo.yml

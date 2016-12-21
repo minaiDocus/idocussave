@@ -721,11 +721,7 @@ fr:
         attributes:
           name: Nom personnalisé
           service_name: Service
-          type: Type
-          type_values:
-            both: Doc. et Op. Bancaires
-            provider: Documents
-            bank: Op. bancaires
+          capabilities: Type
           state: Etat
           is_sane: Fonctionnelle
       new_provider_request:

@@ -138,7 +138,7 @@ Idocus::Application.routes.draw do
         with_options module: 'organization' do |r|
           r.resources :retrievers do
             get   'list',                     on: :collection
-            post  'sync',                     on: :member
+            post  'run',                      on: :member
             get   'waiting_additionnal_info', on: :member
             patch 'additionnal_info',         on: :member
           end
@@ -231,7 +231,7 @@ Idocus::Application.routes.draw do
 
     resources :retrievers do
       get   'list',                     on: :collection
-      post  'sync',                     on: :member
+      post  'run',                      on: :member
       get   'waiting_additionnal_info', on: :member
       patch 'additionnal_info',         on: :member
     end
@@ -297,7 +297,7 @@ Idocus::Application.routes.draw do
     end
     resources :dematbox_files, only: :index
     resources :retrievers, only: %w(index edit destroy) do
-      post 'fetch', on: :collection
+      post 'run', on: :collection
     end
     resources :new_provider_requests, only: %w(index show edit) do
       patch 'start_process', on: :member

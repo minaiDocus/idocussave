@@ -50,6 +50,10 @@ module ApplicationHelper
     content_tag :i, '', class: 'icon-move'
   end
 
+  def icon_refresh
+    content_tag :i, '', class: 'icon-refresh'
+  end
+
   def edit_link
     link_to icon_edit, '#', class: :edit
   end

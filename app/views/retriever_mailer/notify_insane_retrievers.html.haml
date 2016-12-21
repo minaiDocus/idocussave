@@ -15,5 +15,12 @@
         - @insane_retrievers.each do |retriever|
           %tr
             %td= link_to retriever.user.code, account_retrievers_url(user_code: retriever.user.code)
-            %td= retriever.type
+            %td
+              - if retriever.provider_and_bank?
+                Doc. et Op. Bancaires
+              - elsif retriever.provider?
+                Documents
+              - elsif retriever.bank?
+                Op. bancaires
+              - end
             %td= "#{retriever.name} - (#{retriever.service_name})"

@@ -24,7 +24,7 @@ class TempDocument
 
   field :api_id
   field :api_name
-  field :retrieved_metadata, type: Hash
+  field :retrieved_metadata
   field :retriever_service_name
   field :retriever_name
 

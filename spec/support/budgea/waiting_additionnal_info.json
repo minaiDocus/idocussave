@@ -4,6 +4,14 @@
       "accounts" : null,
       "error" : "additionalInformationNeeded",
       "expire" : null,
+      "fields" : [
+        {
+          "name" : "pin_code",
+          "label" : "Please enter the PIN code",
+          "type" : "text",
+          "regex" : null
+        }
+      ],
       "id" : 7,
       "id_user" : 7,
       "id_bank" : 40,

@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class RetrieverPresenter < BasePresenter
   presents :retriever
-  delegate :name, :service_name, :journal, :type, :user, to: :retriever
+  delegate :name, :service_name, :journal, :user, to: :retriever
 
   def state(scope=:account)
     if retriever.waiting_selection?
-      if retriever.provider?
+      if retriever.provider? || retriever.provider_and_bank?
         if scope == :account
           h.link_to 'Sélectionnez vos documents', h.select_account_retrieved_documents_path(document_contains: { retriever_id: retriever }), class: 'btn btn-mini'
         elsif scope == :collaborator
@@ -30,11 +30,7 @@ class RetrieverPresenter < BasePresenter
       elsif scope == :admin
         h.content_tag :span, "En attente de l'utilisateur", class: 'label'
       end
-    elsif retriever.creating?
-      h.content_tag :span, 'Création en cours', class: 'label'
-    elsif retriever.updating?
-      h.content_tag :span, 'Mise à jour en cours', class: 'label'
-    elsif retriever.synchronizing?
+    elsif retriever.configuring? || retriever.running?
       h.content_tag :span, 'Synchronisation en cours', class: 'label'
     elsif retriever.destroying?
       h.content_tag :span, 'Suppression en cours', class: 'label'
@@ -50,13 +46,47 @@ class RetrieverPresenter < BasePresenter
       title = 'Lancer la récupération'
       title = 'Réessayer maintenant' if retriever.error?
       if organization.present?
-        url = h.sync_account_organization_customer_retriever_path(organization, customer, retriever)
+        url = h.run_account_organization_customer_retriever_path(organization, customer, retriever)
       else
-        url = h.sync_account_retriever_path(retriever)
+        url = h.run_account_retriever_path(retriever)
       end
       h.link_to icon(icon: 'download'), url, data: { method: :post, confirm: t('actions.confirm') }, title: title, rel: 'tooltip'
     else
       ''
+    end
+  end
+
+  def capabilities
+    if retriever.provider_and_bank?
+      'Doc. et Op. Bancaires'
+    elsif retriever.provider?
+      'Documents'
+    elsif retriever.bank?
+      'Op. bancaires'
+    end
+  end
+
+  def fiduceo_state
+    if retriever.fiduceo_connection_not_configured?
+      '-'
+    elsif retriever.fiduceo_connection_successful?
+      icon_ok
+    elsif retriever.fiduceo_connection_failed?
+      icon_not_ok
+    else
+      icon_refresh
+    end
+  end
+
+  def budgea_state
+    if retriever.budgea_connection_not_configured?
+      '-'
+    elsif retriever.budgea_connection_successful?
+      icon_ok
+    elsif retriever.budgea_connection_failed?
+      icon_not_ok
+    else
+      icon_refresh
     end
   end
 

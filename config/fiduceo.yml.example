@@ -1,0 +1,16 @@
+development:
+  protocol: https
+  domain: coffreapicust.efactures.fr
+  proxy: socks5://127.0.0.1:8080
+
+test:
+  protocol: http
+  domain: localhost
+
+staging:
+  protocol: https
+  domain: coffreapicust.efactures.fr
+
+production:
+  protocol: http
+  domain: localhost

@@ -1,4 +1,4 @@
-#connectors{ data: { connectors: @connectors.to_json, selected_connectors: [@retriever.connector].compact.to_json } }
+#connectors{ data: { connectors: @connectors.to_json, selected_connectors: [@retriever.connector.try(:public_attributes)].compact.to_json } }
 
 - if action_name.in?(%w(new create))
   - url = account_organization_customer_retrievers_path(@organization, @customer, @retriever)
@@ -7,7 +7,7 @@
 = simple_form_for @retriever, url: url, html: { class: 'retriever_form form form-horizontal' } do |f|
   = f.input :connector_id, required: true, disabled: @retriever.persisted?
   = f.input :service_name, as: :hidden
-  = f.input :type, disabled: true
+  = f.input :capabilities, disabled: true
   = f.input :name
   - unless @retriever.persisted? && @retriever.bank?
     = f.input :journal_id, collection: @customer.account_book_types.asc(:name), include_blank: false, required: true, wrapper_html: { style: 'display:none' }

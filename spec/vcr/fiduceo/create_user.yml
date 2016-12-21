@@ -1,0 +1,109 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: http://localhost:8183/user
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0"?><user/>
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - text/xml
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 13:34:16 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><user xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a84d8498e5940b622d58c</id><retrievers/><documents
+        count="0"/></user>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 13:34:16 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/userpreferences
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 13:34:17 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><userpreferences
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a84d9498e5940b622d58d</id><defaultEcheanceMonth>1</defaultEcheanceMonth><isBankProAvailable>false</isBankProAvailable><maxDataBancaireRetrievers>2</maxDataBancaireRetrievers><maxRetrievers>10000</maxRetrievers><maxStorageSize>0</maxStorageSize><usedStorageSize>0</usedStorageSize></userpreferences>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 13:34:17 GMT
+- request:
+    method: put
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/userpreferences
+    body:
+      encoding: US-ASCII
+      string: |
+        <?xml version="1.0"?>
+        <userpreferences>
+          <id>585a84d9498e5940b622d58d</id>
+          <isBankProAvailable>true</isBankProAvailable>
+          <maxDataBancaireRetrievers>10000</maxDataBancaireRetrievers>
+        </userpreferences>
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - text/xml
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 13:34:17 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><userpreferences
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a84d9498e5940b622d58d</id><defaultEcheanceMonth>1</defaultEcheanceMonth><isBankProAvailable>true</isBankProAvailable><maxDataBancaireRetrievers>10000</maxDataBancaireRetrievers><maxRetrievers>10000</maxRetrievers><maxStorageSize>0</maxStorageSize><usedStorageSize>0</usedStorageSize></userpreferences>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 13:34:18 GMT
+recorded_with: VCR 3.0.0

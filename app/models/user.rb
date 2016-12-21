@@ -79,6 +79,7 @@ class User
 
   field :return_label_generated_at, type: Time
 
+  field :fiduceo_id
   field :ibiza_id, type: String
 
   field :email_code
@@ -152,6 +153,10 @@ class User
   has_many :retrievers,                                                                         dependent: :destroy
   has_many :retrieved_data,                                                                     dependent: :destroy
   has_many :new_provider_requests,                                                              dependent: :destroy
+
+  has_many :sandbox_bank_accounts,                                                              dependent: :destroy
+  has_many :sandbox_operations,                                                                 dependent: :destroy
+  has_many :sandbox_documents,                                                             dependent: :destroy
 
   belongs_to :scanning_provider, inverse_of: 'customers'
 

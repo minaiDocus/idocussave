@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://idocus.biapi.pro/2.0/users/me/connections/245
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Authorization:
+      - Bearer cgtHGWA7a/uelIoViOZyTTbWoqeo52nt
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.6.2
+      Date:
+      - Wed, 02 Nov 2016 13:00:50 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '169'
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Vary:
+      - Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, DELETE, PUT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: US-ASCII
+      string: '{"error_message": null, "id_user": 116, "id_provider": 40, "id_bank":
+        40, "last_update": "2016-11-02 14:00:10", "expire": null, "error": null, "active":
+        true, "id": 245}'
+    http_version: 
+  recorded_at: Wed, 02 Nov 2016 13:00:50 GMT
+recorded_with: VCR 3.0.0

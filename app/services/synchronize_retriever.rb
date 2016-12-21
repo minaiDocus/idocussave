@@ -60,20 +60,14 @@ class SynchronizeRetriever
 private
 
   def process(retriever)
-    if retriever.creating?
-      log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.api_id} - create"
-      if CreateBudgeaAccount.execute(retriever.user)
-        CreateRetrieverConnection.execute(retriever)
-      end
-    elsif retriever.updating?
-      log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.api_id} - update"
-      UpdateRetrieverConnection.execute(retriever)
-    elsif retriever.synchronizing?
-      log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.api_id} - sync"
-      SyncRetrieverConnection.execute(retriever)
-    elsif retriever.destroying?
-      log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.api_id} - destroy"
-      DestroyRetrieverConnection.execute(retriever)
+    log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.budgea_id}/#{retriever.fiduceo_id} - #{retriever.state}"
+    if retriever.connector.is_budgea_active?
+      CreateBudgeaAccount.execute(retriever.user) if retriever.user.budgea_account.nil?
+      SyncBudgeaConnection.execute(retriever)
+    end
+    if retriever.connector.is_fiduceo_active?
+      CreateFiduceoAccount.execute(retriever.user) if retriever.user.fiduceo_id.nil?
+      SyncFiduceoConnection.execute(retriever)
     end
   end
 

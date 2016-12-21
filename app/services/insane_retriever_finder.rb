@@ -1,3 +1,4 @@
+# TODO to be rework
 class InsaneRetrieverFinder
   def self.execute
     retrievers = Retriever.ready

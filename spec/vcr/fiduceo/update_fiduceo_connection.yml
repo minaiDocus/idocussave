@@ -1,0 +1,257 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/retriever
+    body:
+      encoding: US-ASCII
+      string: |
+        <?xml version="1.0"?>
+        <retriever>
+          <id>585a9f1c498ea472a02d689a</id>
+          <login>John Doe 2</login>
+          <label>OVH</label>
+        </retriever>
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - text/xml
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:52:24 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><retriever xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f1c498ea472a02d689a</id><providerId>4d98668c287db3fb58b3f6e9</providerId><providerName>OVH</providerName><login>YQLlvWH5+Q3LnzGNnwPTUSoZtSG9Sol2Ia6W2ONVFocqM5nxDhpU895c+Ke7LOjsdawLQiXT4F2wI3l/UqwSJkXGujltf6GEpQOgTyZmkMwQDcI1HIfXQ2aFsLgCJtOs5RCY85JzyvM/aO7f2h1GJyDUULOLQNLs2v4NRsop5IV7Tf3/uri9oHsVGPoByqhaYYK2ogYdrO7pCAXrczv4WxhETqiUkg6a/VDBWWwGhTIPyIj06F0aDCRMKGRvszzZatO3F6D+bg03r/kRjfZ81nqRvI3TIUP/ITYDx1Nf7YvHS58KaZSSPgN0+PngtzHvf4MdvqZIn8GnXQP8NmXCR/Lw/DJg/2MM2BBzMsr+frrzCzwWXWAni5gClNHL2IYqarI+XY6wSl5Ik6QdedzNGX9TIT5KUYTRVjvcJ4sKnycG0Y9Tf0Wd77ZhDgAJRKbK1CU/SJazCkIC0Ig8yEtLPs+qFWqTw/ANWJtVk++B3B2IkZSbsX3+MqF5d7cp5EyzL3VwEKeqtgSg+IXPpQ8zeSiQDwm9wf2tTrt9CTMfLI+nT5R04EAb69M8TNnzhKdxlQHURWvaMx69dKebGq29KmhW0WamJYIBBiQe+VOVTLmA2uDmlIK96P2bLF8h7lIwlzHyD767+tZ5qA8SyaRcihyHfsOjtNL209qHxpw1seC4mfevayYIpQqmnyNGBJH2BGzYrHB7hCLAk+IdbGhssCwx/Sp53fdqDYVXA4lTKiEcwFZCn9X1xJWuJE97FfCelKkp7r8rIPLMuUznNVBrIj6PxxyUxoVSv/p7KGDYph+bLdJGhyEggBxJzeAKhx3rbbNmBvJBLDjBU9hL7UzBtYZynC81JluKwtHIPJnO67wqeht0dEA2QbK83+T9RbHQVdPFn9IalSJ/XOY3/sp8VHWmbyVh4ufmAK0wlYZ2RXw=</login><pass>EIIrGJzUcbifSq5dq18gigNqWvcIqW3Zx682vkiaZ5PMN4RtjgwpRHrbwPX2M/hhVOFEPAwod+KVG9UWMg3ULOq/wtDonjxsKSlxredLtNA5wpiuL8igumXjEK4+ZlevQ8BateGC3IOwvoL2gma3ts1l5HfAe2PBroAiRzxZMDx9C0fscjvoz++R2X3cSpf1BhVj20VhQxnLhUszCbT9UQlFG9BsPws3+FYbb+SbKFuKu3pPlqNKoysOV1aBTVQP5ozwh7+5TkuH1Km2dDKUOOs9R4VhfCV19F/BluoX3v6s3Ebn6GTsaxtS3zKdYcxqCea3/tlxwkqvyGMdJfliCDGHnJFyJJQYuY6cpZ2U+b0upWj9M7swO7jBpnCROFqADjsQ6b/4eXuTYMt2rZ6RLHaWRA6T/7dqy4BoeyNhNoDP9+kUF6tbbg9ZKmoRJDMtpkCVKLtPEHlSLS+Guvhbzy6TyEKZ3ruR/YvT0MHGj8W4hcHcBkpB2S3OrG8SSM96oxSmtOGSKrAxAskHpwVhYJOLyfuz/joSZ9FZCCKoMgIp7RRjMCeAlxSdntvvmNPIRCPQr1hR0HOdMonCjO1ghRwLYnbtBecJzDoKV2Z8eifP+zFTas09ad0rH4EI3HMCqjWPrYUTbg7bol57lCQcWrt3dDPrO9kPElcokSCrvkKt94XRqS4CwqoqBjiqLGPv9NpL+0zAVxNMZOt3QLFuKaIA80DY8KQ9NolOlefS0enuD3Fn2N6LPEhk2QU5xftRFcyfNf5K544Yo7W517VH7nAoVk6dmlQv2e5VvrcblmIlsSjfVjoQoNN9XmxhMYWv6RLLI3655WDCufd8c4TrNoofsDY7TtCuFiBoZqWA0LTECry1LcpzMAwvSUHUlLuKQ7w9QRvionHP3C1TvPW8E10fB90p24HsNeaCXOYqzBY=</pass><param1></param1><param2></param2><param3></param3><label>OVH</label><active>true</active><retrieverType>STANDARD</retrieverType><period>MONTHLY</period><retrieverStatusList/></retriever>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:52:25 GMT
+- request:
+    method: post
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/retriever/585a9f1c498ea472a02d689a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:52:25 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585aa539498ea472a02d8043</id><transactionStatus>PENDING</transactionStatus><transactionEvents/><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:52:26 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585aa539498ea472a02d8043
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:52:26 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585aa539498ea472a02d8043</id><transactionStatus>PENDING</transactionStatus><transactionEvents
+        lastUserInfo="En attente de traitement ..."><transactionEvent><timestamp>1482335545804</timestamp><status>En
+        attente de traitement ...</status></transactionEvent></transactionEvents><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:52:26 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585aa539498ea472a02d8043
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:52:31 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585aa539498ea472a02d8043</id><transactionStatus>IN_PROGRESS</transactionStatus><transactionEvents
+        lastUserInfo="Connexion en cours ..."><transactionEvent><timestamp>1482335545804</timestamp><status>En
+        attente de traitement ...</status></transactionEvent><transactionEvent><timestamp>1482335550017</timestamp><status>Initialisation
+        ...</status></transactionEvent><transactionEvent><timestamp>1482335550127</timestamp><status>Connexion
+        en cours ...</status></transactionEvent></transactionEvents><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:52:32 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585aa539498ea472a02d8043
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:52:35 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxv
+        bmU9InllcyI/Pjx0cmFuc2FjdGlvbiB4bWxuczp4bWltZT0iaHR0cDovL3d3
+        dy53My5vcmcvMjAwNS8wNS94bWxtaW1lIj48aWQ+NTg1YWE1Mzk0OThlYTQ3
+        MmEwMmQ4MDQzPC9pZD48dHJhbnNhY3Rpb25TdGF0dXM+Q09NUExFVEVEX05P
+        VEhJTkdfTkVXX1RPX0RPV05MT0FEPC90cmFuc2FjdGlvblN0YXR1cz48dHJh
+        bnNhY3Rpb25FdmVudHMgbGFzdFVzZXJJbmZvPSJUcmFpdGVtZW50IHRlcm1p
+        bsOpLiI+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM1NTQ1
+        ODA0PC90aW1lc3RhbXA+PHN0YXR1cz5FbiBhdHRlbnRlIGRlIHRyYWl0ZW1l
+        bnQgLi4uPC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlv
+        bkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1MDAxNzwvdGltZXN0YW1wPjxz
+        dGF0dXM+SW5pdGlhbGlzYXRpb24gLi4uPC9zdGF0dXM+PC90cmFuc2FjdGlv
+        bkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1
+        MDEyNzwvdGltZXN0YW1wPjxzdGF0dXM+Q29ubmV4aW9uIGVuIGNvdXJzIC4u
+        Ljwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVu
+        dD48dGltZXN0YW1wPjE0ODIzMzU1NTI0NzE8L3RpbWVzdGFtcD48c3RhdHVz
+        PkNvbm5leGlvbiBlZmZlY3R1w6llIC4uLjwvc3RhdHVzPjwvdHJhbnNhY3Rp
+        b25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1
+        NTMzNDQ8L3RpbWVzdGFtcD48c3RhdHVzPkNoYXJnZW1lbnQgZGUgMjQgZG9j
+        dW1lbnRzIC4uLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNh
+        Y3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1NTMzNDc8L3RpbWVzdGFt
+        cD48c3RhdHVzPkRvY3VtZW50IMOgIGpvdXIuPC9zdGF0dXM+PC90cmFuc2Fj
+        dGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMz
+        NTU1MzM1MTwvdGltZXN0YW1wPjxzdGF0dXM+RG9jdW1lbnQgw6Agam91ci48
+        L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+
+        PHRpbWVzdGFtcD4xNDgyMzM1NTUzMzU1PC90aW1lc3RhbXA+PHN0YXR1cz5E
+        b2N1bWVudCDDoCBqb3VyLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48
+        dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1NTMzNTk8L3Rp
+        bWVzdGFtcD48c3RhdHVzPkRvY3VtZW50IMOgIGpvdXIuPC9zdGF0dXM+PC90
+        cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+
+        MTQ4MjMzNTU1MzM2MzwvdGltZXN0YW1wPjxzdGF0dXM+RG9jdW1lbnQgw6Ag
+        am91ci48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9u
+        RXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM1NTUzMzY3PC90aW1lc3RhbXA+PHN0
+        YXR1cz5Eb2N1bWVudCDDoCBqb3VyLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25F
+        dmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1NTMz
+        NzE8L3RpbWVzdGFtcD48c3RhdHVzPkRvY3VtZW50IMOgIGpvdXIuPC9zdGF0
+        dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1l
+        c3RhbXA+MTQ4MjMzNTU1MzM3NTwvdGltZXN0YW1wPjxzdGF0dXM+RG9jdW1l
+        bnQgw6Agam91ci48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5z
+        YWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM1NTUzMzgwPC90aW1lc3Rh
+        bXA+PHN0YXR1cz5Eb2N1bWVudCDDoCBqb3VyLjwvc3RhdHVzPjwvdHJhbnNh
+        Y3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIz
+        MzU1NTMzODY8L3RpbWVzdGFtcD48c3RhdHVzPkRvY3VtZW50IMOgIGpvdXIu
+        PC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50
+        Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1MzM5MjwvdGltZXN0YW1wPjxzdGF0dXM+
+        RG9jdW1lbnQgw6Agam91ci48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+
+        PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM1NTUzMzk3PC90
+        aW1lc3RhbXA+PHN0YXR1cz5Eb2N1bWVudCDDoCBqb3VyLjwvc3RhdHVzPjwv
+        dHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1w
+        PjE0ODIzMzU1NTM0MDI8L3RpbWVzdGFtcD48c3RhdHVzPkRvY3VtZW50IMOg
+        IGpvdXIuPC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlv
+        bkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1MzQwODwvdGltZXN0YW1wPjxz
+        dGF0dXM+RG9jdW1lbnQgw6Agam91ci48L3N0YXR1cz48L3RyYW5zYWN0aW9u
+        RXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM1NTUz
+        NDEzPC90aW1lc3RhbXA+PHN0YXR1cz5Eb2N1bWVudCDDoCBqb3VyLjwvc3Rh
+        dHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGlt
+        ZXN0YW1wPjE0ODIzMzU1NTM0MTk8L3RpbWVzdGFtcD48c3RhdHVzPkRvY3Vt
+        ZW50IMOgIGpvdXIuPC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFu
+        c2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1MzQyNTwvdGltZXN0
+        YW1wPjxzdGF0dXM+RG9jdW1lbnQgw6Agam91ci48L3N0YXR1cz48L3RyYW5z
+        YWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgy
+        MzM1NTUzNDMxPC90aW1lc3RhbXA+PHN0YXR1cz5Eb2N1bWVudCDDoCBqb3Vy
+        Ljwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVu
+        dD48dGltZXN0YW1wPjE0ODIzMzU1NTM0Mzc8L3RpbWVzdGFtcD48c3RhdHVz
+        PkRvY3VtZW50IMOgIGpvdXIuPC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50
+        Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1MzQ0Mzwv
+        dGltZXN0YW1wPjxzdGF0dXM+RG9jdW1lbnQgw6Agam91ci48L3N0YXR1cz48
+        L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFt
+        cD4xNDgyMzM1NTUzNDQ5PC90aW1lc3RhbXA+PHN0YXR1cz5Eb2N1bWVudCDD
+        oCBqb3VyLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rp
+        b25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1NTM0NTU8L3RpbWVzdGFtcD48
+        c3RhdHVzPkRvY3VtZW50IMOgIGpvdXIuPC9zdGF0dXM+PC90cmFuc2FjdGlv
+        bkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMzNTU1
+        MzQ2MTwvdGltZXN0YW1wPjxzdGF0dXM+RG9jdW1lbnQgw6Agam91ci48L3N0
+        YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRp
+        bWVzdGFtcD4xNDgyMzM1NTUzNDY3PC90aW1lc3RhbXA+PHN0YXR1cz5Eb2N1
+        bWVudCDDoCBqb3VyLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJh
+        bnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzU1NTM0NzQ8L3RpbWVz
+        dGFtcD48c3RhdHVzPlRyYWl0ZW1lbnQgdGVybWluw6kuPC9zdGF0dXM+PC90
+        cmFuc2FjdGlvbkV2ZW50PjwvdHJhbnNhY3Rpb25FdmVudHM+PHJldHJpZXZl
+        cklkPjU4NWE5ZjFjNDk4ZWE0NzJhMDJkNjg5YTwvcmV0cmlldmVySWQ+PGZv
+        dW5kRG9jdW1lbnRDb3VudD4yNDwvZm91bmREb2N1bWVudENvdW50PjwvdHJh
+        bnNhY3Rpb24+
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:52:35 GMT
+recorded_with: VCR 3.0.0

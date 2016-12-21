@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/documents/1/1000
+    body:
+      encoding: US-ASCII
+      string: |
+        <?xml version="1.0"?>
+        <documentFilter>
+          <retrieverId>585a9f1c498ea472a02d689a</retrieverId>
+        </documentFilter>
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - text/xml
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 16:38:26 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><documents count="24"
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><document><id>585a9f59498ea472a02d7dcc</id><documentId>FR11169431</documentId><parentId></parentId><date>21/12/2016
+        16:27:21</date><transactionId>585a9f1e498ea472a02d689d</transactionId><retrieverId>585a9f1c498ea472a02d689a</retrieverId><providerId>4d98668c287db3fb58b3f6e9</providerId><userId>585a84d8498e5940b622d58c</userId><documentHash>b49b378d89ac088549fd2c5f2372fbc38962c8590c327f2812f9678904555147</documentHash><metadatas><metadata><name>AMOUNT</name><value>2.39</value></metadata><metadata><name>FILE_EXTENSION</name><value>.pdf</value></metadata><metadata><name>CURRENCY</name><value>EUR</value></metadata><metadata><name>DOC_TYPE</name><value>FACTURE</value></metadata><metadata><name>DATE</name><value>18/09/2014</value></metadata><metadata><name>LIBELLE</name><value>Facture</value></metadata><metadata><name>CONTENT_TYPE</name><value>application/pdf</value></metadata></metadatas><tags/><source>BROKER</source></document></documents>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 16:38:28 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/document/585a9f59498ea472a02d7dcc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 16:38:28 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><document xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f59498ea472a02d7dcc</id><documentId>FR11169431</documentId><parentId></parentId><date>21/12/2016
+        16:27:21</date><transactionId>585a9f1e498ea472a02d689d</transactionId><retrieverId>585a9f1c498ea472a02d689a</retrieverId><providerId>4d98668c287db3fb58b3f6e9</providerId><documentHash>97f90eac0d07fe5ade8f60a0fa54cdfc</documentHash><metadatas><metadata><name>AMOUNT</name><value>2.39</value></metadata><metadata><name>FILE_EXTENSION</name><value>.pdf</value></metadata><metadata><name>CURRENCY</name><value>EUR</value></metadata><metadata><name>DOC_TYPE</name><value>FACTURE</value></metadata><metadata><name>DATE</name><value>18/09/2014</value></metadata><metadata><name>LIBELLE</name><value>Facture</value></metadata><metadata><name>CONTENT_TYPE</name><value>application/pdf</value></metadata></metadatas><tags/><source>BROKER</source><binaryData
+        xmime:contentType="application/pdf">JVBERi0xLjMKJf////8KMSAwIG9iago8PCAvQ3JlYXRvciA8ZmVmZjAwNTAw\nMDcyMDA2MTAwNzcwMDZlPgovUHJvZHVjZXIgPGZlZmYwMDUwMDA3MjAwNjEw\nMDc3MDA2ZT4KPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cK\nL1BhZ2VzIDMgMCBSCj4+CmVuZG9iagozIDAgb2JqCjw8IC9UeXBlIC9QYWdl\ncwovQ291bnQgMgovS2lkcyBbNSAwIFIgOCAwIFJdCj4+CmVuZG9iago0IDAg\nb2JqCjw8IC9MZW5ndGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQg\nVGQKL0YxLjAgMTIgVGYKWzw1MD4gNDAgPDYxNjc2NTIwMzEyZjMyPl0gVEoK\nRVQKClEKCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvUGFn\nZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQov\nQ29udGVudHMgNCAwIFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAv\nVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAg\nNiAwIFIKPj4KPj4KPj4KZW5kb2JqCjYgMCBvYmoKPDwgL1R5cGUgL0ZvbnQK\nL1N1YnR5cGUgL1R5cGUxCi9CYXNlRm9udCAvSGVsdmV0aWNhCi9FbmNvZGlu\nZyAvV2luQW5zaUVuY29kaW5nCj4+CmVuZG9iago3IDAgb2JqCjw8IC9MZW5n\ndGggNjgKPj4Kc3RyZWFtCnEKCkJUCjM2IDc0Ny4zODQgVGQKL0YxLjAgMTIg\nVGYKWzw1MD4gNDAgPDYxNjc2NTIwMzIyZjMyPl0gVEoKRVQKClEKCmVuZHN0\ncmVhbQplbmRvYmoKOCAwIG9iago8PCAvVHlwZSAvUGFnZQovUGFyZW50IDMg\nMCBSCi9NZWRpYUJveCBbMCAwIDYxMi4wIDc5Mi4wXQovQ29udGVudHMgNyAw\nIFIKL1Jlc291cmNlcyA8PCAvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VC\nIC9JbWFnZUMgL0ltYWdlSV0KL0ZvbnQgPDwgL0YxLjAgNiAwIFIKPj4KPj4K\nPj4KZW5kb2JqCnhyZWYKMCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAw\nMDAxNSAwMDAwMCBuIAowMDAwMDAwMTA5IDAwMDAwIG4gCjAwMDAwMDAxNTgg\nMDAwMDAgbiAKMDAwMDAwMDIyMSAwMDAwMCBuIAowMDAwMDAwMzM5IDAwMDAw\nIG4gCjAwMDAwMDA1MTcgMDAwMDAgbiAKMDAwMDAwMDYxNCAwMDAwMCBuIAow\nMDAwMDAwNzMyIDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgOQovUm9vdCAy\nIDAgUgovSW5mbyAxIDAgUgo+PgpzdGFydHhyZWYKOTEwCiUlRU9GCg==\n</binaryData></document>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 16:38:56 GMT

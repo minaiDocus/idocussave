@@ -30,11 +30,9 @@ fr:
         description: 'Description'
       retriever:
         connector_id: Fournisseur/Banque
-        type: Type
+        capabilities: Type
         journal: Journal
         name: Nom personnalisé
-        login: Identifiant
-        pass: Mot de passe
       new_provider_request:
         state: Etat
         name: Nom

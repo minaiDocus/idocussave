@@ -14,17 +14,7 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
 
   def new
     @retriever = Retriever.new
-    @retriever.connector_id = params[:connector_id].try(:to_i)
-    if @retriever.connector
-      case @retriever.connector['capabilites']
-      when ['bank']
-        @retriever.type = 'bank'
-      when ['providers']
-        @retriever.type = 'provider'
-      else
-        @retriever.type = 'both'
-      end
-    end
+    @retriever.connector_id = params[:connector_id]
   end
 
   def create
@@ -45,13 +35,8 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   def update
     @retriever.confirm_dyn_params = true
     if @retriever.update(retriever_params)
-      if @retriever.api_id.present?
-        @retriever.udpate_connection
-        flash[:success] = 'Modification en cours.'
-      else
-        @retriever.create_connection
-        flash[:success] = 'Création en cours.'
-      end
+      @retriever.configure_connection
+      flash[:success] = 'Configuration en cours.'
       redirect_to account_organization_customer_retrievers_path(@organization, @customer)
     else
       render :edit
@@ -67,8 +52,8 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
     redirect_to account_organization_customer_retrievers_path(@organization, @customer)
   end
 
-  def fetch
-    @retriever.synchronize
+  def sync
+    @retriever.run
     flash[:success] = 'Traitement en cours...'
     redirect_to account_organization_customer_retrievers_path(@organization, @customer)
   end
@@ -147,7 +132,7 @@ private
       if action_name == 'destroy' && (@retriever.ready? || @retriever.error? || @retriever.unavailable?)
         is_ok = true
       elsif @retriever.ready? || @retriever.error?
-        is_ok = true unless action_name == 'sync' && @retriever.api_id.nil?
+        is_ok = true unless action_name == 'sync' && @retriever.budgea_id.nil?
       end
     elsif action_name.in?(%w(waiting_additionnal_info additionnal_info)) && @retriever.waiting_additionnal_info?
       is_ok = true
@@ -160,8 +145,8 @@ private
   end
 
   def load_connectors
-    @connectors = BudgeaConnector.all
-    @providers  = BudgeaConnector.providers
-    @banks      = BudgeaConnector.banks
+    @connectors = Connector.budgea.asc(:name).list
+    @providers  = Connector.budgea.providers.asc(:name)
+    @banks      = Connector.budgea.banks.asc(:name)
   end
 end

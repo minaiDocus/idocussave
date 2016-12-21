@@ -1,0 +1,357 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/retriever
+    body:
+      encoding: US-ASCII
+      string: |
+        <?xml version="1.0"?>
+        <retriever>
+          <providerId>4d98668c287db3fb58b3f6e9</providerId>
+          <login>John Doe</login>
+          <pass>12345</pass>
+          <label>OVH</label>
+        </retriever>
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Content-Type:
+      - text/xml
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:26:20 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><retriever xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f1c498ea472a02d689a</id><providerId>4d98668c287db3fb58b3f6e9</providerId><providerName>OVH</providerName><login>sq36lKfh1bH1vX8VibCuZt2HMhr5ehUwQ+BfyQPoljx3JeDoiEbTxUmggNwMvgld/6yE///aOsM/Y3Rj/QfKMWHVaF8bJreK2Ydd1WiOlzCshuLKB9fvCrQjIMVcZax33El7M3d7Kpqaw2pUcK+DKfMbpt2M27248j3WUEf4FCsV8Q4dw272MUEHDC2uOL8kUoqlUIK+wP67xWvfwiliUvKWIBo2kT52DwBOGB8q5bMG6k/0MSU5UzBK72xhhkg+4+/DV7Vlbte4gOTSYGK4Tg3/nLT0qJ7iMWr1N6nCL8QTbk9ztKgsXzM5f0F87QYKAGeTnREGY9xZFeQf8hGzqP6EbbI34rjsx6Z0Vli5tRAbKxSmFFlWxuCIDZm4TIYwghO8ogoWtiuIW2zuKLcCesyTiuPg8fVYfDQhWHn9x7xCpVQtCGeh/J6zDZ1jqj0uU4PYI0AvSRAmm75YAKGO645ifdwPXNHLviJEduUWEqnTb/EPT9cHtivtachA7jqKHaDxclL1Ad/UaGVHlcXmDU++CgLv7FPRy9kiZ3yIkeRIQ/0jzyTKHiGBRHiQPxW0nOcXnD5pRxazzLv1dbHPZzQumF3szFpywC/UPp0WyPKs3mdBuaSM1PKWZLzDYFhekzDlJw4wXPHR+QiIHLnBUwoK9tI6kaqfNuTege3U9wuojqErCDIn9tPC4ggZEmpNQpLUt3amG2OVKtS+Kiar6+NUJYctf6uBiIWxyUK7X56E35o94YNCHbAXtVt5AkDdk2Uwc9BWdXvPR1sgmJdhrmdGPtuCdHIZF1h3fLMWcO4yJtC7J2MFlsRcf8GasqUR80fNLJoZSsOMllRedTn5+PwIo1s5anry6aRgOtmYVLMEBz+5PQ8NNFvWEI0+i5EOkyekbRxDqLTJtLl2uGXdocFcDvqhRMqiIvE2KB/CGzE=</login><pass>r/e5ZzFtvXrPKKN018DQ0rdSJfEo8dIPzQdWEBMAc7e4FHsVk/dGu4zVRYFeuk8/k8oJK6lW6s0IMMD3Q5N0NGTOQUKcEoryvL1gAOeRAU+1pl/06v+gz1U+epcQhfSj2/YIYzWBE2p81ZRknjru/VHWBCgQiEfFRVhi8jibZhM041I3szuwpkhGjprCc/sX7EPcF9SL0jzjJwbjjlnOc746jYPfSLjgpgl+3jYBdzq1MFcyNEV6mjJuJn53jD4ojf0zJGuLHaBBDxOpTxnPtSFXxo5VM57+Nk3AdFM3CHids1HoCvINUFlxCyP1tCoYoHoSy34S5aQKi9erI8aNxj3qIM2TEZQaTt7hCFT594dv7Zc5L0ZsdznZ9n+6yyk8+1fuGeJKTADZkjMN6fAcO53SIQ2GQxmp2nln7oejfi0pMAzKCeM03Rb2sP32cdZxzfJ86UbQpQDH8vjEku2zXrj6lHgYwUzF2loES7xNpPFztIQx+QAvrgNrDg2JItncU6ZI8ot7fydTyae+YbhZF1Gqo3TIjwH2QtJhUdmUBCWn8AtxDxKlyldQrEbSADCgtEOwr+d2863Q+El9XTTx0QEWBaNcs0n70f2xvctyLH2Qqzf82ayL9YzWicW5tbPwbxqDQ528k7A30Fx2Qdxw7xnZbEqVsY8NCfD2e2A5H8CxiQd84KZgGbVG7ZMtMz+ZIE5TO10Vy1tY9Y5qGOMNacPakIO901wwA2OKcy8r/B2VcLpU8BAsi1Y8ifSgXjuhit4etz8EBvHO6sazIQw4H/wyu5V75/nBviLdVddJdpDqoWzFfd3UKEr886tHCrTQPMa3s60Q3etsyUxMZ1T3Z8Di/tV3Xxa3uZ6WeHSbjPlbOltJwcAjWvJR6CYC1bnS6FHauXBJDuB6RWW+aZAiTy85UESz3MerSKQ1kD4NlTg=</pass><label>OVH</label><active>true</active><retrieverType>STANDARD</retrieverType><period>MONTHLY</period><retrieverStatusList/></retriever>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:26:22 GMT
+- request:
+    method: post
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/retriever/585a9f1c498ea472a02d689a
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:26:22 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f1e498ea472a02d689d</id><transactionStatus>PENDING</transactionStatus><transactionEvents/><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:26:23 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585a9f1e498ea472a02d689d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:26:23 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f1e498ea472a02d689d</id><transactionStatus>PENDING</transactionStatus><transactionEvents
+        lastUserInfo="En attente de traitement ..."><transactionEvent><timestamp>1482333982856</timestamp><status>En
+        attente de traitement ...</status></transactionEvent></transactionEvents><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:26:24 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585a9f1e498ea472a02d689d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:26:26 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><transaction
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"><id>585a9f1e498ea472a02d689d</id><transactionStatus>IN_PROGRESS</transactionStatus><transactionEvents
+        lastUserInfo="Connexion en cours ..."><transactionEvent><timestamp>1482333982856</timestamp><status>En
+        attente de traitement ...</status></transactionEvent><transactionEvent><timestamp>1482333984041</timestamp><status>Initialisation
+        ...</status></transactionEvent><transactionEvent><timestamp>1482333984152</timestamp><status>Connexion
+        en cours ...</status></transactionEvent></transactionEvents><retrieverId>585a9f1c498ea472a02d689a</retrieverId><foundDocumentCount>0</foundDocumentCount></transaction>
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:26:27 GMT
+- request:
+    method: get
+    uri: http://585a84d8498e5940b622d58c@localhost:8183/transaction/585a9f1e498ea472a02d689d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/xml; charset=UTF-8
+      Date:
+      - Wed, 21 Dec 2016 15:27:23 GMT
+      Accept-Ranges:
+      - bytes
+      Server:
+      - Restlet-Framework/2.2.1
+      Vary:
+      - Accept-Charset, Accept-Encoding, Accept-Language, Accept
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxv
+        bmU9InllcyI/Pjx0cmFuc2FjdGlvbiB4bWxuczp4bWltZT0iaHR0cDovL3d3
+        dy53My5vcmcvMjAwNS8wNS94bWxtaW1lIj48aWQ+NTg1YTlmMWU0OThlYTQ3
+        MmEwMmQ2ODlkPC9pZD48dHJhbnNhY3Rpb25TdGF0dXM+Q09NUExFVEVEPC90
+        cmFuc2FjdGlvblN0YXR1cz48dHJhbnNhY3Rpb25FdmVudHMgbGFzdFVzZXJJ
+        bmZvPSJUcmFpdGVtZW50IHRlcm1pbsOpLiI+PHRyYW5zYWN0aW9uRXZlbnQ+
+        PHRpbWVzdGFtcD4xNDgyMzMzOTgyODU2PC90aW1lc3RhbXA+PHN0YXR1cz5F
+        biBhdHRlbnRlIGRlIHRyYWl0ZW1lbnQgLi4uPC9zdGF0dXM+PC90cmFuc2Fj
+        dGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50Pjx0aW1lc3RhbXA+MTQ4MjMz
+        Mzk4NDA0MTwvdGltZXN0YW1wPjxzdGF0dXM+SW5pdGlhbGlzYXRpb24gLi4u
+        PC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjx0cmFuc2FjdGlvbkV2ZW50
+        Pjx0aW1lc3RhbXA+MTQ4MjMzMzk4NDE1MjwvdGltZXN0YW1wPjxzdGF0dXM+
+        Q29ubmV4aW9uIGVuIGNvdXJzIC4uLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25F
+        dmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzM5ODY0
+        Mjc8L3RpbWVzdGFtcD48c3RhdHVzPkNvbm5leGlvbiBlZmZlY3R1w6llIC4u
+        Ljwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVu
+        dD48dGltZXN0YW1wPjE0ODIzMzM5ODY4NzM8L3RpbWVzdGFtcD48c3RhdHVz
+        PkNoYXJnZW1lbnQgZGUgMjQgZG9jdW1lbnRzIC4uLjwvc3RhdHVzPjwvdHJh
+        bnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0
+        ODIzMzM5ODY4NzU8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1l
+        bnQgZHUgZG9jdW1lbnQgZHUgMTgvMDYvMjAxNiAuLi48L3N0YXR1cz48L3Ry
+        YW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4x
+        NDgyMzMzOTg4NjYzPC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2Vt
+        ZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rp
+        b25FdmVudD48dGltZXN0YW1wPjE0ODIzMzM5ODg4ODA8L3RpbWVzdGFtcD48
+        c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgvMDUv
+        MjAxNiAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0
+        aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzMzOTkxMzM4PC90aW1lc3RhbXA+
+        PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNh
+        Y3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIz
+        MzM5OTE2MTE8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQg
+        ZHUgZG9jdW1lbnQgZHUgMTgvMDQvMjAxNiAuLi48L3N0YXR1cz48L3RyYW5z
+        YWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgy
+        MzMzOTkzNTY4PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50
+        IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25F
+        dmVudD48dGltZXN0YW1wPjE0ODIzMzM5OTM3Nzk8L3RpbWVzdGFtcD48c3Rh
+        dHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgvMDMvMjAx
+        NiAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9u
+        RXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzMzOTk1ODEzPC90aW1lc3RhbXA+PHN0
+        YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rp
+        b25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzM5
+        OTU5NzI8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUg
+        ZG9jdW1lbnQgZHUgMTgvMDIvMjAxNiAuLi48L3N0YXR1cz48L3RyYW5zYWN0
+        aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzMz
+        OTk4MTg5PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9r
+        Ljwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVu
+        dD48dGltZXN0YW1wPjE0ODIzMzM5OTg1NDI8L3RpbWVzdGFtcD48c3RhdHVz
+        PlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTcvMDEvMjAxNiAu
+        Li48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZl
+        bnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDAwMzk3PC90aW1lc3RhbXA+PHN0YXR1
+        cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25F
+        dmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMDA2
+        MDE8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9j
+        dW1lbnQgZHUgMjAvMTIvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9u
+        RXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDAy
+        NTM3PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwv
+        c3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48
+        dGltZXN0YW1wPjE0ODIzMzQwMDI3NDQ8L3RpbWVzdGFtcD48c3RhdHVzPlTD
+        qWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgvMTEvMjAxNSAuLi48
+        L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+
+        PHRpbWVzdGFtcD4xNDgyMzM0MDA0NjIyPC90aW1lc3RhbXA+PHN0YXR1cz5U
+        w6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVu
+        dD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMDQ4MzM8
+        L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1l
+        bnQgZHUgMjEvMTAvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZl
+        bnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDA2ODYx
+        PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3Rh
+        dHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGlt
+        ZXN0YW1wPjE0ODIzMzQwMDcwNTQ8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzD
+        qWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMjEvMTAvMjAxNSAuLi48L3N0
+        YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRp
+        bWVzdGFtcD4xNDgyMzM0MDA4ODgzPC90aW1lc3RhbXA+PHN0YXR1cz5Uw6ls
+        w6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48
+        dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMDkxODk8L3Rp
+        bWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQg
+        ZHUgMTgvMTAvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+
+        PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDExMDkwPC90
+        aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVz
+        PjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0
+        YW1wPjE0ODIzMzQwMTEyOTc8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNo
+        YXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgvMDkvMjAxNSAuLi48L3N0YXR1
+        cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVz
+        dGFtcD4xNDgyMzM0MDEzMTk1PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6lj
+        aGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJh
+        bnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMTM0MDA8L3RpbWVz
+        dGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUg
+        MTgvMDgvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRy
+        YW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDE1MzUyPC90aW1l
+        c3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwv
+        dHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1w
+        PjE0ODIzMzQwMTU1NTc8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJn
+        ZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTUvMDcvMjAxNSAuLi48L3N0YXR1cz48
+        L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFt
+        cD4xNDgyMzM0MDE3NTE0PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFy
+        Z2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNh
+        Y3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMTc3MjI8L3RpbWVzdGFt
+        cD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgv
+        MDYvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5z
+        YWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDE5NTczPC90aW1lc3Rh
+        bXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJh
+        bnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0
+        ODIzMzQwMTk3ODE8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1l
+        bnQgZHUgZG9jdW1lbnQgZHUgMTgvMDUvMjAxNSAuLi48L3N0YXR1cz48L3Ry
+        YW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4x
+        NDgyMzM0MDIyMDA1PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2Vt
+        ZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rp
+        b25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMjIyMTk8L3RpbWVzdGFtcD48
+        c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTYvMDQv
+        MjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0
+        aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDI0MTA5PC90aW1lc3RhbXA+
+        PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNh
+        Y3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIz
+        MzQwMjQzMTg8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQg
+        ZHUgZG9jdW1lbnQgZHUgMTgvMDMvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5z
+        YWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgy
+        MzM0MDI2Njk3PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50
+        IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25F
+        dmVudD48dGltZXN0YW1wPjE0ODIzMzQwMjcwMzI8L3RpbWVzdGFtcD48c3Rh
+        dHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTcvMDIvMjAx
+        NSAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9u
+        RXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDI5Mjg3PC90aW1lc3RhbXA+PHN0
+        YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rp
+        b25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQw
+        Mjk1MjY8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUg
+        ZG9jdW1lbnQgZHUgMTgvMDEvMjAxNSAuLi48L3N0YXR1cz48L3RyYW5zYWN0
+        aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0
+        MDMxNjEyPC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9r
+        Ljwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVu
+        dD48dGltZXN0YW1wPjE0ODIzMzQwMzE4MTg8L3RpbWVzdGFtcD48c3RhdHVz
+        PlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTkvMTIvMjAxNCAu
+        Li48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZl
+        bnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDMzODAyPC90aW1lc3RhbXA+PHN0YXR1
+        cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25F
+        dmVudD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMzQw
+        MDk8L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9j
+        dW1lbnQgZHUgMTcvMTEvMjAxNCAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9u
+        RXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDM1
+        ODcwPC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwv
+        c3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48
+        dGltZXN0YW1wPjE0ODIzMzQwMzYwNzY8L3RpbWVzdGFtcD48c3RhdHVzPlTD
+        qWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1lbnQgZHUgMTgvMTAvMjAxNCAuLi48
+        L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZlbnQ+PHRyYW5zYWN0aW9uRXZlbnQ+
+        PHRpbWVzdGFtcD4xNDgyMzM0MDM3OTcyPC90aW1lc3RhbXA+PHN0YXR1cz5U
+        w6lsw6ljaGFyZ2VtZW50IG9rLjwvc3RhdHVzPjwvdHJhbnNhY3Rpb25FdmVu
+        dD48dHJhbnNhY3Rpb25FdmVudD48dGltZXN0YW1wPjE0ODIzMzQwMzgxODI8
+        L3RpbWVzdGFtcD48c3RhdHVzPlTDqWzDqWNoYXJnZW1lbnQgZHUgZG9jdW1l
+        bnQgZHUgMTgvMDkvMjAxNCAuLi48L3N0YXR1cz48L3RyYW5zYWN0aW9uRXZl
+        bnQ+PHRyYW5zYWN0aW9uRXZlbnQ+PHRpbWVzdGFtcD4xNDgyMzM0MDQwMTEx
+        PC90aW1lc3RhbXA+PHN0YXR1cz5Uw6lsw6ljaGFyZ2VtZW50IG9rLjwvc3Rh
+        dHVzPjwvdHJhbnNhY3Rpb25FdmVudD48dHJhbnNhY3Rpb25FdmVudD48dGlt
+        ZXN0YW1wPjE0ODIzMzQwNDA0MTk8L3RpbWVzdGFtcD48c3RhdHVzPlRyYWl0
+        ZW1lbnQgdGVybWluw6kuPC9zdGF0dXM+PC90cmFuc2FjdGlvbkV2ZW50Pjwv
+        dHJhbnNhY3Rpb25FdmVudHM+PHJldHJpZXZlZERvY3VtZW50cz48ZG9jdW1l
+        bnRJZD41ODVhOWY1ODQ5OGVhNDcyYTAyZDdjNDM8L2RvY3VtZW50SWQ+PGRv
+        Y3VtZW50SWQ+NTg1YTlmNTg0OThlYTQ3MmEwMmQ3YzRlPC9kb2N1bWVudElk
+        Pjxkb2N1bWVudElkPjU4NWE5ZjU4NDk4ZWE0NzJhMDJkN2M1OTwvZG9jdW1l
+        bnRJZD48ZG9jdW1lbnRJZD41ODVhOWY1ODQ5OGVhNDcyYTAyZDdjNjQ8L2Rv
+        Y3VtZW50SWQ+PGRvY3VtZW50SWQ+NTg1YTlmNTg0OThlYTQ3MmEwMmQ3YzZm
+        PC9kb2N1bWVudElkPjxkb2N1bWVudElkPjU4NWE5ZjU4NDk4ZWE0NzJhMDJk
+        N2M3YTwvZG9jdW1lbnRJZD48ZG9jdW1lbnRJZD41ODVhOWY1OTQ5OGVhNDcy
+        YTAyZDdjODU8L2RvY3VtZW50SWQ+PGRvY3VtZW50SWQ+NTg1YTlmNTk0OThl
+        YTQ3MmEwMmQ3YzkwPC9kb2N1bWVudElkPjxkb2N1bWVudElkPjU4NWE5ZjU5
+        NDk4ZWE0NzJhMDJkN2NlMTwvZG9jdW1lbnRJZD48ZG9jdW1lbnRJZD41ODVh
+        OWY1OTQ5OGVhNDcyYTAyZDdjZWM8L2RvY3VtZW50SWQ+PGRvY3VtZW50SWQ+
+        NTg1YTlmNTk0OThlYTQ3MmEwMmQ3Y2Y3PC9kb2N1bWVudElkPjxkb2N1bWVu
+        dElkPjU4NWE5ZjU5NDk4ZWE0NzJhMDJkN2QwMjwvZG9jdW1lbnRJZD48ZG9j
+        dW1lbnRJZD41ODVhOWY1OTQ5OGVhNDcyYTAyZDdkMGQ8L2RvY3VtZW50SWQ+
+        PGRvY3VtZW50SWQ+NTg1YTlmNTk0OThlYTQ3MmEwMmQ3ZDE4PC9kb2N1bWVu
+        dElkPjxkb2N1bWVudElkPjU4NWE5ZjU5NDk4ZWE0NzJhMDJkN2QyMzwvZG9j
+        dW1lbnRJZD48ZG9jdW1lbnRJZD41ODVhOWY1OTQ5OGVhNDcyYTAyZDdkMmU8
+        L2RvY3VtZW50SWQ+PGRvY3VtZW50SWQ+NTg1YTlmNTk0OThlYTQ3MmEwMmQ3
+        ZDM5PC9kb2N1bWVudElkPjxkb2N1bWVudElkPjU4NWE5ZjU5NDk4ZWE0NzJh
+        MDJkN2Q0NDwvZG9jdW1lbnRJZD48ZG9jdW1lbnRJZD41ODVhOWY1OTQ5OGVh
+        NDcyYTAyZDdkNGY8L2RvY3VtZW50SWQ+PGRvY3VtZW50SWQ+NTg1YTlmNTk0
+        OThlYTQ3MmEwMmQ3ZDVhPC9kb2N1bWVudElkPjxkb2N1bWVudElkPjU4NWE5
+        ZjU5NDk4ZWE0NzJhMDJkN2Q2NTwvZG9jdW1lbnRJZD48ZG9jdW1lbnRJZD41
+        ODVhOWY1OTQ5OGVhNDcyYTAyZDdkYjY8L2RvY3VtZW50SWQ+PGRvY3VtZW50
+        SWQ+NTg1YTlmNTk0OThlYTQ3MmEwMmQ3ZGMxPC9kb2N1bWVudElkPjxkb2N1
+        bWVudElkPjU4NWE5ZjU5NDk4ZWE0NzJhMDJkN2RjYzwvZG9jdW1lbnRJZD48
+        L3JldHJpZXZlZERvY3VtZW50cz48cmV0cmlldmVySWQ+NTg1YTlmMWM0OThl
+        YTQ3MmEwMmQ2ODlhPC9yZXRyaWV2ZXJJZD48Zm91bmREb2N1bWVudENvdW50
+        PjI0PC9mb3VuZERvY3VtZW50Q291bnQ+PC90cmFuc2FjdGlvbj4=
+    http_version: 
+  recorded_at: Wed, 21 Dec 2016 15:27:25 GMT
