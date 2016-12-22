@@ -12,7 +12,7 @@ Idocus::Application.configure do
   config.action_controller.perform_caching = true
 
   # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
+  config.action_dispatch.x_sendfile_header = 'X-Sendfile'
 
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
@@ -24,13 +24,13 @@ Idocus::Application.configure do
   config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :uuid ]
+  config.log_tags = [:uuid]
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
   # Use a different cache store in production
-  config.cache_store = :dalli_store, { namespace: "iDocus_production" }
+  config.cache_store = :dalli_store, { namespace: 'iDocus_production' }
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
@@ -42,7 +42,7 @@ Idocus::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = { :host => 'my.idocus.com' }
+  config.action_mailer.default_url_options = { host: 'my.idocus.com' }
 
   config.action_mailer.delivery_method = :smtp
 

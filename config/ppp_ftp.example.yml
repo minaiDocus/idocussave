@@ -1,0 +1,6 @@
+ppp_ftp:
+  path:     '/path_to_data'
+  server:   'ftp.example.com'
+  username: 'username'
+  password: 'password'
+  provider: 'scanning_provider'
