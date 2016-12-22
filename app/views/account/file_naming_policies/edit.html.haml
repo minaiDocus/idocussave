@@ -18,32 +18,32 @@
               %th.hint Commentaire
           %tbody
             %tr
-              %td.name= label_tag 'file_naming_policy[first_user_identifier]', t('mongoid.models.file_naming_policy.attributes.first_user_identifier')
+              %td.name= label_tag 'file_naming_policy[first_user_identifier]', t('activerecord.models.file_naming_policy.attributes.first_user_identifier')
               %td.is_used= f.input_field :first_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom de la société', 'company']], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:first_user_identifier_position)) }
                 = f.input_field :first_user_identifier_position, as: :integer, include_blank: false, label: false
               %td.hint
                 %b Obligatoire
             %tr
-              %td.name= label_tag 'file_naming_policy[second_user_identifier]', t('mongoid.models.file_naming_policy.attributes.second_user_identifier')
+              %td.name= label_tag 'file_naming_policy[second_user_identifier]', t('activerecord.models.file_naming_policy.attributes.second_user_identifier')
               %td.is_used= f.input_field :second_user_identifier, collection: [['Code client iDocus', 'code'], ['Nom de la société', 'company']], label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:second_user_identifier_position)) }
                 = f.input_field :second_user_identifier_position, as: :integer, label: false
               %td.hint Facultatif
             %tr
-              %td.name= label_tag 'file_naming_policy[is_journal_used]', t('mongoid.models.file_naming_policy.attributes.is_journal_used')
+              %td.name= label_tag 'file_naming_policy[is_journal_used]', t('activerecord.models.file_naming_policy.attributes.is_journal_used')
               %td.is_used= f.input_field :is_journal_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:journal_position)) }
                 = f.input_field :journal_position, as: :integer, include_blank: false, label: false
               %td.hint Facultatif
             %tr
-              %td.name= label_tag 'file_naming_policy[is_period_used]', t('mongoid.models.file_naming_policy.attributes.is_period_used')
+              %td.name= label_tag 'file_naming_policy[is_period_used]', t('activerecord.models.file_naming_policy.attributes.is_period_used')
               %td.is_used= f.input_field :is_period_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:period_position)) }
                 = f.input_field :period_position, as: :integer, include_blank: false, label: false
               %td.hint Facultatif
             %tr
-              %td.name= label_tag 'file_naming_policy[is_piece_number_used]', t('mongoid.models.file_naming_policy.attributes.is_piece_number_used')
+              %td.name= label_tag 'file_naming_policy[is_piece_number_used]', t('activerecord.models.file_naming_policy.attributes.is_piece_number_used')
               %td.is_used= f.input_field :is_piece_number_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:piece_number_position)) }
                 = f.input_field :piece_number_position, as: :integer, include_blank: false, label: false
@@ -51,7 +51,7 @@
         %table.table-condensed.well
           %tbody
             %tr
-              %td.name= label_tag 'file_naming_policy[is_third_party_used]', t('mongoid.models.file_naming_policy.attributes.is_third_party_used')
+              %td.name= label_tag 'file_naming_policy[is_third_party_used]', t('activerecord.models.file_naming_policy.attributes.is_third_party_used')
               %td.is_used= f.input_field :is_third_party_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:third_party_position)) }
                 = f.input_field :third_party_position, as: :integer, label: false
@@ -62,12 +62,12 @@
                   %li
                     %b En l'activant, votre fichier ne vous sera livré qu'après le traitement en pré-affectation comptable, sous réserve que la donnée soit disponible.
             %tr
-              %td.name= label_tag 'file_naming_policy[is_invoice_number_used]', t('mongoid.models.file_naming_policy.attributes.is_invoice_number_used')
+              %td.name= label_tag 'file_naming_policy[is_invoice_number_used]', t('activerecord.models.file_naming_policy.attributes.is_invoice_number_used')
               %td.is_used= f.input_field :is_invoice_number_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:invoice_number_position)) }
                 = f.input_field :invoice_number_position, as: :integer, label: false
             %tr
-              %td.name= label_tag 'file_naming_policy[is_invoice_date_used]', t('mongoid.models.file_naming_policy.attributes.is_invoice_date_used')
+              %td.name= label_tag 'file_naming_policy[is_invoice_date_used]', t('activerecord.models.file_naming_policy.attributes.is_invoice_date_used')
               %td.is_used= f.input_field :is_invoice_date_used, collection: [['Oui', true], ['Non', false]], include_blank: false, label: false
               %td.position{ class: ('error' if @file_naming_policy.errors.keys.include?(:invoice_date_position)) }
                 = f.input_field :invoice_date_position, as: :integer, label: false

@@ -1,6 +1,6 @@
 %li{ :id => "original_#{pack.original_document_id}_#{pack.id}", :class => (pack.owner == @user ? 'own' : 'shared') }
   %span.action
-    %a.do-popover{ "data-content" => html_pack_info(pack), :href => "#" }
+    %a.do-popover{ :href => "#", "data-content" => html_pack_info(pack) }
       %i.icon-info-sign
     - if @user.active?
       %a.do-select.do-tooltip{ :href => "#", :title => "sélectionner" }

@@ -9,12 +9,12 @@
         .control-group
           = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
           .controls
-            = text_field_tag 'notification[to]', Settings.notify_ibiza_deliveries_to.join(', ')
+            = text_field_tag 'notification[to]', Settings.first.notify_ibiza_deliveries_to.join(', ')
             %span.help-block Séparer les valeurs par une virgule. La deuxième et les suivantes seront en copie.
         .control-group
           = label_tag 'notification[type]', 'Type', class: 'control-label'
           .controls
-            = select_tag 'notification[type]', options_for_select([['Désactivé', 'no'], ['Erreur uniquement', 'error'], ['Tous', 'yes']], Settings.notify_on_ibiza_delivery)
+            = select_tag 'notification[type]', options_for_select([['Désactivé', 'no'], ['Erreur uniquement', 'error'], ['Tous', 'yes']], Settings.first.notify_on_ibiza_delivery)
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'
           = link_to t('actions.cancel'), admin_notification_settings_path, class: 'btn'

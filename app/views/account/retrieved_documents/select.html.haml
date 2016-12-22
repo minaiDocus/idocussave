@@ -12,8 +12,8 @@
           %thead
             %tr
               %th= label_tag 'document_contains[service_name]', 'Service'
-              %th= label_tag 'document_contains[date][$gte]',   'Date de début'
-              %th= label_tag 'document_contains[date][$lte]',   'Date de fin'
+              %th= label_tag 'document_contains[date][>=]',   'Date de début'
+              %th= label_tag 'document_contains[date][<=]',   'Date de fin'
               %th= label_tag 'document_contains[name]',         'Nom original'
               %th
           %tbody
@@ -26,12 +26,12 @@
                   = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'input-medium'
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][$gte]', (params[:document_contains][:date]['$gte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'document_contains[date][>=]', (params[:document_contains][:date]['>='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][$lte]', (params[:document_contains][:date]['$lte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'document_contains[date][<=]', (params[:document_contains][:date]['<='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td= text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'input-medium'
@@ -42,8 +42,8 @@
       = form_tag validate_account_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
         = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
-        = hidden_field_tag 'document_contains[date][$gte]',   (params[:document_contains][:date]['$gte'] rescue '')
-        = hidden_field_tag 'document_contains[date][$lte]',   (params[:document_contains][:date]['$lte'] rescue '')
+        = hidden_field_tag 'document_contains[date][>=]',   (params[:document_contains][:date]['>='] rescue '')
+        = hidden_field_tag 'document_contains[date][<=]',   (params[:document_contains][:date]['<='] rescue '')
         = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
         = render 'shared/list_options', collection: @documents
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom

@@ -7,12 +7,12 @@
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
-            %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-            %th= sortable :updated_at, t('mongoid.models.common.attributes.updated_at')
-            %th= sortable :state,      t('mongoid.models.fiduceo_provider_wish.attributes.state')
-            %th= sortable :name,       t('mongoid.models.fiduceo_provider_wish.attributes.name')
-            %th= sortable :url,        t('mongoid.models.fiduceo_provider_wish.attributes.url')
-            %th= sortable :login,      t('mongoid.models.fiduceo_provider_wish.attributes.login')
+            %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+            %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at')
+            %th= sortable :state,      t('activerecord.models.fiduceo_provider_wish.attributes.state')
+            %th= sortable :name,       t('activerecord.models.fiduceo_provider_wish.attributes.name')
+            %th= sortable :url,        t('activerecord.models.fiduceo_provider_wish.attributes.url')
+            %th= sortable :login,      t('activerecord.models.fiduceo_provider_wish.attributes.login')
         %tbody
           - @provider_wishes.each do |provider_wish|
             %tr

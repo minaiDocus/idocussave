@@ -15,21 +15,21 @@
       %table.table.table-condensed.table-bordered.table-striped.margin0bottom
         %tbody
           %tr
-            %th= t('mongoid.models.common.attributes.created_at')
+            %th= t('activerecord.models.common.attributes.created_at')
             %td= l @group.created_at
           %tr
-            %th= t('mongoid.models.group.attributes.name')
+            %th= t('activerecord.models.group.attributes.name')
             %td= @group.name
           %tr
-            %th= t('mongoid.models.group.attributes.description')
+            %th= t('activerecord.models.group.attributes.description')
             %td= @group.description
     .span4.box
       %h4.margin1bottom Liste des collaborateurs (#{@group.collaborators.count})
       %ul
-        - @group.collaborators.asc(:code).each do |collaborator|
+        - @group.collaborators.order(code: :asc).each do |collaborator|
           %li= collaborator.info
     .span4.box
       %h4.margin1bottom Liste des clients (#{@group.customers.count})
       %ul
-        - @group.customers.asc(:code).each do |customer|
+        - @group.customers.order(code: :asc).each do |customer|
           %li= customer.info

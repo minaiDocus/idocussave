@@ -237,7 +237,7 @@
                               %th Groupe
                               %th Nom
                           %tbody
-                            - @user.dematbox.services.asc([:group_name, :name]).each do |service|
+                            - @user.dematbox.services.order(group_name: :asc, name: :asc).each do |service|
                               %tr
                                 %td= service.group_name
                                 %td= service.name

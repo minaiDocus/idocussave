@@ -123,7 +123,8 @@
               %td.scanned_by= document.scanned_by
             %td.actions
 
-- if (@user && @user['is_return_labels_authorized']) or current_user
+- #if (@user && @user['is_return_labels_authorized']) or current_user
+- if @user || current_user
   #returnLabelsDialog.modal.hide.fade
     .modal-header
       %button.close{ type: 'button', data: { dismiss: 'modal' } } &times;

@@ -8,45 +8,45 @@
       = hidden_field_tag :sort, sort_column
       = hidden_field_tag :per_page, per_page
 
-      = label_tag 'pre_assignment_delivery_contains[number]', t('mongoid.models.pre_assignment_delivery.attributes.number')
+      = label_tag 'pre_assignment_delivery_contains[number]', t('activerecord.models.pre_assignment_delivery.attributes.number')
       = number_field_tag 'pre_assignment_delivery_contains[number]', (params[:pre_assignment_delivery_contains][:number] rescue ''), class: 'span12'
 
-      = label_tag 'pre_assignment_delivery_contains[pack_name]', t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+      = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
       = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'span12'
 
-      = label_tag 'pre_assignment_delivery_contains[total_item]', t('mongoid.models.pre_assignment_delivery.attributes.total_item')
+      = label_tag 'pre_assignment_delivery_contains[total_item]', t('activerecord.models.pre_assignment_delivery.attributes.total_item')
       = number_field_tag 'pre_assignment_delivery_contains[total_item]', (params[:pre_assignment_delivery_contains][:total_item] rescue ''), class: 'span12'
 
-      = label_tag 'pre_assignment_delivery_contains[is_auto]', t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
+      = label_tag 'pre_assignment_delivery_contains[is_auto]', t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
       = select_tag 'pre_assignment_delivery_contains[is_auto]', options_for_select([[t('yes_value'), 1],[t('no_value'), 0]], (params[:pre_assignment_delivery_contains][:is_auto] rescue '')), include_blank: true
 
-      = label_tag 'pre_assignment_delivery_contains[state]', t('mongoid.models.pre_assignment_delivery.attributes.state')
+      = label_tag 'pre_assignment_delivery_contains[state]', t('activerecord.models.pre_assignment_delivery.attributes.state')
       = select_tag 'pre_assignment_delivery_contains[state]', options_for_select(PreAssignmentDelivery.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:pre_assignment_delivery_contains][:state] rescue '')), include_blank: true
 
-      = label_tag 'pre_assignment_delivery_contains[error_message]', t('mongoid.models.pre_assignment_delivery.attributes.error_message')
+      = label_tag 'pre_assignment_delivery_contains[error_message]', t('activerecord.models.pre_assignment_delivery.attributes.error_message')
       = text_field_tag 'pre_assignment_delivery_contains[error_message]', (params[:pre_assignment_delivery_contains][:error_message] rescue ''), class: 'span12'
 
-      = label_tag 'pre_assignment_delivery_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      = label_tag 'pre_assignment_delivery_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'pre_assignment_delivery_contains[created_at][$gte]', (params[:pre_assignment_delivery_contains][:created_at]['$gte'] rescue '')
+          = text_field_tag 'pre_assignment_delivery_contains[created_at][>=]', (params[:pre_assignment_delivery_contains][:created_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'pre_assignment_delivery_contains[created_at][$lte]', (params[:pre_assignment_delivery_contains][:created_at]['$lte'] rescue '')
+          = text_field_tag 'pre_assignment_delivery_contains[created_at][<=]', (params[:pre_assignment_delivery_contains][:created_at]['<='] rescue '')
 
-      = label_tag 'pre_assignment_delivery_contains[updated_at][$gte]', t('mongoid.models.common.attributes.updated_at')
+      = label_tag 'pre_assignment_delivery_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'pre_assignment_delivery_contains[updated_at][$gte]', (params[:pre_assignment_delivery_contains][:updated_at]['$gte'] rescue '')
+          = text_field_tag 'pre_assignment_delivery_contains[updated_at][>=]', (params[:pre_assignment_delivery_contains][:updated_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'pre_assignment_delivery_contains[updated_at][$lte]', (params[:pre_assignment_delivery_contains][:updated_at]['$lte'] rescue '')
+          = text_field_tag 'pre_assignment_delivery_contains[updated_at][<=]', (params[:pre_assignment_delivery_contains][:updated_at]['<='] rescue '')
 
       %br
       = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'

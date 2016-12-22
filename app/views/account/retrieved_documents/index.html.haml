@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Documents (#{@documents.count})
+          %h3 Documents (#{@documents_count})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
@@ -14,8 +14,8 @@
               - if params[:document_contains] && params[:document_contains][:transaction_id]
                 %th= label_tag 'document_contains[transaction_id]', 'Transaction'
               %th= label_tag 'document_contains[service_name]',     'Service'
-              %th= label_tag 'document_contains[date][$gte]',       'Date de début'
-              %th= label_tag 'document_contains[date][$lte]',       'Date de fin'
+              %th= label_tag 'document_contains[date][>=]',       'Date de début'
+              %th= label_tag 'document_contains[date][<=]',       'Date de fin'
               %th= label_tag 'document_contains[name]',             'Nom original'
               %th
           %tbody
@@ -31,12 +31,12 @@
                   = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'input-medium'
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][$gte]', (params[:document_contains][:date]['$gte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'document_contains[date][>=]', (params[:document_contains][:date]['>='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'document_contains[date][$lte]', (params[:document_contains][:date]['$lte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'document_contains[date][<=]', (params[:document_contains][:date]['<='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td= text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'input-medium'

@@ -30,7 +30,7 @@
       #documentslist.well.qtip-target
         .header
           %h3.pull-left
-            #{@response.results.total} document(s)
+            #{@response.count} document(s)
           - if @user.active?
             .actiongroup.pull-right
               - if current_user.is_admin

@@ -21,8 +21,8 @@
               %li Automate sans récupération
               %li Impossible d'accéder à la boîte mail de récupération des documents
         %tr
-          %th Adresse mail à notifier (#{Settings.notify_errors_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_errors_to)
+          %th Adresse mail à notifier (#{Settings.first.notify_errors_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.first.notify_errors_to)
 
   .row-fluid.margin1top
     .span12
@@ -35,8 +35,8 @@
           %th Description
           %td Lorsqu'une commande de Dematbox est validée
         %tr
-          %th Adresse mail à notifier (#{Settings.notify_dematbox_order_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_dematbox_order_to)
+          %th Adresse mail à notifier (#{Settings.first.notify_dematbox_order_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.first.notify_dematbox_order_to)
 
   .row-fluid.margin1top
     .span12
@@ -49,8 +49,8 @@
           %th Description
           %td Lorsqu'une commande de Kit envoi courrier est validée
         %tr
-          %th Adresse mail à notifier (#{Settings.notify_paper_set_order_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_paper_set_order_to)
+          %th Adresse mail à notifier (#{Settings.first.notify_paper_set_order_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.first.notify_paper_set_order_to)
 
   .row-fluid.margin1top
     .span12
@@ -63,8 +63,8 @@
           %th Description
           %td Lorsqu'une livraison de pré-affectation vers iBiza est effectué
         %tr
-          %th Adresse mail à notifier (#{Settings.notify_ibiza_deliveries_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_ibiza_deliveries_to)
+          %th Adresse mail à notifier (#{Settings.first.notify_ibiza_deliveries_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.first.notify_ibiza_deliveries_to)
         %tr
           %th Type
           %td= ibiza_notification_type
@@ -80,5 +80,5 @@
           %th Description
           %td Lorsque la livraison n'est pas effectuée
         %tr
-          %th Adresse mail à notifier (#{Settings.notify_scans_not_delivered_to.try(:size) || 0})
-          %td!= notification_addresses(Settings.notify_scans_not_delivered_to)
+          %th Adresse mail à notifier (#{Settings.first.notify_scans_not_delivered_to.try(:size) || 0})
+          %td!= notification_addresses(Settings.first.notify_scans_not_delivered_to)

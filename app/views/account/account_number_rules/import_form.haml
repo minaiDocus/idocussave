@@ -15,7 +15,7 @@
                 = file_field_tag :file, class: 'filestyle', data: { classButton: 'btn', input: true, buttonText: 'CSV', classInput: 'input-small' }
                 = link_to "Télécharger le modèle d'import .csv", import_model_account_organization_account_number_rules_path(@organization)
             .control-group
-              = label_tag 'account_number_rule[affect]', t('mongoid.models.account_number_rule.attributes.affect'), class: 'select control-label'
+              = label_tag 'account_number_rule[affect]', t('activerecord.models.account_number_rule.attributes.affect'), class: 'select control-label'
               .controls
                 = select_tag 'account_number_rule[affect]', options_for_select(affect_options_for_select), include_blank: false, hint: 'Ne pourra plus être changé par la suite.'
                 %p.help-block Ne pourra plus être changé par la suite. 

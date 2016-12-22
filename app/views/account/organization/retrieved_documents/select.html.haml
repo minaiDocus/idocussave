@@ -10,8 +10,8 @@
       = form_tag validate_account_organization_customer_retrieved_documents_path, method: 'patch', class: 'form form-horizontal' do
         = hidden_field_tag 'document_contains[retriever_id]', @retriever.id if @retriever
         = hidden_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue '')
-        = hidden_field_tag 'document_contains[date][$gte]',   (params[:document_contains][:date]['$gte'] rescue '')
-        = hidden_field_tag 'document_contains[date][$lte]',   (params[:document_contains][:date]['$lte'] rescue '')
+        = hidden_field_tag 'document_contains[date][>=]',   (params[:document_contains][:date]['>='] rescue '')
+        = hidden_field_tag 'document_contains[date][<=]',   (params[:document_contains][:date]['=>'] rescue '')
         = hidden_field_tag 'document_contains[name]',         (params[:document_contains][:name] rescue '')
         = render 'shared/list_options', collection: @documents
         %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom

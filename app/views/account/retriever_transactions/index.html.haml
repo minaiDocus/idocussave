@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Transactions (#{@transactions.count})
+          %h3 Transactions (#{@transactions_count})
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
@@ -11,8 +11,8 @@
         %table.table-condensed
           %thead
             %tr
-              %th= label_tag 'transaction_contains[created_at][$gte]',    'Date de début'
-              %th= label_tag 'transaction_contains[created_at][$lte]',    'Date de fin'
+              %th= label_tag 'transaction_contains[created_at][>=]',    'Date de début'
+              %th= label_tag 'transaction_contains[created_at][<=]',    'Date de fin'
               %th= label_tag 'transaction_contains[custom_service_name]', 'Service'
               %th= label_tag 'transaction_contains[type]',                'Type'
               %th= label_tag 'transaction_contains[status]',              'Statut'
@@ -21,12 +21,12 @@
             %tr
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'transaction_contains[created_at][$gte]', (params[:transaction_contains][:created_at]['$gte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'transaction_contains[created_at][>=]', (params[:transaction_contains][:created_at]['>='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'transaction_contains[created_at][$lte]', (params[:transaction_contains][:created_at]['$lte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'transaction_contains[created_at][<=]', (params[:transaction_contains][:created_at]['<='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td= text_field_tag 'transaction_contains[custom_service_name]', (params[:transaction_contains][:custom_service_name] rescue ''), class: 'input-small'
@@ -53,8 +53,8 @@
                 - if transaction.retriever.nil?
                   %span.label supprimé
                 = transaction.custom_service_name
-              %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{transaction.type}")
-              %td= link_to t('mongoid.state_machines.fiduceo_transaction.status.' + transaction.status.downcase).capitalize, account_retriever_transaction_path(transaction)
+              %td= t("activerecord.models.fiduceo_retriever.attributes.type_values.#{transaction.type}")
+              %td= link_to t('activerecord.state_machines.fiduceo_transaction.status.' + transaction.status.downcase).capitalize, account_retriever_transaction_path(transaction)
               %td
                 - if transaction.retrieved_document_ids.count > 0
                   = link_to transaction.retrieved_document_ids.count, account_retrieved_documents_path(document_contains: { transaction_id: transaction.id })

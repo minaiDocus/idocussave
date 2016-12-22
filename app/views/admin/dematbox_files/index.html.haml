@@ -3,7 +3,7 @@
 
   .row-fluid
     .span9
-      %h3.margin1bottom Fichiers scannés (#{@dematbox_files.count})
+      %h3.margin1bottom Fichiers scannés (#{@dematbox_files_count})
 
   .row-fluid
     .span9
@@ -11,13 +11,13 @@
       %table.table.table-striped.table-bordered.table-condensed.margin1top.margin0bottom
         %thead
           %tr
-            %th= t('mongoid.models.common.attributes.created_at')
-            %th= t('mongoid.models.temp_document.attributes.dematbox_doc_id')
-            %th= t('mongoid.models.temp_document.attributes.delivered_by')
-            %th= t('mongoid.models.temp_document.attributes.content_file_name')
-            %th= t('mongoid.models.temp_document.attributes.content_file_size')
-            %th= t('mongoid.models.temp_document.attributes.dematbox_notified_at')
-            %th= t('mongoid.models.temp_document.attributes.state')
+            %th= t('activerecord.models.common.attributes.created_at')
+            %th= t('activerecord.models.temp_document.attributes.dematbox_doc_id')
+            %th= t('activerecord.models.temp_document.attributes.delivered_by')
+            %th= t('activerecord.models.temp_document.attributes.content_file_name')
+            %th= t('activerecord.models.temp_document.attributes.content_file_size')
+            %th= t('activerecord.models.temp_document.attributes.dematbox_notified_at')
+            %th= t('activerecord.models.temp_document.attributes.state')
         %tbody
           - @dematbox_files.each do |file|
             %tr

@@ -2,31 +2,31 @@
   - if is_leader?
     %fieldset
       %legend Informations
-      = f.input :name, label: t('mongoid.models.group.attributes.name')
-      = f.input :description, as: :text, label: t('mongoid.models.group.attributes.description')
+      = f.input :name, label: t('activerecord.models.group.attributes.name')
+      = f.input :description, as: :text, label: t('activerecord.models.group.attributes.description')
     - if @user.is_admin
       %fieldset
         %legend Dropbox Extended
-        = f.input :dropbox_delivery_folder, label: t('mongoid.models.group.attributes.dropbox_delivery_folder'), input_html: { class: 'input-xxlarge' }
-        = f.input :is_dropbox_authorized, as: :boolean, label: t('mongoid.models.group.attributes.is_dropbox_authorized')
+        = f.input :dropbox_delivery_folder, label: t('activerecord.models.group.attributes.dropbox_delivery_folder'), input_html: { class: 'input-xxlarge' }
+        = f.input :is_dropbox_authorized, as: :boolean, label: t('activerecord.models.group.attributes.is_dropbox_authorized')
     %fieldset
       %legend Assignation
       .control-group
         .controls
           .span6
             %label
-              %b= t('mongoid.models.group.attributes.collaborators')
+              %b= t('activerecord.models.group.attributes.collaborators')
             %br
-            - members = @group.collaborators.entries
-            - @organization.collaborators.asc(:code).each do |collaborator|
+            - members = @group.collaborators
+            - @organization.collaborators.order(code: :asc).each do |collaborator|
               = check_box_tag 'group[member_tokens][]', collaborator.id, members.include?(collaborator), id: "group_member_tokens_#{collaborator.id}"
               %label{ for: "group_member_tokens_#{collaborator.id}" }= collaborator.info
           .span6
             %label
-              %b= t('mongoid.models.group.attributes.customers')
+              %b= t('activerecord.models.group.attributes.customers')
             %br
-            - members = @group.customers.entries
-            - @organization.customers.asc(:code).each do |customer|
+            - members = @group.customers
+            - @organization.customers.order(code: :asc).each do |customer|
               = check_box_tag 'group[member_tokens][]', customer.id, members.include?(customer), id: "group_member_tokens_#{customer.id}"
               %label{ for: "group_member_tokens_#{customer.id}" }= customer.info
           = hidden_field_tag 'group[member_tokens][]', ''
@@ -34,10 +34,10 @@
     %fieldset
       %legend Assignation des clients
       .control-group
-        %label.control-label= t('mongoid.models.group.attributes.customers')
+        %label.control-label= t('activerecord.models.group.attributes.customers')
         .controls
-          - members = @group.customers.entries
-          - @user.customers.asc(:code).each do |customer|
+          - members = @group.customers
+          - @user.customers.order(code: :asc).each do |customer|
             = check_box_tag 'group[customer_tokens][]', customer.id, members.include?(customer), id: "group_customer_tokens_#{customer.id}"
             %label{ for: "group_customer_tokens_#{customer.id}" }= customer.info
           = hidden_field_tag 'group[customer_tokens][]', ''

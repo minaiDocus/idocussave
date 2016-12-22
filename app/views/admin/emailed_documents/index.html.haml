@@ -1,7 +1,7 @@
 #emails
   .row-fluid.marginbottom
     .span12.margin1bottom
-      %h3 Liste des mails d'envoi de documents (#{@emails.count})
+      %h3 Liste des mails d'envoi de documents (#{@emails_count})
 
   .row-fluid
     .span9
@@ -11,13 +11,13 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :state,      t('mongoid.models.email.attributes.state')
-                %th= sortable :from,       t('mongoid.models.email.attributes.from')
-                %th= sortable :to,         t('mongoid.models.email.attributes.to')
-                %th= sortable :subject,    t('mongoid.models.email.attributes.subject')
-                %th= sortable :size,       t('mongoid.models.email.attributes.size') + ' (Mo)'
-                %th= t('mongoid.models.email.attributes.attachment_names_count')
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :state,      t('activerecord.models.email.attributes.state')
+                %th= sortable :from,       t('activerecord.models.email.attributes.from')
+                %th= sortable :to,         t('activerecord.models.email.attributes.to')
+                %th= sortable :subject,    t('activerecord.models.email.attributes.subject')
+                %th= sortable :size,       t('activerecord.models.email.attributes.size') + ' (Mo)'
+                %th= t('activerecord.models.email.attributes.attachment_names_count')
                 %th Actions
             %tbody
               - @emails.each do |email|

@@ -5,7 +5,7 @@
         .span12
           .row-fluid
             .span5
-              %h3 Liste des règles d'affectations bancaires - iDo'FacBanque (#{@account_number_rules.count})
+              %h3 Liste des règles d'affectations bancaires - iDo'FacBanque (#{@account_number_rules_count})
             .span7.alignright
               = link_to icon_new + ' Ajouter une règle ', new_account_organization_account_number_rule_path(@organization), class: 'btn btn-primary'
               = link_to icon_new + ' Importer des règles  ', import_form_account_organization_account_number_rules_path(@organization), class: 'btn btn-primary'
@@ -24,25 +24,25 @@
               %thead
                 %tr
                   %th= check_box_tag 'master_checkbox', 0, false, style: 'top:0;'
-                  %th= sortable :name, t('mongoid.models.account_number_rule.attributes.name')
-                  %th= sortable :affect, t('mongoid.models.account_number_rule.attributes.affect')
-                  %th= t('mongoid.models.account_number_rule.attributes.rule_type')
-                  %th= sortable :categorization, t('mongoid.models.account_number_rule.attributes.categorization')
-                  %th= sortable :content, t('mongoid.models.account_number_rule.attributes.content')
-                  %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
+                  %th= sortable :name, t('activerecord.models.account_number_rule.attributes.name')
+                  %th= sortable :affect, t('activerecord.models.account_number_rule.attributes.affect')
+                  %th= t('activerecord.models.account_number_rule.attributes.rule_type')
+                  %th= sortable :categorization, t('activerecord.models.account_number_rule.attributes.categorization')
+                  %th= sortable :content, t('activerecord.models.account_number_rule.attributes.content')
+                  %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
               %tbody
                 - @account_number_rules.each do |rule|
                   %tr
                     %td= check_box_tag 'rules[rule_ids][]', rule.id, false, id: "rule_#{rule.id}", style: 'top:0;', class: 'checkbox'
                     %td= rule.name
                     %td
-                      = t('mongoid.models.account_number_rule.attributes.affect_values.' + rule.affect)
+                      = t('activerecord.models.account_number_rule.attributes.affect_values.' + rule.affect)
                       - if rule.affect == 'user'
                         - if rule.users.size == 1
                           (#{rule.users.first.code})
                         - else
                           (#{rule.users.size})
-                    %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
+                    %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + rule.rule_type) + " (#{rule.priority})"
                     %td= rule.categorization
                     %td= rule.content
                     %td= rule.third_party_account

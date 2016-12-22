@@ -8,67 +8,67 @@
       = hidden_field_tag :sort, sort_column
       = hidden_field_tag :per_page, per_page
 
-      = label_tag 'provider_wish_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      = label_tag 'provider_wish_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'provider_wish_contains[created_at][$gte]', (params[:provider_wish_contains][:created_at]['$gte'] rescue '')
+          = text_field_tag 'provider_wish_contains[created_at][>=]', (params[:provider_wish_contains][:created_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'provider_wish_contains[created_at][$lte]', (params[:provider_wish_contains][:created_at]['$lte'] rescue '')
+          = text_field_tag 'provider_wish_contains[created_at][<=]', (params[:provider_wish_contains][:created_at]['<='] rescue '')
 
-      = label_tag 'provider_wish_contains[updated_at][$gte]', t('mongoid.models.common.attributes.updated_at')
+      = label_tag 'provider_wish_contains[updated_at][>=]', t('activerecord.models.common.attributes.updated_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'provider_wish_contains[updated_at][$gte]', (params[:provider_wish_contains][:updated_at]['$gte'] rescue '')
+          = text_field_tag 'provider_wish_contains[updated_at][>=]', (params[:provider_wish_contains][:updated_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'provider_wish_contains[updated_at][$lte]', (params[:provider_wish_contains][:updated_at]['$lte'] rescue '')
+          = text_field_tag 'provider_wish_contains[updated_at][<=]', (params[:provider_wish_contains][:updated_at]['<='] rescue '')
 
-      = label_tag 'user_contains[code]', t('mongoid.models.user.name')
-      = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'span12'
+      = label_tag 'user_contains[user_contains][code]', t('activerecord.models.user.name')
+      = text_field_tag 'user_contains[user_contains][code]', (params[:provider_wish_contains][:user_contains][:code] rescue ''), class: 'span12'
 
-      = label_tag 'provider_wish_contains[state]', t('mongoid.models.fiduceo_provider_wish.attributes.state')
+      = label_tag 'provider_wish_contains[state]', t('activerecord.models.fiduceo_provider_wish.attributes.state')
       = select_tag 'provider_wish_contains[state]', options_for_select(FiduceoProviderWish.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:provider_wish_contains][:state] rescue '')), include_blank: true
 
-      = label_tag 'provider_wish_contains[name]', t('mongoid.models.fiduceo_provider_wish.attributes.name')
+      = label_tag 'provider_wish_contains[name]', t('activerecord.models.fiduceo_provider_wish.attributes.name')
       = text_field_tag 'provider_wish_contains[name]', (params[:provider_wish_contains][:name] rescue ''), class: 'span12'
 
-      = label_tag 'provider_wish_contains[url]', t('mongoid.models.fiduceo_provider_wish.attributes.url')
+      = label_tag 'provider_wish_contains[url]', t('activerecord.models.fiduceo_provider_wish.attributes.url')
       = text_field_tag 'provider_wish_contains[url]', (params[:provider_wish_contains][:url] rescue ''), class: 'span12'
 
-      = label_tag 'provider_wish_contains[login]', t('mongoid.models.fiduceo_provider_wish.attributes.login')
+      = label_tag 'provider_wish_contains[login]', t('activerecord.models.fiduceo_provider_wish.attributes.login')
       = text_field_tag 'provider_wish_contains[login]', (params[:provider_wish_contains][:login] rescue ''), class: 'span12'
 
-      = label_tag 'provider_wish_contains[is_notified]', t('mongoid.models.fiduceo_provider_wish.attributes.is_notified')
+      = label_tag 'provider_wish_contains[is_notified]', t('activerecord.models.fiduceo_provider_wish.attributes.is_notified')
       = select_tag 'provider_wish_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:provider_wish_contains][:is_notified] rescue '')), include_blank: true
 
-      = label_tag 'provider_wish_contains[notified_at][$gte]', t('mongoid.models.fiduceo_provider_wish.attributes.notified_at')
+      = label_tag 'provider_wish_contains[notified_at][>=]', t('activerecord.models.fiduceo_provider_wish.attributes.notified_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'provider_wish_contains[notified_at][$gte]', (params[:provider_wish_contains][:notified_at]['$gte'] rescue '')
+          = text_field_tag 'provider_wish_contains[notified_at][>=]', (params[:provider_wish_contains][:notified_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'provider_wish_contains[notified_at][$lte]', (params[:provider_wish_contains][:notified_at]['$lte'] rescue '')
+          = text_field_tag 'provider_wish_contains[notified_at][<=]', (params[:provider_wish_contains][:notified_at]['<='] rescue '')
 
-      = label_tag 'provider_wish_contains[processing_at][$gte]', t('mongoid.models.fiduceo_provider_wish.attributes.processing_at')
+      = label_tag 'provider_wish_contains[processing_at][>=]', t('activerecord.models.fiduceo_provider_wish.attributes.processing_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'provider_wish_contains[processing_at][$gte]', (params[:provider_wish_contains][:processing_at]['$gte'] rescue '')
+          = text_field_tag 'provider_wish_contains[processing_at][>=]', (params[:provider_wish_contains][:processing_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'provider_wish_contains[processing_at][$lte]', (params[:provider_wish_contains][:processing_at]['$lte'] rescue '')
+          = text_field_tag 'provider_wish_contains[processing_at][<=]', (params[:provider_wish_contains][:processing_at]['<='] rescue '')
 
       %br
       = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'

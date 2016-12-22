@@ -4,7 +4,7 @@
       .row-fuild
         .span12
           .pull-left
-            %h3 Liste des collaborateurs (#{@collaborators.count})
+            %h3 Liste des collaborateurs (#{@collaborators_count})
           .pull-right
             -if @organization.is_active
               = link_to icon_new + ' ' + t('actions.new'), new_account_organization_collaborator_path(@organization), class: 'btn btn-primary'
@@ -17,8 +17,8 @@
           %table.table.table-bordered.table-condensed.table-striped.users_list.margin1top.margin0bottom
             %thead
               %tr
-                %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
+                %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
                 %th Action
             %tbody
               - @collaborators.each do |collaborator|

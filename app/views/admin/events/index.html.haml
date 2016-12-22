@@ -14,13 +14,13 @@
             %thead
               %tr
                 %th Total
-                %th.field.number_field= label_tag 'event_contains[number]', t('mongoid.models.event.attributes.number')
-                %th.field.date_field= label_tag 'event_contains[created_at][$gte]', 'Date de début'
-                %th.field.date_field= label_tag 'event_contains[created_at][$lte]', 'Date de fin'
-                %th.field.text_field= label_tag 'user_contains[code]', t('mongoid.models.event.attributes.user')
-                %th.field.action_field= label_tag 'event_contains[action]', t('mongoid.models.event.attributes.action')
-                %th.field.target_type_field= label_tag 'event_contains[target_type]', t('mongoid.models.event.attributes.target_type')
-                %th.field.text_field= label_tag 'event_contains[target_name]', t('mongoid.models.event.attributes.target_name')
+                %th.field.number_field= label_tag 'event_contains[number]', t('activerecord.models.event.attributes.number')
+                %th.field.date_field= label_tag 'event_contains[created_at][>=]', 'Date de début'
+                %th.field.date_field= label_tag 'event_contains[created_at][<=]', 'Date de fin'
+                %th.field.text_field= label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
+                %th.field.action_field= label_tag 'event_contains[action]', t('activerecord.models.event.attributes.action')
+                %th.field.target_type_field= label_tag 'event_contains[target_type]', t('activerecord.models.event.attributes.target_type')
+                %th.field.text_field= label_tag 'event_contains[target_name]', t('activerecord.models.event.attributes.target_name')
                 %th
             %tbody
               %tr
@@ -36,13 +36,13 @@
                   .input-prepend.date.datepicker
                     %span.add-on
                       = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][$gte]', (params[:event_contains][:created_at]['$gte'] rescue '')
+                    = text_field_tag 'event_contains[created_at][>=]', (params[:event_contains][:created_at]['>='] rescue '')
                 %td.field.date_field
                   .input-prepend.date.datepicker
                     %span.add-on
                       = icon(icon: 'th')
-                    = text_field_tag 'event_contains[created_at][$lte]', (params[:event_contains][:created_at]['$lte'] rescue '')
-                %td.field.text_field= text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue '')
+                    = text_field_tag 'event_contains[created_at][<=]', (params[:event_contains][:created_at]['<='] rescue '')
+                %td.field.text_field= text_field_tag 'event_contains[user_contains][code]', (params[:event_contains][:user_contains][:code] rescue '')
                 %td.field.action_field
                   = select_tag 'event_contains[action]', event_action_options_for_select, include_blank: true
                 %td.field.target_type_field
@@ -60,12 +60,12 @@
       %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
         %thead
           %tr
-            %th.number=      sortable :number,      t('mongoid.models.event.attributes.number')
+            %th.number=      sortable :number,      t('activerecord.models.event.attributes.number')
             %th.date=        sortable :created_at,  'Date'
-            %th=             sortable :user_id,     t('mongoid.models.event.attributes.user')
-            %th=             sortable :action,      t('mongoid.models.event.attributes.action')
-            %th=             sortable :target_type, t('mongoid.models.event.attributes.target_type')
-            %th.target_name= sortable :target_name, t('mongoid.models.event.attributes.target_name')
+            %th=             sortable :user_id,     t('activerecord.models.event.attributes.user')
+            %th=             sortable :action,      t('activerecord.models.event.attributes.action')
+            %th=             sortable :target_type, t('activerecord.models.event.attributes.target_type')
+            %th.target_name= sortable :target_name, t('activerecord.models.event.attributes.target_name')
         %tbody
           - @events.each do |event|
             - event_presenter = EventPresenter.new(event, self)

@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Opérations bancaires #{@operations ? "(#{@operations.count})" : nil}
+          %h3 Opérations bancaires #{@operations ? "(#{@operations_count})" : nil}
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
@@ -11,8 +11,8 @@
         %table.table-condensed
           %thead
             %tr
-              %th= label_tag 'banking_operation_contains[date][$gte]',              'Date de début'
-              %th= label_tag 'banking_operation_contains[date][$lte]',              'Date de fin'
+              %th= label_tag 'banking_operation_contains[date][>=]',              'Date de début'
+              %th= label_tag 'banking_operation_contains[date][<=]',              'Date de fin'
               %th= label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'
               %th= label_tag 'banking_operation_contains[bank_account][number]',    'Compte'
               %th= label_tag 'banking_operation_contains[category]',                'Catégorie'
@@ -22,12 +22,12 @@
             %tr
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'banking_operation_contains[date][$gte]', (params[:banking_operation_contains][:date]['$gte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'banking_operation_contains[date][>=]', (params[:banking_operation_contains][:date]['>='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td
                 .input-append.date.datepicker
-                  = text_field_tag 'banking_operation_contains[date][$lte]', (params[:banking_operation_contains][:date]['$lte'] rescue ''), class: 'input-small'
+                  = text_field_tag 'banking_operation_contains[date][<=]', (params[:banking_operation_contains][:date]['<='] rescue ''), class: 'input-small'
                   %span.add-on
                     %i.icon-th
               %td= text_field_tag 'banking_operation_contains[bank_account][bank_name]', (params[:banking_operation_contains][:bank_account][:bank_name] rescue ''), class: 'input-small'

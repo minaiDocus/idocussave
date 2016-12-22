@@ -7,18 +7,18 @@
 %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
   %thead
     %tr
-      %th= sortable :type,         t('mongoid.models.fiduceo_retriever.attributes.type')
-      %th= sortable :service_name, t('mongoid.models.fiduceo_retriever.attributes.service_name')
-      %th= sortable :name,         t('mongoid.models.fiduceo_retriever.attributes.name')
+      %th= sortable :type,         t('activerecord.models.fiduceo_retriever.attributes.type')
+      %th= sortable :service_name, t('activerecord.models.fiduceo_retriever.attributes.service_name')
+      %th= sortable :name,         t('activerecord.models.fiduceo_retriever.attributes.name')
       %th Journal
       %th Mode
-      %th.retriever_state= t('mongoid.models.fiduceo_retriever.attributes.state')
+      %th.retriever_state= t('activerecord.models.fiduceo_retriever.attributes.state')
       %th Actions
   %tbody
     - @fiduceo_retrievers.each do |fiduceo_retriever|
       - present fiduceo_retriever do |fiduceo_retriever_presenter|
         %tr
-          %td= t("mongoid.models.fiduceo_retriever.attributes.type_values.#{fiduceo_retriever_presenter.type}")
+          %td= t("activerecord.models.fiduceo_retriever.attributes.type_values.#{fiduceo_retriever_presenter.type}")
           %td= fiduceo_retriever_presenter.service_name
           %td= fiduceo_retriever_presenter.name
           %td= fiduceo_retriever_presenter.journal.try(:name) || '-'

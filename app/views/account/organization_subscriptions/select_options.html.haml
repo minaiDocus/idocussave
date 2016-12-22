@@ -47,7 +47,7 @@
             %br
             = check_box_tag 'master_checkbox', 0, false, class: 'pull-left', style: 'top:0px'
             %label.margin2left{ for: 'master_checkbox' } Tous/Aucun
-            - @organization.customers.active.asc(:code).each do |customer|
+            - @organization.customers.active.order(code: :asc).each do |customer|
               = check_box_tag 'subscription[customer_ids][]', customer.id, false, id: "subscription_customer_id_#{customer.id}", class: 'checkbox pull-left', style: 'top:0px'
               %label.margin2left{ for: "subscription_customer_id_#{customer.id}" }= customer.info
             = hidden_field_tag 'subscription[customer_ids][]', ''

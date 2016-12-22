@@ -2,7 +2,7 @@
   .row-fluid.margin1bottom
     .span12.box
       .pull-left
-        %h3 Liste des groupes (#{@groups.count})
+        %h3 Liste des groupes (#{@groups_count})
       .pull-right
         - if is_leader? && @organization.is_active
           = link_to icon_new + ' ' + t('actions.new'), new_account_organization_group_path(@organization), class: 'btn btn-primary'
@@ -14,10 +14,10 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :name, t('mongoid.models.group.attributes.name')
-                %th= t('mongoid.models.group.attributes.collaborators_count')
-                %th= t('mongoid.models.group.attributes.customers_count')
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :name, t('activerecord.models.group.attributes.name')
+                %th= t('activerecord.models.group.attributes.collaborators_count')
+                %th= t('activerecord.models.group.attributes.customers_count')
                 %th.last= t('actions.name')
             %tbody
               - @groups.each do |group|

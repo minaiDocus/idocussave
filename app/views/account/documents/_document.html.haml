@@ -1,7 +1,12 @@
 - document_class = @is_composition ? "composition" : "alone"
 
 %li{ :id => "document_#{document.id}", :class => "#{document_class} pages" }
-  - unless document.dirty || !File.exist?(document.content.path(:thumb))
+  - if document.mongo_id
+    - filepath = "#{Rails.root}/files/production/#{document.class.table_name}/contents/#{document.mongo_id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
+  - else
+    - filepath = "#{Rails.root}/files/production/#{document.class.table_name}/contents/#{document.id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
+
+  - unless document.dirty || !File.exist?(filepath)
     - link_to_large = document.content.url(:large)
     - link_to_thumb = document.content.url(:thumb)
   - else

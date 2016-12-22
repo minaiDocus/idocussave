@@ -15,13 +15,13 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :created_at,    t('mongoid.models.common.attributes.created_at')
-                %th= sortable :updated_at,    t('mongoid.models.common.attributes.updated_at')
-                %th= sortable :user_id,       t('mongoid.models.user.name')
-                %th= sortable :state,         t('mongoid.models.fiduceo_provider_wish.attributes.state')
-                %th= sortable :name,          t('mongoid.models.fiduceo_provider_wish.attributes.name')
-                %th= sortable :notified_at,   t('mongoid.models.fiduceo_provider_wish.attributes.notified_at')
-                %th= sortable :processing_at, t('mongoid.models.fiduceo_provider_wish.attributes.processing_at')
+                %th= sortable :created_at,    t('activerecord.models.common.attributes.created_at')
+                %th= sortable :updated_at,    t('activerecord.models.common.attributes.updated_at')
+                %th= sortable :user_id,       t('activerecord.models.user.name')
+                %th= sortable :state,         t('activerecord.models.fiduceo_provider_wish.attributes.state')
+                %th= sortable :name,          t('activerecord.models.fiduceo_provider_wish.attributes.name')
+                %th= sortable :notified_at,   t('activerecord.models.fiduceo_provider_wish.attributes.notified_at')
+                %th= sortable :processing_at, t('activerecord.models.fiduceo_provider_wish.attributes.processing_at')
                 %th Actions
             %tbody
               - @provider_wishes.each do |provider_wish|

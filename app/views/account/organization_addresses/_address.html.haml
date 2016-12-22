@@ -3,20 +3,20 @@
     %tr
       %th{ colspan: 2 }
         - if single
-          = t('mongoid.models.address.attributes.' + type)
+          = t('activerecord.models.address.attributes.' + type)
         - else
           .pull-left
             - if address.is_for_billing || address.is_for_paper_return || address.is_for_paper_set_shipping
               - if address.is_for_billing
-                = t('mongoid.models.address.attributes.billing')
+                = t('activerecord.models.address.attributes.billing')
                 - if address.is_for_paper_return || address.is_for_paper_set_shipping
                   %br
               - if address.is_for_paper_return
-                = t('mongoid.models.address.attributes.paper_return')
+                = t('activerecord.models.address.attributes.paper_return')
                 - if address.is_for_paper_set_shipping
                   %br
               - if address.is_for_paper_set_shipping
-                = t('mongoid.models.address.attributes.paper_set_shipping')
+                = t('activerecord.models.address.attributes.paper_set_shipping')
             - else
               Adresse non attribuée
           .pull-right
@@ -25,23 +25,23 @@
   - if address
     %tbody
       %tr
-        %th= t('mongoid.models.address.attributes.company')
+        %th= t('activerecord.models.address.attributes.company')
         %td= address.company
       %tr
-        %th= t('mongoid.models.address.attributes.first_name')
+        %th= t('activerecord.models.address.attributes.first_name')
         %td= address.first_name
       %tr
-        %th= t('mongoid.models.address.attributes.last_name')
+        %th= t('activerecord.models.address.attributes.last_name')
         %td= address.last_name
       %tr
-        %th= t('mongoid.models.address.attributes.address_1')
+        %th= t('activerecord.models.address.attributes.address_1')
         %td= address.address_1
       %tr
-        %th= t('mongoid.models.address.attributes.address_2')
+        %th= t('activerecord.models.address.attributes.address_2')
         %td= address.address_2
       %tr
-        %th= t('mongoid.models.address.attributes.city')
+        %th= t('activerecord.models.address.attributes.city')
         %td= address.city
       %tr
-        %th= t('mongoid.models.address.attributes.zip')
+        %th= t('activerecord.models.address.attributes.zip')
         %td= address.zip

@@ -4,7 +4,7 @@
       .row-fluid
         .span12
           .pull-left
-            %h3 Liste des clients (#{@customers.count})
+            %h3 Liste des clients (#{@customers_count})
           .pull-right
             - if (is_leader? || @user.can_manage_customers?) && @organization.is_active
               = link_to icon_new + ' ' + t('actions.new'), info_account_organization_customers_path(@organization), class: 'btn btn-primary'
@@ -17,8 +17,8 @@
             %thead
               %tr
                 %th
-                %th.date= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :code, t('mongoid.models.user.attributes.formatted_identifier')
+                %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
             %tbody
               - @customers.each do |customer|
                 %tr

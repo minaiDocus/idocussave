@@ -6,7 +6,7 @@ node :id do |preseizure_account|
   preseizure_account.id.to_s
 end
 
-child :entries do
+child :entries => :entries do
   attributes :type
 
   node :id do |entry|

@@ -25,7 +25,7 @@
                 %td.aligncenter= label_tag "journals_ids_#{journal.id}", journal.is_default ? icon_ok : ''
                 %td= label_tag "journals_ids_#{journal.id}", journal.name
                 %td= label_tag "journals_ids_#{journal.id}", journal.description
-                %td= label_tag "journals_ids_#{journal.id}", t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+                %td= label_tag "journals_ids_#{journal.id}", t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
                 %td= label_tag "journals_ids_#{journal.id}", (journal.is_pre_assignment_processable? ? (journal.default_account? ? 'compte par défaut' : "compte d'attente") : '')
                 %td= label_tag "journals_ids_#{journal.id}", journal.meta_account_number || ''
                 %td= label_tag "journals_ids_#{journal.id}", journal.meta_charge_account || ''

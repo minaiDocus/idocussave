@@ -13,7 +13,7 @@ node :per_page do
 end
 
 node :total do
-  @preseizures.count
+  @preseizures_count
 end
 
 node :description_keys do
@@ -21,5 +21,5 @@ node :description_keys do
 end
 
 node :description_separator do
-  @organization.ibiza.try(:description_separator) || Ibiza.fields['description_separator'].options[:default]
+  @organization.ibiza.try(:description_separator) || ' - '
 end

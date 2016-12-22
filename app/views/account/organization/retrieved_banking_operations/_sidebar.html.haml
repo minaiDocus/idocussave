@@ -1,15 +1,15 @@
 = form_tag account_organization_customer_retrieved_banking_operations_path(@organization, @customer), method: :get, class: 'form form-horizontal filter margin0bottom' do
-  = label_tag 'banking_operation_contains[date][$gte]', 'Date de début'
+  = label_tag 'banking_operation_contains[date][>=]', 'Date de début'
   .input-prepend.date.datepicker
     %span.add-on
       %i.icon-th
-    = text_field_tag 'banking_operation_contains[date][$gte]', (params[:banking_operation_contains][:date]['$gte'] rescue '')
+    = text_field_tag 'banking_operation_contains[date][>=]', (params[:banking_operation_contains][:date]['>='] rescue '')
 
-  = label_tag 'banking_operation_contains[date][$lte]', 'Date de fin'
+  = label_tag 'banking_operation_contains[date][<=]', 'Date de fin'
   .input-prepend.date.datepicker
     %span.add-on
       %i.icon-th
-    = text_field_tag 'banking_operation_contains[date][$lte]', (params[:banking_operation_contains][:date]['$lte'] rescue '')
+    = text_field_tag 'banking_operation_contains[date][<=]', (params[:banking_operation_contains][:date]['<='] rescue '')
 
   = label_tag 'banking_operation_contains[bank_account][bank_name]', 'Service'
   = text_field_tag 'banking_operation_contains[bank_account][bank_name]', (params[:banking_operation_contains][:bank_account][:bank_name] rescue ''), class: 'span12'

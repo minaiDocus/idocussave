@@ -11,17 +11,17 @@
         = f.input :position
         = f.input :instruction, as: :text
       %fieldset
-        %legend= t('mongoid.models.file_sending_kit.attributes.logo.center')
+        %legend= t('activerecord.models.file_sending_kit.attributes.logo.center')
         = f.input :logo_path, input_html: { class: 'span12' }
         = f.input :logo_height
         = f.input :logo_width
       %fieldset
-        %legend= t('mongoid.models.file_sending_kit.attributes.logo.left')
+        %legend= t('activerecord.models.file_sending_kit.attributes.logo.left')
         = f.input :left_logo_path, input_html: { class: 'span12' }
         = f.input :left_logo_height
         = f.input :left_logo_width
       %fieldset
-        %legend= t('mongoid.models.file_sending_kit.attributes.logo.right')
+        %legend= t('activerecord.models.file_sending_kit.attributes.logo.right')
         = f.input :right_logo_path, input_html: { class: 'span12' }
         = f.input :right_logo_height
         = f.input :right_logo_width

@@ -25,7 +25,7 @@
               %td.organization
                 = link_to organization.name, [:account, organization]
                 = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS'
-              - user_ids = organization.customers.distinct(:_id)
+              - user_ids = organization.customers.distinct(:id).pluck(:id)
               - 12.times.each do |i|
                 %td
                   - time = Time.local(@year, i+1, 15)
@@ -60,7 +60,7 @@
                       - @total[i][0] += not_centralized_price_in_cents_wo_vat
                       - @total[i][1] += not_centralized_price_in_cents_w_vat
                     %div
-                      - organization_periods = centralized_periods.select { |e| e.organization }
+                      - organization_periods = centralized_periods.includes(:organization).select { |e| e.organization }
                       - size = centralized_periods.size + not_centralized_periods.size - organization_periods.size
                       = size
                       - @total[i][2] += size
