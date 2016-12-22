@@ -4,11 +4,12 @@ class DematboxDocumentPresenter
     @dematbox_document = dematbox_document
   end
 
+
   def response
-    if @dematbox_document.valid?
-      @response = '200:OK'
-    else
-      @response = '600:Argument value invalid'
-    end
+    @response = if @dematbox_document.valid?
+                        '200:OK'
+                      else
+                        '600:Argument value invalid'
+                      end
   end
 end

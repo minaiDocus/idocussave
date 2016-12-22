@@ -13,6 +13,7 @@ class EventPresenter < BasePresenter
     end
   end
 
+
   def user_code
     if event.user
       h.link_to event.user.code, [:admin, event.user]
@@ -25,9 +26,11 @@ class EventPresenter < BasePresenter
     end
   end
 
+
   def action
-    h.t("mongoid.models.event.actions.#{event.action}").downcase
+    h.t("activerecord.models.event.actions.#{event.action}").downcase
   end
+
 
   def target_name
     if event.target_type.match('/')
@@ -37,12 +40,13 @@ class EventPresenter < BasePresenter
     end
   end
 
+
   def target_type
     if event.target_type == 'page'
       'page'
     else
       event.target_type.split('/').map do |target_type|
-        h.t("mongoid.models.#{target_type}.name").downcase
+        h.t("activerecord.models.#{target_type}.name").downcase
       end.join(' / ')
     end
   end
