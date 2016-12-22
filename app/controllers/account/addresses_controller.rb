@@ -3,40 +3,50 @@ class Account::AddressesController < Account::AccountController
   before_filter :verify_access
   before_filter :load_address, only: %w(edit update destroy)
 
+  # GET /account/addresses
   def index
     @addresses = @user.addresses.all
   end
 
+
+  # GET /account/addresses/new
   def new
     @address = Address.new
+
     @address.first_name = @user.first_name
     @address.last_name  = @user.last_name
   end
 
+
+  # POST /account/addresses
   def create
     @address = @user.addresses.new(address_params)
     if @address.save
-      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Créé avec succès.'
       redirect_to account_addresses_path
     else
-      render action: 'new'
+      render :new
     end
   end
 
+
+  # POST /account/addresses/:address_id/edit
   def edit
   end
 
+
+  # PUT /account/addresses/:address_id
   def update
     if @address.update(address_params)
-      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_addresses_path
     else
-      render action: 'edit'
+      render :edit
     end
   end
 
+
+  # DELETE /account/addresses/:address_id
   def destroy
     if @address.destroy
       flash[:success] = 'Supprimé avec succès.'
@@ -44,7 +54,7 @@ class Account::AddressesController < Account::AccountController
     end
   end
 
-private
+  private
 
   def verify_access
     if @user.is_prescriber
@@ -52,9 +62,11 @@ private
     end
   end
 
+
   def load_address
     @address = @user.addresses.find(params[:id])
   end
+
 
   def address_params
     params.require(:address).permit(

@@ -1,15 +1,27 @@
 # -*- encoding : UTF-8 -*-
+# FIXME : check if needed
 class Admin::RetrieversController < Admin::AdminController
+  # GET /admin/retrievers
   def index
-    @retrievers = search(retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @retrievers = FiduceoRetriever.search(search_terms(params[:retriever_contains])).order(sort_column => sort_direction).includes(:user, :journal)
+
+    @retrievers_count = @retrievers.count
+
+    @retrievers = @retrievers.page(params[:page]).per(params[:per_page])
   end
 
+
+  # GET /admin/retrievers/:id/edit
   def edit
   end
 
+
+  # DELETE /admin/retrievers/:id
   def destroy
   end
 
+
+  # GET /admin/retrievers/:id/edit
   def fetch
     retrievers = search(retriever_contains)
     count = retrievers.count
@@ -18,7 +30,7 @@ class Admin::RetrieversController < Admin::AdminController
     redirect_to admin_fiduceo_retrievers_path(params.except(:authenticity_token))
   end
 
-private
+  private
 
   def load_retriever
     @retriever = FiduceoRetriever.find params[:id]
@@ -33,40 +45,4 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def retriever_contains
-    @contains ||= {}
-    if params[:retriever_contains] && @contains.blank?
-      @contains = params[:retriever_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :retriever_contains
-
-  def search(contains)
-    user_ids = []
-    if params[:retriever_contains] && params[:retriever_contains][:user_code].present?
-      user_ids = User.where(code: /#{Regexp.quote(params[:retriever_contains][:user_code])}/i).distinct(:_id)
-    end
-    retrievers = FiduceoRetriever.all
-    retrievers = retrievers.where(created_at:         contains[:created_at])                             if contains[:created_at].present?
-    retrievers = retrievers.where(updated_at:         contains[:updated_at])                             if contains[:updated_at].present?
-    retrievers = retrievers.any_in(user_id:           user_ids)                                          if user_ids.any?
-    retrievers = retrievers.where(type:               contains[:type])                                   if contains[:type].present?
-    retrievers = retrievers.where(service_name:       /#{Regexp.quote(contains[:service_name])}/i)       if contains[:service_name].present?
-    retrievers = retrievers.where(name:               /#{Regexp.quote(contains[:name])}/i)               if contains[:name].present?
-    retrievers = retrievers.where(state:              contains[:state])                                  if contains[:state].present?
-    retrievers = retrievers.where(transaction_status: /#{Regexp.quote(contains[:transaction_status])}/i) if contains[:transaction_status].present?
-    retrievers = retrievers.where(is_sane:            contains[:is_sane])                                if contains[:is_sane].present?
-    retrievers
-  end
 end

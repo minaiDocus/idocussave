@@ -1,33 +1,24 @@
 class OrganizationManagement
   module Common
     def _organization
-      self.organization || self.my_organization
+      organization || my_organization
     end
 
     def customer_ids
-      customers.map(&:_id)
+      customers.map(&:id)
     end
 
     def packs
-      Pack.any_of({
-                    organization_id: _organization.id,
-                    :owner_id.in => customer_ids
-                  },
-                  {
-                    owner_id: self.id
-                  })
+      Pack.where(owner_id: id).where("organization_id = ? OR owner_id IN (?)", _organization.id, customer_ids)
     end
 
     def temp_packs
-      TempPack.where(:user_id.in => customer_ids)
+      TempPack.where(user_id: customer_ids)
     end
 
-    def rights
-      @rights ||= find_or_create_organization_rights
-    end
 
     def can_manage_collaborators?
-      rights.is_collaborators_management_authorized
+      organization_rights_is_collaborators_management_authorized
     end
 
     def cannot_manage_collaborators?
@@ -35,7 +26,7 @@ class OrganizationManagement
     end
 
     def can_manage_customers?
-      rights.is_customers_management_authorized
+      organization_rights_is_customers_management_authorized
     end
 
     def cannot_manage_customers?
@@ -43,7 +34,7 @@ class OrganizationManagement
     end
 
     def can_manage_groups?
-      rights.is_groups_management_authorized
+      organization_rights_is_groups_management_authorized
     end
 
     def cannot_manage_groups?
@@ -51,7 +42,7 @@ class OrganizationManagement
     end
 
     def can_manage_journals?
-      rights.is_journals_management_authorized
+      organization_rights_is_journals_management_authorized
     end
 
     def cannot_manage_journals?
@@ -63,7 +54,7 @@ class OrganizationManagement
     include Common
 
     def customers
-      self._organization.customers
+      _organization.customers
     end
   end
 
@@ -71,7 +62,7 @@ class OrganizationManagement
     include Common
 
     def customers
-      self._organization.customers.any_in(group_ids: self['group_ids'])
+      _organization.customers.joins(:groups).where("groups.id IN (?)", self.group_ids)
     end
   end
 end

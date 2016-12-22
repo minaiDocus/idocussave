@@ -4,26 +4,36 @@ class Account::Organization::DematboxController < Account::OrganizationControlle
   before_filter :verify_access
   before_filter :load_dematbox
 
+
+  # POST /account/organizations/:organization_id/customers/:customer_id/dematbox
   def create
-    @dematbox.async_subscribe(params[:pairing_code])
+    @dematbox.subscribe(params[:pairing_code])
+
     flash[:success] = "Configuration de iDocus'Box en cours..."
+
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'idocus_box')
   end
 
+
+  # DELETE /account/organizations/:organization_id/customers/:customer_id/dematbox
   def destroy
     @dematbox.unsubscribe
+
     flash[:success] = 'Supprimé avec succèss.'
+
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'idocus_box')
   end
 
-private
+  private
 
   def verify_access
     unless @customer.is_dematbox_authorized
       flash[:success] = t('authorization.unessessary_rights')
+
       redirect_to account_organization_customer_path(@organization, @customer)
     end
   end
+
 
   def load_dematbox
     @dematbox = @customer.dematbox || Dematbox.create(user_id: @customer.id)

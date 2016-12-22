@@ -4,18 +4,37 @@ class Account::AccountController < ApplicationController
   before_filter :load_user_and_role
   before_filter :verify_suspension
   before_filter :verify_if_active
-  around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
+  #around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
 
   layout 'inner'
 
-protected
+  def index
+    users = if @user.is_prescriber && @user.organization
+              @user.customers.includes(:organization)
+            else
+              [@user]
+            end
+
+    @last_kits       = PaperProcess.where(user_id: users.map(&:id)).kits.order(updated_at: :desc).includes(:user).limit(5)
+    @last_receipts   = PaperProcess.where(user_id: users.map(&:id)).receipts.order(updated_at: :desc).includes(:user).limit(5)
+    @last_scanned    = PeriodDocument.where(user_id: users.map(&:id)).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5)
+    @last_returns    = PaperProcess.where(user_id: users.map(&:id)).returns.order(updated_at: :desc).includes(:user).limit(5)
+    @last_packs      = @user.packs.order(updated_at: :desc).limit(5)
+    @last_temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
+
+    if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
+      customers = @user.is_admin ? @user.organization.customers : @user.customers
+      @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
+    end
+  end
+
+  protected
 
   def catch_error
     begin
       yield
     rescue ActionController::UnknownController,
            AbstractController::ActionNotFound,
-           Mongoid::Errors::DocumentNotFound,
            ActionController::RoutingError
       respond_to do |format|
         format.html { render '/404', status: 404, layout: 'inner' }
@@ -38,59 +57,24 @@ protected
     render status: 400, text: '404'
   end
 
-  def load_user_and_role(name=:@user)
+
+  def load_user_and_role(name = :@user)
     instance = load_user(name)
     instance.extend_organization_role if instance
   end
+
 
   def load_fiduceo_user_id
     @fiduceo_user_id = @user.fiduceo_id || FiduceoUser.new(@user).create
   end
 
-  def load_bank_accounts
-    @bank_accounts = @user.bank_accounts.asc([:bank_name, :number]).map do |bank_account|
-      name = [bank_account.retriever.name, bank_account.name, bank_account.number].join(' - ')
-      [name, bank_account.fiduceo_id]
-    end
-    if @bank_accounts.any?
-      ids = @bank_accounts.map { |e| e[1] }
-      @bank_account_id = params[:bank_account_id] if params[:bank_account_id].in? ids
-      @bank_account_id = ids.first unless @bank_account_id
-    else
-      redirect_to root_path, flash: { error: "Vous n'avez pas de compte bancaire configuré." }
-    end
-  end
 
-  def fiduceo_client
-    @fiduceo_client ||= Fiduceo::Client.new @user.fiduceo_id, cache: true
-  end
-
-private
+  private
 
   def verify_if_active
     if @user && @user.inactive? && !controller_name.in?(%w(profiles documents))
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_documents_path
-    end
-  end
-
-public
-
-  def index
-    if @user.is_prescriber && @user.organization
-      users = @user.customers
-    else
-      users = [@user]
-    end
-    @last_kits       = PaperProcess.where(:user_id.in => users.map(&:id)).kits.desc(:updated_at).limit(5)
-    @last_receipts   = PaperProcess.where(:user_id.in => users.map(&:id)).receipts.desc(:updated_at).limit(5)
-    @last_scanned    = PeriodDocument.where(:user_id.in => users.map(&:id), :scanned_at.nin => [nil]).desc(:scanned_at).limit(5)
-    @last_returns    = PaperProcess.where(:user_id.in => users.map(&:id)).returns.desc(:updated_at).limit(5)
-    @last_packs      = @user.packs.desc(:updated_at).limit(5)
-    @last_temp_packs = @user.temp_packs.not_published.desc(:updated_at).limit(5)
-    if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
-      customers = @user.is_admin ? @user.organization.customers : @user.customers
-      @errors = Pack::Report.failed_delivery(customers.map(&:id), 5)
     end
   end
 end

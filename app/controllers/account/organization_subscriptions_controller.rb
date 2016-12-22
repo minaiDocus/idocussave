@@ -3,9 +3,12 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
   before_filter :verify_rights
   before_filter :load_subscription
 
+  # GET /account/organizations/:organization_id/organization_subscription/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/organization_subscription
   def update
     if @subscription.update(subscription_params)
       UpdatePeriod.new(@subscription.current_period).execute
@@ -16,28 +19,40 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     end
   end
 
+
+  # GET /account/organizations/:organization_id/organization_subscription/select_options
   def select_options
   end
 
+
+  # PUT /account/organizations/:organization_id/organization_subscription/propagate_options
   def propagate_options
     _params = subscription_quotas_params
+
     if @subscription.update(_params)
-      ids = params[:subscription][:customer_ids] - [''] rescue []
-      registered_ids = @organization.customers.where(:_id.in => ids).distinct(:_id)
+      ids = begin
+              params[:subscription][:customer_ids] - ['']
+            rescue
+              []
+            end
+
+      registered_ids = @organization.customers.where(id: ids).distinct(:id)
+
       if ids.size == registered_ids.size
-        subscriptions = Subscription.where(:user_id.in => ids)
-        subscription_ids = subscriptions.distinct(:_id)
+        subscriptions    = Subscription.where(user_id: ids)
+        subscription_ids = subscriptions.distinct(:id)
+
         subscriptions.update_all(_params)
-        periods = Period.where(
-          :subscription_id.in => subscription_ids,
-          :start_at.lte => Time.now,
-          :end_at.gte => Time.now
-        )
+
+        periods = Period.where(subscription_id: subscription_ids).where('start_at <= ? AND end_at >= ?', Time.now, Time.now)
+
         periods.each do |period|
           period.update(_params)
           UpdatePeriodPriceService.new(period).execute
         end
+
         flash[:success] = 'Propagé avec succès.'
+
         redirect_to account_organization_path(@organization, tab: 'subscription')
       else
         render :select_options
@@ -47,22 +62,26 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
     end
   end
 
-private
+  private
 
   def verify_rights
     unless @user.is_admin
       flash[:error] = t('authorization.unessessary_rights')
+
       redirect_to account_organization_path(@organization)
     end
   end
+
 
   def load_subscription
     @subscription = @organization.find_or_create_subscription
   end
 
+
   def subscription_params
     params.require(:subscription).permit(option_ids: [])
   end
+
 
   def subscription_quotas_params
     _params = params.require(:subscription).permit(
@@ -81,7 +100,8 @@ private
       :unit_price_of_excess_paperclips,
       :unit_price_of_excess_oversized
     )
-    _params.each { |k,v| _params[k] = v.to_i }
+
+    _params.each { |k, v| _params[k] = v.to_i }
     _params
   end
 end

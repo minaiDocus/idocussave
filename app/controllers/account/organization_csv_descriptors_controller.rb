@@ -3,23 +3,29 @@ class Account::OrganizationCsvDescriptorsController < Account::OrganizationContr
   before_filter :verify_rights
   before_filter :load_csv_descriptor
 
+
+  # GET account/organizations/:organization_id/csv_descriptor/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/csv_descriptor
   def update
     if @csv_descriptor.update(csv_descriptor_params)
       flash[:success] = 'Modifié avec succès.'
+
       redirect_to account_organization_path(@organization, tab: 'csv_descriptor')
     else
-      render 'edit'
+      render :edit
     end
   end
 
-private
+  private
 
   def verify_rights
     unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @organization.is_csv_descriptor_used
       flash[:error] = t('authorization.unessessary_rights')
+
       redirect_to account_organization_path(@organization)
     end
   end

@@ -3,9 +3,13 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
   before_filter :verify_rights
   before_filter :load_file_naming_policy
 
+
+  # GET /account/organizations/:organization_id/file_naming_policy/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/file_naming_policy
   def update
     if @file_naming_policy.update(file_naming_policy_params)
       flash[:success] = 'Modifié avec succès.'
@@ -15,29 +19,30 @@ class Account::FileNamingPoliciesController < Account::OrganizationController
     end
   end
 
+
+  # PUT /account/organizations/:organization_id/file_naming_policy/preview
   def preview
     @file_naming_policy.assign_attributes(file_naming_policy_params)
     if @file_naming_policy.valid?
-      file_name = CustomFileNameService.new(@file_naming_policy).execute({
-        user_code:      'TS%00001',
-        user_company:   'iDocus',
-        journal:        'AC',
-        period:         '201501',
-        piece_number:   '001',
-        third_party:    'Google',
-        invoice_number: '001002',
-        invoice_date:   '2015-01-02',
-        extension:      '.pdf'
-      })
+      file_name = CustomFileNameService.new(@file_naming_policy).execute(user_code:      'TS%00001',
+                                                                         user_company:   'iDocus',
+                                                                         journal:        'AC',
+                                                                         period:         '201501',
+                                                                         piece_number:   '001',
+                                                                         third_party:    'Google',
+                                                                         invoice_number: '001002',
+                                                                         invoice_date:   '2015-01-02',
+                                                                         extension:      '.pdf')
     else
       file_name = 'invalide'
     end
+
     respond_to do |format|
       format.json { render json: { file_name: file_name } }
     end
   end
 
-private
+  private
 
   def verify_rights
     unless is_leader?
@@ -46,9 +51,11 @@ private
     end
   end
 
+
   def load_file_naming_policy
     @file_naming_policy = @organization.foc_file_naming_policy
   end
+
 
   def file_naming_policy_params
     params.require(:file_naming_policy).permit(
