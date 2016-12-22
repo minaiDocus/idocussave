@@ -1,35 +1,24 @@
 # -*- encoding : UTF-8 -*-
-class Document
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paperclip
-  include Elasticsearch::Model
+class Document < ActiveRecord::Base
+  serialize :tags
 
-  field :content_text, type: String,  default: ""
-  field :is_a_cover,   type: Boolean, default: false
-  field :origin
-  field :tags,         type: Array,   default: []
-  field :position,     type: Integer
-  field :dirty,        type: Boolean, default: true
-  field :token
 
-  validates_inclusion_of :origin, within: %w(mixed scan upload dematbox_scan fiduceo)
+  validates :origin, inclusion: { within: %w(mixed scan upload dematbox_scan fiduceo) }
 
-  index({ origin: 1 })
-  index({ is_a_cover: 1 })
-  index({ dirty: 1 })
 
-  has_many :remote_files,  as: :remotable, dependent: :destroy
+  has_many :remote_files, as: :remotable, dependent: :destroy
+
   belongs_to :pack
 
-  has_mongoid_attached_file :content,
+  has_attached_file :content,
                             styles: {
-                                thumb: ["46x67>", :png],
-                                medium: ["92x133", :png]
+                              thumb: ['46x67>', :png],
+                              medium: ['92x133', :png]
                             },
-                            path: ":rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename",
-                            url: "/account/documents/:id/download/:style"
+                            path: ':rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename',
+                            url: '/account/documents/:id/download/:style'
   do_not_validate_attachment_file_type :content
+
 
   before_content_post_process do |image|
     if image.dirty # halts processing
@@ -39,42 +28,31 @@ class Document
     end
   end
 
+
   before_create :init_tags
 
+
   after_create do |document|
-    IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
     unless document.mixed? || Rails.env.test?
-      Document.delay(priority: 9, run_at: 10.seconds.from_now).generate_thumbs(document.id.to_s)
-      Document.delay(priority: 10, run_at: 10.seconds.from_now).extract_content(document.id.to_s)
+      Document.delay_for(30.seconds).generate_thumbs(document.id)
+      Document.delay_for(30.seconds).extract_content(document.id)
     end
   end
 
-  after_update do |document|
-    keys = document.__elasticsearch__.instance_variable_get(:@__changed_attributes).keys
-    if keys.include?('content_text') || keys.include?('tags')
-      IndexerService.perform_async(Document.to_s, document.id.to_s, 'index')
-    end
-  end
-
-  after_destroy { |document| IndexerService.perform_async(Document.to_s, document.id.to_s, 'delete') }
-
-  scope :mixed,            -> { where(origin: 'mixed') }
-  scope :not_mixed,        -> { not_in(origin: ['mixed']) }
-
-  scope :extracted,        -> { not_in(content_text: [""]) }
-  scope :not_extracted,    -> { where(content_text: "") }
-  scope :cannot_extract,   -> { where(content_text: "-[none]") }
 
   scope :clean,            -> { where(dirty: false) }
-  scope :not_clean,        -> { where(dirty: true) }
-
-  scope :scanned,          -> { where(origin: 'scan') }
-  scope :uploaded,         -> { where(origin: 'upload') }
-  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
-  scope :fiduceo,          -> { where(origin: 'fiduceo') }
-
+  scope :mixed,            -> { where(origin: 'mixed') }
   scope :covers,           -> { where(is_a_cover: true) }
-  scope :not_covers,       -> { any_in(is_a_cover: [false, nil]) }
+  scope :scanned,          -> { where(origin: 'scan') }
+  scope :fiduceo,          -> { where(origin: 'fiduceo') }
+  scope :uploaded,         -> { where(origin: 'upload') }
+  scope :not_mixed,        -> { where.not(origin: ['mixed']) }
+  scope :extracted,        -> { where.not(content_text: ['']) }
+  scope :not_clean,        -> { where(dirty: true) }
+  scope :not_covers,       -> { where(is_a_cover: [false, nil]) }
+  scope :not_extracted,    -> { where(content_text: '') }
+  scope :cannot_extract,   -> { where(content_text: '-[none]') }
+  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
 
   scope :of_period, lambda { |time, duration|
     case duration
@@ -88,23 +66,11 @@ class Document
       start_at = time.beginning_of_year
       end_at   = time.end_of_year
     end
-    where(created_at: { '$gte' => start_at, '$lte' => end_at })
+    where('created_at >= ? AND created_at <= ?', start_at, end_at)
   }
 
-  index_name "idocus_#{Rails.env}_documents"
 
-  mapping dynamic: 'false' do
-    indexes :id
-    indexes :pack_id
-    indexes :created_at, type: 'date'
-    indexes :tags
-    indexes :content_text
-    indexes :origin
-    indexes :is_a_cover, type: 'boolean'
-    indexes :position, type: 'integer'
-  end
-
-  def as_indexed_json(options={})
+  def as_indexed_json(_options = {})
     {
       id:           id.to_s,
       pack_id:      pack_id.to_s,
@@ -117,69 +83,59 @@ class Document
     }
   end
 
-  class << self
-    def search(text, options={})
-      page = options[:page] || 1
-      per_page = options[:per_page] || self.default_per_page
 
-      query = {}
-      filter = {}
-      filter[:id]    = options[:id]                    if options[:id].present?
-      filter[:ids]   = { values: options[:ids] }       if options[:ids].present?
-      filter[:term]  = { pack_id: options[:pack_id] }  if options[:pack_id].present?
-      filter[:terms] = { pack_id: options[:pack_ids] } if options[:pack_ids].present?
-      if filter.present? && text.present?
-        query[:multi_match] = { query: text, fields: [:tags, :content_text] }
-      end
+  def self.search(text, options = {})
+    page = options[:page] || 1
+    per_page = options[:per_page] || default_per_page
 
-      sort = ['_score']
-      sort = [{ position: :asc }] if options[:sort] == true
+    query = self.joins(:pack)
 
-      query_or_payload = nil
-      if filter.present?
-        query_or_payload = { sort: sort, filter: filter }
-        query_or_payload.merge!({ query: query }) if query.present?
-      elsif text.present?
-        query_or_payload = text
-      else
-        raise 'query_or_payload must not be nil'
-      end
+    query = query.where(id: options[:id]) if options[:id].present?
+    query = query.where(id: options[:ids]) if options[:ids].present?
+    query = query.where('packs.id = ?', options[:pack_id] )  if options[:pack_id].present?
+    query = query.where('packs.id IN (?)', options[:pack_ids]) if options[:pack_ids].present?
+    query = query.where('documents.tags LIKE ? OR documents.content_text LIKE ?', "%#{text}%", "%#{text}%") if text.present?
 
-      search = Elasticsearch::Model::Searching::SearchRequest.new(self, query_or_payload)
-      response = Elasticsearch::Model::Response::Response.new(self, search)
-      response.page(page).limit(per_page)
-    end
+    query.order(position: :asc) if  options[:sort] == true
 
-    def client
-      __elasticsearch__.client
-    end
-
-    def generate_thumbs(id)
-      document = Document.find id
-      document.dirty = false # set to false before reprocess to pass `before_content_post_process`
-      document.content.reprocess!
-      document.save
-    end
-
-    def extract_content(id)
-      document = Document.find id
-      if document.content.queued_for_write[:original]
-        path = document.content.queued_for_write[:original].path
-      else
-        path = document.content.path
-      end
-      POSIX::Spawn::system "pdftotext -raw -nopgbrk -q #{path}"
-      dirname = File.dirname(path)
-      filename = File.basename(path, '.pdf') + '.txt'
-      filepath = File.join(dirname, filename)
-      if File.exist?(filepath)
-        text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
-        document.content_text = text
-      end
-      document.content_text = ' ' unless document.content_text.present?
-      document.save
-    end
+    query.page(page).limit(per_page)
   end
+
+
+  def self.generate_thumbs(id)
+    document = Document.find(id)
+    document.dirty = false
+
+    document.content.reprocess!
+
+    document.save
+  end
+
+
+  def self.extract_content(id)
+    document = Document.find(id)
+    path = if document.content.queued_for_write[:original]
+             document.content.queued_for_write[:original].path
+           else
+             FileStoragePathUtils.path_for_object(document)
+           end
+
+    POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
+
+    dirname  = File.dirname(path)
+    filename = File.basename(path, '.pdf') + '.txt'
+    filepath = File.join(dirname, filename)
+
+    if File.exist?(filepath)
+      text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
+      document.content_text = text
+    end
+
+    document.content_text = ' ' unless document.content_text.present?
+
+    document.save
+  end
+
 
   def get_token
     if token.present?
@@ -190,62 +146,77 @@ class Document
     end
   end
 
-  def get_access_url(style=:original)
-    content.url(style) + "&token=" + get_token
+
+  def get_access_url(style = :original)
+    content.url(style) + '&token=' + get_token
   end
+
 
   def append(file_path)
     Dir.mktmpdir do |dir|
+      document_file_path = FileStoragePathUtils.path_for_object(self)
+
       merged_file_path = File.join(dir, content_file_name)
-      Pdftk.new.merge([self.content.path, file_path], merged_file_path)
+
+      Pdftk.new.merge([document_file_path, file_path], merged_file_path)
+
       self.content = open(merged_file_path)
+
       save
     end
   end
+
 
   def prepend(file_path)
     Dir.mktmpdir do |dir|
+      document_file_path = FileStoragePathUtils.path_for_object(self)
+
       merged_file_path = File.join(dir, content_file_name)
-      Pdftk.new.merge([file_path, self.content.path], merged_file_path)
+
+      Pdftk.new.merge([file_path, document_file_path], merged_file_path)
+
       self.content = open(merged_file_path)
+
       save
     end
   end
 
+
   def init_tags
     self.tags = pack.name.downcase.sub(' all', '').split
-    if !self.mixed? && number
-      self.tags << number
-    end
+
+    tags << number if !mixed? && number
   end
 
+
   def number
-    self.content_file_name.split('_')[-1].to_i.to_s rescue nil
+    content_file_name.split('_')[-1].to_i.to_s
+  rescue
+    nil
   end
+
 
   def mixed?
     origin == 'mixed'
   end
 
+
   def scanned?
     origin == 'scan'
   end
+
 
   def uploaded?
     origin == 'upload'
   end
 
+
   def dematbox_scanned?
     origin == 'dematbox_scan'
   end
 
+
   def fiduceo?
     origin == 'fiduceo'
-  end
-
-  class << self
-    def by_position
-      asc(:position)
-    end
   end
 end

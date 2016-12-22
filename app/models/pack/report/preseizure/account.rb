@@ -1,15 +1,12 @@
-class Pack::Report::Preseizure::Account
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Pack::Report::Preseizure::Account < ActiveRecord::Base
+  self.inheritance_column = :_type_disabled
 
-  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts, index: true
   has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :destroy
+  belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
+
 
   accepts_nested_attributes_for :entries
 
-  field :type,      type: Integer # TTC / HT / TVA
-  field :number,    type: String
-  field :lettering, type: String
 
   def self.get_type(txt)
     if txt == "TTC"
@@ -21,9 +18,5 @@ class Pack::Report::Preseizure::Account
     else
       nil
     end
-  end
-
-  def self.by_position
-    asc(:type)
   end
 end

@@ -1,50 +1,61 @@
 # -*- encoding : UTF-8 -*-
-class Event
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Event < ActiveRecord::Base
+  serialize :target_attributes
 
-  belongs_to :organization
   belongs_to :user
+  belongs_to :organization
 
-  field :number,         type: Integer
-  field :user_code
-  field :action
-  field :target_id
-  field :target_type
-  field :target_name
-  field :target_attributes, type: Hash, default: {}
-  field :path
-  field :ip_address
-
-  index({ number: 1 })
-
-  validates_presence_of :number
+  validates_presence_of   :number
   validates_uniqueness_of :number
 
+  before_create     :set_user_code
   before_validation :set_number
-  before_create :set_user_code
 
-  class << self
-    def by_number
-      desc(:number)
-    end
-  end
 
   def target
     if target_id
       target_type.split('/').each_with_index.map do |klass, i|
-        klass.camelcase.constantize.find(target_id.split('/')[i]) rescue nil
+        begin
+          klass.camelcase.constantize.find(target_id.split('/')[i])
+        rescue
+          nil
+        end
       end.compact
     end
   end
 
-private
+
+  def self.search(contains)
+    events = Event.all
+
+    if contains[:user_contains] && contains[:user_contains][:code].present?
+      if contains[:user_contains][:code].downcase.in?(%w(visiteur visitor))
+        events = events.where(user_id: nil)
+      else
+        user = User.where(code: contains[:user_contains][:code]).first
+
+        events = events.where(user_id: user.id) if user
+      end
+    end
+
+    events = events.where(number:      contains[:number])      if contains[:number].present?
+    events = events.where(created_at:  contains[:created_at])  if contains[:created_at].present?
+    events = events.where(action:      contains[:action])      if contains[:action].present?
+    events = events.where(target_type: contains[:target_type]) if contains[:target_type].present?
+    events = events.where("target_name LIKE ?", "%#{contains[:target_name]}%") if contains[:target_name].present?
+
+    events
+  end
+
+  private
+
 
   def set_number
     self.number ||= DbaSequence.next('Event')
   end
 
+
   def set_user_code
-    self.user_code ||= self.user.try(:code)
+    self.user_code ||= user.try(:code)
   end
 end

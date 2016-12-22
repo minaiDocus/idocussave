@@ -1,249 +1,282 @@
 # -*- encoding : UTF-8 -*-
-class TempDocument
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Paperclip
+class TempDocument < ActiveRecord::Base
+  serialize :fiduceo_metadata, Hash
+  serialize :scan_bundling_document_ids, Array
 
-  field :original_file_name
-  field :is_thumb_generated,   type: Boolean, default: false
-  field :pages_number,         type: Integer
-  field :position,             type: Integer
-  field :is_an_original,       type: Boolean, default: true # original or bundled
-  field :is_a_cover,           type: Boolean, default: false
-  field :is_ocr_layer_applied, type: Boolean
-
-  field :delivered_by
-  field :delivery_type
-
-  field :dematbox_doc_id
-  field :dematbox_box_id
-  field :dematbox_service_id
-  field :dematbox_text
-  field :dematbox_is_notified
-  field :dematbox_notified_at
-
-  field :fiduceo_id
-  field :fiduceo_metadata, type: Hash
-  field :fiduceo_service_name
-  field :fiduceo_custom_service_name
-
-  field :signature
-
-  field :is_corruption_notified, type: Boolean
-  field :corruption_notified_at, type: Time
-
-  field :state,                    default: 'created'
-  field :stated_at, type: Time
-  field :is_locked, type: Boolean, default: false
-  field :scan_bundling_document_ids, type: Array, default: []
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan fiduceo)
 
-  index({ delivery_type: 1 })
-  index({ state: 1 })
-  index({ is_an_original: 1 })
 
-  belongs_to :organization
   belongs_to :user
-  belongs_to :temp_pack
-  belongs_to :document_delivery
-  belongs_to :fiduceo_retriever
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
-  has_mongoid_attached_file :content,     styles: { thumb: ["46x67>", :png] },
-                                          path: ":rails_root/files/:rails_env/:class/:id/:filename",
-                                          url: "/account/documents/:id/download/:style"
+  belongs_to :temp_pack
+  belongs_to :organization
+  belongs_to :document_delivery
+  belongs_to :fiduceo_retriever
+
+
+  has_attached_file :content, styles: { thumb: ['46x67>', :png] },
+                                          path: ':rails_root/files/:rails_env/:class/:id/:filename',
+                                          url: '/account/documents/:id/download/:style'
   do_not_validate_attachment_file_type :content
-  has_mongoid_attached_file :raw_content, path: ":rails_root/files/:rails_env/:class/:id/raw_content/:filename"
+
+  has_attached_file :raw_content, path: ':rails_root/files/:rails_env/:class/:id/raw_content/:filename'
   do_not_validate_attachment_file_type :raw_content
 
-  before_content_post_process do |image|
-    image.is_thumb_generated # halts processing
-  end
+  before_content_post_process :is_thumb_generated
+
 
   after_create do |temp_document|
     unless Rails.env.test?
-      TempDocument.delay(priority: 9, run_at: 10.seconds.from_now).generate_thumbs(temp_document.id.to_s)
+      TempDocument.delay_for(10.seconds).generate_thumbs(temp_document.id.to_s)
     end
   end
 
-  scope :locked,            -> { where(is_locked: true) }
-  scope :not_locked,        -> { where(is_locked: false) }
 
   scope :scan,              -> { where(delivery_type: 'scan') }
+  scope :valid,             -> { where(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }
+  scope :ready,             -> { where(state: 'ready', is_locked: false) }
+  scope :locked,            -> { where(is_locked: true) }
   scope :upload,            -> { where(delivery_type: 'upload') }
-  scope :dematbox_scan,     -> { where(delivery_type: 'dematbox_scan') }
   scope :fiduceo,           -> { where(delivery_type: 'fiduceo') }
-
+  scope :created,           -> { where(state: 'created') }
+  scope :bundled,           -> { where(state: 'bundled') }
+  scope :bundling,          -> { where(state: 'bundling') }
   scope :originals,         -> { where(is_an_original: true) }
-
+  scope :processed,         -> { where(state: %w(processed bundled)) }
+  scope :not_locked,        -> { where(is_locked: false) }
+  scope :unreadable,        -> { where(state: 'unreadable') }
+  scope :ocr_needed,        -> { where(state: 'ocr_needed') }
+  scope :by_position,       -> { order(position: :asc) }
+  scope :not_processed,     -> { where.not(state: %w(processed)) }
+  scope :dematbox_scan,     -> { where(delivery_type: 'dematbox_scan') }
+  scope :not_published,     -> { where.not(state: %w(processed bundled wait_selection unreadable)) }
+  scope :bundle_needed,     -> { where(state: 'bundle_needed', is_locked: false) }
+  scope :wait_selection,    -> { where(state: 'wait_selection') }
   scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
 
-  scope :created,           -> { where(state: 'created') }
-  scope :unreadable,        -> { where(state: 'unreadable') }
-  scope :wait_selection,    -> { where(state: 'wait_selection') }
-  scope :ocr_needed,        -> { where(state: 'ocr_needed') }
-  scope :bundle_needed,     -> { where(state: 'bundle_needed', is_locked: false) }
-  scope :bundling,          -> { where(state: 'bundling') }
-  scope :bundled,           -> { where(state: 'bundled') }
-  scope :not_published,     -> { not_in(state: %w(processed bundled wait_selection unreadable)) }
-  scope :ready,             -> { where(state: 'ready', is_locked: false) }
-  scope :processed,         -> { any_in(state: %w(processed bundled)) }
-  scope :not_processed,     -> { not_in(state: %w(processed)) }
-  scope :valid,             -> { any_in(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }
 
-  state_machine :initial => :created do
+  state_machine initial: :created do
+    state :ready
     state :created
+    state :bundled
+    state :bundling
+    state :processed
     state :unreadable
-    state :wait_selection
     state :ocr_needed
     state :bundle_needed
-    state :bundling
-    state :bundled
-    state :ready
-    state :processed
+    state :wait_selection
 
-    before_transition any => any do |temp_document, transition|
+
+    before_transition any => any do |temp_document, _transition|
       temp_document.stated_at = Time.now
     end
 
-    after_transition on: :ready do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(document_not_processed_count: 1)
+
+    after_transition on: :ready do |temp_document, _transition|
+      temp_document.temp_pack.increment!(:document_not_processed_count, 1)
     end
 
-    after_transition on: :processed do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(document_not_processed_count: -1)
+
+    after_transition on: :processed do |temp_document, _transition|
+      temp_document.temp_pack.increment!(:document_not_processed_count, -1)
     end
 
-    after_transition on: :bundle_needed do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(document_bundle_needed_count: 1)
+
+    after_transition on: :bundle_needed do |temp_document, _transition|
+      temp_document.temp_pack.increment!(:document_bundle_needed_count, 1)
     end
 
-    after_transition on: :bundling do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(document_bundle_needed_count: -1)
-      temp_document.temp_pack.with(safe: true).inc(document_bundling_count: 1)
+
+    after_transition on: :bundling do |temp_document, _transition|
+      temp_document.temp_pack.increment!(:document_bundle_needed_count, -1)
+      temp_document.temp_pack.increment!(:document_bundling_count, 1)
     end
 
-    after_transition on: :bundled do |temp_document, transition|
-      temp_document.temp_pack.with(safe: true).inc(document_bundling_count: -1)
+
+    after_transition on: :bundled do |temp_document, _transition|
+      temp_document.temp_pack.increment!(:document_bundling_count, -1)
     end
 
-    after_transition on: :ocr_needed do |temp_document, transition|
-      TempDocument.send_to_ocr_processor(temp_document.id)
+
+    after_transition on: :ocr_needed do |temp_document, _transition|
+      SendTempDocumentToOcrProcessor.execute(temp_document.id)
     end
+
 
     event :unreadable do
-      transition :created => :unreadable
+      transition created: :unreadable
     end
+
 
     event :wait_selection do
-      transition :created => :wait_selection
+      transition created: :wait_selection
     end
 
+
     event :ocr_needed do
-      transition :created => :ocr_needed
+      transition created: :ocr_needed
     end
+
 
     event :bundle_needed do
       transition [:created, :unreadable, :ocr_needed] => :bundle_needed
     end
 
+
     event :bundling do
-      transition :bundle_needed => :bundling
+      transition bundle_needed: :bundling
     end
 
+
     event :bundled do
-      transition :bundling => :bundled
+      transition bundling: :bundled
     end
+
 
     event :ready do
       transition [:created, :unreadable, :wait_selection, :ocr_needed] => :ready
     end
+
 
     event :processed do
       transition [:ready] => :processed
     end
   end
 
-  class << self
-    def by_position
-      asc(:position)
-    end
 
-    def find_with(options)
-      where(options).first
-    end
+  def self.find_with(options)
+    where(options).first
+  end
 
-    def find_or_initialize_with(options)
-      if (temp_document=find_with(options))
-        temp_document
-      else
-        TempDocument.new(options)
-      end
-    end
 
-    def find_by_dematbox_doc_id(id)
-      where(dematbox_doc_id: id).first
-    end
-
-    def find_or_initialize_by_dematbox_doc_id(id)
-      if (temp_document=find_by_dematbox_doc_id(id))
-        temp_document
-      else
-        TempDocument.new(dematbox_doc_id: id)
-      end
-    end
-
-    def send_to_ocr_processor(id)
-      temp_document = TempDocument.find id
-      doc_id = DematboxServiceApi.send_file(temp_document.content.path)
-      temp_document.update_attribute(:dematbox_doc_id, doc_id)
-    end
-    handle_asynchronously :send_to_ocr_processor, priority: 0
-
-    def generate_thumbs(id)
-      temp_document = TempDocument.find id
-      temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
-      temp_document.content.reprocess!
-      temp_document.save
+  def self.find_or_initialize_with(options)
+    if (temp_document = find_with(options))
+      temp_document
+    else
+      TempDocument.new(options)
     end
   end
+
+
+  def self.find_by_dematbox_doc_id(id)
+    where(dematbox_doc_id: id).first
+  end
+
+
+  def self.find_or_initialize_by_dematbox_doc_id(id)
+    if (temp_document = find_by_dematbox_doc_id(id))
+      temp_document
+    else
+      TempDocument.new(dematbox_doc_id: id)
+    end
+  end
+
+
+  def self.generate_thumbs(id)
+    temp_document = TempDocument.find(id)
+
+    temp_document.is_thumb_generated = true # set to true before reprocess to pass `before_content_post_process`
+    temp_document.content.reprocess!
+
+    temp_document.save
+  end
+
+
+  def self.search_dematbox_files(contains)
+    dematbox_files = TempDocument.dematbox_scan.originals
+
+    dematbox_files = dematbox_files.where(dematbox_doc_id: contains[:dematbox_doc_id]) if contains[:dematbox_doc_id]
+
+    if contains[:created_at]
+      contains[:created_at].each do |operator, value|
+        dematbox_files = dematbox_files.where("created_at #{operator} '#{value}'")
+      end
+    end
+
+    dematbox_files.where(delivered_by: contains[:delivered_by]) if contains[:delivered_by]
+
+    dematbox_files = dematbox_files.where('content_file_name LIKE ?', "%#{contains[:content_file_name]}%") if contains[:content_file_name]
+
+    dematbox_files = dematbox_files.where(dematbox_is_notified: contains[:dematbox_is_notified]) if contains[:dematbox_is_notified]
+
+    dematbox_files
+  end
+
+
+  def self.search_for_collection(collection, contains)
+    user = collection.first.user
+
+    if contains[:service_name]
+      retriever_ids = user.fiduceo_retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
+
+      collection = collection.where(fiduceo_retriever_id: retriever_ids)
+    elsif contains[:retriever_id]
+      retriever = user.fiduceo_retrievers.find(contains[:retriever_id])
+
+      collection = collection.where(fiduceo_retriever_id: @retriever.id)
+    end
+
+    if contains[:transaction_id]
+      transaction = userr.fiduceo_transactions.find(contains[:transaction_id])
+
+      documents = collection.where(fiduceo_id: @transaction.retrieved_document_ids)
+    end
+
+   if contains[:date]
+      contains[:date].each do |operator, value|
+        collection = collection.where("created_at #{operator} '#{value}'")
+      end
+    end
+
+    collection
+  end
+
 
   def name_with_position
-    name = File.basename self.content_file_name, '.*'
+    name = File.basename content_file_name, '.*'
     name.sub!(/_\d+\z/, '') if scanned?
-    "#{name}_%0#{DocumentProcessor::POSITION_SIZE}d" % position
+
+    "#{name}_%0#{AccountingWorkflow::TempPackProcessor::POSITION_SIZE}d" % position
   end
 
+
   def file_name_with_position
-    extension = File.extname(self.content_file_name)
+    extension = File.extname(content_file_name)
+
     "#{name_with_position}#{extension}"
   end
+
 
   def scanned?
     delivery_type == 'scan'
   end
 
+
   def uploaded?
     delivery_type == 'upload'
   end
+
 
   def scanned_with_dematbox?
     delivery_type == 'dematbox_scan'
   end
 
+
   def fiduceo?
     delivery_type == 'fiduceo'
   end
+
 
   def is_a_cover?
     if scanned?
       if original_file_name.present?
         case original_file_name
-          when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
-            File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\A0*\z/).present?
-          when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
-            File.basename(original_file_name, '.*').gsub(' ', '_').split('_')[3].match(/\Apage0001\z/).present?
+        when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )#{Pack::POSITION_PATTERN}#{Pack::EXTENSION_PATTERN}\z/
+          File.basename(original_file_name, '.*').tr(' ', '_').split('_')[3].match(/\A0*\z/).present?
+        when /\A#{Pack::CODE_PATTERN}(_| )#{Pack::JOURNAL_PATTERN}(_| )#{Pack::PERIOD_PATTERN}(_| )page\d{3,4}#{Pack::EXTENSION_PATTERN}\z/
+          File.basename(original_file_name, '.*').tr(' ', '_').split('_')[3].match(/\Apage0001\z/).present?
         end
       else
         is_a_cover
@@ -253,9 +286,11 @@ class TempDocument
     end
   end
 
+
   def corruption_notified
     self.is_corruption_notified = true
     self.corruption_notified_at = Time.now
+
     save
   end
 end

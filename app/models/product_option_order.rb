@@ -1,37 +1,23 @@
 # -*- encoding : UTF-8 -*-
-class ProductOptionOrder
-  include Mongoid::Document
+class ProductOptionOrder < ActiveRecord::Base
+  belongs_to :product_optionable, polymorphic: true
 
-  field :name
-  field :title
-  field :group_title
-  field :description
-  field :price_in_cents_wo_vat, type: Float
-  field :group_position,        type: Integer
-  field :position,              type: Integer
-  field :duration,              type: Integer
-  field :quantity,              type: Integer
-  field :is_an_extra,           type: Boolean
-  field :is_to_be_disabled,     type: Boolean
+  scope :by_position, -> { order(group_position: :asc, position: :asc) }
 
-  embedded_in :product_optionable, polymorphic: true
-
-  def self.by_position
-    asc([:group_position,:position])
-  end
 
   def ==(product_option_order)
     result = true
-    result = false unless self.name                  == product_option_order.name
-    result = false unless self.title                 == product_option_order.title
-    result = false unless self.group_title           == product_option_order.group_title
-    result = false unless self.description           == product_option_order.description
-    result = false unless self.price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat
-    result = false unless self.duration              == product_option_order.duration
-    result = false unless self.quantity              == product_option_order.quantity
-    result = false unless self.is_an_extra           == product_option_order.is_an_extra
+    result = false unless name                  == product_option_order.name
+    result = false unless title                 == product_option_order.title
+    result = false unless group_title           == product_option_order.group_title
+    result = false unless description           == product_option_order.description
+    result = false unless price_in_cents_wo_vat == product_option_order.price_in_cents_wo_vat
+    result = false unless duration              == product_option_order.duration
+    result = false unless quantity              == product_option_order.quantity
+    result = false unless is_an_extra           == product_option_order.is_an_extra
     result
   end
+
 
   def eql?(product_option_order)
     self == product_option_order

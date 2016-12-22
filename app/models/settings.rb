@@ -1,23 +1,19 @@
-class Settings
-  include Mongoid::AppSettings
+class Settings < ActiveRecord::Base
+  serialize :notify_errors_to
+  serialize :compta_operators
+  serialize :paper_process_operators
+  serialize :notify_dematbox_order_to
+  serialize :notify_paper_set_order_to
+  serialize :notify_ibiza_deliveries_to
+  serialize :micro_package_authorized_to
+  serialize :notify_scans_not_delivered_to
 
-  setting :is_journals_modification_authorized, type: Boolean, default: false
 
-  setting :notify_errors_to,              type: Array,  default: []
-  setting :notify_ibiza_deliveries_to,    type: Array,  default: []
-  setting :notify_on_ibiza_delivery,      type: String, default: 'error' # yes/no/error
-  setting :notify_scans_not_delivered_to, type: Array,  default: []
-  setting :notify_dematbox_order_to,      type: Array,  default: []
-  setting :notify_paper_set_order_to,     type: Array,  default: []
-  setting :micro_package_authorized_to,   type: Array,  default: []
+  def self.update_setting(attribute, updated_value)
+    setting = Settings.first
 
-  setting :dropbox_extended_access_token
+    setting.send("#{attribute}=", updated_value)
 
-  # operator : { username: '', password: '', scanning_provider: '', is_return_labels_authorized: false }
-  setting :paper_process_operators, type: Array, default: []
-  # operator : { username: '', password: '' }
-  setting :compta_operators,        type: Array, default: []
-
-  setting :default_url, type: String, default: ''
-  setting :inner_url,   type: String, default: ''
+    setting.save
+  end
 end

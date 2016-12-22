@@ -1,10 +1,13 @@
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class FiduceoProvider
   attr_accessor :user_id
+
 
   def initialize(user_id)
     @user_id = user_id
     Rails.cache.fetch(['fiduceo_provider_cache_list']) { [] }
   end
+
 
   def banks
     if @user_id
@@ -16,7 +19,7 @@ class FiduceoProvider
         results = client.banks
         if client.response.code == 200
           results = results[1].select do |bank|
-            bank.deleted != "true"
+            bank.deleted != 'true'
           end.map do |bank|
             _bank = {
               name: bank.name,
@@ -40,7 +43,7 @@ class FiduceoProvider
             bank1[:name].downcase <=> bank2[:name].downcase
           end
           register_to_cache_list cache_name
-          Rails.cache.write(cache_name, results, :expires_in => 1.hour, :compress => true)
+          Rails.cache.write(cache_name, results, expires_in: 1.hour, compress: true)
           results
         else
           raise Fiduceo::Errors::ServiceUnavailable.new('banks')
@@ -51,71 +54,73 @@ class FiduceoProvider
     end
   end
 
+
   def flush_banks_cache
     Rails.cache.delete(['fiduceo', user_id, 'banks'])
     Rails.cache.delete(['fiduceo', user_id, 'raw_banks'])
   end
 
+
   def providers
     FiduceoProvider.providers
   end
 
-  class << self
-    def flush_all_cache
-      list = Rails.cache.fetch(['fiduceo_provider_cache_list']) { [] }
-      list.each do |cache_name|
-        Rails.cache.delete cache_name
-      end
-      flush_providers_cache
-      Rails.cache.delete(['fiduceo_provider_cache_list'])
+  def self.flush_all_cache
+    list = Rails.cache.fetch(['fiduceo_provider_cache_list']) { [] }
+    list.each do |cache_name|
+      Rails.cache.delete cache_name
     end
+    flush_providers_cache
+    Rails.cache.delete(['fiduceo_provider_cache_list'])
+  end
 
-    def flush_providers_cache
-      Rails.cache.delete('fiduceo_provider_providers')
-      Rails.cache.delete('fiduceo_provider_raw_providers')
-    end
+  def self.flush_providers_cache
+    Rails.cache.delete('fiduceo_provider_providers')
+    Rails.cache.delete('fiduceo_provider_raw_providers')
+  end
 
-    def providers
-      Rails.cache.fetch('fiduceo_provider_providers', :expires_in => 1.hour, :compress => true) do
-        results = Fiduceo.providers
-        if results.class == Array
-          Rails.cache.write('fiduceo_provider_raw_providers', results, :expires_in => 1.hour, :compress => true)
-          results.select do |provider|
-            provider.deleted != "true"
-          end.map do |provider|
-            _provider = {
-              name: provider.name,
-              type: 'provider',
-              wait_for_user: provider.wait_for_user == 'true' ? true : false,
-              wait_for_user_label: provider.wait_for_user_label == 'NONE' ? nil : provider.wait_for_user_label
-            }.with_indifferent_access
-            _provider['id']      = provider.id
-            _provider['inputs']  = provider.inputs['input']
-            if provider.providerInfos && provider.providerInfos['providerInfo']
-              if provider.providerInfos['providerInfo'].is_a? Array
-                _provider['url'] = provider.providerInfos['providerInfo'][0]['libelle']
-              elsif provider.providerInfos['providerInfo'].is_a? Hash
-                _provider['url'] = provider.providerInfos['providerInfo']['libelle']
-              else
-                _provider['url'] = nil
-              end
+  def self.providers
+    Rails.cache.fetch('fiduceo_provider_providers', expires_in: 1.hour, compress: true) do
+      results = Fiduceo.providers
+      if results.class == Array
+        Rails.cache.write('fiduceo_provider_raw_providers', results, expires_in: 1.hour, compress: true)
+        results.select do |provider|
+          provider.deleted != 'true'
+        end.map do |provider|
+          _provider = {
+            name: provider.name,
+            type: 'provider',
+            wait_for_user: provider.wait_for_user == 'true' ? true : false,
+            wait_for_user_label: provider.wait_for_user_label == 'NONE' ? nil : provider.wait_for_user_label
+          }.with_indifferent_access
+          _provider['id']      = provider.id
+          _provider['inputs']  = provider.inputs['input']
+          if provider.providerInfos && provider.providerInfos['providerInfo']
+            if provider.providerInfos['providerInfo'].is_a? Array
+              _provider['url'] = provider.providerInfos['providerInfo'][0]['libelle']
+            elsif provider.providerInfos['providerInfo'].is_a? Hash
+              _provider['url'] = provider.providerInfos['providerInfo']['libelle']
+            else
+              _provider['url'] = nil
             end
-            _provider
-          end.sort do |provider1, provider2|
-            provider1[:name].downcase <=> provider2[:name].downcase
           end
-        else
-          []
+          _provider
+        end.sort do |provider1, provider2|
+          provider1[:name].downcase <=> provider2[:name].downcase
         end
+      else
+        []
       end
     end
   end
 
-private
+  private
+
 
   def client
     @client ||= Fiduceo::Client.new @user_id
   end
+
 
   def register_to_cache_list(cache_name)
     new_value = (Rails.cache.read('fiduceo_provider_cache_list') + [cache_name]).uniq

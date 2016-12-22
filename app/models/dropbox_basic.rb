@@ -1,132 +1,50 @@
 # -*- encoding : UTF-8 -*-
-class DropboxBasic
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class DropboxBasic < ActiveRecord::Base
+  serialize :attachment_names
+  serialize :import_folder_paths
 
   belongs_to :external_file_storage
 
-  field :access_token
-  field :path,                 type: String,  default: ':code/:year:month/:account_book/'
-
-  field :dropbox_id,          type: Integer
-  field :changed_at,          type: Time
-  field :checked_at,          type: Time
-  field :delta_cursor,        type: String
-  field :delta_path_prefix,   type: String
-  field :import_folder_paths, type: Array, default: []
-
   validate :beginning_of_path
 
+
+  before_create :initialize_serialized_attributes
+
   before_destroy do
-    self.class.disable_access_token(self.access_token) if self.access_token.present?
+    self.class.disable_access_token(access_token) if access_token.present?
   end
 
-  class << self
-    def disable_access_token(access_token)
-      client = DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
-      client.disable_access_token
-    end
-    handle_asynchronously :disable_access_token, priority: 5
+
+  def self.disable_access_token(access_token)
+    client = DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
+    client.disable_access_token
   end
+
 
   def user
     external_file_storage.user
   end
 
+
   def is_configured?
     access_token.present?
   end
+
 
   def is_used?
     external_file_storage.is_used?(ExternalFileStorage::F_DROPBOX)
   end
 
-  def client
-    if is_configured?
-      @client ||= DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
-    else
-      nil
-    end
-  end
 
-  def is_up_to_date(remote_filepath, filepath, current_client=client)
-    path = File.dirname(remote_filepath)
-    filename = File.basename(remote_filepath)
-    results = current_client.search(path, filename, 1)
-    if results.any?
-      size = results.first["bytes"]
-      if size == File.size(filepath)
-        true
-      else
-        false
-      end
-    else
-      nil
-    end
-  end
+  private
 
-  def is_not_up_to_date(remote_filepath, filepath, current_client=client)
-    !is_up_to_date(remote_filepath, filepath, current_client)
-  end
-
-  def sync(remote_files)
-    queue = Queue.new
-    threads = []
-    semaphore = Mutex.new
-
-    remote_files.each_with_index do |remote_file, index|
-      queue << [remote_file, index]
-    end
-
-    threads_count = 5
-    threads_count = queue.size if queue.size < threads_count
-
-    threads_count.times do
-      threads << Thread.new do
-        current_client = DropboxClient.new(access_token, Dropbox::ACCESS_TYPE)
-        loop do
-          break if queue.empty?
-
-          remote_file, index = queue.pop
-
-          remote_path = ExternalFileStorage::delivery_path(remote_file, path)
-          remote_filepath = File.join(remote_path, remote_file.name)
-          description = "\t[#{'%0.3d' % (index+1)}] \"#{remote_filepath}\""
-          tries = 0
-          begin
-            remote_file.sending!(remote_filepath)
-            if is_not_up_to_date(remote_filepath, remote_file.local_path, current_client)
-              current_client.put_file("#{remote_filepath}", open(remote_file.local_path), true)
-              semaphore.synchronize { puts "#{description} sent" }
-            else
-              semaphore.synchronize { puts "#{description} is up to date" }
-            end
-            remote_file.synced!
-          rescue => e
-            tries += 1
-            semaphore.synchronize { puts "#{description} failed : [#{e.class}] #{e.message}" }
-            if tries < 3
-              retry
-            else
-              semaphore.synchronize { puts "#{description} Retrying later" }
-              remote_file.not_synced!("[#{e.class}] #{e.message}")
-            end
-          end
-        end
-      end
-    end
-
-    threads.each(&:join)
-    remote_files.select do |remote_file|
-      remote_file.state == 'not_synced'
-    end.empty?
-  end
-
-private
 
   def beginning_of_path
-    if path.match /\A\/*exportation vers iDocus/
-      errors.add(:path, :invalid)
-    end
+    errors.add(:path, :invalid) if path =~ /\A\/*exportation vers iDocus/
+  end
+
+
+  def initialize_serialized_attributes
+    self.import_folder_paths ||= []
   end
 end

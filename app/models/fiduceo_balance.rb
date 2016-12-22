@@ -1,6 +1,7 @@
 # -*- encoding : UTF-8 -*-
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class FiduceoBalance
-  def initialize(user_id, bank_account_id, options={})
+  def initialize(user_id, bank_account_id, options = {})
     @user_id = user_id
     @bank_account_id = bank_account_id
     @type = options[:type] || 'monthly'
@@ -14,6 +15,7 @@ class FiduceoBalance
     @previ_count = options[:previ_count] || count
   end
 
+
   def balances
     results = client.bank_account_balances(@bank_account_id, @type, @history_count, @previ_count)
     if client.response.code == 200
@@ -26,7 +28,8 @@ class FiduceoBalance
     end
   end
 
-private
+  private
+
 
   def client
     @client ||= Fiduceo::Client.new @user_id

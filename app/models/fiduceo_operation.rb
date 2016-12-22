@@ -1,11 +1,13 @@
 # -*- encoding : UTF-8 -*-
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class FiduceoOperation
-  def initialize(user_id, options={})
+  def initialize(user_id, options = {})
     @user_id  = user_id
     @page     = options.delete(:page)
     @per_page = options.delete(:per_page)
     @options  = options
   end
+
 
   def operations
     if @page.present?
@@ -17,18 +19,17 @@ class FiduceoOperation
     results.is_a?(Array) ? format_operations(results) : results
   end
 
+
   def by_category
     result = operations
     if result
-      result.group_by do |operation|
-        operation.category
-      end.map do |k,v|
+      result.group_by(&:category).map do |k, v|
         category = OpenStruct.new
         category.name = k
         category.amount = (v.sum(&:amount) || 0).round
         category.operations = v
         category
-      end.sort do |a,b|
+      end.sort do |a, b|
         a.name <=> b.name
       end
     else
@@ -36,7 +37,8 @@ class FiduceoOperation
     end
   end
 
-private
+  private
+
 
   def get_operations
     per_page = 1000
@@ -69,10 +71,11 @@ private
     end
   end
 
+
   def format_operations(results)
     _operations = results.first.is_a?(Integer) ? results[1] : results
     account_ids = _operations.map(&:account_id).uniq
-    bank_accounts = BankAccount.where(:fiduceo_id.in => account_ids).entries
+    bank_accounts = BankAccount.where(fiduceo_id: account_ids)
     _operations.each do |operation|
       operation.date_op      = operation.date_op.try(:to_time)
       operation.date_val     = operation.date_val.try(:to_time)
@@ -88,6 +91,7 @@ private
     end
     _operations
   end
+
 
   def client
     @client ||= Fiduceo::Client.new @user_id

@@ -1,18 +1,12 @@
 # -*- encoding : UTF-8 -*-
-class PeriodDelivery
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class PeriodDelivery < ActiveRecord::Base
+  STATES = [%w(rien nothing), %w(attendus wait), %w(réceptionnés received), %w(traités delivered)].freeze
 
-  # FIXME do that with the builtin i18n rails module
-  STATES = [['rien', 'nothing'], ['attendus', 'wait'], ['réceptionnés', 'received'], ['traités', 'delivered']]
+  belongs_to :period, inverse_of: :delivery
 
-  embedded_in :period, inverse_of: :delivery
-
-  field :state, default: 'wait'
-
-  state_machine :initial => :wait do
-    state :nothing
+  state_machine initial: :wait do
     state :wait
+    state :nothing
     state :received
     state :delivered
 
