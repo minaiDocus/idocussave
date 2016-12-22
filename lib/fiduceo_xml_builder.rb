@@ -1,10 +1,11 @@
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 module Fiduceo
   module XML
     module Builder
       class << self
         def retriever(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.retriever {
+            xml.retriever do
               xml.id         options[:id]          if options[:id]
               xml.providerId options[:provider_id] if options[:provider_id]
               xml.login      options[:login]       if options[:login]
@@ -15,145 +16,145 @@ module Fiduceo
               xml.label      options[:label]       if options[:label]
               xml.active     options[:active]      if options[:active]
               xml.period     options[:period]      if options[:period] # NONE, WEEKLY, BIWEEKLY, MONTHLY, BIMONTHLY, TRIMONTHLY, SIXMONTHLY, YEARLY
-            }
+            end
           end
           builder.to_xml
         end
 
         def provider_wish(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.providerWishList {
+            xml.providerWishList do
               xml.providerName         options[:name]                   if options[:name]
               xml.providerUrl          options[:url]                    if options[:url]
               xml.login                options[:login]                  if options[:login]
               xml.pass                 options[:pass]                   if options[:pass]
               xml.customConnectionInfo options[:custom_connection_info] if options[:custom_connection_info]
               xml.description          options[:description]            if options[:description]
-            }
+            end
           end
           builder.to_xml
         end
 
         def alert(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.alert {
+            xml.alert do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.accountId options[:account_id] if options[:account_id]
               xml.type options[:type] if options[:type] # SOLDE_PREVI || RAD
               xml.status options[:status] if options[:status]
               if options[:alert_params]
-                xml.alertParams {
+                xml.alertParams do
                   options[:alert_params].each do |alert_param|
-                    xml.alertParam {
+                    xml.alertParam do
                       xml.name alert_param[:name] if alert_param[:name]
                       xml.value alert_param[:value] if alert_param[:value]
-                    }
+                    end
                   end
-                }
+                end
               end
               xml.active options[:active] if options[:active]
-            }
+            end
           end
           builder.to_xml
         end
 
         def bank_account(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.bankaccount {
+            xml.bankaccount do
               xml.providerId options[:provider_id] if options[:provider_id]
               xml.codeBank options[:code_bank] if options[:code_bank]
               xml.name options[:name] if options[:name]
               if options[:inputs]
-                xml.inputs {
+                xml.inputs do
                   options[:inputs].each do |input|
-                    xml.input {
+                    xml.input do
                       xml.name input[:name] if input[:name]
                       xml.tag input[:tag] if input[:tag]
                       xml.info input[:info] if input[:info]
                       xml.type input[:type] if input[:type] # TELEPHONE || EMAIL || INSEE || PASSWORD || FULLTEXT
                       if input[:values]
-                        xml.inputValues {
+                        xml.inputValues do
                           input[:values].each do |value|
                             xml.enumValue value
                           end
-                        }
+                        end
                       end
-                    }
+                    end
                   end
-                }
+                end
               end
-            }
+            end
           end
           builder.to_xml
         end
 
-        def doc_to_op_list(list, xml=nil)
+        def doc_to_op_list(list, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.docToOpList {
+          builder.docToOpList do
             list.each do |asso|
               doc_to_op asso, builder
             end
-          }
+          end
           builder.to_xml unless xml
         end
 
-        def doc_to_op(options, xml=nil)
+        def doc_to_op(options, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.docToOp {
+          builder.docToOp do
             builder.id options[:id] if options[:id]
             builder.operationId options[:operation_id] if options[:operation_id]
             builder.documentId options[:document_id] if options[:document_id]
             builder.label options[:label] if options[:label]
             builder.vignette options[:vignette] if options[:vignette]
-          }
+          end
           builder.to_xml unless xml
         end
 
-        def doc_to_proj_list(list, xml=nil)
+        def doc_to_proj_list(list, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.docToProjList {
+          builder.docToProjList do
             list.each do |asso|
               doc_to_proj asso, builder
             end
-          }
+          end
           builder.to_xml unless xml
         end
 
-        def doc_to_proj(options, xml=nil)
+        def doc_to_proj(options, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.docToProj {
+          builder.docToProj do
             builder.id options[:id] if options[:id]
             builder.projectId options[:project_id] if options[:project_id]
             builder.documentId options[:document_id] if options[:document_id]
             builder.label options[:label] if options[:label]
             builder.vignette options[:vignette] if options[:vignette]
-          }
+          end
           builder.to_xml unless xml
         end
 
         def document_filter(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.documentFilter {
+            xml.documentFilter do
               xml.fromDate options[:from_date] if options[:from_date]
               xml.toDate options[:to_date] if options[:to_date]
               xml.retrieverId options[:retriever_id] if options[:retriever_id]
               xml.searchLabel options[:search_label] if options[:search_label]
               if options[:tags]
-                xml.tags {
+                xml.tags do
                   options[:tags].each do |tag|
                     xml.tag tag
                   end
-                }
+                end
               end
-            }
+            end
           end
           builder.to_xml
         end
 
         def document(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.document {
+            xml.document do
               xml.id options[:id] if options[:id]
               xml.documentId options[:document_id] if options[:document_id]
               xml.parentId options[:parent_id] if options[:parent_id]
@@ -163,35 +164,35 @@ module Fiduceo
               xml.documentHash options[:document_hash] if options[:document_hash]
               xml.timestamped options[:timestamped] if options[:timestamped]
               if options[:metabody]
-                xml.metabodys {
+                xml.metabodys do
                   options[:metabody].each do |metabody|
-                    xml.metabody {
+                    xml.metabody do
                       xml.name metabody[:name] if metabody[:name]
                       xml.value metabody[:value] if metabody[:value]
-                    }
+                    end
                   end
-                }
+                end
               end
               doc_to_op_list(options[:doc_to_op_list], xml)
               doc_to_proj_list(options[:doc_to_proj_list], xml)
               if options[:tags]
-                xml.tags {
+                xml.tags do
                   options[:tags].each do |tag|
                     xml.tag tag
                   end
-                }
+                end
               end
               xml.binarybody options[:binary_body] if options[:binary_body] # base64
               xml.tsq options[:tsq] if options[:tsq] # base64
               xml.tsr options[:tsr] if options[:tsr] # base64
-            }
+            end
           end
           builder.to_xml
         end
 
         def operation_filter(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operationFilter {
+            xml.operationFilter do
               xml.fromDate options[:from_date] if options[:from_date]
               xml.toDate options[:to_date] if options[:to_date]
               xml.accountId options[:account_id] if options[:account_id]
@@ -200,31 +201,31 @@ module Fiduceo
               xml.note options[:note] if options[:note]          # VERY_GOOD || GOOD || AVERAGE || BAD || VERY_BAD
               xml.searchLabel options[:search_label] if options[:search_label]
               if options[:tags]
-                xml.tags {
+                xml.tags do
                   options[:tags].each do |tag|
                     xml.tag tag
                   end
-                }
+                end
               end
-            }
+            end
           end
           builder.to_xml
         end
 
         def operations(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operations {
+            xml.operations do
               options[:operations].each do |op|
                 operation(op, xml)
               end
-            }
+            end
           end
           builder.to_xml
         end
 
-        def operation(options, xml=nil)
+        def operation(options, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.operation {
+          builder.operation do
             builder.id options[:id] if options[:id]
             builder.customId options[:custom_id] if options[:custom_id]
             builder.parentId options[:parent_id] if options[:parent_id]
@@ -239,11 +240,11 @@ module Fiduceo
             builder.feeling options[:feeling] if options[:feeling]
             doc_to_op_list(builder, options[:doc_to_op_list])
             if options[:tags]
-              builder.tags {
+              builder.tags do
                 options[:tags].each do |tag|
                   builder.tag tag
                 end
-              }
+              end
             end
             builder.supplierFound options[:supplier_found] if options[:supplier_found]
             builder.cityFound options[:city_found] if options[:city_found]
@@ -259,34 +260,34 @@ module Fiduceo
             builder.checked options[:checked] if options[:checked]
             builder.operationFutureId options[:operation_future_id] if options[:operation_future_id]
             builder.future options[:future] if options[:future]
-          }
+          end
           builder.to_xml unless xml
         end
 
         def operation_cuts(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operationCuts {
+            xml.operationCuts do
               options[:operation_cuts].each do |op_cut|
                 operation_cut(op_cut, xml)
               end
-            }
+            end
           end
           builder.to_xml
         end
 
-        def operation_cut(options, xml=nil)
+        def operation_cut(options, xml = nil)
           builder = xml || Nokogiri::XML::Builder.new
-          builder.operationCut {
+          builder.operationCut do
             builder.amount options[:amount] if options[:amount]
             builder.comment options[:comment] if options[:comment]
             builder.categoryId options[:category_id] if options[:category_id]
-          }
+          end
           builder.to_xml unless xml
         end
 
         def mouvements(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.mouvements {
+            xml.mouvements do
               xml.numClientPrincipal options[:num_client_principal] if options[:num_client_principal]
               xml.numClientCotitulaire options[:num_client_cotitulaire] if options[:num_client_cotitulaire]
               xml.numCompte options[:num_compte] if options[:num_compte]
@@ -311,14 +312,14 @@ module Fiduceo
               xml.perodicite options[:perodicite] if options[:perodicite]
               xml.typeMouvement options[:type_mouvement] if options[:type_mouvement] # Mouvement || PrelevementSIT || PrelevementSEPA || VirementSIT || VirementSEPA || Manuel
               xml.solde options[:solde] if options[:solde]
-            }
+            end
           end
           builder.to_xml
         end
 
         def project(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operationCut {
+            xml.operationCut do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.name options[:name] if options[:name]
@@ -331,73 +332,73 @@ module Fiduceo
               if options[:doc_to_proj_list]
                 doc_to_proj_list(options[:doc_to_proj_list], xml)
               end
-            }
+            end
           end
           builder.to_xml
         end
 
         def transaction(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.transaction {
+            xml.transaction do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.transactionStatus options[:transaction_status] if options[:transaction_status] # PENDING || SCHEDULED || IN_PROGRESS || COMPLETED || COMPLETED_NOTHING_TO_DOWNLOAD || COMPLETED_NOTHING_NEW_TO_DOWNLOAD || COMPLETED_WITH_MISSING_DOCS || COMPLETED_WITH_ERRORS || LOGIN_FAILED || UNEXPECTED_ACCOUNT_body || CHECK_ACCOUNT || DEMATERIALISATION_NEEDED || RETRIEVER_ERROR || PROVIDER_UNAVAILABLE || TIMEOUT || BROKER_UNAVAILABLE || WAIT_FOR_USER_ACTION
               if options[:transaction_events]
-                xml.transactionEvents {
+                xml.transactionEvents do
                   options[:transaction_events].each do |transaction_event|
-                    xml.transactionEvent {
+                    xml.transactionEvent do
                       xml.timestamp transaction_event[:timestamp] if transaction_event[:timestamp]
                       xml.status transaction_event[:status] if transaction_event[:status]
-                    }
+                    end
                     xml.lastUserInfo options[:last_user_info] if options[:last_user_info]
                   end
-                }
+                end
               end
               if options[:retrieved_documents]
-                xml.retrievedDocuments {
+                xml.retrievedDocuments do
                   options[:retrieved_documents].each do |retrieved_document|
                     xml.documentId retrieved_document
                   end
-                }
+                end
               end
               xml.retrieverId options[:retriever_id] if options[:retriever_id]
               xml.foundDocumentCount options[:found_document_count] if options[:found_document_count]
-            }
+            end
           end
           builder.to_xml
         end
 
         def user_preferences(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.userpreferences {
+            xml.userpreferences do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.defaultEcheanceMonth options[:default_echeance_month] if options[:default_echeance_month]
               xml.isBankProAvailable options[:is_bank_pro_available] if options[:is_bank_pro_available]
               xml.maxDataBancaireRetrievers options[:max_data_bancaire_retrievers] if options[:max_data_bancaire_retrievers]
               xml.maxRetrievers options[:max_retrievers] if options[:max_retrievers]
-            }
+            end
           end
           builder.to_xml
         end
 
         def user_import(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.userImport {
+            xml.userImport do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.email options[:email] if options[:email]
               xml.login options[:login] if options[:login]
               xml.pass options[:pass] if options[:pass]
               xml.fiduceoId options[:fiduceo_id] if options[:fiduceo_id]
-            }
+            end
           end
           builder.to_xml
         end
 
         def expense_target(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.expenseTarget {
+            xml.expenseTarget do
               xml.userId options[:user_id] if options[:user_id]
               xml.type options[:type] if options[:type] # AUTO || MANUAL
               xml.categoryId options[:category_id] if options[:category_id]
@@ -405,14 +406,14 @@ module Fiduceo
               xml.suggestion options[:suggestion] if options[:suggestion]
               xml.currentAmountLeft options[:current_amount_left] if options[:current_amount_left]
               xml.defaultEcheance options[:default_echeance] if options[:default_echeance]
-            }
+            end
           end
           builder.to_xml
         end
 
         def operation_future(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operationFuture {
+            xml.operationFuture do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.factoryId options[:factory_id] if options[:factory_id]
@@ -435,20 +436,20 @@ module Fiduceo
               xml.operationId options[:operation_id] if options[:operation_id]
               xml.duplicateOperationFutureId options[:duplicate_operation_future_id] if options[:duplicate_operation_future_id]
               xml.system options[:system] if options[:system]
-            }
+            end
           end
           builder.to_xml
         end
 
         def operation_future_factory(options)
           builder = Nokogiri::XML::Builder.new do |xml|
-            xml.operationFutureFactory {
+            xml.operationFutureFactory do
               xml.id options[:id] if options[:id]
               xml.userId options[:user_id] if options[:user_id]
               xml.period options[:period] if options[:period]
               xml.recurringCount options[:recurring_count] if options[:recurring_count]
               xml.operationFuture options[:operation_future] if options[:operation_future]
-            }
+            end
           end
           builder.to_xml
         end

@@ -10,16 +10,16 @@ if %w(test).include?(Rails.env)
           def initialize(name)
             task name do
               # if rspec-rails is a configured gem, this will output helpful material and exit ...
-              require File.expand_path(File.dirname(__FILE__) + "/../../config/environment")
+              require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 
               # ... otherwise, do this:
               raise <<-MSG
 
-  #{"*" * 80}
+  #{'*' * 80}
   *  You are trying to run an rspec rake task defined in
   *  #{__FILE__},
   *  but rspec can not be found in vendor/gems, vendor/plugins or system gems.
-  #{"*" * 80}
+  #{'*' * 80}
   MSG
             end
           end
@@ -30,15 +30,15 @@ if %w(test).include?(Rails.env)
 
   Rake.application.instance_variable_get('@tasks').delete('default')
 
-  spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? "db:test:prepare" : :noop
+  spec_prereq = File.exist?(File.join(Rails.root, 'config', 'database.yml')) ? 'db:test:prepare' : :noop
   task :noop do
   end
 
-  task :default => :spec
-  task :stats => "spec:statsetup"
+  task default: :spec
+  task stats: 'spec:statsetup'
 
-  desc "Run all specs in spec directory (excluding plugin specs)"
-  Rspec::Core::RakeTask.new(:spec => spec_prereq)
+  desc 'Run all specs in spec directory (excluding plugin specs)'
+  Rspec::Core::RakeTask.new(spec: spec_prereq)
 
   namespace :spec do
     [:requests, :models, :controllers, :views, :helpers, :mailers, :lib].each do |sub|
@@ -48,8 +48,8 @@ if %w(test).include?(Rails.env)
       end
     end
 
-    desc "Run all specs with rcov"
-    RSpec::Core::RakeTask.new(:rcov => spec_prereq) do |t|
+    desc 'Run all specs with rcov'
+    RSpec::Core::RakeTask.new(rcov: spec_prereq) do |t|
       t.rcov = true
       t.rcov_opts = ['--output "spec/coverage" --exclude "spec/*,gems/*,features/*" --rails']
     end
@@ -64,14 +64,14 @@ if %w(test).include?(Rails.env)
       ::STATS_DIRECTORIES << %w(Mailer\ specs spec/mailers) if File.exist?('spec/mailers')
       ::STATS_DIRECTORIES << %w(Routing\ specs spec/routing) if File.exist?('spec/routing')
       ::STATS_DIRECTORIES << %w(Request\ specs spec/requests) if File.exist?('spec/requests')
-      ::CodeStatistics::TEST_TYPES << "Model specs" if File.exist?('spec/models')
-      ::CodeStatistics::TEST_TYPES << "View specs" if File.exist?('spec/views')
-      ::CodeStatistics::TEST_TYPES << "Controller specs" if File.exist?('spec/controllers')
-      ::CodeStatistics::TEST_TYPES << "Helper specs" if File.exist?('spec/helpers')
-      ::CodeStatistics::TEST_TYPES << "Library specs" if File.exist?('spec/lib')
-      ::CodeStatistics::TEST_TYPES << "Mailer specs" if File.exist?('spec/mailer')
-      ::CodeStatistics::TEST_TYPES << "Routing specs" if File.exist?('spec/routing')
-      ::CodeStatistics::TEST_TYPES << "Request specs" if File.exist?('spec/requests')
+      ::CodeStatistics::TEST_TYPES << 'Model specs' if File.exist?('spec/models')
+      ::CodeStatistics::TEST_TYPES << 'View specs' if File.exist?('spec/views')
+      ::CodeStatistics::TEST_TYPES << 'Controller specs' if File.exist?('spec/controllers')
+      ::CodeStatistics::TEST_TYPES << 'Helper specs' if File.exist?('spec/helpers')
+      ::CodeStatistics::TEST_TYPES << 'Library specs' if File.exist?('spec/lib')
+      ::CodeStatistics::TEST_TYPES << 'Mailer specs' if File.exist?('spec/mailer')
+      ::CodeStatistics::TEST_TYPES << 'Routing specs' if File.exist?('spec/routing')
+      ::CodeStatistics::TEST_TYPES << 'Request specs' if File.exist?('spec/requests')
     end
   end
 
