@@ -1,10 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class SubscriptionForm
-  def initialize(subscription, requester=nil, request=nil)
+  def initialize(subscription, requester = nil, request = nil)
     @subscription = subscription
     @requester    = requester
     @request      = request
   end
+
 
   def submit(params)
     dont_apply_now = !(@subscription.user.recently_created? || (@requester.is_admin && params[:is_to_apply_now] == '1'))
@@ -65,6 +66,7 @@ class SubscriptionForm
         @subscription.period_duration             = params[:period_duration]
       end
     end
+
     if params[:number_of_journals].to_i > @subscription.user.account_book_types.count
       @subscription.number_of_journals = params[:number_of_journals]
     end

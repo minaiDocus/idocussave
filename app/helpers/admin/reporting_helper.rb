@@ -2,20 +2,15 @@
 module Admin::ReportingHelper
   def invoice_at(time, organization, invoices)
     start_time = (time + 1.month).beginning_of_month
+
     end_time = start_time.end_of_month
-    invoices.select do |invoice|
-      invoice.created_at > start_time && invoice.created_at < end_time && invoice['organization_id'] == organization.id
-    end.first
+
+    invoices.where("created_at > ? AND created_at < ? AND organization_id = ?", start_time, end_time, organization.id).first
   end
 
   def periods_at(time, organization, user_ids)
-    periods = Period.any_of(
-      { :user_id.in => user_ids },
-      { organization_id: organization.id }
-    ).where(:start_at.lte => time.dup, :end_at.gte => time.dup).entries
-    [
-      periods.select { |e| e.is_centralized },
-      periods.select { |e| !e.is_centralized }
-    ]
+    periods = Period.where('user_id IN (?) OR organization_id = ?', user_ids, organization.id).where("start_at <= ? AND end_at >= ?", time.dup, time.dup)
+
+    [periods.where(is_centralized: true), periods.where(is_centralized: false)]
   end
 end

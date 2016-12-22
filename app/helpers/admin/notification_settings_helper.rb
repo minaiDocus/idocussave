@@ -6,8 +6,9 @@ module Admin::NotificationSettingsHelper
     end.join(', ')
   end
 
+
   def ibiza_notification_type
-    case Settings.notify_on_ibiza_delivery
+    case Settings.first.notify_on_ibiza_delivery
     when 'yes'
       'Tous'
     when 'no'
