@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class OrderPaperSet
-  def initialize(user, order, is_an_update=false)
+  def initialize(user, order, is_an_update = false)
     @user         = user
     @order        = order
     @period       = user.subscription.current_period
@@ -13,34 +13,44 @@ class OrderPaperSet
     @order.period_duration = @period.duration
     @order.price_in_cents_wo_vat = price_in_cents_wo_vat
     @order.address.is_for_paper_set_shipping = true if @order.address
+
     if @order.save
       unless @is_an_update
         @period.orders << @order
         ConfirmOrder.execute(@order.id.to_s)
       end
+
       auto_ajust_number_of_journals_authorized
+
       UpdatePeriod.new(@period).execute
+
       true
     else
       false
     end
   end
 
-private
+  private
 
   def price_in_cents_wo_vat
     price_of_periods * 100
   end
 
+
   def periods_count
     count = 0
+
     date = @order.paper_set_start_date
+
     while date <= @order.paper_set_end_date
       count += 1
+
       date += @order.period_duration.month
     end
+
     count
   end
+
 
   def casing_size_index
     case @order.paper_set_casing_size
@@ -53,13 +63,16 @@ private
     end
   end
 
+
   def folder_count_index
     @order.paper_set_folder_count - 5
   end
 
+
   def price_of_periods
     paper_set_prices[casing_size_index][folder_count_index][periods_count - 1]
   end
+
 
   def paper_set_prices
     [
@@ -80,7 +93,7 @@ private
         [23, 32, 41, 49, 58, 67, 78, 86, 95, 104, 113, 121, 130, 139, 148, 156, 165, 174, 182, 191, 200, 209, 217, 226]
       ],
       [
-        [25, 36, 46, 57, 68, 78, 89,  99, 110, 121, 131, 142, 155, 165, 176, 187, 197, 208, 218, 229, 240, 250, 261, 272],
+        [25, 36, 46, 57, 68, 78, 89, 99, 110, 121, 131, 142, 155, 165, 176, 187, 197, 208, 218, 229, 240, 250, 261, 272],
         [25, 36, 47, 57, 68, 79, 89, 100, 111, 121, 134, 145, 156, 166, 177, 188, 198, 209, 220, 230, 241, 252, 262, 273],
         [25, 36, 47, 57, 68, 79, 90, 100, 111, 124, 135, 146, 156, 167, 178, 189, 199, 210, 221, 231, 242, 253, 264, 274],
         [25, 36, 47, 58, 69, 79, 90, 101, 114, 125, 136, 146, 157, 168, 179, 189, 200, 211, 222, 233, 243, 254, 265, 276],
@@ -89,6 +102,7 @@ private
       ]
     ]
   end
+
 
   def auto_ajust_number_of_journals_authorized
     if @order.paper_set_folder_count != @user.subscription.number_of_journals && @order.paper_set_folder_count >= @user.account_book_types.count

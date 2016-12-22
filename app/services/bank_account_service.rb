@@ -1,16 +1,17 @@
 # -*- encoding : UTF-8 -*-
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class BankAccountService
-  def initialize(user, retriever=nil)
+  def initialize(user, retriever = nil)
     @user = user
     @retriever = retriever
   end
 
   def bank_accounts
-    if @retriever
-      results = client.retriever_bank_accounts(@retriever.fiduceo_id)
-    else
-      results = client.bank_accounts
-    end
+    results = if @retriever
+                client.retriever_bank_accounts(@retriever.fiduceo_id)
+              else
+                client.bank_accounts
+              end
     if client.response.code == 200 && results[1].any?
       results[1].map do |result|
         _bank_account = @user.bank_accounts.where(number: result.account_number).first
@@ -35,11 +36,10 @@ class BankAccountService
     bank_account = bank_accounts.select do |bank_account|
       bank_account.number == account_number
     end.first
-    raise Mongoid::Errors::DocumentNotFound.new(::BankAccount, account_number: account_number) unless bank_account
     bank_account
   end
 
-private
+  private
 
   def client
     @client ||= Fiduceo::Client.new @user.fiduceo_id

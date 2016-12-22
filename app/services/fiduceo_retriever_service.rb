@@ -1,4 +1,5 @@
 # -*- encoding : UTf-8 -*-
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class FiduceoRetrieverService
   class << self
     def create(user, params)
@@ -22,9 +23,7 @@ class FiduceoRetrieverService
             retriever.wait_for_user = provider[:wait_for_user]
             retriever.wait_for_user_label = provider[:wait_for_user_label]
           end
-          if retriever.service_name.match(/bnp/i)
-            retriever.frequency = 'mon-fri'
-          end
+          retriever.frequency = 'mon-fri' if retriever.service_name =~ /bnp/i
           retriever.journal_name = retriever.journal.try(:name)
           retriever.save
           FiduceoDocumentFetcher.initiate_transactions retriever
@@ -67,28 +66,29 @@ class FiduceoRetrieverService
       retriever.transactions.not_processed.destroy_all
       client = Fiduceo::Client.new(retriever.user.fiduceo_id)
       client.retriever(retriever.fiduceo_id, :delete)
-      if client.response.code.in?([200, 204])
-        retriever.destroy
-      end
+      retriever.destroy if client.response.code.in?([200, 204])
     end
 
     def format_params(retriever)
       params = {}
       if retriever.fiduceo_id
-        params.merge!({ id: retriever.fiduceo_id })
+        params[:id] = retriever.fiduceo_id
       else
-        if retriever.type == 'provider'
-          params.merge!({ provider_id: retriever.provider_id })
-        else
-          params.merge!({ provider_id: retriever.bank_id })
-        end
+        params[:provider_id] = if retriever.type == 'provider'
+                                 retriever.provider_id
+                               else
+                                 retriever.bank_id
+                               end
       end
-      params.merge!({ label: retriever.name, login: retriever.login }) if retriever.login_changed?
-      params.merge!({ pass: retriever.pass }) if retriever.pass.present?
-      params.merge!({ param1: retriever.param1 }) if retriever.param1.present?
-      params.merge!({ param2: retriever.param2 }) if retriever.param2.present?
-      params.merge!({ param3: retriever.param3 }) if retriever.param3.present?
-      params.merge!({ active: retriever.is_active.to_s }) if retriever.is_active_changed?
+      if retriever.login_changed?
+        params[:label] = retriever.name
+        params[:login] = retriever.login
+      end
+      params[:pass] = retriever.pass if retriever.pass.present?
+      params[:param1] = retriever.param1 if retriever.param1.present?
+      params[:param2] = retriever.param2 if retriever.param2.present?
+      params[:param3] = retriever.param3 if retriever.param3.present?
+      params[:active] = retriever.is_active.to_s if retriever.is_active_changed?
       params
     end
   end

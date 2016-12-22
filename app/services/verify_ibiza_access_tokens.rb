@@ -1,4 +1,5 @@
 # -*- encoding : UTF-8 -*-
+# Calls Ibiza API to check if API token is valid or not
 class VerifyIbizaAccessTokens
   def initialize(ibiza_id)
     @ibiza_id = ibiza_id
@@ -6,6 +7,7 @@ class VerifyIbizaAccessTokens
 
   def execute
     ibiza = Ibiza.find @ibiza_id
+
     if ibiza.state == 'waiting'
       client = IbizaAPI::Client.new(ibiza.access_token)
       client.company?
@@ -28,5 +30,4 @@ class VerifyIbizaAccessTokens
 
     ibiza.flush_users_cache
   end
-  handle_asynchronously :execute, priority: 1
 end

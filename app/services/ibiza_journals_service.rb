@@ -6,10 +6,12 @@ class IbizaJournalsService
     @user = user
   end
 
+
   def execute
     if valid?
       client.request.clear
       client.company(@user.ibiza_id).journal?
+
       if success?
         @journals = client.response.data.map do |j|
           {
@@ -25,15 +27,18 @@ class IbizaJournalsService
     end
   end
 
+
   def valid?
     @user.ibiza_id.present? && client
   end
+
 
   def success?
     valid? ? client.response.success? : nil
   end
 
-private
+
+  private
 
   def client
     @client ||= @user.organization.try(:ibiza).try(:client)

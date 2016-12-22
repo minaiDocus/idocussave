@@ -1,27 +1,28 @@
 # -*- encoding : UTF-8 -*-
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 class OperationService
   def self.fetch_all
-    BankAccount.outdated.each do |bank_account|
-      transaction = bank_account.retriever.transactions.desc(:created_at).first
+    BankAccount.each do |bank_account|
+      transaction = bank_account.retriever.transactions.order(created_at: :desc).first
       if transaction.updated_at <= 3.minutes.ago
-        self.fetch(bank_account)
+        OperationService.fetch(bank_account)
         bank_account.update_attribute(:is_operations_up_to_date, true)
       end
     end
   end
 
-  def self.fetch(object, update=false)
-    if object.class.to_s.in?(%w(User FiduceoRetriever))
-      bank_accounts = object.bank_accounts
-    else
-      bank_accounts = Array(object)
-    end
+  def self.fetch(object, update = false)
+    bank_accounts = if object.class.to_s.in?(%w(User FiduceoRetriever))
+                      object.bank_accounts
+                    else
+                      Array(object)
+                    end
     bank_accounts.each do |bank_account|
       is_configured = bank_account.configured?
       options = { account_id: bank_account.fiduceo_id }
       date = bank_account.start_date
       if date
-        last_operation_date = bank_account.operations.desc(:date).first.try(:date)
+        last_operation_date = bank_account.operations.order(date: :desc).first.try(:date)
         if last_operation_date && date < (last_operation_date - 60.days)
           date = last_operation_date - 60.days
         end
@@ -52,7 +53,7 @@ class OperationService
   def self.update_bank_account(bank_account)
     options = { account_id: bank_account.fiduceo_id }
     operation_ids = FiduceoOperation.new(bank_account.user.fiduceo_id, options).operations.map(&:id) || []
-    bank_account.user.operations.where(:fiduceo_id.in => operation_ids).update_all(bank_account_id: bank_account.id)
+    bank_account.user.operations.where(fiduceo_id: operation_ids).update_all(bank_account_id: bank_account.id)
   end
 
   def self.assign_attributes(operation, temp_operation)
@@ -68,8 +69,8 @@ class OperationService
     operation.category         = temp_operation.category
   end
 
-  def self.process(banking_operations=nil)
-    operations = banking_operations || Operation.not_processed.not_locked.asc(:date)
+  def self.process(banking_operations = nil)
+    operations = banking_operations || Operation.not_processed.not_locked.order(date: :asc)
 
     if operations.count > 0
       preseizures = []
@@ -104,7 +105,7 @@ class OperationService
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = bank_account.try(:accounting_number) || 512000
+            account.number     = bank_account.try(:accounting_number) || 512_000
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new
@@ -160,7 +161,7 @@ class OperationService
   end
 
   def self.current_period_name
-    Time.now.strftime("%Y%m")
+    Time.now.strftime('%Y%m')
   end
 
   def self.pack_name(user, object)

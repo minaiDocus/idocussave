@@ -4,13 +4,36 @@ class PeriodBillingService
     @period = period
   end
 
+
+  def self.amount_in_cents_wo_vat(order, periods)
+    periods.map do |period|
+      new(period).amount_in_cents_wo_vat(order)
+    end.sum
+  end
+
+  def self.quarter_order_of(number)
+    order = number % 3
+    order == 0 ? 3 : order
+  end
+
+  def self.vat_ratio(time)
+    if time < Time.local(2014, 1, 1)
+      1.196
+    else
+      1.2
+    end
+  end
+
+
   def amount_in_cents_wo_vat(order)
     if @period.duration == 1
       @period.price_in_cents_wo_vat
     elsif @period.duration == 3
       quarter_order = PeriodBillingService.quarter_order_of(order)
+
       if @period.billings.any?
         billing = @period.billings.where(order: quarter_order).first
+        
         if billing
           billing.amount_in_cents_wo_vat
         else
@@ -34,20 +57,25 @@ class PeriodBillingService
     end
   end
 
+
   def data(key, order)
     case @period.duration
     when 1
       @period.send(key)
     when 3
-      order.in?([3,6,9,12]) ? @period.send(key) : 0
+      order.in?([3, 6, 9, 12]) ? @period.send(key) : 0
     when 12
       find_or_compute(key, order)
     end
   end
 
+
   def next_order
-    @period.billings.map(&:order).max + 1 rescue 1
+    @period.billings.map(&:order).max + 1
+  rescue
+    1
   end
+
 
   def save(order)
     case @period.duration
@@ -58,21 +86,30 @@ class PeriodBillingService
     when 12
       _order = order
     end
+
     unless @period.billings.where(order: _order).first
       billing = PeriodBilling.new
+
       billing.amount_in_cents_wo_vat = amount_in_cents_wo_vat(_order)
+
       attributes.each do |attribute|
         billing.send("#{attribute}=", data(attribute, order))
       end
+
       billing.order = _order
+
       @period.billings << billing
+
       @period.save
     end
   end
 
+
   def fill_past_with_0
+    order   = 1
     month = @period.start_at.month
-    order = 1
+    
+
     while month < Time.now.month
       fill_with_0(order)
       order += 1
@@ -80,13 +117,17 @@ class PeriodBillingService
     end
   end
 
+
   def fill_with_0(order)
     billing = PeriodBilling.new(order: order)
+
     @period.billings << billing
+
     @period.save
   end
 
-private
+  private
+
 
   def find_or_compute(key, order)
     billing = @period.billings.where(order: order).first
@@ -94,11 +135,13 @@ private
       billing.send(key)
     elsif order == next_order
       billed = @period.billings.sum(key) || 0
+
       @period.send(key) - billed
     else
       0
     end
   end
+
 
   def attributes
     [
@@ -121,28 +164,5 @@ private
       :excess_compta_pieces,
       :excesses_amount_in_cents_wo_vat
     ]
-  end
-
-public
-
-  class << self
-    def amount_in_cents_wo_vat(order, periods)
-      periods.map do |period|
-        new(period).amount_in_cents_wo_vat(order)
-      end.sum
-    end
-
-    def quarter_order_of(number)
-      order = number % 3
-      order == 0 ? 3 : order
-    end
-
-    def vat_ratio(time)
-      if time < Time.local(2014,1,1)
-        1.196
-      else
-        1.2
-      end
-    end
   end
 end

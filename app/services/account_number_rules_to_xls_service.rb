@@ -4,12 +4,14 @@ class AccountNumberRulesToXlsService
     @rules = rules
   end
 
+
   def execute
     book = Spreadsheet::Workbook.new
 
     sheet1 = book.create_worksheet name: 'Règles'
 
     headers = []
+
     headers += [
       'PRIORITE',
       'NOM',
@@ -18,6 +20,7 @@ class AccountNumberRulesToXlsService
       'CONTENU_RECHERCHE',
       'NUMERO_COMPTE'
     ]
+
     sheet1.row(0).concat headers
     
     if @rules.any? 
@@ -46,7 +49,9 @@ class AccountNumberRulesToXlsService
     end
 
     io = StringIO.new('')
+
     book.write(io)
+    
     io.string
   end
 

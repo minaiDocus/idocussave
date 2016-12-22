@@ -1,25 +1,27 @@
 # -*- encoding : UTF-8 -*-
+# Update a subscription with parameters
 class UpdateSubscription
-  class << self
-    def execute(subscription_id, params, requester_id, request=nil)
-      subscription = Subscription.find subscription_id
-      requester = User.find requester_id
-      new(subscription, params, requester, request).execute
-    end
-    handle_asynchronously :execute, priority: 0
+  def self.execute(subscription_id, params, requester_id, request = nil)
+    requester     = User.find(requester_id)
+    subscription  = Subscription.find(subscription_id)
+
+    new(subscription, params, requester, request).execute
   end
 
-  def initialize(subscription, params, requester, request=nil)
-    @subscription = subscription
+
+  def initialize(subscription, params, requester, request = nil)
     @params       = params
-    @requester    = requester
     @request      = request
+    @requester    = requester
+    @subscription = subscription
   end
+
 
   def execute
     if @subscription.update(@params)
-      EvaluateSubscription.new(@subscription, @requester, @request).execute
-      UpdatePeriod.new(@subscription.current_period).execute
+      UpdatePeriod.new(@subscription.current_period).execute # Update current period with new subscription informations
+      EvaluateSubscription.new(@subscription, @requester, @request).execute # Assign proper rights to requester
+
       true
     else
       false

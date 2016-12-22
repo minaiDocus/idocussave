@@ -1,8 +1,9 @@
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 # -*- encoding : UTF-8 -*-
 class FiduceoDocumentFetcher
   class << self
-    def initiate_transactions(retrievers=nil)
-      _retrievers = Array(retrievers).presence || FiduceoRetriever.active.auto.every_day.where(:state.in => %w(scheduled error))
+    def initiate_transactions(retrievers = nil)
+      _retrievers = Array(retrievers).presence || FiduceoRetriever.active.auto.every_day.where(state: %w(scheduled error))
       _retrievers.each do |retriever|
         if (retriever.ready? || retriever.scheduled? || retriever.error?) && retriever.is_active && retriever.transactions.not_processed.count == 0
           retriever.schedule if retriever.error?
@@ -25,16 +26,13 @@ class FiduceoDocumentFetcher
         transaction.save
         retriever.fetch
         transaction
-      else
-        nil
       end
     end
 
     def prepare_retryable_retrievers
-      FiduceoRetriever.error.where(:updated_at.gte => 6.minutes.ago, :updated_at.lte => 5.minutes.ago).each do |retriever|
-        last_transaction = retriever.transactions.desc(:created_at).first
-        previous_transaction = retriever.transactions.where(:updated_at.lt => last_transaction.created_at,
-                                                            :updated_at.gte => (last_transaction.created_at - 6.minutes)).first
+      FiduceoRetriever.error.where("updated_at >= ? AND updated_at <= ?", 6.minutes.ago, 5.minutes.ago).each do |retriever|
+        last_transaction = retriever.transactions.order(created_at: :desc).first
+        previous_transaction = retriever.transactions.where("updated_at >= ? AND updated_at < ?", (last_transaction.created_at - 6.minutes), last_transaction.created_at).first
         if previous_transaction.blank?
           retriever.schedule
           initiate_transactions retriever
@@ -44,14 +42,14 @@ class FiduceoDocumentFetcher
 
     def fetch
       # prepare_retryable_retrievers
-      transactions = FiduceoTransaction.not_processed.entries
+      transactions = FiduceoTransaction.not_processed
       transactions += FiduceoRetriever.not_processed.map do |retriever|
-        retriever.transactions.desc(:created_at).first
+        retriever.transactions.order(created_at: :desc).first
       end.compact
       transactions.uniq.each do |transaction|
         update_transaction transaction
 
-        if (transaction.success? || transaction.acceptable?) && transaction.retriever && transaction.retriever.pending_document_ids.size > 0
+        if (transaction.success? || transaction.acceptable?) && transaction.retriever && !transaction.retriever.pending_document_ids.empty?
           fetch_documents transaction.retriever
         end
       end
@@ -71,15 +69,13 @@ class FiduceoDocumentFetcher
         end
         transaction.save
         update_retriever_by_transaction(transaction)
-      else
-        nil
       end
     end
 
     def update_retriever_by_transaction(transaction)
       retriever = transaction.retriever.try(:reload)
       if retriever
-        retriever.timeless.update_attribute(:transaction_status, transaction.status)
+        retriever.update_attribute(:transaction_status, transaction.status)
         if transaction.wait_for_user_action? && retriever.processing?
           retriever.wait_for_user_action
         elsif (transaction.success? || transaction.acceptable?) && (retriever.processing? || retriever.wait_for_user_action?)
@@ -109,8 +105,8 @@ class FiduceoDocumentFetcher
         elsif transaction.error? && (retriever.processing? || retriever.wait_for_user_action?)
           retriever.error
           if transaction.critical_error?
-            addresses = Array(Settings.notify_errors_to)
-            FiduceoRetrieverMailer.notify_transaction_error(addresses, transaction).deliver if addresses.size > 0
+            addresses = Array("lolalaikam@idocus.com","luc@idocus.com","t.andrieu@gmail.com")
+            FiduceoRetrieverMailer.notify_transaction_error(addresses, transaction).deliver_later unless addresses.empty?
           end
         end
       end
@@ -124,16 +120,16 @@ class FiduceoDocumentFetcher
 
     def fetch_documents(retriever)
       client = Fiduceo::Client.new retriever.user.fiduceo_id
-      fetched_document_ids = retriever.temp_documents.distinct(:fiduceo_id)
+      fetched_document_ids = retriever.temp_documents.pluck('DISTINCT fiduceo_id')
       documents = []
       retriever.pending_document_ids.each do |id|
         if id.in? fetched_document_ids
-          retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+          retriever.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
         else
           document = client.document id
           if client.response.code == 200
             documents << document
-            retriever.with(safe: true).update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
+            retriever.update_attribute(:pending_document_ids, retriever.pending_document_ids - [id])
           end
         end
       end

@@ -1,30 +1,47 @@
 # -*- encoding : UTF-8 -*-
+# Generates a ZIP to import in quadratus
 class QuadratusZipService
   def initialize(preseizures)
     @preseizures = preseizures
   end
 
+
   def execute
-    base_name = @preseizures.first.report.name.gsub(' ', '_')
-    dir = Dir.mktmpdir
-    QuadratusZipService.remove_temp_dir(dir)
-    data = PreseizureToTxtService.new(@preseizures).execute
+    base_name = @preseizures.first.report.name.tr(' ', '_')
+
+    # Initialize a temp directory
+    dir = Dir.mktmpdir(nil, "#{Rails.root}/tmp")
+    FileUtils.chmod(0755, dir)
+
+    QuadratusZipService.delay_for(6.hours).remove_temp_dir(dir)
+
+    data = PreseizureToTxtService.new(@preseizures).execute # Generate a txt with preseizures
+
     File.open("#{dir}/#{base_name}.txt", 'w') do |f|
       f.write(data)
     end
+
+    # Copy pieces to temp directory
     @preseizures.each do |preseizure|
-      FileUtils.cp preseizure.piece.content.path, File.join(dir, preseizure.piece.number.to_s + '.pdf') if preseizure.piece.try(:content).try(:path)
+      @piece = preseizure.piece
+
+      filepath = FileStoragePathUtils.path_for_object(@piece)
+
+      FileUtils.cp filepath, File.join(dir, preseizure.piece.position.to_s + '.pdf') if preseizure.piece.try(:content).try(:path)
     end
+
     file_path = File.join(dir, base_name + '.zip')
+
     Dir.chdir dir
-    POSIX::Spawn::system "zip #{file_path} *"
+
+    # Finaly zip the temp dir
+    POSIX::Spawn.system "zip #{file_path} *"
+
     file_path
   end
 
-  class << self
-    def remove_temp_dir(dir)
-      FileUtils.remove_dir dir if File.exist? dir
-    end
-    handle_asynchronously :remove_temp_dir, :run_at => Proc.new { 6.hours.from_now }
+
+  def self.remove_temp_dir(dir)
+    FileUtils.remove_dir dir if File.exist? dir
   end
 end
