@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe DropboxImportFolder do
+describe DropboxImport do
   before(:all) do
     Timecop.freeze(Time.local(2015,2,15))
   end
@@ -48,8 +48,8 @@ describe DropboxImportFolder do
       end
 
       it 'creates initial folders' do
-        VCR.use_cassette('dropbox_import_folder/customer/creates_initial_folders') do
-          DropboxImportFolder.new(@dropbox).check
+        VCR.use_cassette('dropbox_import/customer/creates_initial_folders') do
+          DropboxImport.new(@dropbox).check
         end
 
         folder_paths = [
@@ -100,8 +100,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAHUYFz8b09BNdQnXbWzcMx1onR8cUW1DO4QsuuDTvXQAaXaT-aaOD_oeztZp1WrR52g2avgtXRjrw5k2fWTnKdojCoGxnV4VkuN334RireEhKOiPaEL9RwCgPd2q7uEiXIRrVv5oEmIf_1XrXqtLtlUtHek9Da3ZMkEi8fXLaIOpqUWOjO1ipjLOzYigMYMbp4'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/fetches_one_valid_file') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/fetches_one_valid_file') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -132,8 +132,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAHvNtByv6vt4jX-RTfuwQ473Lk7IfzEsEKKcuALOWX5WqWNI313siq-aYS7_UCiK0742nh64Ic0skeE7z7goiyhL9I1O0I8Tq5UcA7WJnVlGYct7TPgVtvDPAOFdnNmZx5E-v1M8-dgXcMvdri4Q4EdGFgtg3elKaYPsSXcGqHJq9NHQpfNMeOKuLcBnzpAOqY'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/marks_one_invalid_file') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/marks_one_invalid_file') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -160,8 +160,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAH-omVMlxwDei1x3DtMP1YFpKwLR_XGT939FfQ-GFXD5R8Ab_OkffQGZa8CsrCqZvnSaIobgc8FdqcuJXCTIdT799MMwjA9v_jhWdbzjlk4eX-y7dtaIw11olDPEUZNHK6X0zrkYzuvOm292adzrF2mFFWbuj9HDzkOju91gvRgJokoSWDuwgyVD786FohhrXk'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/ignores_one_file_marked_invalid') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/ignores_one_file_marked_invalid') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -181,8 +181,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAGkvb1ZwDBvVxkgLshA58LfkBJ79YBnK-tTXKGrI-07o-s9r_QkNDDlYDwABZrXWNHT0W3tt0b2kzqMP9rT6Jugqe9fWb-OxY5A-1BZ66IHNtMOJ7EYx9vpUuBFS5fi6XKTdPzXAu5RXni5XVyghq_KSHjAQ-XHjA0T-ldbWaTr1lHdQP8byFQaFkklbqyPo1Q'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/recreates_deleted_folders') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/recreates_deleted_folders') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -205,8 +205,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAHNv9G4Ed85Mih1-_YCl1X85MoV4KAizO1vvg06uvHavrLkBZSikJMOn8Kszf59SMQb_746_Z5LPYlhXGs-lsO6L-BRsyFrTdxy10CjbW3WLfljJ3HCnxOGJmUfEMETwkg-9Nr8Bzbr8Pmj40tc0KvqBUgWBBFYNgn31xx7wGGcnociVfxgMdF6nPlR3QPvDfU'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/recreates_renamed_or_moved_folders') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/recreates_renamed_or_moved_folders') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -237,8 +237,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAGciVi-0S27vUnG74p8d4eyih-QamQRxfb5A9pmbxS6Rtlh_L4q2Mx7NCf9gEPqiXHw-KSM4mxfOPR55WwhDqTJffXz6rjVjEUDg0KVsoZN8w4OTCHPpm2mjdxteRNm2Pbi5a9Jis1Bcsc5rbrW_fVUvvVfJZ-__vjMePgWcIzaKa42DJN3yOhmlT8c_g3BqsU'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/creates_2_folders_bq') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/creates_2_folders_bq') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -277,8 +277,8 @@ describe DropboxImportFolder do
             ]
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/deletes_2_folders_BQ_and_creates_2_folders_bq1') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/deletes_2_folders_BQ_and_creates_2_folders_bq1') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -315,8 +315,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAFXd1wVC74Y2lAlTsCfiYbXlJ-eTmmCe0mwCiJy6WVBiNuw7rSm_DUyOgOJt9_IONcUg2hEuWITupNangBXN_qhYBQMkdiY6HtstK-UwF4_JXJ2fsW423u_qPFoE5BUbR_g2OW1nsZdLaNssKnTGfuhziTfdT04c4js5BVsjNlTHXut0iSW_mxuJluM3f04H94'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/customer/deletes_2_folders_VT') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/customer/deletes_2_folders_VT') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -345,8 +345,8 @@ describe DropboxImportFolder do
                     delta_cursor = @dropbox.delta_cursor = 'AAHwJLrKrkXuhWX--5dtipzNeMDyP6uF7__k2DFEc05ugF5HpsiDHLVX2-IwLMN2-7YlsSQtodssf3vobtMUP68R26olrEJhNDirMiirohLhA6-_Tg7mzm9jfzoygBU6kzTa-2BW2B8bB51f3kjWqlrZZGmD26QPx9iGICHteQtAzJQ0VvehARaBrexA98XCUWo'
                     @dropbox.save
 
-                    VCR.use_cassette('dropbox_import_folder/customer/executes_multiple_jobs') do
-                      DropboxImportFolder.new(@dropbox).check
+                    VCR.use_cassette('dropbox_import/customer/executes_multiple_jobs') do
+                      DropboxImport.new(@dropbox).check
                     end
 
                     # delta
@@ -425,13 +425,6 @@ describe DropboxImportFolder do
         @group.members << @user2
         @group.save
 
-        @collaborator.groups << @group
-        @collaborator.save
-        @user.groups << @group
-        @user.save
-        @user2.groups << @group
-        @user2.save
-
         efs = @collaborator.find_or_create_external_file_storage
         efs.use ExternalFileStorage::F_DROPBOX
         @dropbox = efs.dropbox_basic
@@ -461,8 +454,8 @@ describe DropboxImportFolder do
       end
 
       it 'creates initial folders' do
-        VCR.use_cassette('dropbox_import_folder/collaborator/creates_initial_folders') do
-          DropboxImportFolder.new(@dropbox).check
+        VCR.use_cassette('dropbox_import/collaborator/creates_initial_folders') do
+          DropboxImport.new(@dropbox).check
         end
 
         folder_paths = [
@@ -535,8 +528,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAEYqODXf58U-SteDlRC3j-xD4ncrMh1d8diaw-iLFo2jJyqJ8h0KhQWz7SuyRnTU1LkGe79FEDut4WiyYx1zKLrlWdGFq67kXngH_tLznncVLy2ptCuSN3ok9LZmF0VIVoT4YCVDUzX1OU2h1TQ8PEfT_NHWGpFEIwZoeO_fAif_A'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/fetches_one_valid_file') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/fetches_one_valid_file') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -567,8 +560,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAFXJ4MsSG-zlrMbG8pYPyDLVTiLQL1bHrWT8Cak1RMi3CgFa1jaIwN7kAnKiVNJOqcgayS9pDyovPZwSxMJPtFHq1n8uKXYDZhgXQQbOFEkhnVC2cd2UCHawYImpb_DSC9JGkjia5qMOteZvMMpbHxFrVyxoO3W5ku_A8_PtcJbDQ'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/marks_one_invalid_file') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/marks_one_invalid_file') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -595,8 +588,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAGZ2f4nTuNezjIJ7SbaToHSCdtrd6BFQmAZI1s0V3xzwyXXcPxepqYyAbiXaO8034W2oW_8uCSInbCiZwFgJ5OSsMOzgEuMs-3QxQm_fqyfiXQWa5l6HwSVkyFivDeGZWPAw-_gaJLNHquGJd35NW-AVn0FWVEy-dnEBsulrE4M7w'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/ignores_one_file_marked_invalid') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/ignores_one_file_marked_invalid') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -616,8 +609,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAHVB1HPH6ovrzxlkydqq4vZKNO8Gx4geZ-5BcRI3A82_vNB8gv_MJ7l4gnsEuI6QXn1jwcOnrEyYYQWoyFVBzVuDzgZAKw4e6yKu-6kqornG0QqIWSU-vTHC-pYBxSMLE05enxUaUoROHL1JSN3il0jnKSpdLdcOKBdrAy8VpJTwQ'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/recreates_deleted_folders') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/recreates_deleted_folders') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -646,8 +639,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAEWDmDqZQmdH7Kbicsm0hi6Pcs0pUUcZgYNleHKYfSngzFmXmZxkaorbQ0AeDtSga8I58QmBgSh92332V6PyK_OZ6qNG9QhkoX_F_ZU3qEr70WQgADGHe5n52Hg9yJB_cN_ivEXa_O_y6FcQsQCOu3fg_RZ_qWuvmWSwIqJyFIeoA'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/recreates_renamed_or_moved_folders') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/recreates_renamed_or_moved_folders') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -684,8 +677,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAE-wwU07MFokYbCkVxWM9oZ1LL3aiMMkVpwoeXhRiqBUvdahVv9KslE8Pnwp6217hA9nX78raNAJL1Vc_GwX2E74yCEEQlI6_YtPj0Y_dCS20zLNGUQ0NxaJWHvo_8L1mm02nSao1UBSOaxQz1Gv7VrdFHAUJyvPpyH73I9kBsDow'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/creates_2_folders_vt') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/creates_2_folders_vt') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -705,19 +698,23 @@ describe DropboxImportFolder do
 
         context 'given journal BQ is renamed BQ1' do
           before(:all) do
-            @user2.account_book_types.where(name: 'BQ').update(name: 'BQ1')
+            @user2.account_book_types.where(name: 'BQ').each do |journal|
+              journal.update(name: 'BQ1')
+            end
           end
 
           after(:all) do
-            @user2.account_book_types.where(name: 'BQ1').update(name: 'BQ')
+            @user2.account_book_types.where(name: 'BQ1').each do |journal|
+              journal.update(name: 'BQ')
+            end
           end
 
           it 'deletes 2 folders BQ and creates 2 folders BQ1' do
             delta_cursor = @dropbox.delta_cursor = 'AAFqwYsvGNEvUtFnv75jI_uvcAbJh4FDMfbQOlspQGQ4M_-UuKSwdjnaJlOdEq3zQ162r_LFnHhnu87tWA6fN9pL6wv6fLG1TguWGDExqR3QQn1LctZEgrxlKSMu62c1q8NCI8SyhL9NMhgmhWd7u7M_XiWdkOqXaQDF2RmRre77Xw'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/deletes_2_folders_BQ_and_creates_2_folders_bq1') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/deletes_2_folders_BQ_and_creates_2_folders_bq1') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -743,11 +740,15 @@ describe DropboxImportFolder do
 
         context 'given journal VT is removed' do
           before(:all) do
-            @user2.account_book_types.where(name: 'BQ').update(name: 'BQ1')
+            @user2.account_book_types.where(name: 'BQ').each do |journal|
+              journal.update(name: 'BQ1')
+            end
           end
 
           after(:all) do
-            @user2.account_book_types.where(name: 'BQ1').update(name: 'BQ')
+            @user2.account_book_types.where(name: 'BQ1').each do |journal|
+              journal.update(name: 'BQ')
+            end
           end
 
           it 'deletes 2 folders VT' do
@@ -766,8 +767,8 @@ describe DropboxImportFolder do
             ]
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/deletes_2_folders_VT') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/deletes_2_folders_VT') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -802,8 +803,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAFP3ZgpBI8HvTyPKBey0nr2BXfqRhmbRjbixs86HeLy1U51sJN5EktuA8Vga2kjbdkPRXdGfQZrn0d686DpTkJrJRThFWznD6U7zN22n3NOhxQPkPbJT2_KKHyEWrT2i8TovqMoE7NK1HtNdcIXNU778tudxPIvzH9gjst89Rt0CA'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/removes_folder_ts%0001_-_abc') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/removes_folder_ts%0001_-_abc') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -843,8 +844,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAFpUGtY65bkw3p8BUksAJ20DidN5mc1k2S0cdOvEEwOwtHl93svFe--pAn7kARELvTslPSmhhzC9Ao_85nJlr0i5uwHEFqnJjgF36Q9Yno-DKRsxJASM7YhVcDu2N7XzfcsxLit0Y7KZvBe6rf4d72gOAy0By08ceekAPVu9Q40Fg'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/creates_ts%0003s_folders') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/creates_ts%0003s_folders') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
@@ -883,8 +884,8 @@ describe DropboxImportFolder do
             delta_cursor = @dropbox.delta_cursor = 'AAFaPkSZoRPGcHi2bW_Zmi5q0wE-Rzibv_q-tsq0EcUvYF1q4_QXfBUP20urPfDvBJAi6wZ3vlpbGEqa8G8VM9X813MRzaPtpp0Hvu8JXSlKVxP1cDpQr1_xHFhUvce-6I395zjXQAjtavBXG9y8gyHk2RQZmXq8MK3F3oxgt-qtqw'
             @dropbox.save
 
-            VCR.use_cassette('dropbox_import_folder/collaborator/renames_folder_ts%0002_-_def') do
-              DropboxImportFolder.new(@dropbox).check
+            VCR.use_cassette('dropbox_import/collaborator/renames_folder_ts%0002_-_def') do
+              DropboxImport.new(@dropbox).check
             end
 
             # delta
