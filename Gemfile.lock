@@ -81,6 +81,7 @@ GEM
     bootstrap-sass (2.0.4.2)
     bson (3.1.1)
     builder (3.2.2)
+    byebug (9.0.6)
     cairo (1.15.2)
       pkg-config (>= 1.1.5)
     callsite (0.0.11)
@@ -328,6 +329,8 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     public_suffix (2.0.4)
+    quiet_assets (1.1.0)
+      railties (>= 3.1, < 5.0)
     rabl (0.11.6)
       activesupport (>= 2.3.14)
     rack (1.6.5)
@@ -385,6 +388,14 @@ GEM
       rspec-support (~> 3.5.0)
     rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-rails (3.5.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
     ruby-box (1.15.0)
@@ -514,6 +525,7 @@ DEPENDENCIES
   bootstrap-datepicker-rails
   bootstrap-sass (= 2.0.4.2)
   bson
+  byebug
   capistrano (~> 2.15)
   capistrano_colors
   capybara
@@ -553,10 +565,12 @@ DEPENDENCIES
   posix-spawn
   prawn (= 1.0.0rc1)
   prawn-qrcode
+  quiet_assets
   rabl (= 0.11.6)
   rack-mini-profiler
   rails (= 4.2.7.1)
   rake
+  rspec-rails
   ruby-box
   sass-rails (= 4.0.5)
   savon
@@ -581,4 +595,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.12.5
+   1.13.6

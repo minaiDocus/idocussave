@@ -133,7 +133,10 @@ gem 'google-api-client', '0.8.2'
 
 
 group :development, :test do
+  gem 'byebug'
   gem 'thin'
+  gem 'rspec-rails'
+  gem 'quiet_assets'
   gem 'better_errors', '1.1.0'
   gem 'binding_of_caller'
   gem 'meta_request'
