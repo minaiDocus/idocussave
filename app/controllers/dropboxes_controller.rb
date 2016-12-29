@@ -8,9 +8,9 @@ class DropboxesController < ApplicationController
 
     if signature == request.headers['X-Dropbox-Signature']
       DropboxBasic.where(dropbox_id: params[:delta][:users]).update_all(changed_at: Time.now)
-      render text: 'OK'
+      render status: :ok, text: 'OK'
     else
-      render text: 'Unauthorized.'
+      render status: :unauthorized, text: 'Unauthorized.'
     end
   end
 
