@@ -27,7 +27,7 @@ class Account::DropboxesController < Account::AccountController
 
           access_token, user_id = flow._finish(params[:code], callback_account_dropbox_url)
 
-          @dropbox.client.disable_access_token if @dropbox.is_configured?
+          DropboxBasic.disable_access_token(@dropbox.access_token) if @dropbox.is_configured?
 
           @dropbox.update(
             access_token:      access_token,
