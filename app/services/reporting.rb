@@ -39,7 +39,7 @@ module Reporting
         end
 
         if period_document.pages - period_document.uploaded_pages > 0
-          period.delivery.update(state: 'delivered')
+          period.update(delivery_state: 'delivered')
         end
       end
 
