@@ -33,9 +33,9 @@ class AccountingWorkflow::TempPackProcessor
           piece_file_path = File.join(dir, piece_file_name)
 
           if temp_document.mongo_id
-            temp_document_path = "#{Rails.root}/files/production/#{temp_document.class.table_name}/#{temp_document.mongo_id}/#{temp_document.content_file_name}"
+            temp_document_path = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/#{temp_document.mongo_id}/#{temp_document.content_file_name}"
           else
-            temp_document_path = "#{Rails.root}/files/production/#{temp_document.class.table_name}/#{temp_document.id}/#{temp_document.content_file_name}"
+            temp_document_path = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/#{temp_document.id}/#{temp_document.content_file_name}"
           end
           DocumentTools.create_stamped_file temp_document_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
                                                                                                                       is_stamp_background_filled: user.is_stamp_background_filled,

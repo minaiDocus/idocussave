@@ -1,8 +1,8 @@
 %li{ :id => "document_#{temp_document.id}", :class => "alone pieces" }
   - if temp_document.mongo_id
-    - filepath = "#{Rails.root}/files/production/#{temp_document.class.table_name}/contents/#{temp_document.mongo_id}/thumb/#{temp_document.content_file_name}"
+    - filepath = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/contents/#{temp_document.mongo_id}/thumb/#{temp_document.content_file_name}"
   - else
-    - filepath = "#{Rails.root}/files/production/#{temp_document.class.table_name}/contents/#{temp_document.id}/thumb/#{temp_document.content_file_name}"
+    - filepath = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/contents/#{temp_document.id}/thumb/#{temp_document.content_file_name}"
 
   - unless !File.exist?(filepath)
     - link_to_thumb = temp_document.content.url(:thumb)

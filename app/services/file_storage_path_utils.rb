@@ -4,11 +4,11 @@ module FileStoragePathUtils
     id = object.mongo_id ? object.mongo_id : object.id
 
     if object.class.in?([Invoice, Document])
-      "#{Rails.root}/files/production/#{object.class.table_name}/contents/#{id}/original/#{object.content_file_name}"
+      "#{Rails.root}/files/#{Rails.env}/#{object.class.table_name}/contents/#{id}/original/#{object.content_file_name}"
     elsif object.is_a?(Pack::Piece)
-      "#{Rails.root}/files/production/pack/pieces/contents/#{id}/original/#{object.content_file_name}"
+      "#{Rails.root}/files/#{Rails.env}/pack/pieces/contents/#{id}/original/#{object.content_file_name}"
     elsif object.is_a?(TempDocument)
-      "#{Rails.root}/files/production/#{object.class.table_name}/#{id}/#{object.content_file_name}"
+      "#{Rails.root}/files/#{Rails.env}/#{object.class.table_name}/#{id}/#{object.content_file_name}"
     end
   end
 end
