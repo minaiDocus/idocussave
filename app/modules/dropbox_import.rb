@@ -64,6 +64,7 @@ class DropboxImport
     end
   end
 
+
   def check
     if @dropbox.is_used? && @dropbox.is_configured?
       checked_at = Time.now

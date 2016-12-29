@@ -21,7 +21,7 @@ class PreAssignmentDeliveryService
     def notify
       deliveries = PreAssignmentDelivery.not_notified.order(number: :asc)
       if deliveries.size > 0
-        addresses = Array(Settings.notify_ibiza_deliveries_to)
+        addresses = Array(Settings.first.notify_ibiza_deliveries_to)
 
         if addresses.size > 0
           IbizaMailer.notify_deliveries(deliveries, addresses).deliver
@@ -125,7 +125,7 @@ class PreAssignmentDeliveryService
 
       retry_delivery = true
 
-      ['Le journal est inconnu', 'Le compte est fermÃ©', 'Le compte est absent'].each do |message|
+      ['Le journal est inconnu', 'Le compte est fermé', 'Le compte est absent'].each do |message|
         retry_delivery = false if client.response.message.to_s.match /#{message}/
       end
 
@@ -142,12 +142,12 @@ class PreAssignmentDeliveryService
 
 
   def notify?
-    Settings.notify_on_ibiza_delivery == 'yes'
+    Settings.first.notify_on_ibiza_delivery == 'yes'
   end
 
 
   def notify_error?
-    Settings.notify_on_ibiza_delivery == 'error'
+    Settings.first.notify_on_ibiza_delivery == 'error'
   end
 
 

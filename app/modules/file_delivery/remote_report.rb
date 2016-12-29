@@ -1,4 +1,4 @@
-module RemoteReport
+module FileDelivery::RemoteReport
   def get_remote_files(receiver, service_name, force = false)
     if type != 'NDF'
       not_delivered = not_delivered_preseizures(receiver, service_name, force)

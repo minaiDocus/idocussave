@@ -1,5 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class DematboxDocumentPresenter
+class CreateDematboxDocumentPresenter
   def initialize(dematbox_document)
     @dematbox_document = dematbox_document
   end

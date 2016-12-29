@@ -153,7 +153,6 @@ class Organization < ActiveRecord::Base
 
 
   def self.search(contains)
-    def search(contains)
     organizations = Organization.all.includes(:leader)
 
     organizations = organizations.where(is_active:    (contains[:is_active] == '1'))    unless contains[:is_active].blank?
@@ -184,6 +183,5 @@ class Organization < ActiveRecord::Base
     organizations = organizations.where("description LIKE ?", "%#{contains[:description]}%") unless contains[:description].blank?
 
     organizations
-  end
   end
 end

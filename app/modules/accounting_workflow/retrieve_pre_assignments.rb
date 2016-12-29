@@ -27,7 +27,6 @@ class AccountingWorkflow::RetrievePreAssignments
 
       UpdatePeriodDataService.new(period).execute
       UpdatePeriodPriceService.new(period).execute
-
       next unless is_preseizure?
 
       if report.preseizures.not_delivered.not_locked.count > 0
@@ -35,7 +34,6 @@ class AccountingWorkflow::RetrievePreAssignments
       end
 
       CreatePreAssignmentDeliveryService.new(pre_assignments, true).execute
-
       FileDelivery.prepare(report)
       FileDelivery.prepare(pack)
     end

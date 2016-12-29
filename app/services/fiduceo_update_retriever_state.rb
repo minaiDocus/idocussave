@@ -41,7 +41,7 @@ class FiduceoUpdateRetrieverState
     client = Fiduceo::Client.new(@retriever.user.fiduceo_id)
     documents = client.documents
 
-    if documents["document"]
+    if documents != [] && documents["document"]
       pending_documents = []
 
       if documents["document"].is_a?(Array)

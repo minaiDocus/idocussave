@@ -7,6 +7,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
   end
 
 
+  # Create a secondary temp documents it comes back from grouping
   def execute
     Dir.mktmpdir do |tmpdir|
       file_path = File.join tmpdir, @temp_pack.basefilename

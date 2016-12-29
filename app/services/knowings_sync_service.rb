@@ -7,12 +7,12 @@ class KnowingsSyncService
   end
 
 
-  def execute(remote_files)
+  def execute
     log = Logger.new(STDOUT)
 
 
-    remote_files.each_with_index do |remote_file, index|
-      remote_filepath = File.join(url, remote_file.local_name)
+    @remote_files.each_with_index do |remote_file, index|
+      remote_filepath = File.join(@knowings.url, remote_file.local_name)
 
       tries = 0
 
@@ -48,6 +48,6 @@ class KnowingsSyncService
 
 
   def client
-    @client ||= KnowingsApi::Client.new(@knowings.username, @knowings.password, url)
+    @client ||= KnowingsApi::Client.new(@knowings.username, @knowings.password, @knowings.url)
   end
 end

@@ -1,6 +1,6 @@
 module ActionMailer
   class Base
-    attr_accessor :smtp_config
+    cattr_accessor :smtp_config
 
     self.smtp_config = YAML.load(File.open(Rails.root.join('config/smtp.yml')))
 

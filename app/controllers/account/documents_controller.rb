@@ -136,25 +136,36 @@ class Account::DocumentsController < Account::AccountController
   def download
     begin
       if params[:id].length > 10
-        document =Document.find_by_mongo_id(params[:id])
+        document = Document.find_by_mongo_id(params[:id])
       else
         document = Document.find params[:id]
       end
       owner = document.pack.owner
 
-      file_path = FileStoragePathUtils.path_for_object(document)
+      filepath = FileStoragePathUtils.path_for_object(document)
 
       if params[:style] == 'thumb' || params[:style] == 'large'
         filepath = filepath.gsub('pdf', 'png')
       end
     rescue
+      if params[:id].length > 10
+        document = TempDocument.find_by_mongo_id(params[:id])
+      else
+        document = TempDocument.find params[:id]
+      end
       owner = document.temp_pack.user
 
-      file_path = FileStoragePathUtils.path_for_object(document)
+      filepath = FileStoragePathUtils.path_for_object(document)
     end
 
     if params[:force_temp_document] && params[:force_temp_document] == "true"
-      file_path = FileStoragePathUtils.path_for_object(document)
+      if params[:id].length > 10
+        document = TempDocument.find_by_mongo_id(params[:id])
+      else
+        document = TempDocument.find params[:id]
+      end
+
+      filepath = FileStoragePathUtils.path_for_object(document)
 
       owner = document.temp_pack.user
     end
@@ -186,7 +197,14 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /account/documents/pieces/:id/download
   def piece
-    file_path = FileStoragePathUtils.path_for_object(piece)
+    if params[:id].length > 10
+      @piece = Pack::Piece.find_by_mongo_id(params[:id])
+    else
+      @piece = Pack::Piece.find(params[:id])
+    end
+
+
+    filepath = FileStoragePathUtils.path_for_object(@piece)
 
     users = []
     if @user
@@ -197,8 +215,9 @@ class Account::DocumentsController < Account::AccountController
               end
     end
 
-    if File.exist?(filepath) && (piece.pack.owner.in?(users) || current_user.try(:is_admin) || params[:token] == piece.get_token)
-      type     = piece.content_content_type || 'application/pdf'
+    if File.exist?(filepath) && (@piece.pack.owner.in?(users) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
+      type     = @piece.content_content_type || 'application/pdf'
+
       filename = File.basename(filepath)
 
       send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')

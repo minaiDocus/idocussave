@@ -54,6 +54,8 @@ module Delivery
           FtpSyncService.new(remote_files).execute
         elsif service_class == :google_doc
           GoogleDriveSyncService.new(receiver.external_file_storage.google_doc).sync(remote_files)
+        elsif service_class == :dropbox_extended
+          DropboxExtended.sync(remote_files)
         end
 
         puts "\tDone."

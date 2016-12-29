@@ -4,12 +4,12 @@ class CreateDematboxDocument
 
 
   def initialize(args)
-    params = Hash[args.map { |k, v| [k.to_s.underscore, v] }]
+    @params = Hash[args.map { |k, v| [k.to_s.underscore, v] }]
 
-    @doc_id          = params['doc_id']
-    @service_id      = params['service_id']
-    @virtual_box_id  = params['virtual_box_id']
-    @improved_scan64 = params['improved_scan']
+    @doc_id          = @params['doc_id']
+    @service_id      = @params['service_id']
+    @virtual_box_id  = @params['virtual_box_id']
+    @improved_scan64 = @params['improved_scan']
     @temp_document   = TempDocument.where(dematbox_doc_id: @doc_id).first if upload?
   end
 
@@ -19,9 +19,9 @@ class CreateDematboxDocument
       if @service_id == DematboxServiceApi.config.service_id.to_s
         @temp_document.content              = file
         @temp_document.raw_content          = File.open(@temp_document.content.path)
-        @temp_document.dematbox_text        = params['text']
-        @temp_document.dematbox_box_id      = params['box_id']
-        @temp_document.dematbox_service_id  = params['service_id']
+        @temp_document.dematbox_text        = @params['text']
+        @temp_document.dematbox_box_id      = @params['box_id']
+        @temp_document.dematbox_service_id  = @params['service_id']
         @temp_document.is_ocr_layer_applied = true
 
         @temp_document.save
@@ -44,16 +44,17 @@ class CreateDematboxDocument
         options = {
           delivered_by:          user.code,
           delivery_type:         'dematbox_scan',
-          dematbox_doc_id:       params['doc_id'],
-          dematbox_box_id:       params['box_id'],
-          dematbox_service_id:   params['service_id'],
-          dematbox_text:         params['text'],
+          dematbox_doc_id:       @params['doc_id'],
+          dematbox_box_id:       @params['box_id'],
+          dematbox_service_id:   @params['service_id'],
+          dematbox_text:         @params['text'],
           is_content_file_valid: true
         }
 
         @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       end
-      DematboxDocument.notify_uploaded(@temp_document.id) if Rails.env != 'test'
+
+      CreateDematboxDocument.notify_uploaded(@temp_document.id) if Rails.env != 'test'
     end
 
     clean_tmp
