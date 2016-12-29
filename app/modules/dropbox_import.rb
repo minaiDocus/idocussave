@@ -64,6 +64,7 @@ class DropboxImport
     end
   end
 
+
   def check
     if @dropbox.is_used? && @dropbox.is_configured?
       checked_at = Time.now
@@ -93,7 +94,7 @@ class DropboxImport
 
 
   def client
-    @client ||= Client.new(@dropbox.client)
+    @client ||= DropboxClient.new(@dropbox.access_token, Dropbox::ACCESS_TYPE)
   end
 
 
@@ -241,6 +242,7 @@ class DropboxImport
             Dir.mktmpdir do |dir|
               File.open File.join(dir, file_name), 'wb' do |file|
                 file.puts file_contents
+                file.flush
 
                 uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user)
                 if uploaded_document.valid?

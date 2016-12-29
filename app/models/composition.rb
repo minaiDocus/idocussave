@@ -8,9 +8,11 @@ class Composition < ActiveRecord::Base
 
     name = 'Undefined'.pdf if name == ''
 
-    user = User.find user_id
-    user_id = options.delete(:user_id)
+
+    user_id      = options.delete(:user_id)
     document_ids = options.delete(:document_ids)
+
+    user = User.find user_id
 
 
     user.extend_organization_role

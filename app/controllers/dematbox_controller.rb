@@ -22,8 +22,10 @@ class DematboxController < ApplicationController
               return: { 'errorReturn' => :string }
 
   def SendFile
-    dematbox_document = CreateDematboxDocument.new(params).execute
+    dematbox_document = CreateDematboxDocument.new(params)
     @response = present(dematbox_document).response
+
+    CreateDematboxDocument.new(params).execute
 
     render template: 'dematbox/send_file_response',
            formats: [:xml],

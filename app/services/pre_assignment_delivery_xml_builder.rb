@@ -43,7 +43,7 @@ class PreAssignmentDeliveryXmlBuilder
       @report.is_locked         = false
       @report.save
 
-      notify
+      PreAssignmentDeliveryService.notify
 
       false
     end

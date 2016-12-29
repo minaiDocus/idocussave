@@ -63,7 +63,7 @@ class JobsOrchestrator
 
 
   def self.check_if_in_queue(class_name, id = nil)
-    true if running_workers.detect { |worker| worker[:class_name] == class_name && worker[:id] == id }
+    true if running_workers.detect { |worker| worker[:class_name] == class_name && worker[:id].to_s == id.to_s }
   end
 end
 

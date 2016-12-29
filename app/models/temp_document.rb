@@ -206,7 +206,7 @@ class TempDocument < ActiveRecord::Base
 
 
   def self.search_for_collection(collection, contains)
-    user = collection.first.user
+    user = collection.first.user if collection.first
 
     if contains[:service_name]
       retriever_ids = user.fiduceo_retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)

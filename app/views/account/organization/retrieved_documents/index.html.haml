@@ -26,7 +26,7 @@
                 - if document.fiduceo_retriever.nil?
                   %span.label supprimé
                 = document.fiduceo_custom_service_name
-              %td= l(document.fiduceo_metadata['date'], format: '%d %b %Y')
+              %td= l(document.fiduceo_metadata['date'], format: '%d %b %Y') if document.fiduceo_metadata['date']
               %td= link_to document.fiduceo_metadata['libelle'] + '.pdf', account_organization_customer_retrieved_document_path(@organization, @customer, document)
               %td
                 = link_to document.piece.content_file_name, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece

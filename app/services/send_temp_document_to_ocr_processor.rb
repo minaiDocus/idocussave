@@ -1,5 +1,5 @@
 module SendTempDocumentToOcrProcessor
-  def execute(temp_document_id)
+  def self.execute(temp_document_id)
     temp_document = TempDocument.find(temp_document_id)
 
     doc_id        = DematboxServiceApi.send_file(temp_document.content.path)

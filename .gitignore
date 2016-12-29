@@ -25,3 +25,6 @@ config/dropbox.yml
 config/google_drive.yml
 config/pdftk.yml
 config/smtp.yml
+/config/database.yml
+.DS_Store
+/config/ppp_ftp.yml

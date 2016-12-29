@@ -22,7 +22,7 @@ class Operation < ActiveRecord::Base
 
 
   def self.search_for_collection(collection, contains)
-    user = collection.first.user
+    user = collection.first.user if collection.first
 
     collection = collection.where("label LIKE ?",    "%#{contains[:label]}%")    unless contains[:label].blank?
     collection = collection.where("category LIKE ?", "%#{contains[:category]}%") unless contains[:category].blank?

@@ -2,13 +2,13 @@ class DropboxBasicSyncService
   def initialize(remote_files)
     @remote_files = remote_files
 
-    @dropbox = remote_files.external_file_storage.dropbox_basic
+    @dropbox = remote_files.first.user.external_file_storage.dropbox_basic
   end
 
 
   # Keeping the Queue implementation in case it could be used later but DO NOT USE IT
   # Multi Threading dropbox uploads causes API error due to too many concurent sessions
-  def execute
+  def sync
     queue = Queue.new
     threads = []
     semaphore = Mutex.new
@@ -29,7 +29,7 @@ class DropboxBasicSyncService
 
           remote_file, index = queue.pop
 
-          remote_path     = ExternalFileStorage.delivery_path(remote_file, path)
+          remote_path     = ExternalFileStorage.delivery_path(remote_file, @dropbox.path)
           remote_filepath = File.join(remote_path, remote_file.name)
 
           description = "\t[#{'%0.3d' % (index + 1)}] \"#{remote_filepath}\""
@@ -65,7 +65,7 @@ class DropboxBasicSyncService
     end
 
     threads.each(&:join)
-    remote_files.select do |remote_file|
+    @remote_files.select do |remote_file|
       remote_file.state == 'not_synced'
     end.empty?
   end
