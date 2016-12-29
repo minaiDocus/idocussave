@@ -60,7 +60,9 @@ gem 'dalli'
 
 
 # Deployment
-gem 'capistrano', '~> 2.15', require: false
+gem 'capistrano'
+gem 'capistrano-rvm'
+gem 'capistrano-rails'
 gem 'capistrano_colors', require: false
 
 
