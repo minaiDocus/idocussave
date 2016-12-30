@@ -134,6 +134,10 @@ gem 'google_drive', '1.0.1'
 gem 'google-api-client', '0.8.2'
 
 
+# Lock mechanism
+gem 'remote_lock'
+
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'

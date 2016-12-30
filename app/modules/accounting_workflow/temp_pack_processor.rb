@@ -3,11 +3,11 @@ class AccountingWorkflow::TempPackProcessor
   POSITION_SIZE = 3
 
   def self.process(temp_pack)
+    runner_id = SecureRandom.hex(4)
     temp_documents = temp_pack.ready_documents
     user_code = temp_pack.name.split[0]
     user = User.find_by_code user_code
-    exit unless user && temp_documents.any?
-    logger.info "#{temp_pack.name} - #{temp_documents.size}"
+    return false unless user && temp_documents.any?
     pack = Pack.find_or_initialize temp_pack.name, user
     current_piece_position = begin
                                  pack.pieces.by_position.last.position + 1
@@ -20,8 +20,8 @@ class AccountingWorkflow::TempPackProcessor
                                 1
                               end
     added_pieces = []
-    temp_documents.each do |temp_document|
-      logger.info "   #{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}"
+    temp_documents.each_with_index do |temp_document, document_index|
+      logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start"
       if !temp_document.is_a_cover? || !pack.has_cover?
         Dir.mktmpdir do |dir|
           ## Initialization
@@ -134,6 +134,7 @@ class AccountingWorkflow::TempPackProcessor
         end
       end
       temp_document.processed
+      logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end"
     end
 
     pack.set_original_document_id
