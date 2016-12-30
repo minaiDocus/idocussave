@@ -318,6 +318,7 @@ fr:
             journal_unknown: 'journal %{journal} inconnu'
             invalid_period: "période '%{period}' inconnu"
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
+            already_exist: existe déjà
         bank_account:
           attributes:
             journal:

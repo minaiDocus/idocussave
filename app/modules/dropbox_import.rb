@@ -232,7 +232,7 @@ class DropboxImport
 
     file_name = File.basename file_path
 
-    unless file_name =~ /\(erreur fichier non valide pour iDocus\)/i
+    unless file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
       if valid_path?(path)
         if UploadedDocument.valid_extensions.include?(File.extname(file_path)) && metadata['bytes'] <= 10.megabytes
           customer, journal_name, period_offset = get_info_from_path path
@@ -247,6 +247,8 @@ class DropboxImport
                 uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user)
                 if uploaded_document.valid?
                   client.file_delete file_path
+                elsif uploaded_document.already_exist?
+                  mark_file_as_already_exist(path, file_name)
                 else
                   mark_file_as_not_processable(path, file_name)
                 end
@@ -262,9 +264,12 @@ class DropboxImport
     end
   end
 
+  def mark_file_as_already_exist(path, file_name)
+    mark_file_as_not_processable(path, file_name, ' (fichier déjà importé sur iDocus)')
+  end
 
-  def mark_file_as_not_processable(path, file_name)
-    new_file_name = File.basename(file_name, '.*') + ' (erreur fichier non valide pour iDocus)' + File.extname(file_name)
+  def mark_file_as_not_processable(path, file_name, error_message=' (erreur fichier non valide pour iDocus)')
+    new_file_name = File.basename(file_name, '.*') + error_message + File.extname(file_name)
 
     client.file_move(File.join(path, file_name), File.join(path, new_file_name))
   rescue DropboxError => e

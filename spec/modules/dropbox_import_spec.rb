@@ -176,6 +176,70 @@ describe DropboxImport do
           end
         end
 
+        context 'given a file already exist' do
+          before(:all) do
+            @temp_pack = TempPack.find_or_create_by_name 'TS%0001 AC 201502 all'
+            @temp_pack.user = @user
+            @temp_pack.save
+
+            temp_document = TempDocument.new
+            temp_document.user                = @user
+            temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
+            temp_document.position            = 1
+            temp_document.temp_pack           = @temp_pack
+            temp_document.original_file_name  = '2pages.pdf'
+            temp_document.delivered_by        = 'Tester'
+            temp_document.delivery_type       = 'upload'
+            temp_document.save
+          end
+
+          it 'marks one file as already exist' do
+            delta_cursor = @dropbox.delta_cursor = 'AAHvNtByv6vt4jX-RTfuwQ473Lk7IfzEsEKKcuALOWX5WqWNI313siq-aYS7_UCiK0742nh64Ic0skeE7z7goiyhL9I1O0I8Tq5UcA7WJnVlGYct7TPgVtvDPAOFdnNmZx5E-v1M8-dgXcMvdri4Q4EdGFgtg3elKaYPsSXcGqHJq9NHQpfNMeOKuLcBnzpAOqY'
+            @dropbox.save
+
+            VCR.use_cassette('dropbox_import/customer/marks_one_file_as_already_exist') do
+              DropboxImport.new(@dropbox).check
+            end
+
+            # delta
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
+            # get file
+            expect(WebMock).to have_requested(:get, 'https://api-content.dropbox.com/1/files/sandbox/exportation%20vers%20idocus/ts%250001%20-%20test/p%C3%A9riode%20actuelle/ac/2pages.pdf').
+              with(headers: @headers)
+            # rename file
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/fileops/move').
+              with(headers: @headers_2).
+              with(body: 'root=sandbox&from_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fac%2F2pages.pdf&to_path=%2Fexportation%C2%A0vers+idocus%2Fts%250001+-+test%2Fp%C3%A9riode+actuelle%2Fac%2F2pages+%28fichier+d%C3%A9j%C3%A0+import%C3%A9+sur+iDocus%29.pdf')
+
+            expect(WebMock).to have_requested(:any, /.*/).times(3)
+
+            expect(@temp_pack.temp_documents.count).to eq 1
+          end
+        end
+
+        context 'given a file marked as already exist' do
+          it 'ignores one file marked as already exist' do
+            delta_cursor = @dropbox.delta_cursor = 'AAH-omVMlxwDei1x3DtMP1YFpKwLR_XGT939FfQ-GFXD5R8Ab_OkffQGZa8CsrCqZvnSaIobgc8FdqcuJXCTIdT799MMwjA9v_jhWdbzjlk4eX-y7dtaIw11olDPEUZNHK6X0zrkYzuvOm292adzrF2mFFWbuj9HDzkOju91gvRgJokoSWDuwgyVD786FohhrXk'
+            @dropbox.save
+
+            VCR.use_cassette('dropbox_import/customer/ignores_one_file_marked_as_already_exist') do
+              DropboxImport.new(@dropbox).check
+            end
+
+            # delta
+            expect(WebMock).to have_requested(:post, 'https://api.dropbox.com/1/delta').
+              with(headers: @headers_2).
+              with(body: "cursor=#{delta_cursor}&path_prefix=#{CGI::escape('/exportation vers iDocus/TS%0001 - TeSt')}")
+
+            expect(WebMock).to have_requested(:any, /.*/).once
+
+            temp_pack = TempPack.where(name: 'TS%0001 AC 201502 all').first
+            expect(temp_pack).to be_nil
+          end
+        end
+
         context 'given folder "/exportation vers iDocus/TS%0001 - TeSt/période précédente" is removed' do
           it 'recreates deleted folders' do
             delta_cursor = @dropbox.delta_cursor = 'AAGkvb1ZwDBvVxkgLshA58LfkBJ79YBnK-tTXKGrI-07o-s9r_QkNDDlYDwABZrXWNHT0W3tt0b2kzqMP9rT6Jugqe9fWb-OxY5A-1BZ66IHNtMOJ7EYx9vpUuBFS5fi6XKTdPzXAu5RXni5XVyghq_KSHjAQ-XHjA0T-ldbWaTr1lHdQP8byFQaFkklbqyPo1Q'

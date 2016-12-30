@@ -242,4 +242,8 @@ class DocumentTools
       'text/csv'
     end
   end
+
+  def self.checksum(file_path)
+    `md5sum #{file_path}`.split[0]
+  end
 end

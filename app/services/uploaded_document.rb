@@ -29,9 +29,10 @@ class UploadedDocument
     @errors << [:invalid_file_extension, extension: extension, valid_extensions: UploadedDocument.valid_extensions] unless valid_extension?
 
     if @errors.empty?
-      @errors << [:file_is_corrupted_or_protected, nil]          unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
-      @errors << [:file_size_is_too_big, size_in_mo: size_in_mo] unless valid_file_size?
+      @errors << [:file_is_corrupted_or_protected, nil]                  unless File.exist?(@file.path) && DocumentTools.modifiable?(processed_file.path)
+      @errors << [:file_size_is_too_big, size_in_mo: size_in_mo]         unless valid_file_size?
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
+      @errors << [:already_exist, nil]                                   unless unique?
     end
 
     if @errors.empty?
@@ -62,6 +63,9 @@ class UploadedDocument
     !valid?
   end
 
+  def already_exist?
+    @errors.detect { |e| e.first == :already_exist }.present?
+  end
 
   def full_error_messages
     results = []
@@ -173,5 +177,14 @@ class UploadedDocument
 
   def size_in_mo
     '%0.2f' % (@file.size / 1_000_000.0)
+  end
+
+  def unique?
+    temp_pack = TempPack.where(name: pack_name).first
+    temp_pack && temp_pack.temp_documents.where(content_fingerprint: fingerprint).first ? false : true
+  end
+
+  def fingerprint
+    DocumentTools.checksum(processed_file.path)
   end
 end
