@@ -142,7 +142,7 @@ class Account::DocumentsController < Account::AccountController
       end
       owner = document.pack.owner
 
-      filepath = FileStoragePathUtils.path_for_object(document)
+      filepath = FileStoragePathUtils.path_for_object(document, (params[:style].presence || 'original'))
 
       if params[:style] == 'thumb' || params[:style] == 'large'
         filepath = filepath.gsub('pdf', 'png')
