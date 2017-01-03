@@ -10,7 +10,8 @@ class Account::ReportingController < Account::AccountController
                [@user]
              end
 
-    @periods = Period.where(user_id: @users.map(&:id)).where('start_at >= ? AND end_at <= ?', Time.local(@year), Time.local(@year).end_of_year).order(start_at: :asc)
+    # NOTE temporary fix using +1.hour
+    @periods = Period.where(user_id: @users.map(&:id)).where('start_at >= ? AND end_at <= ?', Time.local(@year), Time.local(@year).end_of_year + 1.hour).order(start_at: :asc)
 
     respond_to do |format|
       format.html
