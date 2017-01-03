@@ -287,6 +287,9 @@
                     %th= t('activerecord.models.organization.attributes.is_quadratus_used')
                     %td= @organization.is_quadratus_used ? t('yes_value') : t('no_value')
                   %tr
+                    %th= t('activerecord.models.organization.attributes.is_coala_used')
+                    %td= @organization.is_coala_used ? t('yes_value') : t('no_value')
+                  %tr
                     %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
                     %td= @organization.is_csv_descriptor_used ? t('yes_value') : t('no_value')
               - if is_leader?

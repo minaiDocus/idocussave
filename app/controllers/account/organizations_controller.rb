@@ -172,6 +172,7 @@ class Account::OrganizationsController < Account::AccountController
         :is_detail_authorized,
         :is_test,
         :is_quadratus_used,
+        :is_coala_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed
       )
@@ -181,6 +182,7 @@ class Account::OrganizationsController < Account::AccountController
         :authd_prev_period,
         :auth_prev_period_until_day,
         :is_quadratus_used,
+        :is_coala_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed
       )

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(version: 20170106114353) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -189,18 +189,15 @@ ActiveRecord::Schema.define(version: 1) do
   add_index "boxes", ["mongo_id"], name: "index_boxes_on_mongo_id", using: :btree
 
   create_table "cms_images", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
+    t.string   "mongo_id",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "original_file_name",         limit: 255
-    t.string   "content_file_name",          limit: 255
-    t.string   "content_content_type",       limit: 255
-    t.integer  "content_file_size",          limit: 4
-    t.string   "cloud_content_file_name",    limit: 255
-    t.string   "cloud_content_content_type", limit: 255
-    t.integer  "cloud_content_file_size",    limit: 4
+    t.string   "original_file_name",   limit: 255
+    t.string   "content_file_name",    limit: 255
+    t.string   "content_content_type", limit: 255
+    t.integer  "content_file_size",    limit: 4
     t.datetime "content_updated_at"
-    t.string   "content_fingerprint",        limit: 255
+    t.string   "content_fingerprint",  limit: 255
   end
 
   add_index "cms_images", ["mongo_id"], name: "index_cms_images_on_mongo_id", using: :btree
@@ -369,26 +366,23 @@ ActiveRecord::Schema.define(version: 1) do
   add_index "document_deliveries", ["mongo_id"], name: "index_document_deliveries_on_mongo_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
+    t.string   "mongo_id",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "content_text",               limit: 4294967295
-    t.boolean  "is_a_cover",                                    default: false
-    t.string   "origin",                     limit: 255
-    t.text     "tags",                       limit: 4294967295
-    t.integer  "position",                   limit: 4
-    t.boolean  "dirty",                                         default: true,  null: false
-    t.string   "token",                      limit: 255
-    t.string   "content_file_name",          limit: 255
-    t.string   "content_content_type",       limit: 255
-    t.integer  "content_file_size",          limit: 4
-    t.string   "cloud_content_file_name",    limit: 255
-    t.string   "cloud_content_content_type", limit: 255
-    t.integer  "cloud_content_file_size",    limit: 4
+    t.text     "content_text",         limit: 4294967295
+    t.boolean  "is_a_cover",                              default: false
+    t.string   "origin",               limit: 255
+    t.text     "tags",                 limit: 4294967295
+    t.integer  "position",             limit: 4
+    t.boolean  "dirty",                                   default: true,  null: false
+    t.string   "token",                limit: 255
+    t.string   "content_file_name",    limit: 255
+    t.string   "content_content_type", limit: 255
+    t.integer  "content_file_size",    limit: 4
     t.datetime "content_updated_at"
-    t.string   "content_fingerprint",        limit: 255
-    t.integer  "pack_id",                    limit: 4
-    t.string   "pack_id_mongo_id",           limit: 255
+    t.string   "content_fingerprint",  limit: 255
+    t.integer  "pack_id",              limit: 4
+    t.string   "pack_id_mongo_id",     limit: 255
   end
 
   add_index "documents", ["mongo_id"], name: "index_documents_on_mongo_id", using: :btree
@@ -416,33 +410,28 @@ ActiveRecord::Schema.define(version: 1) do
   add_index "dropbox_basics", ["mongo_id"], name: "index_dropbox_basics_on_mongo_id", using: :btree
 
   create_table "emails", force: :cascade do |t|
-    t.string   "mongo_id",                            limit: 255
+    t.string   "mongo_id",                      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "originally_created_at"
-    t.string   "to",                                  limit: 255
-    t.string   "from",                                limit: 255
-    t.string   "subject",                             limit: 255
-    t.text     "attachment_names",                    limit: 65535
-    t.integer  "size",                                limit: 4,     default: 0,         null: false
-    t.string   "state",                               limit: 255,   default: "created", null: false
-    t.text     "errors_list",                         limit: 65535
-    t.boolean  "is_error_notified",                                 default: false,     null: false
-    t.string   "original_content_file_name",          limit: 255
-    t.string   "original_content_content_type",       limit: 255
-    t.integer  "original_content_file_size",          limit: 4
+    t.string   "to",                            limit: 255
+    t.string   "from",                          limit: 255
+    t.string   "subject",                       limit: 255
+    t.text     "attachment_names",              limit: 65535
+    t.integer  "size",                          limit: 4,     default: 0,         null: false
+    t.string   "state",                         limit: 255,   default: "created", null: false
+    t.text     "errors_list",                   limit: 65535
+    t.boolean  "is_error_notified",                           default: false,     null: false
+    t.string   "original_content_file_name",    limit: 255
+    t.string   "original_content_content_type", limit: 255
+    t.integer  "original_content_file_size",    limit: 4
     t.datetime "original_content_updated_at"
-    t.string   "original_content_fingerprint",        limit: 255
-    t.string   "cloud_original_content_file_name",    limit: 255
-    t.string   "cloud_original_content_content_type", limit: 255
-    t.integer  "cloud_original_content_file_size",    limit: 4
-    t.datetime "cloud_original_content_updated_at"
-    t.string   "cloud_original_content_fingerprint",  limit: 255
-    t.integer  "to_user_id",                          limit: 4
-    t.string   "to_user_id_mongo_id",                 limit: 255
-    t.integer  "from_user_id",                        limit: 4
-    t.string   "from_user_id_mongo_id",               limit: 255
-    t.string   "message_id",                          limit: 255
+    t.string   "original_content_fingerprint",  limit: 255
+    t.integer  "to_user_id",                    limit: 4
+    t.string   "to_user_id_mongo_id",           limit: 255
+    t.integer  "from_user_id",                  limit: 4
+    t.string   "from_user_id_mongo_id",         limit: 255
+    t.string   "message_id",                    limit: 255
   end
 
   add_index "emails", ["from_user_id"], name: "from_user_id", using: :btree
@@ -731,30 +720,25 @@ ActiveRecord::Schema.define(version: 1) do
   add_index "ibizas", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "invoices", force: :cascade do |t|
-    t.string   "mongo_id",                   limit: 255
+    t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "number",                     limit: 255
-    t.float    "vat_ratio",                  limit: 24,  default: 1.2, null: false
-    t.integer  "amount_in_cents_w_vat",      limit: 4
-    t.string   "content_file_name",          limit: 255
-    t.string   "content_content_type",       limit: 255
-    t.integer  "content_file_size",          limit: 4
+    t.string   "number",                   limit: 255
+    t.float    "vat_ratio",                limit: 24,  default: 1.2, null: false
+    t.integer  "amount_in_cents_w_vat",    limit: 4
+    t.string   "content_file_name",        limit: 255
+    t.string   "content_content_type",     limit: 255
+    t.integer  "content_file_size",        limit: 4
     t.datetime "content_updated_at"
-    t.string   "content_fingerprint",        limit: 255
-    t.string   "cloud_content_file_name",    limit: 255
-    t.string   "cloud_content_content_type", limit: 255
-    t.integer  "cloud_content_file_size",    limit: 4
-    t.datetime "cloud_content_updated_at"
-    t.string   "cloud_content_fingerprint",  limit: 255
-    t.integer  "organization_id",            limit: 4
-    t.string   "organization_id_mongo_id",   limit: 255
-    t.integer  "user_id",                    limit: 4
-    t.string   "user_id_mongo_id",           limit: 255
-    t.integer  "subscription_id",            limit: 4
-    t.string   "subscription_id_mongo_id",   limit: 255
-    t.integer  "period_id",                  limit: 4
-    t.string   "period_id_mongo_id",         limit: 255
+    t.string   "content_fingerprint",      limit: 255
+    t.integer  "organization_id",          limit: 4
+    t.string   "organization_id_mongo_id", limit: 255
+    t.integer  "user_id",                  limit: 4
+    t.string   "user_id_mongo_id",         limit: 255
+    t.integer  "subscription_id",          limit: 4
+    t.string   "subscription_id_mongo_id", limit: 255
+    t.integer  "period_id",                limit: 4
+    t.string   "period_id_mongo_id",       limit: 255
   end
 
   add_index "invoices", ["mongo_id"], name: "index_invoices_on_mongo_id", using: :btree
@@ -940,6 +924,7 @@ ActiveRecord::Schema.define(version: 1) do
     t.boolean  "is_quadratus_used",                           default: false, null: false
     t.boolean  "is_pre_assignment_date_computed",             default: false, null: false
     t.boolean  "is_csv_descriptor_used",                      default: false, null: false
+    t.boolean  "is_coala_used",                               default: false, null: false
     t.integer  "authd_prev_period",               limit: 4,   default: 1,     null: false
     t.integer  "auth_prev_period_until_day",      limit: 4,   default: 11,    null: false
     t.integer  "auth_prev_period_until_month",    limit: 4,   default: 0,     null: false
@@ -986,11 +971,6 @@ ActiveRecord::Schema.define(version: 1) do
     t.integer  "content_file_size",          limit: 4
     t.datetime "content_updated_at"
     t.string   "content_fingerprint",        limit: 255
-    t.string   "cloud_content_file_name",    limit: 255
-    t.string   "cloud_content_content_type", limit: 255
-    t.integer  "cloud_content_file_size",    limit: 4
-    t.datetime "cloud_content_updated_at"
-    t.string   "cloud_content_fingerprint",  limit: 255
     t.integer  "organization_id",            limit: 4
     t.string   "organization_id_mongo_id",   limit: 255
     t.integer  "user_id",                    limit: 4
@@ -1606,69 +1586,59 @@ ActiveRecord::Schema.define(version: 1) do
   add_index "subscriptions", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "temp_documents", force: :cascade do |t|
-    t.string   "mongo_id",                       limit: 255
+    t.string   "mongo_id",                      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "original_file_name",             limit: 255
-    t.boolean  "is_thumb_generated",                                default: false,     null: false
-    t.integer  "pages_number",                   limit: 4
-    t.integer  "position",                       limit: 4
-    t.boolean  "is_an_original",                                    default: true,      null: false
-    t.boolean  "is_a_cover",                                        default: false,     null: false
+    t.string   "original_file_name",            limit: 255
+    t.boolean  "is_thumb_generated",                               default: false,     null: false
+    t.integer  "pages_number",                  limit: 4
+    t.integer  "position",                      limit: 4
+    t.boolean  "is_an_original",                                   default: true,      null: false
+    t.boolean  "is_a_cover",                                       default: false,     null: false
     t.boolean  "is_ocr_layer_applied"
-    t.string   "delivered_by",                   limit: 255
-    t.string   "delivery_type",                  limit: 255
-    t.string   "dematbox_text",                  limit: 255
-    t.string   "dematbox_is_notified",           limit: 255
-    t.string   "dematbox_notified_at",           limit: 255
-    t.text     "fiduceo_metadata",               limit: 4294967295
-    t.string   "fiduceo_service_name",           limit: 255
-    t.string   "fiduceo_custom_service_name",    limit: 255
-    t.string   "signature",                      limit: 255
+    t.string   "delivered_by",                  limit: 255
+    t.string   "delivery_type",                 limit: 255
+    t.string   "dematbox_text",                 limit: 255
+    t.string   "dematbox_is_notified",          limit: 255
+    t.string   "dematbox_notified_at",          limit: 255
+    t.text     "fiduceo_metadata",              limit: 4294967295
+    t.string   "fiduceo_service_name",          limit: 255
+    t.string   "fiduceo_custom_service_name",   limit: 255
+    t.string   "signature",                     limit: 255
     t.boolean  "is_corruption_notified"
     t.datetime "corruption_notified_at"
-    t.string   "state",                          limit: 255,        default: "created", null: false
+    t.string   "state",                         limit: 255,        default: "created", null: false
     t.datetime "stated_at"
-    t.boolean  "is_locked",                                         default: false,     null: false
-    t.text     "scan_bundling_document_ids",     limit: 65535
-    t.string   "content_file_name",              limit: 255
-    t.string   "content_content_type",           limit: 255
-    t.integer  "content_file_size",              limit: 4
+    t.boolean  "is_locked",                                        default: false,     null: false
+    t.text     "scan_bundling_document_ids",    limit: 65535
+    t.string   "content_file_name",             limit: 255
+    t.string   "content_content_type",          limit: 255
+    t.integer  "content_file_size",             limit: 4
     t.datetime "content_updated_at"
-    t.string   "content_fingerprint",            limit: 255
-    t.string   "cloud_content_file_name",        limit: 255
-    t.string   "cloud_content_content_type",     limit: 255
-    t.integer  "cloud_content_file_size",        limit: 4
-    t.datetime "cloud_content_updated_at"
-    t.string   "cloud_content_fingerprint",      limit: 255
-    t.string   "raw_content_file_name",          limit: 255
-    t.string   "raw_content_content_type",       limit: 255
-    t.integer  "raw_content_file_size",          limit: 4
+    t.string   "content_fingerprint",           limit: 255
+    t.string   "raw_content_file_name",         limit: 255
+    t.string   "raw_content_content_type",      limit: 255
+    t.integer  "raw_content_file_size",         limit: 4
     t.datetime "raw_content_updated_at"
-    t.string   "raw_content_fingerprint",        limit: 255
-    t.string   "cloud_raw_content_file_name",    limit: 255
-    t.string   "cloud_raw_content_content_type", limit: 255
-    t.integer  "cloud_raw_content_file_size",    limit: 4
-    t.datetime "cloud_raw_content_updated_at"
-    t.string   "cloud_raw_content_fingerprint",  limit: 255
-    t.integer  "organization_id",                limit: 4
-    t.string   "organization_id_mongo_id",       limit: 255
-    t.integer  "user_id",                        limit: 4
-    t.string   "user_id_mongo_id",               limit: 255
-    t.integer  "temp_pack_id",                   limit: 4
-    t.string   "temp_pack_id_mongo_id",          limit: 255
-    t.integer  "document_delivery_id",           limit: 4
-    t.string   "document_delivery_id_mongo_id",  limit: 255
-    t.integer  "fiduceo_retriever_id",           limit: 4
-    t.string   "fiduceo_retriever_id_mongo_id",  limit: 255
-    t.integer  "email_id",                       limit: 4
-    t.string   "email_id_mongo_id",              limit: 255
-    t.integer  "piece_id",                       limit: 4
-    t.string   "piece_id_mongo_id",              limit: 255
-    t.string   "dematbox_doc_id",                limit: 255
-    t.string   "dematbox_box_id",                limit: 255
-    t.string   "dematbox_service_id",            limit: 255
-    t.string   "fiduceo_id",                     limit: 255
+    t.string   "raw_content_fingerprint",       limit: 255
+    t.integer  "organization_id",               limit: 4
+    t.string   "organization_id_mongo_id",      limit: 255
+    t.integer  "user_id",                       limit: 4
+    t.string   "user_id_mongo_id",              limit: 255
+    t.integer  "temp_pack_id",                  limit: 4
+    t.string   "temp_pack_id_mongo_id",         limit: 255
+    t.integer  "document_delivery_id",          limit: 4
+    t.string   "document_delivery_id_mongo_id", limit: 255
+    t.integer  "fiduceo_retriever_id",          limit: 4
+    t.string   "fiduceo_retriever_id_mongo_id", limit: 255
+    t.integer  "email_id",                      limit: 4
+    t.string   "email_id_mongo_id",             limit: 255
+    t.integer  "piece_id",                      limit: 4
+    t.string   "piece_id_mongo_id",             limit: 255
+    t.string   "dematbox_doc_id",               limit: 255
+    t.string   "dematbox_box_id",               limit: 255
+    t.string   "dematbox_service_id",           limit: 255
+    t.string   "fiduceo_id",                    limit: 255
   end
 
   add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree

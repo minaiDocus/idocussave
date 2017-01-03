@@ -1,7 +1,6 @@
 class Organization < ActiveRecord::Base
   attr_reader :member_tokens
 
-
   validates :authd_prev_period, numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }

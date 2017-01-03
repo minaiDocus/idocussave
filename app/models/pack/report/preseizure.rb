@@ -26,6 +26,9 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     piece.try(:name) || report.name
   end
 
+  def coala_piece_name
+    report.journal + date.try(:strftime, "%y%m") + '%03d' % position
+  end
 
   def piece_content_url
     piece.try(:content).try(:url)

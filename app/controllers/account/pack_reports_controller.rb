@@ -80,6 +80,13 @@ class Account::PackReportsController < Account::OrganizationController
       else
         render :select_to_download
       end
+    when 'zip_coala'
+      if @organization.is_coala_used
+        file_path = CoalaZipService.new(@report.user, preseizures).execute
+        send_file(file_path, type: 'application/zip', filename: File.basename(file_path), x_sendfile: true)
+      else
+        render action: 'select_to_download'
+      end
     else
       render :select_to_download
     end
