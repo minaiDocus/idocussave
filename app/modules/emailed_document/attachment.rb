@@ -62,9 +62,17 @@ class EmailedDocument::Attachment
     end
   end
 
+  def unique?
+    temp_pack = TempPack.where(name: DocumentTools.pack_name(@file_name)).first
+    temp_pack && temp_pack.temp_documents.where(content_fingerprint: fingerprint).first ? false : true
+  end
+
+  def fingerprint
+    @fingerprint ||= DocumentTools.checksum @file_path
+  end
 
   def valid?
-    valid_size? && valid_content? && valid_pages_number?
+    valid_size? && valid_content? && valid_pages_number? && unique?
   end
 
 

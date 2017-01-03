@@ -236,6 +236,39 @@ describe EmailedDocument do
 
       expect(document.content_file_size).not_to eq document2.content_file_size
     end
+
+    context 'given the file already exist' do
+      before(:all) do
+        @temp_pack = TempPack.find_or_create_by_name "#{@user.code} TS #{Time.now.strftime('%Y%m')} all"
+        @temp_pack.user = @user
+        @temp_pack.save
+
+        temp_document = TempDocument.new
+        temp_document.user                = @user
+        temp_document.content             = File.open(File.join(Rails.root, 'spec/support/files/2pages.pdf'))
+        temp_document.position            = 1
+        temp_document.temp_pack           = @temp_pack
+        temp_document.original_file_name  = '2pages.pdf'
+        temp_document.delivered_by        = 'Tester'
+        temp_document.delivery_type       = 'upload'
+        temp_document.save
+      end
+
+      it 'does not create another file' do
+        code = @user.email_code
+        mail = Mail.new do
+          from     'customer@example.com'
+          to       "#{code}@fw.idocus.com"
+          subject  'TS'
+          add_file filename: '2pages.pdf', content: File.read(Rails.root.join('spec/support/files/2pages.pdf'))
+        end
+
+        emailed_document = EmailedDocument.new mail
+        expect(emailed_document.errors).to eq([["2pages.pdf", :already_exist]])
+        expect(emailed_document).to be_invalid
+        expect(@temp_pack.temp_documents.count).to eq 1
+      end
+    end
   end
 
   describe '.new for yearly' do

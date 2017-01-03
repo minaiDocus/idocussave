@@ -216,6 +216,12 @@ class EmailedDocument
     !valid_attachment_contents?
   end
 
+  def unique_individual_attachments?
+    @unique_individual_attachments ||= attachments.inject(true) do |acc, attachment|
+      acc && attachment.unique?
+    end
+  end
+
   # syntactic sugar ||= does not store false/nil value
   def valid?
     if @valid.nil?
@@ -273,9 +279,10 @@ class EmailedDocument
         next if attachment.valid?
         attachment_errors = []
         attachment_errors << attachment.name
-        attachment_errors << :size         unless attachment.valid_size?
-        attachment_errors << :content      unless attachment.valid_content?
-        attachment_errors << :pages_number unless attachment.valid_pages_number?
+        attachment_errors << :size          unless attachment.valid_size?
+        attachment_errors << :content       unless attachment.valid_content?
+        attachment_errors << :pages_number  unless attachment.valid_pages_number?
+        attachment_errors << :already_exist unless attachment.unique?
         _errors << attachment_errors
       end
     else
