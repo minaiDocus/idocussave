@@ -48,6 +48,10 @@ class JobsOrchestrator
     if Sidekiq::Queue.new("process_fiduceo_operations").size == 0
       ProcessFiduceoOperationsWorker.perform_async unless JobsOrchestrator.check_if_in_queue("ProcessFiduceoOperationsWorker")
     end
+
+    if Sidekiq::Queue.new('retrieve_emailed_document').size == 0
+      RetrieveEmailedDocumentWorker.perform_async unless JobsOrchestrator.check_if_in_queue("RetrieveEmailedDocumentWorker")
+    end
   end
 
 

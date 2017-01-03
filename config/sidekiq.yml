@@ -14,6 +14,7 @@
 # even put in dynamic logic, like a host-specific queue.
 # http://www.mikeperham.com/2013/11/13/advanced-sidekiq-host-specific-queues/
 :queues:
+  - [retrieve_emailed_document, 5]
   - [pre_assignments_delivery, 7]
   - [remote_file_delivery, 6]
   - [grouping_delivery, 9]
