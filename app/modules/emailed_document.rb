@@ -1,4 +1,4 @@
-module EmailedDocument
+class EmailedDocument
   attr_reader :temp_documents
 
   class << self
@@ -87,10 +87,7 @@ module EmailedDocument
           f.write mail.to_s
         end
 
-        email.original_content_content_type = 'text/html'
-        email.original_content = File.open(file_path)
-
-        email.save
+        email.update_attribute(:original_content, File.open(file_path))
       end
     end
 
@@ -304,7 +301,7 @@ module EmailedDocument
         is_content_file_valid: true
       }
       File.open(attachment.file_path) do |file|
-        @temp_documents << AddTempDocumentToTempPack.execute(temp_pack, file, options)
+        @temp_documents << AddTempDocumentToTempPack.execute(pack, file, options)
       end
     end
     @temp_documents

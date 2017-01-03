@@ -351,6 +351,7 @@ describe EmailedDocument do
       emailed_document, email = EmailedDocument.receive(mail, false)
 
       expect(emailed_document).to be_invalid
+      expect(email).to be_valid
       expect(email.state).to eql('unprocessable')
       expect(email.errors_list).to eq([["corrupted.pdf", :content]])
     end
