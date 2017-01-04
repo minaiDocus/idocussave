@@ -2,7 +2,7 @@ set :application, "idocus"
 
 set :repo_url, "git@github.com:dbarbarossa/idocusave.git"
 
-set :branch, "master-v3"
+set :branch, "master-v3-fix"
 
 set :rvm_ruby_version, '2.3.1'
 

@@ -12,7 +12,7 @@ class FiduceoRetriever < ActiveRecord::Base
   belongs_to :journal,        class_name: 'AccountBookType',    inverse_of: 'fiduceo_retrievers'
   has_many   :transactions,   class_name: 'FiduceoTransaction', inverse_of: 'retriever', foreign_key: :retriever_id
   has_many   :temp_documents
-  has_many   :bank_accounts, inverse_of: 'retriever', dependent: :destroy
+  has_many   :bank_accounts, inverse_of: 'retriever', dependent: :destroy, foreign_key: :retriever_id
 
 
   validates_presence_of :type, :name, :login, :service_name

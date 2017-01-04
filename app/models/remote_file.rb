@@ -7,7 +7,7 @@ class RemoteFile < ActiveRecord::Base
   belongs_to :organization
 
 
-  has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
+  has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure', association_foreign_key: 'pack_report_preseizure_id'
 
 
   validates_presence_of  :state

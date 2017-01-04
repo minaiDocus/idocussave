@@ -79,6 +79,7 @@ gem 'hirb', require: false
 
 
 # Assets management
+gem 'therubyracer'
 gem 'uglifier', '>= 1.3.0'
 gem 'sprockets', '2.12.3'
 gem 'sprockets-rails', '2.3.1'

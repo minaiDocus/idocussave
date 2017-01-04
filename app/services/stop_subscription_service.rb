@@ -40,7 +40,7 @@ class StopSubscriptionService
 
     # Disable external services
 
-    RemoveFiduceoService.new(@user.id.to_s).execute
+    RemoveFiduceoService.new(@user.id).execute
 
     @user.dematbox.try(:unsubscribe)
 

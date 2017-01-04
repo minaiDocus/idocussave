@@ -57,7 +57,7 @@ class EvaluateSubscription
     if @customer.is_fiduceo_authorized
       @customer.update_attribute(:is_fiduceo_authorized, false)
 
-      RemoveFiduceoService.new(@customer.id.to_s).delay.execute if @customer.fiduceo_id.present?
+      RemoveFiduceoService.new(@customer.id).delay.execute if @customer.fiduceo_id.present?
     end
   end
 

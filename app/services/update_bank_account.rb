@@ -3,12 +3,12 @@ class UpdateBankAccount
   def self.execute(bank_account, params)
     bank_account.assign_attributes(params)
 
-    changes = @bank_account.changes.dup
+    changes = bank_account.changes.dup
 
-    if @bank_account.save
-      @bank_account.operations.where(is_locked: true).where('date >= ?' , @bank_account.start_date).update_all(is_locked: false)
+    if bank_account.save
+      bank_account.operations.where(is_locked: true).where('date >= ?' , bank_account.start_date).update_all(is_locked: false)
 
-      UpdatePreseizureAccountNumbers.delay.execute(@bank_account.id, changes)
+      UpdatePreseizureAccountNumbers.delay.execute(bank_account.id, changes)
 
       true
     else

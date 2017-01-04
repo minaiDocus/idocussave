@@ -10,7 +10,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :destroy
 
-  has_and_belongs_to_many :remote_files, inverse_of: 'preseizures'
+  has_and_belongs_to_many :remote_files, foreign_key: 'pack_report_preseizure_id'
   has_and_belongs_to_many :pre_assignment_deliveries
 
 
