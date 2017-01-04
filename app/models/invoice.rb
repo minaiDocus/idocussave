@@ -76,12 +76,6 @@ class Invoice < ActiveRecord::Base
     File.join Rails.root, 'files', Rails.env, 'archives', 'invoices', _file_name
   end
 
-
-  def format_price(price_in_cents)
-    price_in_euros = price_in_cents.blank? ? '' : price_in_cents.round / 100.0
-    ('%0.2f' % price_in_euros).tr('.', ',')
-  end
-
   private
 
 

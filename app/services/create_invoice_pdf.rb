@@ -1,8 +1,40 @@
 class CreateInvoicePdf
+  class << self
+    def for_all
+      time = Time.now.beginning_of_month
+
+      # NOTE update all period before generating invoices
+      Period.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).each do |period|
+        UpdatePeriodDataService.new(period).execute
+        UpdatePeriodPriceService.new(period).execute
+        print '.'
+      end; nil
+
+      Organization.billed.order(created_at: :asc).each do |organization|
+        organization_period = organization.periods.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).first
+        unless organization_period.invoices.present?
+          periods = Period.where(user_id: organization.customers.map(&:id)).where('start_at <= ? AND end_at >= ?', time.dup, time.dup)
+          if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
+            puts "Generating invoice for organization : #{organization.name}"
+            invoice = Invoice.new
+            invoice.organization = organization
+            invoice.user         = organization.leader
+            invoice.period       = organization_period
+            invoice.save
+            print "-> Invoice #{invoice.number}..."
+            CreateInvoicePdf.new(invoice).execute
+            print "done\n"
+            InvoiceMailer.delay(priority: 1).notify(invoice)
+          end
+        end
+      end
+      Invoice.archive
+    end
+  end
+
   def initialize(invoice)
     @invoice = invoice
   end
-
 
   def execute
     months = I18n.t('date.month_names').map { |e| e.capitalize if e }
@@ -30,8 +62,7 @@ class CreateInvoicePdf
     scan_box_package_count  = 0
     retriever_package_count = 0
 
-
-    @invoice.periods.each do |period|
+    periods.each do |period|
       period.product_option_orders.each do |option|
         case option.name
         when 'basic_package_subscription'
@@ -102,9 +133,9 @@ class CreateInvoicePdf
 
     @address = @invoice.organization.addresses.for_billing.first
 
-    @invoice.amount_in_cents_w_vat = (@total * vat_ratio).round
+    @invoice.amount_in_cents_w_vat = (@total * @invoice.vat_ratio).round
 
-    Prawn::Document.generate "#{Rails.root}/tmp/#{number}.pdf" do |pdf|
+    Prawn::Document.generate "#{Rails.root}/tmp/#{@invoice.number}.pdf" do |pdf|
       pdf.font 'Helvetica'
       pdf.fill_color '49442A'
 
@@ -146,7 +177,7 @@ class CreateInvoicePdf
       # Information
       pdf.font_size(14) do
         pdf.move_down 30
-        pdf.text "Facture n°" + number.to_s + ' du ' + (@invoice.created_at - 1.month).end_of_month.day.to_s + ' ' + previous_month + ' ' + (@invoice.created_at - 1.month).year.to_s, align: :left, style: :bold
+        pdf.text "Facture n°" + @invoice.number.to_s + ' du ' + (@invoice.created_at - 1.month).end_of_month.day.to_s + ' ' + previous_month + ' ' + (@invoice.created_at - 1.month).year.to_s, align: :left, style: :bold
       end
 
       pdf.move_down 14
@@ -182,7 +213,7 @@ class CreateInvoicePdf
       pdf.float do
         pdf.text_box 'TVA (20%)', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * @invoice.vat_ratio - @total) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
 
@@ -190,7 +221,7 @@ class CreateInvoicePdf
       pdf.float do
         pdf.text_box 'Total TTC', at: [400, pdf.cursor], width: 60, align: :right, style: :bold
       end
-      pdf.text_box format_price(@total * vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
+      pdf.text_box format_price(@total * @invoice.vat_ratio) + " €", at: [470, pdf.cursor], width: 66, align: :right
       pdf.move_down 10
       pdf.stroke_color '000000'
       pdf.stroke_horizontal_line 470, 540, at: pdf.cursor
@@ -206,5 +237,12 @@ class CreateInvoicePdf
     @invoice.content = File.new "#{Rails.root}/tmp/#{@invoice.number}.pdf"
 
     @invoice.save
+  end
+
+private
+
+  def format_price price_in_cents
+    price_in_euros = price_in_cents.blank? ? "" : price_in_cents.round/100.0
+    ("%0.2f" % price_in_euros).gsub(".", ",")
   end
 end

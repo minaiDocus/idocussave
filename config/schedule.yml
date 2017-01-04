@@ -19,3 +19,5 @@ FtpFetcherWorker:
 UpdateAccountingPlanWorker:
   cron: '00 4 * * *'
 
+CreateInvoicePdfWorker:
+  cron: '0 3 1 * *'
