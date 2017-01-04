@@ -1,3 +1,7 @@
+set :deploy_to, '/data/idocus/deploy/staging'
+
+set :linked_dirs, fetch(:linked_dirs, []).push('files')
+
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.

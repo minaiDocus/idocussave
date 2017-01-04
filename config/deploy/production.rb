@@ -1,6 +1,12 @@
-server "my.idocus.com", user: "idocus", roles: %w{app db web}
+set :deploy_to, '/data/idocus/deploy/production'
 
-set :deploy_to, "/data/idocus/deploy/production"
+namespace :deploy do
+  after :updated, :link_production_data do
+    on roles(:all) do
+      execute "ln -s /data/idocus/production_data/files #{release_path}/files"
+    end
+  end
+end
 
 # server-based syntax
 # ======================
