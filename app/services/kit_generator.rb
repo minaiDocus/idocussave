@@ -223,7 +223,7 @@ class KitGenerator
         pdf.bounding_box [15, pdf.cursor], width: 297 do
           label.each_with_index do |field, index|
             if index == 1
-              width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.chop.split('x').map(&:to_i)
+              width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.split('x').map(&:to_i)
               w = width - ((width*20) / 100)
               pdf.float do
                 pdf.bounding_box [0, pdf.cursor], width: w do
@@ -252,7 +252,7 @@ class KitGenerator
         pdf.bounding_box [15, pdf.cursor], width: 297 do
           label.each_with_index do |field, index|
             if index == 0
-              width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.chop.split('x').map(&:to_i)
+              width, height = `identify -format \"%wx%h\" "#{BarCode::TEMPDIR_PATH}/#{field}.png"`.split('x').map(&:to_i)
               w = width - ((width*20) / 100)
               pdf.float do
                 pdf.bounding_box [0, pdf.cursor], width: w do
