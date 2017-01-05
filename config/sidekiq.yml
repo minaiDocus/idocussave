@@ -14,6 +14,7 @@
 # even put in dynamic logic, like a host-specific queue.
 # http://www.mikeperham.com/2013/11/13/advanced-sidekiq-host-specific-queues/
 :queues:
+  - [documents_thumbs_and_content, 1]
   - [retrieve_emailed_document, 5]
   - [pre_assignments_delivery, 7]
   - [remote_file_delivery, 6]
@@ -26,8 +27,8 @@
   - [retrieve_preseizures, 9]
   - [sync_remote_files, 6]
   - [dematbox, 9]
-  - [default, 1]
-  - [mailers, 1]
+  - [default, 2]
+  - [mailers, 3]
 
 # you can override concurrency based on environment
 production:
