@@ -20,7 +20,7 @@ class AccountNumberRule < ActiveRecord::Base
 
 
   def similar_name
-    organization.account_number_rules.where(name: /#{name_pattern}/)
+    organization.account_number_rules.where("name like ?", "%#{name_pattern}%")
   end
 
 
@@ -57,7 +57,7 @@ class AccountNumberRule < ActiveRecord::Base
         attrs[:user_ids]            = account_number_rule_params[:user_ids] if account_number_rule_params[:affect] == 'user'
         attrs[:third_party_account] = nil if attrs[:rule_type] == 'truncate'
 
-        template     = organization.account_number_rules.where(name: /#{attrs[:name]}/).first
+        template     = organization.account_number_rules.where(name: attrs[:name]).first
         attrs[:name] = template.name_pattern + " (#{template.similar_name.size + 1})" if template
 
         organization.account_number_rules.create(attrs)
@@ -71,6 +71,7 @@ class AccountNumberRule < ActiveRecord::Base
 
 
   def self.search_for_collection(collection, contains)
+    return collection if collection.empty?
     organization = collection.first.organization
 
     collection = collection.where("name LIKE ?", "%#{contains[:name]}%") if contains[:name].present?
