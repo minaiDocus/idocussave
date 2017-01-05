@@ -44,3 +44,25 @@ namespace :deploy do
     end
   end
 end
+
+namespace :utils do
+  desc 'Upload uncommited modified files'
+  task :upload_modified do
+    on roles(:all) do
+      data = %x(git ls-files --other --exclude-standard -m | uniq)
+      data.split(/\n/).each do |file_path|
+        upload! file_path, release_path.join(file_path)
+      end
+    end
+  end
+
+  desc 'Upload modified files in last commit'
+  task :upload_last_commit do
+    on roles(:all) do
+      data = %x(git log --name-only --pretty=oneline --full-index HEAD^..HEAD | grep -vE '^[0-9a-f]{40} ' | sort | uniq)
+      data.split(/\n/).each do |file_path|
+        upload! file_path, release_path.join(file_path)
+      end
+    end
+  end
+end
