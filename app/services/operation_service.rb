@@ -14,6 +14,8 @@ class OperationService
   def self.fetch(object, update = false)
     bank_accounts = if object.class.to_s.in?(%w(User FiduceoRetriever))
                       object.bank_accounts
+                    elsif object.is_a? Fixnum
+                      [BankAccount.find(object)]
                     else
                       Array(object)
                     end

@@ -4,8 +4,9 @@ class RetrieveFiduceoOperationsWorker
 
   def perform
     BankAccount.all.each do |bank_account|
-      OperationService.fetch(bank_account) if bank_account.retriever.transaction_status == 'COMPLETED'
-      puts '.'
+      if bank_account.retriever && bank_account.retriever.transaction_status == 'COMPLETED'
+        OperationService.delay(queue: :retrieve_fiduceo_operations).fetch(bank_account.id)
+      end
     end
   end
 end
