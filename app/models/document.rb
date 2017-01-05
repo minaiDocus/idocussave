@@ -53,6 +53,7 @@ class Document < ActiveRecord::Base
   scope :not_extracted,    -> { where(content_text: '') }
   scope :cannot_extract,   -> { where(content_text: '-[none]') }
   scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :by_position,      -> { order(position: :asc) }
 
   scope :of_period, lambda { |time, duration|
     case duration
