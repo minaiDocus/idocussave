@@ -41,6 +41,10 @@ class GoogleDriveSyncService
         @error   = e
         @session = nil
         @google_doc.reset
+      elsif e.message =~ /invalid_grant/
+        # NOTE Unknown error
+        @error   = e
+        @session = nil
       else
         raise
       end
