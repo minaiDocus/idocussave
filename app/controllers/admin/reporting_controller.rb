@@ -38,7 +38,8 @@ class Admin::ReportingController < Admin::AdminController
             with_organization_info = true
           end
 
-          periods = Period.where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).where("start_at  >= ? AND end_at <= ?", beginning_of_year, end_of_year).order(start_at: :asc)
+          # NOTE temporary fix using +1.hour
+          periods = Period.where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).where("start_at  >= ? AND end_at <= ?", beginning_of_year, end_of_year + 1.hour).order(start_at: :asc)
 
           data = PeriodsToXlsService.new(periods, with_organization_info).execute
 
