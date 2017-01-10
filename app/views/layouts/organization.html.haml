@@ -65,9 +65,10 @@
                   = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization)
               %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports)) ? 'active' : '') }
                 = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
+              %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
+                = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
         .span10
           != yield
-
     :plain
       <!--[if lt IE 9]>
         <script src="/assets/html5.js" type="text/javascript"></script>

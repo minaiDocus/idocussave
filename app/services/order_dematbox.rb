@@ -18,7 +18,7 @@ class OrderDematbox
     if @order.save
       unless @is_an_update
         @period.orders << @order
-        ConfirmOrder.execute(@order.id)
+        ConfirmOrder.delay_for(24.hours).execute(@order.id)
       end
 
       UpdatePeriod.new(@period).execute

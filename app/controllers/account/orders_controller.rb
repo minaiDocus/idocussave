@@ -150,7 +150,7 @@ class Account::OrdersController < Account::OrganizationController
     if (Time.now > @order.created_at + 24.hours) || !@order.pending?
       flash[:error] = "Cette action n'est plus valide."
 
-      account_organization_customer_path(@organization, @customer, tab: 'orders')
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'orders')
     end
   end
 

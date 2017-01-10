@@ -10,7 +10,6 @@ class DestroyOrder
     @order.with_lock(timeout: 2, retries: 20, retry_sleep: 0.1) do
       if @order.pending?
         @order.cancel
-        
         is_cancelled = true
       end
     end

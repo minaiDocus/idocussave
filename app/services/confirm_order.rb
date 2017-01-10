@@ -21,9 +21,7 @@ class ConfirmOrder
 
     @order.with_lock(timeout: 2, retries: 20, retry_sleep: 0.1) do
       if @order.pending?
-        @order.confirm
-
-        is_confirmed = true
+        is_confirmed =  @order.confirm
       end
     end
 
@@ -35,6 +33,9 @@ class ConfirmOrder
       end
 
       UpdatePeriod.new(@order.period).execute
+    elsif @order.errors[:address].any?
+      OrderMailer.notify_paper_set_reminder(@order).deliver_later
+      ConfirmOrder.delay_for(24.hours).execute(@order.id.to_s)
     end
   end
 end

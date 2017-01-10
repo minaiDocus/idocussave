@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Order < ActiveRecord::Base
+  attr_accessor :address_required
   self.inheritance_column = :_type_disabled
-
 
   has_one :address, as: :locatable
   has_one :paper_return_address, as: :locatable, class_name: 'Address'
@@ -13,12 +13,12 @@ class Order < ActiveRecord::Base
   validate :inclusion_of_paper_set_end_date,   if: proc { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date, if: proc { |o| o.paper_set? }
 
-  validates_presence_of :state
-  validates_presence_of  :address
+  validates_presence_of  :state
+  validates_presence_of  :address,              if: proc { |o| o.address_required? }
   validates_presence_of  :vat_ratio
   validates_presence_of  :period_duration,      if: proc { |o| o.paper_set? }
   validates_presence_of  :paper_set_end_date,   if: proc { |o| o.paper_set? }
-  validates_presence_of  :paper_return_address, if: proc { |o| o.paper_set? }
+  validates_presence_of  :paper_return_address, if: proc { |o| o.paper_set? && o.address_required? }
   validates_presence_of  :paper_set_start_date, if: proc { |o| o.paper_set? }
   validates_presence_of  :price_in_cents_wo_vat
 
@@ -42,6 +42,7 @@ class Order < ActiveRecord::Base
     state :pending
     state :confirmed
     state :cancelled
+    state :processed
 
     event :confirm do
       transition pending: :confirmed
@@ -50,6 +51,11 @@ class Order < ActiveRecord::Base
     event :cancel do
       transition pending: :cancelled
     end
+
+    event :process do
+      transition confirmed: :processed
+    end
+
   end
 
 
@@ -85,6 +91,19 @@ class Order < ActiveRecord::Base
     end
 
     dates
+  end
+
+  def paper_set_annual_end_date
+    time = Time.now.end_of_year
+    time = case self.user.subscription.period_duration
+    when 1
+      time.beginning_of_month
+    when 3
+      time.beginning_of_quarter
+    when 12
+      time.beginning_of_year
+    end rescue Time.now
+    self.paper_set_end_date   = time.to_date
   end
 
 
@@ -130,9 +149,34 @@ class Order < ActiveRecord::Base
     orders
   end
 
+  def self.search_for_collection(collection, contains)
+    return collection if collection.empty?
+    user_ids = []
+
+    if contains[:user_code].present?
+      user_ids += User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id).pluck(:id)
+    end
+
+    if contains[:company].present?
+      user_ids += User.where("company LIKE ?", "%#{contains[:company]}%").distinct(:id).pluck(:id)
+    end
+
+    if contains[:created_at]
+      contains[:created_at].each do |operator, value|
+        collection = collection.where("orders.created_at #{operator} :value", value: value)
+      end
+    end
+
+    collection = collection.where(state:   contains[:state]) if contains[:state].present?
+    collection = collection.where(user_id: user_ids.uniq)         if user_ids.any?
+    collection
+  end
+
+  def address_required?
+    address_required.nil? ? true : address_required
+  end
 
   private
-
 
   def paper_set_starting_date
     start_date = created_at.try(:to_date) || Date.today

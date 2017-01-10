@@ -1,0 +1,40 @@
+!!!
+%html
+  %head
+    %title [iDocus] Rappel Commande de Kit envoi courrier
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Une commande d'un Kit envoi courrier est en attente de traitement pour le client #{link_to @order.user.code, account_organization_customer_url(@order.user.organization, @order.user, tab: 'orders')} avec les caractéristiques suivantes :
+    %br
+    \- Taille d'enveloppe :
+    = @order.paper_set_casing_size.to_s + 'g'
+    %br
+    \- Nombre de chemises :
+    = @order.paper_set_folder_count.to_s + ' chemises'
+    %br
+    \- Période :
+    = l @order.paper_set_start_date, format: '%B %Y'
+    à
+    = l @order.paper_set_end_date, format: '%B %Y'
+    %br
+    \- Type de Période :
+    - period_type = case @order.period_duration
+      - when 1 then 'Mensuel'
+      - when 3 then 'Trimestriel'
+      - when 12 then 'Annuel'
+    = period_type
+    %br
+    %br
+    Afin que nous puissions traiter la commande, merci de bien vouloir renseigner les addresses de livraison du kit et retour des factures papiers en suivant ce lien : #{link_to account_organization_customer_url(@order.user.organization, @order.user, tab: 'addresses'), account_organization_customer_url(@order.user.organization, @order.user, tab: 'addresses')}
+    %br
+    Pour ne plus recevoir ce rappel, nous vous prions de bien vouloir annuler la commande.
+    %br
+    %br
+    Cordialement,
+    %br
+    L'équipe iDocus.
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

@@ -1,0 +1,9 @@
+#paper_set_order.new
+  .row-fluid
+    .span12.box
+      %h3
+        Commande de Kit envoi courrier pour le client : #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'orders')}
+  .row-fluid
+    .span12.box
+      = simple_form_for @order, url: account_organization_paper_set_orders_path(@organization), html: { class: 'form form-horizontal margin0' } do |f|
+        = render partial: 'form', locals: { f: f }

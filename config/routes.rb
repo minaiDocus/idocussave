@@ -108,6 +108,12 @@ Idocus::Application.routes.draw do
         resource :file_storage_authorizations, only: %w(edit update)
       end
 
+      resources :paper_set_orders do
+        get  'select_for_orders', on: :collection
+        post 'order_multiple',   on: :collection
+        post 'create_multiple', on: :collection
+      end
+
       resources :customers do
         get   'info',                    on: :collection
         get   'edit_ibiza',              on: :member
