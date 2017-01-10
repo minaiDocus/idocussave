@@ -59,8 +59,8 @@ class Admin::NotificationSettingsController < Admin::AdminController
 
   # POST /admin/notification_settings/update_ibiza
   def update_ibiza
-    Settings.update_setting('notify_on_ibiza_delivery',      params[:notification][:type])
-    Settings.update_setting('notify_scans_not_delivered_to', params[:notification][:to].split(',').map(&:strip))
+    Settings.update_setting('notify_on_ibiza_delivery',   params[:notification][:type])
+    Settings.update_setting('notify_ibiza_deliveries_to', params[:notification][:to].split(',').map(&:strip))
 
     flash[:notice] = 'Modifié avec succès.'
 
