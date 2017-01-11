@@ -112,8 +112,9 @@ class TempPack < ActiveRecord::Base
 
 
   def next_document_position
-    with_lock(timeout: 1, retries: 100, retry_sleep: 0.01) do
-      increment(:position_counter, 1).position_counter
+    self.with_lock do
+      increment!(:position_counter, 1)
+      position_counter
     end
   end
 

@@ -16,11 +16,10 @@ class AddTempDocumentToTempPack
     end
 
     if options[:delivery_type] != 'fiduceo' || !temp_document.persisted?
-      next_document_position = temp_pack.increment(:position_counter, 1).position_counter
 
       temp_document.user                = user
       temp_document.content             = file
-      temp_document.position            = next_document_position unless temp_document.position
+      temp_document.position            = temp_pack.next_document_position unless temp_document.position
       temp_document.temp_pack           = temp_pack
       temp_document.organization        = organization
       temp_document.original_file_name  = options[:original_file_name]
