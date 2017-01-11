@@ -34,7 +34,8 @@
           %li= link_to "Mode d'emploi", "https://docs.idocus.com/mode_emploi.pdf", target: '_blank'
           - if @user.is_prescriber
             %li= link_to 'Newsletter', 'https://docs.idocus.com/Evolutions iDocus 2016.2.pdf', target: '_blank'
-            %li= link_to 'Creation dossier', 'https://docs.idocus.com/Creation de dossier client.pdf', target: '_blank'
+            %li= link_to 'Création dossier', 'https://docs.idocus.com/Creation de dossier client.pdf', target: '_blank'
+            %li= link_to 'Création kits', 'https://docs.idocus.com/Evolutions iDocus 2017.pdf', target: '_blank'
       - if @user.is_prescriber
         %li.dropdown
           %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
