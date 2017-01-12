@@ -142,7 +142,7 @@ jQuery ->
     window.retrievers_url = 'retrievers?part=true'
     load_retrievers_list()
 
-    $('.retriever_seach.form').on 'submit', (e) ->
+    $('.retriever_search.form').on 'submit', (e) ->
       window.retriever_contains_name = $('#retriever_contains_name').val()
       e.preventDefault()
       load_retrievers_list()
