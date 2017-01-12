@@ -1,7 +1,7 @@
 class CreateInvoicePdf
   class << self
     def for_all
-      time = Time.now.beginning_of_month
+      time = 1.month.ago.beginning_of_month + 15.days
 
       # NOTE update all period before generating invoices
       Period.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).each do |period|
