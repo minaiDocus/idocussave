@@ -3,8 +3,10 @@ class PaperProcess < ActiveRecord::Base
   belongs_to :organization
   belongs_to :user
   belongs_to :period_document
+  belongs_to :order
 
   self.inheritance_column = :_type_disabled
+  after_save :update_order, if: proc { |e| e.type == 'kit' }
 
 
   validate  :customer_exist, if: proc { |e| e.customer_code_changed? }
@@ -16,6 +18,8 @@ class PaperProcess < ActiveRecord::Base
   validates_inclusion_of :type, in: %w(kit receipt scan return)
   validates_inclusion_of :letter_type, in: [500, 1000, 3000], if: proc { |e| e.type == 'return' }
   validates_uniqueness_of :tracking_number, if: proc { |e| e.type != 'scan' }
+  validates_uniqueness_of :order_id, if: proc { |e| e.type == 'kit' }
+  validate  :order_belonging, if: proc { |e| e.type == 'kit' }
 
 
 
@@ -69,5 +73,14 @@ class PaperProcess < ActiveRecord::Base
     unless User.customers.where(code: customer_code).first
       errors.add(:customer_code, :invalid)
     end
+  end
+
+  def order_belonging
+    return errors.add(:order_id, 'non trouvé') unless Order.paper_sets.exists?(order_id)
+    errors.add(:order_id, 'non trouvé pour ce client') unless order.user.code == customer_code if customer_code.present?
+  end
+
+  def update_order
+    order.process if order.confirmed?
   end
 end

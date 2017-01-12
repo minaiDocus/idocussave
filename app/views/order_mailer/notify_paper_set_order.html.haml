@@ -9,6 +9,9 @@
     %br
     Le client #{link_to @order.user.code, account_organization_customer_url(@order.user.organization, @order.user, tab: 'orders')} vient de passer une commande d'un Kit envoi courrier avec les caractéristiques suivantes :
     %br
+    \- N° de commande :
+    = @order.id
+    %br
     \- Taille d'enveloppe :
     = @order.paper_set_casing_size.to_s + 'g'
     %br

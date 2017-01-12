@@ -34,6 +34,7 @@ isKitFormValid = (customer_codes) ->
   good = false if $.inArray($('#paper_process_customer_code').val(), customer_codes) == -1
   good = false if parseInt($('#paper_process_journals_count').val()) <= 0
   good = false if parseInt($('#paper_process_periods_count').val()) <= 0
+  good = false if parseInt($('#paper_process_order_id').val()) <= 0
   good
 
 jQuery ->

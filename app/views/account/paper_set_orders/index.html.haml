@@ -35,7 +35,7 @@
                     à
                     = paper_set_date_to_name(order.period_duration, order.paper_set_end_date)
                   %td= Order.state_machine.states[order.state].human_name
-                  %td
+                  %td= link_to_paper_tracking(order.kit) if order.kit.try(:tracking_number)
                   %td
                     = link_to icon(icon: 'plus'), new_account_organization_paper_set_order_path(@organization, template: order), class: 'btn btn-mini', title: 'Recommander le même kit'
                     = link_to icon_edit, edit_account_organization_paper_set_order_path(@organization, order), class: 'btn btn-mini', title: 'Editer'

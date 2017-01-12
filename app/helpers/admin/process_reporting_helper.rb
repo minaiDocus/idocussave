@@ -48,7 +48,7 @@ module Admin::ProcessReportingHelper
 
       customer_ids.size - previous_count
     else
-      Order.paper_sets.confirmed.where(user_id: customers.map(&:id)).where("created_at >= ? AND created_at <= ?", time.dup, time.end_of_month).count
+      Order.paper_sets.billed.where(user_id: customers.map(&:id)).where("created_at >= ? AND created_at <= ?", time.dup, time.end_of_month).count
     end
   end
 

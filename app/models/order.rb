@@ -5,6 +5,7 @@ class Order < ActiveRecord::Base
 
   has_one :address, as: :locatable
   has_one :paper_return_address, as: :locatable, class_name: 'Address'
+  has_one :kit, -> { where type: 'kit' }, class_name: 'PaperProcess'
 
   belongs_to :user
   belongs_to :period
@@ -34,8 +35,10 @@ class Order < ActiveRecord::Base
   scope :pending,    -> { where(state: 'pending') }
   scope :confirmed,  -> { where(state: 'confirmed') }
   scope :cancelled,  -> { where(state: 'cancelled') }
+  scope :billed,     -> { where(state: ['confirmed','processed']) }
   scope :dematboxes, -> { where(type: 'dematbox') }
   scope :paper_sets, -> { where(type: 'paper_set') }
+
 
 
   state_machine initial: :pending do
@@ -152,6 +155,8 @@ class Order < ActiveRecord::Base
   def self.search_for_collection(collection, contains)
     return collection if collection.empty?
     user_ids = []
+    _ids = []
+
 
     if contains[:user_code].present?
       user_ids += User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id).pluck(:id)
@@ -161,14 +166,20 @@ class Order < ActiveRecord::Base
       user_ids += User.where("company LIKE ?", "%#{contains[:company]}%").distinct(:id).pluck(:id)
     end
 
+    if contains[:tracking_number].present?
+      _ids = PaperProcess.kits.where("tracking_number LIKE ?", "%#{contains[:tracking_number]}%").distinct(:order_id).pluck(:order_id)
+    end
+
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
         collection = collection.where("orders.created_at #{operator} :value", value: value)
       end
     end
 
+    collection = collection.where(id: _ids)                  if _ids.any?
     collection = collection.where(state:   contains[:state]) if contains[:state].present?
-    collection = collection.where(user_id: user_ids.uniq)         if user_ids.any?
+    collection = collection.where(user_id: user_ids.uniq)    if user_ids.any?
+
     collection
   end
 

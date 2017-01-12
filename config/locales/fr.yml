@@ -343,6 +343,7 @@ fr:
               greater_than: 'doit être supérieur à %{count}'
             periods_count:
               greater_than: 'doit être supérieur à %{count}'
+            order_id: n° de commande
     models:
       common:
         attributes:
