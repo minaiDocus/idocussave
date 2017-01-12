@@ -54,7 +54,7 @@ class Admin::UsersController < Admin::AdminController
     full_info = params[:full_info].present?
 
     if params[:q].present?
-      users = User.where("code LIKE ?", "%#{contains[:q]}%").order(code: :asc).limit(10)
+      users = User.where("code LIKE ?", "%#{params[:q]}%").order(code: :asc).limit(10)
 
       users = users.prescribers if params[:prescriber].present?
 
