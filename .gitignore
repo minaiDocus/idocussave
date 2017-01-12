@@ -1,6 +1,7 @@
 .rspec
 .idea/
 .envrc
+.byebug_history
 ./doc/
 log/
 tmp/
