@@ -48,7 +48,7 @@ Idocus::Application.routes.draw do
   post '/scans/return_labels/:year/:month/:day',     controller: 'return_labels', action: 'create'
   get  '/scans/return_labels/new/:year/:month/:day', controller: 'return_labels', action: 'new'
 
-
+  get '/paper_set_orders', controller: 'paper_set_orders', action: 'index'
 
   post 'dropbox/webhook', controller: 'dropboxes', action: 'webhook'
   get  'dropbox/webhook', controller: 'dropboxes', action: 'verify'

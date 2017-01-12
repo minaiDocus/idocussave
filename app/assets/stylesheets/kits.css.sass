@@ -4,6 +4,7 @@ $tracking_number: 93px
 $customer_code: 130px
 $journals_count: 100px
 $periods_count: 100px
+$order_id: 130px
 $action: 55px
 
 #kits
@@ -31,8 +32,14 @@ $action: 55px
       input
         width: $periods_count
         text-align: right
+    .order_id
+      width: $order_id
+      text-align: right
+      input
+        width: $order_id
+        text-align: right
     .action
       width: $action
-    th, th.journals_count, th.periods_count
+    th, th.journals_count, th.periods_count, th.order_id
       text-align: center
     width: 670px

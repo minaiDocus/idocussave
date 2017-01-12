@@ -1,0 +1,26 @@
+%h3 Filtres
+
+%br
+= form_tag paper_set_orders_path, method: :get, class: 'form form-vertical margin0bottom' do
+  = hidden_field_tag :direction, sort_direction
+  = hidden_field_tag :sort, sort_column
+  = hidden_field_tag :per_page, per_page
+  = label_tag 'order_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+  .filter_date
+    .input-prepend.date.datepicker
+      %span.add-on
+        >=
+      = text_field_tag 'order_contains[created_at][>=]', (params[:order_contains][:created_at]['>='] rescue ''), class: 'input-medium'
+    .input-prepend.date.datepicker
+      %span.add-on
+        <=
+      = text_field_tag 'order_contains[created_at][<=]', (params[:order_contains][:created_at]['<='] rescue ''), class: 'input-medium'
+  = label_tag 'order_contains[user_code]', t('activerecord.models.user.attributes.code')
+  = text_field_tag 'order_contains[user_code]', (params[:order_contains][:user_code] rescue ''), class: 'input-normal'
+  = label_tag 'order_contains[tracking_number]', t('activerecord.models.paper_process.attributes.tracking_number')
+  = text_field_tag 'order_contains[tracking_number]', (params[:order_contains][:tracking_number] rescue ''), class: 'input-normal'
+  = label_tag 'order_contains[state]', t('activerecord.models.order.attributes.state')
+  = select_tag 'order_contains[state]', options_for_select([['Confirmé', 'confirmed'], ['Traitée', 'processed']], (params[:order_contains][:state] rescue '')), include_blank: true
+  %br
+  = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+  = link_to t('filters.reset'), paper_set_orders_path, class: 'btn'

@@ -49,10 +49,11 @@
           %th.customer_code   Code client
           %th.journals_count  Nombre de journaux
           %th.periods_count   Nombre de périodes
+          %th.order_id        N° commande
           %th.action Action
         - if @current_time.to_date == Date.today
           %tr.form
-            = form_for @paper_process, url: kits_path do |f|
+            = form_for @paper_process, url: kits_path, method: :post do |f|
               %td.date -
               %td.tracking_number
                 != f.text_field :tracking_number, autofocus: true, maxlength: 13
@@ -74,6 +75,11 @@
                 - if (error = @paper_process.errors.messages[:periods_count].try(:first))
                   %br
                   .errors.alignleft= error
+              %td.order_id
+                != f.number_field :order_id, min: 0
+                - if (error = @paper_process.errors.messages[:order_id].try(:first))
+                  %br
+                  .errors.alignleft= error
               %td.action= submit_tag 'Valider', class: 'btn btn-primary'
         - @grouped_paper_processes[@current_time.day].to_a.each do |paper_process|
           %tr
@@ -82,4 +88,5 @@
             %td.customer_code=   paper_process.customer_code
             %td.journals_count=  paper_process.journals_count
             %td.periods_count=   paper_process.periods_count
+            %td.order_id=        paper_process.order_id
             %td.action

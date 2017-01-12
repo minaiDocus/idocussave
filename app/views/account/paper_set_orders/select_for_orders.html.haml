@@ -22,7 +22,7 @@
               %th dern. envel. retour
           %tbody
             - @customers.each do |customer|
-              - last_order = customer.orders.paper_sets.confirmed.last
+              - last_order = customer.orders.paper_sets.billed.last
               - paper_return = customer.paper_processes.returns.last
               %tr
                 %td= check_box_tag 'customer_ids[]', customer.id, false, id: "customer_#{customer.id}", style: 'top:0;', class: 'checkbox'

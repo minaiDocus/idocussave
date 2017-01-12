@@ -1,7 +1,7 @@
 class CreateInvoicePdf
   class << self
     def for_all
-      time = Time.now.beginning_of_month
+      time = 1.month.ago.beginning_of_month + 15.days
 
       # NOTE update all period before generating invoices
       Period.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).each do |period|
@@ -79,8 +79,8 @@ class CreateInvoicePdf
       end
     end
 
-    ordered_scanner_count   = @invoice.organization.orders.dematboxes.confirmed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
-    ordered_paper_set_count = @invoice.organization.orders.paper_sets.confirmed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
+    ordered_scanner_count   = @invoice.organization.orders.dematboxes.billed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
+    ordered_paper_set_count = @invoice.organization.orders.paper_sets.billed.where("created_at >= ? AND created_at <= ?", time.beginning_of_month, time.end_of_month).count
 
     @total = PeriodBillingService.amount_in_cents_wo_vat(time.month, periods)
 

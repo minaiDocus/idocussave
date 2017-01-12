@@ -38,15 +38,15 @@ class KitsController < PaperProcessesController
     elsif @paper_process.save
       session[:kit_paper_process] = nil
 
-      @paper_process.user            = User.find_by_code @paper_process.customer_code
+      @paper_process.user         = User.find_by_code @paper_process.customer_code
       @paper_process.organization = @paper_process.user.try(:organization)
+
       @paper_process.save
 
       flash[:success] = 'Créé avec succès.'
     else
       session[:kit_paper_process] = @paper_process
-      
-      flash[:error] = 'Donnée(s) invalide(s).'
+      flash[:error]               = 'Donnée(s) invalide(s).'
     end
 
     redirect_to kits_path
@@ -59,7 +59,8 @@ class KitsController < PaperProcessesController
       :tracking_number,
       :customer_code,
       :journals_count,
-      :periods_count
+      :periods_count,
+      :order_id
     )
   end
 end

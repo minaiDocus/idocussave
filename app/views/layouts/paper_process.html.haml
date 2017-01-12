@@ -4,7 +4,6 @@
     %title Idocus | Traitements papiers
     %meta{ content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-type' }
     %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
-    = javascript_include_tag 'application', 'paper_process'
     = stylesheet_link_tag    'application', 'paper_process'
   %body
     .navbar.navbar-fixed-top
@@ -17,6 +16,8 @@
           = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
           .nav-collapse
             %ul{ class: 'nav' }
+              %li{ class: ('active' if controller_name == 'paper_set_orders') }
+                = link_to 'Commandes', paper_set_orders_path
               %li{ class: ('active' if controller_name == 'kits') }
                 = link_to 'Kit', kits_path
               %li{ class: ('active' if controller_name == 'receipts') }
@@ -35,3 +36,4 @@
     %footer.footer
       %p.copyright.aligncenter &copy; iDocus 2016
     = render '/shared/google_analytics'
+  = javascript_include_tag 'application', 'paper_process'
