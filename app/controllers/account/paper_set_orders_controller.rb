@@ -94,10 +94,12 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     @orders = []
     if params[:orders].any?
       params[:orders].each do |param_order|
-        order_attributes       = param_order.permit(:user_id, :paper_set_casing_size, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
-        order                  = Order.new(order_attributes)
-        order.type             = 'paper_set'
-        order.address_required = false
+        order_attributes           = param_order.permit(:user_id, :paper_set_casing_size, :paper_set_folder_count, :paper_set_start_date, :paper_set_end_date)
+        order                      = Order.new(order_attributes)
+        order.type                 = 'paper_set'
+        order.address              = order.user.paper_set_shipping_address.try(:dup)
+        order.paper_return_address = order.user.paper_return_address.try(:dup)
+        order.address_required     = false
         @orders << order unless OrderPaperSet.new(order.user, order).execute
       end
     end
