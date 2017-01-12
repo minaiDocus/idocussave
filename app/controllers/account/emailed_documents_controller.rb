@@ -2,16 +2,18 @@
 class Account::EmailedDocumentsController < Account::AccountController
   before_filter :verify_rights
 
+  # POST /account/emailed_documents/regenerate_code
   def regenerate_code
     if @user.update_email_code
       flash[:success] = 'Code régénéré avec succès.'
     else
       flash[:error] = "Impossible d'effectuer l'opération demandée"
     end
+
     redirect_to account_profile_path(panel: 'emailed_documents')
   end
 
-private
+  private
 
   def verify_rights
     if @user.is_prescriber || @user.inactive?

@@ -1,8 +1,10 @@
 # -*- encoding : UTF-8 -*-
+# Generates an array from user collection. Array is expected to be used to generate CSV
 class UsersToCsvService
   def initialize(users)
     @users = users
   end
+
 
   def execute
     csv = [
@@ -18,7 +20,9 @@ class UsersToCsvService
       'Nom',
       'Email'
     ].join(';')
+
     csv += "\n"
+
     csv += @users.map do |user|
       [
         I18n.l(user.created_at),
@@ -34,6 +38,7 @@ class UsersToCsvService
         user.email
       ].join(';')
     end.join("\n")
+
     csv
   end
 end

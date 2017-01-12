@@ -13,5 +13,5 @@ node :per_page do
 end
 
 node :total do
-  @pack_reports.count
+  @pack_reports_count
 end

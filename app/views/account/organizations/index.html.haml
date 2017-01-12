@@ -6,7 +6,7 @@
       .pull-left
         %h3 Liste des organisations (#{@organizations.count})
       .pull-right
-        = link_to icon_edit + ' ' + 'Options globales', edit_options_account_organizations_path, class: 'btn btn-primary'
+        = #link_to icon_edit + ' ' + 'Options globales', edit_options_account_organizations_path, class: 'btn btn-primary'
         = link_to icon_new + ' ' + t('actions.new'), new_account_organization_path, class: 'btn btn-primary'
 
   .row-fluid
@@ -19,26 +19,26 @@
             %table.table-condensed
               %thead
                 %tr
-                  %th= label_tag 'organization_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
-                  %th= label_tag 'organization_contains[created_at][$lte]', t('mongoid.models.common.attributes.created_at')
-                  %th= label_tag 'organization_contains[is_test]', t('mongoid.models.organization.attributes.is_test') + " (#{Organization.not_billed.count})"
+                  %th= label_tag 'organization_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+                  %th= label_tag 'organization_contains[created_at][<=]', t('activerecord.models.common.attributes.created_at')
+                  %th= label_tag 'organization_contains[is_test]', t('activerecord.models.organization.attributes.is_test') + " (#{Organization.not_billed.count})"
                   %th= label_tag 'organization_contains[is_for_admin]', 'Est client ?' + " (#{Organization.client.count})"
                   %th= label_tag 'organization_contains[is_active]', 'Est inactif ?' + " (#{Organization.inactive.count})"
-                  %th= label_tag 'organization_contains[is_suspended]', t('mongoid.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
+                  %th= label_tag 'organization_contains[is_suspended]', t('activerecord.models.organization.attributes.is_suspended') + " (#{Organization.suspended.count})"
                   %th= label_tag 'organization_contains[is_without_address]', "Sans adresse ? (#{@without_address_count})"
                   %th= label_tag 'organization_contains[is_debit_mandate_not_configured]', "Prélèvement non configuré ? (#{@debit_mandate_not_configured_count})"
-                  %th= label_tag 'organization_contains[name]', t('mongoid.models.organization.attributes.name')
+                  %th= label_tag 'organization_contains[name]', t('activerecord.models.organization.attributes.name')
                   %th
               %tbody
                 %tr
                   %td
                     .input-append.date.datepicker
-                      = text_field_tag 'organization_contains[created_at][$gte]', (params[:organization_contains][:created_at]['$gte'] rescue ''), class: 'input-small', placeholder: 'Début'
+                      = text_field_tag 'organization_contains[created_at][>=]', (params[:organization_contains][:created_at]['>='] rescue ''), class: 'input-small', placeholder: 'Début'
                       %span.add-on
                         %i.icon-th
                   %td
                     .input-append.date.datepicker
-                      = text_field_tag 'organization_contains[created_at][$lte]', (params[:organization_contains][:created_at]['$lte'] rescue ''), class: 'input-small', placeholder: 'Fin'
+                      = text_field_tag 'organization_contains[created_at][<=]', (params[:organization_contains][:created_at]['<='] rescue ''), class: 'input-small', placeholder: 'Fin'
                       %span.add-on
                         %i.icon-th
                   %td= select_tag 'organization_contains[is_test]', options_for_select([['Oui', 1], ['Non', 0]], (params[:organization_contains][:is_test] rescue 0)), include_blank: true
@@ -60,15 +60,15 @@
           %table.table.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-                %th= sortable :is_test, t('mongoid.models.organization.attributes.is_test')
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th= sortable :is_test, t('activerecord.models.organization.attributes.is_test')
                 %th= sortable :is_for_admin, 'Est client ?'
                 %th= sortable :is_active, 'Est inactif ?'
-                %th= sortable :is_suspended, t('mongoid.models.organization.attributes.is_suspended')
+                %th= sortable :is_suspended, t('activerecord.models.organization.attributes.is_suspended')
                 %th Sans adresse ?
                 %th Prélèvement non configuré ?
-                %th= sortable :name, t('mongoid.models.organization.attributes.name')
-                %th= t('mongoid.models.organization.attributes.leader')
+                %th= sortable :name, t('activerecord.models.organization.attributes.name')
+                %th= t('activerecord.models.organization.attributes.leader')
                 %th Action
             %tbody
               - @organizations.each do |organization|

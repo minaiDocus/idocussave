@@ -1,0 +1,23 @@
+RefreshDashboardStatisticsWorker:
+  cron: '*/15 * * * *'
+
+RefreshFiduceoRetrieverStatusesWorker:
+  cron: '40 6 * * *'
+
+RetrieveFiduceoOperationsWorker:
+  cron: '55 6 * * *'
+
+RetrieveFiduceoDocumentsWorker:
+  cron: '55 6 * * *'
+
+JobOrchestratorWorker:
+  cron: '*/10 * * * *'
+
+FtpFetcherWorker:
+  cron: '0 * * * *'
+
+UpdateAccountingPlanWorker:
+  cron: '00 4 * * *'
+
+CreateInvoicePdfWorker:
+  cron: '0 3 1 * *'

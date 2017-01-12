@@ -9,4 +9,4 @@
     %input{ type: :hidden, name: :packs_count, value: @packs.count }
   - else
     = paginate @response
-    %input{ type: :hidden, name: :packs_count, value: @response.results.total.to_s }
+    %input{ type: :hidden, name: :packs_count, value: @response.count.to_s }

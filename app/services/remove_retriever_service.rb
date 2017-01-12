@@ -22,7 +22,7 @@ private
 
   def notify
     if @notify_error
-      addresses = Array(Settings.notify_errors_to)
+      addresses = Array(Settings.first.notify_errors_to)
       if addresses.size > 0
         NotificationMailer.notify(addresses, "[iDocus][#{Rails.env}] Impossible de supprimer le service Automate pour le client #{@user.code}", '-').deliver
       end

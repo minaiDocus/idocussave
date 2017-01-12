@@ -1,3 +1,4 @@
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 # -*- encoding : UTF-8 -*-
 class FiduceoDocument
   attr_reader :temp_document
@@ -30,7 +31,7 @@ class FiduceoDocument
         is_content_file_valid:  true,
         wait_selection:         wait_selection?
       }
-      @temp_document = pack.add file, options
+      @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       retriever.temp_documents << @temp_document
     end
     clean_tmp
@@ -44,7 +45,7 @@ class FiduceoDocument
     DocumentTools.pack_name file_name
   end
 
-private
+  private
 
   def valid?
     if @fileb64.empty?
@@ -88,8 +89,8 @@ private
   end
 
   def decoded_data
-    Base64::decode64(@fileb64.gsub(/\\n/,"\n")).
-      force_encoding('UTF-8')
+    Base64.decode64(@fileb64.gsub(/\\n/, "\n"))
+          .force_encoding('UTF-8')
   end
 
   def metadata

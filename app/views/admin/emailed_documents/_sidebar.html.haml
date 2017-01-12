@@ -8,30 +8,30 @@
       = hidden_field_tag :sort, sort_column
       = hidden_field_tag :per_page, per_page
 
-      = label_tag 'emailed_document_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      = label_tag 'emailed_document_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
             >=
-          = text_field_tag 'emailed_document_contains[created_at][$gte]', (params[:emailed_document_contains][:created_at]['$gte'] rescue '')
+          = text_field_tag 'emailed_document_contains[created_at][>=]', (params[:emailed_document_contains][:created_at]['>='] rescue '')
         .input-prepend.date.datepicker
           %span.add-on
             <=
-          = text_field_tag 'emailed_document_contains[created_at][$lte]', (params[:emailed_document_contains][:created_at]['$lte'] rescue '')
+          = text_field_tag 'emailed_document_contains[created_at][<=]', (params[:emailed_document_contains][:created_at]['<='] rescue '')
 
-      = label_tag 'emailed_document_contains[state]', t('mongoid.models.email.attributes.state')
+      = label_tag 'emailed_document_contains[state]', t('activerecord.models.email.attributes.state')
       = select_tag 'emailed_document_contains[state]', options_for_select([['Traité', 'processed'], ['Untraitable', 'unprocessable'], ['En erreur', 'error']], (params[:emailed_document_contains][:state] rescue '')), include_blank: true
 
-      = label_tag 'user_contains[code]', t('mongoid.models.user.name') + ' (code)'
-      = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'span12'
+      = label_tag 'emailed_document_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
+      = text_field_tag 'emailed_document_contains[user_contains][code]', (params[:emailed_document_contains][:user_contains][:code] rescue ''), class: 'span12'
 
-      = label_tag 'emailed_document_contains[from]', t('mongoid.models.email.attributes.from')
+      = label_tag 'emailed_document_contains[from]', t('activerecord.models.email.attributes.from')
       = text_field_tag 'emailed_document_contains[from]', (params[:emailed_document_contains][:from] rescue ''), class: 'span12'
 
-      = label_tag 'emailed_document_contains[to]', t('mongoid.models.email.attributes.to')
+      = label_tag 'emailed_document_contains[to]', t('activerecord.models.email.attributes.to')
       = text_field_tag 'emailed_document_contains[to]', (params[:emailed_document_contains][:to] rescue ''), class: 'span12'
 
-      = label_tag 'emailed_document_contains[subject]', t('mongoid.models.email.attributes.subject')
+      = label_tag 'emailed_document_contains[subject]', t('activerecord.models.email.attributes.subject')
       = text_field_tag 'emailed_document_contains[subject]', (params[:emailed_document_contains][:subject] rescue ''), class: 'span12'
 
       %br

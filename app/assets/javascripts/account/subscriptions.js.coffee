@@ -112,6 +112,7 @@ update_price = ->
   price = 0
   period_type = 0
 
+  options = []
   if $('#subscription_is_annual_package_active').is(':checked')
     $('#subscription_period_duration').val(3)
     period_type = 2
@@ -127,7 +128,7 @@ update_price = ->
       period_type = 1
       $('.stamp_price').html('(15€HT)')
 
-    options = []
+    
     if $('#subscription_is_basic_package_active').is(':checked')
       options.push 'subscription', 'pre_assignment'
     if $('#subscription_is_mail_package_active').is(':checked')
@@ -139,6 +140,7 @@ update_price = ->
     if $('#subscription_is_micro_package_active').is(':checked')
       options.push 'subscription'
     options = _.uniq(options)
+
 
     for option in options
       if option == 'stamp'

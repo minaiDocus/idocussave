@@ -3,6 +3,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
   before_filter :load_bank_account, except: %w(index update_multiple)
 
   def index
+    bank_account_contains = search_terms(params[:bank_account_contains])
     if bank_account_contains && bank_account_contains[:retriever_id]
       @retriever = @customer.retrievers.find(bank_account_contains[:retriever_id])
       @retriever.ready if @retriever && @retriever.waiting_selection?
@@ -42,28 +43,10 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
 private
 
   def load_bank_account
-    @bank_account = @customer.bank_accounts.find params[:id]
+    @bank_account = @customer.bank_accounts.find(params[:id])
   end
 
   def bank_account_params
     params.require(:bank_account).permit(:journal, :accounting_number, :temporary_account, :start_date)
   end
-
-  def bank_account_contains
-    @contains ||= {}
-    if params[:bank_account_contains] && @contains.blank?
-      @contains = params[:bank_account_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :bank_account_contains
 end

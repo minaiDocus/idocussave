@@ -29,7 +29,7 @@
               %td.aligncenter= journal.is_default ? icon_ok : nil
               %td= journal.name
               %td= journal.description
-              %td= t("mongoid.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
+              %td= t("activerecord.models.account_book_type.attributes.entry_type_#{journal.entry_type}")
               %td
                 - if journal.is_pre_assignment_processable?
                   = journal.default_account? ? 'compte par défaut' : "compte d'attente"

@@ -7,12 +7,14 @@ class GoogleDriveSyncService
     @client = GoogleDrive::Client.new
   end
 
+
   def init_session
     begin
       if @google_doc.token.present? && @google_doc.token_expires_at && @google_doc.token_expires_at > 10.minutes.from_now
         @session = @client.load_session(@google_doc.token)
       elsif @google_doc.refresh_token.present?
         @session = @client.new_session(@google_doc.refresh_token)
+
         @google_doc.update(
           token: @client.access_token.token,
           token_expires_at: Time.at(@client.access_token.expires_at)
@@ -20,10 +22,12 @@ class GoogleDriveSyncService
       else
         @session = nil
       end
+
       @session.files if @session
     rescue Google::APIClient::AuthorizationError => e
+      @error   = e
       @session = nil
-      @error = e
+
       case e.result.response.status
       when 401
         @google_doc.update(token: '', token_expires_at: nil)
@@ -31,28 +35,38 @@ class GoogleDriveSyncService
       when 403
         @google_doc.reset
       end
+
     rescue OAuth2::Error => e
-      if e.message.match /Token has been revoked/
+      if e.message =~ /Token has been revoked/
+        @error   = e
         @session = nil
-        @error = e
         @google_doc.reset
+      elsif e.message =~ /invalid_grant/
+        # NOTE Unknown error
+        @error   = e
+        @session = nil
       else
         raise
       end
     end
+
     @session
   end
 
+
   def sync(remote_files)
     session = init_session
+
     if session
       remote_files.each_with_index do |remote_file, index|
-        remote_path ||= ExternalFileStorage::delivery_path(remote_files.first, @google_doc.path)
+        remote_path ||= ExternalFileStorage.delivery_path(remote_files.first, @google_doc.path)
+
         begin
           collection = session.root_collection.find_or_create_subcollections(remote_path)
         rescue => e
           remote_file.not_synced!("[#{e.class}] #{e.message}")
         end
+
         send_file(collection, remote_file, remote_path, index) if collection
       end
     else
@@ -66,29 +80,38 @@ class GoogleDriveSyncService
             remote_file.not_synced!("#{@error.result.response.status}: #{@error.result.body}")
           end
         else
-          remote_file.not_synced!("No credentials configured.")
+          remote_file.not_synced!('No credentials configured.')
         end
       end
     end
   end
 
+
   def send_file(collection, remote_file, remote_path, index)
     tries = 0
+
     begin
       remote_filepath = File.join(remote_path, remote_file.name)
       remote_file.sending!(remote_filepath)
-      print "\t[#{'%0.3d' % (index+1)}] #{remote_filepath} sending..."
+
+      print "\t[#{'%0.3d' % (index + 1)}] #{remote_filepath} sending..."
+
       mimetype = DocumentTools.mimetype(remote_file.name)
+
       collection.upload_from_file(remote_file.local_path, remote_file.name, content_type: mimetype, convert: false)
+
       remote_file.synced!
       print "done\n"
     rescue => e
       tries += 1
+
       print " failed : [#{e.class}] #{e.message}\n"
+
       if tries < 3
         retry
       else
-        puts "\t[#{'%0.3d' % (index+1)}] Retrying later"
+        puts "\t[#{'%0.3d' % (index + 1)}] Retrying later"
+
         remote_file.not_synced!("[#{e.class}] #{e.message}")
       end
     end

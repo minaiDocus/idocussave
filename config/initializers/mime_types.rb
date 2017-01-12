@@ -8,4 +8,4 @@ Mime::Type.register 'application/vnd.openxmlformats-officedocument.spreadsheetml
 
 text_html = MIME::Types['text/html'].first
 text_html.extensions << 'eml'
-MIME::Types.index_extensions text_html
+#MIME::Types.index_extensions text_html

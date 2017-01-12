@@ -68,25 +68,25 @@
               %tbody
                 %tr
                   %th Corrompus
-                  %td= TempDocument.unreadable.count
+                  %td= StatisticsManager.get_statistic('unreadable_temp_documents_count')
                 %tr
                   %th Bloqués
-                  %td= TempDocument.locked.count
+                  %td= StatisticsManager.get_statistic('locked_temp_documetns_count')
                 %tr
                   %th En attente de sélection
-                  %td= TempDocument.wait_selection.count
+                  %td= StatisticsManager.get_statistic('wait_selection_temp_documents_count')
                 %tr
                   %th OCR
-                  %td= TempDocument.ocr_needed.count
+                  %td= StatisticsManager.get_statistic('ocr_needed_temp_documents_count')
                 %tr
                   %th A regrouper
-                  %td= TempDocument.bundle_needed.count
+                  %td= StatisticsManager.get_statistic('bundle_needed_temp_documents_count')
                 %tr
                   %th Prêt à être intégrés
-                  %td= TempDocument.ready.count
+                  %td= StatisticsManager.get_statistic('ready_temp_documents_count')
                 %tr
                   %th Traités
-                  %td= TempDocument.processed.count
+                  %td= StatisticsManager.get_statistic('processed_temp_documents_count')
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Livraison des documents
             %table.table.table-striped.table-condensed.table-bordered
@@ -98,28 +98,28 @@
               %tbody
                 %tr
                   %td Dropbox Ext.
-                  %td= RemoteFile.of_service('Dropbox Extended').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Dropbox Extended').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_extentended_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_extentended_remote_files_count')
                 %tr
                   %td Dropbox
-                  %td= RemoteFile.of_service('Dropbox').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Dropbox').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_remote_files_count')
                 %tr
                   %td Google Drive
-                  %td= RemoteFile.of_service('Google Drive').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Google Drive').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_google_drive_extentend_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_google_drive_extentend_remote_files_count')
                 %tr
                   %td Box
-                  %td= RemoteFile.of_service('Box').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Box').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_box_extentend_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_box_extentend_remote_files_count')
                 %tr
                   %td FTP
-                  %td= RemoteFile.of_service('FTP').not_processed.retryable.count
-                  %td= RemoteFile.of_service('FTP').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_ftp_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_ftp_remote_files_count')
                 %tr
                   %td Knowings
-                  %td= RemoteFile.of_service('Knowings').not_processed.retryable.count
-                  %td= RemoteFile.of_service('Knowings').not_processed.not_retryable.count
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_extentend_remote_files_count')
         .row-fluid
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
@@ -155,27 +155,27 @@
               %tbody
                 %tr
                   %th Total
-                  %td= Document.count
+                  %td= StatisticsManager.get_statistic('documents_count')
                 %tr
                   %th Numérisés
-                  %td= Document.scanned.count
+                  %td= StatisticsManager.get_statistic('scanned_documents_count')
                 %tr
                   %th Téléversés (OCR)
                   %td
-                    = Document.uploaded.count
-                    (#{TempDocument.ocr_layer_applied.sum(:pages_number).to_i})
+                    = StatisticsManager.get_statistic('uploaded_documents_count')
+                    (#{StatisticsManager.get_statistic('ocr_layer_applied_temp_documents_count')})
                 %tr
                   %th Num. Dematbox
-                  %td= Document.dematbox_scanned.count
+                  %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
                 %tr
                   %th Auto
                   %td= Document.retrieved.count
                 %tr
                   %th Vignettes rest.
-                  %td= Document.not_clean.not_mixed.count
+                  %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
                 %tr
                   %th Extractions rest.
-                  %td= Document.not_extracted.not_mixed.count
+                  %td= StatisticsManager.get_statistic('not_extracted_not_mixed_documents_count')
         .row-fluid
           .span12
             %h3.label{ style: 'padding:3px 5px 3px;' } Opérations bancaires
@@ -185,25 +185,25 @@
                   %tbody
                     %tr
                       %th Total
-                      %td= Operation.count
+                      %td= StatisticsManager.get_statistic('operations_count')
                     %tr
                       %th Automate
                       %td= Operation.retrieved.count
                     %tr
                       %th Import
-                      %td= Operation.other.count
+                      %td= StatisticsManager.get_statistic('other_operations_count')
               .span6
                 %table.table.table-striped.table-condensed.table-bordered
                   %tbody
                     %tr
                       %th Traités
-                      %td= Operation.processed.count
+                      %td= StatisticsManager.get_statistic('processed_operations_count')
                     %tr
                       %th En attente
-                      %td= Operation.not_processed.not_locked.count
+                      %td= StatisticsManager.get_statistic('not_processed_not_locked_operations_count')
                     %tr
                       %th Bloqués
-                      %td= Operation.not_processed.locked.count
+                      %td= StatisticsManager.get_statistic('not_processed_locked_operations_count')
       .row-fluid
         .span12
           %h3.label{ style: 'padding:3px 5px 3px;' } Demande de nouveaux fournisseurs en cours

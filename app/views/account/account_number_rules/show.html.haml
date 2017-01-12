@@ -14,24 +14,24 @@
       %table.table.table-striped.table-condensed.margin0bottom
         %tbody
           %tr
-            %th= t('mongoid.models.account_number_rule.attributes.affect')
-            %td= t('mongoid.models.account_number_rule.attributes.affect_values.' + @account_number_rule.affect)
+            %th= t('activerecord.models.account_number_rule.attributes.affect')
+            %td= t('activerecord.models.account_number_rule.attributes.affect_values.' + @account_number_rule.affect)
           %tr
-            %th= t('mongoid.models.account_number_rule.attributes.rule_type')
-            %td= t('mongoid.models.account_number_rule.attributes.rule_type_values.' + @account_number_rule.rule_type)
+            %th= t('activerecord.models.account_number_rule.attributes.rule_type')
+            %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + @account_number_rule.rule_type)
           %tr
-            %th= t('mongoid.models.account_number_rule.attributes.content')
+            %th= t('activerecord.models.account_number_rule.attributes.content')
             %td= @account_number_rule.content
           %tr
-            %th= t('mongoid.models.account_number_rule.attributes.priority')
+            %th= t('activerecord.models.account_number_rule.attributes.priority')
             %td= @account_number_rule.priority
           - if @account_number_rule.rule_type == 'match'
             %tr
-              %th= t('mongoid.models.account_number_rule.attributes.third_party_account')
+              %th= t('activerecord.models.account_number_rule.attributes.third_party_account')
               %td= @account_number_rule.third_party_account
           - if @account_number_rule.users.count > 0
             %th Clients concernés (#{@account_number_rule.users.size})
             %td
-              - @account_number_rule.users.asc(:code).each do |user|
+              - @account_number_rule.users.order(code: :asc).each do |user|
                 = link_to user.info, account_organization_customer_path(@organization, user)
                 %br

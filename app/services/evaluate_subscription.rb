@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class EvaluateSubscription
-  def initialize(subscription, requester=nil, request=nil)
+  def initialize(subscription, requester = nil, request = nil)
     @subscription = subscription
     @customer     = subscription.user
     @requester    = requester
@@ -8,7 +8,7 @@ class EvaluateSubscription
   end
 
   def execute
-    update_max_number_of_journals 
+    update_max_number_of_journals
     if @subscription.is_annual_package_active
       unauthorize_dematbox
       authorize_retriever
@@ -20,7 +20,7 @@ class EvaluateSubscription
       else
         unauthorize_upload
       end
-      @subscription.set_start_at_and_end_at 
+      @subscription.set_start_at_and_end_at
       @subscription.is_scan_box_package_active  ? authorize_dematbox       : unauthorize_dematbox
       @subscription.is_retriever_package_active ? authorize_retriever      : unauthorize_retriever
       @subscription.is_pre_assignment_active    ? authorize_pre_assignment : unauthorize_pre_assignment
@@ -54,7 +54,7 @@ private
     unless @customer.options.is_preassignment_authorized
       @customer.options.update_attribute(:is_preassignment_authorized, true)
       AssignDefaultJournalsService.new(@customer, @requester, @request).execute if @requester
-      DropboxImportFolder.changed(@customer)
+      DropboxImport.changed(@customer)
     end
   end
 
@@ -66,7 +66,7 @@ private
         changes = journal.changes
         if journal.save
           params = [journal, @customer, changes, @requester]
-          EventCreateService.new.journal_update(*params)
+          EventCreateService.journal_update(*params)
         end
       end
     end
@@ -89,5 +89,4 @@ private
       @customer.options.update_attribute(:max_number_of_journals, @subscription.number_of_journals)
     end
   end
-
 end

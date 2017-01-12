@@ -1,35 +1,32 @@
 # -*- encoding : UTF-8 -*-
-class Dematbox
-  include Mongoid::Document
-  include Mongoid::Timestamps
-
+class Dematbox < ActiveRecord::Base
   belongs_to :user
-  embeds_many :services, class_name: 'DematboxSubscribedService', inverse_of: :dematbox
+  has_many :services, class_name: 'DematboxSubscribedService', inverse_of: :dematbox
 
-  field :is_configured, type: Boolean, default: false
-  field :beginning_configuration_at, type: Time
 
   scope :configured,     -> { where(is_configured: true) }
   scope :not_configured, -> { where(is_configured: false) }
 
+
   def journal_names
-    user.account_book_types.asc(:name).map(&:name)
+    user.account_book_types.order(name: :asc).map(&:name)
   end
 
-  def build_services
-    all_services = DematboxService.services.asc(:name).entries
-    all_groups   = DematboxService.groups.asc(:name).entries
 
-    current_group  = all_groups.shift
-    previous_group = all_groups.shift
+  def build_services
+    all_groups   = DematboxService.groups.order(name: :asc)
+    all_services = DematboxService.services.order(name: :asc)
+
+    current_group  = all_groups.to_a.shift
+    previous_group = all_groups.to_a.shift
 
     if current_group && previous_group
-      current_group_params  = current_group.to_params('Période Actuelle').merge({ services: { service: [] } })
-      previous_group_params = previous_group.to_params('Période Précédente').merge({ services: { service: [] } })
+      current_group_params  = current_group.to_params('Période Actuelle').merge(services: { service: [] })
+      previous_group_params = previous_group.to_params('Période Précédente').merge(services: { service: [] })
 
       journal_names.each do |journal_name|
-        current_service  = all_services.shift
-        previous_service = all_services.shift
+        current_service  = all_services.to_a.shift
+        previous_service = all_services.to_a.shift
 
         if current_service && previous_service
           current_group_params[:services][:service] << current_service.to_params(journal_name)
@@ -41,22 +38,25 @@ class Dematbox
     end
   end
 
-  def async_subscribe(pairing_code=nil)
-    update_attribute(:beginning_configuration_at, Time.now)
-    delay(priority: 1).subscribe(pairing_code)
-  end
 
-  def subscribe(pairing_code=nil)
+  def subscribe(pairing_code = nil)
+    update_attribute(:beginning_configuration_at, Time.now)
+
     _services = build_services
+
     result = DematboxApi.subscribe(user.code, _services, pairing_code)
+
     update_attribute(:beginning_configuration_at, nil) unless beginning_configuration_at.nil?
-    if result.match(/\A200\s*:\s*OK\z/)
+
+    if result =~ /\A200\s*:\s*OK\z/
       update_attribute(:is_configured, true)
+
       set_services(_services)
     else
       result
     end
   end
+
 
   def set_services(_services)
     services.destroy_all
@@ -68,20 +68,23 @@ class Dematbox
         new_service.group_name            = group[:service_name]
         new_service.group_pid             = group[:service_id]
         new_service.is_for_current_period = group[:service_name] == 'Période Actuelle'
+
         services << new_service
       end
     end
+
     save
   end
 
+
   def to_s
-    "Dematbox #{user.code}\n" + services.asc([:name, :group_name]).map(&:to_s).join("\n")
+    "Dematbox #{user.code}\n" + services.order(name: :asc, group_name: :asc).map(&:to_s).join("\n")
   end
+
 
   def unsubscribe
     result = DematboxApi.unsubscribe(user.code)
-    if result.match(/\A200\s*:\s*OK\z/)
-      destroy
-    end
+
+    destroy if result =~ /\A200\s*:\s*OK\z/
   end
 end

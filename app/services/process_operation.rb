@@ -36,7 +36,7 @@ class ProcessOperation
             account = Pack::Report::Preseizure::Account.new
             account.preseizure = preseizure
             account.type       = Pack::Report::Preseizure::Account.get_type('TTC') # TTC / HT / TVA
-            account.number     = bank_account.try(:accounting_number) || 512000
+            account.number     = bank_account.try(:accounting_number) || 512_000
             account.save
 
             entry = Pack::Report::Preseizure::Entry.new
@@ -92,7 +92,7 @@ class ProcessOperation
   end
 
   def self.current_period_name
-    Time.now.strftime("%Y%m")
+    Time.now.strftime('%Y%m')
   end
 
   def self.pack_name(user, object)

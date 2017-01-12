@@ -18,19 +18,19 @@
         #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
           %table.table.table-striped.table-condensed
             %tr
-              %th= t('mongoid.models.user.attributes.email')
+              %th= t('activerecord.models.user.attributes.email')
               %td= @collaborator.email
             %tr
-              %th= t('mongoid.models.user.attributes.first_name')
+              %th= t('activerecord.models.user.attributes.first_name')
               %td= @collaborator.first_name
             %tr
-              %th= t('mongoid.models.user.attributes.last_name')
+              %th= t('activerecord.models.user.attributes.last_name')
               %td= @collaborator.last_name
             %tr
-              %th= t('mongoid.models.user.attributes.code')
+              %th= t('activerecord.models.user.attributes.code')
               %td= @collaborator.code
             %tr
-              %th= t('mongoid.models.user.attributes.company')
+              %th= t('activerecord.models.user.attributes.company')
               %td= @collaborator.company
           .alignright
             - if @organization.is_active
@@ -38,40 +38,40 @@
         #authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
           %table.table.table-striped.table-condensed
             %tr
-              %th= t('mongoid.models.organization_rights.names.collaborators_management')
+              %th= t('activerecord.models.organization_rights.names.collaborators_management')
               %td
                 - if @collaborator.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.find_or_create_organization_rights.is_collaborators_management_authorized ? t('yes_value') : t('no_value')
+                  = @collaborator.organization_rights_is_collaborators_management_authorized ? t('yes_value') : t('no_value')
             %tr
-              %th= t('mongoid.models.organization_rights.names.customers_management')
+              %th= t('activerecord.models.organization_rights.names.customers_management')
               %td
                 - if @collaborator.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.find_or_create_organization_rights.is_customers_management_authorized ? t('yes_value') : t('no_value')
+                  = @collaborator.organization_rights_is_customers_management_authorized ? t('yes_value') : t('no_value')
             %tr
-              %th= t('mongoid.models.organization_rights.names.groups_management')
+              %th= t('activerecord.models.organization_rights.names.groups_management')
               %td
                 - if @collaborator.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.find_or_create_organization_rights.is_groups_management_authorized ? t('yes_value') : t('no_value')
+                  = @collaborator.organization_rights_is_groups_management_authorized ? t('yes_value') : t('no_value')
             %tr
-              %th= t('mongoid.models.organization_rights.names.journals_management')
+              %th= t('activerecord.models.organization_rights.names.journals_management')
               %td
                 - if @collaborator.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.find_or_create_organization_rights.is_journals_management_authorized ? t('yes_value') : t('no_value')
+                  = @collaborator.organization_rights_is_journals_management_authorized ? t('yes_value') : t('no_value')
             %tr
-              %th= t('mongoid.models.organization_rights.names.customer_journals_management')
+              %th= t('activerecord.models.organization_rights.names.customer_journals_management')
               %td
                 - if @collaborator.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.find_or_create_organization_rights.is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
+                  = @collaborator.organization_rights_is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
           - unless @collaborator.is_admin
             .alignright
               - if @organization.is_active

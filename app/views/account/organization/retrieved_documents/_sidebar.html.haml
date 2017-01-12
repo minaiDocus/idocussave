@@ -19,17 +19,17 @@
   - else
     = text_field_tag 'document_contains[service_name]', (params[:document_contains][:service_name] rescue ''), class: 'span12'
 
-  = label_tag 'document_contains[date][$gte]', 'Date de début'
+  = label_tag 'document_contains[date][>=]', 'Date de début'
   .input-prepend.date.datepicker
     %span.add-on
       %i.icon-th
-    = text_field_tag 'document_contains[date][$gte]', (params[:document_contains][:date]['$gte'] rescue '')
+    = text_field_tag 'document_contains[date][>=]', (params[:document_contains][:date]['>='] rescue '')
 
-  = label_tag 'document_contains[date][$lte]', 'Date de fin'
+  = label_tag 'document_contains[date][<=]', 'Date de fin'
   .input-prepend.date.datepicker
     %span.add-on
       %i.icon-th
-    = text_field_tag 'document_contains[date][$lte]', (params[:document_contains][:date]['$lte'] rescue '')
+    = text_field_tag 'document_contains[date][<=]', (params[:document_contains][:date]['<='] rescue '')
 
   = label_tag 'document_contains[name]', 'Nom original'
   = text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'span12'

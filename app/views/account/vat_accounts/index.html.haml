@@ -23,9 +23,9 @@
     .span12.box
       %table.table.table-striped.table-condensed.margin0bottom
         %tr
-          %th= t('mongoid.models.vat_account.attributes.code')
-          %th= t('mongoid.models.vat_account.attributes.nature')
-          %th= t('mongoid.models.vat_account.attributes.account_number')
+          %th= t('activerecord.models.vat_account.attributes.code')
+          %th= t('activerecord.models.vat_account.attributes.nature')
+          %th= t('activerecord.models.vat_account.attributes.account_number')
         - @vat_accounts.each do |vat_account|
           %tr
             %td= vat_account.code

@@ -31,6 +31,8 @@
         %li aucune pièce jointe n’est au format PDF
       - unless @emailed_document.valid_attachment_contents?
         %li au moins une des pièces jointes PDF est corrompue ou protégée ou non imprimable
+      - unless @emailed_document.unique_individual_attachments?
+        %li au moins une des pièces jointes PDF a déjà été importé
     %br
     =================
     %br

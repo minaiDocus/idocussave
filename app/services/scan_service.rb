@@ -1,28 +1,36 @@
 # -*- encoding : UTF-8 -*-
-class ScanService
-  class << self
-    def not_delivered
-      PeriodDocument.scanned.where(:scanned_at.gte => 30.days.ago).select do |scan|
-        result = false
-        temp_pack = TempPack.where(name: scan.name).first
-        if temp_pack
-          result = temp_pack.temp_documents.scan.where(:created_at.gte => scan.scanned_at).size == 0
-        else
-          result = true
-        end
-        print (result ? '!' : '.')
-        result
-      end.map(&:name)
-    end
+# Generic methods for scanned documents
+module ScanService
+  # List not delivered temp packs
+  def self.not_delivered
+    PeriodDocument.scanned.where("scanned_at >= ?", 30.days.ago).select do |scan|
+      result = false
 
-    def notify_not_delivered
-      @not_delivered = not_delivered
-      emails = Settings.notify_scans_not_delivered_to
-      if @not_delivered.size > 0 && emails.any?
-        ScanMailer.notify_not_delivered(emails, @not_delivered).deliver
+      temp_pack = TempPack.where(name: scan.name).first
+
+      if temp_pack
+        result = temp_pack.temp_documents.scan.where("created_at >= ?", scan.scanned_at).empty?
       else
-        false
+        result = true
       end
+
+      print (result ? '!' : '.')
+
+      result
+    end.map(&:name)
+  end
+
+
+  # Send mail to concerned people in settings
+  def self.notify_not_delivered
+    @not_delivered = not_delivered
+
+    emails = Settings.first.notify_scans_not_delivered_to
+
+    if !@not_delivered.empty? && emails.any?
+      ScanMailer.notify_not_delivered(emails, @not_delivered).deliver_later
+    else
+      false
     end
   end
 end

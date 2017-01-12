@@ -7,7 +7,7 @@ node :contact do |user|
 end
 
 node :is_taxable do |user|
-  user.options.is_taxable
+  user.options.is_taxable if user.options
 end
 
 child :compta_processable_journals => :journals do |journal|

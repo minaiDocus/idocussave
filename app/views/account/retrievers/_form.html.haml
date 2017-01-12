@@ -6,7 +6,7 @@
   = f.input :capabilities, disabled: true
   = f.input :name
   - unless @retriever.persisted? && @retriever.bank?
-    = f.input :journal_id, collection: @user.account_book_types.asc(:name), include_blank: false, required: true, wrapper_html: { style: 'display:none' }
+    = f.input :journal_id, collection: @user.account_book_types.order(name: :asc), include_blank: false, required: true, wrapper_html: { style: 'display:none' }
   #params{ data: { connector_id: @retriever.connector_id, attributes: retriever_dyn_attrs(@retriever) } }
   .form-actions
     = f.submit t('actions.submit'), class: 'btn btn-primary'

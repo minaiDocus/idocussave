@@ -2,28 +2,41 @@
 class Admin::DematboxesController < Admin::AdminController
   before_filter :load_dematbox, except: :index
 
+
+  # GET /admin/dematboxes
   def index
-    @dematboxes = Dematbox.desc(:created_at)
+    @dematboxes = Dematbox.order(created_at: :desc).includes(:user)
   end
 
+
+  # GET /admin/dematboxes/:id
   def show
   end
 
+
+  # DELETE /admin/dematboxes/:id
   def destroy
-    @dematbox.delay(priority: 1).unsubscribe
+    @dematbox.unsubscribe
+
     flash[:notice] = 'Supprimé avec succès.'
+
     redirect_to admin_dematboxes_path
   end
 
+
+  # POST /admin/dematboxes/:id/subscribe
   def subscribe
-    @dematbox.async_subscribe
+    @dematbox.subscribe
+
     flash[:notice] = 'Configuration en cours...'
+
     redirect_to admin_dematboxes_path
   end
 
-private
+  private
+
 
   def load_dematbox
-    @dematbox = Dematbox.find params[:id]
+    @dematbox = Dematbox.find(params[:id])
   end
 end

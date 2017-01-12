@@ -10,16 +10,18 @@ class Account::Report::ExpensesController < Account::AccountController
     @report = Pack::Report.find params[:id]
   end
 
+  # FIXME : scope access
   def verify_rights
-    if @report.user != current_user and !current_user.in?(@report.user.try(:prescribers) || []) and !current_user.is_admin
+    if @report.user != current_user && !current_user.in?(@report.user.try(:prescribers) || []) && !current_user.is_admin
       redirect_to root_path
     end
   end
 
   public
 
+  # FIXME : check if needed
   def show
-    basename = @report.name.gsub(' ','_')
+    basename = @report.name.tr(' ', '_')
     respond_to do |format|
       format.html {}
       format.xlsx do

@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class PeriodsToXlsService
-  def initialize(periods, with_organization_info=false)
+  def initialize(periods, with_organization_info = false)
     @periods = periods
     @with_organization_info = with_organization_info
   end
+
 
   def execute
     book = Spreadsheet::Workbook.new
@@ -35,7 +36,7 @@ class PeriodsToXlsService
     ]
     sheet1.row(0).concat headers
 
-    documents = PeriodDocument.where(:period_id.in => @periods.map(&:id)).asc([:created_at, :name]).entries
+    documents = PeriodDocument.where(period_id: @periods.map(&:id)).order(created_at: :asc, name: :asc)
 
     list = []
 
@@ -71,7 +72,7 @@ class PeriodsToXlsService
     end
 
     list.each_with_index do |data, index|
-      sheet1.row(index+1).replace(data)
+      sheet1.row(index + 1).replace(data)
     end
 
     # Invoice
@@ -96,19 +97,24 @@ class PeriodsToXlsService
       billing = PeriodBillingService.new(period)
       period.duration.times do |index|
         month = period.start_at.month + index
+
         excesses_amount_in_cents_wo_vat = billing.data(:excesses_amount_in_cents_wo_vat, month)
+
         products_amount_in_cents_wo_vat = billing.amount_in_cents_wo_vat(month) - excesses_amount_in_cents_wo_vat
+
         period.product_option_orders.each do |option|
           data = []
           if @with_organization_info
-            if period.user
-              data << period.user.try(:organization).try(:name)
-            else
-              data << period.organization.try(:name)
-            end
+            data << if period.user
+                        period.user.try(:organization).try(:name)
+                      else
+                        period.organization.try(:name)
+                      end
           end
+
           price = (option.price_in_cents_wo_vat * products_amount_in_cents_wo_vat)
           price /= period.products_price_in_cents_wo_vat if price != 0.0
+
           data += [
             month,
             period.start_at.year,
@@ -118,28 +124,33 @@ class PeriodsToXlsService
             option.title,
             format_price(price)
           ]
+
           list << data
         end
-        if period.user && excesses_amount_in_cents_wo_vat > 0
-          data = []
-          if @with_organization_info
-            if period.user
-              data << period.user.try(:organization).try(:name)
-            else
-              data << period.organization.try(:name)
-            end
-          end
-          data += [
-            month,
-            period.start_at.year,
-            period.user.code,
-            period.user.name,
-            'Dépassement',
-            '',
-            format_price(excesses_amount_in_cents_wo_vat)
-          ]
-          list << data
+
+        next unless period.user && excesses_amount_in_cents_wo_vat > 0
+
+        data = []
+
+        if @with_organization_info
+          data << if period.user
+                      period.user.try(:organization).try(:name)
+                    else
+                      period.organization.try(:name)
+                    end
         end
+
+        data += [
+          month,
+          period.start_at.year,
+          period.user.code,
+          period.user.name,
+          'Dépassement',
+          '',
+          format_price(excesses_amount_in_cents_wo_vat)
+        ]
+
+        list << data
       end
     end
 
@@ -149,7 +160,7 @@ class PeriodsToXlsService
     end
 
     list.each_with_index do |data, index|
-      sheet2.row(index+1).replace(data)
+      sheet2.row(index + 1).replace(data)
     end
 
     io = StringIO.new('')
@@ -157,7 +168,9 @@ class PeriodsToXlsService
     io.string
   end
 
-  def format_price price_in_cents
-    ("%0.2f" % (price_in_cents.round/100.0)).gsub('.', ',')
+
+
+  def format_price(price_in_cents)
+    ('%0.2f' % (price_in_cents.round / 100.0)).tr('.', ',')
   end
 end

@@ -5,16 +5,20 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
   before_filter :verify_if_someone_is_active
   before_filter :load_url_path
 
+  # GET /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/collaborators/:collaborator_id/file_storage_authorizations
   def update
     @someone.update(user_params)
     flash[:success] = 'Modifié avec succès.'
     redirect_to @url_path
   end
 
-private
+  private
+
 
   def verify_rights
     unless current_user.is_admin
@@ -22,6 +26,7 @@ private
       redirect_to account_organization_path(@organization)
     end
   end
+
 
   def user_params
     params.require(:user).permit(
@@ -35,11 +40,12 @@ private
     )
   end
 
+
   def load_someone
     id = params[:collaborator_id] || params[:customer_id]
-    @someone = @organization.members.find_by_slug! id
-    raise Mongoid::Errors::DocumentNotFound.new(User, slug: id) unless @someone
+    @someone = @organization.members.find id
   end
+
 
   def verify_if_someone_is_active
     if @someone.inactive?
@@ -47,6 +53,7 @@ private
       redirect_to account_organization_path(@organization)
     end
   end
+
 
   def load_url_path
     if @someone.is_prescriber

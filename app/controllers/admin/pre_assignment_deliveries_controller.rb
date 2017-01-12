@@ -1,14 +1,22 @@
 # -*- encoding : UTF-8 -*-
 class Admin::PreAssignmentDeliveriesController < Admin::AdminController
+  # GET /admin/pre_assignment_deliveries
   def index
-    @pre_assignment_deliveries = search(pre_assignment_delivery_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @pre_assignment_deliveries = PreAssignmentDelivery.search(search_terms(params[:pre_assignment_delivery_contains])).order(sort_column => sort_direction)
+
+    @pre_assignment_deliveries_count = @pre_assignment_deliveries.count
+
+    @pre_assignment_deliveries = @pre_assignment_deliveries.page(params[:page]).per(params[:per_page])
   end
 
+
+  # GET /admin/pre_assignment_deliveries/:id
   def show
-    @delivery = PreAssignmentDelivery.find_by_number params[:id]
+    @delivery = PreAssignmentDelivery.find_by_number(params[:id])
   end
 
-private
+  private
+
 
   def sort_column
     params[:sort] || 'number'
@@ -19,33 +27,4 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def pre_assignment_delivery_contains
-    @contains ||= {}
-    if params[:pre_assignment_delivery_contains] && @contains.blank?
-      @contains = params[:pre_assignment_delivery_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :pre_assignment_delivery_contains
-
-  def search(contains)
-    deliveries = PreAssignmentDelivery.all
-    deliveries = deliveries.where(created_at:    contains[:created_at])                        if contains[:created_at].present?
-    deliveries = deliveries.where(pack_name:     /#{Regexp.quote(contains[:pack_name])}/i)     if contains[:pack_name].present?
-    deliveries = deliveries.where(total_item:    contains[:total_item].to_i)                   if contains[:total_item].present?
-    deliveries = deliveries.where(is_auto:       contains[:is_auto].to_i == 1)                 if contains[:is_auto].present?
-    deliveries = deliveries.where(state:         contains[:state])                             if contains[:state].present?
-    deliveries = deliveries.where(error_message: /#{Regexp.quote(contains[:error_message])}/i) if contains[:error_message].present?
-    deliveries
-  end
 end

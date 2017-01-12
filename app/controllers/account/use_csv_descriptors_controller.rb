@@ -4,6 +4,7 @@ class Account::UseCsvDescriptorsController < Account::OrganizationController
   before_filter :load_customer
   before_filter :redirect_to_current_step
 
+  # FIXME : check if needed
   def edit
   end
 
@@ -11,11 +12,11 @@ class Account::UseCsvDescriptorsController < Account::OrganizationController
     if @customer.update(user_params)
       next_configuration_step
     else
-      render 'edit'
+      render :edit
     end
   end
 
-private
+  private
 
   def verify_rights
     unless @user.is_admin || (@user.is_prescriber && @user.organization == @organization) || @organization.is_csv_descriptor_used
@@ -25,6 +26,6 @@ private
   end
 
   def user_params
-    params.require(:user).permit({ options_attributes: [:is_own_csv_descriptor_used] })
+    params.require(:user).permit(options_attributes: [:is_own_csv_descriptor_used])
   end
 end

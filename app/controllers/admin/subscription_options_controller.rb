@@ -2,37 +2,45 @@
 class Admin::SubscriptionOptionsController < Admin::AdminController
   before_filter :load_subscription_option, except: %w(new create)
 
+  # GET /admin/subscription_options/new
   def new
     @subscription_option = SubscriptionOption.new
   end
 
+
+  # POST /admin/subscription_options
   def create
-    @subscription_option = SubscriptionOption.new subscription_option_params
+    @subscription_option = SubscriptionOption.new(subscription_option_params)
+
     if @subscription_option.save
       flash[:notice] = 'Créé avec succès.'
+
       redirect_to admin_subscriptions_path
     else
-      render action: 'new'
+      render :new
     end
   end
 
+
+  # GET /admin/subscription_options/:id/edit
   def edit
   end
 
+
+  # PUT /admin/subscription_options/:id
   def update
-    if @subscription_option.update(subscription_option_params)
-      @subscription_option.subscribers.each do |subscription|
-        if subscription.owner.try(:active?)
-          UpdatePeriod.new(subscription.current_period).delay(priority: 0).execute
-        end
-      end
+    if UpdateSubscriptionOption.execute(@subscription_option, subscription_option_params)
+
       flash[:notice] = 'Modifié avec succès.'
+
       redirect_to admin_subscriptions_path
     else
-      render action: 'edit'
+      render :edit
     end
   end
 
+
+  # DELETE /admin/subscription_options/:id
   def destroy
     if @subscription_option.destroy
       flash[:notice] = 'Supprimé avec succès.'
@@ -42,10 +50,10 @@ class Admin::SubscriptionOptionsController < Admin::AdminController
     redirect_to admin_subscriptions_path
   end
 
-private
+  private
 
   def load_subscription_option
-    @subscription_option = SubscriptionOption.find params[:id]
+    @subscription_option = SubscriptionOption.find(params[:id])
   end
 
   def subscription_option_params

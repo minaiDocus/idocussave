@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropbox.com/1/delta
+    body:
+      encoding: US-ASCII
+      string: cursor=AAH-omVMlxwDei1x3DtMP1YFpKwLR_XGT939FfQ-GFXD5R8Ab_OkffQGZa8CsrCqZvnSaIobgc8FdqcuJXCTIdT799MMwjA9v_jhWdbzjlk4eX-y7dtaIw11olDPEUZNHK6X0zrkYzuvOm292adzrF2mFFWbuj9HDzkOju91gvRgJokoSWDuwgyVD786FohhrXk&path_prefix=%2Fexportation%C2%A0vers+iDocus%2FTS%250001+-+TeSt
+    headers:
+      Accept:
+      - '*/*'
+      User-Agent:
+      - OfficialDropboxRubySDK/1.6.5
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Authorization:
+      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sat, 24 Oct 2015 16:31:25 GMT
+      Content-Type:
+      - text/javascript
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Content-Type-Options:
+      - nosniff
+      Set-Cookie:
+      - gvc=MTg2NTU3NzIxOTkzMzM4MzE4OTk2OTczMDcyNjEyNDU1MDIwMjAy; expires=Thu, 22
+        Oct 2020 16:31:25 GMT; httponly; Path=/; secure
+      X-Server-Response-Time:
+      - '79'
+      X-Dropbox-Request-Id:
+      - b52e460742674d0bc5d5d56298381caa
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Frame-Options:
+      - SAMEORIGIN
+    body:
+      encoding: US-ASCII
+      string: '{"has_more": false, "cursor": "AAGkvb1ZwDBvVxkgLshA58LfkBJ79YBnK-tTXKGrI-07o-s9r_QkNDDlYDwABZrXWNHT0W3tt0b2kzqMP9rT6Jugqe9fWb-OxY5A-1BZ66IHNtMOJ7EYx9vpUuBFS5fi6XKTdPzXAu5RXni5XVyghq_KSHjAQ-XHjA0T-ldbWaTr1lHdQP8byFQaFkklbqyPo1Q",
+        "entries": [["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/2pages.pdf",
+        null], ["/exportation\u00a0vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/2pages
+        (fichier déjà importé sur iDocus).pdf", {"rev": "26b3d59c017", "thumb_exists":
+        false, "path": "/exportation\u00a0vers iDocus/TS%0001 - TeSt/p\u00e9riode
+        actuelle/AC/2pages (fichier déjà importé sur iDocus).pdf", "is_dir":
+        false, "client_mtime": "Sat, 24 Oct 2015 16:09:36 +0000", "icon": "page_white_acrobat",
+        "bytes": 1117, "modified": "Sat, 24 Oct 2015 16:13:56 +0000", "size": "1.1
+        KB", "root": "app_folder", "mime_type": "application/pdf", "revision": 619}]],
+        "reset": false}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+recorded_with: VCR 2.9.3

@@ -7,32 +7,32 @@
     = hidden_field_tag :sort, sort_column
     = hidden_field_tag :per_page, per_page
 
-    = label_tag 'paper_process_contains[updated_at][$gte]', 'Date de début'
+    = label_tag 'paper_process_contains[updated_at][>=]', 'Date de début'
     .input-prepend.date.datepicker
       %span.add-on
         %i.icon-th
-      = text_field_tag 'paper_process_contains[updated_at][$gte]', (params[:paper_process_contains][:updated_at]['$gte'] rescue '')
+      = text_field_tag 'paper_process_contains[updated_at][>=]', (params[:paper_process_contains][:updated_at]['>='] rescue '')
 
-    = label_tag 'paper_process_contains[updated_at][$lte]', 'Date de fin'
+    = label_tag 'paper_process_contains[updated_at][<=]', 'Date de fin'
     .input-prepend.date.datepicker
       %span.add-on
         %i.icon-th
-      = text_field_tag 'paper_process_contains[updated_at][$lte]', (params[:paper_process_contains][:updated_at]['$lte'] rescue '')
+      = text_field_tag 'paper_process_contains[updated_at][<=]', (params[:paper_process_contains][:updated_at]['<='] rescue '')
 
-    = label_tag 'paper_process_contains[type]', t('mongoid.models.paper_process.attributes.type')
+    = label_tag 'paper_process_contains[type]', t('activerecord.models.paper_process.attributes.type')
     = select_tag 'paper_process_contains[type]', options_for_select(paper_process_type_options, (params[:paper_process_contains][:type] rescue '')), include_blank: true
 
     - if @user.is_prescriber && @user.organization
-      = label_tag 'paper_process_contains[customer_code]', t('mongoid.models.paper_process.attributes.customer_code')
+      = label_tag 'paper_process_contains[customer_code]', t('activerecord.models.paper_process.attributes.customer_code')
       = text_field_tag 'paper_process_contains[customer_code]', (params[:paper_process_contains][:customer_code] rescue ''), class: 'span12'
 
-      = label_tag 'paper_process_contains[customer_company]', t('mongoid.models.user.attributes.company')
+      = label_tag 'paper_process_contains[customer_company]', t('activerecord.models.user.attributes.company')
       = text_field_tag 'paper_process_contains[customer_company]', (params[:paper_process_contains][:customer_company] rescue ''), class: 'span12'
 
-    = label_tag 'paper_process_contains[tracking_number]', t('mongoid.models.paper_process.attributes.tracking_number')
+    = label_tag 'paper_process_contains[tracking_number]', t('activerecord.models.paper_process.attributes.tracking_number')
     = text_field_tag 'paper_process_contains[tracking_number]', (params[:paper_process_contains][:tracking_number] rescue ''), class: 'span12'
 
-    = label_tag 'paper_process_contains[pack_name]', t('mongoid.models.paper_process.attributes.pack_name')
+    = label_tag 'paper_process_contains[pack_name]', t('activerecord.models.paper_process.attributes.pack_name')
     = text_field_tag 'paper_process_contains[pack_name]', (params[:paper_process_contains][:pack_name] rescue ''), class: 'span12'
 
     = submit_tag t('filters.action'), class: 'btn btn-primary'

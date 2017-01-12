@@ -9,7 +9,7 @@
         .control-group
           = label_tag 'notification[to]', 'Notifier à', class: 'control-label'
           .controls
-            = text_field_tag 'notification[to]', Settings.notify_dematbox_order_to.join(', ')
+            = text_field_tag 'notification[to]', Settings.first.notify_dematbox_order_to.join(', ')
             %span.help-block Séparer les valeurs par une virgule. La deuxième et les suivantes seront en copie.
         .form-actions.margin0bottom
           = submit_tag t('actions.submit'), class: 'btn btn-primary'

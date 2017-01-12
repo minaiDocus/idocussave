@@ -6,8 +6,10 @@
       %th.count Nb.
       %th.message Origine / Service / Message
   %tbody
+    - total = 0
     - if collection.count > 0
       - collection.each do |object|
+        - total = total + object.document_count
         %tr
           %td.date
             - if object.date
@@ -20,6 +22,12 @@
           %td.name= object.name
           %td.count= object.document_count
           %td.message= object.message == false ? '-' : object.message
+      %tr
+        %td
+        %td
+        %td.count
+          %strong= total
+        %td
     - else
       %tr
         %td.aligncenter{ colspan: 4 }

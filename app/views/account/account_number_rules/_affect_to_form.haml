@@ -11,11 +11,11 @@
         = link_to 'Aucun', '#', class: 'no_groups'
         )
         %br
-        - @organization.groups.asc(:name).each do |group|
+        - @organization.groups.includes(:members).order(name: :asc).each do |group|
           = check_box_tag 'account_number_rule[group][]', group.members.map{ |m| m.id.to_s }, false, id: "account_number_rule_group_#{group.id}"
           %label{ for: "account_number_rule_group_#{group.id}" }= group.name
       .span6
-        = t('mongoid.models.account_number_rule.attributes.users')
+        = t('activerecord.models.account_number_rule.attributes.users')
         %br
         (
         = link_to 'Tous', '#', class: 'all_users'
@@ -23,7 +23,7 @@
         = link_to 'Aucun', '#', class: 'no_users'
         )
         %br
-        - users = @account_number_rule.present? ? @account_number_rule.users.entries : []
-        - @organization.customers.asc(:code).each do |user|
+        - users = @account_number_rule.present? ? @account_number_rule.users : []
+        - @organization.customers.order(code: :asc).each do |user|
           = check_box_tag 'account_number_rule[user_ids][]', user.id, users.include?(user),id: "account_number_rule_user_ids_#{user.id}"
           %label{ for: "account_number_rule_user_ids_#{user.id}" }= user.info

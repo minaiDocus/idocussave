@@ -1,14 +1,17 @@
 # -*- encoding : UTF-8 -*-
 class Api::V1::PreAssignmentsController < ApiController
+  # GET /api/v1/pre_assignments
   def index
-    @pre_assignments = PreAssignmentService.pending(sort: 1)
+    @pre_assignments = PreAssignmentSearch.pending(sort: 1)
   end
 
+
+  # POST /api/v1/pre_assignments/update_comment
   def update_comment
     if params[:pack_name].present? && params[:comment]
-      pack_ids = Pack::Piece.where(is_awaiting_pre_assignment: true).distinct(:pack_id)
-      @pack = Pack.where(name: (params[:pack_name] + ' all'), :_id.in => pack_ids).first
-      raise Mongoid::Errors::DocumentNotFound.new(Pack, pack_name: params[:pack_name]) unless @pack
+      pack_ids = Pack::Piece.where(is_awaiting_pre_assignment: true).distinct(:pack_id).pluck(:pack_id)
+
+      @pack = Pack.where(name: (params[:pack_name] + ' all'), id: pack_ids).first
 
       @pack.pieces.where(is_awaiting_pre_assignment: true).update_all(pre_assignment_comment: params[:comment])
 

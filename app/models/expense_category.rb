@@ -1,11 +1,6 @@
 # -*- enconding : UTF-8 -*-
-class ExpenseCategory
-	include Mongoid::Document
+class ExpenseCategory < ActiveRecord::Base
+  belongs_to :account_book_type
 
-	embedded_in :account_book_type
-
-	field :name, type: String
-	field :description, type: String
-
-	validates_presence_of :name
+  validates_presence_of :name
 end

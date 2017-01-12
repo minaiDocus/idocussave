@@ -4,11 +4,12 @@ class UpdateJournalRelationService
     @journal = journal
   end
 
+
   def execute
     if @journal.destroyed?
       @journal.retrievers.update_all(journal_id: nil)
     else
-      @journal.retrievers.where(:journal_name.nin => [@journal.name]).update_all(journal_name: @journal.name)
+      @journal.retrievers.where.not(journal_name: [@journal.name]).update_all(journal_name: @journal.name)
       @journal.user.retrievers.where(journal_name: @journal.name, journal_id: nil).update_all(journal_id: @journal.id)
     end
   end

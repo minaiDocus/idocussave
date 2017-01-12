@@ -8,33 +8,33 @@
       %br
       %table.table.table-condensed.table-striped.table-bordered
         %tr
-          %th= t('mongoid.models.common.attributes.created_at')
+          %th= t('activerecord.models.common.attributes.created_at')
           %td= l(@delivery.created_at, format: '%d %b %Y %H:%M')
         %tr
-          %th= t('mongoid.models.common.attributes.updated_at')
+          %th= t('activerecord.models.common.attributes.updated_at')
           %td= l(@delivery.updated_at, format: '%d %b %Y %H:%M')
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.pack_name')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
           %td= @delivery.pack_name
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.total_item')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.total_item')
           %td= @delivery.total_item
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.is_auto')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.is_auto')
           %td= @delivery.is_auto ? t('yes_value') : t('no_value')
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.ibiza_id')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.ibiza_id')
           %td= @delivery.ibiza_id
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.grouped_date')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.grouped_date')
           %td= l(@delivery.grouped_date, format: '%B %Y') rescue nil
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.error_message')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.error_message')
           %td= @delivery.error_message
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.state')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.state')
           %td= pre_assignment_delivery_state @delivery
         %tr
-          %th= t('mongoid.models.pre_assignment_delivery.attributes.xml_data')
+          %th= t('activerecord.models.pre_assignment_delivery.attributes.xml_data')
           %td
             %textarea{ rows: 50 }= @delivery.xml_data

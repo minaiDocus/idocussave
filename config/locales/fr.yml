@@ -112,8 +112,39 @@ fr:
 
   previous: précédent
   next: suivant
-
+  
   activemodel:
+     errors:
+      messages:
+        inclusion: n'est pas inclus(e) dans la liste
+        exclusion: n'est pas disponible
+        invalid: n'est pas valide
+        confirmation: ne concorde pas avec sa confirmation
+        accepted: doit être accepté(e)
+        empty: doit être rempli(e)
+        blank: doit être rempli(e)
+        too_long: 'est trop long (pas plus de %{count} caractères)'
+        too_short: 'est trop court (au moins %{count} caractères)'
+        wrong_length: 'ne fait pas la bonne longueur (doit comporter %{count} caractères)'
+        taken: n'est pas disponible
+        not_a_number: n'est pas un nombre
+        greater_than: 'doit être supérieur à %{count}'
+        greater_than_or_equal_to: 'doit être supérieur ou égal à %{count}'
+        equal_to: 'doit être égal à %{count}'
+        less_than: 'doit être inférieur à %{count}'
+        less_than_or_equal_to: 'doit être inférieur ou égal à %{count}'
+        odd: doit être impair
+        even: doit être pair
+        record_invalid: 'La validation a échoué : %{errors}'
+      models:
+        user:
+          attributes:
+            password:
+              too_short: doit contenir 6 caractères au minimum
+              too_long: doit contenir 20 caractères au maximum
+              confirmation: et la confirmation du mot de passe doivent être identiques
+
+  activerecord:
     errors:
       messages:
         inclusion: n'est pas inclus(e) dans la liste
@@ -195,7 +226,7 @@ fr:
       authorize_upload: Autoriser le téléversement
       update_max_number_of_journals: Modifier le nombre max. de journaux
 
-  mongoid:
+  activerecord:
     errors:
       messages:
         taken: est déjà pris.
@@ -287,6 +318,7 @@ fr:
             journal_unknown: 'journal %{journal} inconnu'
             invalid_period: "période '%{period}' inconnu"
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
+            already_exist: existe déjà
         bank_account:
           attributes:
             journal:
@@ -480,7 +512,6 @@ fr:
           created_at: Date de création
           updated_at: Date de modification
           name: Code journal
-          slug: Identifiant alt.
           pseudonym: Code journal logiciel comptable
           description: Description
           domain: Domaine (Knowings)
@@ -546,18 +577,6 @@ fr:
             right: Logo droite
         actions:
           generate: Générer
-      gray_label:
-        zero: 0 marque grise
-        one: 1 marque grise
-        other: '%{count} marques grise'
-        name: Marque grise
-        attributes:
-          name: Nom
-          site_url: URL site
-          logo_url: URL logo
-          back_url: URL retour
-          is_active: Est actif ?
-          link_to_session_create: Chemin de création de la session
       ibiza:
         zero: 0 iBiza
         one: iBiza
@@ -599,6 +618,7 @@ fr:
           is_active: Est actif ?
           is_suspended: Est suspendu ?
           is_quadratus_used: Activer le fichier de récupération des écritures comptables et pièces pour Quadratus (.zip)?
+          is_coala_used: Activer le fichier de récupération des écritures comptables et pièces pour Coala (.zip)?
           is_csv_descriptor_used: Activer l’option de création du fichier export .csv (un nouvel onglet va s’afficher)?
           is_pre_assignment_date_computed: Date de saisie des factures
           status:
@@ -971,3 +991,4 @@ fr:
           pending: En attente
           confirmed: Confirmé
           cancelled: Annulée
+          processed: Traitée

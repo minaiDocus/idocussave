@@ -19,37 +19,37 @@
             %thead
               %tr
                 %th Total
-                %th.field.date_field= label_tag 'retriever_contains[created_at][$gte]', 'Créé le'
-                %th.field.date_field= label_tag 'retriever_contains[updated_at][$gte]', 'Modifié le'
-                %th.field.text_field= label_tag 'retriever_contains[user_code]', t('mongoid.models.user.name')
-                %th.field= label_tag 'retriever_contains[capabilities]', t('mongoid.models.retriever.attributes.capabilities')
-                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('mongoid.models.retriever.attributes.service_name')
-                %th.field.text_field= label_tag 'retriever_contains[name]', t('mongoid.models.retriever.attributes.name')
-                %th.field= label_tag 'retriever_contains[state]', t('mongoid.models.retriever.attributes.state')
-                %th.field= label_tag 'retriever_contains[is_sane]', t('mongoid.models.retriever.attributes.is_sane')
+                %th.field.date_field= label_tag 'retriever_contains[created_at][>=]', 'Créé le'
+                %th.field.date_field= label_tag 'retriever_contains[updated_at][>=]', 'Modifié le'
+                %th.field.text_field= label_tag 'retriever_contains[user_code]', t('activerecord.models.user.name')
+                %th.field= label_tag 'retriever_contains[capabilities]', t('activerecord.models.fiduceo_retriever.attributes.capabilities')
+                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('activerecord.models.fiduceo_retriever.attributes.service_name')
+                %th.field.text_field= label_tag 'retriever_contains[name]', t('activerecord.models.fiduceo_retriever.attributes.name')
+                %th.field= label_tag 'retriever_contains[state]', t('activerecord.models.fiduceo_retriever.attributes.state')
+                %th.field= label_tag 'retriever_contains[is_sane]', t('activerecord.models.fiduceo_retriever.attributes.is_sane')
                 %th
             %tbody
               %tr
                 %td
-                  %b= @retrievers.count
+                  %b= @retrievers_count
                 %td.field.date_field
                   .input-prepend.date.datepicker
                     %span.add-on
                       >=
-                    = text_field_tag 'retriever_contains[created_at][$gte]', (params[:retriever_contains][:created_at]['$gte'] rescue '')
+                    = text_field_tag 'retriever_contains[created_at][>=]', (params[:retriever_contains][:created_at]['>='] rescue '')
                   .input-prepend.date.datepicker
                     %span.add-on
                       <=
-                    = text_field_tag 'retriever_contains[created_at][$lte]', (params[:retriever_contains][:created_at]['$lte'] rescue '')
+                    = text_field_tag 'retriever_contains[created_at][<=]', (params[:retriever_contains][:created_at]['<='] rescue '')
                 %td.field.date_field
                   .input-prepend.date.datepicker
                     %span.add-on
                       >=
-                    = text_field_tag 'retriever_contains[updated_at][$gte]', (params[:retriever_contains][:updated_at]['$gte'] rescue '')
+                    = text_field_tag 'retriever_contains[updated_at][>=]', (params[:retriever_contains][:updated_at]['>='] rescue '')
                   .input-prepend.date.datepicker
                     %span.add-on
                       <=
-                    = text_field_tag 'retriever_contains[updated_at][$lte]', (params[:retriever_contains][:updated_at]['$lte'] rescue '')
+                    = text_field_tag 'retriever_contains[updated_at][<=]', (params[:retriever_contains][:updated_at]['<='] rescue '')
                 %td.field.text_field= text_field_tag 'retriever_contains[user_code]', (params[:retriever_contains][:user_code] rescue '')
                 %td.field= select_tag 'retriever_contains[capabilities]', options_for_select([['Document', :document], ['Op. Bancaire', :bank], ['Doc. et Op. Bancaires', :both]], (params[:retriever_contains][:capabilities] rescue '')), include_blank: true
                 %td.field.text_field= text_field_tag 'retriever_contains[service_name]', (params[:retriever_contains][:service_name] rescue '')
@@ -64,7 +64,7 @@
     .span12
       .panel
         = form_tag run_admin_retrievers_path(params), class: 'form form-horizontal margin0bottom' do
-          = submit_tag "Lancer la récupération (#{@retrievers.count})", name: nil, class: 'btn btn-primary'
+          = submit_tag "Lancer la récupération (#{@retrievers_count})", name: nil, class: 'btn btn-primary'
 
   .row-fluid
     .span12
@@ -74,7 +74,7 @@
         .span6.alignright.padding1top
           = link_to admin_retrievers_path do
             %span.badge Tous
-          = link_to admin_retrievers_path(retriever_contains: { created_at: { '$gte' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
+          = link_to admin_retrievers_path(retriever_contains: { created_at: { '>=' => Time.now.beginning_of_month.strftime('%Y-%m-%d') } }, per_page: params[:per_page]) do
             %span.badge Récent
           = link_to admin_retrievers_path(retriever_contains: { state: 'ready' }, per_page: params[:per_page]) do
             %span.badge.badge-success OK
@@ -91,13 +91,13 @@
                 %th B
                 %th= sortable :created_at,   'Créé le'
                 %th= sortable :updated_at,   'Modifié le'
-                %th= sortable :user_id,      t('mongoid.models.user.name')
-                %th= sortable :capabilities, t('mongoid.models.retriever.attributes.capabilities')
-                %th= sortable :service_name, t('mongoid.models.retriever.attributes.service_name')
-                %th= sortable :name,         t('mongoid.models.retriever.attributes.name')
+                %th= sortable :user_id,      t('activerecord.models.user.name')
+                %th= sortable :capabilities, t('activerecord.models.fiduceo_retriever.attributes.capabilities')
+                %th= sortable :service_name, t('activerecord.models.fiduceo_retriever.attributes.service_name')
+                %th= sortable :name,         t('activerecord.models.fiduceo_retriever.attributes.name')
                 %th Journal
-                %th= t('mongoid.models.retriever.attributes.state')
-                %th= sortable :is_sane,      t('mongoid.models.retriever.attributes.is_sane')
+                %th= t('activerecord.models.fiduceo_retriever.attributes.state')
+                %th= sortable :is_sane,      t('activerecord.models.fiduceo_retriever.attributes.is_sane')
                 %th Action
             %tbody
               - @retrievers.each do |retriever|

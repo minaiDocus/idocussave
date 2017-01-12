@@ -6,47 +6,58 @@ class Account::SubscriptionsController < Account::OrganizationController
   before_filter :redirect_to_current_step
   before_filter :load_subscription
 
+  # /account/organizations/:organization_id/organization_subscription/edit
   def edit
     @subscription.downgrade
   end
 
+
+  # PUT /account/organizations/:organization_id/organization_subscription
   def update
     subscription_form = SubscriptionForm.new(@subscription, @user, request)
+
     if subscription_form.submit(params[:subscription])
       unless @subscription.is_mail_package_active
         paper_set_orders = @customer.orders.paper_sets.pending
+
         if paper_set_orders.any?
           paper_set_orders.each do |order|
             DestroyOrder.new(order).execute
           end
         end
       end
+
       unless @subscription.is_scan_box_package_active
         dematbox_orders = @customer.orders.dematboxes.pending
+
         if dematbox_orders.any?
           dematbox_orders.each do |order|
             DestroyOrder.new(order).execute
           end
         end
       end
+
       if @customer.configured?
         flash[:success] = 'Modifié avec succès.'
+
         redirect_to account_organization_customer_path(@organization, @customer, tab: 'subscription')
       else
         next_configuration_step
       end
     else
       flash[:error] = 'Vous devez sélectionner un forfait.'
+
       render :edit
     end
   end
 
-private
+
+  private
 
   def load_customer
-    @customer = customers.find_by_slug! params[:customer_id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
+    @customer = customers.find params[:customer_id]
   end
+
 
   def verify_if_customer_is_active
     if @customer.inactive?
@@ -55,9 +66,11 @@ private
     end
   end
 
+
   def load_subscription
     @subscription = @customer.subscription
   end
+
 
   def verify_rights
     unless is_leader? || @user.can_manage_customers?

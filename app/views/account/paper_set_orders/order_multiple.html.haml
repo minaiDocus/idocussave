@@ -1,0 +1,49 @@
+#paper_set_orders.order_multiple
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          .row-fluid
+            .span5
+              %h3 Commande multiple de Kit Courriers (#{@orders.count})
+            .span7.alignright
+              = link_to t('actions.return'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn'
+  .row-fluid
+    .span12.box
+      %p Veuillez choisir les options pour chaque commande.
+      = form_tag create_multiple_account_organization_paper_set_orders_path(@organization) do |f|
+        %table.table.table-condensed.table-striped.margin1top.margin0bottom
+          %thead
+            %tr
+              %th code
+              %th société
+              %th dern. envel. retour
+              %th proposition
+              %th nb chemises
+              %th= t('activerecord.models.order.attributes.paper_set_start_date').downcase
+              %th= t('activerecord.models.order.attributes.paper_set_end_date').downcase
+              %th prix ht
+          %tbody
+            - @orders.each do |order|
+              - order.paper_set_annual_end_date
+              - paper_return = order.user.paper_processes.returns.last
+              - order.paper_set_casing_size = paper_return.letter_type if paper_return
+              %tr
+                = simple_fields_for 'orders[]', order do |builder|
+                  %td
+                    = order.user.code
+                    = builder.hidden_field :user_id
+                  %td= truncate(order.user.company, length: 20, separator: ' ')
+                  %td= paper_return ?  "#{paper_return.letter_type}g" : '-'
+                  %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
+                  %td= builder.input :paper_set_folder_count, label: false, collection: 5..10, include_blank: false
+                  %td= builder.input :paper_set_start_date, label: false, collection: paper_set_start_date_options(order), include_blank: false
+                  %td= builder.input :paper_set_end_date, label: false, collection: paper_set_end_date_options(order), include_blank: false
+                  %td.price{ style: 'font-size:15px;text-align: left !important;'}
+        %hr
+        .aligncenter
+          %h4 Total de la commande :
+          %b.total_price{ style: 'font-size:20px' }
+        .form-actions.margin0bottom
+          = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), select_for_orders_account_organization_paper_set_orders_path(@organization), class: 'btn'

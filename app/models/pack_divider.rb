@@ -1,31 +1,28 @@
 # -*- encoding : UTF-8 -*-
-class PackDivider
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class PackDivider < ActiveRecord::Base
+  self.inheritance_column = :_type_disabled
+
 
   belongs_to :pack, inverse_of: :dividers
 
-  field :name
-  field :type
-  field :origin
-  field :is_a_cover,   type: Boolean, default: false
-  field :pages_number, type: Integer
-  field :position,     type: Integer
 
   validates_presence_of  :name, :type, :origin, :pages_number, :position
   validates_inclusion_of :type, within: %w(sheet piece)
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
-  index({ type: 1 })
-  index({ origin: 1 })
-  index({ is_a_cover: 1 })
+  # TODO add those indexes
+  # index({ type: 1 })
+  # index({ origin: 1 })
+  # index({ is_a_cover: 1 })
 
-  scope :uploaded,         -> { where(origin: 'upload') }
-  scope :scanned,          -> { where(origin: 'scan') }
-  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
-  scope :retrieved,        -> { where(origin: 'retriever') }
   scope :sheets,           -> { where(type: 'sheet') }
+  scope :covers,           -> { where(is_a_cover: true) }
   scope :pieces,           -> { where(type: 'piece') }
+  scope :scanned,          -> { where(origin: 'scan') }
+  scope :retrieved,        -> { where(origin: 'retriever') }
+  scope :uploaded,         -> { where(origin: 'upload') }
+  scope :not_covers,       -> { where(is_a_cover: false) }
+  scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
 
   scope :of_period, lambda { |time, duration|
     case duration
@@ -39,19 +36,6 @@ class PackDivider
       start_at = time.beginning_of_year
       end_at   = time.end_of_year
     end
-    where(created_at: { '$gte' => start_at, '$lte' => end_at })
+    where('created_at >= ? AND created_at <= ?', start_at, end_at)
   }
-
-  scope :covers,     -> { where(is_a_cover: true) }
-  scope :not_covers, -> { where(is_a_cover: false) }
-
-  class << self
-    def by_position
-      asc(:position)
-    end
-
-    def last
-      desc(:position).first
-    end
-  end
 end

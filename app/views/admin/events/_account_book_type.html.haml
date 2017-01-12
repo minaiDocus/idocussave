@@ -9,7 +9,7 @@
       - if @event.target_attributes.include?(k)
         - v = @event.target_attributes[k]
         %tr
-          %td= t("mongoid.models.account_book_type.attributes.#{k}")
+          %td= t("activerecord.models.account_book_type.attributes.#{k}")
           - if v.is_a?(Array)
             %td
               - if v[0].nil?

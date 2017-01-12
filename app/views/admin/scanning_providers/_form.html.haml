@@ -1,29 +1,29 @@
 = simple_nested_form_for [:admin, @scanning_provider], html: { class: 'form form-horizontal padding1top margin0' } do |f|
-  = f.input :name, label: t('mongoid.models.scanning_provider.attributes.name')
-  = f.input :code, label: t('mongoid.models.scanning_provider.attributes.code')
-  = f.input :is_default, as: :boolean, label: t('mongoid.models.scanning_provider.attributes.is_default')
+  = f.input :name, label: t('activerecord.models.scanning_provider.attributes.name')
+  = f.input :code, label: t('activerecord.models.scanning_provider.attributes.code')
+  = f.input :is_default, as: :boolean, label: t('activerecord.models.scanning_provider.attributes.is_default')
   %fieldset
     %legend Adresses
     .row-fluid
       = f.fields_for :addresses do |address|
         .span4
-          = address.input :first_name,   label: t('mongoid.models.address.attributes.first_name')
-          = address.input :last_name,    label: t('mongoid.models.address.attributes.last_name')
-          = address.input :company,      label: t('mongoid.models.address.attributes.company')
-          = address.input :address_1,    label: t('mongoid.models.address.attributes.address_1')
-          = address.input :address_2,    label: t('mongoid.models.address.attributes.address_2')
-          = address.input :zip,          label: t('mongoid.models.address.attributes.zip')
-          = address.input :city,         label: t('mongoid.models.address.attributes.city')
-          = address.input :phone,        label: t('mongoid.models.address.attributes.phone')
-          = address.input :phone_mobile, label: t('mongoid.models.address.attributes.phone_mobile')
+          = address.input :first_name,   label: t('activerecord.models.address.attributes.first_name')
+          = address.input :last_name,    label: t('activerecord.models.address.attributes.last_name')
+          = address.input :company,      label: t('activerecord.models.address.attributes.company')
+          = address.input :address_1,    label: t('activerecord.models.address.attributes.address_1')
+          = address.input :address_2,    label: t('activerecord.models.address.attributes.address_2')
+          = address.input :zip,          label: t('activerecord.models.address.attributes.zip')
+          = address.input :city,         label: t('activerecord.models.address.attributes.city')
+          = address.input :phone,        label: t('activerecord.models.address.attributes.phone')
+          = address.input :phone_mobile, label: t('activerecord.models.address.attributes.phone_mobile')
           .form-actions
             = address.link_to_remove "Supprimer l'adresse", class: 'btn'
       = f.link_to_add "Ajouter une adresse", :addresses, class: 'btn'
   %fieldset
     %legend Assignation
     = f.input :customer_tokens,                                                                                             |
-      input_html: { data: { pre: @scanning_provider.customers.asc(:code).map{ |e| { id: e.id.to_s, name: e.code } }.to_json } }, |
-      label: t('mongoid.models.scanning_provider.attributes.customers')
+      input_html: { data: { pre: @scanning_provider.customers.order(code: :asc).map{ |e| { id: e.id.to_s, name: e.code } }.to_json } }, |
+      label: t('activerecord.models.scanning_provider.attributes.customers')
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'
     = link_to t('actions.cancel'), admin_scanning_providers_path, class: 'btn'

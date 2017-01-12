@@ -2,40 +2,53 @@
 class Account::OrganizationAddressesController < Account::OrganizationController
   before_filter :load_address, only: %w(edit update destroy)
 
+
+  # GET /account/organizations/:organization_id/addresses
   def index
     @addresses = @organization.addresses.all
   end
 
+
+  # GET /account/organizations/:organization_id/addresses/new
   def new
     @address = Address.new
-    @address.first_name = @organization.leader.try(:first_name)
+
     @address.last_name  = @organization.leader.try(:last_name)
+    @address.first_name = @organization.leader.try(:first_name)
   end
 
+
+  # POST /account/organizations/:organization_id/addresses
   def create
     @address = @organization.addresses.new(address_params)
+
     if @address.save
-      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_addresses_path(@organization)
     else
-      render action: 'new'
+      render :new
     end
   end
 
+
+  # GET /account/organizations/:organization_id/addresses/:id/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/new
   def update
     if @address.update(address_params)
-      SetTypesOfAddress.new(@address).execute
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_addresses_path(@organization)
     else
-      render action: 'edit'
+      render :edit
     end
   end
 
+
+
+  # DELETE /account/organizations/:organization_id/addresses/:id
   def destroy
     if @address.destroy
       flash[:success] = 'Supprimé avec succès.'
@@ -43,11 +56,14 @@ class Account::OrganizationAddressesController < Account::OrganizationController
     end
   end
 
-private
+
+  private
+
 
   def load_address
     @address = @organization.addresses.find(params[:id])
   end
+
 
   def address_params
     params.require(:address).permit(

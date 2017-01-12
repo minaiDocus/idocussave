@@ -6,68 +6,92 @@ class Account::ExercisesController < Account::OrganizationController
   before_filter :redirect_to_current_step
   before_filter :load_exercise, except: %w(index new create)
 
+
+  # GET  /account/organizations/:organization_id/customers/:customer_id/exercises
   def index
-    @exercises = @customer.exercises.desc(:start_date)
+    @exercises = @customer.exercises.order(start_date: :desc)
   end
 
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/exercises/new
   def new
     @exercise = Exercise.new
   end
 
+
+  # POST /account/organizations/:organization_id/customers/:customer_id/exercises
   def create
     @exercise = Exercise.new exercise_params
+
     @exercise.user = @customer
+
     if @exercise.save
       flash[:success] = 'Créé avec succès.'
+
       redirect_to account_organization_customer_exercises_path(@organization, @customer)
     else
-      render action: 'new'
+      render :new
     end
   end
 
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/exercises/edit
   def edit
   end
 
+
+  # PUT /account/organizations/:organization_id/customers/:customer_id/exercises/:id
   def update
     if @exercise.update(exercise_params)
       flash[:success] = 'Modifié avec succès.'
+
       redirect_to account_organization_customer_exercises_path(@organization, @customer)
     else
       render 'edit'
     end
   end
 
+
+  # DELETE /account/organizations/:organization_id/customers/:customer_id/exercises/:id
   def destroy
     @exercise.destroy
+
     flash[:success] = 'Supprimé avec succès.'
+
     redirect_to account_organization_customer_exercises_path(@organization, @customer)
   end
 
-private
+
+  private
+
 
   def verify_rights
     unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
+
       redirect_to account_organization_path(@organization)
     end
   end
+
 
   def verify_access
     if @organization.ibiza.try(:access_token).present?
       flash[:error] = t('authorization.unessessary_rights')
+
       redirect_to account_organization_path(@organization)
     end
   end
 
+
   def load_customer
-    @customer = customers.find_by_slug! params[:customer_id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:customer_id]) unless @customer
+    @customer = customers.find params[:customer_id]
   end
+
 
   def load_exercise
     @exercise = @customer.exercises.find params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(Exercise, nil, params[:id]) unless @exercise
   end
+
 
   def exercise_params
     params.require(:exercise).permit(:start_date,

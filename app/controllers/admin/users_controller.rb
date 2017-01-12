@@ -1,11 +1,17 @@
 # -*- encoding : UTF-8 -*-
 class Admin::UsersController < Admin::AdminController
-  helper_method :sort_column, :sort_direction, :user_contains
+  helper_method :sort_column, :sort_direction
 
   before_filter :load_user, only: %w(show update send_reset_password_instructions)
 
+  # GET /admin/users
   def index
-    @users = search(user_contains).order_by(sort_column => sort_direction)
+    @user_contains = search_terms(params[:user_contains])
+
+    @users = User.search(search_terms(params[:user_contains])).order(sort_column => sort_direction)
+
+    @users_count = @users.count
+
     respond_to do |format|
       format.html do
         @users = @users.page(params[:page]).per(params[:per_page])
@@ -17,52 +23,67 @@ class Admin::UsersController < Admin::AdminController
     end
   end
 
+
+  # GET /admin/users/:id
   def show
   end
 
+
+  # PUT /admin/users/:id
   def update
     respond_to do |format|
       if params[:user][:is_prescriber]
         @user.is_prescriber = params[:user].delete(:is_prescriber)
       end
+
       if (params[:user].empty? && @user.save) || (params[:user].any? && @user.update(user_params))
-        format.json{ render json: {}, status: :ok }
-        format.html{ redirect_to admin_user_path(@user) }
+        format.json { render json: {}, status: :ok }
+        format.html { redirect_to admin_user_path(@user) }
       else
-        format.json{ render json: @user.to_json, status: :unprocessable_entity }
-        format.html{ redirect_to admin_user_path(@user), error: 'Impossible de modifier cette utilisateur.' }
+        format.json { render json: @user.to_json, status: :unprocessable_entity }
+        format.html { redirect_to admin_user_path(@user), error: 'Impossible de modifier cette utilisateur.' }
       end
     end
   end
 
+
+  # GET /admin/users/search_by_code
   def search_by_code
     tags = []
+
     full_info = params[:full_info].present?
+
     if params[:q].present?
-      users = User.where(code: /.*#{params[:q]}.*/i).asc(:code).limit(10)
+      users = User.where("code LIKE ?", "%#{contains[:q]}%").order(code: :asc).limit(10)
+
       users = users.prescribers if params[:prescriber].present?
+
       users.each do |user|
-        tags << {id: user.id.to_s, name: full_info ? user.info : user.code}
+        tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
       end
     end
 
     respond_to do |format|
-      format.json{ render json: tags.to_json, status: :ok }
+      format.json { render json: tags.to_json, status: :ok }
     end
   end
 
+
+  # GET /admin/users/:id/send_reset_password_instructions
   def send_reset_password_instructions
     @user.send_reset_password_instructions
+
     flash[:notice] = 'Email envoyé avec succès.'
+
     redirect_to admin_user_path(@user)
   end
 
-private
+  private
 
   def load_user
-    @user = User.find_by_slug! params[:id]
-    raise Mongoid::Errors::DocumentNotFound.new(User, slug: params[:id]) unless @user
+    @user = User.find params[:id]
   end
+
 
   def user_params
     params.require(:user).permit(
@@ -86,53 +107,15 @@ private
     )
   end
 
+
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
 
+
   def sort_direction
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def user_contains
-    @contains ||= {}
-    if params[:user_contains] && @contains.blank?
-      @contains = params[:user_contains].delete_if do |key,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :user_contains
-
-  def search(contains)
-    users = User.not_operators
-    users = users.where(is_admin:        (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
-    users = users.where(is_prescriber:   (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
-    users = contains[:is_inactive] == '1' ? users.closed : users.active                    if contains[:is_inactive].present?
-    users = users.where(first_name:      /#{Regexp.quote(contains[:first_name])}/i)        if contains[:first_name].present?
-    users = users.where(last_name:       /#{Regexp.quote(contains[:last_name])}/i)         if contains[:last_name].present?
-    users = users.where(email:           /#{Regexp.quote(contains[:email])}/i)             if contains[:email].present?
-    users = users.where(company:         /#{Regexp.quote(contains[:company])}/i)           if contains[:company].present?
-    users = users.where(code:            /#{Regexp.quote(contains[:code])}/i)              if contains[:code].present?
-    users = users.where(organization_id: contains[:organization_id])                       if contains[:organization_id].present?
-    if contains[:is_organization_admin].present?
-      user_ids = Organization.all.distinct(:leader_id)
-      if contains[:is_organization_admin] == '1'
-        users = users.where(:_id.in => user_ids)
-      else
-        users = users.where(:_id.nin => user_ids)
-      end
-    end
-    users
-  end
 end

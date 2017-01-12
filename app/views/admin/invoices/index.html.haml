@@ -1,7 +1,7 @@
 #invoices
   .row-fluid
     .span12.margin1bottom
-      %h3 Liste des factures (#{@invoices.count})
+      %h3 Liste des factures (#{@invoices_count})
 
   .row-fluid
     .span9
@@ -11,10 +11,10 @@
           %thead
             %tr
               %th= check_box_tag 'check_all'
-              %th= sortable :number, t('mongoid.models.invoice.attributes.number')
-              %th= sortable :created_at, t('mongoid.models.common.attributes.created_at')
-              %th= sortable :organization_id, t('mongoid.models.organization.name') + ' / ' + t('mongoid.models.user.name')
-              %th.price= sortable :amount_in_cents_w_vat, t('mongoid.models.invoice.attributes.amount_w_vat')
+              %th= sortable :number, t('activerecord.models.invoice.attributes.number')
+              %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+              %th= sortable :organization_id, t('activerecord.models.organization.name') + ' / ' + t('activerecord.models.user.name')
+              %th.price= sortable :amount_in_cents_w_vat, t('activerecord.models.invoice.attributes.amount_w_vat')
               %th.actions= t('actions.name')
           %tbody
             - @invoices.each do |invoice|

@@ -3,31 +3,41 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   before_filter :load_document, only: %w(show piece)
 
   def index
-    @documents = search(document_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    @is_filter_empty = document_contains.empty?
+    @documents = TempDocument.search_for_collection(@user.temp_documents.fiduceo, search_terms(params[:document_contains])).includes(:fiduceo_retriever).order(sort_column => sort_direction)
+    @documents_count = @documents.count
+    @documents = @documents.page(params[:page]).per(params[:per_page])
+    @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
 
   def show
-    if File.exist?(@document.content.path)
-      file_name = @document.metadata['name'] + '.pdf'
-      send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
+    filepath = FileStoragePathUtils.path_for_object(@document)
+
+    if File.exist?(filepath)
+      file_name = @document.metadata['libelle'] + '.pdf'
+
+      send_file(filepath, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
   end
 
   def piece
-    if @document.piece && File.exist?(@document.piece.content.path)
-      send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+    if @document.piece
+      filepath = FileStoragePathUtils.path_for_object(@document.piece)
+      if File.exist?(filepath)
+        send_file(filepath, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      else
+        render nothing: true, status: 404
+      end
     else
       render nothing: true, status: 404
     end
   end
 
   def select
-    @documents = search(document_contains).order_by(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
+    @documents = TempDocument.search_for_collection(@user.temp_documents.fiduceo, search_terms(params[:document_contains])).wait_selection.includes(:fiduceo_retriever).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @retriever.ready if @retriever && @retriever.waiting_selection?
-    @is_filter_empty = document_contains.empty?
+    @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
 
   def validate
@@ -44,10 +54,10 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
         flash[:success] = 'Le document sélectionné sera intégré.'
       end
     end
-    redirect_to select_account_retrieved_documents_path(document_contains: document_contains)
+    redirect_to select_account_retrieved_documents_path(document_contains: search_terms(params[:document_contains]))
   end
 
-private
+  private
 
   def load_document
     @document = @user.temp_documents.retrieved.find(params[:id])
@@ -62,47 +72,4 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def document_contains
-    @contains ||= {}
-    if params[:document_contains] && @contains.blank?
-      @contains = params[:document_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :document_contains
-
-  def search(contains)
-    documents = @user.temp_documents.retrieved.includes(:retriever)
-    documents = documents.where('metadata.name' => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
-    if contains[:service_name]
-      documents = documents.where(retriever_service_name: /#{Regexp.quote(contains[:service_name])}/i)
-    elsif contains[:retriever_id]
-      @retriever = @user.retrievers.find(contains[:retriever_id])
-      documents = documents.where(:retriever_id => @retriever.id)
-    end
-    if contains[:transaction_id]
-      @transaction = @user.transactions.find(contains[:transaction_id])
-      documents = documents.where(:api_id.in => @transaction.retrieved_document_ids)
-    end
-    if contains[:date].present?
-      begin
-        contains[:date]['$gte'] = Time.zone.parse(contains[:date]['$gte']).to_time if contains[:date]['$gte']
-        contains[:date]['$lte'] = Time.zone.parse(contains[:date]['$lte']).to_time if contains[:date]['$lte']
-        documents = documents.where('metadata.date' => contains[:date])
-      rescue ArgumentError
-        documents = []
-      end
-    end
-    documents
-  end
 end

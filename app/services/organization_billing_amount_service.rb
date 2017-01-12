@@ -1,29 +1,31 @@
 # -*- encoding : UTF-8 -*-
+# Gives total due amount for organization for specific period
 class OrganizationBillingAmountService
-  def initialize(organization, time=Time.now)
+  def initialize(organization, time = Time.now)
+    @time         = time
     @organization = organization
-    @time = time
   end
+
 
   def execute
-    PeriodBillingService.amount_in_cents_wo_vat(@time.month, customer_periods) +
-      (period.try(:price_in_cents_wo_vat) || 0)
+    PeriodBillingService.amount_in_cents_wo_vat(@time.month, customer_periods) + (period.try(:price_in_cents_wo_vat) || 0)
   end
+
 
   def customer_ids
-    @organization.customers.active_at(@time).distinct(:_id)
+    @organization.customers.active_at(@time).distinct(:id)
   end
+
 
   def customer_subscription_ids
-    Subscription.where(:user_id.in => customer_ids).distinct(:_id)
+    Subscription.where(user_id: customer_ids).distinct(:id)
   end
 
+
   def customer_periods
-    Period.any_in(subscription_id: customer_subscription_ids).where(
-      :start_at.lte => @time,
-      :end_at.gte => @time
-    )
+    Period.where(subscription_id: customer_subscription_ids).where("start_at <= ? AND end_at >= ?", @time, @time).includes(:billings)
   end
+
 
   def period
     @period ||= @organization.subscription.find_period(@time)

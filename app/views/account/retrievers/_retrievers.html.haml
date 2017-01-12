@@ -10,11 +10,11 @@
       - if current_user.is_admin
         %th F
         %th B
-      %th= sortable :capabilities, t('mongoid.models.retriever.attributes.capabilities')
-      %th= sortable :service_name, t('mongoid.models.retriever.attributes.service_name')
-      %th= sortable :name,         t('mongoid.models.retriever.attributes.name')
+      %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
+      %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
+      %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
       %th Journal
-      %th.retriever_state= t('mongoid.models.retriever.attributes.state')
+      %th.retriever_state= t('activerecord.models.retriever.attributes.state')
       %th Actions
   %tbody
     - @retrievers.each do |retriever|

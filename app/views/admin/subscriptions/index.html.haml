@@ -9,8 +9,9 @@
             %th iDo'Basique
             %th iDo'Courrier
             %th iDo'Box
-            %th iDo'FacBanque
             %th Pack Annuel
+            %th Total
+            %th iDo'FacBanque
             %th Pré-saisie
             %th Tamponnage du papier
         %tbody
@@ -19,8 +20,9 @@
             %td= @basic_package_count
             %td= @mail_package_count
             %td= @scan_box_package_count
-            %td= @retriever_package_count
             %td= @annual_package_count
+            %td= @basic_package_count + @mail_package_count + @scan_box_package_count + @annual_package_count
+            %td= @retriever_package_count
             %td= @pre_assignment_count
             %td= @stamp_count
 
@@ -34,11 +36,11 @@
       %table.table.table-bordered.table-condensed.table-striped
         %thead
           %tr
-            %th.position=              t('mongoid.models.subscription_option.attributes.position')
-            %th.updated_at=            t('mongoid.models.common.attributes.updated_at')
-            %th.name=                  t('mongoid.models.subscription_option.attributes.name')
-            %th.price_in_cents_wo_vat= t('mongoid.models.subscription_option.attributes.price_in_cents_wo_vat')
-            %th.period_duration=       t('mongoid.models.subscription_option.attributes.period_duration')
+            %th.position=              t('activerecord.models.subscription_option.attributes.position')
+            %th.updated_at=            t('activerecord.models.common.attributes.updated_at')
+            %th.name=                  t('activerecord.models.subscription_option.attributes.name')
+            %th.price_in_cents_wo_vat= t('activerecord.models.subscription_option.attributes.price_in_cents_wo_vat')
+            %th.period_duration=       t('activerecord.models.subscription_option.attributes.period_duration')
             %th Abonnés
             %th Actions
         %tbody

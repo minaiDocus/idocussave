@@ -5,7 +5,7 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
-    @retrievers = search(retriever_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @retrievers = FiduceoRetriever.search_for_collection(@customer.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     render partial: 'account/retrievers/retrievers', locals: { scope: :collaborator } if params[:part].present?
   end
 
@@ -82,30 +82,6 @@ private
     params[:direction] || 'desc'
   end
   helper_method :sort_direction
-
-  def retriever_contains
-    @contains ||= {}
-    if params[:retriever_contains] && @contains.blank?
-      @contains = params[:retriever_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :retriever_contains
-
-  def search(contains)
-    retrievers = @customer.retrievers
-    retrievers = retrievers.where(:name => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
-    retrievers
-  end
 
   def retriever_params
     dyn_attrs = [

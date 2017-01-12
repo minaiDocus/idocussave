@@ -14,7 +14,7 @@
           %th Id
           %th Nom
           %th Période
-        - @dematbox.services.asc([:group_name, :name]).each do |service|
+        - @dematbox.services.order(group_name: :asc, name: :asc).each do |service|
           %tr
             %td= service.group_pid
             %td= service.group_name

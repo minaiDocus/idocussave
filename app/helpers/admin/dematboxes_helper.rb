@@ -13,6 +13,7 @@ module Admin::DematboxesHelper
     end
   end
 
+
   def dematbox_type(type)
     if type == 'service'
       'Service'
@@ -22,6 +23,7 @@ module Admin::DematboxesHelper
       ''
     end
   end
+
 
   def dematbox_period(boolean)
     boolean ? 'Actuelle' : 'Précédente'

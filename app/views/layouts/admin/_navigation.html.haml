@@ -38,13 +38,10 @@
         Autres
         %b.caret
       %ul.dropdown-menu
-        %li= link_to 'Tâches', '/admin/delayed_job'
         %li{ class: ('active' if controller_name == 'emailed_documents') }
           = link_to 'Récéptions Mail', admin_emailed_documents_path
         %li{ class: ('active' if controller_name == 'cms_images') }
           = link_to 'Images', admin_cms_images_path
-        %li{ class: ('active' if controller_name == 'gray_labels') }
-          = link_to 'Marque Grise', admin_gray_labels_path
         %li{ class: ('active' if controller_name == 'scanning_providers') }
           = link_to 'Ateliers', admin_scanning_providers_path
         %li{ class: ('active' if controller_name == 'notification_settings') }

@@ -2,6 +2,9 @@
 class Account::SetupsController < Account::OrganizationController
   before_filter :load_customer
 
+  ######### NE PAS TOUCHER / BOL DE SPAGHETTI / OU ALORS PASSER LA JOURNÉE A TESTER ##########
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/setup/next
   def next
     if @customer.configured?
       redirect_to account_organization_customer_path(@organization, @customer)
@@ -10,6 +13,8 @@ class Account::SetupsController < Account::OrganizationController
     end
   end
 
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/setup/previous
   def previous
     if @customer.configured?
       redirect_to account_organization_customer_path(@organization, @customer)
@@ -18,57 +23,59 @@ class Account::SetupsController < Account::OrganizationController
     end
   end
 
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/setup/resume
   def resume
-    if @customer.last_configuration_step != nil
+    if !@customer.last_configuration_step.nil?
       step = @customer.current_configuration_step = @customer.last_configuration_step
       result = @customer.last_configuration_step = nil
       if step == 'compta_options'
-        if @customer.subscription.is_pre_assignment_active
-          result = 'compta_options'
-        elsif @customer.options.upload_authorized?
-          result = 'period_options'
-        else
-          result = 'journals'
-        end
+        result = if @customer.subscription.is_pre_assignment_active
+                   'compta_options'
+                 elsif @customer.options.upload_authorized?
+                   'period_options'
+                 else
+                   'journals'
+                 end
       elsif step == 'period_options'
         if @customer.options.upload_authorized?
           result = 'period_options'
         elsif @customer.subscription.is_pre_assignment_active
-          if @organization.ibiza.try(:configured?)
-            result = 'ibiza'
-          else
-            result = 'use_csv_descriptor'
-          end
+          result = if @organization.ibiza.try(:configured?)
+                     'ibiza'
+                   else
+                     'use_csv_descriptor'
+                   end
         else
           result = 'journals'
         end
       elsif step.in?(%w(ibiza use_csv_descriptor))
         if @customer.subscription.is_pre_assignment_active
-          if @organization.ibiza.try(:configured?)
-            result = 'ibiza'
-          else
-            result = 'use_csv_descriptor'
-          end
+          result = if @organization.ibiza.try(:configured?)
+                     'ibiza'
+                   else
+                     'use_csv_descriptor'
+                   end
         else
           result = 'journals'
         end
       elsif step == 'csv_descriptor'
         if @customer.subscription.is_pre_assignment_active
-          if @customer.own_csv_descriptor_used?
-            result = 'csv_descriptor'
-          else
-            result = 'use_csv_descriptor'
-          end
+          result = if @customer.options.own_csv_descriptor_used?
+                     'csv_descriptor'
+                   else
+                     'use_csv_descriptor'
+                   end
         else
           result = 'journals'
         end
       elsif step.in?(%w(accounting_plans vat_accounts exercises))
         if @customer.subscription.is_pre_assignment_active
-          if @organization.ibiza.try(:configured?)
-            result = 'ibiza'
-          else
-            result = step
-          end
+          result = if @organization.ibiza.try(:configured?)
+                     'ibiza'
+                   else
+                     step
+                   end
         else
           result = 'journals'
         end
@@ -93,11 +100,11 @@ class Account::SetupsController < Account::OrganizationController
           result = 'ged'
         end
       elsif step == 'retrievers'
-        if @customer.subscription.is_retriever_package_active
-          result = 'retrievers'
-        else
-          result = 'ged'
-        end
+        result = if @customer.subscription.is_retriever_package_active
+                   'retrievers'
+                 else
+                   'ged'
+                 end
       else
         result = 'ged'
       end
@@ -109,6 +116,8 @@ class Account::SetupsController < Account::OrganizationController
     end
   end
 
+
+  # GET /account/organizations/:organization_id/customers/:customer_id/setup/complete_later
   def complete_later
     unless @customer.configured?
       @customer.last_configuration_step = @customer.current_configuration_step

@@ -1,3 +1,4 @@
+### Fiduceo related - remained untouched (or nearly) : to be deprecated soon ###
 module Fiduceo
   class << self
     attr_reader :config, :request, :response
@@ -36,7 +37,7 @@ module Fiduceo
       perform 'banks', {}, is_deep: true
     end
 
-    def categories(type=nil) # debit || credit
+    def categories(type = nil) # debit || credit
       path = 'categories'
       path << "/#{type}" if type
       perform path, {}, is_deep: true
@@ -58,13 +59,13 @@ module Fiduceo
       options
     end
 
-    def perform(path, params={}, options={ is_deep: false })
+    def perform(path, params = {}, options = { is_deep: false })
       url = File.join([config.endpoint, path])
       @request = Typhoeus::Request.new(url, default_options.merge(params))
       get_response(options[:is_deep])
     end
 
-    def get_response(is_deep=false)
+    def get_response(is_deep = false)
       @response = @request.run
       if @response.code == 200
         content_type = @response.headers['Content-Type'] || ''
@@ -120,28 +121,28 @@ module Fiduceo
   class Client
     attr_reader :config, :user_id, :request, :response
 
-    def initialize(user_id, options={})
+    def initialize(user_id, _options = {})
       @user_id = user_id
       @config = Fiduceo.config.dup
     end
 
     # PUT
     def create_user
-      result = perform "user", method: :put, body: '<?xml version="1.0"?><user/>'
+      result = perform 'user', method: :put, body: '<?xml version="1.0"?><user/>'
       @user_id = result['id'] if result.is_a? Hash
       result
     end
 
     # GET || DELETE
-    def user(method=:get, id=nil)
-      path = "user"
+    def user(method = :get, id = nil)
+      path = 'user'
       path << "/#{id}" if id
       perform path, method: method
     end
 
     # GET || PUT
     # params must have user_preferences_id
-    def user_preferences(params={})
+    def user_preferences(params = {})
       options = {}
       if params.present?
         options = {
@@ -166,7 +167,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def user_import(id, method=:get)
+    def user_import(id, method = :get)
       perform "userimport/#{id}", method: method
     end
 
@@ -180,11 +181,17 @@ module Fiduceo
     end
 
     # GET || DELETE || POST || PUT
-    def retriever(id=nil, method=:get, params={})
+    def retriever(id = nil, method = :get, params = {})
       options = { method: method }
-      options.merge!({ body: Fiduceo::XML::Builder.retriever(params) }) if params.present?
+      options[:body] = Fiduceo::XML::Builder.retriever(params) if params.present?
       path = 'retriever'
       path << "/#{id}" if id
+      perform path, options
+    end
+
+    def retriever_all(id)
+      options = { method: :get }
+      path = "retriever/all/#{id}"
       perform path, options
     end
 
@@ -216,7 +223,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def alert(id, method=:get)
+    def alert(id, method = :get)
       perform "alert/#{id}", method: method
     end
 
@@ -238,7 +245,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def bank_account(id, method=:get)
+    def bank_account(id, method = :get)
       perform "bankaccount/#{id}", method: method
     end
 
@@ -251,7 +258,7 @@ module Fiduceo
                              body: Fiduceo::XML::Builder.bank_account(params)
     end
 
-    def categories(type=nil) # debit || credit
+    def categories(type = nil) # debit || credit
       path = 'categories'
       path << "/#{type}" if type
       perform path
@@ -275,21 +282,22 @@ module Fiduceo
                              body: Fiduceo::XML::Builder.doc_to_proj(params)
     end
 
-    def documents(page=1, per_page=50, params={})
+    def documents(page = 1, per_page = 50, params = {})
       options = {}
       unless params.empty?
-        options.merge!({ method: :post, body: Fiduceo::XML::Builder.document_filter(params) })
+        options[:method] = :post
+        options[:body] = Fiduceo::XML::Builder.document_filter(params)
       end
       perform "documents/#{page}/#{per_page}", options, is_deep: true
     end
 
     # GET || DELETE
-    def document(id, method=:get)
+    def document(id, method = :get)
       perform "document/#{id}", method: method
     end
 
     # GET || DELETE
-    def document_thumb(id, method=:get)
+    def document_thumb(id, method = :get)
       perform "document/#{id}/thumb", method: method
     end
 
@@ -298,10 +306,11 @@ module Fiduceo
                           body: Fiduceo::XML::Builder.document(params)
     end
 
-    def operations(page=1, per_page=50, params={})
+    def operations(page = 1, per_page = 50, params = {})
       options = {}
       unless params.empty?
-        options.merge!({ method: :post, body: Fiduceo::XML::Builder.operation_filter(params) })
+        options[:method] = :post
+        options[:body] = Fiduceo::XML::Builder.operation_filter(params)
       end
       perform "operations/#{page}/#{per_page}", options, is_deep: true
     end
@@ -316,7 +325,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def operation(id, method=:get)
+    def operation(id, method = :get)
       perform "operation/#{id}", method: method
     end
 
@@ -340,7 +349,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def project(id, method=:get)
+    def project(id, method = :get)
       perform "project/#{id}", method: method
     end
 
@@ -354,11 +363,11 @@ module Fiduceo
     end
 
     # GET || POST
-    def batch_community_export(method=:get)
+    def batch_community_export(method = :get)
       perform 'batch/communityexport', method: method
     end
 
-    def expense_target_history(size, cat_id=nil)
+    def expense_target_history(size, cat_id = nil)
       path = "expensetargethistory/#{size}"
       path << "/#{cat_id}" if cat_id
       perform path
@@ -369,7 +378,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def expense_target(id, method=:get)
+    def expense_target(id, method = :get)
       perform "expensetarget/#{id}", method: method
     end
 
@@ -379,8 +388,8 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def operation_future(id, method=:get)
-      perform "operationfuture/{id}", method: method
+    def operation_future(_id, method = :get)
+      perform 'operationfuture/{id}', method: method
     end
 
     def put_operation_future(params)
@@ -401,7 +410,7 @@ module Fiduceo
     end
 
     # GET || DELETE
-    def operation_future_factory(id, method=:get)
+    def operation_future_factory(id, method = :get)
       perform "operationfuturefactory/#{id}", method: method
     end
 
@@ -423,19 +432,19 @@ module Fiduceo
     def default_options
       options = {}
       options = { proxy: @config.proxy } if @config.proxy
-      options.merge!({ userpwd: userpwd }) if userpwd
+      options[:userpwd] = userpwd if userpwd
       options
     end
 
-    def perform(path, params={}, options={ is_deep: false })
+    def perform(path, params = {}, options = { is_deep: false })
       _params = default_options.merge(params)
-      _params.merge!({ headers: { 'Content-Type' => 'text/xml' } }) if _params[:body].present?
+      _params[:headers] = { 'Content-Type' => 'text/xml' } if _params[:body].present?
       url = File.join(@config.endpoint, path)
       @request = Typhoeus::Request.new(url, _params)
       get_response(options[:is_deep])
     end
 
-    def get_response(is_deep=false)
+    def get_response(is_deep = false)
       @response = @request.run
       if @response.code == 200
         content_type = @response.headers['Content-Type'] || ''
@@ -474,7 +483,7 @@ module Fiduceo
     def to_objects(entries)
       entries.map do |entry|
         _entry = {}
-        entry.each_pair do |k,v|
+        entry.each_pair do |k, v|
           _entry[k.underscore] = v
         end
         OpenStruct.new _entry

@@ -24,20 +24,7 @@ class Account::BankAccountsController < Account::RetrieverController
 private
 
   def bank_account_contains
-    @contains ||= {}
-    if params[:bank_account_contains] && @contains.blank?
-      @contains = params[:bank_account_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
+    search_terms(params[:bank_account_contains])
   end
   helper_method :bank_account_contains
 end

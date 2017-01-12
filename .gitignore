@@ -12,7 +12,7 @@ coverage/
 doc_data.txt
 .sass-cache
 config/secrets.yml
-config/mongoid.yml
+config/database.yml
 config/dematbox.yml
 config/box.yml
 config/dematbox_service_api.yml
@@ -26,3 +26,4 @@ config/pdftk.yml
 config/smtp.yml
 config/budgea.yml
 config/fiduceo.yml
+config/ppp_ftp.yml

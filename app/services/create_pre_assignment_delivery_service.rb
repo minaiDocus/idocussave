@@ -19,7 +19,7 @@ class CreatePreAssignmentDeliveryService
   def execute
     if valid?
       ids = @preseizures.map(&:id)
-      Pack::Report::Preseizure.where(:_id.in => ids).update_all(is_locked: true)
+      Pack::Report::Preseizure.where(id: ids).update_all(is_locked: true)
 
       grouped_preseizures = {}
       if @report.user.options.pre_assignment_date_computed?
@@ -55,11 +55,9 @@ class CreatePreAssignmentDeliveryService
         delivery.total_item   = preseizures.size
         delivery.preseizures  = preseizures
         if delivery.save
-          # Bug : Mongoid N-N relation, when assigning 1 object does not persist automatically
           preseizures.first.save if preseizures.size == 1
-          # Building XML separately and normal preseizures have higher priority than bank operations
-          priority = preseizures.map(&:type).include?(nil) ? 7 : 8
-          PreAssignmentDeliveryService.delay(priority: priority).build_xml(delivery.id)
+
+          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
 
           @deliveries << delivery
         end

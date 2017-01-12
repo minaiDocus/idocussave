@@ -45,6 +45,8 @@ RSpec.configure do |config|
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
 
+  # FactoryGirl.allow_class_lookup = false
+
   config.around(:each, :vcr) do |example|
     name = example.metadata[:full_description].split(/\s+/, 2).join("/").underscore.gsub(/[^\w\/]+/, "_")
     options = example.metadata.slice(:record, :match_requests_on).except(:example_group)
@@ -52,7 +54,6 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    DatabaseCleaner.orm = "mongoid"
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean_with(:truncation)
 

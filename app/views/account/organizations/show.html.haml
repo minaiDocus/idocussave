@@ -49,30 +49,30 @@
                 .span8
                   %table.table.table-condensed.table-striped
                     %tr
-                      %th= t('mongoid.models.organization.attributes.name')
+                      %th= t('activerecord.models.organization.attributes.name')
                       %td= @organization.name
                     %tr
-                      %th= t('mongoid.models.organization.attributes.code')
+                      %th= t('activerecord.models.organization.attributes.code')
                       %td= @organization.code
                     %tr
-                      %th= t('mongoid.models.organization.attributes.leader')
+                      %th= t('activerecord.models.organization.attributes.leader')
                       %td= @organization.leader.try(:info)
                     %tr
-                      %th= t('mongoid.models.organization.attributes.is_detail_authorized')
+                      %th= t('activerecord.models.organization.attributes.is_detail_authorized')
                       %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
                     %tr
-                      %th= t('mongoid.models.organization.attributes.is_pre_assignment_date_computed')
+                      %th= t('activerecord.models.organization.attributes.is_pre_assignment_date_computed')
                       %td= @organization.is_pre_assignment_date_computed ? 'Date de la période iDocus' : 'Date d’origine'
                 .span4
                   %table.table.table-condensed.table-striped
                     %tr
-                      %th= t('mongoid.models.organization.attributes.collaborators_count')
+                      %th= t('activerecord.models.organization.attributes.collaborators_count')
                       - if is_leader?
                         %td= link_to @organization.collaborators.count, account_organization_collaborators_path(@organization)
                       - else
                         %td= @organization.collaborators.count
                     %tr
-                      %th= t('mongoid.models.organization.attributes.customers_count')
+                      %th= t('activerecord.models.organization.attributes.customers_count')
                       %td= link_to @organization.customers.count, account_organization_customers_path(@organization)
                     %tr
                       %th Nombre de clients actifs
@@ -85,7 +85,7 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('mongoid.models.file_naming_policy.attributes.scope')
+                    %th= t('activerecord.models.file_naming_policy.attributes.scope')
                     %td
                       - if @organization.foc_file_naming_policy.scope == 'organization'
                         collaborateurs et clients
@@ -108,14 +108,14 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('mongoid.models.organization.attributes.authd_prev_period')
+                    %th= t('activerecord.models.organization.attributes.authd_prev_period')
                     %td= @organization.authd_prev_period
                   %tr
-                    %th= t('mongoid.models.organization.attributes.auth_prev_period_until_day')
+                    %th= t('activerecord.models.organization.attributes.auth_prev_period_until_day')
                     %td= @organization.auth_prev_period_until_day
                   - if @user.is_admin
                     %tr
-                      %th= t('mongoid.models.organization.attributes.auth_prev_period_until_month')
+                      %th= t('activerecord.models.organization.attributes.auth_prev_period_until_month')
                       %td= @organization.auth_prev_period_until_month
               - if is_leader?
                 .alignright
@@ -127,19 +127,19 @@
                 %table.table.table-condensed.table-striped
                   %tbody
                     %tr
-                      %th= t('mongoid.models.knowings.attributes.is_active')
+                      %th= t('activerecord.models.knowings.attributes.is_active')
                       %td= @organization.knowings.is_active ? t('yes_value') : t('no_value')
                     %tr
-                      %th= t('mongoid.models.knowings.attributes.state')
-                      %td= Knowings.state_machine.states[@organization.knowings.state].human_name
+                      %th= t('activerecord.models.knowings.attributes.state')
+                      %td= Knowings.state_machine.states[@organization.knowings.state].human_name if @organization.knowings && @organization.knowings.state
                     %tr
-                      %th= t('mongoid.models.knowings.attributes.url')
+                      %th= t('activerecord.models.knowings.attributes.url')
                       %td= @organization.knowings.url
                     %tr
-                      %th= t('mongoid.models.knowings.attributes.pole_name')
+                      %th= t('activerecord.models.knowings.attributes.pole_name')
                       %td= @organization.knowings.pole_name
                     %tr
-                      %th= t('mongoid.models.knowings.attributes.is_third_party_included')
+                      %th= t('activerecord.models.knowings.attributes.is_third_party_included')
                       %td= @organization.knowings.is_third_party_included ? t('yes_value') : t('no_value')
               - if is_leader?
                 - if @organization.knowings
@@ -152,15 +152,15 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('mongoid.models.ibiza.attributes.access_token')
+                    %th= t('activerecord.models.ibiza.attributes.access_token')
                     %td
                       %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state))}" }= ibiza_state(@organization.ibiza.try(:state))
                   %tr
-                    %th= t('mongoid.models.ibiza.attributes.access_token_2')
+                    %th= t('activerecord.models.ibiza.attributes.access_token_2')
                     %td
                       %span{ class: "label #{ibiza_state_label(@organization.ibiza.try(:state_2))}" }= ibiza_state(@organization.ibiza.try(:state_2))
                   %tr
-                    %th= t('mongoid.models.ibiza.attributes.is_auto_deliver')
+                    %th= t('activerecord.models.ibiza.attributes.is_auto_deliver')
                     %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
                 %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
@@ -284,10 +284,13 @@
               %table.table.table-condensed.table-striped
                 %tbody
                   %tr
-                    %th= t('mongoid.models.organization.attributes.is_quadratus_used')
+                    %th= t('activerecord.models.organization.attributes.is_quadratus_used')
                     %td= @organization.is_quadratus_used ? t('yes_value') : t('no_value')
                   %tr
-                    %th= t('mongoid.models.organization.attributes.is_csv_descriptor_used')
+                    %th= t('activerecord.models.organization.attributes.is_coala_used')
+                    %td= @organization.is_coala_used ? t('yes_value') : t('no_value')
+                  %tr
+                    %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
                     %td= @organization.is_csv_descriptor_used ? t('yes_value') : t('no_value')
               - if is_leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
@@ -296,10 +299,10 @@
               %table.table.table-striped.table-condensed
                 %thead
                   %tr
-                    %th= t('mongoid.models.reminder_email.attributes.name')
-                    %th= t('mongoid.models.reminder_email.attributes.delivery_day')
-                    %th= t('mongoid.models.reminder_email.attributes.delivered_at')
-                    %th= t('mongoid.models.reminder_email.attributes.summarize')
+                    %th= t('activerecord.models.reminder_email.attributes.name')
+                    %th= t('activerecord.models.reminder_email.attributes.delivery_day')
+                    %th= t('activerecord.models.reminder_email.attributes.delivered_at')
+                    %th= t('activerecord.models.reminder_email.attributes.summarize')
                     %th= t('actions.name')
                 %tbody
                   - @organization.reminder_emails.each do |reminder_email|
@@ -315,7 +318,7 @@
                         = reminder_email.processed_users.count
                         \/
                         - if reminder_email.delivered_at
-                          = @organization.customers.where(:created_at.lte => reminder_email.delivered_at).any_of({ inactive_at: nil }, { :inactive_at.gt => reminder_email.delivered_at }).count
+                          = @organization.customers.where("created_at <= ?", reminder_email.delivered_at).where("inactive_at IS NULL OR inactive_at > ?", reminder_email.delivered_at).count
                         - else
                           = @organization.customers.active.count
                       %td
@@ -323,7 +326,7 @@
                         = link_to icon_show, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', target: :_blank, title: "Voir"
                         = link_to icon_edit, edit_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', title: 'Editer'
                         = link_to icon_destroy, account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', method: :delete, data: { confirm: t('actions.confirm') }, title: 'Supprimer'
-                        = link_to icon(icon: 'play') + ' ' + t('mongoid.models.reminder_email.actions.send'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', data: { confirm: t('mongoid.models.reminder_email.actions.send_confirmation') }, method: :post
+                        = link_to icon(icon: 'play') + ' ' + t('activerecord.models.reminder_email.actions.send'), deliver_account_organization_reminder_email_path(@organization, reminder_email), class: 'btn btn-mini', data: { confirm: t('activerecord.models.reminder_email.actions.send_confirmation') }, method: :post
               = link_to icon_new + ' ' + t('actions.new'), new_account_organization_reminder_email_path(@organization), class: 'btn btn-primary pull-right'
             #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
               .aligncenter
@@ -336,22 +339,22 @@
               #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
                 %table.table.table-striped.table-condensed
                   %tr
-                    %th= t('mongoid.models.file_sending_kit.attributes.folders')
+                    %th= t('activerecord.models.file_sending_kit.attributes.folders')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', Rails.env, 'kit', 'folders.pdf')
                         = link_to 'folders.pdf', folders_account_organization_file_sending_kit_path(@organization), target: '_blank'
                   %tr
-                    %th= t('mongoid.models.file_sending_kit.attributes.mails')
+                    %th= t('activerecord.models.file_sending_kit.attributes.mails')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', Rails.env, 'kit', 'mails.pdf')
                         = link_to 'mails.pdf', mails_account_organization_file_sending_kit_path(@organization), target: '_blank'
                   %tr
-                    %th= t('mongoid.models.file_sending_kit.attributes.customer_labels')
+                    %th= t('activerecord.models.file_sending_kit.attributes.customer_labels')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', Rails.env, 'kit', 'customer_labels.pdf')
                         = link_to 'customer_labels.pdf', customer_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
                   %tr
-                    %th= t('mongoid.models.file_sending_kit.attributes.workshop_labels')
+                    %th= t('activerecord.models.file_sending_kit.attributes.workshop_labels')
                     %td
                       - if File.exist? File.join(Rails.root, 'files', Rails.env, 'kit', 'workshop_labels.pdf')
                         = link_to 'workshop_labels.pdf', workshop_labels_account_organization_file_sending_kit_path(@organization), target: '_blank'
