@@ -80,7 +80,7 @@ class KitGenerator
         pdf.bounding_box [0, pdf.cursor], width: 531, height: 785 do
           pdf.stroke_bounds
           pdf.bounding_box [15, pdf.cursor - 15], width: 501, height: 755 do
-            pdf.text file_sending_kit.instruction, inline_format: true
+            pdf.text file_sending_kit.instruction.to_s, inline_format: true
           end
         end
       end

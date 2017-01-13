@@ -93,7 +93,7 @@
           %th.actions    Actions
         - if @current_time.to_date == Date.today
           %tr.form
-            = form_for @document, url: scans_path do |f|
+            = form_for @document, url: scans_path, method: :post do |f|
               %td.date -
               %td.paperclips
                 != f.number_field :paperclips, class: 'span2'
