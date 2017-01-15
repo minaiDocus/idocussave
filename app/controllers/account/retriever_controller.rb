@@ -3,6 +3,7 @@ class Account::RetrieverController < Account::AccountController
   layout 'layouts/account/retrievers'
 
   before_filter :verify_rights
+  before_filter :redirect_to_root
 
   private
 
@@ -12,5 +13,10 @@ class Account::RetrieverController < Account::AccountController
 
       redirect_to root_path
     end
+  end
+
+  def redirect_to_root
+    flash[:notice] = 'Service temporairement indisponible.'
+    redirect_to root_path
   end
 end

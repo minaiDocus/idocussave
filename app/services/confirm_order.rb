@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ConfirmOrder
   def self.execute(object)
-    @order = if object.is_a?(String)
+    @order = if object.is_a?(Integer)
                    Order.where(id: object).first
                  else
                    object
@@ -19,7 +19,7 @@ class ConfirmOrder
   def execute
     is_confirmed = false
 
-    @order.with_lock(timeout: 2, retries: 20, retry_sleep: 0.1) do
+    @order.with_lock do
       if @order.pending?
         is_confirmed =  @order.confirm
       end
@@ -33,9 +33,9 @@ class ConfirmOrder
       end
 
       UpdatePeriod.new(@order.period).execute
-    elsif @order.errors[:address].any?
+    elsif @order.errors[:address].any? && @order.type == 'paper_set'
       OrderMailer.notify_paper_set_reminder(@order).deliver_later
-      ConfirmOrder.delay_for(24.hours).execute(@order.id.to_s)
+      ConfirmOrder.delay_for(24.hours).execute(@order.id)
     end
   end
 end
