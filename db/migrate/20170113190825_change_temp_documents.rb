@@ -8,7 +8,7 @@ class ChangeTempDocuments < ActiveRecord::Migration
     add_column :temp_documents, :api_name, :string
     add_column :temp_documents, :metadata, :string
 
-    add_reference :temp_documents, :retriever, foreign_key: true
+    add_reference :temp_documents, :retriever
 
     add_index :temp_documents, :user_id
     add_index :temp_documents, :retriever_id

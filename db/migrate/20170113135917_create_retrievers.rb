@@ -29,9 +29,9 @@ class CreateRetrievers < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_reference :retrievers, :user, foreign_key: true
-    add_reference :retrievers, :journal, foreign_key: true
-    add_reference :retrievers, :connector, foreign_key: true
+    add_reference :retrievers, :user, index: true
+    add_reference :retrievers, :journal, index: true
+    add_reference :retrievers, :connector, index: true
 
     add_index :retrievers, :state
   end

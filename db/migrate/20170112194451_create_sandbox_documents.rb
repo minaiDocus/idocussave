@@ -8,11 +8,9 @@ class CreateSandboxDocuments < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_reference :sandbox_documents, :user, foreign_key: true
-    add_reference :sandbox_documents, :retriever, foreign_key: true
+    add_reference :sandbox_documents, :user, index: true
+    add_reference :sandbox_documents, :retriever, index: true
 
-    add_index :sandbox_documents, :user_id
-    add_index :sandbox_documents, :retriever_id
     add_index :sandbox_documents, :api_id
     add_index :sandbox_documents, :api_name
   end

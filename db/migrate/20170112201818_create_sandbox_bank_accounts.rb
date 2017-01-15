@@ -16,7 +16,7 @@ class CreateSandboxBankAccounts < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_reference :sandbox_bank_accounts, :user, foreign_key: true
-    add_reference :sandbox_bank_accounts, :retriever, foreign_key: true
+    add_reference :sandbox_bank_accounts, :user, index: true
+    add_reference :sandbox_bank_accounts, :retriever, index: true
   end
 end

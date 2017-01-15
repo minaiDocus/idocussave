@@ -18,12 +18,10 @@ class CreateSandboxOperations < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_reference :sandbox_operations, :organization, foreign_key: true
-    add_reference :sandbox_operations, :user, foreign_key: true
-    add_reference :sandbox_operations, :sandbox_bank_account, foreign_key: true
+    add_reference :sandbox_operations, :organization, index: true
+    add_reference :sandbox_operations, :user
+    add_reference :sandbox_operations, :sandbox_bank_account
 
-    add_index :sandbox_operations, :user_id
-    add_index :sandbox_operations, :sandbox_bank_account_id
     add_index :sandbox_operations, :api_id
     add_index :sandbox_operations, :api_name
   end
