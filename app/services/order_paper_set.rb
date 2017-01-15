@@ -16,7 +16,7 @@ class OrderPaperSet
     if @order.save
       unless @is_an_update
         @period.orders << @order
-        ConfirmOrder.delay_for(24.hours).execute(@order.id.to_s)
+        ConfirmOrder.delay_for(24.hours).execute(@order.id)
       end
 
       auto_ajust_number_of_journals_authorized
