@@ -1,13 +1,9 @@
 # -*- encoding : UTF-8 -*-
-class RetrievedData
-  include Mongoid::Document
-  include Mongoid::Timestamps
-
+class RetrievedData < ActiveRecord::Base
   belongs_to :user
 
-  field :content,                  type: Hash
-  field :error_message
-  field :processed_connection_ids, type: Array, default: []
+  serialize :content, Hash
+  serialize :processed_connection_ids, Array
 
   scope :processed,     -> { where(state: 'processed') }
   scope :not_processed, -> { where(state: 'not_processed') }

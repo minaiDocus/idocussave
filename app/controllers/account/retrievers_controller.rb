@@ -5,7 +5,7 @@ class Account::RetrieversController < Account::RetrieverController
   before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
-    @retrievers = FiduceoRetriever.search_for_collection(@user.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @retrievers = Retriever.search_for_collection(@user.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = search_terms(params[:fiduceo_retriever_contains]).empty?
     render partial: 'retrievers', locals: { scope: :account } if params[:part].present?
   end
@@ -122,8 +122,8 @@ private
   end
 
   def load_connectors
-    @connectors = Connector.budgea.asc(:name).list
-    @providers  = Connector.budgea.providers.asc(:name)
-    @banks      = Connector.budgea.banks.asc(:name)
+    @connectors = Connector.budgea.order(name: :asc).list
+    @providers  = Connector.budgea.providers.order(name: :asc)
+    @banks      = Connector.budgea.banks.order(name: :asc)
   end
 end

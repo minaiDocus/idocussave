@@ -37,7 +37,7 @@ class SynchronizeRetriever
         workers_count = @threads_count - @queue.size
         retrievers = []
         if workers_count > 0
-          retrievers = Retriever.not_processed.where(:_id.nin => @processing_ids).limit(workers_count).to_a
+          retrievers = Retriever.not_processed.where.not(id: @processing_ids).limit(workers_count).to_a
         end
         if retrievers.empty?
           sleep(0.5)
@@ -60,15 +60,20 @@ class SynchronizeRetriever
 private
 
   def process(retriever)
-    log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.budgea_id}/#{retriever.fiduceo_id} - #{retriever.state}"
+    log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.budgea_id} - #{retriever.state}"
     if retriever.connector.is_budgea_active?
-      CreateBudgeaAccount.execute(retriever.user) if retriever.user.budgea_account.nil?
-      SyncBudgeaConnection.execute(retriever)
+      begin
+        lock.synchronize("create_budgea_account_for_user_id_#{retriever.user.id}", expiry: 10.seconds) do
+          CreateBudgeaAccount.execute(retriever.user) if retriever.user.budgea_account.nil?
+        end
+        SyncBudgeaConnection.execute(retriever)
+      rescue RemoteLock::Error
+      end
     end
-    if retriever.connector.is_fiduceo_active?
-      CreateFiduceoAccount.execute(retriever.user) if retriever.user.fiduceo_id.nil?
-      SyncFiduceoConnection.execute(retriever)
-    end
+    # if retriever.connector.is_fiduceo_active?
+    #   CreateFiduceoAccount.execute(retriever.user) if retriever.user.fiduceo_id.nil?
+    #   SyncFiduceoConnection.execute(retriever)
+    # end
   end
 
   def log(message)
@@ -84,5 +89,9 @@ private
 
   def logger2
     @@logger2 ||= Logger.new(STDOUT)
+  end
+
+  def lock
+    $lock ||= RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
   end
 end

@@ -26,7 +26,7 @@ class RetrievedDocument
         is_content_file_valid:  true,
         wait_selection:         waiting_selection?
       }
-      @temp_document = pack.add file, options
+      @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       retriever.temp_documents << @temp_document
     end
     clean_tmp

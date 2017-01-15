@@ -1,8 +1,6 @@
+# -*- encoding : UTF-8 -*-
 class UserOptions < ActiveRecord::Base
   belongs_to :user
-
-  # TODO add these field
-  field :is_retriever_authorized, type: Boolean, default: false
 
   validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]

@@ -22,11 +22,11 @@
                 %th.field.date_field= label_tag 'retriever_contains[created_at][>=]', 'Créé le'
                 %th.field.date_field= label_tag 'retriever_contains[updated_at][>=]', 'Modifié le'
                 %th.field.text_field= label_tag 'retriever_contains[user_code]', t('activerecord.models.user.name')
-                %th.field= label_tag 'retriever_contains[capabilities]', t('activerecord.models.fiduceo_retriever.attributes.capabilities')
-                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('activerecord.models.fiduceo_retriever.attributes.service_name')
-                %th.field.text_field= label_tag 'retriever_contains[name]', t('activerecord.models.fiduceo_retriever.attributes.name')
-                %th.field= label_tag 'retriever_contains[state]', t('activerecord.models.fiduceo_retriever.attributes.state')
-                %th.field= label_tag 'retriever_contains[is_sane]', t('activerecord.models.fiduceo_retriever.attributes.is_sane')
+                %th.field= label_tag 'retriever_contains[capabilities]', t('activerecord.models.retriever.attributes.capabilities')
+                %th.field.text_field= label_tag 'retriever_contains[service_name]', t('activerecord.models.retriever.attributes.service_name')
+                %th.field.text_field= label_tag 'retriever_contains[name]', t('activerecord.models.retriever.attributes.name')
+                %th.field= label_tag 'retriever_contains[state]', t('activerecord.models.retriever.attributes.state')
+                %th.field= label_tag 'retriever_contains[is_sane]', t('activerecord.models.retriever.attributes.is_sane')
                 %th
             %tbody
               %tr
@@ -92,12 +92,12 @@
                 %th= sortable :created_at,   'Créé le'
                 %th= sortable :updated_at,   'Modifié le'
                 %th= sortable :user_id,      t('activerecord.models.user.name')
-                %th= sortable :capabilities, t('activerecord.models.fiduceo_retriever.attributes.capabilities')
-                %th= sortable :service_name, t('activerecord.models.fiduceo_retriever.attributes.service_name')
-                %th= sortable :name,         t('activerecord.models.fiduceo_retriever.attributes.name')
+                %th= sortable :capabilities, t('activerecord.models.retriever.attributes.capabilities')
+                %th= sortable :service_name, t('activerecord.models.retriever.attributes.service_name')
+                %th= sortable :name,         t('activerecord.models.retriever.attributes.name')
                 %th Journal
-                %th= t('activerecord.models.fiduceo_retriever.attributes.state')
-                %th= sortable :is_sane,      t('activerecord.models.fiduceo_retriever.attributes.is_sane')
+                %th= t('activerecord.models.retriever.attributes.state')
+                %th= sortable :is_sane,      t('activerecord.models.retriever.attributes.is_sane')
                 %th Action
             %tbody
               - @retrievers.each do |retriever|

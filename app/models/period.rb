@@ -12,10 +12,6 @@ class Period < ActiveRecord::Base
   belongs_to :organization
   belongs_to :subscription
 
-  # TODO migrate fiduceo_pieces and fiduceo_pages to those fields
-  # field :retrieved_pieces, type: Integer, default: 0
-  # field :retrieved_pages,  type: Integer, default: 0
-
   validates_inclusion_of :duration, in: [1, 3, 12]
 
 

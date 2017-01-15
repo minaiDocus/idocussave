@@ -50,19 +50,19 @@ describe SyncBudgeaConnection do
     @retriever.journal   = @journal
     @retriever.name      = 'Connecteur de test'
     @retriever.param1 = {
-      name: 'website',
-      type: 'list',
-      value: 'par'
+      'name' => 'website',
+      'type' => 'list',
+      'value' => 'par'
     }
     @retriever.param2 = {
-      name: 'login',
-      type: 'text',
-      value: 'John Doe'
+      'name' => 'login',
+      'type' => 'text',
+      'value' => 'John Doe'
     }
     @retriever.param3 = {
-      name: 'password',
-      type: 'password',
-      value: '1234'
+      'name' => 'password',
+      'type' => 'password',
+      'value' => '1234'
     }
     @retriever.save
     @retriever.reload
@@ -83,9 +83,9 @@ describe SyncBudgeaConnection do
 
   it 'updates a connection successfully' do
     @retriever.param2 = {
-      name: 'login',
-      type: 'text',
-      value: 'John Doe 2'
+      'name' => 'login',
+      'type' => 'text',
+      'value' => 'John Doe 2'
     }
     @retriever.save
     @retriever.reload

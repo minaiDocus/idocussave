@@ -12,3 +12,9 @@ UpdateAccountingPlanWorker:
 
 CreateInvoicePdfWorker:
   cron: '0 3 1 * *'
+
+SynchronizeRetrieverWorker:
+  every: '5s'
+
+ProcessRetrievedDataWorker:
+  every: '5s'

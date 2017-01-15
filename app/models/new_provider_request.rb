@@ -4,13 +4,7 @@ class NewProviderRequest < ActiveRecord::Base
 
   attr_accessor :edited_by_customer
 
-  # TODO add those fields through migration
-  # field :api_id
-  # field :email
-  # # TODO encrypt password
-  # field :password
-  # field :types
-  # field :is_sent,       type: Boolean, default: false
+  # TODO encrypt password field
 
   validates_presence_of :name, :url
   validates_presence_of :password, :types, if: :edited_by_customer
@@ -73,7 +67,7 @@ class NewProviderRequest < ActiveRecord::Base
     end
 
     def search
-      provider_wishes = FiduceoProviderWish.all
+      new_provider_requests = NewProviderRequest.all
 
       user_ids = []
 
@@ -81,27 +75,26 @@ class NewProviderRequest < ActiveRecord::Base
         user_ids = User.where("code LIKE ?", "%#{params[:user_contains][:code]}%").distinct(:id)
       end
 
-      provider_wishes = provider_wishes.where("url LIKE ?", "%#{contains[:url]}%")     unless contains[:url].blank?
-      provider_wishes = provider_wishes.where("name LIKE ?", "%#{contains[:name]}%")   unless contains[:name].blank?
-      provider_wishes = provider_wishes.where("login LIKE ?", "%#{contains[:login]}%") unless contains[:login].blank?
-      provider_wishes = provider_wishes.where(state:         contains[:state])         unless contains[:state].blank?
-      provider_wishes = provider_wishes.where(user_id:      user_ids)                  if user_ids.any?
-      provider_wishes = provider_wishes.where(created_at:    contains[:created_at])    unless contains[:created_at].blank?
-      provider_wishes = provider_wishes.where(updated_at:    contains[:updated_at])    unless contains[:updated_at].blank?
-      provider_wishes = provider_wishes.where(notified_at:   contains[:notified_at])   unless contains[:notified_at].blank?
-      provider_wishes = provider_wishes.where(processing_at: contains[:processing_at]) unless contains[:processing_at].blank?
+      new_provider_requests = new_provider_requests.where("url LIKE ?",   "%#{contains[:url]}%")   unless contains[:url].blank?
+      new_provider_requests = new_provider_requests.where("name LIKE ?",  "%#{contains[:name]}%")  unless contains[:name].blank?
+      new_provider_requests = new_provider_requests.where("login LIKE ?", "%#{contains[:login]}%") unless contains[:login].blank?
+      new_provider_requests = new_provider_requests.where(state:         contains[:state])         unless contains[:state].blank?
+      new_provider_requests = new_provider_requests.where(user_id:       user_ids)                 if user_ids.any?
+      new_provider_requests = new_provider_requests.where(created_at:    contains[:created_at])    unless contains[:created_at].blank?
+      new_provider_requests = new_provider_requests.where(updated_at:    contains[:updated_at])    unless contains[:updated_at].blank?
+      new_provider_requests = new_provider_requests.where(notified_at:   contains[:notified_at])   unless contains[:notified_at].blank?
+      new_provider_requests = new_provider_requests.where(processing_at: contains[:processing_at]) unless contains[:processing_at].blank?
 
       if contains[:is_notified]
         if contains[:is_notified].to_i == 1
-          provider_wishes = provider_wishes.notified
+          new_provider_requests = new_provider_requests.notified
         elsif contains[:is_notified].to_i == 0
-          provider_wishes = provider_wishes.not_notified
+          new_provider_requests = new_provider_requests.not_notified
         end
       end
 
-      provider_wishes
+      new_provider_requests
     end
-
 
     def search_for_collection(collection, contains)
       collection = collection.where("name LIKE ?", "%#{contains[:name]}%") unless contains[:name].blank?

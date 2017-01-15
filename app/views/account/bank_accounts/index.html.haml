@@ -22,9 +22,9 @@
           %thead
             %tr
               %th= check_box_tag 'master_checkbox', 0, false
-              %th= t('mongoid.models.bank_account.attributes.bank_name')
-              %th= t('mongoid.models.bank_account.attributes.name')
-              %th= t('mongoid.models.bank_account.attributes.number')
+              %th= t('activerecord.models.bank_account.attributes.bank_name')
+              %th= t('activerecord.models.bank_account.attributes.name')
+              %th= t('activerecord.models.bank_account.attributes.number')
           %tbody
             = hidden_field_tag 'bank_account_ids[]'
             - @bank_accounts.each do |bank_account|

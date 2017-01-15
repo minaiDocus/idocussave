@@ -1,22 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Operation < ActiveRecord::Base
   belongs_to :organization
-  belongs_to :user,                                                                     index: true
-  belongs_to :bank_account,                                                             index: true
+  belongs_to :user
+  belongs_to :bank_account
   belongs_to :pack
   belongs_to :piece,   class_name: 'Pack::Piece',              inverse_of: :operations
   has_one :preseizure, class_name: 'Pack::Report::Preseizure', inverse_of: :operation
-
-  # TODO add those indexes
-  # index({ api_id: 1 })
-  # index({ api_name: 1 })
-
-  # TODO add those fields through migration
-  # field :api_id
-  # field :api_name
-
-  # TODO review these field
-  # field :type
 
   validates_presence_of :date, :label, :amount
 

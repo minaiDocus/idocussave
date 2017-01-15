@@ -1,41 +1,19 @@
 # -*- encoding : UTF-8 -*-
 class TempDocument < ActiveRecord::Base
-  serialize :fiduceo_metadata, Hash
   serialize :scan_bundling_document_ids, Array
 
   validates_inclusion_of :delivery_type, within: %w(scan upload dematbox_scan retriever)
 
-  # TODO add those indexes
-  # index({ delivery_type: 1 })
-  # index({ state: 1 })
-  # index({ is_an_original: 1 })
-  # index({ api_id: 1 })
+  serialize :retrieved_metadata, Hash
+  serialize :metadata, Hash
 
-
-  # TODO replace those fields
-  # field :fiduceo_id
-  # field :fiduceo_metadata, type: Hash
-  # field :fiduceo_service_name
-  # field :fiduceo_custom_service_name
-  # by those fields
-  # field :api_id
-  # field :api_name
-  # field :retrieved_metadata
-  # field :retriever_service_name
-  # field :retriever_name
-  # field :metadata, type: Hash
-
-
-  # TODO index user_id
   belongs_to :user
   belongs_to :email
   belongs_to :piece, class_name: 'Pack::Piece', inverse_of: :temp_document
   belongs_to :temp_pack
   belongs_to :organization
   belongs_to :document_delivery
-  # TODO index retriever_id
   belongs_to :retriever
-
 
   has_attached_file :content, styles: { thumb: ['46x67>', :png] },
                                           path: ':rails_root/files/:rails_env/:class/:id/:filename',
@@ -230,13 +208,13 @@ class TempDocument < ActiveRecord::Base
     user = collection.first.user if collection.first
 
     if contains[:service_name]
-      retriever_ids = user.fiduceo_retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
+      retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
 
-      collection = collection.where(fiduceo_retriever_id: retriever_ids)
+      collection = collection.where(retriever_id: retriever_ids)
     elsif contains[:retriever_id]
-      retriever = user.fiduceo_retrievers.find(contains[:retriever_id])
+      retriever = user.retrievers.find(contains[:retriever_id])
 
-      collection = collection.where(fiduceo_retriever_id: @retriever.id)
+      collection = collection.where(retriever_id: @retriever.id)
     end
 
     if contains[:transaction_id]

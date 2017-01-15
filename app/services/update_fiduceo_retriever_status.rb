@@ -48,7 +48,8 @@ class UpdateFiduceoRetrieverStatus
     def execute(retriever_id, fetch_data=true)
       new(retriever_id, fetch_data).execute
     end
-    handle_asynchronously :execute, priority: 2, run_at: Proc.new { 5.seconds.from_now }
+    # TODO change with sidekiq worker system
+    # handle_asynchronously :execute, priority: 2, run_at: Proc.new { 5.seconds.from_now }
   end
 
   def initialize(object, fetch_data=true)

@@ -4,7 +4,8 @@ class FetchFiduceoData
     def execute(retriever_id)
       new(retriever_id).execute
     end
-    handle_asynchronously :execute, priority: 2
+    # TODO change with sidekiq worker system
+    # handle_asynchronously :execute, priority: 2
   end
 
   def initialize(object)

@@ -13,7 +13,7 @@ class DestroyBudgeaConnection
 
   def destroy
     is_destroyed = false
-    @user.budgea_account.with_lock(timeout: 2, retries: 10, retry_sleep: 0.2) do
+    lock.synchronize("#{@user.id}_destroy_budgea_connection", expiry: 4.seconds) do
       if @retriever.budgea_id.nil? || is_retriever_not_uniq?
         @retriever.bank_accounts.destroy_all
         is_destroyed = @retriever.destroy_budgea_connection
@@ -39,5 +39,9 @@ private
 
   def is_retriever_not_uniq?
     @user.retrievers.where(budgea_id: @retriever.budgea_id).count > 1
+  end
+
+  def lock
+    $lock ||= RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
   end
 end

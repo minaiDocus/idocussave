@@ -35,7 +35,7 @@ class ProcessRetrievedData
           workers_count = threads_count - queue.size
           retrieved_data = []
           if workers_count > 0
-            retrieved_data = RetrievedData.not_processed.where(:_id.nin => processing_ids).limit(workers_count).to_a.
+            retrieved_data = RetrievedData.not_processed.where.not(id: processing_ids).limit(workers_count).to_a.
               select do |e|
                 if e.user_id.in?(user_ids)
                   false
@@ -77,7 +77,7 @@ class ProcessRetrievedData
     @retrieved_data.content['connections'].each do |connection|
       unless connection['id'].in?(@retrieved_data.processed_connection_ids)
         is_connection_ok = true
-        retriever = user.retrievers.where(budgea_id: connection['id']).asc(:created_at).first
+        retriever = user.retrievers.where(budgea_id: connection['id']).order(created_at: :asc).first
         if retriever
           is_new_transaction_present = false
           if connection['accounts'].present?
@@ -87,15 +87,12 @@ class ProcessRetrievedData
               else
                 user.bank_accounts
               end
-              bank_account = bank_accounts.any_of(
-                  {
-                    api_id: account['id']
-                  },
-                  {
-                    bank_name: retriever.service_name,
-                    number:    account['number']
-                  }
-                ).first
+              bank_account = bank_accounts.where(
+                'api_id = ? OR (bank_name = ? AND number = ?)',
+                account['id'],
+                retriever.service_name,
+                account['number']
+              ).first
 
               if bank_account
                 # NOTE 'deleted' type is datetime
@@ -173,7 +170,11 @@ class ProcessRetrievedData
                       operation.user         = user
                       operation.api_id       = transaction['id']
                       operation.api_name     = 'budgea'
-                      operation.is_locked    = !is_configured
+                      if operation.date < Time.local(2017,1,1).to_date
+                        operation.is_locked = true
+                      else
+                        operation.is_locked = !is_configured
+                      end
                       assign_attributes(operation, transaction)
                       operation.save
                     end
@@ -294,7 +295,7 @@ class ProcessRetrievedData
     end
 
     if @retrieved_data.error?
-      addresses = Array(Settings.notify_errors_to)
+      addresses = Array(Settings.first.try(:notify_errors_to))
       if addresses.size > 0
         NotificationMailer.notify(
           addresses,
@@ -315,7 +316,7 @@ private
     operation.label       = transaction['original_wording']
     operation.amount      = transaction['value']
     operation.comment     = transaction['comment']
-    operation.type        = transaction['type']
+    operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
     operation.category    = BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
   end

@@ -15,14 +15,14 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :created_at,    t('mongoid.models.common.attributes.created_at')
-                %th= sortable :updated_at,    t('mongoid.models.common.attributes.updated_at')
-                %th= sortable :user_id,       t('mongoid.models.user.name')
-                %th= sortable :state,         t('mongoid.models.new_provider_request.attributes.state')
-                %th= sortable :api_id,        t('mongoid.models.new_provider_request.attributes.api_id')
-                %th= sortable :name,          t('mongoid.models.new_provider_request.attributes.name')
-                %th= sortable :notified_at,   t('mongoid.models.new_provider_request.attributes.notified_at')
-                %th= sortable :processing_at, t('mongoid.models.new_provider_request.attributes.processing_at')
+                %th= sortable :created_at,    t('activerecord.models.common.attributes.created_at')
+                %th= sortable :updated_at,    t('activerecord.models.common.attributes.updated_at')
+                %th= sortable :user_id,       t('activerecord.models.user.name')
+                %th= sortable :state,         t('activerecord.models.new_provider_request.attributes.state')
+                %th= sortable :api_id,        t('activerecord.models.new_provider_request.attributes.api_id')
+                %th= sortable :name,          t('activerecord.models.new_provider_request.attributes.name')
+                %th= sortable :notified_at,   t('activerecord.models.new_provider_request.attributes.notified_at')
+                %th= sortable :processing_at, t('activerecord.models.new_provider_request.attributes.processing_at')
                 %th Actions
             %tbody
               - @new_provider_requests.each do |new_provider_request|

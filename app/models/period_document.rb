@@ -8,10 +8,6 @@ class PeriodDocument < ActiveRecord::Base
   belongs_to :period, inverse_of: :documents
   belongs_to :organization
 
-  # TODO migrate fiduceo_pieces and fiduceo_pages to those fields
-  # field :retrieved_pieces, type: Integer, default: 0
-  # field :retrieved_pages,  type: Integer, default: 0
-
   validate  :uniqueness_of_name
   validates :paperclips, numericality: { greater_than_or_equal_to: 0 }
   validates :oversized,  numericality: { greater_than_or_equal_to: 0 }

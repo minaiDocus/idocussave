@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Account::Organization::RetrievedBankingOperationsController < Account::Organization::RetrieverController
   def index
-    @operations = Operation.search_for_collection(@customer.operations.fiduceo, search_terms(params[:banking_operation_contains])).order(sort_column => sort_direction).includes(:bank_account)
+    @operations = Operation.search_for_collection(@customer.operations.retrieved, search_terms(params[:banking_operation_contains])).order(sort_column => sort_direction).includes(:bank_account)
     @operations_count = @operations.count
     @operations = @operations.page(params[:page]).per(params[:per_page])
   end

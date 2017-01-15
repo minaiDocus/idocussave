@@ -1,17 +1,15 @@
 # -*- encoding : UTF-8 -*-
-class Connector
-  include Mongoid::Document
-  include Mongoid::Timestamps
-
+class Connector < ActiveRecord::Base
   has_many :retrievers
 
-  field :name
-  field :capabilities
-  field :apis
-  field :active_apis
-  field :budgea_id,   type: Integer
-  field :fiduceo_ref  # real id or the name of one field inside combined_fields
+  serialize :capabilities, Array
+  serialize :apis, Array
+  serialize :active_apis, Array
+  serialize :combined_fields, Hash
 
+  # field 'fiduceo_ref' contains real id or the name of one field inside combined_fields
+
+  # example of field 'combined_fields'
   # {
   #   login: {
   #      label:        'Identifiant',
@@ -41,7 +39,6 @@ class Connector
   #    },
   # ...
   # }
-  field :combined_fields, type: Hash
 
   validates_presence_of :name, :capabilities, :apis, :active_apis, :combined_fields
   validates_presence_of :budgea_id,   if: Proc.new { |c| c.fiduceo_ref.nil? }
@@ -50,15 +47,17 @@ class Connector
   validates_inclusion_of :apis,         in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea']]
   validates_inclusion_of :active_apis,  in: [['budgea'], ['fiduceo'], ['budgea', 'fiduceo'], ['fiduceo', 'budgea']]
 
-  scope :budgea,              -> { where(apis: 'budgea' ) }
-  scope :fiduceo,             -> { where(apis: 'fiduceo' ) }
-  scope :budgea_and_fiduceo,  -> { where(:apis.all => ['budgea', 'fiduceo']) }
-  scope :providers,           -> { where(capabilities: 'document' ) }
-  scope :banks,               -> { where(capabilities: 'bank' ) }
-  scope :providers_and_banks, -> { where(:capabilities.all => ['bank', 'document']) }
+  scope :budgea,              -> { where("apis LIKE '%budgea%'") }
+  scope :fiduceo,             -> { where("apis LIKE '%fiduceo%'") }
+  # TODO correct this query
+  scope :budgea_and_fiduceo,  -> { where(apis: ['budgea', 'fiduceo']) }
+  scope :providers,           -> { where("capabilities LIKE '%document%'") }
+  scope :banks,               -> { where("capabilities LIKE '%bank%'") }
+  # TODO correct this query
+  scope :providers_and_banks, -> { where(capabilities: ['bank', 'document']) }
 
   def self.list
-    criteria.map(&:public_attributes)
+    relation.map(&:public_attributes)
   end
 
   def fiduceo_id(value=nil)

@@ -1,14 +1,8 @@
 # -*- encoding : UTF-8 -*-
-class BudgeaAccount
-  include Mongoid::Document
-  include Mongoid::Timestamps
-  include Mongoid::Locker
-
+class BudgeaAccount < ActiveRecord::Base
   belongs_to :user
 
-  field :identifier
-  # TODO encrypt me
-  field :access_token
+  # TODO encrypt access_token field
 
   validates_presence_of :identifier, :access_token
 end

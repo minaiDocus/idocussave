@@ -20,53 +20,53 @@
     .span12
       %table.table.table-striped.table-condensed.table-bordered
         %tr
-          %th= t('mongoid.models.common.attributes.created_at')
+          %th= t('activerecord.models.common.attributes.created_at')
           %td= l @new_provider_request.created_at
         %tr
-          %th= t('mongoid.models.common.attributes.updated_at')
+          %th= t('activerecord.models.common.attributes.updated_at')
           %td= l @new_provider_request.updated_at
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.processing_at')
+          %th= t('activerecord.models.new_provider_request.attributes.processing_at')
           %td
             - if @new_provider_request.processing_at
               = l @new_provider_request.processing_at
             - else
               %i.gray vide
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.notified_at')
+          %th= t('activerecord.models.new_provider_request.attributes.notified_at')
           %td
             - if @new_provider_request.notified_at
               = l @new_provider_request.notified_at
             - else
               %i.gray vide
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.state')
+          %th= t('activerecord.models.new_provider_request.attributes.state')
           %td= new_provider_request_state @new_provider_request
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.message')
+          %th= t('activerecord.models.new_provider_request.attributes.message')
           %td
             - if @new_provider_request.message.presence
               = @new_provider_request.message
             - else
               %i.gray vide
         %tr
-          %th= t('mongoid.models.user.name')
+          %th= t('activerecord.models.user.name')
           %td= link_to @new_provider_request.user, [:admin, @new_provider_request.user]
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.name')
+          %th= t('activerecord.models.new_provider_request.attributes.name')
           %td= @new_provider_request.name
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.url')
+          %th= t('activerecord.models.new_provider_request.attributes.url')
           %td= @new_provider_request.url
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.email')
+          %th= t('activerecord.models.new_provider_request.attributes.email')
           %td= @new_provider_request.email
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.login')
+          %th= t('activerecord.models.new_provider_request.attributes.login')
           %td= @new_provider_request.login
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.types')
+          %th= t('activerecord.models.new_provider_request.attributes.types')
           %td= @new_provider_request.types
         %tr
-          %th= t('mongoid.models.new_provider_request.attributes.description')
+          %th= t('activerecord.models.new_provider_request.attributes.description')
           %td= @new_provider_request.description

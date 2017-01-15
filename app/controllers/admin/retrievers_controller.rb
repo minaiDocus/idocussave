@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Admin::RetrieversController < Admin::AdminController
   def index
-    @retrievers = FiduceoRetriever.search(search_terms(params[:retriever_contains])).order(sort_column => sort_direction).includes(:user, :journal)
+    @retrievers = Retriever.search(search_terms(params[:retriever_contains])).order(sort_column => sort_direction).includes(:user, :journal)
     @retrievers_count = @retrievers.count
     @retrievers = @retrievers.page(params[:page]).per(params[:per_page])
   end

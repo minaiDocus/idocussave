@@ -2,7 +2,9 @@
 class Pack < ActiveRecord::Base
   serialize :delivered_user_ids, Hash
   serialize :processed_user_ids, Hash
-
+  # TODO actually those fileds are strings and cannot be converted to array automatically, correct them
+  # serialize :content_historic, Array
+  # serialize :tags, Array
 
   CODE_PATTERN      = '[a-zA-Z0-9]+[%#]*[a-zA-Z0-9]*'.freeze
   PERIOD_PATTERN    = '\d{4}([01T]\d)*'.freeze

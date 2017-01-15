@@ -4,7 +4,7 @@ same_id = (element) ->
 update_form = ->
   connector = null
   window.retriever_id = $('#retriever_connector_id').val()
-  if window.retriever_id.length == 24
+  if window.retriever_id.length > 0
     connector = window.connectors.filter(same_id)[0]
 
   update_connector_info(connector)

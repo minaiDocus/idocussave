@@ -2,9 +2,6 @@
 class Pack::Piece < ActiveRecord::Base
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
-  # TODO add these index
-  # index({ number: 1 }, { unique: true })
-
   before_validation :set_number
 
 

@@ -120,7 +120,7 @@ describe ProcessRetrievedData do
       operation.label        = "FACTURE CB HALL'S BEER"
       operation.amount       = -16.22
       operation.comment      = nil
-      operation.type         = 'card'
+      operation.type_name    = 'card'
       operation.category_id  = 9998
       operation.category     = 'Indéfini'
       operation.save
@@ -153,7 +153,7 @@ describe ProcessRetrievedData do
         @operation.label        = "FACTURE CB HALL'S BEER"
         @operation.amount       = -16.22
         @operation.comment      = nil
-        @operation.type         = 'card'
+        @operation.type_name    = 'card'
         @operation.category_id  = 9998
         @operation.category     = 'Indéfini'
         @operation.save
@@ -199,7 +199,7 @@ describe ProcessRetrievedData do
 
         @operation.reload
         expect(@user.operations.count).to eq 1
-        expect(@operation.api_id).to eq 309
+        expect(@operation.api_id).to eq '309'
         expect(@operation.bank_account).to eq @bank_account
       end
     end
@@ -224,7 +224,7 @@ describe ProcessRetrievedData do
     ProcessRetrievedData.new(retrieved_data).execute
 
     bank_account.reload
-    expect(bank_account.api_id).to eq 17
+    expect(bank_account.api_id).to eq '17'
     expect(bank_account.api_name).to eq 'budgea'
     expect(bank_account.name).to eq 'Compte chèque'
   end
@@ -307,7 +307,7 @@ describe ProcessRetrievedData do
         is_content_file_valid: true
       }
       file = File.open(Rails.root.join('spec', 'support', 'files', '2pages.pdf'), 'r')
-      temp_document = pack.add file, options
+      temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       @retriever.temp_documents << temp_document
       file.close
     end
@@ -474,7 +474,7 @@ describe ProcessRetrievedData do
         operation.label                = "FACTURE CB HALL'S BEER"
         operation.amount               = -16.22
         operation.comment              = nil
-        operation.type                 = 'card'
+        operation.type_name            = 'card'
         operation.category_id          = 9998
         operation.category             = 'Indéfini'
         operation.save
@@ -507,7 +507,7 @@ describe ProcessRetrievedData do
           @operation.label                = "FACTURE CB HALL'S BEER"
           @operation.amount               = -16.22
           @operation.comment              = nil
-          @operation.type                 = 'card'
+          @operation.type_name            = 'card'
           @operation.category_id          = 9998
           @operation.category             = 'Indéfini'
           @operation.save
@@ -553,7 +553,7 @@ describe ProcessRetrievedData do
 
           @operation.reload
           expect(@user.sandbox_operations.count).to eq 1
-          expect(@operation.api_id).to eq 309
+          expect(@operation.api_id).to eq '309'
           expect(@operation.sandbox_bank_account).to eq @bank_account
         end
       end

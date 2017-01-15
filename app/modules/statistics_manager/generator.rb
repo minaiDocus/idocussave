@@ -48,11 +48,11 @@ class StatisticsManager::Generator
 
   def self.calculate_fiduceo_retrievers_statistics
     [
-      ['error_fiduceo_retrievers_count', FiduceoRetriever.error.count],
-      ['scheduled_fiduceo_retrievers_count', FiduceoRetriever.scheduled.count],
-      ['processing_fiduceo_retrievers_count', FiduceoRetriever.processing.count],
-      ['wait_selection_fiduceo_retrievers_count', FiduceoRetriever.wait_selection.count],
-      ['wait_for_user_action_fiduceo_retrievers_count', FiduceoRetriever.wait_for_user_action.count]
+      # ['error_fiduceo_retrievers_count', FiduceoRetriever.error.count],
+      # ['scheduled_fiduceo_retrievers_count', FiduceoRetriever.scheduled.count],
+      # ['processing_fiduceo_retrievers_count', FiduceoRetriever.processing.count],
+      # ['wait_selection_fiduceo_retrievers_count', FiduceoRetriever.wait_selection.count],
+      # ['wait_for_user_action_fiduceo_retrievers_count', FiduceoRetriever.wait_for_user_action.count]
     ]
   end
 
@@ -60,7 +60,7 @@ class StatisticsManager::Generator
   def self.calculate_documents_statistics
     [
       ['documents_count', Document.count],
-      ['fiduceo_documents_count', Document.fiduceo.count],
+      ['fiduceo_documents_count', Document.retrieved.count],
       ['scanned_documents_count', Document.scanned.count],
       ['uploaded_documents_count', Document.uploaded.count],
       ['dematbox_scanned_documents_count', Document.dematbox_scanned.count],
@@ -74,7 +74,7 @@ class StatisticsManager::Generator
     [
       ['operations_count', Operation.count],
       ['other_operations_count', Operation.other.count],
-      ['fiduceo_operations_count' ,Operation.fiduceo.count],
+      ['fiduceo_operations_count' ,Operation.retrieved.count],
       ['processed_operations_count', Operation.processed.count],
       ['not_processed_locked_operations_count', Operation.not_processed.locked.count],
       ['not_processed_not_locked_operations_count', Operation.not_processed.not_locked.count],

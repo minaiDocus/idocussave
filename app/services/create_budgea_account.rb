@@ -9,25 +9,23 @@ class CreateBudgeaAccount
   end
 
   def execute
-    @user.options.with_lock(timeout: 10, retry_sleep: 1) do
-      unless @user.budgea_account.try(:persisted?)
-        result = try_request { client.create_user }
+    unless @user.budgea_account.try(:persisted?)
+      result = try_request { client.create_user }
+      if client.response.code == 200
+        budgea_account = BudgeaAccount.new
+        budgea_account.user = @user
+        budgea_account.access_token = result
+        profiles = try_request { client.get_profiles }
         if client.response.code == 200
-          budgea_account = BudgeaAccount.new
-          budgea_account.user = @user
-          budgea_account.access_token = result
-          profiles = try_request { client.get_profiles }
-          if client.response.code == 200
-            budgea_account.identifier = profiles.first['id_user']
-          else
-            message = "[#{@user.code}] Get identifier<br/>[#{client.response.code}] : #{client.response.body}"
-            notify_failure(message)
-          end
-          budgea_account.save
+          budgea_account.identifier = profiles.first['id_user']
         else
-          message = "[#{@user.code}] Create user<br/>[#{client.response.code}] : #{client.response.body}"
+          message = "[#{@user.code}] Get identifier<br/>[#{client.response.code}] : #{client.response.body}"
           notify_failure(message)
         end
+        budgea_account.save
+      else
+        message = "[#{@user.code}] Create user<br/>[#{client.response.code}] : #{client.response.body}"
+        notify_failure(message)
       end
     end
     @user.budgea_account.try(:persisted?)

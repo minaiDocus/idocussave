@@ -2,10 +2,6 @@
 class PeriodBilling < ActiveRecord::Base
   belongs_to :period
 
-  # TODO migrate fiduceo_pieces and fiduceo_pages to those fields
-  # field :retrieved_pieces, type: Integer, default: 0
-  # field :retrieved_pages,  type: Integer, default: 0
-
   validate :uniqueness_of_order
   validates_presence_of  :order, :amount_in_cents_wo_vat, :excesses_amount_in_cents_wo_vat
   validates_inclusion_of :order, in: 1..12

@@ -1,8 +1,5 @@
 # -*- encoding : UTF-8 -*-
-class Retriever
-  include Mongoid::Document
-  include Mongoid::Timestamps
-
+class Retriever < ActiveRecord::Base
   attr_accessor :confirm_dyn_params
 
   belongs_to :user
@@ -13,35 +10,17 @@ class Retriever
   has_many   :sandbox_documents
   has_many   :sandbox_bank_accounts
 
-  field :budgea_id,              type: Integer
-  field :fiduceo_id
-  field :fiduceo_transaction_id
-  field :name
-  # TODO encrypt
-  field :param1,                 type: Hash
-  field :param2,                 type: Hash
-  field :param3,                 type: Hash
-  field :param4,                 type: Hash
-  field :param5,                 type: Hash
-  field :additionnal_fields,     type: Array
-  field :answers,                type: Hash
-  field :journal_name
-  field :sync_at,                type: Time
-  field :is_sane,                type: Boolean, default: true
-  field :is_new_password_needed, type: Boolean, default: false
-  field :is_selection_needed,    type: Boolean, default: true
-  field :state
-  field :error_message
+  serialize :param1
+  serialize :param2
+  serialize :param3
+  serialize :param4
+  serialize :param5
+  serialize :additionnal_fields
+  serialize :answers
+  serialize :budgea_additionnal_fields
+  serialize :fiduceo_additionnal_fields
 
-  field :budgea_state
-  field :budgea_additionnal_fields
-  field :budgea_error_message
-
-  field :fiduceo_state
-  field :fiduceo_additionnal_fields
-  field :fiduceo_error_message
-
-  index({ state: 1 })
+  # TODO encrypt param1, param2, param3, param4, param5
 
   validates_presence_of :name
   validates_presence_of :journal,      if: Proc.new { |r| r.provider? || r.provider_and_bank? }
@@ -76,7 +55,7 @@ class Retriever
   scope :waiting_additionnal_info, -> { where(state: 'waiting_additionnal_info') }
   scope :error,                    -> { where(state: 'error') }
   scope :unavailable,              -> { where(state: 'unavailable') }
-  scope :not_processed,            -> { where(:state.in => %w(configuring destroying running)) }
+  scope :not_processed,            -> { where(state: %w(configuring destroying running)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
 
   state_machine initial: :configuring do
@@ -280,18 +259,56 @@ class Retriever
 
   class << self
     def providers
-      connector_ids = Connector.where(capabilities: 'document').distinct(:_id)
+      connector_ids = Connector.where(capabilities: ['document']).distinct(:_id)
       where(:connector_id.in => connector_ids)
     end
 
     def banks
-      connector_ids = Connector.where(capabilities: 'bank').distinct(:_id)
+      connector_ids = Connector.where(capabilities: ['bank']).distinct(:_id)
       where(:connector_id.in => connector_ids)
     end
 
     def providers_and_banks
+      # TODO verify query
       connector_ids = Connector.where(:capabilities.all => %w(document bank)).distinct(:_id)
       where(:connector_id.in => connector_ids)
+    end
+
+    def search(contains)
+      retrievers = Retriever.all
+
+      user_ids = []
+
+      if contains[:user_code].present?
+        user_ids = User.where("code LIKE ?", "%#{params[:retriever_contains][:user_code]}%").pluck(:id)
+      end
+
+      if contains[:created_at]
+        contains[:created_at].each do |operator, value|
+          retrievers = retrievers.where("created_at #{operator} '#{value}'")
+        end
+      end
+
+      if contains[:updated_at]
+        contains[:updated_at].each do |operator, value|
+          retrievers = retrievers.where("updated_at #{operator} '#{value}'")
+        end
+      end
+
+      retrievers = retrievers.where(user_id:               user_ids)                       if user_ids.any?
+      # TODO verify query
+      retrievers = retrievers.where(capabilities:          [contains[:capabilities]])      if contains[:capabilities].present?
+      retrievers = retrievers.where(is_sane:               contains[:is_sane])             if contains[:is_sane].present?
+      retrievers = retrievers.where("name LIKE ?",         "%#{contains[:name]}%")         if contains[:name].present?
+      retrievers = retrievers.where("state LIKE ?",        "%#{contains[:state]}%")        if contains[:state].present?
+      retrievers = retrievers.where("service_name LIKE ?", "%#{contains[:service_name]}%") if contains[:service_name].present?
+
+      retrievers
+    end
+
+    def search_for_collection(collection, contains)
+      collection = collection.where('name LIKE ?', "%#{contains[:name]}%") unless contains[:name].blank?
+      collection
     end
   end
 

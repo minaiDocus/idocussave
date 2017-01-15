@@ -10,11 +10,6 @@ class PackDivider < ActiveRecord::Base
   validates_inclusion_of :type, within: %w(sheet piece)
   validates_inclusion_of :origin, within: %w(scan upload dematbox_scan retriever)
 
-  # TODO add those indexes
-  # index({ type: 1 })
-  # index({ origin: 1 })
-  # index({ is_a_cover: 1 })
-
   scope :sheets,           -> { where(type: 'sheet') }
   scope :covers,           -> { where(is_a_cover: true) }
   scope :pieces,           -> { where(type: 'piece') }

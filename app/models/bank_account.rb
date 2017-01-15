@@ -9,10 +9,6 @@ class BankAccount < ActiveRecord::Base
   before_save :upcase_journal
   before_validation :set_foreign_journal, if: proc { |bank_account| bank_account.persisted? }
 
-  # TODO add those fields through migration
-  # field :api_id
-  # field :api_name, default: 'budgea'
-
   validates_presence_of :api_id, :bank_name, :name, :number
   validate :uniqueness_of_number
 

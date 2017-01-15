@@ -29,6 +29,7 @@
   - [dematbox, 9]
   - [default, 2]
   - [mailers, 3]
+  - [retrievers, 9]
 
 # you can override concurrency based on environment
 production:

@@ -1,10 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class Document < ActiveRecord::Base
-  # TODO add those indexes
-  # index({ origin: 1 })
-  # index({ is_a_cover: 1 })
-  # index({ dirty: 1 })
-
   serialize :tags
 
 

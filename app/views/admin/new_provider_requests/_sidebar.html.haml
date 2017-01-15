@@ -8,7 +8,7 @@
       = hidden_field_tag :sort, sort_column
       = hidden_field_tag :per_page, per_page
 
-      = label_tag 'new_provider_request_contains[created_at][$gte]', t('mongoid.models.common.attributes.created_at')
+      = label_tag 'new_provider_request_contains[created_at][$gte]', t('activerecord.models.common.attributes.created_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
@@ -19,7 +19,7 @@
             <=
           = text_field_tag 'new_provider_request_contains[created_at][$lte]', (params[:new_provider_request_contains][:created_at]['$lte'] rescue '')
 
-      = label_tag 'new_provider_request_contains[updated_at][$gte]', t('mongoid.models.common.attributes.updated_at')
+      = label_tag 'new_provider_request_contains[updated_at][$gte]', t('activerecord.models.common.attributes.updated_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
@@ -30,28 +30,28 @@
             <=
           = text_field_tag 'new_provider_request_contains[updated_at][$lte]', (params[:new_provider_request_contains][:updated_at]['$lte'] rescue '')
 
-      = label_tag 'user_contains[code]', t('mongoid.models.user.name')
+      = label_tag 'user_contains[code]', t('activerecord.models.user.name')
       = text_field_tag 'user_contains[code]', (params[:user_contains][:code] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[state]', t('mongoid.models.new_provider_request.attributes.state')
+      = label_tag 'new_provider_request_contains[state]', t('activerecord.models.new_provider_request.attributes.state')
       = select_tag 'new_provider_request_contains[state]', options_for_select(NewProviderRequest.state_machine.states.map { |e| [e.human_name, e.name] }, (params[:new_provider_request_contains][:state] rescue '')), include_blank: true
 
-      = label_tag 'new_provider_request_contains[name]', t('mongoid.models.new_provider_request.attributes.name')
+      = label_tag 'new_provider_request_contains[name]', t('activerecord.models.new_provider_request.attributes.name')
       = text_field_tag 'new_provider_request_contains[name]', (params[:new_provider_request_contains][:name] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[url]', t('mongoid.models.new_provider_request.attributes.url')
+      = label_tag 'new_provider_request_contains[url]', t('activerecord.models.new_provider_request.attributes.url')
       = text_field_tag 'new_provider_request_contains[url]', (params[:new_provider_request_contains][:url] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[email]', t('mongoid.models.new_provider_request.attributes.email')
+      = label_tag 'new_provider_request_contains[email]', t('activerecord.models.new_provider_request.attributes.email')
       = text_field_tag 'new_provider_request_contains[email]', (params[:new_provider_request_contains][:email] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[login]', t('mongoid.models.new_provider_request.attributes.login')
+      = label_tag 'new_provider_request_contains[login]', t('activerecord.models.new_provider_request.attributes.login')
       = text_field_tag 'new_provider_request_contains[login]', (params[:new_provider_request_contains][:login] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[is_notified]', t('mongoid.models.new_provider_request.attributes.is_notified')
+      = label_tag 'new_provider_request_contains[is_notified]', t('activerecord.models.new_provider_request.attributes.is_notified')
       = select_tag 'new_provider_request_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:new_provider_request_contains][:is_notified] rescue '')), include_blank: true
 
-      = label_tag 'new_provider_request_contains[notified_at][$gte]', t('mongoid.models.new_provider_request.attributes.notified_at')
+      = label_tag 'new_provider_request_contains[notified_at][$gte]', t('activerecord.models.new_provider_request.attributes.notified_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
@@ -62,7 +62,7 @@
             <=
           = text_field_tag 'new_provider_request_contains[notified_at][$lte]', (params[:new_provider_request_contains][:notified_at]['$lte'] rescue '')
 
-      = label_tag 'new_provider_request_contains[processing_at][$gte]', t('mongoid.models.new_provider_request.attributes.processing_at')
+      = label_tag 'new_provider_request_contains[processing_at][$gte]', t('activerecord.models.new_provider_request.attributes.processing_at')
       .filter_date
         .input-prepend.date.datepicker
           %span.add-on
