@@ -853,7 +853,7 @@ ActiveRecord::Schema.define(version: 20170116191432) do
     t.string   "pack_id_mongo_id",           limit: 255
   end
 
-  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", unique: true
+  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number"
 
   create_table "pack_report_expenses", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255

@@ -1,13 +1,19 @@
 class ChangeOperations < ActiveRecord::Migration
-  def change
-    rename_column :operations, :fiduceo_id, :api_id
-    add_column :operations, :api_name, :string, default: 'budgea'
-    add_column :operations, :type_name, :string
+  def up
+    change_table :operations, bulk: true do |t|
+      t.rename :fiduceo_id, :api_id
+      t.column :api_name, :string, default: 'budgea'
+      t.column :type_name, :string
+      t.index :api_name
+    end
+  end
 
-    remove_index :operations, name: :fiduceo_id
-    add_index :operations, :api_id
-    add_index :operations, :api_name
-    add_index :operations, :user_id
-    add_index :operations, :bank_account_id
+  def down
+    change_table :operations, bulk: true do |t|
+      t.rename :api_id, :fiduceo_id
+      t.remove :api_name, :string
+      t.remove :type_name, :string
+      t.remove_index :api_name
+    end
   end
 end

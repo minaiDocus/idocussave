@@ -1,7 +1,17 @@
 class AddIndexesToDocuments < ActiveRecord::Migration
-  def change
-    add_index :documents, :origin
-    add_index :documents, :is_a_cover
-    add_index :documents, :dirty
+  def up
+    change_table :documents, bulk: true do |t|
+      t.index :origin
+      t.index :is_a_cover
+      t.index :dirty
+    end
+  end
+
+  def down
+    change_table :documents, bulk: true do |t|
+      t.remove_index :origin
+      t.remove_index :is_a_cover
+      t.remove_index :dirty
+    end
   end
 end
