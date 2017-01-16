@@ -39,7 +39,7 @@ class Account::NewProviderRequestsController < Account::RetrieverController
 private
 
   def verify_rights
-    unless @user.options.is_retriever_authorized
+    unless @user.options.try(:is_retriever_authorized)
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end

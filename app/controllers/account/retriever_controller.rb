@@ -7,7 +7,7 @@ class Account::RetrieverController < Account::AccountController
   private
 
   def verify_rights
-    unless @user.options.is_retriever_authorized && @user.organization.is_active
+    unless @user.options.try(:is_retriever_authorized) && @user.organization.is_active
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to root_path
