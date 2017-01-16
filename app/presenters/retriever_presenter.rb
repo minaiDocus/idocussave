@@ -34,6 +34,15 @@ class RetrieverPresenter < BasePresenter
       h.content_tag :span, 'Synchronisation en cours', class: 'label'
     elsif retriever.destroying?
       h.content_tag :span, 'Suppression en cours', class: 'label'
+    elsif retriever.unavailable?
+      content = h.content_tag :span, formatted_state, class: 'label'
+      if scope == :account
+        content + h.link_to("Demander la création d'un automate", h.new_account_new_provider_request_path, class: 'btn btn-mini')
+      elsif scope == :collaborator
+        content + h.link_to("Demander la création d'un automate", h.new_account_organization_customer_new_provider_request_path(user.organization, user), class: 'btn btn-mini')
+      elsif scope == :admin
+        content + h.content_tag(:span, "Demander la création d'un automate", class: 'label')
+      end
     else
       label_type = 'success'   if retriever.ready?
       label_type = 'important' if retriever.error?
