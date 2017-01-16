@@ -260,18 +260,18 @@ class Retriever < ActiveRecord::Base
   class << self
     def providers
       connector_ids = Connector.where(capabilities: ['document']).distinct(:_id)
-      where(:connector_id.in => connector_ids)
+      where(connector_id: connector_ids)
     end
 
     def banks
       connector_ids = Connector.where(capabilities: ['bank']).distinct(:_id)
-      where(:connector_id.in => connector_ids)
+      where(connector_id: connector_ids)
     end
 
     def providers_and_banks
       # TODO verify query
       connector_ids = Connector.where(:capabilities.all => %w(document bank)).distinct(:_id)
-      where(:connector_id.in => connector_ids)
+      where(connector_id: connector_ids)
     end
 
     def search(contains)

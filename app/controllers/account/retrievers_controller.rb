@@ -53,7 +53,7 @@ class Account::RetrieversController < Account::RetrieverController
     redirect_to account_retrievers_path
   end
 
-  def sync
+  def run
     @retriever.run
     flash[:success] = 'Traitement en cours...'
     redirect_to account_retrievers_path
@@ -105,11 +105,11 @@ private
   def verify_rights
     is_ok = false
 
-    if action_name.in? %w(edit update destroy sync)
+    if action_name.in? %w(edit update destroy run)
       if action_name == 'destroy' && (@retriever.ready? || @retriever.error? || @retriever.unavailable?)
         is_ok = true
       elsif @retriever.ready? || @retriever.error?
-        is_ok = true unless action_name == 'sync' && @retriever.budgea_id.nil?
+        is_ok = true unless action_name == 'run' && @retriever.budgea_id.nil?
       end
     elsif action_name.in?(%w(waiting_additionnal_info additionnal_info)) && @retriever.waiting_additionnal_info?
       is_ok = true
