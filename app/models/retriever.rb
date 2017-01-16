@@ -19,6 +19,7 @@ class Retriever < ActiveRecord::Base
   serialize :answers
   serialize :budgea_additionnal_fields
   serialize :fiduceo_additionnal_fields
+  serialize :fiduceo_capabilities
 
   # TODO encrypt param1, param2, param3, param4, param5
 
@@ -329,11 +330,11 @@ class Retriever < ActiveRecord::Base
   end
 
   def capabilities
-    connector.try(:capabilities)
+    fiduceo_capabilities.presence || connector.try(:capabilities)
   end
 
   def service_name
-    connector.try(:name)
+    fiduceo_service_name.presence || connector.try(:name)
   end
 
 private

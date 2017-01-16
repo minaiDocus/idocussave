@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116191432) do
+ActiveRecord::Schema.define(version: 20170116212432) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -853,7 +853,7 @@ ActiveRecord::Schema.define(version: 20170116191432) do
     t.string   "pack_id_mongo_id",           limit: 255
   end
 
-  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number"
+  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", unique: true
 
   create_table "pack_report_expenses", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -1272,6 +1272,8 @@ ActiveRecord::Schema.define(version: 20170116191432) do
     t.integer  "user_id"
     t.integer  "journal_id"
     t.integer  "connector_id"
+    t.string   "fiduceo_service_name"
+    t.text     "fiduceo_capabilities"
   end
 
   add_index "retrievers", ["state"], name: "index_retrievers_on_state"
