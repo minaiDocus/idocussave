@@ -19,7 +19,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
     changes = @bank_account.changes.dup
     @bank_account.is_for_pre_assignment = true
     if @bank_account.save
-      @bank_account.operations.where(is_locked: true, :date.gte => @bank_account.start_date).update_all(is_locked: false)
+      @bank_account.operations.where("is_locked = ? and date => ?", true, @bank_account.start_date).update_all(is_locked: false)
       UpdatePreseizureAccountNumbers.async_execute(@bank_account.id.to_s, changes)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
@@ -31,8 +31,8 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
   def update_multiple
     bank_accounts = @user.bank_accounts
     if params[:bank_account_ids].is_a?(Array)
-      selected_bank_accounts = @user.bank_accounts.where(:_id.in => params[:bank_account_ids])
-      unselected_bank_accounts = @user.bank_accounts.where(:_id.nin => params[:bank_account_ids])
+      selected_bank_accounts = @user.bank_accounts.where(id: params[:bank_account_ids])
+      unselected_bank_accounts = @user.bank_accounts.where(id: params[:bank_account_ids])
       selected_bank_accounts.update_all(is_used: true)
       unselected_bank_accounts.update_all(is_used: false)
       flash[:success] = 'Modifié avec succès.'

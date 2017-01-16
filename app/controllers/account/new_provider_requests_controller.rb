@@ -5,7 +5,7 @@ class Account::NewProviderRequestsController < Account::RetrieverController
   before_filter :verify_if_modifiable
 
   def index
-    @new_provider_requests = search(new_provider_request_contains).order_by(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @new_provider_requests = search(new_provider_request_contains).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def new
