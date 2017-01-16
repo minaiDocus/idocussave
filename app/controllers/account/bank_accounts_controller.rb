@@ -13,7 +13,7 @@ class Account::BankAccountsController < Account::RetrieverController
     bank_accounts = @user.bank_accounts
     if params[:bank_account_ids].is_a?(Array)
       selected_bank_accounts = @user.bank_accounts.where(id: params[:bank_account_ids])
-      unselected_bank_accounts = @user.bank_accounts.where(id: params[:bank_account_ids])
+      unselected_bank_accounts = @user.bank_accounts.where.not(id: params[:bank_account_ids])
       selected_bank_accounts.update_all(is_used: true)
       unselected_bank_accounts.update_all(is_used: false)
       flash[:success] = 'Modifié avec succès.'
