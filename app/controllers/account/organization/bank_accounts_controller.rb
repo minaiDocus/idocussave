@@ -37,7 +37,7 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
       unselected_bank_accounts.update_all(is_used: false)
       flash[:success] = 'Modifié avec succès.'
     end
-    redirect_to account_organization_customer_bank_accounts_path(@organization, @customer, bank_account_contains: bank_account_contains)
+    redirect_to account_organization_customer_bank_accounts_path(@organization, @customer, bank_account_contains: params[:bank_account_contains])
   end
 
 private

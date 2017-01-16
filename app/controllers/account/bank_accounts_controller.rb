@@ -18,7 +18,7 @@ class Account::BankAccountsController < Account::RetrieverController
       unselected_bank_accounts.update_all(is_used: false)
       flash[:success] = 'Modifié avec succès.'
     end
-    redirect_to account_bank_accounts_path(bank_account_contains: bank_account_contains)
+    redirect_to account_bank_accounts_path(bank_account_contains: params[:bank_account_contains])
   end
 
 private

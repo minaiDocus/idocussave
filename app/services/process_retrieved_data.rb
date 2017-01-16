@@ -170,12 +170,12 @@ class ProcessRetrievedData
                       operation.user         = user
                       operation.api_id       = transaction['id']
                       operation.api_name     = 'budgea'
+                      assign_attributes(operation, transaction)
                       if operation.date < Time.local(2017,1,1).to_date
                         operation.is_locked = true
                       else
                         operation.is_locked = !is_configured
                       end
-                      assign_attributes(operation, transaction)
                       operation.save
                     end
                   end
