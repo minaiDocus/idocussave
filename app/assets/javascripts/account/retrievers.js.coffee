@@ -13,7 +13,7 @@ update_form = ->
   $('#params').html('')
 
   if connector
-    if connector['id'] == $('#params').data('connector-id')
+    if parseInt(connector['id']) == $('#params').data('connector-id')
       attributes = $('#params').data('attributes')
     else
       attributes = {}

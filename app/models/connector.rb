@@ -88,11 +88,6 @@ class Connector < ActiveRecord::Base
     hsh = {}
     combined_fields.each do |key, field|
       hsh[key] = field.slice(:name, :label, :type, :values)
-      if field['type'] == 'list'
-        hsh[key]['values'].each do |value|
-          value.slice!(:label)
-        end
-      end
     end
     hsh
   end
