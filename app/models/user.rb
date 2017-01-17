@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   has_many :periods
   has_many :expenses, class_name: 'Pack::Report::Expense',    inverse_of: :user
   has_many :invoices
-  has_many :children, class_name: 'User', inverse_of: :parent
+  has_many :children, class_name: 'User', inverse_of: :parent, foreign_key: :parent_id
   has_many :addresses, as: :locatable
   has_many :exercises
   has_many :temp_packs
@@ -50,16 +50,13 @@ class User < ActiveRecord::Base
   has_many :pack_pieces,  class_name: 'Pack::Piece',              inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report',             inverse_of: :user
   has_many :remote_files, dependent: :destroy
-  has_many :sended_emails, class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy
+  has_many :sended_emails, class_name: 'Email',                    inverse_of: :from_user, dependent: :destroy, foreign_key: :from_user_id
   has_many :bank_accounts,                                                                      dependent: :destroy
   has_many :temp_documents
   has_many :paper_processes
-  has_many :received_emails, class_name: 'Email',                    inverse_of: :to_user,   dependent: :destroy
+  has_many :received_emails, class_name: 'Email',                    inverse_of: :to_user,   dependent: :destroy, foreign_key: :to_user_id
   has_many :period_documents
   has_many :account_book_types
-  has_many :fiduceo_retrievers,      dependent: :destroy
-  has_many :fiduceo_transactions,    dependent: :destroy
-  has_many :fiduceo_provider_wishes, dependent: :destroy
   has_many :pre_assignment_deliveries
 
   belongs_to :parent,            class_name: 'User', inverse_of: :children

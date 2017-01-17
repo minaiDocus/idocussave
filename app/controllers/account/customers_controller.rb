@@ -306,7 +306,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def compta_options_params
-    params.require(:user).permit(options_attributes: [:is_taxable, :is_pre_assignment_date_computed])
+    params.require(:user).permit(options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed])
   end
 
 
