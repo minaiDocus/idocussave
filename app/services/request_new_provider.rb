@@ -17,6 +17,10 @@ class RequestNewProvider
     end
   end
 
+  def self.execute(new_provider_request_id)
+    new(new_provider_request_id).execute
+  end
+
 private
 
   def client

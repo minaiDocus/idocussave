@@ -66,13 +66,13 @@ class NewProviderRequest < ActiveRecord::Base
       end
     end
 
-    def search
+    def search(contains)
       new_provider_requests = NewProviderRequest.all
 
       user_ids = []
 
-      if params[:user_contains] && params[:user_contains][:code].present?
-        user_ids = User.where("code LIKE ?", "%#{params[:user_contains][:code]}%").distinct(:id)
+      if contains[:user_code] && contains[:user_code].present?
+        user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id)
       end
 
       new_provider_requests = new_provider_requests.where("url LIKE ?",   "%#{contains[:url]}%")   unless contains[:url].blank?
@@ -80,10 +80,30 @@ class NewProviderRequest < ActiveRecord::Base
       new_provider_requests = new_provider_requests.where("login LIKE ?", "%#{contains[:login]}%") unless contains[:login].blank?
       new_provider_requests = new_provider_requests.where(state:         contains[:state])         unless contains[:state].blank?
       new_provider_requests = new_provider_requests.where(user_id:       user_ids)                 if user_ids.any?
-      new_provider_requests = new_provider_requests.where(created_at:    contains[:created_at])    unless contains[:created_at].blank?
-      new_provider_requests = new_provider_requests.where(updated_at:    contains[:updated_at])    unless contains[:updated_at].blank?
-      new_provider_requests = new_provider_requests.where(notified_at:   contains[:notified_at])   unless contains[:notified_at].blank?
-      new_provider_requests = new_provider_requests.where(processing_at: contains[:processing_at]) unless contains[:processing_at].blank?
+
+      if contains[:created_at]
+        contains[:created_at].each do |operator, value|
+          new_provider_requests = new_provider_requests.where("created_at #{operator} ?", value)
+        end
+      end
+
+      if contains[:updated_at]
+        contains[:updated_at].each do |operator, value|
+          new_provider_requests = new_provider_requests.where("updated_at #{operator} ?", value)
+        end
+      end
+
+      if contains[:notified_at]
+        contains[:notified_at].each do |operator, value|
+          new_provider_requests = new_provider_requests.where("notified_at #{operator} ?", value)
+        end
+      end
+
+      if contains[:processing_at]
+        contains[:processing_at].each do |operator, value|
+          new_provider_requests = new_provider_requests.where("processing_at #{operator} ?", value)
+        end
+      end
 
       if contains[:is_notified]
         if contains[:is_notified].to_i == 1
@@ -94,12 +114,6 @@ class NewProviderRequest < ActiveRecord::Base
       end
 
       new_provider_requests
-    end
-
-    def search_for_collection(collection, contains)
-      collection = collection.where("name LIKE ?", "%#{contains[:name]}%") unless contains[:name].blank?
-
-      collection
     end
   end
 

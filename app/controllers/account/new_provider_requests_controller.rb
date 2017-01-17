@@ -5,7 +5,7 @@ class Account::NewProviderRequestsController < Account::RetrieverController
   before_filter :verify_if_modifiable
 
   def index
-    @new_provider_requests = search(new_provider_request_contains).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @new_provider_requests = @user.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def new
@@ -70,27 +70,4 @@ private
   end
   helper_method :sort_direction
 
-  def new_provider_request_contains
-    @contains ||= {}
-    if params[:new_provider_request_contains] && @contains.blank?
-      @contains = params[:new_provider_request_contains].delete_if do |_,value|
-        if value.blank? && !value.is_a?(Hash)
-          true
-        elsif value.is_a? Hash
-          value.delete_if { |k,v| v.blank? }
-          value.blank?
-        else
-          false
-        end
-      end
-    end
-    @contains
-  end
-  helper_method :new_provider_request_contains
-
-  def search(contains)
-    new_provider_requests = @user.new_provider_requests.not_processed_or_recent
-    new_provider_requests = new_provider_requests.where(:name => /#{Regexp.quote(contains[:name])}/i) unless contains[:name].blank?
-    new_provider_requests
-  end
 end
