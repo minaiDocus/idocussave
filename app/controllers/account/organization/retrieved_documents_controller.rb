@@ -3,7 +3,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
   before_filter :load_document, except: %w(index select validate)
 
   def index
-    @documents = TempDocument.search_for_collection(@customer.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:fiduceo_retriever).order(sort_column => sort_direction).includes(:piece)
+    @documents = TempDocument.search_for_collection(@customer.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction)
     @documents_count = @documents.count
     @documents = @documents.page(params[:page]).per(params[:per_page])
   end
@@ -34,7 +34,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
   end
 
   def select
-    @documents = TempDocument.search_for_collection(@customer.temp_documents.retrieved, search_terms(params[:document_contains])).order(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
+    @documents = TempDocument.search_for_collection(@customer.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
     @retriever.ready if @retriever && @retriever.waiting_selection?
   end
 

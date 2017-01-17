@@ -3,7 +3,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   before_filter :load_document, only: %w(show piece)
 
   def index
-    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:fiduceo_retriever).order(sort_column => sort_direction)
+    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction)
     @documents_count = @documents.count
     @documents = @documents.page(params[:page]).per(params[:per_page])
     @is_filter_empty = search_terms(params[:document_contains]).empty?
@@ -35,7 +35,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   end
 
   def select
-    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).wait_selection.includes(:fiduceo_retriever).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).wait_selection.includes(:retriever).includes(:piece).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @retriever.ready if @retriever && @retriever.waiting_selection?
     @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
