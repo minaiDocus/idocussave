@@ -279,7 +279,7 @@ class ProcessRetrievedData
             end
           end
 
-          retriever.update(sync_at: Time.parse(connection['last_update']))
+          retriever.update(sync_at: Time.parse(connection['last_update'])) if connection['last_update'].present?
           if retriever.is_selection_needed && (is_new_document_present || is_new_transaction_present) && retriever.wait_selection
             retriever.update(is_selection_needed: false)
           end
