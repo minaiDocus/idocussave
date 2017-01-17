@@ -12,7 +12,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
     filepath = FileStoragePathUtils.path_for_object(@document)
 
     if File.exist?(filepath)
-      file_name = @document.metadata['libelle'] + '.pdf'
+      file_name = @document.metadata['name'] + '.pdf'
 
       send_file(filepath, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
