@@ -18,7 +18,6 @@ class RenewBudgeaAccessToken
     client = Budgea::Client.new @account.access_token
     result = client.get_new_access_token @account.identifier
     if client.response.code == 200
-      debugger
       if client.delete_access_token
         @account.update(access_token: result['token'])
       else
