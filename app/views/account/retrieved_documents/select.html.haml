@@ -52,10 +52,10 @@
               %th= check_box_tag 'master_checkbox', 0, false
               %th= sortable :created_at,              'Date de la récupération'
               %th= sortable :retriever_id,            'Service'
-              %th= sortable 'metadata.date',          'Date'
-              %th= sortable 'metadata.name',          'Nom original'
+              %th Date
+              %th Nom original
               %th.pages= sortable :pages_number,      'Nb. pages'
-              %th.amount= sortable 'metadata.amount', 'Montant'
+              %th.amount Montant
           %tbody
             - @documents.each do |document|
               %tr
