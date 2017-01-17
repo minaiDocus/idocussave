@@ -207,23 +207,25 @@ class TempDocument < ActiveRecord::Base
   def self.search_for_collection(collection, contains)
     user = collection.first.user if collection.first
 
-    if contains[:service_name]
-      retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
+    if user
+      if contains[:service_name]
+        retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
 
-      collection = collection.where(retriever_id: retriever_ids)
-    elsif contains[:retriever_id]
-      retriever = user.retrievers.find(contains[:retriever_id])
+        collection = collection.where(retriever_id: retriever_ids)
+      elsif contains[:retriever_id]
+        retriever = user.retrievers.find(contains[:retriever_id])
 
-      collection = collection.where(retriever_id: @retriever.id)
+        collection = collection.where(retriever_id: @retriever.id)
+      end
+
+      if contains[:transaction_id]
+        transaction = user.fiduceo_transactions.find(contains[:transaction_id])
+
+        documents = collection.where(fiduceo_id: @transaction.retrieved_document_ids)
+      end
     end
 
-    if contains[:transaction_id]
-      transaction = userr.fiduceo_transactions.find(contains[:transaction_id])
-
-      documents = collection.where(fiduceo_id: @transaction.retrieved_document_ids)
-    end
-
-   if contains[:date]
+    if contains[:date]
       contains[:date].each do |operator, value|
         collection = collection.where("created_at #{operator} '#{value}'")
       end
