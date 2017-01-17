@@ -127,7 +127,7 @@ class ProcessRetrievedData
 
               if bank_account && account['transactions'].present?
                 is_new_transaction_present = true
-                is_configured = bank_account.configured?
+                is_configured = bank_account.is_used && bank_account.configured?
                 account['transactions'].each do |transaction|
                   operations = if retriever.connector.is_fiduceo_active?
                     bank_account.sandbox_operations
