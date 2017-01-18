@@ -18,3 +18,6 @@ SynchronizeRetrieverWorker:
 
 ProcessRetrievedDataWorker:
   every: '5s'
+
+ProcessOperationsWorker:
+  every: '10m'

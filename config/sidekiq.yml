@@ -20,7 +20,7 @@
   - [remote_file_delivery, 6]
   - [grouping_delivery, 9]
   - [process_and_deliver_grouped, 9]
-  - [process_fiduceo_operations, 5]
+  - [process_operations, 5]
   - [retrieve_fiduceo_operations, 5]
   - [retrieve_fiduceo_documents, 5]
   - [retrieve_from_grouping, 9]
