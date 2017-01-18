@@ -7,7 +7,7 @@ class ProcessRetrievedDataWorker
 
     error = nil
     begin
-      $lock.synchronize('synchronize_retriever_task', expiry: 15.minutes, retries: 1) do
+      $lock.synchronize('process_retrieved_data_task', expiry: 15.minutes, retries: 1) do
         begin
           ProcessRetrievedData.concurrently(1.minute)
         rescue => e
