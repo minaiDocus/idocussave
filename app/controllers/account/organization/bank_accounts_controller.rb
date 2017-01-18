@@ -19,8 +19,8 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
     changes = @bank_account.changes.dup
     @bank_account.is_for_pre_assignment = true
     if @bank_account.save
-      @bank_account.operations.where("is_locked = ? and date => ?", true, @bank_account.start_date).update_all(is_locked: false)
-      UpdatePreseizureAccountNumbers.async_execute(@bank_account.id.to_s, changes)
+      @bank_account.operations.where("is_locked = ? and date >= ?", true, @bank_account.start_date).update_all(is_locked: false)
+      UpdatePreseizureAccountNumbers.delay.execute(@bank_account.id.to_s, changes)
       flash[:success] = 'Modifié avec succès.'
       redirect_to account_organization_customer_path(@organization, @customer, tab: 'bank_accounts')
     else
