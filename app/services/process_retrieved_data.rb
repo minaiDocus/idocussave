@@ -74,7 +74,9 @@ class ProcessRetrievedData
 
   def execute
     user = @retrieved_data.user
-    @retrieved_data.content['connections'].each do |connection|
+    connections = @retrieved_data.content['connections']
+    return false unless connections
+    connections.each do |connection|
       unless connection['id'].in?(@retrieved_data.processed_connection_ids)
         is_connection_ok = true
         retriever = user.retrievers.where(budgea_id: connection['id']).order(created_at: :asc).first
