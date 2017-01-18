@@ -26,6 +26,6 @@ class Account::UseCsvDescriptorsController < Account::OrganizationController
   end
 
   def user_params
-    params.require(:user).permit(options_attributes: [:is_own_csv_descriptor_used])
+    params.require(:user).permit(options_attributes: [:id, :is_own_csv_descriptor_used])
   end
 end

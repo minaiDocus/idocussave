@@ -280,7 +280,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, options_attributes: [:is_auto_deliver])
+    params.require(:user).permit(:ibiza_id, options_attributes: [:id, :is_auto_deliver])
   end
 
 
