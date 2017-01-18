@@ -23,7 +23,7 @@ gem 'devise'
 
 
 # Error handling
-gem 'airbrake'
+gem 'airbrake', '4.3.8'
 
 
 # Image / File processing
