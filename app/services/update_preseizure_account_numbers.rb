@@ -25,12 +25,12 @@ class UpdatePreseizureAccountNumbers
 
 
   def operation_ids
-    @operation_ids ||= @bank_account.operations.distinct(:id)
+    @operation_ids ||= @bank_account.operations.pluck(:id)
   end
 
 
   def preseizure_ids
-    @preseizure_ids ||= Pack::Report::Preseizure.where(operation_id: operation_ids, is_delivered: false).distinct(:id)
+    @preseizure_ids ||= Pack::Report::Preseizure.where(operation_id: operation_ids, is_delivered: false).pluck(:id)
   end
 
 
