@@ -64,7 +64,7 @@ class Account::RetrieversController < Account::RetrieverController
 
   def additionnal_info
     if @retriever.update(answers: params[:answers])
-      @retriever.update_connection
+      @retriever.configure_connection
       flash[:success] = 'Traitement en cours...'
       redirect_to account_retrievers_path
     else

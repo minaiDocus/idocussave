@@ -63,12 +63,15 @@ private
         else
           @params[:id_provider] = @retriever.connector.budgea_id
         end
-      elsif @retriever.additionnal_fields.present?
-        @params.merge!(@retriever.answers)
       end
-      5.times do |i|
-        param = @retriever.send("param#{i+1}")
-        @params[param['name']] = param['value'] if param
+
+      if @retriever.additionnal_fields.present?
+        @params.merge!(@retriever.answers)
+      else
+        5.times do |i|
+          param = @retriever.send("param#{i+1}")
+          @params[param['name']] = param['value'] if param
+        end
       end
       @params
     end
