@@ -296,9 +296,12 @@ class Retriever < ActiveRecord::Base
         end
       end
 
+      if contains[:capabilities].present?
+        connector_ids = Connector.where("capabilities LIKE ?", "%#{contains[:capabilities]}%").pluck(:id)
+        retrievers = retrievers.where(connector_id: connector_ids)
+      end
+
       retrievers = retrievers.where(user_id:               user_ids)                       if user_ids.any?
-      # TODO verify query
-      retrievers = retrievers.where(capabilities:          [contains[:capabilities]])      if contains[:capabilities].present?
       retrievers = retrievers.where(is_sane:               contains[:is_sane])             if contains[:is_sane].present?
       retrievers = retrievers.where("name LIKE ?",         "%#{contains[:name]}%")         if contains[:name].present?
       retrievers = retrievers.where("state LIKE ?",        "%#{contains[:state]}%")        if contains[:state].present?
