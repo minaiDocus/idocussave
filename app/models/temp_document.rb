@@ -215,13 +215,13 @@ class TempDocument < ActiveRecord::Base
       elsif contains[:retriever_id]
         retriever = user.retrievers.find(contains[:retriever_id])
 
-        collection = collection.where(retriever_id: @retriever.id)
+        collection = collection.where(retriever_id: retriever.id)
       end
 
       if contains[:transaction_id]
         transaction = user.fiduceo_transactions.find(contains[:transaction_id])
 
-        documents = collection.where(fiduceo_id: @transaction.retrieved_document_ids)
+        documents = collection.where(fiduceo_id: transaction.retrieved_document_ids)
       end
     end
 
