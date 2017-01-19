@@ -75,7 +75,7 @@ private
 
   def clean_tmp
     @file.close if @file
-    FileUtils.remove_entry @dir
+    FileUtils.remove_entry @dir if @dir
   end
 
   def fingerprint
