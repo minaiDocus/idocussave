@@ -13,7 +13,7 @@ class DestroyBudgeaConnection
 
   def destroy
     is_destroyed = false
-    lock.synchronize("#{@user.id}_destroy_budgea_connection", expiry: 4.seconds) do
+    lock.synchronize("#{@user.id}_destroy_budgea_connection", expiry: 30.seconds) do
       if @retriever.budgea_id.nil? || is_retriever_not_uniq?
         @retriever.bank_accounts.destroy_all
         is_destroyed = @retriever.destroy_budgea_connection
