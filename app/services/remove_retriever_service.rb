@@ -1,5 +1,9 @@
 # -*- encoding : UTF-8 -*-
 class RemoveRetrieverService
+  def self.execute(user_id)
+    new(user_id).execute
+  end
+
   def initialize(object, notify_error=true)
     if object.is_a? String
       @user = User.find object
@@ -10,11 +14,15 @@ class RemoveRetrieverService
   end
 
   def execute
+    @user.temp_documents.wait_selection.destroy_all
+    @user.retrievers.each(&:destroy)
     if @user.budgea_account.present?
-      @user.temp_documents.wait_selection.destroy_all
-      @user.retrievers.each(&:destroy)
       client = Budgea::Client.new(@user.budgea_account.access_token)
-      notify unless client.destroy_user
+      if client.destroy_user
+        @user.budgea_account.destroy
+      else
+        notify
+      end
     end
   end
 

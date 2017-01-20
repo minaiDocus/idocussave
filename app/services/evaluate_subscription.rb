@@ -46,7 +46,7 @@ private
   def unauthorize_retriever
     if @customer.options.is_retriever_authorized
       @customer.options.update_attribute(:is_retriever_authorized, false)
-      RemoveRetrieverService.new(@customer.id.to_s).delay.execute if @customer.budgea_account.present?
+      RemoveRetrieverService.delay.execute(@customer.id.to_s) if @customer.budgea_account.present?
     end
   end
 

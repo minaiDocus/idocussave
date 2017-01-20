@@ -39,7 +39,7 @@ class StopSubscriptionService
     @user.account_number_rules = []
 
     # Disable external services
-    RemoveRetrieverService.new(@user.id.to_s).delay.execute
+    RemoveRetrieverService.delay.execute(@user.id.to_s)
 
     @user.dematbox.try(:unsubscribe)
 
