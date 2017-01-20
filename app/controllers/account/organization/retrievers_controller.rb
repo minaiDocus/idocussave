@@ -44,10 +44,16 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   end
 
   def destroy
-    if @retriever.destroy_connection
-      flash[:success] = 'Suppression en cours.'
+    if @retriever.unavailable?
+      @retriever.bank_accounts.destroy_all
+      @retriever.destroy
+      flash[:success] = 'Supprimé avec succès.'
     else
-      flash[:error] = 'Impossible de supprimer.'
+      if @retriever.destroy_connection
+        flash[:success] = 'Suppression en cours.'
+      else
+        flash[:error] = 'Impossible de supprimer.'
+      end
     end
     redirect_to account_organization_customer_retrievers_path(@organization, @customer)
   end
