@@ -22,6 +22,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
 
     verify_if_customer_can_order_paper_sets
 
+    @order.period_duration        = @customer.subscription.period_duration
     @order.paper_set_casing_size  = template.paper_set_casing_size
     @order.paper_set_folder_count = @customer.options.max_number_of_journals
     @order.address                = @customer.paper_set_shipping_address.try(:dup) || Address.new
@@ -82,7 +83,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
     if params[:customer_ids].present?
       customers = @organization.customers.where(id: params[:customer_ids])
       @orders = customers.map do |customer|
-        Order.new(user: customer, type: 'paper_set')
+        Order.new(user: customer, type: 'paper_set', period_duration: customer.subscription.period_duration)
       end
     else
       flash[:notice] = 'Veuillez sélectionner les clients concernés'
