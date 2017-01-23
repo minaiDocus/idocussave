@@ -27,13 +27,12 @@ class Account::RightsController < Account::OrganizationController
 
 
   def collaborator_params
-    params.require(:user).permit(organization_rights_attributes: [
-                                   :is_groups_management_authorized,
-                                   :is_collaborators_management_authorized,
-                                   :is_customers_management_authorized,
-                                   :is_journals_management_authorized,
-                                   :is_customer_journals_management_authorized
-                                 ])
+    params.require(:user).permit(  :organization_rights_is_groups_management_authorized,
+                                   :organization_rights_is_collaborators_management_authorized,
+                                   :organization_rights_is_customers_management_authorized,
+                                   :organization_rights_is_journals_management_authorized,
+                                   :organization_rights_is_customer_journals_management_authorized
+                                )
   end
 
 
