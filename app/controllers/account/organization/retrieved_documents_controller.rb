@@ -52,7 +52,7 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
         flash[:success] = 'Le document sélectionné sera intégré.'
       end
     end
-    redirect_to select_account_organization_customer_retrieved_documents_path(@organization, @customer, document_contains: document_contains)
+    redirect_to select_account_organization_customer_retrieved_documents_path(@organization, @customer, document_contains: params[:document_contains])
   end
 
 private
