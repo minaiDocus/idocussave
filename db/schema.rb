@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123131351) do
+ActiveRecord::Schema.define(version: 20170123153025) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -669,7 +669,7 @@ ActiveRecord::Schema.define(version: 20170123131351) do
     t.date     "value_date"
     t.date     "transaction_date"
     t.text     "label",                    limit: 4294967295
-    t.float    "amount",                   limit: 24
+    t.decimal  "amount",                                      precision: 11, scale: 2
     t.string   "comment",                  limit: 255
     t.string   "supplier_found",           limit: 255
     t.integer  "category_id",              limit: 4
@@ -689,7 +689,7 @@ ActiveRecord::Schema.define(version: 20170123131351) do
     t.string   "piece_id_mongo_id",        limit: 255
     t.string   "api_id",                   limit: 255
     t.string   "type_id",                  limit: 255
-    t.string   "api_name",                                    default: "budgea"
+    t.string   "api_name",                                                             default: "budgea"
     t.string   "type_name"
   end
 
@@ -909,7 +909,7 @@ ActiveRecord::Schema.define(version: 20170123131351) do
     t.datetime "updated_at"
     t.integer  "type",                   limit: 4
     t.string   "number",                 limit: 255
-    t.float    "amount",                 limit: 53
+    t.decimal  "amount",                             precision: 11, scale: 2
     t.integer  "preseizure_id",          limit: 4
     t.string   "preseizure_id_mongo_id", limit: 255
     t.integer  "account_id",             limit: 4
@@ -927,16 +927,16 @@ ActiveRecord::Schema.define(version: 20170123131351) do
     t.string   "observation",              limit: 255
     t.integer  "position",                 limit: 4
     t.string   "piece_number",             limit: 255
-    t.float    "amount",                   limit: 24
+    t.decimal  "amount",                                      precision: 11, scale: 2
     t.string   "currency",                 limit: 255
     t.float    "conversion_rate",          limit: 24
     t.string   "third_party",              limit: 255
     t.integer  "category_id",              limit: 4
-    t.boolean  "is_made_by_abbyy",                            default: false, null: false
-    t.boolean  "is_delivered",                                default: false, null: false
+    t.boolean  "is_made_by_abbyy",                                                     default: false, null: false
+    t.boolean  "is_delivered",                                                         default: false, null: false
     t.datetime "delivery_tried_at"
     t.string   "delivery_message",         limit: 255
-    t.boolean  "is_locked",                                   default: false, null: false
+    t.boolean  "is_locked",                                                            default: false, null: false
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
     t.integer  "user_id",                  limit: 4
