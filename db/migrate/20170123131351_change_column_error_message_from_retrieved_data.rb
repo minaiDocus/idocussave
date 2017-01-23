@@ -1,5 +1,5 @@
 class ChangeColumnErrorMessageFromRetrievedData < ActiveRecord::Migration
-    def up
+  def up
     change_column :retrieved_data, :error_message, :text, limit: 16777215
   end
 
