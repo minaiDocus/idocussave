@@ -74,28 +74,28 @@ class TempDocument < ActiveRecord::Base
 
 
     after_transition on: :ready do |temp_document, _transition|
-      temp_document.temp_pack.increment!(:document_not_processed_count, 1)
+      temp_document.temp_pack.increment_counter!(:document_not_processed_count, 1)
     end
 
 
     after_transition on: :processed do |temp_document, _transition|
-      temp_document.temp_pack.increment!(:document_not_processed_count, -1)
+      temp_document.temp_pack.increment_counter!(:document_not_processed_count, -1)
     end
 
 
     after_transition on: :bundle_needed do |temp_document, _transition|
-      temp_document.temp_pack.increment!(:document_bundle_needed_count, 1)
+      temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, 1)
     end
 
 
     after_transition on: :bundling do |temp_document, _transition|
-      temp_document.temp_pack.increment!(:document_bundle_needed_count, -1)
-      temp_document.temp_pack.increment!(:document_bundling_count, 1)
+      temp_document.temp_pack.increment_counter!(:document_bundle_needed_count, -1)
+      temp_document.temp_pack.increment_counter!(:document_bundling_count, 1)
     end
 
 
     after_transition on: :bundled do |temp_document, _transition|
-      temp_document.temp_pack.increment!(:document_bundling_count, -1)
+      temp_document.temp_pack.increment_counter!(:document_bundling_count, -1)
     end
 
 

@@ -118,6 +118,12 @@ class TempPack < ActiveRecord::Base
     end
   end
 
+  def increment_counter!(counter, value)
+    self.with_lock do
+      increment!(counter, value)
+    end
+  end
+
   private
 
 
