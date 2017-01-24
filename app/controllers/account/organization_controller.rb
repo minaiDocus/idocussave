@@ -2,7 +2,7 @@
 class Account::OrganizationController < Account::AccountController
   layout 'organization'
 
-  #before_filter :verify_role
+  before_filter :verify_role
   before_filter :load_organization
 
   protected
