@@ -35,7 +35,10 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
 
   def select
     @documents = TempDocument.search_for_collection(@customer.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction).wait_selection.page(params[:page]).per(params[:per_page])
-    @retriever.ready if @retriever && @retriever.waiting_selection?
+    if params[:document_contains].try(:[], :retriever_id).present?
+      @retriever = @customer.retrievers.find(params[:document_contains][:retriever_id])
+      @retriever.ready if @retriever.waiting_selection?
+    end
   end
 
   def validate
@@ -43,6 +46,9 @@ class Account::Organization::RetrievedDocumentsController < Account::Organizatio
     if documents.count == 0
       flash[:notice] = 'Aucun document sélectionné.'
     else
+      documents.map(&:retriever).compact.uniq.each do |retriever|
+        retriever.ready if retriever.waiting_selection?
+      end
       documents.each do |document|
         document.ready if document.wait_selection?
       end

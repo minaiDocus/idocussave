@@ -35,6 +35,9 @@ class Account::Organization::BankAccountsController < Account::Organization::Ret
       unselected_bank_accounts = @customer.bank_accounts.where.not(id: params[:bank_account_ids])
       selected_bank_accounts.update_all(is_used: true)
       unselected_bank_accounts.update_all(is_used: false)
+      selected_bank_accounts.map(&:retriever).compact.uniq.each do |retriever|
+        retriever.ready if retriever.waiting_selection?
+      end
       flash[:success] = 'Modifié avec succès.'
     end
     redirect_to account_organization_customer_bank_accounts_path(@organization, @customer, bank_account_contains: params[:bank_account_contains])

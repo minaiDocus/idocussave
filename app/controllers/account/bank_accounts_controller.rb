@@ -16,6 +16,9 @@ class Account::BankAccountsController < Account::RetrieverController
       unselected_bank_accounts = @user.bank_accounts.where.not(id: params[:bank_account_ids])
       selected_bank_accounts.update_all(is_used: true)
       unselected_bank_accounts.update_all(is_used: false)
+      selected_bank_accounts.map(&:retriever).compact.uniq.each do |retriever|
+        retriever.ready if retriever.waiting_selection?
+      end
       flash[:success] = 'Modifié avec succès.'
     end
     redirect_to account_bank_accounts_path(bank_account_contains: params[:bank_account_contains])

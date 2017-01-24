@@ -36,7 +36,10 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
 
   def select
     @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).wait_selection.includes(:retriever).includes(:piece).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-    @retriever.ready if @retriever && @retriever.waiting_selection?
+    if params[:document_contains].try(:[], :retriever_id).present?
+      @retriever = @user.retrievers.find(params[:document_contains][:retriever_id])
+      @retriever.ready if @retriever.waiting_selection?
+    end
     @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
 
@@ -45,6 +48,9 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
     if documents.count == 0
       flash[:notice] = 'Aucun document sélectionné.'
     else
+      documents.map(&:retriever).compact.uniq.each do |retriever|
+        retriever.ready if retriever.waiting_selection?
+      end
       documents.each do |document|
         document.ready if document.wait_selection?
       end
