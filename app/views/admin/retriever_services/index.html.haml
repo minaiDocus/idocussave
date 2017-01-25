@@ -1,0 +1,22 @@
+#retriever_services
+  .row-fluid
+    .span12
+      = render 'layouts/admin/retriever/navigation'
+
+  .row-fluid
+    .box.margin2bottom
+      %h3
+        Liste des automates disponibles
+        = link_to icon_refresh + ' Mettre à jour', admin_retriever_services_update_list_path, method: :post, class: 'btn btn-primary'
+    .box
+      .row-fluid
+        .span6
+          %h4 Documents (#{@providers.size})
+          %ul
+            - @providers.each do |provider|
+              %li= provider.name
+        .span6
+          %h4 Banques (#{@banks.size})
+          %ul
+            - @banks.each do |bank|
+              %li= bank.name

@@ -411,5 +411,8 @@ Idocus::Application.routes.draw do
   get 'admin/currently_being_delivered_packs', controller: 'admin/admin', action: 'currently_being_delivered_packs'
   get '/admin/process_reporting(/:year)(/:month)', controller: 'admin/process_reporting', action: :index
 
+  get  'admin/retriever_services',             controller: 'admin/retriever_services', action: :index
+  post 'admin/retriever_services/update_list', controller: 'admin/retriever_services', action: :update_list
+
   match '*a', to: 'errors#routing', via: :all
 end
