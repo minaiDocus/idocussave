@@ -49,12 +49,10 @@ class Connector < ActiveRecord::Base
 
   scope :budgea,              -> { where("apis LIKE '%budgea%'") }
   scope :fiduceo,             -> { where("apis LIKE '%fiduceo%'") }
-  # TODO correct this query
-  scope :budgea_and_fiduceo,  -> { where(apis: ['budgea', 'fiduceo']) }
+  scope :budgea_and_fiduceo,  -> { where("apis LIKE '%budgea%' AND apis LIKE '%fiduceo%'") }
   scope :providers,           -> { where("capabilities LIKE '%document%'") }
   scope :banks,               -> { where("capabilities LIKE '%bank%'") }
-  # TODO correct this query
-  scope :providers_and_banks, -> { where(capabilities: ['bank', 'document']) }
+  scope :providers_and_banks, -> { where("capabilities LIKE '%bank%' AND capabilities LIKE '%document%'") }
 
   def self.list
     relation.map(&:public_attributes)
