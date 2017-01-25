@@ -35,6 +35,7 @@ class StopSubscriptionService
     @user.options.is_retriever_authorized     = false
     @user.options.max_number_of_journals      = 0
     @user.options.is_preassignment_authorized = false
+    @user.options.is_upload_authorized        = false
     @user.options.save
     @user.account_number_rules = []
 
