@@ -21,3 +21,6 @@ ProcessRetrievedDataWorker:
 
 ProcessOperationsWorker:
   every: '10m'
+
+RemoveOldestRetrievedDataWorker:
+  cron: '0 0 * * *'

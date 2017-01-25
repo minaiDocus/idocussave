@@ -28,6 +28,6 @@ class RetrievedData < ActiveRecord::Base
   end
 
   def self.remove_oldest
-    RetrievedData.where(:created_at.lt => 1.month.ago).destroy_all
+    RetrievedData.where('created_at < ?', 1.month.ago).destroy_all
   end
 end
