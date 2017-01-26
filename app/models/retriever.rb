@@ -19,7 +19,7 @@ class Retriever < ActiveRecord::Base
   serialize :answers
   serialize :budgea_additionnal_fields
   serialize :fiduceo_additionnal_fields
-  serialize :fiduceo_capabilities
+  serialize :capabilities
 
   # TODO encrypt param1, param2, param3, param4, param5
 
@@ -30,6 +30,8 @@ class Retriever < ActiveRecord::Base
   validate :presence_of_answers,       if: Proc.new { |r| r.answers.present? }
 
   before_validation do |retriever|
+    retriever.service_name ||= retriever.connector.name
+    retriever.capabilities ||= retriever.connector.capabilities
     retriever.journal = nil if retriever.capabilities == ['bank']
   end
 
@@ -58,6 +60,10 @@ class Retriever < ActiveRecord::Base
   scope :unavailable,              -> { where(state: 'unavailable') }
   scope :not_processed,            -> { where(state: %w(configuring destroying running)) }
   scope :insane,                   -> { where(state: 'ready', is_sane: false) }
+
+  scope :providers,           -> { where("capabilities LIKE '%document%'") }
+  scope :banks,               -> { where("capabilities LIKE '%bank%'") }
+  scope :providers_and_banks, -> { where("capabilities LIKE '%document%' AND capabilities LIKE '%bank%'") }
 
   state_machine initial: :configuring do
     state :ready
@@ -259,21 +265,6 @@ class Retriever < ActiveRecord::Base
   end
 
   class << self
-    def providers
-      connector_ids = Connector.where("capabilities LIKE '%document%'").pluck(:id)
-      where(connector_id: connector_ids)
-    end
-
-    def banks
-      connector_ids = Connector.where("capabilities LIKE '%bank%'").pluck(:id)
-      where(connector_id: connector_ids)
-    end
-
-    def providers_and_banks
-      connector_ids = Connector.where("capabilities LIKE '%document%' AND capabilities LIKE '%bank%'").pluck(:id)
-      where(connector_id: connector_ids)
-    end
-
     def search(contains)
       retrievers = Retriever.all
 
@@ -295,22 +286,19 @@ class Retriever < ActiveRecord::Base
         end
       end
 
-      if contains[:capabilities].present? || contains[:service_name].present?
-        connectors = Connector.all
-        if contains[:capabilities].present?
-          connectors = connectors.where("capabilities LIKE ?", "%#{contains[:capabilities]}%")
-        end
-        if contains[:service_name].present?
-          connectors = connectors.where("name LIKE ?", "%#{contains[:service_name]}%")
-        end
-
-        retrievers = retrievers.where(connector_id: connectors.pluck(:id))
-      end
-
       retrievers = retrievers.where(user_id:               user_ids)                       if user_ids.any?
       retrievers = retrievers.where(is_sane:               contains[:is_sane])             if contains[:is_sane].present?
       retrievers = retrievers.where("name LIKE ?",         "%#{contains[:name]}%")         if contains[:name].present?
       retrievers = retrievers.where("state LIKE ?",        "%#{contains[:state]}%")        if contains[:state].present?
+      retrievers = retrievers.where("service_name LIKE ?", "%#{contains[:service_name]}%") if contains[:service_name].present?
+
+      if contains[:capabilities].present?
+        if contains[:capabilities] == 'both'
+          retrievers = retrievers.where("capabilities LIKE '%document%' AND capabilities LIKE '%bank%'")
+        else
+          retrievers = retrievers.where("capabilities LIKE ?", "%#{contains[:capabilities]}%")
+        end
+      end
 
       retrievers
     end
@@ -326,23 +314,15 @@ class Retriever < ActiveRecord::Base
   end
 
   def provider?
-    capabilities && capabilities == ['document']
+    capabilities == ['document']
   end
 
   def bank?
-    capabilities && capabilities == ['bank']
+    capabilities == ['bank']
   end
 
   def provider_and_bank?
-    capabilities && capabilities.include?('bank') && capabilities.include?('document')
-  end
-
-  def capabilities
-    fiduceo_capabilities.presence || connector.try(:capabilities)
-  end
-
-  def service_name
-    fiduceo_service_name.presence || connector.try(:name)
+    capabilities.include?('bank') && capabilities.include?('document')
   end
 
 private

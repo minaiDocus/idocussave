@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170123153025) do
+ActiveRecord::Schema.define(version: 20170126201255) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1272,8 +1272,8 @@ ActiveRecord::Schema.define(version: 20170123153025) do
     t.integer  "user_id"
     t.integer  "journal_id"
     t.integer  "connector_id"
-    t.string   "fiduceo_service_name"
-    t.text     "fiduceo_capabilities"
+    t.string   "service_name"
+    t.text     "capabilities"
   end
 
   add_index "retrievers", ["state"], name: "index_retrievers_on_state"
