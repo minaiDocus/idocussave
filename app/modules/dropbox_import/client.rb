@@ -8,7 +8,7 @@ class DropboxImport::Client
     begin
       @client.send(name, *args)
     rescue Errno::ETIMEDOUT, Timeout::Error, DropboxError => e
-      if e.class.in?([Errno::ETIMEDOUT, Timeout::Error]) || e.message.match(/503 Service Unavailable|Internal Server Error/)
+      if e.class.in?([Errno::ETIMEDOUT, Timeout::Error]) || e.message.match(/503 Service Unavailable|Internal Server Error|Please re-issue the request/)
         if tried_count <= 3
           sleep(5 * tried_count)
           tried_count += 1

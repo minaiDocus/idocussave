@@ -94,7 +94,7 @@ class DropboxImport
 
 
   def client
-    @client ||= DropboxClient.new(@dropbox.access_token, Dropbox::ACCESS_TYPE)
+    @client ||= DropboxImport::Client.new(DropboxClient.new(@dropbox.access_token, Dropbox::ACCESS_TYPE))
   end
 
 
