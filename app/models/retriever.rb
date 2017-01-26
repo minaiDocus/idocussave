@@ -280,7 +280,7 @@ class Retriever < ActiveRecord::Base
       user_ids = []
 
       if contains[:user_code].present?
-        user_ids = User.where("code LIKE ?", "%#{params[:retriever_contains][:user_code]}%").pluck(:id)
+        user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").pluck(:id)
       end
 
       if contains[:created_at]
