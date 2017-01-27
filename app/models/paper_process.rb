@@ -57,9 +57,9 @@ class PaperProcess < ActiveRecord::Base
     collection = collection.where('customer_code LIKE ?',   "%#{options[:customer_code]}%")  if options[:customer_code]
     collection = collection.where('tracking_number LIKE ?', "%#{options[:tracking_number]}%") if options[:tracking_number]
 
-    if options[:updated_at]
-      options[:updated_at].each do |operator, value|
-        collection = collection.where("updated_at #{operator} '#{value}'")
+    if options[:created_at]
+      options[:created_at].each do |operator, value|
+        collection = collection.where("created_at #{operator} '#{value}'")
       end
     end
 

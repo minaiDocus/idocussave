@@ -23,7 +23,7 @@ class Account::PaperProcessesController < Account::AccountController
   end
 
   def sort_column
-    params[:sort] || 'updated_at'
+    params[:sort] || 'created_at'
   end
   helper_method :sort_column
 

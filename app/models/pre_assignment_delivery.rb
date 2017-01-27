@@ -74,12 +74,24 @@ class PreAssignmentDelivery < ActiveRecord::Base
   def self.search(contains)
     deliveries = PreAssignmentDelivery.all
 
+    deliveries = deliveries.where(number:        contains[:number].to_i)                       if contains[:number].present?
     deliveries = deliveries.where(state:         contains[:state])                             if contains[:state].present?
     deliveries = deliveries.where(is_auto:       contains[:is_auto].to_i == 1)                 if contains[:is_auto].present?
-    deliveries = deliveries.where(created_at:    contains[:created_at])                        if contains[:created_at].present?
     deliveries = deliveries.where(total_item:    contains[:total_item].to_i)                   if contains[:total_item].present?
     deliveries = deliveries.where("pack_name LIKE ?", "%#{contains[:pack_name]}%")             if contains[:pack_name].present?
     deliveries = deliveries.where("error_message LIKE ?", "%#{contains[:error_message]}%")     if contains[:error_message].present?
+
+    if contains[:created_at]
+      contains[:created_at].each do |operator, value|
+        deliveries = deliveries.where("created_at #{operator} ? ", value)
+      end
+    end
+
+    if contains[:updated_at]
+      contains[:updated_at].each do |operator, value|
+        deliveries = deliveries.where("updated_at #{operator} ? ", value)
+      end
+    end
 
     deliveries
   end
