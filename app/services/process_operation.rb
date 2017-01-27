@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ProcessOperation
   def self.execute(banking_operations=nil)
-    operations = banking_operations || Operation.not_processed.not_locked.asc(:date)
+    operations = banking_operations || Operation.not_processed.not_locked.order(date: :asc)
 
     if operations.count > 0
       preseizures = []
@@ -78,7 +78,7 @@ class ProcessOperation
             pack_report.update_attribute(:is_delivered, false)
           end
           to_deliver_preseizures.group_by(&:report).each do |_, pres|
-            CreatePreAssignmentDeliveryService.new(pres, true).execute
+            CreatePreAssignmentDeliveryService.new(pres, is_auto: true).execute
           end
         else
           operations.each do |operation|

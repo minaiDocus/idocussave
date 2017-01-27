@@ -64,6 +64,8 @@ class IbizaAPI::Utils
                   xml.piece piece_name(preseizure.piece.name, piece_name_format, piece_name_format_sep)
                   xml.voucherID "https://my.idocus.com"+ preseizure.piece.get_access_url
                   xml.voucherRef preseizure.piece_number
+                else
+                  xml.piece preseizure.operation_name
                 end
 
                 xml.accountNumber account.number

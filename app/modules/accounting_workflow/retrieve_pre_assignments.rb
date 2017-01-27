@@ -33,7 +33,7 @@ class AccountingWorkflow::RetrievePreAssignments
         report.update_attribute(:is_delivered, false)
       end
 
-      CreatePreAssignmentDeliveryService.new(pre_assignments, true).execute
+      CreatePreAssignmentDeliveryService.new(pre_assignments, is_auto: true).execute
       FileDelivery.prepare(report)
       FileDelivery.prepare(pack)
     end

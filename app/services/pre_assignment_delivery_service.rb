@@ -131,7 +131,7 @@ class PreAssignmentDeliveryService
 
       if retry_delivery && @preseizures.size > 1
         @preseizures.each do |preseizure|
-          deliveries = CreatePreAssignmentDeliveryService.new(preseizure, false).execute
+          deliveries = CreatePreAssignmentDeliveryService.new(preseizure, is_auto: false, verify: true).execute
           deliveries.first.update_attribute(:is_auto, @delivery.is_auto) if deliveries.present?
         end
       end

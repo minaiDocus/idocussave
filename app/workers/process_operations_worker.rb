@@ -7,7 +7,7 @@ class ProcessOperationsWorker
 
     begin
       $lock.synchronize('process_operations', expiry: 10.minutes, retries: 1) do
-        OperationService.process
+        ProcessOperation.execute
       end
     rescue RemoteLock::Error
     end

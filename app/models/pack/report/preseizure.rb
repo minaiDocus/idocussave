@@ -30,6 +30,10 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     report.journal + date.try(:strftime, "%y%m") + '%03d' % position
   end
 
+  def operation_name
+    report.name + ' %03d' % position
+  end
+
   def piece_content_url
     piece.try(:content).try(:url)
   end
