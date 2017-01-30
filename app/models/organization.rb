@@ -169,12 +169,9 @@ class Organization < ActiveRecord::Base
     end
 
     if contains[:is_debit_mandate_not_configured].present?
-      user_ids      = DebitMandate.configured.distinct(:user_id)
-
-      leader_ids    = Organization.all.distinct(:leader_id)
-
+      user_ids      = DebitMandate.configured.pluck(:user_id)
+      leader_ids    = Organization.all.pluck(:leader_id)
       ids           = contains[:is_debit_mandate_not_configured] == '1' ? (leader_ids - user_ids) : user_ids
-
       organizations = organizations.where(leader_id: ids)
     end
 
