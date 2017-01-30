@@ -30,8 +30,10 @@ class Retriever < ActiveRecord::Base
   validate :presence_of_answers,       if: Proc.new { |r| r.answers.present? }
 
   before_validation do |retriever|
-    retriever.service_name ||= retriever.connector.name
-    retriever.capabilities ||= retriever.connector.capabilities
+    if retriever.connector
+      retriever.service_name ||= retriever.connector.name
+      retriever.capabilities ||= retriever.connector.capabilities
+    end
     retriever.journal = nil if retriever.capabilities == ['bank']
   end
 
