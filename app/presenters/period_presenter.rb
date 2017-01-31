@@ -51,13 +51,14 @@ class PeriodPresenter
       begin
         pack = document.pack
         if pack
-          list[:historic] = pack.content_historic.each { |h| h['date'] = h['date'].strftime('%d/%m/%Y') }
-          list[:link] = Rails.application.routes.url_helpers.account_documents_path(pack_name: document.pack.name)
+          list[:historic] = pack.content_historic.each { |h| h[:date] = h[:date].strftime('%d/%m/%Y') }
+          list[:link] = Rails.application.routes.url_helpers.account_documents_path(pack_name: pack.name)
         else
           list[:historic] = ''
-          list[:link] = ''
+          list[:link] = '#'
         end
       rescue
+        list[:historic] = ''
         list[:link] = '#'
       end
 

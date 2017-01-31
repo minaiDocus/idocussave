@@ -99,11 +99,11 @@ module DocumentsHelper
       items.each_with_index do |(k,v),index|
         concat(content_tag(:tr){
           concat content_tag :td, "#{index + 1}"
-          concat content_tag :td, "#{l(k['date'].localtime)}"
-          concat content_tag :td, "#{k['uploaded']}", style: 'text-align:right'
-          concat content_tag :td, "#{k['scanned']}", style: 'text-align:right'
-          concat content_tag :td, "#{k['dematbox_scanned']}", style: 'text-align:right'
-          concat content_tag :td, "#{k['retrieved']}", style: 'text-align:right'
+          concat content_tag :td, "#{l(k[:date].localtime)}"
+          concat content_tag :td, "#{k[:uploaded]}", style: 'text-align:right'
+          concat content_tag :td, "#{k[:scanned]}", style: 'text-align:right'
+          concat content_tag :td, "#{k[:dematbox_scanned]}", style: 'text-align:right'
+          concat content_tag :td, "#{k[:retrieved]}", style: 'text-align:right'
           }
         )
       end
@@ -139,8 +139,8 @@ module DocumentsHelper
     contents = ''
     contents += content_tag :h4, 'Informations'
     contents += content_tag :div, tinformations(pack, 120)
-    #contents += content_tag :h4, 'Historique des ajouts de pages'
-    #contents += content_tag :div, custom_table_for(columns, pack.content_historic)
+    contents += content_tag :h4, 'Historique des ajouts de pages'
+    contents += content_tag :div, custom_table_for(columns, pack.content_historic)
     content_tag :div, contents
   end
 
