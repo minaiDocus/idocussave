@@ -134,7 +134,7 @@ class PeriodBillingService
     if billing
       billing.send(key)
     elsif order == next_order
-      billed = @period.billings.sum(key) || 0
+      billed = @period.billings.to_a.sum(&key) || 0
 
       @period.send(key) - billed
     else
