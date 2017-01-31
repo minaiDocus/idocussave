@@ -3,11 +3,13 @@ module AccountingWorkflow
     Rails.root.join('files', Rails.env, 'prepa_compta')
   end
 
-
   def self.grouping_dir
     dir.join('grouping')
   end
 
+  def self.ocr_processing_dir
+    Rails.root.join('files', Rails.env, 'ocr_processing')
+  end
 
   def self.pre_assignments_dir
     dir.join('pre_assignments')

@@ -7,6 +7,9 @@ JobOrchestratorWorker:
 FtpFetcherWorker:
   cron: '0 * * * *'
 
+RetrieveOcrProcessedDocumentWorker:
+  every: '1m'
+
 UpdateAccountingPlanWorker:
   cron: '00 4 * * *'
 

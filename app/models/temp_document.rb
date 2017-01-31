@@ -100,7 +100,7 @@ class TempDocument < ActiveRecord::Base
 
 
     after_transition on: :ocr_needed do |temp_document, _transition|
-      SendTempDocumentToOcrProcessor.execute(temp_document.id)
+      AccountingWorkflow::OcrProcessing.send_document(temp_document.id)
     end
 
 
