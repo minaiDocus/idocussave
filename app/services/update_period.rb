@@ -170,7 +170,7 @@ class UpdatePeriod
         option.quantity = 1
         option.group_title = "iDo'FacBanque"
         option.is_to_be_disabled     = @subscription.is_retriever_package_to_be_disabled
-        option.price_in_cents_wo_vat = package_options_price([:retriever], type)
+        option.price_in_cents_wo_vat = package_options_price([@subscription.retriever_price_option], type)
 
         selected_options << option
       end
@@ -286,6 +286,7 @@ class UpdatePeriod
     @prices_list ||= {
       stamp:    [5,  5],
       retriever: [5,  15],
+      reduced_retriever: [3, 9],
       subscription:    [10, 30],
       return_paper:   [10, 10],
       pre_assignment: [9,  15]

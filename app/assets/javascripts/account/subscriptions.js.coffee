@@ -106,6 +106,7 @@ update_price = ->
     'return_paper':        [10,   10,   null],
     'stamp':               [5,    5,    null],
     'retriever':           [5,    15,   null],
+    'reduced_retriever':   [3,    9,    null],
     'annual_subscription': [null, null, 199]
   }
   selected_options = []
@@ -128,7 +129,7 @@ update_price = ->
       period_type = 1
       $('.stamp_price').html('(15€HT)')
 
-    
+
     if $('#subscription_is_basic_package_active').is(':checked')
       options.push 'subscription', 'pre_assignment'
     if $('#subscription_is_mail_package_active').is(':checked')
@@ -136,7 +137,7 @@ update_price = ->
     if $('#subscription_is_scan_box_package_active').is(':checked')
       options.push 'subscription', 'pre_assignment'
     if $('#subscription_is_retriever_package_active').is(':checked')
-      options.push 'retriever'
+      options.push $('#subscription_is_retriever_package_active').data('retriever-price-option')
     if $('#subscription_is_micro_package_active').is(':checked')
       options.push 'subscription'
     options = _.uniq(options)

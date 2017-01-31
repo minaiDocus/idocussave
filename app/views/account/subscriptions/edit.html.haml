@@ -44,7 +44,7 @@
                     %i (Téléchargement + Scan par iDocus'Box + Pré-saisie comptable)
                 .package_choice
                   %label
-                    = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0) }
+                    = f.check_box :is_retriever_package_active, class: 'light_package', disabled: @subscription.is_annual_package_active, data: { original_value: ((@subscription.is_retriever_package_active || @subscription.is_retriever_package_to_be_disabled) ? 1 : 0), retriever_price_option: @subscription.retriever_price_option.to_s }
                     %b iDo’FacBanque
                     %i (Récupération banque + Factures sur Internet)
                 - if @user.is_admin || @organization.code.in?(["DPA","ADV","CRE","GMBA","AEC"])
