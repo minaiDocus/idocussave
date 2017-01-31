@@ -193,7 +193,9 @@ class ProcessRetrievedData
                 connection['subscriptions'].each do |subscription|
                   if subscription['documents'].present?
                     client = Budgea::Client.new(retriever.user.budgea_account.access_token)
-                    subscription['documents'].sort_by do |document|
+                    subscription['documents'].select do |document|
+                      retriever.service_name == 'Nespresso' && document['date'].nil? ? false : true
+                    end.sort_by do |document|
                       Time.parse(document['date'])
                     end.each do |document|
                       already_exist = if retriever.connector.is_fiduceo_active?
