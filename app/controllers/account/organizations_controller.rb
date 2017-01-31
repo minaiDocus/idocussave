@@ -13,10 +13,8 @@ class Account::OrganizationsController < Account::AccountController
 
     @without_address_count = Organization.joins(:addresses).where('addresses.is_for_billing =  ?', true ).count
 
-    user_ids   = DebitMandate.configured.distinct(:user_id)
-
-    leader_ids = Organization.all.distinct(:leader_id)
-
+    user_ids   = DebitMandate.configured.pluck(:user_id)
+    leader_ids = Organization.all.pluck(:leader_id)
     @debit_mandate_not_configured_count = Organization.where(leader_id: (leader_ids - user_ids)).count
   end
 
