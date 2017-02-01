@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
 
   scope :active,                      -> { where(inactive_at: nil) }
   scope :closed,                      -> { where.not(inactive_at: [nil]) }
-  scope :active_at,                   -> (time) { where(inactive_at: [nil]) }
+  scope :active_at,                   -> (time) { where('inactive_at IS NULL OR inactive_at > ?', time.end_of_month) }
   scope :operators,                   -> { where(is_operator: true) }
   scope :customers,                   -> { where(is_prescriber: false, is_operator: [false, nil]) }
   scope :prescribers,                 -> { where(is_prescriber: true) }
