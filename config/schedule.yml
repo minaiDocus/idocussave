@@ -21,3 +21,6 @@ ProcessOperationsWorker:
 
 RemoveOldestRetrievedDataWorker:
   cron: '0 0 * * *'
+
+InitializePeriodsWorker:
+  cron: '0 3 1 * *'
