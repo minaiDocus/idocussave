@@ -38,8 +38,13 @@ class Event < ActiveRecord::Base
       end
     end
 
+    if contains[:created_at].present?
+      contains[:created_at].each do |operator, value|
+        events = events.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
+      end
+    end
+
     events = events.where(number:      contains[:number])      if contains[:number].present?
-    events = events.where(created_at:  contains[:created_at])  if contains[:created_at].present?
     events = events.where(action:      contains[:action])      if contains[:action].present?
     events = events.where(target_type: contains[:target_type]) if contains[:target_type].present?
     events = events.where("target_name LIKE ?", "%#{contains[:target_name]}%") if contains[:target_name].present?
