@@ -1,6 +1,6 @@
 class ProcessOperationsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :process_operations, retry: :false
+  sidekiq_options queue: :process_operations, retry: :false, unique: :until_and_while_executing
 
   def perform
     $lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))

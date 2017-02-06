@@ -1,6 +1,6 @@
 class RetrieveOcrProcessedDocumentWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :default, retry: :false
+  sidekiq_options queue: :default, retry: :false, unique: :until_and_while_executing
 
   def perform
     $lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))

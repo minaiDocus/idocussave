@@ -11,21 +11,23 @@ module AccountingWorkflow::OcrProcessing
     def fetch
       valid_temp_documents.each do |temp_document, file_path|
         temp_document.with_lock do
-          temp_document.raw_content           = File.open(temp_document.content.path)
-          temp_document.content               = File.open(file_path)
-          temp_document.is_ocr_layer_applied  = true
+          if temp_document.ocr_needed? && File.exists?(file_path)
+            temp_document.raw_content           = File.open(temp_document.content.path)
+            temp_document.content               = File.open(file_path)
+            temp_document.is_ocr_layer_applied  = true
 
-          # INFO : Blank pages are removed, so we need to reassign pages_number
-          temp_document.pages_number = DocumentTools.pages_number file_path
+            # INFO : Blank pages are removed, so we need to reassign pages_number
+            temp_document.pages_number = DocumentTools.pages_number file_path
 
-          temp_document.save
+            temp_document.save
 
-          if temp_document.pages_number > 2 && temp_document.temp_pack.is_bundle_needed?
-            temp_document.bundle_needed
-          else
-            temp_document.ready
+            if temp_document.pages_number > 2 && temp_document.temp_pack.is_bundle_needed?
+              temp_document.bundle_needed
+            else
+              temp_document.ready
+            end
+            move_to_archive(file_path)
           end
-          move_to_archive(file_path)
         end
       end
     end
