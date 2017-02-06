@@ -51,7 +51,7 @@ module Admin::EventsHelper
   def format_target_attribute(key, value)
     if value.is_a?(Time)
       l(value, format: "%d %b '%y %H:%M:%S")
-    elsif value.is_a?(Boolean)
+    elsif value.is_a?(TrueClass) || value.is_a?(FalseClass)
       value ? t('yes_value') : t('no_value')
     elsif key == 'user_id'
       user = User.find value
