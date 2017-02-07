@@ -13,7 +13,12 @@ module AccountingWorkflow::OcrProcessing
         temp_document.with_lock do
           if temp_document.ocr_needed? && File.exists?(file_path)
             temp_document.raw_content           = File.open(temp_document.content.path)
-            temp_document.content               = File.open(file_path)
+
+            dir                                 = Dir.mktmpdir
+            temp_document_file_path             = File.join(dir, temp_document.content_file_name)
+            FileUtils.cp file_path, temp_document_file_path
+
+            temp_document.content               = File.open(temp_document_file_path)
             temp_document.is_ocr_layer_applied  = true
 
             # INFO : Blank pages are removed, so we need to reassign pages_number
@@ -26,7 +31,8 @@ module AccountingWorkflow::OcrProcessing
             else
               temp_document.ready
             end
-            move_to_archive(file_path)
+            clean_tmp dir
+            move_to_archive file_path
           end
         end
       end
@@ -34,6 +40,10 @@ module AccountingWorkflow::OcrProcessing
 
     def position(file_path)
       File.basename(file_path, '.pdf').split('_')[-1].to_i
+    end
+
+    def clean_tmp(dir)
+      FileUtils.remove_entry dir if dir
     end
 
     def ready_files_path
