@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170126201255) do
+ActiveRecord::Schema.define(version: 20170127101321) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1153,7 +1153,7 @@ ActiveRecord::Schema.define(version: 20170126201255) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pack_name",                limit: 255
-    t.string   "number",                   limit: 255
+    t.integer  "number",                   limit: 255
     t.string   "state",                    limit: 255
     t.boolean  "is_auto"
     t.integer  "total_item",               limit: 4
