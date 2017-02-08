@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170127101321) do
+ActiveRecord::Schema.define(version: 20170208153821) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -153,10 +153,11 @@ ActiveRecord::Schema.define(version: 20170127101321) do
 
   create_table "budgea_accounts", force: :cascade do |t|
     t.string   "identifier"
-    t.string   "access_token"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.string   "old_access_token"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "user_id"
+    t.string   "encrypted_access_token"
   end
 
   create_table "cms_images", force: :cascade do |t|
@@ -1247,13 +1248,13 @@ ActiveRecord::Schema.define(version: 20170127101321) do
     t.string   "fiduceo_id"
     t.string   "fiduceo_transaction_id"
     t.string   "name"
-    t.text     "param1"
-    t.text     "param2"
-    t.text     "param3"
-    t.text     "param4"
-    t.text     "param5"
+    t.text     "old_param1"
+    t.text     "old_param2"
+    t.text     "old_param3"
+    t.text     "old_param4"
+    t.text     "old_param5"
     t.text     "additionnal_fields"
-    t.text     "answers"
+    t.text     "old_answers"
     t.string   "journal_name"
     t.datetime "sync_at"
     t.boolean  "is_sane",                    default: true
@@ -1274,6 +1275,12 @@ ActiveRecord::Schema.define(version: 20170127101321) do
     t.integer  "connector_id"
     t.string   "service_name"
     t.text     "capabilities"
+    t.text     "encrypted_param1"
+    t.text     "encrypted_param2"
+    t.text     "encrypted_param3"
+    t.text     "encrypted_param4"
+    t.text     "encrypted_param5"
+    t.text     "encrypted_answers"
   end
 
   add_index "retrievers", ["state"], name: "index_retrievers_on_state"

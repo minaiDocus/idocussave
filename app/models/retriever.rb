@@ -10,18 +10,30 @@ class Retriever < ActiveRecord::Base
   has_many   :sandbox_documents
   has_many   :sandbox_bank_accounts
 
-  serialize :param1
-  serialize :param2
-  serialize :param3
-  serialize :param4
-  serialize :param5
+  serialize :old_param1
+  serialize :old_param2
+  serialize :old_param3
+  serialize :old_param4
+  serialize :old_param5
   serialize :additionnal_fields
-  serialize :answers
+  serialize :old_answers
   serialize :budgea_additionnal_fields
   serialize :fiduceo_additionnal_fields
   serialize :capabilities
 
-  # TODO encrypt param1, param2, param3, param4, param5
+  attr_encrypted :param1,  random_iv: true, type: :json
+  attr_encrypted :param2,  random_iv: true, type: :json
+  attr_encrypted :param3,  random_iv: true, type: :json
+  attr_encrypted :param4,  random_iv: true, type: :json
+  attr_encrypted :param5,  random_iv: true, type: :json
+  attr_encrypted :answers, random_iv: true, type: :json
+
+  validates :encrypted_param1,  symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_param1.nil? }
+  validates :encrypted_param2,  symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_param2.nil? }
+  validates :encrypted_param3,  symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_param3.nil? }
+  validates :encrypted_param4,  symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_param4.nil? }
+  validates :encrypted_param5,  symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_param5.nil? }
+  validates :encrypted_answers, symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_answers.nil? }
 
   validates_presence_of :name
   validates_presence_of :journal,      if: Proc.new { |r| r.provider? || r.provider_and_bank? }
@@ -338,7 +350,7 @@ private
         if param
           field = connector.combined_fields[param['name']]
           if field
-            send(param_name)['type'] = field['type']
+            send("#{param_name}=", send(param_name).merge('type' => field['type']))
             if param['value'].present?
               if field['type'] == 'list'
                 values = field['values'].map { |e| e['value'] }

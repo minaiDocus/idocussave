@@ -4,11 +4,10 @@ class RetrieversController < ApplicationController
 
   def callback
     authorization = request.headers['Authorization']
-    if authorization.present?
+    if authorization.present? && params['user']
       access_token = authorization.split[1]
-      # NOTE access_token need to be crypted before searching
-      account = BudgeaAccount.where(access_token: access_token).first
-      if account
+      account = BudgeaAccount.where(identifier: params['user']['id']).first
+      if account && account.access_token == access_token
         retrieved_data = RetrievedData.new
         retrieved_data.user = account.user
         retrieved_data.content = params.except(:controller, :action)

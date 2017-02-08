@@ -138,6 +138,8 @@ gem 'google-api-client', '0.8.2'
 # Lock mechanism
 gem 'remote_lock'
 
+# Encryption
+gem 'symmetric-encryption'
 
 group :development, :test do
   gem 'byebug'

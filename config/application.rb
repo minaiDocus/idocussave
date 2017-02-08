@@ -49,7 +49,7 @@ module Idocus
       :param2,
       :param3,
       :param4,
-      :custom_connection_info,
+      :param5,
       :answers,
       :access_token,
       :token,

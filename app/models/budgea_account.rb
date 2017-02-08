@@ -2,7 +2,9 @@
 class BudgeaAccount < ActiveRecord::Base
   belongs_to :user
 
-  # TODO encrypt access_token field
+  attr_encrypted :access_token, random_iv: true
 
-  validates_presence_of :identifier, :access_token
+  validates_presence_of :identifier, :encrypted_access_token
+
+  validates :encrypted_access_token, symmetric_encryption: true
 end

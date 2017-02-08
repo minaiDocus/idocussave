@@ -19,49 +19,47 @@ describe SyncBudgeaConnection do
     @connector.budgea_id       = 40
     @connector.fiduceo_ref     = nil
     @connector.combined_fields = {
-      website: {
-        label: 'Type de compte',
-        type:  'list',
-        regex: nil,
-        budgea_name:  'website',
-        values: {
-          par: { label: 'Particuliers' },
-          pro: { label: 'Professionnels' }
-        }
+      'website' => {
+        'label'       => 'Type de compte',
+        'type'        => 'list',
+        'regex'       => nil,
+        'budgea_name' => 'website',
+        'values' => [
+          { 'value' => 'par', 'label' => 'Particuliers' },
+          { 'value' => 'pro', 'label' => 'Professionnels' }
+        ]
       },
-      login: {
-        label:        'Identifiant',
-        type:         'text',
-        regex:        nil,
-        budgea_name:  'login'
+      'login' => {
+        'label'       => 'Identifiant',
+        'type'        => 'text',
+        'regex'       => nil,
+        'budgea_name' => 'login'
       },
-      password: {
-        label:        'Mot de passe',
-        type:         'password',
-        regex:        nil,
-        budgea_name:  'password'
+      'password' => {
+        'label'       => 'Mot de passe',
+        'type'        => 'password',
+        'regex'       => nil,
+        'budgea_name' => 'password'
       }
     }
     @connector.save
 
     @retriever = Retriever.new
-    @retriever.user      = @user
-    @retriever.connector = @connector
-    @retriever.journal   = @journal
-    @retriever.name      = 'Connecteur de test'
+    @retriever.user               = @user
+    @retriever.connector          = @connector
+    @retriever.journal            = @journal
+    @retriever.name               = 'Connecteur de test'
+    @retriever.confirm_dyn_params = true
     @retriever.param1 = {
       'name' => 'website',
-      'type' => 'list',
       'value' => 'par'
     }
     @retriever.param2 = {
       'name' => 'login',
-      'type' => 'text',
       'value' => 'John Doe'
     }
     @retriever.param3 = {
       'name' => 'password',
-      'type' => 'password',
       'value' => '1234'
     }
     @retriever.save
@@ -84,7 +82,6 @@ describe SyncBudgeaConnection do
   it 'updates a connection successfully' do
     @retriever.param2 = {
       'name' => 'login',
-      'type' => 'text',
       'value' => 'John Doe 2'
     }
     @retriever.save

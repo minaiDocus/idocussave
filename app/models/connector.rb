@@ -31,14 +31,14 @@ class Connector < ActiveRecord::Base
   #      regex: nil,
   #      budgea_name:  'website',
   #      fiduceo_name: nil,
-  #      values: {
-  #        par: { label: 'Particuliers',   fiduceo_id: 'xxx' },
-  #        pro: { label: 'Professionnels', fiduceo_id: 'yyy' },
-  #        ent: { label: 'Entreprises',    fiduceo_id: 'zzz' }
-  #      }
+  #      values: [
+  #        { 'value' => 'par', label: 'Particuliers',   fiduceo_id: 'xxx' },
+  #        { 'value' => 'pro', label: 'Professionnels', fiduceo_id: 'yyy' },
+  #        { 'value' => 'ent', label: 'Entreprises',    fiduceo_id: 'zzz' }
+  #      ]
   #    },
   # ...
-  # }
+  # }.stringify_keys
 
   validates_presence_of :name, :capabilities, :apis, :active_apis, :combined_fields
   validates_presence_of :budgea_id,   if: Proc.new { |c| c.fiduceo_ref.nil? }
