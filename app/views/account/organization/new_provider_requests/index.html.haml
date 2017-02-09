@@ -11,9 +11,9 @@
             %th= sortable :updated_at, t('activerecord.models.common.attributes.updated_at')
             %th= sortable :state,      t('activerecord.models.new_provider_request.attributes.state')
             %th= sortable :name,       t('activerecord.models.new_provider_request.attributes.name')
-            %th= sortable :url,        t('activerecord.models.new_provider_request.attributes.url')
-            %th= sortable :email,      t('activerecord.models.new_provider_request.attributes.email')
-            %th= sortable :login,      t('activerecord.models.new_provider_request.attributes.login')
+            %th= t('activerecord.models.new_provider_request.attributes.url')
+            %th= t('activerecord.models.new_provider_request.attributes.email')
+            %th= t('activerecord.models.new_provider_request.attributes.login')
             %th Action
         %tbody
           - @new_provider_requests.each do |new_provider_request|

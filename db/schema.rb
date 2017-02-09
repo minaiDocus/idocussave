@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170208153821) do
+ActiveRecord::Schema.define(version: 20170209185025) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -642,24 +642,31 @@ ActiveRecord::Schema.define(version: 20170208153821) do
   end
 
   create_table "new_provider_requests", force: :cascade do |t|
-    t.string   "mongo_id",         limit: 255
+    t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state",            limit: 255,   default: "pending", null: false
-    t.string   "name",             limit: 255
-    t.text     "url",              limit: 65535
-    t.string   "login",            limit: 255
-    t.text     "description",      limit: 65535
-    t.string   "message",          limit: 255
+    t.string   "state",                 limit: 255,   default: "pending", null: false
+    t.string   "name",                  limit: 255
+    t.text     "old_url",               limit: 65535
+    t.string   "old_login",             limit: 255
+    t.text     "old_description",       limit: 65535
+    t.string   "old_message",           limit: 255
     t.datetime "notified_at"
     t.datetime "processing_at"
-    t.integer  "user_id",          limit: 4
-    t.string   "user_id_mongo_id", limit: 255
+    t.integer  "user_id",               limit: 4
+    t.string   "user_id_mongo_id",      limit: 255
     t.integer  "api_id"
-    t.string   "email"
-    t.string   "password"
-    t.string   "types"
-    t.boolean  "is_sent",                        default: false
+    t.string   "old_email"
+    t.string   "old_password"
+    t.string   "old_types"
+    t.boolean  "is_sent",                             default: false
+    t.text     "encrypted_url"
+    t.string   "encrypted_login"
+    t.text     "encrypted_description"
+    t.string   "encrypted_message"
+    t.string   "encrypted_email"
+    t.string   "encrypted_password"
+    t.string   "encrypted_types"
   end
 
   create_table "operations", force: :cascade do |t|

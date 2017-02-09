@@ -39,15 +39,6 @@
       = label_tag 'new_provider_request_contains[name]', t('activerecord.models.new_provider_request.attributes.name')
       = text_field_tag 'new_provider_request_contains[name]', (params[:new_provider_request_contains][:name] rescue ''), class: 'span12'
 
-      = label_tag 'new_provider_request_contains[url]', t('activerecord.models.new_provider_request.attributes.url')
-      = text_field_tag 'new_provider_request_contains[url]', (params[:new_provider_request_contains][:url] rescue ''), class: 'span12'
-
-      = label_tag 'new_provider_request_contains[email]', t('activerecord.models.new_provider_request.attributes.email')
-      = text_field_tag 'new_provider_request_contains[email]', (params[:new_provider_request_contains][:email] rescue ''), class: 'span12'
-
-      = label_tag 'new_provider_request_contains[login]', t('activerecord.models.new_provider_request.attributes.login')
-      = text_field_tag 'new_provider_request_contains[login]', (params[:new_provider_request_contains][:login] rescue ''), class: 'span12'
-
       = label_tag 'new_provider_request_contains[is_notified]', t('activerecord.models.new_provider_request.attributes.is_notified')
       = select_tag 'new_provider_request_contains[is_notified]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:new_provider_request_contains][:is_notified] rescue '')), include_blank: true
 
