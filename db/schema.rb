@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209185025) do
+ActiveRecord::Schema.define(version: 20170209202114) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -663,7 +663,7 @@ ActiveRecord::Schema.define(version: 20170209185025) do
     t.text     "encrypted_url"
     t.string   "encrypted_login"
     t.text     "encrypted_description"
-    t.string   "encrypted_message"
+    t.text     "encrypted_message"
     t.string   "encrypted_email"
     t.string   "encrypted_password"
     t.string   "encrypted_types"
@@ -1513,7 +1513,7 @@ ActiveRecord::Schema.define(version: 20170209185025) do
     t.string   "dematbox_service_id",            limit: 255
     t.string   "api_id",                         limit: 255
     t.string   "api_name"
-    t.text     "metadata",                       limit: 16777215
+    t.string   "metadata"
     t.integer  "retriever_id"
   end
 
