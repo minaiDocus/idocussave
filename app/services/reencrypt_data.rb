@@ -3,8 +3,9 @@
 class ReencryptData
   def self.execute
     list = [
-      [BudgeaAccount, [:access_token]],
-      [Retriever,     [:param1, :param2, :param3, :param4, :param5, :answers]]
+      [BudgeaAccount,      [:access_token]],
+      [Retriever,          [:param1, :param2, :param3, :param4, :param5, :answers]],
+      [NewProviderRequest, [:url, :login, :description, :message, :email, :password, :types]]
     ]
 
     list.each do |klass, attributes|
