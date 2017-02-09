@@ -62,7 +62,7 @@ class OrganizationManagement
     include Common
 
     def customers
-      _organization.customers.joins(:groups).where("groups.id IN (?)", self.group_ids)
+      _organization.customers.joins(:groups).where("groups.id IN (?)", self.group_ids).distinct
     end
   end
 end
