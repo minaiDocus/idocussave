@@ -33,7 +33,7 @@ class Pack::Report < ActiveRecord::Base
 
 
   def self.failed_delivery(user_ids = [], limit = 50)
-    collection = Pack::Report::Preseizure.where.not(delivery_message: '').where.not(delivery_message: nil)
+    collection = Pack::Report::Preseizure.where.not(delivery_message: ['',nil])
     collection = collection.where(user_id: user_ids) if user_ids.present?
 
     collection = collection.group(:delivery_message, :report_id)
@@ -42,7 +42,7 @@ class Pack::Report < ActiveRecord::Base
     collection.map do |delivery|
        object = OpenStruct.new
        object.date           = delivery.delivery_tried_at.try(:localtime)
-       object.document_count = delivery.report_id ? Pack::Report.find(delivery.report_id).preseizures.where.not(delivery_message: nil).count : 'N/A'
+       object.document_count = delivery.report_id ? Pack::Report.find(delivery.report_id).preseizures.where.not(delivery_message: ['',nil]).count : 'N/A'
 
        object.name           = Rails.cache.fetch ['failed_delivery', 'report_name', delivery.report_id.to_s] do
         Pack::Report.find(delivery.report_id).name if delivery.report_id
