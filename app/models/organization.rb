@@ -53,7 +53,7 @@ class Organization < ActiveRecord::Base
 
 
   def to_param
-    "#{id}-#{name.gsub(" ", "-")}"
+    [id, name.parameterize].join('-')
   end
 
   def collaborators

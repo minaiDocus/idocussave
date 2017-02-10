@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
 
 
   def to_param
-    "#{id}-#{first_name.gsub(" ", "-")}-#{last_name.gsub(" ", "-")}"
+    [id, company.parameterize].join('-')
   end
 
 
