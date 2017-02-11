@@ -3,7 +3,7 @@
     .span6
       %h4 Information de base
       = f.input :code, hint: "Doit impérativement commencer par : #{@organization.code}%, 15 caractères alphanumériques maximum, code cabinet inclus.", input_html: { disabled: ('disabled' if action_name.in? %w(edit update)) }
-      = f.input :group_ids, collection: @organization.groups, as: :check_boxes, required: !is_leader?, label: 'A quel groupe, le dossier doit-il être attribué ?'
+      = f.input :group_ids, collection: (is_leader? ? @organization.groups : @user.groups), as: :check_boxes, required: !is_leader?, label: 'A quel groupe, le dossier doit-il être attribué ?'
       = f.association :parent, collection: @organization.collaborators.order(first_name: :asc, last_name: :asc).map { |c| [c.name, c.id] }, label: 'Quel est le collaborateur en charge du dossier?', hint: 'IMPORTANT! Indiquer le collaborateur en charge du dossier permettra à iDocus de le contacter en cas de soucis. Autrement tous les mails seront adressés à l’administrateur de l’organisation.'
     .span6
       = f.input :company

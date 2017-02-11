@@ -230,6 +230,9 @@ class Account::CustomersController < Account::OrganizationController
     authorized = false unless can_manage?
     authorized = false if action_name.in?(%w(account_close_confirm close_account)) && params[:close_now] == '1' && !@user.is_admin
     authorized = false if action_name.in?(%w(info new create destroy)) && !@organization.is_active
+    if action_name.in?(%w(info new create))
+      authorized = false unless is_leader? || @user.groups.any?
+    end
     #authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
 
     unless authorized

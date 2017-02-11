@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
   validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
   validates_uniqueness_of :code
   validates_uniqueness_of :email_code, unless: Proc.new { |u| u.is_prescriber }
+  validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
+  validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
 
 
   attr_accessor :is_group_required
@@ -359,4 +361,17 @@ class User < ActiveRecord::Base
       errors.add(:parent_id, :invalid)
     end
   end
+
+  def presence_of_group
+    errors.add(:group_ids, :empty) if groups.count == 0
+  end
+
+  def belonging_of_groups
+    self.groups.each do |group|
+      unless group.organization_id == self.organization_id
+        errors.add(:group_ids, :invalid)
+      end
+    end
+  end
+
 end
