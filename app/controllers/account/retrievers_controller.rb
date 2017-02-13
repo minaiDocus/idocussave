@@ -96,6 +96,7 @@ private
       { param2: [:name, :value] },
       { param3: [:name, :value] },
       { param4: [:name, :value] },
+      { param5: [:name, :value] }
     ]
     if action_name == 'update'
       params.require(:retriever).permit(:journal_id, :name, *dyn_attrs)
