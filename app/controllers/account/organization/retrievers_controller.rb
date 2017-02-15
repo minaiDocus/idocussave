@@ -33,10 +33,12 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
   end
 
   def update
-    @retriever.confirm_dyn_params = true
-    if @retriever.update(retriever_params)
-      @retriever.configure_connection
-      flash[:success] = 'Configuration en cours.'
+    if UpdateRetriever.new(@retriever, retriever_params).execute
+      if @retriever.configuring?
+        flash[:success] = 'Configuration en cours.'
+      else
+        flash[:success] = 'Modifié avec succès.'
+      end
       redirect_to account_organization_customer_retrievers_path(@organization, @customer)
     else
       render :edit
