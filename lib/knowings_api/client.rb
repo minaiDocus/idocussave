@@ -23,7 +23,7 @@ class KnowingsApi::Client
     @response = @http.request(@request)
     @response.code.to_i == 200
 
-  rescue Errno::ETIMEDOUT
+  rescue Errno::ETIMEDOUT, Exception
     false
   end
 

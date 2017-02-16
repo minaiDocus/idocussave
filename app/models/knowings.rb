@@ -16,7 +16,7 @@ class Knowings < ActiveRecord::Base
     state :verifying
     state :not_performed
 
-    after_transition on: :verify, &:process_verification
+    after_transition on: :verify, do: :process_verification
 
     event :reinit do
       transition all => :not_performed
@@ -56,6 +56,9 @@ class Knowings < ActiveRecord::Base
     username_changed? || password_changed? || url_changed? || is_active_changed?
   end
 
+  def client
+    @client ||= KnowingsApi::Client.new(username, password, url)
+  end
 
   def process_verification
     if client.verify
