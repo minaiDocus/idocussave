@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209202114) do
+ActiveRecord::Schema.define(version: 20170216163121) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -153,7 +153,6 @@ ActiveRecord::Schema.define(version: 20170209202114) do
 
   create_table "budgea_accounts", force: :cascade do |t|
     t.string   "identifier"
-    t.string   "old_access_token"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.integer  "user_id"
@@ -645,21 +644,14 @@ ActiveRecord::Schema.define(version: 20170209202114) do
     t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state",                 limit: 255,   default: "pending", null: false
+    t.string   "state",                 limit: 255, default: "pending", null: false
     t.string   "name",                  limit: 255
-    t.text     "old_url",               limit: 65535
-    t.string   "old_login",             limit: 255
-    t.text     "old_description",       limit: 65535
-    t.string   "old_message",           limit: 255
     t.datetime "notified_at"
     t.datetime "processing_at"
     t.integer  "user_id",               limit: 4
     t.string   "user_id_mongo_id",      limit: 255
     t.integer  "api_id"
-    t.string   "old_email"
-    t.string   "old_password"
-    t.string   "old_types"
-    t.boolean  "is_sent",                             default: false
+    t.boolean  "is_sent",                           default: false
     t.text     "encrypted_url"
     t.string   "encrypted_login"
     t.text     "encrypted_description"
@@ -1255,13 +1247,7 @@ ActiveRecord::Schema.define(version: 20170209202114) do
     t.string   "fiduceo_id"
     t.string   "fiduceo_transaction_id"
     t.string   "name"
-    t.text     "old_param1"
-    t.text     "old_param2"
-    t.text     "old_param3"
-    t.text     "old_param4"
-    t.text     "old_param5"
     t.text     "additionnal_fields"
-    t.text     "old_answers"
     t.string   "journal_name"
     t.datetime "sync_at"
     t.boolean  "is_sane",                    default: true
@@ -1513,7 +1499,7 @@ ActiveRecord::Schema.define(version: 20170209202114) do
     t.string   "dematbox_service_id",            limit: 255
     t.string   "api_id",                         limit: 255
     t.string   "api_name"
-    t.string   "metadata"
+    t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id"
   end
 
