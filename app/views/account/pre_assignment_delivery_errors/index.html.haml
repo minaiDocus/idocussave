@@ -2,7 +2,7 @@
   .row-fluid
     .span12.box
       .pull-left
-        %h3 Liste des livraisons de pré-affectation en erreurs (#{@errors.count})
+        %h3 Liste des livraisons de pré-affectation en erreurs (#{@errors.to_a.size})
       .pull-right
         = link_to t('actions.return'), account_organization_pre_assignments_path(@organization), class: 'btn'
   .row-fluid
@@ -15,7 +15,7 @@
             %th.count Nb.
             %th.message Erreur
         %tbody
-          - @errors.each_with_index do |object, index|
+          - @errors.each do |object|
             %tr
               %td.date
                 - if object.date
