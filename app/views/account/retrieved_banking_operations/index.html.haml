@@ -3,7 +3,7 @@
     .box
       .row-fluid
         .span6
-          %h3 Opérations bancaires #{@operations ? "(#{@operations_count})" : nil}
+          %h3 Opérations bancaires #{@operations ? "(#{@operations.total_count})" : nil}
         .span6
           = link_to "#{@is_filter_empty ? 'Afficher' : 'Cacher'} le filtre", '#', class: 'btn pull-right toggle_filter'
     .filter.box{ class: ('hide' if @is_filter_empty) }
@@ -43,7 +43,6 @@
         %thead
           %tr
             %th Date Op
-            %th Date Val
             %th Service
             %th Compte
             %th Catégorie
@@ -53,7 +52,6 @@
           - @operations.each do |operation|
             %tr
               %td= l(operation.date, format: '%d %b %Y')
-              %td= l(operation.value_date, format: '%d %b %Y')
               %td= operation.bank_account.bank_name if operation.bank_account
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
