@@ -229,6 +229,110 @@ describe ProcessRetrievedData do
     expect(bank_account.name).to eq 'Compte chèque'
   end
 
+  context 'a configured and used bank account exists' do
+    before(:each) do
+      @bank_account = BankAccount.new
+      @bank_account.user              = @user
+      @bank_account.retriever         = @retriever
+      @bank_account.api_id            = 4
+      @bank_account.bank_name         = @retriever.service_name
+      @bank_account.name              = 'Compte courant'
+      @bank_account.number            = '2002700001'
+      @bank_account.journal           = 'AC'
+      @bank_account.accounting_number = 512000
+      @bank_account.start_date        = Time.local(2016,12,1).to_date
+      @bank_account.is_used           = true
+      @bank_account.save
+    end
+
+    it 'creates 3 operations with different states' do
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '3_operations.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      expect(@user.operations.count).to eq 3
+
+      operation1 = @user.operations[0]
+      operation2 = @user.operations[1]
+      operation3 = @user.operations[2]
+
+      expect(operation1.label).to eq 'PRLV FREE'
+      expect(operation1.is_locked).to eq true
+      expect(operation1.is_coming).to eq false
+
+      expect(operation2.label).to eq 'FACTURE CB RESTO'
+      expect(operation2.is_locked).to eq true
+      expect(operation2.is_coming).to eq true
+
+      expect(operation3.label).to eq 'Retrait DAB 100'
+      expect(operation3.is_locked).to eq false
+      expect(operation3.is_coming).to eq false
+    end
+
+    it 'updates 1 operation' do
+      operation = Operation.new
+      operation.organization = @user.organization
+      operation.user         = @user
+      operation.bank_account = @bank_account
+      operation.api_id       = 2
+      operation.api_name     = 'budgea'
+      operation.date         = '2017-01-31'
+      operation.value_date   = '2017-01-31'
+      operation.label        = 'FACTURE CB RESTO'
+      operation.amount       = -15.49
+      operation.type_name    = 'cb_differed'
+      operation.is_locked    = true
+      operation.is_coming    = true
+      operation.save
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'update_1_operation.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      operation = @user.operations.first
+
+      expect(operation.label).to eq 'FACTURE CB RESTO Le Bois'
+      expect(operation.is_locked).to eq true
+      expect(operation.is_coming).to eq true
+    end
+
+    it 'unlocks 1 operation' do
+      operation = Operation.new
+      operation.organization = @user.organization
+      operation.user         = @user
+      operation.bank_account = @bank_account
+      operation.api_id       = 2
+      operation.api_name     = 'budgea'
+      operation.date         = '2017-01-31'
+      operation.value_date   = '2017-01-31'
+      operation.label        = 'FACTURE CB RESTO'
+      operation.amount       = -15.49
+      operation.type_name    = 'cb_differed'
+      operation.is_locked    = true
+      operation.is_coming    = true
+      operation.save
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'unlock_1_operation.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      operation = @user.operations.first
+
+      expect(operation.label).to eq 'FACTURE CB RESTO Le Bois'
+      expect(operation.is_locked).to eq false
+      expect(operation.is_coming).to eq false
+    end
+  end
+
   context 'no preexisting document' do
     before(:each) do
       budgea_account = BudgeaAccount.new

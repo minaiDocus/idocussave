@@ -1,0 +1,42 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : null,
+          "id" : 4,
+          "name" : "Compte courant",
+          "number" : "2002700001",
+          "transactions" : [
+            {
+              "application_date" : "2017-01-31",
+              "comment" : null,
+              "date" : "2017-01-31",
+              "deleted" : null,
+              "id" : 2,
+              "last_update" : "2017-01-02 12:20:30",
+              "original_wording" : "FACTURE CB RESTO Le Bois",
+              "rdate" : "2017-01-02",
+              "type" : "cb_differed",
+              "coming" : true,
+              "value" : -15.49
+            }
+          ],
+          "type" : "checking"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2017-01-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2017-01-01 18:12:54",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}

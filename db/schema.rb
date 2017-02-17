@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170216163121) do
+ActiveRecord::Schema.define(version: 20170217213126) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -691,6 +691,7 @@ ActiveRecord::Schema.define(version: 20170216163121) do
     t.string   "type_id",                  limit: 255
     t.string   "api_name",                                                             default: "budgea"
     t.string   "type_name"
+    t.boolean  "is_coming",                                                            default: false
   end
 
   add_index "operations", ["api_id"], name: "index_operations_on_api_id"

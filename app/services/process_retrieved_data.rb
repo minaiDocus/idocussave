@@ -129,7 +129,6 @@ class ProcessRetrievedData
 
                 if bank_account && account['transactions'].present?
                   is_new_transaction_present = true
-                  is_configured = bank_account.is_used && bank_account.configured?
                   account['transactions'].each do |transaction|
                     operations = if retriever.connector.is_fiduceo_active?
                       bank_account.sandbox_operations
@@ -138,7 +137,7 @@ class ProcessRetrievedData
                     end
                     operation = operations.where(api_id: transaction['id'], api_name: 'budgea').first
                     if operation
-                      assign_attributes(operation, transaction)
+                      assign_attributes(bank_account, operation, transaction)
                       operation.save if operation.changed?
                     else
                       operations = if retriever.connector.is_fiduceo_active?
@@ -172,12 +171,7 @@ class ProcessRetrievedData
                         operation.user         = user
                         operation.api_id       = transaction['id']
                         operation.api_name     = 'budgea'
-                        assign_attributes(operation, transaction)
-                        if operation.date < Time.local(2017,1,1).to_date
-                          operation.is_locked = true
-                        else
-                          operation.is_locked = !is_configured
-                        end
+                        assign_attributes(bank_account, operation, transaction)
                         operation.save
                       end
                     end
@@ -315,7 +309,7 @@ class ProcessRetrievedData
 
 private
 
-  def assign_attributes(operation, transaction)
+  def assign_attributes(bank_account, operation, transaction)
     operation.date        = transaction['date']
     operation.value_date  = transaction['application_date']
     operation.label       = transaction['original_wording']
@@ -324,5 +318,13 @@ private
     operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
     operation.category    = BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
+    if operation.class == Operation && operation.processed_at.nil?
+      operation.is_coming = transaction['coming']
+      if (bank_account.start_date.present? && operation.date < bank_account.start_date) || operation.date < Time.local(2017,1,1).to_date || operation.is_coming
+        operation.is_locked = true
+      else
+        operation.is_locked = !(bank_account.is_used && bank_account.configured?)
+      end
+    end
   end
 end
