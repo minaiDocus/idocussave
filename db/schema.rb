@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170217213126) do
+ActiveRecord::Schema.define(version: 20170220185730) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 20170217213126) do
     t.string   "api_id",                limit: 255
     t.string   "api_name",                          default: "budgea"
     t.boolean  "is_used",                           default: false
+    t.string   "type_name"
   end
 
   create_table "boxes", force: :cascade do |t|
@@ -1295,6 +1296,7 @@ ActiveRecord::Schema.define(version: 20170217213126) do
     t.datetime "updated_at",                           null: false
     t.integer  "user_id"
     t.integer  "retriever_id"
+    t.string   "type_name"
   end
 
   create_table "sandbox_documents", force: :cascade do |t|
