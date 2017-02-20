@@ -142,19 +142,7 @@ class ProcessRetrievedData
                       assign_attributes(bank_account, operation, transaction)
                       operation.save if operation.changed?
                     else
-                      operations = if retriever.connector.is_fiduceo_active?
-                        user.sandbox_operations
-                      else
-                        user.operations
-                      end
-                      orphaned_operation = operations.where(
-                        date:       transaction['date'],
-                        value_date: transaction['application_date'],
-                        label:      transaction['original_wording'],
-                        amount:     transaction['value'],
-                        comment:    transaction['comment'],
-                        api_id:     nil
-                      ).first
+                      orphaned_operation = find_orphaned_operation(bank_account, transaction)
                       if orphaned_operation
                         if retriever.connector.is_fiduceo_active?
                           orphaned_operation.sandbox_bank_account = bank_account
@@ -311,10 +299,42 @@ class ProcessRetrievedData
 
 private
 
+  def find_orphaned_operation(bank_account, transaction)
+    operations = if bank_account.retriever.connector.is_fiduceo_active?
+      bank_account.user.sandbox_operations
+    else
+      bank_account.user.operations
+    end
+
+    orphaned_operation = operations.where(
+      date:       transaction['date'],
+      value_date: transaction['application_date'],
+      amount:     transaction['value'],
+      comment:    transaction['comment'],
+      api_id:     nil
+    )
+
+    if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
+      orphaned_operation = orphaned_operation.where(
+        operations.arel_table[:label].eq(transaction['original_wording']).or(
+          operations.arel_table[:label].eq('[CB] ' + transaction['original_wording'])
+        )
+      )
+    else
+      orphaned_operation = orphaned_operation.where(label: transaction['original_wording'])
+    end
+
+    orphaned_operation.first
+  end
+
   def assign_attributes(bank_account, operation, transaction)
     operation.date        = transaction['date']
     operation.value_date  = transaction['application_date']
-    operation.label       = transaction['original_wording']
+    if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
+      operation.label     = '[CB] ' + transaction['original_wording']
+    else
+      operation.label     = transaction['original_wording']
+    end
     operation.amount      = transaction['value']
     operation.comment     = transaction['comment']
     operation.type_name   = transaction['type']

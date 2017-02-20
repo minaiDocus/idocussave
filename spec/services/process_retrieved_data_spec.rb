@@ -205,6 +205,122 @@ describe ProcessRetrievedData do
     end
   end
 
+  context '2 bank accounts already exist' do
+    before(:each) do
+      @bank_account = BankAccount.new
+      @bank_account.user      = @user
+      @bank_account.retriever = @retriever
+      @bank_account.api_id    = 1
+      @bank_account.bank_name = @retriever.service_name
+      @bank_account.name      = 'Compte courant'
+      @bank_account.number    = '3002900000'
+      @bank_account.type_name = 'checking'
+      @bank_account.save
+
+      @bank_account2 = BankAccount.new
+      @bank_account2.user      = @user
+      @bank_account2.retriever = @retriever
+      @bank_account2.api_id    = 2
+      @bank_account2.bank_name = @retriever.service_name
+      @bank_account2.name      = 'Carte Gold 1234XXXXXXXXXXXX'
+      @bank_account2.number    = '2100005401'
+      @bank_account2.type_name = 'card'
+      @bank_account2.save
+    end
+
+    it 'creates 3 operations' do
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      expect(@user.operations.count).to eq 3
+
+      @operation, @operation2, @operation3 = @user.operations.to_a
+
+      expect(@operation.api_id).to eq '1'
+      expect(@operation.label).to eq 'DAB 100€'
+
+      # should detect '[CB] ...' here
+      expect(@operation2.api_id).to eq '3'
+      expect(@operation2.label).to eq '[CB] RESTO 33.5€'
+
+      expect(@operation3.api_id).to eq '2'
+      expect(@operation3.label).to eq 'Paypal 7.58€'
+    end
+
+    context '3 operations already exist' do
+      before(:each) do
+        @operation = Operation.new
+        @operation.user         = @user
+        @operation.api_name     = 'budgea'
+        @operation.is_locked    = true
+        @operation.date         = '2017-01-01'
+        @operation.value_date   = '2017-01-01'
+        @operation.label        = 'DAB 100€'
+        @operation.amount       = -100.0
+        @operation.type_name    = 'withdrawal'
+        @operation.category_id  = 9998
+        @operation.category     = 'Indéfini'
+        @operation.save
+
+        @operation2 = Operation.new
+        @operation2.user         = @user
+        @operation2.api_name     = 'budgea'
+        @operation2.is_locked    = true
+        @operation2.date         = '2017-01-02'
+        @operation2.value_date   = '2017-01-02'
+        @operation2.label        = 'Paypal 7.58€'
+        @operation2.amount       = -7.58
+        @operation2.type_name    = 'deferred_card'
+        @operation2.category_id  = 9998
+        @operation2.category     = 'Indéfini'
+        @operation2.save
+
+        @operation3 = Operation.new
+        @operation3.user         = @user
+        @operation3.api_name     = 'budgea'
+        @operation3.is_locked    = true
+        @operation3.date         = '2017-01-03'
+        @operation3.value_date   = '2017-01-03'
+        @operation3.label        = '[CB] RESTO 33.5€'
+        @operation3.amount       = -33.5
+        @operation3.comment      = nil
+        @operation3.type_name    = 'deferred_card'
+        @operation3.category_id  = 9998
+        @operation3.category     = 'Indéfini'
+        @operation3.save
+      end
+
+      it 'reattaches 3 operations to 2 bank accounts' do
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = @user
+        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
+        retrieved_data.save
+
+        ProcessRetrievedData.new(retrieved_data).execute
+
+        @operation.reload
+        @operation2.reload
+        @operation3.reload
+
+        expect(@user.operations.count).to eq 3
+
+        expect(@operation.api_id).to eq '1'
+        expect(@operation.bank_account).to eq @bank_account
+
+        expect(@operation2.api_id).to eq '2'
+        expect(@operation2.bank_account).to eq @bank_account2
+
+        # should detect '[CB] ...' here
+        expect(@operation3.api_id).to eq '3'
+        expect(@operation3.bank_account).to eq @bank_account
+      end
+    end
+  end
+
   it 'updates an old (fiduceo) bank account' do
     bank_account = BankAccount.new
     bank_account.user      = @user
@@ -263,7 +379,7 @@ describe ProcessRetrievedData do
       expect(operation1.is_locked).to eq true
       expect(operation1.is_coming).to eq false
 
-      expect(operation2.label).to eq 'FACTURE CB RESTO'
+      expect(operation2.label).to eq '[CB] FACTURE CB RESTO'
       expect(operation2.is_locked).to eq true
       expect(operation2.is_coming).to eq true
 

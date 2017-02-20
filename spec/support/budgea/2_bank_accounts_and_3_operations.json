@@ -1,0 +1,77 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : null,
+          "id" : 1,
+          "name" : "Compte courant",
+          "number" : "3002900000",
+          "transactions" : [
+            {
+              "application_date" : "2017-01-01",
+              "comment" : null,
+              "date" : "2017-01-01",
+              "deleted" : null,
+              "id" : 1,
+              "last_update" : "2017-01-01 12:20:30",
+              "original_wording" : "DAB 100€",
+              "rdate" : "2017-01-01",
+              "type" : "withdrawal",
+              "coming" : false,
+              "value" : -100.0
+            },
+            {
+              "application_date" : "2017-01-03",
+              "comment" : null,
+              "date" : "2017-01-03",
+              "deleted" : null,
+              "id" : 3,
+              "last_update" : "2017-01-03 12:20:30",
+              "original_wording" : "RESTO 33.5€",
+              "rdate" : "2017-01-03",
+              "type" : "deferred_card",
+              "coming" : false,
+              "value" : -33.5
+            }
+          ],
+          "type" : "checking"
+        },
+        {
+          "deleted" : null,
+          "id" : 2,
+          "name" : "Carte Gold 1234XXXXXXXXXXXX",
+          "number" : "2100005401",
+          "transactions" : [
+            {
+              "application_date" : "2017-01-02",
+              "comment" : null,
+              "date" : "2017-01-02",
+              "deleted" : null,
+              "id" : 2,
+              "last_update" : "2017-01-02 12:20:30",
+              "original_wording" : "Paypal 7.58€",
+              "rdate" : "2017-01-02",
+              "type" : "deferred_card",
+              "coming" : false,
+              "value" : -7.58
+            }
+          ],
+          "type" : "card"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2017-01-04 15:17:31"
+    }
+  ],
+  "user": {
+    "signin" : "2017-01-01 18:12:54",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}

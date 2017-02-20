@@ -30,7 +30,7 @@
               "last_update" : "2017-01-02 12:20:30",
               "original_wording" : "FACTURE CB RESTO",
               "rdate" : "2017-01-02",
-              "type" : "cb_differed",
+              "type" : "deferred_card",
               "coming" : true,
               "value" : -15.49
             },
