@@ -363,7 +363,7 @@ class User < ActiveRecord::Base
   end
 
   def presence_of_group
-    errors.add(:group_ids, :empty) if groups.count == 0
+    errors.add(:group_ids, :empty) if groups.empty?
   end
 
   def belonging_of_groups
