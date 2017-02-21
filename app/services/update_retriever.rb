@@ -5,16 +5,21 @@ class UpdateRetriever
   end
 
   def execute
-    @retriever.name       = @params[:name]
-    @retriever.journal_id = @params[:journal_id]
+    @retriever.name = @params[:name] unless @params[:name].nil?
+    if @retriever.provider? && @params[:journal_id].present?
+      @retriever.journal_id = @params[:journal_id]
+    end
 
-    if (@retriever.name_changed? || @retriever.journal_id_changed?) && !dyn_params_changed?
+    is_dyn_params_changed = dyn_params_changed?
+    if (@retriever.name_changed? || @retriever.journal_id_changed?) && !is_dyn_params_changed
       @retriever.save
-    else
+    elsif is_dyn_params_changed
       @retriever.confirm_dyn_params = true
       if @retriever.update(@params)
         @retriever.configure_connection
       end
+    else
+      true
     end
   end
 
@@ -31,8 +36,8 @@ private
 
       if new_param.present?
         if param.nil?
-          is_dyn_params_changed = new_param[:value].present?
-        elsif param['name'] != new_param[:name] || param['value'] != new_param[:value]
+          is_dyn_params_changed = new_param['value'].present?
+        elsif param['name'] != new_param['name'] || param['value'] != new_param['value']
           is_dyn_params_changed = true
         end
       end
