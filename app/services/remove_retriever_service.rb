@@ -16,6 +16,7 @@ class RemoveRetrieverService
   def execute
     @user.temp_documents.wait_selection.destroy_all
     @user.retrievers.each(&:destroy)
+    @user.bank_accounts.destroy_all
     if @user.budgea_account.present?
       client = Budgea::Client.new(@user.budgea_account.access_token)
       if client.destroy_user
