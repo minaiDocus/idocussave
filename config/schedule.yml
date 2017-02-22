@@ -1,5 +1,5 @@
 RefreshDashboardStatisticsWorker:
-  cron: '*/15 * * * *'
+  every: '5m'
 
 JobOrchestratorWorker:
   cron: '*/10 * * * *'

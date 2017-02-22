@@ -71,7 +71,7 @@
                   %td= StatisticsManager.get_statistic('unreadable_temp_documents_count')
                 %tr
                   %th Bloqués
-                  %td= StatisticsManager.get_statistic('locked_temp_documetns_count')
+                  %td= StatisticsManager.get_statistic('locked_temp_documents_count')
                 %tr
                   %th En attente de sélection
                   %td= StatisticsManager.get_statistic('wait_selection_temp_documents_count')
@@ -126,29 +126,27 @@
             %table.table.table-striped.table-condensed.table-bordered
               %tbody
                 %tr
-                  %th Total
-                  %td= Retriever.count
+                  %th Total récupérateurs
+                  %td= StatisticsManager.get_statistic('retrievers_count')
                 %tr
                   %th Total client (Actif)
                   %td
-                    = BudgeaAccount.count
-                    (#{Retriever.all.distinct(:user_id).count})
+                    = StatisticsManager.get_statistic('retriever_users_count')
+                    (#{StatisticsManager.get_statistic('active_retriever_users_count')})
                 %tr
                   %th= Retriever.state_machine.states['ready'].human_name
-                  %td= Retriever.ready.count
+                  %td= StatisticsManager.get_statistic('retrievers_ready_count')
                 %tr
                   %th= Retriever.state_machine.states['waiting_selection'].human_name[0..18] + '.'
-                  %td= Retriever.waiting_selection.count
+                  %td= StatisticsManager.get_statistic('retrievers_waiting_selections_count')
                 %tr
                   %th= 'En erreur'
-                  %td= Retriever.error.count
+                  %td= StatisticsManager.get_statistic('retrievers_errors_count')
                 %tr
                   %th Données en cours de tr.
                   %td
-                    = RetrievedData.not_processed.count
-                    (
-                    = RetrievedData.error.count
-                    )
+                    = StatisticsManager.get_statistic('retrieved_data_not_processed_count')
+                    (#{StatisticsManager.get_statistic('retrieved_data_errors_count')})
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Etat des pages
             %table.table.table-striped.table-condensed.table-bordered
@@ -169,7 +167,7 @@
                   %td= StatisticsManager.get_statistic('dematbox_scanned_documents_count')
                 %tr
                   %th Auto
-                  %td= Document.retrieved.count
+                  %td= StatisticsManager.get_statistic('retrieved_documents_count')
                 %tr
                   %th Vignettes rest.
                   %td= StatisticsManager.get_statistic('not_clean_not_mixed_documents_count')
@@ -188,7 +186,7 @@
                       %td= StatisticsManager.get_statistic('operations_count')
                     %tr
                       %th Automate
-                      %td= Operation.retrieved.count
+                      %td= StatisticsManager.get_statistic('retrieved_operations_count')
                     %tr
                       %th Import
                       %td= StatisticsManager.get_statistic('other_operations_count')
