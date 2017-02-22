@@ -26,6 +26,10 @@ class DocumentTools
     system "convert '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
   end
 
+  def self.to_a4_pdf(file_path, output_file_path)
+    system "convert -page A4+0+350 '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
+  end
+
 
   def self.modifiable?(file_path, strict = true)
     if completed? file_path, strict

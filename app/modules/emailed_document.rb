@@ -112,12 +112,12 @@ class EmailedDocument
             email.save
 
             if emailed_document.user.is_mail_receipt_activated
-              EmailedDocumentMailer.notify_success(email, emailed_document).deliver
+              EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now
             end
           else
             email.update_attribute(:errors_list, emailed_document.errors)
             email.failure
-            emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver
+            emailed_document.user && EmailedDocumentMailer.notify_failure(email, emailed_document).deliver_now
           end
           [emailed_document, email]
         else
@@ -130,7 +130,7 @@ class EmailedDocument
           attachment_names = mail.attachments.map(&:filename).select do |filename|
             File.extname(filename).casecmp('.pdf').zero?
           end
-          EmailedDocumentMailer.notify_error(email, attachment_names).deliver
+          EmailedDocumentMailer.notify_error(email, attachment_names).deliver_now
           email.update_attribute(:is_error_notified, true)
         end
         if rescue_error
@@ -261,11 +261,17 @@ class EmailedDocument
   def get_attachments
     if user.present? && journal.present? && period.present?
       @mail.attachments.select do |attachment|
-        File.extname(attachment.filename).casecmp('.pdf').zero?
+        supported_attachment_filename? attachment.filename
       end.map { |a| Attachment.new(a, file_name) }
     else
       []
     end
+  end
+
+  def supported_attachment_filename?(filename)
+    return true if File.extname(filename).casecmp('.pdf').zero?
+    return true if File.extname(filename).downcase.in?(UploadedDocument::VALID_EXTENSION) && File.basename(filename) =~ /^ido+\d{1,3}/i
+    false
   end
 
   def get_errors

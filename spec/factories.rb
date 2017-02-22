@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 FactoryGirl.define do
-  factory User do
+  factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
     password '123456'
     sequence(:first_name) { |n| "User#{n}" }
@@ -24,11 +24,11 @@ FactoryGirl.define do
     end
   end
 
-  factory PeriodDocument do
+  factory :period_document do
     sequence(:name) { |n| "TS0001 T#{n} #{Time.now.strftime('%Y%m')} all" }
   end
 
-  factory FileSendingKit do
+  factory :file_sending_kit do
     sequence(:title) { |n| "Kit #{n}"}
     sequence(:position) { |n| n }
     logo_path "404.png"
@@ -36,12 +36,12 @@ FactoryGirl.define do
     right_logo_path "404.png"
   end
 
-  factory Organization do
+  factory :organization do
     sequence(:name) { |n| "organization_#{n}" }
     sequence(:code) { |n| "O#{n}" }
   end
 
-  factory AccountBookType do
+  factory :account_book_type do
     sequence(:name) { |n| "J#{n}" }
     description '(description)'
     factory :journal_with_preassignment do
@@ -53,7 +53,7 @@ FactoryGirl.define do
     end
   end
 
-  factory Knowings do
+  factory :knowings do
     username 'test@example.com'
     password 'secret'
     url 'http://knowings.fr'

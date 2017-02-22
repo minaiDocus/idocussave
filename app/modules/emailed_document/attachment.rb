@@ -13,7 +13,6 @@ class EmailedDocument::Attachment
     @name ||= @original.filename
   end
 
-
   def size
     @size ||= @original.body.decoded.length
   end
@@ -28,6 +27,9 @@ class EmailedDocument::Attachment
     printable?
   end
 
+  def original_extension
+    File.extname(name).downcase
+  end
 
   # syntactic sugar ||= does not store false/nil value
   def printable?
@@ -88,10 +90,20 @@ class EmailedDocument::Attachment
   private
 
   def get_file_path
-    f = File.new(File.join(dir, @file_name), 'w')
+    filename = File.basename(@file_name, '.pdf') + original_extension
+    f = File.new(File.join(dir, filename), 'w')
     f.write @original.body.decoded.force_encoding('UTF-8')
     f.close
+    original_extension == '.pdf' ? f.path : converted_file_path(f.path)
+  end
 
-    f.path
+  def converted_file_path(file_path)
+    geometry = Paperclip::Geometry.from_file file_path
+    if geometry.height > 840
+      DocumentTools.to_a4_pdf(file_path, File.join(dir, @file_name))
+    else
+      DocumentTools.to_pdf(file_path, File.join(dir, @file_name))
+    end
+    File.join(dir, @file_name)
   end
 end
