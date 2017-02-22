@@ -210,6 +210,7 @@ class ProcessRetrievedData
                               is_success = true
                               is_new_document_present = true
                             end
+                            FileUtils.remove_entry temp_file_path
                           rescue Errno::ENOENT => e
                             error = e
                           end
