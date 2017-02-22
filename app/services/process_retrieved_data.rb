@@ -178,7 +178,7 @@ class ProcessRetrievedData
                   if subscription['documents'].present?
                     client = Budgea::Client.new(retriever.user.budgea_account.access_token)
                     subscription['documents'].select do |document|
-                      retriever.service_name == 'Nespresso' && document['date'].nil? ? false : true
+                      retriever.service_name.in?(['Nespresso', 'Online.net']) && document['date'].nil? ? false : true
                     end.sort_by do |document|
                       Time.parse(document['date'])
                     end.each do |document|
