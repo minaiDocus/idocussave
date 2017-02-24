@@ -86,4 +86,4 @@
     - elsif !controller_name.in?(%w(organizations rights collaborators groups organization_addresses accounting_plans vat_accounts exercises bank_accounts knowings pre_assignment_delivery_errors ibiza reminder_emails new_provider_requests retrieved_banking_operations retrieved_documents file_sending_kits file_storage_authorizations use_csv_descriptors list_journals))
       = javascript_include_tag "account/#{controller_name}"
     = render '/shared/google_analytics'
-    = render '/shared/zoho_discussions'
+    = render '/shared/zendesk_help'
