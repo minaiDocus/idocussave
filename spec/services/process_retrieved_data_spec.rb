@@ -6,28 +6,7 @@ describe ProcessRetrievedData do
     @user = FactoryGirl.create(:user, code: 'IDO%0001')
     @user.options = UserOptions.create(user_id: @user.id)
     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
-    @connector = Connector.new
-    @connector.name            = 'Connecteur de test'
-    @connector.capabilities    = ['document', 'bank']
-    @connector.apis            = ['budgea']
-    @connector.active_apis     = ['budgea']
-    @connector.budgea_id       = 40
-    @connector.fiduceo_ref     = nil
-    @connector.combined_fields = {
-      login: {
-        label:        'Identifiant',
-        type:         'text',
-        regex:        nil,
-        budgea_name:  'login'
-      },
-      password: {
-        label:        'Mot de passe',
-        type:         'password',
-        regex:        nil,
-        budgea_name:  'password'
-      }
-    }
-    @connector.save
+    @connector = FactoryGirl.create :connector
     @retriever = Retriever.new
     @retriever.user           = @user
     @retriever.budgea_id      = 7
@@ -138,6 +117,25 @@ describe ProcessRetrievedData do
       operation.reload
       expect(@user.bank_accounts.count).to eq 0
       expect(operation.api_id).to be_nil
+    end
+
+    context 'bank account has been detached from retriever' do
+      before(:each) do
+        @bank_account.update(retriever_id: nil)
+      end
+
+      it 're-attach the bank account to the retriever' do
+        expect(@bank_account.retriever).to be_nil
+
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = @user
+        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.save
+        ProcessRetrievedData.new(retrieved_data).execute
+
+        @bank_account.reload
+        expect(@bank_account.retriever).to eq @retriever
+      end
     end
 
     context 'an operation already exist' do

@@ -107,6 +107,7 @@ class ProcessRetrievedData
                     bank_account.destroy
                     bank_account = nil
                   else
+                    bank_account.retriever = retriever
                     bank_account.api_id    = account['id']
                     bank_account.api_name  = 'budgea'
                     bank_account.name      = account['name']

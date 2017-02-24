@@ -10,38 +10,7 @@ describe UpdateRetriever do
       CreateBudgeaAccount.execute(@user)
     end
 
-    @connector = Connector.new
-    @connector.name            = 'Connecteur de test'
-    @connector.capabilities    = ['document', 'bank']
-    @connector.apis            = ['budgea']
-    @connector.active_apis     = ['budgea']
-    @connector.budgea_id       = 40
-    @connector.fiduceo_ref     = nil
-    @connector.combined_fields = {
-      'website' => {
-        'label'       => 'Type de compte',
-        'type'        => 'list',
-        'regex'       => nil,
-        'budgea_name' => 'website',
-        'values' => [
-          { 'value' => 'par', 'label' => 'Particuliers' },
-          { 'value' => 'pro', 'label' => 'Professionnels' }
-        ]
-      },
-      'login' => {
-        'label'       => 'Identifiant',
-        'type'        => 'text',
-        'regex'       => nil,
-        'budgea_name' => 'login'
-      },
-      'password' => {
-        'label'       => 'Mot de passe',
-        'type'        => 'password',
-        'regex'       => nil,
-        'budgea_name' => 'password'
-      }
-    }
-    @connector.save
+    @connector = FactoryGirl.create :connector
   end
 
   context 'given a retriever' do

@@ -15,14 +15,14 @@ class DestroyBudgeaConnection
     is_destroyed = false
     lock.synchronize("#{@user.id}_destroy_budgea_connection", expiry: 30.seconds) do
       if @retriever.budgea_id.nil? || is_retriever_not_uniq?
-        @retriever.bank_accounts.destroy_all
+        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id)) if @retriever.bank_accounts.any?
         is_destroyed = @retriever.destroy_budgea_connection
       end
     end
     return true if is_destroyed
 
     if client.destroy_connection(@retriever.budgea_id)
-      @retriever.bank_accounts.destroy_all
+      DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id)) if @retriever.bank_accounts.any?
       @retriever.destroy_budgea_connection
     else
       @retriever.update(budgea_error_message: client.error_message)
