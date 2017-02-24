@@ -73,7 +73,7 @@ class Account::ReminderEmailsController < Account::OrganizationController
   def deliver
     result = @reminder_email.deliver
 
-    if result.is_a?(Boolean) && result == true
+    if result.is_a?(TrueClass) || result.is_a?(FalseClass) && result == true
       flash[:success] = 'Envoyé avec succès.'
     elsif result.is_a?(Array) && result.empty?
       flash[:notice] = 'Les mails ont déjà été envoyés.'
