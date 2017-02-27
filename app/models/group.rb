@@ -27,12 +27,13 @@ class Group < ActiveRecord::Base
 
 
   def member_tokens=(user_ids)
+    _user_ids = user_ids.map(&:to_s)
     member_ids = members.map { |m| m.id.to_s }
 
-    if user_ids.sort != member_ids.sort
+    if _user_ids.sort != member_ids.sort
       members.clear
 
-      User.find(user_ids).each do |user|
+      User.find(_user_ids).each do |user|
         members << user
 
         user.save unless persisted?
