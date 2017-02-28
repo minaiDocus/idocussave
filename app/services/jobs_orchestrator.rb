@@ -1,7 +1,7 @@
 class JobsOrchestrator
   def self.perform
     if Sidekiq::Queue.new("pre_assignments_delivery").size == 0
-      #DeliverPreAssignmentsWorker.perform_async unless JobsOrchestrator.check_if_in_queue("DeliverPreAssignmentsWorker")
+      DeliverPreAssignmentsWorker.perform_async unless JobsOrchestrator.check_if_in_queue("DeliverPreAssignmentsWorker")
     end
 
     if Sidekiq::Queue.new("grouping_delivery").size == 0
@@ -29,7 +29,7 @@ class JobsOrchestrator
     end
 
     if Sidekiq::Queue.new("retrieve_preseizures").size == 0
-      #RetrievePreseizuresWorker.perform_async unless JobsOrchestrator.check_if_in_queue("RetrievePreseizuresWorker")
+      RetrievePreseizuresWorker.perform_async unless JobsOrchestrator.check_if_in_queue("RetrievePreseizuresWorker")
     end
 
     if Sidekiq::Queue.new("sync_remote_files").size == 0

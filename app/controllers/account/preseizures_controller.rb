@@ -40,7 +40,7 @@ class Account::PreseizuresController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/preseizures/:id/deliver
   def deliver
-    #CreatePreAssignmentDeliveryService.new(@preseizure).execute
+    CreatePreAssignmentDeliveryService.new(@preseizure).execute
     respond_to do |format|
       format.json { render json: { status: :ok } }
     end
