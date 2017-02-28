@@ -6,8 +6,8 @@ class ProcessOperationsWorker
     $lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
 
     begin
-      $lock.synchronize('process_operations', expiry: 10.minutes, retries: 1) do
-        ProcessOperation.execute
+      $lock.synchronize('process_operations', expiry: 2.days.from_now, retries: 1) do
+        ProcessOperation.execute unless JobsOrchestrator.check_if_in_queue('ProcessOperationsWorker')
       end
     rescue RemoteLock::Error
     end

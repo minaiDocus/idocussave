@@ -6,8 +6,8 @@ class RetrieveOcrProcessedDocumentWorker
     $lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
 
     begin
-      $lock.synchronize('ocr_processing', expiry: 5.minutes, retries: 1) do
-        AccountingWorkflow::OcrProcessing.fetch
+      $lock.synchronize('ocr_processing', expiry: 30.minutes, retries: 1) do
+        AccountingWorkflow::OcrProcessing.fetch unless JobsOrchestrator.check_if_in_queue('RetrieveOcrProcessedDocumentWorker')
       end
     rescue RemoteLock::Error
     end
