@@ -94,7 +94,11 @@ class UploadedDocument
       file_path = File.join(@dir, file_name)
 
       if extension == '.pdf'
-        FileUtils.cp @file.path, file_path
+        if DocumentTools.protected?(@file.path)
+          DocumentTools.remove_pdf_security(@file_path, file_path)
+        else
+          FileUtils.cp @file.path, file_path
+        end
       else
         DocumentTools.to_pdf(@file.path, file_path)
       end

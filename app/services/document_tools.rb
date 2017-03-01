@@ -100,6 +100,10 @@ class DocumentTools
       nil
   end
 
+  def self.protected?(file_path)
+    completed?(file_path, false) && !completed?(file_path)
+  end
+
 
   def self.remove_pdf_security(file_path, new_file_path)
     system "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1"

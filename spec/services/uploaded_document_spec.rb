@@ -359,6 +359,19 @@ describe UploadedDocument do
         it { expect(subject.errors).to eq [[:file_is_corrupted_or_protected, nil]] }
         it { expect(subject.full_error_messages).to eq I18n.t('activerecord.errors.models.uploaded_document.attributes.file_is_corrupted_or_protected', nil) }
       end
+
+      context 'when file is protected' do
+        before(:each) do
+          file = File.open("#{Rails.root}/spec/support/files/protected.pdf", "r")
+          @uploaded_document = UploadedDocument.new(file, 'upload.pdf', @user, 'TS', 0)
+          file.close
+        end
+
+        subject { @uploaded_document }
+
+        it { is_expected.to be_valid }
+        it { expect(subject.errors).to be_empty }
+      end
     end
 
     describe 'when journal and other arguments is not valid' do
