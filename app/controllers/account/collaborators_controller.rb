@@ -26,7 +26,8 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   # POST /account/organizations/:organization_id/collaborators
   def create
-    if @collaborator = CreateCollaborator.new(user_params, @organization).execute
+    @collaborator = CreateCollaborator.new(user_params, @organization).execute
+    if @collaborator.persisted?
 
       flash[:success] = 'Créé avec succès.'
 
