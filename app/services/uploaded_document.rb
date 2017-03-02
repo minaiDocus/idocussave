@@ -95,7 +95,10 @@ class UploadedDocument
 
       if extension == '.pdf'
         if DocumentTools.protected?(@file.path)
-          DocumentTools.remove_pdf_security(@file_path, file_path)
+          DocumentTools.remove_pdf_security(@file.path, file_path)
+          unless File.exist?(file_path) && DocumentTools.modifiable?(file_path)
+            FileUtils.cp @file.path, file_path
+          end
         else
           FileUtils.cp @file.path, file_path
         end

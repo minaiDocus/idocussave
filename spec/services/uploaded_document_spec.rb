@@ -369,8 +369,11 @@ describe UploadedDocument do
 
         subject { @uploaded_document }
 
+        it { expect(DocumentTools.modifiable?("#{Rails.root}/spec/support/files/protected.pdf")).to be_falsy }
+        it { expect(DocumentTools.modifiable?(subject.temp_document.content.path)).to be_truthy }
         it { is_expected.to be_valid }
         it { expect(subject.errors).to be_empty }
+
       end
     end
 
