@@ -10,4 +10,33 @@ class Ftp < ActiveRecord::Base
   validates :login,    length: { minimum: 2, maximum: 40 }
   validates :password, length: { minimum: 2, maximum: 40 }
   validates_format_of :host, with: URI.regexp('ftp')
+
+  def is_configured?
+    is_configured
+  end
+
+  def reset_session
+    reset_info
+    is_configured = false
+    save
+  end
+
+  def reset_info
+    self.host = 'ftp://ftp.example.com'
+    self.login = 'login'
+    self.password = 'password'
+  end
+
+  def verify!
+    require "net/ftp"
+    begin
+      Net::FTP.open(self.host.sub(/\Aftp:\/\//,''),self.login,self.password)
+      self.is_configured = true
+    rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED
+      self.is_configured = false
+      reset_info
+    end
+    save
+    self.is_configured
+  end
 end

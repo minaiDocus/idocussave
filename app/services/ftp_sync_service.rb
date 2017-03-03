@@ -76,59 +76,19 @@ class FtpSyncService
     end
   end
 
-
-  def verify!
-    require 'net/ftp'
-    begin
-      Net::FTP.open(host.sub(/\Aftp:\/\//, ''), login, password)
-
-      is_configured = true
-    rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED
-      is_configured = false
-
-      reset_info
-    end
-
-    save
-
-    is_configured
-  end
-
-
-  def reset_info
-    self.host = 'ftp://ftp.example.com'
-    self.login = 'login'
-    self.password = 'password'
-  end
-
-
-  def reset_session
-    reset_info
-
-    is_configured = false
-
-    save
-  end
-
-
   def client
-    if is_configured?
-      @ftp ||= Net::FTP.new(host.sub(/\Aftp:\/\//, ''), login, password)
+    if @ftp.is_configured?
+      @client ||= Net::FTP.new(@ftp.host.sub(/\Aftp:\/\//, ''), @ftp.login, @ftp.password)
     end
   end
 
 
   def close_connection
-    if @ftp
-      @ftp.close
+    if @client
+      @client.close
 
-      @ftp = nil
+      @client = nil
     end
-  end
-
-
-  def is_configured?
-    @ftp.is_configured
   end
 
 
