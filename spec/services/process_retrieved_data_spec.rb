@@ -138,7 +138,7 @@ describe ProcessRetrievedData do
       end
     end
 
-    context 'an operation already exist' do
+    context 'an operation already exist', focus: true do
       before(:each) do
         @operation = Operation.new
         @operation.user         = @user
@@ -170,6 +170,34 @@ describe ProcessRetrievedData do
         @operation.reload
         expect(@user.operations.count).to eq 1
         expect(@operation.label).to eq("FACTURE CB HALL'S BEER")
+      end
+
+      it 'destroys the operation' do
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = @user
+        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
+        retrieved_data.save
+
+        expect(Operation.find(@operation.id)).to be_present
+
+        ProcessRetrievedData.new(retrieved_data).execute
+
+        expect { Operation.find(@operation.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'marks the operation as deleted' do
+        @operation.update(processed_at: Time.parse('2017-01-02 09:15:53'))
+
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = @user
+        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
+        retrieved_data.save
+
+        ProcessRetrievedData.new(retrieved_data).execute
+
+        @operation.reload
+
+        expect(@operation.deleted_at).to eq Time.parse('2017-01-04 15:17:30')
       end
 
       it 'does not create a new operation' do

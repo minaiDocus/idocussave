@@ -42,12 +42,12 @@
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
-            %th Date Op
-            %th Service
-            %th Compte
-            %th Catégorie
-            %th Libellé
-            %th.amount Montant
+            %th= sortable :date,                     'Date Op'
+            %th= sortable 'bank_accounts.bank_name', 'Service'
+            %th= sortable 'bank_accounts.number',    'Compte'
+            %th= sortable :category,                 'Catégorie'
+            %th= sortable :label,                    'Libellé'
+            %th.amount= sortable :amount,            'Montant'
         %tbody
           - @operations.each do |operation|
             %tr

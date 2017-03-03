@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ProcessOperation
   def self.execute(banking_operations=nil)
-    operations = banking_operations || Operation.not_processed.not_locked.order(date: :asc)
+    operations = banking_operations || Operation.not_processed.not_locked.not_recently_added_or_forced.order(date: :asc)
 
     if operations.count > 0
       preseizures = []

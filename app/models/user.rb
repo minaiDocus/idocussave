@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
   has_many :exercises
   has_many :temp_packs
   has_many :operations
+  has_many :forced_processing_operations, class_name: 'Operation', foreign_key: :forced_processing_by_user_id, inverse_of: :forced_processing_by_user
   has_many :preseizures,  class_name: 'Pack::Report::Preseizure', inverse_of: :user
   has_many :pack_pieces,  class_name: 'Pack::Piece',              inverse_of: :user
   has_many :pack_reports, class_name: 'Pack::Report',             inverse_of: :user

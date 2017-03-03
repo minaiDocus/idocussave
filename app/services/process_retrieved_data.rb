@@ -140,8 +140,12 @@ class ProcessRetrievedData
                     end
                     operation = operations.where(api_id: transaction['id'], api_name: 'budgea').first
                     if operation
-                      assign_attributes(bank_account, operation, transaction)
-                      operation.save if operation.changed?
+                      if transaction['deleted'].present? && operation.processed_at.nil?
+                        operation.destroy
+                      else
+                        assign_attributes(bank_account, operation, transaction)
+                        operation.save if operation.changed?
+                      end
                     else
                       orphaned_operation = find_orphaned_operation(bank_account, transaction)
                       if orphaned_operation
@@ -341,6 +345,7 @@ private
     operation.type_name   = transaction['type']
     operation.category_id = transaction['id_category']
     operation.category    = BankOperationCategory.find(transaction['id_category']).try(:[], 'name')
+    operation.deleted_at  = Time.parse(transaction['deleted']) if transaction['deleted'].present?
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
       if (bank_account.start_date.present? && operation.date < bank_account.start_date) || operation.date < Time.local(2017,1,1).to_date || operation.is_coming

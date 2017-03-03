@@ -187,7 +187,9 @@ Idocus::Application.routes.draw do
           r.resources :bank_accounts, only: %w(index edit update) do
             post 'update_multiple', on: :collection
           end
-          r.resources :retrieved_banking_operations, only: :index
+          r.resources :retrieved_banking_operations, only: :index do
+            post 'force_processing', on: :collection
+          end
 
           r.resources :retrieved_documents, only: %w(index show) do
             get   'piece',    on: :member

@@ -4,19 +4,23 @@
 
   .row-fluid
     .span12.box
-      %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@operations.total_count})
+      .pull-left
+        %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@operations.total_count})
+      .pull-right
+        = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @operations }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
-            %th.date Date Op
-            %th Service
-            %th Compte
-            %th Catégorie
-            %th Libellé
-            %th.amount Montant
+            %th.date= sortable :date,                'Date Op'
+            %th= sortable 'bank_accounts.bank_name', 'Service'
+            %th= sortable 'bank_accounts.number',    'Compte'
+            %th= sortable :category,                 'Catégorie'
+            %th= sortable :label,                    'Libellé'
+            %th.amount= sortable :amount,            'Montant'
+            %th Pré-affecté
         %tbody
           - @operations.each do |operation|
             %tr
@@ -26,6 +30,7 @@
               %td= operation.category
               %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + ' €'
+              %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
     .span3.box
       = render 'sidebar'

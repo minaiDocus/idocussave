@@ -23,7 +23,7 @@ ProcessRetrievedDataWorker:
   every: '5s'
 
 ProcessOperationsWorker:
-  every: '10m'
+  every: '1m'
 
 RemoveOldestRetrievedDataWorker:
   cron: '0 0 * * *'

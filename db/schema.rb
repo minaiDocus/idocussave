@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170220185730) do
+ActiveRecord::Schema.define(version: 20170303160616) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -663,36 +663,39 @@ ActiveRecord::Schema.define(version: 20170220185730) do
   end
 
   create_table "operations", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
+    t.string   "mongo_id",                     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "date"
     t.date     "value_date"
     t.date     "transaction_date"
-    t.text     "label",                    limit: 4294967295
-    t.decimal  "amount",                                      precision: 11, scale: 2
-    t.string   "comment",                  limit: 255
-    t.string   "supplier_found",           limit: 255
-    t.integer  "category_id",              limit: 4
-    t.string   "category",                 limit: 255
+    t.text     "label",                        limit: 4294967295
+    t.decimal  "amount",                                          precision: 11, scale: 2
+    t.string   "comment",                      limit: 255
+    t.string   "supplier_found",               limit: 255
+    t.integer  "category_id",                  limit: 4
+    t.string   "category",                     limit: 255
     t.datetime "accessed_at"
     t.datetime "processed_at"
     t.boolean  "is_locked"
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
-    t.integer  "bank_account_id",          limit: 4
-    t.string   "bank_account_id_mongo_id", limit: 255
-    t.integer  "pack_id",                  limit: 4
-    t.string   "pack_id_mongo_id",         limit: 255
-    t.integer  "piece_id",                 limit: 4
-    t.string   "piece_id_mongo_id",        limit: 255
-    t.string   "api_id",                   limit: 255
-    t.string   "type_id",                  limit: 255
-    t.string   "api_name",                                                             default: "budgea"
+    t.integer  "organization_id",              limit: 4
+    t.string   "organization_id_mongo_id",     limit: 255
+    t.integer  "user_id",                      limit: 4
+    t.string   "user_id_mongo_id",             limit: 255
+    t.integer  "bank_account_id",              limit: 4
+    t.string   "bank_account_id_mongo_id",     limit: 255
+    t.integer  "pack_id",                      limit: 4
+    t.string   "pack_id_mongo_id",             limit: 255
+    t.integer  "piece_id",                     limit: 4
+    t.string   "piece_id_mongo_id",            limit: 255
+    t.string   "api_id",                       limit: 255
+    t.string   "type_id",                      limit: 255
+    t.string   "api_name",                                                                 default: "budgea"
     t.string   "type_name"
-    t.boolean  "is_coming",                                                            default: false
+    t.boolean  "is_coming",                                                                default: false
+    t.datetime "deleted_at"
+    t.datetime "forced_processing_at"
+    t.integer  "forced_processing_by_user_id"
   end
 
   add_index "operations", ["api_id"], name: "index_operations_on_api_id"
