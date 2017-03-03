@@ -48,9 +48,9 @@ class AddTempDocumentToTempPack
         if temp_document.retrieved?
           options[:wait_selection] ? temp_document.wait_selection : temp_document.ready
         else
-          if DematboxServiceApi.config.is_active && temp_document.uploaded? && DocumentTools.need_ocr?(temp_document.content.path)
+          if (temp_document.scanned? || temp_document.uploaded?) && DocumentTools.need_ocr?(temp_document.content.path)
             temp_document.ocr_needed
-          elsif temp_pack.is_bundle_needed? && (temp_document.delivery_type == 'scan' || temp_document.pages_number > 2)
+          elsif temp_pack.is_bundle_needed? && (temp_document.scanned? || temp_document.pages_number > 2)
             temp_document.bundle_needed
           else
             temp_document.ready
