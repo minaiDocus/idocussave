@@ -48,7 +48,7 @@ private
   end
 
   def notify_failure(message)
-    addresses = Array(Settings.notify_errors_to)
+    addresses = Array(Settings.first.notify_errors_to)
     if addresses.size > 0
       NotificationMailer.notify(addresses, '[iDocus] Erreur lors de la création de l\'utilisateur Budgea', message).deliver
     end

@@ -92,9 +92,9 @@ class PreseizuresToCsv
             "#{conversion_rate}".gsub(/[\.,\,]/, @descriptor.separator)
           when /\Apiece_url\z/
             if @user.is_access_by_token_active
-              Settings.inner_url + entry.preseizure.piece.try(:get_access_url)
+              Settings.first.inner_url + entry.preseizure.piece.try(:get_access_url)
             else
-              Settings.inner_url + entry.preseizure.piece_content_url
+              Settings.first.inner_url + entry.preseizure.piece_content_url
             end
           when /\Aremark\z/
             entry.preseizure.observation
