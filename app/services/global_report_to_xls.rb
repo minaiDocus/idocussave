@@ -4,7 +4,6 @@ class GlobalReportToXls
     @year = year
   end
 
-
   def execute
     lines = Organization.billed_for_year(@year).order(name: :asc).map do |organization|
       line = [organization.name]
@@ -17,22 +16,17 @@ class GlobalReportToXls
 
       line
     end
-
     write(lines)
   end
 
-  private
-
+private
 
   def write(lines)
     book = Spreadsheet::Workbook.new
-    
     sheet = book.create_worksheet name: 'Reporting'
 
     month_names = I18n.t('date.month_names').compact.map(&:capitalize)
-
     headers = ['Organisation'] + month_names.map { |month_name| [month_name, ''] }.flatten
-
     sheet.row(0).replace headers
 
     12.times.each do |index|
@@ -45,9 +39,7 @@ class GlobalReportToXls
     end
 
     io = StringIO.new('')
-
     book.write(io)
-
     io.string
   end
 end
