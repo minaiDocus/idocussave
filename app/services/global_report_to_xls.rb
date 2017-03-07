@@ -6,7 +6,7 @@ class GlobalReportToXls
 
 
   def execute
-    lines = Organization.billed_for_year(@year).order(created_at: :asc, name: :asc).map do |organization|
+    lines = Organization.billed_for_year(@year).order(name: :asc).map do |organization|
       line = [organization.name]
       customer_ids = organization.customers.distinct(:id).pluck(:id)
 

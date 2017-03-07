@@ -8,7 +8,7 @@ class Admin::ReportingController < Admin::AdminController
 
     end_of_year = beginning_of_year.end_of_year
 
-    @organizations = Organization.billed_for_year(@year).order(created_at: :asc, name: :asc)
+    @organizations = Organization.billed_for_year(@year).order(name: :asc)
 
     @invoices = Invoice.where(organization_id: @organizations.map(&:id)).where("created_at > ? AND created_at < ?", beginning_of_year + 1.month, end_of_year + 1.month)
 
