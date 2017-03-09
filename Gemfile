@@ -29,7 +29,7 @@ gem 'airbrake', '4.3.8'
 # Image / File processing
 gem 'barby'
 gem 'prawn', '1.0.0rc1'
-gem 'paperclip', '4.2.1'
+gem 'paperclip', '~> 4.2.2'
 gem 'chunky_png'  # required by barby
 gem 'haml-rails'
 gem 'prawn-qrcode'
