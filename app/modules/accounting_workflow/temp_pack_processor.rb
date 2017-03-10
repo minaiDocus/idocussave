@@ -70,8 +70,22 @@ class AccountingWorkflow::TempPackProcessor
           if temp_document.scanned?
             position = pack.dividers.sheets.not_covers.last.try(:position) || 0
             position = is_a_cover ? 0 : (position + 1)
-            temp_document.scan_bundling_document_ids.each do |id|
-              bundling_document         = TempDocument.find(id)
+            if temp_pack.is_bundle_needed?
+              temp_document.scan_bundling_document_ids.each do |id|
+                bundling_document         = TempDocument.find(id)
+                base_file_name            = basename.tr(' ', '_')
+                pack_divider              = pack.dividers.build
+                pack_divider.pack         = pack
+                pack_divider.type         = 'sheet'
+                pack_divider.origin       = temp_document.delivery_type
+                pack_divider.is_a_cover   = is_a_cover
+                pack_divider.name         = base_file_name + "_%0#{POSITION_SIZE}d" % position
+                pack_divider.pages_number = bundling_document.pages_number
+                pack_divider.position     = position
+                pack_divider.save
+                position += 1
+              end
+            else
               base_file_name            = basename.tr(' ', '_')
               pack_divider              = pack.dividers.build
               pack_divider.pack         = pack
@@ -79,10 +93,9 @@ class AccountingWorkflow::TempPackProcessor
               pack_divider.origin       = temp_document.delivery_type
               pack_divider.is_a_cover   = is_a_cover
               pack_divider.name         = base_file_name + "_%0#{POSITION_SIZE}d" % position
-              pack_divider.pages_number = bundling_document.pages_number
+              pack_divider.pages_number = pages_number
               pack_divider.position     = position
               pack_divider.save
-              position += 1
             end
           end
 
