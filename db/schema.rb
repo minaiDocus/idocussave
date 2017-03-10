@@ -1158,7 +1158,7 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pack_name",                limit: 255
-    t.integer  "number",                   limit: 255
+    t.integer  "number",                   limit: 4
     t.string   "state",                    limit: 255
     t.boolean  "is_auto"
     t.integer  "total_item",               limit: 4
