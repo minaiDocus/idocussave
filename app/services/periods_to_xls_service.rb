@@ -67,8 +67,13 @@ class PeriodsToXlsService
     end
 
     range = @with_organization_info ? 0..5 : 0..4
+    month_index = @with_organization_info ? 1 : 0
     list = list.sort do |a, b|
-      a[range].join('_') <=> b[range].join('_')
+      _a = a[range]
+      _b = b[range]
+      _a[month_index] = ("%02d" % _a[month_index])
+      _b[month_index] = ("%02d" % _b[month_index])
+      _a <=> _b
     end
 
     list.each_with_index do |data, index|
@@ -155,8 +160,13 @@ class PeriodsToXlsService
     end
 
     range = @with_organization_info ? 0..3 : 0..2
+    month_index = @with_organization_info ? 1 : 0
     list = list.sort do |a, b|
-      a[range].join('_') <=> b[range].join('_')
+      _a = a[range]
+      _b = b[range]
+      _a[month_index] = ("%02d" % _a[month_index])
+      _b[month_index] = ("%02d" % _b[month_index])
+      _a <=> _b
     end
 
     list.each_with_index do |data, index|
