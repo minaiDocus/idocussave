@@ -35,7 +35,7 @@
                   - not_centralized_price_in_cents_wo_vat = PeriodBillingService.amount_in_cents_wo_vat(time.month, not_centralized_periods)
                   - not_centralized_price_in_cents_w_vat = not_centralized_price_in_cents_wo_vat * PeriodBillingService.vat_ratio(time)
 
-                  - if price_in_cents_wo_vat > 0 || not_centralized_price_in_cents_wo_vat > 0
+                  - if centralized_periods.size > 0 || not_centralized_periods.size > 0
                     %div
                       = "#{format_price_00(price_in_cents_wo_vat)} €"
                       %span.df_symbol HT
