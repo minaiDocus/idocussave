@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe DocumentProcessor do
+describe AccountingWorkflow::TempPackProcessor do
   describe '.process for monthly' do
     before(:all) do
       Timecop.freeze(Time.local(2013,1,1))
@@ -27,11 +27,13 @@ describe DocumentProcessor do
       before(:all) do
         UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', 0
         UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
+        @temp_pack = @user.temp_packs.first
 
-        DocumentProcessor.process
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -358,7 +360,7 @@ describe DocumentProcessor do
     context 'with 1 cover and 1 scan files current' do
       before(:all) do
         Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+          @temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
 
           2.times do |i|
             file_name = "TS0001_TS_201301_00#{i}.pdf"
@@ -366,10 +368,10 @@ describe DocumentProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
-            temp_document.temp_pack          = temp_pack
+            temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
-            temp_document.position           = temp_pack.next_document_position
+            temp_document.position           = @temp_pack.next_document_position
 
             temp_document.delivered_by       = 'ppp'
             temp_document.delivery_type      = 'scan'
@@ -379,10 +381,11 @@ describe DocumentProcessor do
           end
         end
 
-        DocumentProcessor.process
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -831,12 +834,15 @@ describe DocumentProcessor do
         dematbox.services << service
         dematbox.save
 
-        DematboxDocument.new(params)
+        CreateDematboxDocument.new(params).execute
 
-        DocumentProcessor.process
+        @temp_pack = @user.temp_packs.first
+
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -1093,7 +1099,7 @@ describe DocumentProcessor do
         dematbox.services << service
         dematbox.save
 
-        DematboxDocument.new(params)
+        CreateDematboxDocument.new(params).execute
 
         params2 = {
           'virtual_box_id' => 'TS0001',
@@ -1104,11 +1110,11 @@ describe DocumentProcessor do
           'text' => nil
         }
 
-        DematboxDocument.new(params2)
+        CreateDematboxDocument.new(params2).execute
 
         # 1 cover scanned file and 1 scanned file
         Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+          @temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
 
           2.times do |i|
             file_name = "TS0001_TS_201301_00#{i}.pdf"
@@ -1116,10 +1122,10 @@ describe DocumentProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
-            temp_document.temp_pack          = temp_pack
+            temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
-            temp_document.position           = temp_pack.next_document_position
+            temp_document.position           = @temp_pack.next_document_position
 
             temp_document.delivered_by       = 'ppp'
             temp_document.delivery_type      = 'scan'
@@ -1129,10 +1135,11 @@ describe DocumentProcessor do
           end
         end
 
-        DocumentProcessor.process
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -2062,40 +2069,63 @@ describe DocumentProcessor do
 
     context 'with 1 scanned file with preassignment activated' do
       before(:all) do
-        Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+        @journal.update_attribute(:entry_type, 2)
+        @temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+        @temp_pack.user = @user
+        @temp_pack.save
 
-          file_name = 'TS0001_TS_201301_001.pdf'
-          file_path = File.join(dir, file_name)
-          original_file_path = File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf')
-          Pdftk.new.merge([original_file_path, original_file_path], file_path)
+        file_name = 'TS0001_TS_201301_001.pdf'
+        original_file_path = File.join(Rails.root, 'spec', 'support', 'files', '2pages.pdf')
+
+        ids = 2.times.map do
           temp_document = TempDocument.new
-
-          temp_document.temp_pack          = temp_pack
+          temp_document.temp_pack          = @temp_pack
+          temp_document.user               = @user
           temp_document.original_file_name = file_name
-          temp_document.content            = open(file_path)
-          temp_document.position           = temp_pack.next_document_position
-
+          temp_document.content            = open(original_file_path)
+          temp_document.position           = @temp_pack.next_document_position
           temp_document.delivered_by       = 'ppp'
           temp_document.delivery_type      = 'scan'
-
+          temp_document.state              = 'bundled'
+          temp_document.pages_number       = 2
           temp_document.save
-          temp_document.ready
+          temp_document.id
         end
 
-        @journal.update_attribute(:entry_type, 2)
+        Dir.mktmpdir do |dir|
+          file_path = File.join(dir, file_name)
+          Pdftk.new.merge([original_file_path, original_file_path], file_path)
 
-        DocumentProcessor.process
+          temp_document_2 = TempDocument.new
+          temp_document_2.temp_pack                  = @temp_pack
+          temp_document_2.user                       = @user
+          temp_document_2.original_file_name         = file_name
+          temp_document_2.content                    = open(file_path)
+          temp_document_2.position                   = @temp_pack.next_document_position
+          temp_document_2.is_an_original             = false
+          temp_document_2.scan_bundling_document_ids = ids
+          temp_document_2.delivered_by               = 'ppp'
+          temp_document_2.delivery_type              = 'scan'
+          temp_document_2.pages_number               = 4
+          temp_document_2.save
+          temp_document_2.ready
+        end
+
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
-        @path = PrepaCompta.pre_assignments_dir.join('input', Time.now.strftime('%Y-%m-%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
+        # TODO review this
+        @path = AccountingWorkflow.pre_assignments_dir.join('input', Time.now.strftime('%Y-%m-%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
       end
 
       after(:all) do
+        @journal.update_attribute(:entry_type, 0)
         TempPack.destroy_all
         Pack.destroy_all
-        File.delete @path
+        FileUtils.remove_entry(Rails.root.join('files/test/prepa_compta/pre_assignments/input/'))
+        # File.delete @path
       end
 
       it 'creates two sheets metadata' do
@@ -2105,24 +2135,25 @@ describe DocumentProcessor do
       end
 
       it 'should create file to preassign successfully' do
+        pending
         expect(File.exist?(@path)).to be true
       end
     end
 
     context 'with 2 processing' do
       before(:all) do
-        Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+        @temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
 
+        Dir.mktmpdir do |dir|
           file_name = 'TS0001_TS_201301_001.pdf'
           file_path = File.join(dir, file_name)
           FileUtils.cp @file_with_2_pages, file_path
           temp_document = TempDocument.new
 
-          temp_document.temp_pack          = temp_pack
+          temp_document.temp_pack          = @temp_pack
           temp_document.original_file_name = file_name
           temp_document.content            = open(file_path)
-          temp_document.position           = temp_pack.next_document_position
+          temp_document.position           = @temp_pack.next_document_position
 
           temp_document.delivered_by       = 'petersbourg'
           temp_document.delivery_type      = 'scan'
@@ -2131,20 +2162,18 @@ describe DocumentProcessor do
           temp_document.ready
         end
 
-        DocumentProcessor.process
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
 
         Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
-
           file_name = 'TS0001_TS_201301_002.pdf'
           file_path = File.join(dir, file_name)
           FileUtils.cp @file_with_2_pages, file_path
           temp_document = TempDocument.new
 
-          temp_document.temp_pack          = temp_pack
+          temp_document.temp_pack          = @temp_pack
           temp_document.original_file_name = file_name
           temp_document.content            = open(file_path)
-          temp_document.position           = temp_pack.next_document_position
+          temp_document.position           = @temp_pack.next_document_position
 
           temp_document.delivered_by       = 'petersbourg'
           temp_document.delivery_type      = 'scan'
@@ -2153,11 +2182,11 @@ describe DocumentProcessor do
           temp_document.ready
         end
 
-        DocumentProcessor.process
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
 
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -2589,7 +2618,7 @@ describe DocumentProcessor do
     context 'with 2 processing each with 1 cover' do
       before(:all) do
         Dir.mktmpdir do |dir|
-          temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
+          @temp_pack = TempPack.find_or_create_by_name 'TS0001 TS 201301 all'
 
           2.times do |i|
             file_name = "TS0001_TS_201301_00#{i}.pdf"
@@ -2597,10 +2626,10 @@ describe DocumentProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
-            temp_document.temp_pack          = temp_pack
+            temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
-            temp_document.position           = temp_pack.next_document_position
+            temp_document.position           = @temp_pack.next_document_position
 
             temp_document.delivered_by       = 'petersbourg'
             temp_document.delivery_type      = 'scan'
@@ -2609,7 +2638,7 @@ describe DocumentProcessor do
             temp_document.ready
           end
 
-          DocumentProcessor.process
+          AccountingWorkflow::TempPackProcessor.process(@temp_pack)
 
           2.times do |i|
             file_name = "TS0001_TS_201301_00#{i}.pdf"
@@ -2617,10 +2646,10 @@ describe DocumentProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
-            temp_document.temp_pack          = temp_pack
+            temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
-            temp_document.position           = temp_pack.next_document_position
+            temp_document.position           = @temp_pack.next_document_position
 
             temp_document.delivered_by       = 'petersbourg'
             temp_document.delivery_type      = 'scan'
@@ -2629,12 +2658,12 @@ describe DocumentProcessor do
             temp_document.ready
           end
 
-          DocumentProcessor.process
+          AccountingWorkflow::TempPackProcessor.process(@temp_pack)
         end
 
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do
@@ -3244,10 +3273,13 @@ describe DocumentProcessor do
         UploadedDocument.new @upload_file, "upload_with_1_page.pdf", @user, 'TS', 0
         UploadedDocument.new @file_with_2_pages, "upload_with_2_pages.pdf", @user, 'TS', 0
 
-        DocumentProcessor.process
+        @temp_pack = @user.temp_packs.first
+
+        AccountingWorkflow::TempPackProcessor.process(@temp_pack)
+
         @user.reload
+        @temp_pack.reload
         @pack = @user.packs.first
-        @temp_pack = TempPack.where(name: @pack.name).first
       end
 
       after(:all) do

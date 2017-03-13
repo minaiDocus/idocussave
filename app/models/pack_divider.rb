@@ -18,6 +18,7 @@ class PackDivider < ActiveRecord::Base
   scope :uploaded,         -> { where(origin: 'upload') }
   scope :not_covers,       -> { where(is_a_cover: false) }
   scope :dematbox_scanned, -> { where(origin: 'dematbox_scan') }
+  scope :by_position,      -> { order(position: :asc) }
 
   scope :of_period, lambda { |time, duration|
     case duration
@@ -33,4 +34,10 @@ class PackDivider < ActiveRecord::Base
     end
     where('created_at >= ? AND created_at <= ?', start_at, end_at)
   }
+
+  class << self
+    def last
+      order(position: :desc).first
+    end
+  end
 end
