@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
     end
     @contains
   end
-  helper_method :search_terms 
+  helper_method :search_terms
 
 
   def format_price_with_dot(price_in_cents)
@@ -111,13 +111,13 @@ class ApplicationController < ActionController::Base
         @current_time = Time.local(params[:year], params[:month], params[:day])
       rescue ArgumentError
         @current_time = Time.now
-      end      
+      end
     end
   end
 
 
   def redirect_to_https
-    if !request.ssl?&& !request.path.match(/(^\/dematbox\/|debit_mandate_notify)/)
+    if !request.ssl? && !request.path.match(/(^\/dematbox\/|debit_mandate_notify)/)
       url = request.url.gsub('http', 'https')
       redirect_to(url)
     end
