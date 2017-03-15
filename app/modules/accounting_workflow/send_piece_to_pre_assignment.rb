@@ -25,25 +25,6 @@ class AccountingWorkflow::SendPieceToPreAssignment
   private
 
 
-  def file_name
-    if @file_name
-      @file_name
-    else
-      data = [@piece.name]
-      if journal.is_pre_assignment_processable?
-        data << "DTI#{journal.default_account_number}"
-        data << "ATI#{journal.account_number}"
-        data << "DCP#{journal.default_charge_account}"
-        data << "ACP#{journal.charge_account}"
-        data << "TVA#{journal.vat_account}"
-        data << "ANO#{journal.anomaly_account}"
-        data << "TAX#{is_taxable ? 1 : 0}"
-      end
-      @file_name = data.join('_').gsub(/\/+/, '').tr(' ', '_') + '.pdf'
-    end
-  end
-
-
   def manual_dir
     list = AccountingWorkflow.pre_assignments_dir.join 'input', journal.compta_type
   end

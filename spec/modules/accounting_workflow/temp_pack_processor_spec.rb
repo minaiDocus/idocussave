@@ -2116,8 +2116,6 @@ describe AccountingWorkflow::TempPackProcessor do
         @user.reload
         @temp_pack.reload
         @pack = @user.packs.first
-        # TODO review this
-        @path = AccountingWorkflow.pre_assignments_dir.join('input', Time.now.strftime('%Y-%m-%d'), 'dynamic', 'AC', 'TS0001_TS_201301_001_DTI_ATI_DCP_ACP_TVA_ANO_TAX1.pdf')
       end
 
       after(:all) do
@@ -2125,7 +2123,6 @@ describe AccountingWorkflow::TempPackProcessor do
         TempPack.destroy_all
         Pack.destroy_all
         FileUtils.remove_entry(Rails.root.join('files/test/prepa_compta/pre_assignments/input/'))
-        # File.delete @path
       end
 
       it 'creates two sheets metadata' do
@@ -2135,8 +2132,8 @@ describe AccountingWorkflow::TempPackProcessor do
       end
 
       it 'should create file to preassign successfully' do
-        pending
-        expect(File.exist?(@path)).to be true
+        file_path = AccountingWorkflow.pre_assignments_dir.join('input', 'AC', 'TS0001_TS_201301_001.pdf')
+        expect(File.exist?(file_path)).to be true
       end
     end
 
