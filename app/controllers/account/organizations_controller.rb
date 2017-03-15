@@ -172,7 +172,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_quadratus_used,
         :is_coala_used,
         :is_csv_descriptor_used,
-        :is_pre_assignment_date_computed
+        :is_pre_assignment_date_computed,
+        :is_operation_processing_forced
       )
     else
       params.require(:organization).permit(
@@ -182,7 +183,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_quadratus_used,
         :is_coala_used,
         :is_csv_descriptor_used,
-        :is_pre_assignment_date_computed
+        :is_pre_assignment_date_computed,
+        :is_operation_processing_forced
       )
     end
   end

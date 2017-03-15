@@ -14,6 +14,7 @@
             = f.input :is_detail_authorized, as: :boolean
             = f.input :is_test,              as: :boolean
           = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]
+          = f.input :is_operation_processing_forced, as: :boolean, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques)."
         - else
           = f.input :is_quadratus_used, as: 'boolean'
           = f.input :is_coala_used, as: 'boolean'

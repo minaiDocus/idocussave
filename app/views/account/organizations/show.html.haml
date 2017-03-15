@@ -63,6 +63,9 @@
                     %tr
                       %th= t('activerecord.models.organization.attributes.is_pre_assignment_date_computed')
                       %td= @organization.is_pre_assignment_date_computed ? 'Date de la période iDocus' : 'Date d’origine'
+                    %tr
+                      %th= t('activerecord.models.organization.attributes.is_operation_processing_forced')
+                      %td= @organization.is_operation_processing_forced ? t('yes_value') : t('no_value')
                 .span4
                   %table.table.table-condensed.table-striped
                     %tr
@@ -162,9 +165,6 @@
                   %tr
                     %th= t('activerecord.models.ibiza.attributes.is_auto_deliver')
                     %td= @organization.ibiza.try(:is_auto_deliver) ? t('yes_value') : t('no_value')
-                  %tr
-                    %th= t('activerecord.models.ibiza.attributes.is_operation_processing_forced')
-                    %td= @organization.ibiza.try(:is_operation_processing_forced) ? t('yes_value') : t('no_value')
               - if @organization.ibiza
                 %h4.margin2top.margin1bottom Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
                 %table.table.table-condensed.table-striped

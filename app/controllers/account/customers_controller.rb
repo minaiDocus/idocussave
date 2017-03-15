@@ -283,7 +283,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def ibiza_params
-    params.require(:user).permit(:ibiza_id, options_attributes: [:id, :is_auto_deliver, :is_operation_processing_forced])
+    params.require(:user).permit(:ibiza_id, options_attributes: [:id, :is_auto_deliver])
   end
 
 
@@ -309,7 +309,7 @@ class Account::CustomersController < Account::OrganizationController
 
 
   def compta_options_params
-    params.require(:user).permit(options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed])
+    params.require(:user).permit(options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed, :is_operation_processing_forced])
   end
 
 

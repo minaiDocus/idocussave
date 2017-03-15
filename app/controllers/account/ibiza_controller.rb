@@ -59,7 +59,7 @@ class Account::IbizaController < Account::OrganizationController
 
 
   def ibiza_params
-    params.require(:ibiza).permit(:access_token, :access_token_2, :is_auto_deliver, :description_separator, :piece_name_format_sep, :is_operation_processing_forced).tap do |whitelist|
+    params.require(:ibiza).permit(:access_token, :access_token_2, :is_auto_deliver, :description_separator, :piece_name_format_sep).tap do |whitelist|
       whitelist[:description]       = params[:ibiza][:description].permit!
       whitelist[:piece_name_format] = params[:ibiza][:piece_name_format].permit!
     end

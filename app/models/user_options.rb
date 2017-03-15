@@ -31,7 +31,7 @@ class UserOptions < ActiveRecord::Base
   # 1 means force operation processing
   def operation_processing_forced?
     if is_operation_processing_forced == -1
-      user.organization.try(:ibiza).try(:is_operation_processing_forced)
+      user.organization.try(:is_operation_processing_forced)
     else
       is_operation_processing_forced == 1
     end
