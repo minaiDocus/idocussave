@@ -138,7 +138,7 @@ describe ProcessRetrievedData do
       end
     end
 
-    context 'an operation already exist', focus: true do
+    context 'an operation already exist' do
       before(:each) do
         @operation = Operation.new
         @operation.user         = @user
