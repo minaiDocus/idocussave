@@ -6,8 +6,9 @@
     .span12.box
       .pull-left
         %h3 Liste des opérations bancaires du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@operations.total_count})
-      .pull-right
-        = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
+      - unless @customer.options.operation_processing_forced?
+        .pull-right
+          = link_to "Forcer la pré-affectation de #{@waiting_operations_count} opération(s)", force_processing_account_organization_customer_retrieved_banking_operations_path(@organization, @customer, banking_operation_contains: params[:banking_operation_contains]), method: :post, class: 'btn btn-danger', data: { confirm: "Ces opérations peuvent encore être modifiés par la/les banque(s). Êtes-vous sûr ?" }
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @operations }

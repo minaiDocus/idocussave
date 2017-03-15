@@ -395,6 +395,7 @@ fr:
           is_auto_deliver: Livrer automatiquement les écritures ?
           is_own_csv_descriptor_used: Utilise son propre format de CSV ?
           is_retriever_authorized: Automate autorisé ?
+          is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
       address:
         zero: 0 adresses
         one: 1 adresse
@@ -585,6 +586,7 @@ fr:
         name: iBiza
         attributes:
           is_auto_deliver: Livrer automatiquement les écritures ?
+          is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
           access_token: Jeton d'accès Scan et OCR
           state: Etat
           access_token_2: Jeton d'accès iDo'FacBanque

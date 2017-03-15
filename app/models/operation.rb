@@ -45,4 +45,14 @@ class Operation < ActiveRecord::Base
 
     collection
   end
+
+  def self.processable
+    Operation.not_processed.not_locked.order(date: :asc).select do |operation|
+      if operation.user.options.operation_processing_forced?
+        true
+      else
+        operation.created_at < 7.days.ago || operation.forced_processing_at.present?
+      end
+    end
+  end
 end

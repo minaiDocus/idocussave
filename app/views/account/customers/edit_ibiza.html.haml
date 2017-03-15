@@ -16,6 +16,7 @@
         = f.simple_fields_for :options do |o|
           = o.hidden_field :id
           = o.input :is_auto_deliver, collection: auto_deliver_options, include_blank: false
+          = o.input :is_operation_processing_forced, collection: operation_processing_options, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques)."
         .form-actions.margin0bottom
           - if @customer.configured?
             = f.submit t('actions.submit'), class: 'btn btn-primary', disabled: true

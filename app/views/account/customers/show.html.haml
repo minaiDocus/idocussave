@@ -287,6 +287,9 @@
                     %tr
                       %th= t('activerecord.models.user_options.attributes.is_auto_deliver')
                       %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('activerecord.models.user_options.attributes.is_operation_processing_forced')
+                      %td= @customer.options.operation_processing_forced? ? t('yes_value') : t('no_value')
                 .row-fluid
                   .span12
                     = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
