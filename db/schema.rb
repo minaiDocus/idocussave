@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170303160616) do
+ActiveRecord::Schema.define(version: 20170315124258) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -135,9 +135,9 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.integer  "retriever_id",          limit: 4
     t.string   "retriever_id_mongo_id", limit: 255
     t.string   "api_id",                limit: 255
-    t.string   "api_name",                          default: "budgea"
+    t.string   "api_name",              limit: 255, default: "budgea"
     t.boolean  "is_used",                           default: false
-    t.string   "type_name"
+    t.string   "type_name",             limit: 255
   end
 
   create_table "boxes", force: :cascade do |t|
@@ -153,11 +153,11 @@ ActiveRecord::Schema.define(version: 20170303160616) do
   end
 
   create_table "budgea_accounts", force: :cascade do |t|
-    t.string   "identifier"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "user_id"
-    t.string   "encrypted_access_token"
+    t.string   "identifier",             limit: 255
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.integer  "user_id",                limit: 4
+    t.string   "encrypted_access_token", limit: 255
   end
 
   create_table "cms_images", force: :cascade do |t|
@@ -187,13 +187,13 @@ ActiveRecord::Schema.define(version: 20170303160616) do
   end
 
   create_table "connectors", force: :cascade do |t|
-    t.string   "name"
-    t.text     "capabilities"
-    t.text     "apis"
-    t.text     "active_apis"
-    t.integer  "budgea_id"
-    t.string   "fiduceo_ref"
-    t.text     "combined_fields"
+    t.string   "name",            limit: 255
+    t.text     "capabilities",    limit: 65535
+    t.text     "apis",            limit: 65535
+    t.text     "active_apis",     limit: 65535
+    t.integer  "budgea_id",       limit: 4
+    t.string   "fiduceo_ref",     limit: 255
+    t.text     "combined_fields", limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -343,9 +343,9 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "pack_id_mongo_id",           limit: 255
   end
 
-  add_index "documents", ["dirty"], name: "index_documents_on_dirty"
-  add_index "documents", ["is_a_cover"], name: "index_documents_on_is_a_cover"
-  add_index "documents", ["origin"], name: "index_documents_on_origin"
+  add_index "documents", ["dirty"], name: "index_documents_on_dirty", using: :btree
+  add_index "documents", ["is_a_cover"], name: "index_documents_on_is_a_cover", using: :btree
+  add_index "documents", ["origin"], name: "index_documents_on_origin", using: :btree
 
   create_table "dropbox_basics", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
@@ -645,21 +645,21 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state",                 limit: 255, default: "pending", null: false
+    t.string   "state",                 limit: 255,   default: "pending", null: false
     t.string   "name",                  limit: 255
     t.datetime "notified_at"
     t.datetime "processing_at"
     t.integer  "user_id",               limit: 4
     t.string   "user_id_mongo_id",      limit: 255
-    t.integer  "api_id"
-    t.boolean  "is_sent",                           default: false
-    t.text     "encrypted_url"
-    t.string   "encrypted_login"
-    t.text     "encrypted_description"
-    t.text     "encrypted_message"
-    t.string   "encrypted_email"
-    t.string   "encrypted_password"
-    t.string   "encrypted_types"
+    t.integer  "api_id",                limit: 4
+    t.boolean  "is_sent",                             default: false
+    t.text     "encrypted_url",         limit: 65535
+    t.string   "encrypted_login",       limit: 255
+    t.text     "encrypted_description", limit: 65535
+    t.text     "encrypted_message",     limit: 65535
+    t.string   "encrypted_email",       limit: 255
+    t.string   "encrypted_password",    limit: 255
+    t.string   "encrypted_types",       limit: 255
   end
 
   create_table "operations", force: :cascade do |t|
@@ -690,18 +690,18 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "piece_id_mongo_id",            limit: 255
     t.string   "api_id",                       limit: 255
     t.string   "type_id",                      limit: 255
-    t.string   "api_name",                                                                 default: "budgea"
-    t.string   "type_name"
+    t.string   "api_name",                     limit: 255,                                 default: "budgea"
+    t.string   "type_name",                    limit: 255
     t.boolean  "is_coming",                                                                default: false
     t.datetime "deleted_at"
     t.datetime "forced_processing_at"
-    t.integer  "forced_processing_by_user_id"
+    t.integer  "forced_processing_by_user_id", limit: 4
   end
 
-  add_index "operations", ["api_id"], name: "index_operations_on_api_id"
-  add_index "operations", ["api_name"], name: "index_operations_on_api_name"
-  add_index "operations", ["bank_account_id"], name: "index_operations_on_bank_account_id"
-  add_index "operations", ["user_id"], name: "index_operations_on_user_id"
+  add_index "operations", ["api_id"], name: "index_operations_on_api_id", using: :btree
+  add_index "operations", ["api_name"], name: "index_operations_on_api_name", using: :btree
+  add_index "operations", ["bank_account_id"], name: "index_operations_on_bank_account_id", using: :btree
+  add_index "operations", ["user_id"], name: "index_operations_on_user_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "mongo_id",                                        limit: 255
@@ -808,6 +808,7 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.integer  "leader_id",                       limit: 4
     t.string   "leader_id_mongo_id",              limit: 255
     t.boolean  "is_coala_used",                               default: false, null: false
+    t.boolean  "is_operation_processing_forced",              default: false
   end
 
   create_table "pack_dividers", force: :cascade do |t|
@@ -824,9 +825,9 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "pack_id_mongo_id", limit: 255
   end
 
-  add_index "pack_dividers", ["is_a_cover"], name: "index_pack_dividers_on_is_a_cover"
-  add_index "pack_dividers", ["origin"], name: "index_pack_dividers_on_origin"
-  add_index "pack_dividers", ["type"], name: "index_pack_dividers_on_type"
+  add_index "pack_dividers", ["is_a_cover"], name: "index_pack_dividers_on_is_a_cover", using: :btree
+  add_index "pack_dividers", ["origin"], name: "index_pack_dividers_on_origin", using: :btree
+  add_index "pack_dividers", ["type"], name: "index_pack_dividers_on_type", using: :btree
 
   create_table "pack_pieces", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -858,7 +859,7 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "pack_id_mongo_id",           limit: 255
   end
 
-  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", unique: true
+  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", unique: true, using: :btree
 
   create_table "pack_report_expenses", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -1024,10 +1025,10 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "user_id_mongo_id",            limit: 255
     t.integer  "period_document_id",          limit: 4
     t.string   "period_document_id_mongo_id", limit: 255
-    t.integer  "order_id"
+    t.integer  "order_id",                    limit: 4
   end
 
-  add_index "paper_processes", ["order_id"], name: "index_paper_processes_on_order_id"
+  add_index "paper_processes", ["order_id"], name: "index_paper_processes_on_order_id", using: :btree
 
   create_table "period_billings", force: :cascade do |t|
     t.string  "mongo_id",                        limit: 255
@@ -1238,115 +1239,115 @@ ActiveRecord::Schema.define(version: 20170303160616) do
   end
 
   create_table "retrieved_data", force: :cascade do |t|
-    t.text     "state"
+    t.text     "state",                    limit: 65535
     t.text     "content",                  limit: 16777215
     t.text     "error_message",            limit: 16777215
-    t.text     "processed_connection_ids"
+    t.text     "processed_connection_ids", limit: 65535
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
-    t.integer  "user_id"
+    t.integer  "user_id",                  limit: 4
   end
 
   create_table "retrievers", force: :cascade do |t|
-    t.integer  "budgea_id"
-    t.string   "fiduceo_id"
-    t.string   "fiduceo_transaction_id"
-    t.string   "name"
-    t.text     "additionnal_fields"
-    t.string   "journal_name"
+    t.integer  "budgea_id",                  limit: 4
+    t.string   "fiduceo_id",                 limit: 255
+    t.string   "fiduceo_transaction_id",     limit: 255
+    t.string   "name",                       limit: 255
+    t.text     "additionnal_fields",         limit: 65535
+    t.string   "journal_name",               limit: 255
     t.datetime "sync_at"
-    t.boolean  "is_sane",                    default: true
-    t.boolean  "is_new_password_needed",     default: false
-    t.boolean  "is_selection_needed",        default: true
-    t.string   "state"
-    t.string   "error_message"
-    t.string   "budgea_state"
-    t.text     "budgea_additionnal_fields"
-    t.string   "budgea_error_message"
-    t.string   "fiduceo_state"
-    t.text     "fiduceo_additionnal_fields"
-    t.string   "fiduceo_error_message"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-    t.integer  "user_id"
-    t.integer  "journal_id"
-    t.integer  "connector_id"
-    t.string   "service_name"
-    t.text     "capabilities"
-    t.text     "encrypted_param1"
-    t.text     "encrypted_param2"
-    t.text     "encrypted_param3"
-    t.text     "encrypted_param4"
-    t.text     "encrypted_param5"
-    t.text     "encrypted_answers"
+    t.boolean  "is_sane",                                  default: true
+    t.boolean  "is_new_password_needed",                   default: false
+    t.boolean  "is_selection_needed",                      default: true
+    t.string   "state",                      limit: 255
+    t.string   "error_message",              limit: 255
+    t.string   "budgea_state",               limit: 255
+    t.text     "budgea_additionnal_fields",  limit: 65535
+    t.string   "budgea_error_message",       limit: 255
+    t.string   "fiduceo_state",              limit: 255
+    t.text     "fiduceo_additionnal_fields", limit: 65535
+    t.string   "fiduceo_error_message",      limit: 255
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
+    t.integer  "user_id",                    limit: 4
+    t.integer  "journal_id",                 limit: 4
+    t.integer  "connector_id",               limit: 4
+    t.string   "service_name",               limit: 255
+    t.text     "capabilities",               limit: 65535
+    t.text     "encrypted_param1",           limit: 65535
+    t.text     "encrypted_param2",           limit: 65535
+    t.text     "encrypted_param3",           limit: 65535
+    t.text     "encrypted_param4",           limit: 65535
+    t.text     "encrypted_param5",           limit: 65535
+    t.text     "encrypted_answers",          limit: 65535
   end
 
-  add_index "retrievers", ["state"], name: "index_retrievers_on_state"
+  add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
 
   create_table "sandbox_bank_accounts", force: :cascade do |t|
-    t.string   "api_id"
-    t.string   "api_name",          default: "budgea"
-    t.string   "bank_name"
-    t.string   "name"
-    t.string   "number"
-    t.boolean  "is_used",           default: false
-    t.string   "journal"
-    t.string   "foreign_journal"
-    t.string   "accounting_number", default: "512000"
-    t.string   "temporary_account", default: "471000"
+    t.string   "api_id",            limit: 255
+    t.string   "api_name",          limit: 255, default: "budgea"
+    t.string   "bank_name",         limit: 255
+    t.string   "name",              limit: 255
+    t.string   "number",            limit: 255
+    t.boolean  "is_used",                       default: false
+    t.string   "journal",           limit: 255
+    t.string   "foreign_journal",   limit: 255
+    t.string   "accounting_number", limit: 255, default: "512000"
+    t.string   "temporary_account", limit: 255, default: "471000"
     t.date     "start_date"
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
-    t.integer  "user_id"
-    t.integer  "retriever_id"
-    t.string   "type_name"
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
+    t.integer  "user_id",           limit: 4
+    t.integer  "retriever_id",      limit: 4
+    t.string   "type_name",         limit: 255
   end
 
   create_table "sandbox_documents", force: :cascade do |t|
-    t.string   "api_id"
-    t.string   "api_name",             default: "budgea"
-    t.text     "retrieved_metadata"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.integer  "user_id"
-    t.integer  "retriever_id"
-    t.string   "content_file_name"
-    t.string   "content_content_type"
-    t.integer  "content_file_size"
+    t.string   "api_id",               limit: 255
+    t.string   "api_name",             limit: 255,   default: "budgea"
+    t.text     "retrieved_metadata",   limit: 65535
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
+    t.integer  "user_id",              limit: 4
+    t.integer  "retriever_id",         limit: 4
+    t.string   "content_file_name",    limit: 255
+    t.string   "content_content_type", limit: 255
+    t.integer  "content_file_size",    limit: 4
     t.datetime "content_updated_at"
-    t.string   "content_fingerprint"
+    t.string   "content_fingerprint",  limit: 255
   end
 
-  add_index "sandbox_documents", ["api_id"], name: "index_sandbox_documents_on_api_id"
-  add_index "sandbox_documents", ["api_name"], name: "index_sandbox_documents_on_api_name"
-  add_index "sandbox_documents", ["retriever_id"], name: "index_sandbox_documents_on_retriever_id"
-  add_index "sandbox_documents", ["user_id"], name: "index_sandbox_documents_on_user_id"
+  add_index "sandbox_documents", ["api_id"], name: "index_sandbox_documents_on_api_id", using: :btree
+  add_index "sandbox_documents", ["api_name"], name: "index_sandbox_documents_on_api_name", using: :btree
+  add_index "sandbox_documents", ["retriever_id"], name: "index_sandbox_documents_on_retriever_id", using: :btree
+  add_index "sandbox_documents", ["user_id"], name: "index_sandbox_documents_on_user_id", using: :btree
 
   create_table "sandbox_operations", force: :cascade do |t|
-    t.string   "api_id"
-    t.string   "api_name",                default: "budgea"
+    t.string   "api_id",                  limit: 255
+    t.string   "api_name",                limit: 255,                default: "budgea"
     t.date     "date"
     t.date     "value_date"
     t.date     "transaction_date"
-    t.string   "label"
-    t.decimal  "amount"
-    t.string   "comment"
-    t.string   "supplier_found"
-    t.string   "type_name"
-    t.integer  "category_id"
-    t.string   "category"
+    t.string   "label",                   limit: 255
+    t.decimal  "amount",                              precision: 10
+    t.string   "comment",                 limit: 255
+    t.string   "supplier_found",          limit: 255
+    t.string   "type_name",               limit: 255
+    t.integer  "category_id",             limit: 4
+    t.string   "category",                limit: 255
     t.boolean  "is_locked"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-    t.integer  "organization_id"
-    t.integer  "user_id"
-    t.integer  "sandbox_bank_account_id"
+    t.datetime "created_at",                                                            null: false
+    t.datetime "updated_at",                                                            null: false
+    t.integer  "organization_id",         limit: 4
+    t.integer  "user_id",                 limit: 4
+    t.integer  "sandbox_bank_account_id", limit: 4
   end
 
-  add_index "sandbox_operations", ["api_id"], name: "index_sandbox_operations_on_api_id"
-  add_index "sandbox_operations", ["api_name"], name: "index_sandbox_operations_on_api_name"
-  add_index "sandbox_operations", ["sandbox_bank_account_id"], name: "index_sandbox_operations_on_sandbox_bank_account_id"
-  add_index "sandbox_operations", ["user_id"], name: "index_sandbox_operations_on_user_id"
+  add_index "sandbox_operations", ["api_id"], name: "index_sandbox_operations_on_api_id", using: :btree
+  add_index "sandbox_operations", ["api_name"], name: "index_sandbox_operations_on_api_name", using: :btree
+  add_index "sandbox_operations", ["sandbox_bank_account_id"], name: "index_sandbox_operations_on_sandbox_bank_account_id", using: :btree
+  add_index "sandbox_operations", ["user_id"], name: "index_sandbox_operations_on_user_id", using: :btree
 
   create_table "scanning_providers", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255
@@ -1504,17 +1505,17 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.string   "dematbox_box_id",                limit: 255
     t.string   "dematbox_service_id",            limit: 255
     t.string   "api_id",                         limit: 255
-    t.string   "api_name"
+    t.string   "api_name",                       limit: 255
     t.text     "metadata",                       limit: 16777215
-    t.integer  "retriever_id"
+    t.integer  "retriever_id",                   limit: 4
   end
 
-  add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id"
-  add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type"
-  add_index "temp_documents", ["is_an_original"], name: "index_temp_documents_on_is_an_original"
-  add_index "temp_documents", ["retriever_id"], name: "index_temp_documents_on_retriever_id"
-  add_index "temp_documents", ["state"], name: "index_temp_documents_on_state"
-  add_index "temp_documents", ["user_id"], name: "index_temp_documents_on_user_id"
+  add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
+  add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
+  add_index "temp_documents", ["is_an_original"], name: "index_temp_documents_on_is_an_original", using: :btree
+  add_index "temp_documents", ["retriever_id"], name: "index_temp_documents_on_retriever_id", using: :btree
+  add_index "temp_documents", ["state"], name: "index_temp_documents_on_state", using: :btree
+  add_index "temp_documents", ["user_id"], name: "index_temp_documents_on_user_id", using: :btree
 
   create_table "temp_packs", force: :cascade do |t|
     t.string   "mongo_id",                      limit: 255
@@ -1551,6 +1552,7 @@ ActiveRecord::Schema.define(version: 20170303160616) do
     t.integer  "user_id",                         limit: 4
     t.string   "user_id_mongo_id",                limit: 255
     t.boolean  "is_retriever_authorized",                     default: false
+    t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,    null: false
   end
 
   create_table "users", force: :cascade do |t|
