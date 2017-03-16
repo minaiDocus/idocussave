@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe PreAssignmentService do
+describe PendingPreAssignmentService do
   describe '.pending' do
     before(:all) do
       @user  = FactoryGirl.create :user,  code: 'TS%0001'
@@ -32,7 +32,7 @@ describe PreAssignmentService do
     end
 
     it 'return 2 entries' do
-      pre_assignments = PreAssignmentService.pending(sort: 1)
+      pre_assignments = PendingPreAssignmentService.pending(sort: 1)
 
       expect(pre_assignments.size).to eq(2)
 

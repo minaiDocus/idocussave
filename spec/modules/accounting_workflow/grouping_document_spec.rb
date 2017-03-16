@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe PrepaCompta::GroupingDocument do
+describe AccountingWorkflow::SendToGrouping do
   before(:all) do
     Timecop.freeze(Time.local(2015,1,1))
   end
@@ -35,7 +35,7 @@ describe PrepaCompta::GroupingDocument do
             delivery_type: 'scan',
             is_content_file_valid: true
           }
-          @temp_pack.add open(file_path), options
+          AddTempDocumentToTempPack.execute(@temp_pack, open(file_path), options)
         end
 
         file_name = 'TS0001_TS_201501.pdf'
@@ -47,7 +47,7 @@ describe PrepaCompta::GroupingDocument do
           delivery_type: 'upload',
           is_content_file_valid: true
         }
-        @temp_pack.add open(file_path), options
+        AddTempDocumentToTempPack.execute(@temp_pack, open(file_path), options)
 
         options = {
           delivered_by:          'test',
@@ -58,11 +58,11 @@ describe PrepaCompta::GroupingDocument do
           dematbox_text:         'text',
           is_content_file_valid: true
         }
-        @temp_pack.add open(file_path), options
+        AddTempDocumentToTempPack.execute(@temp_pack, open(file_path), options)
       end
 
       Timecop.freeze(Time.local(2015,1,1,0,15,1))
-      PrepaCompta::GroupingDocument.execute
+      AccountingWorkflow::SendToGrouping.execute
     end
 
     after(:all) do

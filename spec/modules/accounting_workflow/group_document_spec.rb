@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe PrepaCompta::GroupDocument do
+describe AccountingWorkflow::GroupDocument do
   before(:all) do
     Timecop.freeze(Time.local(2015,1,1,0,1,0))
   end
@@ -12,134 +12,134 @@ describe PrepaCompta::GroupDocument do
 
   describe '.position' do
     it 'returns 5' do
-      result = PrepaCompta::GroupDocument.position('TS0001_AC_201501_005.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS0001_AC_201501_005.pdf')
       expect(result).to eq 5
     end
 
     it 'returns 5' do
-      result = PrepaCompta::GroupDocument.position('TS_0001_AC_201501_005.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS_0001_AC_201501_005.pdf')
       expect(result).to eq 5
     end
 
     it 'returns 3' do
-      result = PrepaCompta::GroupDocument.position('TS0001_AC_201501_003_001.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS0001_AC_201501_003_001.pdf')
       expect(result).to eq 3
     end
 
     it 'returns 3' do
-      result = PrepaCompta::GroupDocument.position('TS_0001_AC_201501_003_001.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS_0001_AC_201501_003_001.pdf')
       expect(result).to eq 3
     end
 
     it 'returns 1017' do
-      result = PrepaCompta::GroupDocument.position('TS_0001_AC_201501_1017_001.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS_0001_AC_201501_1017_001.pdf')
       expect(result).to eq 1017
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.position('TS0001_AC_201501_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.position('TS0001_AC_201501_005_001_001.pdf')
       expect(result).to be_nil
     end
   end
 
   describe '.basename' do
     it 'returns TS0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_005.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_005.pdf')
       expect(result).to eq 'TS0001 AC 201501'
     end
 
     it 'returns TS0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1045.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_1045.pdf')
       expect(result).to eq 'TS0001 AC 201501'
     end
 
     it 'returns TS%0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_005.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_005.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
     it 'returns TS%0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1045.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_1045.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
     it 'returns TS0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_003_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_003_001.pdf')
       expect(result).to eq 'TS0001 AC 201501'
     end
 
     it 'returns TS0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1045_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_1045_001.pdf')
       expect(result).to eq 'TS0001 AC 201501'
     end
 
     it 'returns TS%0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_003_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_003_001.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
     it 'returns TS%0001 AC 201501' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1045_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_1045_001.pdf')
       expect(result).to eq 'TS%0001 AC 201501'
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015T1_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_2015T1_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_2015_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_201501_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_201501_1005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015T1_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_2015T1_1005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS0001_AC_2015_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS0001_AC_2015_1005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015T1_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_2015T1_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015_005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_2015_005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_201501_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_201501_1005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015T1_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_2015T1_1005_001_001.pdf')
       expect(result).to be_nil
     end
 
     it 'returns nil' do
-      result = PrepaCompta::GroupDocument.basename('TS_0001_AC_2015_1005_001_001.pdf')
+      result = AccountingWorkflow::GroupDocument.basename('TS_0001_AC_2015_1005_001_001.pdf')
       expect(result).to be_nil
     end
   end
@@ -173,7 +173,7 @@ describe PrepaCompta::GroupDocument do
     end
 
     it 'does nothing' do
-      PrepaCompta::GroupDocument.execute
+      AccountingWorkflow::GroupDocument.execute
 
       expect(File.exist?(@errors_file_path)).to be_falsy
     end
@@ -184,13 +184,13 @@ describe PrepaCompta::GroupDocument do
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
         Timecop.freeze(Time.local(2015,1,1))
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         expect(File.exist?(@result_file_path)).to be_truthy
         expect(File.exist?(@errors_file_path)).to be_falsy
 
         Timecop.freeze(Time.local(2015,1,1,0,1,0))
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         expect(File.read(@errors_file_path)).to eq 'The document has no document element.'
         expect(File.exist?(@result_file_path)).to be_falsy
@@ -209,7 +209,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         expect(File.read(@errors_file_path)).to eq 'Pack name : "TS0001_AC_201501", unknown.'
       end
@@ -227,7 +227,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         expect(File.read(@errors_file_path)).to eq 'Piece origin : "fake", unknown.'
       end
@@ -244,7 +244,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS_0001_AC_201501_002_001.pdf\", does not match origin : \"scan\"."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -262,7 +262,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS_0001_AC_201501_002.pdf\", does not match origin : \"upload\"."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -281,7 +281,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS_0001_AC_201501_001.pdf\", unknown.\nFile name : \"TS_0001_AC_201501_002.pdf\", unknown."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -320,7 +320,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS0001_AC_201501_001.pdf\", unknown.\nFile name : \"TS0001_AC_201501_002.pdf\", unknown."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -350,7 +350,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS_0001_AC_201501_002.pdf\", not found."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -375,7 +375,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : 1 duplicate(s)."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -405,7 +405,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         error_messages = "File name : \"TS_0001_AC_201501_002.pdf\", already grouped."
         expect(File.read(@errors_file_path)).to eq error_messages
@@ -446,7 +446,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         new_temp_document = @temp_pack.temp_documents.where(position: 3).first
         expect(File.exist?(@errors_file_path)).to be_falsy
@@ -475,7 +475,7 @@ describe PrepaCompta::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DocumentProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 2)
@@ -502,7 +502,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         document_1 = @temp_pack.temp_documents.where(position: 3).first
         document_2 = @temp_pack.temp_documents.where(position: 4).first
@@ -541,7 +541,7 @@ describe PrepaCompta::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", DocumentProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_100#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 1002)
@@ -568,7 +568,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         document_1 = @temp_pack.temp_documents.where(position: 1003).first
         document_2 = @temp_pack.temp_documents.where(position: 1004).first
@@ -607,7 +607,7 @@ describe PrepaCompta::GroupDocument do
           temp_document.state          = 'bundling'
           temp_document.save
 
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", DocumentProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{1+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 2)
@@ -634,7 +634,7 @@ describe PrepaCompta::GroupDocument do
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,1), Time.local(2015,1,1), @result_file_path)
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         document_1 = @temp_pack.temp_documents.where(position: 3).first
         document_2 = @temp_pack.temp_documents.where(position: 4).first
@@ -689,7 +689,7 @@ describe PrepaCompta::GroupDocument do
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
           temp_document.save
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{3+index}", DocumentProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{3+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
         end
 
         base_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'dematbox_scans')
@@ -704,7 +704,7 @@ describe PrepaCompta::GroupDocument do
           temp_document.is_a_cover     = false
           temp_document.state          = 'bundling'
           temp_document.save
-          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{5+index}", DocumentProcessor::POSITION_SIZE
+          Pdftk.new.burst file_path, base_path, "TS_0001_AC_201501_00#{5+index}", AccountingWorkflow::TempPackProcessor::POSITION_SIZE
         end
 
         @temp_pack.update(position_counter: 6)
@@ -745,7 +745,7 @@ describe PrepaCompta::GroupDocument do
         File.utime(Time.local(2015,1,2), Time.local(2015,1,2), @result_file_path)
         FileUtils.mkdir_p Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
 
-        PrepaCompta::GroupDocument.execute
+        AccountingWorkflow::GroupDocument.execute
 
         document_1 = @temp_pack.temp_documents.where(position: 7).first
         document_2 = @temp_pack.temp_documents.where(position: 8).first

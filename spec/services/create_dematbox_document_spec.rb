@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
-describe DematboxDocument do
+describe CreateDematboxDocument do
   describe '.new' do
     before(:all) do
       Timecop.freeze(Time.local(2013,1,1))
@@ -43,7 +43,7 @@ describe DematboxDocument do
     context 'once' do
       context 'when arguments are valid' do
         before(:all) do
-          @dematbox_document = DematboxDocument.new(@params)
+          @dematbox_document = CreateDematboxDocument.new(@params)
         end
 
         subject { @dematbox_document }
@@ -61,7 +61,7 @@ describe DematboxDocument do
       context 'when previous period is accepted' do
         context 'when monthly' do
           before(:all) do
-            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
           end
 
           subject { @dematbox_document }
@@ -81,7 +81,7 @@ describe DematboxDocument do
             subscription = @user.find_or_create_subscription
             subscription.update_attribute(:period_duration, 3)
             UpdatePeriod.new(subscription.current_period).execute
-            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             subscription.periods.destroy_all
           end
 
@@ -104,7 +104,7 @@ describe DematboxDocument do
             @user.auth_prev_period_until_day = 10
             @user.save
             Timecop.freeze(Time.local(2013,1,11))
-            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
           end
 
           after(:all) do
@@ -131,7 +131,7 @@ describe DematboxDocument do
             subscription = @user.find_or_create_subscription
             subscription.update_attribute(:period_duration, 3)
             UpdatePeriod.new(subscription.current_period).execute
-            @dematbox_document = DematboxDocument.new(@params.merge({ 'service_id' => '2' }))
+            @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'service_id' => '2' }))
             subscription.periods.destroy_all
           end
 
@@ -155,7 +155,7 @@ describe DematboxDocument do
       context 'when virtual_box_id is not valid' do
         before(:all) do
           params = @params.merge({ 'virtual_box_id' => 'TS0002' })
-          @dematbox_document = DematboxDocument.new(params)
+          @dematbox_document = CreateDematboxDocument.new(params)
         end
 
         subject { @dematbox_document }
@@ -166,7 +166,7 @@ describe DematboxDocument do
       context 'when service_id is not valid' do
         before(:all) do
           params = @params.merge({ 'service_id' => '3' })
-          @dematbox_document = DematboxDocument.new(params)
+          @dematbox_document = CreateDematboxDocument.new(params)
         end
 
         subject { @dematbox_document }
@@ -176,7 +176,7 @@ describe DematboxDocument do
 
       context 'when content is not valid' do
         before(:all) do
-          @dematbox_document = DematboxDocument.new(@params.merge({ 'improved_scan' => 'CONTENT' }))
+          @dematbox_document = CreateDematboxDocument.new(@params.merge({ 'improved_scan' => 'CONTENT' }))
         end
 
         subject { @dematbox_document }
@@ -188,8 +188,8 @@ describe DematboxDocument do
     context 'twice' do
       context 'when arguments are valid' do
         before(:all) do
-          @dematbox_document = DematboxDocument.new(@params)
-          @dematbox_document2 = DematboxDocument.new(@params.merge({ 'doc_id' => 2 }))
+          @dematbox_document = CreateDematboxDocument.new(@params)
+          @dematbox_document2 = CreateDematboxDocument.new(@params.merge({ 'doc_id' => 2 }))
         end
 
         it 'should create 2 temp_documents' do
