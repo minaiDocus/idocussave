@@ -123,8 +123,8 @@ class PeriodsToXlsService
           data += [
             month,
             period.start_at.year,
-            period.user.try(:code),
-            period.user.try(:name),
+            period.user.try(:code).to_s,
+            period.user.try(:name).to_s,
             option.group_title,
             option.title,
             format_price(price)
@@ -148,8 +148,8 @@ class PeriodsToXlsService
         data += [
           month,
           period.start_at.year,
-          period.user.code,
-          period.user.name,
+          period.user.code.to_s,
+          period.user.name.to_s,
           'Dépassement',
           '',
           format_price(excesses_amount_in_cents_wo_vat)
