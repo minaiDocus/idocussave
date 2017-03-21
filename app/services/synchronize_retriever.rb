@@ -63,7 +63,7 @@ private
     log "#{retriever.user.code} - #{retriever.service_name} - #{retriever.budgea_id} - #{retriever.state}"
     if retriever.connector.is_budgea_active?
       begin
-        lock.synchronize("create_budgea_account_for_user_id_#{retriever.user.id}", expiry: 10.seconds) do
+        $remote_lock.synchronize("create_budgea_account_for_user_id_#{retriever.user.id}", expiry: 10.seconds) do
           CreateBudgeaAccount.execute(retriever.user) if retriever.user.budgea_account.nil?
         end
         SyncBudgeaConnection.execute(retriever)
@@ -89,9 +89,5 @@ private
 
   def logger2
     @@logger2 ||= Logger.new(STDOUT)
-  end
-
-  def lock
-    $lock ||= RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
   end
 end

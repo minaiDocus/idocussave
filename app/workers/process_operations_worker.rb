@@ -3,10 +3,8 @@ class ProcessOperationsWorker
   sidekiq_options queue: :process_operations, retry: :false, unique: :until_and_while_executing
 
   def perform
-    $lock = RemoteLock.new(RemoteLock::Adapters::Redis.new(Redis.new))
-
     begin
-      $lock.synchronize('process_operations', expiry: 48.hours, retries: 1) do
+      $remote_lock.synchronize('process_operations', expiry: 48.hours, retries: 1) do
         ProcessOperation.execute unless JobsOrchestrator.check_if_in_queue('ProcessOperationsWorker')
       end
     rescue RemoteLock::Error
