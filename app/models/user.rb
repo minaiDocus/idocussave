@@ -214,8 +214,7 @@ class User < ActiveRecord::Base
       user_ids = []
 
       user_ids << organization.leader.id if organization.try(:leader)
-
-      user_ids += User.where(group_ids: group_ids, is_prescriber: true).distinct(:id) if group_ids.present?
+      user_ids += User.joins(:groups).where("groups.id" => group_ids, "users.is_prescriber" => true).distinct(:id) if group_ids.present?
 
       if user_ids.any?
         User.where(id: user_ids).order(code: :asc)
