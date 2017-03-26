@@ -4,6 +4,7 @@ require 'spec_helper'
 describe CreateDematboxDocument do
   describe '.new' do
     before(:all) do
+      DatabaseCleaner.start
       Timecop.freeze(Time.local(2013,1,1))
 
       File.open("#{Rails.root}/spec/support/files/completed.pdf", "r") do |f|

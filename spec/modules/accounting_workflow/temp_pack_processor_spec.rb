@@ -4,6 +4,7 @@ require 'spec_helper'
 describe AccountingWorkflow::TempPackProcessor do
   describe '.process for monthly' do
     before(:all) do
+      DatabaseCleaner.start
       Timecop.freeze(Time.local(2013,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
@@ -3247,6 +3248,7 @@ describe AccountingWorkflow::TempPackProcessor do
 
   describe '.process for yearly' do
     before(:all) do
+      DatabaseCleaner.start
       Timecop.freeze(Time.local(2015,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')

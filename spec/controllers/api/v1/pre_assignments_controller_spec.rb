@@ -25,10 +25,6 @@ describe Api::V1::PreAssignmentsController do
     Timecop.return
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
-
   describe 'Visiting index' do
     before(:all) do
       @piece3.update_attribute(:pre_assignment_comment, 'A test comment.')

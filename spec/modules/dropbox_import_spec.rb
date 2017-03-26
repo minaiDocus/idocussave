@@ -13,6 +13,7 @@ describe DropboxImport do
   describe '#check' do
     context 'as customer' do
       before(:all) do
+        DatabaseCleaner.start
         @user = FactoryGirl.create(:user, code: 'TS%0001')
         @user.options = UserOptions.create(user_id: @user.id)
 
@@ -458,6 +459,7 @@ describe DropboxImport do
 
     context 'as collaborator' do
       before(:all) do
+        DatabaseCleaner.start
         @organization = Organization.create(name: 'TEST', code: 'TS')
 
         @collaborator = FactoryGirl.create(:prescriber, code: 'TS%COL1')

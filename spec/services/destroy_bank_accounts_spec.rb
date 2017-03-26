@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe DestroyBankAccounts do
   before(:each) do
+    DatabaseCleaner.start
     @user         = FactoryGirl.create :user, code: 'IDO%0001'
     @user.options = UserOptions.create(user_id: @user.id)
     @journal      = FactoryGirl.create :account_book_type, user_id: @user.id

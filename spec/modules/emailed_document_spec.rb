@@ -4,6 +4,7 @@ require 'spec_helper'
 describe EmailedDocument do
   describe '.new' do
     before(:all) do
+      DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
@@ -385,6 +386,7 @@ describe EmailedDocument do
 
   describe '.receive' do
     before(:all) do
+      DatabaseCleaner.start
       Timecop.freeze(Time.local(2014,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')

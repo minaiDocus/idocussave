@@ -23,10 +23,6 @@ describe OperationImportService do
     @piece.save
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
-
   describe '#data' do
     before(:all) do
       @xml = '<operations></operations>'

@@ -6,10 +6,6 @@ describe 'API V1 Authorization' do
     @user.update_authentication_token
   end
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
-
   it 'without access_token should be unauthorized' do
     get '/api/v1/operations', format: 'json'
     expect(response).not_to be_successful

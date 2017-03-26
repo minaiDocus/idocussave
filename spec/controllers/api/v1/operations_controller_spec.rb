@@ -4,12 +4,9 @@ require 'spec_helper'
 describe Api::V1::OperationsController do
   render_views
 
-  after(:all) do
-    DatabaseCleaner.clean
-  end
-
   describe 'Visiting index' do
     before(:all) do
+      DatabaseCleaner.start
       @admin = FactoryGirl.create :admin, code: 'AD%0001'
       @collaborator = FactoryGirl.create :prescriber, code: 'COL%0001'
       @user = FactoryGirl.create :user, code: 'TS%0001'
@@ -458,6 +455,7 @@ describe Api::V1::OperationsController do
 
   describe 'Posting a file to import' do
     before(:all) do
+      DatabaseCleaner.start
       @admin    = FactoryGirl.create :admin, code: 'AD%0001'
       @operator = FactoryGirl.create :user,  code: 'OP%0001', is_operator: true
       @user     = FactoryGirl.create :user,  code: 'TS%0001'

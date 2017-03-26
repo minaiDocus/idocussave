@@ -27,10 +27,6 @@ describe PendingPreAssignmentService do
       Timecop.return
     end
 
-    after(:all) do
-      DatabaseCleaner.clean
-    end
-
     it 'return 2 entries' do
       pre_assignments = PendingPreAssignmentService.pending(sort: 1)
 
