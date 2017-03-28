@@ -5,7 +5,7 @@ class PeriodService
 
   def initialize(options)
     if options[:user]
-      @period_duration   = options[:user].periods.order(start_at: :desc).first.try(:duration)
+      @period_duration   = options[:user].periods.order(start_date: :desc).first.try(:duration)
       @authd_prev_period = options[:user].authd_prev_period
       @auth_prev_period_until_day   = options[:user].auth_prev_period_until_day.try(:day)
       @auth_prev_period_until_month = options[:user].auth_prev_period_until_month.try(:month)

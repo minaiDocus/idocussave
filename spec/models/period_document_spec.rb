@@ -11,7 +11,7 @@ describe PeriodDocument do
   end
 
   before(:each) do
-    @period = Period.create!(:start_at => Time.now)
+    @period = Period.create!(:start_date => Date.today)
     @document_name = "TS0001 XX #{Time.now.strftime('%Y%m')} all"
     @document_name2 = "TS0001 ZZ #{Time.now.strftime('%Y%m')} all"
   end
@@ -55,13 +55,5 @@ describe PeriodDocument do
     document2 = PeriodDocument.create(:name => @document_name, :period_id => @period.id)
     expect(document).to be_persisted
     expect(document2).not_to be_persisted
-  end
-
-  it "#by_created_at" do
-    document1 = FactoryGirl.create(PeriodDocument, created_at: 2.seconds.ago, period_id: @period.id)
-    document2 = FactoryGirl.create(PeriodDocument, period_id: @period.id)
-    results = PeriodDocument.by_created_at.entries
-    expect(results.first).to eq(document2)
-    expect(results.last).to eq(document1)
   end
 end

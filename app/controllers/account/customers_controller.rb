@@ -17,7 +17,7 @@ class Account::CustomersController < Account::OrganizationController
 
         @customers  = @customers.page(params[:page]).per(params[:per_page])
 
-        @periods = Period.where(user_id: @customers.pluck(:id)).where("start_at < ? AND end_at > ?", Time.now, Time.now).includes(:user, :product_option_orders)
+        @periods = Period.where(user_id: @customers.pluck(:id)).where("start_date < ? AND end_date > ?", Date.today, Date.today).includes(:user, :product_option_orders)
 
         @groups = is_leader? ? @organization.groups : @user.groups
         @groups = @groups.order(name: :asc)

@@ -23,11 +23,11 @@ class OrganizationBillingAmountService
 
 
   def customer_periods
-    Period.where(subscription_id: customer_subscription_ids).where("start_at <= ? AND end_at >= ?", @time, @time).includes(:billings)
+    Period.where(subscription_id: customer_subscription_ids).where("start_date <= ? AND end_date >= ?", @time.to_date, @time.to_date).includes(:billings)
   end
 
 
   def period
-    @period ||= @organization.subscription.find_period(@time)
+    @period ||= @organization.subscription.find_period(@time.to_date)
   end
 end

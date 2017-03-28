@@ -27,7 +27,7 @@ class ScansController < PaperProcessesController
 
       @document = PeriodDocument.where(name: params[:period_document][:name]).order(created_at: :desc).first
 
-      if @document.nil? || (@document && @document.period && @document.period.end_at < Time.now)
+      if @document.nil? || (@document && @document.period && @document.period.end_date < Date.today)
         @document = PeriodDocument.new
       end
 

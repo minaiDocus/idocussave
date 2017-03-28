@@ -8,7 +8,7 @@ describe UpdatePeriodPriceService do
   end
 
   it 'have default values' do
-    period = Period.create(subscription: @subscription, start_at: Time.now.beginning_of_month)
+    period = Period.create(subscription: @subscription, start_date: Date.today.beginning_of_month)
 
     UpdatePeriodPriceService.new(period).execute
 
@@ -26,7 +26,7 @@ describe UpdatePeriodPriceService do
         period.user = @user
         period.subscription = @subscription
         period.duration = 1
-        period.start_at = Time.now.beginning_of_month
+        period.start_date = Date.today.beginning_of_month
         period.save
         option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
         option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 2)
@@ -55,7 +55,7 @@ describe UpdatePeriodPriceService do
         period.user = @user
         period.subscription = @subscription
         period.duration = 3
-        period.start_at = Time.now.beginning_of_quarter
+        period.start_date = Date.today.beginning_of_quarter
         period.save
         option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 900,  duration: 0, group_position: 1)
         option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 1500, duration: 1, group_position: 2)
@@ -84,7 +84,7 @@ describe UpdatePeriodPriceService do
         period.user = @user
         period.subscription = @subscription
         period.duration = 12
-        period.start_at = Time.now.beginning_of_year
+        period.start_date = Date.today.beginning_of_year
         period.save
         option = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 19900, duration: 0, group_position: 1)
         period.product_option_orders << option
@@ -108,7 +108,7 @@ describe UpdatePeriodPriceService do
 
   context 'as organization' do
     it 'set values' do
-      period = Period.create(start_at: Time.now.beginning_of_month)
+      period = Period.create(start_date: Date.today.beginning_of_month)
       period.subscription = Subscription.create
       option1 = ProductOptionOrder.new(name: 'Recurrent option', price_in_cents_wo_vat: 1000, duration: 0, group_position: 1)
       option2 = ProductOptionOrder.new(name: 'Ponctual option',  price_in_cents_wo_vat: 2000, duration: 1, group_position: 2)

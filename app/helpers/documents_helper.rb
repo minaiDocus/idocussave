@@ -28,43 +28,36 @@ module DocumentsHelper
     active_users(users, year).sort_by { |u| [u.code, u.company, u.name, u.email] }.collect { |u| [u.info, u.id] }
   end
 
-
-  def annual_periods_for_user(user, all_periods)
-    periods = []
-
+  # build an array who's values are either a period or nil
+  def annual_periods_for_user(periods)
+    _periods = []
     current_month = 1
     current_period = 0
-    
-    temp_period = all_periods.select { |period| period[:user_id] == user[:id] }.sort { |a, b| a.start_at <=> b.start_at }
 
     while current_month < 13
-      if temp_period[current_period] && temp_period[current_period].start_at.month == current_month
-        periods << temp_period[current_period]
-
-        current_month += temp_period[current_period].duration
+      if periods[current_period] && periods[current_period].start_date.month == current_month
+        _periods << periods[current_period]
+        current_month += periods[current_period].duration
         current_period += 1
       else
-        periods << nil
-
+        _periods << nil
         current_month += 1
       end
     end
 
-    periods
+    _periods
   end
 
-
-  def active_periods?(user, periods, year)
+  def active_year_for_user?(year, user, periods)
     if user.created_at.year <= year && (user.inactive_at || Time.now).year >= year && user.inactive_at.try(:month) != 1
       true
     else
-      !periods.compact.empty?
+      periods.compact.present?
     end
   end
 
-
   def price_of_period_by_time(periods, time)
-    period = periods.select { |p| p.start_at <= time && p.end_at >= time }.first
+    period = periods.select { |p| p.start_date <= time.to_date && p.end_date >= time.to_date }.first
 
     period.try(:price_in_cents_wo_vat) || 0
   end

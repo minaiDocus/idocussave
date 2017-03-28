@@ -1,24 +1,25 @@
 # -*- encoding : UTF-8 -*-
 class Account::ReportingController < Account::AccountController
-  # GET /account/reporting
   def show
-    @year = !params[:year].blank? ? params[:year].to_i : Time.now.year
-
+    @year = Integer(params[:year]) rescue Time.now.year
     @users = if @user.is_prescriber && @user.organization
-               @user.customers.order(code: :asc)
-             else
-               [@user]
-             end
+      @user.customers.order(code: :asc)
+    else
+      [@user]
+    end
 
-    # NOTE temporary fix using +1.hour
-    @periods = Period.where(user_id: @users.map(&:id)).where('start_at >= ? AND end_at <= ?', Time.local(@year), Time.local(@year).end_of_year + 1.hour).order(start_at: :asc)
+    date = Date.parse("#{@year}-01-01")
+    periods = Period.where(user_id: @users.map(&:id)).
+      where('start_date >= ? AND end_date <= ?', date, date.end_of_year).
+      order(start_date: :asc)
+    @periods_by_users = periods.group_by { |period| period.user.id }.each do |user, periods|
+      periods.sort_by!(&:start_date)
+    end
 
     respond_to do |format|
       format.html
-
       format.xls do
         data = PeriodsToXlsService.new(@periods).execute
-
         send_data data, type: 'application/vnd.ms-excel', filename: "reporting_iDocus_#{@year}.xls"
       end
     end

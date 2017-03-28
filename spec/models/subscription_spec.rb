@@ -34,7 +34,7 @@ describe Subscription do
     context 'monthly' do
       before(:all) do
         @period = Period.new
-        @period.start_at     = Time.local(2015,1,1)
+        @period.start_date   = Date.parse('2015-01-01')
         @period.duration     = 1
         @period.subscription = @subscription
         @period.save
@@ -45,19 +45,19 @@ describe Subscription do
       end
 
       it 'returns nothing for 2014-12' do
-        period = @subscription.find_period(Time.local(2014,12))
+        period = @subscription.find_period(Date.parse('2014-12-01'))
 
         expect(period).to be_nil
       end
 
       it 'returns nothing for 2015-02' do
-        period = @subscription.find_period(Time.local(2015,2))
+        period = @subscription.find_period(Date.parse('2015-02-01'))
 
         expect(period).to be_nil
       end
 
       it 'returns period for 2015-01' do
-        period = @subscription.find_period(Time.local(2015,1))
+        period = @subscription.find_period(Date.parse('2015-01-01'))
 
         expect(period).to eq @period
       end
@@ -66,7 +66,7 @@ describe Subscription do
     context 'annually' do
       before(:all) do
         @period = Period.new
-        @period.start_at     = Time.local(2015,1,1)
+        @period.start_date   = Date.parse('2015-01-01')
         @period.duration     = 12
         @period.subscription = @subscription
         @period.save
@@ -77,25 +77,25 @@ describe Subscription do
       end
 
       it 'returns nothing for 2014-12' do
-        period = @subscription.find_period(Time.local(2014,12))
+        period = @subscription.find_period(Date.parse('2014-12-01'))
 
         expect(period).to be_nil
       end
 
       it 'returns nothing for 2016-01' do
-        period = @subscription.find_period(Time.local(2016,1))
+        period = @subscription.find_period(Date.parse('2016-01-01'))
 
         expect(period).to be_nil
       end
 
       it 'returns period for 2015-01' do
-        period = @subscription.find_period(Time.local(2015,1))
+        period = @subscription.find_period(Date.parse('2015-01-01'))
 
         expect(period).to eq @period
       end
 
       it 'returns period for 2015-12' do
-        period = @subscription.find_period(Time.local(2015,12))
+        period = @subscription.find_period(Date.parse('2015-12-01'))
 
         expect(period).to eq @period
       end
@@ -114,138 +114,11 @@ describe Subscription do
     it 'returns a period' do
       expect(@subscription.periods).to be_empty
 
-      period = @subscription.create_period(Time.local(2015,1))
+      period = @subscription.create_period(Date.parse('2015-01-01'))
 
       expect(period).to be_persisted
-      expect(period.start_at).to eq(Time.local(2015,1,1))
+      expect(period.start_date).to eq Date.parse('2015-01-01')
       expect(@subscription.periods).to eq [period]
-    end
-  end
-
-  describe 'micro package' do 
-    before(:all) do 
-      @subscription.update_attribute(:is_micro_package_active, true)
-      @subscription.user.options = UserOptions.new
-    end
-
-    context 'new subscription' do
-      before(:each) do 
-        evaluator = EvaluateSubscription.new(@subscription)
-        allow(evaluator).to receive(:authorize_pre_assignment)
-        evaluator.execute
-      end
-
-      it 'should have start_at and end_at' do   
-        expect(@subscription.start_at).to eq @subscription.created_at.beginning_of_month
-        expect(@subscription.end_at).to eq (@subscription.created_at.beginning_of_month + 11.months).end_of_month
-      end
-
-      describe 'price' do
-        context 'for monthly' do 
-          before(:all) do
-            @subscription.update_attribute(:period_duration, 1)
-            @period = @subscription.current_period 
-          end
-          
-          it 'should cost 10 € with default options' do 
-            UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat / 100).to eq 10
-          end
-          
-          it 'should cost 10 € without pre_assignment active' do 
-            @subscription.is_pre_assignment_active = false
-            UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat / 100).to eq 10
-          end
-        end
-        context 'for quarterly' do 
-          before(:all) do
-            @subscription.update_attribute(:period_duration, 3) 
-            @period = @subscription.current_period 
-          end
-          
-          it 'should cost 30 € with default options' do 
-            UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat / 100).to eq 30
-          end
-
-          it 'should cost 30 € without pre_assignment active' do 
-            @subscription.is_pre_assignment_active = false
-            UpdatePeriod.new(@period).execute
-            expect(@period.price_in_cents_wo_vat / 100).to eq 30
-          end
-        end   
-      end 
-    end
-
-    describe '#set_start_at_and_end_at' do 
-      context 'for monthly' do
-        before(:all) do
-          Timecop.freeze(Time.local(2016,1,1)) 
-          @user = FactoryGirl.create(:user)
-          @subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true)
-          @subscription.user.options = UserOptions.new
-          @subscription.set_start_at_and_end_at
-          Timecop.return
-        end
-
-        it 'returns right values' do   
-          expect(@subscription.start_at).to eq Time.local(2016,1,1).beginning_of_month
-          expect(@subscription.end_at).to eq Time.local(2016,12).end_of_month
-        end
-
-        context 'when subscription term is reached' do
-          before do 
-            Timecop.freeze(Time.local(2017,1,1))
-          end
-          
-          it 'EvaluateSubscription updates start_at and end_at' do 
-            evaluator = EvaluateSubscription.new(@subscription)
-            allow(evaluator).to receive(:authorize_pre_assignment)
-            evaluator.execute
-            expect(@subscription.start_at).to eq Time.local(2017,1).beginning_of_month
-            expect(@subscription.end_at).to eq (Time.local(2017,12)).end_of_month
-          end
-
-          after do
-            Timecop.return 
-          end
-        end  
-      end
-
-      context 'for quaterly' do
-        before(:all) do
-          Timecop.freeze(Time.local(2016,3,1)) 
-          @user = FactoryGirl.create(:user)
-          @subscription = Subscription.create(user_id: @user.id, is_micro_package_active: true, period_duration: 3)
-          @subscription.user.options = UserOptions.new
-          @subscription.set_start_at_and_end_at
-          Timecop.return
-        end
-
-        it 'returns right values' do   
-          expect(@subscription.start_at).to eq Time.local(2016,1,1).beginning_of_month
-          expect(@subscription.end_at).to eq Time.local(2016,12).end_of_month
-        end
-
-        context 'when subscription term is reached' do
-          before do 
-            Timecop.freeze(Time.local(2017,3,1))
-          end
-          
-          it 'EvaluateSubscription updates start_at and end_at' do 
-            evaluator = EvaluateSubscription.new(@subscription)
-            allow(evaluator).to receive(:authorize_pre_assignment)
-            evaluator.execute
-            expect(@subscription.start_at).to eq Time.local(2017,1).beginning_of_month
-            expect(@subscription.end_at).to eq (Time.local(2017,12)).end_of_month
-          end
-
-          after do
-            Timecop.return 
-          end
-        end  
-      end
     end
   end
 end

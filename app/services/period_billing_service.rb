@@ -16,7 +16,7 @@ class PeriodBillingService
   end
 
   def self.vat_ratio(time)
-    if time < Time.local(2014, 1, 1)
+    if time.to_date < Time.local(2014, 1, 1).to_date
       1.196
     else
       1.2
@@ -96,7 +96,7 @@ class PeriodBillingService
 
   def fill_past_with_0
     order   = 1
-    month = @period.start_at.month
+    month = @period.start_date.month
     while month < Time.now.month
       fill_with_0(order)
       order += 1

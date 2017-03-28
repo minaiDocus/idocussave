@@ -20,9 +20,9 @@ class InvoicesToZip
       next unless File.exist?(filepath)
 
       if invoice.organization
-        filename = invoice.organization.name + ' - ' + invoice.period.start_at.strftime('%Y%m') + '.pdf'
+        filename = invoice.organization.name + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
       elsif invoice.user
-        filename =  invoice.user.code + ' - ' + invoice.period.start_at.strftime('%Y%m') + '.pdf'
+        filename =  invoice.user.code + ' - ' + invoice.period.start_date.strftime('%Y%m') + '.pdf'
       else
         filename = File.basename(filepath)
       end

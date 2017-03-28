@@ -17,7 +17,7 @@ class PeriodDocument < ActiveRecord::Base
 
   scope :shared,   -> { where(is_shared: true) }
   scope :scanned,  -> { where.not(scanned_at: [nil]) }
-  scope :for_time, -> (start_time, end_time) { where("created_at >= ? AND created_at <= ?", start_time.dup, end_time.dup) }
+  scope :for_time, -> (start_time, end_time) { where("created_at >= ? AND created_at <= ?", start_time, end_time) }
 
 
   def self.find_or_create_by_name(name, period)

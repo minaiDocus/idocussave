@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe UpdatePeriodDataService do
   it 'have default values' do
-    period = Period.create
+    period = Period.create(start_date: Date.today)
 
     UpdatePeriodDataService.new(period).execute
 
@@ -27,7 +27,7 @@ describe UpdatePeriodDataService do
   end
 
   it 'set values' do
-    period = Period.create
+    period = Period.create(start_date: Date.today)
     document = PeriodDocument.create(name: 'TS%0001 J1 201501 all')
     document.pieces = 10
     document.pages = 10
@@ -46,9 +46,9 @@ describe UpdatePeriodDataService do
     report = Pack::Report.create(name: document.name)
     report.document = document
     report.save
-    preseizure = Pack::Report::Preseizure.create(piece_id: BSON::ObjectId.new)
+    preseizure = Pack::Report::Preseizure.create(piece_id: 1)
     report.preseizures << preseizure
-    preseizure2 = Pack::Report::Preseizure.create(piece_id: BSON::ObjectId.new)
+    preseizure2 = Pack::Report::Preseizure.create(piece_id: 1)
     report.preseizures << preseizure2
     expense = Pack::Report::Expense.create
     report.expenses << expense
@@ -87,13 +87,13 @@ describe UpdatePeriodDataService do
     expect(period.preseizure_pieces).to eq 2
     expect(period.expense_pieces).to eq 1
     expect(period.documents_name_tags).to eq(["b_J1 y_2015 m_1", "b_J2 y_2015 m_1"])
-    expect(period.delivery).to be_delivered
+    expect(period.delivery_state).to eq 'delivered'
   end
 
   describe '#documents_name_tags' do
     context 'for monthly' do
       it "returns ['b_J1 y_2015 m_1']" do
-        period = Period.create(duration: 1)
+        period = Period.create(duration: 1, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 201501 all')
 
         UpdatePeriodDataService.new(period).execute
@@ -104,7 +104,7 @@ describe UpdatePeriodDataService do
 
     context 'for quarterly' do
       it "returns ['b_J1 y_2015 t_1']" do
-        period = Period.create(duration: 3)
+        period = Period.create(duration: 3, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 2015T1 all')
 
         UpdatePeriodDataService.new(period).execute
@@ -115,7 +115,7 @@ describe UpdatePeriodDataService do
 
     context 'for yearly' do
       it "returns ['b_J1 y_2015']" do
-        period = Period.create(duration: 12)
+        period = Period.create(duration: 12, start_date: Date.today)
         period.documents.create(name: 'TS%0001 J1 2015T1 all')
 
         UpdatePeriodDataService.new(period).execute

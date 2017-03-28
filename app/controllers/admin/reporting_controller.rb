@@ -1,12 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Admin::ReportingController < Admin::AdminController
-  # GET /index/reporting
   def index
-    @year = params[:year].present? ? params[:year].to_i : Time.now.year
-    beginning_of_year = Time.local(@year)
-    end_of_year = beginning_of_year.end_of_year
+    @year = Integer(params[:year]) rescue Time.now.year
+    date = Date.parse("#{@year}-01-01")
     @organizations = Organization.billed_for_year(@year).order(name: :asc)
-    @invoices = Invoice.where(organization_id: @organizations.map(&:id)).where("created_at > ? AND created_at < ?", beginning_of_year + 1.month, end_of_year + 1.month)
+    @invoices = Invoice.where(organization_id: @organizations.map(&:id)).
+      where(created_at: date.end_of_month..(date.end_of_month + 12.month))
 
     respond_to do |format|
       format.html
@@ -27,8 +26,10 @@ class Admin::ReportingController < Admin::AdminController
             with_organization_info = true
           end
 
-          # NOTE temporary fix using +1.hour
-          periods = Period.where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).where("start_at  >= ? AND end_at <= ?", beginning_of_year, end_of_year + 1.hour).order(start_at: :asc)
+          periods = Period.where("user_id IN (?) OR organization_id IN (?)", customer_ids, organization_ids).
+            where("start_date >= ? AND end_date <= ?", date, date.end_of_year).
+            order(start_date: :asc)
+
           data = PeriodsToXlsService.new(periods, with_organization_info).execute
           send_data data, type: 'application/vnd.ms-excel', filename: filename
         end

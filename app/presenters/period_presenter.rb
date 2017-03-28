@@ -170,7 +170,7 @@ class PeriodPresenter
     _invoices = []
 
     if @period.organization || @period.user
-      start_time = (@period.start_at + 1.month).beginning_of_month
+      start_time = (@period.start_date + 1.month).beginning_of_month
 
       if @period.duration == 1
         end_time = start_time.end_of_month

@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe PeriodDelivery do
   before(:each) do
-    @period = Period.create!(start_at: Time.now)
+    @period = Period.create!(start_date: Date.today)
   end
 
   it "should pass from wait to received" do

@@ -57,7 +57,7 @@ class Account::OrganizationsController < Account::AccountController
   # GET /account/organizations/:id/
   def show
     @members = @organization.customers.page(params[:page]).per(params[:per])
-    @periods = Period.where(user_id: @organization.customers.pluck(:id)).where("start_at < ? AND end_at > ?", Time.now, Time.now).includes(:billings)
+    @periods = Period.where(user_id: @organization.customers.pluck(:id)).where("start_date < ? AND end_date > ?", Date.today, Date.today).includes(:billings)
 
     @subscription         = @organization.find_or_create_subscription
     @subscription_options = @subscription.options.sort_by(&:position)

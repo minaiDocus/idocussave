@@ -21,7 +21,7 @@ class Period < ActiveRecord::Base
 
 
   before_create :add_one_delivery
-  before_create :set_start_at_and_end_at
+  before_create :set_start_date_and_end_date
 
 
   def self.period_name(duration, offset=0, current_time=Time.now)
@@ -212,7 +212,7 @@ class Period < ActiveRecord::Base
 
 
   def current
-    desc(:start_at).first
+    desc(:start_date).first
   end
 
 private
@@ -230,16 +230,16 @@ private
   end
 
 
-  def set_start_at_and_end_at
+  def set_start_date_and_end_date
     if duration == 1
-      self.start_at = start_at.beginning_of_month
-      self.end_at   = start_at.end_of_month
+      self.start_date = start_date.beginning_of_month
+      self.end_date   = start_date.end_of_month
     elsif duration == 3
-      self.start_at = start_at.beginning_of_quarter
-      self.end_at   = start_at.end_of_quarter
+      self.start_date = start_date.beginning_of_quarter
+      self.end_date   = start_date.end_of_quarter
     elsif duration == 12
-      self.start_at = start_at.beginning_of_year
-      self.end_at   = start_at.end_of_year
+      self.start_date = start_date.beginning_of_year
+      self.end_date   = start_date.end_of_year
     end
   end
 

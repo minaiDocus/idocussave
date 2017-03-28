@@ -43,7 +43,7 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
 
         subscriptions.update_all(_params)
 
-        periods = Period.where(subscription_id: subscriptions.map(&:id)).where('start_at <= ? AND end_at >= ?', Time.now, Time.now)
+        periods = Period.where(subscription_id: subscriptions.map(&:id)).where('start_date <= ? AND end_date >= ?', Date.today, Date.today)
 
         periods.each do |period|
           period.update(_params)

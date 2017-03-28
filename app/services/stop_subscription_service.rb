@@ -8,7 +8,7 @@ class StopSubscriptionService
 
 
   def execute
-    period = @user.subscription.find_period(Time.now)
+    period = @user.subscription.find_period(Date.today)
 
     # Disable period and disable user
     if period
@@ -16,11 +16,11 @@ class StopSubscriptionService
         is_billed = period.billings.map(&:amount_in_cents_wo_vat).select { |e| e > 0 }.present?
 
         unless is_billed
-          @user.inactive_at = period.start_at
+          @user.inactive_at = period.start_date.to_time
           period.destroy
         end
       else
-        @user.inactive_at = period.start_at + period.duration.month
+        @user.inactive_at = period.start_date.to_time + period.duration.month
       end
     else
       @user.inactive_at = Time.now
@@ -34,7 +34,7 @@ class StopSubscriptionService
     @user.account_number_rules   = []
     @user.save
 
-    @user.subscription.update_attributes(start_at: nil, end_at: nil)
+    @user.subscription.update_attributes(start_date: nil, end_date: nil)
 
     # Revoke authorizations stored in options
     @user.options.is_retriever_authorized     = false

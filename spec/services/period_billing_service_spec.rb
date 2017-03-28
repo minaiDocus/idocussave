@@ -5,10 +5,11 @@ describe PeriodBillingService do
   describe '#amount_in_cents_wo_vat' do
     context 'for month' do
       before(:all) do
-        period = Period.new
+        period = Period.new(start_date: Date.today)
         period.subscription = Subscription.create
         period.duration = 1
         period.price_in_cents_wo_vat = 1000
+        period.save
         @period_billing_service = PeriodBillingService.new(period)
       end
 
@@ -28,12 +29,13 @@ describe PeriodBillingService do
     context 'for quarter' do
       context 'without billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.duration = 3
           period.recurrent_products_price_in_cents_wo_vat = 300
           period.ponctual_products_price_in_cents_wo_vat  = 500
           period.excesses_price_in_cents_wo_vat           = 200
           period.price_in_cents_wo_vat                    = 1600
+          period.save
           @period_billing_service = PeriodBillingService.new(period)
         end
 
@@ -76,13 +78,14 @@ describe PeriodBillingService do
 
       context 'with billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.duration = 3
           period.recurrent_products_price_in_cents_wo_vat = 300
           period.ponctual_products_price_in_cents_wo_vat  = 500
           period.products_price_in_cents_wo_vat           = 1400
           period.excesses_price_in_cents_wo_vat           = 200
           period.price_in_cents_wo_vat                    = 1600
+          period.save
           billing = PeriodBilling.new
           billing.order = 1
           billing.amount_in_cents_wo_vat = 900
@@ -131,12 +134,13 @@ describe PeriodBillingService do
     context 'for annual' do
       context 'without billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.duration = 12
           period.recurrent_products_price_in_cents_wo_vat = 19900
           period.excesses_price_in_cents_wo_vat           = 500
           period.products_price_in_cents_wo_vat           = 19900
           period.price_in_cents_wo_vat                    = 20400
+          period.save
           @period_billing_service = PeriodBillingService.new(period)
         end
 
@@ -155,12 +159,13 @@ describe PeriodBillingService do
 
       context 'with billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.duration = 12
           period.recurrent_products_price_in_cents_wo_vat = 19900
           period.products_price_in_cents_wo_vat           = 19900
           period.excesses_price_in_cents_wo_vat           = 500
           period.price_in_cents_wo_vat                    = 20400
+          period.save
           billing = PeriodBilling.new
           billing.order = 1
           billing.amount_in_cents_wo_vat = 20000
@@ -192,10 +197,11 @@ describe PeriodBillingService do
   describe '#data' do
     context 'for month' do
       before(:all) do
-        period = Period.new
+        period = Period.new(start_date: Date.today)
         period.subscription = Subscription.create
         period.duration = 1
         period.oversized = 1
+        period.save
         @period_billing_service = PeriodBillingService.new(period)
       end
 
@@ -215,10 +221,11 @@ describe PeriodBillingService do
     context 'for quarter' do
       context 'without billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.subscription = Subscription.create
           period.duration = 3
           period.oversized = 1
+          period.save
           @period_billing_service = PeriodBillingService.new(period)
         end
 
@@ -261,10 +268,11 @@ describe PeriodBillingService do
 
       context 'with billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.subscription = Subscription.create
           period.duration = 3
           period.oversized = 5
+          period.save
           billing = PeriodBilling.new
           billing.order = 1
           billing.oversized = 1
@@ -313,10 +321,11 @@ describe PeriodBillingService do
     context 'for annual' do
       context 'without billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.subscription = Subscription.create
           period.duration = 12
           period.oversized = 1
+          period.save
           @period_billing_service = PeriodBillingService.new(period)
         end
 
@@ -335,10 +344,11 @@ describe PeriodBillingService do
 
       context 'with billing' do
         before(:all) do
-          period = Period.new
+          period = Period.new(start_date: Date.today)
           period.subscription = Subscription.create
           period.duration = 12
           period.oversized = 5
+          period.save
           billing = PeriodBilling.new
           billing.order = 1
           billing.oversized = 1
@@ -369,8 +379,9 @@ describe PeriodBillingService do
 
   describe '#next_order' do
     it 'returns 1' do
-      period = Period.new
+      period = Period.new(start_date: Date.today)
       period.duration = 3
+      period.save
       period_billing_service = PeriodBillingService.new(period)
       order = period_billing_service.next_order
 
@@ -378,8 +389,9 @@ describe PeriodBillingService do
     end
 
     it 'returns 3' do
-      period = Period.new
+      period = Period.new(start_date: Date.today)
       period.duration = 3
+      period.save
       billing = PeriodBilling.new(order: 2)
       period.billings << billing
       period_billing_service = PeriodBillingService.new(period)
@@ -392,7 +404,7 @@ describe PeriodBillingService do
   describe '#save' do
     context 'for quarter' do
       before(:each) do
-        @period = Period.new
+        @period = Period.new(start_date: Date.today)
         @period.subscription = Subscription.create
         @period.duration = 3
         @period.recurrent_products_price_in_cents_wo_vat = 300
@@ -412,6 +424,7 @@ describe PeriodBillingService do
         @period.expense_pieces                           = 0
         @period.paperclips                               = 5
         @period.oversized                                = 4
+        @period.save
         @period_billing_service = PeriodBillingService.new(@period)
       end
 
@@ -596,7 +609,7 @@ describe PeriodBillingService do
 
     context 'for annual' do
       before(:each) do
-        @period = Period.new
+        @period = Period.new(start_date: Date.today)
         @period.subscription = Subscription.create
         @period.duration = 12
         @period.recurrent_products_price_in_cents_wo_vat = 19900
@@ -615,6 +628,7 @@ describe PeriodBillingService do
         @period.expense_pieces                           = 0
         @period.paperclips                               = 5
         @period.oversized                                = 4
+        @period.save
         @period_billing_service = PeriodBillingService.new(@period)
       end
 
@@ -739,7 +753,8 @@ describe PeriodBillingService do
       before(:each) do
         @period = Period.new
         @period.duration = 1
-        @period.start_at = Time.local(2015,1,1)
+        @period.start_date = Time.local(2015,1,1).to_date
+        @period.save
         @period_billing_service = PeriodBillingService.new(@period)
       end
 
@@ -762,7 +777,8 @@ describe PeriodBillingService do
       before(:each) do
         @period = Period.new
         @period.duration = 3
-        @period.start_at = Time.local(2015,1,1)
+        @period.start_date = Time.local(2015,1,1).to_date
+        @period.save
         @period_billing_service = PeriodBillingService.new(@period)
       end
 
@@ -817,7 +833,8 @@ describe PeriodBillingService do
       before(:each) do
         @period = Period.new
         @period.duration = 12
-        @period.start_at = Time.local(2015,1,1)
+        @period.start_date = Time.local(2015,1,1).to_date
+        @period.save
         @period_billing_service = PeriodBillingService.new(@period)
       end
 
@@ -877,7 +894,8 @@ describe PeriodBillingService do
     before(:each) do
       @period = Period.new
       @period.duration = 3
-      @period.start_at = Time.local(2015,1,1)
+      @period.start_date = Time.local(2015,1,1).to_date
+      @period.save
       @period_billing_service = PeriodBillingService.new(@period)
     end
 
@@ -898,23 +916,26 @@ describe PeriodBillingService do
 
   describe '.amount_in_cents_wo_vat' do
     before(:all) do
-      period = Period.new
+      period = Period.new(start_date: Date.today)
       period.duration = 1
       period.price_in_cents_wo_vat = 1500
+      period.save
 
-      period2 = Period.new
+      period2 = Period.new(start_date: Date.today)
       period2.duration = 3
       period2.recurrent_products_price_in_cents_wo_vat = 300
       period2.ponctual_products_price_in_cents_wo_vat  = 500
       period2.excesses_price_in_cents_wo_vat           = 200
       period2.price_in_cents_wo_vat                    = 1600
+      period2.save
 
-      period3 = Period.new
+      period3 = Period.new(start_date: Date.today)
       period3.duration = 12
       period3.recurrent_products_price_in_cents_wo_vat = 19900
       period3.ponctual_products_price_in_cents_wo_vat  = 0
       period3.excesses_price_in_cents_wo_vat           = 500
       period3.price_in_cents_wo_vat                    = 20400
+      period3.save
       period3.billings << PeriodBilling.new(order: 1, amount_in_cents_wo_vat: 20000)
 
       @periods = [period, period2, period3]

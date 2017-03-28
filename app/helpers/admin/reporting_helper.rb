@@ -8,8 +8,8 @@ module Admin::ReportingHelper
     invoices.where("created_at > ? AND created_at < ? AND organization_id = ?", start_time, end_time, organization.id).first
   end
 
-  def periods_at(time, organization, user_ids)
-    periods = Period.where('user_id IN (?) OR organization_id = ?', user_ids, organization.id).where("start_at <= ? AND end_at >= ?", time.dup, time.dup)
+  def periods_at(date, organization, user_ids)
+    periods = Period.where('user_id IN (?) OR organization_id = ?', user_ids, organization.id).where("start_date <= ? AND end_date >= ?", date, date)
 
     [periods.where(is_centralized: true), periods.where(is_centralized: false)]
   end

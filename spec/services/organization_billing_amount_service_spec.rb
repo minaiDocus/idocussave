@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe OrganizationBillingAmountService do
-  it 'returns 6000' do
+  it 'returns 5000' do
     Timecop.freeze Time.local(2015)
     # First customer, monthly
     customer1 = FactoryGirl.create(:user, code: 'TS%0001')

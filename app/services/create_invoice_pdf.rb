@@ -4,16 +4,16 @@ class CreateInvoicePdf
       time = 1.month.ago.beginning_of_month + 15.days
 
       # NOTE update all period before generating invoices
-      Period.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).each do |period|
+      Period.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).each do |period|
         UpdatePeriodDataService.new(period).execute
         UpdatePeriodPriceService.new(period).execute
         print '.'
       end; nil
 
       Organization.billed.order(created_at: :asc).each do |organization|
-        organization_period = organization.periods.where('start_at <= ? AND end_at >= ?', time.dup, time.dup).first
+        organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
         unless organization_period.invoices.present?
-          periods = Period.where(user_id: organization.customers.map(&:id)).where('start_at <= ? AND end_at >= ?', time.dup, time.dup)
+          periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
           if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
             puts "Generating invoice for organization : #{organization.name}"
             invoice = Invoice.new
@@ -54,7 +54,7 @@ class CreateInvoicePdf
 
     customer_ids = @invoice.organization.customers.map(&:id)
 
-    periods = Period.where(user_id: customer_ids).where("start_at <= ? AND end_at >= ?", time.dup, time.dup)
+    periods = Period.where(user_id: customer_ids).where("start_date <= ? AND end_date >= ?", time.to_date, time.to_date)
 
     mail_package_count      = 0
     basic_package_count     = 0
@@ -118,7 +118,7 @@ class CreateInvoicePdf
     end
 
     options = begin
-                @invoice.organization.subscription.periods.select { |period| period.start_at <= time && period.end_at >= time }
+                @invoice.organization.subscription.periods.select { |period| period.start_date <= time && period.end_date >= time }
                             .first
                             .product_option_orders
                             .by_position

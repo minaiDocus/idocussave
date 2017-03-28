@@ -25,9 +25,9 @@ class ReminderEmail < ActiveRecord::Base
     if clients.any?
       clients.each do |client|
         if client.is_reminder_email_active && client.options.is_upload_authorized
-          period = client.periods.order(start_at: :desc).first
+          period = client.periods.order(start_date: :desc).first
           if period
-            packs_delivered = client.packs.where("created_at > ?", period.start_at).scan_delivered.count
+            packs_delivered = client.packs.where("created_at > ?", period.start_date).scan_delivered.count
           else
             packs_delivered = 0
           end

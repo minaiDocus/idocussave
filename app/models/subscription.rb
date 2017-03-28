@@ -18,19 +18,16 @@ class Subscription < ActiveRecord::Base
 
   validates_inclusion_of :period_duration, in: [1, 3, 12]
 
-
   def current_period
-    find_or_create_period(Time.now)
+    find_or_create_period(Date.today)
   end
 
-
-  def find_period(time)
-    periods.where("start_at <= ? AND end_at >= ?", time.dup, time.dup).first
+  def find_period(date)
+    periods.where("start_date <= ? AND end_date >= ?", date, date).first
   end
 
-
-  def create_period(time)
-    period = Period.new(start_at: time.dup, duration: period_duration)
+  def create_period(date)
+    period = Period.new(start_date: date, duration: period_duration)
     period.subscription = self
 
     if organization
@@ -46,11 +43,9 @@ class Subscription < ActiveRecord::Base
     period
   end
 
-
-  def find_or_create_period(time)
-    find_period(time) || create_period(time)
+  def find_or_create_period(date)
+    find_period(date) || create_period(date)
   end
-
 
   def configured?
     is_basic_package_active     ||
@@ -97,31 +92,28 @@ class Subscription < ActiveRecord::Base
     user || organization
   end
 
-
-  def set_start_at_and_end_at
+  def set_start_date_and_end_date
     if self.is_micro_package_active
-      #updating start_at and end_at when subscription term is reached
-      if self.end_at.present? && self.end_at < Time.now
-        self.start_at = self.period_duration == 1 ? (self.end_at + 1.day).beginning_of_month : (self.end_at + 1.day).beginning_of_quarter
-        self.end_at   = (self.start_at + 11.months).end_of_month
+      # Updating start_date and end_date when subscription term is reached
+      if self.end_date.present? && self.end_date < Date.today
+        self.start_date = self.period_duration == 1 ? (self.end_date + 1.day) : (self.end_date + 1.day).beginning_of_quarter
+        self.end_date   = self.start_date + 1.year - 1.day
       end
-      #when unset
-      self.start_at ||= self.period_duration == 1 ? Time.now.beginning_of_month : Time.now.beginning_of_quarter
-      self.end_at   ||= (self.start_at + 11.months).end_of_month
+      # When unset
+      self.start_date ||= self.period_duration == 1 ? Date.today.beginning_of_month : Date.today.beginning_of_quarter
+      self.end_date   ||= self.start_date + 1.year - 1.day
 
       save
     end
   end
 
-
   def current_preceeding_periods
     return [] unless is_micro_package_active
-    periods.where("start_at >= ? AND start_at <= ?", self.start_at, current_period.start_at)
+    periods.where("start_date >= ? AND start_date < ?", self.start_date, current_period.start_date)
   end
 
-
   def excess_of(value, max_value=nil)
-    return 0 unless is_micro_package_active && current_period.start_at.between?(self.start_at, self.end_at)
+    return 0 unless is_micro_package_active && current_period.start_date.between?(self.start_date, self.end_date)
 
     max_value ||= "max_#{value.to_s}_authorized"
     current_value        = current_period.send(value.to_sym)
@@ -140,5 +132,4 @@ class Subscription < ActiveRecord::Base
   def retriever_price_option
     %w(ADV).include?(user.organization.code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
   end
-
 end

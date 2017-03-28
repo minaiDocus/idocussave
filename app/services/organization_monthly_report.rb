@@ -19,7 +19,7 @@ class OrganizationMonthlyReport
   private
 
   def periods
-    @periods ||= Period.where('user_id IN (?) OR organization_id = ?', @customer_ids, @organization_id).where("start_at <= ? AND end_at >= ?", @time.dup, @time.dup)
+    @periods ||= Period.where('user_id IN (?) OR organization_id = ?', @customer_ids, @organization_id).where("start_date <= ? AND end_date >= ?", @time.to_date, @time.to_date)
   end
 
 

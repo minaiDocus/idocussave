@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170410191545) do
+ActiveRecord::Schema.define(version: 20170411201324) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1103,8 +1103,8 @@ ActiveRecord::Schema.define(version: 20170410191545) do
     t.datetime "updated_at"
     t.datetime "locked_at"
     t.datetime "locked_until"
-    t.datetime "start_at"
-    t.datetime "end_at"
+    t.date     "start_date"
+    t.date     "end_date"
     t.integer  "duration",                                 limit: 4,     default: 1,      null: false
     t.boolean  "is_centralized",                                         default: true,   null: false
     t.integer  "price_in_cents_wo_vat",                    limit: 4,     default: 0,      null: false
@@ -1421,8 +1421,8 @@ ActiveRecord::Schema.define(version: 20170410191545) do
     t.boolean  "is_retriever_package_to_be_disabled"
     t.boolean  "is_pre_assignment_to_be_disabled"
     t.boolean  "is_stamp_to_be_disabled"
-    t.datetime "start_at"
-    t.datetime "end_at"
+    t.date     "start_date"
+    t.date     "end_date"
     t.integer  "max_sheets_authorized",               limit: 4,   default: 100,   null: false
     t.integer  "max_upload_pages_authorized",         limit: 4,   default: 200,   null: false
     t.integer  "max_dematbox_scan_pages_authorized",  limit: 4,   default: 200,   null: false

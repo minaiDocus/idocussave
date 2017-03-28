@@ -44,8 +44,8 @@ class PeriodsToXlsService
       data = []
       data << document.period.user.try(:organization).try(:name) if @with_organization_info
       data += [
-        document.period.end_at.month,
-        document.period.start_at.year,
+        document.period.end_date.month,
+        document.period.start_date.year,
         document.period.user.code,
         document.period.user.company,
         document.name,
@@ -101,7 +101,7 @@ class PeriodsToXlsService
     @periods.each do |period|
       billing = PeriodBillingService.new(period)
       period.duration.times do |index|
-        month = period.start_at.month + index
+        month = period.start_date.month + index
 
         excesses_amount_in_cents_wo_vat = billing.data(:excesses_amount_in_cents_wo_vat, month)
 
@@ -122,7 +122,7 @@ class PeriodsToXlsService
 
           data += [
             month,
-            period.start_at.year,
+            period.start_date.year,
             period.user.try(:code).to_s,
             period.user.try(:name).to_s,
             option.group_title,
@@ -147,7 +147,7 @@ class PeriodsToXlsService
 
         data += [
           month,
-          period.start_at.year,
+          period.start_date.year,
           period.user.code.to_s,
           period.user.name.to_s,
           'Dépassement',
