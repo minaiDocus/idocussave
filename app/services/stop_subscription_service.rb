@@ -13,15 +13,20 @@ class StopSubscriptionService
     # Disable period and disable user
     if period
       if @close_now
-        @user.inactive_at = period.start_at
+        is_billed = period.billings.map(&:amount_in_cents_wo_vat).select { |e| e > 0 }.present?
 
-        period.destroy
+        unless is_billed
+          @user.inactive_at = period.start_at
+          period.destroy
+        end
       else
         @user.inactive_at = period.start_at + period.duration.month
       end
     else
       @user.inactive_at = Time.now
     end
+
+    return false unless @user.inactive_at
 
     # Revoke authorization
     @user.email_code             = nil

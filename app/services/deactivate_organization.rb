@@ -11,7 +11,7 @@ class DeactivateOrganization
     end
 
     @organization.customers.each do |customers|
-      StopSubscriptionService.new(customers, true).execute
+      StopSubscriptionService.new(customers, false).execute
     end
 
     @organization.remote_files.destroy_all

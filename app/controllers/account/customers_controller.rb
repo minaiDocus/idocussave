@@ -179,10 +179,11 @@ class Account::CustomersController < Account::OrganizationController
 
   # PUT /account/organizations/:organization_id/customers/:id/close_account
   def close_account
-    StopSubscriptionService.new(@customer, params[:close_now]).execute
-
-    flash[:success] = 'Dossier clôturé avec succès.'
-
+    if StopSubscriptionService.new(@customer, params[:close_now]).execute
+      flash[:success] = 'Dossier clôturé avec succès.'
+    else
+      flash[:error] = 'Impossible de clôturer immédiatement le dossier, la période a été en partie facturé.'
+    end
     redirect_to account_organization_customer_path(@organization, @customer)
   end
 
