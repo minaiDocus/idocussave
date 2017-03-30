@@ -31,7 +31,7 @@ gem 'barby'
 gem 'prawn', '1.0.0rc1'
 gem 'paperclip', '~> 4.2.2'
 gem 'chunky_png'  # required by barby
-gem 'haml-rails'
+gem 'haml'
 gem 'prawn-qrcode'
 
 
@@ -125,7 +125,7 @@ gem 'ansi', require: false
 gem 'axlsx'
 gem 'to_xls'
 gem 'hpricot'
-gem 'nokogiri'
+gem 'nokogiri', '~> 1.7'
 
 
 # External services
