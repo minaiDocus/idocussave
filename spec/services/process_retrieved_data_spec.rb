@@ -4,6 +4,8 @@ require 'spec_helper'
 describe ProcessRetrievedData do
   before(:each) do
     DatabaseCleaner.start
+    Timecop.freeze(Time.local(2017,1,4))
+
     @user = FactoryGirl.create(:user, code: 'IDO%0001')
     @user.options = UserOptions.create(user_id: @user.id)
     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
@@ -20,6 +22,7 @@ describe ProcessRetrievedData do
   end
 
   after(:each) do
+    Timecop.return
     DatabaseCleaner.clean
   end
 
@@ -473,6 +476,63 @@ describe ProcessRetrievedData do
       expect(operation.label).to eq 'FACTURE CB RESTO Le Bois'
       expect(operation.is_locked).to eq false
       expect(operation.is_coming).to eq false
+    end
+
+    it 'does not lock an operation' do
+      Timecop.freeze(Time.local(2017,2,28))
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      operation = @user.operations.first
+
+      expect(operation.label).to eq 'Retrait DAB 100'
+      expect(operation.is_locked).to eq false
+      expect(operation.is_coming).to eq false
+
+      Timecop.return
+    end
+
+    it 'does not lock recent operation' do
+      Timecop.freeze(Time.local(2017,3,6))
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      operation = @user.operations.first
+
+      expect(operation.label).to eq 'Retrait DAB 100'
+      expect(operation.is_locked).to eq false
+      expect(operation.is_coming).to eq false
+
+      Timecop.return
+    end
+
+    it 'locks 1 old operation' do
+      Timecop.freeze(Time.local(2017,3,15))
+
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      operation = @user.operations.first
+
+      expect(operation.label).to eq 'Retrait DAB 100'
+      expect(operation.is_locked).to eq true
+      expect(operation.is_coming).to eq false
+
+      Timecop.return
     end
   end
 

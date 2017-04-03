@@ -348,11 +348,24 @@ private
     operation.deleted_at  = Time.parse(transaction['deleted']) if transaction['deleted'].present?
     if operation.class == Operation && operation.processed_at.nil?
       operation.is_coming = transaction['coming']
-      if (bank_account.start_date.present? && operation.date < bank_account.start_date) || operation.date < Time.local(2017,1,1).to_date || operation.is_coming
+      if lock_operation?(bank_account, operation)
         operation.is_locked = true
       else
         operation.is_locked = !(bank_account.is_used && bank_account.configured?)
       end
     end
+  end
+
+  def lock_operation?(bank_account, operation)
+    (bank_account.start_date.present? && operation.date < bank_account.start_date) ||
+      operation.date < Date.parse('2017-01-01') ||
+      operation.is_coming ||
+      is_operation_old?(bank_account, operation)
+  end
+
+  def is_operation_old?(bank_account, operation)
+    bank_account.created_at < 1.month.ago &&
+      operation.date < Date.today.beginning_of_month &&
+      operation.date < 1.week.ago.to_date
   end
 end

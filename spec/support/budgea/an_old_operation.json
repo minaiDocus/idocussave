@@ -1,0 +1,42 @@
+{
+  "connections" : [
+    {
+      "accounts" : [
+        {
+          "deleted" : null,
+          "id" : 4,
+          "name" : "Compte courant",
+          "number" : "2002700001",
+          "transactions" : [
+            {
+              "application_date" : "2017-02-27",
+              "comment" : null,
+              "date" : "2017-02-27",
+              "deleted" : null,
+              "id" : 2,
+              "last_update" : "2017-03-15 08:30:00",
+              "original_wording" : "Retrait DAB 100",
+              "rdate" : "2017-02-27",
+              "type" : "withdrawal",
+              "coming" : false,
+              "value" : -100.0
+            }
+          ],
+          "type" : "checking"
+        }
+      ],
+      "error" : null,
+      "expire" : null,
+      "id" : 7,
+      "id_user" : 7,
+      "id_bank" : 40,
+      "last_update" : "2017-03-15 08:30:00"
+    }
+  ],
+  "user": {
+    "signin" : "2017-01-01 18:12:54",
+    "platform" : "sharedAccess",
+    "id" : 7
+  },
+  "total" : 1
+}
