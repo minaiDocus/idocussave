@@ -7,6 +7,6 @@ class Admin::ProcessReportingController < Admin::AdminController
 
     @time = Time.local(year, month)
 
-    @organizations = Organization.order(created_at: :asc, name: :asc)
+    @organizations = Organization.order(name: :asc)
   end
 end
