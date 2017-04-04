@@ -59,9 +59,9 @@ class Pack < ActiveRecord::Base
     query = query.where(owner_id: options[:owner_ids]) if options[:owner_ids].present?
     query = query.joins(:documents).where('packs.tags LIKE ?  OR packs.name LIKE ? OR documents.content_text LIKE ?' , "%#{text}%",  "%#{text}%", "%#{text}%") if text.present?
 
-    query = query.order(updated_at: :desc)
+    query = query.order(updated_at: :desc) if options[:sort] == true
 
-    query.distinct('packs.id').page(page).limit(per_page)
+    query.distinct.page(page).per(per_page)
   end
 
 

@@ -99,7 +99,7 @@ class Document < ActiveRecord::Base
 
     query.order(position: :asc) if  options[:sort] == true
 
-    query.page(page).limit(per_page)
+    query.page(page).per(per_page)
   end
 
 

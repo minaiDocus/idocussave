@@ -30,7 +30,7 @@
       #documentslist.well.qtip-target
         .header
           %h3.pull-left
-            #{@response.count} document(s)
+            #{@packs.total_count} document(s)
           - if @user.active?
             .actiongroup.pull-right
               - if current_user.is_admin
@@ -47,7 +47,7 @@
           %ul.margin3top.margin0left
             = render :partial => "/account/documents/pack", :collection => @packs
           .aligncenter
-            = paginate @response
+            = paginate @packs
 
     .span9
       #pageslist.well

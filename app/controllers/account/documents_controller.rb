@@ -18,9 +18,7 @@ class Account::DocumentsController < Account::AccountController
 
     options.merge!(page: params[:page], per_page: params[:per_page], sort: true)
 
-    @response = Pack.search(params[:filter], options)
-
-    @packs = @response.order(updated_at: :desc)
+    @packs = Pack.search(params[:filter], options)
 
     @last_composition = @user.composition
 
@@ -39,13 +37,11 @@ class Account::DocumentsController < Account::AccountController
   def show
     @pack = Pack.find(params[:id])
 
-    @response = Document.search(params[:filter],
-                                pack_id:  params[:id],
-                                per_page: 10_000,
-                                sort:     true
-                               )
-
-    @documents = @response.where.not(origin: ['mixed']).order(position: :asc).includes(:pack)
+    @documents = Document.search(params[:filter],
+      pack_id:  params[:id],
+      per_page: 10_000,
+      sort:     true
+    ).where.not(origin: ['mixed']).order(position: :asc).includes(:pack)
 
     unless @pack.is_fully_processed || params[:filter].presence
       @temp_pack      = TempPack.find_by_name(@pack.name)
@@ -83,10 +79,7 @@ class Account::DocumentsController < Account::AccountController
         options[:owner_id] = @user.id.to_s
       end
 
-      @response = Pack.search(params[:filter], options)
-
-      @packs = @response
-      @packs = @packs.order(updated_at: :desc) unless params[:filter].present?
+      @packs = Pack.search(params[:filter], options)
     end
   end
 
