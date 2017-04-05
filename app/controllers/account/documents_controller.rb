@@ -35,7 +35,7 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /account/documents/:id
   def show
-    @pack = Pack.find(params[:id])
+    @pack = @user.packs.find(params[:id])
 
     @documents = Document.search(params[:filter],
       pack_id:  params[:id],
