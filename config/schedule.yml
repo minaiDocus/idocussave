@@ -30,3 +30,9 @@ RemoveOldestRetrievedDataWorker:
 
 InitializePeriodsWorker:
   cron: '0 3 1 * *'
+
+DocumentNotificationWorker:
+  cron: '0 8 * * *'
+
+ScansNotDeliveredNotificationWorker:
+  cron: '0 1 * * *'
