@@ -9,7 +9,7 @@ class OrganizationManagement
     end
 
     def packs
-      Pack.where(owner_id: id).where("organization_id = ? OR owner_id IN (?)", _organization.id, customer_ids)
+      Pack.where("owner_id = ? OR (organization_id = ? AND owner_id IN (?))", id, _organization.id, customer_ids)
     end
 
     def temp_packs
