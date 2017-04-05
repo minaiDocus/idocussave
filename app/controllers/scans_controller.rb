@@ -3,7 +3,6 @@ class ScansController < PaperProcessesController
   before_filter :load_scanned_by
   before_filter :load_resource, only: :index
 
-
   # GET /scans
   def index
     respond_to do |format|
@@ -16,7 +15,6 @@ class ScansController < PaperProcessesController
     end
   end
 
- 
   # POST /scans
   def create
     if params[:period_document] && params[:period_document][:name] && params[:period_document][:paperclips] && params[:period_document][:oversized]
@@ -47,7 +45,7 @@ class ScansController < PaperProcessesController
         @document.scanned_at  = Time.now
         @document.scanned_by = @scanned_by
         @document.organization = @document.user.try(:organization)
-        
+
         if @document.user && @document.save
           create_paper_process(@document)
 
@@ -72,7 +70,6 @@ class ScansController < PaperProcessesController
     redirect_to scans_path
   end
 
-  
   # PUT /scans/:id/add
   def add
     document = PeriodDocument.find(params[:id])
@@ -98,7 +95,6 @@ class ScansController < PaperProcessesController
     redirect_to scans_path
   end
 
-
   # PUT /scans/:id/overwrite
   def overwrite
     document = PeriodDocument.find(params[:id])
@@ -122,7 +118,6 @@ class ScansController < PaperProcessesController
     flash[:success] = 'Remplacé avec succès.'
     redirect_to scans_path
   end
-
 
   # GET /scans/cancel
   def cancel
@@ -156,18 +151,16 @@ class ScansController < PaperProcessesController
     #@documents = @documents.where(scanned_by: @scanned_by) if @scanned_by.present?
   end
 
-
   def reset_waiting_document
     session[:document]        = nil
     session[:old_document]  = nil
     session[:new_document] = nil
   end
 
-
   def create_paper_process(document)
     unless document.paper_process
       paper_process = PaperProcess.new
-      
+
       paper_process.type            = 'scan'
       paper_process.user            = document.user
       paper_process.pack_name         = document.name
@@ -178,7 +171,6 @@ class ScansController < PaperProcessesController
       paper_process.save
     end
   end
-
 
   def period_document_params
     params.require(:period_document).permit(:name, :paperclips, :oversized)
