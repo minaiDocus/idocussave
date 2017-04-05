@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ReminderEmail < ActiveRecord::Base
-  serialize :tags, Hash
-  serialize :content_historic, Hash
+  serialize :delivered_user_ids, Array
+  serialize :processed_user_ids, Array
 
   belongs_to :organization
 
