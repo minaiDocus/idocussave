@@ -14,8 +14,13 @@ class DocumentNotifier
         end
       end
 
-      packs.each do |pack|
-        pack.timeless.update_attribute(:is_update_notified, true)
+      ActiveRecord::Base.record_timestamps = false
+      begin
+        packs.each do |pack|
+          pack.update_attribute(:is_update_notified, true)
+        end
+      ensure
+        ActiveRecord::Base.record_timestamps = true
       end
     end
   end
