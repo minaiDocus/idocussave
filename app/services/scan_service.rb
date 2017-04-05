@@ -9,7 +9,8 @@ module ScanService
       temp_pack = TempPack.where(name: scan.name).first
 
       if temp_pack
-        result = temp_pack.temp_documents.scan.where("created_at >= ?", scan.scanned_at).empty?
+        # NOTE minus 10 days because PPP delivers a few days before entering the information inside iDocus
+        result = temp_pack.temp_documents.scan.where("created_at >= ?", scan.scanned_at-10.days).empty?
       else
         result = true
       end
