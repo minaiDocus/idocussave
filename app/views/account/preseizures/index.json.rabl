@@ -13,7 +13,7 @@ node :per_page do
 end
 
 node :total do
-  @preseizures_count
+  @preseizures.try(:total_count) || 0
 end
 
 node :description_keys do

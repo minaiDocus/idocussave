@@ -2,15 +2,14 @@
 class Account::PreseizureAccountsController < Account::OrganizationController
   before_filter :account_params, only: :udpate
 
-  # GET /account/organizations/:organization_id/preseizure_accounts
   def index
     if params[:pack_report_id].present?
-      report = Pack::Report.preseizures.where(user_id: customer_ids).where(id: params[:pack_report_id]).first
+      report = Pack::Report.preseizures.where(user_id: customer_ids, id: params[:pack_report_id]).first
 
       if report
         preseizure = report.preseizures.find params[:preseizure_id]
 
-        @preseizure_accounts = preseizure.accounts.includes(:entries).to_a
+        @preseizure_accounts = preseizure.accounts.order(type: :asc).includes(:entries).to_a
       else
         @preseizure_accounts = []
       end
@@ -21,6 +20,7 @@ class Account::PreseizureAccountsController < Account::OrganizationController
 
   def update
     @account = Pack::Report::Preseizure::Account.find params[:id]
+    raise ActiveRecord::RecordNotFound unless @account.preseizure.report.user.in? customers
     @account.update(account_params)
 
     respond_to do |format|
@@ -28,7 +28,7 @@ class Account::PreseizureAccountsController < Account::OrganizationController
     end
   end
 
-  private
+private
 
   def account_params
     params.require(:account).permit(:number, :lettering, entries_attributes: [:id, :type, :amount])

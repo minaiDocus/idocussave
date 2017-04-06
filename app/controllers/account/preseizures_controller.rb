@@ -1,13 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::PreseizuresController < Account::OrganizationController
   before_filter :load_preseizure, except: :index
-  before_filter :preseizure_params, only: :update
 
-
-  # GET /account/organizations/:organization_id/preseizures
   def index
     if params[:pack_report_id].present?
-      report = Pack::Report.preseizures.where(user_id: customer_ids).where(id: params[:pack_report_id]).first
+      report = Pack::Report.preseizures.where(user_id: customer_ids, id: params[:pack_report_id]).first
 
       if report
         @preseizures = report.preseizures
@@ -16,7 +13,6 @@ class Account::PreseizuresController < Account::OrganizationController
         elsif params[:view] == 'not_delivered'
           @preseizures = @preseizures.where(is_delivered: false)
         end
-        @preseizures_count = @preseizures.count
         @preseizures = @preseizures.by_position.page(params[:page]).per(params[:per_page])
       else
         @preseizures = []
@@ -26,8 +22,6 @@ class Account::PreseizuresController < Account::OrganizationController
     end
   end
 
-
-  # PUT /account/organizations/:organization_id/preseizures/:id
   def update
     respond_to do |format|
       begin
@@ -37,8 +31,6 @@ class Account::PreseizuresController < Account::OrganizationController
     end
   end
 
-
-  # POST /account/organizations/:organization_id/preseizures/:id/deliver
   def deliver
     CreatePreAssignmentDeliveryService.new(@preseizure).execute
     respond_to do |format|
@@ -46,13 +38,12 @@ class Account::PreseizuresController < Account::OrganizationController
     end
   end
 
-
-  private
+private
 
   def load_preseizure
     @preseizure = Pack::Report::Preseizure.find params[:id]
+    raise ActiveRecord::RecordNotFound unless @preseizure.report.user.in? customers
   end
-
 
   def preseizure_params
     params.require(:preseizure).permit(:position,
