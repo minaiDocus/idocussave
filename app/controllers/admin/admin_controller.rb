@@ -9,7 +9,7 @@ class Admin::AdminController < ApplicationController
   # GET /admin
   def index
     @new_provider_requests = NewProviderRequest.not_processed.order(created_at: :desc).includes(:user).limit(5)
-    @unbillable_organizations = Organization.billed.joins(:addresses).where('addresses.is_for_billing = ?', false)
+    @unbillable_organizations = Organization.billed.select { |e| e.billing_address.nil? }
   end
 
 
