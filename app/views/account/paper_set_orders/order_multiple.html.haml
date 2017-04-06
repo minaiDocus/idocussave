@@ -33,6 +33,7 @@
                   %td
                     = order.user.code
                     = builder.hidden_field :user_id
+                    = builder.hidden_field :period_duration
                   %td= truncate(order.user.company, length: 20, separator: ' ')
                   %td= paper_return ?  "#{paper_return.letter_type}g" : '-'
                   %td= builder.input :paper_set_casing_size,label: false, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false

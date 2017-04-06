@@ -38,16 +38,32 @@ casing_size_index_of = (size) ->
 folder_count_index = ->
   parseInt($('#order_paper_set_folder_count').val()) - 5
 
-periods_count = ->
-  $('#order_paper_set_end_date').prop('selectedIndex') + $('#order_paper_set_start_date').prop('selectedIndex') + 1
+period_index_of = (start_date, end_date, period_duration) ->
+  period_duration = parseInt(period_duration)
+  ms_day = 1000*60*60*24*30
+  count = Math.floor(Math.abs(end_date - start_date) / ms_day) + period_duration
+  (count / period_duration) - 1
 
 price_of_periods = ->
   size = $('#order_paper_set_casing_size').val()
-  paper_set_prices()[casing_size_index_of(size)][folder_count_index()][periods_count() - 1]
+  start_date = new Date($('#order_paper_set_start_date').val())
+  end_date   = new Date($('#order_paper_set_end_date').val())
+  period_index = period_index_of(start_date, end_date, $('#order_period_duration').val())
+  if start_date <= end_date
+    paper_set_prices()[casing_size_index_of(size)][folder_count_index()][period_index]
+  else
+    0
 
 update_price = ->
-  price = price_of_periods() + ",00€ HT"
-  $('.total_price').html(price)
+  price = price_of_periods()
+  $('.total_price').html(price + ",00€ HT")
+  if price == 0
+    $('#order_paper_set_start_date').parents('.control-group').addClass('error')
+    $('#order_paper_set_start_date').next('.help-inline').remove()
+    $("<span class='help-inline'>n\'est pas valide</span>").insertAfter($('#order_paper_set_start_date'))
+  else
+    $('#order_paper_set_start_date').parents('.control-group').removeClass('error')
+    $('#order_paper_set_start_date').next('.help-inline').remove()
 
 update_table_price = ->
   orders = $('#paper_set_orders.order_multiple tbody tr')
@@ -56,8 +72,18 @@ update_table_price = ->
     do (order) ->
       paper_set_casing_size  = parseInt($(order).find("select[name*='paper_set_casing_size']").val())
       paper_set_folder_count_index = parseInt($(order).find("select[name*='paper_set_folder_count']").val()) - 5
-      periods_index = $(order).find("select[name*='paper_set_start_date']").prop('selectedIndex') + $(order).find("select[name*='paper_set_end_date']").prop('selectedIndex')
-      price = paper_set_prices()[casing_size_index_of(paper_set_casing_size)][paper_set_folder_count_index][periods_index]
+      start_date = new Date($(order).find("select[name*='paper_set_start_date']").val())
+      end_date = new Date($(order).find("select[name*='paper_set_end_date']").val())
+      period_index = period_index_of(start_date, end_date , $(order).find("input[name*='period_duration']").val())
+      if start_date <= end_date
+        price = paper_set_prices()[casing_size_index_of(paper_set_casing_size)][paper_set_folder_count_index][period_index]
+        $(order).find("select[name*='paper_set_start_date']").parents('.control-group').removeClass('error')
+        $(order).find("select[name*='paper_set_start_date']").next('.help-inline').remove()
+      else
+        price = 0
+        $(order).find("select[name*='paper_set_start_date']").parents('.control-group').addClass('error')
+        $(order).find("select[name*='paper_set_start_date']").next('.help-inline').remove()
+        $("<span class='help-inline'>n\'est pas valide</span>").insertAfter($(order).find("select[name*='paper_set_start_date']"))
       total_price += price
       $(order).find('.price').html(price + ",00€")
       $('.total_price').html(total_price + ",00€ HT")

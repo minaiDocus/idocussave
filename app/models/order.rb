@@ -13,6 +13,7 @@ class Order < ActiveRecord::Base
 
   validate :inclusion_of_paper_set_end_date,   if: proc { |o| o.paper_set? }
   validate :inclusion_of_paper_set_start_date, if: proc { |o| o.paper_set? }
+  validate :value_of_paper_set_start_date,     if: proc { |o| o.paper_set? }
 
   validates_presence_of  :state
   validates_presence_of  :address,              if: proc { |o| o.address_required? }
@@ -115,13 +116,13 @@ class Order < ActiveRecord::Base
 
     maximum_date = date.end_of_year
 
-    dates = []
+    dates = paper_set_start_dates.sort
 
     while date <= maximum_date
       dates << date
       date += period_duration.months
     end
-    dates
+    dates.uniq.reverse
   end
 
 
@@ -213,6 +214,12 @@ class Order < ActiveRecord::Base
   def inclusion_of_paper_set_end_date
     unless paper_set_end_date.in? paper_set_end_dates
       errors.add(:paper_set_end_date, :invalid)
+    end
+  end
+
+  def value_of_paper_set_start_date
+    unless paper_set_start_date <= paper_set_end_date
+      errors.add(:paper_set_start_date, :invalid)
     end
   end
 end

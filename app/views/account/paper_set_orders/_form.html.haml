@@ -4,6 +4,7 @@
   .row-fluid
     .span4
       = f.hidden_field :user_id
+      = f.hidden_field :period_duration
       = f.input :paper_set_casing_size, collection: [['500g', 500], ['1000g', 1000], ['3000g', '3000']], include_blank: false
       = f.input :paper_set_folder_count, collection: 5..10, include_blank: false, hint: ' Correspond au nombre de journaux comptables paramétrés dans le dossier (5 étant le minimum offert par iDocus).'
       = f.input :paper_set_start_date, collection: paper_set_start_date_options(@order), include_blank: false
