@@ -63,7 +63,7 @@ class NewProviderRequest < ActiveRecord::Base
 
   class << self
     def deliver_mails
-      users = User.find NewProviderRequest.processed.not_notified.distinct(:user_id)
+      users = User.find NewProviderRequest.processed.not_notified.pluck(:user_id)
       users.each do |user|
         deliver_mail(user)
       end
