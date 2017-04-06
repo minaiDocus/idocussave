@@ -223,6 +223,7 @@ fr:
         content: Contenu recherché
         third_party_account: Numéro de compte
         priority: Priorisation de règles similaires
+        categorization: Catégorisation
         users: Clients
       file_naming_policy:
         scope: Portée

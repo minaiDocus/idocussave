@@ -20,6 +20,9 @@
             %th= t('activerecord.models.account_number_rule.attributes.rule_type')
             %td= t('activerecord.models.account_number_rule.attributes.rule_type_values.' + @account_number_rule.rule_type)
           %tr
+            %th= t('activerecord.models.account_number_rule.attributes.categorization')
+            %td= @account_number_rule.categorization
+          %tr
             %th= t('activerecord.models.account_number_rule.attributes.content')
             %td= @account_number_rule.content
           %tr
