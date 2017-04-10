@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170315124258) do
+ActiveRecord::Schema.define(version: 20170410191545) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -809,6 +809,7 @@ ActiveRecord::Schema.define(version: 20170315124258) do
     t.string   "leader_id_mongo_id",              limit: 255
     t.boolean  "is_coala_used",                               default: false, null: false
     t.boolean  "is_operation_processing_forced",              default: false
+    t.boolean  "is_operation_value_date_needed",              default: false
   end
 
   create_table "pack_dividers", force: :cascade do |t|
@@ -1553,6 +1554,7 @@ ActiveRecord::Schema.define(version: 20170315124258) do
     t.string   "user_id_mongo_id",                limit: 255
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,    null: false
+    t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,    null: false
   end
 
   create_table "users", force: :cascade do |t|

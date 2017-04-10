@@ -262,6 +262,13 @@ module ApplicationHelper
     ]
   end
 
+  def operation_value_date_options
+    [
+      ["Paramètres du cabinet", -1],
+      [t('no_value'),            0],
+      [t('yes_value'),           1]
+    ]
+  end
 
   def period_type(duration)
     if duration == 1

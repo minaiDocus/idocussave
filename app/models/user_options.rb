@@ -5,7 +5,7 @@ class UserOptions < ActiveRecord::Base
   validates_inclusion_of :is_auto_deliver,                 in: [-1, 0, 1]
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
   validates_inclusion_of :is_operation_processing_forced,  in: [-1, 0, 1]
-
+  validates_inclusion_of :is_operation_value_date_needed,  in: [-1, 0, 1]
 
   def pre_assignment_date_computed?
     if is_pre_assignment_date_computed == -1
@@ -37,6 +37,13 @@ class UserOptions < ActiveRecord::Base
     end
   end
 
+  def operation_value_date_needed?
+    if is_operation_value_date_needed == -1
+      user.organization.try(:is_operation_value_date_needed)
+    else
+      is_operation_value_date_needed == 1
+    end
+  end
 
   def own_csv_descriptor_used?
     is_own_csv_descriptor_used

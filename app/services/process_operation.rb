@@ -28,7 +28,11 @@ class ProcessOperation
             preseizure.type            = 'FLUX'
             preseizure.date            = operation.date
             preseizure.position        = counter
-            preseizure.operation_label = operation.label
+            if user.options.operation_value_date_needed? && operation.retrieved? && operation.date != operation.value_date
+              preseizure.operation_label = "#{operation.label} - #{operation.value_date}"
+            else
+              preseizure.operation_label = operation.label
+            end
             preseizure.category_id     = operation.category_id
             preseizure.save
 

@@ -266,6 +266,9 @@
                     %tr
                       %th= t('activerecord.models.user_options.attributes.is_operation_processing_forced')
                       %td= @customer.options.operation_processing_forced? ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('activerecord.models.user_options.attributes.is_operation_value_date_needed')
+                      %td= @customer.options.operation_value_date_needed? ? t('yes_value') : t('no_value')
               .row-fluid
                 .span12
                   = link_to icon_edit + ' ' + 'Modifier', edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'

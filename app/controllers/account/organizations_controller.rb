@@ -173,7 +173,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_coala_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed,
-        :is_operation_processing_forced
+        :is_operation_processing_forced,
+        :is_operation_value_date_needed
       )
     else
       params.require(:organization).permit(
@@ -184,7 +185,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_coala_used,
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed,
-        :is_operation_processing_forced
+        :is_operation_processing_forced,
+        :is_operation_value_date_needed
       )
     end
   end

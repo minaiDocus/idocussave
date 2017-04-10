@@ -55,4 +55,8 @@ class Operation < ActiveRecord::Base
       end
     end
   end
+
+  def retrieved?
+    api_name.in? %w(budgea fiduceo)
+  end
 end

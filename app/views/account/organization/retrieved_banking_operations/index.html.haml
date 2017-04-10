@@ -29,7 +29,10 @@
               %td= operation.bank_account.bank_name if operation.bank_account
               %td= operation.bank_account.number    if operation.bank_account
               %td= operation.category
-              %td= operation.label
+              - if @customer.options.operation_value_date_needed? && operation.retrieved? && operation.date != operation.value_date
+                %td= "#{operation.label} - #{operation.value_date}"
+              - else
+                %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + ' €'
               %td= is_operation_pre_assigned(operation)
       = render partial: 'shared/list_options', locals: { collection: @operations }
