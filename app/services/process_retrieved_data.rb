@@ -313,7 +313,7 @@ private
 
     orphaned_operation = operations.where(
       date:       transaction['date'],
-      value_date: transaction['application_date'],
+      value_date: transaction['rdate'],
       amount:     transaction['value'],
       comment:    transaction['comment'],
       api_id:     nil
@@ -334,7 +334,7 @@ private
 
   def assign_attributes(bank_account, operation, transaction)
     operation.date        = transaction['date']
-    operation.value_date  = transaction['application_date']
+    operation.value_date  = transaction['rdate']
     if bank_account.type_name != 'card' && transaction['type'] == 'deferred_card'
       operation.label     = '[CB] ' + transaction['original_wording']
     else

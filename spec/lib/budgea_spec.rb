@@ -64,6 +64,7 @@ describe Budgea do
         expect(transactions.size).not_to eq 0
         expect(transaction['original_wording']).to be_present
         expect { Date.parse(transaction['date']) }.not_to raise_error
+        expect { Date.parse(transaction['rdate']) }.not_to raise_error
         expect { Date.parse(transaction['application_date']) }.not_to raise_error
         expect(transaction['id_category']).to be_present
         expect(transaction['value'].class).to be Float
