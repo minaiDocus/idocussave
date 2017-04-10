@@ -10,8 +10,8 @@ class Operation < ActiveRecord::Base
 
   validates_presence_of :date, :label, :amount
 
-  scope :retrieved,     -> { where.not(api_id: [nil, '']) }
-  scope :other,         -> { where(api_id: [nil, '']) }
+  scope :retrieved,     -> { where(api_name: ['budgea', 'fiduceo']) }
+  scope :other,         -> { where.not(api_name: ['budgea', 'fiduceo']) }
   scope :not_accessed,  -> { where(accessed_at: nil) }
   scope :not_processed, -> { where(processed_at: [nil, '']) }
   scope :processed,     -> { where.not(processed_at: [nil, '']) }
