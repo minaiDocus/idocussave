@@ -14,9 +14,7 @@ class DocumentNotifier
         end
       end
 
-      packs.each do |pack|
-        pack.class.connection.execute("update packs set is_update_notified = true where id = #{pack.id}")
-      end
+      Pack.where(id: packs.map(&:id)).update_all(is_update_notified: true)
     end
   end
 
