@@ -14,13 +14,8 @@ class DocumentNotifier
         end
       end
 
-      ActiveRecord::Base.record_timestamps = false
-      begin
-        packs.each do |pack|
-          pack.update_attribute(:is_update_notified, true)
-        end
-      ensure
-        ActiveRecord::Base.record_timestamps = true
+      packs.each do |pack|
+        pack.class.connection.execute("update packs set is_update_notified = true where id = #{pack.id}")
       end
     end
   end
