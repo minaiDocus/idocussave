@@ -78,6 +78,6 @@ class UpdatePeriodDataService
 
 
   def report_ids
-    @report_ids ||= Pack::Report.where(document_id: document_ids).distinct(:id)
+    @report_ids ||= Pack::Report.where(document_id: document_ids).pluck(:id)
   end
 end

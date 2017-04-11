@@ -54,7 +54,7 @@ class Organization < ActiveRecord::Base
   def self.billed_for_year(year)
     start_time = Time.local(year).beginning_of_year + 15.days
     end_time   = Time.local(year).end_of_year + 15.days
-    organization_ids = Invoice.where('created_at > ? AND created_at < ?', start_time, end_time).select(:organization_id).distinct.pluck(:organization_id)
+    organization_ids = Invoice.where('created_at > ? AND created_at < ?', start_time, end_time).distinct.pluck(:organization_id)
 
     Organization.where("(is_test = ? AND is_active = ? AND is_for_admin = ?) OR (id IN (?) AND is_test = ? AND is_for_admin = ?)", false, true, false, organization_ids, false, false)
   end

@@ -53,7 +53,7 @@ class Account::DocumentsController < Account::AccountController
   # GET /account/documents/packs
   def packs
     if params[:view] == 'current_delivery'
-      pack_ids = @user.remote_files.not_processed.distinct(:pack_id)
+      pack_ids = @user.remote_files.not_processed.distinct.pluck(:pack_id)
 
       @packs = @user.packs.where(id: pack_ids)
       @packs = @packs.order(updated_at: :desc).page(params[:page]).per(params[:per_page])

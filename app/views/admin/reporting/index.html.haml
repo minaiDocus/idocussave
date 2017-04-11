@@ -25,7 +25,7 @@
               %td.organization
                 = link_to organization.name, [:account, organization]
                 = link_to image_tag('application/icon-xls.png', alt: 'Export XLS', style: 'position:relative;top:-2px;'), "/admin/reporting/#{@year}.xls?organization_id=#{organization.id}", title: 'Export XLS'
-              - user_ids = organization.customers.distinct(:id).pluck(:id)
+              - user_ids = organization.customers.pluck(:id)
               - 12.times.each do |i|
                 %td
                   - time = Time.local(@year, i+1, 15)

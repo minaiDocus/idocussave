@@ -29,7 +29,7 @@ class ReturnLabels
 
 
   def users_ids
-    @ids ||= users.distinct(:id).pluck(:id)
+    @ids ||= users.map(&:id)
   end
 
 

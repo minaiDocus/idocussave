@@ -125,7 +125,7 @@ describe AccountingWorkflow::SendToGrouping do
     end
 
     it 'change all temp_documents states to bundling' do
-      expect(@temp_pack.temp_documents.distinct(:state)).to eq ['bundling']
+      expect(@temp_pack.temp_documents.distinct.pluck(:state)).to eq ['bundling']
     end
   end
 end

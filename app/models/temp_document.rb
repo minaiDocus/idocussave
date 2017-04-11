@@ -209,7 +209,7 @@ class TempDocument < ActiveRecord::Base
 
     if user
       if contains[:service_name]
-        retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").distinct(:id).pluck(:id)
+        retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").pluck(:id)
 
         collection = collection.where(retriever_id: retriever_ids)
       elsif contains[:retriever_id]

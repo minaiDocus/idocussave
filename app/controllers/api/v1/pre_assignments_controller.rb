@@ -9,7 +9,7 @@ class Api::V1::PreAssignmentsController < ApiController
   # POST /api/v1/pre_assignments/update_comment
   def update_comment
     if params[:pack_name].present? && params[:comment]
-      pack_ids = Pack::Piece.where(is_awaiting_pre_assignment: true).distinct(:pack_id).pluck(:pack_id)
+      pack_ids = Pack::Piece.where(is_awaiting_pre_assignment: true).distinct.pluck(:pack_id)
 
       @pack = Pack.where(name: (params[:pack_name] + ' all'), id: pack_ids).first
 

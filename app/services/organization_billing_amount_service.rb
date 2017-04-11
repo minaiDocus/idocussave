@@ -13,12 +13,12 @@ class OrganizationBillingAmountService
 
 
   def customer_ids
-    @organization.customers.active_at(@time).distinct(:id)
+    @organization.customers.active_at(@time).pluck(:id)
   end
 
 
   def customer_subscription_ids
-    Subscription.where(user_id: customer_ids).distinct(:id)
+    Subscription.where(user_id: customer_ids).pluck(:id)
   end
 
 

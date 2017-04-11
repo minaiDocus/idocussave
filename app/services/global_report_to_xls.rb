@@ -7,7 +7,7 @@ class GlobalReportToXls
   def execute
     lines = Organization.billed_for_year(@year).order(name: :asc).map do |organization|
       line = [organization.name]
-      customer_ids = organization.customers.distinct(:id).pluck(:id)
+      customer_ids = organization.customers.pluck(:id)
 
       12.times.each do |index|
         time = Time.local(@year, index + 1, 15)

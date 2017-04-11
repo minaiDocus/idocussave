@@ -29,8 +29,8 @@ class ComptaController < ApplicationController
   def load_users
     organization_ids = Organization.active.pluck(:id)
 
-    user_ids = AccountBookType.where.not(user_id: nil).compta_processable.distinct(:user_id).pluck(:user_id)
-    
+    user_ids = AccountBookType.where.not(user_id: nil).compta_processable.distinct.pluck(:user_id)
+
     @users = User.where(organization_id: organization_ids, id: user_ids).active.includes(:options)
   end
 end

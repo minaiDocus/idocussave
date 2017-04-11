@@ -1,6 +1,6 @@
 class AccountingWorkflow::MappingGenerator
   def self.execute
-    user_ids = AccountBookType.where('user_id IS NOT NULL').compta_processable.distinct(:user_id).pluck(:user_id)
+    user_ids = AccountBookType.where('user_id IS NOT NULL').compta_processable.pluck(:user_id)
     users = User.where(id: user_ids).active.sort_by(&:code)
     new(users).execute
   end

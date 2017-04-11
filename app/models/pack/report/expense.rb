@@ -40,7 +40,7 @@ class Pack::Report::Expense < ActiveRecord::Base
   end
 
   def self.distinct_type
-    all.distinct(:type)
+    all.distinct.pluck(:type)
   end
 
   def self.of_type(type)

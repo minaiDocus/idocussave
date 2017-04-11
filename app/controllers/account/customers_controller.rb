@@ -34,7 +34,7 @@ class Account::CustomersController < Account::OrganizationController
     @subscription     = @customer.subscription
     @period           = @subscription.periods.order(created_at: :desc).first
     @journals         = @customer.account_book_types.order(name: :asc)
-    @pending_journals = @customer.retrievers.where(journal_id: nil).where.not(journal_name: [nil]).distinct(:journal_name)
+    @pending_journals = @customer.retrievers.where(journal_id: nil).where.not(journal_name: [nil]).distinct.pluck(:journal_name)
   end
 
 

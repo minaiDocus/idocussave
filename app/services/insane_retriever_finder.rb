@@ -26,7 +26,7 @@ class InsaneRetrieverFinder
 
   def is_operations_working
     @retriever.is_sane = true
-    operations = Operation.where(bank_account_id: @retriever.bank_accounts.used.distinct(:id))
+    operations = Operation.where(bank_account_id: @retriever.bank_accounts.used.pluck(:id))
     if operations.count > 0
       if (Date.today - operations.order(date: :desc).first.date).to_i > 7
         @retriever.is_sane = false if has_stopped && other_has_operations
@@ -50,7 +50,7 @@ class InsaneRetrieverFinder
     last_month = 0
     is_stopped = false
     if @retriever.bank?
-      operations = Operation.where(bank_account_id: @retriever.bank_accounts.used.distinct(:id))
+      operations = Operation.where(bank_account_id: @retriever.bank_accounts.used.pluck(:id))
       this_month += operations.where("date <= ? AND date >= ?", Date.today, Date.today - 1.month).count
       last_month += operations.where( "date < ? AND date >= ?", Date.today - 1.month, Date.today - 2.month).count
       is_stopped = true if (last_month - this_month) > last_month.to_f / 4
@@ -66,7 +66,7 @@ class InsaneRetrieverFinder
     has_no_operations = 0
     same_retrievers = Retriever.ready.where(service_name: @retriever.service_name) - [@retriever]
     same_retrievers.each do |same_retriever|
-      operations = Operation.where(bank_account_id: same_retriever.bank_accounts.used.distinct(:id))
+      operations = Operation.where(bank_account_id: same_retriever.bank_accounts.used.pluck(:id))
       next unless operations.count > 0
       if (Date.today - operations.order(date: :desc).first.date).to_i > 7
         has_no_operations += 1

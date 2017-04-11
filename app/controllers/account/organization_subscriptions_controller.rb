@@ -36,15 +36,14 @@ class Account::OrganizationSubscriptionsController < Account::OrganizationContro
               []
             end
 
-      registered_ids = @organization.customers.where(id: ids).distinct(:id)
+      registered_ids = @organization.customers.where(id: ids).pluck(:id)
 
       if ids.size == registered_ids.size
-        subscriptions    = Subscription.where(user_id: ids)
-        subscription_ids = subscriptions.distinct(:id)
+        subscriptions = Subscription.where(user_id: ids)
 
         subscriptions.update_all(_params)
 
-        periods = Period.where(subscription_id: subscription_ids).where('start_at <= ? AND end_at >= ?', Time.now, Time.now)
+        periods = Period.where(subscription_id: subscriptions.map(&:id)).where('start_at <= ? AND end_at >= ?', Time.now, Time.now)
 
         periods.each do |period|
           period.update(_params)

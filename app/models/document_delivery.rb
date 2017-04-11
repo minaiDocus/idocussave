@@ -23,7 +23,7 @@ class DocumentDelivery < ActiveRecord::Base
 
 
   def file_names
-    @file_names ||= temp_documents.valid.distinct(:content_file_name)
+    @file_names ||= temp_documents.valid.distinct.pluck(:content_file_name)
   end
 
 

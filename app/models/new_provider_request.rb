@@ -86,7 +86,7 @@ class NewProviderRequest < ActiveRecord::Base
       user_ids = []
 
       if contains[:user_code] && contains[:user_code].present?
-        user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id)
+        user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").pluck(:id)
       end
 
       new_provider_requests = new_provider_requests.where("name LIKE ?", "%#{contains[:name]}%") unless contains[:name].blank?

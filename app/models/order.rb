@@ -131,7 +131,7 @@ class Order < ActiveRecord::Base
     user_ids = []
 
     if contains[:user_code].present?
-      user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id).pluck(:id)
+      user_ids = User.where("code LIKE ?", "%#{contains[:user_code]}%").pluck(:id)
     end
 
     if contains[:created_at]
@@ -160,15 +160,15 @@ class Order < ActiveRecord::Base
 
 
     if contains[:user_code].present?
-      user_ids += User.where("code LIKE ?", "%#{contains[:user_code]}%").distinct(:id).pluck(:id)
+      user_ids += User.where("code LIKE ?", "%#{contains[:user_code]}%").pluck(:id)
     end
 
     if contains[:company].present?
-      user_ids += User.where("company LIKE ?", "%#{contains[:company]}%").distinct(:id).pluck(:id)
+      user_ids += User.where("company LIKE ?", "%#{contains[:company]}%").pluck(:id)
     end
 
     if contains[:tracking_number].present?
-      _ids = PaperProcess.kits.where("tracking_number LIKE ?", "%#{contains[:tracking_number]}%").distinct(:order_id).pluck(:order_id)
+      _ids = PaperProcess.kits.where("tracking_number LIKE ?", "%#{contains[:tracking_number]}%").pluck(:order_id)
     end
 
     if contains[:created_at]

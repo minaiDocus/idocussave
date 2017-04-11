@@ -78,7 +78,7 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/currently_being_delivered_packs
   def currently_being_delivered_packs
-    pack_ids = RemoteFile.not_processed.retryable.distinct(:pack_id).pluck(:pack_id)
+    pack_ids = RemoteFile.not_processed.retryable.pluck(:pack_id)
     @currently_being_delivered_packs = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'retryable', pack.remote_files_updated_at] do
         remote_files = pack.remote_files.not_processed.retryable.order(created_at: :asc)
@@ -102,7 +102,7 @@ class Admin::AdminController < ApplicationController
 
   # GET /admin/failed_packs_delivery
   def failed_packs_delivery
-    pack_ids = RemoteFile.not_processed.not_retryable.distinct(:pack_id).pluck(:pack_id)
+    pack_ids = RemoteFile.not_processed.not_retryable.pluck(:pack_id)
 
     @failed_packs_delivery = Pack.where(id: pack_ids).map do |pack|
       Rails.cache.fetch ['pack', pack.id.to_s, 'remote_files', 'not_retryable', pack.remote_files_updated_at] do
