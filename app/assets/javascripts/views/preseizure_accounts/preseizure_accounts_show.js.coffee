@@ -33,7 +33,7 @@ class Idocus.Views.PreseizureAccountsShow extends Backbone.View
   edit_entry: (e) ->
     e.preventDefault()
     id = $(e.target).parents('a').data('id')
-    entry = @model.get('entries').models[0]
+    entry = @model.get('entries').where(id: id.toString())[0]
     form = new Backbone.Form(model: entry).render()
     form.parentModel = @model
     title = "Edition d'une écriture"
