@@ -34,8 +34,11 @@ class Idocus.Views.PreseizuresShow extends Backbone.View
     title = "Edition de la pièce #{("000" + @model.get('position')).slice(-3)}"
     bootstrapModal = new Backbone.BootstrapModal(title: title, okText: 'Valider', cancelText: 'Annuler', content: form)
     bootstrapModal.on "ok", ->
-      form.commit()
-      form.model.save()
+      error = form.commit()
+      if typeof error != 'undefined'
+        this.preventClose()
+      else
+        form.model.save()
     bootstrapModal.open()
     this
 

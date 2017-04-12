@@ -6,4 +6,4 @@ class Idocus.Models.PreseizureEntry extends Backbone.Model
     type:
       type: "Select", title: "Type", options: [{ val: 1, label: 'Débit' }, { val: 2, label: 'Crédit' }]
     amount:
-      type: "Number", title: "Montant"
+      type: "Text", title: "Montant", validators: [/^\d+(\.\d{1,2})?$/]

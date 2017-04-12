@@ -39,9 +39,13 @@ class Idocus.Views.PreseizureAccountsShow extends Backbone.View
     title = "Edition d'une écriture"
     bootstrapModal = new Backbone.BootstrapModal(title: title, okText: 'Valider', cancelText: 'Annuler', content: form)
     bootstrapModal.on "ok", ->
-      form.commit()
-      form.parentModel.save()
+      error = form.commit()
+      if typeof error != 'undefined'
+        this.preventClose()
+      else
+        form.parentModel.save()
     bootstrapModal.open()
+    $(form.el).submit(-> false)
     this
 
   showTip: (e) ->

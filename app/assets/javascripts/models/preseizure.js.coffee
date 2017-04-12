@@ -14,7 +14,7 @@ class Idocus.Models.Preseizure extends Backbone.Model
     piece_number:
       type: "Text", title: "Numéro de pièce d'origine"
     amount:
-      type: "Number", title: "Montant d'origine"
+      type: "Text", title: "Montant d'origine", validators: [/^-?\d+(\.\d{1,2})?$/]
     currency:
       type: "Text", title: "Devise"
     conversion_rate:
