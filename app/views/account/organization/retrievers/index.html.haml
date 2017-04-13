@@ -30,7 +30,10 @@
           %li= link_to 'Plan comptable', account_organization_customer_path(@organization, @customer, tab: 'others')
         - if @organization.is_csv_descriptor_used
           %li= link_to 'Format d’export .csv', account_organization_customer_path(@organization, @customer, tab: 'csv_descriptor')
-        %li= link_to 'Outil GED', account_organization_customer_path(@organization, @customer, tab: 'ged')
+        - if @organization.knowings.try(:ready?)
+          %li= link_to 'Outil GED', account_organization_customer_path(@organization, @customer, tab: 'ged')
+        - if @customer.is_dematbox_authorized
+          %li= link_to "iDocus'Box", account_organization_customer_path(@organization, @customer, tab: 'idocus_box')
         - if @user.is_admin && @customer.active?
           %li= link_to 'Stockages externes', account_organization_customer_path(@organization, @customer, tab: 'file_storages')
 
