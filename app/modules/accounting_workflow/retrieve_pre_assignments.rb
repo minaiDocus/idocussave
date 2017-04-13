@@ -19,7 +19,7 @@ class AccountingWorkflow::RetrievePreAssignments
 
   def execute
     grouped_xml_pieces.each do |pack, xml_pieces|
-      period = pack.owner.subscription.find_or_create_period(Time.now)
+      period = pack.owner.subscription.find_or_create_period(Date.today)
       document = Reporting.find_or_create_period_document(pack, period)
       report = document.report || create_report(pack, document)
 
