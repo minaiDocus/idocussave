@@ -129,7 +129,8 @@ class ApplicationController < ActionController::Base
       yield
     rescue ActionController::UnknownController,
            ActionController::RoutingError,
-           AbstractController::ActionNotFound
+           AbstractController::ActionNotFound,
+           ActiveRecord::RecordNotFound
       respond_to do |format|
         format.html { render '/404', status: 404, layout: (@user ? 'inner' : 'error') }
         format.json { render json: { status: :not_found, code: 404 } }
