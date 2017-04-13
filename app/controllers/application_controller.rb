@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   helper_method :format_price, :format_price_00
 
   before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
-  #around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
+  around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
   around_filter :log_visit
   before_filter :load_current_time
 
@@ -129,15 +129,21 @@ class ApplicationController < ActionController::Base
       yield
     rescue ActionController::UnknownController,
            ActionController::RoutingError,
-           AbstractController::ActionNotFound,
+           AbstractController::ActionNotFound
       respond_to do |format|
-        format.html { render '/404', status: 404, layout: 'error' }
+        format.html { render '/404', status: 404, layout: (@user ? 'inner' : 'error') }
         format.json { render json: { status: :not_found, code: 404 } }
+      end
+    rescue Budgea::Errors::ServiceUnavailable => e
+      Airbrake.notify(e, airbrake_request_data)
+      respond_to do |format|
+        format.html { render '/503', status: 503, layout: 'inner' }
+        format.json { render json: { status: :error, code: 503 } }
       end
     rescue => e
       Airbrake.notify(e, airbrake_request_data)
       respond_to do |format|
-        format.html { render '/500', status: 500, layout: 'error' }
+        format.html { render '/500', status: 500, layout: (@user ? 'inner' : 'error') }
         format.json { render json: { status: :error, code: 500 } }
       end
     end

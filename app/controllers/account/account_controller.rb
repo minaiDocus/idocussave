@@ -4,7 +4,6 @@ class Account::AccountController < ApplicationController
   before_filter :load_user_and_role
   before_filter :verify_suspension
   before_filter :verify_if_active
-  #around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
 
   layout 'inner'
 
@@ -29,34 +28,6 @@ class Account::AccountController < ApplicationController
   end
 
   protected
-
-  def catch_error
-    begin
-      yield
-    rescue ActionController::UnknownController,
-           AbstractController::ActionNotFound,
-           ActionController::RoutingError
-      respond_to do |format|
-        format.html { render '/404', status: 404, layout: 'inner' }
-        format.json { render json: { status: :not_found, code: 404 } }
-      end
-    rescue Budgea::Errors::ServiceUnavailable => e
-      Airbrake.notify(e, airbrake_request_data)
-      respond_to do |format|
-        format.html { render '/503', status: 503, layout: 'inner' }
-        format.json { render json: { status: :error, code: 503 } }
-      end
-    rescue => e
-      Airbrake.notify(e, airbrake_request_data)
-      respond_to do |format|
-        format.html { render '/500', status: 500, layout: 'inner' }
-        format.json { render json: { status: :error, code: 500 } }
-      end
-    end
-  rescue ActionController::UnknownFormat
-    render status: 400, text: '404'
-  end
-
 
   def load_user_and_role(name = :@user)
     instance = load_user(name)
