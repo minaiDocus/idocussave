@@ -33,7 +33,7 @@ module FileDelivery::RemoteReport
     else
       delivered_preseizure_ids = remote_files.of(receiver, service_name)
                                              .where(temp_path: /\.csv/)
-                                             .pluck(:preseizure_ids)
+                                             .map { |e| e.preseizures.map(&:id) }
                                              .flatten
                                              .uniq
 
