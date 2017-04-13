@@ -206,7 +206,7 @@ class Account::CustomersController < Account::OrganizationController
     full_info = params[:full_info].present?
     if params[:q].present?
       users = is_leader? ? @organization.customers : @user.customers
-      users = users.where(code: /.*#{params[:q]}.*/i).order(code: :asc).limit(10)
+      users = users.where('code LIKE ?', "%#{params[:q]}%").order(code: :asc).limit(10)
       users.each do |user|
         tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
       end
