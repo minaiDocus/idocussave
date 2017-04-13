@@ -95,7 +95,7 @@ class Account::PackReportsController < Account::OrganizationController
   private
 
   def load_report
-    @report = Pack::Report.preseizures.where(user_id: customer_ids).where(id: params[:id]).first
-    @report
+    @report = Pack::Report.preseizures.where(user_id: customer_ids, id: params[:id]).first
+    raise ActiveRecord::RecordNotFound unless @report
   end
 end
