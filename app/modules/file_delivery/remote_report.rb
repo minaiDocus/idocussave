@@ -32,7 +32,7 @@ module FileDelivery::RemoteReport
       not_delivered = preseizures.by_position
     else
       delivered_preseizure_ids = remote_files.of(receiver, service_name)
-                                             .where(temp_path: /\.csv/)
+                                             .where("temp_path REGEXP ?", "csv$")
                                              .map { |e| e.preseizures.map(&:id) }
                                              .flatten
                                              .uniq
@@ -45,7 +45,7 @@ module FileDelivery::RemoteReport
 
 
   def csv_delivery_number(receiver, service_name)
-    pack.remote_files.of(receiver, service_name).where(temp_path: /\.csv/).size + 1
+    pack.remote_files.of(receiver, service_name).where("temp_path REGEXP ?", "csv$").size + 1
   end
 
 
