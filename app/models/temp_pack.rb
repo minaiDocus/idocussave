@@ -39,6 +39,10 @@ class TempPack < ActiveRecord::Base
     end
   end
 
+  def self.bundle_processable
+    bundle_needed.not_recently_updated.order(updated_at: :asc).select { |temp_pack| temp_pack.temp_documents.ocr_needed.size == 0 }
+  end
+
 
   def update_pack_state
     if journal && journal.compta_processable?

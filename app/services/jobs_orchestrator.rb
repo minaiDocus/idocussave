@@ -5,7 +5,7 @@ class JobsOrchestrator
     end
 
     if Sidekiq::Queue.new("grouping_delivery").size == 0
-      TempPack.bundle_needed.not_recently_updated.order(updated_at: :asc).each do |temp_pack|
+      TempPack.bundle_processable.each do |temp_pack|
         temp_pack.temp_documents.bundle_needed.by_position.each do |temp_document|
           DeliverToGroupingWorker.perform_async(temp_document.id) unless JobsOrchestrator.check_if_in_queue("DeliverToGroupingWorker", "#{temp_document.id}")
         end
