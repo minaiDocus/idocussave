@@ -7,7 +7,7 @@ class Admin::RetrieversController < Admin::AdminController
   end
 
   def run
-    retrievers = search(retriever_contains)
+    retrievers = Retriever.search(search_terms(params[:retriever_contains]))
     count = retrievers.count
     retrievers.each(&:run)
     flash[:notice] = "#{count} récupération(s) en cours."
