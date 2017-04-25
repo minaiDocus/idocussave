@@ -4,7 +4,7 @@ class CsvDescriptor < ActiveRecord::Base
 
 
   def directive_to_a
-    directive.split('|').map do |e|
+    (directive || '').split('|').map do |e|
       e.scan(/(\w+)-?(.+)?/).first
     end
   end

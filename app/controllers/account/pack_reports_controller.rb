@@ -42,11 +42,14 @@ class Account::PackReportsController < Account::OrganizationController
 
     case params[:download].try(:[], :format)
     when 'csv'
-      if preseizures.any?
+      if preseizures.any? && @report.organization.is_csv_descriptor_used
         data = PreseizuresToCsv.new(@report.user, preseizures).execute
 
         send_data(data, type: 'text/csv', filename: "#{@report.name.tr(' ', '_')}.csv")
       else
+        unless @report.organization.is_csv_descriptor_used
+          flash[:error] = "Veuillez activer l'export CSV dans les paramètres de l'organisation avant d'utiliser cette fonctionnalité."
+        end
         render :select_to_download
       end
     when 'xml'
