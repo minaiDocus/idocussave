@@ -17,6 +17,7 @@ class UpdatePeriod
         @period[key] = @subscription[key]
       end
 
+      @period.product_option_orders.destroy_all
       @period.product_option_orders = options
 
       UpdatePeriodPriceService.new(@period).execute if @period.save # updates period pricing if sucess
