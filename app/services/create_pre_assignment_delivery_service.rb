@@ -65,7 +65,7 @@ class CreatePreAssignmentDeliveryService
         if delivery.save
           preseizures.first.save if preseizures.size == 1
 
-          PreAssignmentDeliveryXmlBuilder.new(delivery.id).execute
+          PreAssignmentDeliveryXmlBuilderWorker.perform_async(delivery.id)
 
           @deliveries << delivery
         end
