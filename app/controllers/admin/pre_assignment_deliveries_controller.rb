@@ -13,6 +13,7 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
   # GET /admin/pre_assignment_deliveries/:id
   def show
     @delivery = PreAssignmentDelivery.find_by_number(params[:id])
+    raise ActiveRecord::RecordNotFound unless @delivery
   end
 
   private
