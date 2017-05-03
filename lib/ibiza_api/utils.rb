@@ -101,7 +101,7 @@ class IbizaAPI::Utils
                             end
     end
 
-    result = if preseizure.is_period_range_used && out_of_period_range
+    result = if (preseizure.is_period_range_used && out_of_period_range) || date.nil?
                preseizure.period_start_date
              else
                date
