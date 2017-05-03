@@ -71,7 +71,18 @@ class IbizaAPI::Utils
                 xml.accountNumber account.number
                 xml.accountName account.number
                 xml.term computed_deadline_date(preseizure, exercise) if preseizure.deadline_date.present?
-                xml.description description(preseizure, fields, separator)
+
+                info = description(preseizure, fields, separator)
+                begin
+                  xml.description info
+                rescue ArgumentError => e
+                  if e.message == 'string contains null byte'
+                    xml.description info.gsub("\u0000", '')
+                  else
+                    raise
+                  end
+                end
+
                 entry = account.entries.first
 
                 if entry.type == Pack::Report::Preseizure::Entry::DEBIT
