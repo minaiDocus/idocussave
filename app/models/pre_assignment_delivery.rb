@@ -100,12 +100,6 @@ class PreAssignmentDelivery < ActiveRecord::Base
 
 
   def set_number
-    dba = DbaSequence.find_by_name('preassignment_delivery')
-
-    counter = dba.counter  + 1
-
-    dba.update(counter: counter)
-
-    self.number = counter
+    self.number = DbaSequence.next(:preassignment_delivery) unless self.number
   end
 end
