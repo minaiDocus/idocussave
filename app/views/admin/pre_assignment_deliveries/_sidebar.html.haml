@@ -8,8 +8,8 @@
       = hidden_field_tag :sort, sort_column
       = hidden_field_tag :per_page, per_page
 
-      = label_tag 'pre_assignment_delivery_contains[number]', t('activerecord.models.pre_assignment_delivery.attributes.number')
-      = number_field_tag 'pre_assignment_delivery_contains[number]', (params[:pre_assignment_delivery_contains][:number] rescue ''), class: 'span12'
+      = label_tag 'pre_assignment_delivery_contains[id]', 'N°'
+      = number_field_tag 'pre_assignment_delivery_contains[id]', (params[:pre_assignment_delivery_contains][:id] rescue ''), class: 'span12'
 
       = label_tag 'pre_assignment_delivery_contains[pack_name]', t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
       = text_field_tag 'pre_assignment_delivery_contains[pack_name]', (params[:pre_assignment_delivery_contains][:pack_name] rescue ''), class: 'span12'

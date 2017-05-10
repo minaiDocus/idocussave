@@ -2,7 +2,7 @@
   .row-fluid
     .span12.panel
       .pull-left.margin1bottom
-        %h3 Détail de la livraison n°#{@delivery.number}
+        %h3 Détail de la livraison n°#{@delivery.id}
       .pull-right
         = link_to t('actions.return'), admin_pre_assignment_deliveries_path, class: 'btn'
       %br

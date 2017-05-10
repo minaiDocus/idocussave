@@ -11,7 +11,7 @@
           %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
             %thead
               %tr
-                %th= sortable :number,        t('activerecord.models.pre_assignment_delivery.attributes.number')
+                %th= sortable :id,            'N°'
                 %th= sortable :created_at,    t('activerecord.models.common.attributes.created_at')
                 %th= sortable :updated_at,    t('activerecord.models.common.attributes.updated_at')
                 %th= sortable :pack_name,     t('activerecord.models.pre_assignment_delivery.attributes.pack_name')
@@ -23,7 +23,7 @@
             %tbody
               - @pre_assignment_deliveries.each do |delivery|
                 %tr
-                  %td= delivery.number
+                  %td= delivery.id
                   %td= l(delivery.created_at, format: '%d %b %Y %H:%M')
                   %td= l(delivery.updated_at, format: '%d %b %Y %H:%M')
                   %td= delivery.pack_name
@@ -31,7 +31,7 @@
                   %td= delivery.is_auto ? t('yes_value') : t('no_value')
                   %td= pre_assignment_delivery_state delivery
                   %td= delivery.error_message.to_s[0..55]
-                  %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery.number), title: 'Afficher les détails'
+                  %td= link_to content_tag(:i, '', class: 'icon-eye-open'), admin_pre_assignment_delivery_path(delivery), title: 'Afficher les détails'
       = render partial: 'shared/list_options', locals: { collection: @pre_assignment_deliveries }
     .span3
       = render partial: 'sidebar'

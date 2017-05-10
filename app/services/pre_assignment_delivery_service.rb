@@ -5,7 +5,7 @@ class PreAssignmentDeliveryService
 
   class << self
     def execute(notify_now=false)
-      PreAssignmentDelivery.xml_built.order(number: :asc).each do |delivery|
+      PreAssignmentDelivery.xml_built.order(id: :asc).each do |delivery|
         PreAssignmentDeliveryService.new(delivery).execute
         notify if @@notified_at <= 15.minutes.ago
 
@@ -19,7 +19,7 @@ class PreAssignmentDeliveryService
     end
 
     def notify
-      deliveries = PreAssignmentDelivery.not_notified.order(number: :asc)
+      deliveries = PreAssignmentDelivery.not_notified.order(id: :asc)
       if deliveries.size > 0
         addresses = Array(Settings.first.notify_ibiza_deliveries_to)
 

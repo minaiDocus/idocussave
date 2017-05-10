@@ -32,7 +32,7 @@
       %tbody
         - @deliveries.each do |delivery|
           %tr
-            %td= link_to delivery.number, admin_pre_assignment_delivery_url(delivery.number)
+            %td= link_to delivery.id, admin_pre_assignment_delivery_url(delivery)
             %td= I18n.l(delivery.updated_at)
             %td= delivery.organization.name
             %td= delivery.user.company

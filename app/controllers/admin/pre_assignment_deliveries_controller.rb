@@ -12,15 +12,14 @@ class Admin::PreAssignmentDeliveriesController < Admin::AdminController
 
   # GET /admin/pre_assignment_deliveries/:id
   def show
-    @delivery = PreAssignmentDelivery.find_by_number(params[:id])
-    raise ActiveRecord::RecordNotFound unless @delivery
+    @delivery = PreAssignmentDelivery.find params[:id]
   end
 
   private
 
 
   def sort_column
-    params[:sort] || 'number'
+    params[:sort] || 'id'
   end
   helper_method :sort_column
 

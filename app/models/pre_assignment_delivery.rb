@@ -7,12 +7,7 @@ class PreAssignmentDelivery < ActiveRecord::Base
 
   has_and_belongs_to_many :preseizures, class_name: 'Pack::Report::Preseizure'
 
-
-  validates_presence_of   :pack_name, :number, :state
-  validates_uniqueness_of :number
-
-
-  before_validation :set_number
+  validates_presence_of   :pack_name, :state
 
   scope :auto,         -> { where(is_auto: true) }
   scope :sent,         -> { where(state: 'sent') }
@@ -22,7 +17,6 @@ class PreAssignmentDelivery < ActiveRecord::Base
   scope :sending,      -> { where(state: 'sending') }
   scope :notified,     -> { where(is_notified: true) }
   scope :xml_built,    -> { where(state: 'xml_built') }
-  scope :by_number,    -> { order(number: :desc) }
   scope :building_xml, -> { where(state: 'building_xml') }
   scope :not_notified, -> { where(is_to_notify: true, is_notified: [nil, false]) }
 
@@ -74,7 +68,7 @@ class PreAssignmentDelivery < ActiveRecord::Base
   def self.search(contains)
     deliveries = PreAssignmentDelivery.all
 
-    deliveries = deliveries.where(number:        contains[:number].to_i)                       if contains[:number].present?
+    deliveries = deliveries.where(id:            contains[:id].to_i)                           if contains[:id].present?
     deliveries = deliveries.where(state:         contains[:state])                             if contains[:state].present?
     deliveries = deliveries.where(is_auto:       contains[:is_auto].to_i == 1)                 if contains[:is_auto].present?
     deliveries = deliveries.where(total_item:    contains[:total_item].to_i)                   if contains[:total_item].present?
@@ -94,12 +88,5 @@ class PreAssignmentDelivery < ActiveRecord::Base
     end
 
     deliveries
-  end
-
-  private
-
-
-  def set_number
-    self.number = DbaSequence.next(:preassignment_delivery) unless self.number
   end
 end
