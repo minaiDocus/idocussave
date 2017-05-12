@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title [iDocus] #{t("notifications.#{@notification.notice_type}.title")}
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@notification.user.name},
+    %br
+    %br
+    = t("notifications.#{@notification.notice_type}.message")
+    %br
+    %br
+    = link_to 'Voir sur iDocus', link_through_account_notification_url(@notification)
+    %br
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

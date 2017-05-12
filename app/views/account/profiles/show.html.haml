@@ -88,7 +88,7 @@
                   - if @external_file_storage.is_dropbox_basic_authorized?
                     - service_number = ExternalFileStorage::F_DROPBOX
                     - is_service_used = @external_file_storage.is_used?(service_number)
-                    .well
+                    #dropbox.well
                       .row-fluid
                         .span1
                           = check_box_tag :enable_dropbox, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
@@ -124,7 +124,7 @@
                   - if @external_file_storage.is_google_docs_authorized?
                     - service_number = ExternalFileStorage::F_GOOGLE_DOCS
                     - is_service_used = @external_file_storage.is_used?(service_number)
-                    .well
+                    #google_drive.well
                       .row-fluid
                         .span1
                           = check_box_tag :enable_google_docs, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
@@ -149,7 +149,7 @@
                   - if @external_file_storage.is_ftp_authorized?
                     - service_number = ExternalFileStorage::F_FTP
                     - is_service_used = @external_file_storage.is_used?(service_number)
-                    .well
+                    #ftp.well
                       .row-fluid
                         .span1
                           = check_box_tag :enable_ftp, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'
@@ -174,7 +174,7 @@
                   - if @external_file_storage.is_box_authorized?
                     - service_number = ExternalFileStorage::F_BOX
                     - is_service_used = @external_file_storage.is_used?(service_number)
-                    .well
+                    #box.well
                       .row-fluid
                         .span1
                           = check_box_tag :enable_box, 1, is_service_used, id: "service_#{service_number}", class: 'checkbox use_service', style: 'float:left; margin-right:5px; margin-top:0;'

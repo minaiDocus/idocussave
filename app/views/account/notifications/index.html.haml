@@ -1,0 +1,10 @@
+#notifications.container-fluid
+  .row-fuild
+    .span12
+      %h2 Notifications
+
+      %ul
+        - @notifications.each do |notification|
+          = render partial: 'notification', locals: { notification: notification }
+
+      = paginate @notifications

@@ -322,6 +322,10 @@ Idocus::Application.routes.draw do
     resources :paper_processes, only: :index
 
     resource :suspended, only: :show
+
+    resources :notifications, only: :index do
+      get 'link_through', on: :member
+    end
   end
 
   namespace :api, defaults: { format: 'json' } do

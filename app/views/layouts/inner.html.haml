@@ -24,12 +24,10 @@
             %span{ :class=>"icon-bar" }
           = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
           - if current_user
-            = render partial: 'layouts/navigation'
-            %p{ :class=>"navbar-text pull-right" }
-              Bienvenue
-              = link_to current_user.email, root_path
-              |
-              = link_to 'déconnexion', destroy_user_session_path, method: :delete
+            .nav-collapse.collapse
+              = render partial: 'layouts/navigation'
+              = render partial: 'layouts/user'
+              = render partial: 'layouts/notifications'
 
     - if current_user.try(:is_admin) && controller_name != 'organizations'
       .container-fluid

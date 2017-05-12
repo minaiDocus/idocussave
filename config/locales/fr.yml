@@ -997,3 +997,8 @@ fr:
           confirmed: Confirmé
           cancelled: Annulée
           processed: Traitée
+
+  notifications:
+    dropbox_invalid_token:
+      title: Dropbox - Reconfiguration requise
+      message: "Votre accès à Dropbox a été révoqué, veuillez le reconfigurer s'il vous plaît."

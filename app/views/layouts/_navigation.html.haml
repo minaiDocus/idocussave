@@ -1,45 +1,44 @@
-.nav-collapse
-  %ul{ :class=>'nav' }
-    - unless @user.try(:organization).try(:is_suspended) && @user.active?
-      %li{ class: (controller_name == 'account' ? 'active' : '') }
-        = link_to 'Accueil', root_path
-    - if @user.inactive? || !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
-      - path = (@user.try(:organization).try(:is_suspended) && @user.active?) ? account_profile_path(panel: 'payment_management') : account_profile_path
-      %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
-        = link_to 'Mon compte', path
-    - unless @user.try(:organization).try(:is_suspended) && @user.active?
-      - if @user.is_admin
-        %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
-          = link_to 'Organisations', account_organizations_path
-      - if @user.is_prescriber
-        %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
-          = link_to 'Mon organisation', account_organization_path(@user.organization)
-      %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
-        = link_to 'Mes documents', account_documents_path
-      - if @user.active? && @user.organization.is_active
-        %li{ :class=>('active' if controller_name == 'reporting') }
-          = link_to 'Mon reporting', account_reporting_path
-        - if @user.options.try(:is_retriever_authorized)
-          %li{ :class=>('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
-            = link_to 'Mes automates', account_retrievers_path
-        - if @user.is_prescriber || @user.options.is_upload_authorized
-          %li{ class: ('active' if controller_name == 'paper_processes') }
-            = link_to 'Suivi', account_paper_processes_path
+%ul.nav
+  - unless @user.try(:organization).try(:is_suspended) && @user.active?
+    %li{ class: (controller_name == 'account' ? 'active' : '') }
+      = link_to 'Accueil', root_path
+  - if @user.inactive? || !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
+    - path = (@user.try(:organization).try(:is_suspended) && @user.active?) ? account_profile_path(panel: 'payment_management') : account_profile_path
+    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
+      = link_to 'Mon compte', path
+  - unless @user.try(:organization).try(:is_suspended) && @user.active?
+    - if @user.is_admin
+      %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
+        = link_to 'Organisations', account_organizations_path
+    - if @user.is_prescriber
+      %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
+        = link_to 'Mon organisation', account_organization_path(@user.organization)
+    %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
+      = link_to 'Mes documents', account_documents_path
+    - if @user.active? && @user.organization.is_active
+      %li{ :class=>('active' if controller_name == 'reporting') }
+        = link_to 'Mon reporting', account_reporting_path
+      - if @user.options.try(:is_retriever_authorized)
+        %li{ :class=>('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
+          = link_to 'Mes automates', account_retrievers_path
+      - if @user.is_prescriber || @user.options.is_upload_authorized
+        %li{ class: ('active' if controller_name == 'paper_processes') }
+          = link_to 'Suivi', account_paper_processes_path
+    %li.dropdown
+      %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+        Info
+        %b.caret
+      %ul.dropdown-menu
+        %li= link_to "Mode d'emploi", "https://docs.idocus.com/mode_emploi.pdf", target: '_blank'
+        - if @user.is_prescriber
+          %li= link_to 'Newsletter', 'https://docs.idocus.com/Evolutions iDocus 2016.2.pdf', target: '_blank'
+          %li= link_to 'Création dossier', 'https://docs.idocus.com/Creation de dossier client.pdf', target: '_blank'
+          %li= link_to 'Création kits', 'https://docs.idocus.com/Evolutions iDocus 2017.pdf', target: '_blank'
+    - if @user.is_prescriber
       %li.dropdown
         %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-          Info
+          Produits et tarifs
           %b.caret
         %ul.dropdown-menu
-          %li= link_to "Mode d'emploi", "https://docs.idocus.com/mode_emploi.pdf", target: '_blank'
-          - if @user.is_prescriber
-            %li= link_to 'Newsletter', 'https://docs.idocus.com/Evolutions iDocus 2016.2.pdf', target: '_blank'
-            %li= link_to 'Création dossier', 'https://docs.idocus.com/Creation de dossier client.pdf', target: '_blank'
-            %li= link_to 'Création kits', 'https://docs.idocus.com/Evolutions iDocus 2017.pdf', target: '_blank'
-      - if @user.is_prescriber
-        %li.dropdown
-          %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
-            Produits et tarifs
-            %b.caret
-          %ul.dropdown-menu
-            %li= link_to '2016', 'https://docs.idocus.com/Guide&tarifs_2016_iDocus.pdf', target: '_blank'
-            %li= link_to 'Formation iDocus', 'https://docs.idocus.com/Formation iDocus.pdf', target: '_blank'
+          %li= link_to '2016', 'https://docs.idocus.com/Guide&tarifs_2016_iDocus.pdf', target: '_blank'
+          %li= link_to 'Formation iDocus', 'https://docs.idocus.com/Formation iDocus.pdf', target: '_blank'

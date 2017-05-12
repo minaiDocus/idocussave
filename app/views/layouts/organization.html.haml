@@ -29,12 +29,10 @@
             %span.icon-bar
           %a.logo{ href: root_path }
             = image_tag 'logo/tiny_logo.png', :alt => 'logo'
-          = render partial: 'layouts/navigation'
-          %p.navbar-text.pull-right
-            Bienvenue
-            = link_to current_user.email, root_path
-            |
-            = link_to 'déconnexion', destroy_user_session_path, method: :delete
+          .nav-collapse.collapse
+            = render partial: 'layouts/navigation'
+            = render partial: 'layouts/user'
+            = render partial: 'layouts/notifications'
 
     .container-fluid
       = render 'shared/as_user'
