@@ -1,14 +1,15 @@
 %ul.nav.pull-right
   %li.dropdown.dropdown-notifications
     %a.dropdown-toggle{ href: '#notifications-panel', data: { toggle: 'dropdown' } }
-      %i.icon-bell.icon-white.notification-icon{ data: { count: @user.notifications.not_read.count } }
+      %i.icon-bell.icon-white{ class: (@user.notifications.not_read.count > 0 ? 'notification-icon' : 'notification-icon-disabled'), data: { count: @user.notifications.not_read.count } }
     .dropdown-container.dropdown-position-bottomright
       .dropdown-toolbar
         .dropdown-toolbar-actions
-          %a{ href: account_notifications_path }
-            %i.icon-search
-            Voir tout
         %h3 Notifications
       %ul.dropdown-menu
-        - @recent_notifications.each do |notification|
+        - @last_notifications.each do |notification|
           = render partial: 'account/notifications/notification', locals: { notification: notification }
+      .dropdown-footer
+        %a{ href: account_notifications_path }
+          %i.icon-search
+          Voir tout
