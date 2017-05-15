@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class ReceiptsController < PaperProcessesController
   def index
-    paper_processes = PaperProcess.receipts.where('created_at >= ? AND created_at <= ?', Time.now.beginning_of_month, Time.now.end_of_month)
+    paper_processes = PaperProcess.receipts.where('created_at >= ? AND created_at <= ?', @current_time.beginning_of_month, @current_time.end_of_month)
 
     respond_to do |format|
       format.html do

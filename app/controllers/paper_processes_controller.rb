@@ -3,6 +3,7 @@ class PaperProcessesController < ApplicationController
   layout 'paper_process'
 
   before_filter :authenticate
+  before_filter :load_current_time
 
   private
 
@@ -16,5 +17,15 @@ class PaperProcessesController < ApplicationController
         @user.present?
       end
     end
+  end
+
+  def load_current_time
+    if params[:year] && params[:month] && params[:day]
+      begin
+        @current_time = Time.local(params[:year], params[:month], params[:day])
+      rescue ArgumentError
+      end
+    end
+    @current_time ||= Time.now
   end
 end

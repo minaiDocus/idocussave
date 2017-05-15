@@ -8,8 +8,6 @@ class ApplicationController < ActionController::Base
   before_filter :redirect_to_https if %w(staging sandbox production).include?(Rails.env)
   around_filter :catch_error if %w(staging sandbox production test).include?(Rails.env)
   around_filter :log_visit
-  before_filter :load_current_time
-
 
   def after_sign_in_path_for(resource_or_scope)
     if session[:targeted_path]
@@ -101,20 +99,6 @@ class ApplicationController < ActionController::Base
   end
 
   protected
-
-
-  def load_current_time
-    @current_time = Time.now
-
-    if params[:year] && params[:month] && params[:day]
-      begin
-        @current_time = Time.local(params[:year], params[:month], params[:day])
-      rescue ArgumentError
-        @current_time = Time.now
-      end
-    end
-  end
-
 
   def redirect_to_https
     if !request.ssl? && !request.path.match(/(^\/dematbox\/|debit_mandate_notify)/)
