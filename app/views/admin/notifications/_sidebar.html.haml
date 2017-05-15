@@ -1,0 +1,36 @@
+.row-fluid
+  .span12.well.margin0bottom
+    %h3 Filtres
+
+    %br
+    = form_tag admin_notifications_path, method: :get, class: 'form form-vertical margin0bottom' do
+      = hidden_field_tag :direction, sort_direction
+      = hidden_field_tag :sort, sort_column
+      = hidden_field_tag :per_page, per_page
+
+      = label_tag 'notification_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+      .filter_date
+        .input-prepend.date.datepicker
+          %span.add-on
+            >=
+          = text_field_tag 'notification_contains[created_at][>=]', (params[:notification_contains][:created_at]['>='] rescue '')
+        .input-prepend.date.datepicker
+          %span.add-on
+            <=
+          = text_field_tag 'notification_contains[created_at][<=]', (params[:notification_contains][:created_at]['<='] rescue '')
+
+      = label_tag 'notification_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
+      = text_field_tag 'notification_contains[user_contains][code]', (params[:notification_contains][:user_contains][:code] rescue ''), class: 'span12'
+
+      = label_tag 'notification_contains[notice_type]', t('activerecord.models.notification.attributes.notice_type')
+      = select_tag 'notification_contains[notice_type]', options_for_select(t('notifications').map { |k,v| [v[:title],k] }, (params[:notification_contains][:notice_type] rescue '')), include_blank: true
+
+      = label_tag 'notification_contains[is_sent]', t('activerecord.models.notification.attributes.is_sent')
+      = select_tag 'notification_contains[is_sent]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:notification_contains][:is_sent] rescue '')), include_blank: true
+
+      = label_tag 'notification_contains[is_read]', t('activerecord.models.notification.attributes.is_read')
+      = select_tag 'notification_contains[is_read]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:notification_contains][:is_read] rescue '')), include_blank: true
+
+      %br
+      = submit_tag t('filters.action'), name: nil, class: 'btn btn-primary'
+      = link_to t('filters.reset'), admin_notifications_path, class: 'btn'

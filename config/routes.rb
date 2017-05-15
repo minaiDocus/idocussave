@@ -402,6 +402,8 @@ Idocus::Application.routes.draw do
       get  'edit_scans',             on: :collection
       post 'update_scans',           on: :collection
     end
+
+    resources :notifications, only: %w(index)
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'

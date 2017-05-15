@@ -1,0 +1,31 @@
+#notifications
+  .row-fluid.marginbottom
+    .span12.margin1bottom
+      %h3 Liste des notifications utilisateurs (#{@notifications.total_count})
+
+  .row-fluid
+    .span9
+      = render partial: 'shared/list_options', locals: { collection: @notifications }
+      .row-fluid
+        .span12
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at, t('activerecord.models.common.attributes.created_at')
+                %th Utilisateur
+                %th= sortable :notice_type, t('activerecord.models.notification.attributes.notice_type')
+                %th Message
+                %th= sortable :is_sent, t('activerecord.models.notification.attributes.is_sent')
+                %th= sortable :is_read, t('activerecord.models.notification.attributes.is_read')
+            %tbody
+              - @notifications.each do |notification|
+                %tr
+                  %td= l(notification.created_at, format: '%d %b %Y %H:%M')
+                  %td= link_to(notification.user.code, [:admin, notification.user])
+                  %td= t('notifications.' + notification.notice_type + '.title')
+                  %td= t('notifications.' + notification.notice_type + '.message')
+                  %td= notification.is_sent ? icon_ok : icon_not_ok
+                  %td= notification.is_read ? icon_ok : icon_not_ok
+      = render partial: 'shared/list_options', locals: { collection: @notifications }
+    .span3
+      = render partial: 'sidebar'

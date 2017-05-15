@@ -941,6 +941,15 @@ fr:
           paper_set_folder_count: Nombre de chemise
           paper_set_start_date: Date de début
           paper_set_end_date: Date de fin
+      notification:
+        zero: 0 notification
+        one: 1 notification
+        other: "%{count} notifications"
+        name: Notification
+        attributes:
+          notice_type: Type de notification
+          is_sent: Envoyé ?
+          is_read: Lu ?
     state_machines:
       retriever:
         states:

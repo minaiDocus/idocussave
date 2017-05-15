@@ -44,6 +44,8 @@
           = link_to 'Images', admin_cms_images_path
         %li{ class: ('active' if controller_name == 'scanning_providers') }
           = link_to 'Ateliers', admin_scanning_providers_path
+        %li{ class: ('active' if controller_name == 'notifications') }
+          = link_to 'Notifications utilisateurs', admin_notifications_path
         %li{ class: ('active' if controller_name == 'notification_settings') }
           = link_to 'Paramétrage des notifications', admin_notification_settings_path
 
