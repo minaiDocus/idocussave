@@ -90,7 +90,7 @@ class Account::AccountingPlansController < Account::OrganizationController
     if @organization.ibiza.try(:access_token).present?
       flash[:error] = t('authorization.unessessary_rights')
 
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
@@ -117,7 +117,7 @@ class Account::AccountingPlansController < Account::OrganizationController
   def verify_rights
     unless is_leader? || @user.can_manage_customers?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

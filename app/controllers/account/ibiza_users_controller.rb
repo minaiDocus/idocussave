@@ -32,7 +32,7 @@ class Account::IbizaUsersController < Account::OrganizationController
   def verify_rights
     unless @ibiza.try(:configured?)
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 

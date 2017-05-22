@@ -48,7 +48,7 @@ class Account::IbizaController < Account::OrganizationController
   def verify_rights
     unless is_leader?
       flash[:error] = t('authorization.unessessary_rights')
-      redirect_to account_organization_path
+      redirect_to account_organization_path(@organization)
     end
   end
 
