@@ -46,7 +46,9 @@ class ApplicationController < ActionController::Base
       if request.path =~ /organizations/
         if params[:collaborator_code].present? || session[:collaborator_code].present?
           user = User.prescribers.where(code: params[:collaborator_code].presence || session[:collaborator_code].presence).first || current_user
+          old_collaborator_code = session[:collaborator_code]
           session[:collaborator_code] = user == current_user ? nil : user.code
+          redirect_to account_organization_path(user.organization) if old_collaborator_code != session[:collaborator_code]
         end
       elsif params[:user_code].present? || session[:user_code].present?
         user = User.find_by_code(params[:user_code].presence || session[:user_code].presence) || current_user
