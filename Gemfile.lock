@@ -155,8 +155,9 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    dropbox-sdk (1.6.5)
-      json
+    dropbox_api (0.1.5)
+      faraday (~> 0.9, ~> 0.8)
+      oauth2 (~> 1.1)
     eco (1.0.0)
       coffee-script
       eco-source
@@ -549,7 +550,7 @@ DEPENDENCIES
   dalli
   database_cleaner
   devise
-  dropbox-sdk
+  dropbox_api
   eco
   factory_girl_rails
   gio2

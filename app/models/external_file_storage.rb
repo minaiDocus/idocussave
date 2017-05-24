@@ -2,16 +2,15 @@
 class ExternalFileStorage < ActiveRecord::Base
   SERVICES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings'].freeze
 
-  F_FTP         = 8
-  F_BOX         = 16
   F_DROPBOX     = 2
   F_GOOGLE_DOCS = 4
+  F_FTP         = 8
+  F_BOX         = 16
 
-
+  has_one :dropbox_basic, autosave: true, dependent: :destroy
+  has_one :google_doc,    autosave: true, dependent: :destroy
   has_one :ftp,           autosave: true, dependent: :destroy
   has_one :box,           autosave: true, dependent: :destroy
-  has_one :google_doc,    autosave: true, dependent: :destroy
-  has_one :dropbox_basic, autosave: true, dependent: :destroy
 
 
   belongs_to :user
@@ -200,9 +199,11 @@ class ExternalFileStorage < ActiveRecord::Base
 
 
   def self.delivery_path(remote_file, pseudo_path)
-    info_path = Pack.info_path(remote_file.pack_name, remote_file.receiver)
+    info_path = Pack.info_path(remote_file.pack, remote_file.receiver)
 
-    static_path(pseudo_path.sub(/\/\z/, ''), info_path)
+    result = static_path(pseudo_path.sub(/\/\z/, ''), info_path)
+    result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended'])
+    result
   end
 
 

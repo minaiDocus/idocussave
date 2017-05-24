@@ -185,9 +185,8 @@ class Pack < ActiveRecord::Base
   end
 
 
-  def self.info_path(pack_name, receiver = nil)
-    name_info = pack_name.split('_')
-    pack = Pack.find_by_name(name_info.join(' '))
+  def self.info_path(pack, receiver = nil)
+    name_info = pack.name.split(' ')
 
     info = {}
     info[:code] = name_info[0]

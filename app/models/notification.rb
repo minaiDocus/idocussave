@@ -31,6 +31,9 @@ class Notification < ActiveRecord::Base
   end
 
   def valid_notice_types
-    ['dropbox_invalid_token']
+    [
+      'dropbox_invalid_access_token',
+      'dropbox_insufficient_space'
+    ]
   end
 end

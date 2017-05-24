@@ -3,17 +3,18 @@ class DropboxImport::Client
     @client = client
   end
 
-  def method_missing(name, *args)
-    tried_count = 1
+  def method_missing(name, *args, &block)
+    retries = 0
     begin
-      @client.send(name, *args)
-    rescue Errno::ETIMEDOUT, Timeout::Error, DropboxError => e
-      if e.class.in?([Errno::ETIMEDOUT, Timeout::Error]) || e.message.match(/503 Service Unavailable|Internal Server Error|Please re-issue the request/)
-        if tried_count <= 3
-          sleep(5 * tried_count)
-          tried_count += 1
-          retry
-        end
+      @client.send(name, *args, &block)
+    rescue Errno::ETIMEDOUT, Timeout::Error, DropboxApi::Errors::InternalError, DropboxApi::Errors::RateLimitError
+      retries += 1
+      if retries < 3
+        min_sleep_seconds = Float(2 ** (retries/2.0))
+        max_sleep_seconds = Float(2 ** retries)
+        sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
+        sleep sleep_duration
+        retry
       end
       raise
     end

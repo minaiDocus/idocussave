@@ -8,6 +8,9 @@ guard 'rspec', cmd: 'bin/rspec' do
   watch(%r{^app/(.*)(\.erb|\.haml)$})                { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
   watch(%r{^app/controllers/(.+)_(controller)\.rb$}) { |m| ["spec/routing/#{m[1]}_routing_spec.rb", "spec/#{m[2]}s/#{m[1]}_#{m[2]}_spec.rb"] }
   watch(%r{^spec/support/(.+)\.rb$})                 { 'spec' }
+
+  watch(%r{app/modules/dropbox_import/.*})           { |m| 'spec/modules/dropbox_import_spec.rb' }
+  watch('app/services/send_to_storage.rb')           { |m| 'spec/services/send_to_dropbox_spec.rb' }
 end
 
 guard 'livereload' do

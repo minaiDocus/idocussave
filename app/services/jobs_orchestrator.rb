@@ -32,19 +32,6 @@ class JobsOrchestrator
       RetrievePreseizuresWorker.perform_async unless JobsOrchestrator.check_if_in_queue("RetrievePreseizuresWorker")
     end
 
-    if Sidekiq::Queue.new("sync_remote_files").size == 0
-      SyncRemoteFilesWorker.perform_async unless JobsOrchestrator.check_if_in_queue("SyncRemoteFilesWorker")
-    end
-
-    if Sidekiq::Queue.new("remote_file_delivery").size == 0
-      DeliverRemoteFilesWorker.perform_async('dbx') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "dbx")
-      DeliverRemoteFilesWorker.perform_async('dbb') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "dbb")
-      DeliverRemoteFilesWorker.perform_async('box') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "box")
-      DeliverRemoteFilesWorker.perform_async('kwg') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "kwg")
-      DeliverRemoteFilesWorker.perform_async('ftp') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "ftp")
-      DeliverRemoteFilesWorker.perform_async('gdr') unless JobsOrchestrator.check_if_in_queue("DeliverRemoteFilesWorker", "gdr")
-    end
-
     if Sidekiq::Queue.new('retrieve_emailed_document').size == 0
       RetrieveEmailedDocumentWorker.perform_async unless JobsOrchestrator.check_if_in_queue("RetrieveEmailedDocumentWorker")
     end

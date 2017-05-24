@@ -6,3 +6,4 @@ development:
   username: root
   password: root
   host: localhost
+  pool: 20

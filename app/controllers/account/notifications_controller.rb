@@ -8,7 +8,9 @@ class Account::NotificationsController < Account::AccountController
     notification = @user.notifications.find params[:id]
     notification.update is_read: true
     path = case notification.notice_type
-    when 'dropbox_invalid_token'
+    when 'dropbox_invalid_access_token'
+      account_profile_path(panel: 'efs_management', anchor: 'dropbox')
+    when 'dropbox_insufficient_space'
       account_profile_path(panel: 'efs_management', anchor: 'dropbox')
     end
     redirect_to path

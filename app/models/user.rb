@@ -188,7 +188,7 @@ class User < ActiveRecord::Base
 
 
   def find_or_create_external_file_storage
-    self.external_file_storage ||= ExternalFileStorage.create(user_id: id).reload
+    self.external_file_storage ||= ExternalFileStorage.create(user_id: id)
   end
 
 

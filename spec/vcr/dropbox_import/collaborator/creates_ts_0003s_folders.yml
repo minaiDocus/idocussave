@@ -2,19 +2,21 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.dropbox.com/1/delta
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
     body:
-      encoding: US-ASCII
-      string: cursor=AAFpUGtY65bkw3p8BUksAJ20DidN5mc1k2S0cdOvEEwOwtHl93svFe--pAn7kARELvTslPSmhhzC9Ao_85nJlr0i5uwHEFqnJjgF36Q9Yno-DKRsxJASM7YhVcDu2N7XzfcsxLit0Y7KZvBe6rf4d72gOAy0By08ceekAPVu9Q40Fg&path_prefix=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1
+      encoding: UTF-8
+      string: '{"cursor":"AAFRFvW7XcupKKpCyfkNYr3RasrZ5FhOQC31W21kUy7TIhi_BcarXCCDt2LXA9L6sx2DhcROm-qJtquyfiHRFnuDaQmHGVooa39BhxeGZYglo2Lh5zB_aT9yuyALXbulLdkGBQ2-NoKxVR-6J5CfKCISsw9lc71L_NVWnXTN5WIT2hu_bMTMgfKY5yWOi4D8FZg"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -23,51 +25,52 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:50:44 GMT
+      - Wed, 17 May 2017 11:28:54 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=MjgwMjQzODM5MjgyMzA1ODEyMjU0MzkyMjIwOTczNzc4OTQ1NzE3; expires=Thu, 22
-        Oct 2020 19:50:44 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '36'
-      X-Dropbox-Request-Id:
-      - 5d4aa97c8935844bc395d88519d70f96
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - 0475b860d30d06776269a7bb0d1ac0f8
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '139'
     body:
-      encoding: US-ASCII
-      string: '{"has_more": false, "cursor": "AAH_q4TO1QEOs_H6T-h4s4vSBc2wnhG4QI6xO5nH6u26ndimeRiOGGFeW21WYaDGA6fa1X-zmyTR7ZCemAhK9Cg8dUrFoyE1_DpQSfkhyNDQUF-eNSJd2dK90oPHSIc_s6A3KQEkMvrdUMvJjDxv9FmbZcnNicXd1aZFnTGNzgX4FA",
-        "entries": [], "reset": false}'
+      encoding: ASCII-8BIT
+      string: '{"entries": [], "cursor": "AAH6tPsWt9OiO2pato5en32fo6svyIeO-QL1dm6178Fb-sAP1oqCeB5WHGe1awO-tu5Oj1WpmpXmeYl8Cuc80Nzd8ymdHVRs8fTYZQBfPHOuByEBYZR7XKrofXFvDgIWHlTA_tBPhW8erPKJ4QmyqPnf1s1YbtAeeTQO12Q3aXSbHv2oAMGRKJbZ8GWgato8NCg",
+        "has_more": false}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
     method: post
-    uri: https://api.dropbox.com/1/fileops/create_folder
+    uri: https://api.dropboxapi.com/2/files/create_folder
     body:
-      encoding: US-ASCII
-      string: root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1%2FTS%250003+-+GHI%2Fp%C3%A9riode+actuelle%2FAC
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/AC"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -76,53 +79,53 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:50:47 GMT
+      - Wed, 17 May 2017 11:28:58 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=NDk5NTY0NzYyNzA2NzIyNzYyNTE4Mzc3NDgyNDY0NDExMDE5NTE%3D; expires=Thu, 22
-        Oct 2020 19:50:46 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '351'
-      X-Dropbox-Request-Id:
-      - db23ffc6688739b5f1547adbc1947f55
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - 5a47b3af1aa88504061f13a0f529710a
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '373'
     body:
-      encoding: US-ASCII
-      string: '{"size": "0 bytes", "rev": "2f83d59c017", "thumb_exists": false, "bytes":
-        0, "modified": "Sat, 24 Oct 2015 19:50:46 +0000", "path": "/exportation\u00a0vers
-        iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode actuelle/AC", "is_dir": true, "icon":
-        "folder", "root": "app_folder", "revision": 760}'
+      encoding: ASCII-8BIT
+      string: '{"name": "AC", "path_lower": "/exportation vers idocus/ts%col1/ts%0003
+        - ghi/p\u00e9riode actuelle/ac", "path_display": "/exportation vers iDocus/TS%COL1/TS%0003
+        - GHI/p\u00e9riode actuelle/AC", "id": "id:66z1e_OMcPAAAAAAAAAAog"}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
     method: post
-    uri: https://api.dropbox.com/1/fileops/create_folder
+    uri: https://api.dropboxapi.com/2/files/create_folder
     body:
-      encoding: US-ASCII
-      string: root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1%2FTS%250003+-+GHI%2Fp%C3%A9riode+actuelle%2FBQ
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période actuelle/BQ"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -131,53 +134,53 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:50:49 GMT
+      - Wed, 17 May 2017 11:29:03 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=OTc0MjE3MzgwNDI3MjI5NzQ3ODAzMzk0ODAzODU5MTMyNzU0NDE%3D; expires=Thu, 22
-        Oct 2020 19:50:49 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '202'
-      X-Dropbox-Request-Id:
-      - 37e93fdc95288d758b86ca634a4a83a2
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - 8e9eb0cb778689a5bd1d04b554f991e6
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '330'
     body:
-      encoding: US-ASCII
-      string: '{"size": "0 bytes", "rev": "2fb3d59c017", "thumb_exists": false, "bytes":
-        0, "modified": "Sat, 24 Oct 2015 19:50:49 +0000", "path": "/exportation\u00a0vers
-        iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode actuelle/BQ", "is_dir": true, "icon":
-        "folder", "root": "app_folder", "revision": 763}'
+      encoding: ASCII-8BIT
+      string: '{"name": "BQ", "path_lower": "/exportation vers idocus/ts%col1/ts%0003
+        - ghi/p\u00e9riode actuelle/bq", "path_display": "/exportation vers iDocus/TS%COL1/TS%0003
+        - GHI/p\u00e9riode actuelle/BQ", "id": "id:66z1e_OMcPAAAAAAAAAAow"}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
     method: post
-    uri: https://api.dropbox.com/1/fileops/create_folder
+    uri: https://api.dropboxapi.com/2/files/create_folder
     body:
-      encoding: US-ASCII
-      string: root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1%2FTS%250003+-+GHI%2Fp%C3%A9riode+pr%C3%A9c%C3%A9dente%2FAC
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/AC"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -186,53 +189,54 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:50:52 GMT
+      - Wed, 17 May 2017 11:29:07 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=MTQ1NzUyMzQzNzE3MDcwMTMxMjkzNTgzMzg3MjczNzc4NjcyNDU%3D; expires=Thu, 22
-        Oct 2020 19:50:52 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '278'
-      X-Dropbox-Request-Id:
-      - b807bdfdba606e2f6738edd2f3d86265
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - ad53e3c859c7b255b2c52c1298b01c7c
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '459'
     body:
-      encoding: US-ASCII
-      string: '{"size": "0 bytes", "rev": "2fc3d59c017", "thumb_exists": false, "bytes":
-        0, "modified": "Sat, 24 Oct 2015 19:50:51 +0000", "path": "/exportation\u00a0vers
-        iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente/AC", "is_dir":
-        true, "icon": "folder", "root": "app_folder", "revision": 764}'
+      encoding: ASCII-8BIT
+      string: '{"name": "AC", "path_lower": "/exportation vers idocus/ts%col1/ts%0003
+        - ghi/p\u00e9riode pr\u00e9c\u00e9dente/ac", "path_display": "/exportation
+        vers iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente/AC", "id":
+        "id:66z1e_OMcPAAAAAAAAAApQ"}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
 - request:
     method: post
-    uri: https://api.dropbox.com/1/fileops/create_folder
+    uri: https://api.dropboxapi.com/2/files/create_folder
     body:
-      encoding: US-ASCII
-      string: root=sandbox&path=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1%2FTS%250003+-+GHI%2Fp%C3%A9riode+pr%C3%A9c%C3%A9dente%2FBQ
+      encoding: UTF-8
+      string: '{"path":"/exportation vers iDocus/TS%COL1/TS%0003 - GHI/période précédente/BQ"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -241,36 +245,35 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:50:54 GMT
+      - Wed, 17 May 2017 11:29:12 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=NjMxMDQyMzEwMDYxMDA3MDg1NDA0OTY1NjU3NzMzODA5NDU1MjU%3D; expires=Thu, 22
-        Oct 2020 19:50:54 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '242'
-      X-Dropbox-Request-Id:
-      - c32606aed9e4628b7436955d3e4f590a
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - 47b81b778cefc0214b889a0c0fbd3560
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '718'
     body:
-      encoding: US-ASCII
-      string: '{"size": "0 bytes", "rev": "2fe3d59c017", "thumb_exists": false, "bytes":
-        0, "modified": "Sat, 24 Oct 2015 19:50:54 +0000", "path": "/exportation\u00a0vers
-        iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente/BQ", "is_dir":
-        true, "icon": "folder", "root": "app_folder", "revision": 766}'
+      encoding: ASCII-8BIT
+      string: '{"name": "BQ", "path_lower": "/exportation vers idocus/ts%col1/ts%0003
+        - ghi/p\u00e9riode pr\u00e9c\u00e9dente/bq", "path_display": "/exportation
+        vers iDocus/TS%COL1/TS%0003 - GHI/p\u00e9riode pr\u00e9c\u00e9dente/BQ", "id":
+        "id:66z1e_OMcPAAAAAAAAAApg"}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
-recorded_with: VCR 2.9.3
+recorded_with: VCR 3.0.3

@@ -1,0 +1,118 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
+    body:
+      encoding: UTF-8
+      string: '{"cursor":"AAHuDBnQ43SLoVF1tHaTZFX-BAP6ehQyXrd7c6fLyz8_zGt2EsGZBHLfEMOWakddGquh1eZLtLF-mgAsWOVLcl3bT_aqRiBTCyWBHMcmWLgvFMHTTn2CIyl8hdOy3PE_x_xhRirH0Y3PsuAOfJhMVJM9iJulqrNR9uC6cBrLUp2pU8r2EO7fXyoYcOFOaz4117I"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 10 May 2017 13:56:41 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Dropbox-Request-Id:
+      - 2d16f2b446015693e443c7189122f3a2
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Server-Response-Time:
+      - '169'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries": [{".tag": "deleted", "name": "2pages.pdf", "path_lower":
+        "/exportation vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/2pages.pdf",
+        "path_display": "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode
+        actuelle/AC/2pages.pdf"}],
+        "cursor": "AAFMxB16PCTlIIMB7-YQ0lef5ZMPYf5AdL_BuVAEWnaEYxyMl4QOUOMZeo09FmTsnw9N69LW0reEqPCxGDMlvRKkC-3LjZI-FLrInuAL_BmVQ59HKIWSG8HNHd9gpHuodrkT8ocFy1ZrCNKv33gjmQz-6GQ3dZzZKQTwAa_UvgCq1Apd8ilPmuhiWGpU5peXAQg",
+        "has_more": true}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
+- request:
+    method: post
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
+    body:
+      encoding: UTF-8
+      string: '{"cursor":"AAFMxB16PCTlIIMB7-YQ0lef5ZMPYf5AdL_BuVAEWnaEYxyMl4QOUOMZeo09FmTsnw9N69LW0reEqPCxGDMlvRKkC-3LjZI-FLrInuAL_BmVQ59HKIWSG8HNHd9gpHuodrkT8ocFy1ZrCNKv33gjmQz-6GQ3dZzZKQTwAa_UvgCq1Apd8ilPmuhiWGpU5peXAQg"}'
+    headers:
+      Authorization:
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 10 May 2017 19:51:33 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
+      X-Dropbox-Http-Protocol:
+      - None
+      X-Dropbox-Request-Id:
+      - 87ff101a732d8a9263b0ec64aacb9442
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Server-Response-Time:
+      - '177'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entries": [{".tag": "deleted", "name": "3pages.pdf", "path_lower":
+        "/exportation vers idocus/ts%0001 - test/p\u00e9riode actuelle/ac/3pages.pdf",
+        "path_display": "/exportation vers iDocus/TS%0001 - TeSt/p\u00e9riode
+        actuelle/AC/3pages.pdf"}],
+        "cursor": "AAFeVq99ipMnuvVTcNS7_M5vHAmtvDE0RvvT9kPOvQVHOv5VDUaP1evskfuIC9BEO2PBGW-7c5T_3wwgyzKdww0nspvUWz6LI8G-myyUojkVp_TvYb-PJ5LfKf9ioItpz9wMPeQupbowctZAVBrtFsqqFoUZrDXw5SrrDhvpg3g4GzHVlAGVMdl4U7ZACSV3eUM",
+        "has_more": false}'
+    http_version: 
+  recorded_at: Sat, 14 Feb 2015 21:00:00 GMT

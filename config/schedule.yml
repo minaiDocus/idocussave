@@ -39,3 +39,9 @@ DocumentNotificationWorker:
 
 ScansNotDeliveredNotificationWorker:
   cron: '0 1 * * *'
+
+FileDeliveryWorker:
+  every: '1m'
+
+ImportFromDropboxWorker:
+  every: '1m'

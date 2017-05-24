@@ -1,5 +1,5 @@
-module Delivery
-  def self.process(service_prefix)
+module DeliverFile
+  def self.to(service_prefix)
     service_name  = to_service_name(service_prefix)
     service_class = to_service_class(service_prefix)
 
@@ -17,6 +17,7 @@ module Delivery
 
       pack         = remote_file.pack
       receiver     = remote_file.receiver
+      storage      = receiver.external_file_storage.send(service_class)
       remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
 
       if receiver.class.name == User.name
@@ -34,31 +35,28 @@ module Delivery
       end
 
       if service_name.in?(services_name)
-        puts "[#{service_name}] Synchronising files for #{receiver.class.name.downcase} : #{receiver.info}..."
+        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{remote_files.size} - SYNC START"
 
         remote_files = remote_files.sort do |a, b|
           a.local_name <=> b.local_name
         end
 
-        puts "\t#{pack.name}\t[#{remote_files.count}]"
-
-        if receiver.class.name == Group.name
-          DropboxExtended.sync(remote_files)
+        if receiver.class.name == Group.name || service_class == :dropbox_extended
+          SendToDropbox.new(storage, remote_files, path_pattern: receiver.dropbox_delivery_folder, logger: logger).execute
         elsif receiver.class.name == Organization.name
           KnowingsSyncService.new(remote_files).execute
         elsif service_class == :dropbox_basic
-          DropboxBasicSyncService.new(remote_files).sync
+          SendToDropbox.new(storage, remote_files, logger: logger).execute
         elsif service_class == :box
           BoxSyncService.new(remote_files).sync
         elsif service_class == :ftp
           FtpSyncService.new(remote_files).execute
         elsif service_class == :google_doc
-          GoogleDriveSyncService.new(receiver.external_file_storage.google_doc).sync(remote_files)
-        elsif service_class == :dropbox_extended
-          DropboxExtended.sync(remote_files)
+          GoogleDriveSyncService.new(storage).sync(remote_files)
         end
 
-        puts "\tDone."
+        total_synced = remote_files.select { |e| e.state == 'synced' }.size
+        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{total_synced}/#{remote_files.size} - SYNC END"
       else
         remote_files.each(&:cancel!)
       end
@@ -105,5 +103,9 @@ module Delivery
     else
       ''
     end
+  end
+
+  def self.logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_file_delivery.log")
   end
 end

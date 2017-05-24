@@ -15,10 +15,10 @@
 # http://www.mikeperham.com/2013/11/13/advanced-sidekiq-host-specific-queues/
 :queues:
   - [high, 10]
-  - [documents_thumbs_and_content, 1]
+  - [default, 2]
+  - [low, 1]
   - [retrieve_emailed_document, 5]
   - [pre_assignments_delivery, 7]
-  - [remote_file_delivery, 6]
   - [grouping_delivery, 9]
   - [process_and_deliver_grouped, 9]
   - [process_operations, 5]
@@ -26,14 +26,11 @@
   - [retrieve_fiduceo_documents, 5]
   - [retrieve_from_grouping, 9]
   - [retrieve_preseizures, 9]
-  - [sync_remote_files, 6]
   - [dematbox, 9]
-  - [default, 2]
-  - [mailers, 3]
   - [retrievers, 9]
 
 # you can override concurrency based on environment
 production:
   :concurrency: 12
 staging:
-  :concurrency: 15
+  :concurrency: 12

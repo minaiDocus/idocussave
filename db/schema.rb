@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170511161923) do
+ActiveRecord::Schema.define(version: 20170516165410) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -351,7 +351,7 @@ ActiveRecord::Schema.define(version: 20170511161923) do
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "access_token",                      limit: 255
+    t.string   "old_access_token",                  limit: 255
     t.string   "path",                              limit: 255,        default: ":code/:year:month/:account_book/", null: false
     t.integer  "dropbox_id",                        limit: 4
     t.datetime "changed_at"
@@ -361,6 +361,7 @@ ActiveRecord::Schema.define(version: 20170511161923) do
     t.text     "import_folder_paths",               limit: 4294967295
     t.integer  "external_file_storage_id",          limit: 4
     t.string   "external_file_storage_id_mongo_id", limit: 255
+    t.string   "encrypted_access_token",            limit: 255
   end
 
   create_table "emails", force: :cascade do |t|
@@ -1251,6 +1252,7 @@ ActiveRecord::Schema.define(version: 20170511161923) do
     t.string   "group_id_mongo_id",        limit: 255
     t.integer  "remotable_id",             limit: 4
     t.string   "remotable_id_mongo_id",    limit: 255
+    t.string   "revision",                 limit: 255
   end
 
   create_table "retrieved_data", force: :cascade do |t|

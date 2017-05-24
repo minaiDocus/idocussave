@@ -2,19 +2,21 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.dropbox.com/1/delta
+    uri: https://api.dropboxapi.com/2/files/list_folder/continue
     body:
-      encoding: US-ASCII
-      string: cursor=AAGZ2f4nTuNezjIJ7SbaToHSCdtrd6BFQmAZI1s0V3xzwyXXcPxepqYyAbiXaO8034W2oW_8uCSInbCiZwFgJ5OSsMOzgEuMs-3QxQm_fqyfiXQWa5l6HwSVkyFivDeGZWPAw-_gaJLNHquGJd35NW-AVn0FWVEy-dnEBsulrE4M7w&path_prefix=%2Fexportation%C2%A0vers+iDocus%2FTS%25COL1
+      encoding: UTF-8
+      string: '{"cursor":"AAFTDWUnP8ka7Cpt-4trBdOEQkxIASVeteG7m5tUOyl1ZOc9fylBuDSt6T0NRREqYvKnfB_Z3j2ivkH_-Np7jZCHUOp1cbWaT0bzEdBoJm-iOEimXdJDaTj-fCDG5tmmjTlzoLzTrhXiQHZk0L0_bDGA4bPn45gyLc0tgu2WSu0JQP6C5liD-Mvfwi577rDqvMM"}'
     headers:
-      Accept:
-      - '*/*'
-      User-Agent:
-      - OfficialDropboxRubySDK/1.6.5
-      Content-Type:
-      - application/x-www-form-urlencoded
       Authorization:
-      - Bearer 65XiB3QDfDUAAAAAAAAGzhf645c8M07MSCFxz4il6O72MfyHrPUT0W0jP0nmIfZN
+      - Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO
+      User-Agent:
+      - Faraday v0.9.2
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
   response:
     status:
       code: 200
@@ -23,42 +25,44 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sat, 24 Oct 2015 19:23:06 GMT
+      - Tue, 16 May 2017 20:59:03 GMT
       Content-Type:
-      - text/javascript
+      - application/json
       Transfer-Encoding:
       - chunked
       Connection:
       - keep-alive
-      X-Content-Type-Options:
-      - nosniff
-      Set-Cookie:
-      - gvc=MjY2NTM1MjUzNDcxODcyMjYxMDEwNTc3OTcwMDUwOTE2MjI1NDgw; expires=Thu, 22
-        Oct 2020 19:23:06 GMT; httponly; Path=/; secure
-      X-Server-Response-Time:
-      - '65'
-      X-Dropbox-Request-Id:
-      - efbc3c3c7891de07fb9aaec759b3ce4b
-      Pragma:
-      - no-cache
+      Vary:
+      - Accept-Encoding
       Cache-Control:
       - no-cache
+      Pragma:
+      - no-cache
+      X-Content-Type-Options:
+      - nosniff
       X-Dropbox-Http-Protocol:
       - None
+      X-Dropbox-Request-Id:
+      - d2c32ccd30e26cb9526adbc01552231b
       X-Frame-Options:
       - SAMEORIGIN
+      X-Server-Response-Time:
+      - '183'
     body:
-      encoding: US-ASCII
-      string: '{"has_more": false, "cursor": "AAHVB1HPH6ovrzxlkydqq4vZKNO8Gx4geZ-5BcRI3A82_vNB8gv_MJ7l4gnsEuI6QXn1jwcOnrEyYYQWoyFVBzVuDzgZAKw4e6yKu-6kqornG0QqIWSU-vTHC-pYBxSMLE05enxUaUoROHL1JSN3il0jnKSpdLdcOKBdrAy8VpJTwQ",
-        "entries": [["/exportation\u00a0vers idocus/ts%col1/ts%0001 - abc/p\u00e9riode
-        actuelle/ac/corrupted.pdf", null], ["/exportation\u00a0vers idocus/ts%col1/ts%0001
+      encoding: ASCII-8BIT
+      string: '{"entries": [{".tag": "deleted", "name": "corrupted.pdf", "path_lower":
+        "/exportation vers idocus/ts%col1/ts%0001 - abc/p\u00e9riode actuelle/ac/corrupted.pdf",
+        "path_display": "/exportation vers iDocus/TS%COL1/TS%0001 - ABC/p\u00e9riode
+        actuelle/AC/corrupted.pdf"}, {".tag": "file", "name": "corrupted (erreur fichier
+        non valide pour iDocus).pdf", "path_lower": "/exportation vers idocus/ts%col1/ts%0001
         - abc/p\u00e9riode actuelle/ac/corrupted (erreur fichier non valide pour idocus).pdf",
-        {"rev": "2c33d59c017", "thumb_exists": false, "path": "/exportation\u00a0vers
-        iDocus/TS%COL1/TS%0001 - ABC/p\u00e9riode actuelle/AC/corrupted (erreur fichier
-        non valide pour iDocus).pdf", "is_dir": false, "client_mtime": "Sat, 24 Oct
-        2015 19:18:56 +0000", "icon": "page_white_acrobat", "bytes": 1117, "modified":
-        "Sat, 24 Oct 2015 19:19:11 +0000", "size": "1.1 KB", "root": "app_folder",
-        "mime_type": "application/pdf", "revision": 707}]], "reset": false}'
+        "path_display": "/exportation vers iDocus/TS%COL1/TS%0001 - ABC/p\u00e9riode
+        actuelle/AC/corrupted (erreur fichier non valide pour iDocus).pdf", "id":
+        "id:66z1e_OMcPAAAAAAAAAAiw", "client_modified": "2017-05-16T20:51:03Z", "server_modified":
+        "2017-05-16T20:54:59Z", "rev": "112570c1fec", "size": 1117, "content_hash":
+        "2050f28245f4dd42e42785231b9fb2490ce708d092370a436a67faf137c1920e"}], "cursor":
+        "AAFcZuZzBdduW7iYkysvGdxtnmCGF3nZWpke_Aqu-DCtaUOWecO3TZnHgxZIOm4275s1qRuPvxqg6LH2bL9DTmzX3rqeXVjs4yF2LazsdPH8bTpgRRi-Ck5UQ0HwNqoMylbpNMDkaR-6PgTYdmpxLg-X8nX0NqWmXT3aCKpvm1Ksw7zwe1-b1gtLR_UpUcITt3A",
+        "has_more": false}'
     http_version: 
   recorded_at: Sat, 14 Feb 2015 21:00:00 GMT
-recorded_with: VCR 2.9.3
+recorded_with: VCR 3.0.3

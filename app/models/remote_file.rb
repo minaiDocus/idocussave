@@ -99,6 +99,13 @@ class RemoteFile < ActiveRecord::Base
     save
   end
 
+  def not_retryable!(message = '')
+    self.state         = 'not_synced'
+    self.tried_count   = 2
+    self.error_message = message
+    set_tried_at
+    save
+  end
 
   def name
     if remotable.class == Pack::Piece && (pack.organization.foc_file_naming_policy.scope == 'organization' || group.present? || user.is_prescriber)
@@ -208,6 +215,16 @@ class RemoteFile < ActiveRecord::Base
     end
   end
 
+  def receiver_info
+    case receiver.class.name
+    when User.name
+      receiver.code
+    when Group.name
+      "#{receiver.organization.code}/#{receiver.name}"
+    when Organization.name
+      receiver.code
+    end
+  end
 
   protected
 

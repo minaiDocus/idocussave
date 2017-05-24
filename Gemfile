@@ -130,7 +130,7 @@ gem 'nokogiri', '~> 1.7'
 
 # External services
 gem 'ruby-box'
-gem 'dropbox-sdk', require: 'dropbox_sdk'
+gem 'dropbox_api'
 gem 'google_drive', '1.0.1'
 gem 'google-api-client', '0.8.2'
 
