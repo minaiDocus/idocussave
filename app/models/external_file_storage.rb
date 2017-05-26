@@ -184,7 +184,7 @@ class ExternalFileStorage < ActiveRecord::Base
 
 
   def self.static_path(path, info_path)
-    path.gsub(':code', info_path[:code])
+    path.gsub(':code',                info_path[:code])
         .gsub(':customer_code',       info_path[:customer_code])
         .gsub(':organization_code',   info_path[:organization_code] || '')
         .gsub(':company',             info_path[:company] || '')
@@ -198,10 +198,10 @@ class ExternalFileStorage < ActiveRecord::Base
   end
 
 
-  def self.delivery_path(remote_file, pseudo_path)
+  def self.delivery_path(remote_file, path_pattern)
     info_path = Pack.info_path(remote_file.pack, remote_file.receiver)
 
-    result = static_path(pseudo_path.sub(/\/\z/, ''), info_path)
+    result = static_path(path_pattern.sub(/\/\z/, ''), info_path)
     result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended'])
     result
   end

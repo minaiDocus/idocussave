@@ -33,9 +33,7 @@ private
   end
 
   def up_to_date?(client, metafile)
-    entries(client, metafile.folder_path).select do |entry|
-      entry.name == metafile.name && entry.size == metafile.size
-    end.present?
+    [metafile.name, metafile.size].in? entries(client, metafile.folder_path)
   end
 
   def entries(client, path)
@@ -45,21 +43,21 @@ private
       else
         begin
           result = client.list_folder path
-          @entries = result.entries
+          data = result.entries
           while result.has_more?
             result = client.list_folder_continue result.cursor
-            @entries += result.entries
+            data += result.entries
           end
-          @entries
         rescue DropboxApi::Errors::NotFoundError
-          @entries = []
+          data = []
         end
+        @entries = data.map { |e| [e.name, e.size] }
       end
     end
   end
 
   def retryable_failure?(error)
-    error.is_a?(DropboxApi::Errors::BasicError) && !manageable_failure?(error)
+    (error.is_a?(DropboxApi::Errors::BasicError) || error.is_a?(Faraday::TimeoutError)) && !manageable_failure?(error)
   end
 
   def manageable_failure?(error)

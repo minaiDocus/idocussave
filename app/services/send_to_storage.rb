@@ -24,17 +24,17 @@ class SendToStorage
 
   def run(&sender)
     run_concurrently do |client, metafile|
-      handle_failure metafile do
+      handle_failure metafile do |start_time|
         metafile.sending! metafile.path
 
         if up_to_date? client, metafile
-          logger.info "#{metafile.description} is up to date"
+          logger.info "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)"
         else
           logger.info "#{metafile.description} sending"
 
           sender.call client, metafile
 
-          logger.info "#{metafile.description} sent"
+          logger.info "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)"
         end
 
         metafile.synced!
@@ -79,9 +79,11 @@ private
   def handle_failure(metafile)
     retries = 0
     begin
-      yield
+      start_time = Time.now
+      yield start_time
     rescue => e
       failure_message = "#{metafile.description} failed : [#{e.class}] #{e.message}"
+      execution_time = (Time.now - start_time).round(3)
       if retryable_failure?(e)
         retries += 1
         if retries < 5
@@ -92,16 +94,18 @@ private
           sleep sleep_duration
           retry
         else
-          logger.info "#{failure_message} - retrying later"
-          metafile.not_synced!("[#{e.class}] #{e.message}")
+          logger.info "#{failure_message} - retrying later (#{execution_time}s)"
+          metafile.not_synced! "[#{e.class}] #{e.message}"
           Airbrake.notify(e)
         end
       elsif manageable_failure?(e)
-        logger.info "#{failure_message} - aborting"
-        metafile.not_retryable!("[#{e.class}] #{e.message}")
+        logger.info "#{failure_message} - aborting (#{execution_time}s)"
+        metafile.not_retryable! "[#{e.class}] #{e.message}"
       else
-        raise if Rails.env.test?
+        logger.info "#{failure_message} - retrying later (#{execution_time}s)"
+        metafile.not_synced! "[#{e.class}] #{e.message}"
         Airbrake.notify(e)
+        raise if Rails.env.test?
       end
       @semaphore.synchronize do
         @errors << e

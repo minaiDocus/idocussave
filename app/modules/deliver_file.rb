@@ -36,6 +36,7 @@ module DeliverFile
 
       if service_name.in?(services_name)
         logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{remote_files.size} - SYNC START"
+        start_time = Time.now
 
         remote_files = remote_files.sort do |a, b|
           a.local_name <=> b.local_name
@@ -56,7 +57,7 @@ module DeliverFile
         end
 
         total_synced = remote_files.select { |e| e.state == 'synced' }.size
-        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{total_synced}/#{remote_files.size} - SYNC END"
+        logger.info "[#{service_name}][#{remote_file.receiver_info}] #{pack.name} - #{total_synced}/#{remote_files.size} - SYNC END (#{(Time.now - start_time).round(3)}s)"
       else
         remote_files.each(&:cancel!)
       end

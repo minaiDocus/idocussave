@@ -29,7 +29,6 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/emailed_document.yml',
   'config/ibiza.yml',
   'config/slimpay.yml',
-  'config/dropbox.yml',
   'config/google_drive.yml',
   'config/pdftk.yml',
   'config/smtp.yml',

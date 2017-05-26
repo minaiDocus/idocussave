@@ -18,6 +18,7 @@ class DropboxImport
 
         print '.'
       end
+      true
     end
 
     def changed(object)
@@ -133,12 +134,11 @@ class DropboxImport
 
       customers.each do |customer|
         customer_path = base_path.join "#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
-
+        account_book_type_names = customer.account_book_types.order(name: :asc).map(&:name)
         period_types.each do |period_type|
           period_path = customer_path.join period_type
-
-          customer.account_book_types.order(name: :asc).each do |account_book_type|
-            @needed_folders << period_path.join(account_book_type.name).to_s
+          account_book_type_names.each do |account_book_type_name|
+            @needed_folders << period_path.join(account_book_type_name).to_s
           end
         end
       end
