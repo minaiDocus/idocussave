@@ -53,8 +53,7 @@ module Idocus
       :answers,
       :access_token,
       :token,
-      :connections, # Budgea webhooks param
-      :user         # Budgea webhooks param
+      :connections # Budgea webhooks param
     ]
 
 
