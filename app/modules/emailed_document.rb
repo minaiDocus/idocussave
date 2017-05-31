@@ -269,8 +269,7 @@ class EmailedDocument
   end
 
   def supported_attachment_filename?(filename)
-    return true if File.extname(filename).casecmp('.pdf').zero?
-    return true if File.extname(filename).downcase.in?(UploadedDocument::VALID_EXTENSION) && File.basename(filename) =~ /^ido+\d{1,3}/i
+    return true if File.extname(filename).downcase.in?(UploadedDocument::VALID_EXTENSION)
     false
   end
 
