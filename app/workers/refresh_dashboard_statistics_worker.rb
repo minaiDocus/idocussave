@@ -1,8 +1,10 @@
 class RefreshDashboardStatisticsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :default, retry: :false, unique: :until_and_while_executing
+  sidekiq_options retry: false
 
   def perform
-    StatisticsManager::Generator.generate_dashboard_statistics
+    UniqueJobs.for 'RefreshDashboardStatistics' do
+      StatisticsManager::Generator.generate_dashboard_statistics
+    end
   end
 end

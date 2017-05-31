@@ -1,16 +1,16 @@
 defaults: &defaults
-  address:    idocus.com
-  port:       995
-  enable_ssl: true
-  user_name:  '*.sub.example.com'
-  password:   password
+  path:       '/path_to_data'
+  server:     'ftp.example.com'
+  username:   'username'
+  password:   'password'
+  provider:   'scanning_provider'
   is_enabled: true
 
-development:
+test:
   <<: *defaults
   is_enabled: false
 
-test:
+development:
   <<: *defaults
   is_enabled: false
 

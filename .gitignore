@@ -26,4 +26,4 @@ config/pdftk.yml
 config/smtp.yml
 config/budgea.yml
 config/fiduceo.yml
-config/ppp_ftp.yml
+config/ftp_delivery.yml

@@ -34,8 +34,8 @@ class Document < ActiveRecord::Base
 
   after_create do |document|
     unless document.mixed? || Rails.env.test?
-      Document.delay(queue: :low).generate_thumbs(document.id)
-      Document.delay(queue: :low).extract_content(document.id)
+      Document.delay_for(10.seconds, queue: :low).generate_thumbs(document.id)
+      Document.delay_for(10.seconds, queue: :low).extract_content(document.id)
     end
   end
 

@@ -1,47 +1,88 @@
+## Miscelaneous workers
+
 RefreshDashboardStatisticsWorker:
-  every: '5m'
-
-JobOrchestratorWorker:
-  cron: '*/10 * * * *'
-
-FtpFetcherWorker:
-  cron: '0 * * * *'
-
-RetrieveOcrProcessedDocumentWorker:
-  every: '1m'
-
-UpdateAccountingPlanWorker:
-  cron: '00 4 * * *'
-
+  queue: default
+  every: 5m
 CreateInvoicePdfWorker:
+  queue: high
   cron: '0 3 1 * *'
+InitializePeriodsWorker:
+  queue: high
+  cron: '0 3 1 * *'
+DocumentNotificationWorker:
+  queue: default
+  cron: '0 8 * * *'
+ScansNotDeliveredNotificationWorker:
+  queue: high
+  cron: '0 1 * * *'
+UpdateAccountingPlanWorker:
+  queue: default
+  cron: '0 4 * * *'
+
+## Budgea retrievers workers
 
 SynchronizeRetrieverWorker:
-  every: '5s'
-
+  queue: default
+  every: 5s
 ProcessRetrievedDataWorker:
-  every: '5s'
-
+  queue: default
+  every: 5s
 ProcessOperationsWorker:
-  every: '1m'
-
+  queue: default
+  every: 10s
 RemoveOldestRetrievedDataWorker:
+  queue: default
   cron: '0 0 * * *'
-
 NotifyProcessedRequestsWorker:
+  queue: default
   cron: '0 8 * * *'
 
-InitializePeriodsWorker:
-  cron: '0 3 1 * *'
+## Accounting flow workers
 
-DocumentNotificationWorker:
-  cron: '0 8 * * *'
-
-ScansNotDeliveredNotificationWorker:
-  cron: '0 1 * * *'
-
-FileDeliveryWorker:
-  every: '1m'
-
+FtpFetcherWorker:
+  queue: default
+  every: 1m
+RetrieveEmailedDocumentWorker:
+  queue: default
+  every: 1m
 ImportFromDropboxWorker:
-  every: '1m'
+  queue: default
+  every: 10s
+
+RetrieveOcrProcessedDocumentWorker:
+  queue: high
+  every: 10s
+
+JobOrchestratorWorker:
+  queue: high
+  every: 10s
+
+RetrievePreAssignmentsWorker:
+  queue: default
+  every: 10s
+DeliverPreAssignmentsWorker:
+  queue: default
+  every: 10s
+
+## Delivery workers
+
+DeliverFileToDropbox: &deliver_file_defaults
+  class: DeliverFileWorker
+  queue: file_delivery
+  every: 10s
+  args: dbb
+DeliverFileToDropboxExtended:
+  <<: *deliver_file_defaults
+  args: dbx
+DeliverFileToBox:
+  <<: *deliver_file_defaults
+  args: box
+DeliverFileToGoogleDrive:
+  <<: *deliver_file_defaults
+  args: gdr
+DeliverFileToFTP:
+  <<: *deliver_file_defaults
+  args: ftp
+DeliverFileToKnowings:
+  <<: *deliver_file_defaults
+  args: kwg

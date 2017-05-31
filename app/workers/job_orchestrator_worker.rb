@@ -1,8 +1,10 @@
 class JobOrchestratorWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :default, retry: :false, unique: :until_and_while_executing
+  sidekiq_options queue: :high, retry: false
 
   def perform
-    JobsOrchestrator.perform
+    UniqueJobs.for 'JobOrchestrator' do
+      JobsOrchestrator.perform
+    end
   end
 end

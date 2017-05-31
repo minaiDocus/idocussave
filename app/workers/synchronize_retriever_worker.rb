@@ -1,11 +1,11 @@
 class SynchronizeRetrieverWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :retrievers, retry: :false
+  sidekiq_options retry: false
 
   def perform
     error = nil
     begin
-      $remote_lock.synchronize('synchronize_retriever_task', expiry: 15.minutes, retries: 1) do
+      $remote_lock.synchronize('synchronize_retriever_task', expiry: 1.day, retries: 1) do
         begin
           SynchronizeRetriever.concurrently(1.minute)
         rescue => e

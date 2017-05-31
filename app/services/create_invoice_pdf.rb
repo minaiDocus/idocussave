@@ -1,5 +1,6 @@
 class CreateInvoicePdf
   class << self
+    # TODO: make it idempotent
     def for_all
       time = 1.month.ago.beginning_of_month + 15.days
 
@@ -27,7 +28,7 @@ class CreateInvoicePdf
             print "-> Invoice #{invoice.number}..."
             CreateInvoicePdf.new(invoice).execute
             print "done\n"
-            InvoiceMailer.delay(priority: 1).notify(invoice)
+            InvoiceMailer.delay(queue: :high).notify(invoice)
           end
         end
       end

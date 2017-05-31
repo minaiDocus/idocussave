@@ -28,7 +28,7 @@ class TempDocument < ActiveRecord::Base
 
   after_create do |temp_document|
     unless Rails.env.test?
-      TempDocument.delay_for(10.seconds).generate_thumbs(temp_document.id.to_s)
+      TempDocument.delay_for(10.seconds, queue: :low).generate_thumbs(temp_document.id)
     end
   end
 

@@ -26,6 +26,7 @@ class EmailedDocument
 
 
   def self.config=(new_config)
+    config.is_enabled = new_config['is_enabled']
     config.address    = new_config['address']    if new_config['address']
     config.port       = new_config['port']       if new_config['port']
     config.user_name  = new_config['user_name']  if new_config['user_name']

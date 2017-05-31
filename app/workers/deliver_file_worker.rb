@@ -1,10 +1,10 @@
 class DeliverFileWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :low, retry: :false
+  sidekiq_options queue: :file_delivery, retry: false
 
   def perform(service_prefix)
-    UniqueJobs.for("DeliverFile_to_#{service_prefix}", 1.day) do
-      DeliverFile.to(service_prefix)
+    UniqueJobs.for "DeliverFile_to_#{service_prefix}" do
+      DeliverFile.to service_prefix
     end
   end
 end

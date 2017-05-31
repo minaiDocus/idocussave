@@ -17,20 +17,12 @@
   - [high, 10]
   - [default, 2]
   - [low, 1]
-  - [retrieve_emailed_document, 5]
-  - [pre_assignments_delivery, 7]
-  - [grouping_delivery, 9]
-  - [process_and_deliver_grouped, 9]
-  - [process_operations, 5]
-  - [retrieve_fiduceo_operations, 5]
-  - [retrieve_fiduceo_documents, 5]
-  - [retrieve_from_grouping, 9]
-  - [retrieve_preseizures, 9]
-  - [dematbox, 9]
-  - [retrievers, 9]
 
 # you can override concurrency based on environment
 production:
   :concurrency: 12
 staging:
   :concurrency: 12
+
+:scheduler:
+  :listened_queues_only: true

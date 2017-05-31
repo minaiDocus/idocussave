@@ -1,9 +1,10 @@
 class DeliverPreAssignmentsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :pre_assignments_delivery, retry: :false, unique: :until_and_while_executing
-
+  sidekiq_options retry: false, unique: :until_and_while_executing
 
   def perform(*args)
-    PreAssignmentDeliveryService.execute
+    UniqueJobs.for 'DeliverPreAssignments' do
+      PreAssignmentDeliveryService.execute
+    end
   end
 end

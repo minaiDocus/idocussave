@@ -1,6 +1,6 @@
 class ScansNotDeliveredNotificationWorker
   include Sidekiq::Worker
-  sidekiq_options retry: :false, unique: :until_and_while_executing
+  sidekiq_options queue: :high, retry: false
 
   def perform
     ScanService.notify_not_delivered

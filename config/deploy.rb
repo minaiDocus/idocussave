@@ -32,7 +32,7 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/google_drive.yml',
   'config/pdftk.yml',
   'config/smtp.yml',
-  'config/ppp_ftp.yml'
+  'config/ftp_delivery.yml'
 )
 
 server 'my.idocus.com', user: 'idocus', roles: %w{app db web}

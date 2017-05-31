@@ -36,7 +36,7 @@ private
 
   def unauthorize_dematbox
     @customer.update_attribute(:is_dematbox_authorized, false) if @customer.is_dematbox_authorized
-    @customer.dematbox.delay(priority: 1).unsubscribe if @customer.dematbox.try(:is_configured)
+    @customer.dematbox.delay(queue: :high).unsubscribe if @customer.dematbox.try(:is_configured)
   end
 
   def authorize_retriever

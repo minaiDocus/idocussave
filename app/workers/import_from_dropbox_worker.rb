@@ -1,9 +1,9 @@
 class ImportFromDropboxWorker
   include Sidekiq::Worker
-  sidekiq_options retry: :false
+  sidekiq_options retry: false
 
   def perform
-    UniqueJobs.for('ImportFromDropbox', 6.hours) do
+    UniqueJobs.for 'ImportFromDropbox' do
       DropboxImport.check
     end
   end

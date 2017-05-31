@@ -1,13 +1,16 @@
 class FtpFetcherWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :default, retry: :false, unique: :until_and_while_executing
-
+  sidekiq_options retry: false, unique: :until_and_while_executing
 
   def perform
-    FtpFetcher.fetch(PPPFtpConfiguration::FTP_SERVER,
-                     PPPFtpConfiguration::FTP_USERNAME,
-                     PPPFtpConfiguration::FTP_PASSWORD,
-                     PPPFtpConfiguration::FTP_PATH,
-                     PPPFtpConfiguration::FTP_PROVIDER)
+    if FTPDeliveryConfiguration::IS_ENABLED
+      UniqueJobs.for 'FtpFetcher' do
+        FtpFetcher.fetch(FTPDeliveryConfiguration::FTP_SERVER,
+                         FTPDeliveryConfiguration::FTP_USERNAME,
+                         FTPDeliveryConfiguration::FTP_PASSWORD,
+                         FTPDeliveryConfiguration::FTP_PATH,
+                         FTPDeliveryConfiguration::FTP_PROVIDER)
+      end
+    end
   end
 end

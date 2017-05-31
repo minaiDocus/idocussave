@@ -128,6 +128,10 @@ class TempPack < ActiveRecord::Base
     end
   end
 
+  def not_processed?
+    document_not_processed_count > 0
+  end
+
   private
 
 
