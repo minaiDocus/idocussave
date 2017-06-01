@@ -18,6 +18,8 @@ class DiscountBillingService
       option.price_in_cents_wo_vat = discount.total_amount_in_cents
       period.save
     end
+
+    UpdatePeriodPriceService.new(period).execute
   end
 
   def title
