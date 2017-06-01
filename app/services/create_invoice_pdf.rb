@@ -12,6 +12,9 @@ class CreateInvoicePdf
 
       Organization.billed.order(created_at: :asc).each do |organization|
         organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+        #Update discount only for organization and when generating invoice
+        DiscountBillingService.update_period(organization_period)
+
         unless organization_period.invoices.present?
           periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
           if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0

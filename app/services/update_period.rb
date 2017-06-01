@@ -49,7 +49,7 @@ class UpdatePeriod
 
   def options
     if @subscription.organization
-      _options = extra_options
+      _options = [extra_options, discount_options]
     else
       _options = [base_options, journals_option, order_options, extra_options]
     end
@@ -247,6 +247,20 @@ class UpdatePeriod
     end
   end
 
+  def discount_options
+    discount = DiscountBillingService.new(@subscription.organization)
+
+    option = ProductOptionOrder.new
+
+    option.title       = discount.title
+    option.name        = 'discount_option'
+    option.duration    = 1
+    option.group_title = 'Autres'
+    option.is_an_extra = true
+    option.price_in_cents_wo_vat = discount.total_amount_in_cents
+
+    option
+  end
 
   def order_options
     @period.orders.order(created_at: :asc).map do |order|

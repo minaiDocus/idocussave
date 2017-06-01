@@ -130,6 +130,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def retriever_price_option
-    %w(ADV).include?(user.organization.code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
+    organization_code = organization.try(:code) || user.organization.code
+    %w(ADV).include?(organization_code) ? 'reduced_retriever'.to_sym : 'retriever'.to_sym
   end
 end
