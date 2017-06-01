@@ -49,7 +49,6 @@ describe SendToDropbox do
     expect(WebMock).to have_requested(:any, /.*/).times(2)
 
     expect(result).to eq true
-    expect(@remote_file.revision).to eq '1dd570c1fec'
   end
 
   it 'uploads a file by chunk' do
@@ -113,10 +112,6 @@ describe SendToDropbox do
   end
 
   context 'a file as already been uploaded' do
-    before(:each) do
-      @remote_file.update(revision: '1dd570c1fec')
-    end
-
     it 'does not update an existing file' do
       result = VCR.use_cassette('dropbox/does_not_update_an_existing_file', preserve_exact_body_bytes: true) do
         SendToDropbox.new(@dropbox, [@remote_file]).execute
@@ -126,7 +121,6 @@ describe SendToDropbox do
       expect(WebMock).to have_requested(:any, /.*/).times(1)
 
       expect(result).to eq true
-      expect(@remote_file.revision).to eq '1dd570c1fec'
     end
 
     it 'updates an existing file' do
@@ -147,7 +141,6 @@ describe SendToDropbox do
         expect(WebMock).to have_requested(:any, /.*/).times(2)
 
         expect(result).to eq true
-        expect(@remote_file.revision).to eq '1de570c1fec'
       end
     end
   end

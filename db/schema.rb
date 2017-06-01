@@ -1252,7 +1252,6 @@ ActiveRecord::Schema.define(version: 20170516165410) do
     t.string   "group_id_mongo_id",        limit: 255
     t.integer  "remotable_id",             limit: 4
     t.string   "remotable_id_mongo_id",    limit: 255
-    t.string   "revision",                 limit: 255
   end
 
   create_table "retrieved_data", force: :cascade do |t|

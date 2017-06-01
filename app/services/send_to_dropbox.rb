@@ -3,7 +3,7 @@ class SendToDropbox < SendToStorage
   def execute
     run do |client, metafile|
       if metafile.size < @options[:chunk_size]
-        result = client.upload metafile.path, File.read(metafile.local_path), mode: :overwrite
+        client.upload metafile.path, File.read(metafile.local_path), mode: :overwrite
       else
         while metafile.upload_session[:offset] < metafile.size
           chunk = File.read metafile.local_path, @options[:chunk_size], metafile.upload_session[:offset]
@@ -13,12 +13,11 @@ class SendToDropbox < SendToStorage
             client.upload_session_append_v2 metafile.upload_session, chunk
             metafile.upload_session[:offset] += @options[:chunk_size]
           else
-            result = client.upload_session_finish metafile.upload_session, { mode: :overwrite, path: metafile.path }, chunk
+            client.upload_session_finish metafile.upload_session, { mode: :overwrite, path: metafile.path }, chunk
             metafile.upload_session[:offset] = metafile.size
           end
         end
       end
-      metafile.update(revision: result.rev) if result.is_a? DropboxApi::Metadata::File
     end
   end
 
