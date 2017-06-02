@@ -46,7 +46,7 @@ class Box < ActiveRecord::Base
     end
 
     def config
-      @config ||= Configuration.new
+      @@config ||= Configuration.new
     end
 
     def config=(new_config)
