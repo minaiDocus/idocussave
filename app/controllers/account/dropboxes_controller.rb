@@ -46,7 +46,7 @@ private
   end
 
   def load_authenticator
-    @authenticator = DropboxApi::Authenticator.new(Rails.application.secrets.dropbox_api_key, Rails.application.secrets.dropbox_api_secret)
+    @authenticator = DropboxApi::Authenticator.new(Rails.application.secrets.dropbox_api['key'], Rails.application.secrets.dropbox_api['secret'])
   end
 
   def load_dropbox

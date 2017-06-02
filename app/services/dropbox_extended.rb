@@ -3,8 +3,8 @@ module DropboxExtended
   class << self
     def authenticator
       DropboxApi::Authenticator.new(
-        Rails.application.secrets.dropbox_extended_api_key,
-        Rails.application.secrets.dropbox_extended_api_secret
+        Rails.application.secrets.dropbox_extended_api['key'],
+        Rails.application.secrets.dropbox_extended_api['secret']
       )
     end
 
@@ -20,7 +20,7 @@ module DropboxExtended
     def access_token
       # TODO remove old attribute from Settings after migration
       # Settings.first.dropbox_extended_access_token
-      Rails.application.secrets.dropbox_extended_access_token
+      Rails.application.secrets.dropbox_extended_api['access_token']
     end
 
     def client

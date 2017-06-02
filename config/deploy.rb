@@ -23,13 +23,11 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/dematbox.yml',
   'config/budgea.yml',
   'config/fiduceo.yml',
-  'config/box.yml',
   'config/dematbox_service_api.yml',
   'config/knowings.yml',
   'config/emailed_document.yml',
   'config/ibiza.yml',
   'config/slimpay.yml',
-  'config/google_drive.yml',
   'config/pdftk.yml',
   'config/smtp.yml',
   'config/ftp_delivery.yml'

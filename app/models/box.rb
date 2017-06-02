@@ -48,15 +48,15 @@ class Box < ActiveRecord::Base
     def config
       @@config ||= Configuration.new
     end
-
-    def config=(new_config)
-      config.client_id     = new_config['client_id']     if new_config['client_id']
-      config.client_secret = new_config['client_secret'] if new_config['client_secret']
-      config.callback_url  = new_config['callback_url']  if new_config['callback_url']
-    end
   end
 
   class Configuration
     attr_accessor :client_id, :client_secret, :callback_url
+
+    def initialize
+      @client_id     = Rails.application.secrets.box_api['client_id']
+      @client_secret = Rails.application.secrets.box_api['client_secret']
+      @callback_url  = Rails.application.secrets.box_api['callback_url']
+    end
   end
 end
