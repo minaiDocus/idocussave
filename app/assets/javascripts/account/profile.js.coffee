@@ -46,7 +46,7 @@ jQuery ->
       type: "POST",
       success: (data) ->
         if data
-          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Vos modification ont été enregistrée.</span></div></div>")
+          $(".alerts").html("<div class='row-fluid'><div class='span12 alert alert-success'><a class='close' data-dismiss='alert'> × </a><span> Votre modification a été enregistrée.</span></div></div>")
           if is_enable
             $(".service_config_"+service).show()
           else
