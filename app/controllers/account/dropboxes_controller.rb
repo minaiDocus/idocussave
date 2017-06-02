@@ -1,8 +1,7 @@
-# -*- encoding : UTF-8 -*-
 class Account::DropboxesController < Account::AccountController
-  before_filter :dropbox_authorized?
-  before_filter :load_dropbox
-  before_filter :load_authenticator
+  before_action :verify_authorization
+  before_action :load_dropbox
+  before_action :load_authenticator
 
   def authorize_url
     redirect_to @authenticator.authorize_url(redirect_uri: callback_account_dropbox_url)
@@ -39,7 +38,7 @@ class Account::DropboxesController < Account::AccountController
 
 private
 
-  def dropbox_authorized?
+  def verify_authorization
     unless @user.find_or_create_external_file_storage.is_dropbox_basic_authorized?
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Dropbox."
       redirect_to account_profile_path

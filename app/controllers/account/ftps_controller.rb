@@ -1,18 +1,16 @@
-# -*- encoding : UTF-8 -*-
 class Account::FtpsController < Account::AccountController
-  before_filter :load_ftp
+  before_action :verify_authorization
+  before_action :load_ftp
 
-
-  # POST /account/ftp/configure
   def configure
     @ftp.host     = params[:ftp][:host]
     @ftp.login    = params[:ftp][:login]
     @ftp.password = params[:ftp][:password]
 
     if @ftp.save && @ftp.verify!
-      flash[:notice] = "Configuré avec succès."
+      flash[:success] = 'Votre compte FTP a été configuré avec succès.'
     else
-      flash[:error] = "Paramètre(s) non valide."
+      flash[:error] = 'Vos paramètres FTP ne sont pas valides.'
     end
 
     respond_to do |format|
@@ -21,18 +19,16 @@ class Account::FtpsController < Account::AccountController
     end
   end
 
+private
 
-  private
+  def verify_authorization
+    unless @user.find_or_create_external_file_storage.is_ftp_authorized?
+      flash[:error] = "Vous n'êtes pas autorisé à utiliser FTP."
+      redirect_to account_profile_path(panel: 'efs_management')
+    end
+  end
 
   def load_ftp
-    @user.external_file_storage.create unless @user.external_file_storage
-
-    unless @user.external_file_storage.ftp
-      @user.external_file_storage.ftp = Ftp.new
-
-      @user.external_file_storage.ftp.save
-    end
-
-    @ftp = @user.external_file_storage.ftp
+    @ftp = @user.find_or_create_external_file_storage.ftp
   end
 end

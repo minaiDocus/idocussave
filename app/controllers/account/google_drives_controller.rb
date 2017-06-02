@@ -1,17 +1,13 @@
-# -*- encoding : UTF-8 -*-
 class Account::GoogleDrivesController < Account::AccountController
-  before_filter :verify_authorization
-  before_filter :load_google_doc
+  before_action :verify_authorization
+  before_action :load_google_doc
 
-
-  # POST /account/google_drive/authorize_url
   def authorize_url
     session[:google_drive_state] = SecureRandom.hex(30)
 
     redirect_to GoogleDrive::Client.new.authorize_url(callback_account_google_drive_url, session[:google_drive_state])
   end
 
-  # GET /account/google_drive/callback
   def callback
     if params[:state].present? && params[:state] == session[:google_drive_state]
       if params[:code].present?
@@ -42,18 +38,14 @@ class Account::GoogleDrivesController < Account::AccountController
     redirect_to account_profile_path(panel: 'efs_management')
   end
 
-
-  private
-
+private
 
   def verify_authorization
     unless @user.find_or_create_external_file_storage.is_google_docs_authorized?
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Google Drive."
-
       redirect_to account_profile_path
     end
   end
-
 
   def load_google_doc
     @google_doc = @user.find_or_create_external_file_storage.google_doc

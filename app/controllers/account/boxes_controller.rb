@@ -1,5 +1,5 @@
 class Account::BoxesController < Account::AccountController
-  before_action :authorized?
+  before_action :verify_authorization
   before_action :load_box
 
   def authorize_url
@@ -8,14 +8,18 @@ class Account::BoxesController < Account::AccountController
   end
 
   def callback
-    @box.get_access_token(params[:code])
-    flash[:success] = 'Votre compte Box a été configurée avec succès.'
+    if params[:error] == 'access_denied'
+      flash[:error] = "Vous avez refusé l'accès à votre compte Box."
+    else
+      @box.get_access_token(params[:code])
+      flash[:success] = 'Votre compte Box a été configurée avec succès.'
+    end
     redirect_to account_profile_path(panel: 'efs_management')
   end
 
 private
 
-  def authorized?
+  def verify_authorization
     unless @user.find_or_create_external_file_storage.is_box_authorized?
       flash[:error] = "Vous n'êtes pas autorisé à utiliser Box."
       redirect_to account_profile_path(panel: 'efs_management')
