@@ -15,6 +15,7 @@
 # http://www.mikeperham.com/2013/11/13/advanced-sidekiq-host-specific-queues/
 :queues:
   - [high, 10]
+  - [mailers, 3]
   - [default, 2]
   - [low, 1]
 
