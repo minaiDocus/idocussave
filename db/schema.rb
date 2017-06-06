@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170601193624) do
+ActiveRecord::Schema.define(version: 20170606124607) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -351,7 +351,6 @@ ActiveRecord::Schema.define(version: 20170601193624) do
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "old_access_token",                  limit: 255
     t.string   "path",                              limit: 255,        default: ":code/:year:month/:account_book/", null: false
     t.integer  "dropbox_id",                        limit: 4
     t.datetime "changed_at"
