@@ -149,7 +149,7 @@ class ApplicationController < ActionController::Base
 
 
   def log_visit
-    unless request.path.match('(dematbox|system|assets|num|preview)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?)
+    unless request.path.match('(dematbox|system|assets|num|preview)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?) || controller_name == 'compta'
       unless current_user && current_user.is_admin
         event = Event.new
         event.action      = 'visit'
