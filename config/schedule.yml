@@ -2,7 +2,7 @@
 
 RefreshDashboardStatisticsWorker:
   queue: default
-  every: 5m
+  cron: '*/5 * * * *'
 CreateInvoicePdfWorker:
   queue: high
   cron: '0 3 1 * *'
@@ -23,13 +23,13 @@ UpdateAccountingPlanWorker:
 
 SynchronizeRetrieverWorker:
   queue: default
-  every: 5s
+  cron: '*/5 * * * * *'
 ProcessRetrievedDataWorker:
   queue: default
-  every: 5s
+  cron: '*/5 * * * * *'
 ProcessOperationsWorker:
   queue: default
-  every: 10s
+  cron: '*/10 * * * * *'
 RemoveOldestRetrievedDataWorker:
   queue: default
   cron: '0 0 * * *'
@@ -41,35 +41,35 @@ NotifyProcessedRequestsWorker:
 
 FtpFetcherWorker:
   queue: default
-  every: 1m
+  cron: '* * * * *'
 RetrieveEmailedDocumentWorker:
   queue: default
-  every: 1m
+  cron: '* * * * *'
 ImportFromDropboxWorker:
   queue: default
-  every: 10s
+  cron: '*/10 * * * * *'
 
 RetrieveOcrProcessedDocumentWorker:
   queue: high
-  every: 10s
+  cron: '*/10 * * * * *'
 
 JobOrchestratorWorker:
   queue: high
-  every: 10s
+  cron: '*/10 * * * * *'
 
 RetrievePreAssignmentsWorker:
   queue: default
-  every: 10s
+  cron: '*/10 * * * * *'
 DeliverPreAssignmentsWorker:
   queue: default
-  every: 10s
+  cron: '*/10 * * * * *'
 
 ## Delivery workers
 
 DeliverFileToDropbox: &deliver_file_defaults
   class: DeliverFileWorker
   queue: file_delivery
-  every: 10s
+  cron: '*/10 * * * * *'
   args: dbb
 DeliverFileToDropboxExtended:
   <<: *deliver_file_defaults
