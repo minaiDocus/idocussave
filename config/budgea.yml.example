@@ -1,5 +1,5 @@
 defaults: &defaults
-  domain: idocus.biapi.pro
+  domain: idocus-test.biapi.pro
   client_id:
   client_secret:
   redirect_uri: http://localhost:3000/

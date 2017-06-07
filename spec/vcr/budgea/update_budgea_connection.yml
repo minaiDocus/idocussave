@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://idocus.biapi.pro/2.0/users/me/connections/245
+    uri: https://idocus-test.biapi.pro/2.0/users/me/connections/245
     body:
       encoding: US-ASCII
       string: login=John%20Doe%202&website=par

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: delete
-    uri: https://idocus.biapi.pro/2.0/users/me/connections/257
+    uri: https://idocus-test.biapi.pro/2.0/users/me/connections/257
     body:
       encoding: US-ASCII
       string: ''

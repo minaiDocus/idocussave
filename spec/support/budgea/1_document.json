@@ -11,7 +11,7 @@
               "name" : "Not loaded",
               "id_thumbnail" : 12,
               "id_file" : 11,
-              "url" : "https://idocus.biapi.pro/2.0/users/me/documents/15/file/2pages.pdf",
+              "url" : "https://idocus-test.biapi.pro/2.0/users/me/documents/15/file/2pages.pdf",
               "timestamp" : "2015-07-04 15:16:30",
               "number" : "2pages",
               "duedate" : null,
@@ -22,7 +22,7 @@
               "id_subscription" : 5,
               "income" : false,
               "date" : "2015-07-01",
-              "thumb_url" : "https://idocus.biapi.pro/2.0/users/me/documents/15/thumbnail/2pages.pdf_thumbnail.png",
+              "thumb_url" : "https://idocus-test.biapi.pro/2.0/users/me/documents/15/thumbnail/2pages.pdf_thumbnail.png",
               "id" : 15,
               "vat" : null,
               "total_amount" : 0.0

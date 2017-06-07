@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://idocus.biapi.pro/2.0/users/me/connections/263/documents
+    uri: https://idocus-test.biapi.pro/2.0/users/me/connections/263/documents
     body:
       encoding: US-ASCII
       string: ''

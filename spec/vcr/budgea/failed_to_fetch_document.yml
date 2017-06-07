@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    uri: https://idocus-test.biapi.pro/2.0/users/me/documents/15/file
     body:
       encoding: US-ASCII
       string: ''
@@ -25,7 +25,7 @@ http_interactions:
   recorded_at: Thu, 11 Nov 2016 20:00:15 GMT
 - request:
     method: get
-    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    uri: https://idocus-test.biapi.pro/2.0/users/me/documents/15/file
     body:
       encoding: US-ASCII
       string: ''
@@ -48,7 +48,7 @@ http_interactions:
   recorded_at: Thu, 11 Nov 2016 20:00:17 GMT
 - request:
     method: get
-    uri: https://idocus.biapi.pro/2.0/users/me/documents/15/file
+    uri: https://idocus-test.biapi.pro/2.0/users/me/documents/15/file
     body:
       encoding: US-ASCII
       string: ''

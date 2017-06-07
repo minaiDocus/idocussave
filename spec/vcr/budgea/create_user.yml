@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://idocus.biapi.pro/2.0/auth/init?client_id=30638817&client_secret=xKEOtBwqzvnlYR4kj2u5oXsqcOEl1t2Z
+    uri: https://idocus-test.biapi.pro/2.0/auth/init?client_id=1665108&client_secret=vdao1j5N8vtUgJCvV/voYffYd4d425k7
     body:
       encoding: US-ASCII
       string: ''
