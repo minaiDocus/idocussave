@@ -20,13 +20,6 @@ UpdateAccountingPlanWorker:
   cron: '0 4 * * *'
 
 ## Budgea retrievers workers
-
-SynchronizeRetrieverWorker:
-  queue: default
-  cron: '*/5 * * * * *'
-ProcessRetrievedDataWorker:
-  queue: default
-  cron: '*/5 * * * * *'
 ProcessOperationsWorker:
   queue: default
   cron: '*/10 * * * * *'
@@ -55,7 +48,7 @@ RetrieveOcrProcessedDocumentWorker:
 
 JobOrchestratorWorker:
   queue: high
-  cron: '*/10 * * * * *'
+  cron: '*/2 * * * * *'
 
 RetrievePreAssignmentsWorker:
   queue: default

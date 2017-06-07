@@ -1,78 +1,13 @@
 # -*- encoding : UTF-8 -*-
 class ProcessRetrievedData
-  class << self
-    def concurrently(running_time=20.seconds)
-      queue          = Queue.new
-      threads        = []
-      threads_count  = 10
-      semaphore      = Mutex.new
-      processing_ids = []
-      user_ids       = []
-      logger         = Logger.new("#{Rails.root}/log/#{Rails.env}_process_retrieved_data.log")
-
-      start_time = Time.now
-
-      threads_count.times do
-        threads << Thread.new do
-          loop do
-            retrieved_data = queue.pop
-            break if retrieved_data.nil?
-
-            result = Benchmark.measure do
-              new(retrieved_data, start_time + running_time).execute
-            end
-            semaphore.synchronize do
-              logger.info "[#{retrieved_data.user.code}][#{retrieved_data.id}] #{retrieved_data.state} : #{result.to_s.strip}"
-              processing_ids -= [retrieved_data.id]
-              user_ids       -= [retrieved_data.user.id]
-            end
-          end
-        end
-      end
-
-      loop do
-        if Time.now < start_time + running_time
-          workers_count = threads_count - queue.size
-          retrieved_data = []
-          if workers_count > 0
-            retrieved_data = RetrievedData.not_processed.where.not(id: processing_ids).limit(workers_count).to_a.
-              select do |e|
-                if e.user_id.in?(user_ids)
-                  false
-                else
-                  semaphore.synchronize { user_ids += [e.user_id] }
-                  true
-                end
-              end
-          end
-          if retrieved_data.empty?
-            sleep(0.5)
-          else
-            semaphore.synchronize do
-              processing_ids += retrieved_data.map(&:id)
-              message = "Adding #{retrieved_data.count} job(s) to queue :\n"
-              message += retrieved_data.map { |e| "\t[#{e.user.code}][#{e.id}]" }.join("\n")
-              logger.info message
-            end
-            retrieved_data.each { |r| queue << r }
-          end
-        else
-          threads_count.times { queue << nil }
-          break
-        end
-      end
-
-      threads.each(&:join)
-      nil
-    end
-  end
-
   def initialize(retrieved_data, run_until=nil)
     @retrieved_data = retrieved_data
     @run_until      = run_until
   end
 
   def execute
+    log "[#{@retrieved_data.user.code}][#{@retrieved_data.id}] start"
+    start_time = Time.now
     user = @retrieved_data.user
     connections = @retrieved_data.content['connections']
     if connections.present?
@@ -301,6 +236,8 @@ class ProcessRetrievedData
     else
       @retrieved_data.processed
     end
+  ensure
+    log "[#{user.code}][#{@retrieved_data.id}] #{@retrieved_data.state} - done: #{(Time.now - start_time).round(3)} sec"
   end
 
 private
@@ -368,5 +305,15 @@ private
     bank_account.created_at < 1.month.ago &&
       operation.date < Date.today.beginning_of_month &&
       operation.date < 1.week.ago.to_date
+  end
+
+  def log(message)
+    $remote_lock.synchronize 'ProcessRetrievedDataLog', expiry: 1.second do
+      logger.info(message)
+    end
+  end
+
+  def logger
+    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_process_retrieved_data.log")
   end
 end

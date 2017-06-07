@@ -2,19 +2,10 @@ class ProcessRetrievedDataWorker
   include Sidekiq::Worker
   sidekiq_options retry: false
 
-  def perform
-    error = nil
-    begin
-      $remote_lock.synchronize('process_retrieved_data_task', expiry: 1.day, retries: 1) do
-        begin
-          ProcessRetrievedData.concurrently(1.minute)
-        rescue => e
-          error = e
-        end
-      end
-    rescue RemoteLock::Error
+  def perform(retrieved_data_id)
+    UniqueJobs.for "ProcessRetrievedDataWorker-#{retrieved_data_id}" do
+      retrieved_data = RetrievedData.find retrieved_data_id
+      ProcessRetrievedData.new(retrieved_data).execute
     end
-    raise error if error
-    true
   end
 end

@@ -23,5 +23,17 @@ class JobsOrchestrator
         PublishDocumentWorker.perform_async(temp_pack.id)
       end
     end
+    # Synchronize retrievers
+    Retriever.not_processed.each do |retriever|
+      UniqueJobs.for "SynchronizeRetrieverWorker-#{retriever.id}" do
+        SynchronizeRetrieverWorker.perform_async retriever.id
+      end
+    end
+    # Process retrieved data
+    RetrievedData.not_processed.each do |retrieved_data|
+      UniqueJobs.for "ProcessRetrievedDataWorker-#{retrieved_data.id}" do
+        ProcessRetrievedDataWorker.perform_async retrieved_data.id
+      end
+    end
   end
 end
