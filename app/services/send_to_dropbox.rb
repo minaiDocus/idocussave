@@ -56,7 +56,7 @@ private
   end
 
   def retryable_failure?(error)
-    (error.is_a?(DropboxApi::Errors::BasicError) || error.is_a?(Faraday::TimeoutError)) && !manageable_failure?(error)
+    (error.is_a?(DropboxApi::Errors::BasicError) || error.is_a?(DropboxApi::Errors::HttpError) || error.is_a?(Faraday::TimeoutError)) && !manageable_failure?(error)
   end
 
   def manageable_failure?(error)
