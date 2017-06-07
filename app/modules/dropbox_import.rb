@@ -10,7 +10,7 @@ class DropboxImport
         rescue DropboxApi::Errors::HttpError => e
           if e.message.match(/invalid_access_token/)
             dropbox.reset_access_token
-            NotifyDropboxError.new(@storage.user, 'dropbox_invalid_access_token').execute
+            NotifyDropboxError.new(dropbox.user, 'dropbox_invalid_access_token').execute
           else
             raise
           end
