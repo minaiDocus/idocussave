@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170606124607) do
+ActiveRecord::Schema.define(version: 20170607173657) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1384,7 +1384,6 @@ ActiveRecord::Schema.define(version: 20170606124607) do
     t.text   "notify_dematbox_order_to",            limit: 65535
     t.text   "notify_paper_set_order_to",           limit: 65535
     t.text   "micro_package_authorized_to",         limit: 65535
-    t.text   "dropbox_extended_access_token",       limit: 65535
     t.text   "paper_process_operators",             limit: 65535
     t.text   "compta_operators",                    limit: 65535
     t.text   "default_url",                         limit: 65535

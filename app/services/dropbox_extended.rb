@@ -18,8 +18,6 @@ module DropboxExtended
     end
 
     def access_token
-      # TODO remove old attribute from Settings after migration
-      # Settings.first.dropbox_extended_access_token
       Rails.application.secrets.dropbox_extended_api['access_token']
     end
 
