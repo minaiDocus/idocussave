@@ -270,7 +270,7 @@ class Account::CustomersController < Account::OrganizationController
       :phone_number,
       { group_ids: [] },
       :parent_id,
-      { options_attributes: [:is_taxable, :is_pre_assignment_date_computed] }
+      { options_attributes: [:id, :is_taxable, :is_pre_assignment_date_computed] }
     ]
 
     attributes[-1][:options_attributes] << :is_own_csv_descriptor_used if @user.is_admin
