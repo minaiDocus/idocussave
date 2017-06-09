@@ -22,6 +22,7 @@ class Operation < ActiveRecord::Base
   scope :not_recently_added, -> { where('operations.created_at < ?', 7.days.ago) }
   scope :forced_processing,  -> { where.not(forced_processing_at: nil) }
   scope :waiting_processing, -> { where(forced_processing_at: nil) }
+  scope :not_deleted,        -> { where(deleted_at: nil) }
 
   scope :not_recently_added_or_forced, -> { where('operations.created_at < ? OR operations.forced_processing_at IS NOT ?', 7.days.ago, nil) }
 
@@ -47,7 +48,7 @@ class Operation < ActiveRecord::Base
   end
 
   def self.processable
-    Operation.not_processed.not_locked.order(date: :asc).select do |operation|
+    Operation.not_processed.not_deleted.not_locked.order(date: :asc).select do |operation|
       if operation.user.options.operation_processing_forced?
         true
       else
