@@ -72,6 +72,7 @@ class DropboxImport
       has_more = true
 
       if @current_cursor.nil?
+        @dropbox.import_folder_paths = []
         update_folders
         @current_cursor = client.list_folder_get_latest_cursor(path: @current_path_prefix, recursive: true).cursor
       end
