@@ -3,7 +3,6 @@ class DropboxBasic < ActiveRecord::Base
   serialize :attachment_names
   serialize :import_folder_paths
 
-  # TODO: after migration remove old_access_token
   attr_encrypted :access_token, random_iv: true
 
   validates :encrypted_access_token, symmetric_encryption: true, unless: Proc.new { |r| r.encrypted_access_token.nil? }
