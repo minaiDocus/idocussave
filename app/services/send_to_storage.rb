@@ -86,7 +86,7 @@ private
       execution_time = (Time.now - start_time).round(3)
       if retryable_failure?(e)
         retries += 1
-        if retries < 5
+        if retries < 8
           min_sleep_seconds = Float(2 ** (retries/2.0))
           max_sleep_seconds = Float(2 ** retries)
           sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
