@@ -16,6 +16,7 @@ class Organization < ActiveRecord::Base
   has_one    :csv_descriptor
   has_one    :file_sending_kit
   has_one    :file_naming_policy
+  has_one    :debit_mandate, dependent: :destroy
 
   has_many   :packs
   has_many   :events
@@ -176,10 +177,11 @@ class Organization < ActiveRecord::Base
     end
 
     if contains[:is_debit_mandate_not_configured].present?
-      user_ids      = DebitMandate.configured.pluck(:user_id)
-      leader_ids    = Organization.all.pluck(:leader_id)
-      ids           = contains[:is_debit_mandate_not_configured] == '1' ? (leader_ids - user_ids) : user_ids
-      organizations = organizations.where(leader_id: ids)
+      if contains[:is_debit_mandate_not_configured] == '1'
+        organizations = organizations.where.not(id: DebitMandate.configured.pluck(:organization_id))
+      else
+        organizations = organizations.where(id: DebitMandate.configured.pluck(:organization_id))
+      end
     end
 
     organizations = organizations.where("name LIKE ?", "%#{contains[:name]}%")               unless contains[:name].blank?

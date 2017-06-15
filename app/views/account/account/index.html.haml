@@ -18,15 +18,15 @@
               %i
                 Ce support est soumis à conditions. Voir les
                 = link_to 'Conditions Générales d’Utilisations', 'https://docs.idocus.com/CGU.pdf'
-              - if @user.organization.addresses.select { |a| a.is_for_billing }.count == 0 || !@user.organization.leader.try(:debit_mandate).try(:is_configured?)
+              - if @user.organization.addresses.select { |a| a.is_for_billing }.count == 0 || !@user.organization.debit_mandate.configured?
                 %br
                 %br
                 Merci de renseigner vos données de facturation :
                 %ul
                   - if @user.organization.addresses.select { |a| a.is_for_billing }.count == 0
                     %li= link_to 'Adresse de facturation', account_organization_path(@user.organization, tab: 'addresses')
-                  - if !@user.organization.leader.try(:debit_mandate).try(:is_configured?)
-                    %li= link_to 'Mode de paiement', account_profile_path(panel: 'payment_management')
+                  - unless @user.organization.debit_mandate.configured?
+                    %li= link_to 'Mode de paiement', account_organization_path(@user.organization, tab: 'payments')
                 %span.red Votre compte pourra être suspendu si ces informations n’étaient pas complétées.
               .ie-message.margin1top
                 Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).

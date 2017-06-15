@@ -1,16 +1,8 @@
 # Generate a SepaDirectDebit CSV format to import in Slimpay
 class SepaDirectDebitGenerator
   def self.execute(invoice_time, debit_date)
-    data = DebitMandate.all.map do |debit_mandate|
-    subject = if debit_mandate.user.try(:is_prescriber)
-                    debit_mandate.user.try(:organization)
-                  else
-                    debit_mandate.user
-                  end
-
-      next unless subject
-
-      invoice = subject.invoices.where(
+    data = DebitMandate.configured.map do |debit_mandate|
+      invoice = debit_mandate.organization.invoices.where(
         "created_at >= ? AND created_at <= ?", invoice_time.beginning_of_month, invoice_time.end_of_month
       ).first
 
@@ -29,23 +21,20 @@ class SepaDirectDebitGenerator
     csv
   end
 
-
   def self.header(count)
     "0;iDocus;;iDocus;;;;#{Date.today};#{count};;;;;;"
   end
-
 
   def self.footer(total_amount_in_cents)
     '9;;;;;;;;%0.2f;' % (total_amount_in_cents / 100.0)
   end
 
-
   def self.line(data, debit_date)
     [
       1,
-      data[0].user.email,
+      data[0].clientReference,
       nil,
-      data[1].organization.try(:name),
+      data[0].companyName || data[0].organization.name,
       name(data),
       nil,
       nil,
@@ -64,16 +53,13 @@ class SepaDirectDebitGenerator
     ].join(';')
   end
 
-
   def self.amount(data)
     '%0.2f' % (data[1].amount_in_cents_w_vat / 100.0)
   end
 
-
   def self.name(data)
-    data[0].user.name.split.map(&:capitalize).join(' ')
+    [data[0].firstName, data[0].lastName].join(' ')
   end
-
 
   def self.formatted_date(data)
     time = (data[1].created_at - 1.month)

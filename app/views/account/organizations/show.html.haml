@@ -37,6 +37,9 @@
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
+            - if is_leader?
+              %li{ class: ('active' if params[:tab] == 'payments') }
+                %a{ href: '#payments', data: { toggle: 'tab' } } Mode de paiement
             - if @user.is_admin
               %li{ class: ('active' if params[:tab] == 'file_sending_kit') }
                 %a{ href: '#file_sending_kit', data: { toggle: 'tab' } } Kit d'envoi de documents
@@ -341,6 +344,27 @@
                 N.B.: ce fichier est nécessaire pour tous les outils comptables ne fonctionnant pas avec iDocus par API (Mode SaaS intégral).
                 %br
                 = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
+            - if is_leader?
+              #payments.tab-pane{ class: ('active' if params[:tab] == 'payments') }
+                %h3.aligncenter Prélèvement
+                %table.table.table-condensed.margin2top
+                  %tbody
+                    %tr
+                      %th Etat :
+                      %td
+                        - if @organization.debit_mandate.pending?
+                          %span.label Non configuré
+                        - elsif @organization.debit_mandate.configured?
+                          %span.label.label-success OK
+                        - else
+                          %span.label.label-important Information non valide
+                    %tr
+                      %th Banque :
+                      %td= @organization.debit_mandate.bic
+                %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
+                  %input{ name: :email, type: 'hidden', value: @organization.leader.try(:email) }
+                  %input{ name: :client_reference, type: 'hidden', value: @organization.debit_mandate.clientReference }
+                  %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
             - if @user.is_admin
               #file_sending_kit.tab-pane{ class: ('active' if params[:tab] == 'file_sending_kit') }
                 %table.table.table-striped.table-condensed

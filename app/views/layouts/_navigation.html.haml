@@ -2,17 +2,17 @@
   - unless @user.try(:organization).try(:is_suspended) && @user.active?
     %li{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path
-  - if @user.inactive? || !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
-    - path = (@user.try(:organization).try(:is_suspended) && @user.active?) ? account_profile_path(panel: 'payment_management') : account_profile_path
     %li{ :class=>('active' if controller_name.in?(%w(profiles addresses)) && !(request.path =~ /customers/)) }
-      = link_to 'Mon compte', path
-  - unless @user.try(:organization).try(:is_suspended) && @user.active?
+      = link_to 'Mon compte', account_profile_path
     - if @user.is_admin
       %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
         = link_to 'Organisations', account_organizations_path
-    - if @user.is_prescriber
+  - if @user.is_prescriber
+    - if @user.inactive? || !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
+      - path = (@user.try(:organization).try(:is_suspended) && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
       %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
-        = link_to 'Mon organisation', account_organization_path(@user.organization)
+        = link_to 'Mon organisation', path
+  - unless @user.try(:organization).try(:is_suspended) && @user.active?
     %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
       = link_to 'Mes documents', account_documents_path
     - if @user.active? && @user.organization.is_active

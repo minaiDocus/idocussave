@@ -60,8 +60,6 @@ class StopSubscriptionService
     end
     @user.composition.try(:destroy)
 
-    @user.debit_mandate.try(:destroy)
-
     true
   end
 end

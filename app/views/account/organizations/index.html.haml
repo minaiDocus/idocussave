@@ -79,7 +79,7 @@
                   %td= organization.is_active ? '' : icon_ok
                   %td= organization.is_suspended ? icon_ok : ''
                   %td= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? icon_ok : ''
-                  %td= organization.leader.try(:debit_mandate).try(:is_configured?) ? '' : icon_ok
+                  %td= organization.debit_mandate.configured? ? '' : icon_ok
                   %td= link_to organization.name, account_organization_path(organization)
                   %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
                   %td

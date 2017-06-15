@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
     if controller_name == 'suspended'
       redirect_to root_path unless @user.try(:organization).try(:is_suspended) && @user.active?
     elsif @user.try(:organization).try(:is_suspended) && @user.active?
-      unless ((controller_name == 'profiles' && action_name == 'show') || controller_name == 'payments') && @user.organization.leader == @user
+      unless ((controller_name == 'organizations' && action_name == 'show') || controller_name == 'payments') && @user.organization.leader == @user
         redirect_to account_suspended_path
       end
     end

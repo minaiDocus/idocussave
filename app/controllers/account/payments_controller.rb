@@ -17,18 +17,19 @@ class Account::PaymentsController < Account::AccountController
     attributes = DebitMandateResponseService.new(params[:blob]).execute
 
     if attributes.present?
-      user = User.find_by_email attributes['email']
+      debit_mandate = DebitMandate.where(clientReference: attributes['clientReference']).first
 
-      if user
-        user.debit_mandate ||= DebitMandate.new
-        user.debit_mandate.assign_attributes(attributes)
-        user.debit_mandate.save
+      if debit_mandate
+        debit_mandate.update(attributes)
 
-        if user.debit_mandate.transactionStatus == 'success'
-          user.organization.update_attribute(:is_suspended, false) if user.try(:organization).try(:is_suspended)
+        if debit_mandate.configured? && debit_mandate.organization.is_suspended
+          debit_mandate.organization.update(is_suspended: false)
         end
+
+        render text: 'OK'
+      else
+        render text: 'Erreur'
       end
-      render text: 'OK'
     else
       render text: 'Erreur'
     end

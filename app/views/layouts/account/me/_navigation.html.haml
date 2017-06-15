@@ -8,9 +8,6 @@
           != link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
     - if @user.active?
       - if @user.organization.is_active
-        - if @user.is_prescriber
-          %li{ class: ('active' if @active_panel == 'payment_management') }
-            != link_to 'Mode de paiement', '#payment_management', class: 'do-show'
         - unless @user.try(:organization).try(:is_suspended)
           %li{ class: ('active' if @active_panel == 'efs_management') }
             != link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'

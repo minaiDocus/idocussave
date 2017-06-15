@@ -5,9 +5,9 @@
         - if @user.organization.try(:leader) == @user
           iDocus vous informe que l’accès aux services est suspendu car vos données de facturation ne sont pas complètes.
           %br
-          Merci de compléter le champ mode de paiement dans l’onglet «
-          = link_to 'mon compte', account_profile_path(panel: 'payment_management')
-          ».
+          Merci de compléter le champ prélèvement dans l’onglet «
+          = link_to 'Mode de paiement', account_organization_path(@user.organization, tab: 'payments')
+          » de votre organisation.
           %br
           En cas de souci, envoyez un courriel à
           = link_to 'support@idocus.com', 'mailto:support@idocus.com'

@@ -286,10 +286,6 @@ Idocus::Application.routes.draw do
       get  'use_debit_mandate',    on: :member
     end
 
-    resource :debit_mandate, only: [:shown, :new] do
-      get 'return', on: :member
-    end
-
     resources :compositions do
       delete 'reset', on: :collection
     end

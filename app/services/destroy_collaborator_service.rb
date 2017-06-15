@@ -10,8 +10,6 @@ class DestroyCollaboratorService
 
     @collaborator.periods.destroy_all
 
-    @collaborator.debit_mandate.try(:destroy)
-
     if @collaborator.composition.present? && File.exist?("#{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
       system("rm -r #{Rails.root}/files/#{Rails.env}/compositions/#{@collaborator.composition.id}")
     end
@@ -23,7 +21,7 @@ class DestroyCollaboratorService
     end
 
     @collaborator.external_file_storage.try(:destroy)
-    
+
     @collaborator.destroy
   end
 end

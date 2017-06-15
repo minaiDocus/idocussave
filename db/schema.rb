@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170621165459) do
+ActiveRecord::Schema.define(version: 20170627125541) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -259,7 +259,10 @@ ActiveRecord::Schema.define(version: 20170621165459) do
     t.string   "deliveryPostalCode",       limit: 255
     t.integer  "user_id",                  limit: 4
     t.string   "user_id_mongo_id",         limit: 255
+    t.integer  "organization_id",          limit: 4
   end
+
+  add_index "debit_mandates", ["organization_id"], name: "index_debit_mandates_on_organization_id", using: :btree
 
   create_table "delayed_backend_mongoid_jobs", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255
@@ -1641,5 +1644,6 @@ ActiveRecord::Schema.define(version: 20170621165459) do
     t.text     "group_ids",                                                      limit: 65535
   end
 
+  add_foreign_key "debit_mandates", "organizations"
   add_foreign_key "notifications", "users"
 end

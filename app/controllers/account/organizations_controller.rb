@@ -42,9 +42,8 @@ class Account::OrganizationsController < Account::AccountController
 
   # POST /account/organizations/new
   def create
-    @organization = Organization.new organization_params
-
-    if @organization.save
+    @organization = CreateOrganization.new(organization_params).execute
+    if @organization.persisted?
       flash[:success] = 'Créé avec succès.'
 
       redirect_to account_organization_path(@organization)

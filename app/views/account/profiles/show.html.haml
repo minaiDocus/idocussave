@@ -54,29 +54,6 @@
 
       - if @user.active?
         -if @user.organization.is_active
-          - if @user.is_prescriber
-            #payment_management.row-fluid.pan{ class: (@active_panel == 'payment_management' ? 'active' : '')}
-              .span12.well
-                %h3.aligncenter Prélèvement
-                %table.table.table-condensed.margin2top
-                  %tbody
-                    %tr
-                      %th Etat :
-                      %td
-                        - if @user.debit_mandate
-                          - if @user.debit_mandate.transactionStatus == 'success'
-                            %span.label.label-success OK
-                          - else
-                            %span.label.label-important Information non valide
-                        - else
-                          %span.label Non configuré
-                    %tr
-                      %th Banque :
-                      %td= @user.debit_mandate.try(:bic)
-                %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
-                  %input{ name: :email, type: 'hidden', value: @user.email }
-                  %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
-
           - unless @user.try(:organization).try(:is_suspended)
             #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
               .span12.well
