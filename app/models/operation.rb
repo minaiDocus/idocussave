@@ -48,13 +48,14 @@ class Operation < ActiveRecord::Base
   end
 
   def self.processable
-    Operation.not_processed.not_deleted.not_locked.order(date: :asc).select do |operation|
-      if operation.user.options.operation_processing_forced?
-        true
-      else
-        operation.created_at < 7.days.ago || operation.forced_processing_at.present?
-      end
-    end
+    operations = Operation.not_processed.not_deleted.not_locked.where('created_at < ? OR forced_processing_at IS NOT NULL', 1.week.ago).order(date: :asc).includes(:user, :pack, :bank_account)
+
+    user_ids = Operation.not_processed.not_deleted.not_locked.where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).pluck(:user_id).uniq
+    users = User.find user_ids
+    forced_user_ids = users.select { |user| user.options.operation_processing_forced? }.map(&:id)
+    forced_operations = Operation.not_processed.not_deleted.not_locked.where('created_at > ? AND forced_processing_at IS NULL', 1.week.ago).where(user_id: forced_user_ids).includes(:user, :pack, :bank_account)
+
+    operations + forced_operations
   end
 
   def retrieved?

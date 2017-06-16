@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170607173657) do
+ActiveRecord::Schema.define(version: 20170616123610) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -715,6 +715,11 @@ ActiveRecord::Schema.define(version: 20170607173657) do
   add_index "operations", ["api_id"], name: "index_operations_on_api_id", using: :btree
   add_index "operations", ["api_name"], name: "index_operations_on_api_name", using: :btree
   add_index "operations", ["bank_account_id"], name: "index_operations_on_bank_account_id", using: :btree
+  add_index "operations", ["created_at"], name: "index_operations_on_created_at", using: :btree
+  add_index "operations", ["deleted_at"], name: "index_operations_on_deleted_at", using: :btree
+  add_index "operations", ["forced_processing_at"], name: "index_operations_on_forced_processing_at", using: :btree
+  add_index "operations", ["is_locked"], name: "index_operations_on_is_locked", using: :btree
+  add_index "operations", ["processed_at"], name: "index_operations_on_processed_at", using: :btree
   add_index "operations", ["user_id"], name: "index_operations_on_user_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
