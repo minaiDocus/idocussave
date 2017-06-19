@@ -15,10 +15,10 @@ class Account::GoogleDrivesController < Account::AccountController
           client = GoogleDrive::Client.new
           client.authorize(params[:code], callback_account_google_drive_url)
 
-          @google_doc.token            = client.access_token.token
-          @google_doc.refresh_token    = client.access_token.refresh_token
-          @google_doc.is_configured    = true
-          @google_doc.token_expires_at = Time.at client.access_token.expires_at
+          @google_doc.access_token            = client.access_token.token
+          @google_doc.refresh_token           = client.access_token.refresh_token
+          @google_doc.is_configured           = true
+          @google_doc.access_token_expires_at = Time.at client.access_token.expires_at
 
           @google_doc.save
 
