@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170619185730) do
+ActiveRecord::Schema.define(version: 20170619194319) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -144,12 +144,14 @@ ActiveRecord::Schema.define(version: 20170619185730) do
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "access_token",                      limit: 255
-    t.string   "refresh_token",                     limit: 255
+    t.string   "old_access_token",                  limit: 255
+    t.string   "old_refresh_token",                 limit: 255
     t.string   "path",                              limit: 255, default: "iDocus/:code/:year:month/:account_book", null: false
     t.boolean  "is_configured",                                 default: false,                                    null: false
     t.integer  "external_file_storage_id",          limit: 4
     t.string   "external_file_storage_id_mongo_id", limit: 255
+    t.string   "encrypted_access_token",            limit: 255
+    t.string   "encrypted_refresh_token",           limit: 255
   end
 
   create_table "budgea_accounts", force: :cascade do |t|

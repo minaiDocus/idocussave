@@ -2,6 +2,9 @@
 class Box < ActiveRecord::Base
   belongs_to :external_file_storage
 
+  attr_encrypted :refresh_token, random_iv: true
+  attr_encrypted :access_token,  random_iv: true
+
   def get_authorize_url
     session.authorize_url(Box.config.callback_url)
   end
