@@ -224,6 +224,8 @@ class ProcessRetrievedData
       end
     end
 
+    log "[#{user.code}][#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
+
     if @retrieved_data.error?
       addresses = Array(Settings.first.try(:notify_errors_to))
       if addresses.size > 0
@@ -236,8 +238,6 @@ class ProcessRetrievedData
     else
       @retrieved_data.processed
     end
-  ensure
-    log "[#{user.code}][#{@retrieved_data.id}] #{@retrieved_data.state} - done: #{(Time.now - start_time).round(3)} sec"
   end
 
 private
@@ -308,7 +308,7 @@ private
   end
 
   def log(message)
-    $remote_lock.synchronize 'ProcessRetrievedDataLog', expiry: 1.second do
+    $remote_lock.synchronize 'ProcessRetrievedDataLog', expiry: 3.seconds do
       logger.info(message)
     end
   end
