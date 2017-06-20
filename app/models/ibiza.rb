@@ -3,6 +3,8 @@ class Ibiza < ActiveRecord::Base
   serialize :description, Hash
   serialize :piece_name_format, Hash
 
+  attr_encrypted :access_token,   random_iv: true
+  attr_encrypted :access_token_2, random_iv: true
 
   belongs_to :organization
 

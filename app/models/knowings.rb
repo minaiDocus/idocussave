@@ -2,6 +2,10 @@
 class Knowings < ActiveRecord::Base
   belongs_to :organization
 
+  attr_encrypted :url,      random_iv: true
+  attr_encrypted :username, random_iv: true
+  attr_encrypted :password, random_iv: true
+
   validates_url :url, allow_blank: true, message: I18n.t('activemodel.errors.messages.invalid')
 
   validates_presence_of :url,       if: :active?

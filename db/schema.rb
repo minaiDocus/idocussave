@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620122219) do
+ActiveRecord::Schema.define(version: 20170620184231) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -542,13 +542,16 @@ ActiveRecord::Schema.define(version: 20170620122219) do
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "host",                              limit: 255, default: "ftp://ftp.example.com",                   null: false
-    t.string   "login",                             limit: 255, default: "login",                                   null: false
-    t.string   "password",                          limit: 255, default: "password",                                null: false
+    t.string   "old_host",                          limit: 255, default: "ftp://ftp.example.com",                   null: false
+    t.string   "old_login",                         limit: 255, default: "login",                                   null: false
+    t.string   "old_password",                      limit: 255, default: "password",                                null: false
     t.string   "path",                              limit: 255, default: "iDocus/:code/:year:month/:account_book/", null: false
     t.boolean  "is_configured",                                 default: false,                                     null: false
     t.integer  "external_file_storage_id",          limit: 4
     t.string   "external_file_storage_id_mongo_id", limit: 255
+    t.string   "encrypted_host",                    limit: 255
+    t.string   "encrypted_login",                   limit: 255
+    t.string   "encrypted_password",                limit: 255
   end
 
   create_table "google_docs", force: :cascade do |t|
@@ -585,9 +588,9 @@ ActiveRecord::Schema.define(version: 20170620122219) do
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "access_token",             limit: 65535
+    t.text     "old_access_token",         limit: 65535
     t.string   "state",                    limit: 255,   default: "none", null: false
-    t.text     "access_token_2",           limit: 65535
+    t.text     "old_access_token_2",       limit: 65535
     t.string   "state_2",                  limit: 255,   default: "none", null: false
     t.text     "description",              limit: 65535
     t.string   "description_separator",    limit: 255,   default: " - ",  null: false
@@ -596,6 +599,8 @@ ActiveRecord::Schema.define(version: 20170620122219) do
     t.boolean  "is_auto_deliver",                        default: false,  null: false
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
+    t.text     "encrypted_access_token",   limit: 65535
+    t.text     "encrypted_access_token_2", limit: 65535
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -629,9 +634,9 @@ ActiveRecord::Schema.define(version: 20170620122219) do
     t.string   "mongo_id",                         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "username",                         limit: 255
-    t.string   "password",                         limit: 255
-    t.string   "url",                              limit: 255
+    t.string   "old_username",                     limit: 255
+    t.string   "old_password",                     limit: 255
+    t.string   "old_url",                          limit: 255
     t.boolean  "is_active",                                    default: true,            null: false
     t.string   "state",                            limit: 255, default: "not_performed", null: false
     t.string   "pole_name",                        limit: 255, default: "Pièces",        null: false
@@ -639,6 +644,9 @@ ActiveRecord::Schema.define(version: 20170620122219) do
     t.boolean  "is_pre_assignment_state_included",             default: false,           null: false
     t.integer  "organization_id",                  limit: 4
     t.string   "organization_id_mongo_id",         limit: 255
+    t.string   "encrypted_url",                    limit: 255
+    t.string   "encrypted_username",               limit: 255
+    t.string   "encrypted_password",               limit: 255
   end
 
   create_table "new_provider_requests", force: :cascade do |t|
