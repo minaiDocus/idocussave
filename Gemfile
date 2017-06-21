@@ -141,9 +141,6 @@ gem 'remote_lock'
 # Encryption
 gem 'symmetric-encryption'
 
-# TODO: remove this when upgrading
-gem 'mail', '>= 2.6.6.rc1'
-
 group :development, :test do
   gem 'byebug'
   gem 'thin'

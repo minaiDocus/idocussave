@@ -268,7 +268,7 @@ GEM
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.10)
-    mail (2.6.6.rc1)
+    mail (2.6.6)
       mime-types (>= 1.16, < 4)
     meta_request (0.4.0)
       callsite (~> 0.0, >= 0.0.11)
@@ -566,7 +566,6 @@ DEPENDENCIES
   jquery-ui-rails (= 1.1.0)
   kaminari
   libnotify
-  mail (>= 2.6.6.rc1)
   meta_request
   mysql2
   nested_form
