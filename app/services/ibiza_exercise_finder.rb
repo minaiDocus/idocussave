@@ -52,7 +52,7 @@ class IbizaExerciseFinder
       client.request.clear
       client.company(id).exercices?
       if client.response.success?
-        exercises = client.response.data.map do |exercise_data|
+        exercises = Array(client.response.data).map do |exercise_data|
           exercise = OpenStruct.new
           exercise.end_date   = exercise_data['end'].to_date
           exercise.is_closed  = exercise_data['state'].to_i == 2
