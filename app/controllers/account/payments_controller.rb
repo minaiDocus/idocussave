@@ -1,16 +1,14 @@
 # -*- encoding : UTF-8 -*-
 class Account::PaymentsController < Account::AccountController
-  skip_before_filter :login_user!
-  skip_before_filter :verify_suspension
-  skip_before_filter :load_user_and_role
-  skip_before_filter :verify_authenticity_token
-
+  skip_before_filter :login_user!,               only: :debit_mandate_notify
+  skip_before_filter :verify_suspension,         only: :debit_mandate_notify
+  skip_before_filter :load_user_and_role,        only: :debit_mandate_notify
+  skip_before_filter :verify_authenticity_token, only: :debit_mandate_notify
 
   # GET /account/payment/use_debit_mandate
   def use_debit_mandate
-    redirect_to account_profile_path(panel: 'payment_management')
+    redirect_to account_organization_path(@user.organization, tab: 'payments')
   end
-
 
   # POST /account/payment/debit_mandate_notify
   def debit_mandate_notify
