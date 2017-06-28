@@ -14,10 +14,10 @@
 # even put in dynamic logic, like a host-specific queue.
 # http://www.mikeperham.com/2013/11/13/advanced-sidekiq-host-specific-queues/
 :queues:
-  - [high, 10]
-  - [mailers, 3]
-  - [default, 2]
-  - [low, 1]
+  - high
+  - mailers
+  - default
+  - low
 
 # you can override concurrency based on environment
 production:
