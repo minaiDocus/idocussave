@@ -339,6 +339,10 @@ class Retriever < ActiveRecord::Base
     capabilities && capabilities.include?('bank') && capabilities.include?('document')
   end
 
+  def not_processed?
+    configuring? || destroying? || running?
+  end
+
 private
 
   # TODO move into a form service

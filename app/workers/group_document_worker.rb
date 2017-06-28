@@ -4,7 +4,7 @@ class GroupDocumentWorker
 
   def perform(file_path)
     UniqueJobs.for "GroupDocument-#{file_path}", 1.day, 2 do
-      AccountingWorkflow::GroupDocument.new(file_path).execute
+      AccountingWorkflow::GroupDocument.new(file_path).execute if File.exist?(file_path)
     end
   end
 end

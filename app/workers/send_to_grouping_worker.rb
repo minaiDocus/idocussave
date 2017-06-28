@@ -4,7 +4,8 @@ class SendToGroupingWorker
 
   def perform(temp_document_id)
     UniqueJobs.for "SendToGrouping-#{temp_document_id}", 1.day, 2 do
-      AccountingWorkflow::SendToGrouping.new(TempDocument.find(temp_document_id)).execute
+      temp_document = TempDocument.find(temp_document_id)
+      AccountingWorkflow::SendToGrouping.new(temp_document).execute if temp_document.bundle_needed?
     end
   end
 end
