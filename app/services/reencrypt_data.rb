@@ -5,8 +5,17 @@ class ReencryptData
     list = [
       [BudgeaAccount,      [:access_token]],
       [Retriever,          [:param1, :param2, :param3, :param4, :param5, :answers]],
-      [NewProviderRequest, [:url, :login, :description, :message, :email, :password, :types]]
+      [NewProviderRequest, [:url, :login, :description, :message, :email, :password, :types]],
+      [DropboxBasic,       [:access_token]],
+      [GoogleDoc,          [:refresh_token, :access_token, :access_token_expires_at]],
+      [Box,                [:refresh_token, :access_token]],
+      [Ftp,                [:host, :login, :password]],
+      [Ibiza,              [:access_token, :access_token_2]],
+      [Knowings,           [:url, :username, :password, :pole_name]]
     ]
+
+    # NOTE: Disable update_states for Ibiza to avoid reverifying all the tokens
+    Ibiza.skip_callback(:save, :before, :update_states)
 
     list.each do |klass, attributes|
       puts klass
