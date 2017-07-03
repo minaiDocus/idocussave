@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703113417) do
+ActiveRecord::Schema.define(version: 20170703114120) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1557,6 +1557,7 @@ ActiveRecord::Schema.define(version: 20170703113417) do
     t.string   "remotable_id_mongo_id",    limit: 255
   end
 
+  add_index "remote_files", ["extension"], name: "index_remote_files_on_extension", using: :btree
   add_index "remote_files", ["group_id"], name: "group_id", using: :btree
   add_index "remote_files", ["group_id_mongo_id"], name: "group_id_mongo_id", using: :btree
   add_index "remote_files", ["mongo_id"], name: "index_remote_files_on_mongo_id", using: :btree
@@ -1566,6 +1567,9 @@ ActiveRecord::Schema.define(version: 20170703113417) do
   add_index "remote_files", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
   add_index "remote_files", ["remotable_id"], name: "remotable_id", using: :btree
   add_index "remote_files", ["remotable_id_mongo_id"], name: "remotable_id_mongo_id", using: :btree
+  add_index "remote_files", ["service_name"], name: "index_remote_files_on_service_name", using: :btree
+  add_index "remote_files", ["state"], name: "index_remote_files_on_state", using: :btree
+  add_index "remote_files", ["tried_count"], name: "index_remote_files_on_tried_count", using: :btree
   add_index "remote_files", ["user_id"], name: "user_id", using: :btree
   add_index "remote_files", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
