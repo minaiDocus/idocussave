@@ -38,6 +38,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "user_id_mongo_id",               limit: 255
   end
 
+  add_index "account_book_types", ["mongo_id"], name: "index_account_book_types_on_mongo_id", using: :btree
+  add_index "account_book_types", ["organization_id"], name: "organization_id", using: :btree
+  add_index "account_book_types", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "account_book_types", ["user_id"], name: "user_id", using: :btree
+  add_index "account_book_types", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "account_number_rules", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -52,6 +58,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
   end
+
+  add_index "account_number_rules", ["mongo_id"], name: "index_account_number_rules_on_mongo_id", using: :btree
+  add_index "account_number_rules", ["organization_id"], name: "organization_id", using: :btree
+  add_index "account_number_rules", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "account_number_rules_users", force: :cascade do |t|
     t.integer "user_id",                limit: 4
@@ -70,6 +80,11 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string  "kind",                                 limit: 255
   end
 
+  add_index "accounting_plan_items", ["accounting_plan_itemable_id"], name: "accounting_plan_itemable_id", using: :btree
+  add_index "accounting_plan_items", ["accounting_plan_itemable_id_mongo_id"], name: "accounting_plan_itemable_id_mongo_id", using: :btree
+  add_index "accounting_plan_items", ["accounting_plan_itemable_type"], name: "accounting_plan_itemable_type", using: :btree
+  add_index "accounting_plan_items", ["mongo_id"], name: "index_accounting_plan_items_on_mongo_id", using: :btree
+
   create_table "accounting_plan_vat_accounts", force: :cascade do |t|
     t.string  "mongo_id",                    limit: 255
     t.string  "code",                        limit: 255
@@ -79,6 +94,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string  "accounting_plan_id_mongo_id", limit: 255
   end
 
+  add_index "accounting_plan_vat_accounts", ["accounting_plan_id"], name: "accounting_plan_id", using: :btree
+  add_index "accounting_plan_vat_accounts", ["accounting_plan_id_mongo_id"], name: "accounting_plan_id_mongo_id", using: :btree
+  add_index "accounting_plan_vat_accounts", ["mongo_id"], name: "index_accounting_plan_vat_accounts_on_mongo_id", using: :btree
+
   create_table "accounting_plans", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
     t.datetime "created_at"
@@ -87,6 +106,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "user_id",          limit: 4
     t.string   "user_id_mongo_id", limit: 255
   end
+
+  add_index "accounting_plans", ["mongo_id"], name: "index_accounting_plans_on_mongo_id", using: :btree
+  add_index "accounting_plans", ["user_id"], name: "user_id", using: :btree
+  add_index "accounting_plans", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "addresses", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -118,6 +141,11 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "locatable_id_mongo_id",      limit: 255
   end
 
+  add_index "addresses", ["locatable_id"], name: "locatable_id", using: :btree
+  add_index "addresses", ["locatable_id_mongo_id"], name: "locatable_id_mongo_id", using: :btree
+  add_index "addresses", ["locatable_type"], name: "locatable_type", using: :btree
+  add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
+
   create_table "bank_accounts", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
@@ -140,6 +168,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "type_name",             limit: 255
   end
 
+  add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree
+  add_index "bank_accounts", ["retriever_id"], name: "retriever_id", using: :btree
+  add_index "bank_accounts", ["retriever_id_mongo_id"], name: "retriever_id_mongo_id", using: :btree
+  add_index "bank_accounts", ["user_id"], name: "user_id", using: :btree
+  add_index "bank_accounts", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "boxes", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
@@ -152,6 +186,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "encrypted_refresh_token",           limit: 255
   end
 
+  add_index "boxes", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
+  add_index "boxes", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
+  add_index "boxes", ["mongo_id"], name: "index_boxes_on_mongo_id", using: :btree
+
   create_table "budgea_accounts", force: :cascade do |t|
     t.string   "identifier",             limit: 255
     t.datetime "created_at",                         null: false
@@ -159,6 +197,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "user_id",                limit: 4
     t.string   "encrypted_access_token", limit: 255
   end
+
+  add_index "budgea_accounts", ["user_id"], name: "fk_rails_bc19f24997", using: :btree
 
   create_table "cms_images", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -175,6 +215,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "content_fingerprint",        limit: 255
   end
 
+  add_index "cms_images", ["mongo_id"], name: "index_cms_images_on_mongo_id", using: :btree
+
   create_table "compositions", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
     t.datetime "created_at"
@@ -185,6 +227,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "user_id",          limit: 4
     t.string   "user_id_mongo_id", limit: 255
   end
+
+  add_index "compositions", ["mongo_id"], name: "index_compositions_on_mongo_id", using: :btree
+  add_index "compositions", ["user_id"], name: "user_id", using: :btree
+  add_index "compositions", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "connectors", force: :cascade do |t|
     t.string   "name",            limit: 255
@@ -210,6 +256,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "user_id_mongo_id",          limit: 255
   end
 
+  add_index "csv_descriptors", ["mongo_id"], name: "index_csv_descriptors_on_mongo_id", using: :btree
+  add_index "csv_descriptors", ["organization_id"], name: "organization_id", using: :btree
+  add_index "csv_descriptors", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "csv_descriptors", ["user_id"], name: "user_id", using: :btree
+  add_index "csv_descriptors", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "dba_sequences", force: :cascade do |t|
     t.string   "mongo_id",     limit: 255
     t.datetime "locked_at"
@@ -217,6 +269,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "name",         limit: 255
     t.integer  "counter",      limit: 4,   default: 1, null: false
   end
+
+  add_index "dba_sequences", ["mongo_id"], name: "index_dba_sequences_on_mongo_id", using: :btree
 
   create_table "debit_mandates", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -262,7 +316,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "organization_id",          limit: 4
   end
 
+  add_index "debit_mandates", ["mongo_id"], name: "index_debit_mandates_on_mongo_id", using: :btree
   add_index "debit_mandates", ["organization_id"], name: "index_debit_mandates_on_organization_id", using: :btree
+  add_index "debit_mandates", ["user_id"], name: "user_id", using: :btree
+  add_index "debit_mandates", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "delayed_backend_mongoid_jobs", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255
@@ -279,6 +336,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "queue",      limit: 255
   end
 
+  add_index "delayed_backend_mongoid_jobs", ["mongo_id"], name: "index_delayed_backend_mongoid_jobs_on_mongo_id", using: :btree
+
   create_table "dematbox", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
     t.datetime "created_at"
@@ -289,6 +348,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "user_id_mongo_id",           limit: 255
   end
 
+  add_index "dematbox", ["mongo_id"], name: "index_dematbox_on_mongo_id", using: :btree
+  add_index "dematbox", ["user_id"], name: "user_id", using: :btree
+  add_index "dematbox", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "dematbox_services", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255
     t.datetime "created_at"
@@ -298,6 +361,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "type",       limit: 255
     t.string   "state",      limit: 255, default: "unknown", null: false
   end
+
+  add_index "dematbox_services", ["mongo_id"], name: "index_dematbox_services_on_mongo_id", using: :btree
 
   create_table "dematbox_subscribed_services", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
@@ -312,6 +377,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "dematbox_id_mongo_id",  limit: 255
   end
 
+  add_index "dematbox_subscribed_services", ["dematbox_id"], name: "dematbox_id", using: :btree
+  add_index "dematbox_subscribed_services", ["dematbox_id_mongo_id"], name: "dematbox_id_mongo_id", using: :btree
+  add_index "dematbox_subscribed_services", ["mongo_id"], name: "index_dematbox_subscribed_services_on_mongo_id", using: :btree
+
   create_table "document_deliveries", force: :cascade do |t|
     t.string   "mongo_id",     limit: 255
     t.datetime "created_at"
@@ -322,6 +391,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.datetime "processed_at"
     t.integer  "position",     limit: 4,   default: 1
   end
+
+  add_index "document_deliveries", ["mongo_id"], name: "index_document_deliveries_on_mongo_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -348,7 +419,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
 
   add_index "documents", ["dirty"], name: "index_documents_on_dirty", using: :btree
   add_index "documents", ["is_a_cover"], name: "index_documents_on_is_a_cover", using: :btree
+  add_index "documents", ["mongo_id"], name: "index_documents_on_mongo_id", using: :btree
   add_index "documents", ["origin"], name: "index_documents_on_origin", using: :btree
+  add_index "documents", ["pack_id"], name: "pack_id", using: :btree
+  add_index "documents", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
 
   create_table "dropbox_basics", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
@@ -365,6 +439,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "external_file_storage_id_mongo_id", limit: 255
     t.string   "encrypted_access_token",            limit: 255
   end
+
+  add_index "dropbox_basics", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
+  add_index "dropbox_basics", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
+  add_index "dropbox_basics", ["mongo_id"], name: "index_dropbox_basics_on_mongo_id", using: :btree
 
   create_table "emails", force: :cascade do |t|
     t.string   "mongo_id",                            limit: 255
@@ -396,6 +474,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "message_id",                          limit: 255
   end
 
+  add_index "emails", ["from_user_id"], name: "from_user_id", using: :btree
+  add_index "emails", ["from_user_id_mongo_id"], name: "from_user_id_mongo_id", using: :btree
+  add_index "emails", ["mongo_id"], name: "index_emails_on_mongo_id", using: :btree
+  add_index "emails", ["to_user_id"], name: "to_user_id", using: :btree
+  add_index "emails", ["to_user_id_mongo_id"], name: "to_user_id_mongo_id", using: :btree
+
   create_table "events", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -415,6 +499,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "target_id",                limit: 4
   end
 
+  add_index "events", ["mongo_id"], name: "index_events_on_mongo_id", using: :btree
+  add_index "events", ["organization_id"], name: "organization_id", using: :btree
+  add_index "events", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "events", ["user_id"], name: "user_id", using: :btree
+  add_index "events", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "exercises", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
     t.datetime "created_at"
@@ -426,6 +516,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "user_id_mongo_id", limit: 255
   end
 
+  add_index "exercises", ["mongo_id"], name: "index_exercises_on_mongo_id", using: :btree
+  add_index "exercises", ["user_id"], name: "user_id", using: :btree
+  add_index "exercises", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "expense_categories", force: :cascade do |t|
     t.string  "mongo_id",                      limit: 255
     t.string  "name",                          limit: 255
@@ -433,6 +527,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer "account_book_type_id",          limit: 4
     t.string  "account_book_type_id_mongo_id", limit: 255
   end
+
+  add_index "expense_categories", ["account_book_type_id"], name: "account_book_type_id", using: :btree
+  add_index "expense_categories", ["account_book_type_id_mongo_id"], name: "account_book_type_id_mongo_id", using: :btree
+  add_index "expense_categories", ["mongo_id"], name: "index_expense_categories_on_mongo_id", using: :btree
 
   create_table "external_file_storages", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
@@ -445,6 +543,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "user_id",          limit: 4
     t.string   "user_id_mongo_id", limit: 255
   end
+
+  add_index "external_file_storages", ["mongo_id"], name: "index_external_file_storages_on_mongo_id", using: :btree
+  add_index "external_file_storages", ["user_id"], name: "user_id", using: :btree
+  add_index "external_file_storages", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "fiduceo_retrievers", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255
@@ -476,6 +578,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "bank_id",                      limit: 255
   end
 
+  add_index "fiduceo_retrievers", ["journal_id"], name: "journal_id", using: :btree
+  add_index "fiduceo_retrievers", ["journal_id_mongo_id"], name: "journal_id_mongo_id", using: :btree
+  add_index "fiduceo_retrievers", ["mongo_id"], name: "index_fiduceo_retrievers_on_mongo_id", using: :btree
+  add_index "fiduceo_retrievers", ["user_id"], name: "user_id", using: :btree
+  add_index "fiduceo_retrievers", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "fiduceo_transactions", force: :cascade do |t|
     t.string   "mongo_id",               limit: 255
     t.datetime "created_at"
@@ -494,6 +602,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "retriever_id_mongo_id",  limit: 255
     t.string   "fiduceo_id",             limit: 255
   end
+
+  add_index "fiduceo_transactions", ["mongo_id"], name: "index_fiduceo_transactions_on_mongo_id", using: :btree
+  add_index "fiduceo_transactions", ["retriever_id"], name: "retriever_id", using: :btree
+  add_index "fiduceo_transactions", ["retriever_id_mongo_id"], name: "retriever_id_mongo_id", using: :btree
+  add_index "fiduceo_transactions", ["user_id"], name: "user_id", using: :btree
+  add_index "fiduceo_transactions", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "file_naming_policies", force: :cascade do |t|
     t.string   "mongo_id",                        limit: 255
@@ -521,6 +635,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "organization_id_mongo_id",        limit: 255
   end
 
+  add_index "file_naming_policies", ["mongo_id"], name: "index_file_naming_policies_on_mongo_id", using: :btree
+  add_index "file_naming_policies", ["organization_id"], name: "organization_id", using: :btree
+  add_index "file_naming_policies", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+
   create_table "file_sending_kits", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -541,6 +659,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "organization_id_mongo_id", limit: 255
   end
 
+  add_index "file_sending_kits", ["mongo_id"], name: "index_file_sending_kits_on_mongo_id", using: :btree
+  add_index "file_sending_kits", ["organization_id"], name: "organization_id", using: :btree
+  add_index "file_sending_kits", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+
   create_table "ftps", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
@@ -553,6 +675,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "encrypted_login",                   limit: 255
     t.string   "encrypted_password",                limit: 255
   end
+
+  add_index "ftps", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
+  add_index "ftps", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
+  add_index "ftps", ["mongo_id"], name: "index_ftps_on_mongo_id", using: :btree
 
   create_table "google_docs", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255
@@ -567,6 +693,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "encrypted_access_token_expires_at", limit: 255
   end
 
+  add_index "google_docs", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
+  add_index "google_docs", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
+  add_index "google_docs", ["mongo_id"], name: "index_google_docs_on_mongo_id", using: :btree
+
   create_table "groups", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -578,6 +708,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
   end
+
+  add_index "groups", ["mongo_id"], name: "index_groups_on_mongo_id", using: :btree
+  add_index "groups", ["organization_id"], name: "organization_id", using: :btree
+  add_index "groups", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "groups_users", force: :cascade do |t|
     t.integer "user_id",  limit: 4
@@ -600,6 +734,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.text     "encrypted_access_token",   limit: 65535
     t.text     "encrypted_access_token_2", limit: 65535
   end
+
+  add_index "ibizas", ["mongo_id"], name: "index_ibizas_on_mongo_id", using: :btree
+  add_index "ibizas", ["organization_id"], name: "organization_id", using: :btree
+  add_index "ibizas", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "invoices", force: :cascade do |t|
     t.string   "mongo_id",                   limit: 255
@@ -628,6 +766,16 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "period_id_mongo_id",         limit: 255
   end
 
+  add_index "invoices", ["mongo_id"], name: "index_invoices_on_mongo_id", using: :btree
+  add_index "invoices", ["organization_id"], name: "organization_id", using: :btree
+  add_index "invoices", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "invoices", ["period_id"], name: "period_id", using: :btree
+  add_index "invoices", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
+  add_index "invoices", ["subscription_id"], name: "subscription_id", using: :btree
+  add_index "invoices", ["subscription_id_mongo_id"], name: "subscription_id_mongo_id", using: :btree
+  add_index "invoices", ["user_id"], name: "user_id", using: :btree
+  add_index "invoices", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "knowings", force: :cascade do |t|
     t.string   "mongo_id",                         limit: 255
     t.datetime "created_at"
@@ -643,6 +791,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "encrypted_username",               limit: 255
     t.string   "encrypted_password",               limit: 255
   end
+
+  add_index "knowings", ["mongo_id"], name: "index_knowings_on_mongo_id", using: :btree
+  add_index "knowings", ["organization_id"], name: "organization_id", using: :btree
+  add_index "knowings", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "new_provider_requests", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
@@ -664,6 +816,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "encrypted_password",    limit: 255
     t.string   "encrypted_types",       limit: 255
   end
+
+  add_index "new_provider_requests", ["mongo_id"], name: "index_new_provider_requests_on_mongo_id", using: :btree
+  add_index "new_provider_requests", ["user_id"], name: "user_id", using: :btree
+  add_index "new_provider_requests", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",         limit: 4
@@ -715,15 +871,24 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "forced_processing_by_user_id", limit: 4
   end
 
-  add_index "operations", ["api_id"], name: "index_operations_on_api_id", using: :btree
+  add_index "operations", ["api_id"], name: "fiduceo_id", using: :btree
   add_index "operations", ["api_name"], name: "index_operations_on_api_name", using: :btree
-  add_index "operations", ["bank_account_id"], name: "index_operations_on_bank_account_id", using: :btree
+  add_index "operations", ["bank_account_id"], name: "bank_account_id", using: :btree
+  add_index "operations", ["bank_account_id_mongo_id"], name: "bank_account_id_mongo_id", using: :btree
   add_index "operations", ["created_at"], name: "index_operations_on_created_at", using: :btree
   add_index "operations", ["deleted_at"], name: "index_operations_on_deleted_at", using: :btree
   add_index "operations", ["forced_processing_at"], name: "index_operations_on_forced_processing_at", using: :btree
   add_index "operations", ["is_locked"], name: "index_operations_on_is_locked", using: :btree
+  add_index "operations", ["mongo_id"], name: "index_operations_on_mongo_id", using: :btree
+  add_index "operations", ["organization_id"], name: "organization_id", using: :btree
+  add_index "operations", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "operations", ["pack_id"], name: "pack_id", using: :btree
+  add_index "operations", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "operations", ["piece_id"], name: "piece_id", using: :btree
+  add_index "operations", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
   add_index "operations", ["processed_at"], name: "index_operations_on_processed_at", using: :btree
-  add_index "operations", ["user_id"], name: "index_operations_on_user_id", using: :btree
+  add_index "operations", ["user_id"], name: "user_id", using: :btree
+  add_index "operations", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "mongo_id",                                        limit: 255
@@ -795,6 +960,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.boolean  "paper_return_address_is_for_dematbox_shipping",               default: false,     null: false
   end
 
+  add_index "orders", ["mongo_id"], name: "index_orders_on_mongo_id", using: :btree
+  add_index "orders", ["organization_id"], name: "organization_id", using: :btree
+  add_index "orders", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "orders", ["period_id"], name: "period_id", using: :btree
+  add_index "orders", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
+  add_index "orders", ["user_id"], name: "user_id", using: :btree
+  add_index "orders", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "organization_rights", force: :cascade do |t|
     t.string   "mongo_id",                                   limit: 255
     t.datetime "created_at"
@@ -807,6 +980,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "user_id",                                    limit: 4
     t.string   "user_id_mongo_id",                           limit: 255
   end
+
+  add_index "organization_rights", ["mongo_id"], name: "index_organization_rights_on_mongo_id", using: :btree
+  add_index "organization_rights", ["user_id"], name: "user_id", using: :btree
+  add_index "organization_rights", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "organizations", force: :cascade do |t|
     t.string   "mongo_id",                        limit: 255
@@ -824,15 +1001,19 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.boolean  "is_quadratus_used",                           default: false, null: false
     t.boolean  "is_pre_assignment_date_computed",             default: false, null: false
     t.boolean  "is_csv_descriptor_used",                      default: false, null: false
+    t.boolean  "is_coala_used",                               default: false, null: false
     t.integer  "authd_prev_period",               limit: 4,   default: 1,     null: false
     t.integer  "auth_prev_period_until_day",      limit: 4,   default: 11,    null: false
     t.integer  "auth_prev_period_until_month",    limit: 4,   default: 0,     null: false
     t.integer  "leader_id",                       limit: 4
     t.string   "leader_id_mongo_id",              limit: 255
-    t.boolean  "is_coala_used",                               default: false, null: false
     t.boolean  "is_operation_processing_forced",              default: false
     t.boolean  "is_operation_value_date_needed",              default: false
   end
+
+  add_index "organizations", ["leader_id"], name: "leader_id", using: :btree
+  add_index "organizations", ["leader_id_mongo_id"], name: "leader_id_mongo_id", using: :btree
+  add_index "organizations", ["mongo_id"], name: "index_organizations_on_mongo_id", using: :btree
 
   create_table "pack_dividers", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
@@ -849,7 +1030,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
   end
 
   add_index "pack_dividers", ["is_a_cover"], name: "index_pack_dividers_on_is_a_cover", using: :btree
+  add_index "pack_dividers", ["mongo_id"], name: "index_pack_dividers_on_mongo_id", using: :btree
   add_index "pack_dividers", ["origin"], name: "index_pack_dividers_on_origin", using: :btree
+  add_index "pack_dividers", ["pack_id"], name: "pack_id", using: :btree
+  add_index "pack_dividers", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
   add_index "pack_dividers", ["type"], name: "index_pack_dividers_on_type", using: :btree
 
   create_table "pack_pieces", force: :cascade do |t|
@@ -882,7 +1066,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "pack_id_mongo_id",           limit: 255
   end
 
-  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", unique: true, using: :btree
+  add_index "pack_pieces", ["mongo_id"], name: "index_pack_pieces_on_mongo_id", using: :btree
+  add_index "pack_pieces", ["number"], name: "index_pack_pieces_on_number", using: :btree
+  add_index "pack_pieces", ["organization_id"], name: "organization_id", using: :btree
+  add_index "pack_pieces", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pack_pieces", ["pack_id"], name: "pack_id", using: :btree
+  add_index "pack_pieces", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "pack_pieces", ["user_id"], name: "user_id", using: :btree
+  add_index "pack_pieces", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "pack_report_expenses", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -906,6 +1097,16 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "piece_id_mongo_id",        limit: 255
   end
 
+  add_index "pack_report_expenses", ["mongo_id"], name: "index_pack_report_expenses_on_mongo_id", using: :btree
+  add_index "pack_report_expenses", ["organization_id"], name: "organization_id", using: :btree
+  add_index "pack_report_expenses", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pack_report_expenses", ["piece_id"], name: "piece_id", using: :btree
+  add_index "pack_report_expenses", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
+  add_index "pack_report_expenses", ["report_id"], name: "report_id", using: :btree
+  add_index "pack_report_expenses", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
+  add_index "pack_report_expenses", ["user_id"], name: "user_id", using: :btree
+  add_index "pack_report_expenses", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "pack_report_observation_guests", force: :cascade do |t|
     t.string  "mongo_id",                limit: 255
     t.string  "first_name",              limit: 255
@@ -914,12 +1115,20 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string  "observation_id_mongo_id", limit: 255
   end
 
+  add_index "pack_report_observation_guests", ["mongo_id"], name: "index_pack_report_observation_guests_on_mongo_id", using: :btree
+  add_index "pack_report_observation_guests", ["observation_id"], name: "observation_id", using: :btree
+  add_index "pack_report_observation_guests", ["observation_id_mongo_id"], name: "observation_id_mongo_id", using: :btree
+
   create_table "pack_report_observations", force: :cascade do |t|
     t.string  "mongo_id",            limit: 255
     t.string  "comment",             limit: 255
     t.integer "expense_id",          limit: 4
     t.string  "expense_id_mongo_id", limit: 255
   end
+
+  add_index "pack_report_observations", ["expense_id"], name: "expense_id", using: :btree
+  add_index "pack_report_observations", ["expense_id_mongo_id"], name: "expense_id_mongo_id", using: :btree
+  add_index "pack_report_observations", ["mongo_id"], name: "index_pack_report_observations_on_mongo_id", using: :btree
 
   create_table "pack_report_preseizure_accounts", force: :cascade do |t|
     t.string   "mongo_id",               limit: 255
@@ -931,6 +1140,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "preseizure_id",          limit: 4
     t.string   "preseizure_id_mongo_id", limit: 255
   end
+
+  add_index "pack_report_preseizure_accounts", ["mongo_id"], name: "index_pack_report_preseizure_accounts_on_mongo_id", using: :btree
+  add_index "pack_report_preseizure_accounts", ["preseizure_id"], name: "preseizure_id", using: :btree
+  add_index "pack_report_preseizure_accounts", ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id", using: :btree
 
   create_table "pack_report_preseizure_entries", force: :cascade do |t|
     t.string   "mongo_id",               limit: 255
@@ -944,6 +1157,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "account_id",             limit: 4
     t.string   "account_id_mongo_id",    limit: 255
   end
+
+  add_index "pack_report_preseizure_entries", ["account_id"], name: "account_id", using: :btree
+  add_index "pack_report_preseizure_entries", ["account_id_mongo_id"], name: "account_id_mongo_id", using: :btree
+  add_index "pack_report_preseizure_entries", ["mongo_id"], name: "index_pack_report_preseizure_entries_on_mongo_id", using: :btree
+  add_index "pack_report_preseizure_entries", ["preseizure_id"], name: "preseizure_id", using: :btree
+  add_index "pack_report_preseizure_entries", ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id", using: :btree
 
   create_table "pack_report_preseizures", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -978,6 +1197,18 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "operation_id_mongo_id",    limit: 255
   end
 
+  add_index "pack_report_preseizures", ["mongo_id"], name: "index_pack_report_preseizures_on_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["operation_id"], name: "operation_id", using: :btree
+  add_index "pack_report_preseizures", ["operation_id_mongo_id"], name: "operation_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["organization_id"], name: "organization_id", using: :btree
+  add_index "pack_report_preseizures", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["piece_id"], name: "piece_id", using: :btree
+  add_index "pack_report_preseizures", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["report_id"], name: "report_id", using: :btree
+  add_index "pack_report_preseizures", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["user_id"], name: "user_id", using: :btree
+  add_index "pack_report_preseizures", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "pack_report_preseizures_pre_assignment_deliveries", force: :cascade do |t|
     t.integer "pre_assignment_delivery_id", limit: 4
     t.integer "preseizure_id",              limit: 4
@@ -1008,6 +1239,16 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "document_id_mongo_id",     limit: 255
   end
 
+  add_index "pack_reports", ["document_id"], name: "document_id", using: :btree
+  add_index "pack_reports", ["document_id_mongo_id"], name: "document_id_mongo_id", using: :btree
+  add_index "pack_reports", ["mongo_id"], name: "index_pack_reports_on_mongo_id", using: :btree
+  add_index "pack_reports", ["organization_id"], name: "organization_id", using: :btree
+  add_index "pack_reports", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pack_reports", ["pack_id"], name: "pack_id", using: :btree
+  add_index "pack_reports", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "pack_reports", ["user_id"], name: "user_id", using: :btree
+  add_index "pack_reports", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "packs", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -1031,6 +1272,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "organization_id_mongo_id", limit: 255
   end
 
+  add_index "packs", ["mongo_id"], name: "index_packs_on_mongo_id", using: :btree
+  add_index "packs", ["organization_id"], name: "organization_id", using: :btree
+  add_index "packs", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "packs", ["owner_id"], name: "owner_id", using: :btree
+  add_index "packs", ["owner_id_mongo_id"], name: "owner_id_mongo_id", using: :btree
+
   create_table "paper_processes", force: :cascade do |t|
     t.string   "mongo_id",                    limit: 255
     t.datetime "created_at"
@@ -1051,7 +1298,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "order_id",                    limit: 4
   end
 
+  add_index "paper_processes", ["mongo_id"], name: "index_paper_processes_on_mongo_id", using: :btree
   add_index "paper_processes", ["order_id"], name: "index_paper_processes_on_order_id", using: :btree
+  add_index "paper_processes", ["organization_id"], name: "organization_id", using: :btree
+  add_index "paper_processes", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "paper_processes", ["period_document_id"], name: "period_document_id", using: :btree
+  add_index "paper_processes", ["period_document_id_mongo_id"], name: "period_document_id_mongo_id", using: :btree
+  add_index "paper_processes", ["user_id"], name: "user_id", using: :btree
+  add_index "paper_processes", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "period_billings", force: :cascade do |t|
     t.string  "mongo_id",                        limit: 255
@@ -1079,6 +1333,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string  "period_id_mongo_id",              limit: 255
   end
 
+  add_index "period_billings", ["mongo_id"], name: "index_period_billings_on_mongo_id", using: :btree
+  add_index "period_billings", ["period_id"], name: "period_id", using: :btree
+  add_index "period_billings", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
+
   create_table "period_deliveries", force: :cascade do |t|
     t.string   "mongo_id",           limit: 255
     t.datetime "created_at"
@@ -1087,6 +1345,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "period_id",          limit: 4
     t.string   "period_id_mongo_id", limit: 255
   end
+
+  add_index "period_deliveries", ["mongo_id"], name: "index_period_deliveries_on_mongo_id", using: :btree
+  add_index "period_deliveries", ["period_id"], name: "period_id", using: :btree
+  add_index "period_deliveries", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
 
   create_table "period_documents", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -1118,6 +1380,16 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "pack_id",                  limit: 4
     t.string   "pack_id_mongo_id",         limit: 255
   end
+
+  add_index "period_documents", ["mongo_id"], name: "index_period_documents_on_mongo_id", using: :btree
+  add_index "period_documents", ["organization_id"], name: "organization_id", using: :btree
+  add_index "period_documents", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "period_documents", ["pack_id"], name: "pack_id", using: :btree
+  add_index "period_documents", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "period_documents", ["period_id"], name: "period_id", using: :btree
+  add_index "period_documents", ["period_id_mongo_id"], name: "period_id_mongo_id", using: :btree
+  add_index "period_documents", ["user_id"], name: "user_id", using: :btree
+  add_index "period_documents", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "periods", force: :cascade do |t|
     t.string   "mongo_id",                                 limit: 255
@@ -1177,6 +1449,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "delivery_state",                           limit: 255,   default: "wait", null: false
   end
 
+  add_index "periods", ["mongo_id"], name: "index_periods_on_mongo_id", using: :btree
+  add_index "periods", ["organization_id"], name: "organization_id", using: :btree
+  add_index "periods", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "periods", ["subscription_id"], name: "subscription_id", using: :btree
+  add_index "periods", ["subscription_id_mongo_id"], name: "subscription_id_mongo_id", using: :btree
+  add_index "periods", ["user_id"], name: "user_id", using: :btree
+  add_index "periods", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "pre_assignment_deliveries", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -1200,6 +1480,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "ibiza_id",                 limit: 255
   end
 
+  add_index "pre_assignment_deliveries", ["mongo_id"], name: "index_pre_assignment_deliveries_on_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["organization_id"], name: "organization_id", using: :btree
+  add_index "pre_assignment_deliveries", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["report_id"], name: "report_id", using: :btree
+  add_index "pre_assignment_deliveries", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["user_id"], name: "user_id", using: :btree
+  add_index "pre_assignment_deliveries", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "product_option_orders", force: :cascade do |t|
     t.string  "mongo_id",                       limit: 255
     t.string  "name",                           limit: 255
@@ -1218,6 +1506,11 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string  "product_optionable_id_mongo_id", limit: 255
   end
 
+  add_index "product_option_orders", ["mongo_id"], name: "index_product_option_orders_on_mongo_id", using: :btree
+  add_index "product_option_orders", ["product_optionable_id"], name: "product_optionable_id", using: :btree
+  add_index "product_option_orders", ["product_optionable_id_mongo_id"], name: "product_optionable_id_mongo_id", using: :btree
+  add_index "product_option_orders", ["product_optionable_type"], name: "product_optionable_type", using: :btree
+
   create_table "reminder_emails", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
@@ -1233,6 +1526,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "organization_id",          limit: 4
     t.string   "organization_id_mongo_id", limit: 255
   end
+
+  add_index "reminder_emails", ["mongo_id"], name: "index_reminder_emails_on_mongo_id", using: :btree
+  add_index "reminder_emails", ["organization_id"], name: "organization_id", using: :btree
+  add_index "reminder_emails", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
   create_table "remote_files", force: :cascade do |t|
     t.string   "mongo_id",                 limit: 255
@@ -1260,6 +1557,18 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "remotable_id_mongo_id",    limit: 255
   end
 
+  add_index "remote_files", ["group_id"], name: "group_id", using: :btree
+  add_index "remote_files", ["group_id_mongo_id"], name: "group_id_mongo_id", using: :btree
+  add_index "remote_files", ["mongo_id"], name: "index_remote_files_on_mongo_id", using: :btree
+  add_index "remote_files", ["organization_id"], name: "organization_id", using: :btree
+  add_index "remote_files", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "remote_files", ["pack_id"], name: "pack_id", using: :btree
+  add_index "remote_files", ["pack_id_mongo_id"], name: "pack_id_mongo_id", using: :btree
+  add_index "remote_files", ["remotable_id"], name: "remotable_id", using: :btree
+  add_index "remote_files", ["remotable_id_mongo_id"], name: "remotable_id_mongo_id", using: :btree
+  add_index "remote_files", ["user_id"], name: "user_id", using: :btree
+  add_index "remote_files", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "retrieved_data", force: :cascade do |t|
     t.text     "state",                    limit: 65535
     t.text     "content",                  limit: 16777215
@@ -1269,6 +1578,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.datetime "updated_at",                                null: false
     t.integer  "user_id",                  limit: 4
   end
+
+  add_index "retrieved_data", ["user_id"], name: "fk_rails_c47071c4c1", using: :btree
 
   create_table "retrievers", force: :cascade do |t|
     t.integer  "budgea_id",                  limit: 4
@@ -1304,7 +1615,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.text     "encrypted_answers",          limit: 65535
   end
 
+  add_index "retrievers", ["connector_id"], name: "index_retrievers_on_connector_id", using: :btree
+  add_index "retrievers", ["journal_id"], name: "index_retrievers_on_journal_id", using: :btree
   add_index "retrievers", ["state"], name: "index_retrievers_on_state", using: :btree
+  add_index "retrievers", ["user_id"], name: "index_retrievers_on_user_id", using: :btree
 
   create_table "sandbox_bank_accounts", force: :cascade do |t|
     t.string   "api_id",            limit: 255
@@ -1324,6 +1638,9 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "retriever_id",      limit: 4
     t.string   "type_name",         limit: 255
   end
+
+  add_index "sandbox_bank_accounts", ["retriever_id"], name: "index_sandbox_bank_accounts_on_retriever_id", using: :btree
+  add_index "sandbox_bank_accounts", ["user_id"], name: "index_sandbox_bank_accounts_on_user_id", using: :btree
 
   create_table "sandbox_documents", force: :cascade do |t|
     t.string   "api_id",               limit: 255
@@ -1368,8 +1685,7 @@ ActiveRecord::Schema.define(version: 20170627125541) do
 
   add_index "sandbox_operations", ["api_id"], name: "index_sandbox_operations_on_api_id", using: :btree
   add_index "sandbox_operations", ["api_name"], name: "index_sandbox_operations_on_api_name", using: :btree
-  add_index "sandbox_operations", ["sandbox_bank_account_id"], name: "index_sandbox_operations_on_sandbox_bank_account_id", using: :btree
-  add_index "sandbox_operations", ["user_id"], name: "index_sandbox_operations_on_user_id", using: :btree
+  add_index "sandbox_operations", ["organization_id"], name: "index_sandbox_operations_on_organization_id", using: :btree
 
   create_table "scanning_providers", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255
@@ -1379,6 +1695,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "code",       limit: 255
     t.boolean  "is_default",             default: false, null: false
   end
+
+  add_index "scanning_providers", ["mongo_id"], name: "index_scanning_providers_on_mongo_id", using: :btree
 
   create_table "settings", force: :cascade do |t|
     t.string "mongo_id",                            limit: 255
@@ -1397,6 +1715,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.text   "inner_url",                           limit: 65535
   end
 
+  add_index "settings", ["mongo_id"], name: "index_mongoid_app_settings_records_on_mongo_id", using: :btree
+
   create_table "statistics", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1413,6 +1733,8 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "position",              limit: 4,   default: 1, null: false
     t.integer  "period_duration",       limit: 4,   default: 1, null: false
   end
+
+  add_index "subscription_options", ["mongo_id"], name: "index_subscription_options_on_mongo_id", using: :btree
 
   create_table "subscription_options_subscriptions", force: :cascade do |t|
     t.integer "subscription_id",        limit: 4
@@ -1462,6 +1784,12 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "organization_id",                     limit: 4
     t.string   "organization_id_mongo_id",            limit: 255
   end
+
+  add_index "subscriptions", ["mongo_id"], name: "index_subscriptions_on_mongo_id", using: :btree
+  add_index "subscriptions", ["organization_id"], name: "organization_id", using: :btree
+  add_index "subscriptions", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "subscriptions", ["user_id"], name: "user_id", using: :btree
+  add_index "subscriptions", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "temp_documents", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1531,12 +1859,26 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "retriever_id",                   limit: 4
   end
 
-  add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
   add_index "temp_documents", ["delivery_type"], name: "index_temp_documents_on_delivery_type", using: :btree
+  add_index "temp_documents", ["document_delivery_id"], name: "document_delivery_id", using: :btree
+  add_index "temp_documents", ["document_delivery_id_mongo_id"], name: "document_delivery_id_mongo_id", using: :btree
+  add_index "temp_documents", ["email_id"], name: "email_id", using: :btree
+  add_index "temp_documents", ["email_id_mongo_id"], name: "email_id_mongo_id", using: :btree
+  add_index "temp_documents", ["fiduceo_retriever_id"], name: "fiduceo_retriever_id", using: :btree
+  add_index "temp_documents", ["fiduceo_retriever_id_mongo_id"], name: "fiduceo_retriever_id_mongo_id", using: :btree
   add_index "temp_documents", ["is_an_original"], name: "index_temp_documents_on_is_an_original", using: :btree
+  add_index "temp_documents", ["mongo_id"], name: "index_temp_documents_on_mongo_id", using: :btree
+  add_index "temp_documents", ["organization_id"], name: "organization_id", using: :btree
+  add_index "temp_documents", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "temp_documents", ["piece_id"], name: "piece_id", using: :btree
+  add_index "temp_documents", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
   add_index "temp_documents", ["retriever_id"], name: "index_temp_documents_on_retriever_id", using: :btree
   add_index "temp_documents", ["state"], name: "index_temp_documents_on_state", using: :btree
+  add_index "temp_documents", ["temp_pack_id"], name: "temp_pack_id", using: :btree
+  add_index "temp_documents", ["temp_pack_id_mongo_id"], name: "temp_pack_id_mongo_id", using: :btree
   add_index "temp_documents", ["user_id"], name: "index_temp_documents_on_user_id", using: :btree
+  add_index "temp_documents", ["user_id"], name: "user_id", using: :btree
+  add_index "temp_documents", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "temp_packs", force: :cascade do |t|
     t.string   "mongo_id",                      limit: 255
@@ -1557,6 +1899,14 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.string   "document_delivery_id_mongo_id", limit: 255
   end
 
+  add_index "temp_packs", ["document_delivery_id"], name: "document_delivery_id", using: :btree
+  add_index "temp_packs", ["document_delivery_id_mongo_id"], name: "document_delivery_id_mongo_id", using: :btree
+  add_index "temp_packs", ["mongo_id"], name: "index_temp_packs_on_mongo_id", using: :btree
+  add_index "temp_packs", ["organization_id"], name: "organization_id", using: :btree
+  add_index "temp_packs", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "temp_packs", ["user_id"], name: "user_id", using: :btree
+  add_index "temp_packs", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
   create_table "user_options", force: :cascade do |t|
     t.string   "mongo_id",                        limit: 255
     t.datetime "created_at"
@@ -1576,6 +1926,10 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,    null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,    null: false
   end
+
+  add_index "user_options", ["mongo_id"], name: "index_user_options_on_mongo_id", using: :btree
+  add_index "user_options", ["user_id"], name: "user_id", using: :btree
+  add_index "user_options", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "mongo_id",                                                       limit: 255
@@ -1644,6 +1998,16 @@ ActiveRecord::Schema.define(version: 20170627125541) do
     t.text     "group_ids",                                                      limit: 65535
   end
 
+  add_index "users", ["mongo_id"], name: "index_users_on_mongo_id", using: :btree
+  add_index "users", ["organization_id"], name: "organization_id", using: :btree
+  add_index "users", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "users", ["parent_id"], name: "parent_id", using: :btree
+  add_index "users", ["parent_id_mongo_id"], name: "parent_id_mongo_id", using: :btree
+  add_index "users", ["scanning_provider_id"], name: "scanning_provider_id", using: :btree
+  add_index "users", ["scanning_provider_id_mongo_id"], name: "scanning_provider_id_mongo_id", using: :btree
+
+  add_foreign_key "budgea_accounts", "users"
   add_foreign_key "debit_mandates", "organizations"
   add_foreign_key "notifications", "users"
+  add_foreign_key "retrieved_data", "users"
 end
