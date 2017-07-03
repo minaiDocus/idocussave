@@ -9,7 +9,7 @@ class DropboxImport::Client
       @client.send(name, *args, &block)
     rescue Errno::ETIMEDOUT, Timeout::Error, DropboxApi::Errors::InternalError, DropboxApi::Errors::RateLimitError, DropboxApi::Errors::TooManyWriteOperationsError, DropboxApi::Errors::HttpError
       retries += 1
-      if retries < 3
+      if retries < 5
         min_sleep_seconds = Float(2 ** (retries/2.0))
         max_sleep_seconds = Float(2 ** retries)
         sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
