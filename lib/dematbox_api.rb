@@ -94,7 +94,5 @@ class DematboxApi
     response = client.call :upload_notification, message: message
 
     response.body[:upload_notification_response][:error_return]
-  rescue => e
-    "[#{e.class}] #{e.message}"
   end
 end
