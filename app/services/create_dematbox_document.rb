@@ -54,7 +54,7 @@ class CreateDematboxDocument
         @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       end
 
-      CreateDematboxDocument.notify_uploaded(@temp_document.id) if Rails.env != 'test'
+      DematboxNotifyUploadedWorker.perform_async(@temp_document.id) if Rails.env != 'test'
     end
 
     clean_tmp
@@ -87,14 +87,6 @@ class CreateDematboxDocument
   def invalid?
     !valid?
   end
-
-
-  def self.notify_uploaded(id)
-    temp_document = TempDocument.find(id)
-
-    DematboxNotifyUploadedWorker.perform_async(temp_document.id)
-  end
-
 
   private
 
