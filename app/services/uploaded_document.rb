@@ -188,10 +188,10 @@ class UploadedDocument
 
   def unique?
     temp_pack = TempPack.where(name: pack_name).first
-    temp_pack && temp_pack.temp_documents.where(content_fingerprint: fingerprint).first ? false : true
+    temp_pack && temp_pack.temp_documents.where('content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint).first ? false : true
   end
 
   def fingerprint
-    DocumentTools.checksum(processed_file.path)
+    @fingerprint ||= DocumentTools.checksum(processed_file.path)
   end
 end
