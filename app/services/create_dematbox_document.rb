@@ -17,8 +17,8 @@ class CreateDematboxDocument
   def execute
     if valid?
       if @service_id == DematboxServiceApi.config.service_id.to_s
-        @temp_document.content              = file
         @temp_document.raw_content          = File.open(@temp_document.content.path)
+        @temp_document.content              = file
         @temp_document.dematbox_text        = @params['text']
         @temp_document.dematbox_box_id      = @params['box_id']
         @temp_document.dematbox_service_id  = @params['service_id']
