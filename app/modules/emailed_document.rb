@@ -50,13 +50,24 @@ class EmailedDocument
   def self.fetch_all
     is_ok = true
 
-    Mail.find_and_delete do |mail|
-      begin
-        EmailedDocument.receive(mail)
-      rescue => e
-        is_ok = false
-        mail.skip_deletion
-        Airbrake.notify(e)
+    tries = 0
+    begin
+      Mail.find_and_delete do |mail|
+        begin
+          EmailedDocument.receive(mail)
+        rescue => e
+          is_ok = false
+          mail.skip_deletion
+          Airbrake.notify(e)
+        end
+      end
+    rescue SocketError => e
+      if e.message.match(/^getaddrinfo/) && tries < 3
+        tries += 1
+        sleep(2)
+        retry
+      else
+        raise
       end
     end
 
