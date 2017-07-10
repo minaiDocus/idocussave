@@ -2,6 +2,12 @@ class DropboxImport
   class << self
     def check
       DropboxBasic.all.each do |dropbox|
+        begin
+          dropbox.reload
+        rescue ActiveRecord::RecordNotFound
+          next
+        end
+
         next unless dropbox.is_used? && dropbox.is_configured? && (dropbox.user.is_prescriber || dropbox.user.options.try(:upload_authorized?))
         next unless dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
 
