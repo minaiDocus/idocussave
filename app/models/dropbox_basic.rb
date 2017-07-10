@@ -13,7 +13,11 @@ class DropboxBasic < ActiveRecord::Base
   before_create :initialize_serialized_attributes
 
   before_destroy do
-    DropboxApi::Client.new(access_token).revoke_token if access_token.present?
+    begin
+      DropboxApi::Client.new(access_token).revoke_token if access_token.present?
+    rescue DropboxApi::Errors::HttpError => e
+      raise unless e.message.match(/invalid_access_token/)
+    end
   end
 
   def user
