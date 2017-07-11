@@ -109,6 +109,15 @@ class DocumentTools
     system "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile='#{new_file_path}' -c .setpdfwrite -f '#{file_path}' 2>&1"
   end
 
+  def self.correct_pdf_if_needed(file_path)
+    unless system("#{Pdftk.config[:exe_path]} '#{file_path}' dump_data")
+      # NOTE : the original name with the character "%" is problematic with GhostScript, so we use a simple naming "CORRECTED.pdf"
+      corrected_file_path = File.dirname(file_path) + '/CORRECTED.pdf'
+      if system "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='#{corrected_file_path}' '#{file_path}'"
+        FileUtils.mv corrected_file_path, file_path
+      end
+    end
+  end
 
   def self.need_ocr?(file_path)
     tempfile = Tempfile.new('ocr_result')

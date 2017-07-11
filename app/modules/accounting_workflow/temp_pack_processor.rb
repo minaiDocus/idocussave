@@ -31,13 +31,19 @@ class AccountingWorkflow::TempPackProcessor
           piece_name = DocumentTools.name_with_position(basename, piece_position, POSITION_SIZE)
           piece_file_name = DocumentTools.file_name(piece_name)
           piece_file_path = File.join(dir, piece_file_name)
+          original_file_path = File.join(dir, 'original.pdf')
 
           if temp_document.mongo_id
             temp_document_path = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/#{temp_document.mongo_id}/#{temp_document.content_file_name}"
           else
             temp_document_path = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/#{temp_document.id}/#{temp_document.content_file_name}"
           end
-          DocumentTools.create_stamped_file temp_document_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
+
+          FileUtils.cp temp_document_path, original_file_path
+
+          DocumentTools.correct_pdf_if_needed original_file_path
+
+          DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
                                                                                                                       is_stamp_background_filled: user.is_stamp_background_filled,
                                                                                                                       dir: dir
 
