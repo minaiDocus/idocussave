@@ -91,8 +91,6 @@ class Admin::UsersController < Admin::AdminController
       :password,
       :password_confirmation,
       :code,
-      :is_admin,
-      :is_prescriber,
       :first_name,
       :last_name,
       :company,
