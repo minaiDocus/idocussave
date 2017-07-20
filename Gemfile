@@ -141,6 +141,9 @@ gem 'remote_lock'
 # Encryption
 gem 'symmetric-encryption'
 
+# Metric
+gem 'skylight'
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'
