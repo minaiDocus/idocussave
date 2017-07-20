@@ -221,7 +221,7 @@ class DropboxImport
 
     unless file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
       if needed_folders.include?(path)
-        if UploadedDocument.valid_extensions.include?(File.extname(file_path)) && metadata.size <= 10.megabytes
+        if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase) && metadata.size <= 10.megabytes
           customer, journal_name, period_offset = get_info_from_path path
 
           begin
