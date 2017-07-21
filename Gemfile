@@ -142,7 +142,7 @@ gem 'remote_lock'
 gem 'symmetric-encryption'
 
 # Metric
-gem 'skylight'
+# gem 'skylight'
 
 group :development, :test do
   gem 'byebug'
