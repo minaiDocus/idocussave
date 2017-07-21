@@ -611,6 +611,56 @@ describe DropboxImport do
           end
         end
       end
+
+      context 'given import folder has been deleted' do
+        before(:each) do
+          @folder_paths = [
+            '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/AC',
+            '/exportation vers iDocus/TS%0001 - TeSt/période actuelle/VT',
+            '/exportation vers iDocus/TS%0001 - TeSt/période précédente/AC',
+            '/exportation vers iDocus/TS%0001 - TeSt/période précédente/VT'
+          ]
+          @dropbox.import_folder_paths = @folder_paths
+          @dropbox.delta_path_prefix = '/exportation vers iDocus/TS%0001 - TeSt'
+          @dropbox.delta_cursor = @delta_cursor = 'AAHUih7TxHRIigL_ZKLMFw5fGycgJLtb7OYpbas4sDMVVp9FDcPNvwi5sPPtFpkKiQsqGGs3J8_prkoUE1kM7GlUrz-bTFCo1fnKSp_Z8SXnYKES5c9trusGZbLDHat8QhlWNzKZ1peRsYGeuWy0DgVnw2ZFnUdEMy2onfs_V-AxT931qcX9rxocbuVyGQfPx7NaJ1o65_piVVXnY-EHFSpZ-n0WGeTsMLdPiqLgKlH7jA'
+          @dropbox.save
+        end
+
+        it 'recreates initial folders', focus: true do
+          dropbox_import = DropboxImport.new(@dropbox)
+
+          expect(dropbox_import.folders.size).to eq 4
+          expect(dropbox_import.folders.select(&:exist?).size).to eq 4
+          expect(dropbox_import.folders.select(&:to_be_destroyed?).size).to eq 0
+          expect(dropbox_import.folders.select(&:to_be_created?).size).to eq 0
+
+          VCR.use_cassette('dropbox_import/customer/recreates_initial_folders') do
+            dropbox_import.check
+          end
+
+          # creates 4 folders
+          4.times do |i|
+            expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/create_folder').
+              with(headers: @headers_2).with(body: { path: @folder_paths[i] })
+          end
+          # get latest cursor
+          expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor').
+            with(headers: @headers_2, body: '{"path":"/exportation vers iDocus/TS%0001 - TeSt","recursive":true,"include_media_info":false,"include_deleted":false}')
+          # delta
+          expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/continue').
+            with(headers: @headers_2, body: /\{"cursor":".*"\}/).twice
+
+          expect(WebMock).to have_requested(:any, /.*/).times(7)
+
+          expect(@dropbox.checked_at).to be_present
+          expect(@dropbox.delta_cursor).not_to eq(@delta_cursor)
+          expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%0001 - TeSt')
+          expect(@dropbox.import_folder_paths).to eq(@folder_paths)
+
+          expect(dropbox_import.folders.size).to eq 4
+          expect(dropbox_import.folders.select(&:exist?).size).to eq 4
+        end
+      end
     end
 
     context 'as collaborator' do

@@ -77,14 +77,22 @@ class DropboxImport
       checked_at = Time.now
       has_more = true
 
-      if @current_cursor.nil?
-        @dropbox.import_folder_paths = []
-        update_folders
-        @current_cursor = client.list_folder_get_latest_cursor(path: @current_path_prefix, recursive: true).cursor
-      end
+      initialize_folders if @current_cursor.nil?
 
       while has_more
-        result = client.list_folder_continue(@current_cursor)
+        retryable = true
+        begin
+          result = client.list_folder_continue(@current_cursor)
+        rescue DropboxApi::Errors::WriteError => e
+          if e.message.match(/path\/not_found\//) && retryable
+            initialize_folders
+            retryable = false
+            retry
+          else
+            raise
+          end
+        end
+
         result.entries.each do |entry|
           process_entry entry
         end
@@ -174,6 +182,13 @@ class DropboxImport
 
       @folders
     end
+  end
+
+  def initialize_folders
+    @dropbox.import_folder_paths = []
+    @folders = nil
+    update_folders
+    @current_cursor = client.list_folder_get_latest_cursor(path: @current_path_prefix, recursive: true).cursor
   end
 
   def process_entry(metadata)
