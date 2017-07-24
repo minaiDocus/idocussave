@@ -93,11 +93,8 @@ describe DestroyBankAccounts do
         expect(@user.bank_accounts.size).to eq 0
       end
 
-      it 'nullify the api_id and bank_account_id of all attached operations' do
-        expect(@operation.api_id).to be_nil
+      it 'nullify the bank_account_id of all attached operations' do
         expect(@operation.bank_account_id).to be_nil
-
-        expect(@operation2.api_id).to be_nil
         expect(@operation2.bank_account_id).to be_nil
       end
     end
@@ -113,11 +110,7 @@ describe DestroyBankAccounts do
         @operation2.reload
 
         expect(@user.bank_accounts.size).to eq 2
-
-        expect(@operation.api_id).to be_present
         expect(@operation.bank_account).to be_present
-
-        expect(@operation2.api_id).to be_present
         expect(@operation2.bank_account).to be_present
       end
     end

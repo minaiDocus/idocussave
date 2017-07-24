@@ -22,7 +22,10 @@ class DestroyBudgeaConnection
     return true if is_destroyed
 
     if client.destroy_connection(@retriever.budgea_id)
-      DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id)) if @retriever.bank_accounts.any?
+      if @retriever.bank_accounts.any?
+        Operation.where(bank_account_id: @retriever.bank_accounts.map(&:id)).update_all(api_id: nil)
+        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id))
+      end
       @retriever.destroy_budgea_connection
     else
       @retriever.update(budgea_error_message: client.error_message)

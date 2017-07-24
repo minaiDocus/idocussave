@@ -47,7 +47,10 @@ class Account::Organization::RetrieversController < Account::Organization::Retri
 
   def destroy
     if @retriever.unavailable?
-      DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id)) if @retriever.bank_accounts.any?
+      if @retriever.bank_accounts.any?
+        Operation.where(bank_account_id: @retriever.bank_accounts.map(&:id)).update_all(api_id: nil)
+        DestroyBankAccountsWorker.perform_in(1.day, @retriever.bank_accounts.map(&:id))
+      end
       @retriever.destroy
       flash[:success] = 'Supprimé avec succès.'
     else
