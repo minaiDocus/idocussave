@@ -7,7 +7,7 @@ class DropboxImport::Client
     retries = 0
     begin
       @client.send(name, *args, &block)
-    rescue Errno::ETIMEDOUT, Timeout::Error, DropboxApi::Errors::InternalError, DropboxApi::Errors::RateLimitError, DropboxApi::Errors::TooManyWriteOperationsError, DropboxApi::Errors::HttpError
+    rescue Errno::ETIMEDOUT, Timeout::Error, Faraday::ConnectionFailed, DropboxApi::Errors::InternalError, DropboxApi::Errors::RateLimitError, DropboxApi::Errors::TooManyWriteOperationsError, DropboxApi::Errors::HttpError
       retries += 1
       if retries < 5
         min_sleep_seconds = Float(2 ** (retries/2.0))
