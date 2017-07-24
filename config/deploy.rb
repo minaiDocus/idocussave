@@ -6,6 +6,8 @@ set :branch, 'master'
 
 set :rvm_ruby_version, '2.3.1'
 
+set :conditionally_migrate, true
+
 set :linked_dirs, fetch(:linked_dirs, []).push(
   'log',
   'tmp/pids',
