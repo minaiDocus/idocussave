@@ -89,7 +89,8 @@ class ProcessRetrievedData
                         else
                           orphaned_operation.bank_account = bank_account
                         end
-                        orphaned_operation.api_id       = transaction['id']
+                        assign_attributes(bank_account, orphaned_operation, transaction)
+                        orphaned_operation.api_id = transaction['id']
                         orphaned_operation.save
                       else
                         operation = if retriever.connector.is_fiduceo_active?

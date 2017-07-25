@@ -232,6 +232,23 @@ describe ProcessRetrievedData do
         expect(@operation.api_id).to eq '309'
         expect(@operation.bank_account).to eq @bank_account
       end
+
+      it 'reattaches the operation to the bank account and update it' do
+        @operation.update(api_id: nil, bank_account_id: nil, is_coming: true)
+
+        retrieved_data = RetrievedData.new
+        retrieved_data.user = @user
+        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account_updated.json')))
+        retrieved_data.save
+
+        ProcessRetrievedData.new(retrieved_data).execute
+
+        @operation.reload
+        expect(@user.operations.count).to eq 1
+        expect(@operation.api_id).to eq '309'
+        expect(@operation.bank_account).to eq @bank_account
+        expect(@operation.is_coming).to eq false
+      end
     end
   end
 
