@@ -91,6 +91,17 @@ describe ProcessRetrievedData do
       expect(@user.operations.count).to eq 3
     end
 
+    it 'does not create any operation' do
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'deleted_operation_from_the_start.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      expect(@user.operations.count).to eq 0
+    end
+
     it 'destroys the bank account, but not the operation' do
       operation = Operation.new
       operation.user         = @user

@@ -92,7 +92,7 @@ class ProcessRetrievedData
                         assign_attributes(bank_account, orphaned_operation, transaction)
                         orphaned_operation.api_id = transaction['id']
                         orphaned_operation.save
-                      else
+                      elsif transaction['deleted'].nil?
                         operation = if retriever.connector.is_fiduceo_active?
                           SandboxOperation.new(sandbox_bank_account_id: bank_account.id)
                         else
