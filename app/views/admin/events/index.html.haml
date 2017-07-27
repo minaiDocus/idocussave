@@ -14,7 +14,7 @@
             %thead
               %tr
                 %th Total
-                %th.field.number_field= label_tag 'event_contains[number]', t('activerecord.models.event.attributes.number')
+                %th.field.number_field= label_tag 'event_contains[id]', 'ID'
                 %th.field.date_field= label_tag 'event_contains[created_at][>=]', 'Date de début'
                 %th.field.date_field= label_tag 'event_contains[created_at][<=]', 'Date de fin'
                 %th.field.text_field= label_tag 'event_contains[user_contains][code]', t('activerecord.models.event.attributes.user')
@@ -31,7 +31,7 @@
                     = Event.count
                   - else
                     %b= Event.count
-                %td.field.number_field= number_field_tag 'event_contains[number]', (params[:event_contains][:number] rescue '')
+                %td.field.number_field= number_field_tag 'event_contains[id]', (params[:event_contains][:id] rescue '')
                 %td.field.date_field
                   .input-prepend.date.datepicker
                     %span.add-on
@@ -60,7 +60,7 @@
       %table.list.table.table-condensed.table-striped.panel.margin1top.margin0bottom
         %thead
           %tr
-            %th.number=      sortable :number,      t('activerecord.models.event.attributes.number')
+            %th.number=      sortable :id,          'ID'
             %th.date=        sortable :created_at,  'Date'
             %th=             sortable :user_id,     t('activerecord.models.event.attributes.user')
             %th=             sortable :action,      t('activerecord.models.event.attributes.action')
@@ -70,7 +70,7 @@
           - @events.each do |event|
             - event_presenter = EventPresenter.new(event, self)
             %tr{ data: { id: event_presenter.id.to_s } }
-              %td.do-show.number=      event_presenter.number
+              %td.do-show.number=      event_presenter.id
               %td.do-show.date=        event_presenter.created_at
               %td=                     event_presenter.user_code
               %td.do-show=             event_presenter.action

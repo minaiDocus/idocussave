@@ -16,7 +16,7 @@ class Admin::EventsController < Admin::AdminController
   private
 
   def sort_column
-    params[:sort] || 'number'
+    params[:sort] || 'id'
   end
   helper_method :sort_column
 

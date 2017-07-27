@@ -5,12 +5,9 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :organization
 
-  validates_presence_of   :number
-  validates_uniqueness_of :number
+  before_create :set_user_code
 
-  before_create     :set_user_code
-  before_validation :set_number
-
+  # TODO : remove outdated attributes : mongo_id, number
 
   def target
     if target_id
@@ -44,7 +41,7 @@ class Event < ActiveRecord::Base
       end
     end
 
-    events = events.where(number:      contains[:number])      if contains[:number].present?
+    events = events.where(id:          contains[:id])          if contains[:id].present?
     events = events.where(action:      contains[:action])      if contains[:action].present?
     events = events.where(target_type: contains[:target_type]) if contains[:target_type].present?
     events = events.where("target_name LIKE ?", "%#{contains[:target_name]}%") if contains[:target_name].present?
@@ -53,12 +50,6 @@ class Event < ActiveRecord::Base
   end
 
   private
-
-
-  def set_number
-    self.number ||= DbaSequence.next('Event')
-  end
-
 
   def set_user_code
     self.user_code ||= user.try(:code)
