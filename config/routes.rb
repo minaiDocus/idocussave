@@ -326,10 +326,6 @@ Idocus::Application.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
-      resources :operations do
-        post 'import', on: :collection
-      end
-
       resources :pre_assignments do
         post 'update_comment', on: :collection
       end
