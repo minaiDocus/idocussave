@@ -35,6 +35,19 @@ class AccountingWorkflow::GroupDocument
     end
   end
 
+  class << self
+    def execute
+      processable_results.map do |file_path|
+        new(file_path).execute
+      end
+    end
+
+    def processable_results
+      Dir.glob(AccountingWorkflow.grouping_dir.join('output/*.xml')).select do |file_path|
+        File.atime(file_path) < 1.minute.ago
+      end
+    end
+  end
 
   def self.position(file_name)
     if FILE_NAME_PATTERN_1.match(file_name)

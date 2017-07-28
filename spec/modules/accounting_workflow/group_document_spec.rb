@@ -146,8 +146,8 @@ describe AccountingWorkflow::GroupDocument do
 
   describe '.execute' do
     before(:all) do
-      @result_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'result.xml'
-      @errors_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'errors.txt'
+      @result_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'output', 'result.xml'
+      @errors_file_path = Rails.root.join 'files', 'test', 'prepa_compta', 'grouping', 'errors', 'result.txt'
 
       @user = FactoryGirl.create(:user, code: 'TS%0001')
       FactoryGirl.create(:journal_with_preassignment, user_id: @user.id, name: 'AC', description: '( Achat )')
@@ -159,6 +159,8 @@ describe AccountingWorkflow::GroupDocument do
       FileUtils.mkdir_p base_path.join('dematbox_scans')
       FileUtils.mkdir_p base_path.join('uploads')
       FileUtils.mkdir_p base_path.join('archives')
+      FileUtils.mkdir_p base_path.join('output')
+      FileUtils.mkdir_p base_path.join('errors')
 
       @temp_pack = TempPack.find_or_create_by_name 'TS%0001 AC 201501 all'
 
@@ -189,7 +191,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(File.exist?(@result_file_path)).to be_truthy
         expect(File.exist?(@errors_file_path)).to be_falsy
 
-        Timecop.freeze(Time.local(2015,1,1,0,1,0))
+        Timecop.freeze(Time.local(2015,1,1,0,1,1))
         AccountingWorkflow::GroupDocument.execute
 
         expect(File.read(@errors_file_path)).to eq 'The document has no document element.'
@@ -454,7 +456,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(@temp_pack.temp_documents.bundled.count).to eq 2
         expect(@temp_pack.temp_documents.ready.count).to eq 1
         expect(DocumentTools.pages_number(new_temp_document.content.path)).to eq 4
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('result.xml'))).to be_truthy
@@ -514,7 +516,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(DocumentTools.pages_number(document_1.content.path)).to eq 2
         expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_003.pdf'))).to be_truthy
@@ -580,7 +582,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(DocumentTools.pages_number(document_1.content.path)).to eq 2
         expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_1001_003.pdf'))).to be_truthy
@@ -646,7 +648,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(DocumentTools.pages_number(document_1.content.path)).to eq 3
         expect(DocumentTools.pages_number(document_2.content.path)).to eq 3
         expect(DocumentTools.pages_number(document_3.content.path)).to eq 2
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001_003.pdf'))).to be_truthy
@@ -659,7 +661,7 @@ describe AccountingWorkflow::GroupDocument do
       end
 
       it 'successfully group documents' do
-        Timecop.freeze(Time.local(2015,1,2,0,1,0))
+        Timecop.freeze(Time.local(2015,1,2,0,1,1))
         2.times do |i|
           temp_document = TempDocument.new
           temp_document.temp_pack      = @temp_pack
@@ -743,7 +745,7 @@ describe AccountingWorkflow::GroupDocument do
           </group_documents>'
         File.write(@result_file_path, data)
         File.utime(Time.local(2015,1,2), Time.local(2015,1,2), @result_file_path)
-        FileUtils.mkdir_p Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01_1')
+        FileUtils.mkdir_p Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '01')
 
         AccountingWorkflow::GroupDocument.execute
 
@@ -759,7 +761,7 @@ describe AccountingWorkflow::GroupDocument do
         expect(DocumentTools.pages_number(document_2.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_3.content.path)).to eq 4
         expect(DocumentTools.pages_number(document_4.content.path)).to eq 8
-        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '02_1')
+        archive_path = Rails.root.join('files', 'test', 'prepa_compta', 'grouping', 'archives', '2015', '01', '02')
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_001.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_002.pdf'))).to be_truthy
         expect(File.exist?(archive_path.join('TS_0001_AC_201501_003_001.pdf'))).to be_truthy
