@@ -626,7 +626,7 @@ describe DropboxImport do
           @dropbox.save
         end
 
-        it 'recreates initial folders', focus: true do
+        it 'recreates initial folders' do
           dropbox_import = DropboxImport.new(@dropbox)
 
           expect(dropbox_import.folders.size).to eq 4
