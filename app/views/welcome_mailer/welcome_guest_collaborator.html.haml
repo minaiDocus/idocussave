@@ -1,0 +1,35 @@
+!!!
+%html
+  %head
+    %title [iDocus] Création de compte iDocus
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour #{@guest.name},
+    %br
+    %br
+    Vous bénéficiez d'un espace personnel sur la plateforme iDocus qui vous permet de consulter et gérer les documents de vos comptes.
+    %br
+    %br
+    Nous venons de vous créer un compte pour y accéder.
+    %br
+    %br
+    Merci de bien vouloir cliquer sur ce lien afin de générer votre mot de passe : #{link_to edit_user_password_url(reset_password_token: @token), edit_user_password_url(reset_password_token: @token) }
+    %br
+    Par mesure de sécurité, ce lien est actif pendant 7 jours.
+    %br
+    Si vous avez dépassé ce délai, vous pouvez demander à recevoir un nouveau mail pour générer votre mot de passe en cliquant ici : #{link_to new_user_password_url, new_user_password_url }
+    %br
+    %br
+    %br
+    Votre identifiant est : #{@guest.email}
+    %br
+    %br
+    %br
+    Nous vous souhaitons une bonne utilisation de notre service.
+    %br
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

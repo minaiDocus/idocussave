@@ -120,7 +120,7 @@ Idocus::Application.routes.draw do
         get   'edit_ibiza',              on: :member
         patch 'update_ibiza',            on: :member
         patch 'close_account',           on: :member
-        get   'search_by_code',          on: :collection
+        get   'search',                  on: :collection
         patch 'reopen_account',          on: :member
         get   'edit_compta_options',     on: :member
         get   'edit_period_options',     on: :member
@@ -227,6 +227,10 @@ Idocus::Application.routes.draw do
       end
 
       resources :preseizure_accounts
+
+      resources :account_sharings, only: %w(index new create destroy)
+      resources :account_sharing_groups
+      resources :guest_collaborators
     end
 
 

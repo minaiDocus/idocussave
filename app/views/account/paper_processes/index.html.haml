@@ -1,7 +1,7 @@
 #paper_processes.container-fluid
   .row-fluid
     .span12.box
-      %h3 Suivi (#{@paper_processes_count})
+      %h3 Suivi (#{@paper_processes.total_count})
   .row-fluid
     .span9.box
       = render 'shared/list_options', collection: @paper_processes

@@ -33,8 +33,14 @@ module FileDelivery
           pack.init_delivery_for(owner.organization, options.merge(type: FileDelivery::RemoteFile::PIECES_ONLY))
         end
 
+        # Organization's collaborators
         owner.prescribers.each do |prescriber|
           pack.init_delivery_for(prescriber, options)
+        end
+
+        # Guest collaborators
+        owner.collaborators.each do |collaborator|
+          pack.init_delivery_for(collaborator, options)
         end
 
         owner.groups.each do |group|

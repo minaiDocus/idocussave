@@ -1273,5 +1273,101 @@ describe DropboxImport do
         end
       end
     end
+
+    context 'as guest collaborator' do
+      before(:each) do
+        DatabaseCleaner.start
+
+        @organization = Organization.create(name: 'TEST', code: 'TS')
+
+        @guest_collaborator = FactoryGirl.create(:guest, code: 'TS%COL1')
+        @guest_collaborator.organization = @organization
+        @guest_collaborator.save
+
+        @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
+        @user.options = UserOptions.create(user_id: @user.id)
+        @user.organization = @organization
+        @user.save
+
+        AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )')
+        AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
+
+        @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
+        @user2.options = UserOptions.create(user_id: @user2.id)
+        @user2.organization = @organization
+        @user2.save
+
+        AccountBookType.create(user_id: @user2.id, name: 'AC', description: '( Achat )')
+        AccountBookType.create(user_id: @user2.id, name: 'BQ', description: '( Banque )')
+
+        [@user, @user2].each do |user|
+          account_sharing = AccountSharing.new
+          account_sharing.collaborator = @guest_collaborator
+          account_sharing.account = user
+          account_sharing.authorized_by = user
+          account_sharing.save
+        end
+
+        efs = @guest_collaborator.find_or_create_external_file_storage
+        efs.use ExternalFileStorage::F_DROPBOX
+        @dropbox = efs.dropbox_basic
+        @dropbox.access_token = 'K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO'
+        @dropbox.save
+
+        @guest_collaborator.reload
+
+        @headers = { 'Authorization' => 'Bearer K4z7I_InsgsAAAAAAAAAkZ76RjGf_qZVQ6y72HOjmCJ1FWGFufHC9ZGbfuqO3fQO' }
+        @headers_2 = @headers.merge({ 'Content-Type' => 'application/json' })
+      end
+
+      after(:each) { DatabaseCleaner.clean }
+
+      it 'creates initial folders' do
+        dropbox_import = DropboxImport.new(@dropbox)
+
+        expect(dropbox_import.folders.size).to eq 8
+        expect(dropbox_import.folders.select(&:exist?).size).to eq 0
+        expect(dropbox_import.folders.select(&:to_be_destroyed?).size).to eq 0
+        expect(dropbox_import.folders.select(&:to_be_created?).size).to eq 8
+
+        VCR.use_cassette('dropbox_import/collaborator/creates_initial_folders') do
+          dropbox_import.check
+        end
+
+        folder_paths = [
+          '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC',
+          '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT',
+          '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/AC',
+          '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période précédente/VT',
+          '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/AC',
+          '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période actuelle/BQ',
+          '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/AC',
+          '/exportation vers iDocus/TS%COL1/TS%0002 - DEF/période précédente/BQ'
+        ]
+
+        # creates 8 folders
+        8.times do |i|
+          expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/create_folder').
+            with(headers: @headers_2, body: { path: folder_paths[i] }.to_json)
+        end
+
+        # get latest cursor
+        expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor').
+          with(headers: @headers_2, body: '{"path":"/exportation vers iDocus/TS%COL1","recursive":true,"include_media_info":false,"include_deleted":false}')
+        # delta
+        expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/continue').
+          with(headers: @headers_2, body: /\{"cursor":".*"\}/)
+
+        expect(WebMock).to have_requested(:any, /.*/).times(10)
+
+        expect(@dropbox.checked_at).to be_present
+        expect(@dropbox.delta_cursor).to be_present
+        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%COL1')
+        expect(@dropbox.import_folder_paths).to eq(folder_paths)
+
+        expect(dropbox_import.folders.size).to eq 8
+        expect(dropbox_import.folders.select(&:exist?).size).to eq 8
+      end
+    end
   end
 end

@@ -1,11 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class Account::NewProviderRequestsController < Account::RetrieverController
-  before_filter :verify_rights
   before_filter :load_new_provider_request, only: %w(edit update)
   before_filter :verify_if_modifiable
 
   def index
-    @new_provider_requests = @user.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @new_provider_requests = @account.new_provider_requests.not_processed_or_recent.order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
   end
 
   def new
@@ -13,7 +12,7 @@ class Account::NewProviderRequestsController < Account::RetrieverController
   end
 
   def create
-    @new_provider_request = @user.new_provider_requests.build new_provider_request_params
+    @new_provider_request = @account.new_provider_requests.build new_provider_request_params
     @new_provider_request.edited_by_customer = true
     if @new_provider_request.save
       flash[:success] = 'Votre demande est prise en compte. Nous vous apporterons une réponse dans les prochains jours.'
@@ -38,15 +37,8 @@ class Account::NewProviderRequestsController < Account::RetrieverController
 
 private
 
-  def verify_rights
-    unless @user.options.try(:is_retriever_authorized)
-      flash[:error] = t('authorization.unessessary_rights')
-      redirect_to root_path
-    end
-  end
-
   def load_new_provider_request
-    @new_provider_request = @user.new_provider_requests.find(params[:id])
+    @new_provider_request = @account.new_provider_requests.find(params[:id])
   end
 
   def verify_if_modifiable

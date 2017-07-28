@@ -79,18 +79,25 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :groups, inverse_of: 'members'
   has_and_belongs_to_many :account_number_rules
 
+  has_many :requested_account_sharings,  class_name: 'AccountSharing', inverse_of: 'requested_by',  foreign_key: 'requested_by_id'
+  has_many :authorized_account_sharings, class_name: 'AccountSharing', inverse_of: 'authorized_by', foreign_key: 'authorized_by_id'
+
+  has_many :account_sharings, foreign_key: 'collaborator_id'
+  has_many :accounts, -> { distinct }, class_name: 'User', through: :account_sharings
+  has_many :inverse_account_sharings, class_name: 'AccountSharing', foreign_key: 'account_id'
+  has_many :collaborators, -> { distinct }, class_name: 'User', through: :inverse_account_sharings, source: :collaborator
 
   scope :active,                      -> { where(inactive_at: nil) }
   scope :closed,                      -> { where.not(inactive_at: [nil]) }
   scope :active_at,                   -> (time) { where('inactive_at IS NULL OR inactive_at > ?', time.end_of_month) }
   scope :operators,                   -> { where(is_operator: true) }
-  scope :customers,                   -> { where(is_prescriber: false, is_operator: [false, nil]) }
+  scope :customers,                   -> { where(is_prescriber: false, is_operator: [false, nil], is_guest: false) }
   scope :prescribers,                 -> { where(is_prescriber: true) }
   scope :not_operators,               -> { where(is_operator: [false, nil]) }
   scope :fake_prescribers,            -> { where(is_prescriber: true, is_fake_prescriber: true) }
   scope :not_fake_prescribers,        -> { where(is_prescriber: true, is_fake_prescriber:  [false, nil]) }
   scope :dropbox_extended_authorized, -> { where(is_dropbox_extended_authorized: true) }
-
+  scope :guest_collaborators,         -> { where(is_prescriber: false, is_guest: true) }
 
   accepts_nested_attributes_for :options
   accepts_nested_attributes_for :addresses, allow_destroy: true
@@ -238,6 +245,9 @@ class User < ActiveRecord::Base
     end
   end
 
+  def documents_collaborator?
+    is_prescriber || is_guest
+  end
 
   def compta_processable_journals
     account_book_types.compta_processable
@@ -304,50 +314,34 @@ class User < ActiveRecord::Base
     created_at > 24.hours.ago
   end
 
-
+  # TODO : need a test
   def self.search(contains)
-    users = User.not_operators
-
-    users = contains[:is_inactive] == '1' ? users.closed : users.active                    if contains[:is_inactive].present?
-
+    users = self.all
+    users = contains[:is_inactive] == '1' ? users.closed : users.active                        if contains[:is_inactive].present?
+    users = users.where(is_admin:            (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
+    users = users.where(is_prescriber:       (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
+    users = users.where(is_guest:            (contains[:is_guest] == '1' ? true : false))      if contains[:is_guest].present?
+    users = users.where(organization_id:     contains[:organization_id])                       if contains[:organization_id].present?
     users = users.where("code LIKE ?",       "%#{contains[:code]}%")                           if contains[:code].present?
     users = users.where("email LIKE ?",      "%#{contains[:email]}%")                          if contains[:email].present?
     users = users.where("company LIKE ?",    "%#{contains[:company]}%")                        if contains[:company].present?
-    users = users.where(is_admin:            (contains[:is_admin] == '1' ? true : false))      if contains[:is_admin].present?
-    users = users.where(is_prescriber:       (contains[:is_prescriber] == '1' ? true : false)) if contains[:is_prescriber].present?
     users = users.where("last_name LIKE ?",  "%#{contains[:last_name]}%")                      if contains[:last_name].present?
-    users = users.where(organization_id:     contains[:organization_id])                       if contains[:organization_id].present?
     users = users.where("first_name LIKE ?", "%#{contains[:first_name]}%")                     if contains[:first_name].present?
-
 
     if contains[:is_organization_admin].present?
       user_ids = Organization.all.pluck(:leader_id)
 
       users = if contains[:is_organization_admin] == '1'
-                users.where(id: user_ids)
-              else
-                users.where.not(id: user_ids)
-              end
+        users.where(id: user_ids)
+      else
+        users.where.not(id: user_ids)
+      end
     end
 
     users
   end
 
-
-  def self.search_for_collection(collection, contains)
-    collection = collection.where("code LIKE ?", "%#{contains[:code]}%") unless contains[:code].blank?
-    collection = collection.where("email LIKE ?", "%#{contains[:email]}%") unless contains[:email].blank?
-    collection = collection.where("company LIKE ?", "%#{contains[:company]}%") unless contains[:company].blank?
-    collection = collection.where("last_name LIKE ?", "%#{contains[:last_name]}%") unless contains[:last_name].blank?
-    collection = collection.where("first_name LIKE ?", "%#{contains[:first_name]}%") unless contains[:first_name].blank?
-
-    collection = contains[:is_inactive] == '1' ? collection.closed : collection.active if contains[:is_inactive].present?
-
-    collection
-  end
-
-
-  private
+private
 
 
   def format_of_code

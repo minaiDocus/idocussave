@@ -27,9 +27,9 @@
                   %th
                 %tr
                   - opts = { :class => "margin1left margin0bottom", :style => "width:auto;position:relative;top:-4px;" }
-                  - if !current_user.is_admin and !current_user.is_prescriber
+                  - unless @user.documents_collaborator?
                     - opts.merge!({ :disabled => :disabled})
-                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(@users, @year) ),  opts)
+                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(accounts, @year) ),  opts)
                   %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
@@ -66,7 +66,7 @@
                 #{month}
         %tbody
           - row = 0
-          - @users.each_with_index do |user|
+          - accounts.each_with_index do |user|
             - periods = annual_periods_for_user(@periods_by_users[user.id] || [])
             - if active_year_for_user?(@year, user, periods)
               - row += 1

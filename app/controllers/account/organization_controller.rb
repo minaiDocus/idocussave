@@ -39,7 +39,7 @@ class Account::OrganizationController < Account::AccountController
       @user.customers
     end
   end
-
+  helper_method :customers
 
   def customer_ids
     customers.map(&:id)

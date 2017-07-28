@@ -15,7 +15,7 @@
       %br
       %br
     %form#fileupload.form.form-horizontal{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
-      - if @user.is_prescriber
+      - if @user.documents_collaborator?
         .control-group
           = label_tag :h_file_code, 'Code client : ', class: 'control-label', style: 'font-weight:900;'
           .controls
@@ -24,14 +24,14 @@
       .control-group
         = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label', style: 'font-weight:900;'
         .controls
-          = select_tag :h_file_account_book_type, @user.is_prescriber ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type, style: 'font-size:11px;'
+          = select_tag :h_file_account_book_type, @user.documents_collaborator? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type, style: 'font-size:11px;'
           = hidden_field_tag :file_account_book_type
       .control-group.prev_period_offset
         = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label', style: 'font-weight:900;'
         .controls
-          = select_tag :h_file_prev_period_offset, @user.is_prescriber ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field', style: 'font-size:11px;'
+          = select_tag :h_file_prev_period_offset, @user.documents_collaborator? ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field', style: 'font-size:11px;'
           = hidden_field_tag :file_prev_period_offset
-          - if !@user.is_prescriber && @period_service.prev_expires_at
+          - if !@user.documents_collaborator? && @period_service.prev_expires_at
             %span.help-block
               %span.label.label-warning.margin1right
                 Attention :

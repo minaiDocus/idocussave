@@ -40,6 +40,8 @@ class Organization < ActiveRecord::Base
   has_many   :account_number_rules
   has_many   :pre_assignment_deliveries
 
+  has_many :account_sharings
+
   belongs_to :leader,             class_name: 'User',               inverse_of: 'my_organization'
 
 
@@ -65,14 +67,16 @@ class Organization < ActiveRecord::Base
   end
 
   def collaborators
-    members.where(is_prescriber: true)
+    members.prescribers
   end
 
+  def guest_collaborators
+    members.guest_collaborators
+  end
 
   def customers
-    members.where(is_prescriber: false)
+    members.customers
   end
-
 
   def member_tokens=(ids)
     user_ids = ids.split(',')

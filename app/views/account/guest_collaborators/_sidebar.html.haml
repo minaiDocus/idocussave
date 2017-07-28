@@ -1,0 +1,19 @@
+.well
+  %h3 Filtres
+
+  = form_tag account_organization_guest_collaborators_path(@organization), method: :get, class: 'form form-vertical margin0bottom' do
+    = hidden_field_tag :direction, sort_direction
+    = hidden_field_tag :sort, sort_column
+    = hidden_field_tag :per_page, per_page
+    = label_tag 'guest_collaborator_contains[code]', 'Code'
+    = text_field_tag 'guest_collaborator_contains[code]', (params[:guest_collaborator_contains][:code] rescue ''), class: 'span12'
+    = label_tag 'guest_collaborator_contains[email]', 'Email'
+    = text_field_tag 'guest_collaborator_contains[email]', (params[:guest_collaborator_contains][:email] rescue ''), class: 'span12'
+    = label_tag 'guest_collaborator_contains[company]', 'Société'
+    = text_field_tag 'guest_collaborator_contains[company]', (params[:guest_collaborator_contains][:company] rescue ''), class: 'span12'
+    = label_tag 'guest_collaborator_contains[first_name]', 'Prénom'
+    = text_field_tag 'guest_collaborator_contains[first_name]', (params[:guest_collaborator_contains][:first_name] rescue ''), class: 'span12'
+    = label_tag 'guest_collaborator_contains[last_name]', 'Nom'
+    = text_field_tag 'guest_collaborator_contains[last_name]', (params[:guest_collaborator_contains][:last_name] rescue ''), class: 'span12'
+    = submit_tag t('filters.action'), class: 'btn btn-primary'
+    = link_to t('filters.reset'), account_organization_guest_collaborators_path(@organization), class: 'btn'

@@ -8,7 +8,7 @@ class DropboxImport
           next
         end
 
-        next unless dropbox.is_used? && dropbox.is_configured? && (dropbox.user.is_prescriber || dropbox.user.options.try(:upload_authorized?))
+        next unless dropbox.is_used? && dropbox.is_configured? && (dropbox.user.documents_collaborator? || dropbox.user.options.try(:upload_authorized?))
         next unless dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
 
         begin
@@ -33,6 +33,7 @@ class DropboxImport
         users << object
         users << object.organization.leader
         users += object.groups.map(&:collaborators).flatten
+        users += object.collaborators
         users.compact!
       else
         users = object
@@ -41,7 +42,7 @@ class DropboxImport
       users.each do |user|
         dropbox = user.external_file_storage.try(:dropbox_basic)
 
-        if dropbox && dropbox.is_used? && dropbox.is_configured? && (dropbox.user.is_prescriber || dropbox.user.options.try(:upload_authorized?))
+        if dropbox && dropbox.is_used? && dropbox.is_configured? && (dropbox.user.documents_collaborator? || dropbox.user.options.try(:upload_authorized?))
           dropbox.update_attribute(:changed_at, Time.now)
         end
       end
@@ -57,7 +58,7 @@ class DropboxImport
 
     default_path_prefix = "/exportation vers iDocus/#{user.code}"
 
-    unless user.is_prescriber
+    unless user.documents_collaborator?
       default_path_prefix += " - #{user.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
     end
 
@@ -132,6 +133,8 @@ class DropboxImport
     else
       @customers = if user.is_prescriber && user.organization
         user.customers.active.order(code: :asc)
+      elsif user.is_guest
+        user.accounts.active.order(code: :asc)
       else
         [user]
       end
@@ -145,7 +148,7 @@ class DropboxImport
       @needed_folders = []
       period_types = ['période actuelle', 'période précédente']
       base_path = Pathname.new '/exportation vers iDocus'
-      base_path = base_path.join user.code if user.is_prescriber
+      base_path = base_path.join user.code if user.documents_collaborator?
 
       customers.each do |customer|
         customer_path = base_path.join "#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
@@ -216,7 +219,7 @@ class DropboxImport
   def get_info_from_path(path)
     data = path.split('/')
 
-    if user.is_prescriber
+    if user.documents_collaborator?
       customer_info, period_type, journal_name = data[3..5]
     else
       customer_info, period_type, journal_name = data[2..4]
@@ -286,7 +289,7 @@ class DropboxImport
     paths = []
     folders.each do |folder|
       if folder.to_be_destroyed?
-        if user.is_prescriber
+        if user.documents_collaborator?
           customer, journal, period_offset = get_info_from_path folder.path
           if customer && folder.path.match(/\/#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}\//)
             paths << [folder.path, false]

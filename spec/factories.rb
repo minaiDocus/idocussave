@@ -22,6 +22,9 @@ FactoryGirl.define do
     factory :operator do
       is_operator true
     end
+    factory :guest do
+      is_guest true
+    end
   end
 
   factory :period_document do

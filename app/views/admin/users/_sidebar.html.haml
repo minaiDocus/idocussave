@@ -13,6 +13,8 @@
   = select_tag 'user_contains[is_organization_admin]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_organization_admin] rescue '')), include_blank: true
   = label_tag 'user_contains[is_prescriber]', t('activerecord.models.user.attributes.is_prescriber')
   = select_tag 'user_contains[is_prescriber]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_prescriber] rescue '')), include_blank: true
+  = label_tag 'user_contains[is_guest]', t('activerecord.models.user.attributes.is_guest')
+  = select_tag 'user_contains[is_guest]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_guest] rescue '')), include_blank: true
   = label_tag 'user_contains[is_inactive]', t('activerecord.models.user.attributes.is_inactive')
   = select_tag 'user_contains[is_inactive]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:user_contains][:is_inactive] rescue '')), include_blank: true
   = label_tag 'user_contains[company]', t('activerecord.models.user.attributes.company')

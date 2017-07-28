@@ -53,12 +53,10 @@ class Pack < ActiveRecord::Base
     per_page = options[:per_page].present? ? options[:per_page].to_i : default_per_page
 
     query = self
-    query = query.where(id: options[:id]) if options[:id].present?
     query = query.where(id: options[:ids]) if options[:ids].present?
-    query = query.where(owner_id: options[:owner_id])  if options[:owner_id].present?
-    query = query.where(owner_id: options[:owner_ids]) if options[:owner_ids].present?
+    # WARN : do not change "unless..nil?" to "if..present?, an empty owner_ids must be passed to the query
+    query = query.where(owner_id: options[:owner_ids]) unless options[:owner_ids].nil?
     query = query.joins(:documents).where('packs.tags LIKE ?  OR packs.name LIKE ? OR documents.content_text LIKE ?' , "%#{text}%",  "%#{text}%", "%#{text}%") if text.present?
-
     query = query.order(updated_at: :desc) if options[:sort] == true
 
     query.distinct.page(page).per(per_page)

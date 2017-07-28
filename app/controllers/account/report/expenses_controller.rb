@@ -10,11 +10,8 @@ class Account::Report::ExpensesController < Account::AccountController
     @report = Pack::Report.find params[:id]
   end
 
-  # FIXME : scope access
   def verify_rights
-    if @report.user != current_user && !current_user.in?(@report.user.try(:prescribers) || []) && !current_user.is_admin
-      redirect_to root_path
-    end
+    redirect_to root_path unless @report.user.in?(accounts)
   end
 
   public

@@ -1,11 +1,11 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrieversController < Account::RetrieverController
   before_filter :load_retriever, except: %w(index list new create)
-  before_filter :verify_rights, except: %w(index list new create)
+  before_filter :verify_retriever_state, except: %w(index list new create)
   before_filter :load_connectors, only: %w(list new create edit update)
 
   def index
-    @retrievers = Retriever.search_for_collection(@user.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @retrievers = Retriever.search_for_collection(@account.retrievers, search_terms(params[:fiduceo_retriever_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     @is_filter_empty = search_terms(params[:fiduceo_retriever_contains]).empty?
     render partial: 'retrievers', locals: { scope: :account } if params[:part].present?
   end
@@ -21,7 +21,7 @@ class Account::RetrieversController < Account::RetrieverController
   def create
     @retriever = Retriever.new(retriever_params)
     @retriever.confirm_dyn_params = true
-    @retriever.user = @user
+    @retriever.user = @account
     if @retriever.save
       flash[:success] = 'Création en cours.'
       redirect_to account_retrievers_path
@@ -111,10 +111,10 @@ private
   end
 
   def load_retriever
-    @retriever = @user.retrievers.find params[:id]
+    @retriever = @account.retrievers.find params[:id]
   end
 
-  def verify_rights
+  def verify_retriever_state
     is_ok = false
 
     if action_name.in? %w(edit update destroy run)

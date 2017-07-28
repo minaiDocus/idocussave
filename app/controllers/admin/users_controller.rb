@@ -8,7 +8,7 @@ class Admin::UsersController < Admin::AdminController
   def index
     @user_contains = search_terms(params[:user_contains])
 
-    @users = User.search(search_terms(params[:user_contains])).order(sort_column => sort_direction)
+    @users = User.not_operators.search(@user_contains).order(sort_column => sort_direction)
 
     @users_count = @users.count
 

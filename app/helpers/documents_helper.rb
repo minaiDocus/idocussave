@@ -1,10 +1,9 @@
 # -*- encoding : UTF-8 -*-
 # FIXME : whole check
 module DocumentsHelper
-  def linked_users_option(user)
-    user.is_prescriber && user.organization ? user.customers.order(code: :asc).map { |u| [u, u.id] } : []
+  def linked_users_option
+    @user.documents_collaborator? ? accounts.map { |u| [u, u.id] } : []
   end
-
 
   def account_book_types_option
     @user.account_book_types.by_position.map do |j|
@@ -181,23 +180,21 @@ module DocumentsHelper
     end
   end
 
-
   def file_upload_users_list
-    @file_upload_users_list ||= @user.customers.active.order(code: :asc).select do |customer|
-      customer.options.is_upload_authorized
+    @file_upload_users_list ||= accounts.active.order(code: :asc).select do |user|
+      user.options.is_upload_authorized
     end
   end
 
-
   def file_upload_params
-    if @user.is_prescriber
+    if @user.documents_collaborator?
       result = {}
 
-      file_upload_users_list.each do |customer|
-        period_service = PeriodService.new user: customer
+      file_upload_users_list.each do |user|
+        period_service = PeriodService.new user: user
 
         hsh = {
-          journals: customer.account_book_types.order(name: :asc).map do |j|
+          journals: user.account_book_types.order(name: :asc).map do |j|
             j.name + ' ' + j.description
           end,
           periods:  options_for_period(period_service)
@@ -210,9 +207,9 @@ module DocumentsHelper
           }
         end
 
-        result[customer.code] = hsh
+        result[user.code] = hsh
       end
-      
+
       result
     else
       {}

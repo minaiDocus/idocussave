@@ -46,9 +46,9 @@ class PaperProcess < ActiveRecord::Base
   end
 
 
-  def self.search_for_collection_with_options_and_user(collection, options, user)
+  def self.search_for_collection_with_options_and_user(collection, options, accounts)
     if options[:customer_company].present?
-      user_ids = user.customers.where('company LIKE ?', "%#{options[:customer_company]}%").pluck(:id)
+      user_ids = accounts.where('company LIKE ?', "%#{options[:customer_company]}%").pluck(:id)
       collection = collection.where(user_id: user_ids)
     end
 

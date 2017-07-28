@@ -8,9 +8,10 @@ class OrganizationManagement
       customers.map(&:id)
     end
 
-    def packs
-      Pack.where("owner_id = ? OR (organization_id = ? AND owner_id IN (?))", id, _organization.id, customer_ids)
-    end
+    # TODO : review if it is still needed
+    # def packs
+    #   Pack.where("owner_id = ? OR (organization_id = ? AND owner_id IN (?))", id, _organization.id, customer_ids)
+    # end
 
     def temp_packs
       TempPack.where(user_id: customer_ids)

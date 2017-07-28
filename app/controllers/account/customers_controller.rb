@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class Account::CustomersController < Account::OrganizationController
-  before_filter :load_customer, except: %w(index info new create search_by_code)
+  before_filter :load_customer, except: %w(index info new create search)
   before_filter :verify_rights, except: 'index'
   before_filter :verify_if_customer_is_active, only: %w(edit update edit_period_options update_period_options edit_knowings_options update_knowings_options edit_compta_options update_compta_options)
   before_filter :redirect_to_current_step
@@ -11,7 +11,7 @@ class Account::CustomersController < Account::OrganizationController
   def index
     respond_to do |format|
       format.html do
-        @customers = User.search_for_collection(customers, search_terms(params[:user_contains])).order(sort_column => sort_direction)
+        @customers = customers.search(search_terms(params[:user_contains])).order(sort_column => sort_direction)
 
         @customers_count = @customers.count
 
@@ -200,13 +200,12 @@ class Account::CustomersController < Account::OrganizationController
     redirect_to account_organization_customer_path(@organization, @customer)
   end
 
-
-  def search_by_code
+  def search
     tags = []
     full_info = params[:full_info].present?
     if params[:q].present?
       users = is_leader? ? @organization.customers : @user.customers
-      users = users.where('code LIKE ?', "%#{params[:q]}%").order(code: :asc).limit(10)
+      users = users.where('code LIKE :q OR company LIKE :q OR first_name LIKE :q OR last_name LIKE :q', q: "%#{params[:q]}%").order(code: :asc).limit(10)
       users.each do |user|
         tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
       end
@@ -216,7 +215,6 @@ class Account::CustomersController < Account::OrganizationController
       format.json { render json: tags.to_json, status: :ok }
     end
   end
-
 
   private
 

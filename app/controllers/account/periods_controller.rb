@@ -12,18 +12,21 @@ class Account::PeriodsController < Account::AccountController
     end
   end
 
-
-  private
-
+private
 
   def load_period
     @period = Period.find(params[:id])
   end
 
-
   def verify_rights
-    if @period.user != current_user && !current_user.in?(@period.user.try(:prescribers) || []) && !current_user.is_admin
-      redirect_to root_path
+    unless @period.user.in?(accounts)
+      respond_to do |format|
+        format.html do
+          flash[:error] = t('authorization.unessessary_rights')
+          redirect_to account_reporting_path
+        end
+        format.json { render text: 'Unauthorized', status: :unauthorized }
+      end
     end
   end
 end

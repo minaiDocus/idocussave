@@ -1,8 +1,8 @@
 # -*- encoding : UTF-8 -*-
 class Account::RetrievedBankingOperationsController < Account::RetrieverController
   def index
-    bank_account_ids = @user.bank_accounts.used.map(&:id)
-    operations = @user.operations.retrieved.where(
+    bank_account_ids = @account.bank_accounts.used.map(&:id)
+    operations = @account.operations.retrieved.where(
       Operation.arel_table[:bank_account_id].in(bank_account_ids).or(
         Operation.arel_table[:processed_at].not_eq(nil)
       )

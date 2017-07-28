@@ -12,7 +12,7 @@
         = text_field_tag :filter, "", :id => :filter, :class => "filter pull-left"
 
         = label_tag :document_owner_list, "Afficher les documents :", :class => "pull-left margin1left"
-        = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option(@user),["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
+        = select_tag :document_owner_list, options_for_select([["en cours d'envois","current_delivery"],["tous","all"]]+linked_users_option,["tous","all"]), :class => "view_for pull-left wauto margin05left margin0bottom"
 
         = label_tag :per_page, "par :", :class => "pull-left margin1left"
         = select_tag :per_page, options_for_select([["20",20],["50",50],["100",100]]), :class => "per_page pull-left w50 margin1left"
@@ -21,7 +21,7 @@
           .pull-right
             - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
             - # |
-            - if (@user.is_prescriber && file_upload_users_list.present?) || @user.options.try(:is_upload_authorized)
+            - if (@user.documents_collaborator? && file_upload_users_list.present?) || @user.options.try(:is_upload_authorized)
               %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
                 %span.icon.icon-plus
                 Ajouter des documents

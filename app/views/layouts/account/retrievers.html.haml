@@ -1,5 +1,15 @@
 - content_for :content do
   #retrievers.container-fluid
+    - if @user.documents_collaborator?
+      .row-fluid
+        .span12.box
+          - if action_name == 'index'
+            %form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
+              = label_tag :retrievers_account_id, 'Dossier :'
+              = select_tag :account_id, options_from_collection_for_select(accounts, :id, :info, @account.id)
+              = submit_tag t('actions.submit'), class: 'btn btn-primary'
+          - else
+            Dossier : #{@account.info}
     .row-fluid
       .span3
         .box.sidebar-nav

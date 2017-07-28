@@ -61,6 +61,9 @@
             %th= t('activerecord.models.user.attributes.is_fake_prescriber')
             %td.value= check_box_tag 'user[is_fake_prescriber]', 1, @user.is_fake_prescriber
           %tr
+            %th= t('activerecord.models.user.attributes.is_guest')
+            %td.value= check_box_tag 'user[is_guest]', 1, @user.is_guest, disabled: true
+          %tr
             %th= t('activerecord.models.user.attributes.is_reminder_email_active')
             %td.value= check_box_tag 'user[is_reminder_email_active]', 1, @user.is_reminder_email_active
           %tr

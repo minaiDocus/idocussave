@@ -3,9 +3,11 @@ class Account::Documents::UploadsController < Account::AccountController
   def create
     data = nil
 
-    customer = @user.customers.active.find_by_code(params[:file_code]) if @user.is_prescriber
-
-    customer ||= @user
+    if @user.documents_collaborator?
+      customer = accounts.active.find_by_code(params[:file_code])
+    else
+      customer = @user
+    end
 
     if customer.options.is_upload_authorized
       uploaded_document = UploadedDocument.new(params[:files][0].tempfile,

@@ -17,12 +17,11 @@ class Group < ActiveRecord::Base
 
 
   def collaborators
-    members.where(is_prescriber: true)
+    members.prescribers
   end
 
-
   def customers
-    members.where(is_prescriber: false)
+    members.customers
   end
 
 

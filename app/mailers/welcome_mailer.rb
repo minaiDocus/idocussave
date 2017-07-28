@@ -7,11 +7,17 @@ class WelcomeMailer < ActionMailer::Base
     mail(to: @user.email, subject: '[iDocus] Création de compte iDocus')
   end
 
-
   def welcome_collaborator(collaborator, token)
     @token = token
     @collaborator = collaborator
-    
+
     mail(to: @collaborator.email, subject: '[iDocus] Création de compte iDocus')
+  end
+
+  def welcome_guest_collaborator(guest, token)
+    @token = token
+    @guest = guest
+
+    mail(to: @guest.email, subject: '[iDocus] Création de compte iDocus')
   end
 end

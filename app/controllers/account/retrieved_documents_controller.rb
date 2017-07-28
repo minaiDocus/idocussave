@@ -3,7 +3,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   before_filter :load_document, only: %w(show piece)
 
   def index
-    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction)
+    @documents = TempDocument.search_for_collection(@account.temp_documents.retrieved, search_terms(params[:document_contains])).includes(:retriever).includes(:piece).order(sort_column => sort_direction)
     @documents_count = @documents.count
     @documents = @documents.page(params[:page]).per(params[:per_page])
     @is_filter_empty = search_terms(params[:document_contains]).empty?
@@ -35,16 +35,16 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   end
 
   def select
-    @documents = TempDocument.search_for_collection(@user.temp_documents.retrieved, search_terms(params[:document_contains])).wait_selection.includes(:retriever).includes(:piece).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
+    @documents = TempDocument.search_for_collection(@account.temp_documents.retrieved, search_terms(params[:document_contains])).wait_selection.includes(:retriever).includes(:piece).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
     if params[:document_contains].try(:[], :retriever_id).present?
-      @retriever = @user.retrievers.find(params[:document_contains][:retriever_id])
+      @retriever = @account.retrievers.find(params[:document_contains][:retriever_id])
       @retriever.ready if @retriever.waiting_selection?
     end
     @is_filter_empty = search_terms(params[:document_contains]).empty?
   end
 
   def validate
-    documents = @user.temp_documents.find(params[:document_ids] || [])
+    documents = @account.temp_documents.find(params[:document_ids] || [])
     if documents.count == 0
       flash[:notice] = 'Aucun document sélectionné.'
     else
@@ -66,7 +66,7 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   private
 
   def load_document
-    @document = @user.temp_documents.retrieved.find(params[:id])
+    @document = @account.temp_documents.retrieved.find(params[:id])
   end
 
   def sort_column

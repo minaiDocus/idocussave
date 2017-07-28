@@ -51,6 +51,13 @@ module Account::OrganizationHelper
     end
   end
 
+  def guest_collaborator_form_url(organization, guest)
+    if action_name == 'new' || !guest.persisted?
+      account_organization_guest_collaborators_url(organization)
+    else
+      account_organization_guest_collaborator_url(organization, guest)
+    end
+  end
 
   def description_keys(ibiza)
     if ibiza

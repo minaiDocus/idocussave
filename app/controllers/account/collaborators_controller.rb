@@ -6,7 +6,7 @@ class Account::CollaboratorsController < Account::OrganizationController
 
   # /account/organizations/:organization_id/collaborators
   def index
-    @collaborators = User.search_for_collection(@organization.collaborators, search_terms(params[:user_contains])).order(sort_column => sort_direction)
+    @collaborators = @organization.collaborators.search(search_terms(params[:user_contains])).order(sort_column => sort_direction)
 
     @collaborators_count = @collaborators.count
 

@@ -38,7 +38,7 @@
                 Ce support est soumis à conditions. Merci de vous rapprocher de votre cabinet d’expertise-comptable pour en connaître le détail.
               .ie-message.margin1top
                 Nous vous recommandons d’utiliser iDocus avec un autre navigateur qu’Internet Explorer (Google Chrome, Mozilla Firefox, Safari…).
-      - if @user.is_prescriber || @user.options.is_upload_authorized
+      - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
         .box.paper_process
           .row-fluid
             .span12
@@ -154,7 +154,7 @@
                   %td= pack.name.sub(' all', '')
           .pull-right
             = link_to 'Tous les documents', account_documents_path
-      - if @user.is_prescriber || @user.options.is_upload_authorized
+      - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
         .row-fluid.margin2top
           .span12
             %h4 Derniers documents en cours de traitement

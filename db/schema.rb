@@ -68,6 +68,23 @@ ActiveRecord::Schema.define(version: 20170803175010) do
     t.integer "account_number_rule_id", limit: 4
   end
 
+  create_table "account_sharings", force: :cascade do |t|
+    t.integer  "collaborator_id",  limit: 4
+    t.integer  "account_id",       limit: 4
+    t.integer  "requested_by_id",  limit: 4
+    t.integer  "authorized_by_id", limit: 4
+    t.string   "role",             limit: 255, default: "editor"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.integer  "organization_id",  limit: 4
+  end
+
+  add_index "account_sharings", ["account_id"], name: "index_account_sharings_on_account_id", using: :btree
+  add_index "account_sharings", ["authorized_by_id"], name: "index_account_sharings_on_authorized_by_id", using: :btree
+  add_index "account_sharings", ["collaborator_id"], name: "index_account_sharings_on_collaborator_id", using: :btree
+  add_index "account_sharings", ["organization_id"], name: "index_account_sharings_on_organization_id", using: :btree
+  add_index "account_sharings", ["requested_by_id"], name: "index_account_sharings_on_requested_by_id", using: :btree
+
   create_table "accounting_plan_items", force: :cascade do |t|
     t.string  "mongo_id",                             limit: 255
     t.string  "third_party_account",                  limit: 255
@@ -2000,6 +2017,7 @@ ActiveRecord::Schema.define(version: 20170803175010) do
     t.string   "scanning_provider_id_mongo_id",                                  limit: 255
     t.string   "fiduceo_id",                                                     limit: 255
     t.text     "group_ids",                                                      limit: 65535
+    t.boolean  "is_guest",                                                                     default: false
   end
 
   add_index "users", ["mongo_id"], name: "index_users_on_mongo_id", using: :btree
