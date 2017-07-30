@@ -50,7 +50,7 @@ class AddTempDocumentToTempPack
         else
           if DocumentTools.need_ocr?(temp_document.content.path)
             temp_document.ocr_needed
-          elsif temp_pack.is_bundle_needed? && (temp_document.scanned? || temp_document.pages_number > 2)
+          elsif temp_pack.is_bundle_needed?
             temp_document.bundle_needed
           else
             temp_document.ready

@@ -1,9 +1,10 @@
 # -*- encoding : UTF-8 -*-
 class AccountingWorkflow::CreateTempDocumentFromGrouping
-  def initialize(temp_pack, file_names, origin)
-    @temp_pack  = temp_pack
-    @file_names = file_names
-    @origin     = origin
+  def initialize(temp_pack, file_names, origin, abbyy_vendor_id=nil)
+    @temp_pack       = temp_pack
+    @file_names      = file_names
+    @origin          = origin
+    @abbyy_vendor_id = abbyy_vendor_id.to_i
   end
 
 
@@ -70,6 +71,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.delivered_by                = original_temp_document.delivered_by
     temp_document.delivery_type               = original_temp_document.delivery_type
     temp_document.scan_bundling_document_ids  = bundling_document_ids
+    temp_document.abbyy_vendor_id             = @abbyy_vendor_id
 
     temp_document.save && temp_document.ready
   end

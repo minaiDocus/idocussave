@@ -47,9 +47,17 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
+    output_filepath = File.join(dir, @piece.name.tr(' ', '_') + '.pdf')
 
-    filepath = FileStoragePathUtils.path_for_object(@piece)
-
-    FileUtils.cp(filepath, File.join(dir, @piece.name.tr(' ', '_') + '.pdf'))
+    if journal.compta_type != 'NDF'
+      filepath = FileStoragePathUtils.path_for_object(@piece.temp_document)
+      name     = "VENDOR_ID : [#{@piece.temp_document.abbyy_vendor_id}]"
+      Dir.mktmpdir do |tmp_dir|
+        DocumentTools.create_abbyy_vendor_stamped_file(filepath, output_filepath, name, tmp_dir)
+      end
+    else
+      filepath = FileStoragePathUtils.path_for_object(@piece)
+      FileUtils.cp(filepath, output_filepath)
+    end
   end
 end

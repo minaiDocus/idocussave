@@ -12,6 +12,7 @@
                   </sequence>
                   <attribute type="short" name="number" use="optional"/>
                   <attribute type="string" name="origin" use="optional"/>
+                  <attribute type="integer" name="abbyy_vendor_id" use="optional"/>
                 </complexType>
               </element>
             </sequence>

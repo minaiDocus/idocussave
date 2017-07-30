@@ -215,6 +215,12 @@ class DocumentTools
     output_file_path
   end
 
+  def self.create_abbyy_vendor_stamped_file(file_path, output_file_path, name, dir)
+    stamp_file_path = create_stamp_file(name, file_path, dir, false)
+    Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
+    output_file_path
+  end
+
 
   def self.archive(file_path, files_path)
     clean_files_path = files_path.map { |e| "'#{e}'" }.join(' ')
