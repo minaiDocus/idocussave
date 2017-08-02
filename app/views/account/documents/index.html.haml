@@ -21,7 +21,7 @@
           .pull-right
             - # %a{ :href => "#", :class => "toggle-qtip" } Afficher/Cacher l'aide
             - # |
-            - if (@user.documents_collaborator? && file_upload_users_list.present?) || @user.options.try(:is_upload_authorized)
+            - if file_upload_users_list.present?
               %a{ data: { toggle: :modal }, href: '#uploadDialog', class: 'btn btn-primary', style: 'position:relative;top:-3px;' }
                 %span.icon.icon-plus
                 Ajouter des documents

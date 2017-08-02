@@ -66,7 +66,7 @@
               %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
                 = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
               %li{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
-                = link_to 'Partage de dossiers', account_organization_account_sharings_path(@organization)
+                = link_to 'Accès clients multi-dossiers', account_organization_account_sharings_path(@organization)
         .span10
           != yield
     :plain

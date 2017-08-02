@@ -228,9 +228,12 @@ Idocus::Application.routes.draw do
 
       resources :preseizure_accounts
 
-      resources :account_sharings, only: %w(index new create destroy)
-      resources :account_sharing_groups
-      resources :guest_collaborators
+      resources :account_sharings, only: %w(index new create destroy), module: :organization do
+        post :accept, on: :member
+      end
+      resources :guest_collaborators do
+        get 'search', on: :collection
+      end
     end
 
 
@@ -325,6 +328,11 @@ Idocus::Application.routes.draw do
 
     resources :notifications, only: :index do
       get 'link_through', on: :member
+    end
+
+    resources :account_sharings, only: %w(new create destroy) do
+      get 'new_request', on: :collection
+      post 'create_request', on: :collection
     end
   end
 

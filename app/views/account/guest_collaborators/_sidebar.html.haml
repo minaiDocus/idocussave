@@ -5,8 +5,6 @@
     = hidden_field_tag :direction, sort_direction
     = hidden_field_tag :sort, sort_column
     = hidden_field_tag :per_page, per_page
-    = label_tag 'guest_collaborator_contains[code]', 'Code'
-    = text_field_tag 'guest_collaborator_contains[code]', (params[:guest_collaborator_contains][:code] rescue ''), class: 'span12'
     = label_tag 'guest_collaborator_contains[email]', 'Email'
     = text_field_tag 'guest_collaborator_contains[email]', (params[:guest_collaborator_contains][:email] rescue ''), class: 'span12'
     = label_tag 'guest_collaborator_contains[company]', 'Société'

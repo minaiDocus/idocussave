@@ -41,7 +41,7 @@ protected
     elsif @user.is_guest
       @user.accounts.order(code: :asc)
     else
-      User.where(id: @user.id)
+      User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
     end
   end
   helper_method :accounts
@@ -54,11 +54,7 @@ protected
 private
 
   def all_packs
-    if @user.is_prescriber || @user.is_guest
-      Pack.where(owner_id: account_ids)
-    else
-      @user.packs
-    end
+    Pack.where(owner_id: account_ids)
   end
 
   def verify_if_active

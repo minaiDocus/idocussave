@@ -1,0 +1,12 @@
+#account_sharing.new
+  .row-fluid
+    .span12.box
+      %h3 Partager un dossier
+  .row-fluid
+    .span12.box
+      = simple_form_for [:account, @organization, @account_sharing], html: { class: 'form form-horizontal margin0' } do |f|
+        = f.input :collaborator_id, input_html: { data: { path: search_account_organization_guest_collaborators_path(@organization, format: :json, full_info: true) } }, required: true
+        = f.input :account_id, input_html: { data: { path: search_account_organization_customers_path(@organization, format: :json, full_info: true) } }, required: true
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_organization_account_sharings_path(@organization), class: 'btn'

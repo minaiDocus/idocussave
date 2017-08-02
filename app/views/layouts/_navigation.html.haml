@@ -21,7 +21,7 @@
       - if accounts.detect { |e| e.options.is_retriever_authorized }
         %li{ :class=>('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
           = link_to 'Mes automates', account_retrievers_path
-      - if @user.documents_collaborator? || @user.options.try(:is_upload_authorized)
+      - if accounts.detect { |e| e.options.is_upload_authorized }
         %li{ class: ('active' if controller_name == 'paper_processes') }
           = link_to 'Suivi', account_paper_processes_path
     %li.dropdown

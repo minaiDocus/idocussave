@@ -1,6 +1,6 @@
 - content_for :content do
   #retrievers.container-fluid
-    - if @user.documents_collaborator?
+    - if accounts.size > 1
       .row-fluid
         .span12.box
           - if action_name == 'index'

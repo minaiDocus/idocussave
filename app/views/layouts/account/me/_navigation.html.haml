@@ -4,8 +4,11 @@
       %li{ class: ('active' if @active_panel == 'change_password') }
         != link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
       - if @user.active? && !@user.is_prescriber && @user.organization.is_active
-        %li{ class: ('active' if @active_panel == 'addresses_management') }
-          != link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
+        %li{ class: ('active' if @active_panel == 'account_sharing') }
+          = link_to 'Partage de compte', '#account_sharing', class: 'do-show'
+        - unless @user.is_guest
+          %li{ class: ('active' if @active_panel == 'addresses_management') }
+            != link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
     - if @user.active?
       - if @user.organization.is_active
         - unless @user.try(:organization).try(:is_suspended)

@@ -1,52 +1,51 @@
-class Account::AccountSharingsController < Account::OrganizationController
-  def index
-    @account_sharings = AccountSharing.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
-      order(sort_column => sort_direction).
-      page(params[:page]).
-      per(params[:per_page])
-    @account_sharing_groups = []
-    @guest_collaborators = @organization.guest_collaborators
-  end
-
+class Account::AccountSharingsController < Account::AccountController
   def new
-    @account_sharing = AccountSharing.new
+    @guest_collaborator = User.new(company: @user.company)
   end
 
   def create
-    @account_sharing = AccountSharing.new account_sharing_params
-    @account_sharing.organization  = @organization
-    @account_sharing.requested_by  = current_user
-    @account_sharing.authorized_by = current_user
-    if @account_sharing.save
-      DropboxImport.changed([@account_sharing.collaborator])
-      flash[:success] = 'Dossier partagé avec succès.'
-      redirect_to account_organization_account_sharings_path(@organization)
+    @guest_collaborator, @account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
+    if @account_sharing.persisted?
+      flash[:success] = 'Votre compte a été partagé avec succès.'
+      redirect_to account_profile_path(panel: :account_sharing)
+    elsif Array(@account_sharing.errors[:account] || @account_sharing.errors[:collaborator]).include?("est déjà pris.")
+      flash[:notice] = 'Ce contact a déjà accès à votre compte.'
+      redirect_to account_profile_path(panel: :account_sharing)
     else
       render :new
     end
   end
 
   def destroy
-    @account_sharing = AccountSharing.where(account_id: customers).find params[:id]
+    @account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
     @account_sharing.destroy
     DropboxImport.changed([@account_sharing.collaborator])
-    flash[:success] = "Partage du dossier \"#{@account_sharing.account.info}\" au collaborateur \"#{@account_sharing.collaborator.info}\" supprimé."
-    redirect_to account_organization_account_sharings_path(@organization)
+    flash[:success] = 'Le partage a été annulé avec succès.'
+    redirect_to account_profile_path(panel: :account_sharing)
+  end
+
+  def new_request
+    @account_sharing_request = AccountSharingRequest.new
+  end
+
+  def create_request
+    @account_sharing_request = AccountSharingRequest.new(account_sharing_request_params)
+    @account_sharing_request.user = @user
+    if @account_sharing_request.save
+      flash[:success] = 'Demande envoyé avec succès.'
+      redirect_to account_profile_path(panel: :account_sharing)
+    else
+      render :new_request
+    end
   end
 
 private
 
   def account_sharing_params
-    params.require(:account_sharing).permit(:collaborator_id, :account_id)
+    params.require(:user).permit(:email, :company, :first_name, :last_name)
   end
 
-  def sort_column
-    params[:sort] || 'created_at'
+  def account_sharing_request_params
+    params.require(:account_sharing_request).permit(:code_or_email)
   end
-  helper_method :sort_column
-
-  def sort_direction
-    params[:direction] || 'desc'
-  end
-  helper_method :sort_direction
 end

@@ -1,0 +1,5 @@
+%ul.nav.nav-tabs
+  %li{ class: ('active' if controller_name == 'account_sharings') }
+    = link_to "Dossiers partagés (#{@account_sharings.count})", account_organization_account_sharings_path(@organization)
+  %li{ class: ('active' if controller_name == 'guest_collaborators') }
+    = link_to "Contacts (#{@guest_collaborators.count})", account_organization_guest_collaborators_path(@organization)

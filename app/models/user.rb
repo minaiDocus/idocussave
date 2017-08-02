@@ -10,15 +10,15 @@ class User < ActiveRecord::Base
   validates :authd_prev_period,            numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
-  validates_length_of :code, within: 3..15
+  validates_length_of :code, within: 3..15, unless: Proc.new { |u| u.is_guest }
   validates_length_of :email, maximum: 50
   validates_length_of :company, :first_name, :last_name, :knowings_code, within: 0..50, allow_nil: true
   validates_presence_of :email, :encrypted_password
-  validates_presence_of :code
+  validates_presence_of :code, unless: Proc.new { |u| u.is_guest }
   validates_presence_of :company
   validates_inclusion_of :knowings_visibility, in: 0..2
   validates_inclusion_of :current_configuration_step, :last_configuration_step, in: %w(account subscription compta_options period_options journals ibiza use_csv_descriptor csv_descriptor accounting_plans vat_accounts exercises order_paper_set order_dematbox retrievers ged), allow_blank: true
-  validates_uniqueness_of :code
+  validates_uniqueness_of :code, unless: Proc.new { |u| u.is_guest }
   validates_uniqueness_of :email_code, unless: Proc.new { |u| u.is_prescriber }
   validate :presence_of_group, if: Proc.new { |u| u.is_group_required }
   validate :belonging_of_groups, if: Proc.new { |u| u.group_ids_changed? }
@@ -79,12 +79,11 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :groups, inverse_of: 'members'
   has_and_belongs_to_many :account_number_rules
 
-  has_many :requested_account_sharings,  class_name: 'AccountSharing', inverse_of: 'requested_by',  foreign_key: 'requested_by_id'
   has_many :authorized_account_sharings, class_name: 'AccountSharing', inverse_of: 'authorized_by', foreign_key: 'authorized_by_id'
 
-  has_many :account_sharings, foreign_key: 'collaborator_id'
+  has_many :account_sharings, foreign_key: 'collaborator_id', dependent: :destroy
   has_many :accounts, -> { distinct }, class_name: 'User', through: :account_sharings
-  has_many :inverse_account_sharings, class_name: 'AccountSharing', foreign_key: 'account_id'
+  has_many :inverse_account_sharings, class_name: 'AccountSharing', foreign_key: 'account_id', dependent: :destroy
   has_many :collaborators, -> { distinct }, class_name: 'User', through: :inverse_account_sharings, source: :collaborator
 
   scope :active,                      -> { where(inactive_at: nil) }
@@ -138,7 +137,7 @@ class User < ActiveRecord::Base
 
 
   def info
-    [code, company, name].reject(&:blank?).join(' - ')
+    [(is_guest ? email : code), company, name].reject(&:blank?).join(' - ')
   end
 
 
@@ -243,10 +242,6 @@ class User < ActiveRecord::Base
         extend OrganizationManagement::Collaborator
       end
     end
-  end
-
-  def documents_collaborator?
-    is_prescriber || is_guest
   end
 
   def compta_processable_journals

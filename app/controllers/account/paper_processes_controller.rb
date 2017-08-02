@@ -14,7 +14,7 @@ class Account::PaperProcessesController < Account::AccountController
 private
 
   def verify_rights
-    unless @user.documents_collaborator? || @user.options.try(:is_upload_authorized)
+    unless accounts.detect { |e| e.options.is_upload_authorized }
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to root_path
     end

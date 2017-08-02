@@ -78,6 +78,15 @@
                     %tr
                       %th= t('activerecord.models.common.attributes.created_at')
                       %td= l(@customer.created_at)
+                    %tr
+                      %th Partagé avec :
+                      %td
+                        - if @customer.collaborators.size > 0
+                          - @customer.collaborators.each do |collaborator|
+                            = collaborator.info
+                            %br
+                        - else
+                          %i{ style: 'color:gray' } Aucun
               - if @customer.active?
                 .row-fluid
                   .span12

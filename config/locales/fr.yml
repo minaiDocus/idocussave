@@ -143,6 +143,10 @@ fr:
               too_short: doit contenir 6 caractères au minimum
               too_long: doit contenir 20 caractères au maximum
               confirmation: et la confirmation du mot de passe doivent être identiques
+        account_sharing_request:
+          attributes:
+            code_or_email:
+              already_exist: existe déjà
 
   activerecord:
     errors:

@@ -2,7 +2,7 @@
 # FIXME : whole check
 module DocumentsHelper
   def linked_users_option
-    @user.documents_collaborator? ? accounts.map { |u| [u, u.id] } : []
+    accounts.size > 1 ? accounts.map { |u| [u, u.id] } : []
   end
 
   def account_book_types_option
@@ -187,7 +187,7 @@ module DocumentsHelper
   end
 
   def file_upload_params
-    if @user.documents_collaborator?
+    if accounts.size > 1
       result = {}
 
       file_upload_users_list.each do |user|

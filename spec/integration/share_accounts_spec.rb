@@ -18,18 +18,6 @@ describe 'Share accounts' do
     DatabaseCleaner.clean
   end
 
-  # user.accounts
-  # user.collaborators
-  # user.authorized_account_sharings
-  # create/destroy sharing
-  # duplicates
-  # validations
-  # search
-  # chained search/scope
-
-  # accounts scope in controller ?
-  # views access ?
-
   it 'shares an account successfully' do
     account_sharing = AccountSharing.new
     account_sharing.organization  = @organization
@@ -54,7 +42,7 @@ describe 'Share accounts' do
     expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"], account_id: ["n'est pas valide"] })
   end
 
-  it 'collaborator should be a guest' do
+  it 'collaborator should be a guest or a customer' do
     account_sharing = AccountSharing.new
     account_sharing.organization  = @organization
     account_sharing.authorized_by = @collaborator
@@ -64,17 +52,16 @@ describe 'Share accounts' do
     expect(account_sharing.save).to be false
     expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"] })
 
-    user = create(:user)
-    @organization.members << user
-    account_sharing.collaborator = user
-    expect(account_sharing.save).to be false
-    expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"] })
-
     admin = create(:admin)
     @organization.members << admin
     account_sharing.collaborator = admin
     expect(account_sharing.save).to be false
     expect(account_sharing.errors.messages).to eq({ collaborator_id: ["n'est pas valide"] })
+
+    user = create(:user)
+    @organization.members << user
+    account_sharing.collaborator = user
+    expect(account_sharing.save).to be true
   end
 
   it 'account should be a customer' do
@@ -146,19 +133,32 @@ describe 'Share accounts' do
     end
   end
 
-  it 'ignores duplicates' do
-    2.times do
-      account_sharing = AccountSharing.new
-      account_sharing.organization  = @organization
-      account_sharing.authorized_by = @collaborator
-      account_sharing.collaborator  = @guest_collaborator
-      account_sharing.account       = @user
-      expect(account_sharing.save).to be true
-    end
+  it 'fails on duplicate' do
+    account_sharing = AccountSharing.new
+    account_sharing.organization  = @organization
+    account_sharing.authorized_by = @collaborator
+    account_sharing.collaborator  = @guest_collaborator
+    account_sharing.account       = @user
+    expect(account_sharing.save).to be true
 
-    expect(AccountSharing.count).to eq 2
-    expect(@guest_collaborator.accounts.size).to eq 1
-    expect(@user.collaborators.size).to eq 1
+    account_sharing = AccountSharing.new
+    account_sharing.organization  = @organization
+    account_sharing.authorized_by = @collaborator
+    account_sharing.collaborator  = @guest_collaborator
+    account_sharing.account       = @user
+    expect(account_sharing.save).to be false
+  end
+
+  it 'updates successfully' do
+    account_sharing = AccountSharing.new
+    account_sharing.organization  = @organization
+    account_sharing.authorized_by = @collaborator
+    account_sharing.collaborator  = @guest_collaborator
+    account_sharing.account       = @user
+    expect(account_sharing.save).to be true
+
+    account_sharing.is_approved   = true
+    expect(account_sharing.save).to be true
   end
 
   context 'search' do
@@ -252,6 +252,13 @@ describe 'Share accounts' do
 
       expect(result.size).to eq 1
       expect(result.first).to eq @account_sharing2
+    end
+
+    it "finds a sharing by a guest collaborator's email" do
+      result = AccountSharing.search(collaborator: @guest_collaborator2.email)
+
+      expect(result.size).to eq 1
+      expect(result.first).to eq @account_sharing3
     end
 
     it "finds a sharing by a guest collaborator's code" do

@@ -1,6 +1,6 @@
 = simple_form_for @guest_collaborator, url: guest_collaborator_form_url(@organization, @guest_collaborator), html: { class: 'form form-horizontal margin0' } do |f|
-  = f.input :code
-  = f.input :email
+  - if action_name.in?(%w(new create))
+    = f.input :email
   = f.input :company
   = f.input :first_name
   = f.input :last_name

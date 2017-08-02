@@ -1,0 +1,37 @@
+#account_sharings
+  .row-fluid
+    .span12.box
+      .row-fluid
+        .span12
+          = render partial: 'navigation'
+      .row-fluid
+        .span9
+          = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+          %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+            %thead
+              %tr
+                %th= sortable :created_at, 'Date'
+                %th Dossier
+                %th Client ou contact
+                %th Etat
+                %th Action
+            %tbody
+              - @account_sharings.each do |account_sharing|
+                %tr
+                  %td.date= account_sharing.created_at.strftime('%d/%m/%Y %H:%M')
+                  %td= link_to account_sharing.account.info, account_organization_customer_path(@organization, account_sharing.account)
+                  %td
+                    - if account_sharing.collaborator.is_guest
+                      = account_sharing.collaborator.info
+                    - else
+                      = link_to account_sharing.collaborator.info, account_organization_customer_path(@organization, account_sharing.collaborator)
+                  %td= account_sharing.is_approved? ? 'Partagé' : 'En attente de validation'
+                  %td
+                    - unless account_sharing.is_approved?
+                      = link_to icon_ok, accept_account_organization_account_sharing_path(@organization, account_sharing), method: :post, data: { confirm: "Êtes-vous sûr de vouloir partager le dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: 'Accepter la demande de partage'
+                    = link_to icon_destroy, account_organization_account_sharing_path(@organization, account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler le partage du dossier \"#{account_sharing.account.info}\" au contact \"#{account_sharing.collaborator.info}\" ?" }, title: (account_sharing.is_approved? ? 'Supprimer' : 'Refuser la demande de partage')
+          = render partial: 'shared/list_options', locals: { collection: @account_sharings }
+        .span3
+          .alignright.margin1bottom
+            = link_to icon_new + ' Partager un dossier', new_account_organization_account_sharing_path(@organization), class: 'btn btn-primary'
+          = render partial: 'sidebar'

@@ -1,3 +1,4 @@
+# TODO : need auto test
 class CreateGuestCollaborator
   def initialize(params, organization)
     @params = params
@@ -11,10 +12,11 @@ class CreateGuestCollaborator
     guest.set_random_password
 
     if guest.save
+      guest.code = "#{@organization.code}%SHR#{guest.id}"
       token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
       guest.reset_password_token = encrypted_token
       guest.reset_password_sent_at = Time.now
-      guest.save
+      guest.save!
 
       WelcomeMailer.welcome_guest_collaborator(guest, token).deliver_later
     end

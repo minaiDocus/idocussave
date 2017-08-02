@@ -247,5 +247,5 @@ fr:
         paper_set_start_date: Date de début
         paper_set_end_date: Date de fin
       account_sharing:
-        collaborator: Collaborateur
-        account: Dossier client
+        collaborator_id: Contact ou client
+        account_id: Dossier client

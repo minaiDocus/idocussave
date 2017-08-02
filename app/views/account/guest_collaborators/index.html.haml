@@ -3,7 +3,7 @@
     .span12.box
       .row-fluid
         .span12
-          = render partial: 'account/account_sharings/navigation'
+          = render partial: 'account/organization/account_sharings/navigation'
       .row-fluid
         .span9
           = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
@@ -11,7 +11,6 @@
             %thead
               %tr
                 %th= sortable :created_at, 'Date de création'
-                %th= sortable :code,       'Code'
                 %th= sortable :email,      'Email'
                 %th= sortable :company,    'Société'
                 %th Nom
@@ -21,16 +20,15 @@
               - @guest_collaborators.each do |guest_collaborator|
                 %tr
                   %td.date= guest_collaborator.created_at.strftime('%d/%m/%Y %H:%M')
-                  %td= guest_collaborator.code
                   %td= guest_collaborator.email
                   %td= guest_collaborator.company
                   %td= guest_collaborator.name
                   %td= guest_collaborator.accounts.size
                   %td
                     = link_to icon_edit, edit_account_organization_guest_collaborator_path(@organization, guest_collaborator)
-                    = link_to icon_destroy, account_organization_guest_collaborator_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le collaborateur invité \"#{guest_collaborator.info}\" ?" }
+                    = link_to icon_destroy, account_organization_guest_collaborator_path(@organization, guest_collaborator), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer le contact \"#{guest_collaborator.info}\" ?" }
           = render partial: 'shared/list_options', locals: { collection: @guest_collaborators }
         .span3
           .alignright.margin1bottom
-            = link_to icon_new + ' Ajouter un collaborateur', new_account_organization_guest_collaborator_path(@organization), class: 'btn btn-primary'
+            = link_to icon_new + ' Ajouter un contact', new_account_organization_guest_collaborator_path(@organization), class: 'btn btn-primary'
           = render partial: 'sidebar'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803175010) do
+ActiveRecord::Schema.define(version: 20170804132128) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -69,21 +69,20 @@ ActiveRecord::Schema.define(version: 20170803175010) do
   end
 
   create_table "account_sharings", force: :cascade do |t|
+    t.integer  "organization_id",  limit: 4
     t.integer  "collaborator_id",  limit: 4
     t.integer  "account_id",       limit: 4
-    t.integer  "requested_by_id",  limit: 4
     t.integer  "authorized_by_id", limit: 4
-    t.string   "role",             limit: 255, default: "editor"
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
-    t.integer  "organization_id",  limit: 4
+    t.boolean  "is_approved",                default: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
   add_index "account_sharings", ["account_id"], name: "index_account_sharings_on_account_id", using: :btree
   add_index "account_sharings", ["authorized_by_id"], name: "index_account_sharings_on_authorized_by_id", using: :btree
   add_index "account_sharings", ["collaborator_id"], name: "index_account_sharings_on_collaborator_id", using: :btree
+  add_index "account_sharings", ["is_approved"], name: "index_account_sharings_on_is_approved", using: :btree
   add_index "account_sharings", ["organization_id"], name: "index_account_sharings_on_organization_id", using: :btree
-  add_index "account_sharings", ["requested_by_id"], name: "index_account_sharings_on_requested_by_id", using: :btree
 
   create_table "accounting_plan_items", force: :cascade do |t|
     t.string  "mongo_id",                             limit: 255

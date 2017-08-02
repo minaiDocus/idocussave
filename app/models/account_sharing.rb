@@ -2,12 +2,17 @@ class AccountSharing < ActiveRecord::Base
   belongs_to :organization
   belongs_to :collaborator,  class_name: 'User'
   belongs_to :account,       class_name: 'User'
-  belongs_to :requested_by,  class_name: 'User'
   belongs_to :authorized_by, class_name: 'User'
 
-  validates_presence_of :organization, :collaborator, :account, :authorized_by
+  validates_presence_of :organization, :collaborator, :account
   validate :type_of_collaborator
   validate :type_of_account
+  validate :uniqueness_of_sharing
+
+  scope :approved, -> { where(is_approved: true) }
+  scope :pending,  -> { unscoped.where(is_approved: false) }
+
+  default_scope -> { where(is_approved: true) }
 
   class << self
     def search(contains)
@@ -19,6 +24,7 @@ class AccountSharing < ActiveRecord::Base
         "users.last_name REGEXP :t",
         t: contains[:account].split.join('|')) if contains[:account].present?
       account_sharings = account_sharings.where(
+        "collaborators_account_sharings.email REGEXP :t OR "\
         "collaborators_account_sharings.code REGEXP :t OR "\
         "collaborators_account_sharings.company REGEXP :t OR "\
         "collaborators_account_sharings.first_name REGEXP :t OR "\
@@ -31,7 +37,7 @@ class AccountSharing < ActiveRecord::Base
 private
 
   def type_of_collaborator
-    if collaborator && (collaborator.is_admin || collaborator.is_prescriber || !collaborator.is_guest || collaborator == account || collaborator.try(:organization) != organization)
+    if collaborator && (collaborator.is_admin || collaborator.is_prescriber || collaborator == account || collaborator.try(:organization) != organization)
       errors.add(:collaborator_id, :invalid)
     end
   end
@@ -39,6 +45,16 @@ private
   def type_of_account
     if account && (account.is_admin || account.is_prescriber || account.is_guest || account == collaborator || account.try(:organization) != organization)
       errors.add(:account_id, :invalid)
+    end
+  end
+
+  def uniqueness_of_sharing
+    if account && collaborator
+      account_sharing = AccountSharing.unscoped.where(account: account, collaborator: collaborator).first
+      if account_sharing && account_sharing != self
+        errors.add(:account, :taken)
+        errors.add(:collaborator, :taken)
+      end
     end
   end
 end

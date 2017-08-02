@@ -50,15 +50,11 @@ class Account::DocumentsController < Account::AccountController
       options = { page: params[:page], per_page: params[:per_page] }
       options[:sort] = true unless params[:filter].present?
 
-      options[:owner_ids] = if @user.is_prescriber || @user.is_guest
-        if params[:view].present? && params[:view] != 'all'
-          _user = accounts.find(params[:view])
-          _user ? [_user.id] : []
-        else
-          account_ids
-        end
+      options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
+        _user = accounts.find(params[:view])
+        _user ? [_user.id] : []
       else
-        [@user.id]
+        account_ids
       end
 
       @packs = Pack.search(params[:filter], options)

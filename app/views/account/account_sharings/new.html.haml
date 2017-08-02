@@ -1,12 +1,12 @@
-#account_sharing.new
+#account_sharing.new.container-fluid
   .row-fluid
-    .span12.box
-      %h3 Partager un dossier
-  .row-fluid
-    .span12.box
-      = simple_form_for [:account, @organization, @account_sharing], html: { class: 'form form-horizontal margin0' } do |f|
-        = f.association :collaborator, collection: @organization.guest_collaborators.order(code: :asc), label_method: :info, include_blank: false
-        = f.input :account_id, input_html: { data: { path: search_account_organization_customers_path(@organization, format: :json, full_info: true) } }, label: t('simple_form.labels.account_sharing.account'), required: true
+    .span12.well
+      %h2.padding16left Partager mon compte avec un contact
+      = simple_form_for @guest_collaborator, url: account_account_sharings_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
+        = f.input :email, placeholder: 'john.doe@example.com', hint: 'Si le contact existe déjà, les champs ci-dessous seront ignorés'
+        = f.input :company
+        = f.input :first_name
+        = f.input :last_name
         .form-actions.margin0bottom
           = f.submit t('actions.submit'), class: 'btn btn-primary'
-          = link_to t('actions.cancel'), account_organization_account_sharings_path(@organization), class: 'btn'
+          = link_to t('actions.cancel'), account_profile_path(panel: :account_sharing), class: 'btn'

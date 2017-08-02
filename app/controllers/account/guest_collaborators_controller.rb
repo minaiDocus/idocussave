@@ -2,7 +2,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   before_action :load_guest_collaborator, only: %w(edit update destroy)
 
   def index
-    @account_sharings = @organization.account_sharings
+    @account_sharings = @organization.account_sharings.unscoped
     @account_sharing_groups = []
     @guest_collaborators = @organization.guest_collaborators.
       search(search_terms(params[:guest_collaborator_contains])).
@@ -39,9 +39,38 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   end
 
   def destroy
-    @guest_collaborator.destroy
+    DestroyCollaboratorService.new(@guest_collaborator).execute
     flash[:success] = 'Supprimé avec succès.'
     redirect_to account_organization_guest_collaborators_path(@organization)
+  end
+
+  def search
+    tags = []
+    full_info = params[:full_info].present?
+    if params[:q].present?
+      users = @organization.members.where(is_prescriber: false)
+      users = users.where(
+        "code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
+        t: params[:q].split.join('|')
+      ).order(code: :asc).select do |user|
+        str = [user.code, user.email, user.company, user.first_name, user.last_name].join(' ')
+        !params[:q].split.detect { |e| !str.match(/#{e}/i) }
+      end
+
+      unless is_leader?
+        users = users.select do |user|
+          user.is_guest || @user.customers.include?(user)
+        end
+      end
+
+      users[0..9].each do |user|
+        tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
+      end
+    end
+
+    respond_to do |format|
+      format.json { render json: tags.to_json, status: :ok }
+    end
   end
 
 private
@@ -51,7 +80,7 @@ private
   end
 
   def user_params
-    params.require(:user).permit(:code, :email, :company, :first_name, :last_name)
+    params.require(:user).permit(:email, :company, :first_name, :last_name)
   end
 
   def edit_user_params

@@ -1,0 +1,9 @@
+#account_sharing.new_request.container-fluid
+  .row-fluid
+    .span12.well
+      %h2.padding16left Demander l'accès à un dossier
+      = simple_form_for @account_sharing_request, url: create_request_account_account_sharings_path, html: { class: 'form form-horizontal margin1top margin0bottom' } do |f|
+        = f.input :code_or_email, label: 'Code ou email du dossier'
+        .form-actions.margin0bottom
+          = f.submit t('actions.submit'), class: 'btn btn-primary'
+          = link_to t('actions.cancel'), account_profile_path(panel: :account_sharing), class: 'btn'
