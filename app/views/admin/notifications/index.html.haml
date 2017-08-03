@@ -22,8 +22,8 @@
                 %tr
                   %td= l(notification.created_at, format: '%d %b %Y %H:%M')
                   %td= link_to(notification.user.code, [:admin, notification.user])
-                  %td= t('notifications.' + notification.notice_type + '.title')
-                  %td= t('notifications.' + notification.notice_type + '.message')
+                  %td= notification.title
+                  %td!= markdown_render notification.message
                   %td= notification.is_sent ? icon_ok : icon_not_ok
                   %td= notification.is_read ? icon_ok : icon_not_ok
       = render partial: 'shared/list_options', locals: { collection: @notifications }

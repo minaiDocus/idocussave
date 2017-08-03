@@ -1,9 +1,8 @@
 class Notification < ActiveRecord::Base
   belongs_to :user
-  belongs_to :targetable, polymorphic: true
 
   validates_presence_of :user
-  validates_inclusion_of :notice_type, in: :valid_notice_types
+  validates_inclusion_of :notice_type, in: :notice_types
 
   scope :not_read, -> { where(is_read: false) }
 
@@ -28,12 +27,16 @@ class Notification < ActiveRecord::Base
 
       notifications
     end
+
+    def notice_types
+      [
+        'dropbox_invalid_access_token',
+        'dropbox_insufficient_space'
+      ].freeze
+    end
   end
 
-  def valid_notice_types
-    [
-      'dropbox_invalid_access_token',
-      'dropbox_insufficient_space'
-    ]
+  def notice_types
+    self.class.notice_types
   end
 end

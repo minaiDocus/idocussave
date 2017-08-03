@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703114120) do
+ActiveRecord::Schema.define(version: 20170803175010) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -822,17 +822,16 @@ ActiveRecord::Schema.define(version: 20170703114120) do
   add_index "new_provider_requests", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "notifications", force: :cascade do |t|
-    t.integer  "user_id",         limit: 4
-    t.integer  "targetable_id",   limit: 4
-    t.string   "targetable_type", limit: 255
-    t.string   "notice_type",     limit: 255,                 null: false
-    t.boolean  "is_read",                     default: false, null: false
-    t.boolean  "is_sent",                     default: false, null: false
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
+    t.integer  "user_id",     limit: 4
+    t.string   "notice_type", limit: 255,                   null: false
+    t.boolean  "is_read",                   default: false, null: false
+    t.boolean  "is_sent",                   default: false, null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "title",       limit: 255
+    t.text     "message",     limit: 65535
   end
 
-  add_index "notifications", ["targetable_type", "targetable_id"], name: "index_notifications_on_targetable_type_and_targetable_id", using: :btree
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "operations", force: :cascade do |t|

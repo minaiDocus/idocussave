@@ -10,6 +10,13 @@ class NotifyDropboxError
         notification = Notification.new
         notification.user = @user
         notification.notice_type = @notice_type
+        if @notice_type == 'dropbox_invalid_access_token'
+          notification.title   = "Dropbox - Reconfiguration requise"
+          notification.message = "Votre accès à Dropbox a été révoqué, veuillez le reconfigurer s'il vous plaît."
+        elsif @notice_type == 'dropbox_insufficient_space'
+          notification.title   = "Dropbox - Espace insuffisant"
+          notification.message = "Votre compte Dropbox n'a plus d'espace, la livraison automatique a donc été désactivé, veuillez libérer plus d'espace avant de la réactiver."
+        end
         if notification.save
           NotifyWorker.perform_async(notification.id)
         end

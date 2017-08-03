@@ -144,6 +144,8 @@ gem 'symmetric-encryption'
 # Metric
 # gem 'skylight'
 
+gem 'redcarpet'
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'

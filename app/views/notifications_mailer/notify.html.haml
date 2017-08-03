@@ -1,15 +1,12 @@
 !!!
 %html
   %head
-    %title [iDocus] #{t("notifications.#{@notification.notice_type}.title")}
+    %title [iDocus] #{@notification.title}
     %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
   %body
     Bonjour #{@notification.user.name},
     %br
-    %br
-    = t("notifications.#{@notification.notice_type}.message")
-    %br
-    %br
+    != @markdown.render @notification.message
     = link_to 'Voir sur iDocus', link_through_account_notification_url(@notification)
     %br
     %br

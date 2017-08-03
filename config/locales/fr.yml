@@ -1008,9 +1008,5 @@ fr:
           processed: Traitée
 
   notifications:
-    dropbox_invalid_access_token:
-      title: Dropbox - Reconfiguration requise
-      message: "Votre accès à Dropbox a été révoqué, veuillez le reconfigurer s'il vous plaît."
-    dropbox_insufficient_space:
-      title: Dropbox - Espace insuffisant
-      message: "Votre compte Dropbox n'a plus d'espace, la livraison automatique a donc été désactivé, veuillez libérer plus d'espace avant de la réactiver."
+    dropbox_invalid_access_token: Dropbox - Reconfiguration requise
+    dropbox_insufficient_space: Dropbox - Espace insuffisant

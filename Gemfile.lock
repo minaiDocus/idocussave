@@ -375,6 +375,7 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
+    redcarpet (3.4.0)
     redis (3.3.1)
     ref (2.0.0)
     remote_lock (1.1.0)
@@ -583,6 +584,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (= 4.2.7.1)
   rake
+  redcarpet
   remote_lock
   rspec-rails
   ruby-box
