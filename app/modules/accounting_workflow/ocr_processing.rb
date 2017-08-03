@@ -26,7 +26,7 @@ module AccountingWorkflow::OcrProcessing
 
             temp_document.save
 
-            if temp_document.temp_pack.is_bundle_needed?
+            if (temp_document.scanned? || temp_document.pages_number > 2) && temp_document.temp_pack.is_bundle_needed?
               temp_document.bundle_needed
             else
               temp_document.ready

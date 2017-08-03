@@ -20,7 +20,7 @@ class AccountingWorkflow::GroupDocument
         pack_tag.css('piece').each do |piece_tag|
           file_names = piece_tag.css('file_name').map(&:content)
 
-          grouper = AccountingWorkflow::CreateTempDocumentFromGrouping.new(temp_pack, file_names, piece_tag['origin'], piece_tag['abbyy_vendor_id'])
+          grouper = AccountingWorkflow::CreateTempDocumentFromGrouping.new(temp_pack, file_names, piece_tag['origin'])
           grouper.execute
 
           @processed_file_paths += grouper.file_paths

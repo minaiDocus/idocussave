@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170730193640) do
+ActiveRecord::Schema.define(version: 20170703114120) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1861,7 +1861,6 @@ ActiveRecord::Schema.define(version: 20170730193640) do
     t.string   "api_name",                       limit: 255
     t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id",                   limit: 4
-    t.integer  "abbyy_vendor_id",                limit: 4
   end
 
   add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
