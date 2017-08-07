@@ -1,6 +1,6 @@
 class NotifyWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :high, retry: false
+  sidekiq_options queue: :mailers, retry: false
 
   def perform(notification_id)
     notification = Notification.find notification_id

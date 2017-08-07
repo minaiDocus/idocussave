@@ -15,16 +15,8 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
   end
 
   def create
-    @account_sharing = AccountSharing.new account_sharing_params
-    @account_sharing.organization  = @organization
-    @account_sharing.authorized_by = current_user
-    @account_sharing.is_approved   = true
-    # TODO : put this into model
-    authorized = true
-    authorized = false unless @account_sharing.collaborator && (@account_sharing.collaborator.is_guest || @account_sharing.collaborator.in?(@user.customers))
-    authorized = false unless @account_sharing.account && @account_sharing.account.in?(@user.customers)
-    if authorized && @account_sharing.save
-      DropboxImport.changed([@account_sharing.collaborator])
+    @account_sharing = ShareAccount.new(@user, current_user, account_sharing_params).execute
+    if @account_sharing.persisted?
       flash[:success] = 'Dossier partagé avec succès.'
       redirect_to account_organization_account_sharings_path(@organization)
     else
@@ -33,15 +25,13 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
   end
 
   def accept
-    @account_sharing.is_approved = true
-    @account_sharing.save
+    AcceptAccountSharingRequest.new(@account_sharing).execute
     flash[:success] = "Le dossier \"#{@account_sharing.account.info}\" a été partagé au contact \"#{@account_sharing.collaborator.info}\" avec succès."
     redirect_to account_organization_account_sharings_path(@organization)
   end
 
   def destroy
-    @account_sharing.destroy
-    DropboxImport.changed([@account_sharing.collaborator])
+    DestroyAccountSharing.new(@account_sharing).execute
     flash[:success] = "Partage du dossier \"#{@account_sharing.account.info}\" au contact \"#{@account_sharing.collaborator.info}\" supprimé."
     redirect_to account_organization_account_sharings_path(@organization)
   end

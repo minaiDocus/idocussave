@@ -22,8 +22,11 @@
       = label_tag 'notification_contains[user_contains][code]', t('activerecord.models.user.name') + ' (code)'
       = text_field_tag 'notification_contains[user_contains][code]', (params[:notification_contains][:user_contains][:code] rescue ''), class: 'span12'
 
-      = label_tag 'notification_contains[notice_type]', t('activerecord.models.notification.attributes.notice_type')
-      = select_tag 'notification_contains[notice_type]', options_for_select(t('notifications').map { |k,v| [v,k] }, (params[:notification_contains][:notice_type] rescue '')), include_blank: true
+      = label_tag 'notification_contains[title]', t('activerecord.models.notification.attributes.title')
+      = text_field_tag 'notification_contains[title]', (params[:notification_contains][:title] rescue ''), class: 'span12'
+
+      = label_tag 'notification_contains[message]', t('activerecord.models.notification.attributes.message')
+      = text_field_tag 'notification_contains[message]', (params[:notification_contains][:message] rescue ''), class: 'span12'
 
       = label_tag 'notification_contains[is_sent]', t('activerecord.models.notification.attributes.is_sent')
       = select_tag 'notification_contains[is_sent]', options_for_select([[t('yes_value'), 1], [t('no_value'), 0]], (params[:notification_contains][:is_sent] rescue '')), include_blank: true

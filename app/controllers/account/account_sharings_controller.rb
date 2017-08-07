@@ -1,10 +1,10 @@
 class Account::AccountSharingsController < Account::AccountController
   def new
-    @guest_collaborator = User.new(company: @user.company)
+    @contact = User.new(company: @user.company)
   end
 
   def create
-    @guest_collaborator, @account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
+    @contact, @account_sharing = ShareMyAccount.new(@user, account_sharing_params, current_user).execute
     if @account_sharing.persisted?
       flash[:success] = 'Votre compte a été partagé avec succès.'
       redirect_to account_profile_path(panel: :account_sharing)
@@ -18,9 +18,11 @@ class Account::AccountSharingsController < Account::AccountController
 
   def destroy
     @account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
-    @account_sharing.destroy
-    DropboxImport.changed([@account_sharing.collaborator])
-    flash[:success] = 'Le partage a été annulé avec succès.'
+    if DestroyAccountSharing.new(@account_sharing, @user).execute
+      flash[:success] = 'Le partage a été annulé avec succès.'
+    else
+      flash[:error] = 'Impossible de supprimer le partage.'
+    end
     redirect_to account_profile_path(panel: :account_sharing)
   end
 

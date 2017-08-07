@@ -955,6 +955,8 @@ fr:
           notice_type: Type de notification
           is_sent: Envoyé ?
           is_read: Lu ?
+          title: Titre
+          message: Message
     state_machines:
       retriever:
         states:
@@ -1011,7 +1013,3 @@ fr:
           confirmed: Confirmé
           cancelled: Annulée
           processed: Traitée
-
-  notifications:
-    dropbox_invalid_access_token: Dropbox - Reconfiguration requise
-    dropbox_insufficient_space: Dropbox - Espace insuffisant

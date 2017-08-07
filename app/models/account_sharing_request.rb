@@ -15,7 +15,17 @@ class AccountSharingRequest
       account_sharing.collaborator  = user
       account_sharing.account       = account
       account_sharing.is_approved   = false
-      account_sharing.save
+      if account_sharing.save
+        if account.parent || account.organization.leader
+          notification = Notification.new
+          notification.user        = account.parent || account.organization.leader
+          notification.notice_type = 'account_sharing_request'
+          notification.title       = "Demande d'accès à un dossier"
+          notification.message     = "#{user.info} souhaite accéder au dossier #{account.info}."
+          NotifyWorker.perform_async(notification.id) if notification.save
+        end
+        true
+      end
     end
   end
 

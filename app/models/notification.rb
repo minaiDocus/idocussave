@@ -21,9 +21,11 @@ class Notification < ActiveRecord::Base
         notifications = notifications.where(user_id: user.try(:id))
       end
 
-      notifications = notifications.where(notice_type: contains[:notice_type])  if contains[:notice_type].present?
-      notifications = notifications.where(is_sent: (contains[:is_sent] == '1')) if contains[:is_sent].present?
-      notifications = notifications.where(is_read: (contains[:is_read] == '1')) if contains[:is_read].present?
+      notifications = notifications.where(notice_type: contains[:notice_type])         if contains[:notice_type].present?
+      notifications = notifications.where("title LIKE ?", "%#{contains[:title]}%")     if contains[:title].present?
+      notifications = notifications.where("message LIKE ?", "%#{contains[:message]}%") if contains[:message].present?
+      notifications = notifications.where(is_sent: (contains[:is_sent] == '1'))        if contains[:is_sent].present?
+      notifications = notifications.where(is_read: (contains[:is_read] == '1'))        if contains[:is_read].present?
 
       notifications
     end
@@ -31,7 +33,13 @@ class Notification < ActiveRecord::Base
     def notice_types
       [
         'dropbox_invalid_access_token',
-        'dropbox_insufficient_space'
+        'dropbox_insufficient_space',
+        'share_account',
+        'account_sharing_destroyed',
+        'account_sharing_request',
+        'account_sharing_request_approved',
+        'account_sharing_request_denied',
+        'account_sharing_request_canceled'
       ].freeze
     end
   end
