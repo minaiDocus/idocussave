@@ -233,6 +233,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def group_prescribers
+    if is_prescriber
+      []
+    else
+      User.joins(:groups).where("groups.id" => group_ids, "users.is_prescriber" => true)
+    end
+  end
 
   def extend_organization_role
     if is_prescriber
