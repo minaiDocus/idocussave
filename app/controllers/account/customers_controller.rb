@@ -205,17 +205,10 @@ class Account::CustomersController < Account::OrganizationController
     full_info = params[:full_info].present?
     if params[:q].present?
       users = is_leader? ? @organization.customers : @user.customers
-      # TODO : need refactorization
-      users = users.where(
-        "code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
-        t: params[:q].split.join('|')
+      users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
-        is_ok = true
-        params[:q].split.each do |term|
-          is_ok = false unless str.match(/#{term}/i)
-        end
-        is_ok
+        params[:q].split.detect { |e| !str.match(/#{term}/i) }.nil?
       end
       users.each do |user|
         tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
