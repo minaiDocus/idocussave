@@ -1,4 +1,3 @@
-# TODO : need update
 class DropboxImport
   class << self
     def check
@@ -57,10 +56,10 @@ class DropboxImport
                  object
                end
 
-    default_path_prefix = "/exportation vers iDocus/#{user.code}"
-
-    unless user.is_prescriber
-      default_path_prefix += " - #{user.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
+    if user.is_prescriber
+      default_path_prefix = "/exportation vers iDocus/#{user.code}"
+    else
+      default_path_prefix = '/exportation vers iDocus'
     end
 
     @current_cursor      = @dropbox.delta_cursor
