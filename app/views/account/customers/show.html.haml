@@ -74,7 +74,7 @@
                         - if @customer.parent
                           = @customer.parent.info
                         - else
-                          %i Aucun
+                          %i{ style: 'color:gray' } Aucun
                     %tr
                       %th= t('activerecord.models.common.attributes.created_at')
                       %td= l(@customer.created_at)
@@ -290,7 +290,7 @@
                       - users = @organization.ibiza.users
                       - if @customer.ibiza_id.nil?
                         %td
-                          %i Aucun
+                          %i{ style: 'color:gray' } Aucun
                       - elsif users.is_a?(Array)
                         %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
                       - elsif users.nil?
