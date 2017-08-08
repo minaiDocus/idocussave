@@ -7,6 +7,9 @@ class AcceptAccountSharingRequest
   def execute
     @account_sharing.is_approved = true
     @account_sharing.save
+
+    DropboxImport.changed([@account_sharing.collaborator])
+
     notification = Notification.new
     notification.user        = @account_sharing.collaborator
     notification.notice_type = 'account_sharing_request_approved'
