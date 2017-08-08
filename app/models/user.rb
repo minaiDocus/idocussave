@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   AUTHENTICATION_TOKEN_LENGTH = 20
 
   validate :format_of_code,      if: proc { |u| u.code_changed? }
-  validate :belonging_of_parent, if: proc { |u| u.parent_id_changed? }
+  validate :belonging_of_parent, if: proc { |u| u.parent_id_changed? && u.parent.present? }
   validates :authd_prev_period,            numericality: { greater_than_or_equal_to: 0 }
   validates :auth_prev_period_until_day,   inclusion: { in: 0..28 }
   validates :auth_prev_period_until_month, inclusion: { in: 0..2 }
