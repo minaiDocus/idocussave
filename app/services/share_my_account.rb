@@ -1,4 +1,3 @@
-# TODO : need auto test
 class ShareMyAccount
   def initialize(user, params, current_user=nil)
     @user = user

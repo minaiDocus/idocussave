@@ -11,6 +11,9 @@ class Account::AccountSharingsController < Account::AccountController
     elsif Array(@account_sharing.errors[:account] || @account_sharing.errors[:collaborator]).include?("est déjà pris.")
       flash[:notice] = 'Ce contact a déjà accès à votre compte.'
       redirect_to account_profile_path(panel: :account_sharing)
+    elsif @contact.errors[:email].include?("est déjà pris.") || @account_sharing.errors[:collaborator_id].include?("n'est pas valide")
+      flash[:error] = "Vous ne pouvez pas partager votre compte avec le contact : #{@contact.email}."
+      redirect_to account_profile_path(panel: :account_sharing)
     else
       render :new
     end
