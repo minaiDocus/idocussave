@@ -36,12 +36,16 @@ protected
   end
 
   def accounts
-    if @user.is_prescriber
-      @user.customers.order(code: :asc)
-    elsif @user.is_guest
-      @user.accounts.order(code: :asc)
+    if @user
+      if @user.is_prescriber
+        @user.customers.order(code: :asc)
+      elsif @user.is_guest
+        @user.accounts.order(code: :asc)
+      else
+        User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
+      end
     else
-      User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
+      []
     end
   end
   helper_method :accounts

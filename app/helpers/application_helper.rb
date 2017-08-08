@@ -326,4 +326,8 @@ module ApplicationHelper
     @markdown ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML)
     @markdown.render content
   end
+
+  def has_multiple_accounts?
+    accounts.size > 1 || @user.is_prescriber || @user.is_guest
+  end
 end

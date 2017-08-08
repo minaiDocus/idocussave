@@ -2,7 +2,7 @@
 # FIXME : whole check
 module DocumentsHelper
   def linked_users_option
-    accounts.size > 1 ? accounts.map { |u| [u, u.id] } : []
+    has_multiple_accounts? ? accounts.map { |u| [u, u.id] } : []
   end
 
   def account_book_types_option
@@ -187,7 +187,7 @@ module DocumentsHelper
   end
 
   def file_upload_params
-    if accounts.size > 1
+    if has_multiple_accounts?
       result = {}
 
       file_upload_users_list.each do |user|

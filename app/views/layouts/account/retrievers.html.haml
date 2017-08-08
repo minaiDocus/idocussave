@@ -1,6 +1,6 @@
 - content_for :content do
   #retrievers.container-fluid
-    - if accounts.size > 1
+    - if has_multiple_accounts?
       .row-fluid
         .span12.box
           - if action_name == 'index'

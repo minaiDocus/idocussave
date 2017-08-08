@@ -2,9 +2,13 @@
 class Account::Documents::UploadsController < Account::AccountController
   def create
     data = nil
-    customer = accounts.active.find_by_code(params[:file_code])
+    if params[:file_code].present?
+      customer = accounts.active.find_by_code(params[:file_code])
+    else
+      customer = @user
+    end
 
-    if customer.options.is_upload_authorized
+    if customer.try(:options).try(:is_upload_authorized)
       uploaded_document = UploadedDocument.new(params[:files][0].tempfile,
                                                params[:files][0].original_filename,
                                                customer,
