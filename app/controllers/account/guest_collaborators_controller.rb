@@ -16,7 +16,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   end
 
   def create
-    @guest_collaborator = CreateGuestCollaborator.new(user_params, @organization).execute
+    @guest_collaborator = CreateContact.new(user_params, @organization).execute
     if @guest_collaborator.persisted?
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_guest_collaborators_path(@organization)

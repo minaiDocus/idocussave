@@ -35,7 +35,7 @@ private
       @collaborator
     else
       @collaborator = User.where(is_prescriber: false, email: @params[:email]).first
-      @collaborator ||= CreateGuestCollaborator.new(@params, @user.organization).execute
+      @collaborator ||= CreateContact.new(@params, @user.organization).execute
       @collaborator
     end
   end
