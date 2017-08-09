@@ -2,7 +2,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
   before_action :load_guest_collaborator, only: %w(edit update destroy)
 
   def index
-    @account_sharings = @organization.account_sharings.unscoped
+    @account_sharings = AccountSharing.unscoped.where(account_id: customers)
     @account_sharing_groups = []
     @guest_collaborators = @organization.guest_collaborators.
       search(search_terms(params[:guest_collaborator_contains])).
