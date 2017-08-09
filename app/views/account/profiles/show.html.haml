@@ -66,8 +66,8 @@
                     %i{ style: 'color:gray' } Aucun
               %h4 Liste des mes demandes d'accès :
               %ul
-                - if @user.account_sharings.pending.size > 0
-                  - @user.account_sharings.pending.each do |account_sharing|
+                - if @user.account_sharings.pending.select { |e| e.collaborator == @user }.size > 0
+                  - @user.account_sharings.pending.select { |e| e.collaborator == @user }.each do |account_sharing|
                     %li
                       = account_sharing.account.info
                       = link_to icon_destroy, account_account_sharing_path(account_sharing), method: :delete, data: { confirm: "Êtes-vous sûr de ne plus vouloir accéder au dossier \"#{account_sharing.account.info}\" ?" }
