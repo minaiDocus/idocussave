@@ -1,8 +1,7 @@
-# TODO : need auto test
 class DestroyAccountSharing
-  def initialize(account_sharing, user=nil)
+  def initialize(account_sharing, requester=nil)
     @account_sharing = account_sharing
-    @user = user
+    @requester = requester
   end
 
   def execute
@@ -15,11 +14,11 @@ class DestroyAccountSharing
         notification.notice_type = 'account_sharing_destroyed'
         notification.title       = 'Accès à un compte révoqué'
         notification.message     = "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
-      elsif @user == @account_sharing.collaborator
+      elsif @requester == @account_sharing.collaborator
         notification.user        = @account_sharing.account.parent || @account_sharing.account.organization.leader
         notification.notice_type = 'account_sharing_request_canceled'
         notification.title       = "Demande d'accès à un compte annulé"
-        notification.message     = "La demande d'accès au compte #{@account_sharing.account.info} par #{@user.info} a été annulée."
+        notification.message     = "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."
       else
         notification.user        = @account_sharing.collaborator
         notification.notice_type = 'account_sharing_request_denied'
