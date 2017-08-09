@@ -15,7 +15,7 @@ class Account::Organization::AccountSharingsController < Account::OrganizationCo
   end
 
   def create
-    @account_sharing = ShareAccount.new(@user, current_user, account_sharing_params).execute
+    @account_sharing = ShareAccount.new(@user, account_sharing_params, current_user).execute
     if @account_sharing.persisted?
       flash[:success] = 'Dossier partagé avec succès.'
       redirect_to account_organization_account_sharings_path(@organization)

@@ -1,19 +1,18 @@
-# TODO : need auto test
 class ShareAccount
-  def initialize(user, authorized_by, params)
-    @user          = user
-    @authorized_by = authorized_by
+  def initialize(requester, params, authorized_by=nil)
+    @requester     = requester
+    @authorized_by = authorized_by || requester
     @params        = params
   end
 
   def execute
     @account_sharing = AccountSharing.new @params
-    @account_sharing.organization  = @user.organization
+    @account_sharing.organization  = @requester.organization
     @account_sharing.authorized_by = @authorized_by
     @account_sharing.is_approved   = true
     authorized = true
-    authorized = false unless @account_sharing.collaborator && (@account_sharing.collaborator.is_guest || @account_sharing.collaborator.in?(@user.customers))
-    authorized = false unless @account_sharing.account && @account_sharing.account.in?(@user.customers)
+    authorized = false unless @account_sharing.collaborator && (@account_sharing.collaborator.is_guest || @account_sharing.collaborator.in?(@requester.customers))
+    authorized = false unless @account_sharing.account && @account_sharing.account.in?(@requester.customers)
     if authorized && @account_sharing.save
       DropboxImport.changed([@account_sharing.collaborator])
 
