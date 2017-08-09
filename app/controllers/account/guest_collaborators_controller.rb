@@ -48,7 +48,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
     tags = []
     full_info = params[:full_info].present?
     if params[:q].present?
-      users = @organization.members.where(is_prescriber: false)
+      users = @organization.members.active.where(is_prescriber: false)
       users = users.where(
         "code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
         t: params[:q].split.join('|')
