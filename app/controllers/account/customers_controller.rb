@@ -208,7 +208,7 @@ class Account::CustomersController < Account::OrganizationController
       users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
-        params[:q].split.detect { |e| !str.match(/#{term}/i) }.nil?
+        params[:q].split.detect { |e| !str.match(/#{e}/i) }.nil?
       end
       users.each do |user|
         tags << { id: user.id.to_s, name: full_info ? user.info : user.code }
