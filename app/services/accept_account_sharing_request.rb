@@ -1,4 +1,3 @@
-# TODO : need auto test
 class AcceptAccountSharingRequest
   def initialize(account_sharing)
     @account_sharing = account_sharing
