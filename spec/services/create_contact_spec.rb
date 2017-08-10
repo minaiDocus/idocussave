@@ -36,7 +36,6 @@ describe CreateContact do
 
     user = CreateContact.new(params, organization).execute
 
-    puts user.errors.messages
     expect(user).not_to be_persisted
     expect(user.errors.messages).to eq({ company: ['est vide'] })
   end
