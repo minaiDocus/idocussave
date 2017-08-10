@@ -80,7 +80,7 @@ class DropboxImport
 
       initialize_folders if @current_cursor.nil?
 
-      while has_more
+      while has_more && @current_cursor
         retryable = true
         begin
           result = client.list_folder_continue(@current_cursor)
@@ -189,7 +189,11 @@ class DropboxImport
     @dropbox.import_folder_paths = []
     @folders = nil
     update_folders
-    @current_cursor = client.list_folder_get_latest_cursor(path: @current_path_prefix, recursive: true).cursor
+    begin
+      @current_cursor = client.list_folder_get_latest_cursor(path: @current_path_prefix, recursive: true).cursor
+    rescue DropboxApi::Errors::NotFoundError => e
+      raise unless e.message.match(/path\/not_found/)
+    end
   end
 
   def process_entry(metadata)
