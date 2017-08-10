@@ -24,6 +24,7 @@ describe ShareAccount do
       @contact = create :guest
       @organization.members << @contact
     end
+
     context 'and given customer and collaborator are in the same group' do
       before(:each) do
         @group = Group.new
