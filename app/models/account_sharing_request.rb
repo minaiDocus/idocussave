@@ -1,4 +1,3 @@
-# TODO : need auto test
 class AccountSharingRequest
   include ActiveModel::Model
 
@@ -26,6 +25,8 @@ class AccountSharingRequest
         end
         true
       end
+    else
+      false
     end
   end
 
