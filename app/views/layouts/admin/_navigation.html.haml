@@ -44,6 +44,8 @@
           = link_to 'Images', admin_cms_images_path
         %li{ class: ('active' if controller_name == 'scanning_providers') }
           = link_to 'Ateliers', admin_scanning_providers_path
+        %li{ class: ('active' if controller_name == 'account_sharings') }
+          = link_to 'Partages de compte', admin_account_sharings_path
         %li{ class: ('active' if controller_name == 'notifications') }
           = link_to 'Notifications utilisateurs', admin_notifications_path
         %li{ class: ('active' if controller_name == 'notification_settings') }

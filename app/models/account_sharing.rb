@@ -30,6 +30,14 @@ class AccountSharing < ActiveRecord::Base
         "collaborators_account_sharings.first_name REGEXP :t OR "\
         "collaborators_account_sharings.last_name REGEXP :t",
         t: contains[:collaborator].split.join('|')) if contains[:collaborator].present?
+
+      if contains[:created_at].present?
+        account_sharings = account_sharings.where("account_sharings.created_at <= '#{contains[:created_at]['<=']}'") if contains[:created_at]['<='].present?
+        account_sharings = account_sharings.where("account_sharings.created_at >= '#{contains[:created_at]['>=']}'") if contains[:created_at]['>='].present?
+      end
+
+      account_sharings = account_sharings.where(is_approved: (contains[:is_approved] == '1' ? true : false)) if contains[:is_approved].present?
+
       account_sharings
     end
   end

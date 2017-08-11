@@ -408,6 +408,8 @@ Idocus::Application.routes.draw do
     end
 
     resources :notifications, only: %w(index)
+
+    resources :account_sharings, only: %w(index)
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
