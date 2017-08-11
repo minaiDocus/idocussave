@@ -379,7 +379,7 @@ fr:
           is_organization_admin: Est administrateur de l'organisation ?
           is_prescriber: Est collaborateur ?
           is_fake_prescriber: Est collaborateur de test ?
-          is_guest: Est collaborateur invité ?
+          is_guest: Est un contact ?
           is_access_by_token_active: Accès par jeton activé ?
           is_reminder_email_active: Rappel activé ?
           is_document_notifier_active: Notification des nouveaux documents activé ?
