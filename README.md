@@ -22,7 +22,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 - Ruby 2.3.1 [x86_64]
 - Ruby on Rails 4.2.17
 - MySQL 5.5
-- ImageMagick 6.8.9.9-5
+- ImageMagick 6.8.9-9 Q16 x86_64 2017-07-15
 - Pdftk 2.02
 - Poppler
 - Redis + Sidekiq
