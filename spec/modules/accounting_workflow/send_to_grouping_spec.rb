@@ -62,7 +62,10 @@ describe AccountingWorkflow::SendToGrouping do
       end
 
       Timecop.freeze(Time.local(2015,1,1,0,15,1))
-      AccountingWorkflow::SendToGrouping.execute
+
+      TempDocument.all.each do |temp_document|
+        AccountingWorkflow::SendToGrouping.new(temp_document).execute
+      end
     end
 
     after(:all) do
@@ -125,7 +128,7 @@ describe AccountingWorkflow::SendToGrouping do
     end
 
     it 'change all temp_documents states to bundling' do
-      expect(@temp_pack.temp_documents.distinct.pluck(:state)).to eq ['bundling']
+      expect(@temp_pack.temp_documents.pluck(:state).uniq).to eq ['bundling']
     end
   end
 end
