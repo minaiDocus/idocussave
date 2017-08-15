@@ -18,7 +18,7 @@ Site web qui homogénise le stockage et la gestion des documents provenant de di
 - Pré-afféctation
 
 ## Technologies :
-- Linux - Debian 64bit - personnalisé
+- Debian 64bit
 - Ruby 2.3.1 [x86_64]
 - Ruby on Rails 4.2.17
 - MySQL 5.5
