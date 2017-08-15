@@ -72,11 +72,11 @@ describe AssignDefaultJournalsService do
         end
 
         it 'copy journal AC' do
-          expect(@user.account_book_types.asc(:name).first.name).to eq 'AC'
+          expect(@user.account_book_types.order(name: :asc).first.name).to eq 'AC'
         end
 
         it 'copy journal BQ' do
-          expect(@user.account_book_types.asc(:name).last.name).to eq 'BQ'
+          expect(@user.account_book_types.order(name: :asc).last.name).to eq 'BQ'
         end
 
         it 'create 2 events' do
@@ -139,7 +139,7 @@ describe AssignDefaultJournalsService do
         end
 
         it 'copy journal AC' do
-          expect(@user.account_book_types.asc(:name).first.name).to eq 'AC'
+          expect(@user.account_book_types.order(name: :asc).first.name).to eq 'AC'
         end
 
         it 'create 1 event' do
