@@ -15,53 +15,7 @@ development:         &development_defaults
 test:
   <<: *development_defaults
 
-staging:
-  # Since the key to encrypt and decrypt with must NOT be stored along with the
-  # source code, we only hold a RSA key that is used to unlock the file
-  # containing the actual symmetric encryption key
-  private_rsa_key: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIEpQIBAAKCAQEA0in0CKbgS0ryBap1Jn2iuMVn/waIE+ZBlXmGa7OOOepOKXxG
-    do5suGpfU64bqw8ux6RHDPU5y1PU5r+k0W8oBrL39VRbf+a/PXXbFh05J4x3JAfA
-    zOgyNdxVh8z4ilcriL2jY4K2hm8MCvi4JN0ivO0QFoUH/k4pb5tTtub2NgvXjXvS
-    sAGKJeXz6pT90nWl3nAe/ywrG1OWMw1v+rydWndDHpaut3WCF1CmDWrALYRqG03J
-    +QZCP8BTP+Pgt3KFslJJ9nj9Y1Sz4GxyD6AhVRYSzDd6zxmxWg5L6jD8Xq6/Q9Ue
-    rPHNSRLfZhgGMLyPx9yHaydjrK9yG3CSxY0bRQIDAQABAoIBAQCR2S2S54RWnC8z
-    gWUFjkDj65NNZ5H+BVhUTF7d1WEJjjIqFiWsVxDaNm/rWbO31bSINdhdBL3T/lyM
-    uki+U166r27m4WESdOcY1vZw9VzZtmBkL8E8MpPNzxfIQ5XkI7SBk+GUyHy09NGt
-    t4fLhW97HyWAC1hNwp585pWFI+mP/QvqBgC4GTygyfSVSUMVqYsjwyUCLk8s9PZZ
-    13oszcG2HHdrubTI0LIFVqwh83yZtPqgt9S72gI/CsFOaZey3MmmC8GBNtH48y+f
-    4vcVdjIvBpnrWp5zeJFerhMjX/qJyTl2N6jNadKrHGsWIbv2G20QXZ/XT7GUlVeE
-    RUQ86FRtAoGBAOlpsGdzBIXAEHLUplnHSKTkTW/zp0sCzFbXb5zorPqQqXGxXBwR
-    VY3yRe1A8UF7sf5fyY5+W8GlAq8mqgwZFRKTjZSs8G6OBmgWWSJHGA6jQDplVmPh
-    jL44Wz7RkEnSuzvs4thqgYB3sMKS2jPGtgbsAUxmm3Prx+5xxZmNQpE7AoGBAOaA
-    Ue4SXL2lA11wBsNve1Qg5h63kJkWhKDe+ZnKg8atg1SGMnWAHfH15y3wspQMhRvB
-    clYJipey5jX9DgEyD116it6yq6hZeoja37UqXlI2rKeVjiPhDgGKLtPsN2gyvL6B
-    nIa/Vid4wLxoW9Ee1biqLGJiqsnGZI5ML+6wBD1/AoGBAMqLgh5i+putzRg4W5ow
-    imM8Ec6CGrvG09bP3/TDG8fa3I7iH1Hj4N/qSq/U2QW/9vcL2/WgxLLHJAslfA4/
-    fb++9u77GzB0Yi7UpchO9RtOop+J7GuEAAPZF6TtaU4GZZ9csoSl93apZmOR13Ny
-    jeZ3ybCooWD4S2gophXXNNqdAoGBAMphxI3ppXAFoIy7vdR+36QgNqyls9oWQWEW
-    JcV4YHdjBbqDEW7FjIVTySU2/zSqQXz7Pq54Ni23sBWbGF7IW2FSJPgfnER2O/ZJ
-    Zr4kcyhwROvnjiPGiIuljjQYZRWh5sLF/m75NGX3yhIi9usHzdMT52CDDT2YadXe
-    4v8JoM91AoGANFp3gkVvggbVDw925zJvrsRxgSZvHQQ/FoqmzRMFAEMqHDiYe/VI
-    mZ0elv15DV/JUNIO2rHfdDLRlovUDl3b3FwbJXHp2I9L9X8NTBcBY1L+nZKVkKud
-    R06It0KHEKyJ2kKEl2W9qO+23mrfg7kW17WogtiQz7s4db7i1wxBdzU=
-    -----END RSA PRIVATE KEY-----
-
-
-  # List Symmetric Key files in the order of current / latest first
-  ciphers:
-    -
-      # Filename containing Symmetric Encryption Key encrypted using the
-      # RSA public key derived from the private key above
-      key_filename:      /data/idocus/deploy/staging/shared/keys/idocus_staging.key
-      iv_filename:       /data/idocus/deploy/staging/shared/keys/idocus_staging.iv
-      cipher_name:       aes-256-cbc
-      encoding:          :base64strict
-      version:           1
-      always_add_header: true
-
-production:
+production: &production_defaults
   # Since the key to encrypt and decrypt with must NOT be stored along with the
   # source code, we only hold a RSA key that is used to unlock the file
   # containing the actual symmetric encryption key
@@ -106,3 +60,6 @@ production:
       encoding:          :base64strict
       version:           1
       always_add_header: true
+
+staging:
+  <<: *production_defaults
