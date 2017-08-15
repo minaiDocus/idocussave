@@ -26,10 +26,7 @@
                   %th
                   %th
                 %tr
-                  - opts = { :class => "margin1left margin0bottom", :style => "width:auto;position:relative;top:-4px;" }
-                  - unless has_multiple_accounts?
-                    - opts.merge!({ :disabled => :disabled})
-                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(accounts, @year) ),  opts)
+                  %td= select_tag(:user_filter, options_for_select( [["Tous",0]] + filter_list_of_users(accounts, @year) ), disabled: !has_multiple_accounts?)
                   %td= text_field_tag :account_book_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :year_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"
                   %td= text_field_tag :month_filter, "", :class => "margin0bottom", :style => "width:50px;height:13px;font-size:11px;"

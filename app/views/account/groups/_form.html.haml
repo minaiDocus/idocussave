@@ -17,18 +17,14 @@
             %label
               %b= t('activerecord.models.group.attributes.collaborators')
             %br
-            - members = @group.collaborators
-            - @organization.collaborators.order(code: :asc).each do |collaborator|
-              = check_box_tag 'group[member_tokens][]', collaborator.id, members.include?(collaborator), id: "group_member_tokens_#{collaborator.id}"
-              %label{ for: "group_member_tokens_#{collaborator.id}" }= collaborator.info
+            - collaborators = @organization.collaborators.order(code: :asc)
+            = select_tag 'group[member_tokens][]', options_from_collection_for_select(collaborators, :id, :info, @group.collaborators.map(&:id)), multiple: true, class: 'searchable-option-list show-selection-below-list show-select-all'
           .span6
             %label
               %b= t('activerecord.models.group.attributes.customers')
             %br
-            - members = @group.customers
-            - @organization.customers.order(code: :asc).each do |customer|
-              = check_box_tag 'group[member_tokens][]', customer.id, members.include?(customer), id: "group_member_tokens_#{customer.id}"
-              %label{ for: "group_member_tokens_#{customer.id}" }= customer.info
+            - customers = @organization.customers.order(code: :asc)
+            = select_tag 'group[member_tokens][]', options_from_collection_for_select(customers, :id, :info, @group.customers.map(&:id)), multiple: true, class: 'searchable-option-list'
           = hidden_field_tag 'group[member_tokens][]', ''
   - else
     %fieldset
@@ -36,10 +32,8 @@
       .control-group
         %label.control-label= t('activerecord.models.group.attributes.customers')
         .controls
-          - members = @group.customers
-          - @user.customers.order(code: :asc).each do |customer|
-            = check_box_tag 'group[customer_tokens][]', customer.id, members.include?(customer), id: "group_customer_tokens_#{customer.id}"
-            %label{ for: "group_customer_tokens_#{customer.id}" }= customer.info
+          - customers = @user.customers.order(code: :asc)
+          = select_tag 'group[customer_tokens][]', options_from_collection_for_select(customers, :id, :info, @group.customers.map(&:id)), multiple: true, class: 'searchable-option-list'
           = hidden_field_tag 'group[customer_tokens][]', ''
   .form-actions.margin0bottom
     = f.submit t('actions.submit'), class: 'btn btn-primary'

@@ -6,7 +6,7 @@
           - if action_name == 'index'
             %form{ action: current_url, method: 'GET', class: 'form-inline margin0bottom' }
               = label_tag :retrievers_account_id, 'Dossier :'
-              = select_tag :account_id, options_from_collection_for_select(accounts.active, :id, :info, @account.id)
+              = select_tag :account_id, options_from_collection_for_select(accounts.active, :id, :info, @account.id), class: 'chosen-select'
               = submit_tag t('actions.submit'), class: 'btn btn-primary'
           - else
             Dossier : #{@account.info}

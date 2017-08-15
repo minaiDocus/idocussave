@@ -14,6 +14,8 @@
 //= require file-uploader/application
 //= require file-uploader/cors/jquery.xdr-transport
 //= require shift_selectable
+//= require searchable-option-list
+//= require chosen.jquery
 //= require bootstrap-filestyle.min
 //= require bootstrap-datepicker/core
 //

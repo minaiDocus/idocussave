@@ -281,4 +281,9 @@ $(document).ready(function(){
     render_data(go_right());
     return false;
   });
+
+  $('select#user_filter').chosen({
+    search_contains: true,
+    no_results_text: 'Aucun résultat correspondant à'
+  })
 });

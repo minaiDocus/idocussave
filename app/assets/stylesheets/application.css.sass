@@ -146,9 +146,10 @@
 .modal.fade
   top: -75%
 
-/*** Action bar ***/
-.actionbar, #documentslist, #pageslist
+#documentslist, #pageslist
   overflow: auto
+
+/*** Action bar ***/
 
 .feedback
   display: block !important
@@ -179,7 +180,6 @@
     color: #484848
 
 .actionbar
-  padding-bottom: 0
   ul.token-input-list-facebook
     margin: 5px 0 0 5px
     height: 21px !important
@@ -213,6 +213,10 @@
   font-weight: normal !important
 
 /*** Documents ***/
+
+#document_owner_list, #document_owner_list_chosen
+  max-width: 350px
+
 #documentslist .content ul
   list-style: none
   li
@@ -459,6 +463,13 @@ table td.second
   .actiongroup.first
     position: relative
     top: 4px
+
+#user_filter, #user_filter_chosen
+  width: auto
+  max-width: 350px
+  position: relative
+  top: -4px
+  margin-left: 10px
 
 /*** Month ***/
 .month

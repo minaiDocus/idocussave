@@ -723,8 +723,21 @@
       lock_or_unlock_file_upload_params_interval = setInterval(lock_or_unlock_file_upload_params, 500);
     })
 
+    $('#uploadDialog').on('shown', function() {
+      $('#h_file_code').chosen({
+        search_contains: true,
+        no_results_text: 'Aucun résultat correspondant à'
+      })
+    })
+
     $('#uploadDialog').on('hide', function() {
       clearInterval(lock_or_unlock_file_upload_params_interval);
+    })
+
+    $('#document_owner_list').chosen({
+      search_contains: true,
+      no_results_text: 'Aucun résultat correspondant à',
+      inherit_select_classes: true
     })
 
     if($('#pack').length > 0) {

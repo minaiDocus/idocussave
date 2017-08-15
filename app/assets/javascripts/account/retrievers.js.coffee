@@ -167,3 +167,8 @@ jQuery ->
       else
         $('.filter').addClass('hide')
         $(this).text('Afficher le filtre')
+
+  $('select#account_id').chosen({
+    search_contains: true,
+    no_results_text: 'Aucun résultat correspondant à'
+  })
