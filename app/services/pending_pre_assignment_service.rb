@@ -12,7 +12,7 @@ class PendingPreAssignmentService
         o = OpenStruct.new
 
         o.date           = e.created_at.try(:localtime)
-        o.name           = e.pack.name.sub(/\s\d+\z/, '') if e.pack
+        o.name           = e.pack.name.sub(/\s\d+\z/, '').sub(' all', '') if e.pack
         o.message        = e.pre_assignment_comment
         o.document_count = Pack::Piece.where(pack_id: e.pack_id, is_awaiting_pre_assignment: true).count
 

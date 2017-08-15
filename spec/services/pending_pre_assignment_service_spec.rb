@@ -34,13 +34,13 @@ describe PendingPreAssignmentService do
 
       pre_assignment = pre_assignments.first
       expect(pre_assignment.date).to eq(@piece3.created_at)
-      expect(pre_assignment.name).to eq('TS%0001 AC 201402 all')
+      expect(pre_assignment.name).to eq('TS%0001 AC 201402')
       expect(pre_assignment.document_count).to eq(1)
       expect(pre_assignment.message).to be_nil
 
       pre_assignment = pre_assignments.last
       expect(pre_assignment.date).to eq(@piece1.created_at)
-      expect(pre_assignment.name).to eq('TS%0001 AC 201401 all')
+      expect(pre_assignment.name).to eq('TS%0001 AC 201401')
       expect(pre_assignment.document_count).to eq(2)
       expect(pre_assignment.message).to be_nil
     end
