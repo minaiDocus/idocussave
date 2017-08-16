@@ -4,23 +4,26 @@ describe 'API V1 Authorization' do
   before(:all) do
     @user = FactoryGirl.create :user, code: 'TS%0001'
     @user.update_authentication_token
+
+    @admin = FactoryGirl.create :admin
+    @admin.update_authentication_token
   end
 
   it 'without access_token should be unauthorized' do
-    get '/api/v1/operations', format: 'json'
+    get '/api/v1/pre_assignments', format: 'json'
     expect(response).not_to be_successful
     expect(response.code.to_i).to eq(401)
   end
 
   context 'using params' do
     it 'invalid access_token should be unauthorized' do
-      get '/api/v1/operations', format: 'json', access_token: '12345'
+      get '/api/v1/pre_assignments', format: 'json', access_token: '12345'
       expect(response).not_to be_successful
       expect(response.code.to_i).to eq(401)
     end
 
     it 'valid access_token should be authorized' do
-      get '/api/v1/operations', format: 'json', access_token: @user.authentication_token
+      get '/api/v1/pre_assignments', format: 'json', access_token: @admin.authentication_token
       expect(response).to be_successful
       expect(response.code.to_i).to eq(200)
     end
@@ -31,16 +34,16 @@ describe 'API V1 Authorization' do
       headers = {
         'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(12345)
       }
-      get '/api/v1/operations', { format: 'json' }, headers
+      get '/api/v1/pre_assignments', { format: 'json' }, headers
       expect(response).not_to be_successful
       expect(response.code.to_i).to eq(401)
     end
 
     it 'valid access_token should be authorized' do
       headers = {
-        'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(@user.authentication_token)
+        'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(@admin.authentication_token)
       }
-      get '/api/v1/operations', { format: 'json' }, headers
+      get '/api/v1/pre_assignments', { format: 'json' }, headers
       expect(response).to be_successful
       expect(response.code.to_i).to eq(200)
     end
@@ -63,10 +66,7 @@ describe 'API V1 Authorization' do
     end
 
     it 'visiting pre_assignments #index as admin should be authorized' do
-      admin = FactoryGirl.create :admin
-      admin.update_authentication_token
-
-      get '/api/v1/pre_assignments', format: 'json', access_token: admin.authentication_token
+      get '/api/v1/pre_assignments', format: 'json', access_token: @admin.authentication_token
       expect(response).to be_successful
       expect(response.code.to_i).to eq(200)
     end
