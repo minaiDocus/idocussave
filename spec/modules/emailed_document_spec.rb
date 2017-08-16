@@ -300,8 +300,8 @@ describe EmailedDocument do
       end
 
       after(:all) do
-        subscription = Subscription.create(user_id: @user.id, period_duration: 1)
-        UpdatePeriod.new(subscription.current_period).execute
+        Subscription.destroy_all
+        Period.destroy_all
       end
     end
 
@@ -312,15 +312,13 @@ describe EmailedDocument do
           from     'customer@example.com'
           to       "#{code}@fw.idocus.com"
           subject  'TS'
-          add_file filename: 'ido1.tiff', content: File.read(Rails.root.join('spec/support/files/upload.tiff'))
           add_file filename: 'image.tiff', content: File.read(Rails.root.join('spec/support/files/upload.tiff'))
           add_file filename: 'doc.pdf', content: File.read(Rails.root.join('spec/support/files/upload.pdf'))
           add_file filename: 'ido2.txt', content: File.read(Rails.root.join('spec/support/files/hello.txt'))
         end
         emailed_document = EmailedDocument.new mail
-        expect(emailed_document.attachments.map(&:name)).to include 'ido1.tiff'
+        expect(emailed_document.attachments.map(&:name)).to include 'image.tiff'
         expect(emailed_document.attachments.map(&:name)).to include 'doc.pdf'
-        expect(emailed_document.attachments.map(&:name)).not_to include 'image.tiff'
         expect(emailed_document.attachments.map(&:name)).not_to include 'ido2.txt'
         expect(emailed_document.attachments.size).to eq(2)
       end
