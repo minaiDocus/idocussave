@@ -94,26 +94,4 @@ describe Knowings do
       end
     end
   end
-
-  describe 'sync' do
-    before(:each) do
-      @remote_file = RemoteFile.new(service_name: 'Knowings', temp_path: '/path/to/file.kzip')
-      allow(@remote_file).to receive_messages(local_name: 'file.zip')
-      allow(@remote_file).to receive_messages(sending!: true)
-      allow(@remote_file).to receive_messages(synced!: true)
-      allow(@remote_file).to receive_messages(not_synced!: true)
-    end
-
-    it 'should send file successfully' do
-      expect(@remote_file).to receive(:synced!)
-      allow(@knowings.client).to receive_messages(put: 201)
-      @knowings.sync([@remote_file], Rails.logger)
-    end
-
-    it 'should failed to upload file' do
-      expect(@remote_file).to receive(:not_synced!)
-      allow(@knowings.client).to receive_messages(put: 'unauthorized')
-      @knowings.sync([@remote_file], Rails.logger)
-    end
-  end
 end
