@@ -44,16 +44,16 @@ describe Api::V1::PreAssignmentsController do
         expect(packs.size).to eq(2)
 
         pack = packs.first
-        expect(pack['date']).to eq('2014-01-01 08:00:00')
-        expect(pack['pack_name']).to eq(@pack.name.sub(' all', ''))
-        expect(pack['piece_counts']).to eq(2)
-        expect([nil, '']).to include pack['comment']
+        expect(pack['date']).to eq('2014-02-01 08:00:00')
+        expect(pack['pack_name']).to eq(@pack2.name.sub(' all', ''))
+        expect(pack['piece_counts']).to eq(1)
+        expect(pack['comment']).to eq('A test comment.')
 
         pack2 = packs.last
-        expect(pack2['date']).to eq('2014-02-01 08:00:00')
-        expect(pack2['pack_name']).to eq(@pack2.name.sub(' all', ''))
-        expect(pack2['piece_counts']).to eq(1)
-        expect(pack2['comment']).to eq('A test comment.')
+        expect(pack2['date']).to eq('2014-01-01 08:00:00')
+        expect(pack2['pack_name']).to eq(@pack.name.sub(' all', ''))
+        expect(pack2['piece_counts']).to eq(2)
+        expect([nil, '']).to include pack2['comment']
       end
     end
 
@@ -66,16 +66,16 @@ describe Api::V1::PreAssignmentsController do
         expect(packs.size).to eq(2)
 
         pack = packs.first
-        expect(pack.xpath('date').text).to eq('2014-01-01 08:00:00')
-        expect(pack.xpath('pack_name').text).to eq(@pack.name.sub(' all', ''))
-        expect(pack.xpath('piece_counts').text.to_i).to eq(2)
-        expect(pack.xpath('comment').text).to be_blank
+        expect(pack.xpath('date').text).to eq('2014-02-01 08:00:00')
+        expect(pack.xpath('pack_name').text).to eq(@pack2.name.sub(' all', ''))
+        expect(pack.xpath('piece_counts').text.to_i).to eq(1)
+        expect(pack.xpath('comment').text).to eq('A test comment.')
 
         pack2 = packs.last
-        expect(pack2.xpath('date').text).to eq('2014-02-01 08:00:00')
-        expect(pack2.xpath('pack_name').text).to eq(@pack2.name.sub(' all', ''))
-        expect(pack2.xpath('piece_counts').text.to_i).to eq(1)
-        expect(pack2.xpath('comment').text).to eq('A test comment.')
+        expect(pack2.xpath('date').text).to eq('2014-01-01 08:00:00')
+        expect(pack2.xpath('pack_name').text).to eq(@pack.name.sub(' all', ''))
+        expect(pack2.xpath('piece_counts').text.to_i).to eq(2)
+        expect(pack2.xpath('comment').text).to be_blank
       end
     end
   end

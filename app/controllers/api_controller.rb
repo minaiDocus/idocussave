@@ -78,6 +78,22 @@ class ApiController < ApplicationController
     @current_user = User.find_by_token(params[:access_token])
   end
 
+  def catch_error
+    begin
+      yield
+    rescue ActionController::UnknownController,
+           ActionController::RoutingError,
+           AbstractController::ActionNotFound,
+           ActiveRecord::RecordNotFound
+      respond_with_not_found
+    rescue => e
+      Airbrake.notify(e, airbrake_request_data)
+      respond_to do |format|
+        format.xml  { render xml:  "<message>Internal Error</message>", status: 500 }
+        format.json { render json: { message: "Internal Error" },       status: 500 }
+      end
+    end
+  end
 
   def load_user_and_rights
     current_user.extend_organization_role

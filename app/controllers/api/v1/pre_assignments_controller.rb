@@ -2,7 +2,7 @@
 class Api::V1::PreAssignmentsController < ApiController
   # GET /api/v1/pre_assignments
   def index
-    @pre_assignments = PreAssignmentSearch.pending(sort: 1)
+    @pre_assignments = PendingPreAssignmentService.pending(sort: 1)
   end
 
 
@@ -12,6 +12,7 @@ class Api::V1::PreAssignmentsController < ApiController
       pack_ids = Pack::Piece.where(is_awaiting_pre_assignment: true).distinct.pluck(:pack_id)
 
       @pack = Pack.where(name: (params[:pack_name] + ' all'), id: pack_ids).first
+      raise ActiveRecord::RecordNotFound unless @pack
 
       @pack.pieces.where(is_awaiting_pre_assignment: true).update_all(pre_assignment_comment: params[:comment])
 
