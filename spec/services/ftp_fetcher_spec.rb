@@ -38,8 +38,9 @@ describe FtpFetcher do
     expect(FtpFetcher.clean_file_name(dirty_file_name)).to eq('TS0001_TS_2013_001.pdf')
   end
 
+  # TODO : check file naming pattern
   it ".valid_file_names returns ['TS0001_TS_201301_001.PDF', 'TS0001 TS 201301 002.pdf', 'TS0002 TS 2013 001.pdf']" do
-    file_names = ['TS0001_TS_201301_001.PDF', 'TS0001 TS 201301 002.pdf', 'TS0002 TS 2013 001.pdf', 'invalid_file_name.pdf']
-    expect(FtpFetcher.valid_file_names(file_names)).to eq(['TS0001_TS_201301_001.PDF', 'TS0001 TS 201301 002.pdf', 'TS0002 TS 2013 001.pdf'])
+    file_names = ['TS0001_TS_201301_page001.PDF', 'TS0001 TS 201301 page002.pdf', 'TS0002 TS 2013 page001.pdf', 'invalid_file_name.pdf']
+    expect(FtpFetcher.valid_file_names(file_names)).to eq(['TS0001_TS_201301_page001.PDF', 'TS0001 TS 201301 page002.pdf', 'TS0002 TS 2013 page001.pdf'])
   end
 end
