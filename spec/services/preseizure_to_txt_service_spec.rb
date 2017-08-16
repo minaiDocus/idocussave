@@ -1,6 +1,8 @@
 # -*- encoding : UTF-8 -*-
 require 'spec_helper'
 
+require_dependency 'pack/report/preseizure/account'
+
 describe PreseizureToTxtService do
   before(:all) do
     user = FactoryGirl.create :user,  code: 'TS%0001'
@@ -10,7 +12,7 @@ describe PreseizureToTxtService do
     report.name = 'TS%0001 AC 201501'
     report.save
     @preseizure = Pack::Report::Preseizure.new
-    @preseizure.date = Time.local(2015,1,13)
+    @preseizure.date = '2015-01-13'
     @preseizure.third_party = 'TIERS'
     @preseizure.piece_number = '123'
     @preseizure.user = user
@@ -64,6 +66,7 @@ describe PreseizureToTxtService do
     piece.pack = pack
     piece.name = report.name + ' 001'
     piece.origin = 'upload'
+    piece.position = 1
     piece.save
     @preseizure.piece = piece
     @preseizure.save
