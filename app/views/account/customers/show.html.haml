@@ -26,6 +26,9 @@
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
               %a{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
+            - if @organization.ibiza.try(:configured?)
+              %li{ class: ('active' if params[:tab] == 'ibiza_box') }
+                %a{ href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
             - if @organization.ibiza.try(:access_token).blank?
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
@@ -313,6 +316,9 @@
                       = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
                       = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
                     = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
+            - if @organization.ibiza.try(:configured?)
+              #ibiza_box.tab-pane{ class: ('active' if params[:tab] == 'ibiza_box') }
+                = render 'ibiza_box'
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter

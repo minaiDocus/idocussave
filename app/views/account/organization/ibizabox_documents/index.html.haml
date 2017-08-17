@@ -1,0 +1,26 @@
+#ibizabox_documents
+  .row-fluid
+    .span12.box
+      %h3 Historique des documents récupérés depuis la box iBiza du client #{link_to @customer, account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')} (#{@documents_count})
+  .row-fluid
+    .span9.box
+      = render partial: 'shared/list_options', locals: { collection: @documents }
+      %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
+        %thead
+          %tr
+            %th= sortable :created_at,              'Date de la récupération'
+            %th= sortable :journal,                 'Journal'
+            %th= sortable :original_file_name,       'Nom original'
+            %th Nom iDocus
+            %th.pages= sortable :pages_number,      'Nb. pages'
+        %tbody
+          - @documents.each do |document|
+            %tr
+              %td= l(document.created_at)
+              %td= document.journal
+              %td= link_to document.original_file_name, account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank'
+              %td= link_to document.piece.content_file_name, piece_account_organization_customer_ibizabox_document_path(@organization, @customer, document), target: '_blank' if document.piece
+              %td.pages= document.pages_number
+      = render partial: 'shared/list_options', locals: { collection: @documents }
+    .span3.box
+      = render 'sidebar'

@@ -163,6 +163,10 @@ Idocus::Application.routes.draw do
           get  'select', on: :collection
         end
 
+        resources :ibizabox_folders, only: %w(update) do
+          patch 'refresh', on: :collection
+        end
+
         resources :list_journals, only: %w(index)
 
         resource :csv_descriptor do
@@ -197,6 +201,13 @@ Idocus::Application.routes.draw do
             patch 'validate', on: :collection
           end
           r.resource :dematbox, only: %w(create destroy)
+
+          r.resources :ibizabox_documents, only: %w(index show) do
+            get   'piece',    on: :member
+            get   'select',   on: :collection
+            patch 'validate', on: :collection
+          end
+
         end
 
 

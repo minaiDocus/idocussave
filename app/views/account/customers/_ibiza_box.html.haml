@@ -1,0 +1,21 @@
+= link_to icon_refresh + ' Rafraîchir', refresh_account_organization_customer_ibizabox_folders_path(@organization, @customer), method: :patch, class: 'btn btn-primary margin1right'
+= link_to 'Historique des documents', account_organization_customer_ibizabox_documents_path(@organization, @customer), class: 'btn margin1right'
+= link_to 'Sélection des documents', select_account_organization_customer_ibizabox_documents_path(@organization, @customer), class: 'btn'
+
+%hr
+%h3.margin2bottom Liste des répertoires accessibles (#{@customer.ibizabox_folders.count})
+%table.table.table-striped.table-condensed.margin0bottom
+  %tr
+    %th Code journal idocus
+    %th Répertoire Ibiza
+    %th Périodes accessibles
+    %th Statut
+    %th Actions
+  - @customer.ibizabox_folders.includes(:journal).each do |folder|
+    %tr
+      %td= folder.journal.name
+      %td= folder.journal.pseudonym
+      %td= IbizaboxImport.new(folder).accessible_ibiza_periods.join(" - ")
+      %td= ibizabox_folder_state(folder)
+      %td
+        = link_to "#{folder.active? ? 'Désactiver' : 'Activer'}", account_organization_customer_ibizabox_folder_path(@organization, @customer, folder), method: 'patch', class: "btn btn-mini btn-#{folder.active? ? 'danger' : 'primary'}"

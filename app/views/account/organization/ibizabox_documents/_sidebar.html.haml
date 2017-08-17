@@ -1,0 +1,14 @@
+- if action_name == 'index'
+  - path = account_organization_customer_ibizabox_documents_path(@organization, @customer)
+- elsif action_name == 'select'
+  - path = select_account_organization_customer_ibizabox_documents_path(@organization, @customer)
+
+= form_tag path, method: :get, class: 'form form-horizontal filter margin0bottom' do
+  = label_tag 'document_contains[name]', 'Nom original'
+  = text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'span12'
+  = label_tag 'document_contains[journal]', 'Journal'
+  = select_tag 'document_contains[journal]', options_for_select(@customer.ibizabox_folders.includes(:journal).map { |e| [e.journal.name] }, (params[:document_contains][:journal] rescue nil)), include_blank: true, class: 'span12'
+
+  .margin2top
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
+  = link_to t('filters.reset'), path, class: 'btn'

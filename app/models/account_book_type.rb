@@ -21,6 +21,8 @@ class AccountBookType < ActiveRecord::Base
     end
   end
 
+  has_one   :ibizabox_folder, foreign_key: :journal_id, dependent: :destroy
+
   has_many  :expense_categories
   has_many  :retrievers, inverse_of: 'journal', foreign_key: :journal_id
 

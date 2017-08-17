@@ -14,6 +14,7 @@ class TempDocument < ActiveRecord::Base
   belongs_to :organization
   belongs_to :document_delivery
   belongs_to :retriever
+  belongs_to :ibizabox_folder
 
   has_attached_file :content, styles: { thumb: ['46x67>', :png] },
                                           path: ':rails_root/files/:rails_env/:class/:id/:filename',
@@ -54,6 +55,7 @@ class TempDocument < ActiveRecord::Base
   scope :bundle_needed,     -> { where(state: 'bundle_needed', is_locked: false) }
   scope :wait_selection,    -> { where(state: 'wait_selection') }
   scope :ocr_layer_applied, -> { where(is_ocr_layer_applied: true) }
+  scope :from_ibizabox,     -> { where.not(ibizabox_folder_id: nil) }
 
 
   state_machine initial: :created do
@@ -115,12 +117,12 @@ class TempDocument < ActiveRecord::Base
 
 
     event :ocr_needed do
-      transition created: :ocr_needed
+      transition [:created, :wait_selection] => :ocr_needed
     end
 
 
     event :bundle_needed do
-      transition [:created, :unreadable, :ocr_needed] => :bundle_needed
+      transition [:created, :unreadable, :wait_selection, :ocr_needed] => :bundle_needed
     end
 
 
@@ -234,6 +236,24 @@ class TempDocument < ActiveRecord::Base
     collection
   end
 
+  def self.search_ibizabox_collection(collection, contains)
+    if contains[:name]
+      collection = collection.where("original_file_name LIKE ?", "%#{contains[:name]}%")
+    end
+
+    if contains[:journal]
+      collection = collection.where("account_book_types.name LIKE ?", "%#{contains[:journal]}%")
+    end
+
+    if contains[:date]
+      contains[:date].each do |operator, value|
+        collection = collection.where("created_at #{operator} '#{value}'")
+      end
+    end
+
+    collection
+  end
+
 
   def name_with_position
     name = File.basename content_file_name, '.*'
@@ -267,6 +287,10 @@ class TempDocument < ActiveRecord::Base
 
   def retrieved?
     delivery_type == 'retriever'
+  end
+
+  def from_ibizabox?
+    delivered_by == 'ibiza'
   end
 
 

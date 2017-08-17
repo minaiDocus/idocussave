@@ -605,6 +605,17 @@ fr:
             waiting: en cours de vérification
             valid: validé
             invalid: non valide
+      ibizabox_folder:
+        zero: 0 répertoire iBiza
+        one: répertoire iBiza
+        other: '%{count} répertoires iBiza'
+        name: répertoire iBiza
+        attributes:
+          states:
+            inactive: Inactif
+            ready: Prêt
+            processing: Traitement en cours
+            waiting_selection: En attente de sélection
       organization:
         zero: 0 organisation
         one: 1 organisation
@@ -1013,3 +1024,9 @@ fr:
           confirmed: Confirmé
           cancelled: Annulée
           processed: Traitée
+      ibizabox_folder:
+        states:
+          inactive: Inactif
+          ready: Prêt
+          processing: Traitement en cours
+          waiting_selection: En attente de sélection

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170804132128) do
+ActiveRecord::Schema.define(version: 20170817084653) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -732,6 +732,17 @@ ActiveRecord::Schema.define(version: 20170804132128) do
   create_table "groups_users", force: :cascade do |t|
     t.integer "user_id",  limit: 4
     t.integer "group_id", limit: 4
+  end
+
+  create_table "ibizabox_folders", force: :cascade do |t|
+    t.integer  "journal_id",          limit: 4
+    t.integer  "user_id",             limit: 4
+    t.boolean  "is_selection_needed",             default: true
+    t.string   "state",               limit: 255
+    t.datetime "last_checked_at"
+    t.string   "error_message",       limit: 255
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
   end
 
   create_table "ibizas", force: :cascade do |t|
@@ -1876,6 +1887,7 @@ ActiveRecord::Schema.define(version: 20170804132128) do
     t.string   "api_name",                       limit: 255
     t.text     "metadata",                       limit: 16777215
     t.integer  "retriever_id",                   limit: 4
+    t.integer  "ibizabox_folder_id",             limit: 4
   end
 
   add_index "temp_documents", ["api_id"], name: "index_temp_documents_on_api_id", using: :btree
@@ -1886,6 +1898,7 @@ ActiveRecord::Schema.define(version: 20170804132128) do
   add_index "temp_documents", ["email_id_mongo_id"], name: "email_id_mongo_id", using: :btree
   add_index "temp_documents", ["fiduceo_retriever_id"], name: "fiduceo_retriever_id", using: :btree
   add_index "temp_documents", ["fiduceo_retriever_id_mongo_id"], name: "fiduceo_retriever_id_mongo_id", using: :btree
+  add_index "temp_documents", ["ibizabox_folder_id"], name: "index_temp_documents_on_ibizabox_folder_id", using: :btree
   add_index "temp_documents", ["is_an_original"], name: "index_temp_documents_on_is_an_original", using: :btree
   add_index "temp_documents", ["mongo_id"], name: "index_temp_documents_on_mongo_id", using: :btree
   add_index "temp_documents", ["organization_id"], name: "organization_id", using: :btree

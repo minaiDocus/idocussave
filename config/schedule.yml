@@ -41,6 +41,9 @@ RetrieveEmailedDocumentWorker:
 ImportFromDropboxWorker:
   queue: default
   cron: '*/10 * * * * *'
+InitializeIbizaboxImportWorker:
+  queue: default
+  cron: '0 0 */6 * * *'
 
 RetrieveOcrProcessedDocumentWorker:
   queue: high

@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   has_many :account_book_types
   has_many :pre_assignment_deliveries
   has_many :notifications, dependent: :destroy
+  has_many :ibizabox_folders, dependent: :destroy
 
   belongs_to :parent,            class_name: 'User', inverse_of: :children
   belongs_to :organization,      inverse_of: 'members'
