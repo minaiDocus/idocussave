@@ -10,7 +10,7 @@ class Ftp < ActiveRecord::Base
 
   validates :login,    length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
   validates :password, length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
-  validates_format_of :host, with: URI.regexp('ftp'),       if: proc { |e| e.persisted? }
+  validates_format_of :host, with: /\Aftp:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(\/)?\z/ix, if: proc { |e| e.persisted? }
 
   before_create do
     self.host     ||= 'ftp://ftp.example.com'
