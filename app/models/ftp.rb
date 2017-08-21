@@ -1,4 +1,3 @@
-# -*- encoding : UTF-8 -*-
 class Ftp < ActiveRecord::Base
   belongs_to :external_file_storage
 
@@ -8,7 +7,6 @@ class Ftp < ActiveRecord::Base
 
   scope :configured,     -> { where(is_configured: true) }
   scope :not_configured, -> { where(is_configured: false) }
-
 
   validates :login,    length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
   validates :password, length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
@@ -36,16 +34,7 @@ class Ftp < ActiveRecord::Base
     self.password = 'password'
   end
 
-  def verify!
-    require "net/ftp"
-    begin
-      Net::FTP.open(self.host.sub(/\Aftp:\/\//,''),self.login,self.password)
-      self.is_configured = true
-    rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED
-      self.is_configured = false
-      reset_info
-    end
-    save
-    self.is_configured
+  def domain
+    host.sub /\Aftp:\/\//, ''
   end
 end

@@ -78,7 +78,7 @@ class FtpSyncService
 
   def client
     if @ftp.is_configured?
-      @client ||= Net::FTP.new(@ftp.host.sub(/\Aftp:\/\//, ''), @ftp.login, @ftp.password)
+      @client ||= Net::FTP.new @ftp.domain, @ftp.login, @ftp.password
     end
   end
 

@@ -2,20 +2,19 @@ class Account::FtpsController < Account::AccountController
   before_action :verify_authorization
   before_action :load_ftp
 
-  def configure
-    @ftp.host     = params[:ftp][:host]
-    @ftp.login    = params[:ftp][:login]
-    @ftp.password = params[:ftp][:password]
+  def edit
+  end
 
-    if @ftp.save && @ftp.verify!
+  def update
+    @ftp.assign_attributes(ftp_params)
+    if @ftp.valid? && VerifyFtpSettings.new(@ftp, current_user.code).execute
+      @ftp.is_configured = true
+      @ftp.save
       flash[:success] = 'Votre compte FTP a été configuré avec succès.'
+      redirect_to account_profile_path(anchor: 'ftp', panel: 'efs_management')
     else
       flash[:error] = 'Vos paramètres FTP ne sont pas valides.'
-    end
-
-    respond_to do |format|
-      format.json { render json: is_ok.to_json, status: :ok }
-      format.html { redirect_to account_profile_path }
+      render :edit
     end
   end
 
@@ -30,5 +29,9 @@ private
 
   def load_ftp
     @ftp = @user.find_or_create_external_file_storage.ftp
+  end
+
+  def ftp_params
+    params.require(:ftp).permit(:host, :login, :password)
   end
 end

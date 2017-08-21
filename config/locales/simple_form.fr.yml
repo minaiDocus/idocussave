@@ -249,3 +249,7 @@ fr:
       account_sharing:
         collaborator_id: Contact ou client
         account_id: Dossier client
+      ftp:
+        host: Hôte
+        login: Identifiant
+        password: Mot de passe

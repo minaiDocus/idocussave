@@ -179,11 +179,11 @@
                           - if @external_file_storage.ftp.is_configured?
                             %h5
                               Votre compte iDocus est connecté à votre compte FTP.
-                              = link_to 'Paramètres.', '#ftpDialog', 'data-toggle' => 'modal'
+                              = link_to 'Paramètres.', edit_account_ftp_path
                           - else
                             %h5
                               Pour connecter iDocus à votre compte FTP,
-                              = link_to ' cliquez ici.', '#ftpDialog', 'data-toggle' => 'modal'
+                              = link_to ' cliquez ici.', edit_account_ftp_path
                           \.
                       .row-fluid{ :class => "service_config_#{service_number} #{!is_service_used ? 'hide' : ''}" }
                         .span12
@@ -214,33 +214,6 @@
                         .span12
                           .margin2top
                             = render partial: 'storage_form', locals: { storage: @external_file_storage.box }
-
-              .modal.fade{ :id=>"ftpDialog", :style => "width:333px;height:250px;margin: -125px 0 0 -166px;" }
-                .modal-header
-                  %a.close{ href: '#', data: { dismiss: 'modal' } } ×
-                  %h3 Configuration du service FTP
-                %form.margin0bottom{ :action => configure_account_ftp_path, :method => "POST" }
-                  != hidden_field_tag "authenticity_token", form_authenticity_token
-                  .modal-body
-                    %table
-                      %tr
-                        %td.alignright
-                          != label_tag "ftp[host]", "Hôte : "
-                        %td
-                          != text_field_tag "ftp[host]", @external_file_storage.ftp.host
-                      %tr
-                        %td.alignright
-                          != label_tag "ftp[login]", "Identifiant : "
-                        %td
-                          != text_field_tag "ftp[login]", @external_file_storage.ftp.login
-                      %tr
-                        %td.alignright
-                          != label_tag "ftp[password]", "Mots de passe : "
-                        %td
-                          != password_field_tag "ftp[password]", @external_file_storage.ftp.password
-                  .modal-footer{ :style => "height: 29px;padding-bottom:12px;" }
-                    != submit_tag "Valider", :class => "btn"
-                    %a.btn{ href: '#', data: { dismiss: 'modal' } } Fermer
 
             - if @user.is_dematbox_authorized
               #idocus_box.row-fluid.pan{ class: (@active_panel == 'idocus_box' ? 'active' : '') }

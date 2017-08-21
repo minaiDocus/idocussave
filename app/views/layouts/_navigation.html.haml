@@ -2,7 +2,7 @@
   - unless @user.try(:organization).try(:is_suspended) && @user.active?
     %li{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path
-    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses account_sharings)) && !(request.path =~ /organizations/)) }
+    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
       = link_to 'Mon compte', account_profile_path
     - if @user.is_admin
       %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
