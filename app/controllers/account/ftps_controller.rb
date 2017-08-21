@@ -18,6 +18,12 @@ class Account::FtpsController < Account::AccountController
     end
   end
 
+  def destroy
+    @ftp.reset_info
+    flash[:success] = 'Vos paramètres FTP ont été réinitialisé.'
+    redirect_to account_profile_path(anchor: 'ftp', panel: 'efs_management')
+  end
+
 private
 
   def verify_authorization

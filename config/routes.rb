@@ -295,7 +295,7 @@ Idocus::Application.routes.draw do
       post :update_path_settings, on: :member
     end
 
-    resource :ftp, only: %w(edit update)
+    resource :ftp, only: %w(edit update destroy)
 
     resource :payment do
       post 'debit_mandate_notify', on: :member

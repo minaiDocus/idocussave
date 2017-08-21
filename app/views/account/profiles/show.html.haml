@@ -179,7 +179,9 @@
                           - if @external_file_storage.ftp.is_configured?
                             %h5
                               Votre compte iDocus est connecté à votre compte FTP.
-                              = link_to 'Paramètres.', edit_account_ftp_path
+                              = link_to 'Configurer', edit_account_ftp_path
+                              ou
+                              = link_to 'supprimer mes paramètres.', account_ftp_path, method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
                           - else
                             %h5
                               Pour connecter iDocus à votre compte FTP,

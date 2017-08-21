@@ -22,16 +22,12 @@ class Ftp < ActiveRecord::Base
     is_configured
   end
 
-  def reset_session
-    reset_info
-    is_configured = false
-    save
-  end
-
   def reset_info
-    self.host = 'ftp://ftp.example.com'
-    self.login = 'login'
-    self.password = 'password'
+    self.host          = 'ftp://ftp.example.com'
+    self.login         = 'login'
+    self.password      = 'password'
+    self.is_configured = false
+    save
   end
 
   def domain
