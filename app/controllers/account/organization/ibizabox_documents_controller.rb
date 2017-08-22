@@ -51,8 +51,6 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
       documents.each do |document|
         if DocumentTools.need_ocr?(document.content.path)
           document.ocr_needed
-        elsif document.temp_pack.is_bundle_needed? && document.pages_number > 2
-          document.bundle_needed
         else
           document.ready
         end
