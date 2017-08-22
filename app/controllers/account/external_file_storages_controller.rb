@@ -30,7 +30,7 @@ class Account::ExternalFileStoragesController < Account::AccountController
 
     respond_to do |format|
       format.json { render json: result.to_json, status: :ok }
-      format.html { redirect_to account_profile_path(panel: 'efs_management') }
+      format.html { redirect_to account_profile_path(panel: 'efs_management', anchor: anchor_name(service_name)) }
     end
   end
 
@@ -38,5 +38,16 @@ private
 
   def load_external_file_storage
     @external_file_storage = @user.find_or_create_external_file_storage
+  end
+
+  def anchor_name(service_name)
+    case service_name
+    when :dropbox_basic
+      :dropbox
+    when :google_doc
+      :google_drive
+    else
+      service_name
+    end
   end
 end
