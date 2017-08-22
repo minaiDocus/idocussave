@@ -87,3 +87,10 @@ jQuery ->
       update_path_preview($(this))
 
   $('.do-popover').popover()
+
+  # Scroll down by 50px to avoid content being hidden by top menu when there is an anchor
+  shiftWindow = -> scrollBy(0, -50)
+  isAtTheBottomOfThePage = -> $(window).scrollTop() == $(document).height()-$(window).height()
+  window.addEventListener('hashchange', shiftWindow)
+  if window.location.hash && !isAtTheBottomOfThePage()
+    shiftWindow()
