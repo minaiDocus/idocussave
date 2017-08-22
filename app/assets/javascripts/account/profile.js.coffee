@@ -77,7 +77,7 @@ jQuery ->
     $invoiceDialog.find("iframe").attr('src',$(this).attr('href'))
     $invoiceDialog.modal()
 
-  if $('#profile.storage_form').length > 0
+  if $('.storage_form').length > 0
     update_path_preview($('#dropbox_basic_path'))
     update_path_preview($('#google_doc_path'))
     update_path_preview($('#ftp_path'))
