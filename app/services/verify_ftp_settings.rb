@@ -5,17 +5,20 @@ class VerifyFtpSettings
   end
 
   def execute
-    session = nil
+    ftp = nil
     begin
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}` with user `#{@ftp.login}`..."
-      session = Net::FTP.new @ftp.domain, @ftp.login, @ftp.password
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}` with user `#{@ftp.login}` successful"
+      Rails.logger.info "[VerifyFtpSettings][#{runner}] trying to connect to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}`..."
+      ftp = Net::FTP.new
+      ftp.connect @ftp.domain, @ftp.port
+      ftp.login @ftp.login, @ftp.password
+      ftp.passive = true
+      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful"
       true
     rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED => e
-      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}"
+      Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` failed with : [#{e.class}] #{e.message}"
       false
     ensure
-      session.close if session
+      ftp.close if ftp
     end
   end
 

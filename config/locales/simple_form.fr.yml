@@ -251,5 +251,7 @@ fr:
         account_id: Dossier client
       ftp:
         host: Hôte
+        port: Port
+        is_passive: Mode passif ?
         login: Identifiant
         password: Mot de passe

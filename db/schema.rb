@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824084511) do
+ActiveRecord::Schema.define(version: 20170824202310) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -691,6 +691,8 @@ ActiveRecord::Schema.define(version: 20170824084511) do
     t.string   "encrypted_host",                    limit: 255
     t.string   "encrypted_login",                   limit: 255
     t.string   "encrypted_password",                limit: 255
+    t.string   "encrypted_port",                    limit: 255
+    t.boolean  "is_passive",                                    default: true
   end
 
   add_index "ftps", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree

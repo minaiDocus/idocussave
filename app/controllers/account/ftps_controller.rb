@@ -38,6 +38,6 @@ private
   end
 
   def ftp_params
-    params.require(:ftp).permit(:host, :login, :password)
+    params.require(:ftp).permit(:host, :port, :is_passive, :login, :password)
   end
 end

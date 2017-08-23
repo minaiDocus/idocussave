@@ -9,7 +9,7 @@ class ReencryptData
       [DropboxBasic,       [:access_token]],
       [GoogleDoc,          [:refresh_token, :access_token, :access_token_expires_at]],
       [Box,                [:refresh_token, :access_token]],
-      [Ftp,                [:host, :login, :password]],
+      [Ftp,                [:host, :port, :login, :password]],
       [Ibiza,              [:access_token, :access_token_2]],
       [Knowings,           [:url, :username, :password, :pole_name]]
     ]
