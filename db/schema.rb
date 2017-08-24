@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170817084653) do
+ActiveRecord::Schema.define(version: 20170824084511) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -258,6 +258,7 @@ ActiveRecord::Schema.define(version: 20170817084653) do
     t.text     "combined_fields", limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "urls",            limit: 65535
   end
 
   create_table "csv_descriptors", force: :cascade do |t|

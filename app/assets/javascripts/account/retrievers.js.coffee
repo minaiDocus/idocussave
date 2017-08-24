@@ -18,6 +18,8 @@ update_form = ->
     else
       attributes = {}
 
+    show_urls(connector)
+
     i = 0
     for key in Object.keys(connector['fields'])
       i += 1
@@ -34,6 +36,19 @@ update_form = ->
       if field['type'] == 'date' || field['type'] == 'redirect_uri'
         field['type'] = 'text'
       $('#params').append(tmpl(tmpl_name, field))
+  else
+    $('.urls.help-block').remove()
+
+show_urls = (connector) ->
+  if connector['urls'].length > 0
+    links = []
+    for url in connector['urls']
+      links.push '<a href="'+url+'" target="_blank">'+url+'</a>'
+    help_block = '<p class="urls help-block" style="clear:both;">'+links.join('<br>')+'</p>'
+    if $('#retriever_provider_name').is(':visible')
+      $('#retriever_provider_name').after(help_block)
+    else
+      $('#retriever_connector_id').after(help_block)
 
 show_or_hide_journals = ->
   if $('#retriever_capabilities').val() == 'document' || $('#retriever_capabilities').val() == 'bank_and_document'

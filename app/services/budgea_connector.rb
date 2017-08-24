@@ -22,8 +22,9 @@ class BudgeaConnector
         end.sort_by do |connector|
           connector['name'].downcase
         end.map do |connector|
-          connector.slice!('id', 'name', 'capabilities', 'fields')
+          connector.slice!('id', 'name', 'capabilities', 'fields', 'urls')
           connector['capabilities'] = connector['capabilities'].select { |e| e.in? %w(bank document) }
+          connector['urls'] = Array(connector['urls'])
           connector.with_indifferent_access
         end
       else

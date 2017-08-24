@@ -6,6 +6,7 @@ class Connector < ActiveRecord::Base
   serialize :apis, Array
   serialize :active_apis, Array
   serialize :combined_fields, Hash
+  serialize :urls, Array
 
   # field 'fiduceo_ref' contains real id or the name of one field inside combined_fields
 
@@ -95,7 +96,8 @@ class Connector < ActiveRecord::Base
       id:           id.to_s,
       name:         name,
       capabilities: capabilities,
-      fields:       public_fields
+      fields:       public_fields,
+      urls:         urls
     }
   end
 end

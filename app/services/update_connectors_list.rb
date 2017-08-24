@@ -13,6 +13,7 @@ class UpdateConnectorsList
           connector.apis         = ['budgea']
           connector.active_apis  = ['budgea']
           connector.capabilities = budgea_connector['capabilities']
+          connector.urls         = budgea_connector['urls']
           connector.combined_fields = {}
           budgea_connector['fields'].each do |field|
             connector.combined_fields[field['name']] = field.slice(:label, :type, :regex, :values)
