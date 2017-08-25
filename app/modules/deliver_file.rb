@@ -51,7 +51,7 @@ module DeliverFile
         elsif service_class == :box
           BoxSyncService.new(remote_files).sync
         elsif service_class == :ftp
-          FtpSyncService.new(remote_files).execute
+          SendToFTP.new(storage, remote_files, logger: logger).execute
         elsif service_class == :google_doc
           GoogleDriveSyncService.new(storage).sync(remote_files)
         end

@@ -202,7 +202,7 @@ class ExternalFileStorage < ActiveRecord::Base
     info_path = Pack.info_path(remote_file.pack, remote_file.receiver)
 
     result = static_path(path_pattern.sub(/\/\z/, ''), info_path)
-    result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended'])
+    result = '/' + result if remote_file.service_name.in?(['Dropbox', 'Dropbox Extended', 'FTP'])
     result
   end
 

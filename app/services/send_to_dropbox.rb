@@ -1,7 +1,7 @@
 # Used to send multiple files from a pack to Dropbox, for basic and extended, using Dropbox API v2
 class SendToDropbox < SendToStorage
   def execute
-    run do |client, metafile|
+    run do
       if metafile.size < @options[:chunk_size]
         client.upload metafile.path, File.read(metafile.local_path), mode: :overwrite
       else
@@ -21,9 +21,9 @@ class SendToDropbox < SendToStorage
     end
   end
 
-private
+  private
 
-  def _client
+  def init_client
     DropboxApi::Client.new(@storage.access_token)
   end
 
@@ -31,28 +31,19 @@ private
     10
   end
 
-  def up_to_date?(client, metafile)
-    [metafile.name, metafile.size].in? entries(client, metafile.folder_path)
-  end
-
-  def entries(client, path)
-    @semaphore.synchronize do
-      if @entries
-        @entries
-      else
-        begin
-          result = client.list_folder path
-          data = result.entries
-          while result.has_more?
-            result = client.list_folder_continue result.cursor
-            data += result.entries
-          end
-        rescue DropboxApi::Errors::NotFoundError
-          data = []
-        end
-        @entries = data.map { |e| [e.name, e.size] }
+  def list_files
+    begin
+      result = client.list_folder @folder_path
+      data = result.entries
+      while result.has_more?
+        result = client.list_folder_continue result.cursor
+        data += result.entries
       end
+    rescue DropboxApi::Errors::NotFoundError
+      data = []
     end
+
+    data.map { |e| [e.name, e.size] }
   end
 
   def retryable_failure?(error)

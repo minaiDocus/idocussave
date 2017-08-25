@@ -12,21 +12,18 @@ describe SendToStorage do
   before(:each) do
     class SendToOnlineStorage < SendToStorage
       def execute
-        run do |client, metafile|
+        run do
           # it does nothing
         end
       end
 
-    private
-
-      def _client
-      end
+      private
 
       def max_number_of_threads
         1
       end
 
-      def up_to_date?(client, metafile)
+      def up_to_date?
         false
       end
 
@@ -89,7 +86,7 @@ describe SendToStorage do
 
     class SendToOnlineStorage
       def execute
-        run do |client, metafile|
+        run do
           sleep(1)
         end
       end
@@ -118,7 +115,7 @@ describe SendToStorage do
     class SendToOnlineStorage
       def execute
         @is_error_raised = false
-        run do |client, metafile|
+        run do
           metafile.begin
           unless @is_error_raised
             @is_error_raised = true
@@ -153,7 +150,7 @@ describe SendToStorage do
 
     class SendToOnlineStorage
       def execute
-        run do |client, metafile|
+        run do
           raise SendToStorage::TestError
         end
       end
@@ -189,7 +186,7 @@ describe SendToStorage do
 
     class SendToOnlineStorage
       def execute
-        run do |client, metafile|
+        run do
           raise SendToStorage::TestError
         end
       end

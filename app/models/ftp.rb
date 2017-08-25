@@ -25,6 +25,14 @@ class Ftp < ActiveRecord::Base
     is_configured
   end
 
+  def enable
+    external_file_storage.use ExternalFileStorage::F_FTP
+  end
+
+  def disable
+    external_file_storage.unuse ExternalFileStorage::F_FTP
+  end
+
   def reset_info
     self.host          = 'ftp://ftp.example.com'
     self.port          = 21

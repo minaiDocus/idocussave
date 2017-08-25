@@ -2,6 +2,7 @@
 class SendToStorage
   attr_reader :errors
 
+  # remote_files should be a group of files to be sent into the same folder
   def initialize(storage, remote_files, options={})
     @storage = storage
     @options = {
@@ -9,7 +10,8 @@ class SendToStorage
       chunk_size:            150.megabytes,
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
-    @errors    = []
+    @folder_path = ExternalFileStorage.delivery_path(remote_files.first, @options[:path_pattern]).freeze
+    @errors      = []
 
     @semaphore = Mutex.new
     @queue     = Queue.new
@@ -22,17 +24,51 @@ class SendToStorage
     @threads_count = [@options[:max_number_of_threads], @queue.size].min
   end
 
+  def execute
+    raise 'Define me!'
+  end
+
+  private
+
+  # Define those methods on the child class
+  def init_client; end
+  def max_number_of_threads; end
+  def list_files; end
+  def retryable_failure?(error); end
+  def manageable_failure?(error); end
+  def manage_failure(error); end
+  def before_run; end
+  def after_run; end
+
+  def client
+    Thread.current[:client] ||= init_client
+  end
+
+  def metafile
+    Thread.current[:metafile]
+  end
+
+  def up_to_date?
+    [metafile.name, metafile.size].in? existing_files
+  end
+
+  def existing_files
+    @semaphore.synchronize do
+      @existing_files ||= list_files
+    end
+  end
+
   def run(&sender)
-    run_concurrently do |client, metafile|
-      handle_failure metafile do |start_time|
+    run_concurrently do
+      handle_failure do |start_time|
         metafile.sending! metafile.path
 
-        if up_to_date? client, metafile
+        if up_to_date?
           logger.info "#{metafile.description} is up to date (#{(Time.now - start_time).round(3)}s)"
         else
           logger.info "#{metafile.description} sending"
 
-          sender.call client, metafile
+          sender.call
 
           logger.info "#{metafile.description} sent (#{(Time.now - start_time).round(3)}s)"
         end
@@ -46,29 +82,22 @@ class SendToStorage
     manage_failures
   end
 
-private
-
-  # Define those methods on the child class
-  def _client; end # it should create a new instance each call
-  def max_number_of_threads; end
-  def up_to_date?(client, metafile); end
-  def retryable_failure?(error); end
-  def manageable_failure?(error); end
-  def manage_failure(error); end
-
   def run_concurrently
     @threads_count.times do
       @threads << Thread.new do
-        client = _client
+        before_run
 
         loop do
           begin
-            metafile = @queue.pop(true)
-            yield client, metafile
+            Thread.current[:metafile] = @queue.pop(true)
+
+            yield
           rescue ThreadError => e
             e.message == 'queue empty' ? break : raise
           end
         end
+
+        after_run
       end
     end
 
@@ -76,7 +105,7 @@ private
     @threads.each(&:join)
   end
 
-  def handle_failure(metafile)
+  def handle_failure
     retries = 0
     begin
       start_time = Time.now
