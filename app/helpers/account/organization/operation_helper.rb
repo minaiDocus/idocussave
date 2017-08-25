@@ -6,6 +6,8 @@ module Account::Organization::OperationHelper
       t('no_value')
     elsif operation.forced_processing_at.nil? && Time.now < (operation.created_at + 7.days)
       "dans #{distance_of_time_in_words(Time.now, operation.created_at + 7.days)}"
+    elsif operation.deleted_at.present?
+      'supprimée'
     else
       'maintenant'
     end
