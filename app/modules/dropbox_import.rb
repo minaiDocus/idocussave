@@ -8,7 +8,8 @@ class DropboxImport
           next
         end
 
-        next unless dropbox.is_used? && dropbox.is_configured? && ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
+        next unless dropbox.is_used? && dropbox.is_configured?
+        next unless dropbox.user.is_prescriber || ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
         next unless dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
 
         begin
@@ -42,8 +43,10 @@ class DropboxImport
       users.each do |user|
         dropbox = user.external_file_storage.try(:dropbox_basic)
 
-        if dropbox && dropbox.is_used? && dropbox.is_configured? && ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
-          dropbox.update_attribute(:changed_at, Time.now)
+        if dropbox && dropbox.is_used? && dropbox.is_configured?
+          if dropbox.user.is_prescriber || ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
+            dropbox.update_attribute(:changed_at, Time.now)
+          end
         end
       end
     end
