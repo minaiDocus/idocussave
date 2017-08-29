@@ -13,7 +13,7 @@ class SendToFTP < SendToStorage
     ftp = Net::FTP.new
     ftp.connect @storage.domain, @storage.port
     ftp.login @storage.login, @storage.password
-    ftp.passive = true
+    ftp.passive = @storage.is_passive
     ftp
   end
 

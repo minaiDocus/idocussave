@@ -11,7 +11,7 @@ class VerifyFtpSettings
       ftp = Net::FTP.new
       ftp.connect @ftp.domain, @ftp.port
       ftp.login @ftp.login, @ftp.password
-      ftp.passive = true
+      ftp.passive = @ftp.is_passive
       Rails.logger.info "[VerifyFtpSettings][#{runner}] connection to `#{@ftp.domain}:#{@ftp.port}` with user `#{@ftp.login}` successful"
       true
     rescue Net::FTPPermError, SocketError, Errno::ECONNREFUSED => e
