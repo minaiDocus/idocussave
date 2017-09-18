@@ -67,6 +67,8 @@ class IbizaboxImport
     periods
   end
 
+  private
+
   def get_file(document_id, file_path)
     client.request.clear
     client.company(@user.ibiza_id).ged.file?(document_id)
@@ -79,8 +81,6 @@ class IbizaboxImport
       file
     end
   end
-
-  private
 
   def get_ibiza_folder_contents(period)
     client.request.clear
@@ -117,7 +117,7 @@ class IbizaboxImport
   end
 
   def contents
-    Nokogiri::XML(@xml_data).css('wsGedFile')
+    Nokogiri::XML(@xml_data).xpath("//wsGedFile[docState[text()='0']]")
   end
 
   def decoded_data(encoded_data)
