@@ -13,6 +13,13 @@ class FtpFetcher
 
     dirs = ftp.nlst.sort
 
+    if (uncomplete_deliveries = check_uncomplete_delivery(ftp, dirs)).any?
+      ScanService.notify_uncompleted_delivery uncomplete_deliveries
+      ftp.chdir dir
+      uncomplete_deliveries.each { |file_path| ftp.delete("#{file_path}.uncomplete") rescue false }
+    end
+
+
     ready_dirs(dirs).each do |dir|
       ftp.chdir dir
       date      = dir[0..9]
@@ -97,6 +104,20 @@ class FtpFetcher
     end
   end
 
+  def self.check_uncomplete_delivery(ftp, dirs)
+    dirs.select { |file_path| file_path.end_with?('uncomplete') && ftp.mtime(file_path).localtime < 30.minutes.ago }.inject([]) do |uncomplete_deliveries, file_path|
+      expected_quantity  = ftp.gettextfile(file_path, nil).chop.to_i
+      dir = File.basename(file_path, ".*")
+      ftp.chdir dir
+      if expected_quantity == ftp.nlst.size
+        ftp.chdir '..'
+        ftp.rename file_path, "#{dir}.uploaded"
+      else
+        uncomplete_deliveries << dir
+      end
+      uncomplete_deliveries
+    end
+  end
 
   def self.grouped_packs(file_names)
     file_names.group_by do |e|

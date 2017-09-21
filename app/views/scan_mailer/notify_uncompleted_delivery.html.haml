@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title [iDocus] #{@deliveries.size} livraison(s) incomplète(s)
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Ci-dessous, #{@deliveries.size} livraison(s) incomplète(s) :
+    %ul
+      - @deliveries.each do |delivery|
+        %li= delivery
+    Merci de bien vouloir compléter les fichiers et de redéposer le fichier FLAG.
+    %br
+    Cordialement,
+    %br
+    L’équipe iDocus
+    %br
+    = link_to 'support@idocus.com', 'mailto:support@idocus.com'

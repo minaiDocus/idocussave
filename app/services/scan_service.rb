@@ -34,4 +34,14 @@ module ScanService
       false
     end
   end
+
+  #Send mail for uncomplete scan delivery
+  def self.notify_uncompleted_delivery(deliveries=[])
+    if deliveries.any? && (emails = Settings.first.notify_scans_not_delivered_to).any?
+      ScanMailer.notify_uncompleted_delivery(emails, deliveries).deliver_later
+    else
+      false
+    end
+  end
+
 end
