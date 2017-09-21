@@ -194,7 +194,7 @@ describe AccountingWorkflow::GroupDocument do
         Timecop.freeze(Time.local(2015,1,1,0,1,1))
         AccountingWorkflow::GroupDocument.execute
 
-        expect(File.read(@errors_file_path)).to eq 'The document has no document element.'
+        expect(File.read(@errors_file_path)).to eq '-1:0: ERROR: The document has no document element.'
         expect(File.exist?(@result_file_path)).to be_falsy
       end
 
