@@ -27,7 +27,7 @@ describe BudgeaConnector do
 
     it 'has 4 keys each' do
       @banks.each do |bank|
-        expect(bank.keys).to eq ['id', 'name', 'capabilities', 'fields']
+        expect(bank.keys).to eq ['id', 'name', 'capabilities', 'fields', 'urls']
       end
     end
   end
@@ -52,7 +52,7 @@ describe BudgeaConnector do
 
     it 'has 4 keys each' do
       @providers.each do |bank|
-        expect(bank.keys).to eq ['id', 'name', 'capabilities', 'fields']
+        expect(bank.keys).to eq ['id', 'name', 'capabilities', 'fields', 'urls']
       end
     end
   end
