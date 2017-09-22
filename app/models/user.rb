@@ -1,6 +1,6 @@
 # -*- encoding : UTF-8 -*-
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable
+  devise :database_authenticatable, :recoverable, :rememberable, :validatable, :trackable, :lockable, :timeoutable
 
 
   AUTHENTICATION_TOKEN_LENGTH = 20
