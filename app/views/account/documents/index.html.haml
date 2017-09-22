@@ -67,8 +67,10 @@
           .content.pages
         #panel2{ :style => "display: none" }
           .header.row-fluid
-            %h3.span4.alignleft
-              Page
+            .actiongroup.span4.alignleft
+              %a{ href: '#', class: 'backToPanel1 btn' }
+                %i.icon-arrow-left
+                Retour
             .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
               %a.do-prevPage{:href => "#"}
                 page précédente
@@ -87,15 +89,14 @@
                   %i.icon-ok
                 %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
                   %i.icon-ban-circle
-              |
-              %a{:href => "#", :class=>"backToPanel1"}
-                Vue par vignette
           .content
             %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
         #panel3{ :style => "display: none" }
           .header.row-fluid
-            %h3.span4.alignleft
-              Piece
+            .actiongroup.span4.alignleft
+              %a{ href: '#', class: 'backToPanel1 btn' }
+                %i.icon-arrow-left
+                Retour
             .actiongroup.span4.aligncenter{ style: 'margin-top:4px' }
               %a.do-prevPage{:href => "#"}
                 piece précédente
@@ -104,9 +105,6 @@
               \-
               %a.do-nextPage{:href => "#"}
                 piece suivante
-            .actiongroup.span4.alignright{ style: 'margin-top:4px' }
-              %a{:href => "#", :class=>"backToPanel1"}
-                Vue par vignette
           .content
             %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
 
