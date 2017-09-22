@@ -226,6 +226,11 @@ function initDoShowInvoice(){
   });
 }
 
+function showPeriodsInfo(value){
+  $(".value span").addClass("hide");
+  $(".value .value_"+value).removeClass("hide");
+}
+
 $(document).ready(function(){
   max_period_y = $('.user').length;
 
@@ -256,10 +261,10 @@ $(document).ready(function(){
     return false;
   });
 
+  showPeriodsInfo($("#value_filter").val());
+
   $("#value_filter").change(function(){
-    var val = $(this).val();
-    $(".value span").addClass("hide");
-    $(".value .value_"+val).removeClass("hide");
+    showPeriodsInfo($(this).val());
   });
 
   $('a.up').click(function(){

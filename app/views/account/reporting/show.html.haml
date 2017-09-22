@@ -10,9 +10,10 @@
               %tr{ :style => "text-align:left;" }
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
-                - options = [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
+                - options = []
                 - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
-                  - options += [["Dépassement (€ HT)",9],["Montant facture (€ HT)",8]]
+                  - options += [["Montant facture (€ HT)",8], ["Dépassement (€ HT)",9]]
+                - options += [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
           .span9
             %form#filter.margin0bottom
