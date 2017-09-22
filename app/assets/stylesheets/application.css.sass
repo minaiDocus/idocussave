@@ -771,3 +771,165 @@ table.historic
 .notification
   .media-body
     padding-top: 0
+
+/* Footer */
+
+footer
+  background: #3e2f24
+  color: #fff
+  margin: 30px 0 0 0
+  .centered
+    max-width: 1200px
+    margin: 0 auto
+    display: flex
+    justify-content: space-between
+    .footer-logo
+      width: 20%
+      img.logo
+        margin: 30px 20px 10px 20px
+        padding: 7px
+        max-width: 100%
+        +border-radius(6px 6px 6px 6px)
+        +box-shadow(#ffffff 0 1px 0px inset)
+    .footer-contact
+      width: 20%
+      margin-top: 15px
+    .footer-navigation
+      width: 60%
+      margin-top: 15px
+      .footer-links-holder
+        width: 33.33333%
+        position: relative
+        float: left
+        margin: 0
+        .footer-links
+          margin: 0
+          padding: 0
+          list-style: none
+          -webkit-transition: max-height .5s
+          transition: max-height .5s
+  .bottom-bar
+    position: relative
+    text-align: center
+    font-size: .8em
+    text-transform: uppercase
+    background: #000
+    padding: 15px 0
+
+/* Responsive Tablet Sizes */
+@media only screen and (max-width: 749px)
+  footer
+    .centered
+      flex-wrap: wrap
+      .footer-logo
+        max-width: 250px
+        width: 50%
+      .footer-contact
+        width: 50%
+        padding: 0 20px
+      .footer-navigation
+        width: 100%
+        .footer-links-holder
+          padding: 0 20px
+
+/* Responsive Mobile Sizes */
+@media only screen and (max-width: 500px)
+  footer
+    .centered
+      .footer-logo
+        width: 100%
+        margin: 0 auto
+      .footer-contact
+        width: 100%
+      .footer-navigation
+        .footer-links-holder
+          width: 100%
+          padding: 0
+          h3
+            margin: 0
+            padding: 10px 20px
+            border-top: #000 1px solid
+            cursor: pointer
+            /* Down Arrows */
+            &::after
+              float: right
+              margin-right: 10px
+              content: ""
+              display: inline-block
+              vertical-align: middle
+              margin-top: 7px
+              width: 7px
+              height: 7px
+              border-top: 2px solid #fff
+              border-right: 2px solid #fff
+              -moz-transform: rotate(135deg)
+              -ms-transform: rotate(135deg)
+              -webkit-transform: rotate(135deg)
+              transform: rotate(135deg)
+              -webkit-transition: transform .5s
+              transition: transform .5s
+          .footer-links
+            max-height: 0
+            overflow: hidden
+            padding: 0 20px
+          &.active
+            h3
+              &::after
+                -moz-transform: rotate(-45deg)
+                -ms-transform: rotate(-45deg)
+                -webkit-transform: rotate(-45deg)
+                transform: rotate(-45deg)
+            .footer-links
+              max-height: 10000px
+
+/* Social Icons */
+footer
+  .social
+    text-align: center
+    a
+      display: inline-block
+      padding: 7px
+      width: 35px
+      height: 35px
+      margin: 0 2px
+      background: #fff
+      border-radius: 50%
+      vertical-align: middle
+      &:hover
+        background: #65c2ed
+      &.linkedin
+        padding: 4px
+      svg
+        .face, .twit, .link
+          fill: #000
+
+/* Typography */
+footer
+  h3
+    font-weight: lighter
+    font-style: italic
+    margin-bottom: 0
+  p, li
+    font-weight: 400
+    letter-spacing: 0.05em
+    margin: 10px 0
+  a
+    color: #fff
+    text-decoration: none
+    -webkit-transition: color .5s, background .5s
+    transition: color .5s, background .5s
+    &:hover
+      color: #65c2ed
+
+/* Misc CSS */
+footer
+  .clearfix
+    &:before,
+    &:after
+      content: '\0020'
+      display: block
+      overflow: hidden
+      visibility: hidden
+      width: 0
+      height: 0
+      clear: both
