@@ -661,16 +661,24 @@
         }
       }
 
-      if($('#h_file_code').val() != null) {
-        file_upload_update_fields($('#h_file_code').val());
-        $('#file_code').val($('#h_file_code').val());
+      if($('#h_file_code').val() != '') {
+        file_upload_update_fields($(this).val());
+        $('#file_code').val($(this).val());
       }
 
       $('#h_file_code').on('change', function() {
-        file_upload_update_fields($(this).val());
-        $('#file_code').val($(this).val());
-        $('#file_account_book_type').val($('#h_file_account_book_type').val());
-        $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
+        if ($(this).val() != '') {
+          file_upload_update_fields($(this).val());
+          $('#file_code').val($(this).val());
+          $('#file_account_book_type').val($('#h_file_account_book_type').val());
+          $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
+        } else {
+          $('#file_code').val('');
+          $('#file_account_book_type').val('');
+          $('#file_prev_period_offset').val('');
+          $('#h_file_account_book_type').html('');
+          $('#h_file_prev_period_offset').html('');
+        }
       });
     }
 
@@ -726,6 +734,7 @@
     $('#uploadDialog').on('shown', function() {
       $('#h_file_code').chosen({
         search_contains: true,
+        allow_single_deselect: true,
         no_results_text: 'Aucun résultat correspondant à'
       })
     })
