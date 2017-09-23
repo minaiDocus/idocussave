@@ -10,8 +10,9 @@ class DeactivateOrganization
       CloseCollaboratorAccount.new(collaborator).execute
     end
 
-    @organization.customers.each do |customers|
-      StopSubscriptionService.new(customers, false).execute
+    @organization.customers.each do |customer|
+      next unless customer.is_active
+      StopSubscriptionService.new(customer, false).execute
     end
 
     @organization.remote_files.destroy_all
