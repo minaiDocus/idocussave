@@ -22,7 +22,7 @@
             %tbody
               - @customers.each do |customer|
                 %tr
-                  %td.active_state= icon(icon: 'remove') if customer.inactive? && @organization.is_active
+                  %td.active_state= icon(icon: 'remove') if customer.inactive?
                   %td.date= customer.created_at.strftime('%d/%m/%Y %H:%M')
                   %td.user_info
                     %span.info
