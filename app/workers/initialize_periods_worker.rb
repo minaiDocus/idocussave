@@ -5,6 +5,8 @@ class InitializePeriodsWorker
   def perform
     UniqueJobs.for 'InitializePeriods' do
       Organization.all.each do |organization|
+        next unless organization.is_active
+
         DowngradeSubscription.new(organization.subscription).execute
         organization.customers.active_at(1.month.ago).each do |customer|
           begin
