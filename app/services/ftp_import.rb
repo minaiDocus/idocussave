@@ -118,7 +118,15 @@ class FTPImport
 
   def validate_item(item)
     if item.children.present?
-      path_names = client.nlst item.path
+      path_names = begin
+        client.nlst item.path
+      rescue Net::FTPTempError => e
+        if e.message.match(/No such file or directory/)
+          []
+        else
+          raise
+        end
+      end
       item.children.each do |child|
         if path_names.include? child.path
           child.created if child.to_be_created?
@@ -137,7 +145,6 @@ class FTPImport
 
   def sync_folder(item)
     if item.to_be_created?
-      puts item.path
       client.mkdir item.path
       item.created
     elsif item.to_be_destroyed?
@@ -154,7 +161,15 @@ class FTPImport
       remove_item child
     end
     # TODO : remove artefact folders too
-    files = client.nlst item.path
+    files = begin
+      client.nlst item.path
+    rescue Net::FTPTempError => e
+      if e.message.match(/No such file or directory/)
+        []
+      else
+        raise
+      end
+    end
     files.each do |file|
       client.delete file
     end
@@ -180,7 +195,17 @@ class FTPImport
 
   def process
     import_folders.each do |item|
-      file_paths = client.nlst(item.path + '/*.*')
+      next if item.to_be_created?
+
+      file_paths = begin
+        client.nlst(item.path + '/*.*')
+      rescue Net::FTPTempError => e
+        if e.message.match(/No files found/)
+          []
+        else
+          raise
+        end
+      end
       file_paths.each do |file_path|
         file_name = File.basename(file_path).force_encoding('UTF-8')
 
