@@ -40,6 +40,8 @@ class Organization < ActiveRecord::Base
   has_many   :account_number_rules
   has_many   :pre_assignment_deliveries
 
+  has_one :ftp
+
   has_many :account_sharings
 
   belongs_to :leader,             class_name: 'User',               inverse_of: 'my_organization'

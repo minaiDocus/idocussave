@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824202310) do
+ActiveRecord::Schema.define(version: 20170829092404) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -684,20 +684,25 @@ ActiveRecord::Schema.define(version: 20170824202310) do
     t.string   "mongo_id",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "path",                              limit: 255, default: "iDocus/:code/:year:month/:account_book/", null: false
-    t.boolean  "is_configured",                                 default: false,                                     null: false
+    t.string   "path",                              limit: 255,   default: "iDocus/:code/:year:month/:account_book/", null: false
+    t.boolean  "is_configured",                                   default: false,                                     null: false
     t.integer  "external_file_storage_id",          limit: 4
     t.string   "external_file_storage_id_mongo_id", limit: 255
     t.string   "encrypted_host",                    limit: 255
     t.string   "encrypted_login",                   limit: 255
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
-    t.boolean  "is_passive",                                    default: true
+    t.boolean  "is_passive",                                      default: true
+    t.string   "root_path",                         limit: 255,   default: "/"
+    t.datetime "import_checked_at"
+    t.text     "previous_import_paths",             limit: 65535
+    t.integer  "organization_id",                   limit: 4
   end
 
   add_index "ftps", ["external_file_storage_id"], name: "external_file_storage_id", using: :btree
   add_index "ftps", ["external_file_storage_id_mongo_id"], name: "external_file_storage_id_mongo_id", using: :btree
   add_index "ftps", ["mongo_id"], name: "index_ftps_on_mongo_id", using: :btree
+  add_index "ftps", ["organization_id"], name: "index_ftps_on_organization_id", using: :btree
 
   create_table "google_docs", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255

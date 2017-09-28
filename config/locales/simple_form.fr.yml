@@ -23,6 +23,9 @@ fr:
     #   defaults:
     #     username: 'User name to sign in.'
     #     password: 'No special characters, please.'
+    hints:
+      ftp:
+        root_path: "Le chemin indiqué doit déjà exister. Un dossier 'INPUT' et un dossier 'OUTPUT' seront créés dans ce dossier."
     labels:
       doc_group:
         leader: 'Prescripteur'
@@ -255,3 +258,4 @@ fr:
         is_passive: Mode passif ?
         login: Identifiant
         password: Mot de passe
+        root_path: Chemin racine d'import et de livraison

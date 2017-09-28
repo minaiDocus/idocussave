@@ -1,4 +1,5 @@
 class Ftp < ActiveRecord::Base
+  belongs_to :organization
   belongs_to :external_file_storage
 
   attr_encrypted :host,     random_iv: true
@@ -6,8 +7,12 @@ class Ftp < ActiveRecord::Base
   attr_encrypted :login,    random_iv: true
   attr_encrypted :password, random_iv: true
 
-  scope :configured,     -> { where(is_configured: true) }
-  scope :not_configured, -> { where(is_configured: false) }
+  serialize :previous_import_paths, Array
+
+  scope :configured,       -> { where(is_configured: true) }
+  scope :not_configured,   -> { where(is_configured: false) }
+  scope :for_organization, -> { where.not(organization_id: nil) }
+  scope :importable,       -> { for_organization.configured }
 
   validates :login,    length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
   validates :password, length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
@@ -21,16 +26,24 @@ class Ftp < ActiveRecord::Base
     self.password ||= 'password'
   end
 
-  def is_configured?
+  def user
+    external_file_storage.user
+  end
+
+  def configured?
     is_configured
   end
 
+  def used?
+    external_file_storage ? external_file_storage.is_used?(ExternalFileStorage::F_FTP) : true
+  end
+
   def enable
-    external_file_storage.use ExternalFileStorage::F_FTP
+    external_file_storage ? external_file_storage.use(ExternalFileStorage::F_FTP) : false
   end
 
   def disable
-    external_file_storage.unuse ExternalFileStorage::F_FTP
+    external_file_storage ? external_file_storage.unuse(ExternalFileStorage::F_FTP) : false
   end
 
   def reset_info

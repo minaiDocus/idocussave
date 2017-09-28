@@ -33,6 +33,11 @@ module FileDelivery
           pack.init_delivery_for(owner.organization, options.merge(type: FileDelivery::RemoteFile::PIECES_ONLY))
         end
 
+        # Organization's FTP
+        if owner.organization.try(:ftp).try(:configured?)
+          pack.init_delivery_for(owner.organization, options)
+        end
+
         # Organization's collaborators
         owner.prescribers.each do |prescriber|
           pack.init_delivery_for(prescriber, options)

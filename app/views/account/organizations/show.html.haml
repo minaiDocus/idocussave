@@ -30,6 +30,8 @@
                 %a{ href: '#reminder_emails', data: { toggle: 'tab' } } Emails de rappels
               %li{ class: ('active' if params[:tab] == 'knowings') }
                 %a{ href: '#knowings', data: { toggle: 'tab' } } Knowings
+              %li{ class: ('active' if params[:tab] == 'ftp') }
+                %a{ href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
             %li{ class: ('active' if params[:tab] == 'ibiza') }
               %a{ href: '#ibiza', data: { toggle: 'tab' } } iBiza
             %li{ class: ('active' if params[:tab] == 'other_software') }
@@ -157,6 +159,26 @@
                 - else
                   .aligncenter
                     = link_to 'Configurer', new_account_organization_knowings_path(@organization), class: 'btn btn-primary'
+            #ftp.tab-pane{ class: ('active' if params[:tab] == 'ftp') }
+              %table.table.table-condensed.table-striped
+                %tbody
+                  %tr
+                    %th Etat
+                    %td
+                      - if @organization.ftp.try(:configured?)
+                        %span.label.label-success OK
+                      - else
+                        %span.label Non configuré
+                  %tr
+                    %th Hôte
+                    %td= @organization.ftp.try(:host)
+                  %tr
+                    %th Identifiant
+                    %td= @organization.ftp.try(:login)
+              .aligncenter
+                = link_to 'Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
+                - if @organization.ftp.try(:configured?)
+                  = link_to 'Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr ?' }
             #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
               %table.table.table-condensed.table-striped
                 %tbody

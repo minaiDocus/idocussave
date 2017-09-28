@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class RemoteFile < ActiveRecord::Base
+  SERVICE_NAMES = ['Dropbox', 'Dropbox Extended', 'Google Drive', 'FTP', 'Box', 'Knowings'].freeze
+
   belongs_to :user
   belongs_to :pack
   belongs_to :group
@@ -12,7 +14,7 @@ class RemoteFile < ActiveRecord::Base
 
   validates_presence_of  :state
   validates_presence_of  :service_name
-  validates_inclusion_of :service_name, in: ExternalFileStorage::SERVICES
+  validates_inclusion_of :service_name, in: SERVICE_NAMES
 
 
   scope :of,               -> (object, service_name) { where('user_id = ? OR group_id = ? OR organization_id = ?', object.id, object.id, object.id).where(service_name: service_name) }

@@ -9,13 +9,15 @@ module FileDelivery::RemotePack
     force = options[:force]
     current_remote_files = []
 
-    if object.class.name == User.name
-      services_name = object.find_or_create_external_file_storage.active_services_name
-    elsif object.class.name == Organization.name
-      services_name = ['Knowings']
-    else
-      services_name = ['Dropbox Extended']
-    end
+    services_name = if object.class.name == User.name
+                      object.find_or_create_external_file_storage.active_services_name
+                    elsif object.class == Organization && object.try(:knowings).try(:ready?)
+                      ['Knowings']
+                    elsif object.class == Organization && object.try(:ftp).try(:configured?)
+                      ['FTP']
+                    else
+                      ['Dropbox Extended']
+                    end
 
     services_name.each do |service_name|
       # original

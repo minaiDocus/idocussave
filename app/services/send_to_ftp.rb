@@ -9,6 +9,7 @@ class SendToFTP < SendToStorage
 
   private
 
+  # TODO : handle connection failure
   def init_client
     ftp = Net::FTP.new
     ftp.connect @storage.domain, @storage.port

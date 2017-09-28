@@ -17,8 +17,10 @@ module DeliverFile
 
       pack         = remote_file.pack
       receiver     = remote_file.receiver
-      storage      = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
       remote_files = pack.remote_files.not_processed.of(receiver, service_name).retryable
+
+      storage = receiver.external_file_storage.send(service_class) unless receiver.class.in? [Group, Organization]
+      storage ||= receiver.ftp if receiver.class == Organization && receiver.ftp.try(:configured?) && service_class == :ftp
 
       if receiver.class.name == User.name
         efs = receiver.find_or_create_external_file_storage
@@ -27,6 +29,8 @@ module DeliverFile
       elsif receiver.class.name == Organization.name
         services_name = if receiver.knowings.try(:is_configured?)
                           ['Knowings']
+                        elsif receiver.ftp.try(:configured?)
+                          ['FTP']
                         else
                           []
                         end
@@ -44,7 +48,7 @@ module DeliverFile
 
         if receiver.class.name == Group.name || service_class == :dropbox_extended
           SendToDropbox.new(DropboxExtended, remote_files, path_pattern: receiver.dropbox_delivery_folder, logger: logger).execute
-        elsif receiver.class.name == Organization.name
+        elsif service_class == :knowings
           KnowingsSyncService.new(remote_files).execute
         elsif service_class == :dropbox_basic
           SendToDropbox.new(storage, remote_files, logger: logger).execute
