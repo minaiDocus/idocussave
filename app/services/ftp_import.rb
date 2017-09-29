@@ -18,11 +18,16 @@ class FTPImport
     return false if not @ftp.organization
     return false if not_authorized?
 
+    logger.info "#{log_prefix} START"
+    start_time = Time.now
+
     process
 
     sync_folder folder_tree
 
     client.close
+
+    logger.info "#{log_prefix} END (#{(Time.now - start_time).round(3)}s)"
 
     @ftp.update import_checked_at: Time.now, previous_import_paths: import_folders.map(&:path)
   end
@@ -222,10 +227,13 @@ class FTPImport
             uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @ftp.organization
 
             if uploaded_document.valid?
+              logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
               client.delete file_path
             elsif uploaded_document.already_exist?
+              logger.info "#{log_prefix}[ALREADY_EXIST] #{file_path}"
               mark_file_as_already_exist path, file_name
             else
+              logger.info "#{log_prefix}[INVALID] #{file_path}"
               mark_file_as_not_processable path, file_name
             end
           end
@@ -242,5 +250,18 @@ class FTPImport
     new_file_name = File.basename(file_name, '.*') + error_message + File.extname(file_name)
 
     client.rename File.join(path, file_name), File.join(path, new_file_name)
+  end
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
+  end
+
+  def log_prefix
+    @log_prefix ||= "[FTP Import][#{@ftp.organization.code}]"
+  end
+
+  def file_detail(uploaded_document)
+    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
+    "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
   end
 end

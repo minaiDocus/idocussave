@@ -149,6 +149,6 @@ class SendToStorage
   end
 
   def logger
-    @logger ||= @options[:logger] || Logger.new("#{Rails.root}/log/#{Rails.env}_file_delivery.log")
+    @logger ||= @options[:logger] || Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end

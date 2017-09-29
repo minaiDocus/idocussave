@@ -111,6 +111,6 @@ module DeliverFile
   end
 
   def self.logger
-    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_file_delivery.log")
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end
