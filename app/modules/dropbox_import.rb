@@ -257,10 +257,13 @@ class DropboxImport
 
                 uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user)
                 if uploaded_document.valid?
+                  logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
                   client.delete file_path
                 elsif uploaded_document.already_exist?
+                  logger.info "#{log_prefix}[ALREADY_EXIST] #{file_path}"
                   mark_file_as_already_exist(path, file_name)
                 else
+                  logger.info "#{log_prefix}[INVALID] #{file_path}"
                   mark_file_as_not_processable(path, file_name)
                 end
               end
@@ -331,5 +334,18 @@ class DropboxImport
         folder.created
       end
     end
+  end
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
+  end
+
+  def log_prefix
+    @log_prefix ||= "[Dropbox Import][#{user.code}]"
+  end
+
+  def file_detail(uploaded_document)
+    file_size = ActionController::Base.helpers.number_to_human_size uploaded_document.temp_document.content_file_size
+    "[TDID:#{uploaded_document.temp_document.id}][#{file_size}]"
   end
 end
