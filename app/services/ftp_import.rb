@@ -125,8 +125,8 @@ class FTPImport
     if item.children.present?
       path_names = begin
         client.nlst item.path
-      rescue Net::FTPTempError => e
-        if e.message.match(/No such file or directory/)
+      rescue Net::FTPTempError, Net::FTPPermError => e
+        if e.message.match(/(No such file or directory)|(Directory not found)/)
           []
         else
           raise
@@ -168,8 +168,8 @@ class FTPImport
     # TODO : remove artefact folders too
     files = begin
       client.nlst item.path
-    rescue Net::FTPTempError => e
-      if e.message.match(/No such file or directory/)
+    rescue Net::FTPTempError, Net::FTPPermError => e
+      if e.message.match(/(No such file or directory)|(Directory not found)/)
         []
       else
         raise
@@ -204,7 +204,7 @@ class FTPImport
 
       file_paths = begin
         client.nlst(item.path + '/*.*')
-      rescue Net::FTPTempError => e
+      rescue Net::FTPTempError, Net::FTPPermError => e
         if e.message.match(/No files found/)
           []
         else
