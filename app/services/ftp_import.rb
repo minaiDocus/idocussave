@@ -133,7 +133,9 @@ class FTPImport
         end
       end
       item.children.each do |child|
-        result = path_names.detect { |path| child.path.match(/#{Regexp.quote(path)}\z/) }
+        result = path_names.detect do |path|
+          child.path.match(/#{Regexp.quote(path.force_encoding('UTF-8'))}\z/)
+        end
         if result
           child.created if child.to_be_created?
           validate_item child
