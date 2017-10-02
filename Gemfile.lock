@@ -184,6 +184,8 @@ GEM
     ffi (1.9.14)
     formatador (0.2.5)
     fssm (0.2.10)
+    ftpd (2.1.0)
+      memoizer (~> 1.0)
     gdk_pixbuf2 (3.0.9)
       glib2 (= 3.0.9)
     gio2 (3.0.9)
@@ -271,6 +273,7 @@ GEM
     lumberjack (1.0.10)
     mail (2.6.6)
       mime-types (>= 1.16, < 4)
+    memoizer (1.0.3)
     meta_request (0.4.0)
       callsite (~> 0.0, >= 0.0.11)
       rack-contrib (~> 1.1)
@@ -556,6 +559,7 @@ DEPENDENCIES
   eco
   factory_girl_rails
   fake_ftp
+  ftpd
   gio2
   gobject-introspection (~> 3.0.0)
   google-api-client (= 0.8.2)

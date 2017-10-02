@@ -133,7 +133,8 @@ class FTPImport
         end
       end
       item.children.each do |child|
-        if path_names.include? child.path
+        result = path_names.detect { |path| child.path.match(/#{Regexp.quote(path)}\z/) }
+        if result
           child.created if child.to_be_created?
           validate_item child
         else
@@ -211,14 +212,14 @@ class FTPImport
           raise
         end
       end
-      file_paths.each do |file_path|
-        file_name = File.basename(file_path).force_encoding('UTF-8')
 
-        next unless UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase)
+      file_paths.each do |untrusted_file_path|
+        file_name = File.basename(untrusted_file_path).force_encoding('UTF-8')
+        file_path = File.join(item.path, file_name)
+
+        next unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
         next if file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
         next unless client.size(file_path) <= 10.megabytes
-
-        path = File.dirname file_path
 
         Dir.mktmpdir do |dir|
           File.open File.join(dir, file_name), 'wb' do |file|
@@ -231,10 +232,10 @@ class FTPImport
               client.delete file_path
             elsif uploaded_document.already_exist?
               logger.info "#{log_prefix}[ALREADY_EXIST] #{file_path}"
-              mark_file_as_already_exist path, file_name
+              mark_file_as_already_exist item.path, file_name
             else
               logger.info "#{log_prefix}[INVALID] #{file_path}"
-              mark_file_as_not_processable path, file_name
+              mark_file_as_not_processable item.path, file_name
             end
           end
         end

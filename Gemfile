@@ -171,4 +171,5 @@ group :test do
   gem 'vcr'
   gem 'webmock'
   gem 'fake_ftp'
+  gem 'ftpd', require: false
 end
