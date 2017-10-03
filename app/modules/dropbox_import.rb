@@ -255,7 +255,7 @@ class DropboxImport
                   file.flush
                 end
 
-                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user)
+                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user, 'dropbox')
                 if uploaded_document.valid?
                   logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
                   client.delete file_path

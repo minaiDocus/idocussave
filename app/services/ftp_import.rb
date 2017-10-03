@@ -227,7 +227,7 @@ class FTPImport
           File.open File.join(dir, file_name), 'wb' do |file|
             client.getbinaryfile file_path, file
 
-            uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @ftp.organization
+            uploaded_document = UploadedDocument.new file, file_name, item.customer, item.journal, 0, @ftp.organization, 'ftp'
 
             if uploaded_document.valid?
               logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"

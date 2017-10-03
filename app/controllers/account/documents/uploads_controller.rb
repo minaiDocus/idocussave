@@ -14,7 +14,8 @@ class Account::Documents::UploadsController < Account::AccountController
                                                customer,
                                                params[:file_account_book_type],
                                                params[:file_prev_period_offset],
-                                               current_user)
+                                               current_user,
+                                               'web')
 
       data = present(uploaded_document).to_json
     else

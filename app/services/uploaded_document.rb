@@ -12,7 +12,7 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil)
     @file     = file
     @user     = user
     @code     = @user.code
@@ -41,8 +41,9 @@ class UploadedDocument
       pack.update_pack_state # Create or update pack related to temp_pack
 
       options = {
-        delivered_by:  @uploader.code,
-        delivery_type: 'upload',
+        delivered_by:          @uploader.code,
+        delivery_type:         'upload',
+        api_name:              api_name,
         original_file_name:    @original_file_name,
         is_content_file_valid: true
       }

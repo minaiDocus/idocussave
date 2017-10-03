@@ -321,6 +321,7 @@ class EmailedDocument
       options = {
         delivery_type:         'upload',
         delivered_by:          @user.code,
+        api_name:              'email',
         original_file_name:    attachment.name,
         is_content_file_valid: true
       }
