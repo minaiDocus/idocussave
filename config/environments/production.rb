@@ -67,10 +67,8 @@ Idocus::Application.configure do
   config.assets.digest = false
 
   # Adding js files
-  config.assets.precompile += %w(admin.js
-                                 help.js
-                                 html5.js
-                                 inner.js)
+  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/javascripts/**/*')).grep(/\.(js|coffee)\z/)
+
   # Adding css files
-  config.assets.precompile += %w(admin.css)
+  config.assets.precompile += Dir.glob(Rails.root.join('app/assets/stylesheets/**/*')).grep(/\.(css|sass|scss)\z/).size
 end
