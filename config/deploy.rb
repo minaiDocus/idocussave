@@ -15,6 +15,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
   'tmp/sockets',
   'tmp/barcode',
   'vendor/bundle',
+  'public/assets',
   'public/system',
   'data'
 )
