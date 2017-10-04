@@ -3,13 +3,14 @@ require 'net/ftp'
 class SendToFTP < SendToStorage
   def execute
     run do
+      prepare_dir
+
       client.put metafile.local_path, metafile.name
     end
   end
 
   private
 
-  # TODO : handle connection failure
   def init_client
     ftp = Net::FTP.new
     ftp.connect @storage.domain, @storage.port
@@ -22,16 +23,21 @@ class SendToFTP < SendToStorage
     5
   end
 
-  def before_run
-    prepare_dir
-  end
-
   def after_run
     client.close
   end
 
   def list_files
-    client.list(@folder_path).map do |e|
+    begin
+      results = client.list(@folder_path)
+    rescue Net::FTPTempError, Net::FTPPermError => e
+      if e.message.match(/(No such file or directory)|(Directory not found)/)
+        results = []
+      else
+        raise
+      end
+    end
+    results.map do |e|
       data = e.split(/\s/).reject(&:empty?)
       [data[-1], data[4].to_i]
     end
@@ -40,6 +46,7 @@ class SendToFTP < SendToStorage
   def prepare_dir
     @semaphore.synchronize do
       if @is_folder_ready
+        # TODO : avoid changing directory for each run
         client.chdir @folder_path
       else
         client.chdir '/'
@@ -58,7 +65,7 @@ class SendToFTP < SendToStorage
   end
 
   def manageable_failure?(error)
-    false
+    error.class == Net::FTPPermError && error.message.match(/530 Login incorrect/)
   end
 
   def manage_failure(error)
