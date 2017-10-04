@@ -8,6 +8,46 @@ class FTPImport
     end
   end
 
+  class Client
+    def initialize(message_prefix)
+      @client = Net::FTP.new
+      @message_prefix = message_prefix
+    end
+
+    def method_missing(name, *args, &block)
+      grace_time = name == :getbinaryfile ? 120 : 5
+      retries = 0
+      begin
+        log name, args
+
+        Timeout::timeout grace_time do
+          @client.send name, *args, &block
+        end
+      rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED, Timeout::Error, Net::FTPTempError, EOFError
+        retries += 1
+        if retries < 3
+          min_sleep_seconds = Float(2 ** (retries/2.0))
+          max_sleep_seconds = Float(2 ** retries)
+          sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)
+          sleep sleep_duration
+          retry
+        end
+        raise
+      end
+    end
+
+    private
+
+    def logger
+      @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_debug_ftp_import.log")
+    end
+
+    def log(name, args)
+      _args = name == :login ? ['[FILTERED]'] : args
+      logger.info "[#{@message_prefix}] #{name} - #{_args.join(', ')}"
+    end
+  end
+
   def initialize(ftp)
     @ftp = ftp
     @ftp.previous_import_paths ||= []
@@ -20,6 +60,8 @@ class FTPImport
 
     logger.info "#{log_prefix} START"
     start_time = Time.now
+
+    return unless test_connection
 
     process
 
@@ -37,11 +79,20 @@ class FTPImport
   def client
     return @client if @client
 
-    @client = Net::FTP.new
+    @client = Client.new(@ftp.organization.code)
     @client.connect @ftp.domain, @ftp.port
     @client.login @ftp.login, @ftp.password
     @client.passive = @ftp.is_passive
+
     @client
+  end
+
+  def test_connection
+    client.nlst
+    true
+  rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED
+    # TODO : notify
+    false
   end
 
   def customers
