@@ -60,8 +60,10 @@ class SendToFTP < SendToStorage
     end
   end
 
+  # TODO : handle global failure and abort all attempts
+
   def retryable_failure?(error)
-    false
+    error.class == Net::FTPTempError && error.message.match(/Connection timed out/)
   end
 
   def manageable_failure?(error)
