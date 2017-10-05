@@ -52,7 +52,7 @@ describe FTPImport do
 
         expect(@ftp.is_configured).to eq false
         expect(leader.notifications.size).to eq 1
-        expect(leader.notifications.first.notice_type).to eq 'ftp_auth_failure'
+        expect(leader.notifications.first.notice_type).to eq 'org_ftp_auth_failure'
 
         server.stop
       end
