@@ -90,8 +90,13 @@ class FTPImport
   def test_connection
     client.nlst
     true
-  rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED
-    # TODO : notify
+  rescue Errno::ETIMEDOUT
+    false
+  rescue Errno::ECONNREFUSED, Net::FTPPermError => e
+    if e.message.match(/Login incorrect/)
+      FTPErrorNotifier.new(@ftp).auth_failure
+      @ftp.update is_configured: false
+    end
     false
   end
 

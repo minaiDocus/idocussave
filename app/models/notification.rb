@@ -39,7 +39,8 @@ class Notification < ActiveRecord::Base
         'account_sharing_request',
         'account_sharing_request_approved',
         'account_sharing_request_denied',
-        'account_sharing_request_canceled'
+        'account_sharing_request_canceled',
+        'ftp_auth_failure'
       ].freeze
     end
   end

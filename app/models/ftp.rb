@@ -27,7 +27,7 @@ class Ftp < ActiveRecord::Base
   end
 
   def user
-    external_file_storage.user
+    external_file_storage.try(:user)
   end
 
   def configured?

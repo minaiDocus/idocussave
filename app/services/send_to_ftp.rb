@@ -24,7 +24,7 @@ class SendToFTP < SendToStorage
   end
 
   def after_run
-    client.close
+    client.close if Thread.current[:client]
   end
 
   def list_files
@@ -67,10 +67,13 @@ class SendToFTP < SendToStorage
   end
 
   def manageable_failure?(error)
-    error.class == Net::FTPPermError && error.message.match(/530 Login incorrect/)
+    error.class == Net::FTPPermError && error.message.match(/Login incorrect/)
   end
 
   def manage_failure(error)
-    false
+    if error.class == Net::FTPPermError && error.message.match(/Login incorrect/)
+      @storage.disable
+      FTPErrorNotifier.new(@storage).auth_failure
+    end
   end
 end

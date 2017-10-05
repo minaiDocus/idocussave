@@ -4,21 +4,24 @@ require 'spec_helper'
 
 describe FTPImport do
   class Driver
-    def initialize(temp_dir)
+    def initialize(temp_dir, is_authenticatable=true)
       @temp_dir = temp_dir
+      @is_authenticatable = is_authenticatable
     end
 
     def authenticate(user, password)
-      true
+      @is_authenticatable
     end
 
     def file_system(user)
-      Ftpd::DiskFileSystem.new(@temp_dir)
+      Ftpd::DiskFileSystem.new @temp_dir
     end
   end
 
   describe '#execute' do
-    before(:all) do
+    before(:each) do
+      DatabaseCleaner.start
+
       @organization = Organization.create(name: 'iDocus', code: 'IDOC')
       @ftp = Ftp.new(organization: @organization, host: 'ftp://localhost', is_configured: true)
       @user = FactoryGirl.create(:user, code: 'IDOC%0001', organization: @organization)
@@ -32,17 +35,35 @@ describe FTPImport do
       AccountBookType.create(user: @user2, name: 'VT', description: '( Vente )')
     end
 
-    after(:each) do
-      TempPack.delete_all
-      TempDocument.delete_all
+    after(:each) { DatabaseCleaner.clean }
+
+    it 'fails to authenticate' do
+      leader = create :prescriber, code: 'IDOC%LEAD'
+      @organization.leader = leader
+      @organization.save
+
+      Dir.mktmpdir do |temp_dir|
+        driver = Driver.new temp_dir, false
+        server = Ftpd::FtpServer.new driver
+        server.start
+        @ftp.update port: server.bound_port
+
+        FTPImport.new(@ftp).execute
+
+        expect(@ftp.is_configured).to eq false
+        expect(leader.notifications.size).to eq 1
+        expect(leader.notifications.first.notice_type).to eq 'ftp_auth_failure'
+
+        server.stop
+      end
     end
 
     it 'creates folders successfully' do
       Dir.mktmpdir do |temp_dir|
-        driver = Driver.new(temp_dir)
-        server = Ftpd::FtpServer.new(driver)
+        driver = Driver.new temp_dir
+        server = Ftpd::FtpServer.new driver
         server.start
-        @ftp.update(port: server.bound_port)
+        @ftp.update port: server.bound_port
 
         FTPImport.new(@ftp).execute
 
@@ -59,10 +80,10 @@ describe FTPImport do
 
     it 'imports a file successfully' do
       Dir.mktmpdir do |temp_dir|
-        driver = Driver.new(temp_dir)
-        server = Ftpd::FtpServer.new(driver)
+        driver = Driver.new temp_dir
+        server = Ftpd::FtpServer.new driver
         server.start
-        @ftp.update(port: server.bound_port)
+        @ftp.update port: server.bound_port
 
         FileUtils.mkdir_p File.join(temp_dir, 'INPUT', 'IDOC%0001 - AC (TeSt)')
         FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, 'INPUT', 'IDOC%0001 - AC (TeSt)')
@@ -77,10 +98,10 @@ describe FTPImport do
 
     it 'rejects a file' do
       Dir.mktmpdir do |temp_dir|
-        driver = Driver.new(temp_dir)
-        server = Ftpd::FtpServer.new(driver)
+        driver = Driver.new temp_dir
+        server = Ftpd::FtpServer.new driver
         server.start
-        @ftp.update(port: server.bound_port)
+        @ftp.update port: server.bound_port
 
         original_file_path = Rails.root.join('spec/support/files/corrupted.pdf')
         file_path = File.join(temp_dir, 'INPUT/IDOC%0001 - AC (TeSt)/corrupted.pdf')
