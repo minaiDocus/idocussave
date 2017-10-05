@@ -79,7 +79,7 @@ describe SendToFTP do
 
           SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
 
-          expect(@ftp.used?).to eq false
+          expect(@ftp.configured?).to eq false
           expect(@user.notifications.size).to eq 1
           expect(@user.notifications.first.notice_type).to eq 'ftp_auth_failure'
 
