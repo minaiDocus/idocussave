@@ -39,13 +39,13 @@ RetrieveEmailedDocumentWorker:
   queue: default
   cron: '* * * * *'
 ImportFromDropboxWorker:
-  queue: default
+  queue: file_import
   cron: '*/10 * * * * *'
 ImportFromAllFTPWorker:
-  queue: default
+  queue: file_import
   cron: '0 0 */6 * * *'
 InitializeIbizaboxImportWorker:
-  queue: default
+  queue: file_import
   cron: '0 0 */6 * * *'
 
 RetrieveOcrProcessedDocumentWorker:

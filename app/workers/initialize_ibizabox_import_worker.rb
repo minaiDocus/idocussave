@@ -1,6 +1,6 @@
 class InitializeIbizaboxImportWorker
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  sidekiq_options queue: :file_import, retry: false
 
   def perform
     UniqueJobs.for 'InitializeIbizaboxImport' do

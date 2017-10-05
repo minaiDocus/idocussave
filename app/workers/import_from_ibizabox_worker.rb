@@ -1,6 +1,6 @@
 class ImportFromIbizaboxWorker
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  sidekiq_options queue: :file_import, retry: false
 
   def perform(user_id)
     user = User.find user_id
