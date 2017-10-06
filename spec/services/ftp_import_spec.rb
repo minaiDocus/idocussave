@@ -119,5 +119,95 @@ describe FTPImport do
         server.stop
       end
     end
+
+    describe 'given "/path" as root path' do
+      before(:each) do
+        @root_path = '/path'
+        @ftp.update root_path: @root_path
+      end
+
+      it 'creates folders successfully' do
+        Dir.mktmpdir do |temp_dir|
+          driver = Driver.new temp_dir
+          server = Ftpd::FtpServer.new driver
+          server.start
+          @ftp.update port: server.bound_port
+
+          FTPImport.new(@ftp).execute
+
+          folders = Dir.glob(File.join(temp_dir, @root_path, 'INPUT', '*'))
+          expect(folders.size).to eq 4
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - VT (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - AC (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - VT (TeSt)'))).to eq true
+
+          server.stop
+        end
+      end
+
+      it 'imports a file successfully' do
+        Dir.mktmpdir do |temp_dir|
+          driver = Driver.new temp_dir
+          server = Ftpd::FtpServer.new driver
+          server.start
+          @ftp.update port: server.bound_port
+
+          FileUtils.mkdir_p File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)')
+          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)')
+
+          FTPImport.new(@ftp).execute
+
+          expect(TempDocument.count).to eq 1
+
+          server.stop
+        end
+      end
+    end
+
+    describe 'given "/path/to/folder" as root path' do
+      before(:each) do
+        @root_path = '/path/to/folder'
+        @ftp.update root_path: @root_path
+      end
+
+      it 'creates folders successfully' do
+        Dir.mktmpdir do |temp_dir|
+          driver = Driver.new temp_dir
+          server = Ftpd::FtpServer.new driver
+          server.start
+          @ftp.update port: server.bound_port
+
+          FTPImport.new(@ftp).execute
+
+          folders = Dir.glob(File.join(temp_dir, @root_path, 'INPUT', '*'))
+          expect(folders.size).to eq 4
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - VT (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - AC (TeSt)'))).to eq true
+          expect(folders.include?(File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0002 - VT (TeSt)'))).to eq true
+
+          server.stop
+        end
+      end
+
+      it 'imports a file successfully' do
+        Dir.mktmpdir do |temp_dir|
+          driver = Driver.new temp_dir
+          server = Ftpd::FtpServer.new driver
+          server.start
+          @ftp.update port: server.bound_port
+
+          FileUtils.mkdir_p File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)')
+          FileUtils.cp Rails.root.join('spec/support/files/2pages.pdf'), File.join(temp_dir, @root_path, 'INPUT', 'IDOC%0001 - AC (TeSt)')
+
+          FTPImport.new(@ftp).execute
+
+          expect(TempDocument.count).to eq 1
+
+          server.stop
+        end
+      end
+    end
   end
 end

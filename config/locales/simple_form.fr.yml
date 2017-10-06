@@ -25,7 +25,7 @@ fr:
     #     password: 'No special characters, please.'
     hints:
       ftp:
-        root_path: "Le chemin indiqué doit déjà exister. Un dossier 'INPUT' et un dossier 'OUTPUT' seront créés dans ce dossier."
+        root_path: "C'est dans ce dossier qu'iDocus importera ou expotera des documents."
     labels:
       doc_group:
         leader: 'Prescripteur'
@@ -259,3 +259,4 @@ fr:
         login: Identifiant
         password: Mot de passe
         root_path: Chemin racine d'import et de livraison
+        path: Chemin de livraison

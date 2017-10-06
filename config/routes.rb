@@ -87,7 +87,7 @@ Idocus::Application.routes.draw do
 
       resource :knowings, only: %w(new create edit update)
 
-      resource :ftps, only: %w(edit update), module: 'organization' do
+      resource :ftps, only: %w(edit update destroy), module: 'organization' do
         post :fetch_now, on: :collection
       end
 

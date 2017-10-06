@@ -34,7 +34,7 @@ describe SendToFTP do
       Timecop.return
     end
 
-    describe 'given 3 remote files to deliver' do
+    describe 'given 3 remote files to deliver for a user' do
       before(:each) do
         @user = FactoryGirl.create :user, code: 'IDO%0001'
         @user.options = UserOptions.create(user_id: @user.id)
@@ -103,6 +103,70 @@ describe SendToFTP do
           expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
 
           server.stop
+        end
+      end
+    end
+
+    describe 'given 3 remote files to deliver for an organization' do
+      before(:each) do
+        @organization = FactoryGirl.create :organization, code: 'IDO'
+        @user = FactoryGirl.create :user, code: 'IDO%0001'
+        @user.organization = @organization
+        @user.save
+
+        @ftp = @organization.build_ftp
+        @ftp.host = 'ftp://localhost'
+        @ftp.path = 'OUTPUT/:code/:year:month/:account_book'
+        @ftp.save
+        @ftp.enable
+
+        @pack = Pack.new
+        @pack.owner = @user
+        @pack.name = 'IDO%0001 AC 201701 all'
+        @pack.save
+
+        @remote_files = ['2pages.pdf', '3pages.pdf', '5pages.pdf'].map do |file_name|
+          document = Document.new
+          document.pack       = @pack
+          document.position   = 1
+          document.content    = File.open Rails.root.join('spec/support/files/' + file_name)
+          document.origin     = 'upload'
+          document.is_a_cover = false
+          document.save
+
+          remote_file              = RemoteFile.new
+          remote_file.receiver     = @organization
+          remote_file.pack         = @pack
+          remote_file.service_name = 'FTP'
+          remote_file.remotable    = document
+          remote_file.save
+          remote_file
+        end
+      end
+
+      describe 'given "/path/to/folder" as root path' do
+        before(:each) do
+          @root_path = '/path/to/folder'
+          @ftp.update root_path: @root_path
+        end
+
+        it 'sends 3 files successfully' do
+          Dir.mktmpdir do |temp_dir|
+            driver = Driver.new temp_dir
+            server = Ftpd::FtpServer.new driver
+            server.start
+            @ftp.update port: server.bound_port
+
+            SendToFTP.new(@ftp, @remote_files, max_number_of_threads: 1).execute
+
+            files = Dir.glob(File.join(temp_dir, @root_path, "OUTPUT/IDO%0001/201701/AC/*.pdf")).sort.map do |path|
+              File.basename path
+            end
+
+            expect(files).to eq ['2pages.pdf', '3pages.pdf', '5pages.pdf']
+
+            server.stop
+          end
         end
       end
     end

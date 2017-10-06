@@ -10,6 +10,11 @@ class SendToStorage
       chunk_size:            150.megabytes,
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
+
+    if @storage.class == Ftp && @storage.organization
+      @options[:path_pattern] = File.join @storage.root_path, @options[:path_pattern]
+    end
+
     @folder_path = ExternalFileStorage.delivery_path(remote_files.first, @options[:path_pattern]).freeze
     @errors      = []
 

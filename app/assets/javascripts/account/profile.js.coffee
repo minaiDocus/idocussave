@@ -10,9 +10,9 @@ update_path_preview = (element) ->
   path = ''
   if service == '2'
     path += 'Applications > iDocus > '
-  path += element.val();
-  path = path.replace(':code', 'TS%00001')
-  path = path.replace(':year', '2015')
+  path += element.val()
+  path = path.replace(':code', 'CODE%001')
+  path = path.replace(':year', '2017')
   path = path.replace(':month', '01')
   path = path.replace(':account_book', 'AC')
   path = path.replace(/\//g, ' > ')

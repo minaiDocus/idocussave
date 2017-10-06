@@ -112,10 +112,18 @@ class FTPImport
   def folder_tree
     return @folder_tree if @folder_tree
 
-    @folder_tree = FTPImport::Item.new root_path
+    @folder_tree = last_item = FTPImport::Item.new ''
 
-    input_item = FTPImport::Item.new 'INPUT'
-    @folder_tree.add input_item
+    if root_path != ''
+      root_path.split('/').map(&:presence).compact.each do |folder|
+        item = FTPImport::Item.new folder, true, false
+        last_item.add item
+        last_item = item
+      end
+    end
+
+    input_item = FTPImport::Item.new 'INPUT', true, false
+    last_item.add input_item
 
     current_folder_paths = []
     customers.each do |customer|

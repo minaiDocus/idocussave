@@ -171,14 +171,24 @@
                         %span.label Non configuré
                   %tr
                     %th Hôte
-                    %td= @organization.ftp.try(:host)
+                    %td= @organization.ftp.try(:host) || 'ftp://ftp.example.com'
                   %tr
                     %th Identifiant
-                    %td= @organization.ftp.try(:login)
+                    %td= @organization.ftp.try(:login) || 'login'
+                  %tr
+                    %th Chemin racine d'import et de livraison
+                    %td= @organization.ftp.try(:root_path) || '/'
+                  %tr
+                    %th Chemin d'import
+                    %td INPUT/CODE - JOURNAL (SOCIÉTÉ)
+                  %tr
+                    %th Chemin de livraison
+                    %td= @organization.ftp.try(:path) || 'OUTPUT/:code/:year:month/:account_book/'
               .aligncenter
-                = link_to 'Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
+                = link_to icon_edit + ' Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
                 - if @organization.ftp.try(:configured?)
-                  = link_to 'Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr ?' }
+                  = link_to icon_download + ' Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
+                  = link_to icon_not_ok + ' Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
             #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
               %table.table.table-condensed.table-striped
                 %tbody

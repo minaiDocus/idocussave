@@ -51,6 +51,12 @@ class Ftp < ActiveRecord::Base
     self.port          = 21
     self.login         = 'login'
     self.password      = 'password'
+    self.root_path     = '/'
+    if self.organization
+      self.path        = 'OUTPUT/:code/:year:month/:account_book/'
+    else
+      self.path        = 'iDocus/:code/:year:month/:account_book/'
+    end
     self.is_passive    = true
     self.is_configured = false
     save
