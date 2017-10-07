@@ -43,7 +43,7 @@ class Account::Organization::FtpsController < Account::OrganizationController
   private
 
   def verify_rights
-    unless @user.is_admin || is_leader?
+    unless is_leader?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end

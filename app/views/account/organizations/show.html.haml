@@ -184,11 +184,12 @@
                   %tr
                     %th Chemin de livraison
                     %td= @organization.ftp.try(:path) || 'OUTPUT/:code/:year:month/:account_book/'
-              .aligncenter
-                = link_to icon_edit + ' Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
-                - if @organization.ftp.try(:configured?)
-                  = link_to icon_download + ' Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
-                  = link_to icon_not_ok + ' Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
+              - if is_leader?
+                .alignright
+                  = link_to icon_edit + ' Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
+                  - if @organization.ftp.try(:configured?)
+                    = link_to icon_download + ' Récupérer maintenant', fetch_now_account_organization_ftps_path(@organization), class: 'btn', method: :post, data: { confirm: 'Êtes-vous sûr de vouloir récupérer maintenant ?' }
+                    = link_to icon_not_ok + ' Réinitialiser mes paramètres', account_organization_ftps_path(@organization), class: 'btn btn-danger', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres FTP ?' }
             #ibiza.tab-pane{ class: ('active' if params[:tab] == 'ibiza') }
               %table.table.table-condensed.table-striped
                 %tbody
