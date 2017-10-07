@@ -6,7 +6,20 @@ class Account::Organization::FtpsController < Account::OrganizationController
   end
 
   def update
-    @ftp.assign_attributes(ftp_params.delete_if { |k,v| k == 'password' && v.blank? })
+    _params = ftp_params.delete_if { |k,_| k == 'password' }
+
+    is_connection_params_changed = false
+    is_connection_params_changed = true if @ftp.host != _params[:host]
+    is_connection_params_changed = true if @ftp.port != _params[:port].to_i
+    is_connection_params_changed = true if @ftp.login != _params[:login]
+    is_connection_params_changed = true if @ftp.is_passive != (_params[:is_passive] == '1')
+
+    if ftp_params[:password].present? || is_connection_params_changed
+      @ftp.assign_attributes password: ftp_params[:password]
+    end
+
+    @ftp.assign_attributes _params
+
     result = @ftp.valid?
     is_verified = false
     if result && @ftp.password_changed?
