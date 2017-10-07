@@ -16,7 +16,7 @@ describe DropboxImport do
         DatabaseCleaner.start
 
         @user = FactoryGirl.create(:user, code: 'TS%0001')
-        @user.options = UserOptions.create(user_id: @user.id)
+        @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
 
         AccountBookType.create(user_id: @user.id, name: 'AC', description: '( Achat )')
         AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
@@ -617,7 +617,7 @@ describe DropboxImport do
             organization = Organization.create(name: 'TEST', code: 'TS')
             organization.members << @user
             @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
-            @user2.options = UserOptions.create(user_id: @user2.id)
+            @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
             @user2.organization = organization
             @user2.save
 
@@ -744,7 +744,7 @@ describe DropboxImport do
         @collaborator.extend_organization_role
 
         @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
-        @user.options = UserOptions.create(user_id: @user.id)
+        @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
         @user.organization = @organization
         @user.save
 
@@ -752,7 +752,7 @@ describe DropboxImport do
         AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
 
         @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
-        @user2.options = UserOptions.create(user_id: @user2.id)
+        @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
         @user2.organization = @organization
         @user2.save
 
@@ -1249,7 +1249,7 @@ describe DropboxImport do
         context 'given TS%0003 is added' do
           before(:each) do
             @user3 = FactoryGirl.create(:user, code: 'TS%0003', company: 'GHI')
-            @user3.options = UserOptions.create(user_id: @user3.id)
+            @user3.options = UserOptions.create(user_id: @user3.id, is_upload_authorized: true)
             @user3.organization = @organization
             @user3.save
 
@@ -1354,7 +1354,7 @@ describe DropboxImport do
         @contact.save
 
         @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
-        @user.options = UserOptions.create(user_id: @user.id)
+        @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
         @user.organization = @organization
         @user.save
 
@@ -1362,7 +1362,7 @@ describe DropboxImport do
         AccountBookType.create(user_id: @user.id, name: 'VT', description: '( Vente )')
 
         @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
-        @user2.options = UserOptions.create(user_id: @user2.id)
+        @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
         @user2.organization = @organization
         @user2.save
 

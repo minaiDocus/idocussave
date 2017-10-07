@@ -56,7 +56,7 @@ class FTPImport
   def execute
     return false if not @ftp.configured?
     return false if not @ftp.organization
-    return false if not_authorized?
+    return false if customers.empty?
 
     logger.info "#{log_prefix} START"
     start_time = Time.now
@@ -101,11 +101,8 @@ class FTPImport
   end
 
   def customers
-    @customers ||= @ftp.organization.customers.active.order(code: :asc)
-  end
-
-  def not_authorized?
-    not customers.detect { |e| e.options.try(:upload_authorized?) }
+    @customers ||= @ftp.organization.customers.active.order(code: :asc).
+      select { |c| c.options.try(:upload_authorized?) }
   end
 
   # Pattern : /INPUT/code - journal (company)

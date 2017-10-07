@@ -77,7 +77,7 @@ class DropboxImport
   end
 
   def check
-    if @dropbox.is_used? && @dropbox.is_configured?
+    if @dropbox.is_used? && @dropbox.is_configured? && customers.any?
       checked_at = Time.now
       has_more = true
 
@@ -139,6 +139,7 @@ class DropboxImport
       else
         User.where(id: ([user.id] + user.accounts.map(&:id))).order(code: :asc)
       end
+      @customers = @customers.select { |c| c.options.try(:upload_authorized?) }
     end
   end
 
