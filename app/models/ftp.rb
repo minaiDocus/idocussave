@@ -18,6 +18,7 @@ class Ftp < ActiveRecord::Base
   validates :password, length: { minimum: 2, maximum: 40 }, if: proc { |e| e.persisted? }
   validates_format_of :host, with: /\Aftp:\/\/(([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5})|localhost)(\/)?\z/ix, if: proc { |e| e.persisted? }
   validates_numericality_of :port, greater_than: 0, less_than: 65536, if: proc { |e| e.persisted? }
+  validate :uniqueness_of_path
 
   before_create do
     self.host     ||= 'ftp://ftp.example.com'
@@ -64,5 +65,13 @@ class Ftp < ActiveRecord::Base
 
   def domain
     host.sub /\Aftp:\/\//, ''
+  end
+
+  private
+
+  def uniqueness_of_path
+    if organization && path.match(/\A(\/)*INPUT(\/)*/)
+      errors.add(:path, :invalid)
+    end
   end
 end
