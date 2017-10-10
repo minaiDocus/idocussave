@@ -34,7 +34,8 @@
         = render 'shared/as_user'
     != content_for?(:content) ? yield(:content) : yield
 
-    = render 'layouts/footer'
+    - unless controller_name == 'documents'
+      = render 'layouts/footer'
 
     :plain
       <!--[if lt IE 9]>

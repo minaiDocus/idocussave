@@ -784,13 +784,16 @@ footer
     display: flex
     justify-content: space-between
     .footer-logo
-      width: 20%
+      .logo-container
+        text-align: center
+        float: left
       img.logo
-        margin: 30px 20px 10px 20px
+        margin: 20px
         padding: 7px
         max-width: 100%
         +border-radius(6px 6px 6px 6px)
         +box-shadow(#ffffff 0 1px 0px inset)
+        background-color: white
     .footer-contact
       width: 20%
       margin-top: 15px
@@ -885,7 +888,9 @@ footer
 /* Social Icons */
 footer
   .social
+    float: right
     text-align: center
+    margin: 20px
     a
       display: inline-block
       padding: 7px
@@ -897,8 +902,6 @@ footer
       vertical-align: middle
       &:hover
         background: #65c2ed
-      &.linkedin
-        padding: 4px
       svg
         .face, .twit, .link
           fill: #000
