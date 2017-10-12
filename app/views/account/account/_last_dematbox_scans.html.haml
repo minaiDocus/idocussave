@@ -1,0 +1,16 @@
+.row-fluid
+  .span12
+    %h4 Derniers documents scannés via la Demat'Box
+    %table.table.table-striped.table-condensed.table-bordered.margin1top.margin0bottom
+      %thead
+        %tr
+          %th.date Date
+          %th Nom iDocus
+          %th Client
+      %tbody
+        - @last_dematbox_scans.each do |temp_document|
+          - cache temp_document do
+            %tr
+              %td.date= l temp_document.created_at
+              %td= temp_document.piece.try(:name) || temp_document.temp_pack.name.sub(' all', '')
+              %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)

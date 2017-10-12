@@ -21,6 +21,8 @@ class CreateCollaborator
       collaborator.reset_password_sent_at = Time.now
       collaborator.save
 
+      collaborator.create_options
+
       WelcomeMailer.welcome_collaborator(collaborator, token).deliver_later
     end
 

@@ -1,3 +1,18 @@
+get_last_content_for = (name) ->
+  $.get '/account/account/' + name, (data) ->
+    $('.content.' + name).html(data)
+
 jQuery ->
   if navigator.userAgent.toLowerCase().indexOf('msie') != -1
     $('.ie-message').show()
+
+  get_last_content_for($('.tab-pane.active').attr('id'))
+
+  $('a.last_scans').click ->
+    get_last_content_for('last_scans')
+  $('a.last_uploads').click ->
+    get_last_content_for('last_uploads')
+  $('a.last_dematbox_scans').click ->
+    get_last_content_for('last_dematbox_scans')
+  $('a.last_retrieved').click ->
+    get_last_content_for('last_retrieved')

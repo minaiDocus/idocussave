@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829092404) do
+ActiveRecord::Schema.define(version: 20171010193737) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -693,6 +693,8 @@ ActiveRecord::Schema.define(version: 20170829092404) do
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
     t.boolean  "is_passive",                                      default: true
+    t.datetime "checked_at"
+    t.boolean  "is_import_activated",                             default: false
     t.string   "root_path",                         limit: 255,   default: "/"
     t.datetime "import_checked_at"
     t.text     "previous_import_paths",             limit: 65535
@@ -1954,18 +1956,19 @@ ActiveRecord::Schema.define(version: 20170829092404) do
     t.datetime "updated_at"
     t.datetime "locked_at"
     t.datetime "locked_until"
-    t.integer  "max_number_of_journals",          limit: 4,   default: 5,     null: false
-    t.boolean  "is_preassignment_authorized",                 default: false, null: false
-    t.boolean  "is_taxable",                                  default: true,  null: false
-    t.integer  "is_pre_assignment_date_computed", limit: 4,   default: -1,    null: false
-    t.integer  "is_auto_deliver",                 limit: 4,   default: -1,    null: false
-    t.boolean  "is_own_csv_descriptor_used",                  default: false, null: false
-    t.boolean  "is_upload_authorized",                        default: false, null: false
+    t.integer  "max_number_of_journals",          limit: 4,   default: 5,            null: false
+    t.boolean  "is_preassignment_authorized",                 default: false,        null: false
+    t.boolean  "is_taxable",                                  default: true,         null: false
+    t.integer  "is_pre_assignment_date_computed", limit: 4,   default: -1,           null: false
+    t.integer  "is_auto_deliver",                 limit: 4,   default: -1,           null: false
+    t.boolean  "is_own_csv_descriptor_used",                  default: false,        null: false
+    t.boolean  "is_upload_authorized",                        default: false,        null: false
     t.integer  "user_id",                         limit: 4
     t.string   "user_id_mongo_id",                limit: 255
     t.boolean  "is_retriever_authorized",                     default: false
-    t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,    null: false
-    t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,    null: false
+    t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
+    t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
+    t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
   end
 
   add_index "user_options", ["mongo_id"], name: "index_user_options_on_mongo_id", using: :btree

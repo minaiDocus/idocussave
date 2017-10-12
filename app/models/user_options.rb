@@ -6,6 +6,7 @@ class UserOptions < ActiveRecord::Base
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
   validates_inclusion_of :is_operation_processing_forced,  in: [-1, 0, 1]
   validates_inclusion_of :is_operation_value_date_needed,  in: [-1, 0, 1]
+  validates_inclusion_of :dashboard_default_summary,       in: ['last_scans', 'last_uploads', 'last_dematbox_scans', 'last_retrieved']
 
   def pre_assignment_date_computed?
     if is_pre_assignment_date_computed == -1

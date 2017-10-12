@@ -33,6 +33,9 @@ class TempDocument < ActiveRecord::Base
     end
   end
 
+  after_save do |temp_document|
+    Rails.cache.write(['user', temp_document.user.id, 'temp_documents', 'last_updated_at'], Time.now.to_i)
+  end
 
   scope :scan,              -> { where(delivery_type: 'scan') }
   scope :valid,             -> { where(state: %w(ready ocr_needed bundle_needed bundling bundled processed)) }

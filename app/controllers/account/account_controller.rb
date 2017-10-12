@@ -9,23 +9,54 @@ class Account::AccountController < ApplicationController
   layout 'inner'
 
   def index
-    users = if @user.is_prescriber && @user.organization
-              @user.customers.includes(:organization)
-            else
-              [@user]
-            end
-
-    @last_kits       = PaperProcess.where(user_id: users.map(&:id)).kits.order(updated_at: :desc).includes(:user).limit(5)
-    @last_receipts   = PaperProcess.where(user_id: users.map(&:id)).receipts.order(updated_at: :desc).includes(:user).limit(5)
-    @last_scanned    = PeriodDocument.where(user_id: users.map(&:id)).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5)
-    @last_returns    = PaperProcess.where(user_id: users.map(&:id)).returns.order(updated_at: :desc).includes(:user).limit(5)
     @last_packs      = all_packs.order(updated_at: :desc).limit(5)
     @last_temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
+
+    load_last_scans unless @user.is_prescriber || !@user.options.try(:is_upload_authorized)
 
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
       customers = @user.is_admin ? @user.organization.customers : @user.customers
       @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
     end
+  end
+
+  def choose_default_summary
+    @user.options.update(dashboard_default_summary: params[:service_name])
+    redirect_to root_path
+  end
+
+  def last_scans
+    load_last_scans
+
+    render partial: 'last_scans'
+  end
+
+  def last_uploads
+    @last_uploads = Rails.cache.fetch ['user', @user.id, 'last_uploads', temp_documents_key] do
+      TempDocument.where(user_id: user_ids).upload.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+    end
+
+    render partial: 'last_uploads'
+  end
+
+  def last_dematbox_scans
+    @last_dematbox_scans = Rails.cache.fetch ['user', @user.id, 'last_dematbox_scans', temp_documents_key] do
+      TempDocument.where(user_id: user_ids).dematbox_scan.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+    end
+
+    render partial: 'last_dematbox_scans'
+  end
+
+  def last_retrieved
+    @last_retrieved = Rails.cache.fetch ['user', @user.id, 'last_retrieved', temp_documents_key] do
+      TempDocument.where(user_id: user_ids).retrieved.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+    end
+
+    @last_operations = Rails.cache.fetch ['user', @user.id, 'last_operations', operations_key] do
+      Operation.where(user_id: user_ids).order(created_at: :desc).includes(:user, :bank_account).limit(10).to_a
+    end
+
+    render partial: 'last_retrieved'
   end
 
 protected
@@ -56,6 +87,32 @@ protected
   helper_method :account_ids
 
 private
+
+  def user_ids
+    @user_ids ||= accounts.active.map(&:id).sort
+  end
+
+  def get_key_for(name)
+    timestamps = user_ids.map do |user_id|
+      Rails.cache.fetch ['user', user_id, name, 'last_updated_at'] { Time.now.to_i }
+    end
+    Digest::MD5.hexdigest timestamps.join('-')
+  end
+
+  def temp_documents_key
+    get_key_for 'temp_documents'
+  end
+
+  def operations_key
+    get_key_for 'operations'
+  end
+
+  def load_last_scans
+    @last_kits     = PaperProcess.where(user_id: user_ids).kits.order(updated_at: :desc).includes(:user).limit(5)
+    @last_receipts = PaperProcess.where(user_id: user_ids).receipts.order(updated_at: :desc).includes(:user).limit(5)
+    @last_scanned  = PeriodDocument.where(user_id: user_ids).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5)
+    @last_returns  = PaperProcess.where(user_id: user_ids).returns.order(updated_at: :desc).includes(:user).limit(5)
+  end
 
   def all_packs
     Pack.where(owner_id: account_ids)

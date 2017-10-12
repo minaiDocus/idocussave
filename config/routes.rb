@@ -19,7 +19,6 @@ Idocus::Application.routes.draw do
   get '/account/documents/:id/download/:style', controller: 'account/documents', action: 'download'
   get '/account/documents/pieces/:id/download', controller: 'account/documents', action: 'piece'
 
-
   resources :compta
 
   resources :kits, only: %w(index create)
@@ -57,6 +56,16 @@ Idocus::Application.routes.draw do
 
   namespace :account do
     root to: 'account/account#index'
+
+    resources :account, only: :index do
+      collection do
+        post :choose_default_summary
+        get :last_scans
+        get :last_uploads
+        get :last_dematbox_scans
+        get :last_retrieved
+      end
+    end
 
     resources :organizations, except: :destroy do
       patch :suspend,        on: :member

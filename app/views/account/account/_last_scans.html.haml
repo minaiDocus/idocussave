@@ -1,0 +1,97 @@
+.row-fluid
+  .span12
+    %h4 Derniers kits envoyés
+    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %thead
+        %tr
+          %th.date Date
+          - if @user.is_prescriber
+            %th Code client
+            %th Société
+          %th N° de suivi
+      %tbody
+        %br
+        - @last_kits.each do |kit|
+          %tr
+            %td.date= l kit.updated_at, format: '%d %B %Y'
+            - if @user.is_prescriber
+              %td
+                - if kit.user && kit.user.organization
+                  = link_to kit.customer_code, account_organization_customer_path(kit.user.organization, kit.user)
+                - else
+                  = kit.customer_code
+              %td= kit.user.try(:company)
+            %td
+              = link_to_paper_tracking(kit) if kit.tracking_number.present?
+    .pull-right= link_to 'Tous les kits envoyés', account_paper_processes_path(paper_process_contains: { type: 'kit' })
+.row-fluid.margin1top
+  .span12
+    %h4 Dernières enveloppes reçues
+    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %thead
+        %tr
+          %th.date Date
+          - if @user.is_prescriber
+            %th Code client
+            %th Société
+          %th N° de suivi
+      %tbody
+        %br
+        - @last_receipts.each do |receipt|
+          %tr
+            %td.date= l receipt.updated_at, format: '%d %B %Y'
+            - if @user.is_prescriber
+              %td
+                - if receipt.user && receipt.user.organization
+                  = link_to receipt.customer_code, account_organization_customer_path(receipt.user.organization, receipt.user)
+                - else
+                  = receipt.customer_code
+              %td= receipt.user.try(:company)
+            %td
+              = link_to_paper_tracking(receipt) if receipt.tracking_number.present?
+    .pull-right= link_to 'Toutes les enveloppes reçues', account_paper_processes_path(paper_process_contains: { type: 'receipt' })
+.row-fluid.margin1top
+  .span12
+    %h4 Derniers documents numérisés
+    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %thead
+        %tr
+          %th.date Date
+          %th Nom
+      %tbody
+        %br
+        - @last_scanned.each do |document|
+          %tr
+            %td.date= l document.scanned_at, format: '%d %B %Y'
+            %td
+              - if document.pack
+                = link_to document.name, account_documents_path(pack_name: document.name), target: '_blank'
+              - else
+                = document.name
+    .pull-right= link_to 'Tous les documents numérisés', account_paper_processes_path(paper_process_contains: { type: 'scan' })
+.row-fluid.margin1top
+  .span12
+    %h4 Dernières enveloppes retournées
+    %table.table.table-striped.table-condensed.table-bordered.margin0bottom
+      %thead
+        %tr
+          %th.date Date
+          - if @user.is_prescriber
+            %th Code client
+            %th Société
+          %th N° de suivi
+      %tbody
+        %br
+        - @last_returns.each do |ret|
+          %tr
+            %td.date= l ret.updated_at, format: '%d %B %Y'
+            - if @user.is_prescriber
+              %td
+                - if ret.user && ret.user.organization
+                  = link_to ret.customer_code, account_organization_customer_path(ret.user.organization, ret.user)
+                - else
+                  = ret.customer_code
+              %td= ret.user.try(:company)
+            %td
+              = link_to_paper_tracking(ret) if ret.tracking_number.present?
+    .pull-right= link_to 'Toutes les enveloppes retournées', account_paper_processes_path(paper_process_contains: { type: 'return' })

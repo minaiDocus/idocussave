@@ -26,6 +26,10 @@ class Operation < ActiveRecord::Base
 
   scope :not_recently_added_or_forced, -> { where('operations.created_at < ? OR operations.forced_processing_at IS NOT ?', 7.days.ago, nil) }
 
+  after_save do |operation|
+    Rails.cache.write(['user', operation.user.id, 'operations', 'last_updated_at'], Time.now.to_i)
+  end
+
   def self.search_for_collection(collection, contains)
     user = collection.first.user if collection.first
 
