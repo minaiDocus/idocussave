@@ -12,8 +12,6 @@ class Account::AccountController < ApplicationController
     @last_packs      = all_packs.order(updated_at: :desc).limit(5)
     @last_temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
 
-    load_last_scans unless @user.is_prescriber || !@user.options.try(:is_upload_authorized)
-
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
       customers = @user.is_admin ? @user.organization.customers : @user.customers
       @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
@@ -26,7 +24,18 @@ class Account::AccountController < ApplicationController
   end
 
   def last_scans
-    load_last_scans
+    @last_kits     = Rails.cache.fetch ['user', @user.id, 'last_kits'], expires_in: 5.minutes do
+      PaperProcess.where(user_id: user_ids).kits.order(updated_at: :desc).includes(:user).limit(5).to_a
+    end
+    @last_receipts = Rails.cache.fetch ['user', @user.id, 'last_receipts'], expires_in: 5.minutes do
+      PaperProcess.where(user_id: user_ids).receipts.order(updated_at: :desc).includes(:user).limit(5).to_a
+    end
+    @last_scanned  = Rails.cache.fetch ['user', @user.id, 'last_scanned'], expires_in: 5.minutes do
+      PeriodDocument.where(user_id: user_ids).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5).to_a
+    end
+    @last_returns  = Rails.cache.fetch ['user', @user.id, 'last_returns'], expires_in: 5.minutes do
+      PaperProcess.where(user_id: user_ids).returns.order(updated_at: :desc).includes(:user).limit(5).to_a
+    end
 
     render partial: 'last_scans'
   end
@@ -105,13 +114,6 @@ private
 
   def operations_key
     get_key_for 'operations'
-  end
-
-  def load_last_scans
-    @last_kits     = PaperProcess.where(user_id: user_ids).kits.order(updated_at: :desc).includes(:user).limit(5)
-    @last_receipts = PaperProcess.where(user_id: user_ids).receipts.order(updated_at: :desc).includes(:user).limit(5)
-    @last_scanned  = PeriodDocument.where(user_id: user_ids).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5)
-    @last_returns  = PaperProcess.where(user_id: user_ids).returns.order(updated_at: :desc).includes(:user).limit(5)
   end
 
   def all_packs

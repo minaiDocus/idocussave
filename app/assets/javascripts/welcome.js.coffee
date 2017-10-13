@@ -6,7 +6,8 @@ jQuery ->
   if navigator.userAgent.toLowerCase().indexOf('msie') != -1
     $('.ie-message').show()
 
-  get_last_content_for($('.tab-pane.active').attr('id'))
+  tab_name = $('.tab-pane.active').attr('id')
+  get_last_content_for(tab_name) if tab_name
 
   $('a.last_scans').click ->
     get_last_content_for('last_scans')

@@ -58,4 +58,26 @@ class UserOptions < ActiveRecord::Base
   def retriever_authorized?
     is_retriever_authorized
   end
+
+  def active_summary
+    list = []
+    list += %w(last_scans last_uploads) if user.is_prescriber || is_upload_authorized
+    list << 'last_dematbox_scans' if user.is_prescriber || user.is_dematbox_authorized
+    list << 'last_retrieved' if user.is_prescriber || is_retriever_authorized
+    list
+  end
+
+  def dashboard_summary
+    return @dashboard_summary if @dashboard_summary
+
+    list = active_summary
+    @dashboard_summary = if dashboard_default_summary.in? list
+      dashboard_default_summary
+    else
+      choice = list.first
+      update(dashboard_default_summary: choice)
+      choice
+    end
+    @dashboard_summary
+  end
 end
