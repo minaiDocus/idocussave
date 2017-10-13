@@ -6,33 +6,35 @@
     %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = stylesheet_link_tag    'application', 'paper_process'
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          %a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
-          .nav-collapse
-            %ul{ class: 'nav' }
-              %li{ class: ('active' if controller_name == 'paper_set_orders') }
-                = link_to 'Commandes', paper_set_orders_path
-              %li{ class: ('active' if controller_name == 'kits') }
-                = link_to 'Kit', kits_path
-              %li{ class: ('active' if controller_name == 'receipts') }
-                = link_to 'Réception', receipts_path
-              %li{ class: ('active' if controller_name == 'scans') }
-                = link_to 'Numérisation', scans_path
-              %li{ class: ('active' if controller_name == 'returns') }
-                = link_to 'Retour', returns_path
-          - if current_user
-            %p.navbar-text.pull-right
-              Connecté en tant que
-              = link_to current_user.email, root_path
-              |
-              = link_to 'déconnexion', destroy_user_session_path, method: :delete
-    .container-fluid= yield
+    #wrap
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container-fluid
+            %a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+              %span.icon-bar
+              %span.icon-bar
+              %span.icon-bar
+            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
+            .nav-collapse
+              %ul{ class: 'nav' }
+                %li{ class: ('active' if controller_name == 'paper_set_orders') }
+                  = link_to 'Commandes', paper_set_orders_path
+                %li{ class: ('active' if controller_name == 'kits') }
+                  = link_to 'Kit', kits_path
+                %li{ class: ('active' if controller_name == 'receipts') }
+                  = link_to 'Réception', receipts_path
+                %li{ class: ('active' if controller_name == 'scans') }
+                  = link_to 'Numérisation', scans_path
+                %li{ class: ('active' if controller_name == 'returns') }
+                  = link_to 'Retour', returns_path
+            - if current_user
+              %p.navbar-text.pull-right
+                Connecté en tant que
+                = link_to current_user.email, root_path
+                |
+                = link_to 'déconnexion', destroy_user_session_path, method: :delete
+      .container-fluid.padding6top.margin1bottom= yield
+      #push
     = render 'layouts/footer'
     = render '/shared/google_analytics'
   = javascript_include_tag 'application', 'paper_process'

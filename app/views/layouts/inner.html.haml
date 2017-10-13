@@ -15,24 +15,29 @@
     = stylesheet_link_tag 'account/addresses' if controller_name == 'addresses'
 
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
-            %span{ :class=>"icon-bar" }
-            %span{ :class=>"icon-bar" }
-            %span{ :class=>"icon-bar" }
-          = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
-          - if current_user
-            .nav-collapse.collapse
-              = render partial: 'layouts/navigation'
-              = render partial: 'layouts/user'
-              = render partial: 'layouts/notifications'
+    %div{ id: ('wrap' unless controller_name == 'documents') }
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container-fluid
+            %a{ :class=>"btn btn-navbar", "data-toggle"=>"collapse", "data-target"=>".nav-collapse" }
+              %span{ :class=>"icon-bar" }
+              %span{ :class=>"icon-bar" }
+              %span{ :class=>"icon-bar" }
+            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
+            - if current_user
+              .nav-collapse.collapse
+                = render partial: 'layouts/navigation'
+                = render partial: 'layouts/user'
+                = render partial: 'layouts/notifications'
 
-    - if current_user.try(:is_admin) && controller_name != 'organizations'
-      .container-fluid
-        = render 'shared/as_user'
-    != content_for?(:content) ? yield(:content) : yield
+      .padding6top
+        - if current_user.try(:is_admin) && controller_name != 'organizations'
+          .container-fluid
+            = render 'shared/as_user'
+        != content_for?(:content) ? yield(:content) : yield
+
+      - unless controller_name == 'documents'
+        #push
 
     - unless controller_name == 'documents'
       = render 'layouts/footer'

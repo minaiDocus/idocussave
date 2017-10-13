@@ -20,55 +20,57 @@
       = stylesheet_link_tag "account/#{controller_name}"
 
   %body#organization
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container-fluid
-          %a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          %a.logo{ href: root_path }
-            = image_tag 'logo/tiny_logo.png', :alt => 'logo'
-          .nav-collapse.collapse
-            = render partial: 'layouts/navigation'
-            = render partial: 'layouts/user'
-            = render partial: 'layouts/notifications'
+    #wrap
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container-fluid
+            %a.btn.btn-navbar{ 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+              %span.icon-bar
+              %span.icon-bar
+              %span.icon-bar
+            %a.logo{ href: root_path }
+              = image_tag 'logo/tiny_logo.png', :alt => 'logo'
+            .nav-collapse.collapse
+              = render partial: 'layouts/navigation'
+              = render partial: 'layouts/user'
+              = render partial: 'layouts/notifications'
 
-    .container-fluid
-      = render 'shared/as_user'
+      .container-fluid.padding6top
+        = render 'shared/as_user'
 
-      .alerts
-        = render partial: 'shared/messages'
+        .alerts
+          = render partial: 'shared/messages'
 
-      .row-fluid
-        .span2.margin1bottom
-          .box.sidebar-nav
-            %ul.nav.nav-list
-              %li.nav-header= @organization.name
-              %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps)) && !request.path.match(/customers/)) ? 'active' : '') }
-                = link_to 'Paramètres', account_organization_path(@organization)
-              %li{ class: (controller_name == 'groups' ? 'active' : '') }
-                = link_to 'Groupes', account_organization_groups_path(@organization)
-              - if is_leader? || @user.can_manage_collaborators?
-                %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
-                  = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
-              - if @organization.is_active
-                - if is_leader? || @user.can_manage_journals?
-                  %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
-                    = link_to 'Journaux comptables partagés', account_organization_journals_path(@organization)
-              %li{ class: (request.path.match(/customers/) ? 'active' : '') }
-                = link_to 'Clients', account_organization_customers_path(@organization)
-              - if @organization.is_active
-                %li{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
-                  = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization)
-              %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports)) ? 'active' : '') }
-                = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
-              %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
-                = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
-              %li{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
-                = link_to 'Accès clients multi-dossiers', account_organization_account_sharings_path(@organization)
-        .span10
-          != yield
+        .row-fluid
+          .span2.margin1bottom
+            .box.sidebar-nav
+              %ul.nav.nav-list
+                %li.nav-header= @organization.name
+                %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps)) && !request.path.match(/customers/)) ? 'active' : '') }
+                  = link_to 'Paramètres', account_organization_path(@organization)
+                %li{ class: (controller_name == 'groups' ? 'active' : '') }
+                  = link_to 'Groupes', account_organization_groups_path(@organization)
+                - if is_leader? || @user.can_manage_collaborators?
+                  %li{ class: ((controller_name.in?(%w(collaborators rights)) || (controller_name == 'file_storage_authorizations' and params[:collaborator_id].present?)) ? 'active' : '') }
+                    = link_to 'Collaborateurs', account_organization_collaborators_path(@organization)
+                - if @organization.is_active
+                  - if is_leader? || @user.can_manage_journals?
+                    %li{ class: ((controller_name == 'journals' && params[:customer_id].blank?) ? 'active' : '') }
+                      = link_to 'Journaux comptables partagés', account_organization_journals_path(@organization)
+                %li{ class: (request.path.match(/customers/) ? 'active' : '') }
+                  = link_to 'Clients', account_organization_customers_path(@organization)
+                - if @organization.is_active
+                  %li{ class: (controller_name == 'account_number_rules' ? 'active' : '') }
+                    = link_to "Affectations bancaires (iDo'FacBanque)", account_organization_account_number_rules_path(@organization)
+                %li{ class: (controller_name.in?(%w(pre_assignments pre_assignment_delivery_errors pack_reports)) ? 'active' : '') }
+                  = link_to 'Pré-affectations', account_organization_pre_assignments_path(@organization)
+                %li{ class: (controller_name.in?(%w(paper_set_orders)) ? 'active' : '') }
+                  = link_to 'Commande Kit Courriers', account_organization_paper_set_orders_path(@organization)
+                %li{ class: (controller_name.in?(%w(account_sharings account_sharing_groups guest_collaborators)) ? 'active' : '') }
+                  = link_to 'Accès clients multi-dossiers', account_organization_account_sharings_path(@organization)
+          .span10
+            != yield
+      #push
 
     = render 'layouts/footer'
 

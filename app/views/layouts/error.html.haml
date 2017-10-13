@@ -6,25 +6,28 @@
     %link{ rel: 'shortcut icon', type: 'image/ico', href: image_path('favicon.ico') }
     = stylesheet_link_tag 'application'
   %body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container
-          %a{ class: 'btn btn-navbar', 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
-            %span{ class: 'icon-bar' }
-            %span{ class: 'icon-bar' }
-            %span{ class: 'icon-bar' }
-          = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
-          - if current_user
-            %p{ class: 'navbar-text pull-right' }
-              %span{ style: 'color:#999;'} Connecté en tant que
-              = link_to current_user.email, root_path
-              |
-              = link_to 'déconnexion', destroy_user_session_path, method: :delete
-          - else
-            %p{ class: 'navbar-text pull-right' }
-              = link_to 'Connexion', new_user_session_path
+    #wrap
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container
+            %a{ class: 'btn btn-navbar', 'data-toggle' => 'collapse', 'data-target' => '.nav-collapse' }
+              %span{ class: 'icon-bar' }
+              %span{ class: 'icon-bar' }
+              %span{ class: 'icon-bar' }
+            = link_to image_tag('logo/tiny_logo.png', alt: 'logo'), root_path, class: 'logo'
+            - if current_user
+              %p{ class: 'navbar-text pull-right' }
+                %span{ style: 'color:#999;'} Connecté en tant que
+                = link_to current_user.email, root_path
+                |
+                = link_to 'déconnexion', destroy_user_session_path, method: :delete
+            - else
+              %p{ class: 'navbar-text pull-right' }
+                = link_to 'Connexion', new_user_session_path
 
-    != yield
+      .padding6top
+        != yield
+      #push
 
     = render 'layouts/footer'
 
