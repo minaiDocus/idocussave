@@ -10,11 +10,12 @@ class ApplicationController < ActionController::Base
   around_filter :log_visit
 
   def after_sign_in_path_for(resource_or_scope)
-    if session[:targeted_path]
-      path = session[:targeted_path]
-      session[:targeted_path] = nil
-      path
-    else
+    # TODO : reactivate when paths are sanitized
+    # if session[:targeted_path]
+    #   path = session[:targeted_path]
+    #   session[:targeted_path] = nil
+    #   path
+    # else
       case resource_or_scope
       when :user, User
         root_url
@@ -23,7 +24,7 @@ class ApplicationController < ActionController::Base
       else
         super
       end
-    end
+    # end
   end
 
 
@@ -34,6 +35,7 @@ class ApplicationController < ActionController::Base
 
   def login_user!
     unless current_user && request.path.match(/\A\/users.*/)
+      # TODO : find a way to clean path
       session[:targeted_path] = request.path
     end
     authenticate_user!
