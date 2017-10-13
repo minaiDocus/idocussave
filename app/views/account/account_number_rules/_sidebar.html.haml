@@ -12,7 +12,7 @@
   = label_tag 'account_number_rule_contains[rule_type]', t('activerecord.models.account_number_rule.attributes.rule_type')
   = select_tag 'account_number_rule_contains[rule_type]', options_for_select(rule_type_options_for_select, (params[:account_number_rule_contains][:rule_type] rescue nil)), include_blank: true, class: 'span12'
   = label_tag 'account_number_rule_contains[categorization]', t('activerecord.models.account_number_rule.attributes.categorization')
-  = select_tag 'account_number_rule_contains[categorization]', options_for_select(@organization.account_number_rules.map(&:categorization).uniq, (params[:account_number_rule_contains][:categorization] rescue '')), class: 'span12'
+  = select_tag 'account_number_rule_contains[categorization]', options_for_select(@organization.account_number_rules.map(&:categorization).uniq, (params[:account_number_rule_contains][:categorization] rescue '')), include_blank: true, class: 'span12'
   = label_tag 'account_number_rule_contains[customer_code]', t('activerecord.models.account_number_rule.attributes.customer_code')
   = text_field_tag 'account_number_rule_contains[customer_code]', (params[:account_number_rule_contains][:customer_code] rescue ''), class: 'span12'
   = label_tag 'account_number_rule_contains[content]', t('activerecord.models.account_number_rule.attributes.content')
