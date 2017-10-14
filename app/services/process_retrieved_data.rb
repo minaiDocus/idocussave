@@ -6,7 +6,7 @@ class ProcessRetrievedData
   end
 
   def execute
-    log "[#{@retrieved_data.user.code}][#{@retrieved_data.id}] start"
+    logger.info "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start"
     start_time = Time.now
     user = @retrieved_data.user
     connections = @retrieved_data.content['connections']
@@ -225,7 +225,7 @@ class ProcessRetrievedData
       end
     end
 
-    log "[#{user.code}][#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
+    logger.info "[#{user.code}][RetrievedData:#{@retrieved_data.id}] done: #{(Time.now - start_time).round(3)} sec"
 
     if @retrieved_data.error?
       addresses = Array(Settings.first.try(:notify_errors_to))
@@ -308,13 +308,7 @@ private
       operation.date < 1.week.ago.to_date
   end
 
-  def log(message)
-    $remote_lock.synchronize 'ProcessRetrievedDataLog', expiry: 3.seconds do
-      logger.info(message)
-    end
-  end
-
   def logger
-    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_process_retrieved_data.log")
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end

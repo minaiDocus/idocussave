@@ -5,7 +5,7 @@ class SynchronizeRetriever
   end
 
   def execute
-    log "[#{@retriever.user.code}][#{@retriever.budgea_id}][#{@retriever.service_name}] start - #{@retriever.state}"
+    logger.info "[#{@retriever.user.code}][Retriever:#{@retriever.budgea_id}][#{@retriever.service_name}] start - #{@retriever.state}"
     start_time = Time.now
     if @retriever.connector.is_budgea_active?
       begin
@@ -16,18 +16,12 @@ class SynchronizeRetriever
       rescue RemoteLock::Error
       end
     end
-    log "[#{@retriever.user.code}][#{@retriever.budgea_id}][#{@retriever.service_name}] done - #{@retriever.state} (#{(Time.now - start_time).round(3)} sec)"
+    logger.info "[#{@retriever.user.code}][Retriever:#{@retriever.budgea_id}][#{@retriever.service_name}] done - #{@retriever.state} (#{(Time.now - start_time).round(3)} sec)"
   end
 
 private
 
-  def log(message)
-    $remote_lock.synchronize 'SynchronizeRetrieverLog', expiry: 1.second do
-      logger.info(message)
-    end
-  end
-
   def logger
-    @@logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_retriever_sync.log")
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
   end
 end
