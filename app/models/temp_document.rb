@@ -34,7 +34,9 @@ class TempDocument < ActiveRecord::Base
   end
 
   after_save do |temp_document|
-    Rails.cache.write(['user', temp_document.user.id, 'temp_documents', 'last_updated_at'], Time.now.to_i)
+    unless Rails.env.test?
+      Rails.cache.write(['user', temp_document.user.id, 'temp_documents', 'last_updated_at'], Time.now.to_i)
+    end
   end
 
   scope :scan,              -> { where(delivery_type: 'scan') }
