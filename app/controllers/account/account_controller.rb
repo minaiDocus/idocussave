@@ -25,16 +25,16 @@ class Account::AccountController < ApplicationController
 
   def last_scans
     @last_kits     = Rails.cache.fetch ['user', @user.id, 'last_kits'], expires_in: 5.minutes do
-      PaperProcess.where(user_id: user_ids).kits.order(updated_at: :desc).includes(:user).limit(5).to_a
+      PaperProcess.where(user_id: user_ids).kits.order(updated_at: :desc).includes({ user: :organization }).limit(5).to_a
     end
     @last_receipts = Rails.cache.fetch ['user', @user.id, 'last_receipts'], expires_in: 5.minutes do
-      PaperProcess.where(user_id: user_ids).receipts.order(updated_at: :desc).includes(:user).limit(5).to_a
+      PaperProcess.where(user_id: user_ids).receipts.order(updated_at: :desc).includes({ user: :organization }).limit(5).to_a
     end
     @last_scanned  = Rails.cache.fetch ['user', @user.id, 'last_scanned'], expires_in: 5.minutes do
       PeriodDocument.where(user_id: user_ids).where.not(scanned_at: [nil]).order(scanned_at: :desc).includes(:pack).limit(5).to_a
     end
     @last_returns  = Rails.cache.fetch ['user', @user.id, 'last_returns'], expires_in: 5.minutes do
-      PaperProcess.where(user_id: user_ids).returns.order(updated_at: :desc).includes(:user).limit(5).to_a
+      PaperProcess.where(user_id: user_ids).returns.order(updated_at: :desc).includes({ user: :organization }).limit(5).to_a
     end
 
     render partial: 'last_scans'
@@ -42,7 +42,7 @@ class Account::AccountController < ApplicationController
 
   def last_uploads
     @last_uploads = Rails.cache.fetch ['user', @user.id, 'last_uploads', temp_documents_key] do
-      TempDocument.where(user_id: user_ids).upload.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+      TempDocument.where(user_id: user_ids).upload.order(created_at: :desc).includes({ user: :organization }, :piece, :temp_pack).limit(10).to_a
     end
 
     render partial: 'last_uploads'
@@ -50,7 +50,7 @@ class Account::AccountController < ApplicationController
 
   def last_dematbox_scans
     @last_dematbox_scans = Rails.cache.fetch ['user', @user.id, 'last_dematbox_scans', temp_documents_key] do
-      TempDocument.where(user_id: user_ids).dematbox_scan.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+      TempDocument.where(user_id: user_ids).dematbox_scan.order(created_at: :desc).includes({ user: :organization }, :piece, :temp_pack).limit(10).to_a
     end
 
     render partial: 'last_dematbox_scans'
@@ -58,11 +58,11 @@ class Account::AccountController < ApplicationController
 
   def last_retrieved
     @last_retrieved = Rails.cache.fetch ['user', @user.id, 'last_retrieved', temp_documents_key] do
-      TempDocument.where(user_id: user_ids).retrieved.order(created_at: :desc).includes(:user, :piece, :temp_pack).limit(10).to_a
+      TempDocument.where(user_id: user_ids).retrieved.order(created_at: :desc).includes({ user: :organization }, :piece, :temp_pack).limit(10).to_a
     end
 
     @last_operations = Rails.cache.fetch ['user', @user.id, 'last_operations', operations_key] do
-      Operation.where(user_id: user_ids).order(created_at: :desc).includes(:user, :bank_account).limit(10).to_a
+      Operation.where(user_id: user_ids).order(created_at: :desc).includes({ user: :organization }, :bank_account).limit(10).to_a
     end
 
     render partial: 'last_retrieved'
