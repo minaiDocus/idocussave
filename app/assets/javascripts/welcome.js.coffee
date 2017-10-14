@@ -1,4 +1,5 @@
 get_last_content_for = (name) ->
+  $('.content.' + name).html('<div class="loading-data"></div>');
   $.get '/account/account/' + name, (data) ->
     $('.content.' + name).html(data)
 
