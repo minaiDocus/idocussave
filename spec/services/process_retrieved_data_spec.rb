@@ -700,6 +700,21 @@ describe ProcessRetrievedData do
       expect(@retriever.is_new_password_needed).to be true
     end
 
+    it 'changes state to error because an action is needed on the web site' do
+      retrieved_data = RetrievedData.new
+      retrieved_data.user = @user
+      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'action_needed.json')))
+      retrieved_data.save
+
+      ProcessRetrievedData.new(retrieved_data).execute
+
+      @retriever.reload
+      expect(@retriever).to be_error
+      expect(@retriever.error_message).to eq "Vous devez valider les CGU."
+      expect(@retriever).to be_budgea_connection_failed
+      expect(@retriever.budgea_error_message).to eq "Vous devez valider les CGU."
+    end
+
     it 'changes state to waiting_additionnal_info' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
