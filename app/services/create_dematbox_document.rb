@@ -54,7 +54,7 @@ class CreateDematboxDocument
         @temp_document = AddTempDocumentToTempPack.execute(pack, file, options)
       end
 
-      DematboxNotifyUploadedWorker.perform_async(@temp_document.id) if Rails.env != 'test'
+      DematboxNotifyUploadedWorker.perform_in(5.seconds, @temp_document.id) if Rails.env != 'test'
     end
 
     clean_tmp
