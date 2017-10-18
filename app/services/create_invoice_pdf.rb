@@ -1,6 +1,5 @@
 class CreateInvoicePdf
   class << self
-    # TODO: make it idempotent
     def for_all
       time = 1.month.ago.beginning_of_month + 15.days
 
@@ -13,24 +12,26 @@ class CreateInvoicePdf
 
       Organization.billed.order(created_at: :asc).each do |organization|
         organization_period = organization.periods.where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date).first
+        periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
+
+        next if organization_period.nil?
+        next if organization_period.invoices.present?
+        next if periods.empty? && organization_period.price_in_cents_wo_vat == 0
+        next if organization.addresses.select{ |a| a.is_for_billing }.empty?
+
         #Update discount only for organization and when generating invoice
         DiscountBillingService.update_period(organization_period)
 
-        unless organization_period.invoices.present?
-          periods = Period.where(user_id: organization.customers.map(&:id)).where('start_date <= ? AND end_date >= ?', time.to_date, time.to_date)
-          if periods.count > 0 && organization.addresses.select{ |a| a.is_for_billing }.count > 0
-            puts "Generating invoice for organization : #{organization.name}"
-            invoice = Invoice.new
-            invoice.organization = organization
-            invoice.user         = organization.leader
-            invoice.period       = organization_period
-            invoice.save
-            print "-> Invoice #{invoice.number}..."
-            CreateInvoicePdf.new(invoice).execute
-            print "done\n"
-            InvoiceMailer.delay(queue: :high).notify(invoice)
-          end
-        end
+        puts "Generating invoice for organization : #{organization.name}"
+        invoice = Invoice.new
+        invoice.organization = organization
+        invoice.user         = organization.leader
+        invoice.period       = organization_period
+        invoice.save
+        print "-> Invoice #{invoice.number}..."
+        CreateInvoicePdf.new(invoice).execute
+        print "done\n"
+        InvoiceMailer.delay(queue: :high).notify(invoice)
       end
       Invoice.archive
     end
