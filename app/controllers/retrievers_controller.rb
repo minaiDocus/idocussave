@@ -14,10 +14,17 @@ class RetrieversController < ApplicationController
         retrieved_data.save
         render text: '', status: :ok
       else
+        logger.info [params['user']['id'], access_token].join(' - ')
         render text: '', status: :unauthorized
       end
     else
       render text: '', status: :unauthorized
     end
+  end
+
+private
+
+  def logger
+    @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_debug_retriever_callback.log")
   end
 end
