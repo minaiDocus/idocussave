@@ -2,7 +2,8 @@
   .centered.clearfix
     .footer-logo
       .logo-container
-        = image_tag('logo/logo.png', alt: 'logo', class: 'logo')
+        = link_to 'https://www.idocus.com', target: '_blank' do
+          = image_tag('logo/tiny_logo.png', alt: 'logo', class: 'logo')
       .social
         %a.facebook{ href: 'https://www.facebook.com/idocus/', target: '_blank' }
           %svg{ viewbox: '0 0 33 33' }
