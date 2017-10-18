@@ -68,7 +68,8 @@ class SendToFTP < SendToStorage
   end
 
   def manageable_failure?(error)
-    error.class == Net::FTPPermError && error.message.match(/Login incorrect/)
+    (error.class == Net::FTPPermError && error.message.match(/Login incorrect/)) ||
+    (error.class == Errno::ENOTCONN && error.message.match(/Transport endpoint is not connected/))
   end
 
   def manage_failure(error)

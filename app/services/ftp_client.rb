@@ -13,7 +13,7 @@ class FTPClient
       Timeout::timeout grace_time do
         @client.send name, *args, &block
       end
-    rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED, Timeout::Error, Net::FTPTempError, EOFError
+    rescue Errno::ETIMEDOUT, Errno::ECONNREFUSED, Errno::ENOTCONN, Timeout::Error, Net::FTPTempError, EOFError
       retries += 1
       if retries < 3
         min_sleep_seconds = Float(2 ** (retries/2.0))
