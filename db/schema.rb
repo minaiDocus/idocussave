@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171010193737) do
+ActiveRecord::Schema.define(version: 20171019185646) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1611,11 +1611,11 @@ ActiveRecord::Schema.define(version: 20171010193737) do
 
   create_table "retrieved_data", force: :cascade do |t|
     t.text     "state",                    limit: 65535
-    t.text     "content",                  limit: 16777215
+    t.text     "content",                  limit: 4294967295
     t.text     "error_message",            limit: 16777215
     t.text     "processed_connection_ids", limit: 65535
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.integer  "user_id",                  limit: 4
   end
 
