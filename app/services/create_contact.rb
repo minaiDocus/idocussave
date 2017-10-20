@@ -17,6 +17,8 @@ class CreateContact
       contact.reset_password_sent_at = Time.now
       contact.save!
 
+      contact.create_options
+
       WelcomeMailer.welcome_guest_collaborator(contact, token).deliver_later
     end
 
