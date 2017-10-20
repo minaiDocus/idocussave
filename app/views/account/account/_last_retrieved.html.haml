@@ -8,7 +8,8 @@
           %th Service
           %th Nom original
           %th Nom iDocus
-          %th Client
+          - if @user.is_prescriber
+            %th Client
       %tbody
         - @last_retrieved.each do |temp_document|
           - cache temp_document do
@@ -17,7 +18,8 @@
               %td= temp_document.retriever_service_name
               %td= temp_document.original_file_name
               %td= temp_document.piece.try(:name) || temp_document.temp_pack.name.sub(' all', '')
-              %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)
+              - if @user.is_prescriber
+                %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)
 .row-fluid.margin1top
   .span12
     %h4 Dernières opérations récupérées
@@ -29,7 +31,8 @@
           %th Compte
           %th Libellé
           %th Montant
-          %th client
+          - if @user.is_prescriber
+            %th client
       %tbody
         - @last_operations.each do |operation|
           - cache operation do
@@ -39,4 +42,5 @@
               %td= operation.bank_account.try(:number)
               %td= operation.label
               %td.amount= format_price_00((operation.amount * 100).round) + ' €'
-              %td= link_to operation.user.company, account_organization_customer_path(operation.user.organization, operation.user)
+              - if @user.is_prescriber
+                %td= link_to operation.user.company, account_organization_customer_path(operation.user.organization, operation.user)

@@ -7,7 +7,8 @@
           %th.date Date
           %th Nom original
           %th Nom iDocus
-          %th Client
+          - if @user.is_prescriber
+            %th Client
       %tbody
         - @last_uploads.each do |temp_document|
           - cache temp_document do
@@ -15,4 +16,5 @@
               %td.date= l temp_document.created_at
               %td= temp_document.original_file_name
               %td= temp_document.piece.try(:name) || temp_document.temp_pack.name.sub(' all', '')
-              %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)
+              - if @user.is_prescriber
+                %td= link_to temp_document.user.company, account_organization_customer_path(temp_document.user.organization, temp_document.user)
