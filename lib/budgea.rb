@@ -281,11 +281,13 @@ class Budgea
                            'Site web indisponible.'
                          when 'bug'
                            'Service indisponible.'
+                         when 'actionNeeded'
+                           'Veuillez confirmer les nouveaux termes et conditions.'
                          else
                            nil
                          end
         if result['message'] && result['message'].match(/Can't force synchronization of connection/)
-          @error_message = 'Ne peut pas forcer la synchronisation.'
+          @error_message = 'Limite de synchronisation atteint.'
         end
         (collection_name && result[collection_name]) || result
       else

@@ -24,7 +24,7 @@ class SyncBudgeaConnection
           client.trigger_connection(@retriever.budgea_id)
         end
 
-        if client.response.code.in? [200, 202]
+        if client.response.code.in?([200, 202]) && client.error_message.nil?
           if @retriever.budgea_id.nil?
             @retriever.budgea_id = data['id']
             @retriever.sync_at   = Time.parse data['last_update'] if data['last_update'].present?

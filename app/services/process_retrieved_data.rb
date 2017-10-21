@@ -198,9 +198,7 @@ class ProcessRetrievedData
                 retriever.pause_budgea_connection
               end
             when 'actionNeeded'
-              message = 'Une action sur le site web du fournisseur est nécessaire.'
-              message = 'Une action sur le site web de la banque est nécessaire.' if retriever.bank?
-              retriever.update budgea_error_message: connection['error_message'].presence || message
+              retriever.update budgea_error_message: 'Veuillez confirmer les nouveaux termes et conditions.'
               retriever.fail_budgea_connection
             when 'websiteUnavailable'
               retriever.update(budgea_error_message: 'Site web indisponible.')

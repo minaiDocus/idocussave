@@ -3,7 +3,7 @@
     {
       "accounts" : null,
       "error" : "actionNeeded",
-      "error_message": "Vous devez valider les CGU.",
+      "error_message": "Please confirm the new terms and conditions",
       "expire" : null,
       "id" : 7,
       "id_user" : 7,

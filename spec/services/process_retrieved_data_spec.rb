@@ -710,9 +710,9 @@ describe ProcessRetrievedData do
 
       @retriever.reload
       expect(@retriever).to be_error
-      expect(@retriever.error_message).to eq "Vous devez valider les CGU."
+      expect(@retriever.error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq "Vous devez valider les CGU."
+      expect(@retriever.budgea_error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
     end
 
     it 'changes state to waiting_additionnal_info' do
