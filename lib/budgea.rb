@@ -13,11 +13,12 @@ class Budgea
       config.client_id     = new_config['client_id']     if new_config['client_id']
       config.client_secret = new_config['client_secret'] if new_config['client_secret']
       config.redirect_uri  = new_config['redirect_uri']  if new_config['redirect_uri']
+      config.proxy         = new_config['proxy']         if new_config['proxy']
     end
   end
 
   class Configuration
-    attr_accessor :domain, :client_id, :client_secret, :redirect_uri
+    attr_accessor :domain, :client_id, :client_secret, :redirect_uri, :proxy
   end
 
   class Client
@@ -31,6 +32,7 @@ class Budgea
         base_url:      "https://#{Budgea.config.domain}/2.0",
         client_id:     Budgea.config.client_id,
         client_secret: Budgea.config.client_secret,
+        proxy:         Budgea.config.proxy
       }
       # NOTE access_token is used only for limiting the scope of a request to the user only, because we could use the couple client_id/client_secret or manage_token to do all the request since it's all server side
       @access_token = access_token
@@ -40,6 +42,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/auth/init',
         method:  :post,
+        proxy:   @settings[:proxy],
         headers: { accept: :json },
         params:  authentification_params
       )
@@ -61,6 +64,7 @@ class Budgea
         @request = Typhoeus::Request.new(
           @settings[:base_url] + '/users/me',
           method:  :delete,
+          proxy:   @settings[:proxy],
           headers: headers
         )
         @response = @request.run
@@ -79,6 +83,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/banks?expand=fields',
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: { accept: :json },
         params:  authentification_params
       )
@@ -89,6 +94,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/providers?expand=fields',
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: { accept: :json },
         params:  authentification_params
       )
@@ -100,6 +106,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/categories',
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: { accept: :json },
         params:  authentification_params
       )
@@ -110,6 +117,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/profiles',
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       run_and_parse_response 'profiles'
@@ -119,6 +127,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/#{user_id}/token",
         method:  :post,
+        proxy:   @settings[:proxy],
         headers: headers,
         params:  { application: 'sharedAccess' }
       )
@@ -129,6 +138,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/token',
         method:  :delete,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       @response = @request.run
@@ -139,6 +149,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/connectors',
         method:  :post,
+        proxy:   @settings[:proxy],
         headers: { accept: :json },
         params:  authentification_params.merge(params)
       )
@@ -149,6 +160,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/connections',
         method:  :post,
+        proxy:   @settings[:proxy],
         headers: headers,
         params:  params
       )
@@ -159,6 +171,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/connections/#{id}",
         method:  :post,
+        proxy:   @settings[:proxy],
         headers: headers,
         body:    params
       )
@@ -169,6 +182,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/connections/#{id}",
         method:  :delete,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       @response = @request.run
@@ -179,6 +193,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/connections/#{id}",
         method:  :put,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       run_and_parse_response
@@ -188,6 +203,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + '/users/me/accounts',
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       run_and_parse_response 'accounts'
@@ -197,6 +213,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/accounts/#{account_id}/transactions",
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       run_and_parse_response 'transactions'
@@ -209,6 +226,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + path,
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       run_and_parse_response 'documents'
@@ -218,6 +236,7 @@ class Budgea
       @request = Typhoeus::Request.new(
         @settings[:base_url] + "/users/me/documents/#{document_id}/file",
         method:  :get,
+        proxy:   @settings[:proxy],
         headers: headers
       )
       @response = @request.run

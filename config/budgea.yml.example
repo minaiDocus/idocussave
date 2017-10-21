@@ -6,9 +6,11 @@ defaults: &defaults
 
 development:
   <<: *defaults
+  proxy: socks5://127.0.0.1:8080
 
 test:
   <<: *defaults
+  proxy: socks5://127.0.0.1:8080
 
 staging:
   <<: *defaults

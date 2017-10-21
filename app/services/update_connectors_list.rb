@@ -1,11 +1,10 @@
 class UpdateConnectorsList
   def self.execute
-    log = Logger.new("#{Rails.root}/log/#{Rails.env}.log")
     new_connectors = []
 
     BudgeaConnector.flush_all_cache
     BudgeaConnector.all.each do |budgea_connector|
-      unless budgea_connector['name'] == 'Connecteur de test'
+      unless Rails.env.production? && budgea_connector['name'] == 'Connecteur de test'
         unless Connector.where(name: budgea_connector['name']).first
           connector = Connector.new
           connector.name         = budgea_connector['name']
@@ -25,7 +24,7 @@ class UpdateConnectorsList
     end
 
     new_connectors.each do |new_connector|
-      log.info "Adding new connector : #{new_connector.name}"
+      Rails.logger.info "Adding new connector : #{new_connector.name}"
     end
   end
 end
