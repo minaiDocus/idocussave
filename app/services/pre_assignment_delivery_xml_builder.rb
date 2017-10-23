@@ -23,7 +23,11 @@ class PreAssignmentDeliveryXmlBuilder
       if is_exercises_present?
         @delivery.error_message = @report.delivery_message = "L'exercice correspondant n'est pas défini dans iBiza."
       else
-        @delivery.error_message = @report.delivery_message = @ibiza.client.response.message.to_s
+        if @ibiza.client.response.message.to_s.size > 255
+          @delivery.error_message = @report.delivery_message = 'Erreur inconnu.'
+        else
+          @delivery.error_message = @report.delivery_message = @ibiza.client.response.message.to_s
+        end
       end
 
       @report.save
