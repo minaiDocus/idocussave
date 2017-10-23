@@ -379,30 +379,6 @@ describe ProcessRetrievedData do
     end
   end
 
-  it 'updates an old (fiduceo) bank account' do
-    bank_account = BankAccount.new
-    bank_account.user      = @user
-    bank_account.retriever = @retriever
-    bank_account.api_id    = '1234'
-    bank_account.api_name  = 'fiduceo'
-    bank_account.bank_name = @retriever.service_name
-    bank_account.name      = 'Compte CH.'
-    bank_account.number    = '3002900000'
-    bank_account.save
-
-    retrieved_data = RetrievedData.new
-    retrieved_data.user = @user
-    retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
-    retrieved_data.save
-
-    ProcessRetrievedData.new(retrieved_data).execute
-
-    bank_account.reload
-    expect(bank_account.api_id).to eq '17'
-    expect(bank_account.api_name).to eq 'budgea'
-    expect(bank_account.name).to eq 'Compte chèque'
-  end
-
   context 'a configured and used bank account exists' do
     before(:each) do
       @bank_account = BankAccount.new
