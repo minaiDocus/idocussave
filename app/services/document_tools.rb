@@ -171,7 +171,7 @@ class DocumentTools
   end
 
 
-  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false)
+  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, logger = Rails.logger)
     sizes     = Poppler::Document.new(target_file_path).pages.map(&:size)
     file_path = File.join(dir, 'stamp.pdf')
     
@@ -192,7 +192,7 @@ class DocumentTools
             text name, size: 10, align: :center
           end
         rescue Prawn::Errors::CannotFit
-          puts "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
+          logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
         end
       end
     end
@@ -205,10 +205,11 @@ class DocumentTools
     dir     = options[:dir] || '/tmp'
     origin = options[:origin] || 'scan'
     is_stamp_background_filled = options[:is_stamp_background_filled] || false
+    logger = options[:logger] || Rails.logger
 
     name = stamp_name(pattern, name, origin)
 
-    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled)
+    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, logger)
 
     Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
 

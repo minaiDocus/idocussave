@@ -45,7 +45,8 @@ class AccountingWorkflow::TempPackProcessor
 
           DocumentTools.create_stamped_file original_file_path, piece_file_path, user.stamp_name, piece_name, origin: temp_document.delivery_type,
                                                                                                                       is_stamp_background_filled: user.is_stamp_background_filled,
-                                                                                                                      dir: dir
+                                                                                                                      dir: dir,
+                                                                                                                      logger: logger
 
           pages_number = DocumentTools.pages_number piece_file_path
 
