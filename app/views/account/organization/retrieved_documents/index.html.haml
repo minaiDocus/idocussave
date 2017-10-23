@@ -17,7 +17,7 @@
             %th= sortable 'metadata.name',          'Nom original'
             %th Nom iDocus
             %th.pages= sortable :pages_number,      'Nb. pages'
-            %th.amount= sortable 'metadata.amount', 'Montant'
+            %th.amount                              Montant
         %tbody
           - @documents.each do |document|
             %tr
