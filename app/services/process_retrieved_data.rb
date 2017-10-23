@@ -25,9 +25,9 @@ class ProcessRetrievedData
                   user.bank_accounts
                 end
                 bank_account = bank_accounts.where(
-                  'api_id = ? OR (bank_name = ? AND number = ?)',
+                  'api_id = ? OR (name = ? AND number = ?)',
                   account['id'],
-                  retriever.service_name,
+                  account['name'],
                   account['number']
                 ).first
 
