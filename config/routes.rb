@@ -54,6 +54,8 @@ Idocus::Application.routes.draw do
 
   post 'retriever/callback', controller: 'retrievers', action: 'callback'
 
+  get '/docs/download', controller: 'account/docs', action: 'download'
+
   namespace :account do
     root to: 'account/account#index'
 

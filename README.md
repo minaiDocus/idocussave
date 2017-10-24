@@ -4,7 +4,6 @@
 Site web qui homogénise le stockage et la gestion des documents provenant de différentes sources pour en effectuer la comptabilité
 
 * Site vitrine : https://www.idocus.com
-* Documents : https://docs.idocus.com
 * Application :
   - Production : https://my.idocus.com
   - Administration : https://my.idocus.com/admin
