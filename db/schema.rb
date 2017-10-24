@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019185646) do
+ActiveRecord::Schema.define(version: 20171023202104) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1830,6 +1830,17 @@ ActiveRecord::Schema.define(version: 20171019185646) do
   add_index "subscriptions", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
   add_index "subscriptions", ["user_id"], name: "user_id", using: :btree
   add_index "subscriptions", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
+  create_table "temp_document_metadata", force: :cascade do |t|
+    t.datetime "date"
+    t.string   "name",             limit: 191
+    t.decimal  "amount",                       precision: 10, scale: 2
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
+    t.integer  "temp_document_id", limit: 4
+  end
+
+  add_index "temp_document_metadata", ["temp_document_id"], name: "index_temp_document_metadata_on_temp_document_id", using: :btree
 
   create_table "temp_documents", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255

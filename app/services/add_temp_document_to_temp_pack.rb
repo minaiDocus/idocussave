@@ -40,6 +40,16 @@ class AddTempDocumentToTempPack
 
       temp_document.save
 
+      if temp_document.metadata.present?
+        metadata2 = temp_document.metadata2 || temp_document.build_metadata2
+        metadata2.date   = temp_document.metadata['date']
+        metadata2.name   = temp_document.metadata['name'][0..190]
+        if temp_document.metadata['amount'].present?
+          metadata2.amount = temp_document.metadata['amount'] < 100_000_000 ? temp_document.metadata['amount'] : nil
+        end
+        metadata2.save
+      end
+
       if options[:is_content_file_valid]
         temp_document.pages_number = DocumentTools.pages_number(temp_document.content.path)
 
