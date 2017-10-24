@@ -1,7 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class AccountingPlan < ActiveRecord::Base
-  has_many :providers, -> { where(kind: 'provider') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable
-  has_many :customers,  -> { where(kind: 'customer') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable
+  has_many :providers, -> { where(kind: 'provider') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable, dependent: :destroy
+  has_many :customers, -> { where(kind: 'customer') }, class_name: 'AccountingPlanItem', as: :accounting_plan_itemable, dependent: :destroy
   has_many :vat_accounts, class_name: 'AccountingPlanVatAccount', inverse_of: :accounting_plan
 
   belongs_to :user

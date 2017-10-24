@@ -2,7 +2,9 @@
 require 'spec_helper'
 
 describe UpdateAccountingPlan do
-  before(:all) do
+  before(:each) do
+    DatabaseCleaner.start
+
     organization = create(:organization)
     @user = create(:user, ibiza_id: "{IDENTIFIER}")
     organization.members << @user
@@ -10,16 +12,13 @@ describe UpdateAccountingPlan do
     ibiza.organization = organization
     ibiza.save
     ibiza.update state: 'valid'
-  end
-
-  before(:each) do
     accounting_plan = AccountingPlan.new
     accounting_plan.user = @user
     accounting_plan.save
   end
 
   after(:each) do
-    @user.accounting_plan.destroy
+    DatabaseCleaner.clean
   end
 
   it "update user's accounting plan" do
@@ -28,6 +27,20 @@ describe UpdateAccountingPlan do
       expect(@user.accounting_plan.customers.size).to eq 3
       expect(@user.accounting_plan.providers.size).to eq 16
     end
+  end
+
+  it 'removes old accounting plan items' do
+    VCR.use_cassette('update_accounting_plan/accounting_plan') do
+      UpdateAccountingPlan.new(@user).execute
+    end
+
+    VCR.use_cassette('update_accounting_plan/accounting_plan') do
+      UpdateAccountingPlan.new(@user).execute
+    end
+
+    expect(@user.accounting_plan.customers.size).to eq 3
+    expect(@user.accounting_plan.providers.size).to eq 16
+    expect(AccountingPlanItem.count).to eq 19
   end
 
   it 'has error' do
