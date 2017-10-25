@@ -3,7 +3,7 @@ class Account::DocsController < Account::AccountController
     raise_not_found unless @user.is_prescriber
 
     dir = Rails.root.join('files', Rails.env, 'miscellaneous_docs')
-    list = Dir.chdir(dir) { Dir["*"] }
+    list = Dir.entries(dir).reject { |f| File.directory? f }
 
     raise_not_found unless params[:name].in?(list)
 
