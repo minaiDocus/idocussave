@@ -4,6 +4,10 @@
   - path = select_account_organization_customer_retrieved_documents_path(@organization, @customer)
 
 = form_tag path, method: :get, class: 'form form-horizontal filter margin0bottom' do
+  = hidden_field_tag :direction, sort_direction
+  = hidden_field_tag :sort, sort_column
+  = hidden_field_tag :per_page, per_page
+
   - if @transaction
     = label_tag 'document_contains[transaction_id]', 'Transaction'
     = l(@transaction.created_at)
@@ -33,6 +37,9 @@
 
   = label_tag 'document_contains[name]', 'Nom original'
   = text_field_tag 'document_contains[name]', (params[:document_contains][:name] rescue ''), class: 'span12'
+
+  = label_tag 'document_contains[amount]', 'Montant'
+  = text_field_tag 'document_contains[amount]', (params[:document_contains][:amount] rescue ''), class: 'span12'
 
   .margin2top
   = submit_tag t('filters.action'), class: 'btn btn-primary'

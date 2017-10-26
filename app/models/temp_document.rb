@@ -219,26 +219,25 @@ class TempDocument < ActiveRecord::Base
     if user
       if contains[:service_name]
         retriever_ids = user.retrievers.where("name LIKE ?", "%#{contains[:service_name]}%").pluck(:id)
-
         collection = collection.where(retriever_id: retriever_ids)
       elsif contains[:retriever_id]
         retriever = user.retrievers.find(contains[:retriever_id])
-
         collection = collection.where(retriever_id: retriever.id)
       end
 
       if contains[:transaction_id]
         transaction = user.fiduceo_transactions.find(contains[:transaction_id])
-
         documents = collection.where(fiduceo_id: transaction.retrieved_document_ids)
       end
     end
 
     if contains[:date]
       contains[:date].each do |operator, value|
-        collection = collection.where("created_at #{operator} '#{value}'")
+        collection = collection.where("temp_document_metadata.date #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
+    collection = collection.where("temp_document_metadata.name LIKE ?", "%#{contains[:name]}%") if contains[:name].present?
+    collection = collection.where("temp_document_metadata.amount = ?", contains[:amount].to_f) if contains[:amount].present?
 
     collection
   end

@@ -4,20 +4,20 @@
 
   .row-fluid
     .span12.box
-      %h3 Liste des documents du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@documents_count})
+      %h3 Liste des documents du client #{link_to @customer, account_organization_customer_retrievers_path(@organization, @customer)} (#{@documents.total_count})
   .row-fluid
     .span9.box
       = render partial: 'shared/list_options', locals: { collection: @documents }
       %table.table.table-bordered.table-condensed.table-striped.margin1top.margin0bottom
         %thead
           %tr
-            %th= sortable :created_at,              'Date de la récupération'
-            %th= sortable :retriever_id,            'Service'
-            %th= sortable 'metadata.date',          'Date'
-            %th= sortable 'metadata.name',          'Nom original'
+            %th= sortable :created_at,         'Date de la récupération'
+            %th= sortable :retriever_id,       'Service'
+            %th= sortable :date,               'Date'
+            %th= sortable :name,               'Nom original'
             %th Nom iDocus
-            %th.pages= sortable :pages_number,      'Nb. pages'
-            %th.amount                              Montant
+            %th.pages= sortable :pages_number, 'Nb. pages'
+            %th.amount= sortable :amount,      'Montant'
         %tbody
           - @documents.each do |document|
             %tr
