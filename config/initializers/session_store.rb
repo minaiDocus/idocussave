@@ -2,7 +2,7 @@
 
 # Idocus::Application.config.session_store :cookie_store, :key => '_idocus_session'
 
-Idocus::Application.config.session_store ActionDispatch::Session::CacheStore, expire_after: 1.day
+Idocus::Application.config.session_store ActionDispatch::Session::CacheStore, expire_after: nil
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

@@ -185,7 +185,7 @@ class ProcessRetrievedData
 
             case connection['error']
             when 'wrongpass'
-              error_message = connection['error_message'].presence || 'Mot de passe incorrecte.'
+              error_message = connection['error_message'].presence || 'Mot de passe incorrect.'
               retriever.update(
                 is_new_password_needed: true,
                 budgea_error_message: error_message
