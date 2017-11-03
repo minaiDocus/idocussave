@@ -32,6 +32,7 @@ class Account::FileStorageAuthorizationsController < Account::OrganizationContro
     params.require(:user).permit(
       :is_dropbox_extended_authorized,
       external_file_storage_attributes: [
+        :id,
         :is_dropbox_basic_authorized,
         :is_google_docs_authorized,
         :is_ftp_authorized,
