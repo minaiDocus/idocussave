@@ -18,6 +18,7 @@ class CreateContact
       contact.save!
 
       contact.create_options
+      contact.create_notify
 
       WelcomeMailer.welcome_guest_collaborator(contact, token).deliver_later
     end

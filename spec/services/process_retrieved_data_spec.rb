@@ -6,8 +6,10 @@ describe ProcessRetrievedData do
     DatabaseCleaner.start
     Timecop.freeze(Time.local(2017,1,4))
 
-    @user = FactoryGirl.create(:user, code: 'IDO%0001')
-    @user.options = UserOptions.create(user_id: @user.id)
+    @organization = FactoryGirl.create :organization, code: 'IDO'
+    @user = FactoryGirl.create(:user, code: 'IDO%0001', organization: @organization)
+    @user.create_options
+    @user.create_notify
     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
     @connector = FactoryGirl.create :connector
     @retriever = Retriever.new
@@ -36,6 +38,7 @@ describe ProcessRetrievedData do
       ProcessRetrievedData.new(retrieved_data).execute
 
       expect(@user.bank_accounts.count).to eq 0
+      expect(@user.notifications.count).to eq 0
     end
 
     it 'creates a bank account and an operation' do
@@ -48,6 +51,8 @@ describe ProcessRetrievedData do
 
       expect(@user.bank_accounts.count).to eq 1
       expect(@user.operations.count).to eq 1
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouvelle opération'
     end
   end
 
@@ -75,6 +80,8 @@ describe ProcessRetrievedData do
 
       expect(@user.bank_accounts.count).to eq 1
       expect(@user.operations.count).to eq 1
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouvelle opération'
     end
 
     it 'creates only one bank account, and 3 operations' do
@@ -89,6 +96,8 @@ describe ProcessRetrievedData do
 
       expect(@user.bank_accounts.count).to eq 2
       expect(@user.operations.count).to eq 3
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.message).to match(/^3/)
     end
 
     it 'does not create any operation' do
@@ -100,6 +109,7 @@ describe ProcessRetrievedData do
       ProcessRetrievedData.new(retrieved_data).execute
 
       expect(@user.operations.count).to eq 0
+      expect(@user.notifications.count).to eq 0
     end
 
     it 'destroys the bank account, but not the operation' do
@@ -132,6 +142,7 @@ describe ProcessRetrievedData do
       operation.reload
       expect(@user.bank_accounts.count).to eq 0
       expect(operation.api_id).to be_nil
+      expect(@user.notifications.count).to eq 0
     end
 
     context 'bank account has been detached from retriever' do
@@ -307,6 +318,9 @@ describe ProcessRetrievedData do
 
       expect(@operation3.api_id).to eq '2'
       expect(@operation3.label).to eq 'Paypal 7.58€'
+
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.message).to match(/^3/)
     end
 
     context '3 operations already exist' do
@@ -375,6 +389,9 @@ describe ProcessRetrievedData do
         # should detect '[CB] ...' here
         expect(@operation3.api_id).to eq '3'
         expect(@operation3.bank_account).to eq @bank_account
+
+        expect(@user.notifications.count).to eq 1
+        expect(@user.notifications.first.message).to match(/^3/)
       end
     end
   end
@@ -420,6 +437,9 @@ describe ProcessRetrievedData do
       expect(operation3.label).to eq 'Retrait DAB 100'
       expect(operation3.is_locked).to eq false
       expect(operation3.is_coming).to eq false
+
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.message).to match(/^3/)
     end
 
     it 'updates 1 operation' do
@@ -450,6 +470,8 @@ describe ProcessRetrievedData do
       expect(operation.label).to eq 'FACTURE CB RESTO Le Bois'
       expect(operation.is_locked).to eq true
       expect(operation.is_coming).to eq true
+
+      expect(@user.notifications.count).to eq 0
     end
 
     it 'unlocks 1 operation' do
@@ -480,6 +502,8 @@ describe ProcessRetrievedData do
       expect(operation.label).to eq 'FACTURE CB RESTO Le Bois'
       expect(operation.is_locked).to eq false
       expect(operation.is_coming).to eq false
+
+      expect(@user.notifications.count).to eq 0
     end
 
     it 'does not lock an operation' do
@@ -497,6 +521,9 @@ describe ProcessRetrievedData do
       expect(operation.label).to eq 'Retrait DAB 100'
       expect(operation.is_locked).to eq false
       expect(operation.is_coming).to eq false
+
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouvelle opération'
 
       Timecop.return
     end
@@ -517,6 +544,9 @@ describe ProcessRetrievedData do
       expect(operation.is_locked).to eq false
       expect(operation.is_coming).to eq false
 
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouvelle opération'
+
       Timecop.return
     end
 
@@ -535,6 +565,9 @@ describe ProcessRetrievedData do
       expect(operation.label).to eq 'Retrait DAB 100'
       expect(operation.is_locked).to eq true
       expect(operation.is_coming).to eq false
+
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouvelle opération'
 
       Timecop.return
     end
@@ -562,6 +595,8 @@ describe ProcessRetrievedData do
       expect(retrieved_data.processed_connection_ids).to eq [7]
       expect(@retriever).to be_ready
       expect(@user.temp_documents.count).to eq 0
+
+      expect(@user.notifications.count).to eq 0
     end
 
     it 'creates a document' do
@@ -579,6 +614,9 @@ describe ProcessRetrievedData do
       expect(retrieved_data.processed_connection_ids).to eq [7]
       expect(@retriever).to be_waiting_selection
       expect(@user.temp_documents.count).to eq 1
+
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Nouveau document'
     end
 
     it 'fails to fetch document' do
@@ -598,6 +636,8 @@ describe ProcessRetrievedData do
       expect(retrieved_data.processed_connection_ids).to be_empty
       expect(@retriever).to be_error
       expect(@retriever.error_message).to eq "Certains documents n'ont pas pu être récupérés."
+
+      expect(@user.notifications.count).to eq 0
     end
   end
 
@@ -640,6 +680,8 @@ describe ProcessRetrievedData do
       expect(retrieved_data.processed_connection_ids).to eq [7]
       expect(@retriever).to be_ready
       expect(@user.temp_documents.count).to eq 1
+
+      expect(@user.notifications.count).to eq 0
     end
   end
 
@@ -658,6 +700,8 @@ describe ProcessRetrievedData do
       expect(@retriever).to be_budgea_connection_failed
       expect(@retriever.budgea_error_message).to eq 'Mot de passe incorrect.'
       expect(@retriever.is_new_password_needed).to be true
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Mot de passe invalide'
     end
 
     it 'changes error_message' do
@@ -689,6 +733,8 @@ describe ProcessRetrievedData do
       expect(@retriever.error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
       expect(@retriever).to be_budgea_connection_failed
       expect(@retriever.budgea_error_message).to eq 'Veuillez confirmer les nouveaux termes et conditions.'
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Une action est nécessaire'
     end
 
     it 'changes state to waiting_additionnal_info' do
@@ -704,6 +750,8 @@ describe ProcessRetrievedData do
       expect(@retriever.error_message).to be_nil
       expect(@retriever).to be_budgea_connection_paused
       expect(@retriever.budgea_error_message).to be_nil
+      expect(@user.notifications.count).to eq 1
+      expect(@user.notifications.first.title).to eq 'Automate - Information supplémentaire nécessaire'
     end
   end
 

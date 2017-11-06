@@ -12,6 +12,9 @@ InitializePeriodsWorker:
 DocumentNotificationWorker:
   queue: default
   cron: '0 8 * * *'
+RetrieverNotificationWorker:
+  queue: default
+  cron: '0 8 * * *'
 ScansNotDeliveredNotificationWorker:
   queue: high
   cron: '0 1 * * *'

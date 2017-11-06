@@ -50,8 +50,19 @@ class Account::ProfilesController < Account::AccountController
   private
 
   def user_params
-    params.require(:user).permit(:is_reminder_email_active,
-                                 :is_document_notifier_active,
-                                 :is_mail_receipt_activated)
+    params.require(:user).permit(
+      notify_attributes: [
+        :id,
+        :to_send_docs,
+        :published_docs,
+        :reception_of_emailed_docs,
+        :r_site_unavailable,
+        :r_action_needed,
+        :r_bug,
+        :r_no_bank_account_configured,
+        :r_new_documents,
+        :r_new_operations
+      ]
+    )
   end
 end

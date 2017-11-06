@@ -41,7 +41,15 @@ class Notification < ActiveRecord::Base
         'account_sharing_request_denied',
         'account_sharing_request_canceled',
         'org_ftp_auth_failure',
-        'ftp_auth_failure'
+        'ftp_auth_failure',
+        'retriever_wrong_pass',
+        'retriever_info_needed',
+        'retriever_action_needed',
+        'retriever_website_unavailable',
+        'retriever_bug',
+        'retriever_no_bank_account_configured',
+        'retriever_new_documents',
+        'retriever_new_operations'
       ].freeze
     end
   end

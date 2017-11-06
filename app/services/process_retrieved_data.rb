@@ -17,6 +17,7 @@ class ProcessRetrievedData
           retriever = user.retrievers.where(budgea_id: connection['id']).order(created_at: :asc).first
           if retriever
             is_new_transaction_present = false
+            new_operations_count = 0
             if connection['accounts'].present?
               connection['accounts'].each do |account|
                 bank_accounts = if retriever.connector.is_fiduceo_active?
@@ -88,10 +89,12 @@ class ProcessRetrievedData
                           orphaned_operation.sandbox_bank_account = bank_account
                         else
                           orphaned_operation.bank_account = bank_account
+                          new_operations_count += 1 unless orphaned_operation.processed_at.present?
                         end
                         assign_attributes(bank_account, orphaned_operation, transaction)
                         orphaned_operation.api_id = transaction['id']
                         orphaned_operation.save
+
                       elsif transaction['deleted'].nil?
                         operation = if retriever.connector.is_fiduceo_active?
                           SandboxOperation.new(sandbox_bank_account_id: bank_account.id)
@@ -104,6 +107,8 @@ class ProcessRetrievedData
                         operation.api_name     = 'budgea'
                         assign_attributes(bank_account, operation, transaction)
                         operation.save
+
+                        new_operations_count += 1
                       end
                     end
                   end
@@ -111,7 +116,9 @@ class ProcessRetrievedData
               end
             end
 
-            is_new_document_present = false
+            initial_documents_count = retriever.temp_documents.count
+            initial_sandbox_documents_count = retriever.sandbox_documents.count
+
             unless retriever.bank?
               if connection['subscriptions'].present?
                 errors = []
@@ -149,7 +156,6 @@ class ProcessRetrievedData
                                 RetrievedDocument.new(retriever, document, temp_file_path)
                               end
                               is_success = true
-                              is_new_document_present = true
                             end
                           rescue Errno::ENOENT => e
                             error = e
@@ -183,6 +189,11 @@ class ProcessRetrievedData
               end
             end
 
+            new_documents_count = (retriever.temp_documents.count - initial_documents_count)
+            new_sandbox_documents_count = (retriever.sandbox_documents.count - initial_sandbox_documents_count)
+            is_new_document_present = new_documents_count > 0
+            is_new_document_present ||= new_sandbox_documents_count > 0
+
             case connection['error']
             when 'wrongpass'
               error_message = connection['error_message'].presence || 'Mot de passe incorrect.'
@@ -191,24 +202,37 @@ class ProcessRetrievedData
                 budgea_error_message: error_message
               )
               retriever.fail_budgea_connection
+
+              RetrieverNotification.new(retriever).notify_wrong_pass
             when 'additionalInformationNeeded'
               retriever.success_budgea_connection if retriever.budgea_connection_failed?
               if connection['fields'].present?
                 retriever.update(budgea_additionnal_fields: connection['fields'])
                 retriever.pause_budgea_connection
               end
+
+              RetrieverNotification.new(retriever).notify_info_needed
             when 'actionNeeded'
               retriever.update budgea_error_message: 'Veuillez confirmer les nouveaux termes et conditions.'
               retriever.fail_budgea_connection
+
+              RetrieverNotification.new(retriever).notify_action_needed
             when 'websiteUnavailable'
               retriever.update(budgea_error_message: 'Site web indisponible.')
               retriever.fail_budgea_connection
+
+              RetrieverNotification.new(retriever).notify_website_unavailable
             when 'bug'
               retriever.update(budgea_error_message: 'Service indisponible.')
               retriever.fail_budgea_connection
+
+              RetrieverNotification.new(retriever).notify_bug
             else
               if is_new_document_present || is_new_transaction_present || retriever.error?
                 retriever.success_budgea_connection
+
+                RetrieverNotification.new(retriever).notify_new_documents new_documents_count if new_documents_count > 0
+                RetrieverNotification.new(retriever).notify_new_operations new_operations_count if new_operations_count > 0
               end
             end
 

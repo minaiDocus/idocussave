@@ -22,6 +22,7 @@ class CreateCollaborator
       collaborator.save
 
       collaborator.create_options
+      collaborator.create_notify
 
       WelcomeMailer.welcome_collaborator(collaborator, token).deliver_later
     end

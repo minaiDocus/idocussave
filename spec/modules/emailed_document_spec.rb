@@ -388,8 +388,8 @@ describe EmailedDocument do
       Timecop.freeze(Time.local(2014,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      @user.options = UserOptions.new(is_upload_authorized: true)
-      @user.options.save
+      @user.create_options is_upload_authorized: true
+      @user.create_notify
 
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
       @journal.save

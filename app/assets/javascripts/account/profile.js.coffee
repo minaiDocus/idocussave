@@ -64,7 +64,7 @@ jQuery ->
     $(id).addClass('active')
     return false
 
-  $("#user_is_reminder_email_active").change ->
+  $("#user_notify_attributes_to_send_docs").change ->
     if !$(this).is(":checked")
       result = confirm("En décochant cette case, vous demandez à ne plus recevoir de mails automatiques de relance pour l'envoi de vos documents papier à iDocus.\nAfin de bénéficier pleinement du service, nous vous conseillons de respecter les dates préconisées par votre cabinet.")
       if result == false

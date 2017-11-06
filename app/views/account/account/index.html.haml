@@ -42,21 +42,21 @@
       .box
         %ul.nav.nav-tabs
           - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
-            %li{ class: ('active' if @user.options.dashboard_summary == 'last_scans') }
+            %li{ class: ('active' if @dashboard_summary == 'last_scans') }
               = link_to "iDo'Courrier",  '#last_scans',          class: 'last_scans',          data: { toggle: 'tab' }
-            %li{ class: ('active' if @user.options.dashboard_summary == 'last_uploads') }
+            %li{ class: ('active' if @dashboard_summary == 'last_uploads') }
               = link_to "iDo'Basique",   '#last_uploads',        class: 'last_uploads',        data: { toggle: 'tab' }
           - if @user.is_prescriber || @user.is_dematbox_authorized
-            %li{ class: ('active' if @user.options.dashboard_summary == 'last_dematbox_scans') }
+            %li{ class: ('active' if @dashboard_summary == 'last_dematbox_scans') }
               = link_to "iDo'Box",       '#last_dematbox_scans', class: 'last_dematbox_scans', data: { toggle: 'tab' }
           - if @user.is_prescriber || @user.options.try(:is_retriever_authorized)
-            %li{ class: ('active' if @user.options.dashboard_summary == 'last_retrieved') }
+            %li{ class: ('active' if @dashboard_summary == 'last_retrieved') }
               = link_to "iDo'FacBanque", '#last_retrieved',      class: 'last_retrieved',      data: { toggle: 'tab' }
 
         .tab-content
           - ['last_scans', 'last_uploads', 'last_dematbox_scans', 'last_retrieved'].each do |view_name|
             - if @user.is_prescriber || (view_name.in?(%w(last_scans last_uploads)) && @user.options.try(:is_upload_authorized)) || (view_name == 'last_dematbox_scans' && @user.is_dematbox_authorized) || (view_name == 'last_retrieved' && @user.options.try(:is_retriever_authorized))
-              .tab-pane{ id: view_name, class: ('active' if @user.options.dashboard_summary == view_name)}
+              .tab-pane{ id: view_name, class: ('active' if @dashboard_summary == view_name)}
                 .alignright
                   - if @user.options.dashboard_summary == view_name
                     %i.label Vue par défaut

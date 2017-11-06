@@ -13,6 +13,11 @@ class FTPErrorNotifier
         notification.notice_type = @notice_type
         notification.title       = 'Import/Export FTP - Reconfiguration requise'
         notification.message     = "Votre identifiant et/ou mot de passe sont invalides, veuillez les reconfigurer s'il vous plaît."
+        if @notice_type == 'org_ftp_auth_failure'
+          notification.url       = Rails.application.routes.url_helpers.account_organization_url(@user.organization, { tab: 'ftp' }.merge(ActionMailer::Base.default_url_options))
+        else
+          notification.url       = Rails.application.routes.url_helpers.account_profile_url({ panel: 'efs_management', anchor: 'ftp' }.merge(ActionMailer::Base.default_url_options))
+        end
         notification.save
         NotifyWorker.perform_async notification.id
         notification

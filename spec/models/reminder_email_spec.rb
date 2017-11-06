@@ -17,11 +17,14 @@ describe ReminderEmail do
 
       @user1 = FactoryGirl.create(:prescriber)
       @user1.options = UserOptions.create(user_id: @user1.id, is_upload_authorized: true)
+      @user1.create_notify
       @organization = Organization.create(leader_id: @user1.id, name: 'iDocus', code: 'IDOC')
       @user2 = FactoryGirl.create(:user)
       @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
+      @user2.create_notify
       @user3 = FactoryGirl.create(:user)
       @user3.options = UserOptions.create(user_id: @user3.id, is_upload_authorized: true)
+      @user3.create_notify
 
       @organization.members << @user1
       @organization.members << @user2

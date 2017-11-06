@@ -16,4 +16,12 @@ module Account::ProfileHelper
       ''
     end
   end
+
+  def notification_options
+    [
+      ['notifier immediatement', 'now'],
+      ['notifier dans un récapitulatif journalier', 'delay'],
+      ['ne pas notifier', 'none']
+    ]
+  end
 end

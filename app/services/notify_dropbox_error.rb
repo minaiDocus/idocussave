@@ -17,6 +17,7 @@ class NotifyDropboxError
           notification.title   = "Dropbox - Espace insuffisant"
           notification.message = "Votre compte Dropbox n'a plus d'espace, la livraison automatique a donc été désactivé, veuillez libérer plus d'espace avant de la réactiver."
         end
+        notification.url       = Rails.application.routes.url_helpers.account_profile_url({ panel: 'efs_management', anchor: 'dropbox' }.merge(ActionMailer::Base.default_url_options))
         if notification.save
           NotifyWorker.perform_async(notification.id)
         end

@@ -9,6 +9,7 @@ class DestroyAccountSharing
       DropboxImport.changed([@account_sharing.collaborator])
 
       notification = Notification.new
+      notification.url = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
       if @account_sharing.is_approved
         notification.user        = @account_sharing.collaborator
         notification.notice_type = 'account_sharing_destroyed'

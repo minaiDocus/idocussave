@@ -892,6 +892,27 @@ ActiveRecord::Schema.define(version: 20171124204434) do
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
+  create_table "notifies", force: :cascade do |t|
+    t.boolean  "to_send_docs",                           default: true
+    t.boolean  "published_docs",                         default: true
+    t.boolean  "reception_of_emailed_docs",              default: true
+    t.boolean  "r_site_unavailable",                     default: true
+    t.boolean  "r_action_needed",                        default: true
+    t.boolean  "r_bug",                                  default: true
+    t.string   "r_new_documents",              limit: 5, default: "now"
+    t.integer  "r_new_documents_count",        limit: 4, default: 0
+    t.string   "r_new_operations",             limit: 5, default: "now"
+    t.integer  "r_new_operations_count",       limit: 4, default: 0
+    t.boolean  "r_no_bank_account_configured",           default: true
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.integer  "user_id",                      limit: 4
+  end
+
+  add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
+  add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
+  add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
+
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255
     t.datetime "created_at"
@@ -2040,8 +2061,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "inactive_at"
     t.string   "dropbox_delivery_folder",                                        limit: 255,   default: "iDocus_delivery/:code/:year:month/:account_book/", null: false
     t.boolean  "is_dropbox_extended_authorized",                                               default: false,                                              null: false
-    t.boolean  "is_reminder_email_active",                                                     default: true,                                               null: false
-    t.boolean  "is_document_notifier_active",                                                  default: true,                                               null: false
+    t.boolean  "rm_is_reminder_email_active",                                                  default: true,                                               null: false
+    t.boolean  "rm_is_document_notifier_active",                                               default: true,                                               null: false
     t.boolean  "is_centralized",                                                               default: true,                                               null: false
     t.boolean  "is_operator"
     t.string   "knowings_code",                                                  limit: 255
@@ -2055,7 +2076,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.string   "ibiza_id",                                                       limit: 255
     t.boolean  "is_fiduceo_authorized",                                                        default: false,                                              null: false
     t.string   "email_code",                                                     limit: 255
-    t.boolean  "is_mail_receipt_activated",                                                    default: true,                                               null: false
+    t.boolean  "rm_is_mail_receipt_activated",                                                 default: true,                                               null: false
     t.integer  "authd_prev_period",                                              limit: 4,     default: 1,                                                  null: false
     t.integer  "auth_prev_period_until_day",                                     limit: 4,     default: 11,                                                 null: false
     t.integer  "auth_prev_period_until_month",                                   limit: 4,     default: 0,                                                  null: false
