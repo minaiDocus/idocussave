@@ -66,7 +66,7 @@ fr:
         is_dropbox_extended_authorized: Dropbox Extended autorisé ?
         knowings_code: Quel est le code Knowings du dossier ?
         knowings_visibility: Quelle est la visibilité Knowings attribué au dossier ?
-        authd_prev_period: Nombre de périodes antérieures accéssibles au téléversement des pièces par l'utilisateur
+        authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
         auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
         organization_rights_is_collaborators_management_authorized: Gestion des collaborateurs autorisé ?
@@ -87,7 +87,7 @@ fr:
         code: Code
         leader: Administrateur de l'organisation
         leader_id: Administrateur de l'organisation
-        authd_prev_period: Nombre de périodes antérieures accéssibles au téléversement des pièces par l'utilisateur
+        authd_prev_period: Nombre de périodes antérieures accessibles au téléversement des pièces par l'utilisateur
         auth_prev_period_until_day: "Jour de clôture de la période précédente dans la période en cours (exemple : 11 février pour clôturer janvier)"
         auth_prev_period_until_month: Mois de clôture de la période précédente (Uniquement pour le trimestriel et l'annuel)
         is_detail_authorized: Divulguer le coût iDocus au client ?
