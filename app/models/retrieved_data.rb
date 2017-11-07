@@ -5,6 +5,9 @@ class RetrievedData < ActiveRecord::Base
   serialize :content, Hash
   serialize :processed_connection_ids, Array
 
+  has_attached_file :content2, path: ':rails_root/files/:rails_env/:class/content/:id/:filename'
+  do_not_validate_attachment_file_type :content2
+
   scope :processed,     -> { where(state: 'processed') }
   scope :not_processed, -> { where(state: 'not_processed') }
   scope :error,         -> { where(state: 'error') }
@@ -29,5 +32,14 @@ class RetrievedData < ActiveRecord::Base
 
   def self.remove_oldest
     RetrievedData.where('created_at < ?', 1.month.ago).destroy_all
+  end
+
+  def json_content=(data)
+    self.content2 = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
+    self.content2_file_name = 'data.blob'
+  end
+
+  def json_content
+    Oj.load(SymmetricEncryption.decrypt(File.read(content2.path)))
   end
 end

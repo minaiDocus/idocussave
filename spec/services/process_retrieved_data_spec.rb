@@ -30,7 +30,7 @@ describe ProcessRetrievedData do
     it 'does not create any bank account' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_bank_account.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_bank_account.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -41,7 +41,7 @@ describe ProcessRetrievedData do
     it 'creates a bank account and an operation' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -68,7 +68,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -82,7 +82,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -94,7 +94,7 @@ describe ProcessRetrievedData do
     it 'does not create any operation' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'deleted_operation_from_the_start.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'deleted_operation_from_the_start.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -124,7 +124,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'destroy_bank_account.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'destroy_bank_account.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -144,7 +144,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
         ProcessRetrievedData.new(retrieved_data).execute
 
@@ -177,7 +177,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'bank_operation_update.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'bank_operation_update.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -190,7 +190,7 @@ describe ProcessRetrievedData do
       it 'destroys the operation' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
         retrieved_data.save
 
         expect(Operation.find(@operation.id)).to be_present
@@ -205,7 +205,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'remove_1_bank_operation.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -220,7 +220,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -233,7 +233,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -249,7 +249,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account_updated.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account_updated.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -289,7 +289,7 @@ describe ProcessRetrievedData do
     it 'creates 3 operations' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -355,7 +355,7 @@ describe ProcessRetrievedData do
       it 'reattaches 3 operations to 2 bank accounts' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts_and_3_operations.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -398,7 +398,7 @@ describe ProcessRetrievedData do
     it 'creates 3 operations with different states' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '3_operations.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '3_operations.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -440,7 +440,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'update_1_operation.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'update_1_operation.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -470,7 +470,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'unlock_1_operation.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'unlock_1_operation.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -487,7 +487,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -506,7 +506,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -525,7 +525,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'an_old_operation.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -552,7 +552,7 @@ describe ProcessRetrievedData do
     it 'does not create any document' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_document.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_document.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -567,7 +567,7 @@ describe ProcessRetrievedData do
     it 'creates a document' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
       retrieved_data.save
 
       VCR.use_cassette('budgea/get_document') do
@@ -584,7 +584,7 @@ describe ProcessRetrievedData do
     it 'fails to fetch document' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
       retrieved_data.save
 
       VCR.use_cassette('budgea/failed_to_fetch_document') do
@@ -626,7 +626,7 @@ describe ProcessRetrievedData do
     it 'does not create a document' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
       retrieved_data.save
 
       expect(@user.temp_documents.count).to eq 1
@@ -647,7 +647,7 @@ describe ProcessRetrievedData do
     it 'changes state to error' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -663,7 +663,7 @@ describe ProcessRetrievedData do
     it 'changes error_message' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password_2.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password_2.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -679,7 +679,7 @@ describe ProcessRetrievedData do
     it 'changes state to error because an action is needed on the web site' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'action_needed.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'action_needed.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -694,7 +694,7 @@ describe ProcessRetrievedData do
     it 'changes state to waiting_additionnal_info' do
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'waiting_additionnal_info.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'waiting_additionnal_info.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -718,7 +718,7 @@ describe ProcessRetrievedData do
 
       retrieved_data = RetrievedData.new
       retrieved_data.user = @user
-      retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+      retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
       retrieved_data.save
 
       ProcessRetrievedData.new(retrieved_data).execute
@@ -743,7 +743,7 @@ describe ProcessRetrievedData do
       it 'does not create any bank account' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -754,7 +754,7 @@ describe ProcessRetrievedData do
       it 'creates a bank account and an operation' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -781,7 +781,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -795,7 +795,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '2_bank_accounts.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -826,7 +826,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'destroy_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'destroy_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -860,7 +860,7 @@ describe ProcessRetrievedData do
 
           retrieved_data = RetrievedData.new
           retrieved_data.user = @user
-          retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'bank_operation_update.json')))
+          retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'bank_operation_update.json')))
           retrieved_data.save
 
           ProcessRetrievedData.new(retrieved_data).execute
@@ -875,7 +875,7 @@ describe ProcessRetrievedData do
 
           retrieved_data = RetrievedData.new
           retrieved_data.user = @user
-          retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+          retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
           retrieved_data.save
 
           ProcessRetrievedData.new(retrieved_data).execute
@@ -888,7 +888,7 @@ describe ProcessRetrievedData do
 
           retrieved_data = RetrievedData.new
           retrieved_data.user = @user
-          retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+          retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
           retrieved_data.save
 
           ProcessRetrievedData.new(retrieved_data).execute
@@ -913,7 +913,7 @@ describe ProcessRetrievedData do
       it 'does not create any document' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_document.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '0_document.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -928,7 +928,7 @@ describe ProcessRetrievedData do
       it 'creates a document' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
         retrieved_data.save
 
         VCR.use_cassette('budgea/get_document') do
@@ -946,7 +946,7 @@ describe ProcessRetrievedData do
       it 'fails to fetch document' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
         retrieved_data.save
 
         VCR.use_cassette('budgea/failed_to_fetch_document') do
@@ -981,7 +981,7 @@ describe ProcessRetrievedData do
       it 'does not create a document' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_document.json')))
         retrieved_data.save
 
         expect(@user.sandbox_documents.count).to eq 1
@@ -1002,7 +1002,7 @@ describe ProcessRetrievedData do
       it 'changes budgea state to error' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'wrong_password.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -1018,7 +1018,7 @@ describe ProcessRetrievedData do
       it 'changes budgea state to paused' do
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'waiting_additionnal_info.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', 'waiting_additionnal_info.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
@@ -1044,7 +1044,7 @@ describe ProcessRetrievedData do
 
         retrieved_data = RetrievedData.new
         retrieved_data.user = @user
-        retrieved_data.content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
+        retrieved_data.json_content = JSON.parse(File.read(Rails.root.join('spec', 'support', 'budgea', '1_bank_account.json')))
         retrieved_data.save
 
         ProcessRetrievedData.new(retrieved_data).execute
