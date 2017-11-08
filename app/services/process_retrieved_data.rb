@@ -9,7 +9,7 @@ class ProcessRetrievedData
     logger.info "[#{@retrieved_data.user.code}][RetrievedData:#{@retrieved_data.id}] start"
     start_time = Time.now
     user = @retrieved_data.user
-    connections = @retrieved_data.content['connections']
+    connections = @retrieved_data.json_content['connections']
     if connections.present?
       connections.each do |connection|
         unless connection['id'].in?(@retrieved_data.processed_connection_ids)

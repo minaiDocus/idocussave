@@ -2,6 +2,7 @@
 class RetrievedData < ActiveRecord::Base
   belongs_to :user
 
+  # TODO : remove attribute 'content' when confirmed unnecessary
   serialize :content, Hash
   serialize :processed_connection_ids, Array
 
