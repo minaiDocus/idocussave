@@ -11,7 +11,7 @@ class DeactivateOrganization
     end
 
     @organization.customers.each do |customer|
-      next unless customer.is_active
+      next unless customer.active?
       StopSubscriptionService.new(customer, false).execute
     end
 
