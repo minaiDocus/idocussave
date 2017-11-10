@@ -351,6 +351,7 @@ Idocus::Application.routes.draw do
     resource :suspended, only: :show
 
     resources :notifications, only: :index do
+      get 'latest', on: :collection
       get 'link_through', on: :member
     end
 

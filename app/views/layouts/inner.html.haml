@@ -28,7 +28,8 @@
               .nav-collapse.collapse
                 = render partial: 'layouts/navigation'
                 = render partial: 'layouts/user'
-                = render partial: 'layouts/notifications'
+                #notifications
+                  = render partial: 'layouts/notifications'
 
       .padding6top
         - if current_user.try(:is_admin) && controller_name != 'organizations'

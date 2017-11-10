@@ -33,7 +33,8 @@
             .nav-collapse.collapse
               = render partial: 'layouts/navigation'
               = render partial: 'layouts/user'
-              = render partial: 'layouts/notifications'
+              #notifications
+                = render partial: 'layouts/notifications'
 
       .container-fluid.padding6top
         = render 'shared/as_user'

@@ -4,6 +4,10 @@ class Account::NotificationsController < Account::AccountController
     @notifications.update_all is_read: true
   end
 
+  def latest
+    render partial: 'layouts/notifications'
+  end
+
   def link_through
     notification = Notification.find params[:id]
     notification.update is_read: true if notification.user == @user
