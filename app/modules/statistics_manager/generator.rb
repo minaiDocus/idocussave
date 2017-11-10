@@ -33,23 +33,23 @@ private
 
   def self.calculate_remote_files_statistics
     [
-      ['not_processed_retryable_ftp_remote_files_count', RemoteFile.of_service('FTP').not_processed.retryable.count],
-      ['not_processed_not_retryable_ftp_remote_files_count', RemoteFile.of_service('FTP').not_processed.not_retryable.count],
+      ['not_processed_retryable_dropbox_extended_remote_files_count', RemoteFile.of_service('Dropbox Extended').not_processed.retryable.count],
+      ['not_processed_not_retryable_dropbox_extended_remote_files_count', RemoteFile.of_service('Dropbox Extended').not_processed.not_retryable.count],
 
       ['not_processed_retryable_dropbox_remote_files_count', RemoteFile.of_service('Dropbox').not_processed.retryable.count],
       ['not_processed_not_retryable_dropbox_remote_files_count', RemoteFile.of_service('Dropbox').not_processed.not_retryable.count],
 
-      ['not_processed_retryable_box_extentend_remote_files_count', RemoteFile.of_service('Box').not_processed.retryable.count],
-      ['not_processed_not_retryable_box_extentend_remote_files_count', RemoteFile.of_service('Box').not_processed.not_retryable.count],
+      ['not_processed_retryable_google_drive_remote_files_count', RemoteFile.of_service('Google Drive').not_processed.retryable.count],
+      ['not_processed_not_retryable_google_drive_remote_files_count', RemoteFile.of_service('Google Drive').not_processed.not_retryable.count],
 
-      ['not_processed_not_retryable_knowings_remote_files_count', RemoteFile.of_service('Knowings').not_processed.not_retryable.count],
-      ['not_processed_retryable_knowings_extentend_remote_files_count', RemoteFile.of_service('Knowings').not_processed.retryable.count],
+      ['not_processed_retryable_box_remote_files_count', RemoteFile.of_service('Box').not_processed.retryable.count],
+      ['not_processed_not_retryable_box_remote_files_count', RemoteFile.of_service('Box').not_processed.not_retryable.count],
 
-      ['not_processed_retryable_dropbox_extentended_remote_files_count', RemoteFile.of_service('Dropbox Extended').not_processed.retryable.count],
-      ['not_processed_not_retryable_dropbox_extentended_remote_files_count', RemoteFile.of_service('Dropbox Extended').not_processed.not_retryable.count],
+      ['not_processed_retryable_ftp_remote_files_count', RemoteFile.of_service('FTP').not_processed.retryable.count],
+      ['not_processed_not_retryable_ftp_remote_files_count', RemoteFile.of_service('FTP').not_processed.not_retryable.count],
 
-      ['not_processed_retryable_google_drive_extentend_remote_files_count', RemoteFile.of_service('Google Drive').not_processed.retryable.count],
-      ['not_processed_not_retryable_google_drive_extentend_remote_files_count', RemoteFile.of_service('Google Drive').not_processed.not_retryable.count]
+      ['not_processed_retryable_knowings_remote_files_count', RemoteFile.of_service('Knowings').not_processed.retryable.count],
+      ['not_processed_not_retryable_knowings_remote_files_count', RemoteFile.of_service('Knowings').not_processed.not_retryable.count]
     ]
   end
 

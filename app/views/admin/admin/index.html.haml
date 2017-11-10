@@ -98,28 +98,28 @@
               %tbody
                 %tr
                   %td Dropbox Ext.
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_extentended_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_extentended_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_extended_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_extended_remote_files_count')
                 %tr
                   %td Dropbox
                   %td= StatisticsManager.get_statistic('not_processed_retryable_dropbox_remote_files_count')
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_dropbox_remote_files_count')
                 %tr
                   %td Google Drive
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_google_drive_extentend_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_google_drive_extentend_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_google_drive_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_google_drive_remote_files_count')
                 %tr
                   %td Box
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_box_extentend_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_box_extentend_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_box_remote_files_count')
+                  %td= StatisticsManager.get_statistic('not_processed_not_retryable_box_remote_files_count')
                 %tr
                   %td FTP
                   %td= StatisticsManager.get_statistic('not_processed_retryable_ftp_remote_files_count')
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_ftp_remote_files_count')
                 %tr
                   %td Knowings
+                  %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_remote_files_count')
                   %td= StatisticsManager.get_statistic('not_processed_not_retryable_knowings_remote_files_count')
-                  %td= StatisticsManager.get_statistic('not_processed_retryable_knowings_extentend_remote_files_count')
         .row-fluid
           .span6
             %h3.label{ style: 'padding:3px 5px 3px;' } Récupérateurs automatiques
