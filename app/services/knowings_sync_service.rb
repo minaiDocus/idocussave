@@ -23,7 +23,7 @@ class KnowingsSyncService
         info = "#{number}[#{tries + 1}] \"#{remote_filepath}\""
         result = client.put(remote_file.local_path, remote_file.local_name)
 
-        raise UnexpectedResponseCode.new result unless result.in? [200, 201]
+        raise Knowings::UnexpectedResponseCode.new result unless result.in? [200, 201]
 
         log.info { "#{info} uploaded" }
 
