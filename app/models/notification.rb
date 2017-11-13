@@ -49,7 +49,8 @@ class Notification < ActiveRecord::Base
         'retriever_bug',
         'retriever_no_bank_account_configured',
         'retriever_new_documents',
-        'retriever_new_operations'
+        'retriever_new_operations',
+        'invoice'
       ].freeze
     end
   end

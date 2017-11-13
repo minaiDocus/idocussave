@@ -31,6 +31,15 @@ class CreateInvoicePdf
         print "-> Invoice #{invoice.number}..."
         CreateInvoicePdf.new(invoice).execute
         print "done\n"
+
+        notification = Notification.new
+        notification.user        = invoice.user
+        notification.notice_type = 'invoice'
+        notification.title       = 'Nouvelle facture disponible'
+        notification.message     = "Votre facture pour le mois de #{I18n.l(invoice.period.start_date, format: '%B')} est maintenant disponible."
+        notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'invoices' }.merge(ActionMailer::Base.default_url_options))
+        notification.save
+
         InvoiceMailer.delay(queue: :high).notify(invoice)
       end
       Invoice.archive
