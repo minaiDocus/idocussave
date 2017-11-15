@@ -654,9 +654,9 @@ describe ProcessRetrievedData do
 
       @retriever.reload
       expect(@retriever).to be_error
-      expect(@retriever.error_message).to eq "Mot de passe incorrecte."
+      expect(@retriever.error_message).to eq 'Mot de passe incorrect.'
       expect(@retriever).to be_budgea_connection_failed
-      expect(@retriever.budgea_error_message).to eq "Mot de passe incorrecte."
+      expect(@retriever.budgea_error_message).to eq 'Mot de passe incorrect.'
       expect(@retriever.is_new_password_needed).to be true
     end
 
@@ -1011,7 +1011,7 @@ describe ProcessRetrievedData do
         expect(@retriever).to be_ready
         expect(@retriever.error_message).to be_nil
         expect(@retriever).to be_budgea_connection_failed
-        expect(@retriever.budgea_error_message).to eq "Mot de passe incorrecte."
+        expect(@retriever.budgea_error_message).to eq 'Mot de passe incorrect.'
         expect(@retriever.is_new_password_needed).to be true
       end
 
