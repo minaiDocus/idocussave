@@ -320,7 +320,7 @@ class EmailedDocument
     attachments.each do |attachment|
       options = {
         delivery_type:         'upload',
-        delivered_by:          @user.code,
+        delivered_by:          User.find_by_email(@mail.from.first).try(:code),
         api_name:              'email',
         original_file_name:    attachment.name,
         is_content_file_valid: true
