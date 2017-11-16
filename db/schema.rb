@@ -904,6 +904,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.string   "r_new_operations",             limit: 5, default: "now"
     t.integer  "r_new_operations_count",       limit: 4, default: 0
     t.boolean  "r_no_bank_account_configured",           default: true
+    t.boolean  "document_being_processed",               default: true
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.integer  "user_id",                      limit: 4
@@ -912,6 +913,14 @@ ActiveRecord::Schema.define(version: 20171124204434) do
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
   add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
   add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
+
+  create_table "notifies_temp_documents", force: :cascade do |t|
+    t.string  "label",            limit: 255
+    t.integer "notify_id",        limit: 4
+    t.integer "temp_document_id", limit: 4
+  end
+
+  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", using: :btree
 
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255

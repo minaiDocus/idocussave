@@ -1,5 +1,7 @@
 class Notify < ActiveRecord::Base
   belongs_to :user
+  has_many :notifiable_document_being_processed, dependent: :destroy
+  has_many :temp_document_being_processed, through: :notifiable_document_being_processed, source: :temp_document
 
   TYPES = %w(none now delay).freeze
 

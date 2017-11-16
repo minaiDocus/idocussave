@@ -62,8 +62,10 @@ class AddTempDocumentToTempPack
             temp_document.wait_selection
           elsif DocumentTools.need_ocr?(temp_document.content.path)
             temp_document.ocr_needed
+            NotifyDocumentBeingProcessed.new(temp_document).execute
           elsif temp_pack.is_bundle_needed? && !temp_document.from_ibizabox? && (temp_document.scanned? || temp_document.pages_number > 2)
             temp_document.bundle_needed
+            NotifyDocumentBeingProcessed.new(temp_document).execute
           else
             temp_document.ready
           end

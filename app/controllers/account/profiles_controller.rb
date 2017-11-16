@@ -61,7 +61,8 @@ class Account::ProfilesController < Account::AccountController
         :r_bug,
         :r_no_bank_account_configured,
         :r_new_documents,
-        :r_new_operations
+        :r_new_operations,
+        :document_being_processed
       ]
     )
   end
