@@ -62,7 +62,8 @@ class Account::ProfilesController < Account::AccountController
         :r_no_bank_account_configured,
         :r_new_documents,
         :r_new_operations,
-        :document_being_processed
+        :document_being_processed,
+        :paper_quota_reached
       ]
     )
   end

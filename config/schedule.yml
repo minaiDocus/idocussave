@@ -24,6 +24,9 @@ UpdateAccountingPlanWorker:
 RemindToOrderNewKitWorker:
   queue: default
   cron: '15 3 1 12 *'
+NotifyPaperQuotaReachedWorker:
+  queue: default
+  cron: '0 8 * * *'
 
 ## Budgea retrievers workers
 ProcessOperationsWorker:

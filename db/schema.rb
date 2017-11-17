@@ -905,6 +905,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.integer  "r_new_operations_count",       limit: 4, default: 0
     t.boolean  "r_no_bank_account_configured",           default: true
     t.boolean  "document_being_processed",               default: true
+    t.boolean  "paper_quota_reached",                    default: true
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.integer  "user_id",                      limit: 4
@@ -1534,6 +1535,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "delivery_created_at"
     t.datetime "delivery_updated_at"
     t.string   "delivery_state",                           limit: 255,   default: "wait", null: false
+    t.boolean  "is_paper_quota_reached_notified",                        default: false
   end
 
   add_index "periods", ["mongo_id"], name: "index_periods_on_mongo_id", using: :btree
