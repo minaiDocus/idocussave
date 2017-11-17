@@ -51,7 +51,8 @@ class Notification < ActiveRecord::Base
         'retriever_new_documents',
         'retriever_new_operations',
         'invoice',
-        'document_being_processed'
+        'document_being_processed',
+        'remind_to_order_new_kit'
       ].freeze
     end
   end
