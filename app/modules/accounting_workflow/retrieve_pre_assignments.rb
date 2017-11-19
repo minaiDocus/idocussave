@@ -152,6 +152,9 @@ class AccountingWorkflow::RetrievePreAssignments
         preseizure.entries << entry
       end
     end
+
+    NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
+
     preseizure
   end
 

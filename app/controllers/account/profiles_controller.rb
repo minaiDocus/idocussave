@@ -63,7 +63,8 @@ class Account::ProfilesController < Account::AccountController
         :r_new_documents,
         :r_new_operations,
         :document_being_processed,
-        :paper_quota_reached
+        :paper_quota_reached,
+        :new_pre_assignment_available
       ]
     )
   end

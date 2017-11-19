@@ -906,6 +906,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.boolean  "r_no_bank_account_configured",           default: true
     t.boolean  "document_being_processed",               default: true
     t.boolean  "paper_quota_reached",                    default: true
+    t.boolean  "new_pre_assignment_available",           default: true
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.integer  "user_id",                      limit: 4
@@ -914,6 +915,13 @@ ActiveRecord::Schema.define(version: 20171124204434) do
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
   add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
   add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
+
+  create_table "notifies_preseizures", force: :cascade do |t|
+    t.integer "notify_id",     limit: 4
+    t.integer "preseizure_id", limit: 4
+  end
+
+  add_index "notifies_preseizures", ["notify_id", "preseizure_id"], name: "index_notify_id_preseizure_id", using: :btree
 
   create_table "notifies_temp_documents", force: :cascade do |t|
     t.string  "label",            limit: 255

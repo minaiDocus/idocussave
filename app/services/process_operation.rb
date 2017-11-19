@@ -91,6 +91,10 @@ class ProcessOperation
         end
       end
 
+      preseizures.each do |preseizure|
+        NotifyNewPreAssignmentAvailable.new(preseizure).execute
+      end
+
       preseizures
     end
   end

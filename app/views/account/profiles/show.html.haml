@@ -271,6 +271,8 @@
                         = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox
                       - if !@user.is_prescriber && (@user.subscription.is_mail_package_active || @user.subscription.is_annual_package_active)
                         = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
+                      - if @user.is_prescriber
+                        = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
                       - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
                         %hr
                         %h4.margin2left.margin1bottom Automate
