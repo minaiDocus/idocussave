@@ -34,7 +34,7 @@ class NotifyDocumentBeingProcessed
     notification.user        = user
     notification.notice_type = 'document_being_processed'
     notification.title       = 'Traitement de document'
-    notification.url         = Rails.application.routes.url_helpers.account_documents_path ActionMailer::Base.default_url_options
+    notification.url         = Rails.application.routes.url_helpers.account_documents_url ActionMailer::Base.default_url_options
 
     notification.message = if list.size == 1
       "1 nouveau document a été reçu et est en cours de traitement pour le lot suivant : #{list.first.temp_document.temp_pack.name.sub(' all', '')}"

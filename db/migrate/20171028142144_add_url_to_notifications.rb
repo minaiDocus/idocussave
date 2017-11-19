@@ -14,7 +14,7 @@ class AddUrlToNotifications < ActiveRecord::Migration
       end
 
       Notification.where(notice_type: 'org_ftp_auth_failure').each do |notification|
-        notification.url = Rails.application.routes.url_helpers.account_organization_path(notification.user.organization, { tab: 'ftp' }.merge(ActionMailer::Base.default_url_options))
+        notification.url = Rails.application.routes.url_helpers.account_organization_url(notification.user.organization, { tab: 'ftp' }.merge(ActionMailer::Base.default_url_options))
         notification.save
       end
 
