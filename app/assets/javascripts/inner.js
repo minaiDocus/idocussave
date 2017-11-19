@@ -41,11 +41,11 @@ Number.prototype.formatMoney = function(c, d, t){
 };
 
 function load_latest_notifications() {
-    if (!$('#notifications').is(':hover')) {
+    if ($('.dropdown-notifications.open').length == 0) {
         $.ajax({
             url: '/account/notifications/latest',
             success: function(data){
-                if (!$('#notifications').is(':hover')) {
+                if ($('.dropdown-notifications.open').length == 0) {
                     $('#notifications').html(data);
                 }
             }
