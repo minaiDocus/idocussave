@@ -3,7 +3,7 @@ class NotifyDocumentBeingProcessed
     @temp_document = temp_document
     @sender        = User.find_by_code temp_document.delivered_by
     @user          = temp_document.user
-    @parent        = temp_document.user.parent || temp_document.user.organization.leader
+    @parent        = temp_document.user.parent || temp_document.user.organization.try(:leader)
   end
 
   def execute
@@ -12,6 +12,7 @@ class NotifyDocumentBeingProcessed
       users << @sender
       users << @parent
       users.uniq!
+      users.compact!
     end
 
     users.each do |user|

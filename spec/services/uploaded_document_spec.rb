@@ -242,6 +242,7 @@ describe UploadedDocument do
         DatabaseCleaner.start
         Timecop.freeze(Time.local(2013,1,10))
         @user = FactoryGirl.create(:user, code: 'TS0001')
+        @user.create_notify
         file = File.open("#{Rails.root}/spec/support/files/upload.tiff", "r")
         @user.account_book_types.create(name: 'TS', description: 'TEST')
         @uploaded_document = UploadedDocument.new(file, 'upload.tiff', @user, 'TS', 0)
