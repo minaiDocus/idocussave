@@ -153,14 +153,15 @@ class RetrieverNotification
   end
 
   def notify_no_bank_account_configured
-    return unless collaborator
-    notification = Notification.new
-    notification.user        = collaborator
-    notification.url         = account_organization_customer_bank_accounts_url @retriever.user.organization, @retriever.user
-    notification.notice_type = 'retriever_no_bank_account_configured'
-    notification.title       = 'Automate - En attente de configuration'
-    notification.message     = "Aucun compte bancaire n'a été configuré pour l'automate #{name} du dossier #{user_info}."
-    notification.save
+    prescribers.each do |prescriber|
+      notification = Notification.new
+      notification.user        = prescriber
+      notification.url         = account_organization_customer_bank_accounts_url @retriever.user.organization, @retriever.user
+      notification.notice_type = 'retriever_no_bank_account_configured'
+      notification.title       = 'Automate - En attente de configuration'
+      notification.message     = "Aucun compte bancaire n'a été configuré pour l'automate #{name} du dossier #{user_info}."
+      notification.save
+    end
   end
 
   class << self
@@ -194,11 +195,11 @@ class RetrieverNotification
   private
 
   def users
-    [@retriever.user, @retriever.user.collaborators, collaborator].flatten.compact
+    [@retriever.user, @retriever.user.collaborators, prescribers].flatten.compact
   end
 
-  def collaborator
-    @retriever.user.parent || @retriever.user.organization.leader
+  def prescribers
+    @prescribers ||= @retriever.user.prescribers
   end
 
   def url_for(user)

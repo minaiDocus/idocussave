@@ -23,9 +23,10 @@ class NotifyPaperQuotaReached
       NotifyWorker.perform_async(notification.id)
     end
 
-    if @parent && @parent.notify.paper_quota_reached
+    @user.prescribers.each do |prescriber|
+      next unless prescriber.notify.paper_quota_reached
       notification = Notification.new
-      notification.user        = @parent
+      notification.user        = prescriber
       notification.notice_type = 'paper_quota_reached'
       notification.title       = 'Quota de feuille atteint'
       notification.message     = "Le quota de feuille #{@period.type_name} est atteint pour le client #{@user.code}. Hors forfait de 0,12 cts HT par feuille et pièce comptable."

@@ -1,14 +1,15 @@
 class NotifyNewPreAssignmentAvailable
   def initialize(pre_assignment, time_delay=1.minute)
     @pre_assignment = pre_assignment
-    @user = @pre_assignment.user.parent || @pre_assignment.user.organization.leader
     @time_delay = time_delay
   end
 
   def execute
-    return unless @user && @user.notify.new_pre_assignment_available
-    NotifiableNewPreAssignment.create(notify: @user.notify, preseizure: @pre_assignment)
-    NotifyNewPreAssignmentAvailableWorker.perform_in(@time_delay, @user.id)
+    @pre_assignment.user.prescribers.each do |prescriber|
+      next unless prescriber.notify.new_pre_assignment_available
+      NotifiableNewPreAssignment.create(notify: prescriber.notify, preseizure: @pre_assignment)
+      NotifyNewPreAssignmentAvailableWorker.perform_in(@time_delay, prescriber.id)
+    end
     true
   end
 

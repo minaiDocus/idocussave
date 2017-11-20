@@ -3,14 +3,13 @@ class NotifyDocumentBeingProcessed
     @temp_document = temp_document
     @sender        = User.find_by_code temp_document.delivered_by
     @user          = temp_document.user
-    @parent        = temp_document.user.parent || temp_document.user.organization.try(:leader)
   end
 
   def execute
     users = []
     if @sender
       users << @sender
-      users << @parent
+      users += @user.prescribers
       users.uniq!
       users.compact!
     end

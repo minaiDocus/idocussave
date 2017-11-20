@@ -3,13 +3,13 @@ class RemindToOrderNewKit
     total = 0
     Organization.active.each do |organization|
       groups = {}
+
       organization.customers.active.order(:code).each do |customer|
         next unless customer.subscription.is_mail_package_active || customer.subscription.is_annual_package_active
 
-        parent = customer.parent || organization.leader
-        if parent
-          groups[parent] ||= []
-          groups[parent] << customer
+        customer.prescribers.each do |prescriber|
+          groups[prescriber] ||= []
+          groups[prescriber] << customer.code
         end
 
         next if customer.notifications.where(notice_type: 'remind_to_order_new_kit').where('created_at > ?', 1.day.ago).present?
@@ -24,15 +24,15 @@ class RemindToOrderNewKit
         total += 1
       end
 
-      groups.each do |parent, customers|
-        next if parent.notifications.where(notice_type: 'remind_to_order_new_kit').where('created_at > ?', 1.day.ago).present?
+      groups.each do |prescriber, customer_codes|
+        next if prescriber.notifications.where(notice_type: 'remind_to_order_new_kit').where('created_at > ?', 1.day.ago).present?
 
         message = "Rappel : n'oubliez pas de créer un nouveau kit courrier pour "
-        message += customers.size == 1 ? 'le client suivant : ' : 'les clients suivants : '
-        message += customers.map { |c| c.code }.join(', ')
+        message += customer_codes.size == 1 ? 'le client suivant : ' : 'les clients suivants : '
+        message += customer_codes.join(', ')
 
         notification = Notification.new
-        notification.user        = parent
+        notification.user        = prescriber
         notification.notice_type = 'remind_to_order_new_kit'
         notification.title       = 'Rappel kit courrier'
         notification.message     = message
