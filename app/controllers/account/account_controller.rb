@@ -134,6 +134,6 @@ private
   end
 
   def load_recent_notifications
-    @last_notifications = @user.notifications.order(created_at: :desc).limit(5) if @user
+    @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
   end
 end

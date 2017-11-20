@@ -1,6 +1,6 @@
 class Account::NotificationsController < Account::AccountController
   def index
-    @notifications = @user.notifications.order(created_at: :desc).page(params[:page]).per(params[:per_page])
+    @notifications = @user.notifications.order(is_read: :asc, created_at: :desc).page(params[:page]).per(params[:per_page])
     @notifications.update_all is_read: true
   end
 
