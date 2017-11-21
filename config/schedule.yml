@@ -27,6 +27,9 @@ RemindToOrderNewKitWorker:
 NotifyPaperQuotaReachedWorker:
   queue: default
   cron: '0 8 * * *'
+NotifyPublishedDocumentDailyWorker:
+  queue: default
+  cron: '0 8 * * *'
 
 ## Budgea retrievers workers
 ProcessOperationsWorker:

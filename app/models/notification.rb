@@ -54,7 +54,8 @@ class Notification < ActiveRecord::Base
         'document_being_processed',
         'remind_to_order_new_kit',
         'paper_quota_reached',
-        'new_pre_assignment_available'
+        'new_pre_assignment_available',
+        'published_document'
       ].freeze
     end
   end

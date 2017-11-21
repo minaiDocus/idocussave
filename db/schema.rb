@@ -894,7 +894,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
 
   create_table "notifies", force: :cascade do |t|
     t.boolean  "to_send_docs",                           default: true
-    t.boolean  "published_docs",                         default: true
+    t.boolean  "published_docs_rm",                      default: true
+    t.string   "published_docs",               limit: 5, default: "now"
     t.boolean  "reception_of_emailed_docs",              default: true
     t.boolean  "r_site_unavailable",                     default: true
     t.boolean  "r_action_needed",                        default: true
