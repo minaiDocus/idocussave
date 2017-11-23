@@ -18,7 +18,6 @@ class Ibiza < ActiveRecord::Base
   def configured?
     state == 'valid' || state_2 == 'valid'
   end
-  alias is_configured? configured?
 
 
   def two_channel_delivery?

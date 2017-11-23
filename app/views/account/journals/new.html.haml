@@ -15,7 +15,7 @@
           %legend Codes journaux
           = f.input :name, label: 'Attribuez un nom de code journal iDocus', hint: 'Ce code doit si possible être similaire à celui utilisé dans votre outil comptable. La modification de ce code journal n’est possible que pendant 24 heures.'
           = f.input :description, label: 'Nom du journal comptable iDocus', hint: 'Inscrivez ici entre parenthès le nom du journal comptable iDocus. Exemple (Achats). Ceci est nécessaire pour les utilisateurs du forfait iDo’Courrier notamment.'
-          - if @customer && @organization.ibiza.try(:is_configured?)
+          - if @customer && @organization.ibiza.try(:configured?)
             - collection = journals_for_select(@journal.pseudonym)
           - else
             - collection = nil

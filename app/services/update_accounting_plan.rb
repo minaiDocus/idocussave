@@ -3,7 +3,7 @@ class UpdateAccountingPlan
   # Come accross all organizations customers to update their accounting plan
   def self.execute
     Organization.all.each do |organization|
-      next unless organization.ibiza.try(:is_configured?)
+      next unless organization.ibiza.try(:configured?)
       organization.customers.order(code: :asc).active.each do |customer|
         new(customer).execute
         print '.'
