@@ -26,10 +26,10 @@
                 %a{ href: '#bank_accounts', data: { toggle: 'tab' } } Paramètres bancaires
             %li{ class: ('active' if params[:tab] == 'compta') }
               %a{ href: '#compta', data: { toggle: 'tab' } } Comptabilité
-            - if @organization.ibiza.try(:configured?)
+            - if @organization.ibiza.try(:used?)
               %li{ class: ('active' if params[:tab] == 'ibiza_box') }
                 %a{ href: '#ibiza_box', data: { toggle: 'tab' } } Ibiza Box
-            - if @organization.ibiza.try(:access_token).blank?
+            - unless @organization.ibiza.try(:used?)
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
             - if @organization.is_csv_descriptor_used
@@ -284,31 +284,40 @@
               .row-fluid
                 .span12
                   = link_to icon_edit + ' ' + 'Modifier', edit_compta_options_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
-              - if @organization.ibiza.try(:configured?)
+              - if @organization.ibiza.try(:used?)
                 %h4.margin2top.margin1bottom iBiza
+                - unless @organization.ibiza.configured?
+                  %p
+                    = render 'shared/ibiza_not_configured_warning'
                 %table.table.table-striped.table-condensed
                   %tbody
                     %tr
                       %th= t('activerecord.models.user.attributes.ibiza_id')
-                      - users = @organization.ibiza.users
-                      - if @customer.ibiza_id.nil?
-                        %td
-                          %i{ style: 'color:gray' } Aucun
-                      - elsif users.is_a?(Array)
-                        %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
-                      - elsif users.nil?
-                        %td
-                          %span.label Rafraîchissement en cours
+                      - if @organization.ibiza.configured?
+                        - users = @organization.ibiza.users
+                        - if @customer.ibiza_id.nil?
+                          %td
+                            %i{ style: 'color:gray' } Aucun
+                        - elsif users.is_a?(Array)
+                          %td= users.select { |e| e.id == @customer.ibiza_id }.first.try(:name)
+                        - elsif users.nil?
+                          %td
+                            %span.label Rafraîchissement en cours
+                        - else
+                          %td
+                            %span.label.label-important Erreur
                       - else
                         %td
-                          %span.label.label-important Erreur
                     %tr
                       %th= t('activerecord.models.user_options.attributes.is_auto_deliver')
                       %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
                 .row-fluid
                   .span12
-                    = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
-            - if @organization.ibiza.try(:access_token).blank?
+                    - if @organization.ibiza.configured?
+                      = link_to icon_edit + ' ' + 'Modifier', edit_ibiza_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    - else
+                      = link_to icon_edit + ' ' + 'Modifier', '#', class: 'btn btn-primary pull-right', disabled: true
+            - unless @organization.ibiza.try(:used?)
               #others.tab-pane{ class: ('active' if params[:tab] == 'others') }
                 .row-fluid
                   .span12.aligncenter
@@ -316,9 +325,12 @@
                       = link_to 'Plan comptable', account_organization_customer_accounting_plan_path(@organization, @customer), class: 'btn'
                       = link_to 'Paramètrage des TVA', account_organization_customer_accounting_plan_vat_accounts_path(@organization, @customer), class: 'btn'
                     = link_to 'Exercices comptables', account_organization_customer_exercises_path(@organization, @customer), class: 'btn'
-            - if @organization.ibiza.try(:configured?)
+            - if @organization.ibiza.try(:used?)
               #ibiza_box.tab-pane{ class: ('active' if params[:tab] == 'ibiza_box') }
-                = render 'ibiza_box'
+                - if @organization.ibiza.configured?
+                  = render 'ibiza_box'
+                - else
+                  = render 'shared/ibiza_not_configured_warning'
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter

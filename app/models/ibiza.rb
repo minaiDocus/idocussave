@@ -19,6 +19,9 @@ class Ibiza < ActiveRecord::Base
     state == 'valid' || state_2 == 'valid'
   end
 
+  def used?
+    access_token.present? || access_token_2.present?
+  end
 
   def two_channel_delivery?
     access_token.present? && access_token_2.present? && access_token != access_token_2
