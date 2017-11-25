@@ -12,8 +12,15 @@ describe AssignDefaultJournalsService do
       @organization.members << @collaborator
     end
 
+    after(:each) do
+      @user.reload
+      @collaborator.reload
+      @organization.reload
+    end
+
     context 'given 3 default journals' do
       before(:all) do
+        DatabaseCleaner.start
         @journal1 = AccountBookType.create(name: 'AC', description: '(Achat)',  is_default: true)
         @journal2 = AccountBookType.create(name: 'BQ', description: '(Banque)', is_default: true)
         @journal3 = AccountBookType.create(name: 'VT', description: '(Vente)',  is_default: true)
@@ -23,22 +30,19 @@ describe AssignDefaultJournalsService do
       end
 
       after(:all) do
-        @journal1.destroy
-        @journal2.destroy
-        @journal3.destroy
+        DatabaseCleaner.clean
       end
 
       context 'when maximum authorized is 1' do
         before(:all) do
+          DatabaseCleaner.start
           @user.options.update_attribute(:max_number_of_journals, 1)
 
           AssignDefaultJournalsService.new(@user, @collaborator).execute
         end
 
         after(:all) do
-          @user.account_book_types.destroy_all
-          @user.reload
-          Event.destroy_all
+          DatabaseCleaner.clean
         end
 
         it 'copy 1 journal' do
@@ -56,15 +60,14 @@ describe AssignDefaultJournalsService do
 
       context 'when maximum authorized is 2' do
         before(:all) do
+          DatabaseCleaner.start
           @user.options.update_attribute(:max_number_of_journals, 2)
 
           AssignDefaultJournalsService.new(@user, @collaborator).execute
         end
 
         after(:all) do
-          @user.account_book_types.destroy_all
-          @user.reload
-          Event.destroy_all
+          DatabaseCleaner.clean
         end
 
         it 'copy 2 journals' do
@@ -87,6 +90,7 @@ describe AssignDefaultJournalsService do
 
     context 'given 1 default journal with pre assignment' do
       before(:all) do
+        DatabaseCleaner.start
         @journal = FactoryGirl.build(:journal_with_preassignment)
         @journal.name        = 'AC'
         @journal.description = '(Achat)'
@@ -96,20 +100,19 @@ describe AssignDefaultJournalsService do
       end
 
       after(:all) do
-        @journal.destroy
+        DatabaseCleaner.clean
       end
 
       context 'when pre assignment is not authorized' do
         before(:all) do
+          DatabaseCleaner.start
           @user.options.update_attribute(:is_preassignment_authorized, false)
 
           AssignDefaultJournalsService.new(@user, @collaborator).execute
         end
 
         after(:all) do
-          @user.account_book_types.destroy_all
-          @user.reload
-          Event.destroy_all
+          DatabaseCleaner.clean
         end
 
         it 'does not copy journal' do
@@ -123,15 +126,14 @@ describe AssignDefaultJournalsService do
 
       context 'when pre assignment is authorized' do
         before(:all) do
+          DatabaseCleaner.start
           @user.options.update_attribute(:is_preassignment_authorized, true)
 
           AssignDefaultJournalsService.new(@user, @collaborator).execute
         end
 
         after(:all) do
-          @user.account_book_types.destroy_all
-          @user.reload
-          Event.destroy_all
+          DatabaseCleaner.clean
         end
 
         it 'copy 1 journal' do
@@ -150,6 +152,7 @@ describe AssignDefaultJournalsService do
 
     context 'when user already have journal AC' do
       before(:all) do
+        DatabaseCleaner.start
         @journal1 = AccountBookType.create(name: 'AC', description: '(Achat)', is_default: true)
         @organization.account_book_types << @journal1
         @journal2 = AccountBookType.create(name: 'AC', description: '(Achat)')
@@ -159,11 +162,7 @@ describe AssignDefaultJournalsService do
       end
 
       after(:all) do
-        @journal1.destroy
-        @journal2.destroy
-        @user.account_book_types.destroy_all
-        @user.reload
-        Event.destroy_all
+        DatabaseCleaner.clean
       end
 
       it 'does not copy journal AC' do
@@ -177,6 +176,7 @@ describe AssignDefaultJournalsService do
 
     context 'given 3 default journals, 1 without pre assignment and 2 with' do
       before(:all) do
+        DatabaseCleaner.start
         @journal1 = AccountBookType.create(name: 'BQ', description: '(Banque)', is_default: true)
 
         @journal2 = FactoryGirl.build(:journal_with_preassignment)
@@ -199,13 +199,12 @@ describe AssignDefaultJournalsService do
       end
 
       after(:all) do
-        @journal1.save
-        @journal2.save
-        @journal3.save
+        DatabaseCleaner.clean
       end
 
       context 'when pre assignment is authorized and 1 slot available' do
         before(:all) do
+          DatabaseCleaner.start
           @user.options.update(
             is_preassignment_authorized: true,
             max_number_of_journals: 1
@@ -214,9 +213,7 @@ describe AssignDefaultJournalsService do
         end
 
         after(:all) do
-          @user.account_book_types.destroy_all
-          @user.reload
-          Event.destroy_all
+          DatabaseCleaner.clean
         end
 
         it 'copy 1 journal' do
