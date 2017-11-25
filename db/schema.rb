@@ -888,6 +888,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "updated_at",                                null: false
     t.string   "title",       limit: 255
     t.text     "message",     limit: 65535
+    t.string   "url",         limit: 255
   end
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
@@ -930,7 +931,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.integer "temp_document_id", limit: 4
   end
 
-  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", using: :btree
+  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", length: {"label"=>191, "notify_id"=>nil, "temp_document_id"=>nil}, using: :btree
 
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255
