@@ -2,6 +2,8 @@
 class Period < ActiveRecord::Base
   serialize :documents_name_tags
 
+  audited
+
   has_one  :delivery, class_name: 'PeriodDelivery'
   has_many :orders
   has_many :invoices

@@ -4,6 +4,7 @@ class AccountBookType < ActiveRecord::Base
   ENTRY_TYPE = %w(no expense buying selling).freeze
   TYPES_NAME = %w(AC VT NDF).freeze
 
+  audited
 
   attr_writer :account_type
 

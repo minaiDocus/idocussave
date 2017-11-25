@@ -146,6 +146,9 @@ gem 'symmetric-encryption'
 
 gem 'redcarpet'
 
+# Audit
+gem 'audited', '~> 4.5'
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'
