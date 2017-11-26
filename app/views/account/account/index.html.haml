@@ -102,7 +102,7 @@
             .pull-right
               = link_to 'Tous les documents', account_documents_path
 
-      - if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
+      - if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
         .row-fluid.margin1top
           .span12
             %h4 Dernières erreurs rencontrées à la livraison de la pré-affectation

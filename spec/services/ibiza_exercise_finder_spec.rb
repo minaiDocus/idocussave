@@ -156,7 +156,7 @@ describe IbizaExerciseFinder do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
-            allow(ibiza).to receive(:is_configured?) { true }
+            allow(ibiza).to receive(:configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
 
@@ -170,7 +170,7 @@ describe IbizaExerciseFinder do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
-            allow(ibiza).to receive(:is_configured?) { true }
+            allow(ibiza).to receive(:configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
 
@@ -184,7 +184,7 @@ describe IbizaExerciseFinder do
           VCR.use_cassette('find_exercise/insufficient_rights') do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
-            allow(ibiza).to receive(:is_configured?) { true }
+            allow(ibiza).to receive(:configured?) { true }
             client = IbizaAPI::Client.new('123456')
             allow(ibiza).to receive(:client) { client }
             @user.ibiza_id = '{123456}'
@@ -200,7 +200,7 @@ describe IbizaExerciseFinder do
           VCR.use_cassette('find_exercise/exercises') do
             ibiza = double('ibiza')
             allow(ibiza).to receive(:updated_at) { @time }
-            allow(ibiza).to receive(:is_configured?) { true }
+            allow(ibiza).to receive(:configured?) { true }
             allow(ibiza).to receive(:client) { IbizaAPI::Client.new('123456') }
             @user.ibiza_id = '{123456}'
 

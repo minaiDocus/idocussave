@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Ibiza < ActiveRecord::Base
+  audited
+
   serialize :description, Hash
   serialize :piece_name_format, Hash
 
@@ -19,6 +21,14 @@ class Ibiza < ActiveRecord::Base
     state == 'valid' || state_2 == 'valid'
   end
 
+  def first_configured?
+    state == 'valid'
+  end
+
+  def second_configured?
+    state_2 == 'valid'
+  end
+
   def used?
     access_token.present? || access_token_2.present?
   end
@@ -32,14 +42,24 @@ class Ibiza < ActiveRecord::Base
     state == 'waiting' || state_2 == 'waiting'
   end
 
-
   def practical_access_token
-    access_token.presence || access_token_2
+    if access_token.present? && state == 'valid'
+      access_token
+    elsif access_token_2.present? && state_2 == 'valid'
+      access_token_2
+    end
   end
 
-
   def client
-    @client ||= IbizaAPI::Client.new(practical_access_token)
+    @client ||= IbizaAPI::Client.new(practical_access_token, IbizaClientCallback.new(self, practical_access_token))
+  end
+
+  def first_client
+    @client ||= IbizaAPI::Client.new(access_token, IbizaClientCallback.new(self, access_token))
+  end
+
+  def second_client
+    @client ||= IbizaAPI::Client.new(access_token_2, IbizaClientCallback.new(self, access_token_2))
   end
 
   # nil : updating cache

@@ -1,6 +1,6 @@
 module FileDelivery
   def self.prepare(object, options = {})
-    if object.class != Pack::Report || !object.organization.try(:ibiza).try(:is_configured?)
+    if object.class != Pack::Report || !object.organization.try(:ibiza).try(:configured?)
       options = { type: FileDelivery::RemoteFile::ALL, force: false, delay: false }.merge(options).with_indifferent_access
 
       if object.class == Pack

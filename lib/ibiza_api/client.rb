@@ -1,9 +1,9 @@
 class IbizaAPI::Client
   attr_accessor :token, :partner_id, :request, :response
 
-  def initialize(token)
+  def initialize(token, callback=nil)
     @token      = token
-    @request    = Request.new(self)
+    @request    = Request.new(self, callback)
     @response   = Response.new
     @partner_id = IbizaAPI::Config::PARTNER_ID
   end
@@ -51,11 +51,12 @@ class IbizaAPI::Client
     attr_accessor :client, :path, :method, :body, :original
 
 
-    def initialize(client)
+    def initialize(client, callback=nil)
       @path = ''
       @body = ''
       @method = :get
       @client = client
+      @callback = callback
     end
 
 
@@ -98,6 +99,8 @@ class IbizaAPI::Client
       )
 
       @client.response.original = @original.run
+
+      @callback.after_run(@client.response) if @callback
 
       @client.response.result || @client.response.code
     end

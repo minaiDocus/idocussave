@@ -19,7 +19,7 @@ class UpdateAccountingPlan
 
 
   def execute
-    if @user.ibiza_id.present? && @user.organization.try(:ibiza).try(:is_configured?)
+    if @user.ibiza_id.present? && @user.organization.try(:ibiza).try(:configured?)
       if get_ibiza_accounting_plan
         @accounting_plan.providers = []
         @accounting_plan.customers = []

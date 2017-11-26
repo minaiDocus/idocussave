@@ -77,7 +77,7 @@ class PreAssignmentDeliveryService
 
 
   def client
-    @client ||= IbizaAPI::Client.new(@delivery.ibiza_access_token)
+    @client ||= IbizaAPI::Client.new(@delivery.ibiza_access_token, IbizaClientCallback.new(@ibiza, @delivery.ibiza_access_token))
   end
 
 

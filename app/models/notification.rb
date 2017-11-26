@@ -55,7 +55,8 @@ class Notification < ActiveRecord::Base
         'remind_to_order_new_kit',
         'paper_quota_reached',
         'new_pre_assignment_available',
-        'published_document'
+        'published_document',
+        'ibiza_invalid_access_token'
       ].freeze
     end
   end
