@@ -66,7 +66,8 @@ class Account::ProfilesController < Account::AccountController
         :paper_quota_reached,
         :new_pre_assignment_available,
         :dropbox_invalid_access_token,
-        :dropbox_insufficient_space
+        :dropbox_insufficient_space,
+        :ftp_auth_failure
       ]
     )
   end

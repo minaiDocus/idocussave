@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171127190333) do
+ActiveRecord::Schema.define(version: 20171127201158) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -913,6 +913,7 @@ ActiveRecord::Schema.define(version: 20171127190333) do
     t.boolean  "new_pre_assignment_available",           default: true
     t.boolean  "dropbox_invalid_access_token",           default: true
     t.boolean  "dropbox_insufficient_space",             default: true
+    t.boolean  "ftp_auth_failure",                       default: true
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.integer  "user_id",                      limit: 4
