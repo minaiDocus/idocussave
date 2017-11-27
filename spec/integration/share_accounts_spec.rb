@@ -241,14 +241,14 @@ describe 'Share accounts' do
     end
 
     it "finds a sharing by an account's last name" do
-      result = AccountSharing.search(account: 'Du pond')
+      result = AccountSharing.search(account: 'DU POND')
 
       expect(result.size).to eq 1
       expect(result.first).to eq @account_sharing2
     end
 
     it "finds a sharing by an account's full name" do
-      result = AccountSharing.search(account: 'Alice Du pond')
+      result = AccountSharing.search(account: 'Alice DU POND')
 
       expect(result.size).to eq 1
       expect(result.first).to eq @account_sharing2
@@ -283,7 +283,7 @@ describe 'Share accounts' do
     end
 
     it "finds a sharing by a guest collaborator's last name" do
-      result = AccountSharing.search(collaborator: 'Fisher')
+      result = AccountSharing.search(collaborator: 'FISHER')
 
       expect(result.size).to eq 1
       expect(result.first).to eq @account_sharing3

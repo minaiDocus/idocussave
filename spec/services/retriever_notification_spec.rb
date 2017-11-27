@@ -25,7 +25,7 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
       DatabaseCleaner.clean
     end
 
-    describe 'given user has no parent' do
+    describe 'given user has no group' do
       it 'notifies user and leader' do
         @notify_now.call(@retriever)
 
@@ -50,13 +50,15 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
       end
     end
 
-    describe 'given user has a parent and shared his account with contact' do
+    describe 'given user is in the same group as collaborator and shared his account with contact' do
       before(:all) do
         DatabaseCleaner.start
 
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
         @collaborator.create_notify
-        @user.update(parent: @collaborator)
+        group = Group.create(name: 'Customers', organization: @organization)
+        group.members << @collaborator
+        group.members << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
         @contact.create_notify
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
@@ -66,11 +68,12 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
         DatabaseCleaner.clean
       end
 
-      it 'notifies 3 users' do
+      it 'notifies 4 users' do
         @notify_now.call(@retriever)
 
-        expect(Notification.count).to eq 3
+        expect(Notification.count).to eq 4
         expect(@user.notifications.first.message).to eq user_message
+        expect(@leader.notifications.first.message).to eq others_message
         expect(@collaborator.notifications.first.message).to eq others_message
         expect(@contact.notifications.first.message).to eq others_message
       end
@@ -81,10 +84,11 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
             @user.notify.update_attribute(*deactivate_params)
           end
 
-          it "notifies collaborator and contact" do
+          it "notifies leader, collaborator and contact" do
             @notify_now.call(@retriever)
 
-            expect(Notification.count).to eq 2
+            expect(Notification.count).to eq 3
+            expect(@leader.notifications.count).to eq 1
             expect(@collaborator.notifications.count).to eq 1
             expect(@contact.notifications.count).to eq 1
           end
@@ -95,11 +99,12 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
             @collaborator.notify.update_attribute(*deactivate_params)
           end
 
-          it "notifies user and contact" do
+          it "notifies user, leader and contact" do
             @notify_now.call(@retriever)
 
-            expect(Notification.count).to eq 2
+            expect(Notification.count).to eq 3
             expect(@user.notifications.count).to eq 1
+            expect(@leader.notifications.count).to eq 1
             expect(@contact.notifications.count).to eq 1
           end
         end
@@ -109,11 +114,12 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
             @contact.notify.update_attribute(*deactivate_params)
           end
 
-          it "notifies user and collaborator" do
+          it "notifies user, leader and collaborator" do
             @notify_now.call(@retriever)
 
-            expect(Notification.count).to eq 2
+            expect(Notification.count).to eq 3
             expect(@user.notifications.count).to eq 1
+            expect(@leader.notifications.count).to eq 1
             expect(@collaborator.notifications.count).to eq 1
           end
         end
@@ -217,7 +223,7 @@ describe RetrieverNotification do
   end
 
   describe '#notify_action_needed' do
-    describe 'given organization has a leader, user has a parent and shared his account with contact' do
+    describe 'given organization has a leader, user is in the same group as collaborator and shared his account with contact' do
       before(:all) do
         DatabaseCleaner.start
 
@@ -226,7 +232,9 @@ describe RetrieverNotification do
         @organization.update(leader: @leader)
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
         @collaborator.create_notify
-        @user.update(parent: @collaborator)
+        group = Group.create(name: 'Customers', organization: @organization)
+        group.members << @collaborator
+        group.members << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
         @contact.create_notify
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
@@ -274,13 +282,15 @@ describe RetrieverNotification do
   end
 
   describe '.notify_no_bank_account_configured' do
-    describe 'given user has a parent' do
+    describe 'given user is in the same group as collaborator' do
       before(:all) do
         DatabaseCleaner.start
 
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
         @collaborator.create_notify
-        @user.update(parent: @collaborator)
+        group = Group.create(name: 'Customers', organization: @organization)
+        group.members << @collaborator
+        group.members << @user
       end
 
       after(:all) { DatabaseCleaner.clean }

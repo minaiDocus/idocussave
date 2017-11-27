@@ -8,7 +8,8 @@ describe AccountingWorkflow::TempPackProcessor do
       Timecop.freeze(Time.local(2013,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
-      @user.options = UserOptions.create(user_id: @user.id)
+      @user.create_options
+      @user.create_notify
       @user.find_or_create_subscription
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
 
@@ -369,6 +370,7 @@ describe AccountingWorkflow::TempPackProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
+            temp_document.user               = @user
             temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
@@ -1123,6 +1125,7 @@ describe AccountingWorkflow::TempPackProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
+            temp_document.user               = @user
             temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
@@ -2148,6 +2151,7 @@ describe AccountingWorkflow::TempPackProcessor do
           FileUtils.cp @file_with_2_pages, file_path
           temp_document = TempDocument.new
 
+          temp_document.user               = @user
           temp_document.temp_pack          = @temp_pack
           temp_document.original_file_name = file_name
           temp_document.content            = open(file_path)
@@ -2168,6 +2172,7 @@ describe AccountingWorkflow::TempPackProcessor do
           FileUtils.cp @file_with_2_pages, file_path
           temp_document = TempDocument.new
 
+          temp_document.user               = @user
           temp_document.temp_pack          = @temp_pack
           temp_document.original_file_name = file_name
           temp_document.content            = open(file_path)
@@ -2624,6 +2629,7 @@ describe AccountingWorkflow::TempPackProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
+            temp_document.user               = @user
             temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
@@ -2644,6 +2650,7 @@ describe AccountingWorkflow::TempPackProcessor do
             FileUtils.cp @file_with_2_pages, file_path
             temp_document = TempDocument.new
 
+            temp_document.user               = @user
             temp_document.temp_pack          = @temp_pack
             temp_document.original_file_name = file_name
             temp_document.content            = open(file_path)
@@ -3252,6 +3259,7 @@ describe AccountingWorkflow::TempPackProcessor do
       Timecop.freeze(Time.local(2015,1,1))
 
       @user = FactoryGirl.create(:user, code: 'TS0001')
+      @user.create_notify
       @subscription = Subscription.create(user_id: @user.id, period_duration: 12)
       UpdatePeriod.new(@subscription.current_period).execute
       @journal = @user.account_book_types.create(name: 'TS', description: 'TEST')
