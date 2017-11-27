@@ -64,7 +64,9 @@ class Account::ProfilesController < Account::AccountController
         :r_new_operations,
         :document_being_processed,
         :paper_quota_reached,
-        :new_pre_assignment_available
+        :new_pre_assignment_available,
+        :dropbox_invalid_access_token,
+        :dropbox_insufficient_space
       ]
     )
   end

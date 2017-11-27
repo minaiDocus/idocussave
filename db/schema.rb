@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171124204434) do
+ActiveRecord::Schema.define(version: 20171127190333) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -179,11 +179,11 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "created_at"
   end
 
-  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", length: {"associated_id"=>nil, "associated_type"=>191}, using: :btree
-  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", length: {"auditable_id"=>nil, "auditable_type"=>191}, using: :btree
+  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", using: :btree
+  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", using: :btree
   add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
-  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", length: {"request_uuid"=>191}, using: :btree
-  add_index "audits", ["user_id", "user_type"], name: "user_index", length: {"user_id"=>nil, "user_type"=>191}, using: :btree
+  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
+  add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
 
   create_table "bank_accounts", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
@@ -716,6 +716,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
     t.boolean  "is_passive",                                      default: true
+    t.datetime "checked_at"
+    t.boolean  "is_import_activated",                             default: false
     t.string   "root_path",                         limit: 255,   default: "/"
     t.datetime "import_checked_at"
     t.text     "previous_import_paths",             limit: 65535
@@ -909,6 +911,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.boolean  "document_being_processed",               default: true
     t.boolean  "paper_quota_reached",                    default: true
     t.boolean  "new_pre_assignment_available",           default: true
+    t.boolean  "dropbox_invalid_access_token",           default: true
+    t.boolean  "dropbox_insufficient_space",             default: true
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.integer  "user_id",                      limit: 4
@@ -931,7 +935,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.integer "temp_document_id", limit: 4
   end
 
-  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", length: {"label"=>191, "notify_id"=>nil, "temp_document_id"=>nil}, using: :btree
+  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", using: :btree
 
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255
