@@ -56,6 +56,7 @@ class Account::ProfilesController < Account::AccountController
         :to_send_docs,
         :published_docs,
         :reception_of_emailed_docs,
+        :r_wrong_pass,
         :r_site_unavailable,
         :r_action_needed,
         :r_bug,

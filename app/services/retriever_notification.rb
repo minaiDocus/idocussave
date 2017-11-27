@@ -7,17 +7,19 @@ class RetrieverNotification
 
   def notify_wrong_pass
     users.map do |user|
-      notification = Notification.new
-      notification.user        = user
-      notification.url         = url_for user
-      notification.notice_type = 'retriever_wrong_pass'
-      notification.title       = 'Automate - Mot de passe invalide'
-      if user == @retriever.user
-        notification.message   = "Votre mot de passe pour l'automate #{name} est invalide. Veuillez le reconfigurer s'il vous plaît."
-      else
-        notification.message   = "Le mot de passe pour l'automate #{name}, du dossier #{user_info}, est invalide. Veuillez le reconfigurer s'il vous plaît."
+      if user.notify.r_wrong_pass
+        notification = Notification.new
+        notification.user        = user
+        notification.url         = url_for user
+        notification.notice_type = 'retriever_wrong_pass'
+        notification.title       = 'Automate - Mot de passe invalide'
+        if user == @retriever.user
+          notification.message   = "Votre mot de passe pour l'automate #{name} est invalide. Veuillez le reconfigurer s'il vous plaît."
+        else
+          notification.message   = "Le mot de passe pour l'automate #{name}, du dossier #{user_info}, est invalide. Veuillez le reconfigurer s'il vous plaît."
+        end
+        notification.save
       end
-      notification.save
     end
   end
 

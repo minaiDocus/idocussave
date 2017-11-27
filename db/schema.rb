@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171127201158) do
+ActiveRecord::Schema.define(version: 20171127202548) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -900,6 +900,7 @@ ActiveRecord::Schema.define(version: 20171127201158) do
     t.boolean  "published_docs_rm",                      default: true
     t.string   "published_docs",               limit: 5, default: "now"
     t.boolean  "reception_of_emailed_docs",              default: true
+    t.boolean  "r_wrong_pass",                           default: true
     t.boolean  "r_site_unavailable",                     default: true
     t.boolean  "r_action_needed",                        default: true
     t.boolean  "r_bug",                                  default: true

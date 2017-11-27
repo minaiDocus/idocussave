@@ -287,6 +287,7 @@
                       - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
                         %hr
                         %h4.margin2left.margin1bottom Automate
+                        = o.input :r_wrong_pass, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un mot de passe est invalide pour un automate.", wrapper: :inline_checkbox
                         = o.input :r_site_unavailable, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un site web est indisponible pour un automate.", wrapper: :inline_checkbox
                         = o.input :r_action_needed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'une action est nécessaire pour un automate.", wrapper: :inline_checkbox
                         = o.input :r_bug, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'un automate ne fonctionne pas.", wrapper: :inline_checkbox
