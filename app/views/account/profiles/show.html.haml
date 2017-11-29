@@ -276,7 +276,7 @@
                       %hr
                       %h4.margin2left.margin1bottom Livraison Dropbox
                       = o.input :dropbox_invalid_access_token, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox est déconnecté.", wrapper: :inline_checkbox
-                      = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbx n'a plus d'espace.", wrapper: :inline_checkbox
+                      = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox n'a plus d'espace.", wrapper: :inline_checkbox
                       %hr
                       %h4.margin2left.margin1bottom
                         - if @user.is_prescriber
