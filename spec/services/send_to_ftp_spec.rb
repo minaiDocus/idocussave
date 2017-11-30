@@ -37,7 +37,8 @@ describe SendToFTP do
     describe 'given 3 remote files to deliver for a user' do
       before(:each) do
         @user = FactoryGirl.create :user, code: 'IDO%0001'
-        @user.options = UserOptions.create(user_id: @user.id)
+        @user.create_options
+        @user.create_notify
         @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
 
         @ftp = @user.external_file_storage.ftp

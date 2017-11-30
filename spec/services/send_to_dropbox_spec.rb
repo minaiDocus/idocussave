@@ -9,7 +9,8 @@ describe SendToDropbox do
 
   before(:each) do
     @user = FactoryGirl.create :user, code: 'IDO%0001'
-    @user.options = UserOptions.create(user_id: @user.id)
+    @user.create_options
+    @user.create_notify
     @user.external_file_storage = ExternalFileStorage.create(user_id: @user.id)
 
     @dropbox = @user.external_file_storage.dropbox_basic

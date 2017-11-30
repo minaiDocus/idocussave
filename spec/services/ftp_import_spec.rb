@@ -39,6 +39,7 @@ describe FTPImport do
 
     it 'fails to authenticate' do
       leader = create :prescriber, code: 'IDOC%LEAD', organization: @organization
+      leader.create_notify
       @organization.leader = leader
       @organization.save
 
