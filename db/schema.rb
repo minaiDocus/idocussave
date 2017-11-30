@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171124204434) do
+ActiveRecord::Schema.define(version: 20171127202548) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -179,11 +179,11 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "created_at"
   end
 
-  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", length: {"associated_id"=>nil, "associated_type"=>191}, using: :btree
-  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", length: {"auditable_id"=>nil, "auditable_type"=>191}, using: :btree
+  add_index "audits", ["associated_id", "associated_type"], name: "associated_index", using: :btree
+  add_index "audits", ["auditable_id", "auditable_type"], name: "auditable_index", using: :btree
   add_index "audits", ["created_at"], name: "index_audits_on_created_at", using: :btree
-  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", length: {"request_uuid"=>191}, using: :btree
-  add_index "audits", ["user_id", "user_type"], name: "user_index", length: {"user_id"=>nil, "user_type"=>191}, using: :btree
+  add_index "audits", ["request_uuid"], name: "index_audits_on_request_uuid", using: :btree
+  add_index "audits", ["user_id", "user_type"], name: "user_index", using: :btree
 
   create_table "bank_accounts", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
@@ -716,6 +716,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
     t.boolean  "is_passive",                                      default: true
+    t.datetime "checked_at"
+    t.boolean  "is_import_activated",                             default: false
     t.string   "root_path",                         limit: 255,   default: "/"
     t.datetime "import_checked_at"
     t.text     "previous_import_paths",             limit: 65535
@@ -888,9 +890,54 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "updated_at",                                null: false
     t.string   "title",       limit: 255
     t.text     "message",     limit: 65535
+    t.string   "url",         limit: 255
   end
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
+
+  create_table "notifies", force: :cascade do |t|
+    t.boolean  "to_send_docs",                           default: true
+    t.boolean  "published_docs_rm",                      default: true
+    t.string   "published_docs",               limit: 5, default: "now"
+    t.boolean  "reception_of_emailed_docs",              default: true
+    t.boolean  "r_wrong_pass",                           default: true
+    t.boolean  "r_site_unavailable",                     default: true
+    t.boolean  "r_action_needed",                        default: true
+    t.boolean  "r_bug",                                  default: true
+    t.string   "r_new_documents",              limit: 5, default: "now"
+    t.integer  "r_new_documents_count",        limit: 4, default: 0
+    t.string   "r_new_operations",             limit: 5, default: "now"
+    t.integer  "r_new_operations_count",       limit: 4, default: 0
+    t.boolean  "r_no_bank_account_configured",           default: true
+    t.boolean  "document_being_processed",               default: true
+    t.boolean  "paper_quota_reached",                    default: true
+    t.boolean  "new_pre_assignment_available",           default: true
+    t.boolean  "dropbox_invalid_access_token",           default: true
+    t.boolean  "dropbox_insufficient_space",             default: true
+    t.boolean  "ftp_auth_failure",                       default: true
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.integer  "user_id",                      limit: 4
+  end
+
+  add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
+  add_index "notifies", ["r_new_operations_count"], name: "index_notifies_on_r_new_operations_count", using: :btree
+  add_index "notifies", ["user_id"], name: "index_notifies_on_user_id", using: :btree
+
+  create_table "notifies_preseizures", force: :cascade do |t|
+    t.integer "notify_id",     limit: 4
+    t.integer "preseizure_id", limit: 4
+  end
+
+  add_index "notifies_preseizures", ["notify_id", "preseizure_id"], name: "index_notify_id_preseizure_id", using: :btree
+
+  create_table "notifies_temp_documents", force: :cascade do |t|
+    t.string  "label",            limit: 255
+    t.integer "notify_id",        limit: 4
+    t.integer "temp_document_id", limit: 4
+  end
+
+  add_index "notifies_temp_documents", ["label", "notify_id", "temp_document_id"], name: "index_label_notify_id_temp_document_id", using: :btree
 
   create_table "operations", force: :cascade do |t|
     t.string   "mongo_id",                     limit: 255
@@ -1504,6 +1551,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "delivery_created_at"
     t.datetime "delivery_updated_at"
     t.string   "delivery_state",                           limit: 255,   default: "wait", null: false
+    t.boolean  "is_paper_quota_reached_notified",                        default: false
   end
 
   add_index "periods", ["mongo_id"], name: "index_periods_on_mongo_id", using: :btree
@@ -2040,8 +2088,8 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.datetime "inactive_at"
     t.string   "dropbox_delivery_folder",                                        limit: 255,   default: "iDocus_delivery/:code/:year:month/:account_book/", null: false
     t.boolean  "is_dropbox_extended_authorized",                                               default: false,                                              null: false
-    t.boolean  "is_reminder_email_active",                                                     default: true,                                               null: false
-    t.boolean  "is_document_notifier_active",                                                  default: true,                                               null: false
+    t.boolean  "rm_is_reminder_email_active",                                                  default: true,                                               null: false
+    t.boolean  "rm_is_document_notifier_active",                                               default: true,                                               null: false
     t.boolean  "is_centralized",                                                               default: true,                                               null: false
     t.boolean  "is_operator"
     t.string   "knowings_code",                                                  limit: 255
@@ -2055,7 +2103,7 @@ ActiveRecord::Schema.define(version: 20171124204434) do
     t.string   "ibiza_id",                                                       limit: 255
     t.boolean  "is_fiduceo_authorized",                                                        default: false,                                              null: false
     t.string   "email_code",                                                     limit: 255
-    t.boolean  "is_mail_receipt_activated",                                                    default: true,                                               null: false
+    t.boolean  "rm_is_mail_receipt_activated",                                                 default: true,                                               null: false
     t.integer  "authd_prev_period",                                              limit: 4,     default: 1,                                                  null: false
     t.integer  "auth_prev_period_until_day",                                     limit: 4,     default: 11,                                                 null: false
     t.integer  "auth_prev_period_until_month",                                   limit: 4,     default: 0,                                                  null: false

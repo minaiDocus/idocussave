@@ -50,8 +50,26 @@ class Account::ProfilesController < Account::AccountController
   private
 
   def user_params
-    params.require(:user).permit(:is_reminder_email_active,
-                                 :is_document_notifier_active,
-                                 :is_mail_receipt_activated)
+    params.require(:user).permit(
+      notify_attributes: [
+        :id,
+        :to_send_docs,
+        :published_docs,
+        :reception_of_emailed_docs,
+        :r_wrong_pass,
+        :r_site_unavailable,
+        :r_action_needed,
+        :r_bug,
+        :r_no_bank_account_configured,
+        :r_new_documents,
+        :r_new_operations,
+        :document_being_processed,
+        :paper_quota_reached,
+        :new_pre_assignment_available,
+        :dropbox_invalid_access_token,
+        :dropbox_insufficient_space,
+        :ftp_auth_failure
+      ]
+    )
   end
 end

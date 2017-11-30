@@ -1,14 +1,14 @@
 class IbizaboxImport
   class << self
     def update_folders(user)
-      return false unless user.organization.try(:ibiza).try(:is_configured?)
+      return false unless user.organization.ibiza.first_configured?
       folder_ids = if user.ibizabox_folders.exists?
         user.account_book_types.map(&:id) - user.ibizabox_folders.map(&:journal_id)
       else
         user.account_book_types.map(&:id)
       end
-      folder_ids.map do |folder|
-        user.ibizabox_folders.create(journal_id: folder)
+      folder_ids.map do |folder_id|
+        user.ibizabox_folders.create(journal_id: folder_id)
       end
     end
 
@@ -17,8 +17,9 @@ class IbizaboxImport
     end
 
     def init
-      IbizaboxFolder.ready.map(&:user_id).uniq.each do |user_id|
-        ImportFromIbizaboxWorker.perform_async user_id
+      IbizaboxFolder.ready.includes(:user).map(&:user).uniq.each do |user|
+        next unless user.organization.ibiza.first_configured?
+        ImportFromIbizaboxWorker.perform_async user.id
       end
     end
   end
@@ -53,7 +54,7 @@ class IbizaboxImport
   end
 
   def valid?
-    @folder.active? && @user.organization.try(:ibiza).try(:is_configured?)
+    @folder.active? && @user.organization.ibiza.first_configured?
   end
 
   def accessible_ibiza_periods
@@ -143,7 +144,6 @@ class IbizaboxImport
   end
 
   def client
-    @client ||= @user.organization.ibiza.client
+    @client ||= @user.organization.ibiza.first_client
   end
-
 end

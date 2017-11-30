@@ -59,7 +59,7 @@ class Account::PackReportsController < Account::OrganizationController
 
           ibiza = @organization.ibiza
 
-          if ibiza.try(:is_configured?) && @report.user.ibiza_id
+          if ibiza.try(:configured?) && @report.user.ibiza_id
             date = DocumentTools.to_period(@report.name)
 
             exercise = IbizaExerciseFinder.new(@report.user, date, ibiza).execute

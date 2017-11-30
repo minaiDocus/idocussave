@@ -257,16 +257,46 @@
             #subscription_options.row-fluid.pan{ class: (@active_panel == 'subscription_options' ? 'active' : '')}
               .span12
                 .well
-                  %h3.aligncenter Notification par mail
+                  %h3.aligncenter.margin2bottom Notifications et remontées d'alertes
                   = simple_form_for @user, url: account_profile_path, html: { id: 'subscription_options' } do |f|
-                    = hidden_field_tag :panel, 'subscription_options'
-                    - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
-                      = f.input :is_reminder_email_active, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
-                    = f.input :is_document_notifier_active, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouveaux documents sont disponibles", wrapper: :inline_checkbox
-                    - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
-                      = f.input :is_mail_receipt_activated, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail", wrapper: :inline_checkbox
-                    .form-actions
-                      = f.submit 'Valider', class: 'btn'
+                    = f.simple_fields_for :notify do |o|
+                      %h4.margin2left.margin1bottom Générale
+                      = hidden_field_tag :panel, 'subscription_options'
+                      - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
+                        = o.input :to_send_docs, as: :boolean, label: "oui, je veux recevoir des mails de relance pour ne pas oublier d'envoyer mes documents à numériser.", wrapper: :inline_checkbox
+                      = o.input :published_docs, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                      - if @user.options.try(:is_upload_authorized) && !@user.is_prescriber
+                        = o.input :reception_of_emailed_docs, as: :boolean, label: "oui, je veux recevoir un mail de confirmation lorsque la plateforme reçoit avec succès un document que j’ai envoyé par mail.", wrapper: :inline_checkbox
+                      - if @user.options.try(:is_upload_authorized) || @user.options.try(:is_dematbox_authorized) || @user.is_prescriber
+                        = o.input :document_being_processed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque des documents sont en cours de traitement.", wrapper: :inline_checkbox
+                      - if !@user.is_prescriber && (@user.subscription.is_mail_package_active || @user.subscription.is_annual_package_active)
+                        = o.input :paper_quota_reached, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon quota de 100 feuilles par période a été atteint.", wrapper: :inline_checkbox
+                      - if @user.is_prescriber
+                        = o.input :new_pre_assignment_available, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque de nouvelles pré-affectations sont disponibles.", wrapper: :inline_checkbox
+                      %hr
+                      %h4.margin2left.margin1bottom Livraison Dropbox
+                      = o.input :dropbox_invalid_access_token, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox est déconnecté.", wrapper: :inline_checkbox
+                      = o.input :dropbox_insufficient_space, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon compte Dropbox n'a plus d'espace.", wrapper: :inline_checkbox
+                      %hr
+                      %h4.margin2left.margin1bottom
+                        - if @user.is_prescriber
+                          Import/Export FTP
+                        - else
+                          Livraison FTP
+                      = o.input :ftp_auth_failure, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsque mon FTP est déconnecté.", wrapper: :inline_checkbox
+                      - if @user.options.try(:is_retriever_authorized) || @user.is_prescriber
+                        %hr
+                        %h4.margin2left.margin1bottom Automate
+                        = o.input :r_wrong_pass, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un mot de passe est invalide pour un automate.", wrapper: :inline_checkbox
+                        = o.input :r_site_unavailable, as: :boolean, label: "oui, je veux recevoir une notification lorsqu'un site web est indisponible pour un automate.", wrapper: :inline_checkbox
+                        = o.input :r_action_needed, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'une action est nécessaire pour un automate.", wrapper: :inline_checkbox
+                        = o.input :r_bug, as: :boolean, label: "oui, je veux recevoir des mails de notification lorsqu'un automate ne fonctionne pas.", wrapper: :inline_checkbox
+                        - if @user.is_prescriber
+                          = o.input :r_no_bank_account_configured, as: :boolean, label: "oui, je veux recevoir une notification lorsque aucun compte bancaire n'est configuré pour un automate bancaire.", wrapper: :inline_checkbox
+                        = o.input :r_new_documents, label: 'Lorsque de nouveaux documents sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                        = o.input :r_new_operations, label: 'Lorsque de nouvelles opérations sont disponibles', collection: notification_options, include_blank: false, label_html: { class: 'notification_options_label' }
+                    .form-actions.padding0bottom
+                      = f.submit 'Valider', class: 'btn btn-primary'
 
             - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
               - period_service = PeriodService.new user: @user, current_time: Time.now.beginning_of_month

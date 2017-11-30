@@ -58,7 +58,11 @@ class PreAssignmentDelivery < ActiveRecord::Base
 
   def ibiza_access_token
     if ibiza.two_channel_delivery?
-      preseizures.first.operation.present? ? ibiza.access_token_2 : ibiza.access_token
+      if preseizures.first.operation.present?
+        ibiza.access_token_2 if ibiza.second_configured?
+      elsif ibiza.first_configured?
+        ibiza.access_token
+      end
     else
       ibiza.practical_access_token
     end

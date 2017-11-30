@@ -64,12 +64,6 @@
             %th= t('activerecord.models.user.attributes.is_guest')
             %td.value= check_box_tag 'user[is_guest]', 1, @user.is_guest, disabled: true
           %tr
-            %th= t('activerecord.models.user.attributes.is_reminder_email_active')
-            %td.value= check_box_tag 'user[is_reminder_email_active]', 1, @user.is_reminder_email_active
-          %tr
-            %th= t('activerecord.models.user.attributes.is_document_notifier_active')
-            %td.value= check_box_tag 'user[is_document_notifier_active]', 1, @user.is_document_notifier_active
-          %tr
             %th= t('activerecord.models.user_options.attributes.is_retriever_authorized')
             %td.value
               = check_box_tag 'user[options][is_retriever_authorized]', 1, @user.options.try(:is_retriever_authorized), disabled: true

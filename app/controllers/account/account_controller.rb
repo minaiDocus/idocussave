@@ -12,7 +12,13 @@ class Account::AccountController < ApplicationController
     @last_packs      = all_packs.order(updated_at: :desc).limit(5)
     @last_temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
 
-    if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
+    if params[:dashboard_summary].in? UserOptions::DASHBOARD_SUMMARIES
+      @dashboard_summary = params[:dashboard_summary]
+    else
+      @dashboard_summary = @user.options.dashboard_summary
+    end
+
+    if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
       customers = @user.is_admin ? @user.organization.customers : @user.customers
       @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
     end
@@ -128,6 +134,6 @@ private
   end
 
   def load_recent_notifications
-    @last_notifications = @user.notifications.order(created_at: :desc).limit(5) if @user
+    @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
   end
 end

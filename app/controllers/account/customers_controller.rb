@@ -235,6 +235,7 @@ class Account::CustomersController < Account::OrganizationController
     authorized = false if action_name.in?(%w(info new create destroy)) && !@organization.is_active
     authorized = false if action_name.in?(%w(info new create)) && !(is_leader? || @user.groups.any?)
     authorized = false if action_name.in?(%w(edit_period_options update_period_options)) && !@customer.options.is_upload_authorized
+    authorized = false if action_name.in?(%w(edit_ibiza update_ibiza)) && !@organization.ibiza.try(:configured?)
 
     unless authorized
       flash[:error] = t('authorization.unessessary_rights')

@@ -6,6 +6,9 @@ class NotifyDropboxError
 
   def execute
     $remote_lock.synchronize('notify_dropbox_error', expiry: 5.seconds, retries: 5) do
+      return if @notice_type == 'dropbox_invalid_access_token' && !@user.notify.dropbox_invalid_access_token
+      return if @notice_type == 'dropbox_insufficient_space' && !@user.notify.dropbox_insufficient_space
+
       if @user.notifications.where(notice_type: @notice_type).where('created_at > ?', 1.day.ago).first.nil?
         notification = Notification.new
         notification.user = @user
@@ -17,6 +20,7 @@ class NotifyDropboxError
           notification.title   = "Dropbox - Espace insuffisant"
           notification.message = "Votre compte Dropbox n'a plus d'espace, la livraison automatique a donc été désactivé, veuillez libérer plus d'espace avant de la réactiver."
         end
+        notification.url       = Rails.application.routes.url_helpers.account_profile_url({ panel: 'efs_management', anchor: 'dropbox' }.merge(ActionMailer::Base.default_url_options))
         if notification.save
           NotifyWorker.perform_async(notification.id)
         end

@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
   has_one :accounting_plan
   has_one :my_organization, class_name: 'Organization', inverse_of: 'leader', foreign_key: :leader_id
   has_one :external_file_storage, autosave: true, dependent: :destroy
-
+  has_one :notify, dependent: :destroy
 
   has_many :packs, class_name: 'Pack', inverse_of: :owner, foreign_key: :owner_id
   has_many :orders
@@ -103,7 +103,9 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :addresses, allow_destroy: true
   accepts_nested_attributes_for :csv_descriptor
   accepts_nested_attributes_for :external_file_storage
+  accepts_nested_attributes_for :notify
 
+  # TODO : remove old attributes : rm_is_reminder_email_active, rm_is_document_notifier_active and rm_is_mail_receipt_activated
 
   before_validation do |user|
     if user.email_code.blank? && !user.is_prescriber

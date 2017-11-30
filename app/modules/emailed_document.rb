@@ -123,7 +123,7 @@ class EmailedDocument
 
             email.save
 
-            if emailed_document.user.is_mail_receipt_activated
+            if emailed_document.user.notify.reception_of_emailed_docs
               EmailedDocumentMailer.notify_success(email, emailed_document).deliver_now
             end
           else

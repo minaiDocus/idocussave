@@ -21,6 +21,9 @@ class Period < ActiveRecord::Base
   scope :monthly,   -> { where(duration: 1) }
   scope :quarterly, -> { where(duration: 3) }
 
+  scope :current, -> { where('end_date >= ?', Date.today) }
+  scope :paper_quota_reached_not_notified, -> { where(is_paper_quota_reached_notified: false) }
+  scope :paper_quota_reached, -> { where('max_sheets_authorized <= scanned_sheets') }
 
   before_create :add_one_delivery
   before_create :set_start_date_and_end_date
@@ -212,9 +215,15 @@ class Period < ActiveRecord::Base
     preseizure_pieces + expense_pieces
   end
 
-
-  def current
-    desc(:start_date).first
+  def type_name
+    case duration
+    when 1
+      'mensuel'
+    when 3
+      'trimestre'
+    when 12
+      'annuel'
+    end
   end
 
 private

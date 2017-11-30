@@ -20,6 +20,8 @@ class AccountingWorkflow::TempPackProcessor
                                 1
                               end
     added_pieces = []
+    published_temp_documents = []
+
     temp_documents.each_with_index do |temp_document, document_index|
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - start"
       if !temp_document.is_a_cover? || !pack.has_cover?
@@ -152,6 +154,8 @@ class AccountingWorkflow::TempPackProcessor
           end
           current_piece_position += 1 unless is_a_cover
         end
+
+        published_temp_documents << temp_document
       end
       temp_document.processed
       logger.info "[#{runner_id}] #{temp_pack.name.sub(' all', '')} (#{document_index+1}/#{temp_documents.size}) - n°#{temp_document.position} - #{temp_document.delivery_type} - #{temp_document.pages_number}p - end"
@@ -179,6 +183,10 @@ class AccountingWorkflow::TempPackProcessor
       AccountingWorkflow::SendPieceToPreAssignment.execute(added_pieces)
     end
     FileDelivery.prepare(pack)
+
+    published_temp_documents.each do |temp_document|
+      NotifyPublishedDocument.new(temp_document).execute
+    end
   end
 
   def self.logger

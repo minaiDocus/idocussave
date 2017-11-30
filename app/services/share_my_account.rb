@@ -21,6 +21,7 @@ class ShareMyAccount
         notification.notice_type = 'share_account'
         notification.title       = 'Accès à un compte'
         notification.message     = "Vous avez maintenant accès au compte #{@account_sharing.account.info}."
+        notification.url         = Rails.application.routes.url_helpers.account_profile_url({ panel: 'account_sharing' }.merge(ActionMailer::Base.default_url_options))
         NotifyWorker.perform_async(notification.id) if notification.save
       end
     end

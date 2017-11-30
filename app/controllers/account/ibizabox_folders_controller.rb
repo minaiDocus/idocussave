@@ -15,7 +15,7 @@ class Account::IbizaboxFoldersController < Account::OrganizationController
 
   def refresh
     IbizaboxImport.update_folders(@customer)
-    flash[:success] = "Mis à jour avec succès"
+    flash[:success] = 'Mise à jour avec succès'
     redirect_to account_organization_customer_path(@organization, @customer, tab: 'ibiza_box')
   end
 

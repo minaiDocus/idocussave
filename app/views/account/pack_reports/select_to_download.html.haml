@@ -28,7 +28,7 @@
           = label_tag 'download[format]', 'Format', class: 'control-label'
           .controls
             - formats = [['CSV', 'csv']]
-            - formats << ['XML', 'xml'] if @user.is_admin && @organization.ibiza.try(:is_configured?)
+            - formats << ['XML', 'xml'] if @user.is_admin && @organization.ibiza.try(:configured?)
             - formats << ['ZIP (Quadratus)', 'zip'] if @organization.is_quadratus_used
             - formats << ['ZIP (Coala)', 'zip_coala'] if @organization.is_coala_used
             = select_tag 'download[format]', options_for_select(formats), include_blank: false

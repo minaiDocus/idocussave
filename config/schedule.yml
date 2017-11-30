@@ -12,12 +12,24 @@ InitializePeriodsWorker:
 DocumentNotificationWorker:
   queue: default
   cron: '0 8 * * *'
+RetrieverNotificationWorker:
+  queue: default
+  cron: '0 8 * * *'
 ScansNotDeliveredNotificationWorker:
   queue: high
   cron: '0 1 * * *'
 UpdateAccountingPlanWorker:
   queue: default
   cron: '0 4 * * *'
+RemindToOrderNewKitWorker:
+  queue: default
+  cron: '15 3 1 12 *'
+NotifyPaperQuotaReachedWorker:
+  queue: default
+  cron: '0 8 * * *'
+NotifyPublishedDocumentDailyWorker:
+  queue: default
+  cron: '0 8 * * *'
 
 ## Budgea retrievers workers
 ProcessOperationsWorker:

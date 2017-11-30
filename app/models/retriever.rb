@@ -343,6 +343,14 @@ class Retriever < ActiveRecord::Base
     configuring? || destroying? || running?
   end
 
+  def clear_name
+    if name != service_name
+      "\"#{name}\" (#{service_name})"
+    else
+      "\"#{name}\""
+    end
+  end
+
 private
 
   # TODO move into a form service
