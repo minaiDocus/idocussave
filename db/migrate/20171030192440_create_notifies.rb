@@ -21,14 +21,6 @@ class CreateNotifies < ActiveRecord::Migration
       t.index :r_new_operations_count
     end
 
-    User.find_each do |user|
-      user.create_notify(
-        to_send_docs:              user.is_reminder_email_active,
-        published_docs:            user.is_document_notifier_active,
-        reception_of_emailed_docs: user.is_mail_receipt_activated
-      )
-    end
-
     rename_column :users, :is_reminder_email_active,    :rm_is_reminder_email_active
     rename_column :users, :is_document_notifier_active, :rm_is_document_notifier_active
     rename_column :users, :is_mail_receipt_activated,   :rm_is_mail_receipt_activated
