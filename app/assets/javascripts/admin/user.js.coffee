@@ -1,7 +1,7 @@
 checkbox_event_handler = ->
   $('input[type=checkbox]').unbind 'click'
   $('input[type=checkbox]').bind 'click', ->
-    url = '/admin/users/' + user_id
+    url = '/admin/users/' + $('#user').data('userId')
     hsh = {}
     value = -1
     if $(this).is(':checked')
@@ -36,7 +36,7 @@ jQuery ->
     value = prompt.children('input').val().trim()
     original.children('.value').text(value)
 
-    url = '/admin/users/' + user_id
+    url = '/admin/users/' + $('#user').data('userId')
     hsh = {}
     hsh[prompt.children('input').attr('name')] = value
     $.ajax

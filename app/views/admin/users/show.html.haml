@@ -1,4 +1,4 @@
-#user.show
+#user.show{ data: { user_id: @user.id } }
   .row-fluid
     .span12
       .row-fluid
@@ -80,6 +80,3 @@
           %tr
             %th Stamp - Fond présent ?
             %td.value= check_box_tag 'user[is_stamp_background_filled]', 1, @user.is_stamp_background_filled
-
-:javascript
-  var user_id = "#{params[:id]}"
