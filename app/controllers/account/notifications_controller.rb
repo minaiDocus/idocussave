@@ -1,7 +1,7 @@
 class Account::NotificationsController < Account::AccountController
   def index
     @notifications = @user.notifications.order(is_read: :asc, created_at: :desc).page(params[:page]).per(params[:per_page])
-    @notifications.update_all is_read: true
+    @notifications.update_all is_read: true, updated_at: Time.now
   end
 
   def latest
