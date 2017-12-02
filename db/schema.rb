@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201190953) do
+ActiveRecord::Schema.define(version: 20171202153820) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -313,7 +313,6 @@ ActiveRecord::Schema.define(version: 20171201190953) do
   add_index "dba_sequences", ["mongo_id"], name: "index_dba_sequences_on_mongo_id", using: :btree
 
   create_table "debit_mandates", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "transactionId",            limit: 255
@@ -351,15 +350,10 @@ ActiveRecord::Schema.define(version: 20171201190953) do
     t.string   "deliveryCity",             limit: 255
     t.string   "deliveryCountry",          limit: 255
     t.string   "deliveryPostalCode",       limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
     t.integer  "organization_id",          limit: 4
   end
 
-  add_index "debit_mandates", ["mongo_id"], name: "index_debit_mandates_on_mongo_id", using: :btree
   add_index "debit_mandates", ["organization_id"], name: "index_debit_mandates_on_organization_id", using: :btree
-  add_index "debit_mandates", ["user_id"], name: "user_id", using: :btree
-  add_index "debit_mandates", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "delayed_backend_mongoid_jobs", force: :cascade do |t|
     t.string   "mongo_id",   limit: 255

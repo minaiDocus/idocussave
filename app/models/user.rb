@@ -30,7 +30,6 @@ class User < ActiveRecord::Base
   has_one :dematbox
   has_one :composition
   has_one :subscription
-  has_one :debit_mandate
   has_one :csv_descriptor, autosave: true
   has_one :accounting_plan
   has_one :my_organization, class_name: 'Organization', inverse_of: 'leader', foreign_key: :leader_id

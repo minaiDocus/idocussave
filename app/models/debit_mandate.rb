@@ -1,7 +1,5 @@
 # -*- encoding : UTF-8 -*-
 class DebitMandate < ActiveRecord::Base
-  # TODO: remove user references after migration
-  belongs_to :user
   belongs_to :organization
 
   scope :configured,     -> { where(transactionStatus: 'success') }
