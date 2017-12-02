@@ -84,10 +84,8 @@ class RetrieverNotification
           notification.message   = "L'automate #{name} du dossier #{user_info} ne fonctionne pas correctement."
         end
         notification.save
-        NotifyWorker.perform_async(notification.id)
       end
     end
-    NotificationsMailer.delay(queue: :mailers).notify_retrievers_bug_to_admin @retriever
   end
 
   def notify_new_documents(new_documents_count)
