@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class DebitMandate < ActiveRecord::Base
+  audited
+
   belongs_to :organization
 
   scope :configured,     -> { where(transactionStatus: 'success') }
@@ -20,6 +22,6 @@ class DebitMandate < ActiveRecord::Base
 private
 
   def set_client_reference
-    update_attribute(:clientReference, "#{'%0.5d' % id}#{organization.code}")
+    update_attribute(:clientReference, "#{'%0.5d' % id}#{organization.code}") if clientReference.blank?
   end
 end
