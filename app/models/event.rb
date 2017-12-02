@@ -7,8 +7,6 @@ class Event < ActiveRecord::Base
 
   before_create :set_user_code
 
-  # TODO : remove outdated attributes : mongo_id, number
-
   def target
     if target_id
       target_type.split('/').each_with_index.map do |klass, i|

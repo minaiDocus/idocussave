@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171202153820) do
+ActiveRecord::Schema.define(version: 20171202154923) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -515,29 +515,22 @@ ActiveRecord::Schema.define(version: 20171202153820) do
   add_index "emails", ["to_user_id_mongo_id"], name: "to_user_id_mongo_id", using: :btree
 
   create_table "events", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "number",                   limit: 4
-    t.string   "user_code",                limit: 255
-    t.string   "action",                   limit: 255
-    t.string   "target_type",              limit: 255
-    t.string   "target_name",              limit: 255
-    t.text     "target_attributes",        limit: 65535
-    t.string   "path",                     limit: 255
-    t.string   "ip_address",               limit: 255
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
-    t.integer  "target_id",                limit: 4
+    t.string   "user_code",         limit: 255
+    t.string   "action",            limit: 255
+    t.string   "target_type",       limit: 255
+    t.string   "target_name",       limit: 255
+    t.text     "target_attributes", limit: 65535
+    t.string   "path",              limit: 255
+    t.string   "ip_address",        limit: 255
+    t.integer  "organization_id",   limit: 4
+    t.integer  "user_id",           limit: 4
+    t.integer  "target_id",         limit: 4
   end
 
-  add_index "events", ["mongo_id"], name: "index_events_on_mongo_id", using: :btree
   add_index "events", ["organization_id"], name: "organization_id", using: :btree
-  add_index "events", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
   add_index "events", ["user_id"], name: "user_id", using: :btree
-  add_index "events", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "exercises", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
