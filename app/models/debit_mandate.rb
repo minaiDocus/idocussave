@@ -3,7 +3,7 @@ class DebitMandate < ActiveRecord::Base
   belongs_to :organization
 
   scope :configured,     -> { where(transactionStatus: 'success') }
-  scope :not_configured, -> { where.not(transactionStatus: ['success']) }
+  scope :not_configured, -> { where("transactionStatus IS NULL OR transactionStatus != 'success'") }
 
   after_create :set_client_reference
 

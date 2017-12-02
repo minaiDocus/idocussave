@@ -10,12 +10,8 @@ class Account::OrganizationsController < Account::AccountController
   # GET /account/organizations
   def index
     @organizations = Organization.search(search_terms(params[:organization_contains])).order(sort_column => sort_direction).page(params[:page]).per(params[:per_page])
-
     @without_address_count = Organization.joins(:addresses).where('addresses.is_for_billing =  ?', true ).count
-
-    user_ids   = DebitMandate.configured.pluck(:user_id)
-    leader_ids = Organization.all.pluck(:leader_id)
-    @debit_mandate_not_configured_count = Organization.where(leader_id: (leader_ids - user_ids)).count
+    @debit_mandate_not_configured_count = DebitMandate.not_configured.count
   end
 
 
