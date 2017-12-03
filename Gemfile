@@ -154,7 +154,7 @@ group :development, :test do
   gem 'thin'
   gem 'rspec-rails'
   gem 'quiet_assets'
-  gem 'better_errors', '1.1.0'
+  gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'guard-livereload', require: false
