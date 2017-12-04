@@ -17,7 +17,7 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
       DatabaseCleaner.start
 
       @leader = create :prescriber, code: 'IDO%ADM', organization: @organization
-      @leader.create_notify
+      @leader.create_notify(@notify_options)
       @organization.update(leader: @leader)
     end
 
@@ -55,12 +55,12 @@ RSpec.shared_examples "retriever's notifications for users" do |notify_params, d
         DatabaseCleaner.start
 
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
-        @collaborator.create_notify
+        @collaborator.create_notify(@notify_options)
         group = Group.create(name: 'Customers', organization: @organization)
         group.members << @collaborator
         group.members << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
-        @contact.create_notify
+        @contact.create_notify(@notify_options)
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
       end
 
@@ -134,7 +134,20 @@ describe RetrieverNotification do
 
     @organization = create :organization, code: 'IDO'
     @user         = create :user, code: 'IDO%001', organization: @organization, first_name: 'John', last_name: 'Doe'
-    @user.create_notify
+    @notify_options = {
+      published_docs: 'now',
+      r_wrong_pass: true,
+      r_site_unavailable: true,
+      r_action_needed: true,
+      r_bug: true,
+      r_new_documents: 'now',
+      r_new_operations: 'now',
+      r_no_bank_account_configured: true,
+      document_being_processed: true,
+      paper_quota_reached: true,
+      new_pre_assignment_available: true
+    }
+    @user.create_notify(@notify_options)
     @journal      = create :account_book_type, user: @user
     @connector    = create :connector
     @retriever    = Retriever.new
@@ -228,15 +241,15 @@ describe RetrieverNotification do
         DatabaseCleaner.start
 
         @leader = create :prescriber, code: 'IDO%ADM', organization: @organization
-        @leader.create_notify
+        @leader.create_notify(@notify_options)
         @organization.update(leader: @leader)
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
-        @collaborator.create_notify
+        @collaborator.create_notify(@notify_options)
         group = Group.create(name: 'Customers', organization: @organization)
         group.members << @collaborator
         group.members << @user
         @contact = create :guest, code: 'IDO%SHR01', organization: @organization
-        @contact.create_notify
+        @contact.create_notify(@notify_options)
         AccountSharing.create collaborator: @contact, account: @user, organization: @organization, is_approved: true
       end
 
@@ -266,7 +279,7 @@ describe RetrieverNotification do
   describe '.notify_summary_updates' do
     it 'notifies delayed notifications' do
       user2 = create :user, code: 'IDO%002', organization: @organization, first_name: 'Jack', last_name: 'Spade'
-      user2.create_notify
+      user2.create_notify(@notify_options)
 
       @user.notify.update r_new_documents_count: 7, r_new_operations_count: 53
 
@@ -287,7 +300,7 @@ describe RetrieverNotification do
         DatabaseCleaner.start
 
         @collaborator = create :prescriber, code: 'IDO%COL1', organization: @organization
-        @collaborator.create_notify
+        @collaborator.create_notify(@notify_options)
         group = Group.create(name: 'Customers', organization: @organization)
         group.members << @collaborator
         group.members << @user

@@ -9,7 +9,14 @@ describe ProcessRetrievedData do
     @organization = FactoryGirl.create :organization, code: 'IDO'
     @user = FactoryGirl.create(:user, code: 'IDO%0001', organization: @organization)
     @user.create_options
-    @user.create_notify
+    @user.create_notify(
+      r_wrong_pass: true,
+      r_site_unavailable: true,
+      r_action_needed: true,
+      r_bug: true,
+      r_new_documents: 'now',
+      r_new_operations: 'now'
+    )
     @journal = FactoryGirl.create :account_book_type, user_id: @user.id
     @connector = FactoryGirl.create :connector
     @retriever = Retriever.new
