@@ -370,6 +370,27 @@ Idocus::Application.routes.draw do
         post 'update_comment', on: :collection
       end
     end
+
+    namespace :mobile do
+      devise_for :users
+
+      resources :remote_authentication do
+        post 'request_connexion', on: :collection
+        post 'ping', on: :collection
+      end
+
+      resources :data_loader do
+        post 'load_customers', on: :collection
+        post 'load_packs', on: :collection
+        post 'load_packs_documents', on: :collection
+        post 'load_stats', on: :collection
+        get 'render_image_documents', on: :collection
+      end
+
+      resources :file_uploader do
+        post 'load_file_upload_params', on: :collection
+      end
+    end
   end
 
   namespace :admin do
