@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171202154923) do
+ActiveRecord::Schema.define(version: 20171204163219) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -883,26 +883,26 @@ ActiveRecord::Schema.define(version: 20171202154923) do
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "notifies", force: :cascade do |t|
-    t.boolean  "to_send_docs",                           default: true
-    t.string   "published_docs",               limit: 5, default: "now"
-    t.boolean  "reception_of_emailed_docs",              default: true
-    t.boolean  "r_wrong_pass",                           default: true
-    t.boolean  "r_site_unavailable",                     default: true
-    t.boolean  "r_action_needed",                        default: true
-    t.boolean  "r_bug",                                  default: true
-    t.string   "r_new_documents",              limit: 5, default: "now"
-    t.integer  "r_new_documents_count",        limit: 4, default: 0
-    t.string   "r_new_operations",             limit: 5, default: "now"
-    t.integer  "r_new_operations_count",       limit: 4, default: 0
-    t.boolean  "r_no_bank_account_configured",           default: true
-    t.boolean  "document_being_processed",               default: true
-    t.boolean  "paper_quota_reached",                    default: true
-    t.boolean  "new_pre_assignment_available",           default: true
-    t.boolean  "dropbox_invalid_access_token",           default: true
-    t.boolean  "dropbox_insufficient_space",             default: true
-    t.boolean  "ftp_auth_failure",                       default: true
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
+    t.boolean  "to_send_docs",                             default: true
+    t.string   "published_docs",               limit: 255, default: "delay"
+    t.boolean  "reception_of_emailed_docs",                default: true
+    t.boolean  "r_wrong_pass",                             default: false
+    t.boolean  "r_site_unavailable",                       default: false
+    t.boolean  "r_action_needed",                          default: false
+    t.boolean  "r_bug",                                    default: false
+    t.string   "r_new_documents",              limit: 255, default: "none"
+    t.integer  "r_new_documents_count",        limit: 4,   default: 0
+    t.string   "r_new_operations",             limit: 255, default: "none"
+    t.integer  "r_new_operations_count",       limit: 4,   default: 0
+    t.boolean  "r_no_bank_account_configured",             default: false
+    t.boolean  "document_being_processed",                 default: false
+    t.boolean  "paper_quota_reached",                      default: false
+    t.boolean  "new_pre_assignment_available",             default: false
+    t.boolean  "dropbox_invalid_access_token",             default: true
+    t.boolean  "dropbox_insufficient_space",               default: true
+    t.boolean  "ftp_auth_failure",                         default: true
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
     t.integer  "user_id",                      limit: 4
   end
 
