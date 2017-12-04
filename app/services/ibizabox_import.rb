@@ -1,7 +1,7 @@
 class IbizaboxImport
   class << self
     def update_folders(user)
-      return false unless user.organization.ibiza.first_configured?
+      return false unless user.organization.ibiza.try(:first_configured?)
       folder_ids = if user.ibizabox_folders.exists?
         user.account_book_types.map(&:id) - user.ibizabox_folders.map(&:journal_id)
       else
