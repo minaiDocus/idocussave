@@ -15,7 +15,7 @@ class Account::AccountController < ApplicationController
     if params[:dashboard_summary].in? UserOptions::DASHBOARD_SUMMARIES
       @dashboard_summary = params[:dashboard_summary]
     else
-      @dashboard_summary = @user.options.dashboard_summary
+      @dashboard_summary = @user.try(:options).try(:dashboard_summary)
     end
 
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)

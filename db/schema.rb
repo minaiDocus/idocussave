@@ -707,8 +707,6 @@ ActiveRecord::Schema.define(version: 20171219185110) do
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
     t.boolean  "is_passive",                                      default: true
-    t.datetime "checked_at"
-    t.boolean  "is_import_activated",                             default: false
     t.string   "root_path",                         limit: 255,   default: "/"
     t.datetime "import_checked_at"
     t.text     "previous_import_paths",             limit: 65535
@@ -1902,6 +1900,7 @@ ActiveRecord::Schema.define(version: 20171219185110) do
     t.string   "user_id_mongo_id",                    limit: 255
     t.integer  "organization_id",                     limit: 4
     t.string   "organization_id_mongo_id",            limit: 255
+    t.boolean  "is_ocr_active",                                   default: true,  null: false
   end
 
   add_index "subscriptions", ["mongo_id"], name: "index_subscriptions_on_mongo_id", using: :btree
@@ -2058,6 +2057,7 @@ ActiveRecord::Schema.define(version: 20171219185110) do
     t.boolean  "is_retriever_authorized",                     default: false
     t.integer  "is_operation_processing_forced",  limit: 4,   default: -1,           null: false
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
+    t.boolean  "is_ocr_authorized",                           default: false,        null: false
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
   end
 

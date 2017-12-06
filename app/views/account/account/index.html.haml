@@ -58,7 +58,7 @@
             - if @user.is_prescriber || (view_name.in?(%w(last_scans last_uploads)) && @user.options.try(:is_upload_authorized)) || (view_name == 'last_dematbox_scans' && @user.is_dematbox_authorized) || (view_name == 'last_retrieved' && @user.options.try(:is_retriever_authorized))
               .tab-pane{ id: view_name, class: ('active' if @dashboard_summary == view_name)}
                 .alignright
-                  - if @user.options.dashboard_summary == view_name
+                  - if @user.options.try(:dashboard_summary) == view_name
                     %i.label Vue par défaut
                   - else
                     = link_to 'Définir comme vue par défaut', choose_default_summary_account_account_index_path(service_name: view_name), method: :post, class: 'btn btn-mini'
