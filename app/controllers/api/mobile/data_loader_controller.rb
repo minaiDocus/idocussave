@@ -73,11 +73,11 @@ class Api::Mobile::DataLoaderController < MobileApiController
       filepath = FileStoragePathUtils.path_for_object(document)
     end
 
-    # if params[:force_temp_document] && params[:force_temp_document] == 'true'
-    #   document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
-    #   owner    = document.temp_pack.user
-    #   filepath = FileStoragePathUtils.path_for_object(document)
-    # end
+    if params[:force_temp_document] && params[:force_temp_document] == 'true'
+      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
+      owner    = document.temp_pack.user
+      filepath = FileStoragePathUtils.path_for_object(document)
+    end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
       filename  = File.basename(filepath)
