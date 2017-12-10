@@ -18,7 +18,7 @@ module Admin::ProcessReportingHelper
     total = 0
 
     total += organization.expenses.where("created_at >= ? AND created_at <= ?", time.dup, time.end_of_month).count
-    total += organization.preseizures.where.not(piece_id: [nil]).where("created_at >= ? AND created_at <= ?", time.dup, time.end_of_month).count
+    total += Pack::Report::Preseizure.unscoped.where(organization: organization).where.not(piece_id: [nil]).where("created_at >= ? AND created_at <= ?", time.dup, time.end_of_month).count
 
     total
   end

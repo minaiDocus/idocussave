@@ -238,9 +238,12 @@ Idocus::Application.routes.draw do
 
       resource :ibiza, controller: 'ibiza', only: %w(create edit update)
 
-      resources :ibiza_users,                    only: 'index'
-      resources :pre_assignments,                only: :index
-      resources :pre_assignment_delivery_errors, only: :index
+      resources :ibiza_users,                       only: :index
+      resources :pre_assignments,                   only: :index
+      resources :pre_assignment_delivery_errors,    only: :index
+      resources :pre_assignment_blocked_duplicates, only: :index do
+        post :update_multiple, on: :collection
+      end
 
       resources :pack_reports, only: :index do
         post 'deliver',            on: :member

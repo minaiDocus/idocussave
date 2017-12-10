@@ -98,6 +98,7 @@ fr:
         is_pre_assignment_date_computed: Date de saisie des factures
         is_operation_processing_forced: Souhaitez-vous forcer la pré-affectation des écritures récupérées par les automates ?
         is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+        is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
       vat_account:
         code: Code TVA
         nature: Nature

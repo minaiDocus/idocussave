@@ -13,6 +13,8 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   has_and_belongs_to_many :remote_files, foreign_key: 'pack_report_preseizure_id'
   has_and_belongs_to_many :pre_assignment_deliveries
 
+  has_many :duplicates, class_name: 'Pack::Report::Preseizure', foreign_key: :similar_preseizure_id
+  belongs_to :similar_preseizure, class_name: 'Pack::Report::Preseizure'
 
   scope :locked,          -> { where(is_locked: true) }
   scope :delivered,       -> { where(is_delivered: true) }
@@ -21,6 +23,34 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   scope :not_delivered,   -> { where(is_delivered: false) }
   scope :failed_delivery, -> { where.not(delivery_message: '') }
 
+  scope :blocked_duplicates,     -> { unscoped.where(is_blocked_for_duplication: true, marked_as_duplicate_at: nil) }
+  scope :potential_duplicates,   -> { unscoped.where.not(duplicate_detected_at: nil) }
+  scope :approved_duplicates,    -> { unscoped.where.not(marked_as_duplicate_at: nil) }
+  scope :disapproved_duplicates, -> { where.not(duplicate_unblocked_at: nil) }
+
+  default_scope { where(is_blocked_for_duplication: false) }
+
+  def self.search(contains)
+    preseizures = self.all
+    preseizures = preseizures.joins(:report)
+    preseizures = preseizures.where("pack_reports.name LIKE ?", "%#{contains[:pack_name]}%") if contains[:pack_name].present?
+    preseizures = preseizures.where("third_party LIKE ?", "%#{contains[:third_party]}%") if contains[:third_party].present?
+    preseizures = preseizures.where(amount: contains[:amount]) if contains[:amount].present?
+
+    if contains[:created_at]
+      contains[:created_at].each do |operator, value|
+        preseizures = preseizures.where("pack_report_preseizures.created_at #{operator} ?", value) if operator.in?(['>=', '<='])
+      end
+    end
+
+    if contains[:date]
+      contains[:date].each do |operator, value|
+        preseizures = preseizures.where("date #{operator} ?", value) if operator.in?(['>=', '<='])
+      end
+    end
+
+    preseizures
+  end
 
   def piece_name
     piece.try(:name) || report.name
@@ -115,5 +145,17 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     (amount * 100).round
   rescue
     nil
+  end
+
+  def is_not_blocked_for_duplication
+    !is_blocked_for_duplication
+  end
+
+  def duplicate_unblocked_by_user
+    @duplicate_unblocked_by_user ||= User.find_by id: duplicate_unblocked_by_user_id
+  end
+
+  def marked_as_duplicate_by_user
+    @marked_as_duplicate_by_user ||= User.find_by id: marked_as_duplicate_by_user_id
   end
 end

@@ -33,9 +33,12 @@ class AccountingWorkflow::RetrievePreAssignments
         report.update_attribute(:is_delivered, false)
       end
 
-      CreatePreAssignmentDeliveryService.new(pre_assignments, is_auto: true).execute
-      FileDelivery.prepare(report)
-      FileDelivery.prepare(pack)
+      not_blocked_pre_assignments = pre_assignments.select(&:is_not_blocked_for_duplication)
+      if not_blocked_pre_assignments.size > 0
+        CreatePreAssignmentDeliveryService.new(not_blocked_pre_assignments, is_auto: true).execute
+        FileDelivery.prepare(report)
+        FileDelivery.prepare(pack)
+      end
     end
   end
 
@@ -153,7 +156,9 @@ class AccountingWorkflow::RetrievePreAssignments
       end
     end
 
-    NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
+    unless DetectPreseizureDuplicate.new(preseizure).execute
+      NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
+    end
 
     preseizure
   end

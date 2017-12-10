@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204163219) do
+ActiveRecord::Schema.define(version: 20171208200203) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -883,27 +883,30 @@ ActiveRecord::Schema.define(version: 20171204163219) do
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "notifies", force: :cascade do |t|
-    t.boolean  "to_send_docs",                             default: true
-    t.string   "published_docs",               limit: 255, default: "delay"
-    t.boolean  "reception_of_emailed_docs",                default: true
-    t.boolean  "r_wrong_pass",                             default: false
-    t.boolean  "r_site_unavailable",                       default: false
-    t.boolean  "r_action_needed",                          default: false
-    t.boolean  "r_bug",                                    default: false
-    t.string   "r_new_documents",              limit: 255, default: "none"
-    t.integer  "r_new_documents_count",        limit: 4,   default: 0
-    t.string   "r_new_operations",             limit: 255, default: "none"
-    t.integer  "r_new_operations_count",       limit: 4,   default: 0
-    t.boolean  "r_no_bank_account_configured",             default: false
-    t.boolean  "document_being_processed",                 default: false
-    t.boolean  "paper_quota_reached",                      default: false
-    t.boolean  "new_pre_assignment_available",             default: false
-    t.boolean  "dropbox_invalid_access_token",             default: true
-    t.boolean  "dropbox_insufficient_space",               default: true
-    t.boolean  "ftp_auth_failure",                         default: true
-    t.datetime "created_at",                                                 null: false
-    t.datetime "updated_at",                                                 null: false
-    t.integer  "user_id",                      limit: 4
+    t.boolean  "to_send_docs",                                      default: true
+    t.string   "published_docs",                        limit: 255, default: "delay"
+    t.boolean  "reception_of_emailed_docs",                         default: true
+    t.boolean  "r_wrong_pass",                                      default: false
+    t.boolean  "r_site_unavailable",                                default: false
+    t.boolean  "r_action_needed",                                   default: false
+    t.boolean  "r_bug",                                             default: false
+    t.string   "r_new_documents",                       limit: 255, default: "none"
+    t.integer  "r_new_documents_count",                 limit: 4,   default: 0
+    t.string   "r_new_operations",                      limit: 255, default: "none"
+    t.integer  "r_new_operations_count",                limit: 4,   default: 0
+    t.boolean  "r_no_bank_account_configured",                      default: false
+    t.boolean  "document_being_processed",                          default: false
+    t.boolean  "paper_quota_reached",                               default: false
+    t.boolean  "new_pre_assignment_available",                      default: false
+    t.boolean  "dropbox_invalid_access_token",                      default: true
+    t.boolean  "dropbox_insufficient_space",                        default: true
+    t.boolean  "ftp_auth_failure",                                  default: true
+    t.boolean  "detected_preseizure_duplication",                   default: false
+    t.integer  "detected_preseizure_duplication_count", limit: 4,   default: 0
+    t.integer  "unblocked_preseizure_count",            limit: 4,   default: 0
+    t.datetime "created_at",                                                          null: false
+    t.datetime "updated_at",                                                          null: false
+    t.integer  "user_id",                               limit: 4
   end
 
   add_index "notifies", ["r_new_documents_count"], name: "index_notifies_on_r_new_documents_count", using: :btree
@@ -1099,6 +1102,7 @@ ActiveRecord::Schema.define(version: 20171204163219) do
     t.string   "leader_id_mongo_id",              limit: 255
     t.boolean  "is_operation_processing_forced",              default: false
     t.boolean  "is_operation_value_date_needed",              default: false
+    t.boolean  "is_duplicate_blocker_activated",              default: true
   end
 
   add_index "organizations", ["leader_id"], name: "leader_id", using: :btree
@@ -1255,38 +1259,48 @@ ActiveRecord::Schema.define(version: 20171204163219) do
   add_index "pack_report_preseizure_entries", ["preseizure_id_mongo_id"], name: "preseizure_id_mongo_id", using: :btree
 
   create_table "pack_report_preseizures", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
+    t.string   "mongo_id",                       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "type",                     limit: 255
+    t.string   "type",                           limit: 255
     t.datetime "date"
     t.datetime "deadline_date"
-    t.text     "operation_label",          limit: 4294967295
-    t.string   "observation",              limit: 255
-    t.integer  "position",                 limit: 4
-    t.string   "piece_number",             limit: 255
-    t.decimal  "amount",                                      precision: 11, scale: 2
-    t.string   "currency",                 limit: 255
-    t.float    "conversion_rate",          limit: 24
-    t.string   "third_party",              limit: 255
-    t.integer  "category_id",              limit: 4
-    t.boolean  "is_made_by_abbyy",                                                     default: false, null: false
-    t.boolean  "is_delivered",                                                         default: false, null: false
+    t.text     "operation_label",                limit: 4294967295
+    t.string   "observation",                    limit: 255
+    t.integer  "position",                       limit: 4
+    t.string   "piece_number",                   limit: 255
+    t.decimal  "amount",                                            precision: 11, scale: 2
+    t.string   "currency",                       limit: 255
+    t.float    "conversion_rate",                limit: 24
+    t.string   "third_party",                    limit: 255
+    t.integer  "category_id",                    limit: 4
+    t.boolean  "is_made_by_abbyy",                                                           default: false, null: false
+    t.boolean  "is_delivered",                                                               default: false, null: false
     t.datetime "delivery_tried_at"
-    t.string   "delivery_message",         limit: 255
-    t.boolean  "is_locked",                                                            default: false, null: false
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
-    t.integer  "report_id",                limit: 4
-    t.string   "report_id_mongo_id",       limit: 255
-    t.integer  "piece_id",                 limit: 4
-    t.string   "piece_id_mongo_id",        limit: 255
-    t.integer  "operation_id",             limit: 4
-    t.string   "operation_id_mongo_id",    limit: 255
+    t.string   "delivery_message",               limit: 255
+    t.boolean  "is_locked",                                                                  default: false, null: false
+    t.integer  "organization_id",                limit: 4
+    t.string   "organization_id_mongo_id",       limit: 255
+    t.integer  "user_id",                        limit: 4
+    t.string   "user_id_mongo_id",               limit: 255
+    t.integer  "report_id",                      limit: 4
+    t.string   "report_id_mongo_id",             limit: 255
+    t.integer  "piece_id",                       limit: 4
+    t.string   "piece_id_mongo_id",              limit: 255
+    t.integer  "operation_id",                   limit: 4
+    t.string   "operation_id_mongo_id",          limit: 255
+    t.integer  "similar_preseizure_id",          limit: 4
+    t.datetime "duplicate_detected_at"
+    t.boolean  "is_blocked_for_duplication",                                                 default: false
+    t.datetime "marked_as_duplicate_at"
+    t.integer  "marked_as_duplicate_by_user_id", limit: 4
+    t.datetime "duplicate_unblocked_at"
+    t.integer  "duplicate_unblocked_by_user_id", limit: 4
   end
 
+  add_index "pack_report_preseizures", ["duplicate_unblocked_by_user_id"], name: "index_pack_report_preseizures_on_duplicate_unblocked_by_user_id", using: :btree
+  add_index "pack_report_preseizures", ["is_blocked_for_duplication"], name: "index_pack_report_preseizures_on_is_blocked_for_duplication", using: :btree
+  add_index "pack_report_preseizures", ["marked_as_duplicate_by_user_id"], name: "index_pack_report_preseizures_on_marked_as_duplicate_by_user_id", using: :btree
   add_index "pack_report_preseizures", ["mongo_id"], name: "index_pack_report_preseizures_on_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["operation_id"], name: "operation_id", using: :btree
   add_index "pack_report_preseizures", ["operation_id_mongo_id"], name: "operation_id_mongo_id", using: :btree
@@ -1296,6 +1310,7 @@ ActiveRecord::Schema.define(version: 20171204163219) do
   add_index "pack_report_preseizures", ["piece_id_mongo_id"], name: "piece_id_mongo_id", using: :btree
   add_index "pack_report_preseizures", ["report_id"], name: "report_id", using: :btree
   add_index "pack_report_preseizures", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
+  add_index "pack_report_preseizures", ["similar_preseizure_id"], name: "index_pack_report_preseizures_on_similar_preseizure_id", using: :btree
   add_index "pack_report_preseizures", ["user_id"], name: "user_id", using: :btree
   add_index "pack_report_preseizures", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 

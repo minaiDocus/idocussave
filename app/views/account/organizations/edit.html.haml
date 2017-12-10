@@ -16,6 +16,7 @@
           = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]
           = f.input :is_operation_processing_forced, as: :boolean, hint: "Cette option permet de forcer la pré-affectation des écritures récupérées par les automates sans délais d'attente. Toutefois, en forçant le traitement, iDocus ne pourra plus garantir la mise à jour des opérations (exemple: libellé, date, montant changés par les banques)."
           = f.input :is_operation_value_date_needed, as: :boolean, hint: "La date est ajouté à la suite du libellé de l'opération et sera présent sur la pré-affectation."
+          = f.input :is_duplicate_blocker_activated, as: :boolean
         - else
           = f.input :is_quadratus_used, as: 'boolean'
           = f.input :is_coala_used, as: 'boolean'

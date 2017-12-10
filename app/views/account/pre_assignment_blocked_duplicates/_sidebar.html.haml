@@ -1,0 +1,42 @@
+%h3 Filtres
+
+%br
+= form_tag account_organization_pre_assignment_blocked_duplicates_path(@organization), method: :get, class: 'form form-vertical margin0bottom' do
+  = hidden_field_tag :direction, sort_direction
+  = hidden_field_tag :sort, sort_column
+  = hidden_field_tag :per_page, per_page
+
+  = label_tag 'duplicate_contains[created_at][>=]', t('activerecord.models.common.attributes.created_at')
+  .filter_date
+    .input-prepend.date.datepicker
+      %span.add-on
+        >=
+      = text_field_tag 'duplicate_contains[created_at][>=]', (params[:duplicate_contains][:created_at]['>='] rescue ''), class: 'input-medium'
+    .input-prepend.date.datepicker
+      %span.add-on
+        <=
+      = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue ''), class: 'input-medium'
+
+  = label_tag 'duplicate_contains[pack_name]', 'Lot'
+  = text_field_tag 'duplicate_contains[pack_name]', (params[:duplicate_contains][:pack_name] rescue ''), class: 'span12'
+
+  = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
+  = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue ''), class: 'span12'
+
+  = label_tag 'duplicate_contains[amount]', t('activerecord.models.pack_report_preseizure.attributes.amount')
+  = text_field_tag 'duplicate_contains[amount]', (params[:duplicate_contains][:amount] rescue ''), class: 'span12'
+
+  = label_tag 'duplicate_contains[date][>=]', t('activerecord.models.pack_report_preseizure.attributes.date')
+  .filter_date
+    .input-prepend.date.datepicker
+      %span.add-on
+        >=
+      = text_field_tag 'duplicate_contains[date][>=]', (params[:duplicate_contains][:date]['>='] rescue ''), class: 'input-medium'
+    .input-prepend.date.datepicker
+      %span.add-on
+        <=
+      = text_field_tag 'duplicate_contains[date][<=]', (params[:duplicate_contains][:date]['<='] rescue ''), class: 'input-medium'
+
+  %br
+  = submit_tag t('filters.action'), class: 'btn btn-primary'
+  = link_to t('filters.reset'), account_organization_pre_assignment_blocked_duplicates_path(@organization), class: 'btn'

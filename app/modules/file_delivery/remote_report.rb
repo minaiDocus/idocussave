@@ -3,7 +3,7 @@ module FileDelivery::RemoteReport
     if type != 'NDF'
       not_delivered = not_delivered_preseizures(receiver, service_name, force)
 
-      if !not_delivered.empty?
+      if not_delivered.present?
         remote_file = ::RemoteFile.new
 
         remote_file.receiver     = receiver
@@ -29,7 +29,7 @@ module FileDelivery::RemoteReport
     not_delivered = []
 
     if force
-      not_delivered = preseizures.by_position
+      not_delivered = preseizures.select(&:is_not_blocked_for_duplication).by_position
     else
       delivered_preseizure_ids = remote_files.of(receiver, service_name)
                                              .where("temp_path REGEXP ?", "csv$")
@@ -37,7 +37,7 @@ module FileDelivery::RemoteReport
                                              .flatten
                                              .uniq
 
-      not_delivered = preseizures.where.not(id: delivered_preseizure_ids).by_position
+      not_delivered = preseizures.select(&:is_not_blocked_for_duplication).where.not(id: delivered_preseizure_ids).by_position
     end
 
     not_delivered

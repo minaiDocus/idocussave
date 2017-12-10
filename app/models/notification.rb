@@ -56,7 +56,9 @@ class Notification < ActiveRecord::Base
         'paper_quota_reached',
         'new_pre_assignment_available',
         'published_document',
-        'ibiza_invalid_access_token'
+        'ibiza_invalid_access_token',
+        'detected_preseizure_duplication',
+        'unblocked_preseizure'
       ].freeze
     end
   end
