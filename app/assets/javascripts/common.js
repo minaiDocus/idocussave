@@ -31,7 +31,7 @@ jQuery(function () {
     monthsShort: ["Jan", "Feb", "Mar", "Avr", "Mai", "Jui", "Jul", "Aoû", "Sep", "Oct", "Nov", "Dec"]
   };
 
-  $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr' });
+  $('.datepicker').datepicker({ format: 'yyyy-mm-dd', language: 'fr', orientation: 'bottom auto' });
 
   $("a[rel=popover]").popover();
   $(".tooltip").tooltip();
