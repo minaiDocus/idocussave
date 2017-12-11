@@ -19,7 +19,8 @@ class DetectPreseizureDuplicate
   def valid?
     @preseizure.third_party.present? &&
     @preseizure.amount.present? &&
-    @preseizure.date.present?
+    @preseizure.date.present? &&
+    @preseizure.piece_number.present?
   end
 
   def similar_preseizure
@@ -28,10 +29,11 @@ class DetectPreseizureDuplicate
 
   def scope
     {
-      user_id:     @preseizure.user_id,
-      third_party: @preseizure.third_party,
-      amount:      @preseizure.amount,
-      date:        @preseizure.date
+      user_id:      @preseizure.user_id,
+      third_party:  @preseizure.third_party,
+      amount:       @preseizure.amount,
+      date:         @preseizure.date,
+      piece_number: @preseizure.piece_number
     }
   end
 end

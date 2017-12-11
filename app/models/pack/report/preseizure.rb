@@ -32,8 +32,9 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
   def self.search(contains)
     preseizures = self.all
-    preseizures = preseizures.joins(:report)
-    preseizures = preseizures.where("pack_reports.name LIKE ?", "%#{contains[:pack_name]}%") if contains[:pack_name].present?
+    preseizures = preseizures.joins(:piece)
+    preseizures = preseizures.where("pack_pieces.name LIKE ?", "%#{contains[:piece_name]}%") if contains[:piece_name].present?
+    preseizures = preseizures.where("piece_number LIKE ?", "%#{contains[:piece_number]}%") if contains[:piece_number].present?
     preseizures = preseizures.where("third_party LIKE ?", "%#{contains[:third_party]}%") if contains[:third_party].present?
     preseizures = preseizures.where(amount: contains[:amount]) if contains[:amount].present?
 

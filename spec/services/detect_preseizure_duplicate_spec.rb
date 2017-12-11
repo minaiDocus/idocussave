@@ -18,6 +18,7 @@ describe DetectPreseizureDuplicate do
     preseizure.organization = @organization
     preseizure.amount       = 10.0
     preseizure.third_party  = 'Google'
+    preseizure.piece_number = 'G001'
     preseizure.date         = Time.local(2017, 12, 15)
     preseizure.save
 
@@ -36,6 +37,7 @@ describe DetectPreseizureDuplicate do
       preseizure.organization = @organization
       preseizure.amount       = 10.0
       preseizure.third_party  = 'Google'
+      preseizure.piece_number = 'G001'
       preseizure.date         = nil
       preseizure.save
     end
@@ -46,6 +48,7 @@ describe DetectPreseizureDuplicate do
       preseizure.organization = @organization
       preseizure.amount       = 10.0
       preseizure.third_party  = 'Google'
+      preseizure.piece_number = 'G001'
       preseizure.date         = nil
       preseizure.save
 
@@ -65,6 +68,7 @@ describe DetectPreseizureDuplicate do
       @preseizure.organization = @organization
       @preseizure.amount       = 10.0
       @preseizure.third_party  = 'Google'
+      @preseizure.piece_number = 'G001'
       @preseizure.date         = Time.local(2017, 12, 15)
       @preseizure.save
     end
@@ -75,6 +79,7 @@ describe DetectPreseizureDuplicate do
       preseizure.organization = @organization
       preseizure.amount       = 10.0
       preseizure.third_party  = 'Google'
+      preseizure.piece_number = 'G001'
       preseizure.date         = Time.local(2017, 12, 15)
       preseizure.save
 
@@ -97,6 +102,7 @@ describe DetectPreseizureDuplicate do
         preseizure.organization = @organization
         preseizure.amount       = 10.0
         preseizure.third_party  = 'Google'
+        preseizure.piece_number = 'G001'
         preseizure.date         = Time.local(2017, 12, 15)
         preseizure.save
 

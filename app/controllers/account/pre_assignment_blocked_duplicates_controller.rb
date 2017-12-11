@@ -36,7 +36,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::OrganizationC
   private
 
   def sort_column
-    if params[:sort].in? %w(created_at pack_name third_party amount date)
+    if params[:sort].in? %w(created_at piece_name piece_number third_party amount date)
       params[:sort]
     else
       'created_at'
@@ -46,7 +46,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::OrganizationC
 
   def sort_real_column
     column = sort_column
-    return 'pack_reports.name' if column == 'pack_name'
+    return 'pack_pieces.name' if column == 'piece_name'
     column
   end
 

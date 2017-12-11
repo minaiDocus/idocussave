@@ -17,8 +17,11 @@
         <=
       = text_field_tag 'duplicate_contains[created_at][<=]', (params[:duplicate_contains][:created_at]['<='] rescue ''), class: 'input-medium'
 
-  = label_tag 'duplicate_contains[pack_name]', 'Lot'
-  = text_field_tag 'duplicate_contains[pack_name]', (params[:duplicate_contains][:pack_name] rescue ''), class: 'span12'
+  = label_tag 'duplicate_contains[piece_name]', 'N° pièce'
+  = text_field_tag 'duplicate_contains[piece_name]', (params[:duplicate_contains][:piece_name] rescue ''), class: 'span12'
+
+  = label_tag 'duplicate_contains[piece_number]', 'N° facture'
+  = text_field_tag 'duplicate_contains[piece_number]', (params[:duplicate_contains][:piece_number] rescue ''), class: 'span12'
 
   = label_tag 'duplicate_contains[third_party]', t('activerecord.models.pack_report_preseizure.attributes.third_party')
   = text_field_tag 'duplicate_contains[third_party]', (params[:duplicate_contains][:third_party] rescue ''), class: 'span12'

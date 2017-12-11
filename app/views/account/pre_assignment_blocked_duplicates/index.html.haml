@@ -14,11 +14,12 @@
             %tr
               %th= check_box_tag 'master_checkbox', 0, false
               %th= sortable :created_at, 'Date de création'
-              %th= sortable :pack_name, 'Lot'
+              %th= sortable :piece_name, 'N° pièce'
+              %th= sortable :piece_number, 'N° facture'
               %th= sortable :third_party, t('activerecord.models.pack_report_preseizure.attributes.third_party')
               %th= sortable :amount, t('activerecord.models.pack_report_preseizure.attributes.amount')
               %th= sortable :date, t('activerecord.models.pack_report_preseizure.attributes.date')
-              %th Pièce (PDF)
+              %th Pièces (PDF)
               %th Statut
           %tbody
             - @duplicates.each do |object|
@@ -43,9 +44,13 @@
                     \-
 
                 %td
-                  %b= object.report.name
+                  %b= object.piece.name
                   %br
-                  = object.similar_preseizure.report.name
+                  = object.similar_preseizure.piece.name
+                %td
+                  %b= object.piece_number
+                  %br
+                  = object.similar_preseizure.piece_number
                 %td
                   %b= object.third_party
                   %br
