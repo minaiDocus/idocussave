@@ -16,7 +16,7 @@ class Account::OrdersController < Account::OrganizationController
       @order.type = 'paper_set'
       @order.paper_set_folder_count = @customer.options.max_number_of_journals
 
-      time = Time.now.end_of_year
+      time = (Date.today.month < 12 ? Time.now.end_of_year : 1.month.from_now.end_of_year)
 
       case @customer.subscription.period_duration
       when 1
