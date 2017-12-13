@@ -95,25 +95,25 @@ class NewProviderRequest < ActiveRecord::Base
 
       if contains[:created_at]
         contains[:created_at].each do |operator, value|
-          new_provider_requests = new_provider_requests.where("created_at #{operator} ?", value)
+          new_provider_requests = new_provider_requests.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 
       if contains[:updated_at]
         contains[:updated_at].each do |operator, value|
-          new_provider_requests = new_provider_requests.where("updated_at #{operator} ?", value)
+          new_provider_requests = new_provider_requests.where("updated_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 
       if contains[:notified_at]
         contains[:notified_at].each do |operator, value|
-          new_provider_requests = new_provider_requests.where("notified_at #{operator} ?", value)
+          new_provider_requests = new_provider_requests.where("notified_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 
       if contains[:processing_at]
         contains[:processing_at].each do |operator, value|
-          new_provider_requests = new_provider_requests.where("processing_at #{operator} ?", value)
+          new_provider_requests = new_provider_requests.where("processing_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 

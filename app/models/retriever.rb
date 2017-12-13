@@ -290,13 +290,13 @@ class Retriever < ActiveRecord::Base
 
       if contains[:created_at]
         contains[:created_at].each do |operator, value|
-          retrievers = retrievers.where("created_at #{operator} '#{value}'")
+          retrievers = retrievers.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 
       if contains[:updated_at]
         contains[:updated_at].each do |operator, value|
-          retrievers = retrievers.where("updated_at #{operator} '#{value}'")
+          retrievers = retrievers.where("updated_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 

@@ -66,7 +66,7 @@ class Email < ActiveRecord::Base
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
-        emailed_documents = emailed_documents.where("created_at #{operator} '#{value}'")
+        emailed_documents = emailed_documents.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

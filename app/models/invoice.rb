@@ -30,7 +30,9 @@ class Invoice < ActiveRecord::Base
 
     if contains[:amount_in_cents_w_vat].present?
       comparison_operator = contains[:amount_in_cents_w_vat_comparison_operator]
-      invoices = invoices.where("amount_in_cents_w_vat #{comparison_operator} ?", contains[:amount_in_cents_w_vat])
+      if comparison_operator.in?(%w(= <= >=))
+        invoices = invoices.where("amount_in_cents_w_vat #{comparison_operator} ?", contains[:amount_in_cents_w_vat])
+      end
     end
 
     if contains[:user_contains] && contains[:user_contains][:code].present?
@@ -48,7 +50,7 @@ class Invoice < ActiveRecord::Base
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
-        invoices = invoices.where("created_at #{operator} '#{value}'")
+        invoices = invoices.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

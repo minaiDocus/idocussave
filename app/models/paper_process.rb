@@ -59,7 +59,7 @@ class PaperProcess < ActiveRecord::Base
 
     if options[:created_at]
       options[:created_at].each do |operator, value|
-        collection = collection.where("created_at #{operator} '#{value}'")
+        collection = collection.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

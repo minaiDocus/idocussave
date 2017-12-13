@@ -71,12 +71,20 @@ private
   end
 
   def sort_column
-    params[:sort] || 'created_at'
+    if params[:sort].in? %w(created_at journal original_file_name pages_number)
+      params[:sort]
+    else
+      'created_at'
+    end
   end
   helper_method :sort_column
 
   def sort_direction
-    params[:direction] || 'desc'
+    if params[:direction].in? %w(asc desc)
+      params[:direction]
+    else
+      'desc'
+    end
   end
   helper_method :sort_direction
 end

@@ -136,13 +136,13 @@ class Order < ActiveRecord::Base
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
-        orders = orders.where("created_at #{operator} '#{value}'")
+        orders = orders.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 
     if contains[:price_in_cents_wo_vat]
       contains[:price_in_cents_wo_vat].each do |operator, value|
-        orders = orders.where("price_in_cents_wo_vat #{operator} '#{value}'")
+        orders = orders.where("price_in_cents_wo_vat #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 
@@ -173,7 +173,7 @@ class Order < ActiveRecord::Base
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
-        collection = collection.where("orders.created_at #{operator} :value", value: value)
+        collection = collection.where("orders.created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

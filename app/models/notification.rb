@@ -12,7 +12,7 @@ class Notification < ActiveRecord::Base
 
       if contains[:created_at].present?
         contains[:created_at].each do |operator, value|
-          notifications = notifications.where("created_at #{operator} '#{value}'")
+          notifications = notifications.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
         end
       end
 

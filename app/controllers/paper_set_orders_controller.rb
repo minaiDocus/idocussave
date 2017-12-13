@@ -11,13 +11,20 @@ class PaperSetOrdersController < PaperProcessesController
   private
 
   def sort_column
-    params[:sort] || 'created_at'
+    if params[:sort].in? %w(created_at id user_code state)
+      params[:sort]
+    else
+      'created_at'
+    end
   end
   helper_method :sort_column
 
-
   def sort_direction
-    params[:direction] || 'desc'
+    if params[:direction].in? %w(asc desc)
+      params[:direction]
+    else
+      'desc'
+    end
   end
   helper_method :sort_direction
 end

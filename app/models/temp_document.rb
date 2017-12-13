@@ -199,7 +199,7 @@ class TempDocument < ActiveRecord::Base
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|
-        dematbox_files = dematbox_files.where("created_at #{operator} '#{value}'")
+        dematbox_files = dematbox_files.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 
@@ -253,7 +253,7 @@ class TempDocument < ActiveRecord::Base
 
     if contains[:date]
       contains[:date].each do |operator, value|
-        collection = collection.where("created_at #{operator} '#{value}'")
+        collection = collection.where("created_at #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

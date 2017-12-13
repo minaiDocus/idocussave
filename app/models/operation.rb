@@ -38,7 +38,7 @@ class Operation < ActiveRecord::Base
 
     if contains[:date]
       contains[:date].each do |operator, value|
-        collection = collection.where("date #{operator} '#{value}'")
+        collection = collection.where("date #{operator} ?", value) if operator.in?(['>=', '<='])
       end
     end
 

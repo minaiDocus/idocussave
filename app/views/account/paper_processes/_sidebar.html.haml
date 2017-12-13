@@ -7,17 +7,17 @@
     = hidden_field_tag :sort, sort_column
     = hidden_field_tag :per_page, per_page
 
-    = label_tag 'paper_process_contains[updated_at][>=]', 'Date de début'
+    = label_tag 'paper_process_contains[created_at][>=]', 'Date de début'
     .input-prepend.date.datepicker
       %span.add-on
         %i.icon-th
-      = text_field_tag 'paper_process_contains[updated_at][>=]', (params[:paper_process_contains][:updated_at]['>='] rescue '')
+      = text_field_tag 'paper_process_contains[created_at][>=]', (params[:paper_process_contains][:created_at]['>='] rescue '')
 
-    = label_tag 'paper_process_contains[updated_at][<=]', 'Date de fin'
+    = label_tag 'paper_process_contains[created_at][<=]', 'Date de fin'
     .input-prepend.date.datepicker
       %span.add-on
         %i.icon-th
-      = text_field_tag 'paper_process_contains[updated_at][<=]', (params[:paper_process_contains][:updated_at]['<='] rescue '')
+      = text_field_tag 'paper_process_contains[created_at][<=]', (params[:paper_process_contains][:created_at]['<='] rescue '')
 
     = label_tag 'paper_process_contains[type]', t('activerecord.models.paper_process.attributes.type')
     = select_tag 'paper_process_contains[type]', options_for_select(paper_process_type_options, (params[:paper_process_contains][:type] rescue '')), include_blank: true
