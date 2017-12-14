@@ -6,7 +6,8 @@
           .pull-left
             %h3 Pré-affectations
           .pull-right
-            = link_to 'Livraisons en erreurs', account_organization_pre_assignment_delivery_errors_path(@organization), class: 'btn btn-primary'
+            = link_to 'Doublons', account_organization_pre_assignment_blocked_duplicates_path(@organization), class: 'btn'
+            = link_to 'Livraisons en erreurs', account_organization_pre_assignment_delivery_errors_path(@organization), class: 'btn'
   .row-fluid
     #pack_reports.span3.box
       %h4.aligncenter Lots

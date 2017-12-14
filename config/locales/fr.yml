@@ -648,6 +648,7 @@ fr:
           is_pre_assignment_date_computed: Date de saisie des factures
           is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
           is_operation_value_date_needed: Afficher la date de réalisation de l'opération si elle est différente de la date de prélèvement ?
+          is_duplicate_blocker_activated: Bloquer les doublons de pré-affectation ?
           status:
             admin: Administrateur
             collaborator: Collaborateur
@@ -974,6 +975,15 @@ fr:
           is_read: Lu ?
           title: Titre
           message: Message
+      pack_report_preseizure:
+        zero: 0 pré-affectation
+        one: 1 pré-affectation
+        other: "%{count} pré-affectations"
+        name: Pré-affectation
+        attributes:
+          third_party: Tiers
+          amount: Montant
+          date: Date d'opération
     state_machines:
       retriever:
         states:

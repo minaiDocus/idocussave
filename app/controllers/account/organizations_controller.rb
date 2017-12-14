@@ -169,7 +169,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
-        :is_operation_value_date_needed
+        :is_operation_value_date_needed,
+        :is_duplicate_blocker_activated
       )
     else
       params.require(:organization).permit(
@@ -181,7 +182,8 @@ class Account::OrganizationsController < Account::AccountController
         :is_csv_descriptor_used,
         :is_pre_assignment_date_computed,
         :is_operation_processing_forced,
-        :is_operation_value_date_needed
+        :is_operation_value_date_needed,
+        :is_duplicate_blocker_activated
       )
     end
   end
