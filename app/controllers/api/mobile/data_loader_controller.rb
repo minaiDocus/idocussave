@@ -141,6 +141,25 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def search_packs_with_error
+    # loaded = [{ id: 200, 
+    #             name: 'test erreur idocus',
+    #             created_at: DateTime.now,
+    #             updated_at: DateTime.now,
+    #             owner_id: 0,
+    #             page_number: 3,
+    #             error_message: "teste error messageteste error messageteste error messageteste error messageteste error messageteste error message",
+    #             type: "error"
+    #           },
+    #           { id: 201, 
+    #             name: 'test erreur idocus2',
+    #             created_at: DateTime.now,
+    #             updated_at: DateTime.now,
+    #             owner_id: 0,
+    #             page_number: 5,
+    #             error_message: "teste error messageteste error messageteste error messageteste error messageteste error messageteste error message",
+    #             type: "error"
+    #           }
+    #         ]
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
       errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
       loaded = errors.each_with_index.inject([]) do |memo, (err, index)|
