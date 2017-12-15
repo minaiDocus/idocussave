@@ -46,14 +46,14 @@ class Api::Mobile::DataLoaderController < MobileApiController
         }
     end
 
-    # data_paper_processes = [
-    #                           {date:"18-12-2017", type:1, code:123, company:"Mycomp", number:12, packname:"test 1"},
-    #                           {date:"19-12-2017", type:2, code:1234, company:"12345", number:11, packname:"test 2"},
-    #                           {date:"20-08-2017", type:3, code:12, company:"Hiscomp", number:122, packname:"test 3"},
-    #                           {date:"18-04-2017", type:3, code:1123, company:"Thecomp", number:112, packname:"test 4"},
-    #                           {date:"21-05-2017", type:2, code:234, company:"Hercomp", number:112, packname:"test 5"},
-    #                           {date:"22-11-2017", type:1, code:321, company:"Comp", number:112, packname:"test 6"},
-    #                         ]
+    data_paper_processes = [
+                              {date:"18-12-2017", type:1, code:123, company:"Mycomp", number:12, packname:"test 1"},
+                              {date:"19-12-2017", type:2, code:1234, company:"12345", number:11, packname:"test 2"},
+                              {date:"20-08-2017", type:3, code:12, company:"Hiscomp", number:122, packname:"test 3"},
+                              {date:"18-04-2017", type:3, code:1123, company:"Thecomp", number:112, packname:"test 4"},
+                              {date:"21-05-2017", type:2, code:234, company:"Hercomp", number:112, packname:"test 5"},
+                              {date:"22-11-2017", type:1, code:321, company:"Comp", number:112, packname:"test 6"},
+                            ]
 
      render json: {data_stats: data_paper_processes}, status: 200
   end
@@ -86,6 +86,23 @@ class Api::Mobile::DataLoaderController < MobileApiController
     else
       render json: {error: true, message: "file not found"}, status: 404
     end
+  end
+
+
+  def filter_packs()
+      options = { page: params[:page], per_page: 100 }
+      options[:sort] = true unless params[:filter].present?
+
+      options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
+        _user = accounts.find(params[:view])
+        _user ? [_user.id] : []
+      else
+        account_ids
+      end
+
+      packs = Pack.search(params[:filter], options)
+
+      render json: {packs: packs.collect do |p| p.id end }, status:200
   end
 
 
