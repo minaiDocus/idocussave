@@ -143,16 +143,16 @@ class Api::Mobile::DataLoaderController < MobileApiController
   def search_packs_with_error
     if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
       errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
-      loaded = errors.inject([]) do |memo, err|
-        memo += [{  id: err.id, 
-                    name: err.basename,
-                    created_at: err.created_at,
-                    updated_at: err.updated_at,
-                    owner_id: err.user_id,
-                    page_number: document_count,
-                    message: object.message == false ? '-' : object.message,
+      loaded = errors.each_with_index.inject([]) do |memo, (err, index)|
+        memo += [{  id: (500+index), 
+                    name: err.name,
+                    created_at: err.date,
+                    updated_at: err.date,
+                    owner_id: 0,
+                    page_number: err.document_count,
+                    error_message: err.message == false ? '-' : err.message,
                     type: "error"
-                  }]
+                }]
       end
     end
     loaded || []
