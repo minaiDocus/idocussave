@@ -36,7 +36,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     preseizures = preseizures.where("pack_pieces.name LIKE ?", "%#{contains[:piece_name]}%") if contains[:piece_name].present?
     preseizures = preseizures.where("piece_number LIKE ?", "%#{contains[:piece_number]}%") if contains[:piece_number].present?
     preseizures = preseizures.where("third_party LIKE ?", "%#{contains[:third_party]}%") if contains[:third_party].present?
-    preseizures = preseizures.where(amount: contains[:amount]) if contains[:amount].present?
+    preseizures = preseizures.where(cached_amount: contains[:amount]) if contains[:amount].present?
 
     if contains[:created_at]
       contains[:created_at].each do |operator, value|

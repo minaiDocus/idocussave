@@ -12,44 +12,26 @@ describe DetectPreseizureDuplicate do
     DatabaseCleaner.clean
   end
 
-  it 'does not detect a duplicate' do
-    preseizure = Pack::Report::Preseizure.new
-    preseizure.user         = @user
-    preseizure.organization = @organization
-    preseizure.amount       = 10.0
-    preseizure.third_party  = 'Google'
-    preseizure.piece_number = 'G001'
-    preseizure.date         = Time.local(2017, 12, 15)
-    preseizure.save
-
-    result = DetectPreseizureDuplicate.new(preseizure).execute
-
-    expect(result).to eq false
-    expect(preseizure.is_blocked_for_duplication).to eq false
-    expect(preseizure.duplicate_detected_at).to be_nil
-    expect(preseizure.similar_preseizure).to be_nil
-  end
-
   context 'given an invalid preseizure' do
     before(:each) do
       preseizure = Pack::Report::Preseizure.new
-      preseizure.user         = @user
-      preseizure.organization = @organization
-      preseizure.amount       = 10.0
-      preseizure.third_party  = 'Google'
-      preseizure.piece_number = 'G001'
-      preseizure.date         = nil
+      preseizure.user          = @user
+      preseizure.organization  = @organization
+      preseizure.cached_amount = 10.0
+      preseizure.third_party   = 'Google'
+      preseizure.piece_number  = 'G001'
+      preseizure.date          = nil
       preseizure.save
     end
 
     it 'ignores an invalid preseizure' do
       preseizure = Pack::Report::Preseizure.new
-      preseizure.user         = @user
-      preseizure.organization = @organization
-      preseizure.amount       = 10.0
-      preseizure.third_party  = 'Google'
-      preseizure.piece_number = 'G001'
-      preseizure.date         = nil
+      preseizure.user          = @user
+      preseizure.organization  = @organization
+      preseizure.cached_amount = 10.0
+      preseizure.third_party   = 'Google'
+      preseizure.piece_number  = 'G001'
+      preseizure.date          = nil
       preseizure.save
 
       result = DetectPreseizureDuplicate.new(preseizure).execute
@@ -64,23 +46,23 @@ describe DetectPreseizureDuplicate do
   context 'given a preseizure' do
     before(:each) do
       @preseizure = Pack::Report::Preseizure.new
-      @preseizure.user         = @user
-      @preseizure.organization = @organization
-      @preseizure.amount       = 10.0
-      @preseizure.third_party  = 'Google'
-      @preseizure.piece_number = 'G001'
-      @preseizure.date         = Time.local(2017, 12, 15)
+      @preseizure.user          = @user
+      @preseizure.organization  = @organization
+      @preseizure.cached_amount = 10.0
+      @preseizure.third_party   = 'Google'
+      @preseizure.piece_number  = 'G001'
+      @preseizure.date          = Time.local(2017, 12, 15)
       @preseizure.save
     end
 
     it 'detects a duplicate' do
       preseizure = Pack::Report::Preseizure.new
-      preseizure.user         = @user
-      preseizure.organization = @organization
-      preseizure.amount       = 10.0
-      preseizure.third_party  = 'Google'
-      preseizure.piece_number = 'G001'
-      preseizure.date         = Time.local(2017, 12, 15)
+      preseizure.user          = @user
+      preseizure.organization  = @organization
+      preseizure.cached_amount = 10.0
+      preseizure.third_party   = 'Google'
+      preseizure.piece_number  = 'G001'
+      preseizure.date          = Time.local(2017, 12, 15)
       preseizure.save
 
       result = DetectPreseizureDuplicate.new(preseizure).execute
@@ -98,12 +80,13 @@ describe DetectPreseizureDuplicate do
 
       it 'detects a duplicate but does not block it' do
         preseizure = Pack::Report::Preseizure.new
-        preseizure.user         = @user
-        preseizure.organization = @organization
-        preseizure.amount       = 10.0
-        preseizure.third_party  = 'Google'
-        preseizure.piece_number = 'G001'
-        preseizure.date         = Time.local(2017, 12, 15)
+        preseizure.user          = @user
+        preseizure.organization  = @organization
+        preseizure.cached_amount = 10.0
+        preseizure.third_party   = 'Google'
+        preseizure.piece_number  = 'G001'
+        preseizure.date          = nil
+        preseizure.date          = Time.local(2017, 12, 15)
         preseizure.save
 
         result = DetectPreseizureDuplicate.new(preseizure).execute

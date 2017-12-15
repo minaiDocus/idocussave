@@ -56,9 +56,9 @@
                   %br
                   = object.similar_preseizure.third_party
                 %td
-                  %b= object.amount.to_s + ' €'
+                  %b= object.cached_amount.to_s + ' €'
                   %br
-                  = object.similar_preseizure.amount.to_s + ' €'
+                  = (object.similar_preseizure.cached_amount || object.similar_preseizure.entries.map(&:amount).max.to_s) + ' €'
                 %td
                   %b= l object.date, format: '%d %b %Y'
                   %br

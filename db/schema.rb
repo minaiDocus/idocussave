@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171208200203) do
+ActiveRecord::Schema.define(version: 20171215184008) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1296,6 +1296,7 @@ ActiveRecord::Schema.define(version: 20171208200203) do
     t.integer  "marked_as_duplicate_by_user_id", limit: 4
     t.datetime "duplicate_unblocked_at"
     t.integer  "duplicate_unblocked_by_user_id", limit: 4
+    t.decimal  "cached_amount",                                     precision: 11, scale: 2
   end
 
   add_index "pack_report_preseizures", ["duplicate_unblocked_by_user_id"], name: "index_pack_report_preseizures_on_duplicate_unblocked_by_user_id", using: :btree

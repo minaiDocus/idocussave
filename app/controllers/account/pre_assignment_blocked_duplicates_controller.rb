@@ -47,6 +47,7 @@ class Account::PreAssignmentBlockedDuplicatesController < Account::OrganizationC
   def sort_real_column
     column = sort_column
     return 'pack_pieces.name' if column == 'piece_name'
+    return 'cached_amount' if column == 'amount'
     column
   end
 

@@ -156,6 +156,8 @@ class AccountingWorkflow::RetrievePreAssignments
       end
     end
 
+    preseizure.update(cached_amount: preseizure.entries.map(&:amount).max)
+
     unless DetectPreseizureDuplicate.new(preseizure).execute
       NotifyNewPreAssignmentAvailable.new(preseizure, 5.minutes).execute
     end
