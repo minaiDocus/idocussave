@@ -149,6 +149,8 @@ gem 'redcarpet'
 # Audit
 gem 'audited', '~> 4.5'
 
+gem 'ruby-progressbar', require: false
+
 group :development, :test do
   gem 'byebug'
   gem 'thin'
