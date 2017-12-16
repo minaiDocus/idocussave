@@ -23,5 +23,8 @@ jQuery ->
             option_html = '<option value="'+d['id']+'">'+d['name']+'</option>'
           $('#user_ibiza_id').append(option_html)
         $('#user_ibiza_id').show()
+        $('#user_ibiza_id').chosen
+          search_contains: true,
+          no_results_text: 'Aucun résultat correspondant à'
         $('.feedback').remove()
         $('input[type=submit]').removeAttr('disabled')
