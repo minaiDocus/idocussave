@@ -58,7 +58,7 @@
                 %td
                   %b= object.cached_amount.to_s + ' €'
                   %br
-                  = object.similar_preseizure.cached_amount + ' €'
+                  = object.similar_preseizure.cached_amount.to_s + ' €'
                 %td
                   %b= l object.date, format: '%d %b %Y'
                   %br
