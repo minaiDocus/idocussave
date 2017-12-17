@@ -438,6 +438,8 @@ Idocus::Application.routes.draw do
     resources :notifications, only: %w(index)
 
     resources :account_sharings, only: %w(index)
+
+    resources :pre_assignment_blocked_duplicates, only: :index
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'

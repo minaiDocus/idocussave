@@ -48,6 +48,8 @@
           = link_to 'Partages de compte', admin_account_sharings_path
         %li{ class: ('active' if controller_name == 'notifications') }
           = link_to 'Notifications utilisateurs', admin_notifications_path
+        %li{ class: ('active' if controller_name == 'pre_assignment_blocked_duplicates') }
+          = link_to 'Doublons de pré-affectation', admin_pre_assignment_blocked_duplicates_path
         %li{ class: ('active' if controller_name == 'notification_settings') }
           = link_to 'Paramétrage des notifications', admin_notification_settings_path
 
