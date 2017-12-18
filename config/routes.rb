@@ -388,6 +388,14 @@ Idocus::Application.routes.draw do
         get 'render_image_documents', on: :collection
       end
 
+      resources :account_sharing do
+        post 'load_shared_docs', on: :collection
+        post 'get_list_collaborators', on: :collection
+        post 'add_shared_docs', on: :collection
+        post 'accept_shared_docs', on: :collection
+        post 'delete_shared_docs', on: :collection
+      end
+
       resources :file_uploader do
         post 'load_file_upload_params', on: :collection
       end

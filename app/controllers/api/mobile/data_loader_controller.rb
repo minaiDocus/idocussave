@@ -8,7 +8,6 @@ class Api::Mobile::DataLoaderController < MobileApiController
   respond_to :json
 
   def load_customers
-    p customers
     render json: {customers: customers}, status: 200
   end
 
@@ -35,7 +34,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
       accounts
     ).order("created_at" => "desc").includes(:user).page(1).per(100)
 
-     data_paper_processes = paper_processes.collect do |paper_process|
+    data_paper_processes = paper_processes.collect do |paper_process|
         {
           date: paper_process.created_at,
           type: paper_process.type,
