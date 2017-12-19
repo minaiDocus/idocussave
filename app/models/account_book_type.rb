@@ -18,8 +18,8 @@ class AccountBookType < ActiveRecord::Base
       journal.default_account_number = ''
       journal.charge_account         = ''
       journal.vat_account            = ''
-      journal.vat_account_20         = ''
       journal.vat_account_10         = ''
+      journal.vat_account_8_5        = ''
       journal.vat_account_5_5        = ''
       journal.vat_account_2_1        = ''
       journal.anomaly_account        = ''
@@ -150,8 +150,8 @@ class AccountBookType < ActiveRecord::Base
     self.default_account_number         = nil   if default_account_number.present?
     self.charge_account                 = nil   if charge_account.present?
     self.vat_account                    = nil   if vat_account.present?
-    self.vat_account_20                 = nil   if vat_account_20.present?
     self.vat_account_10                 = nil   if vat_account_10.present?
+    self.vat_account_8_5                = nil   if vat_account_8_5.present?
     self.vat_account_5_5                = nil   if vat_account_5_5.present?
     self.vat_account_2_1                = nil   if vat_account_2_1.present?
     self.anomaly_account                = nil   if anomaly_account.present?

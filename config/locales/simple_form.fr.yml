@@ -115,9 +115,9 @@ fr:
         entry_type_3: Vente
         meta_account_number: Compte de tiers
         meta_charge_account: Compte de charge / produit
-        vat_account: Compte de TVA appliqué à tous les documents dans le journal comptable iDocus
-        vat_account_20: Compte de TVA 20%
+        vat_account: Compte de TVA 20% appliqué à tous les documents dans le journal comptable iDocus
         vat_account_10: Compte de TVA 10%
+        vat_account_8_5: Compte de TVA 8.5%
         vat_account_5_5: Compte de TVA 5.5%
         vat_account_2_1: Compte de TVA 2.1%
         anomaly_account: "Compte d'anomalie"

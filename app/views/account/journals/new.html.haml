@@ -51,9 +51,9 @@
 
               - if !@customer || @customer.options.is_taxable
                 - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
-                = f.input :vat_account, label: 'Quel est le compte de TVA attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
-                = f.input :vat_account_20
+                = f.input :vat_account, label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
                 = f.input :vat_account_10
+                = f.input :vat_account_8_5
                 = f.input :vat_account_5_5
                 = f.input :vat_account_2_1
               = f.input :anomaly_account, label: 'Quel est le compte à utiliser en cas d’anomalie ?', input_html: { disabled: is_disabled }, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'

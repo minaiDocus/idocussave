@@ -34,8 +34,8 @@
       - if !@customer || @customer.options.is_taxable
         - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
         = f.input :vat_account, required: @customer.present?, hint: hint
-        = f.input :vat_account_20
         = f.input :vat_account_10
+        = f.input :vat_account_8_5
         = f.input :vat_account_5_5
         = f.input :vat_account_2_1
       = f.input :anomaly_account, required: true, hint: 'si aucune information claire dans la pièce, si la pièce n’est pas une facture, …'

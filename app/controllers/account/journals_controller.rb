@@ -199,8 +199,8 @@ class Account::JournalsController < Account::OrganizationController
         :meta_account_number,
         :meta_charge_account,
         :vat_account,
-        :vat_account_20,
         :vat_account_10,
+        :vat_account_8_5,
         :vat_account_5_5,
         :vat_account_2_1,
         :anomaly_account
