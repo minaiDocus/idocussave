@@ -37,7 +37,7 @@ module FileDelivery::RemoteReport
                                              .flatten
                                              .uniq
 
-      not_delivered = preseizures.select(&:is_not_blocked_for_duplication).where.not(id: delivered_preseizure_ids).by_position
+      not_delivered = preseizures.where.not(id: delivered_preseizure_ids).by_position.select(&:is_not_blocked_for_duplication)
     end
 
     not_delivered
