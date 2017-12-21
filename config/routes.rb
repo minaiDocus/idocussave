@@ -390,10 +390,19 @@ Idocus::Application.routes.draw do
 
       resources :account_sharing do
         post 'load_shared_docs', on: :collection
+        post 'load_shared_contacts', on: :collection
+
         post 'get_list_collaborators', on: :collection
         post 'add_shared_docs', on: :collection
+        post 'add_shared_contacts', on: :collection
+        post 'edit_shared_contacts', on: :collection
         post 'accept_shared_docs', on: :collection
         post 'delete_shared_docs', on: :collection
+        post 'delete_shared_contacts', on: :collection
+
+        post 'load_shared_docs_customers', on: :collection
+        post 'add_shared_docs_customers', on: :collection
+        post 'add_sharing_request_customers', on: :collection
       end
 
       resources :file_uploader do

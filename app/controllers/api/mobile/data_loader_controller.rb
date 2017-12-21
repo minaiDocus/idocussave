@@ -8,7 +8,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   respond_to :json
 
   def load_customers
-    render json: {customers: customers}, status: 200
+    render json: {customers: accounts}, status: 200
   end
 
   def load_packs
@@ -45,14 +45,14 @@ class Api::Mobile::DataLoaderController < MobileApiController
         }
     end
 
-    data_paper_processes = [
-                              {date:"18-12-2017", type:1, code:123, company:"Mycomp", number:12, packname:"test 1"},
-                              {date:"19-12-2017", type:2, code:1234, company:"12345", number:11, packname:"test 2"},
-                              {date:"20-08-2017", type:3, code:12, company:"Hiscomp", number:122, packname:"test 3"},
-                              {date:"18-04-2017", type:3, code:1123, company:"Thecomp", number:112, packname:"test 4"},
-                              {date:"21-05-2017", type:2, code:234, company:"Hercomp", number:112, packname:"test 5"},
-                              {date:"22-11-2017", type:1, code:321, company:"Comp", number:112, packname:"test 6"},
-                            ]
+    # data_paper_processes = [
+    #                           {date:"18-12-2017", type:1, code:123, company:"Mycomp", number:12, packname:"test 1"},
+    #                           {date:"19-12-2017", type:2, code:1234, company:"12345", number:11, packname:"test 2"},
+    #                           {date:"20-08-2017", type:3, code:12, company:"Hiscomp", number:122, packname:"test 3"},
+    #                           {date:"18-04-2017", type:3, code:1123, company:"Thecomp", number:112, packname:"test 4"},
+    #                           {date:"21-05-2017", type:2, code:234, company:"Hercomp", number:112, packname:"test 5"},
+    #                           {date:"22-11-2017", type:1, code:321, company:"Comp", number:112, packname:"test 6"},
+    #                         ]
 
      render json: {data_stats: data_paper_processes}, status: 200
   end
@@ -88,7 +88,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
 
-  def filter_packs()
+  def filter_packs
       options = { page: params[:page], per_page: 100 }
       options[:sort] = true unless params[:filter].present?
 

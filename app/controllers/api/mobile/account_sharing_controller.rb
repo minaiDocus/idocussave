@@ -8,21 +8,44 @@ class Api::Mobile::AccountSharingController < MobileApiController
   respond_to :json
 
   def load_shared_docs
+    data_docs = []
     account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
+        page(1).
+        per(100)
+
+     data_docs = account_sharings.inject([]) do |memo, data|
+        memo += [ {
+                    id_idocus:data.id,
+                    date:data.created_at, 
+                    approval:data.is_approved,
+                    client:data.collaborator.info,
+                    document:data.account.info
+                  }
+                ]
+      end
+    render json: {data_shared: data_docs}, status: 200
+  end
+
+  def load_shared_contacts
+    contacts = []
+    guest_collaborators = @organization.guest_collaborators.
+      search(search_terms(params[:guest_collaborator_contains])).
       page(1).
       per(100)
 
-    data_docs = account_sharings.inject([]) do |memo, data|
-      memo += [ {
-                  id_idocus:data.id,
-                  date:data.created_at, 
-                  approval:data.is_approved,
-                  client:data.collaborator.info,
-                  document:data.account.info
-                },
-              ]
-    end
-    render json: {data_shared: data_docs}, status: 200
+     contacts = guest_collaborators.inject([]) do |memo, data|
+        memo += [ {
+                    id_idocus:data.id,
+                    date:data.created_at, 
+                    email:data.email,
+                    company:data.company,
+                    first_name:data.first_name,
+                    last_name: data.last_name,
+                    account_size:data.accounts.size
+                  }
+                ]
+      end
+    render json: {contacts: contacts}, status: 200
   end
 
   def get_list_collaborators
@@ -47,6 +70,25 @@ class Api::Mobile::AccountSharingController < MobileApiController
     end
   end
 
+  def add_shared_contacts
+     guest_collaborator = CreateContact.new(user_params, @organization).execute
+    if guest_collaborator.persisted?
+      render json: {message: 'Créé avec succès.'}, status: 200
+    else
+      render json: {message: 'Impossible de créer le contact.'}, status: 200
+    end
+  end
+
+  def edit_shared_contacts
+    guest_collaborator = @organization.guest_collaborators.find params[:id]
+    guest_collaborator.update(params.require(:user).permit(:company, :first_name, :last_name))
+    if guest_collaborator.save
+      render json: {message: 'Modifié avec succès.'}, status: 200
+    else
+      render json: {message: 'Impossible de modifier le contact.'}, status: 200
+    end
+  end
+
   def accept_shared_docs
     account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
     if(AcceptAccountSharingRequest.new(account_sharing).execute)
@@ -56,12 +98,83 @@ class Api::Mobile::AccountSharingController < MobileApiController
     end
   end
 
-  def delete_shared_docs 
-    account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
-    if DestroyAccountSharing.new(account_sharing).execute
-      render json: {message: 'Le partage a été supprimer avec succès.'}, status: 200
+  def delete_shared_docs
+    if(params[:type] && params[:type] == 'customers')
+      account_sharing = AccountSharing.unscoped.where(id: params[:id]).where('account_id = :id OR collaborator_id = :id', id: @user.id).first!
+      if DestroyAccountSharing.new(account_sharing, @user).execute
+        render json: {message: 'Le partage a été supprimer avec succès.'}, status: 200
+      else
+        render json: {message: 'Impossible de supprimer le partage.'}, status: 200
+      end
+    else 
+      account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
+      if DestroyAccountSharing.new(account_sharing).execute
+        render json: {message: 'Le partage a été supprimer avec succès.'}, status: 200
+      else
+        render json: {message: 'Impossible de supprimer le partage.'}, status: 200
+      end
+    end
+  end
+
+  def delete_shared_contacts
+    guest_collaborator = @organization.guest_collaborators.find params[:id]
+    DestroyCollaboratorService.new(guest_collaborator).execute
+    render json: {message: 'Supprimé avec succès.'}, status: 200
+  end
+
+  def load_shared_docs_customers
+    data_shared = []
+    contacts = []
+    access = []
+    if @user.active? && !@user.is_prescriber && @user.organization.is_active
+      data_shared = @user.account_sharings.inject([]) do |memo, data|
+         memo += [ {
+                      id_idocus:data.id,
+                      name:data.account.info,
+                    }
+                  ]
+      end
+
+      contacts = @user.inverse_account_sharings.inject([]) do |memo, data|
+        memo += [ {
+                      id_idocus:data.id,
+                      name:data.collaborator.info,
+                    }
+                  ]
+      end
+
+      access = @user.account_sharings.pending.select { |e| e.collaborator == @user }.inject([]) do |memo, data|
+        memo += [ {
+                      id_idocus:data.id,
+                      name:data.account.info,
+                    }
+                  ]
+      end
+    end
+
+    render json: {data_shared: data_shared, contacts: contacts, access: access}, status: 200
+  end
+
+  def add_shared_docs_customers
+    contact, account_sharing = ShareMyAccount.new(@user, user_params, current_user).execute
+    if account_sharing.persisted?
+      render json: {message: 'Votre compte a été partagé avec succès.'}, status: 200
+    elsif Array(account_sharing.errors[:account] || account_sharing.errors[:collaborator]).include?("est déjà pris.")
+      render json: {message: 'Ce contact a déjà accès à votre compte.'}, status: 200
+    elsif contact.errors[:email].include?("est déjà pris.") || account_sharing.errors[:collaborator_id].include?("n'est pas valide")
+      render json: {message: "Vous ne pouvez pas partager votre compte avec le contact : #{@contact.email}."}, status: 200
     else
-      render json: {message: 'Impossible de supprimer le partage.'}, status: 200
+      render json: {message: 'Un problème a eu lieu pendant le partage de compte!!'}, status: 200
+    end
+  end
+
+  def add_sharing_request_customers
+    account_sharing_request = AccountSharingRequest.new(account_sharing_request_params_customers)
+    account_sharing_request.user = @user
+    if account_sharing_request.save
+      render json: {message: 'Demande envoyé avec succès.'}, status: 200
+    else
+      render json: {message: "Impossible d'envoyé votre demande!!"}, status: 200
     end
   end
 
@@ -70,6 +183,14 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def account_sharing_params
     params.require(:account_sharing).permit(:collaborator_id, :account_id)
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :company, :first_name, :last_name)
+  end
+
+  def account_sharing_request_params_customers
+    params.require(:account_sharing_request).permit(:code_or_email)
   end
 
 end
