@@ -744,6 +744,7 @@
                 allow_single_deselect: true,
                 no_results_text: 'Aucun résultat correspondant à'
               });
+              $('#' + axis_name).trigger('chosen:updated');
 
               $('#analytic_' + axis_name).val($('#' + axis_name).val());
             } else {
