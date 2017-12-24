@@ -728,6 +728,7 @@
 
           for (var i=1; i<4; i++) {
             var axis_name = 'axis' + i;
+            $('#analytic_' + axis_name).val('');
             if(analytic[axis_name] != undefined) {
               var sections = analytic[axis_name]['sections'];
               var axis_options = '';
@@ -743,6 +744,8 @@
                 allow_single_deselect: true,
                 no_results_text: 'Aucun résultat correspondant à'
               });
+
+              $('#analytic_' + axis_name).val($('#' + axis_name).val());
             } else {
               $('.' + axis_name + '-group').addClass('hide');
               $('#' + axis_name).html('');
