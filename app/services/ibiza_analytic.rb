@@ -8,7 +8,7 @@ class IbizaAnalytic
   def execute
     client.company(@id).analyzes.complete?
 
-    if client.response.success?
+    if client.response.success? && client.response.data.present?
       analytics = []
 
       client.response.data.each do |data|

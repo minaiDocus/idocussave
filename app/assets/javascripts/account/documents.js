@@ -847,11 +847,20 @@
       $('#axis3_chosen').removeAttr('title');
     }
 
+    var isUploadParamsLocked = false;
+
     function lock_or_unlock_file_upload_params() {
-      if($('.template-upload').length > 0)
-        lock_file_upload_params();
-      else
-        unlock_file_upload_params();
+      if($('.template-upload').length > 0) {
+        if(!isUploadParamsLocked) {
+          lock_file_upload_params();
+          isUploadParamsLocked = true;
+        }
+      } else {
+        if(isUploadParamsLocked) {
+          unlock_file_upload_params();
+          isUploadParamsLocked = false;
+        }
+      }
     }
 
     var lock_or_unlock_file_upload_params_interval = null;
@@ -861,7 +870,7 @@
     })
 
     $('#uploadDialog').on('shown', function() {
-      if($('#h_file_code').val() != '') {
+      if($('#h_file_code').val() != '' && $('#fileupload').data('params') == undefined) {
         setAnalytics($('#h_file_code').val(), true);
       } else {
         $('#h_file_code').chosen({
