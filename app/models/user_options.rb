@@ -8,6 +8,7 @@ class UserOptions < ActiveRecord::Base
   validates_inclusion_of :is_pre_assignment_date_computed, in: [-1, 0, 1]
   validates_inclusion_of :is_operation_processing_forced,  in: [-1, 0, 1]
   validates_inclusion_of :is_operation_value_date_needed,  in: [-1, 0, 1]
+  validates_inclusion_of :is_compta_analysis_activated,    in: [-1, 0, 1]
   validates_inclusion_of :dashboard_default_summary,       in: DASHBOARD_SUMMARIES
 
   def pre_assignment_date_computed?
@@ -45,6 +46,14 @@ class UserOptions < ActiveRecord::Base
       user.organization.try(:is_operation_value_date_needed)
     else
       is_operation_value_date_needed == 1
+    end
+  end
+
+  def compta_analysis_activated?
+    if is_compta_analysis_activated == -1
+      user.organization.ibiza.try(:is_analysis_activated)
+    else
+      is_compta_analysis_activated == 1
     end
   end
 

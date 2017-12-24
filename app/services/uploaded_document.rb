@@ -12,7 +12,7 @@ class UploadedDocument
   end
 
 
-  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil)
+  def initialize(file, original_file_name, user, journal, prev_period_offset, uploader = nil, api_name=nil, analytic=nil)
     @file     = file
     @user     = user
     @code     = @user.code
@@ -49,6 +49,17 @@ class UploadedDocument
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
+
+      # TODO : verify params and move it into a method
+      if analytic.present?
+        AnalyticReference.create(
+          temp_document_id: @temp_document.id,
+          analytic_id: analytic[:id].presence,
+          axis1_section_code: analytic[:axis1].presence,
+          axis2_section_code: analytic[:axis2].presence,
+          axis3_section_code: analytic[:axis3].presence
+        )
+      end
     end
 
     clean_tmp

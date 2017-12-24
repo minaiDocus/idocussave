@@ -362,6 +362,8 @@ Idocus::Application.routes.draw do
       get 'new_request', on: :collection
       post 'create_request', on: :collection
     end
+
+    resources :analytics, only: %w(index)
   end
 
   namespace :api, defaults: { format: 'json' } do

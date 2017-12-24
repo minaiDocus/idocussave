@@ -9,7 +9,8 @@
           %legend Connexion à iBiza pour le transfert des écritures
           = f.input :access_token, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
           = f.input :access_token_2, hint: "Pour connecter iBiZa à iDocus, rendez-vous sur l'iBiZStore pour récupérer votre jeton d'accès."
-          = f.input :is_auto_deliver, as: :boolean
+          = f.input :is_auto_deliver, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
+          = f.input :is_analysis_activated, as: :boolean, hint: 'Cette option peut être ré-écrite au niveau de chaque dossier.'
         %fieldset
           %legend Format de nom de la pièce iDocus dans iBiza (colonne "Pièce" dans iBiza)
           %table.table.table-condensed

@@ -17,19 +17,21 @@
     %form#fileupload.form.form-horizontal{ action: '/account/documents/upload', method: 'POST', enctype: 'multipart/form-data', data: { params: file_upload_params.to_json } }
       - if has_multiple_accounts?
         .control-group
-          = label_tag :h_file_code, 'Code client : ', class: 'control-label', style: 'font-weight:900;'
+          = label_tag :h_file_code, 'Code client : ', class: 'control-label'
           .controls
             = select_tag :h_file_code, options_for_select(file_upload_users_list.map{ |e| [e.short_info, e.code] }), include_blank: true, data: { placeholder: 'Choisir un client'}, id: :h_file_code
             = hidden_field_tag :file_code
+      - else
+        = hidden_field_tag :h_file_code, @user.code
       .control-group
-        = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label', style: 'font-weight:900;'
+        = label_tag :h_file_account_book_type, 'Type de document : ', class: 'control-label'
         .controls
-          = select_tag :h_file_account_book_type, has_multiple_accounts? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type, style: 'font-size:11px;'
+          = select_tag :h_file_account_book_type, has_multiple_accounts? ? '' : options_for_select(account_book_types_option), id: :h_file_account_book_type
           = hidden_field_tag :file_account_book_type
       .control-group.prev_period_offset
-        = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label', style: 'font-weight:900;'
+        = label_tag :h_file_prev_period_offset, 'Période concerné : ', class: 'control-label'
         .controls
-          = select_tag :h_file_prev_period_offset, has_multiple_accounts? ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field', style: 'font-size:11px;'
+          = select_tag :h_file_prev_period_offset, has_multiple_accounts? ? '' : options_for_select(options_for_period), id: :h_file_prev_period_offset, class: 'text_field'
           = hidden_field_tag :file_prev_period_offset
           - if !@user.is_prescriber && @period_service.prev_expires_at
             %span.help-block
@@ -45,6 +47,27 @@
               après le
               %span.date
               \.
+      - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || (@user.ibiza_id.present? && @user.options.compta_analysis_activated?))
+        .control-group
+          = label_tag :h_analytic_id, 'Analytique : ', class: 'control-label'
+          .controls
+            = select_tag :h_analytic_id, nil, id: :analytic
+            = hidden_field_tag 'analytic[id]'
+        .control-group.axis1-group.hide
+          = label_tag :h_analytic_axis1, 'Axe 1 : ', class: 'control-label'
+          .controls
+            = select_tag :h_analytic_axis1, nil, id: :axis1
+            = hidden_field_tag 'analytic[axis1]'
+        .control-group.axis2-group.hide
+          = label_tag :h_analytic_axis2, 'Axe 2 : ', class: 'control-label'
+          .controls
+            = select_tag :h_analytic_axis2, nil, id: :axis2
+            = hidden_field_tag 'analytic[axis2]'
+        .control-group.axis3-group.hide
+          = label_tag :h_analytic_axis3, 'Axe 3 : ', class: 'control-label'
+          .controls
+            = select_tag :h_analytic_axis3, nil, id: :axis3
+            = hidden_field_tag 'analytic[axis3]'
       :plain
         <div class="row fileupload-buttonbar">
             <div class="span6">

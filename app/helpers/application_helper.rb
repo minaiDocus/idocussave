@@ -253,6 +253,7 @@ module ApplicationHelper
       [t('yes_value'),           1]
     ]
   end
+  alias :activate_compta_analytic_options :auto_deliver_options
 
   def operation_processing_options
     [

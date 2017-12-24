@@ -404,6 +404,7 @@ fr:
           is_taxable: Le dossier est-il assujetti à TVA?
           is_pre_assignment_date_computed: Date de saisie des factures
           is_auto_deliver: Livrer automatiquement les écritures ?
+          is_compta_analysis_activated: Activer la compta analytique ?
           is_own_csv_descriptor_used: Utilise son propre format de CSV ?
           is_retriever_authorized: Automate autorisé ?
           is_operation_processing_forced: Forcer la pré-affectation des écritures récupérées par les automates ?
@@ -598,6 +599,7 @@ fr:
         name: iBiza
         attributes:
           is_auto_deliver: Livrer automatiquement les écritures ?
+          is_analysis_activated: Activer la compta analytique ?
           access_token: Jeton d'accès Scan et OCR
           state: Etat
           access_token_2: Jeton d'accès iDo'FacBanque

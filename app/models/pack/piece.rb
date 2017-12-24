@@ -8,6 +8,7 @@ class Pack::Piece < ActiveRecord::Base
 
   has_one    :expense, class_name: 'Pack::Report::Expense', inverse_of: :piece
   has_one    :temp_document, inverse_of: :piece
+  has_one    :analytic_reference, inverse_of: :piece
 
   has_many   :operations,    class_name: 'Operation', inverse_of: :piece
   has_many   :preseizures,   class_name: 'Pack::Report::Preseizure', inverse_of: :piece

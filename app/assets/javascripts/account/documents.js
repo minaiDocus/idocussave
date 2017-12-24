@@ -635,7 +635,8 @@
     // do_qtip(["left bottom"],["top right"],["#documentslist"],["#help1"],["jtools"]);
 
     if ($('#h_file_code').length > 0) {
-      file_upload_params = $('#fileupload').data('params')
+      var file_upload_params = $('#fileupload').data('params')
+      var analytics = null;
 
       function file_upload_update_fields(code) {
         var account_book_types = file_upload_params[code]['journals'];
@@ -659,12 +660,103 @@
         } else {
           $('.prev_period_offset .help-block').hide();
         }
+
+        setAnalytics(code, file_upload_params[code]['is_analytic_used']);
       }
 
-      if($('#h_file_code').val() != '') {
-        file_upload_update_fields($(this).val());
-        $('#file_code').val($(this).val());
+      function byAnalyticId(element) {
+        return element['id'] == $('#analytic').val();
       }
+
+      function cleanAnalytics() {
+        analytics = null;
+
+        $('#analytic').html('');
+        $('.axis1-group').addClass('hide');
+        $('#axis1').html('');
+        $('.axis2-group').addClass('hide');
+        $('#axis2').html('');
+        $('.axis3-group').addClass('hide');
+        $('#axis3').html('');
+
+        $('#analytic_id').val('');
+        $('#analytic_axis1').val('');
+        $('#analytic_axis2').val('');
+        $('#analytic_axis3').val('');
+      }
+
+      function setAnalytics(code, isUsed) {
+        if($('#analytic').length > 0) {
+          cleanAnalytics();
+
+          if(isUsed) {
+            $.ajax({
+              url: '/account/analytics',
+              data: { code: code },
+              dataType: 'json',
+              type: 'GET',
+              beforeSend: function() {
+                $('#analytic').hide();
+                $('#analytic').after('<div class="feedback active"></div>');
+              },
+              success: function(data) {
+                analytics = data
+                var analytic_options = '<option selected value>Sélectionnez une analytique</option>';
+                for (var i=0; i<analytics.length; i++) {
+                  analytic_options = analytic_options + "<option value=" + analytics[i]['id'] + ">" + analytics[i]['name'] + "</option>";
+                }
+                $('#analytic').html(analytic_options);
+                $('#fileupload .feedback').remove();
+                $('#analytic').show();
+              },
+              error: function(data) {
+                // TODO : handle failures
+                $('#fileupload .feedback').remove();
+                $('#analytic').show();
+              }
+            });
+          } else {
+            $('#analytic').html('<option selected disabled value>Aucune analytique pour ce dossier</option>');
+          }
+        }
+      }
+
+      $('#analytic').on('change', function() {
+        if($('#analytic').val() != '') {
+          var code = $('#h_file_code').val();
+          var analytic = analytics.find(byAnalyticId);
+
+          for (var i=1; i<4; i++) {
+            var axis_name = 'axis' + i;
+            if(analytic[axis_name] != undefined) {
+              var sections = analytic[axis_name]['sections'];
+              var axis_options = '';
+              for (var s=0; s<sections.length; s++) {
+                axis_options = axis_options + "<option value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>";
+              }
+              $('.' + axis_name + '-group label').html('Axe ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
+              $('#' + axis_name).html(axis_options);
+              $('.' + axis_name + '-group').removeClass('hide');
+
+              $('#' + axis_name).chosen({
+                search_contains: true,
+                allow_single_deselect: true,
+                no_results_text: 'Aucun résultat correspondant à'
+              });
+            } else {
+              $('.' + axis_name + '-group').addClass('hide');
+              $('#' + axis_name).html('');
+            }
+          }
+        } else {
+          $('.axis1-group').addClass('hide');
+          $('#axis1').html('');
+          $('.axis2-group').addClass('hide');
+          $('#axis2').html('');
+          $('.axis3-group').addClass('hide');
+          $('#axis3').html('');
+        }
+      });
 
       $('#h_file_code').on('change', function() {
         if ($(this).val() != '') {
@@ -678,12 +770,17 @@
           $('#file_prev_period_offset').val('');
           $('#h_file_account_book_type').html('');
           $('#h_file_prev_period_offset').html('');
+          cleanAnalytics();
         }
       });
     }
 
     $('#file_account_book_type').val($('#h_file_account_book_type').val());
     $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
+    $('#analytic_id').val($('#analytic').val());
+    $('#analytic_axis1').val($('#axis1').val());
+    $('#analytic_axis2').val($('#axis2').val());
+    $('#analytic_axis3').val($('#axis3').val());
 
     $('#h_file_account_book_type').on('change', function() {
       $('#file_account_book_type').val($(this).val());
@@ -693,12 +790,28 @@
       $('#file_prev_period_offset').val($(this).val());
     });
 
+    $('#analytic').on('change', function() {
+      $('#analytic_id').val($(this).val());
+    });
+
+    $('#axis1').on('change', function() {
+      $('#analytic_axis1').val($(this).val());
+    });
+
+    $('#axis2').on('change', function() {
+      $('#analytic_axis2').val($(this).val());
+    });
+
+    $('#axis3').on('change', function() {
+      $('#analytic_axis3').val($(this).val());
+    });
+
     function lock_file_upload_params() {
       var title = null;
       if($('#h_file_code').length > 0) {
         title = 'Vous avez sélectionné des documents à ajouter dans un client / type / période, veuillez démarrer le téléchargement avant de changer pour téléverser à nouveau.';
-        $('select[name="h_file_code"]').attr('disabled', 'disabled');
-        $('select[name="h_file_code"]').attr('title', title);
+        $('select[name="h_file_code"]').attr('disabled', 'disabled').trigger('chosen:updated');
+        $('#h_file_code_chosen').attr('title', title);
       } else {
         title = 'Vous avez sélectionné des documents à ajouter dans un type ou période, veuillez démarrer le téléchargement avant de changer pour téléverser à nouveau.';
       }
@@ -706,16 +819,32 @@
       $('select[name="h_file_prev_period_offset"]').attr('disabled', 'disabled');
       $('select[name="h_file_account_book_type"]').attr('title', title);
       $('select[name="h_file_prev_period_offset"]').attr('title', title);
+      $('select[name="h_analytic_id"]').attr('disabled', 'disabled');
+      $('select[name="h_analytic_id"]').attr('title', title);
+      $('select[name="h_analytic_axis1"]').attr('disabled', 'disabled').trigger('chosen:updated');
+      $('select[name="h_analytic_axis2"]').attr('disabled', 'disabled').trigger('chosen:updated');
+      $('select[name="h_analytic_axis3"]').attr('disabled', 'disabled').trigger('chosen:updated');
+      $('#axis1_chosen').attr('title', title);
+      $('#axis2_chosen').attr('title', title);
+      $('#axis3_chosen').attr('title', title);
     }
 
     function unlock_file_upload_params() {
       if($('#h_file_code').length > 0)
-        $('select[name="h_file_code"]').removeAttr('disabled');
-        $('select[name="h_file_code"]').removeAttr('title');
+        $('select[name="h_file_code"]').removeAttr('disabled').trigger('chosen:updated');
+        $('#h_file_code_chosen').removeAttr('title');
       $('select[name="h_file_account_book_type"]').removeAttr('disabled');
       $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
       $('select[name="h_file_account_book_type"]').removeAttr('title');
       $('select[name="h_file_prev_period_offset"]').removeAttr('title');
+      $('select[name="h_analytic_id"]').removeAttr('disabled');
+      $('select[name="h_analytic_id"]').removeAttr('title');
+      $('select[name="h_analytic_axis1"]').removeAttr('disabled').trigger('chosen:updated');
+      $('select[name="h_analytic_axis2"]').removeAttr('disabled').trigger('chosen:updated');
+      $('select[name="h_analytic_axis3"]').removeAttr('disabled').trigger('chosen:updated');
+      $('#axis1_chosen').removeAttr('title');
+      $('#axis2_chosen').removeAttr('title');
+      $('#axis3_chosen').removeAttr('title');
     }
 
     function lock_or_unlock_file_upload_params() {
@@ -732,11 +861,15 @@
     })
 
     $('#uploadDialog').on('shown', function() {
-      $('#h_file_code').chosen({
-        search_contains: true,
-        allow_single_deselect: true,
-        no_results_text: 'Aucun résultat correspondant à'
-      })
+      if($('#h_file_code').val() != '') {
+        setAnalytics($('#h_file_code').val(), true);
+      } else {
+        $('#h_file_code').chosen({
+          search_contains: true,
+          allow_single_deselect: true,
+          no_results_text: 'Aucun résultat correspondant à'
+        })
+      }
     })
 
     $('#uploadDialog').on('hide', function() {

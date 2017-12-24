@@ -311,6 +311,9 @@
                     %tr
                       %th= t('activerecord.models.user_options.attributes.is_auto_deliver')
                       %td= @customer.options.auto_deliver? ? t('yes_value') : t('no_value')
+                    %tr
+                      %th= t('activerecord.models.user_options.attributes.is_compta_analysis_activated')
+                      %td= @customer.options.compta_analysis_activated? ? t('yes_value') : t('no_value')
                 .row-fluid
                   .span12
                     - if @organization.ibiza.configured?

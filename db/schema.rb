@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219185110) do
+
+ActiveRecord::Schema.define(version: 20171224123837) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -165,6 +166,18 @@ ActiveRecord::Schema.define(version: 20171219185110) do
   add_index "addresses", ["locatable_id_mongo_id"], name: "locatable_id_mongo_id", using: :btree
   add_index "addresses", ["locatable_type"], name: "locatable_type", using: :btree
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
+
+  create_table "analytic_references", force: :cascade do |t|
+    t.integer "temp_document_id",   limit: 4
+    t.integer "pack_piece_id",      limit: 4
+    t.string  "analytic_id",        limit: 255
+    t.string  "axis1_section_code", limit: 255
+    t.string  "axis2_section_code", limit: 255
+    t.string  "axis3_section_code", limit: 255
+  end
+
+  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
+  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
 
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
@@ -782,6 +795,7 @@ ActiveRecord::Schema.define(version: 20171219185110) do
     t.string   "organization_id_mongo_id", limit: 255
     t.text     "encrypted_access_token",   limit: 65535
     t.text     "encrypted_access_token_2", limit: 65535
+    t.boolean  "is_analysis_activated",                  default: false
   end
 
   add_index "ibizas", ["mongo_id"], name: "index_ibizas_on_mongo_id", using: :btree
@@ -2059,6 +2073,7 @@ ActiveRecord::Schema.define(version: 20171219185110) do
     t.integer  "is_operation_value_date_needed",  limit: 4,   default: -1,           null: false
     t.boolean  "is_ocr_authorized",                           default: false,        null: false
     t.string   "dashboard_default_summary",       limit: 255, default: "last_scans"
+    t.integer  "is_compta_analysis_activated",    limit: 4,   default: -1
   end
 
   add_index "user_options", ["mongo_id"], name: "index_user_options_on_mongo_id", using: :btree

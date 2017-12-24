@@ -11,7 +11,6 @@ module DocumentsHelper
     end
   end
 
-
   def active_users(users, year)
     users.select do |u|
       if u.created_at.year <= year
@@ -197,7 +196,8 @@ module DocumentsHelper
           journals: user.account_book_types.order(name: :asc).map do |j|
             j.name + ' ' + j.description
           end,
-          periods:  options_for_period(period_service)
+          periods:  options_for_period(period_service),
+          is_analytic_used: (user.ibiza_id.present? && user.options.compta_analysis_activated?)
         }
 
         if period_service.prev_expires_at
