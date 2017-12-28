@@ -2,7 +2,17 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
   respond_to :json
   
   def ping
-    render :json => {:success=>true, :message=>"Ping success!"}, status: 200
+    version = params[:version] # app version
+    platform = params[:platform] # android or ios
+    code = 200 # neutral code
+    message = "Ping success"
+
+    #code 500 for automatically logout app mobile
+      # code = 500 
+      # message = "Vous n'aves pas l'authorisation necessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
+    #(code 500 for automatically logout app mobile)
+
+    render :json => {:success=>true, :message=>message, :code=>code}, status: 200
   end
 
   def request_connexion

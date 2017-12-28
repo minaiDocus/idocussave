@@ -393,6 +393,7 @@ Idocus::Application.routes.draw do
         post 'load_shared_contacts', on: :collection
 
         post 'get_list_collaborators', on: :collection
+        post 'get_list_customers', on: :collection
         post 'add_shared_docs', on: :collection
         post 'add_shared_contacts', on: :collection
         post 'edit_shared_contacts', on: :collection

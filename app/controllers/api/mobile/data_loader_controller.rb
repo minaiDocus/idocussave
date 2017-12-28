@@ -23,38 +23,48 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def load_stats
-    filters = params[:paper_process_contains]
-    if filters.present?
-      filters[:updated_at] = {:>= => filters[:updated_at_start], :<= => filters[:updated_at_end]}
+    if verify_rights_stats
+      #If rights authorized
+      per_page = 100
+      filters = params[:paper_process_contains]
+      if filters.present?
+        filters[:created_at] = {:>= => filters[:created_at_start], :<= => filters[:created_at_end]}
+      end
+
+       paper_processes = PaperProcess.search_for_collection_with_options_and_user(
+        PaperProcess.where(user_id: accounts),
+        search_terms(filters),
+        accounts
+      ).order("created_at" => "desc").includes(:user).page(params[:page]).per(per_page)
+
+      data_paper_processes = paper_processes.collect do |paper_process|
+          company = "-"
+          customer_code = "-"
+          if @user.is_prescriber && @user.organization
+            company = paper_process.user.try(:company) || "-"
+            customer_code = paper_process.customer_code
+          end
+          
+          {
+            id_idocus: paper_process.id.to_s,
+            date: paper_process.created_at,
+            type: paper_process.type,
+            company: company,
+            code: customer_code,
+            number: paper_process.tracking_number,
+            packname: paper_process.pack_name,
+          }
+      end
+
+      more_result = true
+      if data_paper_processes.count < per_page
+        more_result = false
+      end
+
+      render json: {data_stats: data_paper_processes, more_result: more_result}, status: 200
+    else
+      render json: {data_stats: [], more_result: false}, status: 200
     end
-
-     paper_processes = PaperProcess.search_for_collection_with_options_and_user(
-      PaperProcess.where(user_id: accounts),
-      search_terms(filters),
-      accounts
-    ).order("created_at" => "desc").includes(:user).page(1).per(100)
-
-    data_paper_processes = paper_processes.collect do |paper_process|
-        {
-          date: paper_process.created_at,
-          type: paper_process.type,
-          company: paper_process.user.try(:company),
-          code: paper_process.customer_code,
-          number: paper_process.tracking_number,
-          packname: paper_process.pack_name,
-        }
-    end
-
-    # data_paper_processes = [
-    #                           {date:"18-12-2017", type:1, code:123, company:"Mycomp", number:12, packname:"test 1"},
-    #                           {date:"19-12-2017", type:2, code:1234, company:"12345", number:11, packname:"test 2"},
-    #                           {date:"20-08-2017", type:3, code:12, company:"Hiscomp", number:122, packname:"test 3"},
-    #                           {date:"18-04-2017", type:3, code:1123, company:"Thecomp", number:112, packname:"test 4"},
-    #                           {date:"21-05-2017", type:2, code:234, company:"Hercomp", number:112, packname:"test 5"},
-    #                           {date:"22-11-2017", type:1, code:321, company:"Comp", number:112, packname:"test 6"},
-    #                         ]
-
-     render json: {data_stats: data_paper_processes}, status: 200
   end
 
   def render_image_documents
@@ -89,7 +99,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
 
   def filter_packs
-      options = { page: params[:page], per_page: 100 }
+      options = { page: params[:page], per_page: 200 }
       options[:sort] = true unless params[:filter].present?
 
       options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
@@ -108,8 +118,15 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
   private
 
+  def verify_rights_stats
+    unless accounts.detect { |e| e.options.is_upload_authorized }
+      return false
+    end
+    return true
+  end
+
   def search_pack
-    packs = all_packs.order(updated_at: :desc).limit(100)
+    packs = all_packs.order(updated_at: :desc).limit(200)
     loaded = packs.inject([]) do |memo, pack|
       memo += [{  id: pack.id, 
                   name: pack.name.sub(' all', ''), 
@@ -140,26 +157,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def search_packs_with_error
-    # loaded = [{ id: 200, 
-    #             name: 'test erreur idocus',
-    #             created_at: DateTime.now,
-    #             updated_at: DateTime.now,
-    #             owner_id: 0,
-    #             page_number: 3,
-    #             error_message: "teste error messageteste error messageteste error messageteste error messageteste error messageteste error message",
-    #             type: "error"
-    #           },
-    #           { id: 201, 
-    #             name: 'test erreur idocus2',
-    #             created_at: DateTime.now,
-    #             updated_at: DateTime.now,
-    #             owner_id: 0,
-    #             page_number: 5,
-    #             error_message: "teste error messageteste error messageteste error messageteste error messageteste error messageteste error message",
-    #             type: "error"
-    #           }
-    #         ]
-    if @user.is_prescriber && @user.organization.try(:ibiza).try(:is_configured?)
+    if @user.is_prescriber && @user.organization.try(:ibiza).try(:configured?)
+      customers = @user.is_admin ? @user.organization.customers : @user.customers
       errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
       loaded = errors.each_with_index.inject([]) do |memo, (err, index)|
         memo += [{  id: (500+index), 

@@ -9,13 +9,16 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def load_shared_docs
     data_docs = []
+    per_page = 100
+
     account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
-        page(1).
-        per(100)
+        order(created_at: :desc).
+        page(params[:page]).
+        per(per_page)
 
      data_docs = account_sharings.inject([]) do |memo, data|
         memo += [ {
-                    id_idocus:data.id,
+                    id_idocus:data.id.to_s,
                     date:data.created_at, 
                     approval:data.is_approved,
                     client:data.collaborator.info,
@@ -23,42 +26,87 @@ class Api::Mobile::AccountSharingController < MobileApiController
                   }
                 ]
       end
-    render json: {data_shared: data_docs}, status: 200
+
+    more_result = true
+    if data_docs.count < per_page
+      more_result = false
+    end  
+
+    render json: {data_shared: data_docs, more_result: more_result}, status: 200
   end
 
   def load_shared_contacts
     contacts = []
+    per_page = 100
+
     guest_collaborators = @organization.guest_collaborators.
       search(search_terms(params[:guest_collaborator_contains])).
-      page(1).
-      per(100)
+      order(created_at: :desc).
+      page(params[:page]).
+      per(per_page)
 
      contacts = guest_collaborators.inject([]) do |memo, data|
         memo += [ {
-                    id_idocus:data.id,
+                    id_idocus:data.id.to_s,
                     date:data.created_at, 
                     email:data.email,
                     company:data.company,
                     first_name:data.first_name,
                     last_name: data.last_name,
-                    account_size:data.accounts.size
+                    account_size:data.accounts.size.to_s
                   }
                 ]
       end
-    render json: {contacts: contacts}, status: 200
+
+    more_result = true
+    if contacts.count < per_page
+      more_result = false
+    end
+
+    render json: {contacts: contacts, more_result: more_result}, status: 200
   end
 
   def get_list_collaborators
-    collaborators = @organization.customers
+    tags = []
+    if params[:q].present?
+      users = @organization.members.active.where(is_prescriber: false)
+      users = users.where(
+        "code REGEXP :t OR email REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t",
+        t: params[:q].split.join('|')
+      ).order(code: :asc).select do |user|
+        str = [user.code, user.email, user.company, user.first_name, user.last_name].join(' ')
+        !params[:q].split.detect { |e| !str.match(/#{e}/i) }
+      end
 
-    collaborators_options = collaborators.inject([]) do |memo, collab|
-      memo += [
-                value: collab.id,
-                label: "#{collab.code} - #{collab.company}"
-              ]
+      unless is_leader?
+        users = users.select do |user|
+          user.is_guest || @user.customers.include?(user)
+        end
+      end
+
+      users[0..9].each do |user|
+        tags << { value: user.id, label: user.info}
+      end
     end
 
-    render json: {options: collaborators_options}, status: 200
+    render json: {dataList: tags}, status: 200
+  end
+
+  def get_list_customers
+    tags = []
+    if params[:q].present?
+      users = is_leader? ? @organization.customers.active : @user.customers.active
+      users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
+      ).order(code: :asc).limit(10).select do |user|
+        str = [user.code, user.company, user.first_name, user.last_name].join(' ')
+        params[:q].split.detect { |e| !str.match(/#{e}/i) }.nil?
+      end
+      users.each do |user|
+        tags << { value: user.id, label: user.info }
+      end
+    end
+    
+    render json: {dataList: tags}, status: 200
   end
 
   def add_shared_docs
@@ -191,6 +239,10 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def account_sharing_request_params_customers
     params.require(:account_sharing_request).permit(:code_or_email)
+  end
+
+  def is_leader?
+    @user == @organization.leader || @user.is_admin
   end
 
 end
