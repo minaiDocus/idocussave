@@ -98,7 +98,7 @@ class Order < ActiveRecord::Base
   end
 
   def paper_set_annual_end_date
-    time = Time.now.end_of_year
+    time = (Date.today.month < 12 ? Time.now.end_of_year : 1.month.from_now.end_of_year)
     time = case self.user.subscription.period_duration
     when 1
       time.beginning_of_month
@@ -191,7 +191,7 @@ class Order < ActiveRecord::Base
   private
 
   def paper_set_starting_date
-    start_date = created_at.try(:to_date) || Date.today
+    start_date = created_at.try(:to_date) || (Date.today.month < 12 ? Date.today : 1.month.from_now.to_date)
 
     case period_duration
     when 1
