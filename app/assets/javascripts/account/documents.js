@@ -701,11 +701,17 @@
               },
               success: function(data) {
                 analytics = data
-                var analytic_options = '<option selected value>Sélectionnez une analytique</option>';
-                for (var i=0; i<analytics.length; i++) {
-                  analytic_options = analytic_options + "<option value=" + analytics[i]['id'] + ">" + analytics[i]['name'] + "</option>";
+                if(analytics.length > 0) {
+                  var analytic_options = '<option selected value>Sélectionnez une analytique</option>';
+                  for (var i=0; i<analytics.length; i++) {
+                    analytic_options = analytic_options + "<option value=" + analytics[i]['id'] + ">" + analytics[i]['name'] + "</option>";
+                  }
+                  $('#analytic').html(analytic_options);
+                  $('#analytic').removeAttr('disabled');
+                } else {
+                  $('#analytic').html('<option selected value>Aucune analytique pour ce dossier</option>');
+                  $('#analytic').attr('disabled', 'disabled');
                 }
-                $('#analytic').html(analytic_options);
                 $('#fileupload .feedback').remove();
                 $('#analytic').show();
               },
@@ -716,7 +722,8 @@
               }
             });
           } else {
-            $('#analytic').html('<option selected disabled value>Aucune analytique pour ce dossier</option>');
+            $('#analytic').html('<option selected value>Aucune analytique pour ce dossier</option>');
+            $('#analytic').attr('disabled', 'disabled');
           }
         }
       }

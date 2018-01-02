@@ -53,6 +53,10 @@
           .controls
             = select_tag :h_analytic_id, nil, id: :analytic
             = hidden_field_tag 'analytic[id]'
+            %span.help-block
+              %span.label.label-warning.margin1right
+                Attention :
+              Ventilation à 100% uniquement.
         .control-group.axis1-group.hide
           = label_tag :axis1, 'Axe 1 : ', class: 'control-label'
           .controls
