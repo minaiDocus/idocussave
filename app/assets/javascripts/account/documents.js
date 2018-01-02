@@ -848,7 +848,8 @@
       $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
       $('select[name="h_file_account_book_type"]').removeAttr('title');
       $('select[name="h_file_prev_period_offset"]').removeAttr('title');
-      $('select[name="h_analytic_id"]').removeAttr('disabled');
+      if($('select[name="h_analytic_id"] option').length > 1)
+        $('select[name="h_analytic_id"]').removeAttr('disabled');
       $('select[name="h_analytic_id"]').removeAttr('title');
       $('select[name="h_analytic_axis1"]').removeAttr('disabled').trigger('chosen:updated');
       $('select[name="h_analytic_axis2"]').removeAttr('disabled').trigger('chosen:updated');
