@@ -22,6 +22,8 @@ class UploadedDocument
     @original_file_name  = original_file_name.gsub(/\0/, '')
     @prev_period_offset  = prev_period_offset.to_i
 
+    @analytic = analytic
+
     @errors = []
 
     @errors << [:invalid_period, period: period]     unless valid_prev_period_offset?
@@ -49,17 +51,7 @@ class UploadedDocument
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
-
-      # TODO : verify params and move it into a method
-      if analytic.present?
-        AnalyticReference.create(
-          temp_document_id: @temp_document.id,
-          analytic_id: analytic[:id].presence,
-          axis1_section_code: analytic[:axis1].presence,
-          axis2_section_code: analytic[:axis2].presence,
-          axis3_section_code: analytic[:axis3].presence
-        )
-      end
+      add_analytic_reference
     end
 
     clean_tmp
@@ -210,5 +202,17 @@ class UploadedDocument
 
   def fingerprint
     @fingerprint ||= DocumentTools.checksum(processed_file.path)
+  end
+
+  def add_analytic_reference
+    return unless @analytic.present? && @analytic[:id].present? && @analytic[:axis1].present?
+
+    AnalyticReference.create(
+      temp_document_id:   @temp_document.id,
+      analytic_id:        @analytic[:id].presence,
+      axis1_section_code: @analytic[:axis1].presence,
+      axis2_section_code: @analytic[:axis2].presence,
+      axis3_section_code: @analytic[:axis3].presence
+    )
   end
 end
