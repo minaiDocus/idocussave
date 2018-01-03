@@ -9,10 +9,24 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def load_shared_docs
     data_docs = []
-    per_page = 100
+    per_page = 30
+
+    total = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).count
+    nb_pages = (total / per_page).ceil
+
+    order_by = params[:order][:order_by] || "created_at"
+    direction = params[:order][:direction]? "asc" : "desc"
+
+      case params[:order][:order_by]
+        when "approval"
+          order_by = "is_approved"
+        else
+          order_by = "created_at"
+      end
+
 
     account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
-        order(created_at: :desc).
+        order(order_by => direction).
         page(params[:page]).
         per(per_page)
 
@@ -27,21 +41,32 @@ class Api::Mobile::AccountSharingController < MobileApiController
                 ]
       end
 
-    more_result = true
-    if data_docs.count < per_page
-      more_result = false
-    end  
-
-    render json: {data_shared: data_docs, more_result: more_result}, status: 200
+    render json: {data_shared: data_docs, nb_pages: nb_pages, total: total}, status: 200
   end
 
   def load_shared_contacts
     contacts = []
-    per_page = 100
+    per_page = 30
+
+    total = @organization.guest_collaborators.
+            search(search_terms(params[:guest_collaborator_contains])).count
+    nb_pages = (total / per_page).ceil
+
+    order_by = params[:order][:order_by] || "created_at"
+    direction = params[:order][:direction]? "asc" : "desc"
+
+      case params[:order][:order_by]
+        when "email"
+          order_by = "email"
+        when "company"
+          order_by = "company"
+        else
+          order_by = "created_at"
+      end
 
     guest_collaborators = @organization.guest_collaborators.
       search(search_terms(params[:guest_collaborator_contains])).
-      order(created_at: :desc).
+      order(order_by => direction).
       page(params[:page]).
       per(per_page)
 
@@ -58,12 +83,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
                 ]
       end
 
-    more_result = true
-    if contacts.count < per_page
-      more_result = false
-    end
-
-    render json: {contacts: contacts, more_result: more_result}, status: 200
+    render json: {contacts: contacts, nb_pages: nb_pages, total: total}, status: 200
   end
 
   def get_list_collaborators
@@ -171,36 +191,15 @@ class Api::Mobile::AccountSharingController < MobileApiController
   end
 
   def load_shared_docs_customers
-    data_shared = []
-    contacts = []
-    access = []
+    data_shared = contacts = request_sharing = []
+
     if @user.active? && !@user.is_prescriber && @user.organization.is_active
-      data_shared = @user.account_sharings.inject([]) do |memo, data|
-         memo += [ {
-                      id_idocus:data.id,
-                      name:data.account.info,
-                    }
-                  ]
-      end
-
-      contacts = @user.inverse_account_sharings.inject([]) do |memo, data|
-        memo += [ {
-                      id_idocus:data.id,
-                      name:data.collaborator.info,
-                    }
-                  ]
-      end
-
-      access = @user.account_sharings.pending.select { |e| e.collaborator == @user }.inject([]) do |memo, data|
-        memo += [ {
-                      id_idocus:data.id,
-                      name:data.account.info,
-                    }
-                  ]
-      end
+      data_shared = data_shared_customer
+      contacts = contact_shared_customer
+      request_sharing = account_sharing_request_customer  
     end
 
-    render json: {data_shared: data_shared, contacts: contacts, access: access}, status: 200
+    render json: {data_shared: data_shared, contacts: contacts, access: request_sharing}, status: 200
   end
 
   def add_shared_docs_customers
@@ -210,7 +209,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     elsif Array(account_sharing.errors[:account] || account_sharing.errors[:collaborator]).include?("est déjà pris.")
       render json: {message: 'Ce contact a déjà accès à votre compte.'}, status: 200
     elsif contact.errors[:email].include?("est déjà pris.") || account_sharing.errors[:collaborator_id].include?("n'est pas valide")
-      render json: {message: "Vous ne pouvez pas partager votre compte avec le contact : #{@contact.email}."}, status: 200
+      render json: {message: "Vous ne pouvez pas partager votre compte avec le contact : #{contact.email}."}, status: 200
     else
       render json: {message: 'Un problème a eu lieu pendant le partage de compte!!'}, status: 200
     end
@@ -228,6 +227,36 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
 
   private
+
+  def data_shared_customer
+    data_shared = @user.account_sharings.inject([]) do |memo, data|
+         memo += [ {
+                      id_idocus:data.id,
+                      name:data.account.info,
+                    }
+                  ]
+    end
+  end
+
+  def contact_shared_customer
+   contacts = @user.inverse_account_sharings.inject([]) do |memo, data|
+      memo += [ {
+                    id_idocus:data.id,
+                    name:data.collaborator.info,
+                  }
+                ]
+    end
+  end
+
+  def account_sharing_request_customer
+    access = @user.account_sharings.pending.select { |e| e.collaborator == @user }.inject([]) do |memo, data|
+        memo += [ {
+                      id_idocus:data.id,
+                      name:data.account.info,
+                    }
+                  ]
+    end
+  end
 
   def account_sharing_params
     params.require(:account_sharing).permit(:collaborator_id, :account_id)

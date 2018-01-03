@@ -30,6 +30,9 @@ class DocumentTools
     system "convert -page A4+0+350 '#{file_path}' 'pdf:#{output_file_path}' 2>&1"
   end
 
+  def self.resize_img(file_path, output_file_path)
+    system "convert '#{file_path}' -resize 840x840\\> '#{output_file_path}'"
+  end
 
   def self.modifiable?(file_path, strict = true)
     if completed? file_path, strict

@@ -85,7 +85,6 @@ class UploadedDocument
 
   private
 
-
   def processed_file
     if @temp_file
       @temp_file
@@ -104,7 +103,13 @@ class UploadedDocument
           FileUtils.cp @file.path, file_path
         end
       else
-        DocumentTools.to_pdf(@file.path, file_path)
+        geometry = Paperclip::Geometry.from_file @file.path
+        tmp_file_path = @file.path
+        if geometry.height > 840 || geometry.width > 840 
+          tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
+          DocumentTools.resize_img(@file.path, tmp_file_path)
+        end
+        DocumentTools.to_pdf(tmp_file_path, file_path)
       end
 
       @temp_file = File.open(file_path, 'r')

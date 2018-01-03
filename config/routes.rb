@@ -384,7 +384,7 @@ Idocus::Application.routes.draw do
         post 'load_packs', on: :collection
         post 'load_packs_documents', on: :collection
         post 'load_stats', on: :collection
-        post 'filter_packs', on: :collection
+        post 'get_packs', on: :collection
         get 'render_image_documents', on: :collection
       end
 

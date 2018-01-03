@@ -25,17 +25,41 @@ class Api::Mobile::DataLoaderController < MobileApiController
   def load_stats
     if verify_rights_stats
       #If rights authorized
-      per_page = 100
+      per_page = 30
       filters = params[:paper_process_contains]
       if filters.present?
         filters[:created_at] = {:>= => filters[:created_at_start], :<= => filters[:created_at_end]}
       end
 
-       paper_processes = PaperProcess.search_for_collection_with_options_and_user(
+      order_by = params[:order][:order_by] || "created_at"
+      direction = params[:order][:direction]? "asc" : "desc"
+
+      case params[:order][:order_by]
+        when "type"
+          order_by = "type"
+        when "code"
+          order_by = "customer_code"
+        when "number"
+          order_by = "tracking_number"
+        when "packname"
+          order_by = "pack_name"
+        else
+          order_by = "created_at"
+      end
+
+      total = PaperProcess.search_for_collection_with_options_and_user(
         PaperProcess.where(user_id: accounts),
         search_terms(filters),
         accounts
-      ).order("created_at" => "desc").includes(:user).page(params[:page]).per(per_page)
+      ).includes(:user).count
+
+      nb_pages = (total / per_page).ceil
+
+      paper_processes = PaperProcess.search_for_collection_with_options_and_user(
+        PaperProcess.where(user_id: accounts),
+        search_terms(filters),
+        accounts
+      ).order(order_by => direction).includes(:user).page(params[:page]).per(per_page)
 
       data_paper_processes = paper_processes.collect do |paper_process|
           company = "-"
@@ -56,14 +80,9 @@ class Api::Mobile::DataLoaderController < MobileApiController
           }
       end
 
-      more_result = true
-      if data_paper_processes.count < per_page
-        more_result = false
-      end
-
-      render json: {data_stats: data_paper_processes, more_result: more_result}, status: 200
+      render json: {data_stats: data_paper_processes, nb_pages: nb_pages, total: total}, status: 200
     else
-      render json: {data_stats: [], more_result: false}, status: 200
+      render json: {data_stats: [], nb_pages: 1, total: 0}, status: 200
     end
   end
 
@@ -97,24 +116,35 @@ class Api::Mobile::DataLoaderController < MobileApiController
     end
   end
 
+  def get_packs
+    per_page = 30
+    options = {}
 
-  def filter_packs
-      options = { page: params[:page], per_page: 200 }
-      options[:sort] = true unless params[:filter].present?
+    options[:sort] = true unless params[:filter].present?
+    options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
+      _user = accounts.find(params[:view])
+      _user ? [_user.id] : []
+    else
+      account_ids
+    end
 
-      options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
-        _user = accounts.find(params[:view])
-        _user ? [_user.id] : []
-      else
-        account_ids
-      end
+    total = Pack.search(params[:filter], options).count
+    nb_pages = (total / per_page).ceil
 
-      packs = Pack.search(params[:filter], options)
+    options[:page] = params[:page]
+    options[:per_page] = per_page
 
-      render json: {packs: packs.collect do |p| p.id end }, status:200
+    loaded_packs = Pack.search(params[:filter], options).inject([]) do |memo, pack|
+      memo += [{  id: pack.id, 
+                  name: pack.name.sub(' all', ''), 
+                  created_at: pack.created_at, 
+                  updated_at: pack.updated_at, 
+                  owner_id: pack.owner_id
+              }]
+    end
+
+    render json: {packs: loaded_packs, nb_pages: nb_pages, total: total}, status:200
   end
-
-
 
   private
 
@@ -126,7 +156,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def search_pack
-    packs = all_packs.order(updated_at: :desc).limit(200)
+    packs = all_packs.order(updated_at: :desc).limit(5)
     loaded = packs.inject([]) do |memo, pack|
       memo += [{  id: pack.id, 
                   name: pack.name.sub(' all', ''), 
@@ -167,7 +197,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
                     updated_at: err.date,
                     owner_id: 0,
                     page_number: err.document_count,
-                    error_message: err.message == false ? '-' : err.message,
+                    message: err.message == false ? '-' : err.message,
                     type: "error"
                 }]
       end
@@ -178,7 +208,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   def documents_collection
     documents = Document.search(params[:filter],
       pack_id:  params[:id],
-      per_page: 10_000,
+      per_page: 60,
       sort:     true
     ).where.not(origin: ['mixed']).order(position: :asc).includes(:pack)
 

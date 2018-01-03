@@ -99,11 +99,14 @@ class EmailedDocument::Attachment
 
   def converted_file_path(file_path)
     geometry = Paperclip::Geometry.from_file file_path
-    if geometry.height > 840
-      DocumentTools.to_a4_pdf(file_path, File.join(dir, @file_name))
-    else
-      DocumentTools.to_pdf(file_path, File.join(dir, @file_name))
+
+    tmp_file_path = file_path
+    if geometry.height > 840 || geometry.width > 840
+      tmp_file_path = File.join(dir, "resized_#{File.basename(file_path)}")
+      DocumentTools.resize_img(file_path, tmp_file_path)
     end
+
+    DocumentTools.to_pdf(tmp_file_path, File.join(dir, @file_name))
     File.join(dir, @file_name)
   end
 end
