@@ -9,28 +9,25 @@ class Api::Mobile::AccountSharingController < MobileApiController
 
   def load_shared_docs
     data_docs = []
-    per_page = 30
-
-    total = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).count
-    nb_pages = (total / per_page).ceil
+    per_page = 20
 
     order_by = params[:order][:order_by] || "created_at"
     direction = params[:order][:direction]? "asc" : "desc"
 
-      case params[:order][:order_by]
-        when "approval"
-          order_by = "is_approved"
-        else
-          order_by = "created_at"
-      end
-
+    case params[:order][:order_by]
+      when "approval"
+        order_by = "is_approved"
+      else
+        order_by = "created_at"
+    end
 
     account_sharings = AccountSharing.unscoped.where(account_id: customers).search(search_terms(params[:account_sharing_contains])).
         order(order_by => direction).
         page(params[:page]).
         per(per_page)
-
-     data_docs = account_sharings.inject([]) do |memo, data|
+    nb_pages = (account_sharings.total_count.to_f / per_page.to_f).ceil
+    
+    data_docs = account_sharings.inject([]) do |memo, data|
         memo += [ {
                     id_idocus:data.id.to_s,
                     date:data.created_at, 
@@ -41,28 +38,24 @@ class Api::Mobile::AccountSharingController < MobileApiController
                 ]
       end
 
-    render json: {data_shared: data_docs, nb_pages: nb_pages, total: total}, status: 200
+    render json: {data_shared: data_docs, nb_pages: nb_pages, total: account_sharings.total_count}, status: 200
   end
 
   def load_shared_contacts
     contacts = []
-    per_page = 30
-
-    total = @organization.guest_collaborators.
-            search(search_terms(params[:guest_collaborator_contains])).count
-    nb_pages = (total / per_page).ceil
+    per_page = 20
 
     order_by = params[:order][:order_by] || "created_at"
     direction = params[:order][:direction]? "asc" : "desc"
 
-      case params[:order][:order_by]
-        when "email"
-          order_by = "email"
-        when "company"
-          order_by = "company"
-        else
-          order_by = "created_at"
-      end
+    case params[:order][:order_by]
+      when "email"
+        order_by = "email"
+      when "company"
+        order_by = "company"
+      else
+        order_by = "created_at"
+    end
 
     guest_collaborators = @organization.guest_collaborators.
       search(search_terms(params[:guest_collaborator_contains])).
@@ -70,7 +63,9 @@ class Api::Mobile::AccountSharingController < MobileApiController
       page(params[:page]).
       per(per_page)
 
-     contacts = guest_collaborators.inject([]) do |memo, data|
+    nb_pages = (guest_collaborators.total_count.to_f / per_page.to_f).ceil
+
+    contacts = guest_collaborators.inject([]) do |memo, data|
         memo += [ {
                     id_idocus:data.id.to_s,
                     date:data.created_at, 
@@ -83,7 +78,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
                 ]
       end
 
-    render json: {contacts: contacts, nb_pages: nb_pages, total: total}, status: 200
+    render json: {contacts: contacts, nb_pages: nb_pages, total: guest_collaborators.total_count}, status: 200
   end
 
   def get_list_collaborators

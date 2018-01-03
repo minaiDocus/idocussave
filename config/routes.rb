@@ -382,7 +382,8 @@ Idocus::Application.routes.draw do
       resources :data_loader do
         post 'load_customers', on: :collection
         post 'load_packs', on: :collection
-        post 'load_packs_documents', on: :collection
+        post 'load_documents_processed', on: :collection
+        post 'load_documents_processing', on: :collection
         post 'load_stats', on: :collection
         post 'get_packs', on: :collection
         get 'render_image_documents', on: :collection

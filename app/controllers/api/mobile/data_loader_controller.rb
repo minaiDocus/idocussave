@@ -16,16 +16,20 @@ class Api::Mobile::DataLoaderController < MobileApiController
     render json: {packs: packs}, status: 200
   end
 
-  def load_packs_documents
-    @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
+  def load_documents_processed
+    data_loaded = documents_collection
+    p data_loaded
+    render json: {published: data_loaded[:datas], total: data_loaded[:total], nb_pages: data_loaded[:nb_pages]}, status: 200
+  end
 
-   render json: {published: documents_collection, publishing: temp_documents_collection}, status: 200
+  def load_documents_processing
+    render json: {publishing: temp_documents_collection}, status: 200
   end
 
   def load_stats
     if verify_rights_stats
       #If rights authorized
-      per_page = 30
+      per_page = 20
       filters = params[:paper_process_contains]
       if filters.present?
         filters[:created_at] = {:>= => filters[:created_at_start], :<= => filters[:created_at_end]}
@@ -47,19 +51,13 @@ class Api::Mobile::DataLoaderController < MobileApiController
           order_by = "created_at"
       end
 
-      total = PaperProcess.search_for_collection_with_options_and_user(
-        PaperProcess.where(user_id: accounts),
-        search_terms(filters),
-        accounts
-      ).includes(:user).count
-
-      nb_pages = (total / per_page).ceil
-
       paper_processes = PaperProcess.search_for_collection_with_options_and_user(
         PaperProcess.where(user_id: accounts),
         search_terms(filters),
         accounts
       ).order(order_by => direction).includes(:user).page(params[:page]).per(per_page)
+
+      nb_pages = (paper_processes.total_count.to_f / per_page.to_f).ceil
 
       data_paper_processes = paper_processes.collect do |paper_process|
           company = "-"
@@ -80,7 +78,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
           }
       end
 
-      render json: {data_stats: data_paper_processes, nb_pages: nb_pages, total: total}, status: 200
+      render json: {data_stats: data_paper_processes, nb_pages: nb_pages, total: paper_processes.total_count}, status: 200
     else
       render json: {data_stats: [], nb_pages: 1, total: 0}, status: 200
     end
@@ -117,10 +115,9 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def get_packs
-    per_page = 30
-    options = {}
+    per_page = 20
 
-    options[:sort] = true unless params[:filter].present?
+    options = {page: params[:page], per_page: per_page, sort: true}
     options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
       _user = accounts.find(params[:view])
       _user ? [_user.id] : []
@@ -128,13 +125,10 @@ class Api::Mobile::DataLoaderController < MobileApiController
       account_ids
     end
 
-    total = Pack.search(params[:filter], options).count
-    nb_pages = (total / per_page).ceil
+    packs = Pack.search(params[:filter], options)
+    nb_pages = (packs.total_count.to_f / per_page.to_f).ceil
 
-    options[:page] = params[:page]
-    options[:per_page] = per_page
-
-    loaded_packs = Pack.search(params[:filter], options).inject([]) do |memo, pack|
+    loaded_packs = packs.inject([]) do |memo, pack|
       memo += [{  id: pack.id, 
                   name: pack.name.sub(' all', ''), 
                   created_at: pack.created_at, 
@@ -143,7 +137,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
               }]
     end
 
-    render json: {packs: loaded_packs, nb_pages: nb_pages, total: total}, status:200
+    render json: {packs: loaded_packs, nb_pages: nb_pages, total: packs.total_count}, status:200
   end
 
   private
@@ -206,13 +200,17 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def documents_collection
+    per_page = 50
     documents = Document.search(params[:filter],
       pack_id:  params[:id],
-      per_page: 60,
+      page:params[:page],
+      per_page: per_page,
       sort:     true
     ).where.not(origin: ['mixed']).order(position: :asc).includes(:pack)
 
-    documents.collect do |document|
+    nb_pages = (documents.total_count.to_f / per_page.to_f).ceil
+
+    data_collected = documents.collect do |document|
         if document.mongo_id
           id_doc = document.mongo_id
           filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.mongo_id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
@@ -233,10 +231,13 @@ class Api::Mobile::DataLoaderController < MobileApiController
           thumb: thumb,
           large: large
         }
-      end
+    end
+
+    {datas: data_collected, nb_pages: nb_pages, total: documents.total_count}
   end
 
   def temp_documents_collection
+    @pack = Pack.where(owner_id: account_ids, id: params[:id]).first!
     temp_documents = []
 
     unless @pack.is_fully_processed || params[:filter].presence
