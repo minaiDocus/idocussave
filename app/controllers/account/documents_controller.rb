@@ -64,13 +64,9 @@ class Account::DocumentsController < Account::AccountController
   # GET /account/documents/:id/archive
   def archive
     pack = Pack.find(params[:id])
-    pack = if @user.is_prescriber
-             pack.owner.in?(@user.customers) ? pack : nil
-           else
-             pack.owner == @user ? pack : nil
-           end
+    pack = nil unless pack.owner.in?(accounts)
 
-    if File.exist? pack.archive_file_path
+    if pack && File.exist?(pack.archive_file_path)
       send_file(pack.archive_file_path, type: 'application/zip', filename: pack.archive_name, x_sendfile: true)
     else
       render text: 'File unavalaible'
