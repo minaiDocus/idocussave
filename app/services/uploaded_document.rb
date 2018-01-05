@@ -35,6 +35,7 @@ class UploadedDocument
       @errors << [:file_size_is_too_big, size_in_mo: size_in_mo]         unless valid_file_size?
       @errors << [:pages_number_is_too_high, pages_number: pages_number] unless valid_pages_number?
       @errors << [:already_exist, nil]                                   unless unique?
+      @errors << [:invalid_analytic_params, nil]                         unless valid_analytic_params?
     end
 
     if @errors.empty?
@@ -51,7 +52,7 @@ class UploadedDocument
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
-      add_analytic_reference
+      add_analytic_reference if analytic_requested?
     end
 
     clean_tmp
@@ -204,15 +205,25 @@ class UploadedDocument
     @fingerprint ||= DocumentTools.checksum(processed_file.path)
   end
 
-  def add_analytic_reference
-    return unless @analytic.present? && @analytic[:id].present? && @analytic[:axis1].present?
+  def analytic_requested?
+    @analytic_requested ||= @analytic[:name].present? && (@analytic[:axis1].present? || @analytic[:axis2].present? || @analytic[:axis3].present?)
+  end
 
-    AnalyticReference.create(
-      temp_document_id:   @temp_document.id,
-      analytic_id:        @analytic[:id].presence,
-      axis1_section_code: @analytic[:axis1].presence,
-      axis2_section_code: @analytic[:axis2].presence,
-      axis3_section_code: @analytic[:axis3].presence
+  def valid_analytic_params?
+    if analytic_requested?
+      IbizaAnalytic.new(@user.ibiza_id, @user.organization.ibiza.access_token).valid?(@analytic)
+    else
+      true
+    end
+  end
+
+  def add_analytic_reference
+    analytic_reference = AnalyticReference.create(
+      name:  @analytic[:name].presence,
+      axis1: @analytic[:axis1].presence,
+      axis2: @analytic[:axis2].presence,
+      axis3: @analytic[:axis3].presence
     )
+    @temp_document.update(analytic_reference: analytic_reference)
   end
 end

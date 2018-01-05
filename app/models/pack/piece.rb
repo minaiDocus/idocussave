@@ -8,7 +8,6 @@ class Pack::Piece < ActiveRecord::Base
 
   has_one    :expense, class_name: 'Pack::Report::Expense', inverse_of: :piece
   has_one    :temp_document, inverse_of: :piece
-  has_one    :analytic_reference, inverse_of: :piece
 
   has_many   :operations,    class_name: 'Operation', inverse_of: :piece
   has_many   :preseizures,   class_name: 'Pack::Report::Preseizure', inverse_of: :piece
@@ -17,8 +16,7 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :user
   belongs_to :pack, inverse_of: :pieces
   belongs_to :organization
-
-
+  belongs_to :analytic_reference, inverse_of: :pieces
 
   has_attached_file :content,
                             path: ':rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename',

@@ -70,6 +70,7 @@ class AccountingWorkflow::CreateTempDocumentFromGrouping
     temp_document.delivered_by                = original_temp_document.delivered_by
     temp_document.delivery_type               = original_temp_document.delivery_type
     temp_document.scan_bundling_document_ids  = bundling_document_ids
+    temp_document.analytic_reference_id       = original_temp_document.analytic_reference_id
 
     temp_document.save && temp_document.ready
   end

@@ -331,6 +331,7 @@ fr:
             invalid_period: "période '%{period}' inconnu"
             file_is_corrupted_or_protected: fichier corrompu ou protégé par mot de passe
             already_exist: existe déjà
+            invalid_analytic_params: paramètres analytiques invalides
         bank_account:
           attributes:
             journal:

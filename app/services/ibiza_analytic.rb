@@ -1,58 +1,75 @@
 # TODO : handle failures
 class IbizaAnalytic
-  def initialize(id, access_token)
+  def initialize(id, access_token, expires_in=15.minutes)
     @id = id
     @access_token = access_token
+    @expires_in = expires_in
   end
 
-  def execute
-    client.company(@id).analyzes.complete?
+  def list
+    Rails.cache.fetch ['ibiza_analytics', @id], expires_in: @expires_in do
+      client.company(@id).analyzes.complete?
 
-    if client.response.success? && client.response.data.present?
-      analytics = []
+      if client.response.success? && client.response.data.present?
+        analytics = []
 
-      client.response.data.each do |data|
-        analytic = {
-          id:               data['analysisID'],
-          name:             data['analysisName'],
-          description:      data['analysisDescription'],
-          software:         data['software'],
-          ventilation_kind: data['ventilationKind']
-        }
+        client.response.data.each do |data|
+          analytic = {
+            id:               data['analysisID'],
+            name:             data['analysisName'],
+            description:      data['analysisDescription'],
+            software:         data['software'],
+            ventilation_kind: data['ventilationKind']
+          }
 
-        [:axis1, :axis2, :axis3].each do |axis|
-          if data[axis.to_s].present?
-            analytic[axis] = {
-              id:       data[axis.to_s],
-              name:     data["#{axis}Name"],
-              sections: []
-            }
-          else
-            analytic[axis] = nil
+          [:axis1, :axis2, :axis3].each do |axis|
+            if data[axis.to_s].present?
+              analytic[axis] = {
+                id:       data[axis.to_s],
+                name:     data["#{axis}Name"],
+                sections: []
+              }
+            else
+              analytic[axis] = nil
+            end
           end
+
+          analytics << analytic
         end
 
-        analytics << analytic
-      end
-
-      analytics.each do |analytic|
-        client.request.clear
-        client.company(@id).analyzes(analytic[:id]).sections?
-        if client.response.success?
-          client.response.data.each do |data|
-            axis = [:axis1, :axis2, :axis3].select do |axis_name|
-              analytic[axis_name] && analytic[axis_name][:id] == data['axis']
-            end.first
-            data.dig('analyticalSections', 'analyticalSection').each do |section|
-              next if section['closed'].to_i != 0
-              analytic[axis][:sections] << { code: section['code'], description: section['description'] }
+        analytics.each do |analytic|
+          client.request.clear
+          client.company(@id).analyzes(analytic[:id]).sections?
+          if client.response.success?
+            client.response.data.each do |data|
+              axis = [:axis1, :axis2, :axis3].select do |axis_name|
+                analytic[axis_name] && analytic[axis_name][:id] == data['axis']
+              end.first
+              data.dig('analyticalSections', 'analyticalSection').each do |section|
+                next if section['closed'].to_i != 0
+                analytic[axis][:sections] << { code: section['code'], description: section['description'] }
+              end
             end
           end
         end
       end
-    else
-      false
     end
+  end
+
+  def valid?(data)
+    return false unless list
+    analytic = list.select { |analytic| analytic[:name] == data[:name] }.first
+    return false unless analytic
+    [:axis1, :axis2, :axis3].each do |axis|
+      if data[axis].present?
+        if analytic[axis].present?
+          return false unless analytic[axis][:sections].map { |s| s[:code] }.include?(data[axis])
+        else
+          return false
+        end
+      end
+    end
+    true
   end
 
   private

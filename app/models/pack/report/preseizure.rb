@@ -6,6 +6,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   belongs_to :report,    class_name: 'Pack::Report', inverse_of: :preseizures
   belongs_to :operation, class_name: 'Operation',    inverse_of: :preseizure
   belongs_to :organization,                          inverse_of: :preseizures
+  has_one :analytic_reference, through: :piece
 
   has_many :entries,  class_name: 'Pack::Report::Preseizure::Entry',   inverse_of: :preseizure, dependent: :destroy
   has_many :accounts, class_name: 'Pack::Report::Preseizure::Account', inverse_of: :preseizure, dependent: :destroy

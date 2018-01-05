@@ -90,6 +90,17 @@ class IbizaAPI::Utils
                 else
                   xml.credit entry.amount
                 end
+
+                if preseizure.analytic_reference.present?
+                  xml.importAnalyticalEntries do
+                    xml.importAnalyticalEntry do
+                      xml.analysis preseizure.analytic_reference.name
+                      xml.axis1 preseizure.analytic_reference.axis1
+                      xml.axis2 preseizure.analytic_reference.axis2
+                      xml.axis3 preseizure.analytic_reference.axis3
+                    end
+                  end
+                end
               end
             end
           end

@@ -665,7 +665,7 @@
       }
 
       function byAnalyticId(element) {
-        return element['id'] == $('#analytic').val();
+        return element['name'] == $('#analytic').val();
       }
 
       function cleanAnalytics() {
@@ -679,7 +679,7 @@
         $('.axis3-group').addClass('hide');
         $('#axis3').html('');
 
-        $('#analytic_id').val('');
+        $('#analytic_name').val('');
         $('#analytic_axis1').val('');
         $('#analytic_axis2').val('');
         $('#analytic_axis3').val('');
@@ -702,9 +702,9 @@
               success: function(data) {
                 analytics = data
                 if(analytics.length > 0) {
-                  var analytic_options = '<option selected value>Sélectionnez une analytique</option>';
+                  var analytic_options = '<option selected value>Sélectionnez une analyse</option>';
                   for (var i=0; i<analytics.length; i++) {
-                    analytic_options = analytic_options + "<option value=" + analytics[i]['id'] + ">" + analytics[i]['name'] + "</option>";
+                    analytic_options = analytic_options + "<option value=" + analytics[i]['name'] + ">" + analytics[i]['name'] + "</option>";
                   }
                   $('#analytic').html(analytic_options);
                   $('#analytic').removeAttr('disabled');
@@ -738,7 +738,7 @@
             $('#analytic_' + axis_name).val('');
             if(analytic[axis_name] != undefined) {
               var sections = analytic[axis_name]['sections'];
-              var axis_options = '';
+              var axis_options = '<option selected value>Sélectionnez une section</option>';
               for (var s=0; s<sections.length; s++) {
                 axis_options = axis_options + "<option value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>";
               }
@@ -788,7 +788,7 @@
 
     $('#file_account_book_type').val($('#h_file_account_book_type').val());
     $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
-    $('#analytic_id').val($('#analytic').val());
+    $('#analytic_name').val($('#analytic').val());
     $('#analytic_axis1').val($('#axis1').val());
     $('#analytic_axis2').val($('#axis2').val());
     $('#analytic_axis3').val($('#axis3').val());
@@ -802,7 +802,7 @@
     });
 
     $('#analytic').on('change', function() {
-      $('#analytic_id').val($(this).val());
+      $('#analytic_name').val($(this).val());
     });
 
     $('#axis1').on('change', function() {
@@ -830,8 +830,8 @@
       $('select[name="h_file_prev_period_offset"]').attr('disabled', 'disabled');
       $('select[name="h_file_account_book_type"]').attr('title', title);
       $('select[name="h_file_prev_period_offset"]').attr('title', title);
-      $('select[name="h_analytic_id"]').attr('disabled', 'disabled');
-      $('select[name="h_analytic_id"]').attr('title', title);
+      $('select[name="h_analytic_name"]').attr('disabled', 'disabled');
+      $('select[name="h_analytic_name"]').attr('title', title);
       $('select[name="h_analytic_axis1"]').attr('disabled', 'disabled').trigger('chosen:updated');
       $('select[name="h_analytic_axis2"]').attr('disabled', 'disabled').trigger('chosen:updated');
       $('select[name="h_analytic_axis3"]').attr('disabled', 'disabled').trigger('chosen:updated');
@@ -848,9 +848,9 @@
       $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
       $('select[name="h_file_account_book_type"]').removeAttr('title');
       $('select[name="h_file_prev_period_offset"]').removeAttr('title');
-      if($('select[name="h_analytic_id"] option').length > 1)
-        $('select[name="h_analytic_id"]').removeAttr('disabled');
-      $('select[name="h_analytic_id"]').removeAttr('title');
+      if($('select[name="h_analytic_name"] option').length > 1)
+        $('select[name="h_analytic_name"]').removeAttr('disabled');
+      $('select[name="h_analytic_name"]').removeAttr('title');
       $('select[name="h_analytic_axis1"]').removeAttr('disabled').trigger('chosen:updated');
       $('select[name="h_analytic_axis2"]').removeAttr('disabled').trigger('chosen:updated');
       $('select[name="h_analytic_axis3"]').removeAttr('disabled').trigger('chosen:updated');

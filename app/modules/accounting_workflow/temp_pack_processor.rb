@@ -54,15 +54,16 @@ class AccountingWorkflow::TempPackProcessor
 
           ## Piece
           piece = Pack::Piece.new
-          piece.organization  = user.organization
-          piece.user          = user
-          piece.pack          = pack
-          piece.name          = piece_name
-          piece.content       = open(piece_file_path)
-          piece.origin        = temp_document.delivery_type
-          piece.temp_document = temp_document
-          piece.is_a_cover    = is_a_cover
-          piece.position      = piece_position
+          piece.organization          = user.organization
+          piece.user                  = user
+          piece.pack                  = pack
+          piece.name                  = piece_name
+          piece.content               = open(piece_file_path)
+          piece.origin                = temp_document.delivery_type
+          piece.temp_document         = temp_document
+          piece.is_a_cover            = is_a_cover
+          piece.position              = piece_position
+          piece.analytic_reference_id = temp_document.analytic_reference_id
           piece.save
           added_pieces << piece
 

@@ -15,9 +15,9 @@ class TempDocument < ActiveRecord::Base
   belongs_to :document_delivery
   belongs_to :retriever
   belongs_to :ibizabox_folder
+  belongs_to :analytic_reference
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
-  has_one    :analytic_reference
 
   has_attached_file :content, styles: { thumb: ['46x67>', :png] },
                                           path: ':rails_root/files/:rails_env/:class/:id/:filename',
