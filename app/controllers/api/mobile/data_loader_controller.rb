@@ -18,7 +18,6 @@ class Api::Mobile::DataLoaderController < MobileApiController
 
   def load_documents_processed
     data_loaded = documents_collection
-    p data_loaded
     render json: {published: data_loaded[:datas], total: data_loaded[:total], nb_pages: data_loaded[:nb_pages]}, status: 200
   end
 
@@ -117,7 +116,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
   def get_packs
     per_page = 20
 
-    options = {page: params[:page], per_page: per_page, sort: true}
+    options = {page: params[:page], per_page: per_page}
+    options[:sort] = true unless params[:filter].present?
     options[:owner_ids] = if params[:view].present? && params[:view] != 'all'
       _user = accounts.find(params[:view])
       _user ? [_user.id] : []
@@ -200,7 +200,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def documents_collection
-    per_page = 50
+    per_page = 30
     documents = Document.search(params[:filter],
       pack_id:  params[:id],
       page:params[:page],
