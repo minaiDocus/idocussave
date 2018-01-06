@@ -742,7 +742,7 @@
               for (var s=0; s<sections.length; s++) {
                 axis_options = axis_options + "<option value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>";
               }
-              $('.' + axis_name + '-group label').html('Axe ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
+              $('.' + axis_name + '-group label').html('Section ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
               $('#' + axis_name).html(axis_options);
               $('.' + axis_name + '-group').removeClass('hide');
 
