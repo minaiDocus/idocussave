@@ -91,7 +91,7 @@ class IbizaAPI::Utils
                   xml.credit entry.amount
                 end
 
-                if preseizure.analytic_reference.present?
+                if account.type == Pack::Report::Preseizure::Account::HT && preseizure.analytic_reference.present?
                   xml.importAnalyticalEntries do
                     xml.importAnalyticalEntry do
                       xml.analysis preseizure.analytic_reference.name

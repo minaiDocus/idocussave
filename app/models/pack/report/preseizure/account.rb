@@ -1,6 +1,10 @@
 class Pack::Report::Preseizure::Account < ActiveRecord::Base
   self.inheritance_column = :_type_disabled
 
+  TTC = 1
+  HT  = 2
+  TVA = 3
+
   has_many   :entries   , class_name: 'Pack::Report::Preseizure::Entry', inverse_of: :account, dependent: :destroy
   belongs_to :preseizure, class_name: 'Pack::Report::Preseizure'       , inverse_of: :accounts
 
