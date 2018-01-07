@@ -206,7 +206,7 @@ class UploadedDocument
   end
 
   def analytic_requested?
-    @analytic_requested ||= @analytic[:name].present? && (@analytic[:axis1].present? || @analytic[:axis2].present? || @analytic[:axis3].present?)
+    @analytic_requested ||= @analytic.try(:[], :name).present? && (@analytic[:axis1].present? || @analytic[:axis2].present? || @analytic[:axis3].present?)
   end
 
   def valid_analytic_params?
