@@ -49,7 +49,7 @@
               \.
       - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || (@user.ibiza_id.present? && @user.options.compta_analysis_activated?))
         .control-group
-          = label_tag :analytic, 'Axe analytique : ', class: 'control-label'
+          = label_tag :analytic, 'Analyse : ', class: 'control-label'
           .controls
             = select_tag :h_analytic_name, nil, id: :analytic
             = hidden_field_tag 'analytic[name]'
@@ -58,17 +58,17 @@
                 Attention :
               Ventilation à 100% uniquement.
         .control-group.axis1-group.hide
-          = label_tag :axis1, 'Section 1 : ', class: 'control-label'
+          = label_tag :axis1, 'Axe 1 : ', class: 'control-label'
           .controls
             = select_tag :h_analytic_axis1, nil, id: :axis1
             = hidden_field_tag 'analytic[axis1]'
         .control-group.axis2-group.hide
-          = label_tag :axis2, 'Section 2 : ', class: 'control-label'
+          = label_tag :axis2, 'Axe 2 : ', class: 'control-label'
           .controls
             = select_tag :h_analytic_axis2, nil, id: :axis2
             = hidden_field_tag 'analytic[axis2]'
         .control-group.axis3-group.hide
-          = label_tag :axis3, 'Section 3 : ', class: 'control-label'
+          = label_tag :axis3, 'Axe 3 : ', class: 'control-label'
           .controls
             = select_tag :h_analytic_axis3, nil, id: :axis3
             = hidden_field_tag 'analytic[axis3]'
