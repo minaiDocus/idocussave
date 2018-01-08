@@ -665,28 +665,19 @@
       }
 
       function byAnalyticId(element) {
-        return element['name'] == $('#analytic').val();
+        return element['name'] == this.val();
       }
 
       function cleanAnalytics() {
         analytics = null;
 
-        $('#analytic').html('');
-        $('.axis1-group').addClass('hide');
-        $('#axis1').html('');
-        $('.axis2-group').addClass('hide');
-        $('#axis2').html('');
-        $('.axis3-group').addClass('hide');
-        $('#axis3').html('');
-
-        $('#analytic_name').val('');
-        $('#analytic_axis1').val('');
-        $('#analytic_axis2').val('');
-        $('#analytic_axis3').val('');
+        $('.analytic_axis_group').addClass('hide');
+        $('.analytic_select').html('');
+        $('.hidden_analytic_input').val('');
       }
 
       function setAnalytics(code, isUsed) {
-        if($('#analytic').length > 0) {
+        if($('.analytic_name').length > 0) {
           cleanAnalytics();
 
           if(isUsed) {
@@ -696,76 +687,78 @@
               dataType: 'json',
               type: 'GET',
               beforeSend: function() {
-                $('#analytic').hide();
-                $('#analytic').after('<div class="feedback active"></div>');
+                $('.analytic_name').hide();
+                $('.analytic_name').after('<div class="feedback active"></div>');
               },
               success: function(data) {
-                analytics = data
+                analytics = data;
                 if(analytics.length > 0) {
                   var analytic_options = '<option selected value>Sélectionnez une analyse</option>';
                   for (var i=0; i<analytics.length; i++) {
                     analytic_options = analytic_options + "<option value=" + analytics[i]['name'] + ">" + analytics[i]['name'] + "</option>";
                   }
-                  $('#analytic').html(analytic_options);
-                  $('#analytic').removeAttr('disabled');
+                  $('.analytic_name').html(analytic_options);
+                  $('.analytic_name').removeAttr('disabled');
                 } else {
-                  $('#analytic').html('<option selected value>Aucune analytique pour ce dossier</option>');
-                  $('#analytic').attr('disabled', 'disabled');
+                  $('.analytic_name').html('<option selected value>Aucune analytique pour ce dossier</option>');
+                  $('.analytic_name').attr('disabled', 'disabled');
                 }
+
                 $('#fileupload .feedback').remove();
-                $('#analytic').show();
+                $('.analytic_name').show();
               },
               error: function(data) {
                 // TODO : handle failures
                 $('#fileupload .feedback').remove();
-                $('#analytic').show();
+                $('.analytic_name').show();
               }
             });
           } else {
-            $('#analytic').html('<option selected value>Aucune analytique pour ce dossier</option>');
-            $('#analytic').attr('disabled', 'disabled');
+            $('.analytic_name').html('<option selected value>Aucune analytique pour ce dossier</option>');
+            $('.analytic_name').attr('disabled', 'disabled');
           }
         }
       }
 
-      $('#analytic').on('change', function() {
-        if($('#analytic').val() != '') {
-          var code = $('#h_file_code').val();
-          var analytic = analytics.find(byAnalyticId);
+      $('.analytic_name').on('change', function() {
+        window.analytic = $(this);
+        var current_analytic = $(this);
+        var number = current_analytic.data('analytic-number');
+
+        $('#analytic_'+number+'_group .analytic_axis').html('');
+        $('#analytic_'+number+'_group .hidden_analytic_axis').val('');
+        $('#analytic_'+number+'_group .analytic_axis_group').addClass('hide');
+
+        if(current_analytic.val() != '') {
+          var analytic = analytics.find(byAnalyticId, current_analytic);
 
           for (var i=1; i<4; i++) {
-            var axis_name = 'axis' + i;
-            $('#analytic_' + axis_name).val('');
+            var axis_name   = 'axis' + i;
+            var axis        = $('#h_analytic_'+number+'_'+axis_name);
+            var axis_group  = $('#analytic_'+number+'_'+axis_name+'-group');
+            var hidden_axis = $('#analytic_'+number+'_'+axis_name);
+
             if(analytic[axis_name] != undefined) {
               var sections = analytic[axis_name]['sections'];
               var axis_options = '<option selected value>Sélectionnez une section</option>';
               for (var s=0; s<sections.length; s++) {
                 axis_options = axis_options + "<option value=" + sections[s]['code'] + ">" + sections[s]['description'] + "</option>";
               }
-              $('.' + axis_name + '-group label').html('Axe ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
-              $('#' + axis_name).html(axis_options);
-              $('.' + axis_name + '-group').removeClass('hide');
 
-              $('#' + axis_name).chosen({
+              axis.html(axis_options);
+              axis_group.find('label').html('Axe ' + i + ' (' + analytic[axis_name]['name'] + ') : ');
+              axis_group.removeClass('hide');
+
+              axis.chosen({
                 search_contains: true,
                 allow_single_deselect: true,
                 no_results_text: 'Aucun résultat correspondant à'
               });
-              $('#' + axis_name).trigger('chosen:updated');
+              axis.trigger('chosen:updated');
 
-              $('#analytic_' + axis_name).val($('#' + axis_name).val());
-            } else {
-              $('.' + axis_name + '-group').addClass('hide');
-              $('#' + axis_name).html('');
+              hidden_axis.val(axis.val());
             }
           }
-        } else {
-          $('.axis1-group').addClass('hide');
-          $('#axis1').html('');
-          $('.axis2-group').addClass('hide');
-          $('#axis2').html('');
-          $('.axis3-group').addClass('hide');
-          $('#axis3').html('');
         }
       });
 
@@ -788,10 +781,6 @@
 
     $('#file_account_book_type').val($('#h_file_account_book_type').val());
     $('#file_prev_period_offset').val($('#h_file_prev_period_offset').val());
-    $('#analytic_name').val($('#analytic').val());
-    $('#analytic_axis1').val($('#axis1').val());
-    $('#analytic_axis2').val($('#axis2').val());
-    $('#analytic_axis3').val($('#axis3').val());
 
     $('#h_file_account_book_type').on('change', function() {
       $('#file_account_book_type').val($(this).val());
@@ -801,20 +790,8 @@
       $('#file_prev_period_offset').val($(this).val());
     });
 
-    $('#analytic').on('change', function() {
-      $('#analytic_name').val($(this).val());
-    });
-
-    $('#axis1').on('change', function() {
-      $('#analytic_axis1').val($(this).val());
-    });
-
-    $('#axis2').on('change', function() {
-      $('#analytic_axis2').val($(this).val());
-    });
-
-    $('#axis3').on('change', function() {
-      $('#analytic_axis3').val($(this).val());
+    $('.analytic_select').on('change', function() {
+      $(this).siblings('.hidden_analytic_input').val($(this).val());
     });
 
     function lock_file_upload_params() {
@@ -830,14 +807,9 @@
       $('select[name="h_file_prev_period_offset"]').attr('disabled', 'disabled');
       $('select[name="h_file_account_book_type"]').attr('title', title);
       $('select[name="h_file_prev_period_offset"]').attr('title', title);
-      $('select[name="h_analytic_name"]').attr('disabled', 'disabled');
-      $('select[name="h_analytic_name"]').attr('title', title);
-      $('select[name="h_analytic_axis1"]').attr('disabled', 'disabled').trigger('chosen:updated');
-      $('select[name="h_analytic_axis2"]').attr('disabled', 'disabled').trigger('chosen:updated');
-      $('select[name="h_analytic_axis3"]').attr('disabled', 'disabled').trigger('chosen:updated');
-      $('#axis1_chosen').attr('title', title);
-      $('#axis2_chosen').attr('title', title);
-      $('#axis3_chosen').attr('title', title);
+      $('.analytic_name').attr('disabled', 'disabled').attr('title', title);
+      $('.analytic_axis').attr('disabled', 'disabled').trigger('chosen:updated');
+      $('#analytic .chosen-container').attr('title', title);
     }
 
     function unlock_file_upload_params() {
@@ -848,15 +820,11 @@
       $('select[name="h_file_prev_period_offset"]').removeAttr('disabled');
       $('select[name="h_file_account_book_type"]').removeAttr('title');
       $('select[name="h_file_prev_period_offset"]').removeAttr('title');
-      if($('select[name="h_analytic_name"] option').length > 1)
-        $('select[name="h_analytic_name"]').removeAttr('disabled');
-      $('select[name="h_analytic_name"]').removeAttr('title');
-      $('select[name="h_analytic_axis1"]').removeAttr('disabled').trigger('chosen:updated');
-      $('select[name="h_analytic_axis2"]').removeAttr('disabled').trigger('chosen:updated');
-      $('select[name="h_analytic_axis3"]').removeAttr('disabled').trigger('chosen:updated');
-      $('#axis1_chosen').removeAttr('title');
-      $('#axis2_chosen').removeAttr('title');
-      $('#axis3_chosen').removeAttr('title');
+      if($('.analytic_name option').length > 1)
+        $('.analytic_name').removeAttr('disabled');
+      $('.analytic_name').removeAttr('title');
+      $('.analytic_axis').removeAttr('disabled').trigger('chosen:updated');
+      $('#analytic .chosen-container').removeAttr('title');
     }
 
     var isUploadParamsLocked = false;

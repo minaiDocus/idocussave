@@ -58,14 +58,19 @@ class IbizaAnalytic
 
   def valid?(data)
     return false unless list
-    analytic = list.select { |analytic| analytic[:name] == data[:name] }.first
-    return false unless analytic
-    [:axis1, :axis2, :axis3].each do |axis|
-      if data[axis].present?
-        if analytic[axis].present?
-          return false unless analytic[axis][:sections].map { |s| s[:code] }.include?(data[axis])
-        else
-          return false
+    3.times do |e|
+      i = (e+1).to_s
+      if data[i][:name].present?
+        analytic = list.select { |analytic| analytic[:name] == data[i][:name] }.first
+        return false unless analytic
+        [:axis1, :axis2, :axis3].each do |axis|
+          if data[i][axis].present?
+            if analytic[axis].present?
+              return false unless analytic[axis][:sections].map { |s| s[:code] }.include?(data[i][axis])
+            else
+              return false
+            end
+          end
         end
       end
     end

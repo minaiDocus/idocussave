@@ -93,11 +93,16 @@ class IbizaAPI::Utils
 
                 if account.type == Pack::Report::Preseizure::Account::HT && preseizure.analytic_reference.present?
                   xml.importAnalyticalEntries do
-                    xml.importAnalyticalEntry do
-                      xml.analysis preseizure.analytic_reference.name
-                      xml.axis1 preseizure.analytic_reference.axis1
-                      xml.axis2 preseizure.analytic_reference.axis2
-                      xml.axis3 preseizure.analytic_reference.axis3
+                    3.times do |e|
+                      i = e+1
+                      if preseizure.analytic_reference.send("a#{i}_name").present?
+                        xml.importAnalyticalEntry do
+                          xml.analysis preseizure.analytic_reference.send("a#{i}_name")
+                          xml.axis1 preseizure.analytic_reference.send("a#{i}_axis1")
+                          xml.axis2 preseizure.analytic_reference.send("a#{i}_axis2")
+                          xml.axis3 preseizure.analytic_reference.send("a#{i}_axis3")
+                        end
+                      end
                     end
                   end
                 end

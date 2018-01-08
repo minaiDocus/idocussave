@@ -12,7 +12,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20171224123837) do
+ActiveRecord::Schema.define(version: 20180108203333) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -168,10 +168,18 @@ ActiveRecord::Schema.define(version: 20171224123837) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
-    t.string "name",  limit: 255
-    t.string "axis1", limit: 255
-    t.string "axis2", limit: 255
-    t.string "axis3", limit: 255
+    t.string "a1_name",  limit: 255
+    t.string "a1_axis1", limit: 255
+    t.string "a1_axis2", limit: 255
+    t.string "a1_axis3", limit: 255
+    t.string "a2_name",  limit: 255
+    t.string "a2_axis1", limit: 255
+    t.string "a2_axis2", limit: 255
+    t.string "a2_axis3", limit: 255
+    t.string "a3_name",  limit: 255
+    t.string "a3_axis1", limit: 255
+    t.string "a3_axis2", limit: 255
+    t.string "a3_axis3", limit: 255
   end
 
   create_table "audits", force: :cascade do |t|

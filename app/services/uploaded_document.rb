@@ -206,7 +206,12 @@ class UploadedDocument
   end
 
   def analytic_requested?
-    @analytic_requested ||= @analytic.try(:[], :name).present? && (@analytic[:axis1].present? || @analytic[:axis2].present? || @analytic[:axis3].present?)
+    result = false
+    3.times do |e|
+      i = (e+1).to_s
+      result ||= @analytic.try(:[], i).try(:[], :name).present? && (@analytic[i][:axis1].present? || @analytic[i][:axis2].present? || @analytic[i][:axis3].present?)
+    end
+    result
   end
 
   def valid_analytic_params?
@@ -219,10 +224,18 @@ class UploadedDocument
 
   def add_analytic_reference
     analytic_reference = AnalyticReference.create(
-      name:  @analytic[:name].presence,
-      axis1: @analytic[:axis1].presence,
-      axis2: @analytic[:axis2].presence,
-      axis3: @analytic[:axis3].presence
+      a1_name:  @analytic['1'][:name].presence,
+      a1_axis1: @analytic['1'][:axis1].presence,
+      a1_axis2: @analytic['1'][:axis2].presence,
+      a1_axis3: @analytic['1'][:axis3].presence,
+      a2_name:  @analytic['2'][:name].presence,
+      a2_axis1: @analytic['2'][:axis1].presence,
+      a2_axis2: @analytic['2'][:axis2].presence,
+      a2_axis3: @analytic['2'][:axis3].presence,
+      a3_name:  @analytic['3'][:name].presence,
+      a3_axis1: @analytic['3'][:axis1].presence,
+      a3_axis2: @analytic['3'][:axis2].presence,
+      a3_axis3: @analytic['3'][:axis3].presence
     )
     @temp_document.update(analytic_reference: analytic_reference)
   end
