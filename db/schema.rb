@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171215184008) do
+ActiveRecord::Schema.define(version: 20171219185110) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -28,6 +28,10 @@ ActiveRecord::Schema.define(version: 20171215184008) do
     t.string   "charge_account",                 limit: 255
     t.string   "default_charge_account",         limit: 255
     t.string   "vat_account",                    limit: 255
+    t.string   "vat_account_10",                 limit: 255
+    t.string   "vat_account_8_5",                limit: 255
+    t.string   "vat_account_5_5",                limit: 255
+    t.string   "vat_account_2_1",                limit: 255
     t.string   "anomaly_account",                limit: 255
     t.boolean  "is_default",                                   default: false
     t.boolean  "is_expense_categories_editable",               default: false, null: false

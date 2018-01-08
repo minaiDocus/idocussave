@@ -73,7 +73,7 @@ class Account::JournalsController < Account::OrganizationController
         redirect_to account_organization_journals_path(@organization)
       end
     else
-      render :new
+      render :edit
     end
   end
 
@@ -199,6 +199,10 @@ class Account::JournalsController < Account::OrganizationController
         :meta_account_number,
         :meta_charge_account,
         :vat_account,
+        :vat_account_10,
+        :vat_account_8_5,
+        :vat_account_5_5,
+        :vat_account_2_1,
         :anomaly_account
       ]
     end
