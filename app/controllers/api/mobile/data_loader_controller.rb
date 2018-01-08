@@ -152,7 +152,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
   def search_pack
     packs = all_packs.order(updated_at: :desc).limit(5)
     loaded = packs.inject([]) do |memo, pack|
-      memo += [{  id: pack.id, 
+      memo += [{  id: pack.id,
+                  pack_id: pack.id, 
                   name: pack.name.sub(' all', ''), 
                   created_at: pack.created_at, 
                   updated_at: pack.updated_at, 
@@ -168,7 +169,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
     temp_packs = @user.temp_packs.not_published.order(updated_at: :desc).limit(5)
 
     loaded = temp_packs.inject([]) do |memo, tmp_pack|
-      memo += [{  id: tmp_pack.id, 
+      memo += [{  id: tmp_pack.id,
+                  pack_id: get_pack_from_temp_pack(tmp_pack), 
                   name: tmp_pack.basename,
                   created_at: tmp_pack.created_at,
                   updated_at: tmp_pack.updated_at,
@@ -185,7 +187,8 @@ class Api::Mobile::DataLoaderController < MobileApiController
       customers = @user.is_admin ? @user.organization.customers : @user.customers
       errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
       loaded = errors.each_with_index.inject([]) do |memo, (err, index)|
-        memo += [{  id: (500+index), 
+        memo += [{  id: (500+index),
+                    pack_id: 0, 
                     name: err.name,
                     created_at: err.date,
                     updated_at: err.date,
@@ -266,5 +269,11 @@ class Api::Mobile::DataLoaderController < MobileApiController
         large: {id:id_doc, style:'large', filter: temp_document.content_file_name}
       }
     end
+  end
+
+  def get_pack_from_temp_pack(tmp_pack)
+      pack = Pack.find_by_name(tmp_pack.name)
+      pack_id = 0
+      pack_id = pack.id if pack.present?
   end
 end
