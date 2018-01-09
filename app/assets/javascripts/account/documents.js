@@ -692,7 +692,7 @@
               },
               success: function(data) {
                 analytics = data;
-                if(analytics.length > 0) {
+                if(analytics != null && analytics.length > 0) {
                   var analytic_options = '<option selected value>Sélectionnez une analyse</option>';
                   for (var i=0; i<analytics.length; i++) {
                     analytic_options = analytic_options + "<option value=" + analytics[i]['name'] + ">" + analytics[i]['name'] + "</option>";
