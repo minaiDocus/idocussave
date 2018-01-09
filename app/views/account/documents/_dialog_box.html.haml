@@ -48,32 +48,31 @@
               %span.date
               \.
       - if @user.organization.ibiza.try(:configured?) && (has_multiple_accounts? || (@user.ibiza_id.present? && @user.options.compta_analysis_activated?))
-        #analytic.row-fluid
-          - 3.times do |e|
-            - i = e+1
-            .span4{ id: "analytic_#{i}_group" }
-              .control-group
-                = label_tag "h_analytic_#{i}_name", "Analyse #{i} :", class: 'control-label'
-                .controls
+        .control-group
+          %label.control-label Compta analytique :
+          #analytic.controls
+            %span.no_analytic.label Aucune analytique pour ce dossier.
+            .loading.hide
+              .feedback.active
+            .fields.hide
+              - 3.times do |e|
+                - i = e+1
+                .box.analytic_group{ id: "analytic_#{i}_group", class: (i != 3 ? 'margin1right' : '') }
+                  = label_tag "h_analytic_#{i}_name", "Analyse #{i} :"
                   = select_tag "h_analytic_#{i}_name", nil, class: 'analytic_select analytic_name', data: { analytic_number: i }
                   = hidden_field_tag "analytic[#{i}][name]", nil, class: 'hidden_analytic_input hidden_analytic_name'
-              .control-group.analytic_axis_group.hide{ id: "analytic_#{i}_axis1-group" }
-                = label_tag "h_analytic_#{i}_axis1", 'Axe 1 :', class: 'control-label'
-                .controls
-                  = select_tag "h_analytic_#{i}_axis1", nil, class: 'analytic_select analytic_axis'
-                  = hidden_field_tag "analytic[#{i}][axis1]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
-              .control-group.analytic_axis_group.hide{ id: "analytic_#{i}_axis2-group" }
-                = label_tag "h_analytic_#{i}_axis2", 'Axe 2 :', class: 'control-label'
-                .controls
-                  = select_tag "h_analytic_#{i}_axis2", nil, class: 'analytic_select analytic_axis'
-                  = hidden_field_tag "analytic[#{i}][axis2]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
-              .control-group.analytic_axis_group.hide{ id: "analytic_#{i}_axis3-group" }
-                = label_tag "h_analytic_#{i}_axis3", 'Axe 3 :', class: 'control-label'
-                .controls
-                  = select_tag "h_analytic_#{i}_axis3", nil, class: 'analytic_select analytic_axis'
-                  = hidden_field_tag "analytic[#{i}][axis3]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
-        .control-group
-          .controls
+                  .analytic_axis_group.hide{ id: "analytic_#{i}_axis1-group" }
+                    = label_tag "h_analytic_#{i}_axis1", 'Axe 1 :'
+                    = select_tag "h_analytic_#{i}_axis1", nil, class: 'analytic_select analytic_axis'
+                    = hidden_field_tag "analytic[#{i}][axis1]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
+                  .analytic_axis_group.hide{ id: "analytic_#{i}_axis2-group" }
+                    = label_tag "h_analytic_#{i}_axis2", 'Axe 2 :'
+                    = select_tag "h_analytic_#{i}_axis2", nil, class: 'analytic_select analytic_axis'
+                    = hidden_field_tag "analytic[#{i}][axis2]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
+                  .analytic_axis_group.hide{ id: "analytic_#{i}_axis3-group" }
+                    = label_tag "h_analytic_#{i}_axis3", 'Axe 3 :'
+                    = select_tag "h_analytic_#{i}_axis3", nil, class: 'analytic_select analytic_axis'
+                    = hidden_field_tag "analytic[#{i}][axis3]", nil, class: 'hidden_analytic_input hidden_analytic_axis'
             %span.help-block
               %span.label.label-warning.margin1right
                 Attention :

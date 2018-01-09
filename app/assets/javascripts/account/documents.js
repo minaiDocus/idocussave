@@ -687,8 +687,8 @@
               dataType: 'json',
               type: 'GET',
               beforeSend: function() {
-                $('.analytic_name').hide();
-                $('.analytic_name').after('<div class="feedback active"></div>');
+                $('#analytic .no_analytic, #analytic .fields').hide();
+                $('#analytic .loading').show();
               },
               success: function(data) {
                 analytics = data;
@@ -698,24 +698,22 @@
                     analytic_options = analytic_options + "<option value=" + analytics[i]['name'] + ">" + analytics[i]['name'] + "</option>";
                   }
                   $('.analytic_name').html(analytic_options);
-                  $('.analytic_name').removeAttr('disabled');
+                  $('#analytic .fields').show();
                 } else {
-                  $('.analytic_name').html('<option selected value>Aucune analytique pour ce dossier</option>');
-                  $('.analytic_name').attr('disabled', 'disabled');
+                  $('#analytic .no_analytic').show();
                 }
 
-                $('#fileupload .feedback').remove();
-                $('.analytic_name').show();
+                $('#analytic .loading').hide();
               },
               error: function(data) {
                 // TODO : handle failures
-                $('#fileupload .feedback').remove();
-                $('.analytic_name').show();
+                $('#analytic .loading, #analytic .fields').hide();
+                $('#analytic .no_analytic').show();
               }
             });
           } else {
-            $('.analytic_name').html('<option selected value>Aucune analytique pour ce dossier</option>');
-            $('.analytic_name').attr('disabled', 'disabled');
+            $('#analytic .loading, #analytic .fields').hide();
+            $('#analytic .no_analytic').show();
           }
         }
       }
