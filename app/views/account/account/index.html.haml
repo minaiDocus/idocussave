@@ -79,7 +79,7 @@
               - @last_packs.each do |pack|
                 %tr
                   %td.date= l(pack.updated_at)
-                  %td= pack.name.sub(' all', '')
+                  %td= link_to pack.name.sub(' all', ''), account_documents_path(pack_name: pack.name)
           .pull-right
             = link_to 'Tous les documents', account_documents_path
       - if @user.is_prescriber || @user.options.try(:is_upload_authorized)
@@ -97,7 +97,7 @@
                 - @last_temp_packs.each do |temp_pack|
                   %tr
                     %td.date= l(temp_pack.updated_at)
-                    %td= temp_pack.basename
+                    %td= link_to temp_pack.basename, account_documents_path(pack_name: temp_pack.name)
                     %td= temp_pack.temp_documents.not_published.sum(:pages_number).to_i
             .pull-right
               = link_to 'Tous les documents', account_documents_path
@@ -124,7 +124,7 @@
                           = l(object.date, format: '%d %B %Y %H:%M')
                       - else
                         \-
-                    %td.name= object.name
+                    %td.name= link_to object.name, account_organization_pre_assignment_delivery_errors_path(@user.organization)
                     %td.count= object.document_count
                     %td.message= object.message == false ? '-' : object.message
             .pull-right
