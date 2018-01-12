@@ -31,7 +31,7 @@
                 #notifications
                   = render partial: 'layouts/notifications'
 
-      .padding6top
+      .padding6top.dynamic_padding
         - if current_user.try(:is_admin) && controller_name != 'organizations'
           .container-fluid
             = render 'shared/as_user'

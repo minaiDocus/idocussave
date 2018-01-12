@@ -33,7 +33,7 @@
                 = link_to current_user.email, root_path
                 |
                 = link_to 'déconnexion', destroy_user_session_path, method: :delete
-      .container-fluid.padding6top.margin1bottom= yield
+      .container-fluid.padding6top.margin1bottom.dynamic_padding= yield
       #push
     = render 'layouts/footer'
     = render '/shared/google_analytics'

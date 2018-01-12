@@ -38,4 +38,27 @@ jQuery(function () {
   $("a[rel=tooltip]").tooltip();
 
   $('input[type="checkbox"]').shiftSelectable();
+
+  // Add a top padding when necessary
+
+  $menu = $('.navbar-fixed-top');
+
+  function dynamicTopPadding() {
+    if ($menu.height() < 45) {
+      $('.ad_dynamic_padding').css('padding-top', '0px');
+      $('.dynamic_padding').css('padding-top', '60px');
+    } else if ($menu.height() < 55) {
+      $('.ad_dynamic_padding').css('padding-top', '0px');
+      $('.dynamic_padding').css('padding-top', '0px');
+    } else {
+      $('.ad_dynamic_padding').css('padding-top', '40px');
+      $('.dynamic_padding').css('padding-top', '100px');
+    }
+  }
+
+  // Execute on load
+  dynamicTopPadding();
+
+  // Bind event listener
+  $(window).resize(dynamicTopPadding);
 });

@@ -53,8 +53,8 @@
         %li{ class: ('active' if controller_name == 'notification_settings') }
           = link_to 'Paramétrage des notifications', admin_notification_settings_path
 
-%p.navbar-text.pull-right
-  Bienvenu
-  = link_to current_user.email, root_path
-  |
-  = link_to 'déconnexion', destroy_user_session_path, method: :delete
+  %p.navbar-text.pull-right
+    Bienvenu
+    = link_to current_user.email, root_path
+    |
+    = link_to 'déconnexion', destroy_user_session_path, method: :delete
