@@ -15,10 +15,13 @@ class Document < ActiveRecord::Base
                               thumb: ['46x67>', :png],
                               medium: ['92x133', :png]
                             },
-                            path: ':rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename',
+                            path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                             url: '/account/documents/:id/download/:style'
   do_not_validate_attachment_file_type :content
 
+  Paperclip.interpolates :mongo_id_or_id do |attachment, style|
+    attachment.instance.mongo_id || attachment.instance.id
+  end
 
   before_content_post_process do |image|
     if image.dirty # halts processing

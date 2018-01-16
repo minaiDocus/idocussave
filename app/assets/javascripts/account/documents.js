@@ -136,6 +136,15 @@
         synchroniseSelected();
         $("#pageslist").attr("style","min-height:"+$("#documentslist").height()+"px");
 
+        $("#pageslist .thumb img").load(function(){
+          $(this).parent('.thumb').css('background', 'none');
+        });
+
+        $("#pageslist .thumb img").each(function(index){
+          if($(this).complete)
+            $(this).load();
+        });
+
         var viewTitle = $("#panel1 .header h3");
         var vTitle = "";
         if (title)

@@ -1,42 +1,19 @@
-- document_class = @is_composition ? "composition" : "alone"
-
-%li{ :id => "document_#{document.id}", :class => "#{document_class} pages" }
-  - if document.mongo_id
-    - filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.mongo_id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
-  - else
-    - filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
-
-  - unless document.dirty || !File.exist?(filepath)
-    - link_to_large = document.content.url(:large)
-    - link_to_thumb = document.content.url(:thumb)
-  - else
-    - link_to_large = link_to_thumb = 'application/processing.png'
-
-  - if document.is_a_cover
-    - page_number = document.position + 3
-  - else
-    - page_number = document.content_file_name.scan(/(\d{1,4}).pdf/)[0][0].to_i rescue 1
-    - page_number += 2 if document.pack.has_cover?
-
-  %input{ :type => :hidden, :name => :page_number, :value => "#{page_number}" }
-  %input{ :type => :hidden, :name => :tags, :value => "#{document.tags.join(' ')}" }
-  - if !@is_composition
-    = link_to "", document.content.url, :class => "zoom do-showPage", :title => "Visualiser la page"
+%li{ id: "document_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages" }
+  %input{ type: :hidden, name: :page_number, value: calculate_page_number(document) }
+  %input{ type: :hidden, name: :tags, value: document.tags.join(' ') }
+  = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page' unless @is_composition
   .toolbar
     %ul.margin0
-      %li.download
-        != link_to "", document.content.url, :class => "download", :title => "Télécharger", :target => "_blank"
+      %li.download= link_to '', document.content.url, class: 'download', title: 'Télécharger', target: '_blank'
       - if @user.active?
         - if @is_composition
           %li.delete_composition
-            %a.delete.do-removePageFromSelection{ :href => "#", :title => "Supprimer" }
+            %a.delete.do-removePageFromSelection{ href: '#', title: 'Supprimer' }
         - else
-          %li.selector
-            != link_to "", "#", :class => "select do-selectPage", :title => "Sélectionner pour la composition"
+          %li.selector= link_to '', '#', class: 'select do-selectPage', title: 'Sélectionner pour la composition'
   - if @is_composition
-    .handle{ :title => "Déplacer" }
+    .handle{ title: 'Déplacer' }
   .pagethumb
-    .thumb
-      != image_tag link_to_thumb
+    .thumb= image_tag document_thumb_url(document)
   .foot
     %span

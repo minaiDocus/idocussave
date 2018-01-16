@@ -92,16 +92,13 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
-  # GET /account/documents/:id/download
+  # GET /account/documents/:id/download/:style
   def download
     begin
       document = params[:id].size > 20 ? Document.find_by_mongo_id(params[:id]) : Document.find(params[:id])
       owner    = document.pack.owner
       filepath = FileStoragePathUtils.path_for_object(document, (params[:style].presence || 'original'))
-
-      if params[:style] == 'thumb' || params[:style] == 'large'
-        filepath = filepath.gsub('pdf', 'png')
-      end
+      filepath.gsub!('pdf', 'png') if params[:style].in?(%w(thumb medium))
     rescue
       document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
       owner    = document.temp_pack.user
