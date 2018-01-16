@@ -1,4 +1,4 @@
-%li{ id: "document_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages" }
+%li{ id: "#{@is_composition ? 'composition' : 'document'}_#{document.id}", class: "#{@is_composition ? 'composition' : 'alone'} pages" }
   %input{ type: :hidden, name: :page_number, value: calculate_page_number(document) }
   %input{ type: :hidden, name: :tags, value: document.tags.join(' ') }
   = link_to '', document.content.url, class: 'zoom do-showPage', title: 'Visualiser la page' unless @is_composition

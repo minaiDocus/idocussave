@@ -2,6 +2,7 @@
 class Composition < ActiveRecord::Base
   belongs_to :user
 
+  serialize :document_ids, Array
 
   def self.create_with_documents(options = {})
     name = options.delete(:name) || 'Undefined'

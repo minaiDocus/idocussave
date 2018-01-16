@@ -1,4 +1,4 @@
-.container-fluid{ class: (@user.active? ? 'padding12bottom' : '') }
+.container-fluid{ class: (@user.active? ? 'padding19bottom' : '') }
   .alerts
     = render partial: 'shared/messages'
 
@@ -90,7 +90,7 @@
                 %a.do-unselectSinglePage.do-tooltip{:href => "#", :title => "Désélectionner"}
                   %i.icon-ban-circle
           .content
-            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
+            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:1125px;" }
         #panel3{ :style => "display: none" }
           .header.row-fluid
             .actiongroup.span4.alignleft
@@ -106,7 +106,7 @@
               %a.do-nextPage{:href => "#"}
                 piece suivante
           .content
-            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:400px;"}
+            %iframe{ :src => "", :class => "showPage", :style => "width:100%; min-height:1125px;" }
 
   - if @user.active?
     .selection-fixed-bottom
@@ -125,7 +125,7 @@
                 %a{ "data-toggle"=>"modal", :href => "#compositionDialog" }
                   Composer
             .content.pages.margin3top
-              %ul
+              %ul.list
                 - @is_composition = true
                 != render :partial => "/account/documents/document", :collection => @composition
 - if @pack
