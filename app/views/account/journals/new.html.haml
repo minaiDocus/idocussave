@@ -50,8 +50,8 @@
               = f.input :meta_charge_account, required: true
 
               - if !@customer || @customer.options.is_taxable
-                - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
-                = f.input :vat_account, label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { disabled: is_disabled }, required: @customer.present?, hint: hint
+                - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
+                = f.input :vat_account, label: 'Quel est le compte de TVA 20% attribué au Journal Comptable iDocus (le cas échéant) ? Exemple: 445660', input_html: { disabled: is_disabled }, required: true, hint: hint
                 = f.input :vat_account_10
                 = f.input :vat_account_8_5
                 = f.input :vat_account_5_5

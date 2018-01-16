@@ -32,7 +32,7 @@
       = f.input :meta_account_number, required: true
       = f.input :meta_charge_account, required: true
       - if !@customer || @customer.options.is_taxable
-        - hint = !@customer ? 'obligatoire si client assujeti à TVA' : ''
+        - hint = !@customer ? 'obligatoire mais ne sera utilisé que pour les clients assujettis à la TVA' : ''
         = f.input :vat_account, required: @customer.present?, hint: hint
         = f.input :vat_account_10
         = f.input :vat_account_8_5

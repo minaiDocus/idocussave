@@ -44,7 +44,7 @@ class AccountBookType < ActiveRecord::Base
   validates_length_of   :instructions, maximum: 400
   validates_presence_of :name
   validates_presence_of :description
-  validates_presence_of :vat_account,         if: proc { |j| j.is_pre_assignment_processable? && j.try(:user).try(:options).try(:is_taxable) }
+  validate  :presence_of_vat_account,         if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :meta_account_number, if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :meta_charge_account, if: proc { |j| j.is_pre_assignment_processable? }
@@ -183,6 +183,13 @@ class AccountBookType < ActiveRecord::Base
       journal = user.account_book_types.where(name: name).first
 
       errors.add(:name, :taken) if journal && journal != self
+    end
+  end
+
+  def presence_of_vat_account
+    if vat_account.blank?
+      return errors.add(:vat_account, :blank) if user && user.try(:options).try(:is_taxable)
+      errors.add(:vat_account, :blank) unless user  #require vat_account on shared journals if pre_assignement_processable
     end
   end
 end
