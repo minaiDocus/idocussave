@@ -59,14 +59,10 @@ class Admin::InvoicesController < Admin::AdminController
 
   # GET /admin/invoices/:id
   def show
-    file_path = FileStoragePathUtils.path_for_object(@invoice)
-
-
-    if File.exist?(file_path)
-      type       = @invoice.content_content_type || 'application/pdf'
-      filename = File.basename file_path
-
-      send_file(file_path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@invoice.content.path)
+      type     = @invoice.content_content_type || 'application/pdf'
+      filename = File.basename @invoice.content.path
+      send_file(@invoice.content.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     end
   end
 

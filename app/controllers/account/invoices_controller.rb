@@ -1,10 +1,7 @@
 class Account::InvoicesController < Account::AccountController
   # GET /account/invoices/:id/download/
   def download
-    invoice = Invoice.find params[:id]
-
-    filepath = FileStoragePathUtils.path_for_object(invoice)
-
+    invoice      = Invoice.find params[:id]
     owner        = invoice.user
     organization = invoice.organization
 
@@ -20,12 +17,10 @@ class Account::InvoicesController < Account::AccountController
       authorized = true
     end
 
-    if File.exist?(filepath) && authorized
-      filename = File.basename filepath
-
+    if File.exist?(invoice.content.path) && authorized
+      filename = File.basename invoice.content.path
       type = invoice.content_content_type || 'application/pdf'
-
-      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+      send_file(invoice.content.path, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
