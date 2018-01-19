@@ -128,7 +128,7 @@ class ProcessRetrievedData
                     subscription['documents'].select do |document|
                       retriever.service_name.in?(['Nespresso', 'Online.net']) && document['date'].nil? ? false : true
                     end.sort_by do |document|
-                      Time.parse(document['date'])
+                      document['date'].present? ? Time.parse(document['date']) : Time.local(1970)
                     end.each do |document|
                       already_exist = if retriever.connector.is_fiduceo_active?
                         retriever.sandbox_documents.where(api_id: document['id']).first
