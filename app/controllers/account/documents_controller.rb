@@ -92,29 +92,29 @@ class Account::DocumentsController < Account::AccountController
     end
   end
 
+  # GET /account/documents/processing/:id/download/:style
+  def download_processing
+    document = TempDocument.find(params[:id])
+    owner    = document.temp_pack.user
+    filepath = document.content.path(params[:style].presence)
+
+    if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin))
+      mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
+      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
+    else
+      render nothing: true, status: 404
+    end
+  end
+
   # GET /account/documents/:id/download/:style
   def download
-    begin
-      document = params[:id].size > 20 ? Document.find_by_mongo_id(params[:id]) : Document.find(params[:id])
-      owner    = document.pack.owner
-      filepath = FileStoragePathUtils.path_for_object(document, (params[:style].presence || 'original'))
-      filepath.gsub!('pdf', 'png') if params[:style].in?(%w(thumb medium))
-    rescue
-      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
-      owner    = document.temp_pack.user
-      filepath = FileStoragePathUtils.path_for_object(document)
-    end
-
-    if params[:force_temp_document] && params[:force_temp_document] == 'true'
-      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
-      owner    = document.temp_pack.user
-      filepath = FileStoragePathUtils.path_for_object(document)
-    end
+    document = Document.find(params[:id])
+    owner    = document.pack.owner
+    filepath = document.content.path(params[:style].presence)
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
-      filename  = File.basename(filepath)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: filename, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end

@@ -19,13 +19,17 @@ class TempDocument < ActiveRecord::Base
   # TODO : rename me
   has_one    :metadata2, class_name: 'TempDocumentMetadata'
 
-  has_attached_file :content, styles: { thumb: ['46x67>', :png] },
-                                          path: ':rails_root/files/:rails_env/:class/:id/:filename',
-                                          url: '/account/documents/:id/download/:style'
+  has_attached_file :content, styles: { medium: ['92x133', :png] },
+                              path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/:filename',
+                              url: '/account/documents/processing/:id/download/:style'
   do_not_validate_attachment_file_type :content
 
-  has_attached_file :raw_content, path: ':rails_root/files/:rails_env/:class/:id/raw_content/:filename'
+  has_attached_file :raw_content, path: ':rails_root/files/:rails_env/:class/:mongo_id_or_id/raw_content/:filename'
   do_not_validate_attachment_file_type :raw_content
+
+  Paperclip.interpolates :mongo_id_or_id do |attachment, style|
+    attachment.instance.mongo_id || attachment.instance.id
+  end
 
   before_content_post_process :is_thumb_generated
 

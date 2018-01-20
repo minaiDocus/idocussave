@@ -16,4 +16,12 @@ module Account::DocumentsHelper
       document.content.url(:medium)
     end
   end
+
+  def temp_document_thumb_url(document)
+    if File.exist?(document.content.path(:medium))
+      document.content.url(:medium)
+    else
+      'application/processing.png'
+    end
+  end
 end
