@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180120184959) do
+ActiveRecord::Schema.define(version: 20180120192420) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -2114,8 +2114,6 @@ ActiveRecord::Schema.define(version: 20180120184959) do
     t.datetime "inactive_at"
     t.string   "dropbox_delivery_folder",                                        limit: 255,   default: "iDocus_delivery/:code/:year:month/:account_book/", null: false
     t.boolean  "is_dropbox_extended_authorized",                                               default: false,                                              null: false
-    t.boolean  "rm_is_reminder_email_active",                                                  default: true,                                               null: false
-    t.boolean  "rm_is_document_notifier_active",                                               default: true,                                               null: false
     t.boolean  "is_centralized",                                                               default: true,                                               null: false
     t.boolean  "is_operator"
     t.string   "knowings_code",                                                  limit: 255
@@ -2129,7 +2127,6 @@ ActiveRecord::Schema.define(version: 20180120184959) do
     t.string   "ibiza_id",                                                       limit: 255
     t.boolean  "is_fiduceo_authorized",                                                        default: false,                                              null: false
     t.string   "email_code",                                                     limit: 255
-    t.boolean  "rm_is_mail_receipt_activated",                                                 default: true,                                               null: false
     t.integer  "authd_prev_period",                                              limit: 4,     default: 1,                                                  null: false
     t.integer  "auth_prev_period_until_day",                                     limit: 4,     default: 11,                                                 null: false
     t.integer  "auth_prev_period_until_month",                                   limit: 4,     default: 0,                                                  null: false

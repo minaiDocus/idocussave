@@ -104,8 +104,6 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :external_file_storage
   accepts_nested_attributes_for :notify
 
-  # TODO : remove old attributes : rm_is_reminder_email_active, rm_is_document_notifier_active and rm_is_mail_receipt_activated
-
   before_validation do |user|
     if user.email_code.blank? && !user.is_prescriber
       user.email_code = user.get_new_email_code
