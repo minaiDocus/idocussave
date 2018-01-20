@@ -2,12 +2,10 @@
 class RetrievedData < ActiveRecord::Base
   belongs_to :user
 
-  # TODO : remove attribute 'content' when confirmed unnecessary
-  serialize :content, Hash
   serialize :processed_connection_ids, Array
 
-  has_attached_file :content2, path: ':rails_root/files/:rails_env/:class/content/:id/:filename'
-  do_not_validate_attachment_file_type :content2
+  has_attached_file :content, path: ':rails_root/files/:rails_env/:class/content/:id/:filename'
+  do_not_validate_attachment_file_type :content
 
   scope :processed,     -> { where(state: 'processed') }
   scope :not_processed, -> { where(state: 'not_processed') }
@@ -36,11 +34,11 @@ class RetrievedData < ActiveRecord::Base
   end
 
   def json_content=(data)
-    self.content2 = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
-    self.content2_file_name = 'data.blob'
+    self.content = StringIO.new(SymmetricEncryption.encrypt(Oj.dump(data)))
+    self.content_file_name = 'data.blob'
   end
 
   def json_content
-    Oj.load(SymmetricEncryption.decrypt(File.read(content2.path)))
+    Oj.load(SymmetricEncryption.decrypt(File.read(content.path)))
   end
 end
