@@ -84,32 +84,29 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def render_image_documents
+    # NOTE : temporary fix
+    style = params[:style] == 'thumb' ? 'medium' : params[:style].presence
     begin
-      document = params[:id].size > 20 ? Document.find_by_mongo_id(params[:id]) : Document.find(params[:id])
+      document = Document.find(params[:id])
       owner    = document.pack.owner
-      filepath = FileStoragePathUtils.path_for_object(document, (params[:style].presence || 'original'))
-
-      if params[:style] == 'thumb' || params[:style] == 'large'
-        filepath = filepath.gsub('pdf', 'png')
-      end
+      filepath = document.content.path(style)
     rescue
-      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
+      document = TempDocument.find(params[:id])
       owner    = document.temp_pack.user
-      filepath = FileStoragePathUtils.path_for_object(document)
+      filepath = document.content.path(style)
     end
 
-    if params[:force_temp_document] && params[:force_temp_document] == 'true'
-      document = params[:id].size > 20 ? TempDocument.find_by_mongo_id(params[:id]) : TempDocument.find(params[:id])
+    if params[:force_temp_document] == 'true'
+      document = TempDocument.find(params[:id])
       owner    = document.temp_pack.user
-      filepath = FileStoragePathUtils.path_for_object(document)
+      filepath = document.content.path
     end
 
     if File.exist?(filepath) && (owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == document.get_token)
-      filename  = File.basename(filepath)
       mime_type = File.extname(filepath) == '.png' ? 'image/png' : 'application/pdf'
-      send_file(filepath, type: mime_type, filename: filename, x_sendfile: true, disposition: 'inline')
+      send_file(filepath, type: mime_type, filename: document.content_file_name, x_sendfile: true, disposition: 'inline')
     else
-      render json: {error: true, message: "file not found"}, status: 404
+      render json: { error: true, message: 'file not found' }, status: 404
     end
   end
 
