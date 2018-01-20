@@ -24,10 +24,7 @@ class QuadratusZipService
     # Copy pieces to temp directory
     @preseizures.each do |preseizure|
       @piece = preseizure.piece
-
-      filepath = FileStoragePathUtils.path_for_object(@piece)
-
-      FileUtils.cp filepath, File.join(dir, preseizure.piece.position.to_s + '.pdf') if preseizure.piece.try(:content).try(:path)
+      FileUtils.cp @piece.content.path, File.join(dir, preseizure.piece.position.to_s + '.pdf') if preseizure.piece.try(:content).try(:path)
     end
 
     file_path = File.join(dir, base_name + '.zip')

@@ -122,13 +122,11 @@ class Account::DocumentsController < Account::AccountController
 
   # GET /account/documents/pieces/:id/download
   def piece
+    # NOTE : support old MongoDB id for pieces uploaded to iBiZa, in CSV export or others
     @piece = params[:id].length > 20 ? Pack::Piece.find_by_mongo_id(params[:id]) : Pack::Piece.find(params[:id])
-    filepath = FileStoragePathUtils.path_for_object(@piece)
-
-    if File.exist?(filepath) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
-      type     = @piece.content_content_type || 'application/pdf'
-      filename = File.basename(filepath)
-      send_file(filepath, type: type, filename: filename, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@piece.content.path) && (@piece.pack.owner.in?(accounts) || current_user.try(:is_admin) || params[:token] == @piece.get_token)
+      type = @piece.content_content_type || 'application/pdf'
+      send_file(@piece.content.path, type: type, filename: @piece.content_file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end

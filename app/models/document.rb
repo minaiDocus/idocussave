@@ -121,7 +121,7 @@ class Document < ActiveRecord::Base
     path = if document.content.queued_for_write[:original]
              document.content.queued_for_write[:original].path
            else
-             FileStoragePathUtils.path_for_object(document)
+             document.content.path
            end
 
     POSIX::Spawn.system "pdftotext -raw -nopgbrk -q #{path}"
@@ -158,11 +158,9 @@ class Document < ActiveRecord::Base
 
   def append(file_path)
     Dir.mktmpdir do |dir|
-      document_file_path = FileStoragePathUtils.path_for_object(self)
-
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([document_file_path, file_path], merged_file_path)
+      Pdftk.new.merge([self.content.path, file_path], merged_file_path)
 
       self.content = open(merged_file_path)
 
@@ -173,11 +171,9 @@ class Document < ActiveRecord::Base
 
   def prepend(file_path)
     Dir.mktmpdir do |dir|
-      document_file_path = FileStoragePathUtils.path_for_object(self)
-
       merged_file_path = File.join(dir, content_file_name)
 
-      Pdftk.new.merge([file_path, document_file_path], merged_file_path)
+      Pdftk.new.merge([file_path, self.content.path], merged_file_path)
 
       self.content = open(merged_file_path)
 

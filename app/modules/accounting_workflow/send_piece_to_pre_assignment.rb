@@ -47,9 +47,6 @@ class AccountingWorkflow::SendPieceToPreAssignment
 
   def copy_to_dir(dir)
     FileUtils.mkdir_p(dir)
-
-    filepath = FileStoragePathUtils.path_for_object(@piece.temp_document)
-
-    FileUtils.cp(filepath, File.join(dir, @piece.name.tr(' ', '_') + '.pdf'))
+    FileUtils.cp(@piece.temp_document.content.path, File.join(dir, @piece.name.tr(' ', '_') + '.pdf'))
   end
 end

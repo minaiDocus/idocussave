@@ -3,8 +3,7 @@ module AccountingWorkflow::OcrProcessing
     def send_document(temp_document_id)
       temp_document = TempDocument.find_by_id(temp_document_id)
       if temp_document && temp_document.ocr_needed?
-        filepath = FileStoragePathUtils.path_for_object(temp_document)
-        FileUtils.cp filepath, input_path.join(temp_document.file_name_with_position)
+        FileUtils.cp temp_document.content.path, input_path.join(temp_document.file_name_with_position)
       end
     end
 

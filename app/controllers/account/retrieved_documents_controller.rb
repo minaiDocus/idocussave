@@ -14,12 +14,9 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
   end
 
   def show
-    filepath = FileStoragePathUtils.path_for_object(@document)
-
-    if File.exist?(filepath)
+    if File.exist?(@document.content.path)
       file_name = @document.metadata['name'] + '.pdf'
-
-      send_file(filepath, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
+      send_file(@document.content.path, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
@@ -27,9 +24,8 @@ class Account::RetrievedDocumentsController < Account::RetrieverController
 
   def piece
     if @document.piece
-      filepath = FileStoragePathUtils.path_for_object(@document.piece)
-      if File.exist?(filepath)
-        send_file(filepath, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      if File.exist?(@document.piece.content.path)
+        send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
       else
         render nothing: true, status: 404
       end

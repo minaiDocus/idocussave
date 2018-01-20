@@ -19,10 +19,13 @@ class Pack::Piece < ActiveRecord::Base
   belongs_to :analytic_reference, inverse_of: :pieces
 
   has_attached_file :content,
-                            path: ':rails_root/files/:rails_env/:class/:attachment/:id/:style/:filename',
+                            path: ':rails_root/files/:rails_env/:class/:attachment/:mongo_id_or_id/:style/:filename',
                             url: '/account/documents/pieces/:id/download'
   do_not_validate_attachment_file_type :content
 
+  Paperclip.interpolates :mongo_id_or_id do |attachment, style|
+    attachment.instance.mongo_id || attachment.instance.id
+  end
 
   scope :covers,           -> { where(is_a_cover: true) }
   scope :scanned,          -> { where(origin: 'scan') }

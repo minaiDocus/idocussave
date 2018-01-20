@@ -11,12 +11,8 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
   end
 
   def show
-    filepath = FileStoragePathUtils.path_for_object(@document)
-
-    if File.exist?(filepath)
-      file_name = @document.original_file_name
-
-      send_file(filepath, type: 'application/pdf', filename: file_name, x_sendfile: true, disposition: 'inline')
+    if File.exist?(@document.content.path)
+      send_file(@document.content.path, type: 'application/pdf', filename: @document.original_file_name, x_sendfile: true, disposition: 'inline')
     else
       render nothing: true, status: 404
     end
@@ -24,9 +20,8 @@ class Account::Organization::IbizaboxDocumentsController < Account::Organization
 
   def piece
     if @document.piece
-      filepath = FileStoragePathUtils.path_for_object(@document.piece)
-      if File.exist?(filepath)
-        send_file(filepath, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
+      if File.exist?(@document.piece.content.path)
+        send_file(@document.piece.content.path, type: 'application/pdf', filename: @document.piece.content_file_name, x_sendfile: true, disposition: 'inline')
       else
         render nothing: true, status: 404
       end

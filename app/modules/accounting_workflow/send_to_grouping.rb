@@ -27,16 +27,12 @@ class AccountingWorkflow::SendToGrouping
 
 
   def copy
-    filepath = FileStoragePathUtils.path_for_object(@temp_document)
-
-    FileUtils.cp filepath, path.join(basename + '.pdf')
+    FileUtils.cp @temp_document.content.path, path.join(basename + '.pdf')
   end
 
 
   def split
-    filepath = FileStoragePathUtils.path_for_object(@temp_document)
-
-    Pdftk.new.burst filepath, path, basename, AccountingWorkflow::TempPackProcessor::POSITION_SIZE
+    Pdftk.new.burst @temp_document.content.path, path, basename, AccountingWorkflow::TempPackProcessor::POSITION_SIZE
   end
 
 

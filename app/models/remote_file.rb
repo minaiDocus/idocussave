@@ -141,9 +141,7 @@ class RemoteFile < ActiveRecord::Base
 
 
   def local_path
-    filepath = FileStoragePathUtils.path_for_object(remotable)
-
-    temp_path.presence || filepath
+    temp_path.presence || remotable.content.path
   end
 
 
