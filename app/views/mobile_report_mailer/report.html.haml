@@ -1,0 +1,30 @@
+!!!
+%html
+  %head
+    %title [iDocus] Rapport d'erreurs mobile
+    %meta{ content: 'text/html', charset: 'UTF-8', 'http-equiv' => 'Content-type' }
+  %body
+    Bonjour,
+    %br
+    %br
+    Erreur mobile détécté : #{@data_report[:title]}
+    %br
+    %br
+    User: --------->>>
+    %br
+    user_id : #{@data_report[:user_id]}
+    %br
+    user_token : #{@data_report[:user_token]}
+    %br
+    platform : #{@data_report[:platform]}
+    %br
+    %br
+    Report: -------->>>
+    %br
+    #{@data_report[:report]}
+    %br
+    %br
+    %br
+    Cordialement,
+    %br
+    App iDocus.

@@ -413,6 +413,16 @@ Idocus::Application.routes.draw do
       resources :file_uploader do
         post 'load_file_upload_params', on: :collection
       end
+
+      resources :firebase_notification do
+        post 'get_notifications', on: :collection
+        post 'release_new_notifications', on: :collection
+        post 'register_firebase_token', on: :collection
+      end
+
+      resources :error_report do
+        post 'send_error_report', on: :collection
+      end
     end
   end
 

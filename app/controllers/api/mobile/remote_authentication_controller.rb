@@ -7,7 +7,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     code = 200 # neutral code
     message = "Ping success"
 
-    #code 500 for automatically logout app mobile
+    #(code 500 for automatically logout app mobile)
       # code = 500 
       # message = "Vous n'aves pas l'authorisation necessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
     #(code 500 for automatically logout app mobile)

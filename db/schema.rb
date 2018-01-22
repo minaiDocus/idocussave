@@ -168,6 +168,7 @@ ActiveRecord::Schema.define(version: 20180123121934) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
+<<<<<<< HEAD
     t.string "a1_name",  limit: 255
     t.string "a1_axis1", limit: 255
     t.string "a1_axis2", limit: 255
@@ -182,6 +183,19 @@ ActiveRecord::Schema.define(version: 20180123121934) do
     t.string "a3_axis3", limit: 255
   end
 
+=======
+    t.integer "temp_document_id",   limit: 4
+    t.integer "pack_piece_id",      limit: 4
+    t.string  "analytic_id",        limit: 255
+    t.string  "axis1_section_code", limit: 255
+    t.string  "axis2_section_code", limit: 255
+    t.string  "axis3_section_code", limit: 255
+  end
+
+  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
+  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
+
+>>>>>>> Add push notification firebase
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
     t.string   "auditable_type",  limit: 255
@@ -709,6 +723,18 @@ ActiveRecord::Schema.define(version: 20180123121934) do
   add_index "file_sending_kits", ["mongo_id"], name: "index_file_sending_kits_on_mongo_id", using: :btree
   add_index "file_sending_kits", ["organization_id"], name: "organization_id", using: :btree
   add_index "file_sending_kits", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+
+  create_table "firebase_tokens", force: :cascade do |t|
+    t.integer  "user_id",                limit: 4
+    t.string   "name",                   limit: 255
+    t.string   "platform",               limit: 255
+    t.datetime "last_registration_date"
+    t.datetime "last_sending_date"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  add_index "firebase_tokens", ["user_id", "name"], name: "index_owener_id_and_name", using: :btree
 
   create_table "ftps", force: :cascade do |t|
     t.string   "mongo_id",                          limit: 255

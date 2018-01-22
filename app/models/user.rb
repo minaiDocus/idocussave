@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
   has_many :sandbox_bank_accounts,                                                              dependent: :destroy
   has_many :sandbox_operations,                                                                 dependent: :destroy
   has_many :sandbox_documents,                                                                  dependent: :destroy
-
+  has_many :firebase_tokens,                                                                    dependent: :destroy
 
   has_and_belongs_to_many :groups, inverse_of: 'members'
   has_and_belongs_to_many :account_number_rules

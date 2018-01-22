@@ -1,5 +1,15 @@
 # -*- encoding : utf-8 -*-
 FactoryGirl.define do
+  factory :firebase_token do
+    id ""
+    user_id ""
+    name ""
+    platform ""
+    created_at "2018-01-16"
+    updated_at "2018-01-16"
+    last_registration_date "2018-01-16"
+    last_sending_date "2018-01-16"
+  end
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
     password '123456'

@@ -5,6 +5,9 @@ class NotifyWorker
   def perform(notification_id)
     notification = Notification.find notification_id
     NotificationsMailer.notify(notification).deliver
+    
+    #sending push notification to FCM
+    FirebaseNotification.fcm_send_notification(notification)
     notification.update is_sent: true
   end
 end
