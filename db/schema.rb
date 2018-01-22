@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 20180123121934) do
   add_index "addresses", ["mongo_id"], name: "index_addresses_on_mongo_id", using: :btree
 
   create_table "analytic_references", force: :cascade do |t|
-<<<<<<< HEAD
     t.string "a1_name",  limit: 255
     t.string "a1_axis1", limit: 255
     t.string "a1_axis2", limit: 255
@@ -183,19 +182,6 @@ ActiveRecord::Schema.define(version: 20180123121934) do
     t.string "a3_axis3", limit: 255
   end
 
-=======
-    t.integer "temp_document_id",   limit: 4
-    t.integer "pack_piece_id",      limit: 4
-    t.string  "analytic_id",        limit: 255
-    t.string  "axis1_section_code", limit: 255
-    t.string  "axis2_section_code", limit: 255
-    t.string  "axis3_section_code", limit: 255
-  end
-
-  add_index "analytic_references", ["pack_piece_id"], name: "index_analytic_references_on_pack_piece_id", using: :btree
-  add_index "analytic_references", ["temp_document_id"], name: "index_analytic_references_on_temp_document_id", using: :btree
-
->>>>>>> Add push notification firebase
   create_table "audits", force: :cascade do |t|
     t.integer  "auditable_id",    limit: 4
     t.string   "auditable_type",  limit: 255

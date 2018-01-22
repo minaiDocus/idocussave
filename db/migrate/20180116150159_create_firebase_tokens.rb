@@ -2,8 +2,8 @@ class CreateFirebaseTokens < ActiveRecord::Migration
   def change
     create_table :firebase_tokens do |t|
       t.belongs_to :user
-      t.string :name, length: 1024
-      t.string :platform, length: 20
+      t.string :name
+      t.string :platform
       t.datetime :last_registration_date
       t.datetime :last_sending_date
       t.datetime :created_at
