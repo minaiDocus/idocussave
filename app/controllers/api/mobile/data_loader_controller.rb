@@ -84,8 +84,7 @@ class Api::Mobile::DataLoaderController < MobileApiController
   end
 
   def render_image_documents
-    # NOTE : temporary fix
-    style = params[:style] == 'thumb' ? 'medium' : params[:style].presence
+    style = params[:style].presence || 'medium'
     begin
       document = Document.find(params[:id])
       owner    = document.pack.owner
@@ -211,16 +210,11 @@ class Api::Mobile::DataLoaderController < MobileApiController
     nb_pages = (documents.total_count.to_f / per_page.to_f).ceil
 
     data_collected = documents.collect do |document|
-        if document.mongo_id
-          id_doc = document.mongo_id
-          filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.mongo_id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
-        else
-          id_doc = document.id
-          filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.id}/thumb/#{document.content_file_name.gsub('pdf', 'png')}"
-        end
+        id_doc = document.id
+        filepath = "#{Rails.root}/files/#{Rails.env}/#{document.class.table_name}/contents/#{document.id}/medium/#{document.content_file_name.gsub('pdf', 'png')}"
 
         unless document.dirty || !File.exist?(filepath)
-          thumb = {id:id_doc, style:'thumb', filter: document.content_file_name}
+          thumb = {id:id_doc, style:'medium', filter: document.content_file_name}
           large = {id:id_doc, style:'original', filter: document.content_file_name}
         else
           thumb = large = false
@@ -246,16 +240,11 @@ class Api::Mobile::DataLoaderController < MobileApiController
     end
 
     temp_documents.collect do |temp_document|
-      if temp_document.mongo_id
-        id_doc = temp_document.mongo_id
-        filepath = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/contents/#{temp_document.mongo_id}/thumb/#{temp_document.content_file_name}"
-      else
-        id_doc = temp_document.id
-        filepath = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/contents/#{temp_document.id}/thumb/#{temp_document.content_file_name}"
-      end
+      id_doc = temp_document.id
+      filepath = "#{Rails.root}/files/#{Rails.env}/#{temp_document.class.table_name}/contents/#{temp_document.id}/medium/#{temp_document.content_file_name}"
 
       unless !File.exist?(filepath)
-        thumb = {id:id_doc, style:'thumb', filter: temp_document.content_file_name}
+        thumb = {id:id_doc, style:'medium', filter: temp_document.content_file_name}
       else
         thumb = false
       end

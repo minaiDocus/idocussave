@@ -8,6 +8,7 @@ class NotifyWorker
     
     #sending push notification to FCM
     FirebaseNotification.fcm_send_notification(notification)
+    
     notification.update is_sent: true
   end
 end
