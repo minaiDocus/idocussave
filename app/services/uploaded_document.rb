@@ -48,7 +48,8 @@ class UploadedDocument
         delivery_type:         'upload',
         api_name:              api_name,
         original_file_name:    @original_file_name,
-        is_content_file_valid: true
+        is_content_file_valid: true,
+        original_fingerprint:  fingerprint
       }
 
       @temp_document = AddTempDocumentToTempPack.execute(pack, processed_file, options) # Create temp document for temp pack
@@ -109,7 +110,7 @@ class UploadedDocument
       else
         geometry = Paperclip::Geometry.from_file @file.path
         tmp_file_path = @file.path
-        if geometry.height > 840 || geometry.width > 840 
+        if geometry.height > 2000 || geometry.width > 2000
           tmp_file_path = File.join(@dir, "resized_#{@original_file_name}")
           DocumentTools.resize_img(@file.path, tmp_file_path)
         end
@@ -198,11 +199,11 @@ class UploadedDocument
 
   def unique?
     temp_pack = TempPack.where(name: pack_name).first
-    temp_pack && temp_pack.temp_documents.where('content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint).first ? false : true
+    temp_pack && temp_pack.temp_documents.where('original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint, fingerprint).first ? false : true
   end
 
   def fingerprint
-    @fingerprint ||= DocumentTools.checksum(processed_file.path)
+    @fingerprint ||= DocumentTools.checksum(@file.path)
   end
 
   def analytic_requested?

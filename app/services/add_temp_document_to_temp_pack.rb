@@ -17,12 +17,13 @@ class AddTempDocumentToTempPack
 
     if options[:delivery_type] != 'retriever' || !temp_document.persisted?
 
-      temp_document.user                = user
-      temp_document.content             = file
-      temp_document.position            = temp_pack.next_document_position unless temp_document.position
-      temp_document.temp_pack           = temp_pack
-      temp_document.organization        = organization
-      temp_document.original_file_name  = options[:original_file_name]
+      temp_document.user                 = user
+      temp_document.content              = file
+      temp_document.original_fingerprint = options[:original_fingerprint] if options[:original_fingerprint]
+      temp_document.position             = temp_pack.next_document_position unless temp_document.position
+      temp_document.temp_pack            = temp_pack
+      temp_document.organization         = organization
+      temp_document.original_file_name   = options[:original_file_name]
 
       temp_document.delivered_by        = options[:delivered_by]
       temp_document.delivery_type       = options[:delivery_type]

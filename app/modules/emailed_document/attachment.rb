@@ -5,7 +5,7 @@ class EmailedDocument::Attachment
     @original  = original
     @file_name = file_name
     @file_path = get_file_path
-    DocumentTools.remove_pdf_security(@file_path, @file_path) if is_printable_only?
+    DocumentTools.remove_pdf_security(processed_file_path, processed_file_path) if is_printable_only?
   end
 
 
@@ -34,7 +34,7 @@ class EmailedDocument::Attachment
   # syntactic sugar ||= does not store false/nil value
   def printable?
     if @printable.nil?
-      @printable = DocumentTools.printable? @file_path
+      @printable = DocumentTools.printable? processed_file_path
     else
       @printable
     end
@@ -42,7 +42,7 @@ class EmailedDocument::Attachment
 
 
   def pages_number
-    DocumentTools.pages_number(@file_path)
+    DocumentTools.pages_number(processed_file_path)
   rescue
     0
   end
@@ -60,13 +60,13 @@ class EmailedDocument::Attachment
     else
       @is_printable_only_set = true
 
-      @is_printable_only = DocumentTools.is_printable_only? @file_path
+      @is_printable_only = DocumentTools.is_printable_only? processed_file_path
     end
   end
 
   def unique?
     temp_pack = TempPack.where(name: DocumentTools.pack_name(@file_name)).first
-    temp_pack && temp_pack.temp_documents.where('content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint).first ? false : true
+    temp_pack && temp_pack.temp_documents.where('original_fingerprint = ? OR content_fingerprint = ? OR raw_content_fingerprint = ?', fingerprint, fingerprint, fingerprint).first ? false : true
   end
 
   def fingerprint
@@ -87,6 +87,27 @@ class EmailedDocument::Attachment
     FileUtils.remove_entry @dir if @dir
   end
 
+  def processed_file_path
+    if @temp_file_path
+      @temp_file_path
+    else
+      @temp_file_path = if original_extension != '.pdf'
+        geometry = Paperclip::Geometry.from_file @file_path
+
+        tmp_file_path = @file_path
+        if geometry.height > 2000 || geometry.width > 2000
+          tmp_file_path = File.join(dir, "resized_#{File.basename(@file_path)}")
+          DocumentTools.resize_img(@file_path, tmp_file_path)
+        end
+
+        DocumentTools.to_pdf(tmp_file_path, File.join(dir, @file_name))
+        File.join(dir, @file_name)
+      else
+        @file_path
+      end
+    end
+  end
+
   private
 
   def get_file_path
@@ -94,19 +115,6 @@ class EmailedDocument::Attachment
     f = File.new(File.join(dir, filename), 'w')
     f.write @original.body.decoded.force_encoding('UTF-8')
     f.close
-    original_extension == '.pdf' ? f.path : converted_file_path(f.path)
-  end
-
-  def converted_file_path(file_path)
-    geometry = Paperclip::Geometry.from_file file_path
-
-    tmp_file_path = file_path
-    if geometry.height > 840 || geometry.width > 840
-      tmp_file_path = File.join(dir, "resized_#{File.basename(file_path)}")
-      DocumentTools.resize_img(file_path, tmp_file_path)
-    end
-
-    DocumentTools.to_pdf(tmp_file_path, File.join(dir, @file_name))
-    File.join(dir, @file_name)
+    f.path
   end
 end

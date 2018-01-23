@@ -31,7 +31,7 @@ class DocumentTools
   end
 
   def self.resize_img(file_path, output_file_path)
-    system "convert '#{file_path}' -resize 840x840\\> '#{output_file_path}'"
+    system "convert '#{file_path}' -resize 2000x2000\\> '#{output_file_path}'"
   end
 
   def self.modifiable?(file_path, strict = true)
@@ -174,7 +174,7 @@ class DocumentTools
   end
 
 
-  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, logger = Rails.logger)
+  def self.create_stamp_file(name, target_file_path, dir = '/tmp', is_stamp_background_filled = false, logger = Rails.logger, font_size = 10)
     sizes     = Poppler::Document.new(target_file_path).pages.map(&:size)
     file_path = File.join(dir, 'stamp.pdf')
     
@@ -185,14 +185,14 @@ class DocumentTools
         begin
           if is_stamp_background_filled
             bounding_box([0, bounds.height], width: bounds.width) do
-              table([[name]], position: :center) do
+              table([[name]], size: font_size, position: :center) do
                 style(row(0), border_color: 'FF0000', text_color: 'FFFFFF', background_color: 'FF0000')
                 style(columns(0), background_color: 'FF0000', border_color: 'FF0000', align: :center)
               end
             end
           else
             fill_color 'FF0000'
-            text name, size: 10, align: :center
+            text name, size: font_size, align: :center
           end
         rescue Prawn::Errors::CannotFit
           logger.info "Prawn::Errors::CannotFit - DocumentTools.create_stamp_file '#{name}' (#{size.join(':')})"
@@ -212,11 +212,17 @@ class DocumentTools
 
     name = stamp_name(pattern, name, origin)
 
-    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, logger)
+    stamp_file_path = create_stamp_file(name, file_path, dir, is_stamp_background_filled, logger, stamp_font_size(file_path))
 
     Pdftk.new.stamp(file_path, stamp_file_path, output_file_path)
 
     output_file_path
+  end
+
+  def self.stamp_font_size(file_path)
+    geometry = Paperclip::Geometry.from_file file_path
+    base = geometry.height > geometry.width ? geometry.height : geometry.width
+    (base * 30 / 1500) < 10 ? 10 : (base * 30 / 1500)
   end
 
 

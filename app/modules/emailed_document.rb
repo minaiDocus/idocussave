@@ -323,9 +323,10 @@ class EmailedDocument
         delivered_by:          User.find_by_email(@mail.from.first).try(:code),
         api_name:              'email',
         original_file_name:    attachment.name,
-        is_content_file_valid: true
+        is_content_file_valid: true,
+        original_fingerprint:  attachment.fingerprint
       }
-      File.open(attachment.file_path) do |file|
+      File.open(attachment.processed_file_path) do |file|
         @temp_documents << AddTempDocumentToTempPack.execute(pack, file, options)
       end
     end

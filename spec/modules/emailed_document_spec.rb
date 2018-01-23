@@ -332,11 +332,11 @@ describe EmailedDocument do
           add_file filename: 'ido1.tiff', content: File.read(Rails.root.join('spec/support/files/upload.tiff'))
         end
         attachment = EmailedDocument::Attachment.new(mail.attachments.first, 'converted.pdf')
-        expect(DocumentTools.completed?(attachment.file_path, false)).to be_truthy
+        expect(DocumentTools.completed?(attachment.processed_file_path, false)).to be_truthy
         attachment.clean_dir
       end
 
-      it 'large files should be converted to A4 format' do
+      it 'large files should be resized' do
         code = @user.email_code
         mail = Mail.new do
           from     'customer@example.com'
@@ -346,8 +346,11 @@ describe EmailedDocument do
         end
         attachment = EmailedDocument::Attachment.new(mail.attachments.first, 'converted.pdf')
         image = Paperclip::Geometry.from_file attachment.file_path
-        expect(image.width).to eq 595
-        expect(image.height).to eq 842
+        resized_pdf = Paperclip::Geometry.from_file attachment.processed_file_path
+        expect(image.width).to eq 3200
+        expect(image.height).to eq 1800
+        expect(resized_pdf.width).to eq 2000
+        expect(resized_pdf.height).to eq 1125
         attachment.clean_dir
       end
 

@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180120192420) do
+
+ActiveRecord::Schema.define(version: 20180123121934) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -722,8 +723,6 @@ ActiveRecord::Schema.define(version: 20180120192420) do
     t.string   "encrypted_password",                limit: 255
     t.string   "encrypted_port",                    limit: 255
     t.boolean  "is_passive",                                      default: true
-    t.datetime "checked_at"
-    t.boolean  "is_import_activated",                             default: false
     t.string   "root_path",                         limit: 255,   default: "/"
     t.datetime "import_checked_at"
     t.text     "previous_import_paths",             limit: 65535
@@ -1968,6 +1967,7 @@ ActiveRecord::Schema.define(version: 20180120192420) do
     t.integer  "content_file_size",              limit: 4
     t.datetime "content_updated_at"
     t.string   "content_fingerprint",            limit: 255
+    t.string   "original_fingerprint",           limit: 255
     t.string   "cloud_content_file_name",        limit: 255
     t.string   "cloud_content_content_type",     limit: 255
     t.integer  "cloud_content_file_size",        limit: 4
