@@ -370,7 +370,7 @@ describe UploadedDocument do
       end
 
       context 'when file is protected' do
-        before(:each) do
+        before(:all) do
           file = File.open("#{Rails.root}/spec/support/files/protected.pdf", "r")
           @uploaded_document = UploadedDocument.new(file, 'upload.pdf', @user, 'TS', 0)
           file.close
