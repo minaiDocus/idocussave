@@ -31,6 +31,8 @@ module DeliverFile
                           ['Knowings']
                         elsif receiver.ftp.try(:configured?)
                           ['FTP']
+                        elsif receiver.mcf_settings.try(:configured?)
+                          ['My Company Files']
                         else
                           []
                         end
@@ -50,6 +52,10 @@ module DeliverFile
           SendToDropbox.new(DropboxExtended, remote_files, path_pattern: receiver.dropbox_delivery_folder, logger: logger).execute
         elsif service_class == :knowings
           KnowingsSyncService.new(remote_files).execute
+        elsif service_class == :my_company_files
+          path_pattern = Pathname.new '/' + remote_files.first.pack.owner.mcf_storage
+          path_pattern = path_pattern.join receiver.mcf_settings.delivery_path_pattern.sub(/\A\//, '')
+          SendToMcf.new(receiver.mcf_settings, remote_files, path_pattern: path_pattern.to_s, logger: logger).execute
         elsif service_class == :dropbox_basic
           SendToDropbox.new(storage, remote_files, logger: logger).execute
         elsif service_class == :box
@@ -85,6 +91,8 @@ module DeliverFile
       :ftp
     when 'kwg'
       :knowings
+    when 'mcf'
+      :my_company_files
     else
       :dropbox_basic
     end
@@ -105,6 +113,8 @@ module DeliverFile
       'FTP'
     when 'kwg'
       'Knowings'
+    when 'mcf'
+      'My Company Files'
     else
       ''
     end

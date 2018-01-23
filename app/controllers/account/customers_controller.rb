@@ -171,6 +171,17 @@ class Account::CustomersController < Account::OrganizationController
     end
   end
 
+  def edit_mcf
+  end
+
+  def update_mcf
+    if @customer.update(mcf_params)
+      flash[:success] = 'Modifié avec succès.'
+      redirect_to account_organization_customer_path(@organization, @customer, tab: 'mcf')
+    else
+      render :edit_mcf
+    end
+  end
 
   # GET /account/organizations/:organization_id/customers/:id/account_close_confirm
   def account_close_confirm
@@ -320,6 +331,9 @@ class Account::CustomersController < Account::OrganizationController
     ])
   end
 
+  def mcf_params
+    params.require(:user).permit(:mcf_storage)
+  end
 
   def load_customer
     @customer = customers.find(params[:id])

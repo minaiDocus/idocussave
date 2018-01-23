@@ -112,7 +112,7 @@ describe SendToDropbox do
     expect(result).to eq true
   end
 
-  context 'a file as already been uploaded' do
+  context 'a file has already been uploaded' do
     it 'does not update an existing file' do
       result = VCR.use_cassette('dropbox/does_not_update_an_existing_file', preserve_exact_body_bytes: true) do
         SendToDropbox.new(@dropbox, [@remote_file]).execute

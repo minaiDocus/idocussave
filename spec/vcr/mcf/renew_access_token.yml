@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken
+    body:
+      encoding: UTF-8
+      string: refreshToken=d16c23253f54437db6cab93255ab1933
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Fri, 19 Jan 2018 20:07:04 GMT
+      Content-Length:
+      - '180'
+    body:
+      encoding: UTF-8
+      string: '{"Status":600,"Message":"Success","AccessToken":"fbaeb20da31c4967946dc72af2131216cd38b7eb605648df","RefreshToken":"d16c23253f54437db6cab93255ab1933","ExpirationDate":1534348014547}'
+    http_version: 
+  recorded_at: Fri, 19 Jan 2018 20:07:26 GMT
+recorded_with: VCR 3.0.3

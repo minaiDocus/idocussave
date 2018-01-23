@@ -132,20 +132,26 @@ Idocus::Application.routes.draw do
       end
 
       resources :customers do
-        get   'info',                    on: :collection
-        get   'edit_ibiza',              on: :member
-        patch 'update_ibiza',            on: :member
-        patch 'close_account',           on: :member
-        get   'search',                  on: :collection
-        patch 'reopen_account',          on: :member
-        get   'edit_compta_options',     on: :member
-        get   'edit_period_options',     on: :member
-        patch 'update_compta_options',   on: :member
-        patch 'update_period_options',   on: :member
-        get   'edit_knowings_options',   on: :member
-        get   'account_close_confirm',   on: :member
-        get   'account_reopen_confirm',  on: :member
-        patch 'update_knowings_options', on: :member
+        collection do
+          get   'info'
+          get   'search'
+        end
+        member do
+          get   'edit_ibiza'
+          patch 'update_ibiza'
+          patch 'close_account'
+          patch 'reopen_account'
+          get   'edit_compta_options'
+          get   'edit_period_options'
+          patch 'update_compta_options'
+          patch 'update_period_options'
+          get   'edit_knowings_options'
+          get   'account_close_confirm'
+          get   'account_reopen_confirm'
+          patch 'update_knowings_options'
+          get   'edit_mcf'
+          patch 'update_mcf'
+        end
 
         resource :setup, only: [] do
           member do
@@ -240,6 +246,7 @@ Idocus::Application.routes.draw do
       resource :ibiza, controller: 'ibiza', only: %w(create edit update)
 
       resources :ibiza_users,                       only: :index
+      resources :mcf_users,                         only: :index
       resources :pre_assignments,                   only: :index
       resources :pre_assignment_delivery_errors,    only: :index
       resources :pre_assignment_blocked_duplicates, only: :index do
@@ -263,6 +270,11 @@ Idocus::Application.routes.draw do
       end
       resources :guest_collaborators do
         get 'search', on: :collection
+      end
+
+      resource :mcf_settings, only: %w(edit update destroy) do
+        post :authorize
+        get  :callback
       end
     end
 

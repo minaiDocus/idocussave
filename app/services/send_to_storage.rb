@@ -7,23 +7,29 @@ class SendToStorage
     @storage = storage
     @options = {
       max_number_of_threads: max_number_of_threads,
+      max_retries:           8,
       chunk_size:            150.megabytes,
       path_pattern:          (@storage.respond_to?(:path) ? @storage.path : nil)
     }.merge(options).with_indifferent_access
 
     if @storage.class == Ftp && @storage.organization
       @options[:path_pattern] = File.join @storage.root_path, @options[:path_pattern]
+    elsif @storage.class == McfSettings
+      @options[:path_pattern] = File.join remote_files.first.pack.owner.mcf_storage, @options[:path_pattern]
     end
 
     @folder_path = ExternalFileStorage.delivery_path(remote_files.first, @options[:path_pattern]).freeze
     @errors      = []
+    @metafiles   = []
 
     @semaphore = Mutex.new
     @queue     = Queue.new
     @threads   = []
 
     remote_files.each_with_index do |remote_file, index|
-      @queue << Storage::Metafile.new(remote_file, @options[:path_pattern], (index+1), remote_files.size)
+      metafile = Storage::Metafile.new(remote_file, @options[:path_pattern], (index+1), remote_files.size)
+      @metafiles << metafile
+      @queue << metafile
     end
 
     @threads_count = [@options[:max_number_of_threads], @queue.size].min
@@ -44,6 +50,7 @@ class SendToStorage
   def manage_failure(error); end
   def before_run; end
   def after_run; end
+  def before_retry; end
 
   def client
     Thread.current[:client] ||= init_client
@@ -114,13 +121,14 @@ class SendToStorage
     retries = 0
     begin
       start_time = Time.now
+      before_retry if retries > 0
       yield start_time
     rescue => e
       failure_message = "#{metafile.description} failed : [#{e.class}] #{e.message}"
       execution_time = (Time.now - start_time).round(3)
       if retryable_failure?(e)
         retries += 1
-        if retries < 8
+        if retries < @options[:max_retries]
           min_sleep_seconds = Float(2 ** (retries/2.0))
           max_sleep_seconds = Float(2 ** retries)
           sleep_duration = rand(min_sleep_seconds..max_sleep_seconds).round(2)

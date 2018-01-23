@@ -58,7 +58,9 @@ class Notification < ActiveRecord::Base
         'published_document',
         'ibiza_invalid_access_token',
         'detected_preseizure_duplication',
-        'unblocked_preseizure'
+        'unblocked_preseizure',
+        'mcf_invalid_access_token',
+        'mcf_insufficient_space'
       ].freeze
     end
   end

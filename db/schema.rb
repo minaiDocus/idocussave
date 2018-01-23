@@ -890,6 +890,17 @@ ActiveRecord::Schema.define(version: 20180216075047) do
   add_index "knowings", ["organization_id"], name: "organization_id", using: :btree
   add_index "knowings", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
+  create_table "mcf_settings", force: :cascade do |t|
+    t.integer "organization_id",                   limit: 4
+    t.string  "encrypted_access_token",            limit: 255
+    t.string  "encrypted_refresh_token",           limit: 255
+    t.string  "encrypted_access_token_expires_at", limit: 255
+    t.string  "delivery_path_pattern",             limit: 255, default: "/:year:month/:account_book/"
+    t.boolean "is_delivery_activated",                         default: true
+  end
+
+  add_index "mcf_settings", ["organization_id"], name: "index_mcf_settings_on_organization_id", using: :btree
+
   create_table "new_provider_requests", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
     t.datetime "created_at"
@@ -2190,6 +2201,7 @@ ActiveRecord::Schema.define(version: 20180216075047) do
     t.text     "group_ids",                                                      limit: 65535
     t.boolean  "is_guest",                                                                     default: false
     t.datetime "news_read_at"
+    t.string   "mcf_storage",                                                    limit: 255
   end
 
   add_index "users", ["mongo_id"], name: "index_users_on_mongo_id", using: :btree

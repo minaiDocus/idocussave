@@ -47,7 +47,7 @@
             .box.sidebar-nav
               %ul.nav.nav-list
                 %li.nav-header= @organization.name
-                %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps)) && !request.path.match(/customers/)) ? 'active' : '') }
+                %li{ class: ((controller_name.in?(%w(organizations organization_addresses organization_period_options reminder_emails file_sending_kits organization_subscriptions csv_descriptors organization_csv_descriptors knowings ibiza file_naming_policies ftps mcf_settings)) && !request.path.match(/customers/)) ? 'active' : '') }
                   = link_to 'Paramètres', account_organization_path(@organization)
                 %li{ class: (controller_name == 'groups' ? 'active' : '') }
                   = link_to 'Groupes', account_organization_groups_path(@organization)

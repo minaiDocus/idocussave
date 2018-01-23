@@ -32,6 +32,9 @@
             - unless @organization.ibiza.try(:used?)
               %li{ class: ('active' if params[:tab] == 'others') }
                 %a{ href: '#others', data: { toggle: 'tab' } } Plan comptable
+            - if @organization.mcf_settings.try(:access_token).present?
+              %li{ class: ('active' if params[:tab] == 'mcf') }
+                %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
@@ -334,6 +337,23 @@
                   = render 'ibiza_box'
                 - else
                   = render 'shared/ibiza_not_configured_warning'
+            - if @organization.mcf_settings.access_token.present?
+              #mcf.tab-pane{ class: ('active' if params[:tab] == 'mcf') }
+                %table.table.table-striped.table-condensed
+                  %tbody
+                    %tr
+                      %th Compte associé
+                      %td
+                        - if @customer.mcf_storage.present?
+                          = @customer.mcf_storage
+                        - else
+                          %i{ style: 'color:gray' } Aucun
+                .row-fluid
+                  .span12
+                    - if @organization.mcf_settings.configured?
+                      = link_to icon_edit + ' Modifier', edit_mcf_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                    - else @organization.mcf_settings.configured?
+                      = link_to icon_edit + ' Modifier', '#', class: 'btn btn-primary pull-right', disabled: true
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter

@@ -34,6 +34,8 @@
                 %a{ href: '#ftp', data: { toggle: 'tab' } } Import/Export FTP
             %li{ class: ('active' if params[:tab] == 'ibiza') }
               %a{ href: '#ibiza', data: { toggle: 'tab' } } iBiza
+            %li{ class: ('active' if params[:tab] == 'mcf') }
+              %a{ href: '#mcf', data: { toggle: 'tab' } } My Company Files
             %li{ class: ('active' if params[:tab] == 'other_software') }
               %a{ href: '#other_software', data: { toggle: 'tab' } } Autres logiciels
             - if @organization.is_csv_descriptor_used
@@ -328,6 +330,31 @@
                       %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
               - if is_leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
+            #mcf.tab-pane{ class: ('active' if params[:tab] == 'mcf') }
+              %table.table.table-condensed.table-striped
+                %tbody
+                  %tr
+                    %th Statut de la liaison
+                    %td
+                      - if @organization.mcf_settings.try(:access_token).present?
+                        %span.label.label-success OK
+                      - else
+                        %span.label.label-default Non configuré
+                  - if @organization.mcf_settings.try(:access_token).present?
+                    %tr
+                      %th Livraison activé ?
+                      %td
+                        - if @organization.mcf_settings.try(:is_delivery_activated)
+                          %span.label.label-success= t('yes_value')
+                        - else
+                          %span.label.label-important= t('no_value')
+                  %tr
+                    %th Chemin de livraison
+                    %td= @organization.mcf_settings.try(:delivery_path_pattern) || McfSettings.new.delivery_path_pattern
+              - if @organization.mcf_settings.try(:access_token).present?
+                = link_to icon_destroy + ' Supprimer mes paramètres', account_organization_mcf_settings_path(@organization), class: 'btn btn-danger pull-right margin05left', method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer vos paramètres pour My Company Files ?' }
+                = link_to icon_edit + ' Editer', edit_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right margin05left'
+              = link_to icon(icon: 'share-alt') + ' Configurer la liaison', authorize_account_organization_mcf_settings_path(@organization), class: 'btn btn-primary pull-right', method: :post
             #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }
               %table.table.table-condensed.table-striped
                 %tbody

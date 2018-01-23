@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf
+    body:
+      encoding: UTF-8
+      string: accessToken=fbaeb20da31c4967946dc72af2131216cd38b7eb605648df&isAdmin=false&listPath%5B%5D=John%20Doe%2FTEST%2F2pages.pdf&listPath%5B%5D=John%20Doe%2FTEST%2Fmissing.pdf&withAttribute=false
+    headers:
+      User-Agent:
+      - Typhoeus - https://github.com/typhoeus/typhoeus
+      Accept:
+      - json
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json; charset=utf-8
+      Expires:
+      - "-1"
+      Server:
+      - Microsoft-IIS/8.0
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Aspnet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+      Date:
+      - Thu, 18 Jan 2018 21:04:44 GMT
+      Content-Length:
+      - '204'
+    body:
+      encoding: UTF-8
+      string: '[{"Path":"John Doe/TEST/2pages.pdf","Md5":"97F90EAC0D07FE5ADE8F60A0FA54CDFC","Status":600,"Message":"File
+        exist"},{"Path":"John Doe/TEST/missing.pdf","Md5":"","Status":700,"Message":"File
+        doesn''t exist"}]'
+    http_version: 
+  recorded_at: Thu, 18 Jan 2018 21:05:07 GMT
+recorded_with: VCR 3.0.3

@@ -18,8 +18,10 @@ class Storage::Metafile
   end
 
   def name
-    # add more special character to sanitize
-    @name ||= @remote_file.name.gsub(/\*/, '')
+    return @name if @name
+    @name = @remote_file.name
+    @name.sub!('%', '_') if @remote_file.service_name == RemoteFile::MY_COMPANY_FILES
+    @name
   end
 
   def description
@@ -32,6 +34,10 @@ class Storage::Metafile
 
   def size
     @size ||= @remote_file.local_size
+  end
+
+  def fingerprint
+    @remote_file.remotable.try(:content_fingerprint) || DocumentTools.checksum(@remote_file.temp_path)
   end
 
   def method_missing(name, *args, &block)
