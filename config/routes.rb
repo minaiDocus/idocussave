@@ -383,13 +383,15 @@ Idocus::Application.routes.draw do
       end
 
       resources :data_loader do
-        post 'load_customers', on: :collection
-        post 'load_packs', on: :collection
-        post 'load_documents_processed', on: :collection
-        post 'load_documents_processing', on: :collection
-        post 'load_stats', on: :collection
-        post 'get_packs', on: :collection
-        get 'render_image_documents', on: :collection
+        collection do
+          post :load_customers
+          post :load_packs
+          post :load_documents_processed
+          post :load_documents_processing
+          post :load_stats
+          post :get_packs
+          get  :render_image_documents
+        end
       end
 
       resources :account_sharing do
