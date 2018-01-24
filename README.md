@@ -1,13 +1,13 @@
 # iDocus
 
 ## Information Générale
-Site web qui homogénise le stockage et la gestion des documents provenant de différentes sources pour en effectuer la comptabilité
+Solutions de dématérialisation
 
 * Site vitrine : https://www.idocus.com
 * Application :
   - Production : https://my.idocus.com
   - Administration : https://my.idocus.com/admin
-  - Administration du coffre : https://backoffice-coffre.idocus.com/coffre/
+  - Staging : https://staging.idocus.com
   - Traquer de bug : https://errbit.idocus.com
 * Slimpay : https://prlv.idocus.com
 
