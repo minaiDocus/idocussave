@@ -18,13 +18,15 @@ Solutions de dématérialisation
 
 ## Technologies :
 - Debian 64bit
-- Ruby 2.3.1 [x86_64]
-- Ruby on Rails 4.2.17
+- Ruby 2.3.1
+- Ruby on Rails 4.2.7.1
+- RVM 1.29.3
+- Memcached 1.4.21
 - MySQL 5.5
-- ImageMagick 6.8.9-9 Q16 x86_64 2017-07-15
+- ImageMagick 6.8.9-9 Q16 x86_64 2017-11-16
 - Pdftk 2.02
-- Poppler
-- Redis + Sidekiq
+- Poppler 0.26.5-2+deb8u2
+- Redis 2.8.17
 
 ## Services externes :
 * Budget Insight
