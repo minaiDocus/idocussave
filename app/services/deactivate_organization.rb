@@ -1,9 +1,7 @@
-# -*- encoding : UTF-8 -*-
 class DeactivateOrganization
   def initialize(organization_id)
     @organization = Organization.find organization_id
   end
-
 
   def execute
     @organization.collaborators.each do |collaborator|
@@ -15,19 +13,10 @@ class DeactivateOrganization
       StopSubscriptionService.new(customer, false).execute
     end
 
-    @organization.remote_files.destroy_all
-
     @organization.reminder_emails.destroy_all
-
+    @organization.ibiza.try(:destroy)
     @organization.knowings.try(:destroy)
-
     @organization.file_sending_kit.try(:destroy)
-
     @organization.file_naming_policy.try(:destroy)
-
-    @organization.temp_documents.each do |temp_document|
-      path = temp_document.content.path
-      FileUtils.rm path if File.exist?(path)
-    end
   end
 end
