@@ -7,6 +7,8 @@ jQuery ->
   if navigator.userAgent.toLowerCase().indexOf('msie') != -1
     $('.ie-message').show()
 
+  $('#news.modal.active').modal(show: true)
+
   tab_name = $('.tab-pane.active').attr('id')
   get_last_content_for(tab_name) if tab_name
 

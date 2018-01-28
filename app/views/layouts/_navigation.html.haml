@@ -30,5 +30,6 @@
           Base de connaissances
           %b.caret
         %ul.dropdown-menu
+          %li= link_to 'Communications', '#news', 'data-toggle' => 'modal'
           %li= link_to 'Centre d\'aide', 'https://idocus.zendesk.com/hc/fr', target: '_blank'
           %li= link_to 'Produits et tarifs 2018', docs_download_path(name: 'produits_et_tarifs_2018.pdf'), target: '_blank'

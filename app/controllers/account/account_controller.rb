@@ -22,6 +22,8 @@ class Account::AccountController < ApplicationController
       customers = @user.is_admin ? @user.organization.customers : @user.customers
       @errors = Pack::Report.failed_delivery(customers.pluck(:id), 5)
     end
+
+    @news_present = @user.news_read_at ? News.published.where('published_at > ?', @user.news_read_at).exists? : News.exists?
   end
 
   def choose_default_summary

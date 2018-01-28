@@ -60,4 +60,10 @@ module AdminHelper
   def file_size(size_in_octet)
     '%0.3f' % ((size_in_octet * 1.0) / 1_048_576.0)
   end
+
+  def news_target_audience_options
+    News::TARGET_AUDIENCES.map do |target_audience|
+      [t('simple_form.labels.news.target_audiences.' + target_audience), target_audience]
+    end
+  end
 end

@@ -38,6 +38,8 @@
         Autres
         %b.caret
       %ul.dropdown-menu
+        %li{ class: ('active' if controller_name == 'news') }
+          = link_to 'News', admin_news_index_path
         %li{ class: ('active' if controller_name == 'emailed_documents') }
           = link_to 'Récéptions Mail', admin_emailed_documents_path
         %li{ class: ('active' if controller_name == 'cms_images') }

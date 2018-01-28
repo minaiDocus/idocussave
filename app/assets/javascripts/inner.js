@@ -54,3 +54,15 @@ function load_latest_notifications() {
 }
 
 setInterval(load_latest_notifications, 5000);
+
+$('#news.modal').on('show', function (e) {
+    $.ajax({
+        url: '/account/news',
+        beforeSend: function() {
+            $('#news .modal-body').html("<img src='/assets/application/spinner_gray_alpha.gif' alt='chargement...' style='padding-top:184px;padding-left:399px;'/>");
+        },
+        success: function(data){
+            $('#news .modal-body').html(data);
+        }
+    });
+})

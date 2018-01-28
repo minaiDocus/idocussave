@@ -267,3 +267,12 @@ fr:
         password: Mot de passe
         root_path: Chemin racine d'import et de livraison
         path: Chemin de livraison
+      news:
+        title: Titre
+        body: Message
+        target_audience: Audience cible
+        url: URL vers l'article complet
+        target_audiences:
+          everyone: Tout le monde
+          collaborators: Collaborateurs
+          customers: Clients finaux

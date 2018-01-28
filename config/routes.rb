@@ -365,6 +365,8 @@ Idocus::Application.routes.draw do
     end
 
     resources :analytics, only: %w(index)
+
+    get :news, controller: :news, action: :index
   end
 
   namespace :api, defaults: { format: 'json' } do
@@ -494,6 +496,10 @@ Idocus::Application.routes.draw do
     resources :account_sharings, only: %w(index)
 
     resources :pre_assignment_blocked_duplicates, only: :index
+
+    resources :news do
+      post :publish, on: :member
+    end
   end
 
   get 'admin/reports_delivery',                controller: 'admin/admin', action: 'reports_delivery'
