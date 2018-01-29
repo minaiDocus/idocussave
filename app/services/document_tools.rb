@@ -220,9 +220,13 @@ class DocumentTools
   end
 
   def self.stamp_font_size(file_path)
-    geometry = Paperclip::Geometry.from_file file_path
-    base = geometry.height > geometry.width ? geometry.height : geometry.width
-    (base * 30 / 1500) < 10 ? 10 : (base * 30 / 1500)
+    begin
+      geometry = Paperclip::Geometry.from_file(file_path)
+      base = geometry.height > geometry.width ? geometry.height : geometry.width
+      (base * 30 / 1500) < 10 ? 10 : (base * 30 / 1500)
+    rescue Paperclip::Errors::NotIdentifiedByImageMagickError
+      10
+    end
   end
 
 
