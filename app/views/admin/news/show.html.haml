@@ -38,4 +38,4 @@
           %tr
             %th= t('activerecord.models.news.attributes.url')
             %td= link_to @news.url, @news.url, target: '_blank'
-    .span8.panel!= markdown_render @news.body
+    .span8.panel!= @news.body

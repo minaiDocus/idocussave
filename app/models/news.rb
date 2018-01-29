@@ -46,8 +46,16 @@ class News < ActiveRecord::Base
   end
 
   def body=(content)
-    _content = ActionController::Base.helpers.strip_tags content
-    _content = ActionController::Base.helpers.sanitize _content
-    super(_content)
+    super ActionController::Base.helpers.sanitize(content, tags: allowed_tags, attributes: allowed_attributes)
+  end
+
+  private
+
+  def allowed_tags
+    ActionView::Base.sanitized_allowed_tags + %w(u s)
+  end
+
+  def allowed_attributes
+    ActionView::Base.sanitized_allowed_attributes + %w(style)
   end
 end
