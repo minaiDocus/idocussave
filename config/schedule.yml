@@ -41,6 +41,9 @@ RemoveOldestRetrievedDataWorker:
 NotifyProcessedRequestsWorker:
   queue: default
   cron: '0 8 * * *'
+UpdateConnectorsListWorker:
+  queue: default
+  cron: '45 3 * * *'
 
 ## Accounting flow workers
 
