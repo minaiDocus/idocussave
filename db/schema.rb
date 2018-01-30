@@ -11,8 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20180123121934) do
+ActiveRecord::Schema.define(version: 20180125201652) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -898,6 +897,20 @@ ActiveRecord::Schema.define(version: 20180123121934) do
   add_index "new_provider_requests", ["mongo_id"], name: "index_new_provider_requests_on_mongo_id", using: :btree
   add_index "new_provider_requests", ["user_id"], name: "user_id", using: :btree
   add_index "new_provider_requests", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
+
+  create_table "news", force: :cascade do |t|
+    t.string   "state",           limit: 255,   null: false
+    t.string   "title",           limit: 255,   null: false
+    t.text     "body",            limit: 65535, null: false
+    t.string   "target_audience", limit: 255,   null: false
+    t.string   "url",             limit: 255
+    t.datetime "published_at"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "news", ["published_at"], name: "index_news_on_published_at", using: :btree
+  add_index "news", ["target_audience"], name: "index_news_on_target_audience", using: :btree
 
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",     limit: 4
@@ -2160,6 +2173,7 @@ ActiveRecord::Schema.define(version: 20180123121934) do
     t.string   "fiduceo_id",                                                     limit: 255
     t.text     "group_ids",                                                      limit: 65535
     t.boolean  "is_guest",                                                                     default: false
+    t.datetime "news_read_at"
   end
 
   add_index "users", ["mongo_id"], name: "index_users_on_mongo_id", using: :btree

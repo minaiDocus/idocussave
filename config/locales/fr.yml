@@ -987,6 +987,17 @@ fr:
           third_party: Tiers
           amount: Montant
           date: Date d'opération
+      news:
+        zero: 0 nouvelle
+        one: 1 nouvelle
+        other: "%{count} nouvelles"
+        name: Nouvelles
+        attributes:
+          title: Titre
+          body: Message
+          target_audience: Audience cible
+          url: URL vers l'article complet
+          published_at: Publié le
     state_machines:
       retriever:
         states:

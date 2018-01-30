@@ -118,4 +118,13 @@ CKEDITOR.editorConfig = function( config )
     { name: 'insert', items: ['HorizontalRule', 'SpecialChar' ] },
     { name: 'links', items: [ 'Link', 'Unlink'] }
   ];
+
+  config.toolbar_news = [
+    { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
+    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+    { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar' ] },
+    { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] }
+  ];
 };

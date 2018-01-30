@@ -30,7 +30,7 @@
     background-position: center center
 
 // Application
-#uploadDialog.modal, #packTaggingDialog.modal, #pageTaggingDialog.modal, #compositionDialog.modal, #invoiceDialog.modal, #returnLabelsDialog.modal
+#uploadDialog.modal, #packTaggingDialog.modal, #pageTaggingDialog.modal, #compositionDialog.modal, #invoiceDialog.modal, #returnLabelsDialog.modal, #news.modal
   top: 50%
   left: 50%
   display: none
@@ -75,6 +75,23 @@
   width: 878px
   height: 700px
   margin: -250px 0 0 -439px !important
+
+#news.modal
+  width: 830px
+  height: 491px
+  margin: -246px 0 0 -415px !important
+  .title
+    h4
+      float: left
+    .date
+      float: right
+  .body
+    padding-top: 10px
+    clear: both
+  .link
+    float: right
+  hr
+    clear: both
 
 .modal-backdrop
   z-index: 1040

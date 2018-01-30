@@ -1,0 +1,10 @@
+#news.edit
+  = render partial: 'navigation'
+
+  .row-fluid
+    .span12.panel
+      %h3 Edition de l'annonce : #{@news.title}
+
+  .row-fluid
+    .span12.panel
+      = render partial: 'form'

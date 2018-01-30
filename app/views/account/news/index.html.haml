@@ -1,0 +1,10 @@
+- @news.each_with_index do |news, index|
+  .news
+    .title
+      %h4= news.title
+      .date= l news.created_at, format: '%e %B %Y'
+    .body!= news.body
+    - if news.url.present?
+      .link= link_to 'Lire la suite', news.url, target: '_blank'
+  - if (index + 1) < @news.size
+    %hr
