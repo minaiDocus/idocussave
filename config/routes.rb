@@ -57,6 +57,8 @@ Idocus::Application.routes.draw do
 
   get '/docs/download', controller: 'account/docs', action: 'download'
 
+  post 'my_company_files/upload', controller: :my_company_files, action: 'upload'
+
   namespace :account do
     root to: 'account/account#index'
 
