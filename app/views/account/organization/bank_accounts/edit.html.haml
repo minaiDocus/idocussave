@@ -9,10 +9,10 @@
     .span12.box
       = simple_form_for @bank_account, url: account_organization_customer_bank_account_path(@organization, @customer, @bank_account), html: { class: 'form form-horizontal margin0' } do |f|
         = f.input :number,            disabled: true
+        = f.input :journal, required: true
         - if @organization.ibiza.try(:used?)
           - if @organization.ibiza.configured?
-            - @bank_account.journal = @bank_account.foreign_journal if @bank_account.foreign_journal.present?
-            = f.input :journal, collection: journals_for_select(@bank_account.journal, 'bank'), required: true, include_blank: false, hint: ibiza_journals_beginning_with_a_number_hint
+            = f.input :foreign_journal, collection: journals_for_select(@bank_account.foreign_journal, 'bank'), hint: 'si différent de "Code journal" ci-dessus'
           - else
             .control-group
               %label.control-label= t('simple_form.labels.bank_account.journal')

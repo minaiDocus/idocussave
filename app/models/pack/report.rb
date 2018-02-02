@@ -21,11 +21,8 @@ class Pack::Report < ActiveRecord::Base
 
   def journal
     result = name.split[1]
-
     if user
-      user.account_book_types.where(name: result).first.try(:get_name) ||
-        user.bank_accounts.where(journal: result).first.try(:foreign_journal).presence ||
-        result
+      user.account_book_types.where(name: result).first.try(:get_name) || result
     else
       result
     end

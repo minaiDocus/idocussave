@@ -60,7 +60,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
   end
 
   def coala_piece_name
-    report.journal + report.name.split(' ')[-1][2..-1] + '%03d' % position
+    journal_name + report.name.split(' ')[-1][2..-1] + '%03d' % position
   end
 
   def operation_name
@@ -71,6 +71,13 @@ class Pack::Report::Preseizure < ActiveRecord::Base
     piece.try(:content).try(:url)
   end
 
+  def journal_name
+    if self.operation
+      operation.bank_account.try(:foreign_journal) || operation.bank_account.journal
+    else
+      report.journal
+    end
+  end
 
   def period_date
     Time.local(year, month, 1)

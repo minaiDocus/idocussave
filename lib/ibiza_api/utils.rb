@@ -8,7 +8,7 @@ class IbizaAPI::Utils
 
     results = sorted_used_fields.map do |k, _|
       if k == 'journal'
-        preseizure.report.journal
+        preseizure.journal_name
       elsif k == 'piece_name' && preseizure.piece
         preseizure.piece.name
       elsif k == 'piece_number'
@@ -57,7 +57,7 @@ class IbizaAPI::Utils
           preseizures.each do |preseizure|
             preseizure.accounts.each do |account|
               xml.importEntry do
-                xml.journalRef preseizure.report.journal
+                xml.journalRef preseizure.journal_name
                 xml.date computed_date(preseizure, exercise)
 
                 if preseizure.piece

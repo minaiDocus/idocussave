@@ -48,7 +48,8 @@ fr:
         message: Message
       bank_account:
         number: Numéro de compte
-        journal: Journal comptable de l’outil comptable
+        journal: Code journal
+        foreign_journal: Journal comptable de l’outil comptable
         accounting_number: Compte de trésorerie
         temporary_account: Compte d’attente
         start_date: Date limite de livraison

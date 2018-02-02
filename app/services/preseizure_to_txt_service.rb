@@ -20,7 +20,7 @@ class PreseizureToTxtService
           line[i + 1] = account_number[i] || ' '
         end
 
-        line[9..10]    = preseizure.report.journal[0..1]
+        line[9..10]    = preseizure.journal_name[0..1]
         line[11..13]   = '000'
         line[14..19]   = preseizure.date.strftime('%d%m%y') if preseizure.date
 
@@ -32,7 +32,7 @@ class PreseizureToTxtService
         line[43..54]   = '%012d' % entry.amount_in_cents
         line[63..68]   = preseizure.deadline_date.strftime('%d%m%y') if preseizure.deadline_date
         line[107..109] = 'EUR'
-        line[110..112] = preseizure.report.journal[0..2] if preseizure.report.journal.size > 2
+        line[110..112] = preseizure.journal_name[0..2] if preseizure.journal_name.size > 2
 
         if label.size > 20
           e = 116 + label.size - 1

@@ -33,7 +33,7 @@ class PreseizuresToCsv
     if @is_coala
       result =  [
                   entry.preseizure.date.try(:strftime, "%d/%m/%Y"),
-                  entry.preseizure.report.journal.downcase,
+                  entry.preseizure.journal_name.downcase,
                   entry.account.number,
                   entry.preseizure.coala_piece_name,
                   entry.preseizure.third_party || entry.preseizure.operation_label,
@@ -74,7 +74,7 @@ class PreseizuresToCsv
           when /\Aclient_code\z/
             entry.preseizure.report.user.code
           when /\Ajournal\z/
-            entry.preseizure.report.journal
+            entry.preseizure.journal_name
           when /\Aperiod\z/
             entry.preseizure.piece_name.try(:split).try(:[], 2)
           when /\Apiece_number\z/

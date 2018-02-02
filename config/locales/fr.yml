@@ -803,7 +803,8 @@ fr:
           bank_name: Banque
           name: Nom
           number: Numéro de compte
-          journal: Journal comptable de l’outil comptable
+          journal: Code journal
+          foreign_journal: Code journal logiciel comptable
           accounting_number: Compte de trésorerie
           temporary_account: Compte d’attente
           start_date: Date historique
