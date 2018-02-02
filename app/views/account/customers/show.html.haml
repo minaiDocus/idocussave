@@ -337,7 +337,7 @@
                   = render 'ibiza_box'
                 - else
                   = render 'shared/ibiza_not_configured_warning'
-            - if @organization.mcf_settings.access_token.present?
+            - if @organization.mcf_settings.try(:access_token).present?
               #mcf.tab-pane{ class: ('active' if params[:tab] == 'mcf') }
                 %table.table.table-striped.table-condensed
                   %tbody
