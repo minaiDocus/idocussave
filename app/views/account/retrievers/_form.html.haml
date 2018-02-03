@@ -5,7 +5,7 @@
   = f.input :service_name, as: :hidden
   = f.input :capabilities, disabled: true
   = f.input :name
-  - unless @retriever.persisted? && @retriever.bank?
+  - unless @retriever.persisted? && @retriever.connector.bank?
     = f.input :journal_id, collection: @account.account_book_types.order(name: :asc), include_blank: false, required: true, wrapper_html: { style: 'display:none' }
   #params{ data: { connector_id: @retriever.connector_id, attributes: retriever_dyn_attrs(@retriever) } }
   .form-actions

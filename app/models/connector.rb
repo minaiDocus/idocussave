@@ -102,4 +102,16 @@ class Connector < ActiveRecord::Base
       urls:         urls
     }
   end
+
+  def provider?
+    capabilities == ['document']
+  end
+
+  def bank?
+    capabilities == ['bank']
+  end
+
+  def provider_and_bank?
+    capabilities.include?('bank') && capabilities.include?('document')
+  end
 end
