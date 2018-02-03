@@ -9,7 +9,7 @@ class DematboxNotifyUploaded
       begin
         result = DematboxApi.notify_uploaded temp_document.dematbox_doc_id, temp_document.dematbox_box_id, message
       rescue Savon::SOAPFault => e
-        if e.match(/702:DocId already notified/)
+        if e.message.match(/702:DocId already notified/)
           result = true
         else
           raise
