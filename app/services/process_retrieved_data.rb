@@ -119,7 +119,7 @@ class ProcessRetrievedData
             initial_documents_count = retriever.temp_documents.count
             initial_sandbox_documents_count = retriever.sandbox_documents.count
 
-            unless retriever.bank?
+            unless retriever.bank? || retriever.journal.nil?
               if connection['subscriptions'].present?
                 errors = []
                 connection['subscriptions'].each do |subscription|
