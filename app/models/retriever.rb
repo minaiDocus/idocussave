@@ -43,8 +43,8 @@ class Retriever < ActiveRecord::Base
 
   before_validation do |retriever|
     if retriever.connector
-      retriever.service_name ||= retriever.connector.name
-      retriever.capabilities ||= retriever.connector.capabilities
+      retriever.service_name = retriever.connector.name
+      retriever.capabilities = retriever.connector.capabilities
     end
     retriever.journal = nil if retriever.capabilities == ['bank']
   end

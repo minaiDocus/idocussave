@@ -1,5 +1,7 @@
 # -*- encoding : UTF-8 -*-
 class Connector < ActiveRecord::Base
+  audited
+
   has_many :retrievers
 
   serialize :capabilities, Array
