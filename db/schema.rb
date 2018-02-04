@@ -228,6 +228,8 @@ ActiveRecord::Schema.define(version: 20180328105102) do
     t.string   "api_name",              limit: 255,   default: "budgea"
     t.boolean  "is_used",                             default: false
     t.string   "type_name",             limit: 255
+    t.boolean  "lock_old_operation",                default: true
+    t.integer  "permitted_late_days",   limit: 4,   default: 7
   end
 
   add_index "bank_accounts", ["mongo_id"], name: "index_bank_accounts_on_mongo_id", using: :btree

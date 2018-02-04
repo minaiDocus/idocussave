@@ -54,6 +54,8 @@ fr:
         accounting_number: Compte de trésorerie
         temporary_account: Compte d’attente
         start_date: Date limite de livraison
+        lock_old_operation: Bloquer les opérations du mois précédent
+        permitted_late_days: Nombre de jour de retard autorisé avant blocage de l'opération
       user:
         code: Code du dossier
         company: Nom de la société

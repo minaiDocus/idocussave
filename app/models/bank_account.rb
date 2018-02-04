@@ -12,6 +12,7 @@ class BankAccount < ActiveRecord::Base
 
   validates_presence_of :api_id, :bank_name, :name, :number
   validate :uniqueness_of_number_and_name
+  validates :permitted_late_days, numericality: { greater_than: 0, less_than_or_equal_to: 365 }
 
   validates_presence_of :journal, :accounting_number, :start_date, if: Proc.new { |e| e.is_for_pre_assignment }
   validates_presence_of :currency, if: Proc.new { |e| e.is_for_pre_assignment }

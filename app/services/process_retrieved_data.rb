@@ -334,9 +334,10 @@ private
   end
 
   def is_operation_old?(bank_account, operation)
-    bank_account.created_at < 1.month.ago &&
+    bank_account.lock_old_operation &&
+      bank_account.created_at < 1.month.ago &&
       operation.date < Date.today.beginning_of_month &&
-      operation.date < 1.week.ago.to_date
+      operation.date < bank_account.permitted_late_days.days.ago.to_date
   end
 
   def logger
