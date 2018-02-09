@@ -34,7 +34,7 @@
                   - if document.retriever.nil?
                     %span.label supprimé
                   = document.retriever_name
-                %td= l(document.metadata['date'], format: '%d %b %Y')
+                %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
                 %td= link_to document.metadata['name'] + '.pdf', account_retrieved_document_path(document)
                 %td.pages= document.pages_number
                 %td.amount= document.metadata['amount'].to_s + ' €'

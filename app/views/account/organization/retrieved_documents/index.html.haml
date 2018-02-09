@@ -26,7 +26,7 @@
                 - if document.retriever.nil?
                   %span.label supprimé
                 = document.retriever_name
-              %td= l(document.metadata['date'], format: '%d %b %Y')
+              %td= l(document.metadata['date'], format: '%d %b %Y') rescue ''
               %td= link_to document.metadata['name'] + '.pdf', account_organization_customer_retrieved_document_path(@organization, @customer, document)
               %td
                 = link_to document.piece.content_file_name, piece_account_organization_customer_retrieved_document_path(@organization, @customer, document) if document.piece
