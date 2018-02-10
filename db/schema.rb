@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180125201652) do
+ActiveRecord::Schema.define(version: 20180210141732) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1611,35 +1611,33 @@ ActiveRecord::Schema.define(version: 20180125201652) do
   add_index "periods", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "pre_assignment_deliveries", force: :cascade do |t|
-    t.string   "mongo_id",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "pack_name",                limit: 255
-    t.string   "state",                    limit: 255
+    t.string   "pack_name",       limit: 255
+    t.string   "state",           limit: 255
     t.boolean  "is_auto"
-    t.integer  "total_item",               limit: 4
+    t.integer  "total_item",      limit: 4
     t.date     "grouped_date"
-    t.text     "xml_data",                 limit: 4294967295
-    t.string   "error_message",            limit: 255
+    t.text     "xml_data",        limit: 4294967295
+    t.text     "error_message",   limit: 65535
     t.boolean  "is_to_notify"
     t.boolean  "is_notified"
     t.datetime "notified_at"
-    t.integer  "organization_id",          limit: 4
-    t.string   "organization_id_mongo_id", limit: 255
-    t.integer  "report_id",                limit: 4
-    t.string   "report_id_mongo_id",       limit: 255
-    t.integer  "user_id",                  limit: 4
-    t.string   "user_id_mongo_id",         limit: 255
-    t.string   "ibiza_id",                 limit: 255
+    t.integer  "organization_id", limit: 4
+    t.integer  "report_id",       limit: 4
+    t.integer  "user_id",         limit: 4
+    t.string   "ibiza_id",        limit: 255
   end
 
-  add_index "pre_assignment_deliveries", ["mongo_id"], name: "index_pre_assignment_deliveries_on_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["is_auto"], name: "index_pre_assignment_deliveries_on_is_auto", using: :btree
+  add_index "pre_assignment_deliveries", ["is_notified"], name: "index_pre_assignment_deliveries_on_is_notified", using: :btree
+  add_index "pre_assignment_deliveries", ["is_to_notify"], name: "index_pre_assignment_deliveries_on_is_to_notify", using: :btree
   add_index "pre_assignment_deliveries", ["organization_id"], name: "organization_id", using: :btree
-  add_index "pre_assignment_deliveries", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["pack_name"], name: "index_pre_assignment_deliveries_on_pack_name", using: :btree
   add_index "pre_assignment_deliveries", ["report_id"], name: "report_id", using: :btree
-  add_index "pre_assignment_deliveries", ["report_id_mongo_id"], name: "report_id_mongo_id", using: :btree
+  add_index "pre_assignment_deliveries", ["state"], name: "index_pre_assignment_deliveries_on_state", using: :btree
+  add_index "pre_assignment_deliveries", ["total_item"], name: "index_pre_assignment_deliveries_on_total_item", using: :btree
   add_index "pre_assignment_deliveries", ["user_id"], name: "user_id", using: :btree
-  add_index "pre_assignment_deliveries", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "product_option_orders", force: :cascade do |t|
     t.string  "mongo_id",                       limit: 255
