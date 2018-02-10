@@ -132,6 +132,8 @@ class Document < ActiveRecord::Base
 
     if File.exist?(filepath)
       text = File.open(filepath, 'r').readlines.map(&:strip).join(' ')
+      # remove special character, which will not be used on search anyway
+      text = text.each_char.select { |c| c.bytes.size < 4 }.join
       document.content_text = text
     end
 
