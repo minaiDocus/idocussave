@@ -18,8 +18,9 @@ class Composition < ActiveRecord::Base
 
     user.extend_organization_role
 
+    accounts = [user] + user.accounts
     documents = Document.find(document_ids).select do |document|
-      document.pack.owner == user || user.customers.include?(document.pack.owner) || user.is_admin
+      document.pack.owner == accounts || user.customers.include?(document.pack.owner) || user.is_admin
     end.sort_by do |x|
       document_ids.index(x.id.to_s)
     end
