@@ -19,8 +19,10 @@ class UpdateAccountingPlan
 
 
   def execute
-    if @user.ibiza_id.present? && @user.organization.try(:ibiza).try(:configured?)
+    if @user.ibiza_id.present? && @user.organization.try(:ibiza).try(:configured?) && @accounting_plan.need_update?
       if get_ibiza_accounting_plan
+        @accounting_plan.update(is_updating: true, last_checked_at: Time.now)
+
         @accounting_plan.providers = []
         @accounting_plan.customers = []
 
@@ -28,6 +30,7 @@ class UpdateAccountingPlan
           create_item(account)
         end
 
+        @accounting_plan.is_updating = false
         @accounting_plan.save
       else
         false
@@ -53,8 +56,6 @@ class UpdateAccountingPlan
   def get_ibiza_accounting_plan
     client.request.clear
     client.company(@user.ibiza_id).accounts?
-
-    @accounting_plan.update(last_checked_at: Time.now)
 
     if client.response.success?
       @xml_data = client.response.body.force_encoding('UTF-8')

@@ -78,6 +78,8 @@ class AddTempDocumentToTempPack
       temp_pack.save
     end
 
+    UpdateAccountingPlanWorker.perform_async user.id if user.accounting_plan.try(:need_update?)
+
     temp_document
   end
 end

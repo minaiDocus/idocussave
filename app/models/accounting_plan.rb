@@ -11,6 +11,7 @@ class AccountingPlan < ActiveRecord::Base
   accepts_nested_attributes_for :customers,    allow_destroy: true
   accepts_nested_attributes_for :vat_accounts, allow_destroy: true
 
+  scope :updating,     -> { where(is_updating: true) }
 
   def import(file, type)
     items = type == 'providers' ? providers : customers
@@ -107,5 +108,10 @@ class AccountingPlan < ActiveRecord::Base
     end
 
     data.join("\n")
+  end
+
+  def need_update?
+    return true unless last_checked_at
+    (last_checked_at < 4.hours.ago && !is_updating)? true : false
   end
 end
