@@ -64,6 +64,10 @@ class Operation < ActiveRecord::Base
     operations + forced_operations
   end
 
+  def need_conversion?
+    bank_account.original_currency["id"] != bank_account.currency
+  end
+
   def retrieved?
     api_name.in? %w(budgea fiduceo)
   end

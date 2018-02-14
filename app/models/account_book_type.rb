@@ -43,6 +43,7 @@ class AccountBookType < ActiveRecord::Base
   validates :description, length: { in: 2..50 }
   validates_length_of   :instructions, maximum: 400
   validates_presence_of :name
+  validates_presence_of :currency
   validates_presence_of :description
   validate  :presence_of_vat_account,         if: proc { |j| j.is_pre_assignment_processable? }
   validates_presence_of :anomaly_account,     if: proc { |j| j.is_pre_assignment_processable? }

@@ -94,4 +94,8 @@ module JournalHelper
       e.present? ? [e, e] : ['Aucun', e]
     end
   end
+
+  def journal_currencies
+    CurrencyRate.lists
+  end
 end

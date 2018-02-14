@@ -35,6 +35,7 @@
             = f.input :entry_type, label: 'Sélectionnez le type de pré-saisie comptable pour le journal', collection: [[t('simple_form.labels.account_book_type.entry_type_0'),0], [t('simple_form.labels.account_book_type.entry_type_1'),1], [t('simple_form.labels.account_book_type.entry_type_2'),2], [t('simple_form.labels.account_book_type.entry_type_3'),3]], include_blank: false, input_html: { disabled: is_disabled }
 
             .pre-assignment-attributes{ style: 'display:none;' }
+              = f.input :currency, collection: journal_currencies, include_blank: false, selected: "EUR", hint: "Les écritures seront converties vers cette devise avec le taux de change de la date de facture"
               = f.input :account_type, label: 'Souhaitez-vous configurer le journal en compte d’attente ou compte par défaut?', collection: [["Compte d'attente", 'waiting'], ["Compte par défaut", 'default']], include_blank: false
               .account_type_help.margin2bottom
                 %i

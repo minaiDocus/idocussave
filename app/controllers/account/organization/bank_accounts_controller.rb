@@ -50,6 +50,6 @@ private
   end
 
   def bank_account_params
-    params.require(:bank_account).permit(:journal, :accounting_number, :foreign_journal, :temporary_account, :start_date)
+    params.require(:bank_account).permit(:journal, :currency, :accounting_number, :foreign_journal, :temporary_account, :start_date)
   end
 end
