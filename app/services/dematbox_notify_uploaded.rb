@@ -1,5 +1,5 @@
 class DematboxNotifyUploaded
-  def self.execute(temp_document_id)
+  def self.execute(temp_document_id, remaining_tries=0)
     temp_document = TempDocument.find(temp_document_id)
 
     if temp_document.dematbox_box_id && temp_document.dematbox_doc_id
@@ -11,6 +11,8 @@ class DematboxNotifyUploaded
       rescue Savon::SOAPFault => e
         if e.message.match(/702:DocId already notified/)
           result = true
+        elsif e.message.match(/703:DocId not sent/) && remaining_tries > 0 && (not Rails.env.test?)
+          DematboxNotifyUploadedWorker.perform_in(5.seconds, temp_document_id, (remaining_tries-1))
         else
           raise
         end
