@@ -18,7 +18,8 @@ class Storage::Metafile
   end
 
   def name
-    @name ||= @remote_file.name
+    # add more special character to sanitize
+    @name ||= @remote_file.name.gsub(/\*/, '')
   end
 
   def description
