@@ -38,6 +38,7 @@ class ProcessOperation
             if operation.need_conversion?
               preseizure.amount           = operation.amount.abs
               preseizure.currency         = operation.bank_account.original_currency["id"]
+              preseizure.unit             = operation.bank_account.currency
               preseizure.conversion_rate  = CurrencyRate.get_operation_exchange_rate operation
             end
             preseizure.save

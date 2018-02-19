@@ -12,7 +12,11 @@ class Idocus.Views.PreseizureAccountsIndex extends Backbone.View
     this
 
   render: ->
-    @$el.html(@template(@collection))
+    unit = "EUR"
+    if(@collection.length > 0)
+      unit = @collection.at(0).get("unit")
+
+    @$el.html(@template({@collection, unit: unit}))
     @setPreseizureAccounts()
     this
 

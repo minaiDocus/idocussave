@@ -19,7 +19,7 @@ class BankAccount < ActiveRecord::Base
   validates_format_of :journal, with: /\A[A-Z][A-Z0-9]*\z/, if: Proc.new { |e| e.is_for_pre_assignment }
 
   scope :used,           -> { where(is_used: true) }
-  scope :configured,     -> { where.not(journal:[nil, ''], accounting_number: [nil, '']) }
+  scope :configured,     -> { where.not(journal: [nil, ''], accounting_number: [nil, '']) }
   scope :not_configured, -> { where(journal: [nil, ''], accounting_number: [nil, '']) }
 
   def configured?

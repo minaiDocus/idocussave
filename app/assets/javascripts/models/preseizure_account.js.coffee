@@ -18,6 +18,7 @@ class Idocus.Models.PreseizureAccount extends Backbone.Model
       type: @get('type')
       number: @get('number')
       lettering: @get('lettering')
+      unit: @get('unit')
       entries_attributes: @get('entries')
 
   typeName: ->

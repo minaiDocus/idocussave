@@ -12,6 +12,7 @@
               <element type="string" name="amount"/>
               <element type="string" name="currency"/>
               <element type="string" name="conversion_rate"/>
+              <element type="string" name="unit"/>
               <element type="string" name="deadline_date"/>
               <element type="string" name="observation"/>
               <element type="boolean" name="is_made_by_abbyy"/>

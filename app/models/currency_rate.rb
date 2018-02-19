@@ -11,7 +11,7 @@ class CurrencyRate < ActiveRecord::Base
     #take the currency_rate of the day if the given date is future
     date = Date.today if date > Date.today
 
-    current_rate = self.of(date, from, to).try(:exchange_rate) || nil
+    current_rate = self.of(date, from, to).try(:exchange_rate)
 
     if current_rate.nil?
       CurrencyRateService.execute from, date

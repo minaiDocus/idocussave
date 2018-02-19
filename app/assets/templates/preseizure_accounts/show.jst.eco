@@ -6,11 +6,11 @@
     </a>
   </td>
   <% if parseInt(entry.get('type')) == 1: %>
-    <td class="amount"><%= entry.get('amount') %> €</td>
+    <td class="amount"><%= entry.get('amount') %></td>
     <td class="amount"></td>
   <% else: %>
     <td class="amount"></td>
-    <td class="amount"><%= entry.get('amount') %> €</td>
+    <td class="amount"><%= entry.get('amount') %></td>
   <% end %>
   <td>
     <a class="tip edit_entry" href="" data-id="<%= entry.get('id') %>" title="Editer">
