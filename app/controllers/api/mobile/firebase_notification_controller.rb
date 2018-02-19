@@ -1,5 +1,6 @@
 class Api::Mobile::FirebaseNotificationController < MobileApiController
   skip_before_action :load_organization
+  skip_before_action :apply_membership
   before_action :load_notifications
 
   respond_to :json
@@ -27,6 +28,7 @@ class Api::Mobile::FirebaseNotificationController < MobileApiController
   def register_firebase_token
     FirebaseToken.create_or_initialize(@user, params[:firebase_token], params[:platform], params[:version]) if params[:firebase_token].present?
     @user.firebase_tokens.each do |token| token.delete_unless_valid end
+
     render json: { success: true }, status: 200
   end
 

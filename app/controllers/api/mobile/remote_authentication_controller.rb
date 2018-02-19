@@ -3,6 +3,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
   skip_before_action :verify_suspension
   skip_before_action :verify_if_active
   skip_before_action :load_organization
+  skip_before_action :apply_membership
 
   respond_to :json
 
@@ -13,8 +14,11 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     message = 'Ping success'
 
     #(code 500 for automatically logout app mobile)
-      # code = 500
-      # message = "Vous n'aves pas l'authorisation necessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
+      #### EXAMPLE ####
+      # if (version.to_f <= 1.08 && platform == "android")
+      #   code = 500 
+      #   message = "Vous n'avez pas l'autorisation nécessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
+      # end
     #(code 500 for automatically logout app mobile)
 
     render json: { success: true, message: message, code: code }, status: 200
@@ -22,6 +26,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
 
   def request_connexion
     ensure_params_exist
+
     resource = User.find_for_database_authentication(email: params[:user_login][:login])
     return invalid_login_attempt unless resource
 
@@ -31,6 +36,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
       render json: { success: true, user: resource }, status: 200
       return
     end
+
     invalid_login_attempt
   end
 
@@ -43,7 +49,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
 
   def ensure_params_exist
     return unless params[:user_login].blank?
-    render json: { error: true, message: 'Paramètre non valide'}, status: 422
+    render json: { error: true, message: 'Paramètre non valide' }, status: 422
   end
 
   def invalid_login_attempt

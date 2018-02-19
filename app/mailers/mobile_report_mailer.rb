@@ -1,7 +1,7 @@
 class MobileReportMailer < ActionMailer::Base
-  def report(subject, data_report)
+  def report(data_report)
     @data_report = data_report
     
-    mail to: "mina@idocus.com", subject: "[Erreur mobile] - #{subject}"
+    mail to: "mina@idocus.com", subject: "[Erreur mobile] - #{data_report[:title]}"
   end
 end

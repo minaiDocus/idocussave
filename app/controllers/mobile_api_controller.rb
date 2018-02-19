@@ -6,6 +6,7 @@ class MobileApiController < ApplicationController
   before_action :verify_suspension
   before_action :verify_if_active
   before_action :load_organization
+  before_action :apply_membership
 
   respond_to :json
 
@@ -22,22 +23,27 @@ class MobileApiController < ApplicationController
     authenticate_user!
   end
 
-  protected
-
-  def load_user_and_role(name = :@user)
-    super do |collaborator|
-      if @user.organization.present?
-        collaborator.with_organization_scope(@user.organization)
-      end
-    end
+  def organization_id
+    (params[:organization_id].present?)? params[:organization_id] : @user.organization.id
   end
+
+  protected
 
   def has_multiple_accounts?
     accounts.count > 1 ? true : false
   end
 
   def load_organization
-    @organization = @user.organization
+    if @user.admin?
+      @organization = ::Organization.find organization_id
+    else
+      @membership = Member.find_by!(user_id: @user.id, organization_id: organization_id.to_i)
+      @organization = @membership.organization
+    end
+  end
+
+  def apply_membership
+    @user.with_scope @membership, @organization
   end
 
   def customers

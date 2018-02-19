@@ -1,9 +1,11 @@
 class FirebaseToken < ActiveRecord::Base
   belongs_to :user
+
   validates_presence_of :name, :user
 
   def self.create_or_initialize(user, name, platform, version)
     firebase_token = user.firebase_tokens.find_by_name(name) || user.firebase_tokens.create(name: name, platform: "#{platform} - #{version}")
+    
     firebase_token.update last_registration_date: Time.now if firebase_token.present?
   end
 

@@ -1,12 +1,11 @@
 class FirebaseNotification
   class << self
-    def fcm_send_notification(notification)
-      fcm_send_message(notification.title, notification.message, notification.user, false)
+    def send_notification(notification)
+      send_message(notification.user, notification.title, notification.message, false)
     end
 
-    def fcm_send_message(title="", message="", user=nil, to_be_added=false)
-      tokens = user.firebase_tokens
-      tokens.each do |token|
+    def send_message(user, title="", message="", to_be_added=false)
+      user.firebase_tokens.each do |token|
         if token.valid_token?
           payload = {
                       "to": token.name,
@@ -28,7 +27,7 @@ class FirebaseNotification
       end
     end
 
-    def fcm_send_broadcast_message(title="", message="", to_be_added=false)
+    def send_broadcast_message(title="", message="", to_be_added=false)
       payload = { 
                  "notification": {
                     "title": title,
@@ -49,16 +48,15 @@ class FirebaseNotification
 
     def send_request_fcm(payload)
       begin
-        header = {
-                  'Content-type' => 'application/json', 
-                  'Authorization' => basic_server_key
-                 }
-        uri = URI.parse(api_uri)
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = true
-        req = Net::HTTP::Post.new(uri.path, header)
-        req.body = payload.to_json
-        res = https.request(req)
+        response = Typhoeus::Request.new(
+          api_uri,
+          method:  :post,
+          headers:  { 
+                      'Content-type' => 'application/json', 
+                      'Authorization' => basic_server_key 
+                    },
+          body:  payload.to_json
+        ).run
         true
       rescue Exception => e
         e.to_s
@@ -67,11 +65,11 @@ class FirebaseNotification
     end
 
     def api_uri
-      'https://fcm.googleapis.com/fcm/send'
+      Rails.application.secrets.firebase_api['base_uri']
     end
 
     def basic_server_key
-      'key=AAAA28lsVzI:APA91bGcBSq2NFkSKwzLaMmJSeYWn-FcUxgSY3AB9amMj4MGzJ7mjXIgEI2dcv2oilaKNriwcaS12UrC5VWifI-P-HUm7tCOmbZn9yagd1LrbnRu05nlyRccTA4VyDCoZfVZSD9S-ziI'
+      Rails.application.secrets.firebase_api['basic_server_key']
     end
 
   end
