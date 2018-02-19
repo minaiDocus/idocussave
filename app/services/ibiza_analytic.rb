@@ -45,8 +45,10 @@ class IbizaAnalytic
               axis = [:axis1, :axis2, :axis3].select do |axis_name|
                 analytic[axis_name] && analytic[axis_name][:id] == data['axis']
               end.first
-              data.dig('analyticalSections', 'analyticalSection').each do |section|
-                next if section['closed'].to_i != 0
+              sections = data.dig('analyticalSections', 'analyticalSection')
+              sections = [sections] if sections.is_a?(Hash)
+              sections.each do |section|
+                next if section['closed'].to_i == 1
                 analytic[axis][:sections] << { code: section['code'], description: section['description'] }
               end
             end
