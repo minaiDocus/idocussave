@@ -94,6 +94,7 @@ module Idocus
 
     ActionMailer::Base.default from: 'iDocus <notification@idocus.com>', reply_to: 'Support iDocus <support@idocus.com>'
 
+    config.middleware.insert_before ActionDispatch::ParamsParser, "CatchJsonParseErrors"
     config.middleware.swap Rails::Rack::Logger, CustomLogger, alternative: ['/account/notifications/latest']
   end
 end
