@@ -73,7 +73,7 @@ class Pack::Report::Preseizure < ActiveRecord::Base
 
   def journal_name
     if self.operation
-      operation.bank_account.try(:foreign_journal).presence || operation.bank_account.journal
+      operation.bank_account.try(:foreign_journal).presence || operation.bank_account.try(:journal) || report.journal
     else
       report.journal
     end
