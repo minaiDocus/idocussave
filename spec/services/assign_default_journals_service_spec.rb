@@ -4,17 +4,18 @@ require 'spec_helper'
 describe AssignDefaultJournalsService do
   describe '#execute' do
     before(:all) do
-      @user = FactoryGirl.create(:user, code: 'TS%0001')
-      @user.options = UserOptions.create(user_id: @user.id)
-      @collaborator = FactoryGirl.create(:prescriber, code: 'TS%C001')
+      @user = create(:user, code: 'TS%0001')
+      @user.create_options
+      @prescriber = create(:prescriber)
+      @collaborator = Collaborator.new(@prescriber)
       @organization = Organization.create(name: 'TEST', code: 'TS')
-      @organization.members << @user
-      @organization.members << @collaborator
+      @organization.customers << @user
+      Member.create(user: @prescriber, organization: @organization, code: 'TS%C001')
     end
 
     after(:each) do
       @user.reload
-      @collaborator.reload
+      @prescriber.reload
       @organization.reload
     end
 

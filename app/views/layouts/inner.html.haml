@@ -13,6 +13,7 @@
     = stylesheet_link_tag 'account/paper_processes' if controller_name == 'paper_processes'
     = stylesheet_link_tag 'account/suspended' if controller_name == 'suspended'
     = stylesheet_link_tag 'account/addresses' if controller_name == 'addresses'
+    = stylesheet_link_tag 'account/group_organizations' if controller_name == 'group_organizations'
 
   %body
     %div{ id: ('wrap' unless controller_name == 'documents') }
@@ -27,6 +28,8 @@
             - if current_user
               .nav-collapse.collapse
                 = render partial: 'layouts/navigation'
+                - if current_user.admin?
+                  = render partial: 'layouts/change_user'
                 = render partial: 'layouts/user'
                 #notifications
                   = render partial: 'layouts/notifications'
@@ -63,5 +66,7 @@
       = javascript_include_tag 'account/documents'
     - elsif controller_name == 'addresses'
       = javascript_include_tag 'account/addresses'
+    - elsif controller_name == 'group_organizations'
+      = javascript_include_tag 'account/group_organizations'
     = render '/shared/google_analytics'
     = render '/shared/zendesk_help'

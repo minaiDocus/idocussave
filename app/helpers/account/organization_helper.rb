@@ -1,9 +1,9 @@
 module Account::OrganizationHelper
-  def collaborator_form_url(organization, collaborator)
-    if action_name == 'new' || !collaborator.persisted?
+  def collaborator_form_url(organization, member)
+    if action_name == 'new' || !member.persisted?
       account_organization_collaborators_url(organization)
     else
-      account_organization_collaborator_url(organization, collaborator)
+      account_organization_collaborator_url(organization, member)
     end
   end
 
@@ -70,5 +70,9 @@ module Account::OrganizationHelper
     else
       [:third_party]
     end
+  end
+
+  def inside_organization?
+    request.path =~ /organizations/ && !((controller_name == 'organizations' && action_name.in?(%w(index new create))) || controller_name == 'group_organizations')
   end
 end

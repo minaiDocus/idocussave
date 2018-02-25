@@ -6,7 +6,7 @@ describe AccountNumberFinderService do
     before(:all) do
       @organization = create(:organization)
       @user = create(:user)
-      @organization.members << @user
+      @organization.customers << @user
       @accounting_plan = [
         ['GOOGLE', '0GOO'],
         ['SLIMPAY', '0SLIM'],

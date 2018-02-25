@@ -1,14 +1,14 @@
 class ShareAccount
   def initialize(requester, params, authorized_by=nil)
     @requester     = requester
-    @authorized_by = authorized_by || requester
+    @authorized_by = authorized_by
     @params        = params
   end
 
   def execute
     @account_sharing = AccountSharing.new @params
     @account_sharing.organization  = @requester.organization
-    @account_sharing.authorized_by = @authorized_by
+    @account_sharing.authorized_by = authorized_by
     @account_sharing.is_approved   = true
     authorized = true
     authorized = false unless @account_sharing.collaborator && (@account_sharing.collaborator.is_guest || @account_sharing.collaborator.in?(@requester.customers))
@@ -35,5 +35,15 @@ class ShareAccount
       NotifyWorker.perform_async(notification2.id) if notification2.save
     end
     @account_sharing
+  end
+
+  def authorized_by
+    if @authorized_by
+      @authorized_by
+    elsif @requester.class == Collaborator
+      @requester.user
+    else
+      @requester
+    end
   end
 end

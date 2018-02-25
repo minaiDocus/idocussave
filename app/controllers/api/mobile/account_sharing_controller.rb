@@ -93,7 +93,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
         !params[:q].split.detect { |e| !str.match(/#{e}/i) }
       end
 
-      unless is_leader?
+      unless @user.leader?
         users = users.select do |user|
           user.is_guest || @user.customers.include?(user)
         end
@@ -110,7 +110,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def get_list_customers
     tags = []
     if params[:q].present?
-      users = is_leader? ? @organization.customers.active : @user.customers.active
+      users = @user.leader? ? @organization.customers.active : @user.customers.active
       users = users.where("code REGEXP :t OR company REGEXP :t OR first_name REGEXP :t OR last_name REGEXP :t", t: params[:q].split.join('|')
       ).order(code: :asc).limit(10).select do |user|
         str = [user.code, user.company, user.first_name, user.last_name].join(' ')
@@ -265,7 +265,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     params.require(:account_sharing_request).permit(:code_or_email)
   end
 
-  def is_leader?
+  def @user.leader?
     @user == @organization.leader || @user.is_admin
   end
 

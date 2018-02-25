@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210141732) do
+ActiveRecord::Schema.define(version: 20180224152842) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -778,10 +778,19 @@ ActiveRecord::Schema.define(version: 20180210141732) do
   add_index "groups", ["organization_id"], name: "organization_id", using: :btree
   add_index "groups", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
 
-  create_table "groups_users", force: :cascade do |t|
-    t.integer "user_id",  limit: 4
-    t.integer "group_id", limit: 4
+  create_table "groups_members", force: :cascade do |t|
+    t.integer "member_id", limit: 4, null: false
+    t.integer "group_id",  limit: 4, null: false
   end
+
+  add_index "groups_members", ["member_id", "group_id"], name: "index_groups_members_on_member_id_and_group_id", unique: true, using: :btree
+
+  create_table "groups_users", force: :cascade do |t|
+    t.integer "user_id",  limit: 4, null: false
+    t.integer "group_id", limit: 4, null: false
+  end
+
+  add_index "groups_users", ["user_id", "group_id"], name: "index_groups_users_on_user_id_and_group_id", unique: true, using: :btree
 
   create_table "ibizabox_folders", force: :cascade do |t|
     t.integer  "journal_id",          limit: 4
@@ -872,6 +881,24 @@ ActiveRecord::Schema.define(version: 20180210141732) do
   add_index "knowings", ["mongo_id"], name: "index_knowings_on_mongo_id", using: :btree
   add_index "knowings", ["organization_id"], name: "organization_id", using: :btree
   add_index "knowings", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree
+
+  create_table "members", force: :cascade do |t|
+    t.integer  "organization_id",          limit: 4,                            null: false
+    t.integer  "user_id",                  limit: 4,                            null: false
+    t.datetime "created_at",                                                    null: false
+    t.datetime "updated_at",                                                    null: false
+    t.string   "role",                     limit: 255, default: "collaborator", null: false
+    t.string   "code",                     limit: 255,                          null: false
+    t.boolean  "manage_groups",                        default: true
+    t.boolean  "manage_collaborators",                 default: false
+    t.boolean  "manage_customers",                     default: true
+    t.boolean  "manage_journals",                      default: true
+    t.boolean  "manage_customer_journals",             default: true
+  end
+
+  add_index "members", ["code"], name: "index_members_on_code", unique: true, using: :btree
+  add_index "members", ["organization_id", "user_id"], name: "index_organization_user_on_members", unique: true, using: :btree
+  add_index "members", ["role"], name: "index_members_on_role", using: :btree
 
   create_table "new_provider_requests", force: :cascade do |t|
     t.string   "mongo_id",              limit: 255
@@ -1105,6 +1132,13 @@ ActiveRecord::Schema.define(version: 20180210141732) do
   add_index "orders", ["user_id"], name: "user_id", using: :btree
   add_index "orders", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
+  create_table "organization_groups", force: :cascade do |t|
+    t.string   "name",        limit: 255, null: false
+    t.string   "description", limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
   create_table "organization_rights", force: :cascade do |t|
     t.string   "mongo_id",                                   limit: 255
     t.datetime "created_at"
@@ -1147,11 +1181,13 @@ ActiveRecord::Schema.define(version: 20180210141732) do
     t.boolean  "is_operation_processing_forced",              default: false
     t.boolean  "is_operation_value_date_needed",              default: false
     t.boolean  "is_duplicate_blocker_activated",              default: true
+    t.integer  "organization_group_id",           limit: 4
   end
 
   add_index "organizations", ["leader_id"], name: "leader_id", using: :btree
   add_index "organizations", ["leader_id_mongo_id"], name: "leader_id_mongo_id", using: :btree
   add_index "organizations", ["mongo_id"], name: "index_organizations_on_mongo_id", using: :btree
+  add_index "organizations", ["organization_group_id"], name: "index_organizations_on_organization_group_id", using: :btree
 
   create_table "pack_dividers", force: :cascade do |t|
     t.string   "mongo_id",         limit: 255
@@ -2172,8 +2208,10 @@ ActiveRecord::Schema.define(version: 20180210141732) do
     t.text     "group_ids",                                                      limit: 65535
     t.boolean  "is_guest",                                                                     default: false
     t.datetime "news_read_at"
+    t.integer  "manager_id",                                                     limit: 4
   end
 
+  add_index "users", ["manager_id"], name: "index_users_on_manager_id", using: :btree
   add_index "users", ["mongo_id"], name: "index_users_on_mongo_id", using: :btree
   add_index "users", ["organization_id"], name: "organization_id", using: :btree
   add_index "users", ["organization_id_mongo_id"], name: "organization_id_mongo_id", using: :btree

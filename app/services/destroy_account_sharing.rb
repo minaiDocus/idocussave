@@ -16,7 +16,7 @@ class DestroyAccountSharing
         notification.title       = 'Accès à un compte révoqué'
         notification.message     = "Votre accès au compte #{@account_sharing.account.info} a été révoqué."
       elsif @requester == @account_sharing.collaborator
-        notification.user        = @account_sharing.account.parent || @account_sharing.account.organization.leader
+        notification.user        = @account_sharing.account.manager&.user || @account_sharing.account.organization.leader
         notification.notice_type = 'account_sharing_request_canceled'
         notification.title       = "Demande d'accès à un compte annulé"
         notification.message     = "La demande d'accès au compte #{@account_sharing.account.info} par #{@requester.info} a été annulée."

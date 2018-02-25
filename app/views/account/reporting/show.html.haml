@@ -11,7 +11,7 @@
                 %th= label_tag :value_filter, "Afficher : ", :class => "margin0bottom"
               %tr
                 - options = []
-                - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
                   - options += [["Montant facture (€ HT)",8], ["Dépassement (€ HT)",9]]
                 - options += [["Feuilles numérisées",0],["Pièces numérisées",1],["Pages numérisées",2],["Dépassement numérisation",10],["Pièces téléversées",4],["Pages téléversées",5],["Dépassement téléversement",11],["Pièces iDocus'Box",14],["Pages iDocus'Box",15],["Dépassement iDocus'Box",16],["Pièces Automatique",17],["Pages Automatique",18],["Pièces pré-affectées",12],["Dépassement pré-affectation",13],["Attaches",6],["Hors format",7]]
                 %td= select_tag(:value_filter, options_for_select(options), :class => "margin0bottom", :style => "width:auto;")
@@ -146,7 +146,7 @@
                             %span{ :class => "hide excess_compta_pieces value_13" }
                               - period.duration.times do |i|
                                 %div{ class: "period_#{i+1}" }= period_billing.data(:excess_compta_pieces, i+1)
-                            - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+                            - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
                               %span{ :class => "hide price value_8" }
                                 - period.duration.times do |i|
                                   %div{ class: "period_#{i+1}" }
@@ -178,7 +178,7 @@
                   - else
                     %td.align-middle.block
                       \-
-          - if current_user.is_prescriber || current_user.is_admin
+          - if @user.collaborator?
             %tr#total
               %td
                 %b.value
@@ -289,7 +289,7 @@
                         - if invoice.content.try(:url)
                           %a{ :href => invoice.content.url, :class => "icon-download-alt", :style => "width:16px;height:16px;" }
                           %a{ :href => invoice.content.url, :title => "#{invoice.number}.pdf", :class => "icon-eye-open do-showInvoice" }
-        - if current_user.is_prescriber || current_user.is_admin
+        - if @user.collaborator?
           %tfooter
             %tr
               %th{ :style => "width:15%;" }
@@ -468,7 +468,7 @@
         </tr>
       </table>
     </div>
-  - if current_user.is_admin || current_user.is_prescriber || @user.organization.try(:is_detail_authorized)
+  - if @user.collaborator? || @user.organization.try(:is_detail_authorized)
     :plain
       <div class="separator"></div>
       <div class="optionslist">

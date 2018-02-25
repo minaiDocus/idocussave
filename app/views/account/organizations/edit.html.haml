@@ -1,7 +1,7 @@
 .edit
   .row-fluid
     .span12.box
-      %h3 Edition de l'organisation
+      %h3 Édition de l'organisation
 
   .row-fluid
     .span12.box
@@ -10,7 +10,6 @@
         - if params[:part] != 'other_software'
           = f.input :name
           - if @user.is_admin
-            = f.input :leader_id, collection: @organization.collaborators, label_method: :info
             = f.input :is_detail_authorized, as: :boolean
             = f.input :is_test,              as: :boolean
           = f.input :is_pre_assignment_date_computed, as: :radio_buttons, collection: [["Non, date d’origine", false], ["Oui, date de la période iDocus", true]]

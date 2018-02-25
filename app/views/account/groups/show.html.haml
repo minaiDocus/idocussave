@@ -6,7 +6,7 @@
           .pull-left
             %h3 #{@group}
           .pull-right
-            - if (is_leader? || @user.can_manage_groups?) && @organization.is_active
+            - if (@user.leader? || @user.manage_groups) && @organization.is_active
               = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_group_path(@organization, @group), class: 'btn btn-primary'
 
   .row-fluid

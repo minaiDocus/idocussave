@@ -615,7 +615,7 @@ describe DropboxImport do
         context 'given user has access to another account' do
           before(:each) do
             organization = Organization.create(name: 'TEST', code: 'TS')
-            organization.members << @user
+            organization.customers << @user
             @user2 = FactoryGirl.create(:user, code: 'TS%0002', company: 'DEF')
             @user2.options = UserOptions.create(user_id: @user2.id, is_upload_authorized: true)
             @user2.organization = organization
@@ -738,10 +738,10 @@ describe DropboxImport do
 
         @organization = Organization.create(name: 'TEST', code: 'TS')
 
-        @collaborator = FactoryGirl.create(:prescriber, code: 'TS%COL1')
+        @collaborator = FactoryGirl.create(:prescriber)
         @collaborator.organization = @organization
         @collaborator.save
-        @collaborator.extend_organization_role
+        @member = Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
         @user = FactoryGirl.create(:user, code: 'TS%0001', company: 'ABC')
         @user.options = UserOptions.create(user_id: @user.id, is_upload_authorized: true)
@@ -762,9 +762,9 @@ describe DropboxImport do
         @group = Group.new
         @group.name = 'Customers'
         @group.organization = @organization
-        @group.members << @collaborator
-        @group.members << @user
-        @group.members << @user2
+        @group.members << @member
+        @group.customers << @user
+        @group.customers << @user2
         @group.save
 
         efs = @collaborator.find_or_create_external_file_storage
@@ -1256,11 +1256,8 @@ describe DropboxImport do
             AccountBookType.create(user_id: @user3.id, name: 'AC', description: '( Achat )')
             AccountBookType.create(user_id: @user3.id, name: 'BQ', description: '( Banque )')
 
-            @group.members << @user3
+            @group.customers << @user3
             @group.save
-
-            @user3.groups << @group
-            @user3.save
           end
 
           it 'creates TS%0003\'s folders' do

@@ -14,15 +14,13 @@ describe AccountSharingRequest do
       @organization = create :organization, code: 'TS'
 
       @customer = create :user, code: 'TS%0001'
-      @organization.members << @customer
+      @organization.customers << @customer
 
-      @collaborator = create :prescriber, code: 'TS%COL1'
-      @organization.members << @collaborator
-      @collaborator.extend_organization_role
-      @collaborator
+      @collaborator = create :prescriber
+      @member = Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
       @contact = create :guest
-      @organization.members << @contact
+      @organization.guest_collaborators << @contact
     end
 
     it "contact requests an access to customer's account" do
@@ -37,7 +35,7 @@ describe AccountSharingRequest do
 
     it "another customer requests an access to the customer's account" do
       customer2 = create :user, code: 'TS%0002'
-      @organization.members << customer2
+      @organization.customers << customer2
 
       request = AccountSharingRequest.new
       request.user = customer2
@@ -49,8 +47,7 @@ describe AccountSharingRequest do
     end
 
     it 'notifies the collaborator in charge of the account' do
-      @customer.parent = @collaborator
-      @customer.save
+      @customer.update(manager: @member)
 
       request = AccountSharingRequest.new
       request.user = @contact
@@ -66,9 +63,7 @@ describe AccountSharingRequest do
 
     it 'notifies the administrator of the organization' do
       leader = create :prescriber
-      @organization.members << leader
-      @organization.leader = leader
-      @organization.save
+      Member.create(user: leader, organization: @organization, code: 'TS%LEAD', role: Member::ADMIN)
 
       request = AccountSharingRequest.new
       request.user = @contact
@@ -135,7 +130,7 @@ describe AccountSharingRequest do
     it 'cannot request a sharing to someone on another organization' do
       organization2 = create :organization, code: 'ABC'
       customer3 = create :user, code: 'ABC%0001'
-      organization2.members << customer3
+      organization2.customers << customer3
 
       request = AccountSharingRequest.new
       request.user = @contact

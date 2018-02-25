@@ -4,14 +4,8 @@ class Account::ProfilesController < Account::AccountController
   def show
     if @user.active?
       @external_file_storage = @user.find_or_create_external_file_storage
-
-      if @user.my_organization
-        @invoices = @user.my_organization.invoices.order(created_at: :desc).page(params[:page])
-      else
-        @invoices = @user.invoices.order(created_at: :desc).page(params[:page])
-      end
+      @invoices = @user.invoices.order(created_at: :desc).page(params[:page])
     end
-
     @active_panel = params[:panel] || 'change_password'
   end
 

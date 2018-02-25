@@ -1,42 +1,38 @@
-# -*- encoding : UTF-8 -*-
 class Account::RightsController < Account::OrganizationController
-  before_filter :verify_rights
-  before_filter :load_collaborator
+  before_action :verify_rights
+  before_action :load_member
 
-  # /account/organizations/:organization_id/collaborators/:collaborator_id/rights/edit
+  # GET /account/organizations/:organization_id/collaborators/:collaborator_id/rights/edit
   def edit
   end
 
   # PUT /account/organizations/:organization_id/collaborators/:collaborator_id/rights
   def update
-    @collaborator.update(collaborator_params)
-
+    @member.update(membership_params)
     flash[:success] = 'Modifié avec succès.'
-
-    redirect_to account_organization_collaborator_path(@organization, @collaborator, tab: 'authorization')
+    redirect_to account_organization_collaborator_path(@organization, @member, tab: 'authorization')
   end
 
   private
 
   def verify_rights
-    unless is_leader? || @user.can_manage_collaborators?
+    unless @user.leader? || @user.manage_collaborators?
       flash[:error] = t('authorization.unessessary_rights')
       redirect_to account_organization_path(@organization)
     end
   end
 
-
-  def collaborator_params
-    params.require(:user).permit(  :organization_rights_is_groups_management_authorized,
-                                   :organization_rights_is_collaborators_management_authorized,
-                                   :organization_rights_is_customers_management_authorized,
-                                   :organization_rights_is_journals_management_authorized,
-                                   :organization_rights_is_customer_journals_management_authorized
-                                )
+  def membership_params
+    params.require(:member).permit(
+      :manage_groups,
+      :manage_collaborators,
+      :manage_customers,
+      :manage_journals,
+      :manage_customer_journals
+    )
   end
 
-
-  def load_collaborator
-    @collaborator = @organization.collaborators.find params[:collaborator_id]
+  def load_member
+    @member = @organization.members.find params[:collaborator_id]
   end
 end

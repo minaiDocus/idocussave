@@ -5,11 +5,9 @@ class Account::InvoicesController < Account::AccountController
     owner        = invoice.user
     organization = invoice.organization
 
-    @user.extend_organization_role
-
     authorized = false
 
-    if owner && (@user == owner || @user.my_organization == owner.organization || @user.customers.include?(owner))
+    if owner && (@user == owner || owner.organization.admins.include?(@user) || @user.customers.include?(owner))
       authorized = true
     elsif organization && @user.my_organization == organization
       authorized = true

@@ -1,28 +1,25 @@
 class UpdateCollaborator
-  def initialize(collaborator, params)
-    @params       = params
-    @collaborator = collaborator
+  def initialize(member, params)
+    @member = member
+    @params = params
   end
 
-
   def execute
-    @collaborator.assign_attributes(@params)
+    @member.assign_attributes(@params)
+    is_email_changed = @member.user.email_changed?
 
-    is_email_changed = @collaborator.email_changed?
-
-    if @collaborator.save
+    if @member.save
       if is_email_changed
         token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
 
-        @collaborator.reset_password_token   = encrypted_token
-        @collaborator.reset_password_sent_at = Time.now
+        @member.user.reset_password_token   = encrypted_token
+        @member.user.reset_password_sent_at = Time.now
+        @member.user.save
 
-        @collaborator.save
-
-        WelcomeMailer.welcome_collaborator(@collaborator, token).deliver_later
+        WelcomeMailer.welcome_collaborator(@member.user, token).deliver_later
       end
     end
 
-    @collaborator
+    @member.valid?
   end
 end

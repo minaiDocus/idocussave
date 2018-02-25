@@ -1,30 +1,23 @@
-# -*- encoding : UTF-8 -*-
 class Account::GroupsController < Account::OrganizationController
   before_filter :verify_rights, except: %w(index show)
   before_filter :load_group, except: %w(index new create)
 
   # GET /account/organizations/:organization_id/groups
   def index
-    collection = is_leader? ? @organization.groups : @user.groups
-
-    @groups = Group.search_for_collection(collection, search_terms(params[:group_contains])).order(sort_column => sort_direction)
-
-    @groups_count = @groups.count
-
-    @groups = @groups.page(params[:page]).per(params[:per_page])
+    @groups = @user.groups.search(search_terms(params[:group_contains])).
+      order(sort_column => sort_direction).
+      page(params[:page]).
+      per(params[:per_page])
   end
-
 
   # GET /account/organizations/:organization_id/groups/:id
   def show
   end
 
-
-  # /account/organizations/:organization_id/groups/new
+  # GET /account/organizations/:organization_id/groups/new
   def new
     @group = @organization.groups.new
   end
-
 
   # POST /account/organizations/:organization_id/groups
   def create
@@ -32,19 +25,16 @@ class Account::GroupsController < Account::OrganizationController
 
     if @group.save
       DropboxImport.changed(@group.collaborators)
-
       flash[:success] = 'Créé avec succès.'
       redirect_to account_organization_groups_path(@organization)
     else
-      render 'new'
+      render :new
     end
   end
-
 
   # GET /account/organizations/:organization_id/groups/:id/edit
   def edit
   end
-
 
   # PUT /account/organizations/:organization_id/groups/:id
   def update
@@ -52,17 +42,13 @@ class Account::GroupsController < Account::OrganizationController
 
     if @group.update(safe_group_params)
       collaborators = (@group.collaborators + previous_collaborators).uniq
-
       DropboxImport.changed(collaborators)
-
       flash[:success] = 'Modifié avec succès.'
-
       redirect_to account_organization_groups_path(@organization)
     else
-      render 'edit'
+      render :edit
     end
   end
-
 
   # DELETE /account/organizations/:organization_id/groups/:id
   def destroy
@@ -72,12 +58,11 @@ class Account::GroupsController < Account::OrganizationController
     redirect_to account_organization_groups_path(@organization)
   end
 
-
   private
 
   def verify_rights
-    unless is_leader? && @organization.is_active
-      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && @user.cannot_manage_groups?) || !@organization.is_active
+    unless @user.leader? && @organization.is_active
+      if action_name.in?(%w(new create destroy)) || (action_name.in?(%w(edit update)) && !@user.manage_groups) || !@organization.is_active
         flash[:error] = t('authorization.unessessary_rights')
 
         redirect_to account_organization_path(@organization)
@@ -85,61 +70,53 @@ class Account::GroupsController < Account::OrganizationController
     end
   end
 
-
   def group_params
-    if @user.is_admin
+    if @user.admin?
       params.require(:group).permit(
         :name,
         :description,
         :dropbox_delivery_folder,
         :is_dropbox_authorized,
-        member_tokens: []
+        member_ids: [],
+        customer_ids: []
       )
-    elsif is_leader?
+    elsif @user.leader?
       params.require(:group).permit(
         :name,
         :description,
-        member_tokens: []
+        member_ids: [],
+        customer_ids: []
       )
     else
-      params.require(:group).permit(customer_tokens: [])
+      params.require(:group).permit(customer_ids: [])
     end
   end
-
 
   def safe_group_params
-    if is_leader?
+    if @user.leader?
+      # TODO2 : Sanitize member_ids
       safe_ids = @organization.members.map(&:id).map(&:to_s)
-
-      ids = params[:group][:member_tokens]
+      ids = params[:group][:member_ids]
       ids.delete_if { |id| !id.in?(safe_ids) }
-
-      params[:group][:member_tokens] = ids
-
-      group_params
-    else
-      safe_ids = @user.customer_ids.map(&:to_s)
-
-      ids = params[:group][:customer_tokens]
-      ids.delete_if { |id| !id.in?(safe_ids) }
-
-      params[:group][:customer_tokens] = ids
-
-      group_params
+      params[:group][:member_ids] = ids
     end
-  end
+    # TODO2 : Sanitize customer_ids
+    safe_ids = @organization.customers.map(&:id).map(&:to_s)
+    ids = params[:group][:customer_ids]
+    ids.delete_if { |id| !id.in?(safe_ids) }
+    params[:group][:customer_ids] = ids
 
+    group_params
+  end
 
   def load_group
     @group = @organization.groups.find(params[:id])
   end
 
-
   def sort_column
     params[:sort] || 'created_at'
   end
   helper_method :sort_column
-
 
   def sort_direction
     params[:direction] || 'desc'

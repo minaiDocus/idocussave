@@ -1,5 +1,3 @@
-# -*- encoding : UTF-8 -*-
-# FIXME : whole check
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
@@ -27,11 +25,9 @@ class ApplicationController < ActionController::Base
     # end
   end
 
-
   def after_sign_out_path_for(_resource_or_scope)
     "https://www.idocus.com"
   end
-
 
   def login_user!
     unless current_user && request.path.match(/\A\/users.*/)
@@ -41,30 +37,70 @@ class ApplicationController < ActionController::Base
     authenticate_user!
   end
 
-
   def load_user(name = :@user)
     user = nil
     if current_user && current_user.is_admin
-      if request.path =~ /organizations/
-        if params[:collaborator_code].present? || session[:collaborator_code].present?
-          user = User.prescribers.where(code: params[:collaborator_code].presence || session[:collaborator_code].presence).first || current_user
-          old_collaborator_code = session[:collaborator_code]
-          session[:collaborator_code] = user == current_user ? nil : user.code
-          redirect_to account_organization_path(user.organization) if old_collaborator_code != session[:collaborator_code]
+      if params[:user_code].present? || session[:user_code].present?
+        user = User.find_by_code(params[:user_code].presence || session[:user_code].presence)
+        user || (member = Member.find_by_code(params[:user_code].presence || session[:user_code].presence))
+        user ||= member.try(:user)
+        user ||= current_user
+        session[:user_code] = if user == current_user
+          nil
+        else
+          member.try(:code) || user.code
         end
-      elsif params[:user_code].present? || session[:user_code].present?
-        user = User.find_by_code(params[:user_code].presence || session[:user_code].presence) || current_user
-        session[:user_code] = user == current_user ? nil : user.code
       end
     end
     user ||= current_user
     instance_variable_set name, user
   end
 
+  def load_user_and_role(name = :@user)
+    instance = load_user(name)
+    if instance&.collaborator?
+      collaborator = Collaborator.new(instance)
+      yield(collaborator) if block_given?
+      instance_variable_set name, collaborator
+    end
+  end
+
+  def accounts
+    return @accounts if @accounts
+
+    @accounts = if @user
+      if @user.collaborator?
+        @user.customers.order(code: :asc)
+      elsif @user.is_guest
+        @user.accounts.order(code: :asc)
+      else
+        User.where(id: ([@user.id] + @user.accounts.map(&:id))).order(code: :asc)
+      end
+    else
+      []
+    end
+  end
+  helper_method :accounts
+
+  def account_ids
+    accounts.map(&:id)
+  end
+  helper_method :account_ids
 
   def present(object, klass = nil)
     klass ||= "#{object.class}Presenter".constantize
     klass.new(object)
+  end
+
+  def verify_if_active
+    if @user && @user.inactive? && !controller_name.in?(%w(profiles documents))
+      flash[:error] = t('authorization.unessessary_rights')
+      redirect_to account_documents_path
+    end
+  end
+
+  def load_recent_notifications
+    @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
   end
 
   private
@@ -87,16 +123,13 @@ class ApplicationController < ActionController::Base
   end
   helper_method :search_terms
 
-
   def format_price_with_dot(price_in_cents)
     '%0.2f' % (price_in_cents.round / 100.0)
   end
 
-
   def format_price_00(price_in_cents)
     format_price_with_dot(price_in_cents).tr('.', ',')
   end
-
 
   def format_price(price_in_cents)
     format_price_00(price_in_cents).gsub(/,00/, '')
@@ -110,7 +143,6 @@ class ApplicationController < ActionController::Base
       redirect_to(url)
     end
   end
-
 
   def catch_error
     begin
@@ -140,7 +172,6 @@ class ApplicationController < ActionController::Base
     render status: :bad_request, text: 'Bad Request'
   end
 
-
   def authenticate_admin_user!
     authenticate_user!
     unless current_user && current_user.is_admin
@@ -148,7 +179,6 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
   end
-
 
   def log_visit
     unless request.path.match('(dematbox|system|assets|num|preview)') || !params[:action].in?(%w(index show)) || (controller_name == 'retrievers' && params[:part].present?) || controller_name == 'compta'
@@ -166,12 +196,11 @@ class ApplicationController < ActionController::Base
     yield
   end
 
-
   def verify_suspension
     if controller_name == 'suspended'
-      redirect_to root_path unless @user.try(:organization).try(:is_suspended) && @user.active?
-    elsif @user.try(:organization).try(:is_suspended) && @user.active?
-      unless ((controller_name == 'organizations' && action_name == 'show') || controller_name == 'payments') && @user.organization.leader == @user
+      redirect_to root_path unless @user&.organization&.is_suspended && @user.active?
+    elsif @user&.organization&.is_suspended && @user.active?
+      unless ((controller_name == 'organizations' && action_name == 'show') || controller_name == 'payments') && @user.leader?
         redirect_to account_suspended_path
       end
     end

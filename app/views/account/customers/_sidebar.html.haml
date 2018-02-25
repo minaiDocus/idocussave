@@ -17,7 +17,7 @@
     = text_field_tag 'user_contains[first_name]', (params[:user_contains][:first_name] rescue ''), class: 'span12'
     = label_tag 'user_contains[email]', t('activerecord.models.user.attributes.email')
     = text_field_tag 'user_contains[email]', (params[:user_contains][:email] rescue ''), class: 'span12'
-    - if is_leader?
+    - if @user.leader?
       = label_tag 'collaborator_id', 'Collaborateur'
       = select_tag 'collaborator_id', options_from_collection_for_select(@organization.collaborators.order(code: :asc), :id, :code, params[:collaborator_id]), include_blank: true
     = label_tag 'group_ids[]', t('activerecord.models.group.name').pluralize

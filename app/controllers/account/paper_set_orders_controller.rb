@@ -140,7 +140,7 @@ class Account::PaperSetOrdersController < Account::OrganizationController
   end
 
   def can_manage?
-    is_leader? || @user.can_manage_customers?
+    @user.leader? || @user.manage_customers
   end
 
   def verify_rights

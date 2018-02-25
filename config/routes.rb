@@ -70,6 +70,9 @@ Idocus::Application.routes.draw do
       end
     end
 
+    # Named like that to avoid conflict with the routes of groups
+    resources :group_organizations, controller_name: 'organization_groups'
+
     resources :organizations, except: :destroy do
       patch :suspend,        on: :member
       patch :activate,       on: :member

@@ -1,7 +1,7 @@
-#collaborator
+#member.user
   .row-fluid
     .span12.box
-      %h3= @collaborator
+      %h3= @member.info
 
   .row-fluid
     .span12.box
@@ -19,65 +19,65 @@
           %table.table.table-striped.table-condensed
             %tr
               %th= t('activerecord.models.user.attributes.email')
-              %td= @collaborator.email
+              %td= @member.user.email
             %tr
               %th= t('activerecord.models.user.attributes.first_name')
-              %td= @collaborator.first_name
+              %td= @member.user.first_name
             %tr
               %th= t('activerecord.models.user.attributes.last_name')
-              %td= @collaborator.last_name
+              %td= @member.user.last_name
             %tr
               %th= t('activerecord.models.user.attributes.code')
-              %td= @collaborator.code
+              %td= @member.code
             %tr
               %th= t('activerecord.models.user.attributes.company')
-              %td= @collaborator.company
+              %td= @member.user.company
           .alignright
             - if @organization.is_active
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @collaborator), class: 'btn btn-primary'
+              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @member), class: 'btn btn-primary'
         #authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
           %table.table.table-striped.table-condensed
             %tr
               %th= t('activerecord.models.organization_rights.names.collaborators_management')
               %td
-                - if @collaborator.is_admin
+                - if @member.user.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.organization_rights_is_collaborators_management_authorized ? t('yes_value') : t('no_value')
+                  = @member.manage_collaborators ? t('yes_value') : t('no_value')
             %tr
               %th= t('activerecord.models.organization_rights.names.customers_management')
               %td
-                - if @collaborator.is_admin
+                - if @member.user.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.organization_rights_is_customers_management_authorized ? t('yes_value') : t('no_value')
+                  = @member.manage_customers ? t('yes_value') : t('no_value')
             %tr
               %th= t('activerecord.models.organization_rights.names.groups_management')
               %td
-                - if @collaborator.is_admin
+                - if @member.user.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.organization_rights_is_groups_management_authorized ? t('yes_value') : t('no_value')
+                  = @member.manage_groups ? t('yes_value') : t('no_value')
             %tr
               %th= t('activerecord.models.organization_rights.names.journals_management')
               %td
-                - if @collaborator.is_admin
+                - if @member.user.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.organization_rights_is_journals_management_authorized ? t('yes_value') : t('no_value')
+                  = @member.manage_journals ? t('yes_value') : t('no_value')
             %tr
               %th= t('activerecord.models.organization_rights.names.customer_journals_management')
               %td
-                - if @collaborator.is_admin
+                - if @member.user.is_admin
                   = t('yes_value')
                 - else
-                  = @collaborator.organization_rights_is_customer_journals_management_authorized ? t('yes_value') : t('no_value')
-          - unless @collaborator.is_admin
+                  = @member.manage_customer_journals ? t('yes_value') : t('no_value')
+          - unless @member.user.is_admin
             .alignright
               - if @organization.is_active
-                = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @collaborator), class: 'btn btn-primary'
+                = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @member), class: 'btn btn-primary'
         - if @user.is_admin && @organization.is_active
           #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
-            = render partial: 'account/customers/file_storages', locals: { user: @collaborator }
+            = render partial: 'account/customers/file_storages', locals: { user: @member.user }
             .alignright
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_file_storage_authorizations_path(@organization, @collaborator), class: 'btn btn-primary'
+              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_file_storage_authorizations_path(@organization, @member), class: 'btn btn-primary'

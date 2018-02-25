@@ -1,30 +1,48 @@
 %ul.nav
-  - unless @user.try(:organization).try(:is_suspended) && @user.active?
+  - unless @user&.organization&.is_suspended && @user.active?
     %li{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path
-    %li{ :class=>('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
+    %li{ class: ('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
       = link_to 'Mon compte', account_profile_path
-    - if @user.is_admin
-      %li{ class: (controller_name == 'organizations' && action_name.in?(%w(index new create)) ? 'active' : '') }
+    - if @user.admin?
+      %li{ class: ((controller_name == 'organizations' && action_name.in?(%w(index new create)) || controller_name == 'group_organizations') ? 'active' : '') }
         = link_to 'Organisations', account_organizations_path
-  - if @user.is_prescriber
-    - if @user.inactive? || !@user.try(:organization).try(:is_suspended) || @user.try(:organization).try(:leader) == @user
-      - path = (@user.try(:organization).try(:is_suspended) && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
-      %li{ class: (request.path =~ /organizations/ && !(controller_name == 'organizations' && action_name.in?(%w(index new create)))  ? 'active' : '') }
-        = link_to 'Mon organisation', path
-  - unless @user.try(:organization).try(:is_suspended) && @user.active?
-    %li{ :class=>('active' if controller_name == 'documents' && params[:action] == 'index') }
+  - if @user.collaborator?
+    - if @user.has_one_organization?
+      - if @user.inactive? || (not @user&.organization&.is_suspended) || @user&.organization&.admins.try(:include?, @user)
+        - path = (@user&.organization&.is_suspended && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
+        %li{ class: (inside_organization?  ? 'active' : '') }
+          = link_to 'Mon organisation', path
+    - else
+      %li.dropdown{ class: (inside_organization? ? 'active' : '') }
+        %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+          Mon organisation
+          %b.caret
+        %ul.dropdown-menu
+          - @user.organizations.each do |organization|
+            %li= link_to organization.name, account_organization_path(organization)
+  - unless @user&.organization&.is_suspended && @user.active?
+    %li{ class: ('active' if controller_name == 'documents' && params[:action] == 'index') }
       = link_to 'Mes documents', account_documents_path
     - if @user.active? && @user.organization.is_active
-      %li{ :class=>('active' if controller_name == 'reporting') }
-        = link_to 'Mon reporting', account_reporting_path
+      - if @user.collaborator? && !@user.has_one_organization?
+        %li.dropdown
+          %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
+            Mon reporting
+            %b.caret
+          %ul.dropdown-menu
+            - @user.organizations.each do |organization|
+              %li= link_to "Reporting #{organization.name}", account_reporting_path(organization_id: organization.id)
+      - else
+        %li{ class: ('active' if controller_name == 'reporting') }
+          = link_to 'Mon reporting', account_reporting_path
       - if accounts.detect { |e| e.options.is_retriever_authorized }
-        %li{ :class=>('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
+        %li{ class: ('active' if controller_name.in?(%w(retrievers new_provider_requests retrieved_banking_operations bank_accounts retrieved_documents)) && params[:organization_id].nil?) }
           = link_to 'Mes automates', account_retrievers_path
       - if accounts.detect { |e| e.options.is_upload_authorized }
         %li{ class: ('active' if controller_name == 'paper_processes') }
           = link_to 'Suivi', account_paper_processes_path
-    - if @user.is_prescriber
+    - if @user.collaborator?
       %li.dropdown
         %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
           Base de connaissances

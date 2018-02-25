@@ -57,7 +57,7 @@ class Account::GuestCollaboratorsController < Account::OrganizationController
         !params[:q].split.detect { |e| !str.match(/#{e}/i) }
       end
 
-      unless is_leader?
+      unless @user.leader?
         users = users.select do |user|
           user.is_guest || @user.customers.include?(user)
         end

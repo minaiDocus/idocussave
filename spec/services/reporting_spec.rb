@@ -123,7 +123,7 @@ describe Reporting do
     it 'creates a period_document' do
       user = create :user
       organization = create :organization
-      organization.members << user
+      organization.customers << user
       @pack.organization = organization
       @pack.owner = user
       @pack.save
@@ -146,7 +146,7 @@ describe Reporting do
 
         @user = create :user
         organization = create :organization
-        organization.members << @user
+        organization.customers << @user
         subscription = Subscription.create(user: @user, period_duration: period_duration)
         @pack = Pack.create(owner: @user, name: 'TS%0001 TS 201612 all')
 

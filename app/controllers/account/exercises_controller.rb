@@ -66,7 +66,7 @@ class Account::ExercisesController < Account::OrganizationController
 
 
   def verify_rights
-    unless is_leader? || @user.can_manage_customers?
+    unless @user.leader? || @user.manage_customers
       flash[:error] = t('authorization.unessessary_rights')
 
       redirect_to account_organization_path(@organization)

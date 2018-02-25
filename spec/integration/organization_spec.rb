@@ -15,12 +15,12 @@ describe 'Organization Management' do
       @customer = FactoryGirl.create(:user)
 
       @organization = Organization.create name: 'iDocus', code: 'IDOC', leader_id: @collaborator.id
-      @organization.members << @collaborator
-      @organization.members << @customer
+      @organization.customers << @customer
+      @member = Member.create(user: @collaborator, organization: @organization, code: 'IDOC%COL1')
 
       @group = Group.create name: 'Group 1', organization_id: @organization.id
-      @group.members << @collaborator
-      @group.members << @customer
+      @group.members << @member
+      @group.customers << @customer
     end
 
     describe 'As an organization' do
@@ -41,11 +41,11 @@ describe 'Organization Management' do
       end
     end
 
-    describe 'As a collaborator' do
+    describe 'As a collaborator (member)' do
       it 'should be part of an organization and a group' do
-        expect(@collaborator.organization).to eq(@organization)
-        expect(@collaborator.groups).to include(@group)
-        expect(@collaborator.groups.count).to eq(1)
+        expect(@member.organization).to eq(@organization)
+        expect(@member.groups).to include(@group)
+        expect(@member.groups.count).to eq(1)
       end
     end
 

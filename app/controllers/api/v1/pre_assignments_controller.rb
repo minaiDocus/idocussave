@@ -1,10 +1,8 @@
-# -*- encoding : UTF-8 -*-
 class Api::V1::PreAssignmentsController < ApiController
   # GET /api/v1/pre_assignments
   def index
     @pre_assignments = PendingPreAssignmentService.pending(sort: 1)
   end
-
 
   # POST /api/v1/pre_assignments/update_comment
   def update_comment

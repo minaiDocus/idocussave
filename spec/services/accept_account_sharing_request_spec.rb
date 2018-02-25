@@ -14,15 +14,13 @@ describe AcceptAccountSharingRequest do
       @organization = create :organization, code: 'TS'
 
       @customer = create :user, code: 'TS%0001'
-      @organization.members << @customer
+      @organization.customers << @customer
 
       @collaborator = create :prescriber, code: 'TS%COL1'
-      @organization.members << @collaborator
-      @collaborator.extend_organization_role
-      @collaborator
+      Member.create(user: @collaborator, organization: @organization, code: 'TS%COL1')
 
       @contact = create :guest
-      @organization.members << @contact
+      @organization.guest_collaborators << @contact
     end
 
     context 'given a sharing request already exist' do

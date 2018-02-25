@@ -26,9 +26,9 @@ describe ReminderEmail do
       @user3.options = UserOptions.create(user_id: @user3.id, is_upload_authorized: true)
       @user3.create_notify
 
-      @organization.members << @user1
-      @organization.members << @user2
-      @organization.members << @user3
+      @organization.customers << @user1
+      @organization.customers << @user2
+      @organization.customers << @user3
 
       @user2.find_or_create_subscription
       @user3.find_or_create_subscription

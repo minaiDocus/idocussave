@@ -43,7 +43,6 @@ describe 'Create event on visit' do
       @user = FactoryGirl.create(:admin, code: 'TS%0001')
       @user.organization = Organization.create(name: 'TEST', code: 'TS')
       @user.save
-      @user.extend_organization_role
 
       page.driver.post user_session_path,
         user: { email: @user.email, password: @user.password }

@@ -125,7 +125,7 @@ class DropboxImport
       @user
     else
       @user = @dropbox.user
-      @user.extend_organization_role
+      @user = Collaborator.new(@user) if @user.collaborator?
       @user
     end
   end

@@ -8,7 +8,6 @@ class NotifyPaperQuotaReached
   def initialize(period)
     @period = period
     @user = period.user
-    @parent = @user.parent || @user.organization.leader
   end
 
   def execute

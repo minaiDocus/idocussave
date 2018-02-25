@@ -357,6 +357,11 @@ fr:
             periods_count:
               greater_than: 'doit être supérieur à %{count}'
             order_id: n° de commande
+        organization_group:
+          attributes:
+            organizations:
+              too_short: Sélectionner au moins 2 organisations
+              too_long: Sélectionner au maximum 10 organisations
     models:
       common:
         attributes:
@@ -667,10 +672,8 @@ fr:
         attributes:
           name: Nom
           description: Description
-          collaborators: Collaborateurs
+          members: Collaborateurs
           collaborators_count: Nombre de collaborateurs
-          members: Membres
-          members_count: Nombre de membres
           customers: Clients
           customers_count: Nombre de clients
           dropbox_delivery_folder: Chemin de livraison

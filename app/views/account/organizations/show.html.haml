@@ -39,7 +39,7 @@
             - if @organization.is_csv_descriptor_used
               %li{ class: ('active' if params[:tab] == 'csv_descriptor') }
                 %a{ href: '#csv_descriptor', data: { toggle: 'tab' } } Format d’export .csv
-            - if is_leader?
+            - if @user.leader?
               %li{ class: ('active' if params[:tab] == 'payments') }
                 %a{ href: '#payments', data: { toggle: 'tab' } } Mode de paiement
             - if @user.is_admin
@@ -81,7 +81,7 @@
                   %table.table.table-condensed.table-striped
                     %tr
                       %th= t('activerecord.models.organization.attributes.collaborators_count')
-                      - if is_leader?
+                      - if @user.leader?
                         %td= link_to @organization.collaborators.count, account_organization_collaborators_path(@organization)
                       - else
                         %td= @organization.collaborators.count
@@ -91,7 +91,7 @@
                     %tr
                       %th Nombre de clients actifs
                       %td= @organization.customers.active.count
-              - if is_leader?
+              - if @user.leader?
                 .row-fluid
                   .span12= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization), class: 'btn btn-primary'
             #file_naming_policy.tab-pane{ class: ('active' if params[:tab] == 'file_naming_policy') }
@@ -108,7 +108,7 @@
                   %tr
                     %th Exemple
                     %td= CustomFileNameService.new(@organization.foc_file_naming_policy).execute({'user_code' => 'TS%00001', 'user_company' => 'iDocus', 'journal' => 'AC', 'period' => '201501', 'piece_number' => '001', 'third_party' => 'Google', 'invoice_number' => '001002', 'invoice_date' => '2015-01-02', 'extension' => '.pdf'})
-              - if is_leader?
+              - if @user.leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_file_naming_policy_path(@organization), class: 'btn btn-primary'
             #addresses.tab-pane{ class: ('active' if params[:tab] == 'addresses') }
               .row-fluid.margin1bottom
@@ -131,7 +131,7 @@
                     %tr
                       %th= t('activerecord.models.organization.attributes.auth_prev_period_until_month')
                       %td= @organization.auth_prev_period_until_month
-              - if is_leader?
+              - if @user.leader?
                 .alignright
                   = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_period_options_path(@organization), class: 'btn btn-primary'
                   - if @user.is_admin
@@ -155,7 +155,7 @@
                     %tr
                       %th= t('activerecord.models.knowings.attributes.is_third_party_included')
                       %td= @organization.knowings.is_third_party_included ? t('yes_value') : t('no_value')
-              - if is_leader?
+              - if @user.leader?
                 - if @organization.knowings
                   .alignright
                     = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_knowings_path(@organization), class: 'btn btn-primary'
@@ -187,7 +187,7 @@
                   %tr
                     %th Chemin de livraison
                     %td= @organization.ftp.try(:path) || 'OUTPUT/:code/:year:month/:account_book/'
-              - if is_leader?
+              - if @user.leader?
                 .alignright
                   = link_to icon_edit + ' Configurer', edit_account_organization_ftps_path(@organization), class: 'btn btn-primary'
                   - if @organization.ftp.try(:configured?)
@@ -326,7 +326,7 @@
                         = value ? t('yes_value') : t('no_value')
                       %td.position= @organization.ibiza.description['piece_number']['position'] rescue 1
                       %td Permet d'afficher dans iBiza une référence dans la colonne Ref pièce (la colonne doit être affichée)
-              - if is_leader?
+              - if @user.leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_ibiza_path(@organization), class: 'btn btn-primary'
             #other_software.tab-pane{ class: ('active' if params[:tab] == 'other_software') }
               %table.table.table-condensed.table-striped
@@ -340,7 +340,7 @@
                   %tr
                     %th= t('activerecord.models.organization.attributes.is_csv_descriptor_used')
                     %td= @organization.is_csv_descriptor_used ? t('yes_value') : t('no_value')
-              - if is_leader?
+              - if @user.leader?
                 .alignright= link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_path(@organization, part: 'other_software'), class: 'btn btn-primary'
             #reminder_emails.tab-pane{ class: ('active' if params[:tab] == 'reminder_emails') }
               %p Configurez ici un nouvel e-mail de rappel qui sera envoyé à vos clients afin qu'ils n'oublient pas d'envoyer leurs documents.
@@ -383,7 +383,7 @@
                 N.B.: ce fichier est nécessaire pour tous les outils comptables ne fonctionnant pas avec iDocus par API (Mode SaaS intégral).
                 %br
                 = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_csv_descriptor_path(@organization), class: 'btn btn-primary'
-            - if is_leader?
+            - if @user.leader?
               #payments.tab-pane{ class: ('active' if params[:tab] == 'payments') }
                 %h3.aligncenter Prélèvement
                 %table.table.table-condensed.margin2top

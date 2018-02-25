@@ -1,4 +1,4 @@
-﻿#customer
+#customer
   .row-fluid
     .span12
       = render 'header'
@@ -74,8 +74,8 @@
                     %tr
                       %th Collaborateur en charge
                       %td
-                        - if @customer.parent
-                          = @customer.parent.info
+                        - if @customer.manager
+                          = @customer.manager.info
                         - else
                           %i{ style: 'color:gray' } Aucun
                     %tr
@@ -195,7 +195,7 @@
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Nom journal comptable
                     %th.aligncenter{ colspan: 4 } Pré-saisie comptable
                     %th{ rowspan: 2, style: 'vertical-align:middle' } Nombre d’automates
-                    - if (is_leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                    - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
                       %th{ rowspan: 2, style: 'vertical-align:middle' } Actions
                   %tr
                     %th Type de pré-saisie
@@ -214,7 +214,7 @@
                       %td= journal.meta_account_number
                       %td= journal.meta_charge_account
                       %td= journal.retrievers.count
-                      - if (is_leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
+                      - if (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized) && @customer.active?
                         %td
                           = link_to icon_edit + 'Editer', edit_account_organization_customer_journal_path(@organization, @customer, journal), class: 'btn btn-mini'
                           - if @user.is_admin || false || journal.is_open_for_modification?
@@ -239,7 +239,7 @@
                     %i.margin1left
                       = link_to '(Augmenter le total autorisé de journaux comptables)', edit_account_organization_customer_subscription_path(@organization, @customer)
                 .span5.alignright
-                  - if @customer.active? && (is_leader? || @user.organization_rights_is_customer_journals_management_authorized)
+                  - if @customer.active? && (@user.leader? || @user.organization_rights_is_customer_journals_management_authorized)
                     - if is_max_number_of_journals_reached?
                       = link_to icon(icon: 'plus') + ' ' + 'Ajouter nouveau', '#', class: 'btn btn-primary', disabled: 'disabled'
                       = link_to icon(icon: 'th-large') + ' Copier depuis base existante',            '#', class: 'btn btn-primary', disabled: 'disabled'

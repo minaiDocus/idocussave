@@ -40,8 +40,7 @@ describe FTPImport do
     it 'fails to authenticate' do
       leader = create :prescriber, code: 'IDOC%LEAD', organization: @organization
       leader.create_notify
-      @organization.leader = leader
-      @organization.save
+      Member.create(user: leader, organization: @organization, code: 'IDOC%LEAD', role: Member::ADMIN)
 
       Dir.mktmpdir do |temp_dir|
         driver = Driver.new temp_dir, false

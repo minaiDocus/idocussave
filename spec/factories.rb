@@ -6,7 +6,7 @@ FactoryGirl.define do
     sequence(:first_name) { |n| "User#{n}" }
     last_name 'TEST'
     company 'TeSt'
-    sequence(:code) { |n| "TS#{'%04d' % n}" }
+    sequence(:code) { |n| is_prescriber ? nil : "TS#{'%04d' % n}" }
     sequence(:email_code) { |n| "%08d" % n }
     factory :admin do
       is_admin true

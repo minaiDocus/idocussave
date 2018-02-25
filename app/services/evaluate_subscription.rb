@@ -65,7 +65,7 @@ private
         journal.reset_compta_attributes
         changes = journal.changes
         if journal.save
-          params = [journal, @customer, changes, @requester]
+          params = [journal, @customer, changes, @requester.try(:user)]
           EventCreateService.journal_update(*params)
         end
       end

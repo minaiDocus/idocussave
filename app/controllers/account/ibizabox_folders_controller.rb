@@ -24,9 +24,9 @@ class Account::IbizaboxFoldersController < Account::OrganizationController
   def verify_rights
     is_ok = false
     if @organization.is_active
-      is_ok = true if is_leader?
-      is_ok = true if !is_ok && !@customer && @user.can_manage_journals?
-      is_ok = true if !is_ok && @customer && @user.organization_rights_is_journals_management_authorized
+      is_ok = true if @user.leader?
+      is_ok = true if !is_ok && !@customer && @user.manage_journals
+      is_ok = true if !is_ok && @customer && @user.manage_customer_journals
     end
     unless is_ok
       flash[:error] = t('authorization.unessessary_rights')
@@ -40,5 +40,4 @@ class Account::IbizaboxFoldersController < Account::OrganizationController
       redirect_to account_organization_path(@organization)
     end
   end
-
 end

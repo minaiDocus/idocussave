@@ -13,12 +13,13 @@ describe DestroyAccountSharing do
     before(:each) do
       @organization = create(:organization)
       @collaborator = create(:prescriber)
+      @member       = Member.create(organization: @organization, user: @collaborator, code: 'TS%COL1')
       @contact      = create(:guest)
       @customer     = create(:user)
 
-      @organization.members << @collaborator
-      @organization.members << @contact
-      @organization.members << @customer
+      @organization.members << @member
+      @organization.guest_collaborators << @contact
+      @organization.customers << @customer
     end
 
     context "given customer's account are already shared with contact" do
@@ -69,8 +70,7 @@ describe DestroyAccountSharing do
       end
 
       it 'cancels the request and notify the collaborator in charge of the account' do
-        @customer.parent = @collaborator
-        @customer.save
+        @customer.update(manager: @member)
 
         expect(NotifyWorker).to receive(:perform_async)
         expect(DropboxImport).to receive(:changed)
@@ -85,9 +85,7 @@ describe DestroyAccountSharing do
 
       it 'cancels the request and notify the leader of the organization' do
         leader = create :prescriber
-        @organization.members << leader
-        @organization.leader = leader
-        @organization.save
+        Member.create(user: leader, organization: @organization, code: 'TS%LEAD', role: Member::ADMIN)
 
         expect(NotifyWorker).to receive(:perform_async)
         expect(DropboxImport).to receive(:changed)
