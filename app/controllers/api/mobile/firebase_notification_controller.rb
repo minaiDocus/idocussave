@@ -1,8 +1,6 @@
 class Api::Mobile::FirebaseNotificationController < MobileApiController
-  before_filter :load_user_and_role
-  before_filter :verify_suspension
-  before_filter :verify_if_active
-  before_filter :load_notifications
+  skip_before_action :load_organization
+  before_action :load_notifications
 
   respond_to :json
 
@@ -35,8 +33,7 @@ class Api::Mobile::FirebaseNotificationController < MobileApiController
 
   private
 
-    def load_notifications
-      @notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(50)
-    end
-
+  def load_notifications
+    @notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(50)
+  end
 end

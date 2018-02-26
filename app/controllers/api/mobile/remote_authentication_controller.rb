@@ -1,6 +1,11 @@
 class Api::Mobile::RemoteAuthenticationController < ApplicationController
+  skip_before_action :load_user_and_role
+  skip_before_action :verify_suspension
+  skip_before_action :verify_if_active
+  skip_before_action :load_organization
+
   respond_to :json
-  
+
   def ping
     version = params[:version] # app version
     platform = params[:platform] # android or ios
@@ -8,7 +13,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     message = "Ping success"
 
     #(code 500 for automatically logout app mobile)
-      # code = 500 
+      # code = 500
       # message = "Vous n'aves pas l'authorisation necessaire pour acceder au service iDocus, vous allez être déconnecté dans quelques secondes"
     #(code 500 for automatically logout app mobile)
 
@@ -28,7 +33,7 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     end
     invalid_login_attempt
   end
-  
+
   # def destroy
   #   current_user.reset_authentication_token
   #   render :json=> {:success=>true}, status: 200
@@ -45,5 +50,4 @@ class Api::Mobile::RemoteAuthenticationController < ApplicationController
     warden.custom_failure!
     render :json=> {:error=>true, :message=>"Login / Mot de passe incorrect"}, :status=>412
   end
-
 end

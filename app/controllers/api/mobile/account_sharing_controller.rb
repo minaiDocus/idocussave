@@ -1,10 +1,4 @@
-# -*- encoding : UTF-8 -*-
 class Api::Mobile::AccountSharingController < MobileApiController
-  before_filter :load_user_and_role
-  before_filter :verify_suspension
-  before_filter :verify_if_active
-  before_filter :load_organization
-
   respond_to :json
 
   def load_shared_docs
@@ -26,11 +20,11 @@ class Api::Mobile::AccountSharingController < MobileApiController
         page(params[:page]).
         per(per_page)
     nb_pages = (account_sharings.total_count.to_f / per_page.to_f).ceil
-    
+
     data_docs = account_sharings.inject([]) do |memo, data|
         memo += [ {
                     id_idocus:data.id.to_s,
-                    date:data.created_at, 
+                    date:data.created_at,
                     approval:data.is_approved,
                     client:data.collaborator.info,
                     document:data.account.info
@@ -68,7 +62,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     contacts = guest_collaborators.inject([]) do |memo, data|
         memo += [ {
                     id_idocus:data.id.to_s,
-                    date:data.created_at, 
+                    date:data.created_at,
                     email:data.email,
                     company:data.company,
                     first_name:data.first_name,
@@ -120,7 +114,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
         tags << { value: user.id, label: user.info }
       end
     end
-    
+
     render json: {dataList: tags}, status: 200
   end
 
@@ -169,7 +163,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
       else
         render json: {message: 'Impossible de supprimer le partage.'}, status: 200
       end
-    else 
+    else
       account_sharing = AccountSharing.unscoped.where(account_id: customers).find params[:id]
       if DestroyAccountSharing.new(account_sharing).execute
         render json: {message: 'Le partage a été supprimer avec succès.'}, status: 200
@@ -191,7 +185,7 @@ class Api::Mobile::AccountSharingController < MobileApiController
     if @user.active? && !@user.is_prescriber && @user.organization.is_active
       data_shared = data_shared_customer
       contacts = contact_shared_customer
-      request_sharing = account_sharing_request_customer  
+      request_sharing = account_sharing_request_customer
     end
 
     render json: {data_shared: data_shared, contacts: contacts, access: request_sharing}, status: 200
@@ -268,5 +262,4 @@ class Api::Mobile::AccountSharingController < MobileApiController
   def @user.leader?
     @user == @organization.leader || @user.is_admin
   end
-
 end

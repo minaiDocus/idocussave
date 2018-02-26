@@ -1,9 +1,4 @@
 class Api::Mobile::DataLoaderController < MobileApiController
-  before_action :load_user_and_role
-  before_action :verify_suspension
-  before_action :verify_if_active
-  before_action :load_organization
-
   respond_to :json
 
   def load_customers

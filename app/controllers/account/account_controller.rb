@@ -106,8 +106,4 @@ class Account::AccountController < ApplicationController
   def operations_key
     get_key_for 'operations'
   end
-
-  def all_packs
-    Pack.where(owner_id: account_ids)
-  end
 end

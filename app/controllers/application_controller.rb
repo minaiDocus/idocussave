@@ -103,6 +103,10 @@ class ApplicationController < ActionController::Base
     @last_notifications = @user.notifications.order(is_read: :asc, created_at: :desc).limit(5) if @user
   end
 
+  def all_packs
+    Pack.where(owner_id: account_ids)
+  end
+
   private
 
   def search_terms(search_terms_from_parameters)
