@@ -240,6 +240,7 @@ class FTPImport
         file_name = File.basename(untrusted_file_path).force_encoding('UTF-8')
         file_path = File.join(item.path, file_name)
 
+        next if file_name =~ /^\./
         next unless UploadedDocument.valid_extensions.include?(File.extname(file_name).downcase)
         next if file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
         next unless client.size(file_path) <= 10.megabytes
