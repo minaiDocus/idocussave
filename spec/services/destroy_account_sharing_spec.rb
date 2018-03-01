@@ -17,7 +17,6 @@ describe DestroyAccountSharing do
       @contact      = create(:guest)
       @customer     = create(:user)
 
-      @organization.members << @member
       @organization.guest_collaborators << @contact
       @organization.customers << @customer
     end
