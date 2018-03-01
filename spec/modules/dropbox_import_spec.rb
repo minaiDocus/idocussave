@@ -812,7 +812,7 @@ describe DropboxImport do
 
         # get latest cursor
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor').
-          with(headers: @headers_2, body: '{"path":"/exportation vers iDocus/TS%COL1","recursive":true,"include_media_info":false,"include_deleted":false}')
+          with(headers: @headers_2, body: '{"path":"/exportation vers iDocus","recursive":true,"include_media_info":false,"include_deleted":false}')
         # delta
         expect(WebMock).to have_requested(:post, 'https://api.dropboxapi.com/2/files/list_folder/continue').
           with(headers: @headers_2, body: /\{"cursor":".*"\}/)
@@ -821,7 +821,7 @@ describe DropboxImport do
 
         expect(@dropbox.checked_at).to be_present
         expect(@dropbox.delta_cursor).to be_present
-        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus/TS%COL1')
+        expect(@dropbox.delta_path_prefix).to eq('/exportation vers iDocus')
         expect(@dropbox.import_folder_paths).to eq(folder_paths)
 
         expect(dropbox_import.folders.size).to eq 8
@@ -830,7 +830,7 @@ describe DropboxImport do
 
       context 'given initial folders have been created' do
         before(:each) do
-          @dropbox.delta_path_prefix = '/exportation vers iDocus/TS%COL1'
+          @dropbox.delta_path_prefix = '/exportation vers iDocus'
           @dropbox.import_folder_paths = [
             '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/AC',
             '/exportation vers iDocus/TS%COL1/TS%0001 - ABC/période actuelle/VT',

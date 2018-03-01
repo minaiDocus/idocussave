@@ -1,4 +1,6 @@
 class DropboxImport
+  ROOT_FOLDER = '/exportation vers iDocus'.freeze
+
   class << self
     def check
       DropboxBasic.all.each do |dropbox|
@@ -9,7 +11,7 @@ class DropboxImport
         end
 
         next unless dropbox.is_used? && dropbox.is_configured?
-        next unless dropbox.user.is_prescriber || ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
+        next unless dropbox.user.collaborator? || ([dropbox.user]+ dropbox.user.accounts).detect { |e| e.options.try(:upload_authorized?) }
         next unless dropbox.changed_at && (dropbox.checked_at.nil? || dropbox.changed_at > dropbox.checked_at)
 
         begin
@@ -32,9 +34,10 @@ class DropboxImport
       if object.is_a? User
         users = []
         users << object
-        users << object.organization.leader
-        users += object.groups.map(&:collaborators).flatten
+        users += object.organization.admins
+        users += object.groups.collaborators
         users += object.collaborators
+        users.uniq!
         users.compact!
       else
         users = object
@@ -53,24 +56,14 @@ class DropboxImport
   end
 
   def initialize(object)
-    @dropbox = if object.is_a? String
-                 DropboxBasic.find object
-               else
-                 object
-               end
-
-    if user.is_prescriber
-      default_path_prefix = "/exportation vers iDocus/#{user.code}"
-    else
-      default_path_prefix = '/exportation vers iDocus'
-    end
+    @dropbox = object.is_a?(String) ? DropboxBasic.find(object) : object
 
     @current_cursor      = @dropbox.delta_cursor
     @current_path_prefix = @dropbox.delta_path_prefix
 
-    if @current_path_prefix != default_path_prefix
+    if @current_path_prefix != ROOT_FOLDER
       @current_cursor = nil
-      @current_path_prefix = default_path_prefix
+      @current_path_prefix = ROOT_FOLDER
     end
 
     @initial_cursor = @current_cursor.try(:dup)
@@ -121,13 +114,7 @@ class DropboxImport
   end
 
   def user
-    if @user
-      @user
-    else
-      @user = @dropbox.user
-      @user = Collaborator.new(@user) if @user.collaborator?
-      @user
-    end
+    @user ||= @dropbox.user.collaborator? ? Collaborator.new(@dropbox.user) : @dropbox.user
   end
 
   def customers
@@ -135,7 +122,7 @@ class DropboxImport
       @customers
     else
       @customers = if user.is_prescriber && user.organization
-        user.customers.active.order(code: :asc)
+        user.all_customers.active.order(code: :asc)
       else
         User.where(id: ([user.id] + user.accounts.map(&:id))).order(code: :asc)
       end
@@ -148,11 +135,14 @@ class DropboxImport
       @needed_folders
     else
       @needed_folders = []
-      period_types = ['période actuelle', 'période précédente']
-      base_path = Pathname.new '/exportation vers iDocus'
-      base_path = base_path.join user.code if user.is_prescriber
+      period_types = ['période actuelle', 'période précédente'].freeze
 
       customers.each do |customer|
+        base_path = Pathname.new ROOT_FOLDER
+        if user.collaborator?
+          code = user.memberships.find { |m| m.organization_id == customer.organization_id }.code
+          base_path = base_path.join code
+        end
         customer_path = base_path.join "#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}"
         account_book_type_names = customer.account_book_types.order(name: :asc).map(&:name)
         period_types.each do |period_type|
@@ -224,8 +214,10 @@ class DropboxImport
 
   def get_info_from_path(path)
     data = path.split('/')
+    collaborator_code = nil
 
-    if user.is_prescriber
+    if user.collaborator?
+      collaborator_code = data[2]
       customer_info, period_type, journal_name = data[3..5]
     else
       customer_info, period_type, journal_name = data[2..4]
@@ -235,7 +227,7 @@ class DropboxImport
     customer = customers.select { |c| code == c.code }.first
     period_offset = period_type == 'période actuelle' ? 0 : 1
 
-    [customer, journal_name.upcase, period_offset]
+    [customer, journal_name.upcase, period_offset, collaborator_code]
   end
 
   def process_file(metadata)
@@ -246,7 +238,7 @@ class DropboxImport
     unless file_name =~ /\(erreur fichier non valide pour iDocus\)/i || file_name =~ /\(fichier déjà importé sur iDocus\)/i
       if needed_folders.include?(path)
         if UploadedDocument.valid_extensions.include?(File.extname(file_path).downcase) && metadata.size <= 10.megabytes
-          customer, journal_name, period_offset = get_info_from_path path
+          customer, journal_name, period_offset, collaborator_code = get_info_from_path path
 
           begin
             Dir.mktmpdir do |dir|
@@ -256,15 +248,17 @@ class DropboxImport
                   file.flush
                 end
 
-                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, user, 'dropbox')
+                uploader = collaborator_code.present? ? user.memberships.find_by_code(collaborator_code) : user
+
+                uploaded_document = UploadedDocument.new(file, file_name, customer, journal_name, period_offset, uploader, 'dropbox')
                 if uploaded_document.valid?
-                  logger.info "#{log_prefix}[SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
+                  logger.info "[Dropbox Import][#{uploader.code}][SUCCESS]#{file_detail(uploaded_document)} #{file_path}"
                   client.delete file_path
                 elsif uploaded_document.already_exist?
-                  logger.info "#{log_prefix}[ALREADY_EXIST] #{file_path}"
+                  logger.info "[Dropbox Import][#{uploader.code}][ALREADY_EXIST] #{file_path}"
                   mark_file_as_already_exist(path, file_name)
                 else
-                  logger.info "#{log_prefix}[INVALID] #{file_path}"
+                  logger.info "[Dropbox Import][#{uploader.code}][INVALID] #{file_path}"
                   mark_file_as_not_processable(path, file_name)
                 end
               end
@@ -298,8 +292,8 @@ class DropboxImport
     paths = []
     folders.each do |folder|
       if folder.to_be_destroyed?
-        if user.is_prescriber
-          customer, journal, period_offset = get_info_from_path folder.path
+        if user.collaborator?
+          customer = get_info_from_path(folder.path).first
           if customer && folder.path.match(/\/#{customer.code} - #{customer.company.gsub(/[\\\/\:\?\*\"\|&]/, '').strip}\//)
             paths << [folder.path, false]
           else
@@ -339,10 +333,6 @@ class DropboxImport
 
   def logger
     @logger ||= Logger.new("#{Rails.root}/log/#{Rails.env}_processing.log")
-  end
-
-  def log_prefix
-    @log_prefix ||= "[Dropbox Import][#{user.code}]"
   end
 
   def file_detail(uploaded_document)
