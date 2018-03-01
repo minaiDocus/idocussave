@@ -18,6 +18,9 @@
         #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
           %table.table.table-striped.table-condensed
             %tr
+              %th= t('activerecord.models.member.attributes.role')
+              %td= t('activerecord.models.member.attributes.role_values.' + @member.role)
+            %tr
               %th= t('activerecord.models.user.attributes.email')
               %td= @member.user.email
             %tr

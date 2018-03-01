@@ -1002,6 +1002,16 @@ fr:
           target_audience: Audience cible
           url: URL vers l'article complet
           published_at: Publié le
+      member:
+        zero: 0 membre
+        one: 1 membre
+        other: "%{count} membres"
+        name: Membre
+        attributes:
+          role: Rôle
+          role_values:
+            collaborator: Collaborateur
+            admin: Administrateur de l'organisation
     state_machines:
       retriever:
         states:

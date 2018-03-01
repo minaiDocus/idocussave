@@ -19,6 +19,7 @@
               %tr
                 %th.date= sortable :created_at, t('activerecord.models.common.attributes.created_at')
                 %th= sortable :code, t('activerecord.models.user.attributes.formatted_identifier')
+                %th= sortable :role, t('activerecord.models.member.attributes.role')
                 %th Action
             %tbody
               - @members.each do |member|
@@ -26,6 +27,7 @@
                   %td.date= l member.created_at
                   %td.user_info
                     %span.info= link_to member.info, account_organization_collaborator_path(@organization, member)
+                  %td= t('activerecord.models.member.attributes.role_values.' + member.role)
                   %td
                     - if @organization.is_active && !member.user.is_admin
                       = link_to icon_destroy, account_organization_collaborator_path(@organization, member), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }

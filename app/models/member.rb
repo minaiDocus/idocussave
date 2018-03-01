@@ -54,6 +54,7 @@ class Member < ActiveRecord::Base
 
   def self.search(contains)
     members = self.all.joins(:user)
+    members = members.where(role: contains[:role])                                   if contains[:role].present?
     members = members.where("code LIKE ?",             "%#{contains[:code]}%")       if contains[:code].present?
     members = members.where("users.email LIKE ?",      "%#{contains[:email]}%")      if contains[:email].present?
     members = members.where("users.company LIKE ?",    "%#{contains[:company]}%")    if contains[:company].present?
