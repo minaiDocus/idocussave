@@ -35,7 +35,7 @@ class DropboxImport
         users = []
         users << object
         users += object.organization.admins
-        users += object.groups.collaborators
+        users += object.groups.flat_map(&:collaborators)
         users += object.collaborators
         users.uniq!
         users.compact!

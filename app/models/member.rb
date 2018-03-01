@@ -67,7 +67,7 @@ class Member < ActiveRecord::Base
 
   def uniqueness_of_code
     member = Member.find_by(code: code)
-    user = User.find_by(code: code)
+    user = User.where(is_prescriber: false).find_by(code: code)
     if (member && member != self) || user
       errors.add(:code, :taken)
     end

@@ -14,6 +14,7 @@ class Organization < ActiveRecord::Base
   has_many :collaborators, through: :members, source: :user
   has_many :customers, -> { customers }, class_name: 'User'
   has_many :guest_collaborators, -> { guest_collaborators }, class_name: 'User'
+  has_many :users, -> { where(is_prescriber: false, is_operator: [false, nil]) }
 
   has_one  :ibiza
   has_one  :knowings

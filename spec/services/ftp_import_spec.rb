@@ -38,7 +38,7 @@ describe FTPImport do
     after(:each) { DatabaseCleaner.clean }
 
     it 'fails to authenticate' do
-      leader = create :prescriber, code: 'IDOC%LEAD', organization: @organization
+      leader = create :prescriber, organization: @organization
       leader.create_notify
       Member.create(user: leader, organization: @organization, code: 'IDOC%LEAD', role: Member::ADMIN)
 

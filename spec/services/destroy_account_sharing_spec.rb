@@ -11,7 +11,7 @@ describe DestroyAccountSharing do
 
   context 'given an organization, a contact, a collaborator and a customer' do
     before(:each) do
-      @organization = create(:organization)
+      @organization = create(:organization, code: 'TS')
       @collaborator = create(:prescriber)
       @member       = Member.create(organization: @organization, user: @collaborator, code: 'TS%COL1')
       @contact      = create(:guest)
