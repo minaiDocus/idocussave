@@ -124,6 +124,11 @@ Idocus::Application.routes.draw do
       resources :groups
 
       resources :collaborators do
+        member do
+          post   :add_to_organization
+          delete :remove_from_organization
+        end
+
         resource :rights, only: %w(edit update)
         resource :file_storage_authorizations, only: %w(edit update)
       end

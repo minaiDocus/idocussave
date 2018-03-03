@@ -51,4 +51,9 @@ class Account::OrganizationController < ApplicationController
   def load_customer
     @customer = customers.find params[:customer_id]
   end
+
+  def multi_organizations?
+    (@organization.organization_group&.organizations&.count || 1) > 1
+  end
+  helper_method :multi_organizations?
 end

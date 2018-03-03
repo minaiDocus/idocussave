@@ -62,6 +62,69 @@ class Account::CollaboratorsController < Account::OrganizationController
     redirect_to account_organization_collaborators_path(@organization)
   end
 
+  def add_to_organization
+    if @user.leader?
+      related_organization = @organization.organization_group.organizations.find(params[:oid])
+
+      member = related_organization.members.find_by(user_id: @member.user.id)
+      if member
+        flash[:notice] = "Ce collaborateur est déjà membre de l'organisation : #{related_organization.name}."
+      else
+        base_code = "#{@organization.code}%"
+        new_base_code = "#{related_organization.code}%"
+
+        member = Member.create(
+          organization: related_organization,
+          user: @member.user,
+          role: @member.role,
+          code: @member.code.sub(/^#{base_code}/, new_base_code)
+        )
+
+        if member.persisted?
+          flash[:success] = "Ce collaborateur a été ajouté à l'organisation #{related_organization.name}."
+        else
+          flash[:error] = "Une erreur a empêché d'enregistrer les modifications."
+        end
+      end
+    else
+      flash[:error] = t('authorization.unessessary_rights')
+    end
+
+    redirect_to account_organization_collaborator_path(@organization, @member, tab: 'organization_group')
+  end
+
+  def remove_from_organization
+    if @user.leader?
+      related_organization = Organization.find(params[:oid])
+      member = related_organization.members.find_by(user_id: @member.user.id)
+
+      if member
+        if member.user.memberships.count > 1
+          member.destroy
+          flash[:success] = "#{@member.name} a été retiré de l'organisation : #{related_organization.name}."
+
+          if related_organization == @organization
+            if member.user.id == @user.id
+              # Has deleted his own access to the organization, redirecting to another organization
+              redirect_to account_organization_path(@user.organizations.order(:name).first)
+            else
+              # Has deleted access to this organization for this account, redirecting to list of collaborators
+              redirect_to account_organization_collaborators_path(@organization)
+            end
+            return
+          end
+        else
+          flash[:notice] = 'Ne peut supprimer le seul accès de ce collaborateur.'
+        end
+      else
+        flash[:notice] = "Ce collaborateur n'est pas membre de l'organisation."
+      end
+    else
+      flash[:error] = t('authorization.unessessary_rights')
+    end
+    redirect_to account_organization_collaborator_path(@organization, @member, tab: 'organization_group')
+  end
+
   private
 
   def verify_rights

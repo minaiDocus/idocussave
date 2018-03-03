@@ -1,0 +1,41 @@
+#authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
+  %table.table.table-striped.table-condensed
+    %tr
+      %th= t('activerecord.models.organization_rights.names.collaborators_management')
+      %td
+        - if @member.user.is_admin
+          = t('yes_value')
+        - else
+          = @member.manage_collaborators ? t('yes_value') : t('no_value')
+    %tr
+      %th= t('activerecord.models.organization_rights.names.customers_management')
+      %td
+        - if @member.user.is_admin
+          = t('yes_value')
+        - else
+          = @member.manage_customers ? t('yes_value') : t('no_value')
+    %tr
+      %th= t('activerecord.models.organization_rights.names.groups_management')
+      %td
+        - if @member.user.is_admin
+          = t('yes_value')
+        - else
+          = @member.manage_groups ? t('yes_value') : t('no_value')
+    %tr
+      %th= t('activerecord.models.organization_rights.names.journals_management')
+      %td
+        - if @member.user.is_admin
+          = t('yes_value')
+        - else
+          = @member.manage_journals ? t('yes_value') : t('no_value')
+    %tr
+      %th= t('activerecord.models.organization_rights.names.customer_journals_management')
+      %td
+        - if @member.user.is_admin
+          = t('yes_value')
+        - else
+          = @member.manage_customer_journals ? t('yes_value') : t('no_value')
+  - unless @member.user.is_admin
+    .alignright
+      - if @organization.is_active
+        = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @member), class: 'btn btn-primary'

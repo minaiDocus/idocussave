@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180224152842) do
+ActiveRecord::Schema.define(version: 20180302181749) do
 
   create_table "account_book_types", force: :cascade do |t|
     t.string   "mongo_id",                       limit: 255
@@ -1133,10 +1133,11 @@ ActiveRecord::Schema.define(version: 20180224152842) do
   add_index "orders", ["user_id_mongo_id"], name: "user_id_mongo_id", using: :btree
 
   create_table "organization_groups", force: :cascade do |t|
-    t.string   "name",        limit: 255, null: false
-    t.string   "description", limit: 255
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.string   "name",                         limit: 255,                 null: false
+    t.string   "description",                  limit: 255
+    t.boolean  "is_auto_membership_activated",             default: false, null: false
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
   end
 
   create_table "organization_rights", force: :cascade do |t|

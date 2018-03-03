@@ -30,7 +30,7 @@
                   %td= t('activerecord.models.member.attributes.role_values.' + member.role)
                   %td
                     - if @organization.is_active && !member.user.is_admin
-                      = link_to icon_destroy, account_organization_collaborator_path(@organization, member), class: 'btn btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
+                      = link_to icon_destroy, account_organization_collaborator_path(@organization, member), class: 'btn btn-danger btn-mini', data: { method: :delete, confirm: "Êtes-vous sûr de vouloir supprimer ce compte définitivement ? Cette action est irréversible." }
       = render partial: 'shared/list_options', locals: { collection: @members }
     .span3.box
       = render partial: 'sidebar'

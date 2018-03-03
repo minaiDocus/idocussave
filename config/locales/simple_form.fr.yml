@@ -106,6 +106,7 @@ fr:
       organization_group:
         name: Nom du groupe
         organizations: Organisations membre du groupe
+        is_auto_membership_activated: Membre automatique des organisations du groupe ?
       group:
         members: Collaborateurs
         customers: Clients

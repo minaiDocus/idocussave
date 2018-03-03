@@ -1,13 +1,23 @@
 #member.user
   .row-fluid
     .span12.box
-      %h3= @member.info
+      .pull-left
+        %h3
+          = @member.info
+          - if @member.user == @user.user
+            %i (Votre compte)
+      .pull-right
+        - if (@user.leader? || @user.manage_collaborators) && @organization.is_active
+          = link_to icon_destroy + ' Supprimer le compte', account_organization_collaborator_path(@organization, @member), class: 'btn btn-danger btn-primary', data: { method: :delete, confirm: t('actions.confirm') }
 
   .row-fluid
     .span12.box
       %ul.nav.nav-tabs
         %li{ class: ('active' if params[:tab] == 'information' || params[:tab].blank? ) }
           %a{ href: '#information', data: { toggle: 'tab' } } Information
+        - if multi_organizations? || @member.user.memberships.count > 1
+          %li{ class: ('active' if params[:tab] == 'organization_group') }
+            %a{ href: '#organization_group', data: { toggle: 'tab' } } Organisations
         %li{ class: ('active' if params[:tab] == 'authorization') }
           %a{ href: '#authorization', data: { toggle: 'tab' } } Autorisation
         - if @user.is_admin && @organization.is_active
@@ -15,72 +25,7 @@
             %a{ href: '#file_storages', data: { toggle: 'tab' } } Stockages externes
 
       .tab-content
-        #information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
-          %table.table.table-striped.table-condensed
-            %tr
-              %th= t('activerecord.models.member.attributes.role')
-              %td= t('activerecord.models.member.attributes.role_values.' + @member.role)
-            %tr
-              %th= t('activerecord.models.user.attributes.email')
-              %td= @member.user.email
-            %tr
-              %th= t('activerecord.models.user.attributes.first_name')
-              %td= @member.user.first_name
-            %tr
-              %th= t('activerecord.models.user.attributes.last_name')
-              %td= @member.user.last_name
-            %tr
-              %th= t('activerecord.models.user.attributes.code')
-              %td= @member.code
-            %tr
-              %th= t('activerecord.models.user.attributes.company')
-              %td= @member.user.company
-          .alignright
-            - if @organization.is_active
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @member), class: 'btn btn-primary'
-        #authorization.tab-pane{ class: ('active' if params[:tab] == 'authorization') }
-          %table.table.table-striped.table-condensed
-            %tr
-              %th= t('activerecord.models.organization_rights.names.collaborators_management')
-              %td
-                - if @member.user.is_admin
-                  = t('yes_value')
-                - else
-                  = @member.manage_collaborators ? t('yes_value') : t('no_value')
-            %tr
-              %th= t('activerecord.models.organization_rights.names.customers_management')
-              %td
-                - if @member.user.is_admin
-                  = t('yes_value')
-                - else
-                  = @member.manage_customers ? t('yes_value') : t('no_value')
-            %tr
-              %th= t('activerecord.models.organization_rights.names.groups_management')
-              %td
-                - if @member.user.is_admin
-                  = t('yes_value')
-                - else
-                  = @member.manage_groups ? t('yes_value') : t('no_value')
-            %tr
-              %th= t('activerecord.models.organization_rights.names.journals_management')
-              %td
-                - if @member.user.is_admin
-                  = t('yes_value')
-                - else
-                  = @member.manage_journals ? t('yes_value') : t('no_value')
-            %tr
-              %th= t('activerecord.models.organization_rights.names.customer_journals_management')
-              %td
-                - if @member.user.is_admin
-                  = t('yes_value')
-                - else
-                  = @member.manage_customer_journals ? t('yes_value') : t('no_value')
-          - unless @member.user.is_admin
-            .alignright
-              - if @organization.is_active
-                = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_rights_path(@organization, @member), class: 'btn btn-primary'
-        - if @user.is_admin && @organization.is_active
-          #file_storages.tab-pane{ class: ('active' if params[:tab] == 'file_storages') }
-            = render partial: 'account/customers/file_storages', locals: { user: @member.user }
-            .alignright
-              = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_file_storage_authorizations_path(@organization, @member), class: 'btn btn-primary'
+        = render partial: 'info'
+        = render partial: 'organization_group'
+        = render partial: 'authorization'
+        = render partial: 'file_storage'

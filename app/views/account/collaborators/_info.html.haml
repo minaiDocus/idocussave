@@ -1,0 +1,29 @@
+#information.tab-pane{ class: ('active' if params[:tab] == 'information' || params[:tab].blank?) }
+  %table.table.table-striped.table-condensed
+    %tr
+      %th= t('activerecord.models.member.attributes.role')
+      %td= t('activerecord.models.member.attributes.role_values.' + @member.role)
+    %tr
+      %th= t('activerecord.models.common.attributes.created_at')
+      %td= l @member.user.created_at
+    %tr
+      %th Membre depuis
+      %td= l @member.created_at
+    %tr
+      %th= t('activerecord.models.user.attributes.email')
+      %td= @member.user.email
+    %tr
+      %th= t('activerecord.models.user.attributes.first_name')
+      %td= @member.user.first_name
+    %tr
+      %th= t('activerecord.models.user.attributes.last_name')
+      %td= @member.user.last_name
+    %tr
+      %th= t('activerecord.models.user.attributes.code')
+      %td= @member.code
+    %tr
+      %th= t('activerecord.models.user.attributes.company')
+      %td= @member.user.company
+  .alignright
+    - if @organization.is_active
+      = link_to icon_edit + ' ' + t('actions.edit'), edit_account_organization_collaborator_path(@organization, @member), class: 'btn btn-primary'

@@ -47,7 +47,7 @@ class Account::GroupOrganizationsController < Account::AccountController
   end
 
   def organization_group_params
-    params.require(:organization_group).permit(:name, organization_ids: [])
+    params.require(:organization_group).permit(:name, :is_auto_membership_activated, organization_ids: [])
   end
 
   def load_organization_group
