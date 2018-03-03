@@ -80,6 +80,11 @@ class Account::CollaboratorsController < Account::OrganizationController
           code: @member.code.sub(/^#{base_code}/, new_base_code)
         )
 
+        if member.errors[:code].present?
+          member.code += 'X'
+          member.save
+        end
+
         if member.persisted?
           flash[:success] = "Ce collaborateur a été ajouté à l'organisation #{related_organization.name}."
         else

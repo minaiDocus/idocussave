@@ -22,7 +22,7 @@
                 - elsif @member.user.memberships.count > 1
                   = link_to icon_destroy + "Retirer l'accès à l'organisation", remove_from_organization_account_organization_collaborator_path(@organization, @member, oid: organization.id), class: 'btn btn-danger btn-mini', data: { method: :delete, confirm: t('actions.confirm') }
                 - else
-                  %i Ne peut supprimer le seul accès de ce collaborateur.
+                  %i Ne peut pas supprimer le seul accès de ce collaborateur.
             - else
               %td -
               %td
