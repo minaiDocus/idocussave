@@ -1,5 +1,5 @@
 %ul.nav
-  - unless @user&.organization&.is_suspended && @user.active?
+  - unless @user&.organizations_suspended? && @user.active?
     %li{ class: (controller_name == 'account' ? 'active' : '') }
       = link_to 'Accueil', root_path
     %li{ class: ('active' if controller_name.in?(%w(profiles addresses account_sharings ftps)) && !(request.path =~ /organizations/)) }
@@ -9,19 +9,25 @@
         = link_to 'Organisations', account_organizations_path
   - if @user.collaborator?
     - if @user.has_one_organization?
-      - if @user.inactive? || (not @user&.organization&.is_suspended) || @user&.organization&.admins.try(:include?, @user)
-        - path = (@user&.organization&.is_suspended && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
-        %li{ class: (inside_organization?  ? 'active' : '') }
+      - if @user.inactive? || @user.organizations_not_suspended? || @user.can_unsuspend?
+        - path = (@user.organizations_suspended? && @user.active?) ? account_organization_path(@user.organization, tab: 'payments') : account_organization_path(@user.organization)
+        %li{ class: (inside_organization? ? 'active' : '') }
           = link_to 'Mon organisation', path
-    - else
+    - elsif @user.organizations_not_suspended? || @user.can_unsuspend?
       %li.dropdown{ class: (inside_organization? ? 'active' : '') }
         %a.dropdown-toggle{ href: '#', data: { toggle: 'dropdown' } }
           Mon organisation
           %b.caret
         %ul.dropdown-menu
           - @user.organizations.each do |organization|
-            %li= link_to organization.name, account_organization_path(organization)
-  - unless @user&.organization&.is_suspended && @user.active?
+            %li
+              - if organization.is_suspended
+                = link_to account_organization_path(organization, tab: 'payments') do
+                  = organization.name
+                  %i (Suspendu)
+              - else
+                = link_to organization.name, account_organization_path(organization)
+  - unless @user.organizations_suspended? && @user.active?
     %li{ class: ('active' if controller_name == 'documents' && params[:action] == 'index') }
       = link_to 'Mes documents', account_documents_path
     - if @user.active? && @user.organization.is_active

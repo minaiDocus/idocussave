@@ -63,10 +63,6 @@ class Organization < ActiveRecord::Base
     Organization.where("(is_test = ? AND is_active = ? AND is_for_admin = ?) OR (id IN (?) AND is_test = ? AND is_for_admin = ?)", false, true, false, organization_ids, false, false)
   end
 
-  def leader
-    admins.first
-  end
-
   def to_param
     [id, name.parameterize].join('-')
   end

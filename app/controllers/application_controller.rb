@@ -202,8 +202,8 @@ class ApplicationController < ActionController::Base
 
   def verify_suspension
     if controller_name == 'suspended'
-      redirect_to root_path unless @user&.organization&.is_suspended && @user.active?
-    elsif @user&.organization&.is_suspended && @user.active?
+      redirect_to root_path unless @user&.organizations_suspended? && @user.active?
+    elsif @user&.organizations_suspended? && @user.active?
       unless ((controller_name == 'organizations' && action_name == 'show') || controller_name == 'payments') && @user.leader?
         redirect_to account_suspended_path
       end

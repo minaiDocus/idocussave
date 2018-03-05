@@ -1,8 +1,9 @@
-%ul.nav.pull-right{ style: 'margin-left:0' }
-  %li.change_user
-    %a{ href: '#change_user', data: { toggle: :modal } }
-      %i.icon-white.icon-eye-open
-      - if session[:user_code].present?
-        = session[:user_code]
-      - else
-        Changer de compte
+- unless controller_name == 'organizations' && action_name == 'index'
+  %ul.nav.pull-right{ style: 'margin-left:0' }
+    %li.change_user
+      %a{ href: '#change_user', data: { toggle: :modal } }
+        %i.icon-white.icon-eye-open
+        - if session[:user_code].present?
+          = session[:user_code]
+        - else
+          Changer de compte

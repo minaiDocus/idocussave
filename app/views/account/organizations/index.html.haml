@@ -82,7 +82,9 @@
                   %td= organization.addresses.select { |a| a.is_for_billing }.count == 0 ? icon_ok : ''
                   %td= organization.debit_mandate.configured? ? '' : icon_ok
                   %td= link_to organization.name, account_organization_path(organization)
-                  %td= link_to organization.leader.info, account_organization_collaborator_path(organization, organization.leader) if organization.leader
+                  %td
+                    - if (admin_member = organization.admin_members.first)
+                      = link_to admin_member.info, account_organization_collaborator_path(organization, admin_member)
                   %td
                     - if organization.is_suspended
                       = link_to 'Reprendre', unsuspend_account_organization_path(organization), method: 'patch', class: 'btn btn-mini'

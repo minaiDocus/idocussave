@@ -1,31 +1,31 @@
 .well.sidebar-nav
   %ul.nav.nav-list.dlink
-    - unless @user.try(:organization).try(:is_suspended) && @user.active?
+    - unless @user.organizations_suspended? && @user.active?
       %li{ class: ('active' if @active_panel == 'change_password') }
-        != link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
-      - if @user.active? && !@user.is_prescriber && @user.organization.is_active
+        = link_to 'Changer mon mot de passe', '#change_password', class: 'do-show'
+      - if @user.active? && !@user.collaborator? && @user.organization.is_active
         %li{ class: ('active' if @active_panel == 'account_sharing') }
           = link_to 'Partage de compte', '#account_sharing', class: 'do-show'
         - unless @user.is_guest
           %li{ class: ('active' if @active_panel == 'addresses_management') }
-            != link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
+            = link_to 'Gestion de mes adresses', '#addresses_management', class: 'do-show'
     - if @user.active?
       - if @user.organization.is_active
-        - unless @user.try(:organization).try(:is_suspended)
+        - unless @user.organizations_suspended?
           %li{ class: ('active' if @active_panel == 'efs_management') }
-            != link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'
+            = link_to 'Configurer les stockages externes', '#efs_management', class: 'do-show'
           %li{ class: ('active' if @active_panel == 'subscription_options') }
-            != link_to "Notifications et remontées d'alertes", '#subscription_options', class: 'do-show'
+            = link_to "Notifications et remontées d'alertes", '#subscription_options', class: 'do-show'
           - if @user.is_dematbox_authorized
             %li{ class: ('active' if @active_panel == 'idocus_box') }
-              != link_to "iDocus'Box", '#idocus_box', class: 'do-show'
-          - if @user.options.try(:is_upload_authorized) && !(@user.is_admin || @user.is_prescriber || @user.inactive?)
+              = link_to "iDocus'Box", '#idocus_box', class: 'do-show'
+          - if @user.options&.is_upload_authorized && !(@user.admin? || @user.collaborator?)
             %li{ class: ('active' if @active_panel == 'emailed_documents') }
-              != link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
-      - if !@user.organization.is_active && @user == @user.organization.leader
+              = link_to "Adresse email d'envoi de documents", '#emailed_documents', class: 'do-show'
+      - if !@user.organization.is_active && @user.can_unsuspend?
         %li{ class: ('active' if @active_panel == 'active_organization') }
-          != link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
-      - if @user.is_prescriber || @user.invoices.count > 0
-        - unless @user.try(:organization).try(:is_suspended) && @user.active?
+          = link_to 'Réactiver mon compte client', '#active_organization', class: 'do-show'
+      - if @user.collaborator? || @user.invoices.count > 0
+        - unless @user.organizations_suspended?
           %li{ class: ('active' if @active_panel == 'invoices') }
-            != link_to 'Factures', '#invoices', class: 'do-show'
+            = link_to 'Factures', '#invoices', class: 'do-show'

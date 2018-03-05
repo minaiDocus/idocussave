@@ -44,6 +44,8 @@ Group.all.each do |g|
     m.save
     print '.'
   end
+
+  # cleanup old relations
 end
 
 puts 'Migrate parent/child relationship'

@@ -14,10 +14,17 @@ class AccountSharingRequest
       account_sharing.collaborator  = user
       account_sharing.account       = account
       account_sharing.is_approved   = false
+
       if account_sharing.save
-        if account.manager || account.organization.leader
+        collaborators = if account.manager&.user
+          [account.manager.user]
+        else
+          account.organization.admins
+        end
+
+        collaborators.each do |collaborator|
           notification = Notification.new
-          notification.user        = account.manager&.user || account.organization.leader
+          notification.user        = collaborator
           notification.notice_type = 'account_sharing_request'
           notification.title       = "Demande d'accès à un dossier"
           notification.message     = "#{user.info} souhaite accéder au dossier #{account.info}."

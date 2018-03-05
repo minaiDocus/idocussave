@@ -32,8 +32,14 @@
             %th.first= t('activerecord.models.user.attributes.company')
             %td= render partial: 'text_field', locals: { value: @user.company, name: 'user[company]' }
           %tr
-            %th.first= t('activerecord.models.user.attributes.code')
-            %td= @user.code
+            %th.first Code utilisateur
+            %td
+              - if @user.collaborator?
+                - @user.memberships.order(:code).each do |membership|
+                  = membership.code
+                  %br
+              - else
+                = @user.code
           %tr
             %th.first= t('activerecord.models.user.attributes.knowings_code')
             %td= render partial: 'text_field', locals: { value: @user.knowings_code, name: 'user[knowings_code]' }
@@ -43,8 +49,14 @@
           %tr
             %th.first= t('activerecord.models.organization.name')
             %td
-              = organization_link(@user)
-              = (result = organization_status(@user)) ? "(#{result})" : ''
+              - if @user.collaborator?
+                - @user.organizations.each do |organization|
+                  = link_to organization.name, account_organization_path(organization)
+                  = (result = organization_status(@user, organization)) ? "(#{result})" : ''
+                  %br
+              - else
+                = link_to @user.organization.name, account_organization_path(@user.organization)
+                = (result = organization_status(@user, @user.organization)) ? "(#{result})" : ''
           %tr
             %th.first= t('activerecord.models.scanning_provider.name')
             %td

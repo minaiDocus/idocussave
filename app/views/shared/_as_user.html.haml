@@ -13,4 +13,5 @@
       - else
         Visualiser et agir en tant que :
         %span.label.label-default #{current_user_info}
+        = link_to 'Réinitialiser', current_url(Hash[:user_code, current_user.code]), class: 'btn btn-mini'
     .modal-footer

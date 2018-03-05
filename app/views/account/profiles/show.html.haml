@@ -9,7 +9,7 @@
           = render partial: 'layouts/account/me/navigation'
 
     .span9
-      - unless @user.try(:organization).try(:is_suspended) && @user.active?
+      - unless @user.organizations_suspended? && @user.active?
         #change_password.row-fluid.pan{ class: (@active_panel == 'change_password' ? 'active' : '')}
           .span12
             .well.change_pass_parent
@@ -95,8 +95,8 @@
                     = link_to 'Configurer', account_addresses_path, class: 'btn'
 
       - if @user.active?
-        -if @user.organization.is_active
-          - unless @user.try(:organization).try(:is_suspended)
+        - if @user.organization.is_active
+          - unless @user.organizations_suspended?
             #efs_management.row-fluid.pan{ class: (@active_panel == 'efs_management' ? 'active' : '')}
               .span12.well
                 %h3.aligncenter Stockage externe des documents
@@ -344,7 +344,7 @@
                       = "#{@user.email_code}@fw.idocus.com"
                     = link_to 'Générer une nouvelle adresse', regenerate_code_account_emailed_documents_path, class: 'btn btn-mini btn-primary', data: { method: :post }, style: 'position:relative;top:-2px;'
 
-        -if !@user.organization.is_active && @user == @user.organization.leader
+        - if !@user.organization.is_active && @user.leader?
           #active_organization.row-fluid.pan{ class: (@active_panel == 'active_organization' ? 'active' : '')}
             .span12
               .well

@@ -10,7 +10,6 @@ class IbizaClientCallback
     return unless response.message.dig('error', 'details').try(:match, /Invalid directory authentication/)
 
     UniqueJobs.for "IbizaClientCallback-#{@ibiza.id}", 1.minute do
-      return if notified?
       disable_invalid_access_token
       notify_disabled
     end
@@ -24,23 +23,26 @@ class IbizaClientCallback
     else @ibiza.access_token_2 == @access_token
       @ibiza.state_2 = 'invalid'
     end
-    @ibiza.save
+    @ibiza.save if @ibiza.changed?
   end
 
-  def notified?
-    return unless @ibiza.organization.leader
-    @ibiza.organization.leader.notifications.where(notice_type: 'ibiza_invalid_access_token').where('created_at > ?', 1.day.ago).exists?
+  def notified?(user)
+    user.notifications.where(notice_type: 'ibiza_invalid_access_token').where('created_at > ?', 1.day.ago).exists?
   end
 
   def notify_disabled
-    notification = Notification.new
-    notification.user        = @ibiza.organization.leader
-    notification.notice_type = 'ibiza_invalid_access_token'
-    notification.title       = 'Compte iBiza déconnecté'
-    notification.message     = "Votre compte iBiza n'est plus connectée, merci de le reconfigurer, s'il vous plaît."
-    notification.url         = Rails.application.routes.url_helpers.account_organization_url(
-                                 @ibiza.organization, { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options))
-    notification.save
-    NotifyWorker.perform_async(notification.id)
+    @ibiza.organization.admins.each do |admin|
+      next if notified?(admin)
+
+      notification = Notification.new
+      notification.user        = admin
+      notification.notice_type = 'ibiza_invalid_access_token'
+      notification.title       = 'Compte iBiza déconnecté'
+      notification.message     = "Votre compte iBiza n'est plus connectée, merci de le reconfigurer, s'il vous plaît."
+      notification.url         = Rails.application.routes.url_helpers.account_organization_url(
+                                   @ibiza.organization, { tab: 'ibiza' }.merge(ActionMailer::Base.default_url_options))
+      notification.save
+      NotifyWorker.perform_async(notification.id)
+    end
   end
 end

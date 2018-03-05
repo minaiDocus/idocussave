@@ -15,6 +15,10 @@ class Collaborator
     @member = Member.find_by(organization: @organization, user: @user)
   end
 
+  def scoped?
+    @member.present?
+  end
+
   def member
     @member || @user.memberships.first
   end
@@ -32,7 +36,7 @@ class Collaborator
   end
 
   def leader?
-    @user.is_admin || member.admin?
+    @user.is_admin || (@member && @member.admin?) || @user.memberships.detect(&:admin?)
   end
 
   def not_leader?
@@ -45,6 +49,22 @@ class Collaborator
 
   def has_one_organization?
     @user.organizations.count == 1
+  end
+
+  def organizations_suspended?
+    organizations.detect(&:is_suspended)
+  end
+
+  def organizations_not_suspended?
+    not organizations_suspended?
+  end
+
+  def can_unsuspend?
+    if @organization
+      @organization.admins.include?(@user)
+    else
+      organizations.detect { |o| o.is_suspended && o.admins.include?(@user) }
+    end
   end
 
   def customers

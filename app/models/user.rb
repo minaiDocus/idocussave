@@ -217,14 +217,7 @@ class User < ActiveRecord::Base
   end
 
   def prescribers
-    if collaborator?
-      []
-    else
-      users = []
-      users << organization.leader if organization&.leader
-      users += group_prescribers
-      users
-    end
+    collaborator? ? [] : ((organization&.admins || []) + group_prescribers)
   end
 
   def group_prescribers

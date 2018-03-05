@@ -60,8 +60,11 @@
                       %th= t('activerecord.models.organization.attributes.code')
                       %td= @organization.code
                     %tr
-                      %th= t('activerecord.models.organization.attributes.leader')
-                      %td= @organization.leader.try(:info)
+                      %th= t('activerecord.models.organization.attributes.leaders')
+                      %td
+                        - @organization.admin_members.each do |admin_member|
+                          = link_to admin_member.info, account_organization_collaborator_path(@organization, admin_member)
+                          %br
                     %tr
                       %th= t('activerecord.models.organization.attributes.is_detail_authorized')
                       %td= @organization.is_detail_authorized ? t('yes_value') : t('no_value')
@@ -401,7 +404,7 @@
                       %th Banque :
                       %td= @organization.debit_mandate.bic
                 %form.aligncenter.margin0bottom{ method: :get, action: 'https://prlv.idocus.com/form.php' }
-                  %input{ name: :email, type: 'hidden', value: @organization.leader.try(:email) }
+                  %input{ name: :email, type: 'hidden', value: (@user.leader? ? @user.email : @organization.admins.first&.email) }
                   %input{ name: :client_reference, type: 'hidden', value: @organization.debit_mandate.clientReference }
                   %input.btn.btn-primary{ name: '', type: 'submit', value: 'Configurer' }
             - if @user.is_admin

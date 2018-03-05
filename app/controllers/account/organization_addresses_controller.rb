@@ -11,10 +11,12 @@ class Account::OrganizationAddressesController < Account::OrganizationController
 
   # GET /account/organizations/:organization_id/addresses/new
   def new
-    @address = Address.new
+    leader = @user.leader? ? @user : @organization.admins.first
 
-    @address.last_name  = @organization.leader.try(:last_name)
-    @address.first_name = @organization.leader.try(:first_name)
+    @address = Address.new(
+      last_name:  leader&.last_name,
+      first_name: leader&.first_name
+    )
   end
 
 
