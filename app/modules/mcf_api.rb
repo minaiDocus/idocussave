@@ -18,7 +18,7 @@ class McfApi
     end
 
     def renew_access_token(refresh_token)
-      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken', { 'refreshToken' => refresh_token })
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken', { 'RefreshToken' => refresh_token })
       data_response = handle_response
 
       @access_token = data_response['AccessToken']
@@ -26,33 +26,41 @@ class McfApi
     end
 
     def accounts
-      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/TakeStorageFullRight', { 'AccessToken' => @access_token })
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAllStorages', { 'AccessToken' => @access_token, 'AttributeName' => 'Storage' })
       data_response = handle_response
 
-      data_response['ListStorage']
+      data_response['ListStorageDto'].select{ |storage| storage["Read"] && storage["Write"] && !storage["IsArchive"] }.collect{ |storage| storage["Name"] }
     end
 
     def upload(file_path, remote_path, force=true)
-      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/UploadToMCF', {  accessToken: @access_token,
-                                                                                                    sendMail:    'false',
-                                                                                                    force:       force.to_s,
-                                                                                                    pathFile:    remote_path,
-                                                                                                    file:        File.open(file_path, 'r') 
-                                                                                                  })
+      remote_storage = remote_path.split("/")[0]
+      remote_path.slice!("#{remote_storage}/")
+
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/Upload', { accessToken: @access_token,
+                                                                                              attributeName:  "Storage",
+                                                                                              attributeValue: remote_storage,
+                                                                                              sendMail:    'false',
+                                                                                              force:       force.to_s,
+                                                                                              pathFile:    remote_path,
+                                                                                              file:        File.open(file_path, 'r') 
+                                                                                            })
       data_response = handle_response
     end
 
     def verify_files(file_paths)
-     @request = Typhoeus::Request.new(
-        'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf',
+      remote_storage = file_paths.first.split("/")[0]
+      file_paths = file_paths.map { |path| path.sub("#{remote_storage}/", "") }
+
+      @request = Typhoeus::Request.new(
+        'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile',
         method:  :post,
         headers: { accept: :json },
         timeout: 10,
         body:    {
-          accessToken:   @access_token,
-          withAttribute: false,
-          isAdmin:       false,
-          listPath:      file_paths
+          AccessToken:    @access_token,
+          AttributeName:  "Storage",
+          AttributeValue: remote_storage,
+          ListPath:       file_paths
         }
       )
       @response = @request.run
@@ -65,7 +73,7 @@ class McfApi
           data.select do |info|
             info['Status'] == 600
           end.map do |info|
-            { path: info['Path'], md5: info['Md5'] }
+            { path: File.join(remote_storage, info['Path']), md5: info['Md5'] }
           end
         end
      else

@@ -27,7 +27,7 @@ class Account::McfSettingsController < Account::OrganizationController
   def authorize
     url = Rails.application.secrets.my_company_files_api['authorize_url'] + '?'
     url += {
-      client_id:    Rails.application.secrets.my_company_files_api['client_id'],
+      client_id:    @user.id,
       client_name:  Rails.application.secrets.my_company_files_api['client_name'],
       redirect_uri: callback_account_organization_mcf_settings_url(@organization),
       state:        state

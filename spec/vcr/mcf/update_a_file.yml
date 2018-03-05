@@ -2,14 +2,14 @@
 http_interactions:
 - request:
     method: post
-    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
     body:
       encoding: UTF-8
       base64_string: |
-        YWNjZXNzVG9rZW49ZmJhZWIyMGRhMzFjNDk2Nzk0NmRjNzJhZjIxMzEyMTZj
-        ZDM4YjdlYjYwNTY0OGRmJmlzQWRtaW49ZmFsc2UmbGlzdFBhdGglNUIlNUQ9
-        Sm9obiUyMERvZSUyRjIwMTgwMSUyRkFDJTJGMnBhZ2VzLnBkZiZ3aXRoQXR0
-        cmlidXRlPWZhbHNl
+        QWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
+        NjMxMDc1NWNlMDE0MDRmJkF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZBdHRyaWJ1
+        dGVWYWx1ZT1Kb2huJTIwRG9lJkxpc3RQYXRoJTVCJTVEPTIwMTgwMSUyRkFD
+        JTJGMnBhZ2VzLnBkZg==
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -39,27 +39,28 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 22 Jan 2018 20:26:15 GMT
+      - Mon, 05 Mar 2018 15:02:34 GMT
       Content-Length:
-      - '119'
+      - '110'
     body:
       encoding: UTF-8
       base64_string: |
-        W3siUGF0aCI6IkpvaG4gRG9lLzIwMTgwMS9BQy8ycGFnZXMucGRmIiwiTWQ1
-        IjoiOTdGOTBFQUMwRDA3RkU1QURFOEY2MEEwRkE1NENERkMiLCJTdGF0dXMi
-        OjYwMCwiTWVzc2FnZSI6IkZpbGUgZXhpc3QifV0=
+        W3siUGF0aCI6IjIwMTgwMS9BQy8ycGFnZXMucGRmIiwiTWQ1IjoiOTdGOTBF
+        QUMwRDA3RkU1QURFOEY2MEEwRkE1NENERkMiLCJTdGF0dXMiOjYwMCwiTWVz
+        c2FnZSI6IkZpbGUgZXhpc3QifV0=
     http_version: 
-  recorded_at: Mon, 22 Jan 2018 20:26:40 GMT
+  recorded_at: Mon, 05 Mar 2018 15:02:54 GMT
 - request:
     method: post
-    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/UploadToMCF
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
     body:
       encoding: UTF-8
       base64_string: |
-        YWNjZXNzVG9rZW49ZmJhZWIyMGRhMzFjNDk2Nzk0NmRjNzJhZjIxMzEyMTZj
-        ZDM4YjdlYjYwNTY0OGRmJmZpbGU9JTIzJTNDRmlsZSUzQTB4MDAwMDAwMDk3
-        OGMxMDglM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT1Kb2huJTIwRG9lJTJGMjAx
-        ODAxJTJGQUMlMkYycGFnZXMucGRmJnNlbmRNYWlsPWZhbHNl
+        YWNjZXNzVG9rZW49NjRiMDFiZGE1NzFmNDdhZWE4ODE0Y2I3YTI5YTdkYzM1
+        NjMxMDc1NWNlMDE0MDRmJmF0dHJpYnV0ZU5hbWU9U3RvcmFnZSZhdHRyaWJ1
+        dGVWYWx1ZT1Kb2huJTIwRG9lJmZpbGU9JTIzJTNDRmlsZSUzQTB4MDAwMDAw
+        MGIzYmY1MjglM0UmZm9yY2U9dHJ1ZSZwYXRoRmlsZT0yMDE4MDElMkZBQyUy
+        RjJwYWdlcy5wZGYmc2VuZE1haWw9ZmFsc2U=
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -89,15 +90,15 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 22 Jan 2018 20:26:17 GMT
+      - Mon, 05 Mar 2018 15:02:34 GMT
       Content-Length:
-      - '115'
+      - '104'
     body:
       encoding: UTF-8
       base64_string: |
-        eyJDb2RlRXJyb3IiOjYwMCwiUHJvdmlkZXJJZCI6MCwiUHJvdmlkZXJOYW1l
-        IjpudWxsLCJTdWNjZXNzIjp0cnVlLCJNZXNzYWdlIjoiU3VjY2VzcyIsIlN0
-        b3JhZ2VMaW1pdFJlYWNoZWQiOmZhbHNlfQ==
+        eyJTdGF0dXMiOjYwMCwiUHJvdmlkZXJJZCI6NDczLCJQcm92aWRlck5hbWUi
+        OiJCb2Nhc2F5IiwiTWVzc2FnZSI6IlN1Y2Nlc3MiLCJTdG9yYWdlTGltaXRS
+        ZWFjaGVkIjpmYWxzZX0=
     http_version: 
-  recorded_at: Mon, 22 Jan 2018 20:26:41 GMT
+  recorded_at: Mon, 05 Mar 2018 15:02:55 GMT
 recorded_with: VCR 3.0.3

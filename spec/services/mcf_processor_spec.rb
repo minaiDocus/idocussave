@@ -97,6 +97,7 @@ describe McfProcessor do
 
         McfProcessor.new(@mcf_document).execute_retake
 
+        expect(WebMock).to have_requested(:post, 'https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/resendobject')
         expect(@mcf_document.retake_retry).to eq (retake + 1)
       end
 
@@ -135,7 +136,8 @@ describe McfProcessor do
         result = VCR.use_cassette('mcf/move_object') do
           McfProcessor.new(@mcf_document).execute_remove
         end
-
+        
+        expect(WebMock).to have_requested(:post, 'https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/moveobject')
         expect(@mcf_document.is_moved).to be true
       end
     end

@@ -54,7 +54,8 @@ module Idocus
       :access_token,
       :token,
       :connections, # Budgea webhooks param
-      :expiration_date
+      :expiration_date,
+      :ByteResponse # MCF file uploaded byte code
     ]
 
 

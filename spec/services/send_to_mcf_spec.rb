@@ -13,7 +13,7 @@ describe SendToMcf do
     @leader.update(organization: @organization)
     @mcf = McfSettings.create(
       organization: @organization,
-      access_token: 'fbaeb20da31c4967946dc72af2131216cd38b7eb605648df',
+      access_token: '64b01bda571f47aea8814cb7a29a7dc356310755ce01404f',
       access_token_expires_at: 1.year.from_now
     )
     user = FactoryGirl.create :user, code: 'IDO%0001', mcf_storage: 'John Doe'
@@ -39,26 +39,26 @@ describe SendToMcf do
     @remote_file.save
   end
 
-  it 'sends a file successfully' do
-    result = VCR.use_cassette('mcf/upload_file', preserve_exact_body_bytes: true) do
+  it 'sends a file successfully', :send_files do
+    result = VCR.use_cassette('mcf/upload_file') do
       SendToMcf.new(@mcf, [@remote_file]).execute
     end
 
-    expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf')
-    expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/UploadToMCF')
+    expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
+    expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
     expect(WebMock).to have_requested(:any, /.*/).times(2)
 
     expect(result).to eq true
     expect(@remote_file.state).to eq 'synced'
   end
 
-  context 'a file has already been uploaded' do
+  context 'a file has already been uploaded', :upload_existing_file do
     it 'does not update an existing file' do
-      result = VCR.use_cassette('mcf/does_not_update_an_existing_file', preserve_exact_body_bytes: true) do
+      result = VCR.use_cassette('mcf/does_not_update_an_existing_file') do
         SendToMcf.new(@mcf, [@remote_file]).execute
       end
 
-      expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf')
+      expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
       expect(WebMock).to have_requested(:any, /.*/).times(1)
 
       expect(result).to eq true
@@ -76,8 +76,8 @@ describe SendToMcf do
           SendToMcf.new(@mcf, [@remote_file]).execute
         end
 
-        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf')
-        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/UploadToMCF')
+        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile')
+        expect(WebMock).to have_requested(:post, 'https://uploadservice.mycompanyfiles.fr/api/idocus/Upload')
         expect(WebMock).to have_requested(:any, /.*/).times(2)
 
         expect(result).to eq true
@@ -85,7 +85,7 @@ describe SendToMcf do
     end
   end
 
-  it 'manages insufficient space error' do
+  it 'manages insufficient space error', :handling_space_error do
     message = "{\"CodeError\":507,\"Success\":false,\"StorageLimitReached\":true}"
     allow_any_instance_of(SendToMcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unknown.new(message))
@@ -99,7 +99,7 @@ describe SendToMcf do
     expect(@leader.notifications.size).to eq 1
   end
 
-  it 'manages invalid token error' do
+  it 'manages invalid token error', :handling_invalid_token do
     allow_any_instance_of(SendToMcf).to receive(:up_to_date?).and_return(false)
     allow_any_instance_of(McfApi::Client).to receive(:upload).and_raise(McfApi::Errors::Unauthorized)
 

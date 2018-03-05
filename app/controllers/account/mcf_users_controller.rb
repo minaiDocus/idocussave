@@ -32,7 +32,7 @@ class Account::McfUsersController < Account::OrganizationController
       if _accounts.present?
         [{ name: 'Aucun', id: '' }] + _accounts.map { |account| { name: account, id: account } }
       else
-        false
+        nil
       end
     end
   end

@@ -2,10 +2,10 @@
 http_interactions:
 - request:
     method: post
-    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/UploadToMCF
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/Upload
     body:
       encoding: UTF-8
-      string: accessToken=fbaeb20da31c4967946dc72af2131216cd38b7eb605648df&file=%23%3CFile%3A0x000000051a72c8%3E&force=false&pathFile=John%20Doe%2FTEST%2F2pages.pdf&sendMail=false
+      string: accessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&attributeName=Storage&attributeValue=John%20Doe&file=%23%3CFile%3A0x000000090dfb48%3E&force=true&pathFile=TEST%2F2pages.pdf&sendMail=false
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -35,12 +35,12 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Thu, 18 Jan 2018 21:02:20 GMT
+      - Mon, 05 Mar 2018 12:02:45 GMT
       Content-Length:
-      - '115'
+      - '104'
     body:
       encoding: UTF-8
-      string: '{"CodeError":600,"ProviderId":0,"ProviderName":null,"Success":true,"Message":"Success","StorageLimitReached":false}'
+      string: '{"Status":600,"ProviderId":473,"ProviderName":"Bocasay","Message":"Success","StorageLimitReached":false}'
     http_version: 
-  recorded_at: Thu, 18 Jan 2018 21:02:43 GMT
+  recorded_at: Mon, 05 Mar 2018 12:03:06 GMT
 recorded_with: VCR 3.0.3

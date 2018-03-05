@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe McfApi do
-  let(:client) { McfApi::Client.new('fbaeb20da31c4967946dc72af2131216cd38b7eb605648df') }
+  let(:client) { McfApi::Client.new('64b01bda571f47aea8814cb7a29a7dc356310755ce01404f') }
   
   context 'Receiving files from MCF', :system_in do  
     describe '#move_uploaded_file', :move_uploaded_file do
-      it 'sends request to remove token to mcf' do
+      it 'sends request to remove file token to mcf' do
         result = VCR.use_cassette('mcf/move_object') do
           client.move_uploaded_file
         end
@@ -42,7 +42,8 @@ describe McfApi do
           client.accounts
         end
 
-        expect(accounts).to eq ['John Doe']
+        expect(accounts).to be_an Array
+        expect(accounts).to include "John Doe"
       end
     end
 
@@ -52,7 +53,7 @@ describe McfApi do
           client.upload(Rails.root.join('spec/support/files/2pages.pdf'), 'John Doe/TEST/2pages.pdf')
         end
 
-        expect(result['CodeError']).to eq 600
+        expect(result['Status']).to eq 600
       end
     end
 

@@ -33,7 +33,7 @@ class MyCompanyFilesController < ApplicationController
   end
 
   def valid_params_presence?
-    [:Token, :Type, :Name, :IdBaseClient, :ByteResponse].each_with_object(params) do |key, obj|
+    [:Token, :Type, :Name, :IdBaseClient, :ByteResponse, :Ged].each_with_object(params) do |key, obj|
       unless obj[key].present?
         @error = {status: 406, message: 'Invalid parameters sent'}
         return false 

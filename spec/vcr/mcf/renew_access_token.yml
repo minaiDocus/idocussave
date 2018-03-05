@@ -5,7 +5,7 @@ http_interactions:
     uri: https://uploadservice.mycompanyfiles.fr/api/idocus/TakeAnotherToken
     body:
       encoding: UTF-8
-      string: refreshToken=d16c23253f54437db6cab93255ab1933
+      string: RefreshToken=d16c23253f54437db6cab93255ab1933
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -35,12 +35,12 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Fri, 19 Jan 2018 20:07:04 GMT
+      - Mon, 05 Mar 2018 12:59:19 GMT
       Content-Length:
       - '180'
     body:
       encoding: UTF-8
       string: '{"Status":600,"Message":"Success","AccessToken":"fbaeb20da31c4967946dc72af2131216cd38b7eb605648df","RefreshToken":"d16c23253f54437db6cab93255ab1933","ExpirationDate":1534348014547}'
     http_version: 
-  recorded_at: Fri, 19 Jan 2018 20:07:26 GMT
+  recorded_at: Mon, 05 Mar 2018 12:59:40 GMT
 recorded_with: VCR 3.0.3

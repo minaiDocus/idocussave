@@ -2,14 +2,10 @@
 http_interactions:
 - request:
     method: post
-    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFileInMcf
+    uri: https://uploadservice.mycompanyfiles.fr/api/idocus/VerifyFile
     body:
       encoding: UTF-8
-      base64_string: |
-        YWNjZXNzVG9rZW49ZmJhZWIyMGRhMzFjNDk2Nzk0NmRjNzJhZjIxMzEyMTZj
-        ZDM4YjdlYjYwNTY0OGRmJmlzQWRtaW49ZmFsc2UmbGlzdFBhdGglNUIlNUQ9
-        Sm9obiUyMERvZSUyRjIwMTgwMSUyRkFDJTJGMnBhZ2VzLnBkZiZ3aXRoQXR0
-        cmlidXRlPWZhbHNl
+      string: AccessToken=64b01bda571f47aea8814cb7a29a7dc356310755ce01404f&AttributeName=Storage&AttributeValue=John%20Doe&ListPath%5B%5D=201801%2FAC%2F2pages.pdf
     headers:
       User-Agent:
       - Typhoeus - https://github.com/typhoeus/typhoeus
@@ -39,15 +35,13 @@ http_interactions:
       X-Powered-By:
       - ASP.NET
       Date:
-      - Mon, 22 Jan 2018 20:15:03 GMT
+      - Mon, 05 Mar 2018 15:02:28 GMT
       Content-Length:
-      - '119'
+      - '110'
     body:
       encoding: UTF-8
-      base64_string: |
-        W3siUGF0aCI6IkpvaG4gRG9lLzIwMTgwMS9BQy8ycGFnZXMucGRmIiwiTWQ1
-        IjoiOTdGOTBFQUMwRDA3RkU1QURFOEY2MEEwRkE1NENERkMiLCJTdGF0dXMi
-        OjYwMCwiTWVzc2FnZSI6IkZpbGUgZXhpc3QifV0=
+      string: '[{"Path":"201801/AC/2pages.pdf","Md5":"97F90EAC0D07FE5ADE8F60A0FA54CDFC","Status":600,"Message":"File
+        exist"}]'
     http_version: 
-  recorded_at: Mon, 22 Jan 2018 20:15:28 GMT
+  recorded_at: Mon, 05 Mar 2018 15:02:49 GMT
 recorded_with: VCR 3.0.3
