@@ -174,6 +174,14 @@ class Account::CustomersController < Account::OrganizationController
   def edit_mcf
   end
 
+  def show_mcf_errors
+    order_by = params[:sort] || 'created_at'
+    direction = params[:direction] || 'desc'
+    
+    @mcf_documents_error = @customer.mcf_documents.not_processable.order(order_by=>direction).page(params[:page]).per(20)
+    render :show_mcf_errors
+  end
+
   def update_mcf
     if @customer.update(mcf_params)
       flash[:success] = 'Modifié avec succès.'

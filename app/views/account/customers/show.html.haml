@@ -349,11 +349,13 @@
                         - else
                           %i{ style: 'color:gray' } Aucun
                 .row-fluid
-                  .span12
+                  .span12.alignright
                     - if @organization.mcf_settings.configured?
-                      = link_to icon_edit + ' Modifier', edit_mcf_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary pull-right'
+                      = link_to icon_edit + ' Modifier', edit_mcf_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
+                      = link_to icon_destroy + ' Liste des erreurs de récupération', show_mcf_errors_account_organization_customer_path(@organization, @customer), class: 'btn btn-primary'
                     - else @organization.mcf_settings.configured?
-                      = link_to icon_edit + ' Modifier', '#', class: 'btn btn-primary pull-right', disabled: true
+                      = link_to icon_edit + ' Modifier', '#', class: 'btn btn-primary', disabled: true
+                      = link_to icon_destroy + ' Liste des erreurs', '#', class: 'btn btn-primary', disabled: true
             - if @organization.is_csv_descriptor_used
               #csv_descriptor.tab-pane{ class: ('active' if params[:tab] == 'csv_descriptor'), :style => "line-height:25px" }
                 .aligncenter

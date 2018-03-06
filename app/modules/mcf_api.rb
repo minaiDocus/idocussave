@@ -8,12 +8,12 @@ class McfApi
     end
 
     def move_uploaded_file
-      @response = send_request('https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/moveobject', { 'AccessToken' => @access_token })
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/moveobject', { 'AccessToken' => @access_token })
       data_response = handle_response
     end
 
     def ask_to_resend_file
-      @response = send_request('https://uploadservice-preprod.mycompanyfiles.fr/api/idocus/resendobject', { 'AccessToken' => @access_token })
+      @response = send_request('https://uploadservice.mycompanyfiles.fr/api/idocus/resendobject', { 'AccessToken' => @access_token })
       data_response = handle_response
     end
 

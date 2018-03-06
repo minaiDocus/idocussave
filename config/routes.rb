@@ -152,6 +152,7 @@ Idocus::Application.routes.draw do
           get   'account_reopen_confirm'
           patch 'update_knowings_options'
           get   'edit_mcf'
+          get   'show_mcf_errors'
           patch 'update_mcf'
         end
 
